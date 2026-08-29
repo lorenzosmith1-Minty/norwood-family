@@ -1,0 +1,16 @@
+{
+  "overview": "A warm, historical family tree app for the Norwood family, showing two generations of relatives in a clean, scannable layout.",
+  "features": [
+    "Explore the family tree from Home",
+    "View the Norwood couple and their eight children",
+    "Tap a person card to select and highlight it",
+    "Back button to return Home"
+  ],
+  "category": "family-tree",
+  "tags": [
+    "family",
+    "genealogy",
+    "history"
+  ],
+  "last_updated": "2026-08-29T19:57:35.661Z"
+}

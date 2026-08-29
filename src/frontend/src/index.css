@@ -1,0 +1,153 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Fraunces";
+  src: url("/assets/fonts/Fraunces.woff2") format("woff2");
+  font-display: swap;
+  font-weight: 100 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "General Sans";
+  src: url("/assets/fonts/GeneralSans.woff2") format("woff2");
+  font-display: swap;
+  font-weight: 100 900;
+  font-style: normal;
+}
+
+@layer base {
+  :root {
+    --font-display: "Fraunces", serif;
+    --font-body: "General Sans", sans-serif;
+    --font-mono: "Geist Mono", monospace;
+    --radius: 0.875rem;
+
+    --background: 0.96 0.02 70;
+    --foreground: 0.22 0.04 45;
+    --card: 0.985 0.015 70;
+    --card-foreground: 0.22 0.04 45;
+    --popover: 0.985 0.015 70;
+    --popover-foreground: 0.22 0.04 45;
+
+    --primary: 0.42 0.11 35;
+    --primary-foreground: 0.96 0.02 70;
+
+    --secondary: 0.92 0.02 70;
+    --secondary-foreground: 0.3 0.04 45;
+    --muted: 0.92 0.02 70;
+    --muted-foreground: 0.5 0.03 45;
+
+    --accent: 0.55 0.09 60;
+    --accent-foreground: 0.96 0.02 70;
+
+    --destructive: 0.5 0.2 25;
+    --destructive-foreground: 0.96 0.02 70;
+
+    --success: 0.55 0.12 150;
+    --warning: 0.7 0.13 80;
+
+    --border: 0.86 0.03 70;
+    --input: 0.86 0.03 70;
+    --ring: 0.42 0.11 35;
+
+    --chart-1: 0.42 0.11 35;
+    --chart-2: 0.55 0.09 60;
+    --chart-3: 0.5 0.08 160;
+    --chart-4: 0.6 0.1 25;
+    --chart-5: 0.45 0.05 45;
+
+    --sidebar: 0.985 0.015 70;
+    --sidebar-foreground: 0.22 0.04 45;
+    --sidebar-primary: 0.42 0.11 35;
+    --sidebar-primary-foreground: 0.96 0.02 70;
+    --sidebar-accent: 0.92 0.02 70;
+    --sidebar-accent-foreground: 0.3 0.04 45;
+    --sidebar-border: 0.86 0.03 70;
+    --sidebar-ring: 0.42 0.11 35;
+  }
+
+  .dark {
+    --background: 0.16 0.02 55;
+    --foreground: 0.93 0.02 60;
+    --card: 0.2 0.02 55;
+    --card-foreground: 0.93 0.02 60;
+    --popover: 0.22 0.02 55;
+    --popover-foreground: 0.93 0.02 60;
+
+    --primary: 0.72 0.14 60;
+    --primary-foreground: 0.16 0.02 55;
+
+    --secondary: 0.24 0.02 55;
+    --secondary-foreground: 0.85 0.02 60;
+    --muted: 0.24 0.02 55;
+    --muted-foreground: 0.55 0.02 55;
+
+    --accent: 0.58 0.12 30;
+    --accent-foreground: 0.95 0.01 60;
+
+    --destructive: 0.55 0.2 25;
+    --destructive-foreground: 0.93 0.02 60;
+
+    --success: 0.6 0.15 150;
+    --warning: 0.72 0.13 80;
+
+    --border: 0.28 0.02 55;
+    --input: 0.28 0.02 55;
+    --ring: 0.72 0.14 60;
+
+    --chart-1: 0.72 0.14 60;
+    --chart-2: 0.58 0.12 30;
+    --chart-3: 0.6 0.12 160;
+    --chart-4: 0.65 0.13 25;
+    --chart-5: 0.7 0.1 55;
+
+    --sidebar: 0.2 0.02 55;
+    --sidebar-foreground: 0.93 0.02 60;
+    --sidebar-primary: 0.72 0.14 60;
+    --sidebar-primary-foreground: 0.16 0.02 55;
+    --sidebar-accent: 0.24 0.02 55;
+    --sidebar-accent-foreground: 0.85 0.02 60;
+    --sidebar-border: 0.28 0.02 55;
+    --sidebar-ring: 0.72 0.14 60;
+  }
+
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+}
+
+@layer utilities {
+  .transition-smooth {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .text-gradient-warm {
+    background-image: linear-gradient(
+      120deg,
+      oklch(0.3 0.05 45),
+      oklch(0.42 0.11 35)
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .paper-grain {
+    background-image: radial-gradient(
+        circle at 15% 20%,
+        oklch(0.9 0.02 70 / 0.5),
+        transparent 40%
+      ),
+      radial-gradient(
+        circle at 85% 80%,
+        oklch(0.88 0.03 60 / 0.4),
+        transparent 45%
+      );
+  }
+}

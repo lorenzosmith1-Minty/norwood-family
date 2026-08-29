@@ -5,6 +5,7 @@ import { type Person, PersonCard } from "../components/PersonCard";
 
 interface FamilyTreePageProps {
   onBack: () => void;
+  onOpenProfile: () => void;
 }
 
 const couple: Person[] = [
@@ -23,7 +24,7 @@ const children: Person[] = [
   { name: "Lula E.", role: "Child" },
 ];
 
-export function FamilyTreePage({ onBack }: FamilyTreePageProps) {
+export function FamilyTreePage({ onBack, onOpenProfile }: FamilyTreePageProps) {
   const [selected, setSelected] = useState<number | null>(null);
 
   return (
@@ -58,25 +59,31 @@ export function FamilyTreePage({ onBack }: FamilyTreePageProps) {
         </p>
       </motion.header>
 
-      {/* Couple */}
-      <section
-        aria-label="Starting couple"
-        className="mt-10 grid grid-cols-2 gap-3 sm:gap-4"
-      >
-        {couple.map((person, index) => (
-          <PersonCard
-            key={person.name}
-            person={person}
-            index={index}
-            selected={selected === index}
-            onSelect={() => setSelected(index)}
-          />
-        ))}
+      {/* Couple with horizontal relationship line */}
+      <section aria-label="Starting couple" className="relative mt-10">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4">
+          {couple.map((person, index) => (
+            <PersonCard
+              key={person.name}
+              person={person}
+              index={index}
+              selected={selected === index}
+              onSelect={() => setSelected(index)}
+              onOpen={index === 0 ? onOpenProfile : undefined}
+            />
+          ))}
+        </div>
+
+        {/* Horizontal relationship line between the two cards */}
+        <div
+          className="pointer-events-none absolute left-1/2 top-1/2 h-px w-1/2 -translate-x-1/2 -translate-y-1/2 bg-border"
+          aria-hidden="true"
+        />
       </section>
 
-      {/* Connecting line from couple to children */}
+      {/* Vertical line branching down from the center of the couple */}
       <div
-        className="relative mx-auto my-2 flex h-8 w-px bg-border"
+        className="relative mx-auto flex h-8 w-px bg-border"
         aria-hidden="true"
       >
         <span className="absolute left-1/2 top-0 h-4 w-px -translate-x-1/2 bg-border" />

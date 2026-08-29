@@ -1,10 +1,9 @@
 {
-  "overview": "A warm, historical family tree app for the Norwood family, showing two generations of relatives in a clean, scannable layout.",
+  "overview": "A warm, historical Family Tree web app for the Norwood family, now with a Person Profile page for matriarch Julia 'Julie' Norwood.",
   "features": [
-    "Explore the family tree from Home",
-    "View the Norwood couple and their eight children",
-    "Tap a person card to select and highlight it",
-    "Back button to return Home"
+    "Browse the Norwood family tree",
+    "Open Julia Norwood's person profile from her card",
+    "View her story, family, timeline, and sources"
   ],
   "category": "family-tree",
   "tags": [
@@ -12,5 +11,5 @@
     "genealogy",
     "history"
   ],
-  "last_updated": "2026-08-29T19:57:35.661Z"
+  "last_updated": "2026-08-29T20:22:21.473Z"
 }

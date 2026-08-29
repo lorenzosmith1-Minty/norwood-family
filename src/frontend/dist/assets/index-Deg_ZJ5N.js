@@ -27719,37 +27719,87 @@ const createLucideIcon = (iconName, iconNode) => {
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$6 = [
+const __iconNode$c = [
   ["path", { d: "m12 19-7-7 7-7", key: "1l729n" }],
   ["path", { d: "M19 12H5", key: "x3x0zl" }]
 ];
-const ArrowLeft = createLucideIcon("arrow-left", __iconNode$6);
+const ArrowLeft = createLucideIcon("arrow-left", __iconNode$c);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$5 = [["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]];
-const ChevronRight = createLucideIcon("chevron-right", __iconNode$5);
+const __iconNode$b = [
+  ["path", { d: "M12 7v14", key: "1akyts" }],
+  [
+    "path",
+    {
+      d: "M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z",
+      key: "ruj8y"
+    }
+  ]
+];
+const BookOpen = createLucideIcon("book-open", __iconNode$b);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$4 = [
+const __iconNode$a = [
+  ["path", { d: "M8 2v4", key: "1cmpym" }],
+  ["path", { d: "M16 2v4", key: "4m81vk" }],
+  ["rect", { width: "18", height: "18", x: "3", y: "4", rx: "2", key: "1hopcy" }],
+  ["path", { d: "M3 10h18", key: "8toen8" }],
+  ["path", { d: "M8 14h.01", key: "6423bh" }],
+  ["path", { d: "M12 14h.01", key: "1etili" }],
+  ["path", { d: "M16 14h.01", key: "1gbofw" }],
+  ["path", { d: "M8 18h.01", key: "lrp35t" }],
+  ["path", { d: "M12 18h.01", key: "mhygvu" }],
+  ["path", { d: "M16 18h.01", key: "kzsmim" }]
+];
+const CalendarDays = createLucideIcon("calendar-days", __iconNode$a);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$9 = [["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]];
+const ChevronRight = createLucideIcon("chevron-right", __iconNode$9);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$8 = [
   ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
   ["polyline", { points: "12 6 12 12 16.5 12", key: "1aq6pp" }]
 ];
-const Clock3 = createLucideIcon("clock-3", __iconNode$4);
+const Clock3 = createLucideIcon("clock-3", __iconNode$8);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$3 = [
+const __iconNode$7 = [
+  ["path", { d: "M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z", key: "1rqfz7" }],
+  ["path", { d: "M14 2v4a2 2 0 0 0 2 2h4", key: "tnqrlb" }],
+  ["path", { d: "M10 9H8", key: "b1mrlr" }],
+  ["path", { d: "M16 13H8", key: "t4e002" }],
+  ["path", { d: "M16 17H8", key: "z1uh3a" }]
+];
+const FileText = createLucideIcon("file-text", __iconNode$7);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$6 = [
   ["path", { d: "M10 18v-7", key: "wt116b" }],
   [
     "path",
@@ -27763,14 +27813,14 @@ const __iconNode$3 = [
   ["path", { d: "M3 22h18", key: "8prr45" }],
   ["path", { d: "M6 18v-7", key: "1ivflk" }]
 ];
-const Landmark = createLucideIcon("landmark", __iconNode$3);
+const Landmark = createLucideIcon("landmark", __iconNode$6);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$2 = [
+const __iconNode$5 = [
   ["rect", { width: "8", height: "18", x: "3", y: "3", rx: "1", key: "oynpb5" }],
   ["path", { d: "M7 3v18", key: "bbkbws" }],
   [
@@ -27781,7 +27831,58 @@ const __iconNode$2 = [
     }
   ]
 ];
-const LibraryBig = createLucideIcon("library-big", __iconNode$2);
+const LibraryBig = createLucideIcon("library-big", __iconNode$5);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$4 = [
+  ["path", { d: "M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4", key: "re6nr2" }],
+  ["path", { d: "M2 6h4", key: "aawbzj" }],
+  ["path", { d: "M2 10h4", key: "l0bgd4" }],
+  ["path", { d: "M2 14h4", key: "1gsvsf" }],
+  ["path", { d: "M2 18h4", key: "1bu2t1" }],
+  [
+    "path",
+    {
+      d: "M21.378 5.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z",
+      key: "pqwjuv"
+    }
+  ]
+];
+const NotebookPen = createLucideIcon("notebook-pen", __iconNode$4);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$3 = [
+  ["path", { d: "M15 12h-5", key: "r7krc0" }],
+  ["path", { d: "M15 8h-5", key: "1khuty" }],
+  ["path", { d: "M19 17V5a2 2 0 0 0-2-2H4", key: "zz82l3" }],
+  [
+    "path",
+    {
+      d: "M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3",
+      key: "1ph1d7"
+    }
+  ]
+];
+const ScrollText = createLucideIcon("scroll-text", __iconNode$3);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$2 = [
+  ["path", { d: "m21 21-4.34-4.34", key: "14j7rj" }],
+  ["circle", { cx: "11", cy: "11", r: "8", key: "4ej97u" }]
+];
+const Search = createLucideIcon("search", __iconNode$2);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -27789,17 +27890,6 @@ const LibraryBig = createLucideIcon("library-big", __iconNode$2);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$1 = [
-  ["path", { d: "m21 21-4.34-4.34", key: "14j7rj" }],
-  ["circle", { cx: "11", cy: "11", r: "8", key: "4ej97u" }]
-];
-const Search = createLucideIcon("search", __iconNode$1);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode = [
   [
     "path",
     {
@@ -27809,7 +27899,20 @@ const __iconNode = [
   ],
   ["path", { d: "M12 22v-3", key: "kmzjlo" }]
 ];
-const TreePine = createLucideIcon("tree-pine", __iconNode);
+const TreePine = createLucideIcon("tree-pine", __iconNode$1);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode = [
+  ["path", { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", key: "1yyitq" }],
+  ["path", { d: "M16 3.128a4 4 0 0 1 0 7.744", key: "16gr8j" }],
+  ["path", { d: "M22 21v-2a4 4 0 0 0-3-3.87", key: "kshegd" }],
+  ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }]
+];
+const Users = createLucideIcon("users", __iconNode);
 const LayoutGroupContext = reactExports.createContext({});
 function useConstant(init) {
   const ref = reactExports.useRef(null);
@@ -29231,7 +29334,7 @@ class JSAnimation extends WithPromise {
     this.startTime = 0;
     return this.tick(sampleTime, true);
   }
-  attachTimeline(timeline) {
+  attachTimeline(timeline2) {
     var _a2;
     if (this.options.allowFlatten) {
       this.options.type = "keyframes";
@@ -29239,7 +29342,7 @@ class JSAnimation extends WithPromise {
       this.initAnimation();
     }
     (_a2 = this.driver) == null ? void 0 : _a2.stop();
-    return timeline.observe(this);
+    return timeline2.observe(this);
   }
 }
 function fillWildcards(keyframes2) {
@@ -29715,14 +29818,14 @@ class NativeAnimation extends WithPromise {
   /**
    * Attaches a timeline to the animation, for instance the `ScrollTimeline`.
    */
-  attachTimeline({ timeline, rangeStart, rangeEnd, observe }) {
+  attachTimeline({ timeline: timeline2, rangeStart, rangeEnd, observe }) {
     var _a2;
     if (this.allowFlatten) {
       (_a2 = this.animation.effect) == null ? void 0 : _a2.updateTiming({ easing: "linear" });
     }
     this.animation.onfinish = null;
-    if (timeline && supportsScrollTimeline()) {
-      this.animation.timeline = timeline;
+    if (timeline2 && supportsScrollTimeline()) {
+      this.animation.timeline = timeline2;
       if (rangeStart)
         this.animation.rangeStart = rangeStart;
       if (rangeEnd)
@@ -29995,11 +30098,11 @@ class AsyncMotionValueAnimation extends WithPromise {
   get startTime() {
     return this.animation.startTime;
   }
-  attachTimeline(timeline) {
+  attachTimeline(timeline2) {
     if (this._animation) {
-      this.stopTimeline = this.animation.attachTimeline(timeline);
+      this.stopTimeline = this.animation.attachTimeline(timeline2);
     } else {
-      this.pendingTimeline = timeline;
+      this.pendingTimeline = timeline2;
     }
     return () => this.stop();
   }
@@ -35653,14 +35756,15 @@ function PersonCard({
   person,
   selected,
   onSelect,
-  index: index2
+  index: index2,
+  onOpen
 }) {
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(
     motion.button,
     {
       type: "button",
       "data-ocid": `tree.person.${index2 + 1}`,
-      onClick: onSelect,
+      onClick: onOpen ?? onSelect,
       "aria-pressed": selected,
       initial: { opacity: 0, y: 16 },
       animate: { opacity: 1, y: 0 },
@@ -35699,7 +35803,7 @@ const children = [
   { name: "Lillie", role: "Child" },
   { name: "Lula E.", role: "Child" }
 ];
-function FamilyTreePage({ onBack }) {
+function FamilyTreePage({ onBack, onOpenProfile }) {
   const [selected, setSelected] = reactExports.useState(null);
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto flex w-full max-w-3xl flex-col px-6 py-8 sm:py-12", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsxs(
@@ -35732,27 +35836,30 @@ function FamilyTreePage({ onBack }) {
         ]
       }
     ),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(
-      "section",
-      {
-        "aria-label": "Starting couple",
-        className: "mt-10 grid grid-cols-2 gap-3 sm:gap-4",
-        children: couple.map((person, index2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
-          PersonCard,
-          {
-            person,
-            index: index2,
-            selected: selected === index2,
-            onSelect: () => setSelected(index2)
-          },
-          person.name
-        ))
-      }
-    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { "aria-label": "Starting couple", className: "relative mt-10", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "grid grid-cols-2 gap-3 sm:gap-4", children: couple.map((person, index2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+        PersonCard,
+        {
+          person,
+          index: index2,
+          selected: selected === index2,
+          onSelect: () => setSelected(index2),
+          onOpen: index2 === 0 ? onOpenProfile : void 0
+        },
+        person.name
+      )) }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "div",
+        {
+          className: "pointer-events-none absolute left-1/2 top-1/2 h-px w-1/2 -translate-x-1/2 -translate-y-1/2 bg-border",
+          "aria-hidden": "true"
+        }
+      )
+    ] }),
     /* @__PURE__ */ jsxRuntimeExports.jsx(
       "div",
       {
-        className: "relative mx-auto my-2 flex h-8 w-px bg-border",
+        className: "relative mx-auto flex h-8 w-px bg-border",
         "aria-hidden": "true",
         children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "absolute left-1/2 top-0 h-4 w-px -translate-x-1/2 bg-border" })
       }
@@ -35892,9 +35999,288 @@ function HomePage({ onExplore }) {
     /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-10 max-w-sm text-center text-sm text-muted-foreground", children: "A living record of the people, places, and moments that make us who we are." })
   ] });
 }
+const facts = [
+  { label: "Born", value: "approx. 1860" },
+  { label: "Died", value: "June 19, 1936" },
+  { label: "Location", value: "Mississippi" },
+  { label: "Husband", value: "Isaiah Norwood" },
+  { label: "Evidence status", value: "Mixed" }
+];
+const timeline = [
+  {
+    date: "c. 1860",
+    title: "Born",
+    detail: "Julia is born."
+  },
+  {
+    date: "1880",
+    title: "Appears in the census",
+    detail: "Julia, age about 20, appears in the census with her husband Isaiah Norwood in Lincoln County, Mississippi."
+  },
+  {
+    date: "After Isaiah’s death",
+    title: "Raises her children",
+    detail: "Julia raises their children."
+  },
+  {
+    date: "June 19, 1936",
+    title: "Died",
+    detail: "Julia dies."
+  }
+];
+const sources = [
+  {
+    kind: "documented",
+    title: "1880 U.S. Census",
+    source: "U.S. Federal Census, 1880",
+    detail: "A documented record that supports Julia’s approximate age of about 20, her marriage to Isaiah Norwood, and the family’s location in Lincoln County, Mississippi."
+  },
+  {
+    kind: "family-history",
+    title: "Family Research Notes",
+    source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+    detail: "A family-history note passed down through the family. It includes family history, relationships, and oral-history details that help connect Julia to the broader Norwood line."
+  },
+  {
+    kind: "documented",
+    title: "Death Information",
+    source: "Family records",
+    detail: "Records Julia’s death as June 19, 1936, marking the end of her life in Mississippi."
+  }
+];
+function PersonProfilePage({ onBack }) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto flex w-full max-w-3xl flex-col px-6 py-8 sm:py-12", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      motion.div,
+      {
+        initial: { opacity: 0, y: 16 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] },
+        children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "button",
+          {
+            type: "button",
+            "data-ocid": "profile.back_button",
+            onClick: onBack,
+            className: "mb-6 inline-flex items-center gap-2 self-start rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(ArrowLeft, { className: "h-4 w-4", strokeWidth: 2, "aria-hidden": "true" }),
+              "Back to Family Tree"
+            ]
+          }
+        )
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      motion.header,
+      {
+        className: "flex flex-col items-center text-center",
+        initial: { opacity: 0, y: 16 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] },
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "mb-3 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-accent-foreground/70", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Landmark, { className: "h-4 w-4", strokeWidth: 1.75, "aria-hidden": "true" }),
+            "The Norwood Family"
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "font-display text-3xl font-semibold leading-tight text-foreground sm:text-4xl", children: "Julia “Julie” Norwood" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-2 text-sm uppercase tracking-[0.18em] text-muted-foreground", children: "Matriarch" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("figure", { className: "mt-6 w-full max-w-xs", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "overflow-hidden rounded-2xl border border-border bg-card p-2 shadow-elevated", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "img",
+              {
+                src: "/assets/generated/matriarch-portrait.dim_800x900.png",
+                alt: "A representative vintage sepia-toned studio portrait of an elderly Black woman in a high-collared Victorian dress and headwrap, framed by an aged cream border. This is representative historical imagery, not an actual photograph of Julia Norwood.",
+                className: "aspect-[4/5] w-full rounded-xl object-cover",
+                loading: "lazy"
+              }
+            ) }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("figcaption", { className: "mt-2 text-center text-xs italic leading-relaxed text-muted-foreground", children: "Representative historical portrait — not an actual photograph of Julia Norwood." })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("dl", { className: "mt-6 grid w-full max-w-md grid-cols-1 gap-3 sm:grid-cols-2", children: facts.map((fact) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "div",
+            {
+              className: "rounded-2xl border border-border bg-card px-4 py-3 text-left shadow-subtle",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("dt", { className: "text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground", children: fact.label }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("dd", { className: "mt-1 font-display text-base font-semibold text-foreground", children: fact.value })
+              ]
+            },
+            fact.label
+          )) })
+        ]
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      motion.section,
+      {
+        "aria-label": "Her Story",
+        className: "mt-10",
+        initial: { opacity: 0, y: 16 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.6, delay: 0.1, ease: [0.4, 0, 0.2, 1] },
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              BookOpen,
+              {
+                className: "h-4 w-4 text-accent-foreground/70",
+                strokeWidth: 1.75,
+                "aria-hidden": "true"
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display text-xl font-semibold text-foreground", children: "Her Story" })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-3 text-base leading-relaxed text-muted-foreground", children: "Julia “Julie” Norwood was the matriarch of the Norwood family, born around 1860 in Mississippi. She married Isaiah Norwood, and together they raised a large family of eight children. Her life in Mississippi anchored the family through the generations, and her memory lives on in the branches of the family tree that descend from her." })
+        ]
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      motion.section,
+      {
+        "aria-label": "Family",
+        className: "mt-10",
+        initial: { opacity: 0, y: 16 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.6, delay: 0.15, ease: [0.4, 0, 0.2, 1] },
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              Users,
+              {
+                className: "h-4 w-4 text-accent-foreground/70",
+                strokeWidth: 1.75,
+                "aria-hidden": "true"
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display text-xl font-semibold text-foreground", children: "Family" })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-3 flex flex-col gap-3", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3 rounded-2xl border border-border bg-card px-4 py-3 shadow-subtle", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary font-display text-base font-semibold text-accent-foreground", children: "I" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-display text-base font-semibold text-foreground", children: "Isaiah Norwood" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs uppercase tracking-[0.18em] text-muted-foreground", children: "Husband" })
+              ] })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-base leading-relaxed text-muted-foreground", children: "Julia and Isaiah raised eight children together — Clayton, Isaiah Jr., Edward, Hattie, Pinkie, Louise, Lillie, and Lula E. — the next generation of the Norwood family." })
+          ] })
+        ]
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      motion.section,
+      {
+        "aria-label": "Timeline",
+        className: "mt-10",
+        initial: { opacity: 0, y: 16 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.6, delay: 0.2, ease: [0.4, 0, 0.2, 1] },
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              CalendarDays,
+              {
+                className: "h-4 w-4 text-accent-foreground/70",
+                strokeWidth: 1.75,
+                "aria-hidden": "true"
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display text-xl font-semibold text-foreground", children: "Timeline" })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("ol", { className: "mt-3 flex flex-col gap-3", children: timeline.map((item) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "li",
+            {
+              className: "flex gap-4 rounded-2xl border border-border bg-card px-4 py-3 shadow-subtle",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  "span",
+                  {
+                    className: "mt-1 flex h-2.5 w-2.5 shrink-0 rounded-full bg-accent",
+                    "aria-hidden": "true"
+                  }
+                ),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs font-semibold uppercase tracking-[0.18em] text-accent-foreground/70", children: item.date }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-0.5 font-display text-base font-semibold text-foreground", children: item.title }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-0.5 text-sm text-muted-foreground", children: item.detail })
+                ] })
+              ]
+            },
+            item.title
+          )) })
+        ]
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      motion.section,
+      {
+        "aria-label": "Sources",
+        className: "mt-10",
+        initial: { opacity: 0, y: 16 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.6, delay: 0.25, ease: [0.4, 0, 0.2, 1] },
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              ScrollText,
+              {
+                className: "h-4 w-4 text-accent-foreground/70",
+                strokeWidth: 1.75,
+                "aria-hidden": "true"
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display text-xl font-semibold text-foreground", children: "Sources" })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-3 flex flex-col gap-3", children: sources.map((source) => {
+            const isDocumented = source.kind === "documented";
+            const Icon2 = isDocumented ? FileText : NotebookPen;
+            return /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "div",
+              {
+                className: "rounded-2xl border border-border bg-card px-4 py-3 shadow-subtle",
+                children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-start gap-3", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    Icon2,
+                    {
+                      className: "mt-0.5 h-4 w-4 shrink-0 text-accent-foreground/70",
+                      strokeWidth: 1.75,
+                      "aria-hidden": "true"
+                    }
+                  ),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap items-center gap-2", children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-display text-base font-semibold text-foreground", children: source.title }),
+                      /* @__PURE__ */ jsxRuntimeExports.jsx(
+                        "span",
+                        {
+                          className: `inline-flex items-center rounded-full px-2 py-0.5 text-[0.65rem] font-semibold uppercase tracking-[0.12em] ${isDocumented ? "bg-accent/15 text-accent-foreground" : "bg-secondary text-muted-foreground"}`,
+                          children: isDocumented ? "Documented record" : "Family-history note"
+                        }
+                      )
+                    ] }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-1 text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground", children: source.source }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-1.5 text-sm leading-relaxed text-muted-foreground", children: source.detail })
+                  ] })
+                ] })
+              },
+              source.title
+            );
+          }) })
+        ]
+      }
+    )
+  ] });
+}
 function App() {
   const [view, setView] = reactExports.useState("home");
-  return /* @__PURE__ */ jsxRuntimeExports.jsx(Layout, { children: view === "home" ? /* @__PURE__ */ jsxRuntimeExports.jsx(HomePage, { onExplore: () => setView("family-tree") }) : /* @__PURE__ */ jsxRuntimeExports.jsx(FamilyTreePage, { onBack: () => setView("home") }) });
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(Layout, { children: view === "home" ? /* @__PURE__ */ jsxRuntimeExports.jsx(HomePage, { onExplore: () => setView("family-tree") }) : view === "family-tree" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+    FamilyTreePage,
+    {
+      onBack: () => setView("home"),
+      onOpenProfile: () => setView("profile")
+    }
+  ) : /* @__PURE__ */ jsxRuntimeExports.jsx(PersonProfilePage, { onBack: () => setView("family-tree") }) });
 }
 BigInt.prototype.toJSON = function() {
   return this.toString();

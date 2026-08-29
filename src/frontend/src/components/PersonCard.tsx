@@ -10,6 +10,7 @@ interface PersonCardProps {
   selected: boolean;
   onSelect: () => void;
   index: number;
+  onOpen?: () => void;
 }
 
 export function PersonCard({
@@ -17,12 +18,13 @@ export function PersonCard({
   selected,
   onSelect,
   index,
+  onOpen,
 }: PersonCardProps) {
   return (
     <motion.button
       type="button"
       data-ocid={`tree.person.${index + 1}`}
-      onClick={onSelect}
+      onClick={onOpen ?? onSelect}
       aria-pressed={selected}
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}

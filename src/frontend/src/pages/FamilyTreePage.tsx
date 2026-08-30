@@ -2,15 +2,26 @@ import { ArrowLeft, TreePine } from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";
 import { type Person, PersonCard } from "../components/PersonCard";
+import { profiles } from "./PersonProfilePage";
 
 interface FamilyTreePageProps {
   onBack: () => void;
-  onOpenProfile: () => void;
+  onOpenProfile: (id: string) => void;
 }
 
-const couple: Person[] = [
-  { name: "Julia “Julie” Norwood", role: "Matriarch" },
-  { name: "Isaiah Norwood", role: "Patriarch" },
+const couple: (Person & { id: string })[] = [
+  {
+    id: "julia",
+    name: "Julia “Julie” Norwood",
+    role: "Matriarch",
+    photo: profiles.julia.portrait,
+  },
+  {
+    id: "isaiah",
+    name: "Isaiah Norwood",
+    role: "Patriarch",
+    photo: profiles.isaiah.portrait,
+  },
 ];
 
 const children: Person[] = [
@@ -69,7 +80,7 @@ export function FamilyTreePage({ onBack, onOpenProfile }: FamilyTreePageProps) {
               index={index}
               selected={selected === index}
               onSelect={() => setSelected(index)}
-              onOpen={index === 0 ? onOpenProfile : undefined}
+              onOpen={() => onOpenProfile(couple[index].id)}
             />
           ))}
         </div>

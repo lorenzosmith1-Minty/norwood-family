@@ -29334,7 +29334,7 @@ class JSAnimation extends WithPromise {
     this.startTime = 0;
     return this.tick(sampleTime, true);
   }
-  attachTimeline(timeline2) {
+  attachTimeline(timeline) {
     var _a2;
     if (this.options.allowFlatten) {
       this.options.type = "keyframes";
@@ -29342,7 +29342,7 @@ class JSAnimation extends WithPromise {
       this.initAnimation();
     }
     (_a2 = this.driver) == null ? void 0 : _a2.stop();
-    return timeline2.observe(this);
+    return timeline.observe(this);
   }
 }
 function fillWildcards(keyframes2) {
@@ -29818,14 +29818,14 @@ class NativeAnimation extends WithPromise {
   /**
    * Attaches a timeline to the animation, for instance the `ScrollTimeline`.
    */
-  attachTimeline({ timeline: timeline2, rangeStart, rangeEnd, observe }) {
+  attachTimeline({ timeline, rangeStart, rangeEnd, observe }) {
     var _a2;
     if (this.allowFlatten) {
       (_a2 = this.animation.effect) == null ? void 0 : _a2.updateTiming({ easing: "linear" });
     }
     this.animation.onfinish = null;
-    if (timeline2 && supportsScrollTimeline()) {
-      this.animation.timeline = timeline2;
+    if (timeline && supportsScrollTimeline()) {
+      this.animation.timeline = timeline;
       if (rangeStart)
         this.animation.rangeStart = rangeStart;
       if (rangeEnd)
@@ -30098,11 +30098,11 @@ class AsyncMotionValueAnimation extends WithPromise {
   get startTime() {
     return this.animation.startTime;
   }
-  attachTimeline(timeline2) {
+  attachTimeline(timeline) {
     if (this._animation) {
-      this.stopTimeline = this.animation.attachTimeline(timeline2);
+      this.stopTimeline = this.animation.attachTimeline(timeline);
     } else {
-      this.pendingTimeline = timeline2;
+      this.pendingTimeline = timeline;
     }
     return () => this.stop();
   }
@@ -35752,6 +35752,13 @@ const featureBundle = {
   ...layout
 };
 const motion = /* @__PURE__ */ createMotionProxy(featureBundle, createDomVisualElement);
+function getInitials(name) {
+  var _a2;
+  const parts = name.split(/\s+/).filter((part) => part.length > 0 && /[A-Za-z]/.test(part.charAt(0)));
+  const first = ((_a2 = parts[0]) == null ? void 0 : _a2.charAt(0)) ?? "";
+  const last = parts.length > 1 ? parts[parts.length - 1].charAt(0) : "";
+  return (first + last).toUpperCase();
+}
 function PersonCard({
   person,
   selected,
@@ -35759,12 +35766,13 @@ function PersonCard({
   index: index2,
   onOpen
 }) {
+  const handleClick = onOpen ?? onSelect;
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(
     motion.button,
     {
       type: "button",
       "data-ocid": `tree.person.${index2 + 1}`,
-      onClick: onOpen ?? onSelect,
+      onClick: handleClick,
       "aria-pressed": selected,
       initial: { opacity: 0, y: 16 },
       animate: { opacity: 1, y: 0 },
@@ -35775,12 +35783,27 @@ function PersonCard({
       },
       className: `group flex w-full flex-col items-center rounded-2xl border px-4 py-4 text-center shadow-subtle transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${selected ? "border-accent bg-accent/15 shadow-elevated" : "border-border bg-card hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-elevated"}`,
       children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx(
+        person.photo ? /* @__PURE__ */ jsxRuntimeExports.jsx(
           "span",
           {
-            className: `mb-3 flex h-12 w-12 items-center justify-center rounded-full font-display text-lg font-semibold transition-colors duration-300 ${selected ? "bg-accent text-accent-foreground" : "bg-secondary text-accent-foreground group-hover:bg-accent group-hover:text-accent-foreground"}`,
+            className: "mb-3 block h-16 w-16 overflow-hidden rounded-full border-2 border-border bg-card shadow-subtle transition-colors duration-300 group-hover:border-accent/60",
             "aria-hidden": "true",
-            children: person.name.charAt(0)
+            children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "img",
+              {
+                src: person.photo.src,
+                alt: person.photo.alt,
+                className: "h-full w-full object-cover",
+                loading: "lazy"
+              }
+            )
+          }
+        ) : /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "span",
+          {
+            className: `mb-3 flex h-16 w-16 items-center justify-center rounded-full font-display text-lg font-semibold transition-colors duration-300 ${selected ? "bg-accent text-accent-foreground" : "bg-secondary text-accent-foreground group-hover:bg-accent group-hover:text-accent-foreground"}`,
+            "aria-hidden": "true",
+            children: getInitials(person.name)
           }
         ),
         /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-display text-base font-semibold leading-snug text-foreground", children: person.name }),
@@ -35789,9 +35812,368 @@ function PersonCard({
     }
   );
 }
+const juliaProfile = {
+  id: "julia",
+  name: "Julia “Julie” Norwood",
+  role: "Matriarch",
+  portrait: {
+    src: "/assets/generated/matriarch-portrait.dim_800x900.png",
+    alt: "A representative vintage sepia-toned studio portrait of an elderly Black woman in a high-collared Victorian dress and headwrap, framed by an aged cream border. This is representative historical imagery, not an actual photograph of Julia Norwood."
+  },
+  facts: [
+    { label: "Born", value: "approx. 1860" },
+    { label: "Died", value: "June 19, 1936" },
+    { label: "Location", value: "Mississippi" },
+    { label: "Husband", value: "Isaiah Norwood" },
+    { label: "Evidence status", value: "Mixed" }
+  ],
+  story: "Julia “Julie” Norwood was the matriarch of the Norwood family, born around 1860 in Mississippi. She married Isaiah Norwood, and together they raised a large family of eight children. Her life in Mississippi anchored the family through the generations, and her memory lives on in the branches of the family tree that descend from her.",
+  family: {
+    spouseName: "Isaiah Norwood",
+    spouseRole: "Husband",
+    childrenText: "Julia and Isaiah raised eight children together — Clayton, Isaiah Jr., Edward, Hattie, Pinkie, Louise, Lillie, and Lula E. — the next generation of the Norwood family."
+  },
+  timeline: [
+    {
+      date: "c. 1860",
+      title: "Born",
+      detail: "Julia is born."
+    },
+    {
+      date: "1880",
+      title: "Appears in the census",
+      detail: "Julia, age about 20, appears in the census with her husband Isaiah Norwood in Lincoln County, Mississippi."
+    },
+    {
+      date: "After Isaiah’s death",
+      title: "Raises her children",
+      detail: "Julia raises their children."
+    },
+    {
+      date: "June 19, 1936",
+      title: "Died",
+      detail: "Julia dies."
+    }
+  ],
+  sources: [
+    {
+      kind: "documented",
+      title: "1880 U.S. Census",
+      source: "U.S. Federal Census, 1880",
+      detail: "A documented record that supports Julia’s approximate age of about 20, her marriage to Isaiah Norwood, and the family’s location in Lincoln County, Mississippi."
+    },
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail: "A family-history note passed down through the family. It includes family history, relationships, and oral-history details that help connect Julia to the broader Norwood line."
+    },
+    {
+      kind: "documented",
+      title: "Death Information",
+      source: "Family records",
+      detail: "Records Julia’s death as June 19, 1936, marking the end of her life in Mississippi."
+    }
+  ]
+};
+const isaiahProfile = {
+  id: "isaiah",
+  name: "Isaiah Norwood",
+  role: "Patriarch",
+  portrait: {
+    src: "/assets/generated/patriarch-portrait.dim_800x900.png",
+    alt: "A representative vintage sepia-toned studio portrait of an elderly Black man in a high-collared Victorian suit with a bow tie, framed by an aged cream border. This is representative historical imagery, not an actual photograph of Isaiah Norwood."
+  },
+  facts: [
+    { label: "Born", value: "1858" },
+    { label: "Husband", value: "Julia “Julie” Norwood" },
+    { label: "Evidence status", value: "Mixed" }
+  ],
+  story: "Isaiah Norwood was the patriarch of the Norwood family, born in 1858. He married Julia “Julie” Norwood, and together they built the family that would grow to eight children. Isaiah appears with Julia in the 1880 census in Lincoln County, Mississippi, placing the young family in the region that would anchor the Norwood line for generations. Family history says Isaiah was killed at about age 36. Two different family accounts of his death have been preserved, and neither should be treated as confirmed fact.",
+  family: {
+    spouseName: "Julia “Julie” Norwood",
+    spouseRole: "Wife",
+    childrenText: "Isaiah and Julia raised eight children together — Clayton, Isaiah Jr., Edward, Hattie, Pinkie, Louise, Lillie, and Lula E. — the next generation of the Norwood family."
+  },
+  timeline: [
+    {
+      date: "1858",
+      title: "Born",
+      detail: "Isaiah Norwood is born. This is a documented record of his birth year."
+    },
+    {
+      date: "1880",
+      title: "Appears in the census",
+      detail: "Isaiah, about age 22, appears in the census with Julia “Julie” Norwood in Lincoln County, Mississippi. This is a documented record."
+    },
+    {
+      date: "About age 36",
+      title: "Killed",
+      detail: "Family history says Isaiah is killed at about age 36. This is a family account, not a confirmed documented record."
+    },
+    {
+      date: "After his death",
+      title: "Julia raises their children",
+      detail: "After Isaiah’s death, Julia raises their children. This is a family account."
+    }
+  ],
+  sources: [
+    {
+      kind: "documented",
+      title: "1880 U.S. Census",
+      source: "U.S. Federal Census, 1880",
+      detail: "A documented record that supports Isaiah’s approximate age of about 22, his marriage to Julia “Julie” Norwood, and the family’s location in Lincoln County, Mississippi."
+    },
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail: "A family-history note passed down through the family. It includes family relationships and oral-history details that help connect Isaiah to the broader Norwood line."
+    },
+    {
+      kind: "family-history",
+      title: "Death Account",
+      source: "Family history",
+      detail: "A family-history account of Isaiah’s death. The exact circumstances are not confirmed, and the account should not be treated as a documented record."
+    }
+  ]
+};
+const profiles = {
+  julia: juliaProfile,
+  isaiah: isaiahProfile
+};
+function SectionHeader({
+  icon: Icon2,
+  label
+}) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      Icon2,
+      {
+        className: "h-4 w-4 text-accent-foreground/70",
+        strokeWidth: 1.75,
+        "aria-hidden": "true"
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display text-xl font-semibold text-foreground", children: label })
+  ] });
+}
+function EmptySection() {
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "div",
+    {
+      "data-ocid": "profile.section.empty_state",
+      className: "mt-3 rounded-2xl border border-dashed border-border bg-card/50 px-4 py-6 text-center shadow-subtle",
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-display text-base font-semibold text-foreground", children: "Not yet populated" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-1 text-sm text-muted-foreground", children: "This section is still being researched and will be added soon." })
+      ]
+    }
+  );
+}
+function PersonProfilePage({ onBack, person }) {
+  const storyLabel = person.id === "julia" ? "Her Story" : "His Story";
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto flex w-full max-w-3xl flex-col px-6 py-8 sm:py-12", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      motion.div,
+      {
+        initial: { opacity: 0, y: 16 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] },
+        children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "button",
+          {
+            type: "button",
+            "data-ocid": "profile.back_button",
+            onClick: onBack,
+            className: "mb-6 inline-flex items-center gap-2 self-start rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(ArrowLeft, { className: "h-4 w-4", strokeWidth: 2, "aria-hidden": "true" }),
+              "Back to Family Tree"
+            ]
+          }
+        )
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      motion.header,
+      {
+        className: "flex flex-col items-center text-center",
+        initial: { opacity: 0, y: 16 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] },
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "mb-3 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-accent-foreground/70", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Landmark, { className: "h-4 w-4", strokeWidth: 1.75, "aria-hidden": "true" }),
+            "The Norwood Family"
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "font-display text-3xl font-semibold leading-tight text-foreground sm:text-4xl", children: person.name }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-2 text-sm uppercase tracking-[0.18em] text-muted-foreground", children: person.role }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("figure", { className: "mt-6 w-full max-w-xs", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "overflow-hidden rounded-2xl border border-border bg-card p-2 shadow-elevated", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "img",
+              {
+                src: person.portrait.src,
+                alt: person.portrait.alt,
+                className: "aspect-[4/5] w-full rounded-xl object-cover",
+                loading: "lazy"
+              }
+            ) }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("figcaption", { className: "mt-2 text-center text-xs italic leading-relaxed text-muted-foreground", children: [
+              "Representative historical portrait — not an actual photograph of",
+              " ",
+              person.name.split(" ")[0],
+              " Norwood."
+            ] })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("dl", { className: "mt-6 grid w-full max-w-md grid-cols-1 gap-3 sm:grid-cols-2", children: person.facts.map((fact) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "div",
+            {
+              className: "rounded-2xl border border-border bg-card px-4 py-3 text-left shadow-subtle",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("dt", { className: "text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground", children: fact.label }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("dd", { className: "mt-1 font-display text-base font-semibold text-foreground", children: fact.value })
+              ]
+            },
+            fact.label
+          )) })
+        ]
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      motion.section,
+      {
+        "aria-label": storyLabel,
+        className: "mt-10",
+        initial: { opacity: 0, y: 16 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.6, delay: 0.1, ease: [0.4, 0, 0.2, 1] },
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(SectionHeader, { icon: BookOpen, label: storyLabel }),
+          person.story ? /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-3 text-base leading-relaxed text-muted-foreground", children: person.story }) : /* @__PURE__ */ jsxRuntimeExports.jsx(EmptySection, {})
+        ]
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      motion.section,
+      {
+        "aria-label": "Family",
+        className: "mt-10",
+        initial: { opacity: 0, y: 16 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.6, delay: 0.15, ease: [0.4, 0, 0.2, 1] },
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(SectionHeader, { icon: Users, label: "Family" }),
+          person.family.spouseName ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-3 flex flex-col gap-3", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3 rounded-2xl border border-border bg-card px-4 py-3 shadow-subtle", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary font-display text-base font-semibold text-accent-foreground", children: person.family.spouseName.charAt(0) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-display text-base font-semibold text-foreground", children: person.family.spouseName }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs uppercase tracking-[0.18em] text-muted-foreground", children: person.family.spouseRole })
+              ] })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-base leading-relaxed text-muted-foreground", children: person.family.childrenText })
+          ] }) : /* @__PURE__ */ jsxRuntimeExports.jsx(EmptySection, {})
+        ]
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      motion.section,
+      {
+        "aria-label": "Timeline",
+        className: "mt-10",
+        initial: { opacity: 0, y: 16 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.6, delay: 0.2, ease: [0.4, 0, 0.2, 1] },
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(SectionHeader, { icon: CalendarDays, label: "Timeline" }),
+          person.timeline.length > 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("ol", { className: "mt-3 flex flex-col gap-3", children: person.timeline.map((item) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "li",
+            {
+              className: "flex gap-4 rounded-2xl border border-border bg-card px-4 py-3 shadow-subtle",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  "span",
+                  {
+                    className: "mt-1 flex h-2.5 w-2.5 shrink-0 rounded-full bg-accent",
+                    "aria-hidden": "true"
+                  }
+                ),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs font-semibold uppercase tracking-[0.18em] text-accent-foreground/70", children: item.date }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-0.5 font-display text-base font-semibold text-foreground", children: item.title }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-0.5 text-sm text-muted-foreground", children: item.detail })
+                ] })
+              ]
+            },
+            item.title
+          )) }) : /* @__PURE__ */ jsxRuntimeExports.jsx(EmptySection, {})
+        ]
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      motion.section,
+      {
+        "aria-label": "Sources",
+        className: "mt-10",
+        initial: { opacity: 0, y: 16 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.6, delay: 0.25, ease: [0.4, 0, 0.2, 1] },
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(SectionHeader, { icon: ScrollText, label: "Sources" }),
+          person.sources.length > 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-3 flex flex-col gap-3", children: person.sources.map((source) => {
+            const isDocumented = source.kind === "documented";
+            const Icon2 = isDocumented ? FileText : NotebookPen;
+            return /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "div",
+              {
+                className: "rounded-2xl border border-border bg-card px-4 py-3 shadow-subtle",
+                children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-start gap-3", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    Icon2,
+                    {
+                      className: "mt-0.5 h-4 w-4 shrink-0 text-accent-foreground/70",
+                      strokeWidth: 1.75,
+                      "aria-hidden": "true"
+                    }
+                  ),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap items-center gap-2", children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-display text-base font-semibold text-foreground", children: source.title }),
+                      /* @__PURE__ */ jsxRuntimeExports.jsx(
+                        "span",
+                        {
+                          className: `inline-flex items-center rounded-full px-2 py-0.5 text-[0.65rem] font-semibold uppercase tracking-[0.12em] ${isDocumented ? "bg-accent/15 text-accent-foreground" : "bg-secondary text-muted-foreground"}`,
+                          children: isDocumented ? "Documented record" : "Family-history note"
+                        }
+                      )
+                    ] }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-1 text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground", children: source.source }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-1.5 text-sm leading-relaxed text-muted-foreground", children: source.detail })
+                  ] })
+                ] })
+              },
+              source.title
+            );
+          }) }) : /* @__PURE__ */ jsxRuntimeExports.jsx(EmptySection, {})
+        ]
+      }
+    )
+  ] });
+}
 const couple = [
-  { name: "Julia “Julie” Norwood", role: "Matriarch" },
-  { name: "Isaiah Norwood", role: "Patriarch" }
+  {
+    id: "julia",
+    name: "Julia “Julie” Norwood",
+    role: "Matriarch",
+    photo: profiles.julia.portrait
+  },
+  {
+    id: "isaiah",
+    name: "Isaiah Norwood",
+    role: "Patriarch",
+    photo: profiles.isaiah.portrait
+  }
 ];
 const children = [
   { name: "Clayton", role: "Child" },
@@ -35844,7 +36226,7 @@ function FamilyTreePage({ onBack, onOpenProfile }) {
           index: index2,
           selected: selected === index2,
           onSelect: () => setSelected(index2),
-          onOpen: index2 === 0 ? onOpenProfile : void 0
+          onOpen: () => onOpenProfile(couple[index2].id)
         },
         person.name
       )) }),
@@ -35999,288 +36381,26 @@ function HomePage({ onExplore }) {
     /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-10 max-w-sm text-center text-sm text-muted-foreground", children: "A living record of the people, places, and moments that make us who we are." })
   ] });
 }
-const facts = [
-  { label: "Born", value: "approx. 1860" },
-  { label: "Died", value: "June 19, 1936" },
-  { label: "Location", value: "Mississippi" },
-  { label: "Husband", value: "Isaiah Norwood" },
-  { label: "Evidence status", value: "Mixed" }
-];
-const timeline = [
-  {
-    date: "c. 1860",
-    title: "Born",
-    detail: "Julia is born."
-  },
-  {
-    date: "1880",
-    title: "Appears in the census",
-    detail: "Julia, age about 20, appears in the census with her husband Isaiah Norwood in Lincoln County, Mississippi."
-  },
-  {
-    date: "After Isaiah’s death",
-    title: "Raises her children",
-    detail: "Julia raises their children."
-  },
-  {
-    date: "June 19, 1936",
-    title: "Died",
-    detail: "Julia dies."
-  }
-];
-const sources = [
-  {
-    kind: "documented",
-    title: "1880 U.S. Census",
-    source: "U.S. Federal Census, 1880",
-    detail: "A documented record that supports Julia’s approximate age of about 20, her marriage to Isaiah Norwood, and the family’s location in Lincoln County, Mississippi."
-  },
-  {
-    kind: "family-history",
-    title: "Family Research Notes",
-    source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
-    detail: "A family-history note passed down through the family. It includes family history, relationships, and oral-history details that help connect Julia to the broader Norwood line."
-  },
-  {
-    kind: "documented",
-    title: "Death Information",
-    source: "Family records",
-    detail: "Records Julia’s death as June 19, 1936, marking the end of her life in Mississippi."
-  }
-];
-function PersonProfilePage({ onBack }) {
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto flex w-full max-w-3xl flex-col px-6 py-8 sm:py-12", children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsx(
-      motion.div,
-      {
-        initial: { opacity: 0, y: 16 },
-        animate: { opacity: 1, y: 0 },
-        transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] },
-        children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
-          "button",
-          {
-            type: "button",
-            "data-ocid": "profile.back_button",
-            onClick: onBack,
-            className: "mb-6 inline-flex items-center gap-2 self-start rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-            children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx(ArrowLeft, { className: "h-4 w-4", strokeWidth: 2, "aria-hidden": "true" }),
-              "Back to Family Tree"
-            ]
-          }
-        )
-      }
-    ),
-    /* @__PURE__ */ jsxRuntimeExports.jsxs(
-      motion.header,
-      {
-        className: "flex flex-col items-center text-center",
-        initial: { opacity: 0, y: 16 },
-        animate: { opacity: 1, y: 0 },
-        transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] },
-        children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "mb-3 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-accent-foreground/70", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx(Landmark, { className: "h-4 w-4", strokeWidth: 1.75, "aria-hidden": "true" }),
-            "The Norwood Family"
-          ] }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "font-display text-3xl font-semibold leading-tight text-foreground sm:text-4xl", children: "Julia “Julie” Norwood" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-2 text-sm uppercase tracking-[0.18em] text-muted-foreground", children: "Matriarch" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("figure", { className: "mt-6 w-full max-w-xs", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "overflow-hidden rounded-2xl border border-border bg-card p-2 shadow-elevated", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-              "img",
-              {
-                src: "/assets/generated/matriarch-portrait.dim_800x900.png",
-                alt: "A representative vintage sepia-toned studio portrait of an elderly Black woman in a high-collared Victorian dress and headwrap, framed by an aged cream border. This is representative historical imagery, not an actual photograph of Julia Norwood.",
-                className: "aspect-[4/5] w-full rounded-xl object-cover",
-                loading: "lazy"
-              }
-            ) }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("figcaption", { className: "mt-2 text-center text-xs italic leading-relaxed text-muted-foreground", children: "Representative historical portrait — not an actual photograph of Julia Norwood." })
-          ] }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("dl", { className: "mt-6 grid w-full max-w-md grid-cols-1 gap-3 sm:grid-cols-2", children: facts.map((fact) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
-            "div",
-            {
-              className: "rounded-2xl border border-border bg-card px-4 py-3 text-left shadow-subtle",
-              children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx("dt", { className: "text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground", children: fact.label }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("dd", { className: "mt-1 font-display text-base font-semibold text-foreground", children: fact.value })
-              ]
-            },
-            fact.label
-          )) })
-        ]
-      }
-    ),
-    /* @__PURE__ */ jsxRuntimeExports.jsxs(
-      motion.section,
-      {
-        "aria-label": "Her Story",
-        className: "mt-10",
-        initial: { opacity: 0, y: 16 },
-        animate: { opacity: 1, y: 0 },
-        transition: { duration: 0.6, delay: 0.1, ease: [0.4, 0, 0.2, 1] },
-        children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx(
-              BookOpen,
-              {
-                className: "h-4 w-4 text-accent-foreground/70",
-                strokeWidth: 1.75,
-                "aria-hidden": "true"
-              }
-            ),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display text-xl font-semibold text-foreground", children: "Her Story" })
-          ] }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-3 text-base leading-relaxed text-muted-foreground", children: "Julia “Julie” Norwood was the matriarch of the Norwood family, born around 1860 in Mississippi. She married Isaiah Norwood, and together they raised a large family of eight children. Her life in Mississippi anchored the family through the generations, and her memory lives on in the branches of the family tree that descend from her." })
-        ]
-      }
-    ),
-    /* @__PURE__ */ jsxRuntimeExports.jsxs(
-      motion.section,
-      {
-        "aria-label": "Family",
-        className: "mt-10",
-        initial: { opacity: 0, y: 16 },
-        animate: { opacity: 1, y: 0 },
-        transition: { duration: 0.6, delay: 0.15, ease: [0.4, 0, 0.2, 1] },
-        children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx(
-              Users,
-              {
-                className: "h-4 w-4 text-accent-foreground/70",
-                strokeWidth: 1.75,
-                "aria-hidden": "true"
-              }
-            ),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display text-xl font-semibold text-foreground", children: "Family" })
-          ] }),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-3 flex flex-col gap-3", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3 rounded-2xl border border-border bg-card px-4 py-3 shadow-subtle", children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary font-display text-base font-semibold text-accent-foreground", children: "I" }),
-              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-display text-base font-semibold text-foreground", children: "Isaiah Norwood" }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs uppercase tracking-[0.18em] text-muted-foreground", children: "Husband" })
-              ] })
-            ] }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-base leading-relaxed text-muted-foreground", children: "Julia and Isaiah raised eight children together — Clayton, Isaiah Jr., Edward, Hattie, Pinkie, Louise, Lillie, and Lula E. — the next generation of the Norwood family." })
-          ] })
-        ]
-      }
-    ),
-    /* @__PURE__ */ jsxRuntimeExports.jsxs(
-      motion.section,
-      {
-        "aria-label": "Timeline",
-        className: "mt-10",
-        initial: { opacity: 0, y: 16 },
-        animate: { opacity: 1, y: 0 },
-        transition: { duration: 0.6, delay: 0.2, ease: [0.4, 0, 0.2, 1] },
-        children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx(
-              CalendarDays,
-              {
-                className: "h-4 w-4 text-accent-foreground/70",
-                strokeWidth: 1.75,
-                "aria-hidden": "true"
-              }
-            ),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display text-xl font-semibold text-foreground", children: "Timeline" })
-          ] }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("ol", { className: "mt-3 flex flex-col gap-3", children: timeline.map((item) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
-            "li",
-            {
-              className: "flex gap-4 rounded-2xl border border-border bg-card px-4 py-3 shadow-subtle",
-              children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  "span",
-                  {
-                    className: "mt-1 flex h-2.5 w-2.5 shrink-0 rounded-full bg-accent",
-                    "aria-hidden": "true"
-                  }
-                ),
-                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs font-semibold uppercase tracking-[0.18em] text-accent-foreground/70", children: item.date }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-0.5 font-display text-base font-semibold text-foreground", children: item.title }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-0.5 text-sm text-muted-foreground", children: item.detail })
-                ] })
-              ]
-            },
-            item.title
-          )) })
-        ]
-      }
-    ),
-    /* @__PURE__ */ jsxRuntimeExports.jsxs(
-      motion.section,
-      {
-        "aria-label": "Sources",
-        className: "mt-10",
-        initial: { opacity: 0, y: 16 },
-        animate: { opacity: 1, y: 0 },
-        transition: { duration: 0.6, delay: 0.25, ease: [0.4, 0, 0.2, 1] },
-        children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx(
-              ScrollText,
-              {
-                className: "h-4 w-4 text-accent-foreground/70",
-                strokeWidth: 1.75,
-                "aria-hidden": "true"
-              }
-            ),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display text-xl font-semibold text-foreground", children: "Sources" })
-          ] }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-3 flex flex-col gap-3", children: sources.map((source) => {
-            const isDocumented = source.kind === "documented";
-            const Icon2 = isDocumented ? FileText : NotebookPen;
-            return /* @__PURE__ */ jsxRuntimeExports.jsx(
-              "div",
-              {
-                className: "rounded-2xl border border-border bg-card px-4 py-3 shadow-subtle",
-                children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-start gap-3", children: [
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(
-                    Icon2,
-                    {
-                      className: "mt-0.5 h-4 w-4 shrink-0 text-accent-foreground/70",
-                      strokeWidth: 1.75,
-                      "aria-hidden": "true"
-                    }
-                  ),
-                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
-                    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap items-center gap-2", children: [
-                      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-display text-base font-semibold text-foreground", children: source.title }),
-                      /* @__PURE__ */ jsxRuntimeExports.jsx(
-                        "span",
-                        {
-                          className: `inline-flex items-center rounded-full px-2 py-0.5 text-[0.65rem] font-semibold uppercase tracking-[0.12em] ${isDocumented ? "bg-accent/15 text-accent-foreground" : "bg-secondary text-muted-foreground"}`,
-                          children: isDocumented ? "Documented record" : "Family-history note"
-                        }
-                      )
-                    ] }),
-                    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-1 text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground", children: source.source }),
-                    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-1.5 text-sm leading-relaxed text-muted-foreground", children: source.detail })
-                  ] })
-                ] })
-              },
-              source.title
-            );
-          }) })
-        ]
-      }
-    )
-  ] });
-}
 function App() {
   const [view, setView] = reactExports.useState("home");
+  const [profileId, setProfileId] = reactExports.useState("julia");
+  const profile = profiles[profileId] ?? profiles.julia;
   return /* @__PURE__ */ jsxRuntimeExports.jsx(Layout, { children: view === "home" ? /* @__PURE__ */ jsxRuntimeExports.jsx(HomePage, { onExplore: () => setView("family-tree") }) : view === "family-tree" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
     FamilyTreePage,
     {
       onBack: () => setView("home"),
-      onOpenProfile: () => setView("profile")
+      onOpenProfile: (id2) => {
+        setProfileId(id2);
+        setView("profile");
+      }
     }
-  ) : /* @__PURE__ */ jsxRuntimeExports.jsx(PersonProfilePage, { onBack: () => setView("family-tree") }) });
+  ) : /* @__PURE__ */ jsxRuntimeExports.jsx(
+    PersonProfilePage,
+    {
+      person: profile,
+      onBack: () => setView("family-tree")
+    }
+  ) });
 }
 BigInt.prototype.toJSON = function() {
   return this.toString();

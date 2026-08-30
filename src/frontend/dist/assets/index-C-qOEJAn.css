@@ -925,6 +925,9 @@ video {
 .h-12 {
   height: 3rem;
 }
+.h-16 {
+  height: 4rem;
+}
 .h-2 {
   height: 0.5rem;
 }
@@ -1003,8 +1006,8 @@ video {
 .w-11 {
   width: 2.75rem;
 }
-.w-12 {
-  width: 3rem;
+.w-16 {
+  width: 4rem;
 }
 .w-2 {
   width: 0.5rem;
@@ -1348,6 +1351,9 @@ video {
 }
 .border {
   border-width: 1px;
+}
+.border-2 {
+  border-width: 2px;
 }
 .border-\[1\.5px\] {
   border-width: 1.5px;
@@ -2363,6 +2369,10 @@ video {
 .group:hover .group-hover\:translate-x-1 {
   --tw-translate-x: 0.25rem;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.group:hover .group-hover\:border-accent\/60 {
+  border-color: oklch(var(--accent) / 0.6);
 }
 
 .group:hover .group-hover\:bg-accent {

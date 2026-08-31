@@ -61,6 +61,15 @@ async function openFamilyTree(user: ReturnType<typeof userEvent.setup>) {
   await user.click(screen.getByRole("button", { name: "Explore the Family" }));
 }
 
+// The Clayton branch defaults to collapsed; expand it so its cards render.
+async function expandClaytonBranch(user: ReturnType<typeof userEvent.setup>) {
+  await user.click(screen.getByRole("button", { name: /^Clayton \d+$/ }));
+}
+
+function childrenSection() {
+  return screen.getByRole("region", { name: "Children" });
+}
+
 describe("Family Tree screen", () => {
   it("navigates from Home to the Family Tree when 'Explore the Family' is tapped", async () => {
     const user = userEvent.setup();
@@ -110,6 +119,7 @@ describe("Family Tree screen", () => {
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     const coupleSection = screen.getByRole("region", {
       name: "Starting couple",
@@ -359,7 +369,9 @@ describe("Family Tree screen", () => {
     renderApp();
     await openFamilyTree(user);
 
-    const clayton = screen.getByRole("button", { name: /Clayton Child/ });
+    const clayton = within(childrenSection()).getByRole("button", {
+      name: /^Clayton/,
+    });
     await user.click(clayton);
 
     // The profile replaces the Family Tree view.
@@ -376,7 +388,9 @@ describe("Family Tree screen", () => {
     const { container } = renderApp();
     await openFamilyTree(user);
 
-    await user.click(screen.getByRole("button", { name: /Clayton Child/ }));
+    await user.click(
+      within(childrenSection()).getByRole("button", { name: /^Clayton/ }),
+    );
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       "Clayton Norwood",
@@ -407,7 +421,9 @@ describe("Family Tree screen", () => {
     renderApp();
     await openFamilyTree(user);
 
-    await user.click(screen.getByRole("button", { name: /Clayton Child/ }));
+    await user.click(
+      within(childrenSection()).getByRole("button", { name: /^Clayton/ }),
+    );
 
     // The four sections are present, with Clayton's story labeled "His Story".
     for (const section of ["His Story", "Family", "Timeline", "Sources"]) {
@@ -737,7 +753,7 @@ describe("Family Tree screen", () => {
     expect(chevrons.length).toBeGreaterThan(0);
   });
 
-  it("applies the warm sepia 'Aged Album' card styling to person cards", async () => {
+  it("renders compact person cards showing only initials, name, and years by default", async () => {
     const user = userEvent.setup();
     const { container } = renderApp();
     await openFamilyTree(user);
@@ -750,10 +766,14 @@ describe("Family Tree screen", () => {
       .filter((button) =>
         button.getAttribute("data-ocid")?.startsWith("tree.person."),
       );
+    expect(allPersonCards.length).toBeGreaterThan(0);
     for (const card of allPersonCards) {
-      expect(card.className).toContain("bg-card");
-      expect(card.className).toContain("border");
-      expect(card.className).toContain("rounded-xl");
+      // Compact card surface.
+      expect(card.className).toContain("ft-card");
+      // No relationship label (role chip) is shown by default.
+      expect(card.querySelector(".ft-role-chip")).toBeNull();
+      // The card shows the person's name.
+      expect(card.querySelector(".ft-card-name")).not.toBeNull();
     }
   });
 
@@ -808,7 +828,9 @@ describe("Family Tree screen", () => {
     renderApp();
     await openFamilyTree(user);
 
-    const clayton = screen.getByRole("button", { name: /Clayton Child/ });
+    const clayton = within(childrenSection()).getByRole("button", {
+      name: /^Clayton/,
+    });
     expect(clayton).not.toHaveTextContent("Relation to You");
   });
 
@@ -883,12 +905,12 @@ describe("Family Tree screen", () => {
 
     const isaiahJr = screen.getByRole("button", { name: /Isaiah Jr\./ });
     await user.click(isaiahJr);
-    expect(isaiahJr).not.toHaveTextContent("Me");
+    expect(isaiahJr).not.toHaveTextContent("This is me");
 
     await user.click(screen.getByRole("button", { name: "This is Me" }));
 
-    // The card is now labeled 'Me' and the action disappears.
-    expect(isaiahJr).toHaveTextContent("Me");
+    // The card is now labeled 'This is me' and the action disappears.
+    expect(isaiahJr).toHaveTextContent("This is me");
     expect(screen.queryByRole("button", { name: "This is Me" })).toBeNull();
   });
 
@@ -900,7 +922,7 @@ describe("Family Tree screen", () => {
     const isaiahJr = screen.getByRole("button", { name: /Isaiah Jr\./ });
     await user.click(isaiahJr);
     await user.click(screen.getByRole("button", { name: "This is Me" }));
-    expect(isaiahJr).toHaveTextContent("Me");
+    expect(isaiahJr).toHaveTextContent("This is me");
 
     // Select and mark a second person.
     const edward = screen.getByRole("button", { name: /Edward/ });
@@ -908,11 +930,11 @@ describe("Family Tree screen", () => {
     await user.click(screen.getByRole("button", { name: "This is Me" }));
 
     // Only the newly marked person keeps the label.
-    expect(edward).toHaveTextContent("Me");
-    expect(isaiahJr).not.toHaveTextContent("Me");
+    expect(edward).toHaveTextContent("This is me");
+    expect(isaiahJr).not.toHaveTextContent("This is me");
   });
 
-  it("keeps the 'Me' label when the selection moves to another card", async () => {
+  it("hides the 'This is me' label when the selection moves to another card", async () => {
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
@@ -920,13 +942,15 @@ describe("Family Tree screen", () => {
     const isaiahJr = screen.getByRole("button", { name: /Isaiah Jr\./ });
     await user.click(isaiahJr);
     await user.click(screen.getByRole("button", { name: "This is Me" }));
-    expect(isaiahJr).toHaveTextContent("Me");
+    expect(isaiahJr).toHaveTextContent("This is me");
 
-    // Select a different card — the 'Me' label stays on Isaiah Jr.
+    // Select a different card — the 'This is me' label hides on the deselected
+    // card (relationship details, including this-is-me, are only shown on the
+    // selected card).
     const edward = screen.getByRole("button", { name: /Edward/ });
     await user.click(edward);
-    expect(isaiahJr).toHaveTextContent("Me");
-    expect(edward).not.toHaveTextContent("Me");
+    expect(isaiahJr).not.toHaveTextContent("This is me");
+    expect(edward).not.toHaveTextContent("This is me");
   });
 
   it("keeps relation display unchanged when a card is marked 'Me'", async () => {
@@ -955,6 +979,7 @@ describe("Family Tree screen", () => {
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     const claytonBranch = screen.getByRole("region", {
       name: "Clayton's branch",
@@ -977,6 +1002,7 @@ describe("Family Tree screen", () => {
     const user = userEvent.setup();
     const { container } = renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     const claytonBranch = screen.getByRole("region", {
       name: "Clayton's branch",
@@ -1013,6 +1039,7 @@ describe("Family Tree screen", () => {
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     const claytonBranch = screen.getByRole("region", {
       name: "Clayton's branch",
@@ -1033,6 +1060,7 @@ describe("Family Tree screen", () => {
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     const claytonBranch = screen.getByRole("region", {
       name: "Clayton's branch",
@@ -1065,6 +1093,7 @@ describe("Family Tree screen", () => {
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     const claytonBranch = screen.getByRole("region", {
       name: "Clayton's branch",

@@ -52,6 +52,16 @@ function lulaVersieCouple() {
   return screen.getByRole("region", { name: "Lula Mae and Versie" });
 }
 
+// The Lula Mae & Versie branch defaults to collapsed; expand it so its cards
+// render.
+async function expandLulaVersieBranch(
+  user: ReturnType<typeof userEvent.setup>,
+) {
+  await user.click(
+    screen.getByRole("button", { name: /^Lula Mae & Versie \d+$/ }),
+  );
+}
+
 // Characterization baseline for the Gertrude Adams-Hill / Harvey Adams Sr.
 // change. The request will add Gertrude Adams-Hill as Versie Smith's mother and
 // Harvey Adams Sr. as Gertrude's father, with new cards in the Family Tree and
@@ -74,10 +84,13 @@ describe("Versie Smith characterization: existing profile and couple stay intact
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandLulaVersieBranch(user);
 
     const couple = lulaVersieCouple();
+    // The fold row ("Lula Mae & Versie 19") also lives inside this region, so
+    // anchor the Lula Mae card query to the exact card name.
     expect(
-      within(couple).getByRole("button", { name: /Lula Mae/ }),
+      within(couple).getByRole("button", { name: "Lula Mae" }),
     ).toBeInTheDocument();
     expect(
       within(couple).getByRole("button", { name: /Versie Smith/ }),
@@ -97,6 +110,7 @@ describe("Versie Smith characterization: existing profile and couple stay intact
     const user = userEvent.setup();
     const { container } = renderApp();
     await openFamilyTree(user);
+    await expandLulaVersieBranch(user);
 
     await user.click(
       within(lulaVersieCouple()).getByRole("button", { name: /Versie Smith/ }),
@@ -126,6 +140,7 @@ describe("Versie Smith characterization: existing profile and couple stay intact
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandLulaVersieBranch(user);
 
     await user.click(
       within(lulaVersieCouple()).getByRole("button", { name: /Versie Smith/ }),

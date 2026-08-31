@@ -44255,7 +44255,7 @@ const harveyAdamsSrProfile = {
       {
         name: "Mary Jane Johnson",
         role: "Second Wife",
-        children: []
+        children: ["Mildred Adams", "Christine Adams"]
       }
     ]
   },
@@ -44838,6 +44838,231 @@ const eulaLeeAdamsProfile = {
     }
   ]
 };
+const maryJaneJohnsonProfile = {
+  id: "mary-jane-johnson",
+  name: "Mary Jane Johnson",
+  role: "Second Wife of Harvey Adams Sr.",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Mary Jane Johnson, since no photograph of her is known to exist."
+  },
+  facts: [
+    { label: "Husband", value: "Harvey Adams Sr." },
+    {
+      label: "Children",
+      value: "Mildred Adams and Christine Adams"
+    },
+    { label: "Evidence status", value: "Family history" }
+  ],
+  story: "Mary Jane Johnson was the second wife of Harvey Adams Sr. She was the mother of Mildred Adams and Christine Adams. No additional details about her life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "Harvey Adams Sr.",
+    spouseRole: "Husband",
+    childrenText: "Mary Jane Johnson was the second wife of Harvey Adams Sr. and the mother of Mildred Adams and Christine Adams.",
+    spouses: [
+      {
+        name: "Harvey Adams Sr.",
+        role: "Husband",
+        children: ["Mildred Adams", "Christine Adams"]
+      }
+    ]
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Marries Harvey Adams Sr.",
+      detail: "Mary Jane Johnson marries Harvey Adams Sr. as his second wife. The date is not recorded."
+    }
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail: "A family-history note identifying Mary Jane Johnson as the second wife of Harvey Adams Sr. and the mother of Mildred Adams and Christine Adams. These are family accounts, not documented records."
+    }
+  ]
+};
+const mildredAdamsProfile = {
+  id: "mildred-adams",
+  name: "Mildred Adams",
+  role: "Daughter of Harvey Adams Sr. and Mary Jane Johnson",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Mildred Adams, since no photograph of her is known to exist."
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Harvey Adams Sr. and Mary Jane Johnson"
+    },
+    {
+      label: "Children",
+      value: "Tammy, Punchy, and Patricia Rollins"
+    },
+    { label: "Evidence status", value: "Family history" }
+  ],
+  story: "Mildred Adams was the daughter of Harvey Adams Sr. and Mary Jane Johnson. She was the mother of Tammy, Punchy, and Patricia Rollins. No additional details about her life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "Children",
+    spouseRole: "Daughters",
+    childrenText: "Mildred Adams had three daughters — Tammy, Punchy, and Patricia Rollins."
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail: "Mildred Adams is born, the daughter of Harvey Adams Sr. and Mary Jane Johnson. The date is not recorded in the family records gathered so far."
+    }
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail: "A family-history note identifying Mildred Adams as the daughter of Harvey Adams Sr. and Mary Jane Johnson, and the mother of Tammy, Punchy, and Patricia Rollins. These are family accounts, not documented records."
+    }
+  ]
+};
+const christineAdamsProfile = {
+  id: "christine-adams",
+  name: "Christine Adams",
+  role: "Daughter of Harvey Adams Sr. and Mary Jane Johnson",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Christine Adams, since no photograph of her is known to exist."
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Harvey Adams Sr. and Mary Jane Johnson"
+    },
+    { label: "Evidence status", value: "Family history" }
+  ],
+  story: "Christine Adams was the daughter of Harvey Adams Sr. and Mary Jane Johnson. No additional details about her life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "",
+    spouseRole: "",
+    childrenText: ""
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail: "Christine Adams is born, the daughter of Harvey Adams Sr. and Mary Jane Johnson. The date is not recorded in the family records gathered so far."
+    }
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail: "A family-history note identifying Christine Adams as the daughter of Harvey Adams Sr. and Mary Jane Johnson. No additional details about her are recorded. This is a family account, not a documented record."
+    }
+  ]
+};
+const tammyProfile = {
+  id: "tammy",
+  name: "Tammy",
+  role: "Daughter of Mildred Adams",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Tammy, since no photograph of her is known to exist."
+  },
+  facts: [
+    { label: "Mother", value: "Mildred Adams" },
+    { label: "Evidence status", value: "Family history" }
+  ],
+  story: "Tammy was the daughter of Mildred Adams. No additional details about her life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "",
+    spouseRole: "",
+    childrenText: ""
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail: "Tammy is born, the daughter of Mildred Adams. The date is not recorded in the family records gathered so far."
+    }
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail: "A family-history note identifying Tammy as the daughter of Mildred Adams. No additional details about her are recorded. This is a family account, not a documented record."
+    }
+  ]
+};
+const punchyProfile = {
+  id: "punchy",
+  name: "Punchy",
+  role: "Daughter of Mildred Adams",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Punchy, since no photograph of her is known to exist."
+  },
+  facts: [
+    { label: "Mother", value: "Mildred Adams" },
+    { label: "Evidence status", value: "Family history" }
+  ],
+  story: "Punchy was the daughter of Mildred Adams. No additional details about her life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "",
+    spouseRole: "",
+    childrenText: ""
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail: "Punchy is born, the daughter of Mildred Adams. The date is not recorded in the family records gathered so far."
+    }
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail: "A family-history note identifying Punchy as the daughter of Mildred Adams. No additional details about her are recorded. This is a family account, not a documented record."
+    }
+  ]
+};
+const patriciaRollinsProfile = {
+  id: "patricia-rollins",
+  name: "Patricia Rollins",
+  role: "Daughter of Mildred Adams",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Patricia Rollins, since no photograph of her is known to exist."
+  },
+  facts: [
+    { label: "Mother", value: "Mildred Adams" },
+    { label: "Evidence status", value: "Family history" }
+  ],
+  story: "Patricia Rollins was the daughter of Mildred Adams. No additional details about her life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "",
+    spouseRole: "",
+    childrenText: ""
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail: "Patricia Rollins is born, the daughter of Mildred Adams. The date is not recorded in the family records gathered so far."
+    }
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail: "A family-history note identifying Patricia Rollins as the daughter of Mildred Adams. No additional details about her are recorded. This is a family account, not a documented record."
+    }
+  ]
+};
 const profiles = {
   julia: juliaProfile,
   isaiah: isaiahProfile,
@@ -44861,6 +45086,12 @@ const profiles = {
   "gertrude-adams-hill": gertrudeAdamsHillProfile,
   "harvey-adams-sr": harveyAdamsSrProfile,
   "mary-louise-sims": maryLouiseSimsProfile,
+  "mary-jane-johnson": maryJaneJohnsonProfile,
+  "mildred-adams": mildredAdamsProfile,
+  "christine-adams": christineAdamsProfile,
+  tammy: tammyProfile,
+  punchy: punchyProfile,
+  "patricia-rollins": patriciaRollinsProfile,
   "john-adams": johnAdamsProfile,
   "louis-adams-sr": louisAdamsSrProfile,
   "albert-adams": albertAdamsProfile,
@@ -45190,7 +45421,7 @@ function PersonProfilePage({
   profilePhoto,
   onProfilePhotoChange
 }) {
-  const storyLabel = person.id === "julia" || person.id === "erma" || person.id === "hudson" || person.id === "gertrude-adams-hill" || person.id === "mary-louise-sims" || person.id === "fannie-adams" || person.id === "christine-adams-tucker" || person.id === "ella-mae-adams" || person.id === "eula-lee-adams" ? "Her Story" : "His Story";
+  const storyLabel = person.id === "julia" || person.id === "erma" || person.id === "hudson" || person.id === "gertrude-adams-hill" || person.id === "mary-louise-sims" || person.id === "mary-jane-johnson" || person.id === "mildred-adams" || person.id === "christine-adams" || person.id === "tammy" || person.id === "punchy" || person.id === "patricia-rollins" || person.id === "fannie-adams" || person.id === "christine-adams-tucker" || person.id === "ella-mae-adams" || person.id === "eula-lee-adams" ? "Her Story" : "His Story";
   const hasProfilePhoto = Boolean(profilePhoto);
   const completeness = computeCompleteness(person, hasProfilePhoto);
   const portraitSrc = profilePhoto ?? person.portrait.src;
@@ -46740,45 +46971,26 @@ function PersonCard({
           delay: 0.1 + index2 * 0.06,
           ease: [0.4, 0, 0.2, 1]
         },
-        className: `group flex w-full flex-col items-center rounded-xl border px-3 py-3 text-center shadow-subtle transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${selected ? "border-accent bg-accent/15 shadow-elevated" : "border-border bg-card hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-elevated"}`,
+        className: `ft-card ${selected ? "ft-card-selected" : ""}`,
         children: [
-          photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx(
-            "span",
+          photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ft-card-portrait", "aria-hidden": "true", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "img",
             {
-              className: "mb-2 block h-12 w-12 overflow-hidden rounded-full border-2 border-border bg-card shadow-subtle transition-colors duration-300 group-hover:border-accent/60",
-              "aria-hidden": "true",
-              children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-                "img",
-                {
-                  src: photoSrc,
-                  alt: photoAlt,
-                  className: "h-full w-full object-cover",
-                  loading: "lazy"
-                }
-              )
+              src: photoSrc,
+              alt: photoAlt,
+              className: "h-full w-full object-cover",
+              loading: "lazy"
             }
-          ) : /* @__PURE__ */ jsxRuntimeExports.jsx(
-            "span",
-            {
-              className: `mb-2 flex h-12 w-12 items-center justify-center rounded-full font-display text-base font-semibold transition-colors duration-300 ${selected ? "bg-accent text-accent-foreground" : "bg-secondary text-accent-foreground group-hover:bg-accent group-hover:text-accent-foreground"}`,
-              "aria-hidden": "true",
-              children: getInitials$1(person.name)
-            }
-          ),
-          isMe && /* @__PURE__ */ jsxRuntimeExports.jsx(
-            "span",
-            {
-              "data-ocid": `tree.person.${index2 + 1}.me_badge`,
-              className: "mb-1 rounded-full border border-accent/40 bg-accent px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-accent-foreground",
-              children: "Me"
-            }
-          ),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-display text-sm font-semibold leading-snug text-foreground", children: person.name }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "mt-0.5 text-[10px] uppercase tracking-[0.16em] text-muted-foreground", children: person.role }),
-          selected && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "mt-2 w-full rounded-lg border border-accent/30 bg-accent/10 px-2 py-1 text-[11px] leading-tight text-foreground", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-semibold text-accent-foreground/80", children: "Relation to You:" }),
-            " ",
-            person.relationToYou ?? "Not set"
+          ) }) : /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ft-card-portrait", "aria-hidden": "true", children: getInitials$1(person.name) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ft-card-name", children: person.name }),
+          person.years && /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ft-card-years", children: person.years }),
+          selected && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "ft-card-detail", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ft-role-chip", children: person.role }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "ft-relation-text", children: [
+              "Relation to You: ",
+              person.relationToYou ?? "Not set"
+            ] }),
+            isMe && /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ft-me-badge", children: "This is me" })
           ] })
         ]
       }
@@ -46800,17 +47012,25 @@ const couple = [
     id: "julia",
     name: "Julia “Julie” Norwood",
     role: "Matriarch",
-    photo: profiles.julia.portrait
+    photo: profiles.julia.portrait,
+    years: "1860–1936"
   },
   {
     id: "isaiah",
     name: "Isaiah Norwood",
     role: "Patriarch",
-    photo: profiles.isaiah.portrait
+    photo: profiles.isaiah.portrait,
+    years: "1858–"
   }
 ];
 const children = [
-  { id: "clayton", name: "Clayton", role: "Child", relationToYou: "uncle" },
+  {
+    id: "clayton",
+    name: "Clayton",
+    role: "Child",
+    relationToYou: "uncle",
+    years: "1883–"
+  },
   { name: "Isaiah Jr.", role: "Child" },
   { name: "Edward", role: "Child" },
   { name: "Hattie", role: "Child", relationToYou: "grandaunt" },
@@ -46830,7 +47050,12 @@ const claytonBranch = [
     ]
   },
   {
-    spouse: { id: "erma", name: "Erma T. Williams", role: "Second Wife" },
+    spouse: {
+      id: "erma",
+      name: "Erma T. Williams",
+      role: "Second Wife",
+      years: "1897–1977"
+    },
     children: [
       { id: "columbus", name: "Columbus", role: "Child" },
       {
@@ -46840,10 +47065,15 @@ const claytonBranch = [
       },
       { id: "alton", name: "Alton", role: "Child" },
       { id: "robert-davis", name: "Robert Davis “RD”", role: "Child" },
-      { id: "ardeanus", name: "Ardeanus", role: "Child" },
-      { id: "willie-b", name: "Willie B.", role: "Child" },
-      { id: "james", name: "James", role: "Child" },
-      { id: "freddie", name: "Freddie", role: "Child" },
+      {
+        id: "ardeanus",
+        name: "Ardeanus",
+        role: "Child",
+        years: "1929–"
+      },
+      { id: "willie-b", name: "Willie B.", role: "Child", years: "1932–1995" },
+      { id: "james", name: "James", role: "Child", years: "1927–1987" },
+      { id: "freddie", name: "Freddie", role: "Child", years: "1938–1985" },
       { id: "zelia-mae", name: "Zelia Mae", role: "Child" },
       { id: "lula-mae", name: "Lula Mae", role: "Child" }
     ]
@@ -46877,6 +47107,15 @@ const firstMarriageChildren = [
   { id: ellaMaeAdamsProfile.id, name: "Ella Mae Adams", role: "Daughter" },
   { id: eulaLeeAdamsProfile.id, name: "Eula Lee Adams", role: "Daughter" }
 ];
+const secondMarriageChildren = [
+  { id: "mildred-adams", name: "Mildred Adams", role: "Daughter" },
+  { id: "christine-adams", name: "Christine Adams", role: "Daughter" }
+];
+const mildredChildren = [
+  { id: "tammy", name: "Tammy", role: "Daughter" },
+  { id: "punchy", name: "Punchy", role: "Daughter" },
+  { id: "patricia-rollins", name: "Patricia Rollins", role: "Daughter" }
+];
 const CHILDREN_PER_ROW = 4;
 const COUPLE_INDICES = [0, 1];
 const CHILDREN_INDICES = [2, 3, 4, 5, 6, 7, 8, 9];
@@ -46891,7 +47130,99 @@ const FIRST_MARRIAGE_CHILDREN_INDICES = Array.from(
   (_2, i) => 30 + i
 );
 const GERTRUDE_INDEX = 44;
+const MARY_JANE_INDEX = 45;
+const SECOND_MARRIAGE_CHILDREN_INDICES = [46, 47];
+const MILDRED_INDEX = 46;
+const MILDRED_CHILDREN_INDICES = [48, 49, 50];
+const CLAYTON_BRANCH_INDICES = Array.from({ length: 16 }, (_2, i) => 10 + i);
+const LULA_VERSIE_BRANCH_INDICES = Array.from({ length: 19 }, (_2, i) => 26 + i);
+const HARVEY_SECOND_BRANCH_INDICES = Array.from(
+  { length: 6 },
+  (_2, i) => 45 + i
+);
+const BRANCH_INDICES = {
+  clayton: CLAYTON_BRANCH_INDICES,
+  lulaVersie: LULA_VERSIE_BRANCH_INDICES,
+  harveySecond: HARVEY_SECOND_BRANCH_INDICES
+};
+const CLAYTON_BRANCH_IDS = /* @__PURE__ */ new Set([
+  "clayton",
+  "hudson",
+  "elbert",
+  "wellman",
+  "wetherby",
+  "erma",
+  "columbus",
+  "thomas-clayton",
+  "alton",
+  "robert-davis",
+  "ardeanus",
+  "willie-b",
+  "james",
+  "freddie",
+  "zelia-mae",
+  "lula-mae"
+]);
+const LULA_VERSIE_BRANCH_IDS = /* @__PURE__ */ new Set([
+  "lula-mae",
+  "versie-smith",
+  "gertrude-adams-hill",
+  "harvey-adams-sr",
+  "mary-louise-sims",
+  "john-adams",
+  "louis-adams-sr",
+  "albert-adams",
+  "charles-adams",
+  "homer-adams",
+  "versie-adams-sr",
+  "judge-granberry-adams",
+  "fannie-adams",
+  "harvey-adams-jr",
+  "christine-adams-tucker",
+  "robert-adams-sr",
+  "ella-mae-adams",
+  "eula-lee-adams"
+]);
+const HARVEY_SECOND_BRANCH_IDS = /* @__PURE__ */ new Set([
+  "harvey-adams-sr",
+  "mary-jane-johnson",
+  "mildred-adams",
+  "christine-adams",
+  "tammy",
+  "punchy",
+  "patricia-rollins"
+]);
+const branchesForPerson = (id2) => {
+  const branches = [];
+  if (CLAYTON_BRANCH_IDS.has(id2)) branches.push("clayton");
+  if (LULA_VERSIE_BRANCH_IDS.has(id2)) branches.push("lulaVersie");
+  if (HARVEY_SECOND_BRANCH_IDS.has(id2)) branches.push("harveySecond");
+  return branches;
+};
 const inSet = (selected, set) => selected !== null && set.includes(selected);
+function BranchFold({
+  name,
+  count,
+  onToggle,
+  dataOcid,
+  open = false
+}) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "button",
+    {
+      type: "button",
+      "data-ocid": dataOcid,
+      onClick: onToggle,
+      "aria-expanded": open,
+      className: `ft-branch-fold ${open ? "ft-branch-fold-open" : ""}`,
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ft-branch-fold-name", children: name }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ft-branch-fold-count", children: count }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ft-branch-fold-toggle", "aria-hidden": "true", children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ft-fold-chevron" }) })
+      ]
+    }
+  );
+}
 function BranchRow({
   rowChildren,
   rowOffset,
@@ -46959,7 +47290,9 @@ function ClaytonBranch({
   meIndex,
   onMarkMe,
   onOpenProfile,
-  profilePhotos
+  profilePhotos,
+  collapsed,
+  onToggle
 }) {
   const spouseIndices = branches.map((_2, i) => baseIndex + i);
   const childrenStart = baseIndex + branches.length;
@@ -46974,104 +47307,132 @@ function ClaytonBranch({
     ...CLAYTON_SPOUSE_INDICES
   ]);
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { "aria-label": "Clayton's branch", className: "relative mt-2", children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx(
-        "div",
-        {
-          className: `ft-trunk pointer-events-none absolute left-[25%] top-0 bottom-1/2 sm:left-[12.5%] ${claytonSpouseSelected ? "ft-connector-selected" : ""}`,
-          "aria-hidden": "true",
-          children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-            "span",
-            {
-              className: "absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2",
-              "aria-hidden": "true",
-              children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-                "span",
-                {
-                  className: `ft-junction block ${claytonSpouseSelected ? "ft-connector-selected" : ""}`
-                }
-              )
-            }
-          )
-        }
-      ),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "grid grid-cols-2 gap-3 sm:gap-4", children: branches.map((branch, i) => /* @__PURE__ */ jsxRuntimeExports.jsx(
-        PersonCard,
-        {
-          person: branch.spouse,
-          index: spouseIndices[i],
-          selected: selected === spouseIndices[i],
-          onSelect: () => onSelect(spouseIndices[i]),
-          onOpen: branch.spouse.id && onOpenProfile ? () => onOpenProfile(branch.spouse.id) : void 0,
-          isMe: meIndex === spouseIndices[i],
-          onMarkMe: () => onMarkMe(spouseIndices[i]),
-          profilePhoto: branch.spouse.id ? profilePhotos == null ? void 0 : profilePhotos[branch.spouse.id] : void 0
-        },
-        branch.spouse.name
-      )) }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx(
-        "div",
-        {
-          className: `ft-couple-line pointer-events-none absolute left-1/2 top-1/2 w-1/2 -translate-x-1/2 -translate-y-1/2 sm:w-3/4 ${claytonSpouseSelected ? "ft-connector-selected" : ""}`,
-          "aria-hidden": "true"
-        }
-      )
-    ] }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-6 space-y-6", children: branches.map((branch, i) => {
-      const spouseIndex = spouseIndices[i];
-      const childIndices = childGroups[i];
-      const downSelected = selected === spouseIndex || selected === CLAYTON_INDEX || selected !== null && childIndices.includes(selected);
-      return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx(
-          "div",
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "div",
+      {
+        className: `ft-trunk pointer-events-none absolute left-[25%] top-0 bottom-1/2 sm:left-[12.5%] ${claytonSpouseSelected ? "ft-connector-selected" : ""}`,
+        "aria-hidden": "true",
+        children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "span",
           {
-            className: `ft-trunk relative mx-auto h-6 ${downSelected ? "ft-connector-selected" : ""}`,
+            className: "absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2",
             "aria-hidden": "true",
             children: /* @__PURE__ */ jsxRuntimeExports.jsx(
               "span",
               {
-                className: `ft-junction absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ${downSelected ? "ft-connector-selected" : ""}`,
-                "aria-hidden": "true"
+                className: `ft-junction block ${claytonSpouseSelected ? "ft-connector-selected" : ""}`
               }
             )
           }
-        ),
-        Array.from({
-          length: Math.ceil(branch.children.length / CHILDREN_PER_ROW)
-        }).map((_2, row) => {
-          const rowChildren = branch.children.slice(
-            row * CHILDREN_PER_ROW,
-            row * CHILDREN_PER_ROW + CHILDREN_PER_ROW
-          );
-          const rowOffset = childGroups[i][row * CHILDREN_PER_ROW];
-          return /* @__PURE__ */ jsxRuntimeExports.jsx(
-            BranchRow,
+        )
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      BranchFold,
+      {
+        name: "Clayton",
+        count: 16,
+        open: !collapsed,
+        onToggle,
+        dataOcid: "tree.branch.clayton"
+      }
+    ),
+    !collapsed && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "ft-branch-expanded", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "grid grid-cols-2 gap-3 sm:gap-4", children: branches.map((branch, i) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+          PersonCard,
+          {
+            person: branch.spouse,
+            index: spouseIndices[i],
+            selected: selected === spouseIndices[i],
+            onSelect: () => onSelect(spouseIndices[i]),
+            onOpen: branch.spouse.id && onOpenProfile ? () => onOpenProfile(branch.spouse.id) : void 0,
+            isMe: meIndex === spouseIndices[i],
+            onMarkMe: () => onMarkMe(spouseIndices[i]),
+            profilePhoto: branch.spouse.id ? profilePhotos == null ? void 0 : profilePhotos[branch.spouse.id] : void 0
+          },
+          branch.spouse.name
+        )) }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "div",
+          {
+            className: `ft-couple-line pointer-events-none absolute left-1/2 top-1/2 w-1/2 -translate-x-1/2 -translate-y-1/2 sm:w-3/4 ${claytonSpouseSelected ? "ft-connector-selected" : ""}`,
+            "aria-hidden": "true"
+          }
+        )
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-6 space-y-6", children: branches.map((branch, i) => {
+        const spouseIndex = spouseIndices[i];
+        const childIndices = childGroups[i];
+        const downSelected = selected === spouseIndex || selected === CLAYTON_INDEX || selected !== null && childIndices.includes(selected);
+        return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "div",
             {
-              rowChildren,
-              rowOffset,
-              parentIndices: [spouseIndex],
-              selected,
-              onSelect,
-              meIndex,
-              onMarkMe,
-              onOpenProfile,
-              profilePhotos
-            },
-            rowChildren[0].name
-          );
-        })
-      ] }, branch.spouse.name);
-    }) })
+              className: `ft-trunk relative mx-auto h-6 ${downSelected ? "ft-connector-selected" : ""}`,
+              "aria-hidden": "true",
+              children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "span",
+                {
+                  className: `ft-junction absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ${downSelected ? "ft-connector-selected" : ""}`,
+                  "aria-hidden": "true"
+                }
+              )
+            }
+          ),
+          Array.from({
+            length: Math.ceil(
+              branch.children.length / CHILDREN_PER_ROW
+            )
+          }).map((_2, row) => {
+            const rowChildren = branch.children.slice(
+              row * CHILDREN_PER_ROW,
+              row * CHILDREN_PER_ROW + CHILDREN_PER_ROW
+            );
+            const rowOffset = childGroups[i][row * CHILDREN_PER_ROW];
+            return /* @__PURE__ */ jsxRuntimeExports.jsx(
+              BranchRow,
+              {
+                rowChildren,
+                rowOffset,
+                parentIndices: [spouseIndex],
+                selected,
+                onSelect,
+                meIndex,
+                onMarkMe,
+                onOpenProfile,
+                profilePhotos
+              },
+              rowChildren[0].name
+            );
+          })
+        ] }, branch.spouse.name);
+      }) })
+    ] })
   ] });
 }
 function FamilyTreePage({
   onBack,
   onOpenProfile,
-  profilePhotos
+  profilePhotos,
+  initialExpandedPersonId
 }) {
   var _a2;
   const [selected, setSelected] = reactExports.useState(null);
   const [meIndex, setMeIndex] = reactExports.useState(null);
+  const [collapsed, setCollapsed] = reactExports.useState(() => {
+    const initial = {
+      clayton: true,
+      lulaVersie: true,
+      harveySecond: true
+    };
+    if (initialExpandedPersonId) {
+      for (const key of branchesForPerson(initialExpandedPersonId)) {
+        initial[key] = false;
+      }
+    }
+    return initial;
+  });
   const rows = [];
   for (let i = 0; i < children.length; i += CHILDREN_PER_ROW) {
     rows.push({
@@ -47099,13 +47460,42 @@ function FamilyTreePage({
     {
       id: gertrudeAdamsHillProfile.id,
       name: "Gertrude Adams-Hill",
-      role: "Mother"
-    }
+      role: "Mother",
+      years: "1913–"
+    },
+    {
+      id: "mary-jane-johnson",
+      name: "Mary Jane Johnson",
+      role: "Second Wife"
+    },
+    ...secondMarriageChildren,
+    ...mildredChildren
   ];
   const coupleBaseIndex = couple.length + children.length + claytonBranch.flatMap((branch) => [branch.spouse, ...branch.children]).length;
   const parentsBaseIndex = coupleBaseIndex + 2;
   const firstMarriageChildrenBaseIndex = parentsBaseIndex + 2;
   const gertrudeIndex = firstMarriageChildrenBaseIndex + firstMarriageChildren.length;
+  const handleSelect = (index2) => {
+    setSelected(index2);
+    setCollapsed((prev) => {
+      const next = { ...prev };
+      for (const [key, indices] of Object.entries(BRANCH_INDICES)) {
+        if (indices.includes(index2) && next[key]) {
+          next[key] = false;
+        }
+      }
+      return next;
+    });
+  };
+  const toggleBranch = (key) => {
+    setCollapsed((prev) => {
+      const indices = BRANCH_INDICES[key];
+      if (!prev[key] && selected !== null && indices.includes(selected)) {
+        return prev;
+      }
+      return { ...prev, [key]: !prev[key] };
+    });
+  };
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto flex w-full max-w-3xl flex-col px-6 py-8 sm:py-12", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsxs(
       motion.header,
@@ -47133,7 +47523,7 @@ function FamilyTreePage({
             "The Norwood Family"
           ] }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "font-display text-3xl font-semibold leading-tight text-foreground sm:text-4xl", children: "Family Tree" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-3 max-w-md text-base text-muted-foreground", children: "Julia and Isaiah, and their eight children. Tap a card to select a family member." })
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-3 max-w-md text-base text-muted-foreground", children: "Julia and Isaiah, and their eight children. Tap a card to select a family member, or expand a branch to explore its descendants." })
         ]
       }
     ),
@@ -47144,7 +47534,7 @@ function FamilyTreePage({
           person,
           index: index2,
           selected: selected === index2,
-          onSelect: () => setSelected(index2),
+          onSelect: () => handleSelect(index2),
           onOpen: () => onOpenProfile(couple[index2].id),
           isMe: meIndex === index2,
           onMarkMe: () => setMeIndex(index2),
@@ -47181,7 +47571,7 @@ function FamilyTreePage({
         rowOffset: row.offset,
         parentIndices: COUPLE_INDICES,
         selected,
-        onSelect: setSelected,
+        onSelect: handleSelect,
         meIndex,
         onMarkMe: setMeIndex,
         onOpenProfile,
@@ -47195,110 +47585,244 @@ function FamilyTreePage({
         branches: claytonBranch,
         baseIndex: couple.length + children.length,
         selected,
-        onSelect: setSelected,
+        onSelect: handleSelect,
         meIndex,
         onMarkMe: setMeIndex,
         onOpenProfile,
-        profilePhotos
+        profilePhotos,
+        collapsed: collapsed.clayton,
+        onToggle: () => toggleBranch("clayton")
       }
     ),
     /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { "aria-label": "Lula Mae and Versie", className: "relative mt-10", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-2 gap-3 sm:gap-4", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx(
-          PersonCard,
-          {
-            person: { id: "lula-mae", name: "Lula Mae", role: "Child" },
-            index: coupleBaseIndex,
-            selected: selected === coupleBaseIndex,
-            onSelect: () => setSelected(coupleBaseIndex),
-            onOpen: () => onOpenProfile("lula-mae"),
-            isMe: meIndex === coupleBaseIndex,
-            onMarkMe: () => setMeIndex(coupleBaseIndex),
-            profilePhoto: profilePhotos == null ? void 0 : profilePhotos["lula-mae"]
-          }
-        ),
-        /* @__PURE__ */ jsxRuntimeExports.jsx(
-          PersonCard,
-          {
-            person: {
-              id: "versie-smith",
-              name: "Versie Smith",
-              role: "Husband"
-            },
-            index: coupleBaseIndex + 1,
-            selected: selected === coupleBaseIndex + 1,
-            onSelect: () => setSelected(coupleBaseIndex + 1),
-            onOpen: () => onOpenProfile("versie-smith"),
-            isMe: meIndex === coupleBaseIndex + 1,
-            onMarkMe: () => setMeIndex(coupleBaseIndex + 1),
-            profilePhoto: profilePhotos == null ? void 0 : profilePhotos["versie-smith"]
-          }
-        )
-      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        BranchFold,
+        {
+          name: "Lula Mae & Versie",
+          count: 19,
+          open: !collapsed.lulaVersie,
+          onToggle: () => toggleBranch("lulaVersie"),
+          dataOcid: "tree.branch.lula_versie"
+        }
+      ),
       /* @__PURE__ */ jsxRuntimeExports.jsx(
         "div",
         {
-          className: `ft-couple-line pointer-events-none absolute left-1/2 top-1/2 w-1/2 -translate-x-1/2 -translate-y-1/2 ${inSet(selected, [LULA_MAE_INDEX, VERSIE_INDEX]) ? "ft-connector-selected" : ""}`,
-          "aria-hidden": "true"
+          className: `ft-trunk relative mx-auto h-8 ${inSet(selected, [LULA_MAE_INDEX, VERSIE_INDEX]) ? "ft-connector-selected" : ""}`,
+          "aria-hidden": "true",
+          children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "span",
+            {
+              className: `ft-junction absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ${inSet(selected, [LULA_MAE_INDEX, VERSIE_INDEX]) ? "ft-connector-selected" : ""}`,
+              "aria-hidden": "true"
+            }
+          )
         }
-      )
-    ] }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(
-      "div",
-      {
-        className: `ft-trunk relative mx-auto h-8 ${inSet(selected, [LULA_MAE_INDEX, VERSIE_INDEX]) ? "ft-connector-selected" : ""}`,
-        "aria-hidden": "true",
-        children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-          "span",
+      ),
+      !collapsed.lulaVersie && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "ft-branch-expanded", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-2 gap-3 sm:gap-4", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            PersonCard,
+            {
+              person: { id: "lula-mae", name: "Lula Mae", role: "Child" },
+              index: coupleBaseIndex,
+              selected: selected === coupleBaseIndex,
+              onSelect: () => handleSelect(coupleBaseIndex),
+              onOpen: () => onOpenProfile("lula-mae"),
+              isMe: meIndex === coupleBaseIndex,
+              onMarkMe: () => setMeIndex(coupleBaseIndex),
+              profilePhoto: profilePhotos == null ? void 0 : profilePhotos["lula-mae"]
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            PersonCard,
+            {
+              person: {
+                id: "versie-smith",
+                name: "Versie Smith",
+                role: "Husband"
+              },
+              index: coupleBaseIndex + 1,
+              selected: selected === coupleBaseIndex + 1,
+              onSelect: () => handleSelect(coupleBaseIndex + 1),
+              onOpen: () => onOpenProfile("versie-smith"),
+              isMe: meIndex === coupleBaseIndex + 1,
+              onMarkMe: () => setMeIndex(coupleBaseIndex + 1),
+              profilePhoto: profilePhotos == null ? void 0 : profilePhotos["versie-smith"]
+            }
+          )
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "div",
           {
-            className: `ft-junction absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ${inSet(selected, [LULA_MAE_INDEX, VERSIE_INDEX]) ? "ft-connector-selected" : ""}`,
+            className: `ft-couple-line pointer-events-none absolute left-1/2 top-1/2 w-1/2 -translate-x-1/2 -translate-y-1/2 ${inSet(selected, [LULA_MAE_INDEX, VERSIE_INDEX]) ? "ft-connector-selected" : ""}`,
             "aria-hidden": "true"
           }
-        )
-      }
-    ),
-    /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { "aria-label": "Versie's maternal line", className: "relative mt-2", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-2 gap-3 sm:gap-4", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx(
-          PersonCard,
-          {
-            person: {
-              id: harveyAdamsSrProfile.id,
-              name: "Harvey Adams Sr.",
-              role: "Father"
-            },
-            index: parentsBaseIndex,
-            selected: selected === parentsBaseIndex,
-            onSelect: () => setSelected(parentsBaseIndex),
-            onOpen: () => onOpenProfile(harveyAdamsSrProfile.id),
-            isMe: meIndex === parentsBaseIndex,
-            onMarkMe: () => setMeIndex(parentsBaseIndex),
-            profilePhoto: profilePhotos == null ? void 0 : profilePhotos[harveyAdamsSrProfile.id]
-          }
         ),
         /* @__PURE__ */ jsxRuntimeExports.jsx(
-          PersonCard,
+          "div",
           {
-            person: {
-              id: maryLouiseSimsProfile.id,
-              name: "Mary Louise Sims",
-              role: "First Wife"
-            },
-            index: parentsBaseIndex + 1,
-            selected: selected === parentsBaseIndex + 1,
-            onSelect: () => setSelected(parentsBaseIndex + 1),
-            onOpen: () => onOpenProfile(maryLouiseSimsProfile.id),
-            isMe: meIndex === parentsBaseIndex + 1,
-            onMarkMe: () => setMeIndex(parentsBaseIndex + 1),
-            profilePhoto: profilePhotos == null ? void 0 : profilePhotos[maryLouiseSimsProfile.id]
+            className: `ft-trunk relative mx-auto h-8 ${inSet(selected, [LULA_MAE_INDEX, VERSIE_INDEX]) ? "ft-connector-selected" : ""}`,
+            "aria-hidden": "true",
+            children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "span",
+              {
+                className: `ft-junction absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ${inSet(selected, [LULA_MAE_INDEX, VERSIE_INDEX]) ? "ft-connector-selected" : ""}`,
+                "aria-hidden": "true"
+              }
+            )
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "section",
+          {
+            "aria-label": "Versie's maternal line",
+            className: "relative mt-2",
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-2 gap-3 sm:gap-4", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  PersonCard,
+                  {
+                    person: {
+                      id: harveyAdamsSrProfile.id,
+                      name: "Harvey Adams Sr.",
+                      role: "Father"
+                    },
+                    index: parentsBaseIndex,
+                    selected: selected === parentsBaseIndex,
+                    onSelect: () => handleSelect(parentsBaseIndex),
+                    onOpen: () => onOpenProfile(harveyAdamsSrProfile.id),
+                    isMe: meIndex === parentsBaseIndex,
+                    onMarkMe: () => setMeIndex(parentsBaseIndex),
+                    profilePhoto: profilePhotos == null ? void 0 : profilePhotos[harveyAdamsSrProfile.id]
+                  }
+                ),
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  PersonCard,
+                  {
+                    person: {
+                      id: maryLouiseSimsProfile.id,
+                      name: "Mary Louise Sims",
+                      role: "First Wife"
+                    },
+                    index: parentsBaseIndex + 1,
+                    selected: selected === parentsBaseIndex + 1,
+                    onSelect: () => handleSelect(parentsBaseIndex + 1),
+                    onOpen: () => onOpenProfile(maryLouiseSimsProfile.id),
+                    isMe: meIndex === parentsBaseIndex + 1,
+                    onMarkMe: () => setMeIndex(parentsBaseIndex + 1),
+                    profilePhoto: profilePhotos == null ? void 0 : profilePhotos[maryLouiseSimsProfile.id]
+                  }
+                )
+              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "div",
+                {
+                  className: `ft-couple-line pointer-events-none absolute left-1/2 top-1/2 w-1/2 -translate-x-1/2 -translate-y-1/2 ${inSet(selected, [HARVEY_INDEX, MARY_LOUISE_INDEX]) ? "ft-connector-selected" : ""}`,
+                  "aria-hidden": "true"
+                }
+              ),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "div",
+                {
+                  className: `ft-trunk relative mx-auto h-8 ${inSet(selected, [
+                    HARVEY_INDEX,
+                    MARY_LOUISE_INDEX,
+                    ...FIRST_MARRIAGE_CHILDREN_INDICES,
+                    GERTRUDE_INDEX
+                  ]) ? "ft-connector-selected" : ""}`,
+                  "aria-hidden": "true",
+                  children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "span",
+                    {
+                      className: `ft-junction absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ${inSet(selected, [
+                        HARVEY_INDEX,
+                        MARY_LOUISE_INDEX,
+                        ...FIRST_MARRIAGE_CHILDREN_INDICES,
+                        GERTRUDE_INDEX
+                      ]) ? "ft-connector-selected" : ""}`,
+                      "aria-hidden": "true"
+                    }
+                  )
+                }
+              ),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-2 space-y-6", children: Array.from({
+                length: Math.ceil(
+                  firstMarriageChildren.length / CHILDREN_PER_ROW
+                )
+              }).map((_2, row) => {
+                const rowChildren = firstMarriageChildren.slice(
+                  row * CHILDREN_PER_ROW,
+                  row * CHILDREN_PER_ROW + CHILDREN_PER_ROW
+                );
+                return /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  BranchRow,
+                  {
+                    rowChildren,
+                    rowOffset: firstMarriageChildrenBaseIndex + row * CHILDREN_PER_ROW,
+                    parentIndices: [HARVEY_INDEX, MARY_LOUISE_INDEX],
+                    selected,
+                    onSelect: handleSelect,
+                    meIndex,
+                    onMarkMe: setMeIndex,
+                    onOpenProfile,
+                    profilePhotos
+                  },
+                  rowChildren[0].name
+                );
+              }) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "div",
+                {
+                  className: `ft-trunk relative mx-auto h-8 ${inSet(selected, [
+                    ...FIRST_MARRIAGE_CHILDREN_INDICES,
+                    GERTRUDE_INDEX
+                  ]) ? "ft-connector-selected" : ""}`,
+                  "aria-hidden": "true",
+                  children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "span",
+                    {
+                      className: `ft-junction absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ${inSet(selected, [
+                        ...FIRST_MARRIAGE_CHILDREN_INDICES,
+                        GERTRUDE_INDEX
+                      ]) ? "ft-connector-selected" : ""}`,
+                      "aria-hidden": "true"
+                    }
+                  )
+                }
+              ),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-2 flex justify-center", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "w-full max-w-[calc(50%-0.375rem)] sm:max-w-[calc(50%-0.5rem)]", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                PersonCard,
+                {
+                  person: {
+                    id: gertrudeAdamsHillProfile.id,
+                    name: "Gertrude Adams-Hill",
+                    role: "Mother",
+                    years: "1913–"
+                  },
+                  index: gertrudeIndex,
+                  selected: selected === gertrudeIndex,
+                  onSelect: () => handleSelect(gertrudeIndex),
+                  onOpen: () => onOpenProfile(gertrudeAdamsHillProfile.id),
+                  isMe: meIndex === gertrudeIndex,
+                  onMarkMe: () => setMeIndex(gertrudeIndex),
+                  profilePhoto: profilePhotos == null ? void 0 : profilePhotos[gertrudeAdamsHillProfile.id]
+                }
+              ) }) })
+            ]
           }
         )
-      ] }),
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { "aria-label": "Harvey's second marriage", className: "relative mt-10", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx(
-        "div",
+        BranchFold,
         {
-          className: `ft-couple-line pointer-events-none absolute left-1/2 top-1/2 w-1/2 -translate-x-1/2 -translate-y-1/2 ${inSet(selected, [HARVEY_INDEX, MARY_LOUISE_INDEX]) ? "ft-connector-selected" : ""}`,
-          "aria-hidden": "true"
+          name: "Harvey Adams Sr.",
+          count: 6,
+          open: !collapsed.harveySecond,
+          onToggle: () => toggleBranch("harveySecond"),
+          dataOcid: "tree.branch.harvey_second"
         }
       ),
       /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -47306,9 +47830,9 @@ function FamilyTreePage({
         {
           className: `ft-trunk relative mx-auto h-8 ${inSet(selected, [
             HARVEY_INDEX,
-            MARY_LOUISE_INDEX,
-            ...FIRST_MARRIAGE_CHILDREN_INDICES,
-            GERTRUDE_INDEX
+            MARY_JANE_INDEX,
+            ...SECOND_MARRIAGE_CHILDREN_INDICES,
+            ...MILDRED_CHILDREN_INDICES
           ]) ? "ft-connector-selected" : ""}`,
           "aria-hidden": "true",
           children: /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -47316,75 +47840,126 @@ function FamilyTreePage({
             {
               className: `ft-junction absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ${inSet(selected, [
                 HARVEY_INDEX,
-                MARY_LOUISE_INDEX,
-                ...FIRST_MARRIAGE_CHILDREN_INDICES,
-                GERTRUDE_INDEX
+                MARY_JANE_INDEX,
+                ...SECOND_MARRIAGE_CHILDREN_INDICES,
+                ...MILDRED_CHILDREN_INDICES
               ]) ? "ft-connector-selected" : ""}`,
               "aria-hidden": "true"
             }
           )
         }
       ),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-2 space-y-6", children: Array.from({
-        length: Math.ceil(firstMarriageChildren.length / CHILDREN_PER_ROW)
-      }).map((_2, row) => {
-        const rowChildren = firstMarriageChildren.slice(
-          row * CHILDREN_PER_ROW,
-          row * CHILDREN_PER_ROW + CHILDREN_PER_ROW
-        );
-        return /* @__PURE__ */ jsxRuntimeExports.jsx(
+      !collapsed.harveySecond && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "ft-branch-expanded", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-2 gap-3 sm:gap-4", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            PersonCard,
+            {
+              person: {
+                id: harveyAdamsSrProfile.id,
+                name: "Harvey Adams Sr.",
+                role: "Father"
+              },
+              index: HARVEY_INDEX,
+              selected: selected === HARVEY_INDEX,
+              onSelect: () => handleSelect(HARVEY_INDEX),
+              onOpen: () => onOpenProfile(harveyAdamsSrProfile.id),
+              isMe: meIndex === HARVEY_INDEX,
+              onMarkMe: () => setMeIndex(HARVEY_INDEX),
+              profilePhoto: profilePhotos == null ? void 0 : profilePhotos[harveyAdamsSrProfile.id]
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            PersonCard,
+            {
+              person: {
+                id: "mary-jane-johnson",
+                name: "Mary Jane Johnson",
+                role: "Second Wife"
+              },
+              index: MARY_JANE_INDEX,
+              selected: selected === MARY_JANE_INDEX,
+              onSelect: () => handleSelect(MARY_JANE_INDEX),
+              onOpen: () => onOpenProfile("mary-jane-johnson"),
+              isMe: meIndex === MARY_JANE_INDEX,
+              onMarkMe: () => setMeIndex(MARY_JANE_INDEX),
+              profilePhoto: profilePhotos == null ? void 0 : profilePhotos["mary-jane-johnson"]
+            }
+          )
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "div",
+          {
+            className: `ft-couple-line pointer-events-none absolute left-1/2 top-1/2 w-1/2 -translate-x-1/2 -translate-y-1/2 ${inSet(selected, [HARVEY_INDEX, MARY_JANE_INDEX]) ? "ft-connector-selected" : ""}`,
+            "aria-hidden": "true"
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "div",
+          {
+            className: `ft-trunk relative mx-auto h-8 ${inSet(selected, [
+              HARVEY_INDEX,
+              MARY_JANE_INDEX,
+              ...SECOND_MARRIAGE_CHILDREN_INDICES,
+              ...MILDRED_CHILDREN_INDICES
+            ]) ? "ft-connector-selected" : ""}`,
+            "aria-hidden": "true",
+            children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "span",
+              {
+                className: `ft-junction absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ${inSet(selected, [
+                  HARVEY_INDEX,
+                  MARY_JANE_INDEX,
+                  ...SECOND_MARRIAGE_CHILDREN_INDICES,
+                  ...MILDRED_CHILDREN_INDICES
+                ]) ? "ft-connector-selected" : ""}`,
+                "aria-hidden": "true"
+              }
+            )
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-2", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
           BranchRow,
           {
-            rowChildren,
-            rowOffset: firstMarriageChildrenBaseIndex + row * CHILDREN_PER_ROW,
-            parentIndices: [HARVEY_INDEX, MARY_LOUISE_INDEX],
+            rowChildren: secondMarriageChildren,
+            rowOffset: SECOND_MARRIAGE_CHILDREN_INDICES[0],
+            parentIndices: [HARVEY_INDEX, MARY_JANE_INDEX],
             selected,
-            onSelect: setSelected,
+            onSelect: handleSelect,
             meIndex,
             onMarkMe: setMeIndex,
             onOpenProfile,
             profilePhotos
-          },
-          rowChildren[0].name
-        );
-      }) }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx(
-        "div",
-        {
-          className: `ft-trunk relative mx-auto h-8 ${inSet(selected, [
-            ...FIRST_MARRIAGE_CHILDREN_INDICES,
-            GERTRUDE_INDEX
-          ]) ? "ft-connector-selected" : ""}`,
-          "aria-hidden": "true",
-          children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-            "span",
-            {
-              className: `ft-junction absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ${inSet(selected, [
-                ...FIRST_MARRIAGE_CHILDREN_INDICES,
-                GERTRUDE_INDEX
-              ]) ? "ft-connector-selected" : ""}`,
-              "aria-hidden": "true"
-            }
-          )
-        }
-      ),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-2 flex justify-center", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "w-full max-w-[calc(50%-0.375rem)] sm:max-w-[calc(50%-0.5rem)]", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-        PersonCard,
-        {
-          person: {
-            id: gertrudeAdamsHillProfile.id,
-            name: "Gertrude Adams-Hill",
-            role: "Mother"
-          },
-          index: gertrudeIndex,
-          selected: selected === gertrudeIndex,
-          onSelect: () => setSelected(gertrudeIndex),
-          onOpen: () => onOpenProfile(gertrudeAdamsHillProfile.id),
-          isMe: meIndex === gertrudeIndex,
-          onMarkMe: () => setMeIndex(gertrudeIndex),
-          profilePhoto: profilePhotos == null ? void 0 : profilePhotos[gertrudeAdamsHillProfile.id]
-        }
-      ) }) })
+          }
+        ) }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "div",
+          {
+            className: `ft-trunk pointer-events-none relative left-[25%] h-8 sm:left-[12.5%] ${inSet(selected, [MILDRED_INDEX, ...MILDRED_CHILDREN_INDICES]) ? "ft-connector-selected" : ""}`,
+            "aria-hidden": "true",
+            children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "span",
+              {
+                className: `ft-junction absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ${inSet(selected, [MILDRED_INDEX, ...MILDRED_CHILDREN_INDICES]) ? "ft-connector-selected" : ""}`,
+                "aria-hidden": "true"
+              }
+            )
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-2", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+          BranchRow,
+          {
+            rowChildren: mildredChildren,
+            rowOffset: MILDRED_CHILDREN_INDICES[0],
+            parentIndices: [MILDRED_INDEX],
+            selected,
+            onSelect: handleSelect,
+            meIndex,
+            onMarkMe: setMeIndex,
+            onOpenProfile,
+            profilePhotos
+          }
+        ) })
+      ] })
     ] }),
     /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-10 text-center text-sm text-muted-foreground", children: selected === null ? "Tap a card to highlight a family member." : `Selected: “${((_a2 = allPeople[selected]) == null ? void 0 : _a2.name) ?? ""}”` })
   ] });
@@ -47742,7 +48317,7 @@ const HERITAGE = {
     name: "Harvey Adams Sr.",
     role: "Father",
     parents: [],
-    spouses: ["mary-louise-sims"],
+    spouses: ["mary-louise-sims", "mary-jane-johnson"],
     children: [
       "gertrude-adams-hill",
       "john-adams",
@@ -47757,7 +48332,9 @@ const HERITAGE = {
       "christine-adams-tucker",
       "robert-adams-sr",
       "ella-mae-adams",
-      "eula-lee-adams"
+      "eula-lee-adams",
+      "mildred-adams",
+      "christine-adams"
     ]
   },
   "mary-louise-sims": {
@@ -47782,6 +48359,54 @@ const HERITAGE = {
       "ella-mae-adams",
       "eula-lee-adams"
     ]
+  },
+  "mary-jane-johnson": {
+    id: "mary-jane-johnson",
+    name: "Mary Jane Johnson",
+    role: "Second Wife",
+    parents: [],
+    spouses: ["harvey-adams-sr"],
+    children: ["mildred-adams", "christine-adams"]
+  },
+  "mildred-adams": {
+    id: "mildred-adams",
+    name: "Mildred Adams",
+    role: "Daughter",
+    parents: ["harvey-adams-sr", "mary-jane-johnson"],
+    spouses: [],
+    children: ["tammy", "punchy", "patricia-rollins"]
+  },
+  "christine-adams": {
+    id: "christine-adams",
+    name: "Christine Adams",
+    role: "Daughter",
+    parents: ["harvey-adams-sr", "mary-jane-johnson"],
+    spouses: [],
+    children: []
+  },
+  tammy: {
+    id: "tammy",
+    name: "Tammy",
+    role: "Daughter",
+    parents: ["mildred-adams"],
+    spouses: [],
+    children: []
+  },
+  punchy: {
+    id: "punchy",
+    name: "Punchy",
+    role: "Daughter",
+    parents: ["mildred-adams"],
+    spouses: [],
+    children: []
+  },
+  "patricia-rollins": {
+    id: "patricia-rollins",
+    name: "Patricia Rollins",
+    role: "Daughter",
+    parents: ["mildred-adams"],
+    spouses: [],
+    children: []
   },
   "john-adams": {
     id: "john-adams",
@@ -48367,6 +48992,7 @@ function App() {
   const [view, setView] = reactExports.useState("home");
   const [profileId, setProfileId] = reactExports.useState("julia");
   const [selectedArchiveItemId, setSelectedArchiveItemId] = reactExports.useState(null);
+  const [exploredPersonId, setExploredPersonId] = reactExports.useState(null);
   const { data: isAdmin = false } = useIsAdmin();
   const [profilePhotos, setProfilePhotos] = reactExports.useState(
     () => ({})
@@ -48409,10 +49035,12 @@ function App() {
         {
           onBack: () => setView("home"),
           onOpenProfile: (id2) => {
+            setExploredPersonId(id2);
             setProfileId(id2);
             setView("profile");
           },
-          profilePhotos
+          profilePhotos,
+          initialExpandedPersonId: exploredPersonId ?? void 0
         }
       ) : view === "heritage-branch" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
         HeritageBranchPage,

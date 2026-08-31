@@ -92,6 +92,10 @@
     --connector-junction: 0.42 0.11 35;
     --connector-arrow: 0.42 0.11 35 / 0.7;
 
+    /* Family Tree refinement: collapsed branch surface (compact overview) */
+    --ft-fold: 0.93 0.025 70;
+    --ft-fold-foreground: 0.3 0.04 45;
+
     --sidebar: 0.985 0.015 70;
     --sidebar-foreground: 0.22 0.04 45;
     --sidebar-primary: 0.42 0.11 35;
@@ -169,6 +173,10 @@
     --connector-line-soft: 0.72 0.14 60 / 0.32;
     --connector-junction: 0.72 0.14 60;
     --connector-arrow: 0.72 0.14 60 / 0.65;
+
+    /* Family Tree refinement: collapsed branch surface (compact overview) */
+    --ft-fold: 0.22 0.02 55;
+    --ft-fold-foreground: 0.85 0.02 60;
 
     --sidebar: 0.2 0.02 55;
     --sidebar-foreground: 0.93 0.02 60;
@@ -926,5 +934,155 @@
       width: 0.6rem;
       height: 0.6rem;
     }
+  }
+
+  /* ---- Family Tree refinement: compact overview/reference view ---- */
+
+  /* Compact person card: photo/initials, name, and birth-death years only.
+     Smaller footprint than the legacy h-12 w-12 avatar card so the tree
+     reads as a clean index on narrow screens. */
+  .ft-card {
+    @apply relative flex flex-col items-center gap-1 rounded-lg border border-border/60 bg-card px-1.5 py-1.5 text-center;
+    min-width: 3.5rem;
+    box-shadow: 0 1px 2px -1px oklch(0.36 0.05 45 / 0.1);
+    transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+  }
+  .ft-card:hover,
+  .ft-card:focus-within {
+    transform: translateY(-1px);
+    border-color: oklch(var(--photo-ring) / 0.6);
+    box-shadow: 0 4px 12px -4px oklch(0.36 0.05 45 / 0.16);
+  }
+  .ft-card:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(var(--ring) / 0.25);
+  }
+
+  /* Portrait: 40px circle (down from 48px) — photo or initials fallback */
+  .ft-card-portrait {
+    @apply flex h-10 w-10 items-center justify-center rounded-full font-display text-[11px] font-semibold;
+    background-color: oklch(var(--muted));
+    color: oklch(var(--muted-foreground));
+    box-shadow: 0 0 0 2px oklch(var(--photo-ring-soft));
+    overflow: hidden;
+  }
+  .ft-card-portrait img {
+    @apply h-full w-full object-cover;
+  }
+
+  /* Name + years: two tight lines, years in tabular numerals */
+  .ft-card-name {
+    @apply max-w-[4.5rem] truncate text-[10px] font-semibold leading-tight;
+    color: oklch(var(--foreground));
+  }
+  .ft-card-years {
+    @apply text-[9px] font-medium leading-none tabular-nums;
+    color: oklch(var(--muted-foreground));
+  }
+
+  /* Selected card: warm ink ring + paper tint; detail reveal below */
+  .ft-card-selected {
+    border-color: oklch(var(--branch-selected));
+    background-color: oklch(var(--branch-selected) / 0.06);
+    box-shadow: 0 0 0 2px oklch(var(--branch-selected) / 0.55), 0 4px 12px -4px
+      oklch(0.36 0.05 45 / 0.16);
+  }
+  .ft-card-selected .ft-card-portrait {
+    box-shadow: 0 0 0 2px oklch(var(--branch-selected));
+  }
+  .ft-card-selected .ft-card-name {
+    color: oklch(var(--branch-selected));
+  }
+
+  /* Detail reveal: role chip + relation-to-you + this-is-me, shown only
+     while the card is selected; hidden on deselect */
+  .ft-card-detail {
+    @apply flex flex-col items-center gap-0.5;
+    animation: detail-in 0.25s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+  .ft-role-chip {
+    @apply inline-flex items-center gap-1 rounded-full border border-border/60 bg-card px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-[0.14em];
+    color: oklch(var(--foreground));
+  }
+  .ft-relation-text {
+    @apply text-[9px] font-medium leading-tight;
+    color: oklch(var(--muted-foreground));
+  }
+  .ft-me-badge {
+    @apply inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-[0.14em];
+    color: oklch(var(--success));
+    background-color: oklch(var(--success) / 0.12);
+  }
+  .ft-me-badge::before {
+    content: "";
+    width: 0.35rem;
+    height: 0.35rem;
+    border-radius: 9999px;
+    background-color: oklch(var(--success));
+  }
+
+  /* Collapsed branch: compact summary row — branch person name + a
+     descendant count chip + expand affordance. The whole row is the tap
+     target (min 44px) so it is easy to hit on mobile. */
+  .ft-branch-fold {
+    @apply flex min-h-[44px] items-center gap-2 rounded-lg border border-dashed border-border/80 px-3 py-1.5;
+    background-color: oklch(var(--ft-fold));
+    color: oklch(var(--ft-fold-foreground));
+    box-shadow: 0 1px 2px -1px oklch(0.36 0.05 45 / 0.08);
+    transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color
+      0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+  }
+  .ft-branch-fold:hover,
+  .ft-branch-fold:focus-within {
+    border-color: oklch(var(--photo-ring));
+    background-color: oklch(var(--card));
+  }
+  .ft-branch-fold:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(var(--ring) / 0.25);
+  }
+  .ft-branch-fold-name {
+    @apply truncate text-[11px] font-semibold leading-tight;
+    color: oklch(var(--ft-fold-foreground));
+  }
+  .ft-branch-fold-count {
+    @apply inline-flex items-center gap-1 rounded-full border border-border/60 bg-card px-1.5 py-0.5 text-[9px] font-bold tabular-nums;
+    color: oklch(var(--muted-foreground));
+  }
+  .ft-branch-fold-count::before {
+    content: "";
+    width: 0.3rem;
+    height: 0.3rem;
+    border-radius: 9999px;
+    background-color: oklch(var(--accent));
+  }
+
+  /* Expand affordance: rotated-square chevron matching the ft-chevron
+     connector language; flips to signal open/closed. */
+  .ft-branch-fold-toggle {
+    @apply ml-auto flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border/60 bg-card;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .ft-fold-chevron {
+    width: 0.4rem;
+    height: 0.4rem;
+    border-right: 2px solid oklch(var(--connector-arrow));
+    border-bottom: 2px solid oklch(var(--connector-arrow));
+    transform: rotate(-45deg);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .ft-branch-fold-open .ft-fold-chevron {
+    transform: rotate(45deg);
+  }
+
+  /* Expanded branch content: gentle scale + fade on reveal */
+  .ft-branch-expanded {
+    animation: fold-in 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
   }
 }

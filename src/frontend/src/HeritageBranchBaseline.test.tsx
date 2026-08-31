@@ -48,6 +48,11 @@ async function openFamilyTree(user: ReturnType<typeof userEvent.setup>) {
   await user.click(screen.getByRole("button", { name: "Explore the Family" }));
 }
 
+// The Clayton branch defaults to collapsed; expand it so its cards render.
+async function expandClaytonBranch(user: ReturnType<typeof userEvent.setup>) {
+  await user.click(screen.getByRole("button", { name: /^Clayton \d+$/ }));
+}
+
 // Characterization baseline for the existing Family Tree view before the new
 // Heritage Branch View is added. The new view is a net-new View union member
 // plus a new page component, reachable alongside the existing Family Tree. These
@@ -91,6 +96,7 @@ describe("Heritage Branch View baseline: existing Family Tree stays intact", () 
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     const childrenSection = screen.getByRole("region", { name: "Children" });
     for (const name of [

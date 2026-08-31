@@ -52,6 +52,16 @@ function maternalLine() {
   return screen.getByRole("region", { name: "Versie's maternal line" });
 }
 
+// The Lula Mae & Versie branch defaults to collapsed; expand it so the maternal
+// line (and its cards) render.
+async function expandLulaVersieBranch(
+  user: ReturnType<typeof userEvent.setup>,
+) {
+  await user.click(
+    screen.getByRole("button", { name: /^Lula Mae & Versie \d+$/ }),
+  );
+}
+
 // The 14 recorded children of Harvey Adams Sr. and Mary Louise Sims, with the
 // Gertrude child mapping to the existing Gertrude Adams-Hill profile. Each
 // entry is the role-qualified accessible name of the Family Tree card.
@@ -83,17 +93,39 @@ describe("Harvey Adams Sr. first-marriage branch cover", () => {
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandLulaVersieBranch(user);
 
     const line = maternalLine();
-    // Mary Louise Sims renders as Harvey's first wife.
+    // Mary Louise Sims renders as Harvey's first wife. The card's accessible
+    // name is just her name (role labels are hidden by default).
     expect(
-      within(line).getByRole("button", { name: /Mary Louise Sims First Wife/ }),
+      within(line).getByRole("button", { name: /^Mary Louise Sims$/ }),
     ).toBeInTheDocument();
 
-    // All 14 recorded children render as cards under the first marriage.
-    for (const child of FIRST_MARRIAGE_CHILDREN) {
+    // All 14 recorded children render as cards under the first marriage. The
+    // cards' accessible names are just the person names (roles are hidden).
+    // Gertrude Adams-Hill appears twice in the maternal line (as a first-marriage
+    // child and as Versie's mother); the child card has no years, so the exact
+    // name matches only the child card.
+    const firstMarriageChildNames = [
+      "John Adams",
+      "Louis Adams Sr.",
+      "Albert Adams",
+      "Charles Adams",
+      "Homer Adams",
+      "Versie Adams Sr.",
+      "Judge Granberry Adams",
+      "Fannie Adams",
+      "Gertrude Adams-Hill",
+      "Harvey Adams Jr.",
+      "Christine Adams Tucker",
+      "Robert Adams Sr.",
+      "Ella Mae Adams",
+      "Eula Lee Adams",
+    ];
+    for (const child of firstMarriageChildNames) {
       expect(
-        within(line).getByRole("button", { name: new RegExp(child) }),
+        within(line).getByRole("button", { name: new RegExp(`^${child}$`) }),
       ).toBeInTheDocument();
     }
   });
@@ -102,10 +134,11 @@ describe("Harvey Adams Sr. first-marriage branch cover", () => {
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandLulaVersieBranch(user);
 
     await user.click(
       within(maternalLine()).getByRole("button", {
-        name: /Mary Louise Sims First Wife/,
+        name: /^Mary Louise Sims$/,
       }),
     );
 
@@ -130,24 +163,25 @@ describe("Harvey Adams Sr. first-marriage branch cover", () => {
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandLulaVersieBranch(user);
 
     const cases: { card: RegExp; heading: string }[] = [
-      { card: /John Adams Son/, heading: "John Adams" },
-      { card: /Louis Adams Sr\. Son/, heading: "Louis Adams Sr." },
-      { card: /Albert Adams Son/, heading: "Albert Adams" },
-      { card: /Charles Adams Son/, heading: "Charles Adams" },
-      { card: /Homer Adams Son/, heading: "Homer Adams" },
-      { card: /Versie Adams Sr\. Son/, heading: "Versie Adams Sr." },
-      { card: /Judge Granberry Adams Son/, heading: "Judge Granberry Adams" },
-      { card: /Fannie Adams Daughter/, heading: "Fannie Adams" },
-      { card: /Harvey Adams Jr\. Son/, heading: "Harvey Adams Jr." },
+      { card: /^John Adams$/, heading: "John Adams" },
+      { card: /^Louis Adams Sr\.$/, heading: "Louis Adams Sr." },
+      { card: /^Albert Adams$/, heading: "Albert Adams" },
+      { card: /^Charles Adams$/, heading: "Charles Adams" },
+      { card: /^Homer Adams$/, heading: "Homer Adams" },
+      { card: /^Versie Adams Sr\.$/, heading: "Versie Adams Sr." },
+      { card: /^Judge Granberry Adams$/, heading: "Judge Granberry Adams" },
+      { card: /^Fannie Adams$/, heading: "Fannie Adams" },
+      { card: /^Harvey Adams Jr\.$/, heading: "Harvey Adams Jr." },
       {
-        card: /Christine Adams Tucker Daughter/,
+        card: /^Christine Adams Tucker$/,
         heading: "Christine Adams Tucker",
       },
-      { card: /Robert Adams Sr\. Son/, heading: "Robert Adams Sr." },
-      { card: /Ella Mae Adams Daughter/, heading: "Ella Mae Adams" },
-      { card: /Eula Lee Adams Daughter/, heading: "Eula Lee Adams" },
+      { card: /^Robert Adams Sr\.$/, heading: "Robert Adams Sr." },
+      { card: /^Ella Mae Adams$/, heading: "Ella Mae Adams" },
+      { card: /^Eula Lee Adams$/, heading: "Eula Lee Adams" },
     ];
 
     for (const { card, heading } of cases) {
@@ -167,12 +201,15 @@ describe("Harvey Adams Sr. first-marriage branch cover", () => {
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandLulaVersieBranch(user);
 
     // The Gertrude child card in the first-marriage list opens the existing
-    // Gertrude Adams-Hill profile, not a separate Gertrude Adams profile.
+    // Gertrude Adams-Hill profile, not a separate Gertrude Adams profile. The
+    // child card has no years, so the exact name matches only it (the Mother
+    // card carries "1913–").
     await user.click(
       within(maternalLine()).getByRole("button", {
-        name: /Gertrude Adams-Hill Daughter/,
+        name: /^Gertrude Adams-Hill$/,
       }),
     );
 
@@ -188,10 +225,11 @@ describe("Harvey Adams Sr. first-marriage branch cover", () => {
     const user = userEvent.setup();
     const { container } = renderApp();
     await openFamilyTree(user);
+    await expandLulaVersieBranch(user);
 
     await user.click(
       within(maternalLine()).getByRole("button", {
-        name: /Christine Adams Tucker Daughter/,
+        name: /^Christine Adams Tucker$/,
       }),
     );
 
@@ -211,11 +249,12 @@ describe("Harvey Adams Sr. first-marriage branch cover", () => {
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandLulaVersieBranch(user);
 
     // Versie Adams Sr. is a first-marriage child of Harvey and Mary Louise.
     await user.click(
       within(maternalLine()).getByRole("button", {
-        name: /Versie Adams Sr\. Son/,
+        name: /^Versie Adams Sr\.$/,
       }),
     );
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(

@@ -48,6 +48,16 @@ async function openFamilyTree(user: ReturnType<typeof userEvent.setup>) {
   await user.click(screen.getByRole("button", { name: "Explore the Family" }));
 }
 
+// The Lula Mae & Versie branch defaults to collapsed; expand it so its cards
+// and connectors render.
+async function expandLulaVersieBranch(
+  user: ReturnType<typeof userEvent.setup>,
+) {
+  await user.click(
+    screen.getByRole("button", { name: /^Lula Mae & Versie \d+$/ }),
+  );
+}
+
 // The vertical trunk that descends from the center of a couple, sitting between
 // the two given sections.
 function trunkBetween(
@@ -79,6 +89,7 @@ describe("Family Tree connector characterization: lower tree sections", () => {
     const user = userEvent.setup();
     const { container } = renderApp();
     await openFamilyTree(user);
+    await expandLulaVersieBranch(user);
 
     const lulaSection = screen.getByRole("region", {
       name: "Lula Mae and Versie",
@@ -102,6 +113,7 @@ describe("Family Tree connector characterization: lower tree sections", () => {
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandLulaVersieBranch(user);
 
     const maternalSection = screen.getByRole("region", {
       name: "Versie's maternal line",

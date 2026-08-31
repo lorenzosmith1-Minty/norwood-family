@@ -48,6 +48,11 @@ async function openFamilyTree(user: ReturnType<typeof userEvent.setup>) {
   await user.click(screen.getByRole("button", { name: "Explore the Family" }));
 }
 
+// The Clayton branch defaults to collapsed; expand it so its cards render.
+async function expandClaytonBranch(user: ReturnType<typeof userEvent.setup>) {
+  await user.click(screen.getByRole("button", { name: /^Clayton \d+$/ }));
+}
+
 // Characterization baseline for the Erma T. Williams branch. The four earlier
 // child profiles (Columbus, Thomas Clayton 'Tip / TC', Alton, Robert Davis 'RD')
 // and the three newest (Ardeanus, Willie B., James) are intentionally changing
@@ -67,6 +72,7 @@ describe("Family Tree characterization: Erma T. Williams branch", () => {
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     const cases: { card: RegExp; heading: string }[] = [
       { card: /Ardeanus/, heading: "Ardeanus Norwood" },
@@ -101,6 +107,7 @@ describe("Family Tree characterization: Erma T. Williams branch", () => {
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     const cases: { card: RegExp; heading: string }[] = [
       { card: /Freddie/, heading: "Freddie Norwood" },
@@ -130,6 +137,7 @@ describe("Family Tree characterization: Erma T. Williams branch", () => {
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     const claytonBranch = screen.getByRole("region", {
       name: "Clayton's branch",
@@ -148,6 +156,7 @@ describe("Family Tree characterization: Erma T. Williams branch", () => {
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     const claytonBranch = screen.getByRole("region", {
       name: "Clayton's branch",
@@ -180,6 +189,7 @@ describe("Family Tree characterization: Erma T. Williams branch", () => {
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     const claytonBranch = screen.getByRole("region", {
       name: "Clayton's branch",

@@ -48,6 +48,16 @@ async function openFamilyTree(user: ReturnType<typeof userEvent.setup>) {
   await user.click(screen.getByRole("button", { name: "Explore the Family" }));
 }
 
+// The Lula Mae & Versie branch defaults to collapsed; expand it so its cards
+// render.
+async function expandLulaVersieBranch(
+  user: ReturnType<typeof userEvent.setup>,
+) {
+  await user.click(
+    screen.getByRole("button", { name: /^Lula Mae & Versie \d+$/ }),
+  );
+}
+
 function completenessPercent(): string {
   const container = document.querySelector(
     '[data-ocid="profile.completeness"]',
@@ -66,11 +76,14 @@ describe("Versie Smith cover: profile, Family Tree couple, and Heritage Branch c
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandLulaVersieBranch(user);
 
-    // The couple section shows Lula Mae and Versie side by side.
+    // The couple section shows Lula Mae and Versie side by side. The fold row
+    // ("Lula Mae & Versie 19") also lives inside this region, so anchor the
+    // Lula Mae card query to the exact card name.
     const couple = screen.getByRole("region", { name: "Lula Mae and Versie" });
     expect(
-      within(couple).getByRole("button", { name: /Lula Mae/ }),
+      within(couple).getByRole("button", { name: "Lula Mae" }),
     ).toBeInTheDocument();
     expect(
       within(couple).getByRole("button", { name: /Versie Smith/ }),
@@ -103,6 +116,7 @@ describe("Versie Smith cover: profile, Family Tree couple, and Heritage Branch c
     const user = userEvent.setup();
     const { container } = renderApp();
     await openFamilyTree(user);
+    await expandLulaVersieBranch(user);
 
     await user.click(
       within(
@@ -149,6 +163,7 @@ describe("Versie Smith cover: profile, Family Tree couple, and Heritage Branch c
     const user = userEvent.setup();
     const { container } = renderApp();
     await openFamilyTree(user);
+    await expandLulaVersieBranch(user);
 
     await user.click(
       within(
@@ -180,6 +195,7 @@ describe("Versie Smith cover: profile, Family Tree couple, and Heritage Branch c
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandLulaVersieBranch(user);
 
     await user.click(
       within(
@@ -200,6 +216,7 @@ describe("Versie Smith cover: profile, Family Tree couple, and Heritage Branch c
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandLulaVersieBranch(user);
 
     await user.click(
       within(
@@ -223,6 +240,7 @@ describe("Versie Smith cover: profile, Family Tree couple, and Heritage Branch c
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandLulaVersieBranch(user);
 
     await user.click(
       within(

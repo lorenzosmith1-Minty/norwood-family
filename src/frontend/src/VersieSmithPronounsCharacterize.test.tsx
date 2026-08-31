@@ -46,6 +46,11 @@ afterEach(cleanup);
 
 async function openVersieProfile(user: ReturnType<typeof userEvent.setup>) {
   await user.click(screen.getByRole("button", { name: "Explore the Family" }));
+  // The Lula Mae & Versie branch defaults to collapsed; expand it so its cards
+  // render.
+  await user.click(
+    screen.getByRole("button", { name: /^Lula Mae & Versie \d+$/ }),
+  );
   const couple = screen.getByRole("region", { name: "Lula Mae and Versie" });
   await user.click(
     within(couple).getByRole("button", { name: /Versie Smith/ }),

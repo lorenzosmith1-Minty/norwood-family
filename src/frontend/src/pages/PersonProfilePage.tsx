@@ -1264,7 +1264,7 @@ export const harveyAdamsSrProfile: PersonProfile = {
       {
         name: "Mary Jane Johnson",
         role: "Second Wife",
-        children: [],
+        children: ["Mildred Adams", "Christine Adams"],
       },
     ],
   },
@@ -1911,6 +1911,257 @@ export const eulaLeeAdamsProfile: PersonProfile = {
   ],
 };
 
+export const maryJaneJohnsonProfile: PersonProfile = {
+  id: "mary-jane-johnson",
+  name: "Mary Jane Johnson",
+  role: "Second Wife of Harvey Adams Sr.",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Mary Jane Johnson, since no photograph of her is known to exist.",
+  },
+  facts: [
+    { label: "Husband", value: "Harvey Adams Sr." },
+    {
+      label: "Children",
+      value: "Mildred Adams and Christine Adams",
+    },
+    { label: "Evidence status", value: "Family history" },
+  ],
+  story:
+    "Mary Jane Johnson was the second wife of Harvey Adams Sr. She was the mother of Mildred Adams and Christine Adams. No additional details about her life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "Harvey Adams Sr.",
+    spouseRole: "Husband",
+    childrenText:
+      "Mary Jane Johnson was the second wife of Harvey Adams Sr. and the mother of Mildred Adams and Christine Adams.",
+    spouses: [
+      {
+        name: "Harvey Adams Sr.",
+        role: "Husband",
+        children: ["Mildred Adams", "Christine Adams"],
+      },
+    ],
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Marries Harvey Adams Sr.",
+      detail:
+        "Mary Jane Johnson marries Harvey Adams Sr. as his second wife. The date is not recorded.",
+    },
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail:
+        "A family-history note identifying Mary Jane Johnson as the second wife of Harvey Adams Sr. and the mother of Mildred Adams and Christine Adams. These are family accounts, not documented records.",
+    },
+  ],
+};
+
+export const mildredAdamsProfile: PersonProfile = {
+  id: "mildred-adams",
+  name: "Mildred Adams",
+  role: "Daughter of Harvey Adams Sr. and Mary Jane Johnson",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Mildred Adams, since no photograph of her is known to exist.",
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Harvey Adams Sr. and Mary Jane Johnson",
+    },
+    {
+      label: "Children",
+      value: "Tammy, Punchy, and Patricia Rollins",
+    },
+    { label: "Evidence status", value: "Family history" },
+  ],
+  story:
+    "Mildred Adams was the daughter of Harvey Adams Sr. and Mary Jane Johnson. She was the mother of Tammy, Punchy, and Patricia Rollins. No additional details about her life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "Children",
+    spouseRole: "Daughters",
+    childrenText:
+      "Mildred Adams had three daughters — Tammy, Punchy, and Patricia Rollins.",
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail:
+        "Mildred Adams is born, the daughter of Harvey Adams Sr. and Mary Jane Johnson. The date is not recorded in the family records gathered so far.",
+    },
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail:
+        "A family-history note identifying Mildred Adams as the daughter of Harvey Adams Sr. and Mary Jane Johnson, and the mother of Tammy, Punchy, and Patricia Rollins. These are family accounts, not documented records.",
+    },
+  ],
+};
+
+export const christineAdamsProfile: PersonProfile = {
+  id: "christine-adams",
+  name: "Christine Adams",
+  role: "Daughter of Harvey Adams Sr. and Mary Jane Johnson",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Christine Adams, since no photograph of her is known to exist.",
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Harvey Adams Sr. and Mary Jane Johnson",
+    },
+    { label: "Evidence status", value: "Family history" },
+  ],
+  story:
+    "Christine Adams was the daughter of Harvey Adams Sr. and Mary Jane Johnson. No additional details about her life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "",
+    spouseRole: "",
+    childrenText: "",
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail:
+        "Christine Adams is born, the daughter of Harvey Adams Sr. and Mary Jane Johnson. The date is not recorded in the family records gathered so far.",
+    },
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail:
+        "A family-history note identifying Christine Adams as the daughter of Harvey Adams Sr. and Mary Jane Johnson. No additional details about her are recorded. This is a family account, not a documented record.",
+    },
+  ],
+};
+
+export const tammyProfile: PersonProfile = {
+  id: "tammy",
+  name: "Tammy",
+  role: "Daughter of Mildred Adams",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Tammy, since no photograph of her is known to exist.",
+  },
+  facts: [
+    { label: "Mother", value: "Mildred Adams" },
+    { label: "Evidence status", value: "Family history" },
+  ],
+  story:
+    "Tammy was the daughter of Mildred Adams. No additional details about her life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "",
+    spouseRole: "",
+    childrenText: "",
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail:
+        "Tammy is born, the daughter of Mildred Adams. The date is not recorded in the family records gathered so far.",
+    },
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail:
+        "A family-history note identifying Tammy as the daughter of Mildred Adams. No additional details about her are recorded. This is a family account, not a documented record.",
+    },
+  ],
+};
+
+export const punchyProfile: PersonProfile = {
+  id: "punchy",
+  name: "Punchy",
+  role: "Daughter of Mildred Adams",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Punchy, since no photograph of her is known to exist.",
+  },
+  facts: [
+    { label: "Mother", value: "Mildred Adams" },
+    { label: "Evidence status", value: "Family history" },
+  ],
+  story:
+    "Punchy was the daughter of Mildred Adams. No additional details about her life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "",
+    spouseRole: "",
+    childrenText: "",
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail:
+        "Punchy is born, the daughter of Mildred Adams. The date is not recorded in the family records gathered so far.",
+    },
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail:
+        "A family-history note identifying Punchy as the daughter of Mildred Adams. No additional details about her are recorded. This is a family account, not a documented record.",
+    },
+  ],
+};
+
+export const patriciaRollinsProfile: PersonProfile = {
+  id: "patricia-rollins",
+  name: "Patricia Rollins",
+  role: "Daughter of Mildred Adams",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Patricia Rollins, since no photograph of her is known to exist.",
+  },
+  facts: [
+    { label: "Mother", value: "Mildred Adams" },
+    { label: "Evidence status", value: "Family history" },
+  ],
+  story:
+    "Patricia Rollins was the daughter of Mildred Adams. No additional details about her life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "",
+    spouseRole: "",
+    childrenText: "",
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail:
+        "Patricia Rollins is born, the daughter of Mildred Adams. The date is not recorded in the family records gathered so far.",
+    },
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail:
+        "A family-history note identifying Patricia Rollins as the daughter of Mildred Adams. No additional details about her are recorded. This is a family account, not a documented record.",
+    },
+  ],
+};
+
 export const profiles: Record<string, PersonProfile> = {
   julia: juliaProfile,
   isaiah: isaiahProfile,
@@ -1934,6 +2185,12 @@ export const profiles: Record<string, PersonProfile> = {
   "gertrude-adams-hill": gertrudeAdamsHillProfile,
   "harvey-adams-sr": harveyAdamsSrProfile,
   "mary-louise-sims": maryLouiseSimsProfile,
+  "mary-jane-johnson": maryJaneJohnsonProfile,
+  "mildred-adams": mildredAdamsProfile,
+  "christine-adams": christineAdamsProfile,
+  tammy: tammyProfile,
+  punchy: punchyProfile,
+  "patricia-rollins": patriciaRollinsProfile,
   "john-adams": johnAdamsProfile,
   "louis-adams-sr": louisAdamsSrProfile,
   "albert-adams": albertAdamsProfile,
@@ -2302,6 +2559,12 @@ export function PersonProfilePage({
     person.id === "hudson" ||
     person.id === "gertrude-adams-hill" ||
     person.id === "mary-louise-sims" ||
+    person.id === "mary-jane-johnson" ||
+    person.id === "mildred-adams" ||
+    person.id === "christine-adams" ||
+    person.id === "tammy" ||
+    person.id === "punchy" ||
+    person.id === "patricia-rollins" ||
     person.id === "fannie-adams" ||
     person.id === "christine-adams-tucker" ||
     person.id === "ella-mae-adams" ||

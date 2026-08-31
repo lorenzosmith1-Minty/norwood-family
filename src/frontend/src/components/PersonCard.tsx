@@ -6,6 +6,7 @@ export interface Person {
   role: string;
   photo?: { src: string; alt: string };
   relationToYou?: string;
+  years?: string;
 }
 
 interface PersonCardProps {
@@ -59,17 +60,10 @@ export function PersonCard({
           delay: 0.1 + index * 0.06,
           ease: [0.4, 0, 0.2, 1],
         }}
-        className={`group flex w-full flex-col items-center rounded-xl border px-3 py-3 text-center shadow-subtle transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
-          selected
-            ? "border-accent bg-accent/15 shadow-elevated"
-            : "border-border bg-card hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-elevated"
-        }`}
+        className={`ft-card ${selected ? "ft-card-selected" : ""}`}
       >
         {photoSrc ? (
-          <span
-            className="mb-2 block h-12 w-12 overflow-hidden rounded-full border-2 border-border bg-card shadow-subtle transition-colors duration-300 group-hover:border-accent/60"
-            aria-hidden="true"
-          >
+          <span className="ft-card-portrait" aria-hidden="true">
             <img
               src={photoSrc}
               alt={photoAlt}
@@ -78,37 +72,19 @@ export function PersonCard({
             />
           </span>
         ) : (
-          <span
-            className={`mb-2 flex h-12 w-12 items-center justify-center rounded-full font-display text-base font-semibold transition-colors duration-300 ${
-              selected
-                ? "bg-accent text-accent-foreground"
-                : "bg-secondary text-accent-foreground group-hover:bg-accent group-hover:text-accent-foreground"
-            }`}
-            aria-hidden="true"
-          >
+          <span className="ft-card-portrait" aria-hidden="true">
             {getInitials(person.name)}
           </span>
         )}
-        {isMe && (
-          <span
-            data-ocid={`tree.person.${index + 1}.me_badge`}
-            className="mb-1 rounded-full border border-accent/40 bg-accent px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-accent-foreground"
-          >
-            Me
-          </span>
-        )}
-        <span className="font-display text-sm font-semibold leading-snug text-foreground">
-          {person.name}
-        </span>
-        <span className="mt-0.5 text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
-          {person.role}
-        </span>
+        <span className="ft-card-name">{person.name}</span>
+        {person.years && <span className="ft-card-years">{person.years}</span>}
         {selected && (
-          <span className="mt-2 w-full rounded-lg border border-accent/30 bg-accent/10 px-2 py-1 text-[11px] leading-tight text-foreground">
-            <span className="font-semibold text-accent-foreground/80">
-              Relation to You:
-            </span>{" "}
-            {person.relationToYou ?? "Not set"}
+          <span className="ft-card-detail">
+            <span className="ft-role-chip">{person.role}</span>
+            <span className="ft-relation-text">
+              Relation to You: {person.relationToYou ?? "Not set"}
+            </span>
+            {isMe && <span className="ft-me-badge">This is me</span>}
           </span>
         )}
       </motion.button>

@@ -48,6 +48,11 @@ async function openFamilyTree(user: ReturnType<typeof userEvent.setup>) {
   await user.click(screen.getByRole("button", { name: "Explore the Family" }));
 }
 
+// The Clayton branch defaults to collapsed; expand it so its cards render.
+async function expandClaytonBranch(user: ReturnType<typeof userEvent.setup>) {
+  await user.click(screen.getByRole("button", { name: /^Clayton \d+$/ }));
+}
+
 async function openBranchFromHome(user: ReturnType<typeof userEvent.setup>) {
   await user.click(
     screen.getByRole("button", { name: "Heritage Branch View" }),
@@ -83,6 +88,7 @@ describe("Family Tree connector cover", () => {
     const user = userEvent.setup();
     const { container } = renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     const claytonBranch = screen.getByRole("region", {
       name: "Clayton's branch",
@@ -109,6 +115,7 @@ describe("Family Tree connector cover", () => {
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     const claytonBranch = screen.getByRole("region", {
       name: "Clayton's branch",
@@ -149,6 +156,7 @@ describe("Family Tree connector cover", () => {
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     const childrenSection = screen.getByRole("region", { name: "Children" });
     const claytonBranch = screen.getByRole("region", {
@@ -213,6 +221,7 @@ describe("Family Tree connector cover", () => {
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     const claytonBranch = screen.getByRole("region", {
       name: "Clayton's branch",

@@ -230,7 +230,7 @@ describe("Photo workflow", () => {
   it("removing all photos restores the initials placeholder and updates completeness", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openProfile(user, /Clayton Child/);
+    await openProfile(user, /^Clayton \d{4}/);
 
     // Clayton's default portrait is a placeholder, so the Photo field is not
     // complete until a profile photo is uploaded.

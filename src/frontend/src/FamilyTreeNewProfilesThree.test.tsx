@@ -52,6 +52,11 @@ function claytonBranch() {
   return screen.getByRole("region", { name: "Clayton's branch" });
 }
 
+// The Clayton branch defaults to collapsed; expand it so its cards render.
+async function expandClaytonBranch(user: ReturnType<typeof userEvent.setup>) {
+  await user.click(screen.getByRole("button", { name: /^Clayton \d+$/ }));
+}
+
 // Cover for the three new Erma T. Williams child profiles (Ardeanus, Willie B.,
 // James). Each opens from its Family Tree card and its Heritage Branch card,
 // renders the full Person Profile template with recorded-only facts, an
@@ -61,6 +66,7 @@ describe("Family Tree cover: three new Erma T. Williams child profiles", () => {
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     await user.click(
       within(claytonBranch()).getByRole("button", { name: /Ardeanus/ }),
@@ -80,6 +86,7 @@ describe("Family Tree cover: three new Erma T. Williams child profiles", () => {
     const user = userEvent.setup();
     const { container } = renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     await user.click(
       within(claytonBranch()).getByRole("button", { name: /Ardeanus/ }),
@@ -111,6 +118,7 @@ describe("Family Tree cover: three new Erma T. Williams child profiles", () => {
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     await user.click(
       within(claytonBranch()).getByRole("button", { name: /Willie B\./ }),
@@ -130,6 +138,7 @@ describe("Family Tree cover: three new Erma T. Williams child profiles", () => {
     const user = userEvent.setup();
     const { container } = renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     await user.click(
       within(claytonBranch()).getByRole("button", { name: /Willie B\./ }),
@@ -167,6 +176,7 @@ describe("Family Tree cover: three new Erma T. Williams child profiles", () => {
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     await user.click(
       within(claytonBranch()).getByRole("button", { name: /James/ }),
@@ -186,6 +196,7 @@ describe("Family Tree cover: three new Erma T. Williams child profiles", () => {
     const user = userEvent.setup();
     const { container } = renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     await user.click(
       within(claytonBranch()).getByRole("button", { name: /James/ }),
@@ -217,6 +228,7 @@ describe("Family Tree cover: three new Erma T. Williams child profiles", () => {
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     for (const cardName of [/Ardeanus/, /Willie B\./, /James/]) {
       await user.click(
@@ -241,6 +253,7 @@ describe("Family Tree cover: three new Erma T. Williams child profiles", () => {
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     // Ardeanus: only his recorded birth date appears.
     await user.click(
@@ -287,6 +300,7 @@ describe("Family Tree cover: three new Erma T. Williams child profiles", () => {
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     for (const cardName of [/Ardeanus/, /Willie B\./, /James/]) {
       await user.click(

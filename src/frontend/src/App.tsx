@@ -26,6 +26,10 @@ export default function App() {
   const [selectedArchiveItemId, setSelectedArchiveItemId] = useState<
     bigint | null
   >(null);
+  // Last tree person the user explored (opened a profile for). Passed to the
+  // Family Tree so the branch containing that person starts expanded when the
+  // user returns from the profile view. In-session navigation state only.
+  const [exploredPersonId, setExploredPersonId] = useState<string | null>(null);
   const { data: isAdmin = false } = useIsAdmin();
   // Tracks only explicitly-set (uploaded) profile photos. Default portraits are
   // resolved by each consumer via `profilePhoto ?? person.portrait.src`, so this
@@ -74,10 +78,12 @@ export default function App() {
         <FamilyTreePage
           onBack={() => setView("home")}
           onOpenProfile={(id) => {
+            setExploredPersonId(id);
             setProfileId(id);
             setView("profile");
           }}
           profilePhotos={profilePhotos}
+          initialExpandedPersonId={exploredPersonId ?? undefined}
         />
       ) : view === "heritage-branch" ? (
         <HeritageBranchPage

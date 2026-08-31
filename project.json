@@ -1,18 +1,18 @@
 {
-  "overview": "A warm, historical family tree app for the Norwood family with a heritage branch view, family archive, and photo galleries.",
+  "overview": "A family history app for the Norwood family with an interactive family tree, detailed person profiles, a heritage branch view, photo galleries, and a community archive.",
   "features": [
-    "Browse the family tree with clear relationship connectors",
-    "Explore heritage branches with an interactive anchor view",
-    "View detailed person profiles and family relationships",
-    "Contribute to and browse the family archive",
-    "Manage per-person photo galleries"
+    "Explore the classic family tree with collapsible branches",
+    "View detailed profiles for each family member",
+    "Browse the heritage branch view",
+    "Share photos and archive items",
+    "Search and reference family relationships"
   ],
   "category": "family-tree",
   "tags": [
     "family",
     "genealogy",
     "heritage",
-    "archive"
+    "history"
   ],
-  "last_updated": "2026-08-31T15:27:08.001Z"
+  "last_updated": "2026-08-31T18:47:12.085Z"
 }

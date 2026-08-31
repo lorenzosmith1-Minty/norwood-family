@@ -52,6 +52,11 @@ function claytonBranch() {
   return screen.getByRole("region", { name: "Clayton's branch" });
 }
 
+// The Clayton branch defaults to collapsed; expand it so its cards render.
+async function expandClaytonBranch(user: ReturnType<typeof userEvent.setup>) {
+  await user.click(screen.getByRole("button", { name: /^Clayton \d+$/ }));
+}
+
 function completenessPercent(): string {
   const container = document.querySelector(
     '[data-ocid="profile.completeness"]',
@@ -80,6 +85,7 @@ describe("Versie Smith characterization: Lula Mae's existing behavior stays inta
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     // Lula Mae remains a child in Clayton's branch (under Erma T. Williams),
     // alongside the other Erma children.
@@ -108,6 +114,7 @@ describe("Versie Smith characterization: Lula Mae's existing behavior stays inta
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     await user.click(
       within(claytonBranch()).getByRole("button", { name: /Lula Mae/ }),
@@ -123,6 +130,7 @@ describe("Versie Smith characterization: Lula Mae's existing behavior stays inta
     const user = userEvent.setup();
     const { container } = renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     await user.click(
       within(claytonBranch()).getByRole("button", { name: /Lula Mae/ }),
@@ -154,6 +162,7 @@ describe("Versie Smith characterization: Lula Mae's existing behavior stays inta
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     await user.click(
       within(claytonBranch()).getByRole("button", { name: /Lula Mae/ }),
@@ -176,6 +185,7 @@ describe("Versie Smith characterization: Lula Mae's existing behavior stays inta
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     for (const { card, heading } of [
       { card: /Freddie/, heading: "Freddie Norwood" },

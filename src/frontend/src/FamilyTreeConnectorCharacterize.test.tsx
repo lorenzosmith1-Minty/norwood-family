@@ -48,6 +48,21 @@ async function openFamilyTree(user: ReturnType<typeof userEvent.setup>) {
   await user.click(screen.getByRole("button", { name: "Explore the Family" }));
 }
 
+// The Clayton branch defaults to collapsed; expand it so its cards render.
+async function expandClaytonBranch(user: ReturnType<typeof userEvent.setup>) {
+  await user.click(screen.getByRole("button", { name: /^Clayton \d+$/ }));
+}
+
+// The Lula Mae & Versie branch defaults to collapsed; expand it so the nested
+// "Versie's maternal line" region renders.
+async function expandLulaVersieBranch(
+  user: ReturnType<typeof userEvent.setup>,
+) {
+  await user.click(
+    screen.getByRole("button", { name: /^Lula Mae & Versie \d+$/ }),
+  );
+}
+
 // Characterization baseline for the family-tree connector redesign. The request
 // will intentionally change the connector DOM structure and CSS classes in
 // FamilyTreePage.tsx (new junction points, direction chevrons, selected-path
@@ -61,6 +76,7 @@ describe("Family Tree connector characterization: semantic structure stays intac
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     const branch = screen.getByRole("region", { name: "Clayton's branch" });
     const cardTexts = within(branch)
@@ -109,6 +125,7 @@ describe("Family Tree connector characterization: semantic structure stays intac
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     // The person cards carry data-ocid "tree.person.<n>"; the "This is Me"
     // action button carries a ".mark_me" suffix and is excluded.
@@ -138,6 +155,8 @@ describe("Family Tree connector characterization: semantic structure stays intac
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
+    await expandLulaVersieBranch(user);
 
     const sections = [
       screen.getByRole("region", { name: "Starting couple" }),

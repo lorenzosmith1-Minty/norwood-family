@@ -82,6 +82,7 @@ export default {
         subtle: "0 2px 8px -2px rgba(93, 64, 55, 0.12), 0 1px 3px -1px rgba(93, 64, 55, 0.08)",
         elevated:
           "0 12px 32px -8px rgba(93, 64, 55, 0.18), 0 4px 12px -4px rgba(93, 64, 55, 0.12)",
+        fold: "0 1px 2px -1px rgba(93, 64, 55, 0.08)",
       },
       keyframes: {
         "accordion-down": {
@@ -112,6 +113,14 @@ export default {
           "0%, 100%": { boxShadow: "0 0 0 3px rgba(176, 133, 92, 0.35)" },
           "50%": { boxShadow: "0 0 0 6px rgba(176, 133, 92, 0.12)" },
         },
+        "detail-in": {
+          from: { opacity: "0", transform: "translateY(4px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
+        "fold-in": {
+          from: { opacity: "0", transform: "scale(0.98) translateY(4px)" },
+          to: { opacity: "1", transform: "scale(1) translateY(0)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -121,6 +130,8 @@ export default {
         "soft-pulse": "soft-pulse 3s ease-in-out infinite",
         "branch-in": "branch-in 0.4s cubic-bezier(0.4, 0, 0.2, 1) both",
         "anchor-glow": "anchor-glow 3s ease-in-out infinite",
+        "detail-in": "detail-in 0.25s cubic-bezier(0.4, 0, 0.2, 1) both",
+        "fold-in": "fold-in 0.3s cubic-bezier(0.4, 0, 0.2, 1) both",
       },
     },
   },

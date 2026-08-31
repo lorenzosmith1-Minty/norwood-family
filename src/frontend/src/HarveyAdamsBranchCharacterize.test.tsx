@@ -52,6 +52,16 @@ function maternalLine() {
   return screen.getByRole("region", { name: "Versie's maternal line" });
 }
 
+// The Lula Mae & Versie branch defaults to collapsed; expand it so the maternal
+// line (and its cards) render.
+async function expandLulaVersieBranch(
+  user: ReturnType<typeof userEvent.setup>,
+) {
+  await user.click(
+    screen.getByRole("button", { name: /^Lula Mae & Versie \d+$/ }),
+  );
+}
+
 // Characterization baseline for the Harvey Adams Sr. first-marriage branch
 // expansion. The request will add Mary Louise Sims as a first-wife profile and
 // 14 recorded children under that marriage, and wire them into the Family Tree
@@ -75,20 +85,21 @@ describe("Harvey Adams Sr. branch characterization: stable maternal-line behavio
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandLulaVersieBranch(user);
 
     const line = maternalLine();
     expect(
       within(line).getByRole("button", { name: /Harvey Adams Sr\./ }),
     ).toBeInTheDocument();
     // Gertrude appears twice in the maternal line: once as a first-marriage
-    // child card and once as Versie's Mother card.
+    // child card and once as Versie's Mother card. The Mother card carries her
+    // years ("1913–"), so it is disambiguated by years; the child card has no
+    // years.
     expect(
-      within(line).getByRole("button", { name: /Gertrude Adams-Hill Mother/ }),
+      within(line).getByRole("button", { name: /Gertrude Adams-Hill 1913/ }),
     ).toBeInTheDocument();
     expect(
-      within(line).getByRole("button", {
-        name: /Gertrude Adams-Hill Daughter/,
-      }),
+      within(line).getByRole("button", { name: /^Gertrude Adams-Hill$/ }),
     ).toBeInTheDocument();
   });
 
@@ -96,6 +107,7 @@ describe("Harvey Adams Sr. branch characterization: stable maternal-line behavio
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandLulaVersieBranch(user);
 
     await user.click(
       within(maternalLine()).getByRole("button", { name: /Harvey Adams Sr\./ }),
@@ -126,6 +138,7 @@ describe("Harvey Adams Sr. branch characterization: stable maternal-line behavio
     const user = userEvent.setup();
     const { container } = renderApp();
     await openFamilyTree(user);
+    await expandLulaVersieBranch(user);
 
     await user.click(
       within(maternalLine()).getByRole("button", { name: /Harvey Adams Sr\./ }),
@@ -151,6 +164,7 @@ describe("Harvey Adams Sr. branch characterization: stable maternal-line behavio
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandLulaVersieBranch(user);
 
     await user.click(
       within(maternalLine()).getByRole("button", { name: /Harvey Adams Sr\./ }),
@@ -211,10 +225,11 @@ describe("Harvey Adams Sr. branch characterization: stable maternal-line behavio
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandLulaVersieBranch(user);
 
     await user.click(
       within(maternalLine()).getByRole("button", {
-        name: /Gertrude Adams-Hill Mother/,
+        name: /Gertrude Adams-Hill 1913/,
       }),
     );
 

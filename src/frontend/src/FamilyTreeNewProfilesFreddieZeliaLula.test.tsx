@@ -52,6 +52,11 @@ function claytonBranch() {
   return screen.getByRole("region", { name: "Clayton's branch" });
 }
 
+// The Clayton branch defaults to collapsed; expand it so its cards render.
+async function expandClaytonBranch(user: ReturnType<typeof userEvent.setup>) {
+  await user.click(screen.getByRole("button", { name: /^Clayton \d+$/ }));
+}
+
 function completenessPercent(): string {
   const container = document.querySelector(
     '[data-ocid="profile.completeness"]',
@@ -71,6 +76,7 @@ describe("Family Tree cover: Freddie, Zelia Mae, and Lula Mae profiles", () => {
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     await user.click(
       within(claytonBranch()).getByRole("button", { name: /Freddie/ }),
@@ -99,6 +105,7 @@ describe("Family Tree cover: Freddie, Zelia Mae, and Lula Mae profiles", () => {
     const user = userEvent.setup();
     const { container } = renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     await user.click(
       within(claytonBranch()).getByRole("button", { name: /Freddie/ }),
@@ -135,6 +142,7 @@ describe("Family Tree cover: Freddie, Zelia Mae, and Lula Mae profiles", () => {
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     await user.click(
       within(claytonBranch()).getByRole("button", { name: /Zelia Mae/ }),
@@ -163,6 +171,7 @@ describe("Family Tree cover: Freddie, Zelia Mae, and Lula Mae profiles", () => {
     const user = userEvent.setup();
     const { container } = renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     await user.click(
       within(claytonBranch()).getByRole("button", { name: /Zelia Mae/ }),
@@ -197,6 +206,7 @@ describe("Family Tree cover: Freddie, Zelia Mae, and Lula Mae profiles", () => {
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     await user.click(
       within(claytonBranch()).getByRole("button", { name: /Zelia Mae/ }),
@@ -223,6 +233,7 @@ describe("Family Tree cover: Freddie, Zelia Mae, and Lula Mae profiles", () => {
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     await user.click(
       within(claytonBranch()).getByRole("button", { name: /Lula Mae/ }),
@@ -251,6 +262,7 @@ describe("Family Tree cover: Freddie, Zelia Mae, and Lula Mae profiles", () => {
     const user = userEvent.setup();
     const { container } = renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     await user.click(
       within(claytonBranch()).getByRole("button", { name: /Lula Mae/ }),
@@ -283,6 +295,7 @@ describe("Family Tree cover: Freddie, Zelia Mae, and Lula Mae profiles", () => {
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     for (const cardName of [/Freddie/, /Zelia Mae/, /Lula Mae/]) {
       await user.click(
@@ -307,6 +320,7 @@ describe("Family Tree cover: Freddie, Zelia Mae, and Lula Mae profiles", () => {
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     for (const cardName of [/Freddie/, /Zelia Mae/, /Lula Mae/]) {
       await user.click(
@@ -331,6 +345,7 @@ describe("Family Tree cover: Freddie, Zelia Mae, and Lula Mae profiles", () => {
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     // Freddie: only his recorded birth, death, and burial events appear.
     await user.click(
@@ -380,6 +395,7 @@ describe("Family Tree cover: Freddie, Zelia Mae, and Lula Mae profiles", () => {
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
+    await expandClaytonBranch(user);
 
     // Each of the three profiles has birth/death facts, family relationships, a
     // story, a timeline, and a source, but no photo: 6 of 7 fields done.

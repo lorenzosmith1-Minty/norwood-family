@@ -43803,6 +43803,1041 @@ const robertDavisProfile = {
     }
   ]
 };
+const ardeanusProfile = {
+  id: "ardeanus",
+  name: "Ardeanus Norwood",
+  role: "Son",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Ardeanus Norwood, since no photograph of him is known to exist."
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Clayton Norwood and Erma T. Williams"
+    },
+    { label: "Born", value: "Dec. 3, 1929" },
+    { label: "Died", value: "Not recorded" },
+    { label: "Location", value: "California" },
+    { label: "Evidence status", value: "Limited" }
+  ],
+  story: "Ardeanus Norwood was the son of Clayton Norwood and Erma T. Williams, born Dec. 3, 1929. He is associated with California. No death date is recorded in the family records gathered so far.",
+  family: {
+    spouseName: "",
+    spouseRole: "",
+    childrenText: ""
+  },
+  timeline: [
+    {
+      date: "Dec. 3, 1929",
+      title: "Born",
+      detail: "Ardeanus Norwood is born, the son of Clayton Norwood and Erma T. Williams."
+    }
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail: "A family-history note identifying Ardeanus as a son of Clayton Norwood and Erma T. Williams, born Dec. 3, 1929, and associated with California. No death date is recorded. These are family accounts, not documented records."
+    }
+  ]
+};
+const willieBProfile = {
+  id: "willie-b",
+  name: "Willie B. Norwood",
+  role: "Son",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Willie B. Norwood, since no photograph of him is known to exist."
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Clayton Norwood and Erma T. Williams"
+    },
+    { label: "Born", value: "July 12, 1932" },
+    { label: "Died", value: "July 6, 1995" },
+    { label: "Location", value: "Diamond Bar, California" },
+    { label: "Military service", value: "U.S. Army; Korea" },
+    { label: "Evidence status", value: "Limited" }
+  ],
+  story: "Willie B. Norwood was the son of Clayton Norwood and Erma T. Williams. His recorded dates are July 12, 1932 – July 6, 1995, and he is associated with Diamond Bar, California. He served in the U.S. Army in Korea. No additional details about his life are currently recorded in the family records gathered so far.",
+  family: {
+    spouseName: "",
+    spouseRole: "",
+    childrenText: ""
+  },
+  timeline: [
+    {
+      date: "July 12, 1932",
+      title: "Born",
+      detail: "Willie B. Norwood is born, the son of Clayton Norwood and Erma T. Williams."
+    },
+    {
+      date: "July 6, 1995",
+      title: "Died",
+      detail: "Willie B. Norwood dies."
+    }
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail: "A family-history note identifying Willie B. Norwood as a son of Clayton Norwood and Erma T. Williams, with recorded dates of July 12, 1932 – July 6, 1995, an association with Diamond Bar, California, and service in the U.S. Army in Korea. These are family accounts, not documented records."
+    }
+  ]
+};
+const jamesProfile = {
+  id: "james",
+  name: "James Norwood",
+  role: "Son",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for James Norwood, since no photograph of him is known to exist."
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Clayton Norwood and Erma T. Williams"
+    },
+    { label: "Born", value: "Not recorded" },
+    { label: "Died", value: "Not recorded" },
+    { label: "Location", value: "Chicago" },
+    { label: "Military service", value: "Not recorded" },
+    { label: "Evidence status", value: "Limited" }
+  ],
+  story: "James Norwood was the son of Clayton Norwood and Erma T. Williams. He is associated with Chicago. No additional details about his life are currently recorded in the family records gathered so far.",
+  family: {
+    spouseName: "",
+    spouseRole: "",
+    childrenText: ""
+  },
+  timeline: [],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail: "A family-history note identifying James as a son of Clayton Norwood and Erma T. Williams, associated with Chicago. No additional details about him are currently recorded. This is a family account, not a documented record."
+    }
+  ]
+};
+const freddieProfile = {
+  id: "freddie",
+  name: "Freddie Norwood",
+  role: "Son",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Freddie Norwood, since no photograph of him is known to exist."
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Clayton Norwood and Erma T. Williams"
+    },
+    { label: "Born", value: "1938" },
+    { label: "Died", value: "1985" },
+    { label: "Location", value: "Mississippi" },
+    { label: "Buried", value: "Ebenezer Cemetery" },
+    { label: "Evidence status", value: "Limited" }
+  ],
+  story: "Freddie Norwood was the son of Clayton Norwood and Erma T. Williams. His recorded dates are 1938 – 1985, he is associated with Mississippi, and he is buried at Ebenezer Cemetery. He had a daughter, Felecia Anita Beasly. No additional details about his life are currently recorded in the family records gathered so far.",
+  family: {
+    spouseName: "",
+    spouseRole: "",
+    childrenText: "Freddie Norwood had a daughter, Felecia Anita Beasly.",
+    spouses: [
+      {
+        name: "",
+        role: "",
+        children: ["Felecia Anita Beasly"]
+      }
+    ]
+  },
+  timeline: [
+    {
+      date: "1938",
+      title: "Born",
+      detail: "Freddie Norwood is born, the son of Clayton Norwood and Erma T. Williams."
+    },
+    {
+      date: "1985",
+      title: "Died",
+      detail: "Freddie Norwood dies."
+    },
+    {
+      date: "1985",
+      title: "Buried at Ebenezer Cemetery",
+      detail: "Freddie Norwood is buried at Ebenezer Cemetery."
+    }
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail: "A family-history note identifying Freddie as a son of Clayton Norwood and Erma T. Williams, with recorded dates of 1938 – 1985, an association with Mississippi, burial at Ebenezer Cemetery, and a daughter, Felecia Anita Beasly. These are family accounts, not documented records."
+    }
+  ]
+};
+const zeliaMaeProfile = {
+  id: "zelia-mae",
+  name: "Zelia Mae Norwood",
+  role: "Daughter",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Zelia Mae Norwood, since no photograph of her is known to exist."
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Clayton Norwood and Erma T. Williams"
+    },
+    { label: "Born", value: "Not recorded" },
+    { label: "Died", value: "Not recorded" },
+    { label: "Location", value: "Mississippi" },
+    { label: "Married", value: "Twice" },
+    { label: "Children", value: "None" },
+    { label: "Evidence status", value: "Family history" }
+  ],
+  story: "Zelia Mae Norwood was the daughter of Clayton Norwood and Erma T. Williams, associated with Mississippi. She married twice and had no children. Her first husband was Prent Sims (June 11, 1914 – April 11, 1970) — those dates are his lifespan, not a marriage date — and her second husband was Carter. No birth or death dates for Zelia Mae are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "Prent Sims",
+    spouseRole: "First Husband",
+    childrenText: "Zelia Mae married twice and had no children. Her first husband was Prent Sims (June 11, 1914 – April 11, 1970) — those dates are his lifespan, not a marriage date — and her second husband was Carter.",
+    spouses: [
+      {
+        name: "Prent Sims",
+        role: "First Husband",
+        children: []
+      },
+      {
+        name: "Carter",
+        role: "Second Husband",
+        children: []
+      }
+    ]
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Marries Prent Sims",
+      detail: "Zelia Mae marries her first husband, Prent Sims. The date is not recorded. Prent Sims' dates, June 11, 1914 – April 11, 1970, are his lifespan, not a marriage date."
+    },
+    {
+      date: "Unknown",
+      title: "Marries Carter",
+      detail: "Zelia Mae marries her second husband, Carter. The date is not recorded."
+    },
+    {
+      date: "Unknown",
+      title: "No children",
+      detail: "Zelia Mae had no children. This is a family account, not a documented record."
+    }
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail: "A family-history note identifying Zelia Mae as a daughter of Clayton Norwood and Erma T. Williams, associated with Mississippi. It records that she married twice and had no children, with her first husband Prent Sims (June 11, 1914 – April 11, 1970) and her second husband Carter. These are family accounts, not documented records."
+    }
+  ]
+};
+const lulaMaeProfile = {
+  id: "lula-mae",
+  name: "Lula Mae Norwood",
+  role: "Daughter",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Lula Mae Norwood, since no photograph of her is known to exist."
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Clayton Norwood and Erma T. Williams"
+    },
+    { label: "Born", value: "Not recorded" },
+    { label: "Died", value: "Not recorded" },
+    { label: "Location", value: "New York / New Jersey" },
+    { label: "Husband", value: "Versie Smith" },
+    { label: "Evidence status", value: "Family history" }
+  ],
+  story: "Lula Mae Norwood was the daughter of Clayton Norwood and Erma T. Williams, associated with New York / New Jersey. She married Versie Smith, and both were from Mississippi. No birth or death dates for Lula Mae are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "Versie Smith",
+    spouseRole: "Husband",
+    childrenText: "Lula Mae married Versie Smith. Both were from Mississippi.",
+    spouses: [
+      {
+        name: "Versie Smith",
+        role: "Husband",
+        children: []
+      }
+    ]
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Marries Versie Smith",
+      detail: "Lula Mae marries Versie Smith. The date is not recorded. Both were from Mississippi."
+    }
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail: "A family-history note identifying Lula Mae as a daughter of Clayton Norwood and Erma T. Williams, associated with New York / New Jersey. It records that she married Versie Smith, and that both were from Mississippi. These are family accounts, not documented records."
+    }
+  ]
+};
+const versieSmithProfile = {
+  id: "versie-smith",
+  name: "Versie Smith",
+  role: "Husband of Lula Mae Norwood",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Versie Smith, since no photograph of him is known to exist."
+  },
+  facts: [
+    { label: "Wife", value: "Lula Mae Norwood" },
+    { label: "Mother", value: "Gertrude Adams-Hill" },
+    { label: "Born", value: "Out of wedlock" },
+    {
+      label: "Father",
+      value: "Mr. Beard? (uncertain — not confirmed)"
+    },
+    {
+      label: "Biological father",
+      value: "Did not know him"
+    },
+    { label: "Raised", value: "As an Adams in Mississippi" },
+    {
+      label: "Later moved",
+      value: "To New York after Army service"
+    },
+    { label: "Died", value: "From lung cancer" },
+    { label: "Evidence status", value: "Family history" }
+  ],
+  story: "Versie Smith was the husband of Lula Mae Norwood and the son of Gertrude Adams-Hill. He was born out of wedlock, and his father is recorded only as “Mr. Beard?” — the uncertainty is preserved because his identity is not confirmed. Versie did not know his biological father and was raised as an Adams in Mississippi. He later moved to New York after his Army service, and he died from lung cancer. These details come from family research notes and are family-history accounts, not confirmed documented records.",
+  family: {
+    spouseName: "Lula Mae Norwood",
+    spouseRole: "Wife",
+    childrenText: "Versie Smith married Lula Mae Norwood. Both were from Mississippi. His mother was Gertrude Adams-Hill.",
+    spouses: [
+      {
+        name: "Lula Mae Norwood",
+        role: "Wife",
+        children: []
+      }
+    ]
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Marries Lula Mae Norwood",
+      detail: "Versie Smith marries Lula Mae Norwood. The date is not recorded. Both were from Mississippi."
+    },
+    {
+      date: "Unknown",
+      title: "Moves to New York",
+      detail: "Versie moves to New York after his Army service. The date is not recorded. This is a family-history account, not a documented record."
+    }
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail: "A family-history note identifying Versie Smith as the husband of Lula Mae Norwood and the son of Gertrude Adams-Hill. It records that he was born out of wedlock, that his father is recorded only as “Mr. Beard?” (uncertain), that he did not know his biological father, that he was raised as an Adams in Mississippi, that he moved to New York after Army service, and that he died from lung cancer. These are family accounts, not documented records."
+    }
+  ]
+};
+const gertrudeAdamsHillProfile = {
+  id: "gertrude-adams-hill",
+  name: "Gertrude Adams-Hill",
+  role: "Daughter of Harvey Adams Sr.",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Gertrude Adams-Hill, since no photograph of her is known to exist."
+  },
+  facts: [
+    { label: "Born", value: "Oct. 19, 1913" },
+    { label: "Location", value: "Mississippi" },
+    { label: "Father", value: "Harvey Adams Sr." },
+    { label: "Son", value: "Versie Smith" },
+    { label: "Spouse", value: "Hill (given name not recorded)" },
+    { label: "Evidence status", value: "Family history" }
+  ],
+  story: "Gertrude Adams-Hill was born Oct. 19, 1913 in Mississippi. She was the daughter of Harvey Adams Sr. and the mother of Versie Smith. She married a man named Hill, though his given name is not recorded in the family records gathered so far. The children recorded in the family notes — David Earl Johnson, Gertrude Louise, and Versie Smith — are family-history notes, not confirmed documented records.",
+  family: {
+    spouseName: "Hill",
+    spouseRole: "Spouse",
+    childrenText: "Gertrude Adams-Hill married a man named Hill, though his given name is not recorded. The children recorded in the family notes are David Earl Johnson, Gertrude Louise, and Versie Smith. These are family-history notes, not documented records.",
+    spouses: [
+      {
+        name: "Hill",
+        role: "Spouse",
+        children: ["David Earl Johnson", "Gertrude Louise", "Versie Smith"]
+      }
+    ]
+  },
+  timeline: [
+    {
+      date: "Oct. 19, 1913",
+      title: "Born",
+      detail: "Gertrude Adams-Hill is born in Mississippi. This is a documented record of her birth."
+    },
+    {
+      date: "Unknown",
+      title: "Marries Hill",
+      detail: "Gertrude Adams-Hill marries a man named Hill. The date is not recorded, and his given name is not recorded in the family records gathered so far."
+    },
+    {
+      date: "Unknown",
+      title: "Mother of Versie Smith",
+      detail: "Gertrude Adams-Hill is the mother of Versie Smith. This is a family-history account, not a documented record."
+    }
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail: "A family-history note identifying Gertrude Adams-Hill as the daughter of Harvey Adams Sr. and the mother of Versie Smith. It records her birth as Oct. 19, 1913 in Mississippi, her marriage to a man named Hill (given name not recorded), and the children recorded in the family notes: David Earl Johnson, Gertrude Louise, and Versie Smith. These are family accounts, not documented records."
+    }
+  ]
+};
+const harveyAdamsSrProfile = {
+  id: "harvey-adams-sr",
+  name: "Harvey Adams Sr.",
+  role: "Father of Gertrude Adams-Hill",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Harvey Adams Sr., since no photograph of him is known to exist."
+  },
+  facts: [
+    { label: "Occupation", value: "Farmer in Mississippi" },
+    { label: "Raised", value: "Livestock" },
+    { label: "Daughter", value: "Gertrude Adams-Hill" },
+    { label: "Married", value: "Twice" },
+    { label: "Evidence status", value: "Family history" }
+  ],
+  story: "Harvey Adams Sr. was the father of Gertrude Adams-Hill. He was a farmer in Mississippi and raised livestock. He married twice, to Mary Louise Sims and Mary Jane Johnson. The children recorded from his first marriage to Mary Louise Sims are John Adams, Louis Adams Sr., Albert Adams, Charles Adams, Homer Adams, Versie Adams Sr., Judge Granberry Adams, Fannie Adams, Gertrude Adams, Harvey Adams Jr., Christine Adams Tucker, Robert Adams Sr., Ella Mae Adams, and Eula Lee Adams. These are family-history notes, not confirmed documented records.",
+  family: {
+    spouseName: "Mary Louise Sims",
+    spouseRole: "First Wife",
+    childrenText: "Harvey Adams Sr. married twice, to Mary Louise Sims and Mary Jane Johnson. The children recorded from his first marriage to Mary Louise Sims are John Adams, Louis Adams Sr., Albert Adams, Charles Adams, Homer Adams, Versie Adams Sr., Judge Granberry Adams, Fannie Adams, Gertrude Adams, Harvey Adams Jr., Christine Adams Tucker, Robert Adams Sr., Ella Mae Adams, and Eula Lee Adams. These are family-history notes, not confirmed documented records.",
+    spouses: [
+      {
+        name: "Mary Louise Sims",
+        role: "First Wife",
+        children: [
+          "John Adams",
+          "Louis Adams Sr.",
+          "Albert Adams",
+          "Charles Adams",
+          "Homer Adams",
+          "Versie Adams Sr.",
+          "Judge Granberry Adams",
+          "Fannie Adams",
+          "Gertrude Adams",
+          "Harvey Adams Jr.",
+          "Christine Adams Tucker",
+          "Robert Adams Sr.",
+          "Ella Mae Adams",
+          "Eula Lee Adams"
+        ]
+      },
+      {
+        name: "Mary Jane Johnson",
+        role: "Second Wife",
+        children: []
+      }
+    ]
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Farmer in Mississippi",
+      detail: "Harvey Adams Sr. was a farmer in Mississippi and raised livestock. This is a family-history account, not a documented record."
+    },
+    {
+      date: "Unknown",
+      title: "Marries Mary Louise Sims",
+      detail: "Harvey Adams Sr. marries his first wife, Mary Louise Sims. The date is not recorded."
+    },
+    {
+      date: "Unknown",
+      title: "Marries Mary Jane Johnson",
+      detail: "Harvey Adams Sr. marries his second wife, Mary Jane Johnson. The date is not recorded."
+    }
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail: "A family-history note identifying Harvey Adams Sr. as the father of Gertrude Adams-Hill. It records that he was a farmer in Mississippi, raised livestock, and married twice, to Mary Louise Sims and Mary Jane Johnson. The children recorded from his first marriage to Mary Louise Sims are John Adams, Louis Adams Sr., Albert Adams, Charles Adams, Homer Adams, Versie Adams Sr., Judge Granberry Adams, Fannie Adams, Gertrude Adams, Harvey Adams Jr., Christine Adams Tucker, Robert Adams Sr., Ella Mae Adams, and Eula Lee Adams. These are family accounts, not documented records."
+    }
+  ]
+};
+const maryLouiseSimsProfile = {
+  id: "mary-louise-sims",
+  name: "Mary Louise Sims",
+  role: "First Wife of Harvey Adams Sr.",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Mary Louise Sims, since no photograph of her is known to exist."
+  },
+  facts: [
+    { label: "Husband", value: "Harvey Adams Sr." },
+    { label: "Evidence status", value: "Family history" }
+  ],
+  story: "Mary Louise Sims was the first wife of Harvey Adams Sr. She was the mother of the children recorded in the family notes from his first marriage. No additional details about her life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "Harvey Adams Sr.",
+    spouseRole: "Husband",
+    childrenText: "Mary Louise Sims was the first wife of Harvey Adams Sr. and the mother of the children recorded from his first marriage.",
+    spouses: [
+      {
+        name: "Harvey Adams Sr.",
+        role: "Husband",
+        children: [
+          "John Adams",
+          "Louis Adams Sr.",
+          "Albert Adams",
+          "Charles Adams",
+          "Homer Adams",
+          "Versie Adams Sr.",
+          "Judge Granberry Adams",
+          "Fannie Adams",
+          "Gertrude Adams",
+          "Harvey Adams Jr.",
+          "Christine Adams Tucker",
+          "Robert Adams Sr.",
+          "Ella Mae Adams",
+          "Eula Lee Adams"
+        ]
+      }
+    ]
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Marries Harvey Adams Sr.",
+      detail: "Mary Louise Sims marries Harvey Adams Sr. as his first wife. The date is not recorded."
+    }
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail: "A family-history note identifying Mary Louise Sims as the first wife of Harvey Adams Sr. and the mother of the children recorded from his first marriage. These are family accounts, not documented records."
+    }
+  ]
+};
+const johnAdamsProfile = {
+  id: "john-adams",
+  name: "John Adams",
+  role: "Son of Harvey Adams Sr. and Mary Louise Sims",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for John Adams, since no photograph of him is known to exist."
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Harvey Adams Sr. and Mary Louise Sims"
+    },
+    { label: "Evidence status", value: "Family history" }
+  ],
+  story: "John Adams was the son of Harvey Adams Sr. and Mary Louise Sims. No additional details about his life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "",
+    spouseRole: "",
+    childrenText: ""
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail: "John Adams is born, the son of Harvey Adams Sr. and Mary Louise Sims. The date is not recorded in the family records gathered so far."
+    }
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail: "A family-history note identifying John Adams as a son of Harvey Adams Sr. and Mary Louise Sims. No additional details about him are recorded. This is a family account, not a documented record."
+    }
+  ]
+};
+const louisAdamsSrProfile = {
+  id: "louis-adams-sr",
+  name: "Louis Adams Sr.",
+  role: "Son of Harvey Adams Sr. and Mary Louise Sims",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Louis Adams Sr., since no photograph of him is known to exist."
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Harvey Adams Sr. and Mary Louise Sims"
+    },
+    { label: "Evidence status", value: "Family history" }
+  ],
+  story: "Louis Adams Sr. was the son of Harvey Adams Sr. and Mary Louise Sims. No additional details about his life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "",
+    spouseRole: "",
+    childrenText: ""
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail: "Louis Adams Sr. is born, the son of Harvey Adams Sr. and Mary Louise Sims. The date is not recorded in the family records gathered so far."
+    }
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail: "A family-history note identifying Louis Adams Sr. as a son of Harvey Adams Sr. and Mary Louise Sims. No additional details about him are recorded. This is a family account, not a documented record."
+    }
+  ]
+};
+const albertAdamsProfile = {
+  id: "albert-adams",
+  name: "Albert Adams",
+  role: "Son of Harvey Adams Sr. and Mary Louise Sims",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Albert Adams, since no photograph of him is known to exist."
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Harvey Adams Sr. and Mary Louise Sims"
+    },
+    { label: "Evidence status", value: "Family history" }
+  ],
+  story: "Albert Adams was the son of Harvey Adams Sr. and Mary Louise Sims. No additional details about his life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "",
+    spouseRole: "",
+    childrenText: ""
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail: "Albert Adams is born, the son of Harvey Adams Sr. and Mary Louise Sims. The date is not recorded in the family records gathered so far."
+    }
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail: "A family-history note identifying Albert Adams as a son of Harvey Adams Sr. and Mary Louise Sims. No additional details about him are recorded. This is a family account, not a documented record."
+    }
+  ]
+};
+const charlesAdamsProfile = {
+  id: "charles-adams",
+  name: "Charles Adams",
+  role: "Son of Harvey Adams Sr. and Mary Louise Sims",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Charles Adams, since no photograph of him is known to exist."
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Harvey Adams Sr. and Mary Louise Sims"
+    },
+    { label: "Evidence status", value: "Family history" }
+  ],
+  story: "Charles Adams was the son of Harvey Adams Sr. and Mary Louise Sims. No additional details about his life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "",
+    spouseRole: "",
+    childrenText: ""
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail: "Charles Adams is born, the son of Harvey Adams Sr. and Mary Louise Sims. The date is not recorded in the family records gathered so far."
+    }
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail: "A family-history note identifying Charles Adams as a son of Harvey Adams Sr. and Mary Louise Sims. No additional details about him are recorded. This is a family account, not a documented record."
+    }
+  ]
+};
+const homerAdamsProfile = {
+  id: "homer-adams",
+  name: "Homer Adams",
+  role: "Son of Harvey Adams Sr. and Mary Louise Sims",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Homer Adams, since no photograph of him is known to exist."
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Harvey Adams Sr. and Mary Louise Sims"
+    },
+    { label: "Evidence status", value: "Family history" }
+  ],
+  story: "Homer Adams was the son of Harvey Adams Sr. and Mary Louise Sims. No additional details about his life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "",
+    spouseRole: "",
+    childrenText: ""
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail: "Homer Adams is born, the son of Harvey Adams Sr. and Mary Louise Sims. The date is not recorded in the family records gathered so far."
+    }
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail: "A family-history note identifying Homer Adams as a son of Harvey Adams Sr. and Mary Louise Sims. No additional details about him are recorded. This is a family account, not a documented record."
+    }
+  ]
+};
+const versieAdamsSrProfile = {
+  id: "versie-adams-sr",
+  name: "Versie Adams Sr.",
+  role: "Son of Harvey Adams Sr. and Mary Louise Sims",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Versie Adams Sr., since no photograph of him is known to exist."
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Harvey Adams Sr. and Mary Louise Sims"
+    },
+    { label: "Evidence status", value: "Family history" }
+  ],
+  story: "Versie Adams Sr. was the son of Harvey Adams Sr. and Mary Louise Sims. No additional details about his life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "",
+    spouseRole: "",
+    childrenText: ""
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail: "Versie Adams Sr. is born, the son of Harvey Adams Sr. and Mary Louise Sims. The date is not recorded in the family records gathered so far."
+    }
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail: "A family-history note identifying Versie Adams Sr. as a son of Harvey Adams Sr. and Mary Louise Sims. No additional details about him are recorded. This is a family account, not a documented record."
+    }
+  ]
+};
+const judgeGranberryAdamsProfile = {
+  id: "judge-granberry-adams",
+  name: "Judge Granberry Adams",
+  role: "Son of Harvey Adams Sr. and Mary Louise Sims",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Judge Granberry Adams, since no photograph of him is known to exist."
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Harvey Adams Sr. and Mary Louise Sims"
+    },
+    { label: "Evidence status", value: "Family history" }
+  ],
+  story: "Judge Granberry Adams was the son of Harvey Adams Sr. and Mary Louise Sims. No additional details about his life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "",
+    spouseRole: "",
+    childrenText: ""
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail: "Judge Granberry Adams is born, the son of Harvey Adams Sr. and Mary Louise Sims. The date is not recorded in the family records gathered so far."
+    }
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail: "A family-history note identifying Judge Granberry Adams as a son of Harvey Adams Sr. and Mary Louise Sims. No additional details about him are recorded. This is a family account, not a documented record."
+    }
+  ]
+};
+const fannieAdamsProfile = {
+  id: "fannie-adams",
+  name: "Fannie Adams",
+  role: "Daughter of Harvey Adams Sr. and Mary Louise Sims",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Fannie Adams, since no photograph of her is known to exist."
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Harvey Adams Sr. and Mary Louise Sims"
+    },
+    { label: "Evidence status", value: "Family history" }
+  ],
+  story: "Fannie Adams was the daughter of Harvey Adams Sr. and Mary Louise Sims. No additional details about her life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "",
+    spouseRole: "",
+    childrenText: ""
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail: "Fannie Adams is born, the daughter of Harvey Adams Sr. and Mary Louise Sims. The date is not recorded in the family records gathered so far."
+    }
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail: "A family-history note identifying Fannie Adams as a daughter of Harvey Adams Sr. and Mary Louise Sims. No additional details about her are recorded. This is a family account, not a documented record."
+    }
+  ]
+};
+const harveyAdamsJrProfile = {
+  id: "harvey-adams-jr",
+  name: "Harvey Adams Jr.",
+  role: "Son of Harvey Adams Sr. and Mary Louise Sims",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Harvey Adams Jr., since no photograph of him is known to exist."
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Harvey Adams Sr. and Mary Louise Sims"
+    },
+    { label: "Evidence status", value: "Family history" }
+  ],
+  story: "Harvey Adams Jr. was the son of Harvey Adams Sr. and Mary Louise Sims. No additional details about his life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "",
+    spouseRole: "",
+    childrenText: ""
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail: "Harvey Adams Jr. is born, the son of Harvey Adams Sr. and Mary Louise Sims. The date is not recorded in the family records gathered so far."
+    }
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail: "A family-history note identifying Harvey Adams Jr. as a son of Harvey Adams Sr. and Mary Louise Sims. No additional details about him are recorded. This is a family account, not a documented record."
+    }
+  ]
+};
+const christineAdamsTuckerProfile = {
+  id: "christine-adams-tucker",
+  name: "Christine Adams Tucker",
+  role: "Daughter of Harvey Adams Sr. and Mary Louise Sims",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Christine Adams Tucker, since no photograph of her is known to exist."
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Harvey Adams Sr. and Mary Louise Sims"
+    },
+    {
+      label: "Spouse",
+      value: "Tucker (given name not recorded)"
+    },
+    { label: "Evidence status", value: "Family history" }
+  ],
+  story: "Christine Adams Tucker was the daughter of Harvey Adams Sr. and Mary Louise Sims. She married a man named Tucker, though his given name is not recorded in the family records gathered so far. No additional details about her life are recorded.",
+  family: {
+    spouseName: "Tucker",
+    spouseRole: "Spouse",
+    childrenText: "Christine Adams Tucker married a man named Tucker, though his given name is not recorded in the family records gathered so far.",
+    spouses: [
+      {
+        name: "Tucker",
+        role: "Spouse",
+        children: []
+      }
+    ]
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail: "Christine Adams Tucker is born, the daughter of Harvey Adams Sr. and Mary Louise Sims. The date is not recorded in the family records gathered so far."
+    },
+    {
+      date: "Unknown",
+      title: "Marries Tucker",
+      detail: "Christine Adams Tucker marries a man named Tucker. The date is not recorded, and his given name is not recorded in the family records gathered so far."
+    }
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail: "A family-history note identifying Christine Adams Tucker as a daughter of Harvey Adams Sr. and Mary Louise Sims, and recording that she married a man named Tucker (given name not recorded). These are family accounts, not documented records."
+    }
+  ]
+};
+const robertAdamsSrProfile = {
+  id: "robert-adams-sr",
+  name: "Robert Adams Sr.",
+  role: "Son of Harvey Adams Sr. and Mary Louise Sims",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Robert Adams Sr., since no photograph of him is known to exist."
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Harvey Adams Sr. and Mary Louise Sims"
+    },
+    { label: "Evidence status", value: "Family history" }
+  ],
+  story: "Robert Adams Sr. was the son of Harvey Adams Sr. and Mary Louise Sims. No additional details about his life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "",
+    spouseRole: "",
+    childrenText: ""
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail: "Robert Adams Sr. is born, the son of Harvey Adams Sr. and Mary Louise Sims. The date is not recorded in the family records gathered so far."
+    }
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail: "A family-history note identifying Robert Adams Sr. as a son of Harvey Adams Sr. and Mary Louise Sims. No additional details about him are recorded. This is a family account, not a documented record."
+    }
+  ]
+};
+const ellaMaeAdamsProfile = {
+  id: "ella-mae-adams",
+  name: "Ella Mae Adams",
+  role: "Daughter of Harvey Adams Sr. and Mary Louise Sims",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Ella Mae Adams, since no photograph of her is known to exist."
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Harvey Adams Sr. and Mary Louise Sims"
+    },
+    { label: "Evidence status", value: "Family history" }
+  ],
+  story: "Ella Mae Adams was the daughter of Harvey Adams Sr. and Mary Louise Sims. No additional details about her life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "",
+    spouseRole: "",
+    childrenText: ""
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail: "Ella Mae Adams is born, the daughter of Harvey Adams Sr. and Mary Louise Sims. The date is not recorded in the family records gathered so far."
+    }
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail: "A family-history note identifying Ella Mae Adams as a daughter of Harvey Adams Sr. and Mary Louise Sims. No additional details about her are recorded. This is a family account, not a documented record."
+    }
+  ]
+};
+const eulaLeeAdamsProfile = {
+  id: "eula-lee-adams",
+  name: "Eula Lee Adams",
+  role: "Daughter of Harvey Adams Sr. and Mary Louise Sims",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Eula Lee Adams, since no photograph of her is known to exist."
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Harvey Adams Sr. and Mary Louise Sims"
+    },
+    { label: "Evidence status", value: "Family history" }
+  ],
+  story: "Eula Lee Adams was the daughter of Harvey Adams Sr. and Mary Louise Sims. No additional details about her life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "",
+    spouseRole: "",
+    childrenText: ""
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail: "Eula Lee Adams is born, the daughter of Harvey Adams Sr. and Mary Louise Sims. The date is not recorded in the family records gathered so far."
+    }
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail: "A family-history note identifying Eula Lee Adams as a daughter of Harvey Adams Sr. and Mary Louise Sims. No additional details about her are recorded. This is a family account, not a documented record."
+    }
+  ]
+};
 const profiles = {
   julia: juliaProfile,
   isaiah: isaiahProfile,
@@ -43815,7 +44850,30 @@ const profiles = {
   columbus: columbusProfile,
   "thomas-clayton": thomasClaytonProfile,
   alton: altonProfile,
-  "robert-davis": robertDavisProfile
+  "robert-davis": robertDavisProfile,
+  ardeanus: ardeanusProfile,
+  "willie-b": willieBProfile,
+  james: jamesProfile,
+  freddie: freddieProfile,
+  "zelia-mae": zeliaMaeProfile,
+  "lula-mae": lulaMaeProfile,
+  "versie-smith": versieSmithProfile,
+  "gertrude-adams-hill": gertrudeAdamsHillProfile,
+  "harvey-adams-sr": harveyAdamsSrProfile,
+  "mary-louise-sims": maryLouiseSimsProfile,
+  "john-adams": johnAdamsProfile,
+  "louis-adams-sr": louisAdamsSrProfile,
+  "albert-adams": albertAdamsProfile,
+  "charles-adams": charlesAdamsProfile,
+  "homer-adams": homerAdamsProfile,
+  "versie-adams-sr": versieAdamsSrProfile,
+  "judge-granberry-adams": judgeGranberryAdamsProfile,
+  "fannie-adams": fannieAdamsProfile,
+  "harvey-adams-jr": harveyAdamsJrProfile,
+  "christine-adams-tucker": christineAdamsTuckerProfile,
+  "robert-adams-sr": robertAdamsSrProfile,
+  "ella-mae-adams": ellaMaeAdamsProfile,
+  "eula-lee-adams": eulaLeeAdamsProfile
 };
 function getInitials$3(name) {
   var _a2;
@@ -44132,7 +45190,7 @@ function PersonProfilePage({
   profilePhoto,
   onProfilePhotoChange
 }) {
-  const storyLabel = person.id === "julia" || person.id === "erma" || person.id === "hudson" ? "Her Story" : "His Story";
+  const storyLabel = person.id === "julia" || person.id === "erma" || person.id === "hudson" || person.id === "gertrude-adams-hill" || person.id === "mary-louise-sims" || person.id === "fannie-adams" || person.id === "christine-adams-tucker" || person.id === "ella-mae-adams" || person.id === "eula-lee-adams" ? "Her Story" : "His Story";
   const hasProfilePhoto = Boolean(profilePhoto);
   const completeness = computeCompleteness(person, hasProfilePhoto);
   const portraitSrc = profilePhoto ?? person.portrait.src;
@@ -45782,19 +46840,62 @@ const claytonBranch = [
       },
       { id: "alton", name: "Alton", role: "Child" },
       { id: "robert-davis", name: "Robert Davis “RD”", role: "Child" },
-      { name: "Ardeanus", role: "Child" },
-      { name: "Willie B.", role: "Child" },
-      { name: "James", role: "Child" },
-      { name: "Freddie", role: "Child" },
-      { name: "Zelia Mae", role: "Child" },
-      { name: "Lula Mae", role: "Child" }
+      { id: "ardeanus", name: "Ardeanus", role: "Child" },
+      { id: "willie-b", name: "Willie B.", role: "Child" },
+      { id: "james", name: "James", role: "Child" },
+      { id: "freddie", name: "Freddie", role: "Child" },
+      { id: "zelia-mae", name: "Zelia Mae", role: "Child" },
+      { id: "lula-mae", name: "Lula Mae", role: "Child" }
     ]
   }
 ];
+const firstMarriageChildren = [
+  { id: johnAdamsProfile.id, name: "John Adams", role: "Son" },
+  { id: louisAdamsSrProfile.id, name: "Louis Adams Sr.", role: "Son" },
+  { id: albertAdamsProfile.id, name: "Albert Adams", role: "Son" },
+  { id: charlesAdamsProfile.id, name: "Charles Adams", role: "Son" },
+  { id: homerAdamsProfile.id, name: "Homer Adams", role: "Son" },
+  { id: versieAdamsSrProfile.id, name: "Versie Adams Sr.", role: "Son" },
+  {
+    id: judgeGranberryAdamsProfile.id,
+    name: "Judge Granberry Adams",
+    role: "Son"
+  },
+  { id: fannieAdamsProfile.id, name: "Fannie Adams", role: "Daughter" },
+  {
+    id: gertrudeAdamsHillProfile.id,
+    name: "Gertrude Adams-Hill",
+    role: "Daughter"
+  },
+  { id: harveyAdamsJrProfile.id, name: "Harvey Adams Jr.", role: "Son" },
+  {
+    id: christineAdamsTuckerProfile.id,
+    name: "Christine Adams Tucker",
+    role: "Daughter"
+  },
+  { id: robertAdamsSrProfile.id, name: "Robert Adams Sr.", role: "Son" },
+  { id: ellaMaeAdamsProfile.id, name: "Ella Mae Adams", role: "Daughter" },
+  { id: eulaLeeAdamsProfile.id, name: "Eula Lee Adams", role: "Daughter" }
+];
 const CHILDREN_PER_ROW = 4;
+const COUPLE_INDICES = [0, 1];
+const CHILDREN_INDICES = [2, 3, 4, 5, 6, 7, 8, 9];
+const CLAYTON_INDEX = 2;
+const CLAYTON_SPOUSE_INDICES = [10, 11];
+const LULA_MAE_INDEX = 26;
+const VERSIE_INDEX = 27;
+const HARVEY_INDEX = 28;
+const MARY_LOUISE_INDEX = 29;
+const FIRST_MARRIAGE_CHILDREN_INDICES = Array.from(
+  { length: firstMarriageChildren.length },
+  (_2, i) => 30 + i
+);
+const GERTRUDE_INDEX = 44;
+const inSet = (selected, set) => selected !== null && set.includes(selected);
 function BranchRow({
   rowChildren,
   rowOffset,
+  parentIndices,
   selected,
   onSelect,
   meIndex,
@@ -45802,15 +46903,35 @@ function BranchRow({
   onOpenProfile,
   profilePhotos
 }) {
+  const barSelected = inSet(selected, parentIndices) || rowChildren.some((_2, i) => selected === rowOffset + i);
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx(
       "div",
       {
-        className: "pointer-events-none absolute left-0 right-0 top-0 h-px bg-border",
+        className: `ft-connector pointer-events-none absolute left-0 right-0 top-0 h-px ${barSelected ? "ft-connector-selected" : ""}`,
         "aria-hidden": "true"
       }
     ),
-    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "grid grid-cols-2 sm:grid-cols-4", children: rowChildren.map((person) => /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex justify-center", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-6 w-px bg-border", "aria-hidden": "true" }) }, person.name)) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4", children: rowChildren.map((person, i) => {
+      const index2 = rowOffset + i;
+      const stubSelected = inSet(selected, parentIndices) || selected === index2;
+      return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col items-center", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "div",
+          {
+            className: `ft-child-stub h-6 ${stubSelected ? "ft-connector-selected" : ""}`,
+            "aria-hidden": "true"
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "span",
+          {
+            className: `ft-chevron -mt-1.5 ${stubSelected ? "ft-connector-selected" : ""}`,
+            "aria-hidden": "true"
+          }
+        )
+      ] }, person.name);
+    }) }),
     /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4", children: rowChildren.map((person, i) => {
       const index2 = rowOffset + i;
       return /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -45848,15 +46969,32 @@ function ClaytonBranch({
     cursor += branch.children.length;
     return group;
   });
+  const claytonSpouseSelected = inSet(selected, [
+    CLAYTON_INDEX,
+    ...CLAYTON_SPOUSE_INDICES
+  ]);
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { "aria-label": "Clayton's branch", className: "relative mt-2", children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsx(
-      "div",
-      {
-        className: "pointer-events-none absolute left-[25%] top-0 h-8 w-px bg-border sm:left-[12.5%]",
-        "aria-hidden": "true"
-      }
-    ),
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "div",
+        {
+          className: `ft-trunk pointer-events-none absolute left-[25%] top-0 bottom-1/2 sm:left-[12.5%] ${claytonSpouseSelected ? "ft-connector-selected" : ""}`,
+          "aria-hidden": "true",
+          children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "span",
+            {
+              className: "absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2",
+              "aria-hidden": "true",
+              children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "span",
+                {
+                  className: `ft-junction block ${claytonSpouseSelected ? "ft-connector-selected" : ""}`
+                }
+              )
+            }
+          )
+        }
+      ),
       /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "grid grid-cols-2 gap-3 sm:gap-4", children: branches.map((branch, i) => /* @__PURE__ */ jsxRuntimeExports.jsx(
         PersonCard,
         {
@@ -45874,43 +47012,56 @@ function ClaytonBranch({
       /* @__PURE__ */ jsxRuntimeExports.jsx(
         "div",
         {
-          className: "pointer-events-none absolute left-1/2 top-1/2 h-px w-1/2 -translate-x-1/2 -translate-y-1/2 bg-border",
+          className: `ft-couple-line pointer-events-none absolute left-1/2 top-1/2 w-1/2 -translate-x-1/2 -translate-y-1/2 sm:w-3/4 ${claytonSpouseSelected ? "ft-connector-selected" : ""}`,
           "aria-hidden": "true"
         }
       )
     ] }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-6 space-y-6", children: branches.map((branch, i) => /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx(
-        "div",
-        {
-          className: "relative mx-auto flex h-6 w-px bg-border",
-          "aria-hidden": "true"
-        }
-      ),
-      Array.from({
-        length: Math.ceil(branch.children.length / CHILDREN_PER_ROW)
-      }).map((_2, row) => {
-        const rowChildren = branch.children.slice(
-          row * CHILDREN_PER_ROW,
-          row * CHILDREN_PER_ROW + CHILDREN_PER_ROW
-        );
-        const rowOffset = childGroups[i][row * CHILDREN_PER_ROW];
-        return /* @__PURE__ */ jsxRuntimeExports.jsx(
-          BranchRow,
+    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-6 space-y-6", children: branches.map((branch, i) => {
+      const spouseIndex = spouseIndices[i];
+      const childIndices = childGroups[i];
+      const downSelected = selected === spouseIndex || selected === CLAYTON_INDEX || selected !== null && childIndices.includes(selected);
+      return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "div",
           {
-            rowChildren,
-            rowOffset,
-            selected,
-            onSelect,
-            meIndex,
-            onMarkMe,
-            onOpenProfile,
-            profilePhotos
-          },
-          rowChildren[0].name
-        );
-      })
-    ] }, branch.spouse.name)) })
+            className: `ft-trunk relative mx-auto h-6 ${downSelected ? "ft-connector-selected" : ""}`,
+            "aria-hidden": "true",
+            children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "span",
+              {
+                className: `ft-junction absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ${downSelected ? "ft-connector-selected" : ""}`,
+                "aria-hidden": "true"
+              }
+            )
+          }
+        ),
+        Array.from({
+          length: Math.ceil(branch.children.length / CHILDREN_PER_ROW)
+        }).map((_2, row) => {
+          const rowChildren = branch.children.slice(
+            row * CHILDREN_PER_ROW,
+            row * CHILDREN_PER_ROW + CHILDREN_PER_ROW
+          );
+          const rowOffset = childGroups[i][row * CHILDREN_PER_ROW];
+          return /* @__PURE__ */ jsxRuntimeExports.jsx(
+            BranchRow,
+            {
+              rowChildren,
+              rowOffset,
+              parentIndices: [spouseIndex],
+              selected,
+              onSelect,
+              meIndex,
+              onMarkMe,
+              onOpenProfile,
+              profilePhotos
+            },
+            rowChildren[0].name
+          );
+        })
+      ] }, branch.spouse.name);
+    }) })
   ] });
 }
 function FamilyTreePage({
@@ -45931,8 +47082,30 @@ function FamilyTreePage({
   const allPeople = [
     ...couple,
     ...children,
-    ...claytonBranch.flatMap((branch) => [branch.spouse, ...branch.children])
+    ...claytonBranch.flatMap((branch) => [branch.spouse, ...branch.children]),
+    { id: "lula-mae", name: "Lula Mae", role: "Child" },
+    { id: "versie-smith", name: "Versie Smith", role: "Husband" },
+    {
+      id: harveyAdamsSrProfile.id,
+      name: "Harvey Adams Sr.",
+      role: "Father"
+    },
+    {
+      id: maryLouiseSimsProfile.id,
+      name: "Mary Louise Sims",
+      role: "First Wife"
+    },
+    ...firstMarriageChildren,
+    {
+      id: gertrudeAdamsHillProfile.id,
+      name: "Gertrude Adams-Hill",
+      role: "Mother"
+    }
   ];
+  const coupleBaseIndex = couple.length + children.length + claytonBranch.flatMap((branch) => [branch.spouse, ...branch.children]).length;
+  const parentsBaseIndex = coupleBaseIndex + 2;
+  const firstMarriageChildrenBaseIndex = parentsBaseIndex + 2;
+  const gertrudeIndex = firstMarriageChildrenBaseIndex + firstMarriageChildren.length;
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto flex w-full max-w-3xl flex-col px-6 py-8 sm:py-12", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsxs(
       motion.header,
@@ -45982,7 +47155,7 @@ function FamilyTreePage({
       /* @__PURE__ */ jsxRuntimeExports.jsx(
         "div",
         {
-          className: "pointer-events-none absolute left-1/2 top-1/2 h-px w-1/2 -translate-x-1/2 -translate-y-1/2 bg-border",
+          className: `ft-couple-line pointer-events-none absolute left-1/2 top-1/2 w-1/2 -translate-x-1/2 -translate-y-1/2 ${inSet(selected, COUPLE_INDICES) ? "ft-connector-selected" : ""}`,
           "aria-hidden": "true"
         }
       )
@@ -45990,16 +47163,23 @@ function FamilyTreePage({
     /* @__PURE__ */ jsxRuntimeExports.jsx(
       "div",
       {
-        className: "relative mx-auto flex h-8 w-px bg-border",
+        className: `ft-trunk relative mx-auto h-8 ${inSet(selected, [...COUPLE_INDICES, ...CHILDREN_INDICES]) ? "ft-connector-selected" : ""}`,
         "aria-hidden": "true",
-        children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "absolute left-1/2 top-0 h-4 w-px -translate-x-1/2 bg-border" })
+        children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "span",
+          {
+            className: `ft-junction absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ${inSet(selected, [...COUPLE_INDICES, ...CHILDREN_INDICES]) ? "ft-connector-selected" : ""}`,
+            "aria-hidden": "true"
+          }
+        )
       }
     ),
-    /* @__PURE__ */ jsxRuntimeExports.jsx("section", { "aria-label": "Children", className: "mt-2 space-y-6", children: rows.map((row) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+    /* @__PURE__ */ jsxRuntimeExports.jsx("section", { "aria-label": "Children", className: "space-y-6", children: rows.map((row) => /* @__PURE__ */ jsxRuntimeExports.jsx(
       BranchRow,
       {
         rowChildren: row.people,
         rowOffset: row.offset,
+        parentIndices: COUPLE_INDICES,
         selected,
         onSelect: setSelected,
         meIndex,
@@ -46022,6 +47202,190 @@ function FamilyTreePage({
         profilePhotos
       }
     ),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { "aria-label": "Lula Mae and Versie", className: "relative mt-10", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-2 gap-3 sm:gap-4", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          PersonCard,
+          {
+            person: { id: "lula-mae", name: "Lula Mae", role: "Child" },
+            index: coupleBaseIndex,
+            selected: selected === coupleBaseIndex,
+            onSelect: () => setSelected(coupleBaseIndex),
+            onOpen: () => onOpenProfile("lula-mae"),
+            isMe: meIndex === coupleBaseIndex,
+            onMarkMe: () => setMeIndex(coupleBaseIndex),
+            profilePhoto: profilePhotos == null ? void 0 : profilePhotos["lula-mae"]
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          PersonCard,
+          {
+            person: {
+              id: "versie-smith",
+              name: "Versie Smith",
+              role: "Husband"
+            },
+            index: coupleBaseIndex + 1,
+            selected: selected === coupleBaseIndex + 1,
+            onSelect: () => setSelected(coupleBaseIndex + 1),
+            onOpen: () => onOpenProfile("versie-smith"),
+            isMe: meIndex === coupleBaseIndex + 1,
+            onMarkMe: () => setMeIndex(coupleBaseIndex + 1),
+            profilePhoto: profilePhotos == null ? void 0 : profilePhotos["versie-smith"]
+          }
+        )
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "div",
+        {
+          className: `ft-couple-line pointer-events-none absolute left-1/2 top-1/2 w-1/2 -translate-x-1/2 -translate-y-1/2 ${inSet(selected, [LULA_MAE_INDEX, VERSIE_INDEX]) ? "ft-connector-selected" : ""}`,
+          "aria-hidden": "true"
+        }
+      )
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "div",
+      {
+        className: `ft-trunk relative mx-auto h-8 ${inSet(selected, [LULA_MAE_INDEX, VERSIE_INDEX]) ? "ft-connector-selected" : ""}`,
+        "aria-hidden": "true",
+        children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "span",
+          {
+            className: `ft-junction absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ${inSet(selected, [LULA_MAE_INDEX, VERSIE_INDEX]) ? "ft-connector-selected" : ""}`,
+            "aria-hidden": "true"
+          }
+        )
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { "aria-label": "Versie's maternal line", className: "relative mt-2", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-2 gap-3 sm:gap-4", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          PersonCard,
+          {
+            person: {
+              id: harveyAdamsSrProfile.id,
+              name: "Harvey Adams Sr.",
+              role: "Father"
+            },
+            index: parentsBaseIndex,
+            selected: selected === parentsBaseIndex,
+            onSelect: () => setSelected(parentsBaseIndex),
+            onOpen: () => onOpenProfile(harveyAdamsSrProfile.id),
+            isMe: meIndex === parentsBaseIndex,
+            onMarkMe: () => setMeIndex(parentsBaseIndex),
+            profilePhoto: profilePhotos == null ? void 0 : profilePhotos[harveyAdamsSrProfile.id]
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          PersonCard,
+          {
+            person: {
+              id: maryLouiseSimsProfile.id,
+              name: "Mary Louise Sims",
+              role: "First Wife"
+            },
+            index: parentsBaseIndex + 1,
+            selected: selected === parentsBaseIndex + 1,
+            onSelect: () => setSelected(parentsBaseIndex + 1),
+            onOpen: () => onOpenProfile(maryLouiseSimsProfile.id),
+            isMe: meIndex === parentsBaseIndex + 1,
+            onMarkMe: () => setMeIndex(parentsBaseIndex + 1),
+            profilePhoto: profilePhotos == null ? void 0 : profilePhotos[maryLouiseSimsProfile.id]
+          }
+        )
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "div",
+        {
+          className: `ft-couple-line pointer-events-none absolute left-1/2 top-1/2 w-1/2 -translate-x-1/2 -translate-y-1/2 ${inSet(selected, [HARVEY_INDEX, MARY_LOUISE_INDEX]) ? "ft-connector-selected" : ""}`,
+          "aria-hidden": "true"
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "div",
+        {
+          className: `ft-trunk relative mx-auto h-8 ${inSet(selected, [
+            HARVEY_INDEX,
+            MARY_LOUISE_INDEX,
+            ...FIRST_MARRIAGE_CHILDREN_INDICES,
+            GERTRUDE_INDEX
+          ]) ? "ft-connector-selected" : ""}`,
+          "aria-hidden": "true",
+          children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "span",
+            {
+              className: `ft-junction absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ${inSet(selected, [
+                HARVEY_INDEX,
+                MARY_LOUISE_INDEX,
+                ...FIRST_MARRIAGE_CHILDREN_INDICES,
+                GERTRUDE_INDEX
+              ]) ? "ft-connector-selected" : ""}`,
+              "aria-hidden": "true"
+            }
+          )
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-2 space-y-6", children: Array.from({
+        length: Math.ceil(firstMarriageChildren.length / CHILDREN_PER_ROW)
+      }).map((_2, row) => {
+        const rowChildren = firstMarriageChildren.slice(
+          row * CHILDREN_PER_ROW,
+          row * CHILDREN_PER_ROW + CHILDREN_PER_ROW
+        );
+        return /* @__PURE__ */ jsxRuntimeExports.jsx(
+          BranchRow,
+          {
+            rowChildren,
+            rowOffset: firstMarriageChildrenBaseIndex + row * CHILDREN_PER_ROW,
+            parentIndices: [HARVEY_INDEX, MARY_LOUISE_INDEX],
+            selected,
+            onSelect: setSelected,
+            meIndex,
+            onMarkMe: setMeIndex,
+            onOpenProfile,
+            profilePhotos
+          },
+          rowChildren[0].name
+        );
+      }) }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "div",
+        {
+          className: `ft-trunk relative mx-auto h-8 ${inSet(selected, [
+            ...FIRST_MARRIAGE_CHILDREN_INDICES,
+            GERTRUDE_INDEX
+          ]) ? "ft-connector-selected" : ""}`,
+          "aria-hidden": "true",
+          children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "span",
+            {
+              className: `ft-junction absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ${inSet(selected, [
+                ...FIRST_MARRIAGE_CHILDREN_INDICES,
+                GERTRUDE_INDEX
+              ]) ? "ft-connector-selected" : ""}`,
+              "aria-hidden": "true"
+            }
+          )
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-2 flex justify-center", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "w-full max-w-[calc(50%-0.375rem)] sm:max-w-[calc(50%-0.5rem)]", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+        PersonCard,
+        {
+          person: {
+            id: gertrudeAdamsHillProfile.id,
+            name: "Gertrude Adams-Hill",
+            role: "Mother"
+          },
+          index: gertrudeIndex,
+          selected: selected === gertrudeIndex,
+          onSelect: () => setSelected(gertrudeIndex),
+          onOpen: () => onOpenProfile(gertrudeAdamsHillProfile.id),
+          isMe: meIndex === gertrudeIndex,
+          onMarkMe: () => setMeIndex(gertrudeIndex),
+          profilePhoto: profilePhotos == null ? void 0 : profilePhotos[gertrudeAdamsHillProfile.id]
+        }
+      ) }) })
+    ] }),
     /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-10 text-center text-sm text-muted-foreground", children: selected === null ? "Tap a card to highlight a family member." : `Selected: “${((_a2 = allPeople[selected]) == null ? void 0 : _a2.name) ?? ""}”` })
   ] });
 }
@@ -46354,6 +47718,172 @@ const HERITAGE = {
     name: "Lula Mae",
     role: "Child",
     parents: ["clayton", "erma"],
+    spouses: ["versie-smith"],
+    children: []
+  },
+  "versie-smith": {
+    id: "versie-smith",
+    name: "Versie Smith",
+    role: "Husband",
+    parents: ["gertrude-adams-hill"],
+    spouses: ["lula-mae"],
+    children: []
+  },
+  "gertrude-adams-hill": {
+    id: "gertrude-adams-hill",
+    name: "Gertrude Adams-Hill",
+    role: "Mother",
+    parents: ["harvey-adams-sr"],
+    spouses: [],
+    children: ["versie-smith"]
+  },
+  "harvey-adams-sr": {
+    id: "harvey-adams-sr",
+    name: "Harvey Adams Sr.",
+    role: "Father",
+    parents: [],
+    spouses: ["mary-louise-sims"],
+    children: [
+      "gertrude-adams-hill",
+      "john-adams",
+      "louis-adams-sr",
+      "albert-adams",
+      "charles-adams",
+      "homer-adams",
+      "versie-adams-sr",
+      "judge-granberry-adams",
+      "fannie-adams",
+      "harvey-adams-jr",
+      "christine-adams-tucker",
+      "robert-adams-sr",
+      "ella-mae-adams",
+      "eula-lee-adams"
+    ]
+  },
+  "mary-louise-sims": {
+    id: "mary-louise-sims",
+    name: "Mary Louise Sims",
+    role: "First Wife",
+    parents: [],
+    spouses: ["harvey-adams-sr"],
+    children: [
+      "john-adams",
+      "louis-adams-sr",
+      "albert-adams",
+      "charles-adams",
+      "homer-adams",
+      "versie-adams-sr",
+      "judge-granberry-adams",
+      "fannie-adams",
+      "gertrude-adams-hill",
+      "harvey-adams-jr",
+      "christine-adams-tucker",
+      "robert-adams-sr",
+      "ella-mae-adams",
+      "eula-lee-adams"
+    ]
+  },
+  "john-adams": {
+    id: "john-adams",
+    name: "John Adams",
+    role: "Son",
+    parents: ["harvey-adams-sr", "mary-louise-sims"],
+    spouses: [],
+    children: []
+  },
+  "louis-adams-sr": {
+    id: "louis-adams-sr",
+    name: "Louis Adams Sr.",
+    role: "Son",
+    parents: ["harvey-adams-sr", "mary-louise-sims"],
+    spouses: [],
+    children: []
+  },
+  "albert-adams": {
+    id: "albert-adams",
+    name: "Albert Adams",
+    role: "Son",
+    parents: ["harvey-adams-sr", "mary-louise-sims"],
+    spouses: [],
+    children: []
+  },
+  "charles-adams": {
+    id: "charles-adams",
+    name: "Charles Adams",
+    role: "Son",
+    parents: ["harvey-adams-sr", "mary-louise-sims"],
+    spouses: [],
+    children: []
+  },
+  "homer-adams": {
+    id: "homer-adams",
+    name: "Homer Adams",
+    role: "Son",
+    parents: ["harvey-adams-sr", "mary-louise-sims"],
+    spouses: [],
+    children: []
+  },
+  "versie-adams-sr": {
+    id: "versie-adams-sr",
+    name: "Versie Adams Sr.",
+    role: "Son",
+    parents: ["harvey-adams-sr", "mary-louise-sims"],
+    spouses: [],
+    children: []
+  },
+  "judge-granberry-adams": {
+    id: "judge-granberry-adams",
+    name: "Judge Granberry Adams",
+    role: "Son",
+    parents: ["harvey-adams-sr", "mary-louise-sims"],
+    spouses: [],
+    children: []
+  },
+  "fannie-adams": {
+    id: "fannie-adams",
+    name: "Fannie Adams",
+    role: "Daughter",
+    parents: ["harvey-adams-sr", "mary-louise-sims"],
+    spouses: [],
+    children: []
+  },
+  "harvey-adams-jr": {
+    id: "harvey-adams-jr",
+    name: "Harvey Adams Jr.",
+    role: "Son",
+    parents: ["harvey-adams-sr", "mary-louise-sims"],
+    spouses: [],
+    children: []
+  },
+  "christine-adams-tucker": {
+    id: "christine-adams-tucker",
+    name: "Christine Adams Tucker",
+    role: "Daughter",
+    parents: ["harvey-adams-sr", "mary-louise-sims"],
+    spouses: [],
+    children: []
+  },
+  "robert-adams-sr": {
+    id: "robert-adams-sr",
+    name: "Robert Adams Sr.",
+    role: "Son",
+    parents: ["harvey-adams-sr", "mary-louise-sims"],
+    spouses: [],
+    children: []
+  },
+  "ella-mae-adams": {
+    id: "ella-mae-adams",
+    name: "Ella Mae Adams",
+    role: "Daughter",
+    parents: ["harvey-adams-sr", "mary-louise-sims"],
+    spouses: [],
+    children: []
+  },
+  "eula-lee-adams": {
+    id: "eula-lee-adams",
+    name: "Eula Lee Adams",
+    role: "Daughter",
+    parents: ["harvey-adams-sr", "mary-louise-sims"],
     spouses: [],
     children: []
   }
@@ -46368,45 +47898,80 @@ function getSiblings(id2) {
   }
   return [...siblingSet];
 }
-function TrunkConnector() {
+function TrunkConnector({ selected = false }) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative my-1 h-8 w-8", "aria-hidden": "true", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "span",
+      {
+        className: `ft-trunk absolute left-1/2 top-0 h-full -translate-x-1/2 ${selected ? "ft-connector-selected" : ""}`
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "absolute bottom-0 left-1/2 -translate-x-1/2", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "span",
+      {
+        className: `ft-junction block ${selected ? "ft-connector-selected" : ""}`
+      }
+    ) })
+  ] });
+}
+function HorizontalConnector({ selected = false }) {
   return /* @__PURE__ */ jsxRuntimeExports.jsx(
-    "svg",
+    "span",
     {
-      className: "branch-connector my-1 h-8 w-8",
-      viewBox: "0 0 32 32",
-      "aria-hidden": "true",
-      children: /* @__PURE__ */ jsxRuntimeExports.jsx("path", { d: "M16 0 C 20 12, 12 20, 16 32" })
+      className: `ft-couple-line w-8 shrink-0 ${selected ? "ft-connector-selected" : ""}`,
+      "aria-hidden": "true"
     }
   );
 }
-function HorizontalConnector() {
-  return /* @__PURE__ */ jsxRuntimeExports.jsx(
-    "svg",
-    {
-      className: "branch-connector h-1 w-8",
-      viewBox: "0 0 32 4",
-      preserveAspectRatio: "none",
-      "aria-hidden": "true",
-      children: /* @__PURE__ */ jsxRuntimeExports.jsx("path", { d: "M0 2 L32 2" })
-    }
-  );
-}
-function RowConnector({ count }) {
-  const xs = Array.from({ length: count }, (_2, i) => (i + 0.5) / count * 100);
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
-    "svg",
-    {
-      className: "branch-connector my-1 h-10 w-full",
-      viewBox: "0 0 100 40",
-      preserveAspectRatio: "none",
-      "aria-hidden": "true",
-      children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx("path", { d: "M50 0 C 50 10, 50 10, 50 18" }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx("path", { d: `M${xs[0]} 18 L${xs[xs.length - 1]} 18` }),
-        xs.map((x2) => /* @__PURE__ */ jsxRuntimeExports.jsx("path", { d: `M${x2} 18 C ${x2} 26, ${x2} 26, ${x2} 40` }, x2))
-      ]
-    }
-  );
+function RowConnector({
+  count,
+  selected = false
+}) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative my-1 h-10 w-full", "aria-hidden": "true", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "span",
+      {
+        className: `ft-trunk absolute left-1/2 top-0 h-[18px] -translate-x-1/2 ${selected ? "ft-connector-selected" : ""}`
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "absolute left-1/2 top-[18px] -translate-x-1/2", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "span",
+      {
+        className: `ft-junction block ${selected ? "ft-connector-selected" : ""}`
+      }
+    ) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "span",
+      {
+        className: `ft-couple-line absolute left-0 right-0 top-[22px] ${selected ? "ft-connector-selected" : ""}`
+      }
+    ),
+    Array.from({ length: count }, (_2, i) => {
+      const x2 = (i + 0.5) / count * 100;
+      return /* @__PURE__ */ jsxRuntimeExports.jsxs(reactExports.Fragment, { children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "span",
+          {
+            className: `ft-child-stub absolute top-[22px] h-[18px] -translate-x-1/2 ${selected ? "ft-connector-selected" : ""}`,
+            style: { left: `${x2}%` }
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "span",
+          {
+            className: "absolute top-[30px]",
+            style: { left: `calc(${x2}% - 0.225rem)` },
+            children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "span",
+              {
+                className: `ft-chevron block ${selected ? "ft-connector-selected" : ""}`
+              }
+            )
+          }
+        )
+      ] }, x2);
+    })
+  ] });
 }
 function HeritageBranchPage({
   onBack,
@@ -46514,25 +48079,52 @@ function HeritageBranchPage({
         children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col items-center", children: [
           parents.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex justify-center gap-3", children: parents.map((id2, i) => renderCard(id2, i)) }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(TrunkConnector, {})
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              TrunkConnector,
+              {
+                selected: selectedId === anchorId || parents.includes(selectedId ?? "")
+              }
+            )
           ] }),
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-center gap-2", children: [
             leftSpouses.map((id2, i) => /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "flex items-center gap-2", children: [
               renderCard(id2, i),
-              /* @__PURE__ */ jsxRuntimeExports.jsx(HorizontalConnector, {})
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                HorizontalConnector,
+                {
+                  selected: selectedId === anchorId || selectedId === id2
+                }
+              )
             ] }, id2)),
             renderCard(anchorId, parents.length + leftSpouses.length, true),
             rightSpouses.map((id2, i) => /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "flex items-center gap-2", children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx(HorizontalConnector, {}),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                HorizontalConnector,
+                {
+                  selected: selectedId === anchorId || selectedId === id2
+                }
+              ),
               renderCard(id2, parents.length + leftSpouses.length + 1 + i)
             ] }, id2))
           ] }),
           siblings.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx(RowConnector, { count: siblings.length }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              RowConnector,
+              {
+                count: siblings.length,
+                selected: selectedId === anchorId || siblings.includes(selectedId ?? "")
+              }
+            ),
             /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-wrap justify-center gap-3", children: siblings.map((id2, i) => renderCard(id2, i)) })
           ] }),
           children2.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx(RowConnector, { count: children2.length }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              RowConnector,
+              {
+                count: children2.length,
+                selected: selectedId === anchorId || children2.includes(selectedId ?? "")
+              }
+            ),
             /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-wrap justify-center gap-3", children: children2.map((id2, i) => renderCard(id2, i)) })
           ] })
         ] })

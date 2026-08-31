@@ -84,7 +84,7 @@
     "extension-oql": {
       "source": "caffeinelabs/skills",
       "sourceType": "github",
-      "computedHash": "b04e5dd90cad4d14890de58b0ccf196ef54429c2b860310c3d8654f0c706feb4"
+      "computedHash": "ee0151a367978ccb13d37826c802d81bdbaf25285cda601c8b2ae5d253de1c80"
     },
     "extension-posting-to-x": {
       "source": "caffeinelabs/skills",
@@ -99,7 +99,7 @@
     "extension-querying-oql": {
       "source": "caffeinelabs/skills",
       "sourceType": "github",
-      "computedHash": "082152434904a50ddcc05c6269b91d7528952a6808fff227d7dd4314949dbd41"
+      "computedHash": "3f857ec86acc4e5068cc9017de80e112bf59ba3b5adedaee768afa03aaddfb21"
     },
     "extension-stripe": {
       "source": "caffeinelabs/skills",

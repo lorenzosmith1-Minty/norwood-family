@@ -2,7 +2,25 @@ import { ArrowLeft, TreePine } from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";
 import { type Person, PersonCard } from "../components/PersonCard";
-import { profiles } from "./PersonProfilePage";
+import {
+  albertAdamsProfile,
+  charlesAdamsProfile,
+  christineAdamsTuckerProfile,
+  ellaMaeAdamsProfile,
+  eulaLeeAdamsProfile,
+  fannieAdamsProfile,
+  gertrudeAdamsHillProfile,
+  harveyAdamsJrProfile,
+  harveyAdamsSrProfile,
+  homerAdamsProfile,
+  johnAdamsProfile,
+  judgeGranberryAdamsProfile,
+  louisAdamsSrProfile,
+  maryLouiseSimsProfile,
+  profiles,
+  robertAdamsSrProfile,
+  versieAdamsSrProfile,
+} from "./PersonProfilePage";
 
 interface FamilyTreePageProps {
   onBack: () => void;
@@ -57,21 +75,72 @@ const claytonBranch: { spouse: Person; children: Person[] }[] = [
       },
       { id: "alton", name: "Alton", role: "Child" },
       { id: "robert-davis", name: "Robert Davis “RD”", role: "Child" },
-      { name: "Ardeanus", role: "Child" },
-      { name: "Willie B.", role: "Child" },
-      { name: "James", role: "Child" },
-      { name: "Freddie", role: "Child" },
-      { name: "Zelia Mae", role: "Child" },
-      { name: "Lula Mae", role: "Child" },
+      { id: "ardeanus", name: "Ardeanus", role: "Child" },
+      { id: "willie-b", name: "Willie B.", role: "Child" },
+      { id: "james", name: "James", role: "Child" },
+      { id: "freddie", name: "Freddie", role: "Child" },
+      { id: "zelia-mae", name: "Zelia Mae", role: "Child" },
+      { id: "lula-mae", name: "Lula Mae", role: "Child" },
     ],
   },
 ];
 
+const firstMarriageChildren: Person[] = [
+  { id: johnAdamsProfile.id, name: "John Adams", role: "Son" },
+  { id: louisAdamsSrProfile.id, name: "Louis Adams Sr.", role: "Son" },
+  { id: albertAdamsProfile.id, name: "Albert Adams", role: "Son" },
+  { id: charlesAdamsProfile.id, name: "Charles Adams", role: "Son" },
+  { id: homerAdamsProfile.id, name: "Homer Adams", role: "Son" },
+  { id: versieAdamsSrProfile.id, name: "Versie Adams Sr.", role: "Son" },
+  {
+    id: judgeGranberryAdamsProfile.id,
+    name: "Judge Granberry Adams",
+    role: "Son",
+  },
+  { id: fannieAdamsProfile.id, name: "Fannie Adams", role: "Daughter" },
+  {
+    id: gertrudeAdamsHillProfile.id,
+    name: "Gertrude Adams-Hill",
+    role: "Daughter",
+  },
+  { id: harveyAdamsJrProfile.id, name: "Harvey Adams Jr.", role: "Son" },
+  {
+    id: christineAdamsTuckerProfile.id,
+    name: "Christine Adams Tucker",
+    role: "Daughter",
+  },
+  { id: robertAdamsSrProfile.id, name: "Robert Adams Sr.", role: "Son" },
+  { id: ellaMaeAdamsProfile.id, name: "Ella Mae Adams", role: "Daughter" },
+  { id: eulaLeeAdamsProfile.id, name: "Eula Lee Adams", role: "Daughter" },
+];
+
 const CHILDREN_PER_ROW = 4;
+
+/* Numeric indices of every person in the tree, used to decide which connector
+   run belongs to the currently selected person. These mirror the fixed layout
+   order below (couple, children, Clayton branch, Lula Mae/Versie, Harvey's
+   maternal line). */
+const COUPLE_INDICES = [0, 1];
+const CHILDREN_INDICES = [2, 3, 4, 5, 6, 7, 8, 9];
+const CLAYTON_INDEX = 2;
+const CLAYTON_SPOUSE_INDICES = [10, 11];
+const LULA_MAE_INDEX = 26;
+const VERSIE_INDEX = 27;
+const HARVEY_INDEX = 28;
+const MARY_LOUISE_INDEX = 29;
+const FIRST_MARRIAGE_CHILDREN_INDICES = Array.from(
+  { length: firstMarriageChildren.length },
+  (_, i) => 30 + i,
+);
+const GERTRUDE_INDEX = 44;
+
+const inSet = (selected: number | null, set: number[]) =>
+  selected !== null && set.includes(selected);
 
 interface BranchRowProps {
   rowChildren: Person[];
   rowOffset: number;
+  parentIndices: number[];
   selected: number | null;
   onSelect: (index: number) => void;
   meIndex: number | null;
@@ -83,6 +152,7 @@ interface BranchRowProps {
 function BranchRow({
   rowChildren,
   rowOffset,
+  parentIndices,
   selected,
   onSelect,
   meIndex,
@@ -90,20 +160,43 @@ function BranchRow({
   onOpenProfile,
   profilePhotos,
 }: BranchRowProps) {
+  const barSelected =
+    inSet(selected, parentIndices) ||
+    rowChildren.some((_, i) => selected === rowOffset + i);
   return (
     <div className="relative">
       {/* Horizontal branch bar spanning the row */}
       <div
-        className="pointer-events-none absolute left-0 right-0 top-0 h-px bg-border"
+        className={`ft-connector pointer-events-none absolute left-0 right-0 top-0 h-px ${
+          barSelected ? "ft-connector-selected" : ""
+        }`}
         aria-hidden="true"
       />
-      {/* Vertical stubs dropping from the bar down to each child */}
-      <div className="grid grid-cols-2 sm:grid-cols-4">
-        {rowChildren.map((person) => (
-          <div key={person.name} className="flex justify-center">
-            <div className="h-6 w-px bg-border" aria-hidden="true" />
-          </div>
-        ))}
+      {/* Vertical stubs dropping from the bar down to each child, each
+          ending in a downward chevron just above the card. The grid mirrors
+          the card grid's gaps so every stub sits on its card's center. */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
+        {rowChildren.map((person, i) => {
+          const index = rowOffset + i;
+          const stubSelected =
+            inSet(selected, parentIndices) || selected === index;
+          return (
+            <div key={person.name} className="flex flex-col items-center">
+              <div
+                className={`ft-child-stub h-6 ${
+                  stubSelected ? "ft-connector-selected" : ""
+                }`}
+                aria-hidden="true"
+              />
+              <span
+                className={`ft-chevron -mt-1.5 ${
+                  stubSelected ? "ft-connector-selected" : ""
+                }`}
+                aria-hidden="true"
+              />
+            </div>
+          );
+        })}
       </div>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
         {rowChildren.map((person, i) => {
@@ -161,16 +254,34 @@ function ClaytonBranch({
     return group;
   });
 
+  const claytonSpouseSelected = inSet(selected, [
+    CLAYTON_INDEX,
+    ...CLAYTON_SPOUSE_INDICES,
+  ]);
+
   return (
     <section aria-label="Clayton's branch" className="relative mt-2">
-      {/* Vertical connector from Clayton's card down to the spouses */}
-      <div
-        className="pointer-events-none absolute left-[25%] top-0 h-8 w-px bg-border sm:left-[12.5%]"
-        aria-hidden="true"
-      />
-
       {/* Spouses side by side */}
       <div className="relative">
+        {/* Vertical connector from Clayton's card down to the marriage bar,
+            ending in a junction where it meets the bar */}
+        <div
+          className={`ft-trunk pointer-events-none absolute left-[25%] top-0 bottom-1/2 sm:left-[12.5%] ${
+            claytonSpouseSelected ? "ft-connector-selected" : ""
+          }`}
+          aria-hidden="true"
+        >
+          <span
+            className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2"
+            aria-hidden="true"
+          >
+            <span
+              className={`ft-junction block ${
+                claytonSpouseSelected ? "ft-connector-selected" : ""
+              }`}
+            />
+          </span>
+        </div>
         <div className="grid grid-cols-2 gap-3 sm:gap-4">
           {branches.map((branch, i) => (
             <PersonCard
@@ -192,46 +303,68 @@ function ClaytonBranch({
             />
           ))}
         </div>
-        {/* Horizontal relationship line between the two spouses */}
+        {/* Horizontal relationship line between the two spouses; on sm it
+            widens so Clayton's trunk (offset to his card column) meets it */}
         <div
-          className="pointer-events-none absolute left-1/2 top-1/2 h-px w-1/2 -translate-x-1/2 -translate-y-1/2 bg-border"
+          className={`ft-couple-line pointer-events-none absolute left-1/2 top-1/2 w-1/2 -translate-x-1/2 -translate-y-1/2 sm:w-3/4 ${
+            claytonSpouseSelected ? "ft-connector-selected" : ""
+          }`}
           aria-hidden="true"
         />
       </div>
 
       {/* Children under each spouse */}
       <div className="mt-6 space-y-6">
-        {branches.map((branch, i) => (
-          <div key={branch.spouse.name}>
-            {/* Vertical connector from the spouse down to their children */}
-            <div
-              className="relative mx-auto flex h-6 w-px bg-border"
-              aria-hidden="true"
-            />
-            {Array.from({
-              length: Math.ceil(branch.children.length / CHILDREN_PER_ROW),
-            }).map((_, row) => {
-              const rowChildren = branch.children.slice(
-                row * CHILDREN_PER_ROW,
-                row * CHILDREN_PER_ROW + CHILDREN_PER_ROW,
-              );
-              const rowOffset = childGroups[i][row * CHILDREN_PER_ROW];
-              return (
-                <BranchRow
-                  key={rowChildren[0].name}
-                  rowChildren={rowChildren}
-                  rowOffset={rowOffset}
-                  selected={selected}
-                  onSelect={onSelect}
-                  meIndex={meIndex}
-                  onMarkMe={onMarkMe}
-                  onOpenProfile={onOpenProfile}
-                  profilePhotos={profilePhotos}
+        {branches.map((branch, i) => {
+          const spouseIndex = spouseIndices[i];
+          const childIndices = childGroups[i];
+          const downSelected =
+            selected === spouseIndex ||
+            selected === CLAYTON_INDEX ||
+            (selected !== null && childIndices.includes(selected));
+          return (
+            <div key={branch.spouse.name}>
+              {/* Vertical trunk from the spouse down to their children,
+                  ending in a junction where it meets the branch bar */}
+              <div
+                className={`ft-trunk relative mx-auto h-6 ${
+                  downSelected ? "ft-connector-selected" : ""
+                }`}
+                aria-hidden="true"
+              >
+                <span
+                  className={`ft-junction absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ${
+                    downSelected ? "ft-connector-selected" : ""
+                  }`}
+                  aria-hidden="true"
                 />
-              );
-            })}
-          </div>
-        ))}
+              </div>
+              {Array.from({
+                length: Math.ceil(branch.children.length / CHILDREN_PER_ROW),
+              }).map((_, row) => {
+                const rowChildren = branch.children.slice(
+                  row * CHILDREN_PER_ROW,
+                  row * CHILDREN_PER_ROW + CHILDREN_PER_ROW,
+                );
+                const rowOffset = childGroups[i][row * CHILDREN_PER_ROW];
+                return (
+                  <BranchRow
+                    key={rowChildren[0].name}
+                    rowChildren={rowChildren}
+                    rowOffset={rowOffset}
+                    parentIndices={[spouseIndex]}
+                    selected={selected}
+                    onSelect={onSelect}
+                    meIndex={meIndex}
+                    onMarkMe={onMarkMe}
+                    onOpenProfile={onOpenProfile}
+                    profilePhotos={profilePhotos}
+                  />
+                );
+              })}
+            </div>
+          );
+        })}
       </div>
     </section>
   );
@@ -257,7 +390,35 @@ export function FamilyTreePage({
     ...couple,
     ...children,
     ...claytonBranch.flatMap((branch) => [branch.spouse, ...branch.children]),
+    { id: "lula-mae", name: "Lula Mae", role: "Child" },
+    { id: "versie-smith", name: "Versie Smith", role: "Husband" },
+    {
+      id: harveyAdamsSrProfile.id,
+      name: "Harvey Adams Sr.",
+      role: "Father",
+    },
+    {
+      id: maryLouiseSimsProfile.id,
+      name: "Mary Louise Sims",
+      role: "First Wife",
+    },
+    ...firstMarriageChildren,
+    {
+      id: gertrudeAdamsHillProfile.id,
+      name: "Gertrude Adams-Hill",
+      role: "Mother",
+    },
   ];
+
+  const coupleBaseIndex =
+    couple.length +
+    children.length +
+    claytonBranch.flatMap((branch) => [branch.spouse, ...branch.children])
+      .length;
+  const parentsBaseIndex = coupleBaseIndex + 2;
+  const firstMarriageChildrenBaseIndex = parentsBaseIndex + 2;
+  const gertrudeIndex =
+    firstMarriageChildrenBaseIndex + firstMarriageChildren.length;
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col px-6 py-8 sm:py-12">
@@ -311,26 +472,41 @@ export function FamilyTreePage({
 
         {/* Horizontal relationship line between the two cards */}
         <div
-          className="pointer-events-none absolute left-1/2 top-1/2 h-px w-1/2 -translate-x-1/2 -translate-y-1/2 bg-border"
+          className={`ft-couple-line pointer-events-none absolute left-1/2 top-1/2 w-1/2 -translate-x-1/2 -translate-y-1/2 ${
+            inSet(selected, COUPLE_INDICES) ? "ft-connector-selected" : ""
+          }`}
           aria-hidden="true"
         />
       </section>
 
-      {/* Vertical trunk dropping from the center of the couple */}
+      {/* Vertical trunk dropping from the center of the couple, ending in a
+          junction where it meets the children's branch line */}
       <div
-        className="relative mx-auto flex h-8 w-px bg-border"
+        className={`ft-trunk relative mx-auto h-8 ${
+          inSet(selected, [...COUPLE_INDICES, ...CHILDREN_INDICES])
+            ? "ft-connector-selected"
+            : ""
+        }`}
         aria-hidden="true"
       >
-        <span className="absolute left-1/2 top-0 h-4 w-px -translate-x-1/2 bg-border" />
+        <span
+          className={`ft-junction absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ${
+            inSet(selected, [...COUPLE_INDICES, ...CHILDREN_INDICES])
+              ? "ft-connector-selected"
+              : ""
+          }`}
+          aria-hidden="true"
+        />
       </div>
 
       {/* Children branching below the couple */}
-      <section aria-label="Children" className="mt-2 space-y-6">
+      <section aria-label="Children" className="space-y-6">
         {rows.map((row) => (
           <BranchRow
             key={row.people[0].name}
             rowChildren={row.people}
             rowOffset={row.offset}
+            parentIndices={COUPLE_INDICES}
             selected={selected}
             onSelect={setSelected}
             meIndex={meIndex}
@@ -352,6 +528,215 @@ export function FamilyTreePage({
         onOpenProfile={onOpenProfile}
         profilePhotos={profilePhotos}
       />
+
+      {/* Lula Mae and Versie as a couple */}
+      <section aria-label="Lula Mae and Versie" className="relative mt-10">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4">
+          <PersonCard
+            person={{ id: "lula-mae", name: "Lula Mae", role: "Child" }}
+            index={coupleBaseIndex}
+            selected={selected === coupleBaseIndex}
+            onSelect={() => setSelected(coupleBaseIndex)}
+            onOpen={() => onOpenProfile("lula-mae")}
+            isMe={meIndex === coupleBaseIndex}
+            onMarkMe={() => setMeIndex(coupleBaseIndex)}
+            profilePhoto={profilePhotos?.["lula-mae"]}
+          />
+          <PersonCard
+            person={{
+              id: "versie-smith",
+              name: "Versie Smith",
+              role: "Husband",
+            }}
+            index={coupleBaseIndex + 1}
+            selected={selected === coupleBaseIndex + 1}
+            onSelect={() => setSelected(coupleBaseIndex + 1)}
+            onOpen={() => onOpenProfile("versie-smith")}
+            isMe={meIndex === coupleBaseIndex + 1}
+            onMarkMe={() => setMeIndex(coupleBaseIndex + 1)}
+            profilePhoto={profilePhotos?.["versie-smith"]}
+          />
+        </div>
+
+        {/* Horizontal relationship line between the two cards */}
+        <div
+          className={`ft-couple-line pointer-events-none absolute left-1/2 top-1/2 w-1/2 -translate-x-1/2 -translate-y-1/2 ${
+            inSet(selected, [LULA_MAE_INDEX, VERSIE_INDEX])
+              ? "ft-connector-selected"
+              : ""
+          }`}
+          aria-hidden="true"
+        />
+      </section>
+
+      {/* Vertical trunk dropping from the center of the couple down to Versie,
+          ending in a junction where it meets the branch line */}
+      <div
+        className={`ft-trunk relative mx-auto h-8 ${
+          inSet(selected, [LULA_MAE_INDEX, VERSIE_INDEX])
+            ? "ft-connector-selected"
+            : ""
+        }`}
+        aria-hidden="true"
+      >
+        <span
+          className={`ft-junction absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ${
+            inSet(selected, [LULA_MAE_INDEX, VERSIE_INDEX])
+              ? "ft-connector-selected"
+              : ""
+          }`}
+          aria-hidden="true"
+        />
+      </div>
+
+      {/* Versie's maternal line: Harvey (father), Mary Louise Sims (first wife),
+          their children, and Gertrude (mother) */}
+      <section aria-label="Versie's maternal line" className="relative mt-2">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4">
+          <PersonCard
+            person={{
+              id: harveyAdamsSrProfile.id,
+              name: "Harvey Adams Sr.",
+              role: "Father",
+            }}
+            index={parentsBaseIndex}
+            selected={selected === parentsBaseIndex}
+            onSelect={() => setSelected(parentsBaseIndex)}
+            onOpen={() => onOpenProfile(harveyAdamsSrProfile.id)}
+            isMe={meIndex === parentsBaseIndex}
+            onMarkMe={() => setMeIndex(parentsBaseIndex)}
+            profilePhoto={profilePhotos?.[harveyAdamsSrProfile.id]}
+          />
+          <PersonCard
+            person={{
+              id: maryLouiseSimsProfile.id,
+              name: "Mary Louise Sims",
+              role: "First Wife",
+            }}
+            index={parentsBaseIndex + 1}
+            selected={selected === parentsBaseIndex + 1}
+            onSelect={() => setSelected(parentsBaseIndex + 1)}
+            onOpen={() => onOpenProfile(maryLouiseSimsProfile.id)}
+            isMe={meIndex === parentsBaseIndex + 1}
+            onMarkMe={() => setMeIndex(parentsBaseIndex + 1)}
+            profilePhoto={profilePhotos?.[maryLouiseSimsProfile.id]}
+          />
+        </div>
+
+        {/* Horizontal relationship line between the two cards */}
+        <div
+          className={`ft-couple-line pointer-events-none absolute left-1/2 top-1/2 w-1/2 -translate-x-1/2 -translate-y-1/2 ${
+            inSet(selected, [HARVEY_INDEX, MARY_LOUISE_INDEX])
+              ? "ft-connector-selected"
+              : ""
+          }`}
+          aria-hidden="true"
+        />
+
+        {/* Vertical trunk dropping from the center of the couple down to the
+            children, ending in a junction where it meets the branch line */}
+        <div
+          className={`ft-trunk relative mx-auto h-8 ${
+            inSet(selected, [
+              HARVEY_INDEX,
+              MARY_LOUISE_INDEX,
+              ...FIRST_MARRIAGE_CHILDREN_INDICES,
+              GERTRUDE_INDEX,
+            ])
+              ? "ft-connector-selected"
+              : ""
+          }`}
+          aria-hidden="true"
+        >
+          <span
+            className={`ft-junction absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ${
+              inSet(selected, [
+                HARVEY_INDEX,
+                MARY_LOUISE_INDEX,
+                ...FIRST_MARRIAGE_CHILDREN_INDICES,
+                GERTRUDE_INDEX,
+              ])
+                ? "ft-connector-selected"
+                : ""
+            }`}
+            aria-hidden="true"
+          />
+        </div>
+
+        {/* Children of Harvey Adams Sr. and Mary Louise Sims */}
+        <div className="mt-2 space-y-6">
+          {Array.from({
+            length: Math.ceil(firstMarriageChildren.length / CHILDREN_PER_ROW),
+          }).map((_, row) => {
+            const rowChildren = firstMarriageChildren.slice(
+              row * CHILDREN_PER_ROW,
+              row * CHILDREN_PER_ROW + CHILDREN_PER_ROW,
+            );
+            return (
+              <BranchRow
+                key={rowChildren[0].name}
+                rowChildren={rowChildren}
+                rowOffset={
+                  firstMarriageChildrenBaseIndex + row * CHILDREN_PER_ROW
+                }
+                parentIndices={[HARVEY_INDEX, MARY_LOUISE_INDEX]}
+                selected={selected}
+                onSelect={setSelected}
+                meIndex={meIndex}
+                onMarkMe={setMeIndex}
+                onOpenProfile={onOpenProfile}
+                profilePhotos={profilePhotos}
+              />
+            );
+          })}
+        </div>
+
+        {/* Vertical trunk dropping from the children down to Gertrude,
+            ending in a junction where it meets the branch line */}
+        <div
+          className={`ft-trunk relative mx-auto h-8 ${
+            inSet(selected, [
+              ...FIRST_MARRIAGE_CHILDREN_INDICES,
+              GERTRUDE_INDEX,
+            ])
+              ? "ft-connector-selected"
+              : ""
+          }`}
+          aria-hidden="true"
+        >
+          <span
+            className={`ft-junction absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ${
+              inSet(selected, [
+                ...FIRST_MARRIAGE_CHILDREN_INDICES,
+                GERTRUDE_INDEX,
+              ])
+                ? "ft-connector-selected"
+                : ""
+            }`}
+            aria-hidden="true"
+          />
+        </div>
+
+        {/* Gertrude Adams-Hill, mother of Versie Smith */}
+        <div className="mt-2 flex justify-center">
+          <div className="w-full max-w-[calc(50%-0.375rem)] sm:max-w-[calc(50%-0.5rem)]">
+            <PersonCard
+              person={{
+                id: gertrudeAdamsHillProfile.id,
+                name: "Gertrude Adams-Hill",
+                role: "Mother",
+              }}
+              index={gertrudeIndex}
+              selected={selected === gertrudeIndex}
+              onSelect={() => setSelected(gertrudeIndex)}
+              onOpen={() => onOpenProfile(gertrudeAdamsHillProfile.id)}
+              isMe={meIndex === gertrudeIndex}
+              onMarkMe={() => setMeIndex(gertrudeIndex)}
+              profilePhoto={profilePhotos?.[gertrudeAdamsHillProfile.id]}
+            />
+          </div>
+        </div>
+      </section>
 
       <p className="mt-10 text-center text-sm text-muted-foreground">
         {selected === null

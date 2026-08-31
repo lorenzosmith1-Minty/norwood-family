@@ -771,6 +771,1146 @@ export const robertDavisProfile: PersonProfile = {
   ],
 };
 
+export const ardeanusProfile: PersonProfile = {
+  id: "ardeanus",
+  name: "Ardeanus Norwood",
+  role: "Son",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Ardeanus Norwood, since no photograph of him is known to exist.",
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Clayton Norwood and Erma T. Williams",
+    },
+    { label: "Born", value: "Dec. 3, 1929" },
+    { label: "Died", value: "Not recorded" },
+    { label: "Location", value: "California" },
+    { label: "Evidence status", value: "Limited" },
+  ],
+  story:
+    "Ardeanus Norwood was the son of Clayton Norwood and Erma T. Williams, born Dec. 3, 1929. He is associated with California. No death date is recorded in the family records gathered so far.",
+  family: {
+    spouseName: "",
+    spouseRole: "",
+    childrenText: "",
+  },
+  timeline: [
+    {
+      date: "Dec. 3, 1929",
+      title: "Born",
+      detail:
+        "Ardeanus Norwood is born, the son of Clayton Norwood and Erma T. Williams.",
+    },
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail:
+        "A family-history note identifying Ardeanus as a son of Clayton Norwood and Erma T. Williams, born Dec. 3, 1929, and associated with California. No death date is recorded. These are family accounts, not documented records.",
+    },
+  ],
+};
+
+export const willieBProfile: PersonProfile = {
+  id: "willie-b",
+  name: "Willie B. Norwood",
+  role: "Son",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Willie B. Norwood, since no photograph of him is known to exist.",
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Clayton Norwood and Erma T. Williams",
+    },
+    { label: "Born", value: "July 12, 1932" },
+    { label: "Died", value: "July 6, 1995" },
+    { label: "Location", value: "Diamond Bar, California" },
+    { label: "Military service", value: "U.S. Army; Korea" },
+    { label: "Evidence status", value: "Limited" },
+  ],
+  story:
+    "Willie B. Norwood was the son of Clayton Norwood and Erma T. Williams. His recorded dates are July 12, 1932 – July 6, 1995, and he is associated with Diamond Bar, California. He served in the U.S. Army in Korea. No additional details about his life are currently recorded in the family records gathered so far.",
+  family: {
+    spouseName: "",
+    spouseRole: "",
+    childrenText: "",
+  },
+  timeline: [
+    {
+      date: "July 12, 1932",
+      title: "Born",
+      detail:
+        "Willie B. Norwood is born, the son of Clayton Norwood and Erma T. Williams.",
+    },
+    {
+      date: "July 6, 1995",
+      title: "Died",
+      detail: "Willie B. Norwood dies.",
+    },
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail:
+        "A family-history note identifying Willie B. Norwood as a son of Clayton Norwood and Erma T. Williams, with recorded dates of July 12, 1932 – July 6, 1995, an association with Diamond Bar, California, and service in the U.S. Army in Korea. These are family accounts, not documented records.",
+    },
+  ],
+};
+
+export const jamesProfile: PersonProfile = {
+  id: "james",
+  name: "James Norwood",
+  role: "Son",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for James Norwood, since no photograph of him is known to exist.",
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Clayton Norwood and Erma T. Williams",
+    },
+    { label: "Born", value: "Not recorded" },
+    { label: "Died", value: "Not recorded" },
+    { label: "Location", value: "Chicago" },
+    { label: "Military service", value: "Not recorded" },
+    { label: "Evidence status", value: "Limited" },
+  ],
+  story:
+    "James Norwood was the son of Clayton Norwood and Erma T. Williams. He is associated with Chicago. No additional details about his life are currently recorded in the family records gathered so far.",
+  family: {
+    spouseName: "",
+    spouseRole: "",
+    childrenText: "",
+  },
+  timeline: [],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail:
+        "A family-history note identifying James as a son of Clayton Norwood and Erma T. Williams, associated with Chicago. No additional details about him are currently recorded. This is a family account, not a documented record.",
+    },
+  ],
+};
+
+export const freddieProfile: PersonProfile = {
+  id: "freddie",
+  name: "Freddie Norwood",
+  role: "Son",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Freddie Norwood, since no photograph of him is known to exist.",
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Clayton Norwood and Erma T. Williams",
+    },
+    { label: "Born", value: "1938" },
+    { label: "Died", value: "1985" },
+    { label: "Location", value: "Mississippi" },
+    { label: "Buried", value: "Ebenezer Cemetery" },
+    { label: "Evidence status", value: "Limited" },
+  ],
+  story:
+    "Freddie Norwood was the son of Clayton Norwood and Erma T. Williams. His recorded dates are 1938 – 1985, he is associated with Mississippi, and he is buried at Ebenezer Cemetery. He had a daughter, Felecia Anita Beasly. No additional details about his life are currently recorded in the family records gathered so far.",
+  family: {
+    spouseName: "",
+    spouseRole: "",
+    childrenText: "Freddie Norwood had a daughter, Felecia Anita Beasly.",
+    spouses: [
+      {
+        name: "",
+        role: "",
+        children: ["Felecia Anita Beasly"],
+      },
+    ],
+  },
+  timeline: [
+    {
+      date: "1938",
+      title: "Born",
+      detail:
+        "Freddie Norwood is born, the son of Clayton Norwood and Erma T. Williams.",
+    },
+    {
+      date: "1985",
+      title: "Died",
+      detail: "Freddie Norwood dies.",
+    },
+    {
+      date: "1985",
+      title: "Buried at Ebenezer Cemetery",
+      detail: "Freddie Norwood is buried at Ebenezer Cemetery.",
+    },
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail:
+        "A family-history note identifying Freddie as a son of Clayton Norwood and Erma T. Williams, with recorded dates of 1938 – 1985, an association with Mississippi, burial at Ebenezer Cemetery, and a daughter, Felecia Anita Beasly. These are family accounts, not documented records.",
+    },
+  ],
+};
+
+export const zeliaMaeProfile: PersonProfile = {
+  id: "zelia-mae",
+  name: "Zelia Mae Norwood",
+  role: "Daughter",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Zelia Mae Norwood, since no photograph of her is known to exist.",
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Clayton Norwood and Erma T. Williams",
+    },
+    { label: "Born", value: "Not recorded" },
+    { label: "Died", value: "Not recorded" },
+    { label: "Location", value: "Mississippi" },
+    { label: "Married", value: "Twice" },
+    { label: "Children", value: "None" },
+    { label: "Evidence status", value: "Family history" },
+  ],
+  story:
+    "Zelia Mae Norwood was the daughter of Clayton Norwood and Erma T. Williams, associated with Mississippi. She married twice and had no children. Her first husband was Prent Sims (June 11, 1914 – April 11, 1970) — those dates are his lifespan, not a marriage date — and her second husband was Carter. No birth or death dates for Zelia Mae are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "Prent Sims",
+    spouseRole: "First Husband",
+    childrenText:
+      "Zelia Mae married twice and had no children. Her first husband was Prent Sims (June 11, 1914 – April 11, 1970) — those dates are his lifespan, not a marriage date — and her second husband was Carter.",
+    spouses: [
+      {
+        name: "Prent Sims",
+        role: "First Husband",
+        children: [],
+      },
+      {
+        name: "Carter",
+        role: "Second Husband",
+        children: [],
+      },
+    ],
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Marries Prent Sims",
+      detail:
+        "Zelia Mae marries her first husband, Prent Sims. The date is not recorded. Prent Sims' dates, June 11, 1914 – April 11, 1970, are his lifespan, not a marriage date.",
+    },
+    {
+      date: "Unknown",
+      title: "Marries Carter",
+      detail:
+        "Zelia Mae marries her second husband, Carter. The date is not recorded.",
+    },
+    {
+      date: "Unknown",
+      title: "No children",
+      detail:
+        "Zelia Mae had no children. This is a family account, not a documented record.",
+    },
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail:
+        "A family-history note identifying Zelia Mae as a daughter of Clayton Norwood and Erma T. Williams, associated with Mississippi. It records that she married twice and had no children, with her first husband Prent Sims (June 11, 1914 – April 11, 1970) and her second husband Carter. These are family accounts, not documented records.",
+    },
+  ],
+};
+
+export const lulaMaeProfile: PersonProfile = {
+  id: "lula-mae",
+  name: "Lula Mae Norwood",
+  role: "Daughter",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Lula Mae Norwood, since no photograph of her is known to exist.",
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Clayton Norwood and Erma T. Williams",
+    },
+    { label: "Born", value: "Not recorded" },
+    { label: "Died", value: "Not recorded" },
+    { label: "Location", value: "New York / New Jersey" },
+    { label: "Husband", value: "Versie Smith" },
+    { label: "Evidence status", value: "Family history" },
+  ],
+  story:
+    "Lula Mae Norwood was the daughter of Clayton Norwood and Erma T. Williams, associated with New York / New Jersey. She married Versie Smith, and both were from Mississippi. No birth or death dates for Lula Mae are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "Versie Smith",
+    spouseRole: "Husband",
+    childrenText: "Lula Mae married Versie Smith. Both were from Mississippi.",
+    spouses: [
+      {
+        name: "Versie Smith",
+        role: "Husband",
+        children: [],
+      },
+    ],
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Marries Versie Smith",
+      detail:
+        "Lula Mae marries Versie Smith. The date is not recorded. Both were from Mississippi.",
+    },
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail:
+        "A family-history note identifying Lula Mae as a daughter of Clayton Norwood and Erma T. Williams, associated with New York / New Jersey. It records that she married Versie Smith, and that both were from Mississippi. These are family accounts, not documented records.",
+    },
+  ],
+};
+
+export const versieSmithProfile: PersonProfile = {
+  id: "versie-smith",
+  name: "Versie Smith",
+  role: "Husband of Lula Mae Norwood",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Versie Smith, since no photograph of him is known to exist.",
+  },
+  facts: [
+    { label: "Wife", value: "Lula Mae Norwood" },
+    { label: "Mother", value: "Gertrude Adams-Hill" },
+    { label: "Born", value: "Out of wedlock" },
+    {
+      label: "Father",
+      value: "Mr. Beard? (uncertain — not confirmed)",
+    },
+    {
+      label: "Biological father",
+      value: "Did not know him",
+    },
+    { label: "Raised", value: "As an Adams in Mississippi" },
+    {
+      label: "Later moved",
+      value: "To New York after Army service",
+    },
+    { label: "Died", value: "From lung cancer" },
+    { label: "Evidence status", value: "Family history" },
+  ],
+  story:
+    "Versie Smith was the husband of Lula Mae Norwood and the son of Gertrude Adams-Hill. He was born out of wedlock, and his father is recorded only as “Mr. Beard?” — the uncertainty is preserved because his identity is not confirmed. Versie did not know his biological father and was raised as an Adams in Mississippi. He later moved to New York after his Army service, and he died from lung cancer. These details come from family research notes and are family-history accounts, not confirmed documented records.",
+  family: {
+    spouseName: "Lula Mae Norwood",
+    spouseRole: "Wife",
+    childrenText:
+      "Versie Smith married Lula Mae Norwood. Both were from Mississippi. His mother was Gertrude Adams-Hill.",
+    spouses: [
+      {
+        name: "Lula Mae Norwood",
+        role: "Wife",
+        children: [],
+      },
+    ],
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Marries Lula Mae Norwood",
+      detail:
+        "Versie Smith marries Lula Mae Norwood. The date is not recorded. Both were from Mississippi.",
+    },
+    {
+      date: "Unknown",
+      title: "Moves to New York",
+      detail:
+        "Versie moves to New York after his Army service. The date is not recorded. This is a family-history account, not a documented record.",
+    },
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail:
+        "A family-history note identifying Versie Smith as the husband of Lula Mae Norwood and the son of Gertrude Adams-Hill. It records that he was born out of wedlock, that his father is recorded only as “Mr. Beard?” (uncertain), that he did not know his biological father, that he was raised as an Adams in Mississippi, that he moved to New York after Army service, and that he died from lung cancer. These are family accounts, not documented records.",
+    },
+  ],
+};
+
+export const gertrudeAdamsHillProfile: PersonProfile = {
+  id: "gertrude-adams-hill",
+  name: "Gertrude Adams-Hill",
+  role: "Daughter of Harvey Adams Sr.",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Gertrude Adams-Hill, since no photograph of her is known to exist.",
+  },
+  facts: [
+    { label: "Born", value: "Oct. 19, 1913" },
+    { label: "Location", value: "Mississippi" },
+    { label: "Father", value: "Harvey Adams Sr." },
+    { label: "Son", value: "Versie Smith" },
+    { label: "Spouse", value: "Hill (given name not recorded)" },
+    { label: "Evidence status", value: "Family history" },
+  ],
+  story:
+    "Gertrude Adams-Hill was born Oct. 19, 1913 in Mississippi. She was the daughter of Harvey Adams Sr. and the mother of Versie Smith. She married a man named Hill, though his given name is not recorded in the family records gathered so far. The children recorded in the family notes — David Earl Johnson, Gertrude Louise, and Versie Smith — are family-history notes, not confirmed documented records.",
+  family: {
+    spouseName: "Hill",
+    spouseRole: "Spouse",
+    childrenText:
+      "Gertrude Adams-Hill married a man named Hill, though his given name is not recorded. The children recorded in the family notes are David Earl Johnson, Gertrude Louise, and Versie Smith. These are family-history notes, not documented records.",
+    spouses: [
+      {
+        name: "Hill",
+        role: "Spouse",
+        children: ["David Earl Johnson", "Gertrude Louise", "Versie Smith"],
+      },
+    ],
+  },
+  timeline: [
+    {
+      date: "Oct. 19, 1913",
+      title: "Born",
+      detail:
+        "Gertrude Adams-Hill is born in Mississippi. This is a documented record of her birth.",
+    },
+    {
+      date: "Unknown",
+      title: "Marries Hill",
+      detail:
+        "Gertrude Adams-Hill marries a man named Hill. The date is not recorded, and his given name is not recorded in the family records gathered so far.",
+    },
+    {
+      date: "Unknown",
+      title: "Mother of Versie Smith",
+      detail:
+        "Gertrude Adams-Hill is the mother of Versie Smith. This is a family-history account, not a documented record.",
+    },
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail:
+        "A family-history note identifying Gertrude Adams-Hill as the daughter of Harvey Adams Sr. and the mother of Versie Smith. It records her birth as Oct. 19, 1913 in Mississippi, her marriage to a man named Hill (given name not recorded), and the children recorded in the family notes: David Earl Johnson, Gertrude Louise, and Versie Smith. These are family accounts, not documented records.",
+    },
+  ],
+};
+
+export const harveyAdamsSrProfile: PersonProfile = {
+  id: "harvey-adams-sr",
+  name: "Harvey Adams Sr.",
+  role: "Father of Gertrude Adams-Hill",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Harvey Adams Sr., since no photograph of him is known to exist.",
+  },
+  facts: [
+    { label: "Occupation", value: "Farmer in Mississippi" },
+    { label: "Raised", value: "Livestock" },
+    { label: "Daughter", value: "Gertrude Adams-Hill" },
+    { label: "Married", value: "Twice" },
+    { label: "Evidence status", value: "Family history" },
+  ],
+  story:
+    "Harvey Adams Sr. was the father of Gertrude Adams-Hill. He was a farmer in Mississippi and raised livestock. He married twice, to Mary Louise Sims and Mary Jane Johnson. The children recorded from his first marriage to Mary Louise Sims are John Adams, Louis Adams Sr., Albert Adams, Charles Adams, Homer Adams, Versie Adams Sr., Judge Granberry Adams, Fannie Adams, Gertrude Adams, Harvey Adams Jr., Christine Adams Tucker, Robert Adams Sr., Ella Mae Adams, and Eula Lee Adams. These are family-history notes, not confirmed documented records.",
+  family: {
+    spouseName: "Mary Louise Sims",
+    spouseRole: "First Wife",
+    childrenText:
+      "Harvey Adams Sr. married twice, to Mary Louise Sims and Mary Jane Johnson. The children recorded from his first marriage to Mary Louise Sims are John Adams, Louis Adams Sr., Albert Adams, Charles Adams, Homer Adams, Versie Adams Sr., Judge Granberry Adams, Fannie Adams, Gertrude Adams, Harvey Adams Jr., Christine Adams Tucker, Robert Adams Sr., Ella Mae Adams, and Eula Lee Adams. These are family-history notes, not confirmed documented records.",
+    spouses: [
+      {
+        name: "Mary Louise Sims",
+        role: "First Wife",
+        children: [
+          "John Adams",
+          "Louis Adams Sr.",
+          "Albert Adams",
+          "Charles Adams",
+          "Homer Adams",
+          "Versie Adams Sr.",
+          "Judge Granberry Adams",
+          "Fannie Adams",
+          "Gertrude Adams",
+          "Harvey Adams Jr.",
+          "Christine Adams Tucker",
+          "Robert Adams Sr.",
+          "Ella Mae Adams",
+          "Eula Lee Adams",
+        ],
+      },
+      {
+        name: "Mary Jane Johnson",
+        role: "Second Wife",
+        children: [],
+      },
+    ],
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Farmer in Mississippi",
+      detail:
+        "Harvey Adams Sr. was a farmer in Mississippi and raised livestock. This is a family-history account, not a documented record.",
+    },
+    {
+      date: "Unknown",
+      title: "Marries Mary Louise Sims",
+      detail:
+        "Harvey Adams Sr. marries his first wife, Mary Louise Sims. The date is not recorded.",
+    },
+    {
+      date: "Unknown",
+      title: "Marries Mary Jane Johnson",
+      detail:
+        "Harvey Adams Sr. marries his second wife, Mary Jane Johnson. The date is not recorded.",
+    },
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail:
+        "A family-history note identifying Harvey Adams Sr. as the father of Gertrude Adams-Hill. It records that he was a farmer in Mississippi, raised livestock, and married twice, to Mary Louise Sims and Mary Jane Johnson. The children recorded from his first marriage to Mary Louise Sims are John Adams, Louis Adams Sr., Albert Adams, Charles Adams, Homer Adams, Versie Adams Sr., Judge Granberry Adams, Fannie Adams, Gertrude Adams, Harvey Adams Jr., Christine Adams Tucker, Robert Adams Sr., Ella Mae Adams, and Eula Lee Adams. These are family accounts, not documented records.",
+    },
+  ],
+};
+
+export const maryLouiseSimsProfile: PersonProfile = {
+  id: "mary-louise-sims",
+  name: "Mary Louise Sims",
+  role: "First Wife of Harvey Adams Sr.",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Mary Louise Sims, since no photograph of her is known to exist.",
+  },
+  facts: [
+    { label: "Husband", value: "Harvey Adams Sr." },
+    { label: "Evidence status", value: "Family history" },
+  ],
+  story:
+    "Mary Louise Sims was the first wife of Harvey Adams Sr. She was the mother of the children recorded in the family notes from his first marriage. No additional details about her life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "Harvey Adams Sr.",
+    spouseRole: "Husband",
+    childrenText:
+      "Mary Louise Sims was the first wife of Harvey Adams Sr. and the mother of the children recorded from his first marriage.",
+    spouses: [
+      {
+        name: "Harvey Adams Sr.",
+        role: "Husband",
+        children: [
+          "John Adams",
+          "Louis Adams Sr.",
+          "Albert Adams",
+          "Charles Adams",
+          "Homer Adams",
+          "Versie Adams Sr.",
+          "Judge Granberry Adams",
+          "Fannie Adams",
+          "Gertrude Adams",
+          "Harvey Adams Jr.",
+          "Christine Adams Tucker",
+          "Robert Adams Sr.",
+          "Ella Mae Adams",
+          "Eula Lee Adams",
+        ],
+      },
+    ],
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Marries Harvey Adams Sr.",
+      detail:
+        "Mary Louise Sims marries Harvey Adams Sr. as his first wife. The date is not recorded.",
+    },
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail:
+        "A family-history note identifying Mary Louise Sims as the first wife of Harvey Adams Sr. and the mother of the children recorded from his first marriage. These are family accounts, not documented records.",
+    },
+  ],
+};
+
+export const johnAdamsProfile: PersonProfile = {
+  id: "john-adams",
+  name: "John Adams",
+  role: "Son of Harvey Adams Sr. and Mary Louise Sims",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for John Adams, since no photograph of him is known to exist.",
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Harvey Adams Sr. and Mary Louise Sims",
+    },
+    { label: "Evidence status", value: "Family history" },
+  ],
+  story:
+    "John Adams was the son of Harvey Adams Sr. and Mary Louise Sims. No additional details about his life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "",
+    spouseRole: "",
+    childrenText: "",
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail:
+        "John Adams is born, the son of Harvey Adams Sr. and Mary Louise Sims. The date is not recorded in the family records gathered so far.",
+    },
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail:
+        "A family-history note identifying John Adams as a son of Harvey Adams Sr. and Mary Louise Sims. No additional details about him are recorded. This is a family account, not a documented record.",
+    },
+  ],
+};
+
+export const louisAdamsSrProfile: PersonProfile = {
+  id: "louis-adams-sr",
+  name: "Louis Adams Sr.",
+  role: "Son of Harvey Adams Sr. and Mary Louise Sims",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Louis Adams Sr., since no photograph of him is known to exist.",
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Harvey Adams Sr. and Mary Louise Sims",
+    },
+    { label: "Evidence status", value: "Family history" },
+  ],
+  story:
+    "Louis Adams Sr. was the son of Harvey Adams Sr. and Mary Louise Sims. No additional details about his life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "",
+    spouseRole: "",
+    childrenText: "",
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail:
+        "Louis Adams Sr. is born, the son of Harvey Adams Sr. and Mary Louise Sims. The date is not recorded in the family records gathered so far.",
+    },
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail:
+        "A family-history note identifying Louis Adams Sr. as a son of Harvey Adams Sr. and Mary Louise Sims. No additional details about him are recorded. This is a family account, not a documented record.",
+    },
+  ],
+};
+
+export const albertAdamsProfile: PersonProfile = {
+  id: "albert-adams",
+  name: "Albert Adams",
+  role: "Son of Harvey Adams Sr. and Mary Louise Sims",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Albert Adams, since no photograph of him is known to exist.",
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Harvey Adams Sr. and Mary Louise Sims",
+    },
+    { label: "Evidence status", value: "Family history" },
+  ],
+  story:
+    "Albert Adams was the son of Harvey Adams Sr. and Mary Louise Sims. No additional details about his life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "",
+    spouseRole: "",
+    childrenText: "",
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail:
+        "Albert Adams is born, the son of Harvey Adams Sr. and Mary Louise Sims. The date is not recorded in the family records gathered so far.",
+    },
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail:
+        "A family-history note identifying Albert Adams as a son of Harvey Adams Sr. and Mary Louise Sims. No additional details about him are recorded. This is a family account, not a documented record.",
+    },
+  ],
+};
+
+export const charlesAdamsProfile: PersonProfile = {
+  id: "charles-adams",
+  name: "Charles Adams",
+  role: "Son of Harvey Adams Sr. and Mary Louise Sims",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Charles Adams, since no photograph of him is known to exist.",
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Harvey Adams Sr. and Mary Louise Sims",
+    },
+    { label: "Evidence status", value: "Family history" },
+  ],
+  story:
+    "Charles Adams was the son of Harvey Adams Sr. and Mary Louise Sims. No additional details about his life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "",
+    spouseRole: "",
+    childrenText: "",
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail:
+        "Charles Adams is born, the son of Harvey Adams Sr. and Mary Louise Sims. The date is not recorded in the family records gathered so far.",
+    },
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail:
+        "A family-history note identifying Charles Adams as a son of Harvey Adams Sr. and Mary Louise Sims. No additional details about him are recorded. This is a family account, not a documented record.",
+    },
+  ],
+};
+
+export const homerAdamsProfile: PersonProfile = {
+  id: "homer-adams",
+  name: "Homer Adams",
+  role: "Son of Harvey Adams Sr. and Mary Louise Sims",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Homer Adams, since no photograph of him is known to exist.",
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Harvey Adams Sr. and Mary Louise Sims",
+    },
+    { label: "Evidence status", value: "Family history" },
+  ],
+  story:
+    "Homer Adams was the son of Harvey Adams Sr. and Mary Louise Sims. No additional details about his life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "",
+    spouseRole: "",
+    childrenText: "",
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail:
+        "Homer Adams is born, the son of Harvey Adams Sr. and Mary Louise Sims. The date is not recorded in the family records gathered so far.",
+    },
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail:
+        "A family-history note identifying Homer Adams as a son of Harvey Adams Sr. and Mary Louise Sims. No additional details about him are recorded. This is a family account, not a documented record.",
+    },
+  ],
+};
+
+export const versieAdamsSrProfile: PersonProfile = {
+  id: "versie-adams-sr",
+  name: "Versie Adams Sr.",
+  role: "Son of Harvey Adams Sr. and Mary Louise Sims",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Versie Adams Sr., since no photograph of him is known to exist.",
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Harvey Adams Sr. and Mary Louise Sims",
+    },
+    { label: "Evidence status", value: "Family history" },
+  ],
+  story:
+    "Versie Adams Sr. was the son of Harvey Adams Sr. and Mary Louise Sims. No additional details about his life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "",
+    spouseRole: "",
+    childrenText: "",
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail:
+        "Versie Adams Sr. is born, the son of Harvey Adams Sr. and Mary Louise Sims. The date is not recorded in the family records gathered so far.",
+    },
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail:
+        "A family-history note identifying Versie Adams Sr. as a son of Harvey Adams Sr. and Mary Louise Sims. No additional details about him are recorded. This is a family account, not a documented record.",
+    },
+  ],
+};
+
+export const judgeGranberryAdamsProfile: PersonProfile = {
+  id: "judge-granberry-adams",
+  name: "Judge Granberry Adams",
+  role: "Son of Harvey Adams Sr. and Mary Louise Sims",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Judge Granberry Adams, since no photograph of him is known to exist.",
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Harvey Adams Sr. and Mary Louise Sims",
+    },
+    { label: "Evidence status", value: "Family history" },
+  ],
+  story:
+    "Judge Granberry Adams was the son of Harvey Adams Sr. and Mary Louise Sims. No additional details about his life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "",
+    spouseRole: "",
+    childrenText: "",
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail:
+        "Judge Granberry Adams is born, the son of Harvey Adams Sr. and Mary Louise Sims. The date is not recorded in the family records gathered so far.",
+    },
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail:
+        "A family-history note identifying Judge Granberry Adams as a son of Harvey Adams Sr. and Mary Louise Sims. No additional details about him are recorded. This is a family account, not a documented record.",
+    },
+  ],
+};
+
+export const fannieAdamsProfile: PersonProfile = {
+  id: "fannie-adams",
+  name: "Fannie Adams",
+  role: "Daughter of Harvey Adams Sr. and Mary Louise Sims",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Fannie Adams, since no photograph of her is known to exist.",
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Harvey Adams Sr. and Mary Louise Sims",
+    },
+    { label: "Evidence status", value: "Family history" },
+  ],
+  story:
+    "Fannie Adams was the daughter of Harvey Adams Sr. and Mary Louise Sims. No additional details about her life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "",
+    spouseRole: "",
+    childrenText: "",
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail:
+        "Fannie Adams is born, the daughter of Harvey Adams Sr. and Mary Louise Sims. The date is not recorded in the family records gathered so far.",
+    },
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail:
+        "A family-history note identifying Fannie Adams as a daughter of Harvey Adams Sr. and Mary Louise Sims. No additional details about her are recorded. This is a family account, not a documented record.",
+    },
+  ],
+};
+
+export const harveyAdamsJrProfile: PersonProfile = {
+  id: "harvey-adams-jr",
+  name: "Harvey Adams Jr.",
+  role: "Son of Harvey Adams Sr. and Mary Louise Sims",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Harvey Adams Jr., since no photograph of him is known to exist.",
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Harvey Adams Sr. and Mary Louise Sims",
+    },
+    { label: "Evidence status", value: "Family history" },
+  ],
+  story:
+    "Harvey Adams Jr. was the son of Harvey Adams Sr. and Mary Louise Sims. No additional details about his life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "",
+    spouseRole: "",
+    childrenText: "",
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail:
+        "Harvey Adams Jr. is born, the son of Harvey Adams Sr. and Mary Louise Sims. The date is not recorded in the family records gathered so far.",
+    },
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail:
+        "A family-history note identifying Harvey Adams Jr. as a son of Harvey Adams Sr. and Mary Louise Sims. No additional details about him are recorded. This is a family account, not a documented record.",
+    },
+  ],
+};
+
+export const christineAdamsTuckerProfile: PersonProfile = {
+  id: "christine-adams-tucker",
+  name: "Christine Adams Tucker",
+  role: "Daughter of Harvey Adams Sr. and Mary Louise Sims",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Christine Adams Tucker, since no photograph of her is known to exist.",
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Harvey Adams Sr. and Mary Louise Sims",
+    },
+    {
+      label: "Spouse",
+      value: "Tucker (given name not recorded)",
+    },
+    { label: "Evidence status", value: "Family history" },
+  ],
+  story:
+    "Christine Adams Tucker was the daughter of Harvey Adams Sr. and Mary Louise Sims. She married a man named Tucker, though his given name is not recorded in the family records gathered so far. No additional details about her life are recorded.",
+  family: {
+    spouseName: "Tucker",
+    spouseRole: "Spouse",
+    childrenText:
+      "Christine Adams Tucker married a man named Tucker, though his given name is not recorded in the family records gathered so far.",
+    spouses: [
+      {
+        name: "Tucker",
+        role: "Spouse",
+        children: [],
+      },
+    ],
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail:
+        "Christine Adams Tucker is born, the daughter of Harvey Adams Sr. and Mary Louise Sims. The date is not recorded in the family records gathered so far.",
+    },
+    {
+      date: "Unknown",
+      title: "Marries Tucker",
+      detail:
+        "Christine Adams Tucker marries a man named Tucker. The date is not recorded, and his given name is not recorded in the family records gathered so far.",
+    },
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail:
+        "A family-history note identifying Christine Adams Tucker as a daughter of Harvey Adams Sr. and Mary Louise Sims, and recording that she married a man named Tucker (given name not recorded). These are family accounts, not documented records.",
+    },
+  ],
+};
+
+export const robertAdamsSrProfile: PersonProfile = {
+  id: "robert-adams-sr",
+  name: "Robert Adams Sr.",
+  role: "Son of Harvey Adams Sr. and Mary Louise Sims",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Robert Adams Sr., since no photograph of him is known to exist.",
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Harvey Adams Sr. and Mary Louise Sims",
+    },
+    { label: "Evidence status", value: "Family history" },
+  ],
+  story:
+    "Robert Adams Sr. was the son of Harvey Adams Sr. and Mary Louise Sims. No additional details about his life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "",
+    spouseRole: "",
+    childrenText: "",
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail:
+        "Robert Adams Sr. is born, the son of Harvey Adams Sr. and Mary Louise Sims. The date is not recorded in the family records gathered so far.",
+    },
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail:
+        "A family-history note identifying Robert Adams Sr. as a son of Harvey Adams Sr. and Mary Louise Sims. No additional details about him are recorded. This is a family account, not a documented record.",
+    },
+  ],
+};
+
+export const ellaMaeAdamsProfile: PersonProfile = {
+  id: "ella-mae-adams",
+  name: "Ella Mae Adams",
+  role: "Daughter of Harvey Adams Sr. and Mary Louise Sims",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Ella Mae Adams, since no photograph of her is known to exist.",
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Harvey Adams Sr. and Mary Louise Sims",
+    },
+    { label: "Evidence status", value: "Family history" },
+  ],
+  story:
+    "Ella Mae Adams was the daughter of Harvey Adams Sr. and Mary Louise Sims. No additional details about her life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "",
+    spouseRole: "",
+    childrenText: "",
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail:
+        "Ella Mae Adams is born, the daughter of Harvey Adams Sr. and Mary Louise Sims. The date is not recorded in the family records gathered so far.",
+    },
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail:
+        "A family-history note identifying Ella Mae Adams as a daughter of Harvey Adams Sr. and Mary Louise Sims. No additional details about her are recorded. This is a family account, not a documented record.",
+    },
+  ],
+};
+
+export const eulaLeeAdamsProfile: PersonProfile = {
+  id: "eula-lee-adams",
+  name: "Eula Lee Adams",
+  role: "Daughter of Harvey Adams Sr. and Mary Louise Sims",
+  portrait: {
+    src: "/assets/images/placeholder.svg",
+    alt: "An initials placeholder portrait for Eula Lee Adams, since no photograph of her is known to exist.",
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Harvey Adams Sr. and Mary Louise Sims",
+    },
+    { label: "Evidence status", value: "Family history" },
+  ],
+  story:
+    "Eula Lee Adams was the daughter of Harvey Adams Sr. and Mary Louise Sims. No additional details about her life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "",
+    spouseRole: "",
+    childrenText: "",
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail:
+        "Eula Lee Adams is born, the daughter of Harvey Adams Sr. and Mary Louise Sims. The date is not recorded in the family records gathered so far.",
+    },
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail:
+        "A family-history note identifying Eula Lee Adams as a daughter of Harvey Adams Sr. and Mary Louise Sims. No additional details about her are recorded. This is a family account, not a documented record.",
+    },
+  ],
+};
+
 export const profiles: Record<string, PersonProfile> = {
   julia: juliaProfile,
   isaiah: isaiahProfile,
@@ -784,6 +1924,29 @@ export const profiles: Record<string, PersonProfile> = {
   "thomas-clayton": thomasClaytonProfile,
   alton: altonProfile,
   "robert-davis": robertDavisProfile,
+  ardeanus: ardeanusProfile,
+  "willie-b": willieBProfile,
+  james: jamesProfile,
+  freddie: freddieProfile,
+  "zelia-mae": zeliaMaeProfile,
+  "lula-mae": lulaMaeProfile,
+  "versie-smith": versieSmithProfile,
+  "gertrude-adams-hill": gertrudeAdamsHillProfile,
+  "harvey-adams-sr": harveyAdamsSrProfile,
+  "mary-louise-sims": maryLouiseSimsProfile,
+  "john-adams": johnAdamsProfile,
+  "louis-adams-sr": louisAdamsSrProfile,
+  "albert-adams": albertAdamsProfile,
+  "charles-adams": charlesAdamsProfile,
+  "homer-adams": homerAdamsProfile,
+  "versie-adams-sr": versieAdamsSrProfile,
+  "judge-granberry-adams": judgeGranberryAdamsProfile,
+  "fannie-adams": fannieAdamsProfile,
+  "harvey-adams-jr": harveyAdamsJrProfile,
+  "christine-adams-tucker": christineAdamsTuckerProfile,
+  "robert-adams-sr": robertAdamsSrProfile,
+  "ella-mae-adams": ellaMaeAdamsProfile,
+  "eula-lee-adams": eulaLeeAdamsProfile,
 };
 
 interface PersonProfilePageProps {
@@ -1134,7 +2297,15 @@ export function PersonProfilePage({
   onProfilePhotoChange,
 }: PersonProfilePageProps) {
   const storyLabel =
-    person.id === "julia" || person.id === "erma" || person.id === "hudson"
+    person.id === "julia" ||
+    person.id === "erma" ||
+    person.id === "hudson" ||
+    person.id === "gertrude-adams-hill" ||
+    person.id === "mary-louise-sims" ||
+    person.id === "fannie-adams" ||
+    person.id === "christine-adams-tucker" ||
+    person.id === "ella-mae-adams" ||
+    person.id === "eula-lee-adams"
       ? "Her Story"
       : "His Story";
 

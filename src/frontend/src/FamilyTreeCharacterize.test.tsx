@@ -48,41 +48,80 @@ async function openFamilyTree(user: ReturnType<typeof userEvent.setup>) {
   await user.click(screen.getByRole("button", { name: "Explore the Family" }));
 }
 
-// Characterization baseline for the Erma T. Williams branch before the four new
+// Characterization baseline for the Erma T. Williams branch. The four earlier
 // child profiles (Columbus, Thomas Clayton 'Tip / TC', Alton, Robert Davis 'RD')
-// are added. Those four cards are intentionally changing (they will become
-// clickable and open new profiles), so they are NOT frozen here. Instead this
-// protects the adjacent working behavior that must remain unchanged: the other
-// six Erma children and the 'Son (died at birth)' card stay highlight-only, the
-// Ms. Hudson branch children stay clickable, and the existing placeholder
-// profiles keep rendering the full Person Profile template.
+// and the three newest (Ardeanus, Willie B., James) are intentionally changing
+// (they became clickable and open new profiles), so they are NOT frozen here.
+// Instead this protects the adjacent working behavior that must remain
+// unchanged: the remaining Erma children (Freddie, Zelia Mae, Lula Mae) and the
+// 'Son (died at birth)' card stay highlight-only, the Ms. Hudson branch children
+// stay clickable, and the existing placeholder profiles keep rendering the full
+// Person Profile template.
 describe("Family Tree characterization: Erma T. Williams branch", () => {
-  it("keeps the six remaining Erma T. Williams children highlight-only (non-clickable)", async () => {
+  it("opens the three new Erma child profiles (Ardeanus, Willie B., James) from their cards", async () => {
+    // Ardeanus, Willie B., and James previously rendered as highlight-only
+    // non-clickable cards. That behavior intentionally changed: they now have
+    // profiles and open from their Family Tree cards. This test reflects the
+    // new behavior while the next test keeps the remaining highlight-only cards
+    // (Freddie, Zelia Mae, Lula Mae) frozen.
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
 
-    const claytonBranch = screen.getByRole("region", {
-      name: "Clayton's branch",
-    });
+    const cases: { card: RegExp; heading: string }[] = [
+      { card: /Ardeanus/, heading: "Ardeanus Norwood" },
+      { card: /Willie B\./, heading: "Willie B. Norwood" },
+      { card: /James/, heading: "James Norwood" },
+    ];
 
-    for (const name of [
-      "Ardeanus",
-      "Willie B.",
-      "James",
-      "Freddie",
-      "Zelia Mae",
-      "Lula Mae",
-    ]) {
-      const card = within(claytonBranch).getByRole("button", {
-        name: new RegExp(name),
+    for (const { card, heading } of cases) {
+      const claytonBranch = screen.getByRole("region", {
+        name: "Clayton's branch",
       });
-      await user.click(card);
-      // Tapping highlights the card but stays on the Family Tree — it does not
-      // navigate to a profile.
-      expect(card).toHaveAttribute("aria-pressed", "true");
+      await user.click(
+        within(claytonBranch).getByRole("button", { name: card }),
+      );
+      // Tapping the card navigates to the person's profile.
       expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-        "Family Tree",
+        heading,
+      );
+      // Back to the tree for the next profile.
+      await user.click(
+        screen.getByRole("button", { name: /Back to Family Tree/ }),
+      );
+    }
+  });
+
+  it("opens Freddie, Zelia Mae, and Lula Mae from their cards", async () => {
+    // Freddie, Zelia Mae, and Lula Mae previously rendered as highlight-only
+    // non-clickable cards. That behavior intentionally changed: they now have
+    // profiles and open from their Family Tree cards. This test reflects the
+    // new behavior while the next test keeps the remaining highlight-only card
+    // ('Son (died at birth)') frozen.
+    const user = userEvent.setup();
+    renderApp();
+    await openFamilyTree(user);
+
+    const cases: { card: RegExp; heading: string }[] = [
+      { card: /Freddie/, heading: "Freddie Norwood" },
+      { card: /Zelia Mae/, heading: "Zelia Mae Norwood" },
+      { card: /Lula Mae/, heading: "Lula Mae Norwood" },
+    ];
+
+    for (const { card, heading } of cases) {
+      const claytonBranch = screen.getByRole("region", {
+        name: "Clayton's branch",
+      });
+      await user.click(
+        within(claytonBranch).getByRole("button", { name: card }),
+      );
+      // Tapping the card navigates to the person's profile.
+      expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
+        heading,
+      );
+      // Back to the tree for the next profile.
+      await user.click(
+        screen.getByRole("button", { name: /Back to Family Tree/ }),
       );
     }
   });

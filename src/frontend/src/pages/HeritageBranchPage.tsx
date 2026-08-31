@@ -7,7 +7,7 @@ import {
   UserRound,
 } from "lucide-react";
 import { motion } from "motion/react";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import {
   HeritageBranchCard,
   type HeritagePerson,
@@ -24,9 +24,11 @@ interface HeritageBranchPageProps {
  * Documented family relationships, derived from the existing FamilyTreePage
  * tree data (couple, children, claytonBranch) and the profiles record. Only
  * relationships present in the family record are included — nothing is
- * invented. People without a profile entry (e.g. Isaiah Jr., Edward, Hattie)
- * are still documented members of the tree and render as selectable cards,
- * but they have no profile to open.
+ * invented. Gertrude Adams-Hill is documented as Versie Smith's mother and
+ * Harvey Adams Sr. as Gertrude's father; both have profile entries and open
+ * via the Open Profile action. People without a profile entry (e.g. Isaiah
+ * Jr., Edward, Hattie) are still documented members of the tree and render as
+ * selectable cards, but they have no profile to open.
  */
 const HERITAGE: Record<string, HeritagePerson> = {
   julia: {
@@ -278,6 +280,172 @@ const HERITAGE: Record<string, HeritagePerson> = {
     name: "Lula Mae",
     role: "Child",
     parents: ["clayton", "erma"],
+    spouses: ["versie-smith"],
+    children: [],
+  },
+  "versie-smith": {
+    id: "versie-smith",
+    name: "Versie Smith",
+    role: "Husband",
+    parents: ["gertrude-adams-hill"],
+    spouses: ["lula-mae"],
+    children: [],
+  },
+  "gertrude-adams-hill": {
+    id: "gertrude-adams-hill",
+    name: "Gertrude Adams-Hill",
+    role: "Mother",
+    parents: ["harvey-adams-sr"],
+    spouses: [],
+    children: ["versie-smith"],
+  },
+  "harvey-adams-sr": {
+    id: "harvey-adams-sr",
+    name: "Harvey Adams Sr.",
+    role: "Father",
+    parents: [],
+    spouses: ["mary-louise-sims"],
+    children: [
+      "gertrude-adams-hill",
+      "john-adams",
+      "louis-adams-sr",
+      "albert-adams",
+      "charles-adams",
+      "homer-adams",
+      "versie-adams-sr",
+      "judge-granberry-adams",
+      "fannie-adams",
+      "harvey-adams-jr",
+      "christine-adams-tucker",
+      "robert-adams-sr",
+      "ella-mae-adams",
+      "eula-lee-adams",
+    ],
+  },
+  "mary-louise-sims": {
+    id: "mary-louise-sims",
+    name: "Mary Louise Sims",
+    role: "First Wife",
+    parents: [],
+    spouses: ["harvey-adams-sr"],
+    children: [
+      "john-adams",
+      "louis-adams-sr",
+      "albert-adams",
+      "charles-adams",
+      "homer-adams",
+      "versie-adams-sr",
+      "judge-granberry-adams",
+      "fannie-adams",
+      "gertrude-adams-hill",
+      "harvey-adams-jr",
+      "christine-adams-tucker",
+      "robert-adams-sr",
+      "ella-mae-adams",
+      "eula-lee-adams",
+    ],
+  },
+  "john-adams": {
+    id: "john-adams",
+    name: "John Adams",
+    role: "Son",
+    parents: ["harvey-adams-sr", "mary-louise-sims"],
+    spouses: [],
+    children: [],
+  },
+  "louis-adams-sr": {
+    id: "louis-adams-sr",
+    name: "Louis Adams Sr.",
+    role: "Son",
+    parents: ["harvey-adams-sr", "mary-louise-sims"],
+    spouses: [],
+    children: [],
+  },
+  "albert-adams": {
+    id: "albert-adams",
+    name: "Albert Adams",
+    role: "Son",
+    parents: ["harvey-adams-sr", "mary-louise-sims"],
+    spouses: [],
+    children: [],
+  },
+  "charles-adams": {
+    id: "charles-adams",
+    name: "Charles Adams",
+    role: "Son",
+    parents: ["harvey-adams-sr", "mary-louise-sims"],
+    spouses: [],
+    children: [],
+  },
+  "homer-adams": {
+    id: "homer-adams",
+    name: "Homer Adams",
+    role: "Son",
+    parents: ["harvey-adams-sr", "mary-louise-sims"],
+    spouses: [],
+    children: [],
+  },
+  "versie-adams-sr": {
+    id: "versie-adams-sr",
+    name: "Versie Adams Sr.",
+    role: "Son",
+    parents: ["harvey-adams-sr", "mary-louise-sims"],
+    spouses: [],
+    children: [],
+  },
+  "judge-granberry-adams": {
+    id: "judge-granberry-adams",
+    name: "Judge Granberry Adams",
+    role: "Son",
+    parents: ["harvey-adams-sr", "mary-louise-sims"],
+    spouses: [],
+    children: [],
+  },
+  "fannie-adams": {
+    id: "fannie-adams",
+    name: "Fannie Adams",
+    role: "Daughter",
+    parents: ["harvey-adams-sr", "mary-louise-sims"],
+    spouses: [],
+    children: [],
+  },
+  "harvey-adams-jr": {
+    id: "harvey-adams-jr",
+    name: "Harvey Adams Jr.",
+    role: "Son",
+    parents: ["harvey-adams-sr", "mary-louise-sims"],
+    spouses: [],
+    children: [],
+  },
+  "christine-adams-tucker": {
+    id: "christine-adams-tucker",
+    name: "Christine Adams Tucker",
+    role: "Daughter",
+    parents: ["harvey-adams-sr", "mary-louise-sims"],
+    spouses: [],
+    children: [],
+  },
+  "robert-adams-sr": {
+    id: "robert-adams-sr",
+    name: "Robert Adams Sr.",
+    role: "Son",
+    parents: ["harvey-adams-sr", "mary-louise-sims"],
+    spouses: [],
+    children: [],
+  },
+  "ella-mae-adams": {
+    id: "ella-mae-adams",
+    name: "Ella Mae Adams",
+    role: "Daughter",
+    parents: ["harvey-adams-sr", "mary-louise-sims"],
+    spouses: [],
+    children: [],
+  },
+  "eula-lee-adams": {
+    id: "eula-lee-adams",
+    name: "Eula Lee Adams",
+    role: "Daughter",
+    parents: ["harvey-adams-sr", "mary-louise-sims"],
     spouses: [],
     children: [],
   },
@@ -294,52 +462,103 @@ function getSiblings(id: string): string[] {
   return [...siblingSet];
 }
 
-/** Gentle curved trunk connecting a single parent/center down to the next row. */
-function TrunkConnector() {
+/**
+ * Vertical trunk descending from the center of a couple connection, ending in
+ * a junction diamond. Uses the shared .ft-* connector system.
+ */
+function TrunkConnector({ selected = false }: { selected?: boolean }) {
   return (
-    <svg
-      className="branch-connector my-1 h-8 w-8"
-      viewBox="0 0 32 32"
-      aria-hidden="true"
-    >
-      <path d="M16 0 C 20 12, 12 20, 16 32" />
-    </svg>
-  );
-}
-
-/** Short horizontal relationship line between the anchor and a spouse. */
-function HorizontalConnector() {
-  return (
-    <svg
-      className="branch-connector h-1 w-8"
-      viewBox="0 0 32 4"
-      preserveAspectRatio="none"
-      aria-hidden="true"
-    >
-      <path d="M0 2 L32 2" />
-    </svg>
+    <div className="relative my-1 h-8 w-8" aria-hidden="true">
+      <span
+        className={`ft-trunk absolute left-1/2 top-0 h-full -translate-x-1/2 ${
+          selected ? "ft-connector-selected" : ""
+        }`}
+      />
+      <span className="absolute bottom-0 left-1/2 -translate-x-1/2">
+        <span
+          className={`ft-junction block ${
+            selected ? "ft-connector-selected" : ""
+          }`}
+        />
+      </span>
+    </div>
   );
 }
 
 /**
- * Organic branch connector: a curved trunk drops from the row above onto a
- * horizontal bar, then curved stubs descend to each card in the row below.
+ * Distinct horizontal relationship line joining the anchor and a spouse.
+ * Uses the shared .ft-couple-line class so couples read as a clear bar.
  */
-function RowConnector({ count }: { count: number }) {
-  const xs = Array.from({ length: count }, (_, i) => ((i + 0.5) / count) * 100);
+function HorizontalConnector({ selected = false }: { selected?: boolean }) {
   return (
-    <svg
-      className="branch-connector my-1 h-10 w-full"
-      viewBox="0 0 100 40"
-      preserveAspectRatio="none"
+    <span
+      className={`ft-couple-line w-8 shrink-0 ${
+        selected ? "ft-connector-selected" : ""
+      }`}
       aria-hidden="true"
-    >
-      <path d="M50 0 C 50 10, 50 10, 50 18" />
-      <path d={`M${xs[0]} 18 L${xs[xs.length - 1]} 18`} />
-      {xs.map((x) => (
-        <path key={x} d={`M${x} 18 C ${x} 26, ${x} 26, ${x} 40`} />
-      ))}
-    </svg>
+    />
+  );
+}
+
+/**
+ * Branch connector: a vertical trunk drops from the row above onto a junction
+ * diamond, then a horizontal bar spans the children and short stubs descend to
+ * each card. Each parent-to-child stub carries a subtle downward chevron.
+ */
+function RowConnector({
+  count,
+  selected = false,
+}: {
+  count: number;
+  selected?: boolean;
+}) {
+  return (
+    <div className="relative my-1 h-10 w-full" aria-hidden="true">
+      {/* Trunk descending from the couple center to the junction */}
+      <span
+        className={`ft-trunk absolute left-1/2 top-0 h-[18px] -translate-x-1/2 ${
+          selected ? "ft-connector-selected" : ""
+        }`}
+      />
+      {/* Junction diamond where the trunk meets the branch line */}
+      <span className="absolute left-1/2 top-[18px] -translate-x-1/2">
+        <span
+          className={`ft-junction block ${
+            selected ? "ft-connector-selected" : ""
+          }`}
+        />
+      </span>
+      {/* Horizontal branch bar spanning the children */}
+      <span
+        className={`ft-couple-line absolute left-0 right-0 top-[22px] ${
+          selected ? "ft-connector-selected" : ""
+        }`}
+      />
+      {/* Child stubs + downward direction chevrons */}
+      {Array.from({ length: count }, (_, i) => {
+        const x = ((i + 0.5) / count) * 100;
+        return (
+          <Fragment key={x}>
+            <span
+              className={`ft-child-stub absolute top-[22px] h-[18px] -translate-x-1/2 ${
+                selected ? "ft-connector-selected" : ""
+              }`}
+              style={{ left: `${x}%` }}
+            />
+            <span
+              className="absolute top-[30px]"
+              style={{ left: `calc(${x}% - 0.225rem)` }}
+            >
+              <span
+                className={`ft-chevron block ${
+                  selected ? "ft-connector-selected" : ""
+                }`}
+              />
+            </span>
+          </Fragment>
+        );
+      })}
+    </div>
   );
 }
 
@@ -455,7 +674,11 @@ export function HeritageBranchPage({
               <div className="flex justify-center gap-3">
                 {parents.map((id, i) => renderCard(id, i))}
               </div>
-              <TrunkConnector />
+              <TrunkConnector
+                selected={
+                  selectedId === anchorId || parents.includes(selectedId ?? "")
+                }
+              />
             </>
           )}
 
@@ -464,13 +687,17 @@ export function HeritageBranchPage({
             {leftSpouses.map((id, i) => (
               <span key={id} className="flex items-center gap-2">
                 {renderCard(id, i)}
-                <HorizontalConnector />
+                <HorizontalConnector
+                  selected={selectedId === anchorId || selectedId === id}
+                />
               </span>
             ))}
             {renderCard(anchorId, parents.length + leftSpouses.length, true)}
             {rightSpouses.map((id, i) => (
               <span key={id} className="flex items-center gap-2">
-                <HorizontalConnector />
+                <HorizontalConnector
+                  selected={selectedId === anchorId || selectedId === id}
+                />
                 {renderCard(id, parents.length + leftSpouses.length + 1 + i)}
               </span>
             ))}
@@ -479,7 +706,12 @@ export function HeritageBranchPage({
           {/* Siblings nearby */}
           {siblings.length > 0 && (
             <>
-              <RowConnector count={siblings.length} />
+              <RowConnector
+                count={siblings.length}
+                selected={
+                  selectedId === anchorId || siblings.includes(selectedId ?? "")
+                }
+              />
               <div className="flex flex-wrap justify-center gap-3">
                 {siblings.map((id, i) => renderCard(id, i))}
               </div>
@@ -489,7 +721,12 @@ export function HeritageBranchPage({
           {/* Children below */}
           {children.length > 0 && (
             <>
-              <RowConnector count={children.length} />
+              <RowConnector
+                count={children.length}
+                selected={
+                  selectedId === anchorId || children.includes(selectedId ?? "")
+                }
+              />
               <div className="flex flex-wrap justify-center gap-3">
                 {children.map((id, i) => renderCard(id, i))}
               </div>

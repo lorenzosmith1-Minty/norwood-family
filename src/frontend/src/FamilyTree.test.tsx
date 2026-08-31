@@ -668,7 +668,7 @@ describe("Family Tree screen", () => {
     }
   });
 
-  it("draws a horizontal couple connector, a vertical trunk, and branching lines to each child", async () => {
+  it("draws a horizontal couple connector, a vertical trunk with a junction, and branching lines with chevrons to each child", async () => {
     const user = userEvent.setup();
     const { container } = renderApp();
     await openFamilyTree(user);
@@ -678,23 +678,26 @@ describe("Family Tree screen", () => {
     });
     const childrenSection = screen.getByRole("region", { name: "Children" });
 
-    // A horizontal line spans the center of the couple section, between the two cards.
+    // A distinct horizontal couple line spans the center of the couple section,
+    // between the two cards.
     const horizontalLine = Array.from(
       coupleSection.querySelectorAll("div"),
     ).find(
       (el) =>
-        el.className.includes("left-1/2") && el.className.includes("top-1/2"),
+        el.className.includes("ft-couple-line") &&
+        el.className.includes("left-1/2") &&
+        el.className.includes("top-1/2"),
     );
     expect(horizontalLine).toBeDefined();
-    expect(horizontalLine?.className).toContain("h-px");
     expect(horizontalLine?.className).toContain("w-1/2");
 
-    // A vertical trunk runs down from the couple section toward the children.
+    // A vertical trunk runs down from the couple section toward the children,
+    // ending in a visible junction point where it meets the branch line.
     const verticalLine = Array.from(container.querySelectorAll("div")).find(
-      (el) => el.className.includes("h-8") && el.className.includes("w-px"),
+      (el) => el.className.includes("ft-trunk") && el.className.includes("h-8"),
     );
     expect(verticalLine).toBeDefined();
-    expect(verticalLine?.className).toContain("bg-border");
+    expect(verticalLine?.querySelector(".ft-junction")).not.toBeNull();
 
     // The vertical trunk sits between the couple and the children sections.
     const coupleNode = coupleSection;
@@ -713,24 +716,25 @@ describe("Family Tree screen", () => {
       childrenSection.querySelectorAll("div"),
     ).filter(
       (el) =>
+        el.className.includes("ft-connector") &&
         el.className.includes("left-0") &&
         el.className.includes("right-0") &&
         el.className.includes("top-0") &&
         el.className.includes("h-px"),
     );
     expect(branchBars.length).toBeGreaterThan(0);
-    for (const bar of branchBars) {
-      expect(bar.className).toContain("bg-border");
-    }
 
-    // Vertical stubs drop from each branch bar down to the children.
+    // Vertical stubs drop from each branch bar down to the children, each
+    // ending in a downward direction chevron.
     const stubs = Array.from(childrenSection.querySelectorAll("div")).filter(
-      (el) => el.className.includes("h-6") && el.className.includes("w-px"),
+      (el) =>
+        el.className.includes("ft-child-stub") && el.className.includes("h-6"),
     );
     expect(stubs.length).toBeGreaterThan(0);
-    for (const stub of stubs) {
-      expect(stub.className).toContain("bg-border");
-    }
+    const chevrons = Array.from(
+      childrenSection.querySelectorAll(".ft-chevron"),
+    );
+    expect(chevrons.length).toBeGreaterThan(0);
   });
 
   it("applies the warm sepia 'Aged Album' card styling to person cards", async () => {

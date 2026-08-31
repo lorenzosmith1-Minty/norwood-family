@@ -93,6 +93,7 @@ Mobile-first generous vertical rhythm (`space-y-4`/`space-y-6`), centered single
 - Decorative: soft-pulse on accent highlights
 - Progress: `.progress-fill` width animates 0.6s on upload/completeness update
 - Branch nodes: `branch-in` (0.4s scale+fade) on re-anchor; anchor halo `anchor-glow` (3s) on the centered person
+- Connector selection: `.ft-connector-selected` recolors the connector run instantly (no layout shift) when a person is selected
 
 ## Heritage Branch View
 
@@ -107,6 +108,19 @@ Mobile-first generous vertical rhythm (`space-y-4`/`space-y-6`), centered single
 - Header: `.branch-anchor-chip` — pill with bronze `.branch-anchor-dot` identifying the current anchor
 - Tokens: `--branch-line` / `--branch-line-soft` (connector color), `--branch-selected` (selection fill), `--branch-anchor` (anchor halo), `--branch-collapsed` (dashed hint); dark-mode variants tuned for readability
 
+## Family Tree Connector System (Refinement)
+
+- Couple line: `.ft-couple-line` — distinct 2px horizontal sepia bar joining two spouse cards; reads clearly as a union, not a generic row divider
+- Trunk: `.ft-trunk` — 2px vertical line descending from the exact center of the couple line, anchoring the children's branch to the union
+- Junction: `.ft-junction` — small rotated-square (diamond) node where the trunk meets the children's branch line; a visible split point that makes ownership obvious at a glance
+- Child connectors: `.ft-child-stub` (soft vertical stub down to each child) + `.ft-connector`/`.ft-connector-soft` base line classes; consistent parent-to-child path from the junction
+- Union grouping: each marriage renders its own couple line + trunk + junction + branch, so children visually belong to one union; multiple marriages appear as fully separate spouse connections, each with its own trunk and child branch
+- Direction cues: `.ft-chevron` — small downward chevron (rotated square) on each parent-to-child connector; subtle and elegant, not heavy arrows; keeps clean at mobile widths
+- Selection highlight: `.ft-connector-selected` — warms the full connector run (line, trunk, junction, chevrons) to the existing `--branch-selected` accent ink without altering layout; applied to the path connecting the selected person to spouse and children
+- Mobile legibility: lines thicken to 2.5px and the junction grows slightly at `max-width: 640px` so topology stays readable on small screens
+- Tokens: `--connector-line` (couple/trunk ink), `--connector-line-soft` (child stubs), `--connector-junction` (diamond node), `--connector-arrow` (chevrons); selection reuses `--branch-selected`; dark-mode variants tuned for readability
+- CSS-div connectors live in FamilyTreePage.tsx; SVG equivalents (TrunkConnector/HorizontalConnector/RowConnector) in HeritageBranchPage.tsx share the same tokens/classes
+
 ## Constraints
 
 - Token-only styling — no raw hex/rgb in components
@@ -119,4 +133,13 @@ Mobile-first generous vertical rhythm (`space-y-4`/`space-y-6`), centered single
 
 ## Signature Detail
 
-The aged sepia family portrait with a distressed torn-paper edge serves as the emotional centerpiece, framed by clean modern cards and crisp typography, now extended with archive contribution forms and admin approval that feel like ledger entries on the same warm paper — and a Heritage Branch View where curved sepia branch lines connect compact portrait cards around a bronze-haloed anchor person.
+The aged sepia family portrait with a distressed torn-paper edge serves as the emotional centerpiece, framed by clean modern cards and crisp typography, now extended with archive contribution forms and admin approval that feel like ledger entries on the same warm paper — and a Heritage Branch View where curved sepia branch lines connect compact portrait cards around a bronze-haloed anchor person, with the Family Tree's refined couple-line/trunk/junction connector system making every union and child branch unmistakable.
+
+## New Person Profiles (Ardeanus, Willie B., James Norwood)
+
+- Reuse the existing Person Profile template exactly — no new tokens or visual changes; the warm archival/heirloom system is unchanged
+- Portraits: initials-based avatars (no photo exists) — reuse the `.branch-portrait` / `.photo-ring` initials-avatar pattern already in the system; no photo upload surfaces (out of scope)
+- Unrecorded facts render as "Not recorded" fallbacks, matching the existing template's handling of absent data
+- Family-history notes stay visually distinct from documented details — reuse the existing source-kind treatment (`.source-status` with `family-history` vs `documented` labels) so notes are never presented as verified fact
+- Timeline shows only recorded dates; completeness reflects recorded-only data
+- Tree/branch integration: new cards link into Family Tree and Heritage Branch via the existing profile-id mechanism (no backend model change)

@@ -1,18 +1,18 @@
 {
-  "overview": "A mobile-first family history app with a warm archival visual style, now adding an interactive anchor-centered Heritage Branch View of the family tree.",
+  "overview": "A warm, historical family tree app for the Norwood family with a heritage branch view, family archive, and photo galleries.",
   "features": [
-    "Anchor-centered interactive family tree (Heritage Branch View)",
-    "Parents, spouse, siblings, and children around any selected anchor",
-    "Person actions: Relation to You, Relationship Path, Open Profile, Anchor Tree Here, This is Me",
-    "Existing Family Tree view and profiles unchanged",
-    "Warm archival/heirloom mobile-first design"
+    "Browse the family tree with clear relationship connectors",
+    "Explore heritage branches with an interactive anchor view",
+    "View detailed person profiles and family relationships",
+    "Contribute to and browse the family archive",
+    "Manage per-person photo galleries"
   ],
-  "category": "family-history-app",
+  "category": "family-tree",
   "tags": [
     "family",
     "genealogy",
     "heritage",
-    "mobile-first"
+    "archive"
   ],
-  "last_updated": "2026-08-31T02:11:29.165Z"
+  "last_updated": "2026-08-31T15:27:08.001Z"
 }

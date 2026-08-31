@@ -85,6 +85,13 @@
     --branch-anchor-foreground: 0.96 0.02 70;
     --branch-collapsed: 0.55 0.09 60 / 0.55;
 
+    /* Family Tree connector system: couple line, trunk, junction, child
+       connectors, direction cues, selection highlight */
+    --connector-line: 0.42 0.11 35 / 0.55;
+    --connector-line-soft: 0.55 0.09 60 / 0.4;
+    --connector-junction: 0.42 0.11 35;
+    --connector-arrow: 0.42 0.11 35 / 0.7;
+
     --sidebar: 0.985 0.015 70;
     --sidebar-foreground: 0.22 0.04 45;
     --sidebar-primary: 0.42 0.11 35;
@@ -155,6 +162,13 @@
     --branch-anchor: 0.58 0.12 30;
     --branch-anchor-foreground: 0.95 0.01 60;
     --branch-collapsed: 0.72 0.14 60 / 0.55;
+
+    /* Family Tree connector system: couple line, trunk, junction, child
+       connectors, direction cues, selection highlight */
+    --connector-line: 0.72 0.14 60 / 0.5;
+    --connector-line-soft: 0.72 0.14 60 / 0.32;
+    --connector-junction: 0.72 0.14 60;
+    --connector-arrow: 0.72 0.14 60 / 0.65;
 
     --sidebar: 0.2 0.02 55;
     --sidebar-foreground: 0.93 0.02 60;
@@ -814,5 +828,103 @@
     height: 0.5rem;
     border-radius: 9999px;
     background-color: oklch(var(--branch-anchor));
+  }
+
+  /* ---- Family Tree connector system ---- */
+
+  /* Base connector: a thin sepia ink line with rounded caps. Height is
+     fixed here (2px, matching the couple line and child stubs) so the
+     branch bar reads clearly under the junction diamond. */
+  .ft-connector {
+    height: 2px;
+    background-color: oklch(var(--connector-line));
+    border-radius: 9999px;
+  }
+  .ft-connector-soft {
+    background-color: oklch(var(--connector-line-soft));
+  }
+
+  /* Couple line: distinct horizontal bar joining two spouse cards */
+  .ft-couple-line {
+    height: 2px;
+    background-color: oklch(var(--connector-line));
+  }
+
+  /* Vertical trunk descending from the center of the couple line */
+  .ft-trunk {
+    width: 2px;
+    background-color: oklch(var(--connector-line));
+  }
+
+  /* Junction point: visible node where the trunk meets the children's
+     branch line — a small diamond that reads as a clear split. The diamond
+     is drawn with a 45deg rotation on the ::before pseudo-element so the
+     element's own transform stays free for Tailwind's -translate-x/y
+     centering utilities (a transform here would override them and push the
+     junction off the trunk). */
+  .ft-junction {
+    position: relative;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 2px;
+    background-color: oklch(var(--connector-junction));
+    box-shadow: 0 0 0 2px oklch(var(--card));
+  }
+  .ft-junction::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 2px;
+    background-color: inherit;
+    transform: rotate(45deg);
+  }
+
+  /* Parent-to-child connector: short vertical stub down to each child */
+  .ft-child-stub {
+    width: 2px;
+    background-color: oklch(var(--connector-line-soft));
+  }
+
+  /* Downward direction cue: small chevron on parent-to-child connectors */
+  .ft-chevron {
+    width: 0.45rem;
+    height: 0.45rem;
+    border-right: 2px solid oklch(var(--connector-arrow));
+    border-bottom: 2px solid oklch(var(--connector-arrow));
+    transform: rotate(45deg);
+  }
+
+  /* Selected-path highlight: warms the whole connector run to the accent
+     ink without moving layout */
+  .ft-connector-selected {
+    background-color: oklch(var(--branch-selected));
+  }
+  .ft-connector-selected.ft-chevron {
+    border-color: oklch(var(--branch-selected));
+  }
+  .ft-connector-selected.ft-junction {
+    background-color: oklch(var(--branch-selected));
+    box-shadow: 0 0 0 2px oklch(var(--card)), 0 0 0 4px
+      oklch(var(--branch-selected) / 0.25);
+  }
+  .ft-connector-selected.ft-junction::before {
+    background-color: oklch(var(--branch-selected));
+  }
+
+  /* Mobile legibility: slightly heavier lines and larger junction on small
+     screens so the topology stays readable at narrow widths */
+  @media (max-width: 640px) {
+    .ft-couple-line,
+    .ft-trunk,
+    .ft-connector {
+      height: 2.5px;
+    }
+    .ft-child-stub {
+      width: 2.5px;
+    }
+    .ft-junction {
+      width: 0.6rem;
+      height: 0.6rem;
+    }
   }
 }

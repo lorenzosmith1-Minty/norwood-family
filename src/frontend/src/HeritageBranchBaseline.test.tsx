@@ -132,4 +132,47 @@ describe("Heritage Branch View baseline: existing Family Tree stays intact", () 
       /Norwood Family\s*Connection/,
     );
   });
+
+  it("keeps Open Profile disabled for people without a profile entry", async () => {
+    // Freddie, Zelia Mae, and Lula Mae now have profiles, so their Open Profile
+    // is enabled. The other documented members without a profile entry must keep
+    // Open Profile disabled. Isaiah Jr., Edward, and Hattie are children of the
+    // default Julia anchor; Freddie, Zelia Mae, and Lula Mae are Erma's children,
+    // so they are reached by anchoring the tree on Clayton.
+    const user = userEvent.setup();
+    renderApp();
+    await user.click(
+      screen.getByRole("button", { name: "Heritage Branch View" }),
+    );
+
+    for (const name of [
+      "Isaiah Jr., Child",
+      "Edward, Child",
+      "Hattie, Child",
+    ]) {
+      await user.click(screen.getByRole("button", { name: new RegExp(name) }));
+      expect(
+        screen.getByRole("button", { name: "Open Profile" }),
+      ).toBeDisabled();
+    }
+
+    // Re-anchor on Clayton to reveal his children, including Erma's.
+    await user.click(
+      screen.getByRole("button", { name: /Clayton Norwood, Son/ }),
+    );
+    await user.click(screen.getByRole("button", { name: "Anchor Tree Here" }));
+
+    // Freddie, Zelia Mae, and Lula Mae now have profiles, so Open Profile is
+    // enabled for them.
+    for (const name of [
+      "Freddie, Child",
+      "Zelia Mae, Child",
+      "Lula Mae, Child",
+    ]) {
+      await user.click(screen.getByRole("button", { name: new RegExp(name) }));
+      expect(
+        screen.getByRole("button", { name: "Open Profile" }),
+      ).toBeEnabled();
+    }
+  });
 });

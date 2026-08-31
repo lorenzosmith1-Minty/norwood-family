@@ -54,4 +54,12 @@ export default defineConfig({
     ],
     dedupe: ["@icp-sdk/core"]
   },
+  test: {
+    environment: "jsdom",
+    server: {
+      deps: {
+        inline: ["@caffeineai/object-storage", "@caffeineai/core-infrastructure"],
+      },
+    },
+  },
 });

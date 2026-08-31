@@ -1,8 +1,77 @@
 // Version: 4.0.0
+type ArchiveItemId__806701466 = Nat;
+type ArchiveItemStatus__249205974 = {#Approved; #Pending; #Rejected};
+type ArchiveItemStatus__828623496 = {#Approved; #Pending; #Rejected};
+type ArchiveItemType__197671339 =
+  {
+    #Audio;
+    #Document;
+    #Other;
+    #Photo;
+    #Research;
+    #Video;
+    #WorkBusiness;
+    #WrittenStoryNote
+  };
+type ArchiveItemType__77290011 =
+  {
+    #Audio;
+    #Document;
+    #Other;
+    #Photo;
+    #Research;
+    #Video;
+    #WorkBusiness;
+    #WrittenStoryNote
+  };
+type ArchiveItem__425253936 =
+  {
+    blob : ExternalBlob__220559234;
+    contributor : Principal;
+    createdAt : Int;
+    description : Text;
+    era : Text;
+    id : ArchiveItemId__806701466;
+    itemType : ArchiveItemType__197671339;
+    privacyLevel : PrivacyLevel__764828888;
+    relatedBranchId : ?Text;
+    relatedMemberIds : [Text];
+    sourceStatus : SourceStatus__200219094;
+    status : ArchiveItemStatus__828623496;
+    tags : [Text];
+    title : Text;
+    year : ?Nat
+  };
+type ArchiveItem__785104390 =
+  {
+    blob : Blob;
+    contributor : Principal;
+    createdAt : Int;
+    description : Text;
+    era : Text;
+    id : Nat;
+    itemType : ArchiveItemType__77290011;
+    privacyLevel : PrivacyLevel__296521163;
+    relatedBranchId : ?Text;
+    relatedMemberIds : [Text];
+    sourceStatus : SourceStatus__645004629;
+    status : ArchiveItemStatus__249205974;
+    tags : [Text];
+    title : Text;
+    year : ?Nat
+  };
 type Data__265875254<K, V> = {var count : Nat__58649523; kvs : [var ?(K, V)]};
+type ExternalBlob__220559234 = Blob;
 type Internal__161573640<K, V> =
   {children : [var ?Node__430031793<K, V>]; data : Data__265875254<K, V>};
 type Leaf__1045638083<K, V> = {data : Data__265875254<K, V>};
+type List__1004628775<T> =
+  {
+    var blockIndex : Nat__58649523;
+    var blocks : [var [var ?T]];
+    var elementIndex : Nat__58649523
+  };
+type List__89170296<T> = List__1004628775<T>;
 type Map__13625999<K, V> =
   {var root : Node__430031793<K, V>; var size : Nat__58649523};
 type Map__386906547<K, V> = Map__670138087<K, V>;
@@ -17,18 +86,111 @@ type NewActor__1048145655 =
         userRoles : Map__386906547<Principal, UserRole__1012859405>
       }
   };
+type NewActor__163002496 =
+  {
+    accessControlState :
+      {
+        var adminAssigned : Bool;
+        userRoles : Map__386906547<Principal, UserRole__462637140>
+      };
+    archiveItems : List__89170296<ArchiveItem__785104390>;
+    galleries : Map__386906547<Text, PhotoGallery__360467265>
+  };
+type NewActor__816907118 =
+  {
+    accessControlState :
+      {
+        var adminAssigned : Bool;
+        userRoles : Map__386906547<Principal, UserRole__1068182424>
+      };
+    galleries : Map__386906547<Text, PhotoGallery__161040622>
+  };
 type Node__430031793<K, V> =
   {#internal : Internal__161573640<K, V>; #leaf : Leaf__1045638083<K, V>};
+type OldActor__1060490054 =
+  {
+    accessControlState :
+      {
+        var adminAssigned : Bool;
+        userRoles : Map__386906547<Principal, UserRole__462637140>
+      };
+    galleries : Map__386906547<Text, PhotoGallery__360467265>
+  };
 type OldActor__560581152 = {};
+type OldActor__792294613 =
+  {
+    accessControlState :
+      {
+        var adminAssigned : Bool;
+        userRoles : Map__386906547<Principal, UserRole__1068182424>
+      }
+  };
+type PersonId__675039419 = Text;
+type PhotoGallery__161040622 =
+  {photos : List__89170296<Photo__757730061>; var profilePhotoId : ?Nat};
+type PhotoGallery__360467265 =
+  {photos : List__89170296<Photo__213526586>; var profilePhotoId : ?Nat};
+type PhotoGallery__749612372 =
+  {
+    photos : List__89170296<Photo__93630719>;
+    var profilePhotoId : ?PhotoId__325645949
+  };
+type PhotoId__325645949 = Nat;
+type Photo__213526586 =
+  {
+    blob : Blob;
+    filename : Text;
+    id : Nat;
+    mimeType : Text;
+    uploadedAt : Int;
+    uploadedBy : Principal
+  };
+type Photo__757730061 =
+  {
+    blob : Blob;
+    filename : Text;
+    id : Nat;
+    mimeType : Text;
+    uploadedAt : Int;
+    uploadedBy : Principal
+  };
+type Photo__93630719 =
+  {
+    blob : ExternalBlob__220559234;
+    filename : Text;
+    id : PhotoId__325645949;
+    mimeType : Text;
+    uploadedAt : Int;
+    uploadedBy : Principal
+  };
+type PrivacyLevel__296521163 = {#FamilyOnly; #Private; #Public};
+type PrivacyLevel__764828888 = {#FamilyOnly; #Private; #Public};
+type SourceStatus__200219094 = {#Copy; #Original; #Transcribed; #Unverified};
+type SourceStatus__645004629 = {#Copy; #Original; #Transcribed; #Unverified};
 type UserRole__1012859405 = {#admin; #guest; #user};
+type UserRole__1068182424 = {#admin; #guest; #user};
+type UserRole__462637140 = {#admin; #guest; #user};
 type UserRole__91647283 = {#admin; #guest; #user};
 {
-  "20260829_000000" : (_old : OldActor__560581152) -> NewActor__1048145655
+  "20260829_000000" : (_old : OldActor__560581152) -> NewActor__1048145655;
+  "20260830_000000" : (old : OldActor__792294613) -> NewActor__816907118;
+  "20260831_000000" : (old : OldActor__1060490054) -> NewActor__163002496
 }
 actor  {
   stable accessControlState :
     {
       var adminAssigned : Bool;
       userRoles : Map__386906547<Principal, UserRole__91647283>
+    };
+  stable archiveItems :
+    {
+      var blockIndex : Nat__58649523;
+      var blocks : [var [var ?ArchiveItem__425253936]];
+      var elementIndex : Nat__58649523
+    };
+  stable galleries :
+    {
+      var root : Node__430031793<PersonId__675039419, PhotoGallery__749612372>;
+      var size : Nat__58649523
     }
 };

@@ -10,6 +10,35 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
+export interface ArchiveItem {
+  'id' : ArchiveItemId,
+  'era' : string,
+  'status' : ArchiveItemStatus,
+  'title' : string,
+  'relatedMemberIds' : Array<string>,
+  'blob' : ExternalBlob,
+  'createdAt' : bigint,
+  'tags' : Array<string>,
+  'year' : [] | [bigint],
+  'description' : string,
+  'privacyLevel' : PrivacyLevel,
+  'itemType' : ArchiveItemType,
+  'relatedBranchId' : [] | [string],
+  'sourceStatus' : SourceStatus,
+  'contributor' : Principal,
+}
+export type ArchiveItemId = bigint;
+export type ArchiveItemStatus = { 'Approved' : null } |
+  { 'Rejected' : null } |
+  { 'Pending' : null };
+export type ArchiveItemType = { 'Research' : null } |
+  { 'Photo' : null } |
+  { 'Document' : null } |
+  { 'WorkBusiness' : null } |
+  { 'WrittenStoryNote' : null } |
+  { 'Audio' : null } |
+  { 'Other' : null } |
+  { 'Video' : null };
 export interface Cell { 'value' : Value, 'name' : string }
 export type Error = { 'FrontendOriginsNotConfigured' : null } |
   {
@@ -26,9 +55,27 @@ export type Error = { 'FrontendOriginsNotConfigured' : null } |
   { 'UntrustedSsoSource' : { 'domain' : string } } |
   { 'MissingField' : string } |
   { 'FrontendOriginMismatch' : { 'got' : string, 'expected' : Array<string> } };
+export type ExternalBlob = Uint8Array;
+export type PersonId = string;
+export interface Photo {
+  'id' : PhotoId,
+  'blob' : ExternalBlob,
+  'mimeType' : string,
+  'filename' : string,
+  'uploadedAt' : bigint,
+  'uploadedBy' : Principal,
+}
+export type PhotoId = bigint;
+export type PrivacyLevel = { 'Private' : null } |
+  { 'Public' : null } |
+  { 'FamilyOnly' : null };
 export interface Result { 'hasMore' : boolean, 'rows' : Array<Array<Cell>> }
 export type Result__1 = { 'ok' : null } |
   { 'err' : Error };
+export type SourceStatus = { 'Copy' : null } |
+  { 'Unverified' : null } |
+  { 'Transcribed' : null } |
+  { 'Original' : null };
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
   { 'guest' : null };
@@ -38,15 +85,70 @@ export type Value = { 'int' : bigint } |
   { 'bool' : boolean } |
   { 'null' : null } |
   { 'text' : string };
+export interface _ImmutableObjectStorageCreateCertificateResult {
+  'method' : string,
+  'blob_hash' : string,
+}
+export interface _ImmutableObjectStorageRefillInformation {
+  'proposed_top_up_amount' : [] | [bigint],
+}
+export interface _ImmutableObjectStorageRefillResult {
+  'success' : [] | [boolean],
+  'topped_up_amount' : [] | [bigint],
+}
 export interface _SERVICE {
+  '_immutableObjectStorageBlobsAreLive' : ActorMethod<
+    [Array<Uint8Array>],
+    Array<boolean>
+  >,
+  '_immutableObjectStorageBlobsToDelete' : ActorMethod<[], Array<Uint8Array>>,
+  '_immutableObjectStorageConfirmBlobDeletion' : ActorMethod<
+    [Array<Uint8Array>],
+    undefined
+  >,
+  '_immutableObjectStorageCreateCertificate' : ActorMethod<
+    [string],
+    _ImmutableObjectStorageCreateCertificateResult
+  >,
+  '_immutableObjectStorageRefillCashier' : ActorMethod<
+    [[] | [_ImmutableObjectStorageRefillInformation]],
+    _ImmutableObjectStorageRefillResult
+  >,
+  '_immutableObjectStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
   '_initialize_access_control' : ActorMethod<[], undefined>,
   '_internet_identity_sign_in_finish' : ActorMethod<[], Result__1>,
   '_internet_identity_sign_in_start' : ActorMethod<[], Uint8Array>,
+  'addPhoto' : ActorMethod<[PersonId, string, string, ExternalBlob], Photo>,
+  'approveArchiveItem' : ActorMethod<[ArchiveItemId], [] | [ArchiveItem]>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
   'execute' : ActorMethod<[string], Result>,
+  'getApiDoc' : ActorMethod<[], string>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
+  'getProfilePhoto' : ActorMethod<[PersonId], [] | [Photo]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
+  'listApprovedArchiveItems' : ActorMethod<[], Array<ArchiveItem>>,
+  'listPendingArchiveItems' : ActorMethod<[], Array<ArchiveItem>>,
+  'listPhotos' : ActorMethod<[PersonId], Array<Photo>>,
+  'rejectArchiveItem' : ActorMethod<[ArchiveItemId], [] | [ArchiveItem]>,
+  'removePhoto' : ActorMethod<[PersonId, PhotoId], boolean>,
   'schema' : ActorMethod<[], string>,
+  'setProfilePhoto' : ActorMethod<[PersonId, PhotoId], [] | [Photo]>,
+  'submitArchiveItem' : ActorMethod<
+    [
+      string,
+      string,
+      ArchiveItemType,
+      ExternalBlob,
+      string,
+      [] | [bigint],
+      Array<string>,
+      Array<string>,
+      [] | [string],
+      SourceStatus,
+      PrivacyLevel,
+    ],
+    ArchiveItem
+  >,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

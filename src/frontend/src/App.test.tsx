@@ -1,12 +1,51 @@
 import "@testing-library/jest-dom/vitest";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { cleanup, render, screen, within } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
+
+// App renders useIsAdmin at the top level, which calls useActor from
+// @caffeineai/core-infrastructure. The real useActor requires an
+// InternetIdentityProvider, so these Home-screen tests stub the provider seam
+// with a minimal actor (isCallerAdmin is never reached because these renders
+// have no QueryClient, so the query stays disabled).
+const { mockActor } = vi.hoisted(() => {
+  const mockActor = {
+    async isCallerAdmin(): Promise<boolean> {
+      return false;
+    },
+  };
+  return { mockActor };
+});
+
+vi.mock("@caffeineai/core-infrastructure", () => ({
+  useActor: () => ({ actor: mockActor, isFetching: false }),
+  useInternetIdentity: () => ({
+    isAuthenticated: false,
+    login: () => {},
+    isInitializing: false,
+    isLoggingIn: false,
+  }),
+}));
+
+// App renders useIsAdmin at the top level, which calls useQuery, so every render
+// must be wrapped in a QueryClientProvider.
+function renderApp() {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <App />
+    </QueryClientProvider>,
+  );
+}
 
 afterEach(cleanup);
 
 const NAV_LABELS = [
   "Explore the Family",
+  "Heritage Branch View",
   "Travel Through Time",
   "Family Stories",
   "Family Mysteries",
@@ -15,7 +54,7 @@ const NAV_LABELS = [
 
 describe("Home screen", () => {
   it("renders the app title and subtitle on the default route", () => {
-    render(<App />);
+    renderApp();
 
     const heading = screen.getByRole("heading", { level: 1 });
     expect(heading).toHaveTextContent(/Norwood Family\s*Connection/);
@@ -24,14 +63,14 @@ describe("Home screen", () => {
     ).toBeInTheDocument();
   });
 
-  it("shows all five navigation buttons with exact labels", () => {
-    render(<App />);
+  it("shows all six navigation buttons with exact labels", () => {
+    renderApp();
 
     const nav = screen.getByRole("navigation", {
       name: "Family history sections",
     });
     const buttons = within(nav).getAllByRole("button");
-    expect(buttons).toHaveLength(5);
+    expect(buttons).toHaveLength(6);
     for (const label of NAV_LABELS) {
       expect(
         within(nav).getByRole("button", { name: label }),
@@ -39,8 +78,8 @@ describe("Home screen", () => {
     }
   });
 
-  it("renders the five buttons as non-navigating buttons", () => {
-    render(<App />);
+  it("renders the six buttons as non-navigating buttons", () => {
+    renderApp();
 
     const nav = screen.getByRole("navigation", {
       name: "Family history sections",
@@ -54,7 +93,7 @@ describe("Home screen", () => {
   });
 
   it("displays an old-photograph image with a descriptive alt", () => {
-    render(<App />);
+    renderApp();
 
     const image = screen.getByRole("img", {
       name: /vintage sepia-toned portrait of a Black family/i,
@@ -67,13 +106,13 @@ describe("Home screen", () => {
   });
 
   it("shows the family eyebrow label above the title", () => {
-    render(<App />);
+    renderApp();
 
     expect(screen.getByText("The Norwood Family")).toBeInTheDocument();
   });
 
   it("shows the closing family-history tagline", () => {
-    render(<App />);
+    renderApp();
 
     expect(
       screen.getByText(/A living record of the people, places, and moments/),
@@ -81,7 +120,7 @@ describe("Home screen", () => {
   });
 
   it("renders the hero as an image with a descriptive, non-identifying alt", () => {
-    render(<App />);
+    renderApp();
 
     // The hero is the only image on the Home screen.
     const image = screen.getByRole("img");
@@ -93,7 +132,7 @@ describe("Home screen", () => {
   });
 
   it("keeps the hero as a single representative image that is not labeled as an actual family photo", () => {
-    render(<App />);
+    renderApp();
 
     // Exactly one image on the Home screen: the hero.
     const images = screen.getAllByRole("img");
@@ -107,14 +146,14 @@ describe("Home screen", () => {
   });
 
   it("applies the distinctive display typography to the title", () => {
-    render(<App />);
+    renderApp();
 
     const heading = screen.getByRole("heading", { level: 1 });
     expect(heading.className).toContain("font-display");
   });
 
   it("applies warm paper texture and clean card styling", () => {
-    const { container } = render(<App />);
+    const { container } = renderApp();
 
     // Warm paper grain overlay is rendered by the Layout.
     expect(container.querySelector(".paper-grain")).not.toBeNull();
@@ -129,7 +168,7 @@ describe("Home screen", () => {
   });
 
   it("provides hover and focus transitions on interactive elements", () => {
-    render(<App />);
+    renderApp();
 
     const nav = screen.getByRole("navigation", {
       name: "Family history sections",

@@ -7,6 +7,26 @@ export interface None {
     __kind__: "None";
 }
 export type Option<T> = Some<T> | None;
+import type { ExternalBlob } from "@caffeineai/object-storage";
+export type { ExternalBlob } from "@caffeineai/object-storage";
+export interface ArchiveItem {
+    id: ArchiveItemId;
+    era: string;
+    status: ArchiveItemStatus;
+    title: string;
+    relatedMemberIds: Array<string>;
+    blob: ExternalBlob;
+    createdAt: bigint;
+    tags: Array<string>;
+    year?: bigint;
+    description: string;
+    privacyLevel: PrivacyLevel;
+    itemType: ArchiveItemType;
+    relatedBranchId?: string;
+    sourceStatus: SourceStatus;
+    contributor: Principal;
+}
+export type PhotoId = bigint;
 export type Result__1 = {
     __kind__: "ok";
     ok: null;
@@ -58,9 +78,15 @@ export type Error_ = {
         expected: Array<string>;
     };
 };
+export type PersonId = string;
+export type ArchiveItemId = bigint;
 export interface Result {
     hasMore: boolean;
     rows: Array<Array<Cell>>;
+}
+export interface Cell {
+    value: Value;
+    name: string;
 }
 export type Value = {
     __kind__: "int";
@@ -81,9 +107,39 @@ export type Value = {
     __kind__: "text";
     text: string;
 };
-export interface Cell {
-    value: Value;
-    name: string;
+export interface Photo {
+    id: PhotoId;
+    blob: ExternalBlob;
+    mimeType: string;
+    filename: string;
+    uploadedAt: bigint;
+    uploadedBy: Principal;
+}
+export enum ArchiveItemStatus {
+    Approved = "Approved",
+    Rejected = "Rejected",
+    Pending = "Pending"
+}
+export enum ArchiveItemType {
+    Research = "Research",
+    Photo = "Photo",
+    Document = "Document",
+    WorkBusiness = "WorkBusiness",
+    WrittenStoryNote = "WrittenStoryNote",
+    Audio = "Audio",
+    Other = "Other",
+    Video = "Video"
+}
+export enum PrivacyLevel {
+    Private = "Private",
+    Public = "Public",
+    FamilyOnly = "FamilyOnly"
+}
+export enum SourceStatus {
+    Copy = "Copy",
+    Unverified = "Unverified",
+    Transcribed = "Transcribed",
+    Original = "Original"
 }
 export enum UserRole {
     admin = "admin",
@@ -91,9 +147,20 @@ export enum UserRole {
     guest = "guest"
 }
 export interface backendInterface {
+    addPhoto(personId: PersonId, filename: string, mimeType: string, blob: ExternalBlob): Promise<Photo>;
+    approveArchiveItem(id: ArchiveItemId): Promise<ArchiveItem | null>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     execute(qJson: string): Promise<Result>;
+    getApiDoc(): Promise<string>;
     getCallerUserRole(): Promise<UserRole>;
+    getProfilePhoto(personId: PersonId): Promise<Photo | null>;
     isCallerAdmin(): Promise<boolean>;
+    listApprovedArchiveItems(): Promise<Array<ArchiveItem>>;
+    listPendingArchiveItems(): Promise<Array<ArchiveItem>>;
+    listPhotos(personId: PersonId): Promise<Array<Photo>>;
+    rejectArchiveItem(id: ArchiveItemId): Promise<ArchiveItem | null>;
+    removePhoto(personId: PersonId, photoId: PhotoId): Promise<boolean>;
     schema(): Promise<string>;
+    setProfilePhoto(personId: PersonId, photoId: PhotoId): Promise<Photo | null>;
+    submitArchiveItem(title: string, description: string, itemType: ArchiveItemType, blob: ExternalBlob, era: string, year: bigint | null, tags: Array<string>, relatedMemberIds: Array<string>, relatedBranchId: string | null, sourceStatus: SourceStatus, privacyLevel: PrivacyLevel): Promise<ArchiveItem>;
 }

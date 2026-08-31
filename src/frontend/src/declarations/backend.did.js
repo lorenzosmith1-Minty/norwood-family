@@ -8,6 +8,17 @@
 
 import { IDL } from '@icp-sdk/core/candid';
 
+export const _ImmutableObjectStorageCreateCertificateResult = IDL.Record({
+  'method' : IDL.Text,
+  'blob_hash' : IDL.Text,
+});
+export const _ImmutableObjectStorageRefillInformation = IDL.Record({
+  'proposed_top_up_amount' : IDL.Opt(IDL.Nat),
+});
+export const _ImmutableObjectStorageRefillResult = IDL.Record({
+  'success' : IDL.Opt(IDL.Bool),
+  'topped_up_amount' : IDL.Opt(IDL.Nat),
+});
 export const Error = IDL.Variant({
   'FrontendOriginsNotConfigured' : IDL.Null,
   'MixedSsoSources' : IDL.Record({
@@ -30,6 +41,61 @@ export const Error = IDL.Variant({
   }),
 });
 export const Result__1 = IDL.Variant({ 'ok' : IDL.Null, 'err' : Error });
+export const PersonId = IDL.Text;
+export const ExternalBlob = IDL.Vec(IDL.Nat8);
+export const PhotoId = IDL.Nat;
+export const Photo = IDL.Record({
+  'id' : PhotoId,
+  'blob' : ExternalBlob,
+  'mimeType' : IDL.Text,
+  'filename' : IDL.Text,
+  'uploadedAt' : IDL.Int,
+  'uploadedBy' : IDL.Principal,
+});
+export const ArchiveItemId = IDL.Nat;
+export const ArchiveItemStatus = IDL.Variant({
+  'Approved' : IDL.Null,
+  'Rejected' : IDL.Null,
+  'Pending' : IDL.Null,
+});
+export const PrivacyLevel = IDL.Variant({
+  'Private' : IDL.Null,
+  'Public' : IDL.Null,
+  'FamilyOnly' : IDL.Null,
+});
+export const ArchiveItemType = IDL.Variant({
+  'Research' : IDL.Null,
+  'Photo' : IDL.Null,
+  'Document' : IDL.Null,
+  'WorkBusiness' : IDL.Null,
+  'WrittenStoryNote' : IDL.Null,
+  'Audio' : IDL.Null,
+  'Other' : IDL.Null,
+  'Video' : IDL.Null,
+});
+export const SourceStatus = IDL.Variant({
+  'Copy' : IDL.Null,
+  'Unverified' : IDL.Null,
+  'Transcribed' : IDL.Null,
+  'Original' : IDL.Null,
+});
+export const ArchiveItem = IDL.Record({
+  'id' : ArchiveItemId,
+  'era' : IDL.Text,
+  'status' : ArchiveItemStatus,
+  'title' : IDL.Text,
+  'relatedMemberIds' : IDL.Vec(IDL.Text),
+  'blob' : ExternalBlob,
+  'createdAt' : IDL.Int,
+  'tags' : IDL.Vec(IDL.Text),
+  'year' : IDL.Opt(IDL.Nat),
+  'description' : IDL.Text,
+  'privacyLevel' : PrivacyLevel,
+  'itemType' : ArchiveItemType,
+  'relatedBranchId' : IDL.Opt(IDL.Text),
+  'sourceStatus' : SourceStatus,
+  'contributor' : IDL.Principal,
+});
 export const UserRole = IDL.Variant({
   'admin' : IDL.Null,
   'user' : IDL.Null,
@@ -50,19 +116,87 @@ export const Result = IDL.Record({
 });
 
 export const idlService = IDL.Service({
+  '_immutableObjectStorageBlobsAreLive' : IDL.Func(
+      [IDL.Vec(IDL.Vec(IDL.Nat8))],
+      [IDL.Vec(IDL.Bool)],
+      ['query'],
+    ),
+  '_immutableObjectStorageBlobsToDelete' : IDL.Func(
+      [],
+      [IDL.Vec(IDL.Vec(IDL.Nat8))],
+      ['query'],
+    ),
+  '_immutableObjectStorageConfirmBlobDeletion' : IDL.Func(
+      [IDL.Vec(IDL.Vec(IDL.Nat8))],
+      [],
+      [],
+    ),
+  '_immutableObjectStorageCreateCertificate' : IDL.Func(
+      [IDL.Text],
+      [_ImmutableObjectStorageCreateCertificateResult],
+      [],
+    ),
+  '_immutableObjectStorageRefillCashier' : IDL.Func(
+      [IDL.Opt(_ImmutableObjectStorageRefillInformation)],
+      [_ImmutableObjectStorageRefillResult],
+      [],
+    ),
+  '_immutableObjectStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
   '_initialize_access_control' : IDL.Func([], [], []),
   '_internet_identity_sign_in_finish' : IDL.Func([], [Result__1], []),
   '_internet_identity_sign_in_start' : IDL.Func([], [IDL.Vec(IDL.Nat8)], []),
+  'addPhoto' : IDL.Func(
+      [PersonId, IDL.Text, IDL.Text, ExternalBlob],
+      [Photo],
+      [],
+    ),
+  'approveArchiveItem' : IDL.Func([ArchiveItemId], [IDL.Opt(ArchiveItem)], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
   'execute' : IDL.Func([IDL.Text], [Result], ['query']),
+  'getApiDoc' : IDL.Func([], [IDL.Text], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+  'getProfilePhoto' : IDL.Func([PersonId], [IDL.Opt(Photo)], ['query']),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+  'listApprovedArchiveItems' : IDL.Func([], [IDL.Vec(ArchiveItem)], ['query']),
+  'listPendingArchiveItems' : IDL.Func([], [IDL.Vec(ArchiveItem)], ['query']),
+  'listPhotos' : IDL.Func([PersonId], [IDL.Vec(Photo)], ['query']),
+  'rejectArchiveItem' : IDL.Func([ArchiveItemId], [IDL.Opt(ArchiveItem)], []),
+  'removePhoto' : IDL.Func([PersonId, PhotoId], [IDL.Bool], []),
   'schema' : IDL.Func([], [IDL.Text], ['query']),
+  'setProfilePhoto' : IDL.Func([PersonId, PhotoId], [IDL.Opt(Photo)], []),
+  'submitArchiveItem' : IDL.Func(
+      [
+        IDL.Text,
+        IDL.Text,
+        ArchiveItemType,
+        ExternalBlob,
+        IDL.Text,
+        IDL.Opt(IDL.Nat),
+        IDL.Vec(IDL.Text),
+        IDL.Vec(IDL.Text),
+        IDL.Opt(IDL.Text),
+        SourceStatus,
+        PrivacyLevel,
+      ],
+      [ArchiveItem],
+      [],
+    ),
 });
 
 export const idlInitArgs = [];
 
 export const idlFactory = ({ IDL }) => {
+  const _ImmutableObjectStorageCreateCertificateResult = IDL.Record({
+    'method' : IDL.Text,
+    'blob_hash' : IDL.Text,
+  });
+  const _ImmutableObjectStorageRefillInformation = IDL.Record({
+    'proposed_top_up_amount' : IDL.Opt(IDL.Nat),
+  });
+  const _ImmutableObjectStorageRefillResult = IDL.Record({
+    'success' : IDL.Opt(IDL.Bool),
+    'topped_up_amount' : IDL.Opt(IDL.Nat),
+  });
   const Error = IDL.Variant({
     'FrontendOriginsNotConfigured' : IDL.Null,
     'MixedSsoSources' : IDL.Record({
@@ -85,6 +219,61 @@ export const idlFactory = ({ IDL }) => {
     }),
   });
   const Result__1 = IDL.Variant({ 'ok' : IDL.Null, 'err' : Error });
+  const PersonId = IDL.Text;
+  const ExternalBlob = IDL.Vec(IDL.Nat8);
+  const PhotoId = IDL.Nat;
+  const Photo = IDL.Record({
+    'id' : PhotoId,
+    'blob' : ExternalBlob,
+    'mimeType' : IDL.Text,
+    'filename' : IDL.Text,
+    'uploadedAt' : IDL.Int,
+    'uploadedBy' : IDL.Principal,
+  });
+  const ArchiveItemId = IDL.Nat;
+  const ArchiveItemStatus = IDL.Variant({
+    'Approved' : IDL.Null,
+    'Rejected' : IDL.Null,
+    'Pending' : IDL.Null,
+  });
+  const PrivacyLevel = IDL.Variant({
+    'Private' : IDL.Null,
+    'Public' : IDL.Null,
+    'FamilyOnly' : IDL.Null,
+  });
+  const ArchiveItemType = IDL.Variant({
+    'Research' : IDL.Null,
+    'Photo' : IDL.Null,
+    'Document' : IDL.Null,
+    'WorkBusiness' : IDL.Null,
+    'WrittenStoryNote' : IDL.Null,
+    'Audio' : IDL.Null,
+    'Other' : IDL.Null,
+    'Video' : IDL.Null,
+  });
+  const SourceStatus = IDL.Variant({
+    'Copy' : IDL.Null,
+    'Unverified' : IDL.Null,
+    'Transcribed' : IDL.Null,
+    'Original' : IDL.Null,
+  });
+  const ArchiveItem = IDL.Record({
+    'id' : ArchiveItemId,
+    'era' : IDL.Text,
+    'status' : ArchiveItemStatus,
+    'title' : IDL.Text,
+    'relatedMemberIds' : IDL.Vec(IDL.Text),
+    'blob' : ExternalBlob,
+    'createdAt' : IDL.Int,
+    'tags' : IDL.Vec(IDL.Text),
+    'year' : IDL.Opt(IDL.Nat),
+    'description' : IDL.Text,
+    'privacyLevel' : PrivacyLevel,
+    'itemType' : ArchiveItemType,
+    'relatedBranchId' : IDL.Opt(IDL.Text),
+    'sourceStatus' : SourceStatus,
+    'contributor' : IDL.Principal,
+  });
   const UserRole = IDL.Variant({
     'admin' : IDL.Null,
     'user' : IDL.Null,
@@ -105,14 +294,79 @@ export const idlFactory = ({ IDL }) => {
   });
   
   return IDL.Service({
+    '_immutableObjectStorageBlobsAreLive' : IDL.Func(
+        [IDL.Vec(IDL.Vec(IDL.Nat8))],
+        [IDL.Vec(IDL.Bool)],
+        ['query'],
+      ),
+    '_immutableObjectStorageBlobsToDelete' : IDL.Func(
+        [],
+        [IDL.Vec(IDL.Vec(IDL.Nat8))],
+        ['query'],
+      ),
+    '_immutableObjectStorageConfirmBlobDeletion' : IDL.Func(
+        [IDL.Vec(IDL.Vec(IDL.Nat8))],
+        [],
+        [],
+      ),
+    '_immutableObjectStorageCreateCertificate' : IDL.Func(
+        [IDL.Text],
+        [_ImmutableObjectStorageCreateCertificateResult],
+        [],
+      ),
+    '_immutableObjectStorageRefillCashier' : IDL.Func(
+        [IDL.Opt(_ImmutableObjectStorageRefillInformation)],
+        [_ImmutableObjectStorageRefillResult],
+        [],
+      ),
+    '_immutableObjectStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
     '_initialize_access_control' : IDL.Func([], [], []),
     '_internet_identity_sign_in_finish' : IDL.Func([], [Result__1], []),
     '_internet_identity_sign_in_start' : IDL.Func([], [IDL.Vec(IDL.Nat8)], []),
+    'addPhoto' : IDL.Func(
+        [PersonId, IDL.Text, IDL.Text, ExternalBlob],
+        [Photo],
+        [],
+      ),
+    'approveArchiveItem' : IDL.Func(
+        [ArchiveItemId],
+        [IDL.Opt(ArchiveItem)],
+        [],
+      ),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
     'execute' : IDL.Func([IDL.Text], [Result], ['query']),
+    'getApiDoc' : IDL.Func([], [IDL.Text], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+    'getProfilePhoto' : IDL.Func([PersonId], [IDL.Opt(Photo)], ['query']),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+    'listApprovedArchiveItems' : IDL.Func(
+        [],
+        [IDL.Vec(ArchiveItem)],
+        ['query'],
+      ),
+    'listPendingArchiveItems' : IDL.Func([], [IDL.Vec(ArchiveItem)], ['query']),
+    'listPhotos' : IDL.Func([PersonId], [IDL.Vec(Photo)], ['query']),
+    'rejectArchiveItem' : IDL.Func([ArchiveItemId], [IDL.Opt(ArchiveItem)], []),
+    'removePhoto' : IDL.Func([PersonId, PhotoId], [IDL.Bool], []),
     'schema' : IDL.Func([], [IDL.Text], ['query']),
+    'setProfilePhoto' : IDL.Func([PersonId, PhotoId], [IDL.Opt(Photo)], []),
+    'submitArchiveItem' : IDL.Func(
+        [
+          IDL.Text,
+          IDL.Text,
+          ArchiveItemType,
+          ExternalBlob,
+          IDL.Text,
+          IDL.Opt(IDL.Nat),
+          IDL.Vec(IDL.Text),
+          IDL.Vec(IDL.Text),
+          IDL.Opt(IDL.Text),
+          SourceStatus,
+          PrivacyLevel,
+        ],
+        [ArchiveItem],
+        [],
+      ),
   });
 };
 

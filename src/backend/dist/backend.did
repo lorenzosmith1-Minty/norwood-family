@@ -1,3 +1,16 @@
+type _ImmutableObjectStorageRefillResult = 
+ record {
+   success: opt bool;
+   topped_up_amount: opt nat;
+ };
+type _ImmutableObjectStorageRefillInformation = record {
+                                                  proposed_top_up_amount:
+                                                   opt nat;};
+type _ImmutableObjectStorageCreateCertificateResult = 
+ record {
+   blob_hash: text;
+   method: text;
+ };
 type Value = 
  variant {
    "bool": bool;
@@ -13,6 +26,13 @@ type UserRole =
    guest;
    user;
  };
+type SourceStatus = 
+ variant {
+   Copy;
+   Original;
+   Transcribed;
+   Unverified;
+ };
 type Result__1 = 
  variant {
    err: Error;
@@ -23,6 +43,24 @@ type Result =
    hasMore: bool;
    rows: vec vec Cell;
  };
+type PrivacyLevel = 
+ variant {
+   FamilyOnly;
+   Private;
+   Public;
+ };
+type PhotoId = nat;
+type Photo = 
+ record {
+   "blob": ExternalBlob;
+   filename: text;
+   id: PhotoId;
+   mimeType: text;
+   uploadedAt: int;
+   uploadedBy: principal;
+ };
+type PersonId = text;
+type ExternalBlob = blob;
 type Error = 
  variant {
    AmbiguousAttribute: record {
@@ -50,13 +88,73 @@ type Cell =
    name: text;
    value: Value;
  };
+type ArchiveItemType = 
+ variant {
+   Audio;
+   Document;
+   Other;
+   Photo;
+   Research;
+   Video;
+   WorkBusiness;
+   WrittenStoryNote;
+ };
+type ArchiveItemStatus = 
+ variant {
+   Approved;
+   Pending;
+   Rejected;
+ };
+type ArchiveItemId = nat;
+type ArchiveItem = 
+ record {
+   "blob": ExternalBlob;
+   contributor: principal;
+   createdAt: int;
+   description: text;
+   era: text;
+   id: ArchiveItemId;
+   itemType: ArchiveItemType;
+   privacyLevel: PrivacyLevel;
+   relatedBranchId: opt text;
+   relatedMemberIds: vec text;
+   sourceStatus: SourceStatus;
+   status: ArchiveItemStatus;
+   tags: vec text;
+   title: text;
+   year: opt nat;
+ };
 service : {
+  _immutableObjectStorageBlobsAreLive: (hashes: vec blob) -> (vec bool) query;
+  _immutableObjectStorageBlobsToDelete: () -> (vec blob) query;
+  _immutableObjectStorageConfirmBlobDeletion: (blobs: vec blob) -> ();
+  _immutableObjectStorageCreateCertificate: (blobHash: text) ->
+   (_ImmutableObjectStorageCreateCertificateResult);
+  _immutableObjectStorageRefillCashier: (refillInformation:
+   opt _ImmutableObjectStorageRefillInformation) ->
+   (_ImmutableObjectStorageRefillResult);
+  _immutableObjectStorageUpdateGatewayPrincipals: () -> ();
   _initialize_access_control: () -> ();
   _internet_identity_sign_in_finish: () -> (Result__1);
   _internet_identity_sign_in_start: () -> (blob);
+  addPhoto: (personId: PersonId, filename: text, mimeType: text, "blob":
+   ExternalBlob) -> (Photo);
+  approveArchiveItem: (id: ArchiveItemId) -> (opt ArchiveItem);
   assignCallerUserRole: (user: principal, role: UserRole) -> ();
   execute: (qJson: text) -> (Result) query;
+  getApiDoc: () -> (text) query;
   getCallerUserRole: () -> (UserRole) query;
+  getProfilePhoto: (personId: PersonId) -> (opt Photo) query;
   isCallerAdmin: () -> (bool) query;
+  listApprovedArchiveItems: () -> (vec ArchiveItem) query;
+  listPendingArchiveItems: () -> (vec ArchiveItem) query;
+  listPhotos: (personId: PersonId) -> (vec Photo) query;
+  rejectArchiveItem: (id: ArchiveItemId) -> (opt ArchiveItem);
+  removePhoto: (personId: PersonId, photoId: PhotoId) -> (bool);
   schema: () -> (text) query;
+  setProfilePhoto: (personId: PersonId, photoId: PhotoId) -> (opt Photo);
+  submitArchiveItem: (title: text, description: text, itemType:
+   ArchiveItemType, "blob": ExternalBlob, era: text, year: opt nat, tags:
+   vec text, relatedMemberIds: vec text, relatedBranchId: opt text,
+   sourceStatus: SourceStatus, privacyLevel: PrivacyLevel) -> (ArchiveItem);
 }

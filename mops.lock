@@ -1,10 +1,11 @@
 {
   "version": 3,
-  "mopsTomlDepsHash": "f56ea69ccc09230c64ca51b0c321a25f382b29aee160feaf4d821bb0b08ed03a",
+  "mopsTomlDepsHash": "2a0ef791263c545d501e8dbb6981a470392d8f0badc76600e6362667594ddcdb",
   "deps": {
     "base": "0.11.1",
     "caffeineai-authorization": "1.0.1",
     "caffeineai-lints": "0.1.0",
+    "caffeineai-object-storage": "1.1.1",
     "caffeineai-oql": "0.5.3",
     "core": "2.6.1",
     "ic": "4.2.0",
@@ -19,10 +20,14 @@
       "identity-attributes": "0.4.0"
     },
     "caffeineai-lints@0.1.0": {},
+    "caffeineai-object-storage@1.1.1": {
+      "core": "2.2.0"
+    },
     "caffeineai-oql@0.5.3": {
       "core": "2.6.0",
       "json": "1.4.0"
     },
+    "core@2.2.0": {},
     "core@2.5.0": {},
     "core@2.6.0": {},
     "core@2.6.1": {},
@@ -110,6 +115,15 @@
       "caffeineai-lints@0.1.0/mops.toml": "a444907d2356e5a7e3f21769a9b95d8e26333fa8c2fcd251bffae2c58025d2f7",
       "caffeineai-lints@0.1.0/rules/migration-self-contained.toml": "84f6aa103597b5d708218aff3477bac261f30492d2f7bc13f146ee33d2c9bb65",
       "caffeineai-lints@0.1.0/src/Lib.mo": "5417424c5ea911f4e7a2730705fbd3d3ce5868b6e62b8abfbb91807515995036"
+    },
+    "caffeineai-object-storage@1.1.1": {
+      "caffeineai-object-storage@1.1.1/README.md": "cec7c399f7f9dee04709ba8e6610fe380e887ef667b9981082dac06eeb9c36fc",
+      "caffeineai-object-storage@1.1.1/mops.toml": "5a45862bf52f33cadceb3611d323d49465aef34a58971957a3d005e07a42b59d",
+      "caffeineai-object-storage@1.1.1/rules/mixin-storage-included.toml": "d2ab392a7a2a07f1c23f77f9357f6d0967346bff30a4588b8b53736f3931f1d5",
+      "caffeineai-object-storage@1.1.1/rules/no-redeclare-caffeine-storage-gateway.toml": "8a232d3119adc5d29ff9cfeaea5ba4dedd96c6e7d9a6c1b544723bc666e923be",
+      "caffeineai-object-storage@1.1.1/rules/no-redeclare-caffeine-storage-refill.toml": "ef27548d981848d1e9940053aae9c31162d4c9352778c1c3a2de7476924da9f7",
+      "caffeineai-object-storage@1.1.1/src/Mixin.mo": "175c6b98672a83054fc08855062d1a7b7f2bd3713bf11a60d5319ac5afefe2b3",
+      "caffeineai-object-storage@1.1.1/src/Storage.mo": "0c757f4cb30ebe8e30b42a59b130a1662b47e403b9664f44e98d14b08b20af42"
     },
     "caffeineai-oql@0.5.3": {
       "caffeineai-oql@0.5.3/README.md": "75c40cd6822859ddbe9edf9327465dfa0e2a00a07cbb5d58f558a6b642331bfb",

@@ -1,15 +1,18 @@
 {
-  "overview": "A warm, historical Family Tree web app for the Norwood family, now with a Person Profile page for matriarch Julia 'Julie' Norwood.",
+  "overview": "A mobile-first family history app with a warm archival visual style, now adding an interactive anchor-centered Heritage Branch View of the family tree.",
   "features": [
-    "Browse the Norwood family tree",
-    "Open Julia Norwood's person profile from her card",
-    "View her story, family, timeline, and sources"
+    "Anchor-centered interactive family tree (Heritage Branch View)",
+    "Parents, spouse, siblings, and children around any selected anchor",
+    "Person actions: Relation to You, Relationship Path, Open Profile, Anchor Tree Here, This is Me",
+    "Existing Family Tree view and profiles unchanged",
+    "Warm archival/heirloom mobile-first design"
   ],
-  "category": "family-tree",
+  "category": "family-history-app",
   "tags": [
     "family",
     "genealogy",
-    "history"
+    "heritage",
+    "mobile-first"
   ],
-  "last_updated": "2026-08-29T20:22:21.473Z"
+  "last_updated": "2026-08-31T02:11:29.165Z"
 }

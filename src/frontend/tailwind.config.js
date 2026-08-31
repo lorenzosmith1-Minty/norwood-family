@@ -16,7 +16,7 @@ export default {
     },
     extend: {
       colors: {
-        border: "oklch(var(--border))",
+        border: "oklch(var(--border) / <alpha-value>)",
         input: "oklch(var(--input))",
         ring: "oklch(var(--ring) / <alpha-value>)",
         background: "oklch(var(--background))",
@@ -104,6 +104,14 @@ export default {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0.6" },
         },
+        "branch-in": {
+          from: { opacity: "0", transform: "scale(0.92) translateY(6px)" },
+          to: { opacity: "1", transform: "scale(1) translateY(0)" },
+        },
+        "anchor-glow": {
+          "0%, 100%": { boxShadow: "0 0 0 3px rgba(176, 133, 92, 0.35)" },
+          "50%": { boxShadow: "0 0 0 6px rgba(176, 133, 92, 0.12)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -111,6 +119,8 @@ export default {
         "fade-up": "fade-up 0.6s cubic-bezier(0.4, 0, 0.2, 1) both",
         "fade-in": "fade-in 0.8s ease-out both",
         "soft-pulse": "soft-pulse 3s ease-in-out infinite",
+        "branch-in": "branch-in 0.4s cubic-bezier(0.4, 0, 0.2, 1) both",
+        "anchor-glow": "anchor-glow 3s ease-in-out infinite",
       },
     },
   },

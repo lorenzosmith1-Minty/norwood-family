@@ -1,6 +1,7 @@
 import {
   ChevronRight,
   Clock3,
+  GitBranch,
   Landmark,
   LibraryBig,
   Search,
@@ -12,6 +13,10 @@ const navItems = [
   {
     label: "Explore the Family",
     icon: TreePine,
+  },
+  {
+    label: "Heritage Branch View",
+    icon: GitBranch,
   },
   {
     label: "Travel Through Time",
@@ -33,9 +38,17 @@ const navItems = [
 
 interface HomePageProps {
   onExplore: () => void;
+  onAddToHistory: () => void;
+  onOpenArchive: () => void;
+  onOpenBranch: () => void;
 }
 
-export function HomePage({ onExplore }: HomePageProps) {
+export function HomePage({
+  onExplore,
+  onAddToHistory,
+  onOpenArchive,
+  onOpenBranch,
+}: HomePageProps) {
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col items-center px-6 py-12 sm:py-16">
       {/* Hero */}
@@ -93,7 +106,17 @@ export function HomePage({ onExplore }: HomePageProps) {
               <button
                 type="button"
                 data-ocid={`home.nav_button.${index + 1}`}
-                onClick={index === 0 ? onExplore : undefined}
+                onClick={
+                  index === 0
+                    ? onExplore
+                    : index === 1
+                      ? onOpenBranch
+                      : index === 3
+                        ? onOpenArchive
+                        : index === 5
+                          ? onAddToHistory
+                          : undefined
+                }
                 className="group flex w-full items-center gap-4 rounded-2xl border border-border bg-card px-5 py-4 text-left shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:translate-y-0"
               >
                 <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-secondary text-accent-foreground transition-colors duration-300 group-hover:bg-accent group-hover:text-accent-foreground">

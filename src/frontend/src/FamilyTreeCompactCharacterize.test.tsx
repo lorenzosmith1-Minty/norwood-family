@@ -189,7 +189,7 @@ describe("Family Tree compact-card characterization: tree structure stays intact
       within(lulaSection).getByRole("button", { name: "Lula Mae" }),
     ).toBeInTheDocument();
     expect(
-      within(lulaSection).getByRole("button", { name: /Versie Smith/ }),
+      within(lulaSection).getByRole("button", { name: "Versie Smith" }),
     ).toBeInTheDocument();
 
     // Versie's maternal line: Harvey and Mary Louise, their children, and

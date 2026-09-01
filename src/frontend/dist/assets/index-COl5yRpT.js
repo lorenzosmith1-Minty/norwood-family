@@ -45063,6 +45063,293 @@ const patriciaRollinsProfile = {
     }
   ]
 };
+const lorenzoSmithSrProfile = {
+  id: "lorenzoSmithSr",
+  name: "Lorenzo Smith Sr.",
+  role: "Son",
+  portrait: {
+    src: "",
+    alt: "An initials placeholder portrait for Lorenzo Smith Sr., since no photograph of him is known to exist."
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Lula Mae Norwood and Versie Smith"
+    },
+    {
+      label: "Siblings",
+      value: "Versie Smith Jr., Herbert Smith, Alonzo Smith, Sherri Smith, Beatrice Smith, and Ed Smith"
+    },
+    { label: "Evidence status", value: "Family history" }
+  ],
+  story: "Lorenzo Smith Sr. was the son of Lula Mae Norwood and Versie Smith, one of seven children. No additional details about his life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "Lula Mae Norwood and Versie Smith",
+    spouseRole: "Parents",
+    childrenText: "Lorenzo Smith Sr. is one of seven children of Lula Mae Norwood and Versie Smith. His siblings are Versie Smith Jr., Herbert Smith, Alonzo Smith, Sherri Smith, Beatrice Smith, and Ed Smith."
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail: "Lorenzo Smith Sr. is born, the son of Lula Mae Norwood and Versie Smith. The date is not recorded in the family records gathered so far."
+    }
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail: "A family-history note identifying Lorenzo Smith Sr. as a son of Lula Mae Norwood and Versie Smith, one of seven children. No additional details about him are recorded. This is a family account, not a documented record."
+    }
+  ]
+};
+const versieSmithJrProfile = {
+  id: "versieSmithJr",
+  name: "Versie Smith Jr.",
+  role: "Son",
+  portrait: {
+    src: "",
+    alt: "An initials placeholder portrait for Versie Smith Jr., since no photograph of him is known to exist."
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Lula Mae Norwood and Versie Smith"
+    },
+    {
+      label: "Siblings",
+      value: "Lorenzo Smith Sr., Herbert Smith, Alonzo Smith, Sherri Smith, Beatrice Smith, and Ed Smith"
+    },
+    { label: "Evidence status", value: "Family history" }
+  ],
+  story: "Versie Smith Jr. was the son of Lula Mae Norwood and Versie Smith, one of seven children. No additional details about his life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "Lula Mae Norwood and Versie Smith",
+    spouseRole: "Parents",
+    childrenText: "Versie Smith Jr. is one of seven children of Lula Mae Norwood and Versie Smith. His siblings are Lorenzo Smith Sr., Herbert Smith, Alonzo Smith, Sherri Smith, Beatrice Smith, and Ed Smith."
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail: "Versie Smith Jr. is born, the son of Lula Mae Norwood and Versie Smith. The date is not recorded in the family records gathered so far."
+    }
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail: "A family-history note identifying Versie Smith Jr. as a son of Lula Mae Norwood and Versie Smith, one of seven children. No additional details about him are recorded. This is a family account, not a documented record."
+    }
+  ]
+};
+const herbertSmithProfile = {
+  id: "herbertSmith",
+  name: "Herbert Smith",
+  role: "Son",
+  portrait: {
+    src: "",
+    alt: "An initials placeholder portrait for Herbert Smith, since no photograph of him is known to exist."
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Lula Mae Norwood and Versie Smith"
+    },
+    {
+      label: "Siblings",
+      value: "Lorenzo Smith Sr., Versie Smith Jr., Alonzo Smith, Sherri Smith, Beatrice Smith, and Ed Smith"
+    },
+    { label: "Evidence status", value: "Family history" }
+  ],
+  story: "Herbert Smith was the son of Lula Mae Norwood and Versie Smith, one of seven children. No additional details about his life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "Lula Mae Norwood and Versie Smith",
+    spouseRole: "Parents",
+    childrenText: "Herbert Smith is one of seven children of Lula Mae Norwood and Versie Smith. His siblings are Lorenzo Smith Sr., Versie Smith Jr., Alonzo Smith, Sherri Smith, Beatrice Smith, and Ed Smith."
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail: "Herbert Smith is born, the son of Lula Mae Norwood and Versie Smith. The date is not recorded in the family records gathered so far."
+    }
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail: "A family-history note identifying Herbert Smith as a son of Lula Mae Norwood and Versie Smith, one of seven children. No additional details about him are recorded. This is a family account, not a documented record."
+    }
+  ]
+};
+const alonzoSmithProfile = {
+  id: "alonzoSmith",
+  name: "Alonzo Smith",
+  role: "Son",
+  portrait: {
+    src: "",
+    alt: "An initials placeholder portrait for Alonzo Smith, since no photograph of him is known to exist."
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Lula Mae Norwood and Versie Smith"
+    },
+    {
+      label: "Siblings",
+      value: "Lorenzo Smith Sr., Versie Smith Jr., Herbert Smith, Sherri Smith, Beatrice Smith, and Ed Smith"
+    },
+    { label: "Evidence status", value: "Family history" }
+  ],
+  story: "Alonzo Smith was the son of Lula Mae Norwood and Versie Smith, one of seven children. No additional details about his life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "Lula Mae Norwood and Versie Smith",
+    spouseRole: "Parents",
+    childrenText: "Alonzo Smith is one of seven children of Lula Mae Norwood and Versie Smith. His siblings are Lorenzo Smith Sr., Versie Smith Jr., Herbert Smith, Sherri Smith, Beatrice Smith, and Ed Smith."
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail: "Alonzo Smith is born, the son of Lula Mae Norwood and Versie Smith. The date is not recorded in the family records gathered so far."
+    }
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail: "A family-history note identifying Alonzo Smith as a son of Lula Mae Norwood and Versie Smith, one of seven children. No additional details about him are recorded. This is a family account, not a documented record."
+    }
+  ]
+};
+const sherriSmithProfile = {
+  id: "sherriSmith",
+  name: "Sherri Smith",
+  role: "Daughter",
+  portrait: {
+    src: "",
+    alt: "An initials placeholder portrait for Sherri Smith, since no photograph of her is known to exist."
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Lula Mae Norwood and Versie Smith"
+    },
+    {
+      label: "Siblings",
+      value: "Lorenzo Smith Sr., Versie Smith Jr., Herbert Smith, Alonzo Smith, Beatrice Smith, and Ed Smith"
+    },
+    { label: "Evidence status", value: "Family history" }
+  ],
+  story: "Sherri Smith was the daughter of Lula Mae Norwood and Versie Smith, one of seven children. No additional details about her life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "Lula Mae Norwood and Versie Smith",
+    spouseRole: "Parents",
+    childrenText: "Sherri Smith is one of seven children of Lula Mae Norwood and Versie Smith. Her siblings are Lorenzo Smith Sr., Versie Smith Jr., Herbert Smith, Alonzo Smith, Beatrice Smith, and Ed Smith."
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail: "Sherri Smith is born, the daughter of Lula Mae Norwood and Versie Smith. The date is not recorded in the family records gathered so far."
+    }
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail: "A family-history note identifying Sherri Smith as a daughter of Lula Mae Norwood and Versie Smith, one of seven children. No additional details about her are recorded. This is a family account, not a documented record."
+    }
+  ]
+};
+const beatriceSmithProfile = {
+  id: "beatriceSmith",
+  name: "Beatrice Smith",
+  role: "Daughter",
+  portrait: {
+    src: "",
+    alt: "An initials placeholder portrait for Beatrice Smith, since no photograph of her is known to exist."
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Lula Mae Norwood and Versie Smith"
+    },
+    {
+      label: "Siblings",
+      value: "Lorenzo Smith Sr., Versie Smith Jr., Herbert Smith, Alonzo Smith, Sherri Smith, and Ed Smith"
+    },
+    { label: "Evidence status", value: "Family history" }
+  ],
+  story: "Beatrice Smith was the daughter of Lula Mae Norwood and Versie Smith, one of seven children. No additional details about her life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "Lula Mae Norwood and Versie Smith",
+    spouseRole: "Parents",
+    childrenText: "Beatrice Smith is one of seven children of Lula Mae Norwood and Versie Smith. Her siblings are Lorenzo Smith Sr., Versie Smith Jr., Herbert Smith, Alonzo Smith, Sherri Smith, and Ed Smith."
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail: "Beatrice Smith is born, the daughter of Lula Mae Norwood and Versie Smith. The date is not recorded in the family records gathered so far."
+    }
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail: "A family-history note identifying Beatrice Smith as a daughter of Lula Mae Norwood and Versie Smith, one of seven children. No additional details about her are recorded. This is a family account, not a documented record."
+    }
+  ]
+};
+const edSmithProfile = {
+  id: "edSmith",
+  name: "Ed Smith",
+  role: "Son",
+  portrait: {
+    src: "",
+    alt: "An initials placeholder portrait for Ed Smith, since no photograph of him is known to exist."
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Lula Mae Norwood and Versie Smith"
+    },
+    {
+      label: "Siblings",
+      value: "Lorenzo Smith Sr., Versie Smith Jr., Herbert Smith, Alonzo Smith, Sherri Smith, and Beatrice Smith"
+    },
+    { label: "Evidence status", value: "Family history" }
+  ],
+  story: "Ed Smith was the son of Lula Mae Norwood and Versie Smith, one of seven children. No additional details about his life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "Lula Mae Norwood and Versie Smith",
+    spouseRole: "Parents",
+    childrenText: "Ed Smith is one of seven children of Lula Mae Norwood and Versie Smith. His siblings are Lorenzo Smith Sr., Versie Smith Jr., Herbert Smith, Alonzo Smith, Sherri Smith, and Beatrice Smith."
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail: "Ed Smith is born, the son of Lula Mae Norwood and Versie Smith. The date is not recorded in the family records gathered so far."
+    }
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail: "A family-history note identifying Ed Smith as a son of Lula Mae Norwood and Versie Smith, one of seven children. No additional details about him are recorded. This is a family account, not a documented record."
+    }
+  ]
+};
 const profiles = {
   julia: juliaProfile,
   isaiah: isaiahProfile,
@@ -45104,7 +45391,14 @@ const profiles = {
   "christine-adams-tucker": christineAdamsTuckerProfile,
   "robert-adams-sr": robertAdamsSrProfile,
   "ella-mae-adams": ellaMaeAdamsProfile,
-  "eula-lee-adams": eulaLeeAdamsProfile
+  "eula-lee-adams": eulaLeeAdamsProfile,
+  lorenzoSmithSr: lorenzoSmithSrProfile,
+  versieSmithJr: versieSmithJrProfile,
+  herbertSmith: herbertSmithProfile,
+  alonzoSmith: alonzoSmithProfile,
+  sherriSmith: sherriSmithProfile,
+  beatriceSmith: beatriceSmithProfile,
+  edSmith: edSmithProfile
 };
 function getInitials$3(name) {
   var _a2;
@@ -45119,7 +45413,7 @@ function computeCompleteness(person, hasProfilePhoto) {
   const fields = [
     {
       label: "Photo",
-      done: hasProfilePhoto || person.portrait.src !== PLACEHOLDER_SRC
+      done: hasProfilePhoto || Boolean(person.portrait.src && person.portrait.src !== PLACEHOLDER_SRC)
     },
     {
       label: "Birth information",
@@ -45421,7 +45715,7 @@ function PersonProfilePage({
   profilePhoto,
   onProfilePhotoChange
 }) {
-  const storyLabel = person.id === "julia" || person.id === "erma" || person.id === "hudson" || person.id === "gertrude-adams-hill" || person.id === "mary-louise-sims" || person.id === "mary-jane-johnson" || person.id === "mildred-adams" || person.id === "christine-adams" || person.id === "tammy" || person.id === "punchy" || person.id === "patricia-rollins" || person.id === "fannie-adams" || person.id === "christine-adams-tucker" || person.id === "ella-mae-adams" || person.id === "eula-lee-adams" ? "Her Story" : "His Story";
+  const storyLabel = person.id === "julia" || person.id === "erma" || person.id === "hudson" || person.id === "gertrude-adams-hill" || person.id === "mary-louise-sims" || person.id === "mary-jane-johnson" || person.id === "mildred-adams" || person.id === "christine-adams" || person.id === "tammy" || person.id === "punchy" || person.id === "patricia-rollins" || person.id === "fannie-adams" || person.id === "christine-adams-tucker" || person.id === "ella-mae-adams" || person.id === "eula-lee-adams" || person.id === "sherriSmith" || person.id === "beatriceSmith" ? "Her Story" : "His Story";
   const hasProfilePhoto = Boolean(profilePhoto);
   const completeness = computeCompleteness(person, hasProfilePhoto);
   const portraitSrc = profilePhoto ?? person.portrait.src;
@@ -46950,12 +47244,23 @@ function PersonCard({
   onOpen,
   isMe = false,
   onMarkMe,
-  profilePhoto
+  profilePhoto,
+  variant = "default",
+  openOnSelect = true
 }) {
   var _a2, _b2;
-  const handleClick = onOpen ?? onSelect;
+  const handleClick = () => {
+    onSelect();
+    if (openOnSelect) {
+      onOpen == null ? void 0 : onOpen();
+    }
+  };
   const photoSrc = profilePhoto ?? ((_a2 = person.photo) == null ? void 0 : _a2.src);
   const photoAlt = profilePhoto ? `${person.name}'s profile photo` : ((_b2 = person.photo) == null ? void 0 : _b2.alt) ?? `${person.name}'s initials`;
+  const isFu = variant === "couple" || variant === "child";
+  const cardClass = isFu ? `${variant === "couple" ? "fu-couple-card" : "fu-child-card"} ${selected ? "border-[oklch(var(--branch-selected))]" : ""}` : `ft-card ${selected ? "ft-card-selected" : ""}`;
+  const portraitClass = isFu ? `${variant === "couple" ? "fu-couple-portrait" : "fu-child-portrait"} ${selected ? "shadow-[0_0_0_2px_oklch(var(--branch-selected))]" : ""}` : "ft-card-portrait";
+  const nameClass = isFu ? variant === "couple" ? "fu-couple-name" : "fu-child-name" : "ft-card-name";
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative flex w-full flex-col items-center", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsxs(
       motion.button,
@@ -46971,9 +47276,9 @@ function PersonCard({
           delay: 0.1 + index2 * 0.06,
           ease: [0.4, 0, 0.2, 1]
         },
-        className: `ft-card ${selected ? "ft-card-selected" : ""}`,
+        className: cardClass,
         children: [
-          photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ft-card-portrait", "aria-hidden": "true", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+          photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: portraitClass, "aria-hidden": "true", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
             "img",
             {
               src: photoSrc,
@@ -46981,8 +47286,8 @@ function PersonCard({
               className: "h-full w-full object-cover",
               loading: "lazy"
             }
-          ) }) : /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ft-card-portrait", "aria-hidden": "true", children: getInitials$1(person.name) }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ft-card-name", children: person.name }),
+          ) }) : /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: portraitClass, "aria-hidden": "true", children: getInitials$1(person.name) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: nameClass, children: person.name }),
           person.years && /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ft-card-years", children: person.years }),
           selected && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "ft-card-detail", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ft-role-chip", children: person.role }),
@@ -46995,16 +47300,28 @@ function PersonCard({
         ]
       }
     ),
-    selected && !isMe && onMarkMe && /* @__PURE__ */ jsxRuntimeExports.jsx(
-      "button",
-      {
-        type: "button",
-        "data-ocid": `tree.person.${index2 + 1}.mark_me`,
-        onClick: onMarkMe,
-        className: "mt-2 inline-flex items-center rounded-full border border-border bg-card px-3 py-1 text-[11px] font-medium text-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-        children: "This is Me"
-      }
-    )
+    selected && (onOpen || !isMe && onMarkMe) && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-2 flex flex-wrap items-center justify-center gap-1.5", children: [
+      !openOnSelect && onOpen && /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "button",
+        {
+          type: "button",
+          "data-ocid": `tree.person.${index2 + 1}.open_profile`,
+          onClick: onOpen,
+          className: "inline-flex items-center rounded-full border border-border bg-card px-3 py-1 text-[11px] font-medium text-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+          children: "Open Profile"
+        }
+      ),
+      !isMe && onMarkMe && /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "button",
+        {
+          type: "button",
+          "data-ocid": `tree.person.${index2 + 1}.mark_me`,
+          onClick: onMarkMe,
+          className: "inline-flex items-center rounded-full border border-border bg-card px-3 py-1 text-[11px] font-medium text-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+          children: "This is Me"
+        }
+      )
+    ] })
   ] });
 }
 const couple = [
@@ -47116,6 +47433,50 @@ const mildredChildren = [
   { id: "punchy", name: "Punchy", role: "Daughter" },
   { id: "patricia-rollins", name: "Patricia Rollins", role: "Daughter" }
 ];
+const lulaVersieChildren = [
+  {
+    id: "lorenzoSmithSr",
+    name: "Lorenzo Smith Sr.",
+    role: "Son",
+    relationToYou: "granduncle"
+  },
+  {
+    id: "versieSmithJr",
+    name: "Versie Smith Jr.",
+    role: "Son",
+    relationToYou: "granduncle"
+  },
+  {
+    id: "herbertSmith",
+    name: "Herbert Smith",
+    role: "Son",
+    relationToYou: "granduncle"
+  },
+  {
+    id: "alonzoSmith",
+    name: "Alonzo Smith",
+    role: "Son",
+    relationToYou: "granduncle"
+  },
+  {
+    id: "sherriSmith",
+    name: "Sherri Smith",
+    role: "Daughter",
+    relationToYou: "grandaunt"
+  },
+  {
+    id: "beatriceSmith",
+    name: "Beatrice Smith",
+    role: "Daughter",
+    relationToYou: "grandaunt"
+  },
+  {
+    id: "edSmith",
+    name: "Ed Smith",
+    role: "Son",
+    relationToYou: "granduncle"
+  }
+];
 const CHILDREN_PER_ROW = 4;
 const COUPLE_INDICES = [0, 1];
 const CHILDREN_INDICES = [2, 3, 4, 5, 6, 7, 8, 9];
@@ -47123,22 +47484,36 @@ const CLAYTON_INDEX = 2;
 const CLAYTON_SPOUSE_INDICES = [10, 11];
 const LULA_MAE_INDEX = 26;
 const VERSIE_INDEX = 27;
-const HARVEY_INDEX = 28;
-const MARY_LOUISE_INDEX = 29;
+const LULA_VERSIE_CHILDREN_INDICES = Array.from(
+  { length: lulaVersieChildren.length },
+  (_2, i) => 28 + i
+);
+const HARVEY_INDEX = 28 + lulaVersieChildren.length;
+const MARY_LOUISE_INDEX = HARVEY_INDEX + 1;
 const FIRST_MARRIAGE_CHILDREN_INDICES = Array.from(
   { length: firstMarriageChildren.length },
-  (_2, i) => 30 + i
+  (_2, i) => MARY_LOUISE_INDEX + 1 + i
 );
-const GERTRUDE_INDEX = 44;
-const MARY_JANE_INDEX = 45;
-const SECOND_MARRIAGE_CHILDREN_INDICES = [46, 47];
-const MILDRED_INDEX = 46;
-const MILDRED_CHILDREN_INDICES = [48, 49, 50];
+const GERTRUDE_INDEX = FIRST_MARRIAGE_CHILDREN_INDICES[FIRST_MARRIAGE_CHILDREN_INDICES.length - 1] + 1;
+const MARY_JANE_INDEX = GERTRUDE_INDEX + 1;
+const SECOND_MARRIAGE_CHILDREN_INDICES = [
+  MARY_JANE_INDEX + 1,
+  MARY_JANE_INDEX + 2
+];
+const MILDRED_INDEX = SECOND_MARRIAGE_CHILDREN_INDICES[0];
+const MILDRED_CHILDREN_INDICES = [
+  MILDRED_INDEX + 2,
+  MILDRED_INDEX + 3,
+  MILDRED_INDEX + 4
+];
 const CLAYTON_BRANCH_INDICES = Array.from({ length: 16 }, (_2, i) => 10 + i);
-const LULA_VERSIE_BRANCH_INDICES = Array.from({ length: 19 }, (_2, i) => 26 + i);
+const LULA_VERSIE_BRANCH_INDICES = Array.from(
+  { length: 2 + lulaVersieChildren.length + 17 },
+  (_2, i) => 26 + i
+);
 const HARVEY_SECOND_BRANCH_INDICES = Array.from(
   { length: 6 },
-  (_2, i) => 45 + i
+  (_2, i) => MARY_JANE_INDEX + i
 );
 const BRANCH_INDICES = {
   clayton: CLAYTON_BRANCH_INDICES,
@@ -47166,6 +47541,7 @@ const CLAYTON_BRANCH_IDS = /* @__PURE__ */ new Set([
 const LULA_VERSIE_BRANCH_IDS = /* @__PURE__ */ new Set([
   "lula-mae",
   "versie-smith",
+  ...lulaVersieChildren.map((child) => child.id),
   "gertrude-adams-hill",
   "harvey-adams-sr",
   "mary-louise-sims",
@@ -47446,6 +47822,7 @@ function FamilyTreePage({
     ...claytonBranch.flatMap((branch) => [branch.spouse, ...branch.children]),
     { id: "lula-mae", name: "Lula Mae", role: "Child" },
     { id: "versie-smith", name: "Versie Smith", role: "Husband" },
+    ...lulaVersieChildren,
     {
       id: harveyAdamsSrProfile.id,
       name: "Harvey Adams Sr.",
@@ -47472,7 +47849,7 @@ function FamilyTreePage({
     ...mildredChildren
   ];
   const coupleBaseIndex = couple.length + children.length + claytonBranch.flatMap((branch) => [branch.spouse, ...branch.children]).length;
-  const parentsBaseIndex = coupleBaseIndex + 2;
+  const parentsBaseIndex = coupleBaseIndex + 2 + lulaVersieChildren.length;
   const firstMarriageChildrenBaseIndex = parentsBaseIndex + 2;
   const gertrudeIndex = firstMarriageChildrenBaseIndex + firstMarriageChildren.length;
   const handleSelect = (index2) => {
@@ -47599,7 +47976,7 @@ function FamilyTreePage({
         BranchFold,
         {
           name: "Lula Mae & Versie",
-          count: 19,
+          count: 26,
           open: !collapsed.lulaVersie,
           onToggle: () => toggleBranch("lulaVersie"),
           dataOcid: "tree.branch.lula_versie"
@@ -47620,59 +47997,71 @@ function FamilyTreePage({
         }
       ),
       !collapsed.lulaVersie && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "ft-branch-expanded", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-2 gap-3 sm:gap-4", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx(
-            PersonCard,
-            {
-              person: { id: "lula-mae", name: "Lula Mae", role: "Child" },
-              index: coupleBaseIndex,
-              selected: selected === coupleBaseIndex,
-              onSelect: () => handleSelect(coupleBaseIndex),
-              onOpen: () => onOpenProfile("lula-mae"),
-              isMe: meIndex === coupleBaseIndex,
-              onMarkMe: () => setMeIndex(coupleBaseIndex),
-              profilePhoto: profilePhotos == null ? void 0 : profilePhotos["lula-mae"]
-            }
-          ),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(
-            PersonCard,
-            {
-              person: {
-                id: "versie-smith",
-                name: "Versie Smith",
-                role: "Husband"
-              },
-              index: coupleBaseIndex + 1,
-              selected: selected === coupleBaseIndex + 1,
-              onSelect: () => handleSelect(coupleBaseIndex + 1),
-              onOpen: () => onOpenProfile("versie-smith"),
-              isMe: meIndex === coupleBaseIndex + 1,
-              onMarkMe: () => setMeIndex(coupleBaseIndex + 1),
-              profilePhoto: profilePhotos == null ? void 0 : profilePhotos["versie-smith"]
-            }
-          )
-        ] }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx(
-          "div",
-          {
-            className: `ft-couple-line pointer-events-none absolute left-1/2 top-1/2 w-1/2 -translate-x-1/2 -translate-y-1/2 ${inSet(selected, [LULA_MAE_INDEX, VERSIE_INDEX]) ? "ft-connector-selected" : ""}`,
-            "aria-hidden": "true"
-          }
-        ),
-        /* @__PURE__ */ jsxRuntimeExports.jsx(
-          "div",
-          {
-            className: `ft-trunk relative mx-auto h-8 ${inSet(selected, [LULA_MAE_INDEX, VERSIE_INDEX]) ? "ft-connector-selected" : ""}`,
-            "aria-hidden": "true",
-            children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-              "span",
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "fu-cluster", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "fu-couple", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              PersonCard,
               {
-                className: `ft-junction absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ${inSet(selected, [LULA_MAE_INDEX, VERSIE_INDEX]) ? "ft-connector-selected" : ""}`,
-                "aria-hidden": "true"
+                variant: "couple",
+                person: { id: "lula-mae", name: "Lula Mae", role: "Child" },
+                index: LULA_MAE_INDEX,
+                selected: selected === LULA_MAE_INDEX,
+                onSelect: () => handleSelect(LULA_MAE_INDEX),
+                onOpen: () => onOpenProfile("lula-mae"),
+                isMe: meIndex === LULA_MAE_INDEX,
+                onMarkMe: () => setMeIndex(LULA_MAE_INDEX),
+                profilePhoto: profilePhotos == null ? void 0 : profilePhotos["lula-mae"]
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "fu-couple-line", "aria-hidden": "true" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              PersonCard,
+              {
+                variant: "couple",
+                person: {
+                  id: "versie-smith",
+                  name: "Versie Smith",
+                  role: "Husband"
+                },
+                index: VERSIE_INDEX,
+                selected: selected === VERSIE_INDEX,
+                onSelect: () => handleSelect(VERSIE_INDEX),
+                onOpen: () => onOpenProfile("versie-smith"),
+                isMe: meIndex === VERSIE_INDEX,
+                onMarkMe: () => setMeIndex(VERSIE_INDEX),
+                profilePhoto: profilePhotos == null ? void 0 : profilePhotos["versie-smith"]
               }
             )
-          }
-        ),
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "fu-trunk", "aria-hidden": "true" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "fu-junction", "aria-hidden": "true" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "fu-children-label", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "fu-label-rule", "aria-hidden": "true" }),
+            "Their Children",
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "fu-label-rule", "aria-hidden": "true" })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "fu-children-grid", children: lulaVersieChildren.map((child, i) => {
+            const index2 = LULA_VERSIE_CHILDREN_INDICES[i];
+            return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col items-center", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "fu-child-stub", "aria-hidden": "true" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                PersonCard,
+                {
+                  variant: "child",
+                  person: child,
+                  index: index2,
+                  selected: selected === index2,
+                  onSelect: () => handleSelect(index2),
+                  onOpen: () => onOpenProfile(child.id),
+                  openOnSelect: false,
+                  isMe: meIndex === index2,
+                  onMarkMe: () => setMeIndex(index2),
+                  profilePhoto: profilePhotos == null ? void 0 : profilePhotos[child.id]
+                }
+              )
+            ] }, child.id);
+          }) })
+        ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs(
           "section",
           {

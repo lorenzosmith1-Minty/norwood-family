@@ -65,7 +65,7 @@ describe("Family Tree collapsible-branch characterization: branch folds", () => 
 
     const claytonFold = screen.getByRole("button", { name: "Clayton 16" });
     const lulaVersieFold = screen.getByRole("button", {
-      name: "Lula Mae & Versie 19",
+      name: "Lula Mae & Versie 26",
     });
     const harveyFold = screen.getByRole("button", {
       name: "Harvey Adams Sr. 6",
@@ -175,7 +175,7 @@ describe("Family Tree collapsible-branch characterization: explored branch stays
 
     // Expand the Lula Mae & Versie branch so Versie's card is reachable.
     const lulaVersieFold = screen.getByRole("button", {
-      name: "Lula Mae & Versie 19",
+      name: "Lula Mae & Versie 26",
     });
     await user.click(lulaVersieFold);
     expect(lulaVersieFold).toHaveAttribute("aria-expanded", "true");

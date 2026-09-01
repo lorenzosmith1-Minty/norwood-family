@@ -151,6 +151,55 @@ const mildredChildren: Person[] = [
   { id: "patricia-rollins", name: "Patricia Rollins", role: "Daughter" },
 ];
 
+/* The seven children of Lula Mae Norwood and Versie Smith, shown as a compact
+   Family Unit cluster. Profile ids were added to the profiles record by a
+   parallel task; dates are deliberately omitted to respect the confirmed-facts
+   boundary. */
+const lulaVersieChildren: (Person & { id: string })[] = [
+  {
+    id: "lorenzoSmithSr",
+    name: "Lorenzo Smith Sr.",
+    role: "Son",
+    relationToYou: "granduncle",
+  },
+  {
+    id: "versieSmithJr",
+    name: "Versie Smith Jr.",
+    role: "Son",
+    relationToYou: "granduncle",
+  },
+  {
+    id: "herbertSmith",
+    name: "Herbert Smith",
+    role: "Son",
+    relationToYou: "granduncle",
+  },
+  {
+    id: "alonzoSmith",
+    name: "Alonzo Smith",
+    role: "Son",
+    relationToYou: "granduncle",
+  },
+  {
+    id: "sherriSmith",
+    name: "Sherri Smith",
+    role: "Daughter",
+    relationToYou: "grandaunt",
+  },
+  {
+    id: "beatriceSmith",
+    name: "Beatrice Smith",
+    role: "Daughter",
+    relationToYou: "grandaunt",
+  },
+  {
+    id: "edSmith",
+    name: "Ed Smith",
+    role: "Son",
+    relationToYou: "granduncle",
+  },
+];
+
 const CHILDREN_PER_ROW = 4;
 
 /* Numeric indices of every person in the tree, used to decide which connector
@@ -163,26 +212,42 @@ const CLAYTON_INDEX = 2;
 const CLAYTON_SPOUSE_INDICES = [10, 11];
 const LULA_MAE_INDEX = 26;
 const VERSIE_INDEX = 27;
-const HARVEY_INDEX = 28;
-const MARY_LOUISE_INDEX = 29;
+const LULA_VERSIE_CHILDREN_INDICES = Array.from(
+  { length: lulaVersieChildren.length },
+  (_, i) => 28 + i,
+);
+const HARVEY_INDEX = 28 + lulaVersieChildren.length;
+const MARY_LOUISE_INDEX = HARVEY_INDEX + 1;
 const FIRST_MARRIAGE_CHILDREN_INDICES = Array.from(
   { length: firstMarriageChildren.length },
-  (_, i) => 30 + i,
+  (_, i) => MARY_LOUISE_INDEX + 1 + i,
 );
-const GERTRUDE_INDEX = 44;
-const MARY_JANE_INDEX = 45;
-const SECOND_MARRIAGE_CHILDREN_INDICES = [46, 47];
-const MILDRED_INDEX = 46;
-const MILDRED_CHILDREN_INDICES = [48, 49, 50];
+const GERTRUDE_INDEX =
+  FIRST_MARRIAGE_CHILDREN_INDICES[FIRST_MARRIAGE_CHILDREN_INDICES.length - 1] +
+  1;
+const MARY_JANE_INDEX = GERTRUDE_INDEX + 1;
+const SECOND_MARRIAGE_CHILDREN_INDICES = [
+  MARY_JANE_INDEX + 1,
+  MARY_JANE_INDEX + 2,
+];
+const MILDRED_INDEX = SECOND_MARRIAGE_CHILDREN_INDICES[0];
+const MILDRED_CHILDREN_INDICES = [
+  MILDRED_INDEX + 2,
+  MILDRED_INDEX + 3,
+  MILDRED_INDEX + 4,
+];
 
 /* Collapsible major descendant branches. Each maps to the contiguous run of
    person indices it owns so the tree can (a) show a descendant count when
    collapsed, and (b) auto-expand the branch containing the selected card. */
 const CLAYTON_BRANCH_INDICES = Array.from({ length: 16 }, (_, i) => 10 + i);
-const LULA_VERSIE_BRANCH_INDICES = Array.from({ length: 19 }, (_, i) => 26 + i);
+const LULA_VERSIE_BRANCH_INDICES = Array.from(
+  { length: 2 + lulaVersieChildren.length + 17 },
+  (_, i) => 26 + i,
+);
 const HARVEY_SECOND_BRANCH_INDICES = Array.from(
   { length: 6 },
-  (_, i) => 45 + i,
+  (_, i) => MARY_JANE_INDEX + i,
 );
 
 const BRANCH_INDICES: Record<string, number[]> = {
@@ -215,6 +280,7 @@ const CLAYTON_BRANCH_IDS = new Set([
 const LULA_VERSIE_BRANCH_IDS = new Set([
   "lula-mae",
   "versie-smith",
+  ...lulaVersieChildren.map((child) => child.id),
   "gertrude-adams-hill",
   "harvey-adams-sr",
   "mary-louise-sims",
@@ -584,6 +650,7 @@ export function FamilyTreePage({
     ...claytonBranch.flatMap((branch) => [branch.spouse, ...branch.children]),
     { id: "lula-mae", name: "Lula Mae", role: "Child" },
     { id: "versie-smith", name: "Versie Smith", role: "Husband" },
+    ...lulaVersieChildren,
     {
       id: harveyAdamsSrProfile.id,
       name: "Harvey Adams Sr.",
@@ -615,7 +682,7 @@ export function FamilyTreePage({
     children.length +
     claytonBranch.flatMap((branch) => [branch.spouse, ...branch.children])
       .length;
-  const parentsBaseIndex = coupleBaseIndex + 2;
+  const parentsBaseIndex = coupleBaseIndex + 2 + lulaVersieChildren.length;
   const firstMarriageChildrenBaseIndex = parentsBaseIndex + 2;
   const gertrudeIndex =
     firstMarriageChildrenBaseIndex + firstMarriageChildren.length;
@@ -762,7 +829,7 @@ export function FamilyTreePage({
       <section aria-label="Lula Mae and Versie" className="relative mt-10">
         <BranchFold
           name="Lula Mae & Versie"
-          count={19}
+          count={26}
           open={!collapsed.lulaVersie}
           onToggle={() => toggleBranch("lulaVersie")}
           dataOcid="tree.branch.lula_versie"
@@ -789,61 +856,75 @@ export function FamilyTreePage({
 
         {!collapsed.lulaVersie && (
           <div className="ft-branch-expanded">
-            <div className="grid grid-cols-2 gap-3 sm:gap-4">
-              <PersonCard
-                person={{ id: "lula-mae", name: "Lula Mae", role: "Child" }}
-                index={coupleBaseIndex}
-                selected={selected === coupleBaseIndex}
-                onSelect={() => handleSelect(coupleBaseIndex)}
-                onOpen={() => onOpenProfile("lula-mae")}
-                isMe={meIndex === coupleBaseIndex}
-                onMarkMe={() => setMeIndex(coupleBaseIndex)}
-                profilePhoto={profilePhotos?.["lula-mae"]}
-              />
-              <PersonCard
-                person={{
-                  id: "versie-smith",
-                  name: "Versie Smith",
-                  role: "Husband",
-                }}
-                index={coupleBaseIndex + 1}
-                selected={selected === coupleBaseIndex + 1}
-                onSelect={() => handleSelect(coupleBaseIndex + 1)}
-                onOpen={() => onOpenProfile("versie-smith")}
-                isMe={meIndex === coupleBaseIndex + 1}
-                onMarkMe={() => setMeIndex(coupleBaseIndex + 1)}
-                profilePhoto={profilePhotos?.["versie-smith"]}
-              />
-            </div>
+            {/* Family Unit cluster: Lula Mae + Versie couple and their seven
+                children, self-contained on a framed plate with short local
+                connectors only */}
+            <div className="fu-cluster">
+              {/* Couple together at the top of the cluster */}
+              <div className="fu-couple">
+                <PersonCard
+                  variant="couple"
+                  person={{ id: "lula-mae", name: "Lula Mae", role: "Child" }}
+                  index={LULA_MAE_INDEX}
+                  selected={selected === LULA_MAE_INDEX}
+                  onSelect={() => handleSelect(LULA_MAE_INDEX)}
+                  onOpen={() => onOpenProfile("lula-mae")}
+                  isMe={meIndex === LULA_MAE_INDEX}
+                  onMarkMe={() => setMeIndex(LULA_MAE_INDEX)}
+                  profilePhoto={profilePhotos?.["lula-mae"]}
+                />
+                <span className="fu-couple-line" aria-hidden="true" />
+                <PersonCard
+                  variant="couple"
+                  person={{
+                    id: "versie-smith",
+                    name: "Versie Smith",
+                    role: "Husband",
+                  }}
+                  index={VERSIE_INDEX}
+                  selected={selected === VERSIE_INDEX}
+                  onSelect={() => handleSelect(VERSIE_INDEX)}
+                  onOpen={() => onOpenProfile("versie-smith")}
+                  isMe={meIndex === VERSIE_INDEX}
+                  onMarkMe={() => setMeIndex(VERSIE_INDEX)}
+                  profilePhoto={profilePhotos?.["versie-smith"]}
+                />
+              </div>
 
-            {/* Horizontal relationship line between the two cards */}
-            <div
-              className={`ft-couple-line pointer-events-none absolute left-1/2 top-1/2 w-1/2 -translate-x-1/2 -translate-y-1/2 ${
-                inSet(selected, [LULA_MAE_INDEX, VERSIE_INDEX])
-                  ? "ft-connector-selected"
-                  : ""
-              }`}
-              aria-hidden="true"
-            />
+              {/* Short trunk + junction down to the children label */}
+              <div className="fu-trunk" aria-hidden="true" />
+              <span className="fu-junction" aria-hidden="true" />
 
-            {/* Vertical trunk dropping from the center of the couple down to
-                Versie, ending in a junction where it meets the branch line */}
-            <div
-              className={`ft-trunk relative mx-auto h-8 ${
-                inSet(selected, [LULA_MAE_INDEX, VERSIE_INDEX])
-                  ? "ft-connector-selected"
-                  : ""
-              }`}
-              aria-hidden="true"
-            >
-              <span
-                className={`ft-junction absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ${
-                  inSet(selected, [LULA_MAE_INDEX, VERSIE_INDEX])
-                    ? "ft-connector-selected"
-                    : ""
-                }`}
-                aria-hidden="true"
-              />
+              {/* Their Children label */}
+              <div className="fu-children-label">
+                <span className="fu-label-rule" aria-hidden="true" />
+                Their Children
+                <span className="fu-label-rule" aria-hidden="true" />
+              </div>
+
+              {/* Seven children as compact clickable cards */}
+              <div className="fu-children-grid">
+                {lulaVersieChildren.map((child, i) => {
+                  const index = LULA_VERSIE_CHILDREN_INDICES[i];
+                  return (
+                    <div key={child.id} className="flex flex-col items-center">
+                      <span className="fu-child-stub" aria-hidden="true" />
+                      <PersonCard
+                        variant="child"
+                        person={child}
+                        index={index}
+                        selected={selected === index}
+                        onSelect={() => handleSelect(index)}
+                        onOpen={() => onOpenProfile(child.id)}
+                        openOnSelect={false}
+                        isMe={meIndex === index}
+                        onMarkMe={() => setMeIndex(index)}
+                        profilePhoto={profilePhotos?.[child.id]}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
             </div>
 
             {/* Versie's maternal line: Harvey (father), Mary Louise Sims

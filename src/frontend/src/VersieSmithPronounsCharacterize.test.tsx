@@ -53,7 +53,7 @@ async function openVersieProfile(user: ReturnType<typeof userEvent.setup>) {
   );
   const couple = screen.getByRole("region", { name: "Lula Mae and Versie" });
   await user.click(
-    within(couple).getByRole("button", { name: /Versie Smith/ }),
+    within(couple).getByRole("button", { name: "Versie Smith" }),
   );
 }
 

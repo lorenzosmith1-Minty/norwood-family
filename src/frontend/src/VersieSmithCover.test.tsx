@@ -86,11 +86,11 @@ describe("Versie Smith cover: profile, Family Tree couple, and Heritage Branch c
       within(couple).getByRole("button", { name: "Lula Mae" }),
     ).toBeInTheDocument();
     expect(
-      within(couple).getByRole("button", { name: /Versie Smith/ }),
+      within(couple).getByRole("button", { name: "Versie Smith" }),
     ).toBeInTheDocument();
 
     await user.click(
-      within(couple).getByRole("button", { name: /Versie Smith/ }),
+      within(couple).getByRole("button", { name: "Versie Smith" }),
     );
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
@@ -121,7 +121,7 @@ describe("Versie Smith cover: profile, Family Tree couple, and Heritage Branch c
     await user.click(
       within(
         screen.getByRole("region", { name: "Lula Mae and Versie" }),
-      ).getByRole("button", { name: /Versie Smith/ }),
+      ).getByRole("button", { name: "Versie Smith" }),
     );
 
     const dl = container.querySelector("dl");
@@ -168,7 +168,7 @@ describe("Versie Smith cover: profile, Family Tree couple, and Heritage Branch c
     await user.click(
       within(
         screen.getByRole("region", { name: "Lula Mae and Versie" }),
-      ).getByRole("button", { name: /Versie Smith/ }),
+      ).getByRole("button", { name: "Versie Smith" }),
     );
 
     const dl = container.querySelector("dl");
@@ -200,7 +200,7 @@ describe("Versie Smith cover: profile, Family Tree couple, and Heritage Branch c
     await user.click(
       within(
         screen.getByRole("region", { name: "Lula Mae and Versie" }),
-      ).getByRole("button", { name: /Versie Smith/ }),
+      ).getByRole("button", { name: "Versie Smith" }),
     );
 
     const sources = screen.getByRole("region", { name: "Sources" });
@@ -221,7 +221,7 @@ describe("Versie Smith cover: profile, Family Tree couple, and Heritage Branch c
     await user.click(
       within(
         screen.getByRole("region", { name: "Lula Mae and Versie" }),
-      ).getByRole("button", { name: /Versie Smith/ }),
+      ).getByRole("button", { name: "Versie Smith" }),
     );
 
     const timeline = screen.getByRole("region", { name: "Timeline" });
@@ -245,7 +245,7 @@ describe("Versie Smith cover: profile, Family Tree couple, and Heritage Branch c
     await user.click(
       within(
         screen.getByRole("region", { name: "Lula Mae and Versie" }),
-      ).getByRole("button", { name: /Versie Smith/ }),
+      ).getByRole("button", { name: "Versie Smith" }),
     );
 
     const completeness = document.querySelector(

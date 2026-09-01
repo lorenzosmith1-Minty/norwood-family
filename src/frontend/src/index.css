@@ -96,6 +96,11 @@
     --ft-fold: 0.93 0.025 70;
     --ft-fold-foreground: 0.3 0.04 45;
 
+    /* Family Unit cluster: framed plate surface + sepia children label */
+    --fu-surface: 0.95 0.02 72;
+    --fu-surface-foreground: 0.3 0.04 45;
+    --fu-label: 0.42 0.11 35;
+
     --sidebar: 0.985 0.015 70;
     --sidebar-foreground: 0.22 0.04 45;
     --sidebar-primary: 0.42 0.11 35;
@@ -177,6 +182,11 @@
     /* Family Tree refinement: collapsed branch surface (compact overview) */
     --ft-fold: 0.22 0.02 55;
     --ft-fold-foreground: 0.85 0.02 60;
+
+    /* Family Unit cluster: framed plate surface + sepia children label */
+    --fu-surface: 0.21 0.02 55;
+    --fu-surface-foreground: 0.85 0.02 60;
+    --fu-label: 0.72 0.14 60;
 
     --sidebar: 0.2 0.02 55;
     --sidebar-foreground: 0.93 0.02 60;
@@ -1084,5 +1094,167 @@
   /* Expanded branch content: gentle scale + fade on reveal */
   .ft-branch-expanded {
     animation: fold-in 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+
+  /* ---- Family Unit cluster: compact self-contained couple + children ---- */
+
+  /* Cluster container: a single framed plate on the paper — self-contained
+     and centered, never spanning the full page. Warm aged-paper surface
+     with a soft edge, entered with the same gentle fold as a branch. */
+  .fu-cluster {
+    @apply relative mx-auto flex max-w-md flex-col items-center gap-0 rounded-xl border border-border/60 px-5 py-5;
+    background-color: oklch(var(--fu-surface));
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.12);
+    animation: fold-in 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+
+  /* Couple row: the two spouse cards sit side by side, joined locally */
+  .fu-couple {
+    @apply flex items-center justify-center;
+  }
+
+  /* Couple member card: larger than the children so the unit anchors here */
+  .fu-couple-card {
+    @apply relative flex flex-col items-center gap-1.5 rounded-xl border border-border/60 bg-card px-3 py-3 text-center;
+    min-width: 6rem;
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.1);
+    transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+  }
+  .fu-couple-card:hover,
+  .fu-couple-card:focus-within {
+    transform: translateY(-2px);
+    border-color: oklch(var(--photo-ring) / 0.6);
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.2);
+  }
+  .fu-couple-card:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(var(--ring) / 0.25);
+  }
+  .fu-couple-portrait {
+    @apply flex h-14 w-14 items-center justify-center rounded-full font-display text-lg font-semibold;
+    background-color: oklch(var(--muted));
+    color: oklch(var(--muted-foreground));
+    box-shadow: 0 0 0 2px oklch(var(--photo-ring-soft));
+    overflow: hidden;
+  }
+  .fu-couple-portrait img {
+    @apply h-full w-full object-cover;
+  }
+  .fu-couple-name {
+    @apply max-w-[6.5rem] truncate font-display text-sm font-semibold leading-tight;
+    color: oklch(var(--foreground));
+  }
+
+  /* Short couple bar: joins the two spouse cards locally — never a long
+     horizontal line across the page */
+  .fu-couple-line {
+    width: 2rem;
+    height: 2px;
+    background-color: oklch(var(--connector-line));
+    border-radius: 9999px;
+  }
+
+  /* Short trunk: descends from the couple center to the children label */
+  .fu-trunk {
+    width: 2px;
+    height: 1rem;
+    background-color: oklch(var(--connector-line));
+  }
+
+  /* Junction: small rotated-square diamond where the trunk meets the label.
+     The ::before pseudo-element carries the 45deg rotation so the element's
+     own transform stays free for Tailwind centering utilities. */
+  .fu-junction {
+    position: relative;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 2px;
+    background-color: oklch(var(--connector-junction));
+    box-shadow: 0 0 0 2px oklch(var(--fu-surface));
+  }
+  .fu-junction::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 2px;
+    background-color: inherit;
+    transform: rotate(45deg);
+  }
+
+  /* "Their Children" label: tracked caption flanked by short local rules */
+  .fu-children-label {
+    @apply inline-flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.22em];
+    color: oklch(var(--fu-label));
+  }
+  .fu-label-rule {
+    width: 2rem;
+    height: 1px;
+    background-color: oklch(var(--connector-line-soft));
+  }
+
+  /* Child card grid: compact wrap that holds the seven children */
+  .fu-children-grid {
+    @apply grid w-full grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4;
+  }
+
+  /* Short local stub: drops from the label zone to each child card */
+  .fu-child-stub {
+    width: 2px;
+    height: 0.75rem;
+    background-color: oklch(var(--connector-line-soft));
+  }
+
+  /* Compact clickable child card: portrait + name only (no dates) */
+  .fu-child-card {
+    @apply relative flex flex-col items-center gap-1 rounded-lg border border-border/60 bg-card px-1.5 py-2 text-center;
+    min-width: 0;
+    box-shadow: 0 1px 2px -1px oklch(0.36 0.05 45 / 0.1);
+    transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+  }
+  .fu-child-card:hover,
+  .fu-child-card:focus-within {
+    transform: translateY(-1px);
+    border-color: oklch(var(--photo-ring) / 0.6);
+    box-shadow: 0 4px 12px -4px oklch(0.36 0.05 45 / 0.16);
+  }
+  .fu-child-card:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(var(--ring) / 0.25);
+  }
+  .fu-child-portrait {
+    @apply flex h-9 w-9 items-center justify-center rounded-full font-display text-[10px] font-semibold;
+    background-color: oklch(var(--muted));
+    color: oklch(var(--muted-foreground));
+    box-shadow: 0 0 0 2px oklch(var(--photo-ring-soft));
+    overflow: hidden;
+  }
+  .fu-child-portrait img {
+    @apply h-full w-full object-cover;
+  }
+  .fu-child-name {
+    @apply max-w-full truncate text-[10px] font-semibold leading-tight;
+    color: oklch(var(--foreground));
+  }
+
+  /* Mobile legibility: slightly heavier lines and larger junction on small
+     screens, mirroring the ft-* connector media query */
+  @media (max-width: 640px) {
+    .fu-couple-line,
+    .fu-trunk {
+      height: 2.5px;
+    }
+    .fu-child-stub {
+      width: 2.5px;
+    }
+    .fu-junction {
+      width: 0.6rem;
+      height: 0.6rem;
+    }
   }
 }

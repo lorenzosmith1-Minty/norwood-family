@@ -576,6 +576,11 @@ video {
     --ft-fold: 0.93 0.025 70;
     --ft-fold-foreground: 0.3 0.04 45;
 
+    /* Family Unit cluster: framed plate surface + sepia children label */
+    --fu-surface: 0.95 0.02 72;
+    --fu-surface-foreground: 0.3 0.04 45;
+    --fu-label: 0.42 0.11 35;
+
     --sidebar: 0.985 0.015 70;
     --sidebar-foreground: 0.22 0.04 45;
     --sidebar-primary: 0.42 0.11 35;
@@ -657,6 +662,11 @@ video {
     /* Family Tree refinement: collapsed branch surface (compact overview) */
     --ft-fold: 0.22 0.02 55;
     --ft-fold-foreground: 0.85 0.02 60;
+
+    /* Family Unit cluster: framed plate surface + sepia children label */
+    --fu-surface: 0.21 0.02 55;
+    --fu-surface-foreground: 0.85 0.02 60;
+    --fu-label: 0.72 0.14 60;
 
     --sidebar: 0.2 0.02 55;
     --sidebar-foreground: 0.93 0.02 60;
@@ -1275,11 +1285,17 @@ video {
 .max-w-\[4\.5rem\] {
   max-width: 4.5rem;
 }
+.max-w-\[6\.5rem\] {
+  max-width: 6.5rem;
+}
 .max-w-\[calc\(100\%-2rem\)\] {
   max-width: calc(100% - 2rem);
 }
 .max-w-\[calc\(50\%-0\.375rem\)\] {
   max-width: calc(50% - 0.375rem);
+}
+.max-w-full {
+  max-width: 100%;
 }
 .max-w-max {
   max-width: -moz-max-content;
@@ -1636,6 +1652,9 @@ video {
 }
 .border-dashed {
   border-style: dashed;
+}
+.border-\[oklch\(var\(--branch-selected\)\)\] {
+  border-color: oklch(var(--branch-selected));
 }
 .border-accent {
   --tw-border-opacity: 1;
@@ -2030,6 +2049,9 @@ video {
 .tracking-\[0\.18em\] {
   letter-spacing: 0.18em;
 }
+.tracking-\[0\.22em\] {
+  letter-spacing: 0.22em;
+}
 .tracking-\[0\.2em\] {
   letter-spacing: 0.2em;
 }
@@ -2114,6 +2136,11 @@ video {
 .shadow-\[0_0_0_1px_hsl\(var\(--sidebar-border\)\)\] {
   --tw-shadow: 0 0 0 1px hsl(var(--sidebar-border));
   --tw-shadow-colored: 0 0 0 1px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+.shadow-\[0_0_0_2px_oklch\(var\(--branch-selected\)\)\] {
+  --tw-shadow: 0 0 0 2px oklch(var(--branch-selected));
+  --tw-shadow-colored: 0 0 0 2px var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 .shadow-elevated {
@@ -3671,6 +3698,256 @@ video {
 /* Expanded branch content: gentle scale + fade on reveal */
 .ft-branch-expanded {
     animation: fold-in 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+/* ---- Family Unit cluster: compact self-contained couple + children ---- */
+/* Cluster container: a single framed plate on the paper — self-contained
+     and centered, never spanning the full page. Warm aged-paper surface
+     with a soft edge, entered with the same gentle fold as a branch. */
+.fu-cluster {
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  max-width: 28rem;
+  flex-direction: column;
+  align-items: center;
+  gap: 0px;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
+    background-color: oklch(var(--fu-surface));
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.12);
+    animation: fold-in 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+/* Couple row: the two spouse cards sit side by side, joined locally */
+.fu-couple {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* Couple member card: larger than the children so the unit anchors here */
+.fu-couple-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  background-color: oklch(var(--card));
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  text-align: center;
+    min-width: 6rem;
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.1);
+    transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+}
+.fu-couple-card:hover,
+  .fu-couple-card:focus-within {
+    transform: translateY(-2px);
+    border-color: oklch(var(--photo-ring) / 0.6);
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.2);
+  }
+.fu-couple-card:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(var(--ring) / 0.25);
+  }
+.fu-couple-portrait {
+  display: flex;
+  height: 3.5rem;
+  width: 3.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  font-family: var(--font-display), serif;
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+    background-color: oklch(var(--muted));
+    color: oklch(var(--muted-foreground));
+    box-shadow: 0 0 0 2px oklch(var(--photo-ring-soft));
+    overflow: hidden;
+}
+.fu-couple-portrait img {
+  height: 100%;
+  width: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.fu-couple-name {
+  max-width: 6.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-display), serif;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  line-height: 1.25;
+    color: oklch(var(--foreground));
+}
+/* Short couple bar: joins the two spouse cards locally — never a long
+     horizontal line across the page */
+.fu-couple-line {
+    width: 2rem;
+    height: 2px;
+    background-color: oklch(var(--connector-line));
+    border-radius: 9999px;
+  }
+/* Short trunk: descends from the couple center to the children label */
+.fu-trunk {
+    width: 2px;
+    height: 1rem;
+    background-color: oklch(var(--connector-line));
+  }
+/* Junction: small rotated-square diamond where the trunk meets the label.
+     The ::before pseudo-element carries the 45deg rotation so the element's
+     own transform stays free for Tailwind centering utilities. */
+.fu-junction {
+    position: relative;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 2px;
+    background-color: oklch(var(--connector-junction));
+    box-shadow: 0 0 0 2px oklch(var(--fu-surface));
+  }
+.fu-junction::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 2px;
+    background-color: inherit;
+    transform: rotate(45deg);
+  }
+/* "Their Children" label: tracked caption flanked by short local rules */
+.fu-children-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+    color: oklch(var(--fu-label));
+}
+.fu-label-rule {
+    width: 2rem;
+    height: 1px;
+    background-color: oklch(var(--connector-line-soft));
+  }
+/* Child card grid: compact wrap that holds the seven children */
+.fu-children-grid {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+@media (min-width: 640px) {
+
+  .fu-children-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (min-width: 768px) {
+
+  .fu-children-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+/* Short local stub: drops from the label zone to each child card */
+.fu-child-stub {
+    width: 2px;
+    height: 0.75rem;
+    background-color: oklch(var(--connector-line-soft));
+  }
+/* Compact clickable child card: portrait + name only (no dates) */
+.fu-child-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: var(--radius);
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  background-color: oklch(var(--card));
+  padding-left: 0.375rem;
+  padding-right: 0.375rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  text-align: center;
+    min-width: 0;
+    box-shadow: 0 1px 2px -1px oklch(0.36 0.05 45 / 0.1);
+    transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+}
+.fu-child-card:hover,
+  .fu-child-card:focus-within {
+    transform: translateY(-1px);
+    border-color: oklch(var(--photo-ring) / 0.6);
+    box-shadow: 0 4px 12px -4px oklch(0.36 0.05 45 / 0.16);
+  }
+.fu-child-card:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(var(--ring) / 0.25);
+  }
+.fu-child-portrait {
+  display: flex;
+  height: 2.25rem;
+  width: 2.25rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  font-family: var(--font-display), serif;
+  font-size: 10px;
+  font-weight: 600;
+    background-color: oklch(var(--muted));
+    color: oklch(var(--muted-foreground));
+    box-shadow: 0 0 0 2px oklch(var(--photo-ring-soft));
+    overflow: hidden;
+}
+.fu-child-portrait img {
+  height: 100%;
+  width: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.fu-child-name {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.25;
+    color: oklch(var(--foreground));
+}
+/* Mobile legibility: slightly heavier lines and larger junction on small
+     screens, mirroring the ft-* connector media query */
+@media (max-width: 640px) {
+    .fu-couple-line,
+    .fu-trunk {
+      height: 2.5px;
+    }
+    .fu-child-stub {
+      width: 2.5px;
+    }
+    .fu-junction {
+      width: 0.6rem;
+      height: 0.6rem;
+    }
   }
 .\[--cell-size\:--spacing\(8\)\] {
   --cell-size: var(--spacing(8));

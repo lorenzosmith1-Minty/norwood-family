@@ -93,11 +93,11 @@ describe("Versie Smith characterization: existing profile and couple stay intact
       within(couple).getByRole("button", { name: "Lula Mae" }),
     ).toBeInTheDocument();
     expect(
-      within(couple).getByRole("button", { name: /Versie Smith/ }),
+      within(couple).getByRole("button", { name: "Versie Smith" }),
     ).toBeInTheDocument();
 
     await user.click(
-      within(couple).getByRole("button", { name: /Versie Smith/ }),
+      within(couple).getByRole("button", { name: "Versie Smith" }),
     );
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
@@ -113,7 +113,7 @@ describe("Versie Smith characterization: existing profile and couple stay intact
     await expandLulaVersieBranch(user);
 
     await user.click(
-      within(lulaVersieCouple()).getByRole("button", { name: /Versie Smith/ }),
+      within(lulaVersieCouple()).getByRole("button", { name: "Versie Smith" }),
     );
 
     // The header facts still list his mother Gertrude Adams-Hill.
@@ -143,7 +143,7 @@ describe("Versie Smith characterization: existing profile and couple stay intact
     await expandLulaVersieBranch(user);
 
     await user.click(
-      within(lulaVersieCouple()).getByRole("button", { name: /Versie Smith/ }),
+      within(lulaVersieCouple()).getByRole("button", { name: "Versie Smith" }),
     );
 
     const family = screen.getByRole("region", { name: "Family" });

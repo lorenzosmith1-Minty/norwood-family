@@ -2162,6 +2162,335 @@ export const patriciaRollinsProfile: PersonProfile = {
   ],
 };
 
+export const lorenzoSmithSrProfile: PersonProfile = {
+  id: "lorenzoSmithSr",
+  name: "Lorenzo Smith Sr.",
+  role: "Son",
+  portrait: {
+    src: "",
+    alt: "An initials placeholder portrait for Lorenzo Smith Sr., since no photograph of him is known to exist.",
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Lula Mae Norwood and Versie Smith",
+    },
+    {
+      label: "Siblings",
+      value:
+        "Versie Smith Jr., Herbert Smith, Alonzo Smith, Sherri Smith, Beatrice Smith, and Ed Smith",
+    },
+    { label: "Evidence status", value: "Family history" },
+  ],
+  story:
+    "Lorenzo Smith Sr. was the son of Lula Mae Norwood and Versie Smith, one of seven children. No additional details about his life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "Lula Mae Norwood and Versie Smith",
+    spouseRole: "Parents",
+    childrenText:
+      "Lorenzo Smith Sr. is one of seven children of Lula Mae Norwood and Versie Smith. His siblings are Versie Smith Jr., Herbert Smith, Alonzo Smith, Sherri Smith, Beatrice Smith, and Ed Smith.",
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail:
+        "Lorenzo Smith Sr. is born, the son of Lula Mae Norwood and Versie Smith. The date is not recorded in the family records gathered so far.",
+    },
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail:
+        "A family-history note identifying Lorenzo Smith Sr. as a son of Lula Mae Norwood and Versie Smith, one of seven children. No additional details about him are recorded. This is a family account, not a documented record.",
+    },
+  ],
+};
+
+export const versieSmithJrProfile: PersonProfile = {
+  id: "versieSmithJr",
+  name: "Versie Smith Jr.",
+  role: "Son",
+  portrait: {
+    src: "",
+    alt: "An initials placeholder portrait for Versie Smith Jr., since no photograph of him is known to exist.",
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Lula Mae Norwood and Versie Smith",
+    },
+    {
+      label: "Siblings",
+      value:
+        "Lorenzo Smith Sr., Herbert Smith, Alonzo Smith, Sherri Smith, Beatrice Smith, and Ed Smith",
+    },
+    { label: "Evidence status", value: "Family history" },
+  ],
+  story:
+    "Versie Smith Jr. was the son of Lula Mae Norwood and Versie Smith, one of seven children. No additional details about his life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "Lula Mae Norwood and Versie Smith",
+    spouseRole: "Parents",
+    childrenText:
+      "Versie Smith Jr. is one of seven children of Lula Mae Norwood and Versie Smith. His siblings are Lorenzo Smith Sr., Herbert Smith, Alonzo Smith, Sherri Smith, Beatrice Smith, and Ed Smith.",
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail:
+        "Versie Smith Jr. is born, the son of Lula Mae Norwood and Versie Smith. The date is not recorded in the family records gathered so far.",
+    },
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail:
+        "A family-history note identifying Versie Smith Jr. as a son of Lula Mae Norwood and Versie Smith, one of seven children. No additional details about him are recorded. This is a family account, not a documented record.",
+    },
+  ],
+};
+
+export const herbertSmithProfile: PersonProfile = {
+  id: "herbertSmith",
+  name: "Herbert Smith",
+  role: "Son",
+  portrait: {
+    src: "",
+    alt: "An initials placeholder portrait for Herbert Smith, since no photograph of him is known to exist.",
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Lula Mae Norwood and Versie Smith",
+    },
+    {
+      label: "Siblings",
+      value:
+        "Lorenzo Smith Sr., Versie Smith Jr., Alonzo Smith, Sherri Smith, Beatrice Smith, and Ed Smith",
+    },
+    { label: "Evidence status", value: "Family history" },
+  ],
+  story:
+    "Herbert Smith was the son of Lula Mae Norwood and Versie Smith, one of seven children. No additional details about his life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "Lula Mae Norwood and Versie Smith",
+    spouseRole: "Parents",
+    childrenText:
+      "Herbert Smith is one of seven children of Lula Mae Norwood and Versie Smith. His siblings are Lorenzo Smith Sr., Versie Smith Jr., Alonzo Smith, Sherri Smith, Beatrice Smith, and Ed Smith.",
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail:
+        "Herbert Smith is born, the son of Lula Mae Norwood and Versie Smith. The date is not recorded in the family records gathered so far.",
+    },
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail:
+        "A family-history note identifying Herbert Smith as a son of Lula Mae Norwood and Versie Smith, one of seven children. No additional details about him are recorded. This is a family account, not a documented record.",
+    },
+  ],
+};
+
+export const alonzoSmithProfile: PersonProfile = {
+  id: "alonzoSmith",
+  name: "Alonzo Smith",
+  role: "Son",
+  portrait: {
+    src: "",
+    alt: "An initials placeholder portrait for Alonzo Smith, since no photograph of him is known to exist.",
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Lula Mae Norwood and Versie Smith",
+    },
+    {
+      label: "Siblings",
+      value:
+        "Lorenzo Smith Sr., Versie Smith Jr., Herbert Smith, Sherri Smith, Beatrice Smith, and Ed Smith",
+    },
+    { label: "Evidence status", value: "Family history" },
+  ],
+  story:
+    "Alonzo Smith was the son of Lula Mae Norwood and Versie Smith, one of seven children. No additional details about his life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "Lula Mae Norwood and Versie Smith",
+    spouseRole: "Parents",
+    childrenText:
+      "Alonzo Smith is one of seven children of Lula Mae Norwood and Versie Smith. His siblings are Lorenzo Smith Sr., Versie Smith Jr., Herbert Smith, Sherri Smith, Beatrice Smith, and Ed Smith.",
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail:
+        "Alonzo Smith is born, the son of Lula Mae Norwood and Versie Smith. The date is not recorded in the family records gathered so far.",
+    },
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail:
+        "A family-history note identifying Alonzo Smith as a son of Lula Mae Norwood and Versie Smith, one of seven children. No additional details about him are recorded. This is a family account, not a documented record.",
+    },
+  ],
+};
+
+export const sherriSmithProfile: PersonProfile = {
+  id: "sherriSmith",
+  name: "Sherri Smith",
+  role: "Daughter",
+  portrait: {
+    src: "",
+    alt: "An initials placeholder portrait for Sherri Smith, since no photograph of her is known to exist.",
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Lula Mae Norwood and Versie Smith",
+    },
+    {
+      label: "Siblings",
+      value:
+        "Lorenzo Smith Sr., Versie Smith Jr., Herbert Smith, Alonzo Smith, Beatrice Smith, and Ed Smith",
+    },
+    { label: "Evidence status", value: "Family history" },
+  ],
+  story:
+    "Sherri Smith was the daughter of Lula Mae Norwood and Versie Smith, one of seven children. No additional details about her life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "Lula Mae Norwood and Versie Smith",
+    spouseRole: "Parents",
+    childrenText:
+      "Sherri Smith is one of seven children of Lula Mae Norwood and Versie Smith. Her siblings are Lorenzo Smith Sr., Versie Smith Jr., Herbert Smith, Alonzo Smith, Beatrice Smith, and Ed Smith.",
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail:
+        "Sherri Smith is born, the daughter of Lula Mae Norwood and Versie Smith. The date is not recorded in the family records gathered so far.",
+    },
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail:
+        "A family-history note identifying Sherri Smith as a daughter of Lula Mae Norwood and Versie Smith, one of seven children. No additional details about her are recorded. This is a family account, not a documented record.",
+    },
+  ],
+};
+
+export const beatriceSmithProfile: PersonProfile = {
+  id: "beatriceSmith",
+  name: "Beatrice Smith",
+  role: "Daughter",
+  portrait: {
+    src: "",
+    alt: "An initials placeholder portrait for Beatrice Smith, since no photograph of her is known to exist.",
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Lula Mae Norwood and Versie Smith",
+    },
+    {
+      label: "Siblings",
+      value:
+        "Lorenzo Smith Sr., Versie Smith Jr., Herbert Smith, Alonzo Smith, Sherri Smith, and Ed Smith",
+    },
+    { label: "Evidence status", value: "Family history" },
+  ],
+  story:
+    "Beatrice Smith was the daughter of Lula Mae Norwood and Versie Smith, one of seven children. No additional details about her life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "Lula Mae Norwood and Versie Smith",
+    spouseRole: "Parents",
+    childrenText:
+      "Beatrice Smith is one of seven children of Lula Mae Norwood and Versie Smith. Her siblings are Lorenzo Smith Sr., Versie Smith Jr., Herbert Smith, Alonzo Smith, Sherri Smith, and Ed Smith.",
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail:
+        "Beatrice Smith is born, the daughter of Lula Mae Norwood and Versie Smith. The date is not recorded in the family records gathered so far.",
+    },
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail:
+        "A family-history note identifying Beatrice Smith as a daughter of Lula Mae Norwood and Versie Smith, one of seven children. No additional details about her are recorded. This is a family account, not a documented record.",
+    },
+  ],
+};
+
+export const edSmithProfile: PersonProfile = {
+  id: "edSmith",
+  name: "Ed Smith",
+  role: "Son",
+  portrait: {
+    src: "",
+    alt: "An initials placeholder portrait for Ed Smith, since no photograph of him is known to exist.",
+  },
+  facts: [
+    {
+      label: "Parents",
+      value: "Lula Mae Norwood and Versie Smith",
+    },
+    {
+      label: "Siblings",
+      value:
+        "Lorenzo Smith Sr., Versie Smith Jr., Herbert Smith, Alonzo Smith, Sherri Smith, and Beatrice Smith",
+    },
+    { label: "Evidence status", value: "Family history" },
+  ],
+  story:
+    "Ed Smith was the son of Lula Mae Norwood and Versie Smith, one of seven children. No additional details about his life are recorded in the family records gathered so far.",
+  family: {
+    spouseName: "Lula Mae Norwood and Versie Smith",
+    spouseRole: "Parents",
+    childrenText:
+      "Ed Smith is one of seven children of Lula Mae Norwood and Versie Smith. His siblings are Lorenzo Smith Sr., Versie Smith Jr., Herbert Smith, Alonzo Smith, Sherri Smith, and Beatrice Smith.",
+  },
+  timeline: [
+    {
+      date: "Unknown",
+      title: "Born",
+      detail:
+        "Ed Smith is born, the son of Lula Mae Norwood and Versie Smith. The date is not recorded in the family records gathered so far.",
+    },
+  ],
+  sources: [
+    {
+      kind: "family-history",
+      title: "Family Research Notes",
+      source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
+      detail:
+        "A family-history note identifying Ed Smith as a son of Lula Mae Norwood and Versie Smith, one of seven children. No additional details about him are recorded. This is a family account, not a documented record.",
+    },
+  ],
+};
+
 export const profiles: Record<string, PersonProfile> = {
   julia: juliaProfile,
   isaiah: isaiahProfile,
@@ -2204,6 +2533,13 @@ export const profiles: Record<string, PersonProfile> = {
   "robert-adams-sr": robertAdamsSrProfile,
   "ella-mae-adams": ellaMaeAdamsProfile,
   "eula-lee-adams": eulaLeeAdamsProfile,
+  lorenzoSmithSr: lorenzoSmithSrProfile,
+  versieSmithJr: versieSmithJrProfile,
+  herbertSmith: herbertSmithProfile,
+  alonzoSmith: alonzoSmithProfile,
+  sherriSmith: sherriSmithProfile,
+  beatriceSmith: beatriceSmithProfile,
+  edSmith: edSmithProfile,
 };
 
 interface PersonProfilePageProps {
@@ -2241,7 +2577,9 @@ function computeCompleteness(
   const fields: CompletenessField[] = [
     {
       label: "Photo",
-      done: hasProfilePhoto || person.portrait.src !== PLACEHOLDER_SRC,
+      done:
+        hasProfilePhoto ||
+        Boolean(person.portrait.src && person.portrait.src !== PLACEHOLDER_SRC),
     },
     {
       label: "Birth information",
@@ -2568,7 +2906,9 @@ export function PersonProfilePage({
     person.id === "fannie-adams" ||
     person.id === "christine-adams-tucker" ||
     person.id === "ella-mae-adams" ||
-    person.id === "eula-lee-adams"
+    person.id === "eula-lee-adams" ||
+    person.id === "sherriSmith" ||
+    person.id === "beatriceSmith"
       ? "Her Story"
       : "His Story";
 

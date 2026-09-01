@@ -48,17 +48,17 @@ async function openFamilyTree(user: ReturnType<typeof userEvent.setup>) {
   await user.click(screen.getByRole("button", { name: "Explore the Family" }));
 }
 
-function maternalLine() {
-  return screen.getByRole("region", { name: "Versie's maternal line" });
+function maternalFamily() {
+  return screen.getByRole("region", { name: "Versie's maternal family" });
 }
 
-// The Lula Mae & Versie branch defaults to collapsed; expand it so the maternal
-// line (and its cards) render.
-async function expandLulaVersieBranch(
+// The Versie's maternal family branch defaults to collapsed; expand it so the
+// ancestor cards (Harvey, Gertrude, Versie) render.
+async function expandVersieMaternalBranch(
   user: ReturnType<typeof userEvent.setup>,
 ) {
   await user.click(
-    screen.getByRole("button", { name: /^Lula Mae & Versie \d+$/ }),
+    screen.getByRole("button", { name: /^Versie's Maternal Family \d+$/ }),
   );
 }
 
@@ -81,25 +81,27 @@ describe("Harvey Adams Sr. branch characterization: stable maternal-line behavio
     );
   });
 
-  it("keeps Harvey and Gertrude as Versie's maternal line in the Family Tree", async () => {
+  it("keeps Harvey and Gertrude as Versie's maternal ancestry in the Family Tree", async () => {
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
-    await expandLulaVersieBranch(user);
+    await expandVersieMaternalBranch(user);
 
-    const line = maternalLine();
+    const line = maternalFamily();
     expect(
       within(line).getByRole("button", { name: /Harvey Adams Sr\./ }),
     ).toBeInTheDocument();
-    // Gertrude appears twice in the maternal line: once as a first-marriage
-    // child card and once as Versie's Mother card. The Mother card carries her
-    // years ("1913–"), so it is disambiguated by years; the child card has no
-    // years.
+    // Gertrude appears once as Versie's Mother card, carrying her years
+    // ("1913–"); the first-marriage child card is gone from the tree.
     expect(
       within(line).getByRole("button", { name: /Gertrude Adams-Hill 1913/ }),
     ).toBeInTheDocument();
     expect(
-      within(line).getByRole("button", { name: /^Gertrude Adams-Hill$/ }),
+      within(line).queryByRole("button", { name: /^Gertrude Adams-Hill$/ }),
+    ).toBeNull();
+    // Versie Smith (the person) sits at the bottom of the ancestry chain.
+    expect(
+      within(line).getByRole("button", { name: /^Versie Smith$/ }),
     ).toBeInTheDocument();
   });
 
@@ -107,10 +109,12 @@ describe("Harvey Adams Sr. branch characterization: stable maternal-line behavio
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
-    await expandLulaVersieBranch(user);
+    await expandVersieMaternalBranch(user);
 
     await user.click(
-      within(maternalLine()).getByRole("button", { name: /Harvey Adams Sr\./ }),
+      within(maternalFamily()).getByRole("button", {
+        name: /Harvey Adams Sr\./,
+      }),
     );
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
@@ -138,10 +142,12 @@ describe("Harvey Adams Sr. branch characterization: stable maternal-line behavio
     const user = userEvent.setup();
     const { container } = renderApp();
     await openFamilyTree(user);
-    await expandLulaVersieBranch(user);
+    await expandVersieMaternalBranch(user);
 
     await user.click(
-      within(maternalLine()).getByRole("button", { name: /Harvey Adams Sr\./ }),
+      within(maternalFamily()).getByRole("button", {
+        name: /Harvey Adams Sr\./,
+      }),
     );
 
     const dl = container.querySelector("dl");
@@ -164,10 +170,12 @@ describe("Harvey Adams Sr. branch characterization: stable maternal-line behavio
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
-    await expandLulaVersieBranch(user);
+    await expandVersieMaternalBranch(user);
 
     await user.click(
-      within(maternalLine()).getByRole("button", { name: /Harvey Adams Sr\./ }),
+      within(maternalFamily()).getByRole("button", {
+        name: /Harvey Adams Sr\./,
+      }),
     );
 
     const family = screen.getByRole("region", { name: "Family" });
@@ -225,10 +233,10 @@ describe("Harvey Adams Sr. branch characterization: stable maternal-line behavio
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
-    await expandLulaVersieBranch(user);
+    await expandVersieMaternalBranch(user);
 
     await user.click(
-      within(maternalLine()).getByRole("button", {
+      within(maternalFamily()).getByRole("button", {
         name: /Gertrude Adams-Hill 1913/,
       }),
     );

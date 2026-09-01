@@ -163,7 +163,7 @@ describe("Family Tree connector characterization: semantic structure stays intac
       screen.getByRole("region", { name: "Children" }),
       screen.getByRole("region", { name: "Clayton's branch" }),
       screen.getByRole("region", { name: "Lula Mae and Versie" }),
-      screen.getByRole("region", { name: "Versie's maternal line" }),
+      screen.getByRole("region", { name: "Versie's maternal family" }),
     ];
 
     for (let i = 0; i < sections.length - 1; i++) {

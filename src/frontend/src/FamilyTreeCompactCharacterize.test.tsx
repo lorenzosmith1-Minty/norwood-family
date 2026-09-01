@@ -67,6 +67,13 @@ async function expandHarveySecondBranch(
     screen.getByRole("button", { name: /^Harvey Adams Sr\. \d+$/ }),
   );
 }
+async function expandVersieMaternalBranch(
+  user: ReturnType<typeof userEvent.setup>,
+) {
+  await user.click(
+    screen.getByRole("button", { name: /^Versie's Maternal Family \d+$/ }),
+  );
+}
 
 // Characterization baseline for the Family Tree compact-card / collapsible-branch
 // change. The request will intentionally change the card layout (compact cards
@@ -137,6 +144,7 @@ describe("Family Tree compact-card characterization: tree structure stays intact
     await expandClaytonBranch(user);
     await expandLulaVersieBranch(user);
     await expandHarveySecondBranch(user);
+    await expandVersieMaternalBranch(user);
 
     // The starting couple and their eight children.
     const coupleSection = screen.getByRole("region", {
@@ -192,24 +200,38 @@ describe("Family Tree compact-card characterization: tree structure stays intact
       within(lulaSection).getByRole("button", { name: "Versie Smith" }),
     ).toBeInTheDocument();
 
-    // Versie's maternal line: Harvey and Mary Louise, their children, and
-    // Gertrude as mother.
+    // Versie's maternal ancestry: Harvey (grandfather) above Gertrude (mother)
+    // above Versie (the person). The first-marriage branch (Mary Louise Sims
+    // and her children) is no longer part of the Family Tree.
     const maternalSection = screen.getByRole("region", {
-      name: "Versie's maternal line",
+      name: "Versie's maternal family",
     });
-    for (const name of ["Harvey Adams Sr.", "Mary Louise Sims"]) {
-      expect(
-        within(maternalSection).getByRole("button", { name: new RegExp(name) }),
-      ).toBeInTheDocument();
-    }
-    for (const name of ["John Adams", "Gertrude Adams-Hill"]) {
-      // Gertrude renders twice in the maternal line (as a daughter of Harvey
-      // and Mary Louise, and as Versie's mother), so assert at least one card.
-      const cards = within(maternalSection).getAllByRole("button", {
-        name: new RegExp(name),
-      });
-      expect(cards.length).toBeGreaterThanOrEqual(1);
-    }
+    expect(
+      within(maternalSection).getByRole("button", {
+        name: /^Harvey Adams Sr\.$/,
+      }),
+    ).toBeInTheDocument();
+    expect(
+      within(maternalSection).getByRole("button", {
+        name: /Gertrude Adams-Hill 1913/,
+      }),
+    ).toBeInTheDocument();
+    expect(
+      within(maternalSection).getByRole("button", {
+        name: /^Versie Smith$/,
+      }),
+    ).toBeInTheDocument();
+    // The first-marriage cards are gone from the Family Tree.
+    expect(
+      within(maternalSection).queryByRole("button", {
+        name: /Mary Louise Sims/,
+      }),
+    ).toBeNull();
+    expect(
+      within(maternalSection).queryByRole("button", {
+        name: /John Adams/,
+      }),
+    ).toBeNull();
 
     // Harvey's second marriage: Mary Jane, their children, and Mildred's
     // daughters.
@@ -250,7 +272,7 @@ describe("Family Tree compact-card characterization: tree structure stays intact
       screen.getByRole("region", { name: "Children" }),
       screen.getByRole("region", { name: "Clayton's branch" }),
       screen.getByRole("region", { name: "Lula Mae and Versie" }),
-      screen.getByRole("region", { name: "Versie's maternal line" }),
+      screen.getByRole("region", { name: "Versie's maternal family" }),
       screen.getByRole("region", { name: "Harvey's second marriage" }),
     ];
 

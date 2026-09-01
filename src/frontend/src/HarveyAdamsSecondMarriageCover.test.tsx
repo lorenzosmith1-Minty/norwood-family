@@ -62,13 +62,13 @@ async function expandHarveySecondBranch(
   );
 }
 
-// The Lula Mae & Versie branch defaults to collapsed; expand it so the maternal
-// line (and Harvey's card there) renders.
-async function expandLulaVersieBranch(
+// The Versie's maternal family branch defaults to collapsed; expand it so
+// Harvey's ancestor card there renders.
+async function expandVersieMaternalBranch(
   user: ReturnType<typeof userEvent.setup>,
 ) {
   await user.click(
-    screen.getByRole("button", { name: /^Lula Mae & Versie \d+$/ }),
+    screen.getByRole("button", { name: /^Versie's Maternal Family \d+$/ }),
   );
 }
 
@@ -352,12 +352,12 @@ describe("Harvey Adams Sr. second-marriage cover", () => {
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
-    await expandLulaVersieBranch(user);
+    await expandVersieMaternalBranch(user);
 
-    // Harvey's card in the maternal line opens his profile.
+    // Harvey's card in the maternal ancestry branch opens his profile.
     await user.click(
       within(
-        screen.getByRole("region", { name: "Versie's maternal line" }),
+        screen.getByRole("region", { name: "Versie's maternal family" }),
       ).getByRole("button", { name: /Harvey Adams Sr\./ }),
     );
 

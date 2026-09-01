@@ -3,23 +3,9 @@ import { motion } from "motion/react";
 import { useState } from "react";
 import { type Person, PersonCard } from "../components/PersonCard";
 import {
-  albertAdamsProfile,
-  charlesAdamsProfile,
-  christineAdamsTuckerProfile,
-  ellaMaeAdamsProfile,
-  eulaLeeAdamsProfile,
-  fannieAdamsProfile,
   gertrudeAdamsHillProfile,
-  harveyAdamsJrProfile,
   harveyAdamsSrProfile,
-  homerAdamsProfile,
-  johnAdamsProfile,
-  judgeGranberryAdamsProfile,
-  louisAdamsSrProfile,
-  maryLouiseSimsProfile,
   profiles,
-  robertAdamsSrProfile,
-  versieAdamsSrProfile,
 } from "./PersonProfilePage";
 
 interface FamilyTreePageProps {
@@ -107,35 +93,6 @@ const claytonBranch: { spouse: Person; children: Person[] }[] = [
   },
 ];
 
-const firstMarriageChildren: Person[] = [
-  { id: johnAdamsProfile.id, name: "John Adams", role: "Son" },
-  { id: louisAdamsSrProfile.id, name: "Louis Adams Sr.", role: "Son" },
-  { id: albertAdamsProfile.id, name: "Albert Adams", role: "Son" },
-  { id: charlesAdamsProfile.id, name: "Charles Adams", role: "Son" },
-  { id: homerAdamsProfile.id, name: "Homer Adams", role: "Son" },
-  { id: versieAdamsSrProfile.id, name: "Versie Adams Sr.", role: "Son" },
-  {
-    id: judgeGranberryAdamsProfile.id,
-    name: "Judge Granberry Adams",
-    role: "Son",
-  },
-  { id: fannieAdamsProfile.id, name: "Fannie Adams", role: "Daughter" },
-  {
-    id: gertrudeAdamsHillProfile.id,
-    name: "Gertrude Adams-Hill",
-    role: "Daughter",
-  },
-  { id: harveyAdamsJrProfile.id, name: "Harvey Adams Jr.", role: "Son" },
-  {
-    id: christineAdamsTuckerProfile.id,
-    name: "Christine Adams Tucker",
-    role: "Daughter",
-  },
-  { id: robertAdamsSrProfile.id, name: "Robert Adams Sr.", role: "Son" },
-  { id: ellaMaeAdamsProfile.id, name: "Ella Mae Adams", role: "Daughter" },
-  { id: eulaLeeAdamsProfile.id, name: "Eula Lee Adams", role: "Daughter" },
-];
-
 /* Harvey Adams Sr.'s second marriage to Mary Jane Johnson, and the daughters
    of that marriage's child Mildred. These mirror the fixed layout order below
    (Mary Jane as second wife, Mildred + Christine as children, then Mildred's
@@ -204,8 +161,8 @@ const CHILDREN_PER_ROW = 4;
 
 /* Numeric indices of every person in the tree, used to decide which connector
    run belongs to the currently selected person. These mirror the fixed layout
-   order below (couple, children, Clayton branch, Lula Mae/Versie, Harvey's
-   maternal line). */
+   order below (couple, children, Clayton branch, Lula Mae/Versie, Versie's
+   maternal ancestry, Harvey's second marriage). */
 const COUPLE_INDICES = [0, 1];
 const CHILDREN_INDICES = [2, 3, 4, 5, 6, 7, 8, 9];
 const CLAYTON_INDEX = 2;
@@ -216,16 +173,13 @@ const LULA_VERSIE_CHILDREN_INDICES = Array.from(
   { length: lulaVersieChildren.length },
   (_, i) => 28 + i,
 );
+/* Versie's maternal ancestry branch: Harvey Adams Sr. (grandfather) at the
+   top, Gertrude Adams-Hill (mother) in the middle, Versie Smith (the person)
+   at the bottom. Ancestors upward, descendants downward. */
 const HARVEY_INDEX = 28 + lulaVersieChildren.length;
-const MARY_LOUISE_INDEX = HARVEY_INDEX + 1;
-const FIRST_MARRIAGE_CHILDREN_INDICES = Array.from(
-  { length: firstMarriageChildren.length },
-  (_, i) => MARY_LOUISE_INDEX + 1 + i,
-);
-const GERTRUDE_INDEX =
-  FIRST_MARRIAGE_CHILDREN_INDICES[FIRST_MARRIAGE_CHILDREN_INDICES.length - 1] +
-  1;
-const MARY_JANE_INDEX = GERTRUDE_INDEX + 1;
+const GERTRUDE_INDEX = HARVEY_INDEX + 1;
+const VERSIE_MATERNAL_INDEX = GERTRUDE_INDEX + 1;
+const MARY_JANE_INDEX = VERSIE_MATERNAL_INDEX + 1;
 const SECOND_MARRIAGE_CHILDREN_INDICES = [
   MARY_JANE_INDEX + 1,
   MARY_JANE_INDEX + 2,
@@ -242,9 +196,16 @@ const MILDRED_CHILDREN_INDICES = [
    collapsed, and (b) auto-expand the branch containing the selected card. */
 const CLAYTON_BRANCH_INDICES = Array.from({ length: 16 }, (_, i) => 10 + i);
 const LULA_VERSIE_BRANCH_INDICES = Array.from(
-  { length: 2 + lulaVersieChildren.length + 17 },
+  { length: 2 + lulaVersieChildren.length },
   (_, i) => 26 + i,
 );
+/* Versie's maternal ancestry branch: Harvey Adams Sr. and Gertrude Adams-Hill
+   above Versie Smith (ancestors upward, descendants downward). */
+const VERSIE_MATERNAL_BRANCH_INDICES = [
+  HARVEY_INDEX,
+  GERTRUDE_INDEX,
+  VERSIE_MATERNAL_INDEX,
+];
 const HARVEY_SECOND_BRANCH_INDICES = Array.from(
   { length: 6 },
   (_, i) => MARY_JANE_INDEX + i,
@@ -253,6 +214,7 @@ const HARVEY_SECOND_BRANCH_INDICES = Array.from(
 const BRANCH_INDICES: Record<string, number[]> = {
   clayton: CLAYTON_BRANCH_INDICES,
   lulaVersie: LULA_VERSIE_BRANCH_INDICES,
+  versieMaternal: VERSIE_MATERNAL_BRANCH_INDICES,
   harveySecond: HARVEY_SECOND_BRANCH_INDICES,
 };
 
@@ -281,22 +243,14 @@ const LULA_VERSIE_BRANCH_IDS = new Set([
   "lula-mae",
   "versie-smith",
   ...lulaVersieChildren.map((child) => child.id),
-  "gertrude-adams-hill",
+]);
+
+/* Versie's maternal ancestry branch: Harvey Adams Sr. and Gertrude Adams-Hill
+   are Versie Smith's ancestors, shown above her. */
+const VERSIE_MATERNAL_BRANCH_IDS = new Set([
   "harvey-adams-sr",
-  "mary-louise-sims",
-  "john-adams",
-  "louis-adams-sr",
-  "albert-adams",
-  "charles-adams",
-  "homer-adams",
-  "versie-adams-sr",
-  "judge-granberry-adams",
-  "fannie-adams",
-  "harvey-adams-jr",
-  "christine-adams-tucker",
-  "robert-adams-sr",
-  "ella-mae-adams",
-  "eula-lee-adams",
+  "gertrude-adams-hill",
+  "versie-smith",
 ]);
 
 const HARVEY_SECOND_BRANCH_IDS = new Set([
@@ -316,6 +270,7 @@ const branchesForPerson = (id: string): string[] => {
   const branches: string[] = [];
   if (CLAYTON_BRANCH_IDS.has(id)) branches.push("clayton");
   if (LULA_VERSIE_BRANCH_IDS.has(id)) branches.push("lulaVersie");
+  if (VERSIE_MATERNAL_BRANCH_IDS.has(id)) branches.push("versieMaternal");
   if (HARVEY_SECOND_BRANCH_IDS.has(id)) branches.push("harveySecond");
   return branches;
 };
@@ -626,6 +581,7 @@ export function FamilyTreePage({
     const initial: Record<string, boolean> = {
       clayton: true,
       lulaVersie: true,
+      versieMaternal: true,
       harveySecond: true,
     };
     if (initialExpandedPersonId) {
@@ -657,17 +613,12 @@ export function FamilyTreePage({
       role: "Father",
     },
     {
-      id: maryLouiseSimsProfile.id,
-      name: "Mary Louise Sims",
-      role: "First Wife",
-    },
-    ...firstMarriageChildren,
-    {
       id: gertrudeAdamsHillProfile.id,
       name: "Gertrude Adams-Hill",
       role: "Mother",
       years: "1913–",
     },
+    { id: "versie-smith", name: "Versie Smith", role: "Husband" },
     {
       id: "mary-jane-johnson",
       name: "Mary Jane Johnson",
@@ -676,16 +627,6 @@ export function FamilyTreePage({
     ...secondMarriageChildren,
     ...mildredChildren,
   ];
-
-  const coupleBaseIndex =
-    couple.length +
-    children.length +
-    claytonBranch.flatMap((branch) => [branch.spouse, ...branch.children])
-      .length;
-  const parentsBaseIndex = coupleBaseIndex + 2 + lulaVersieChildren.length;
-  const firstMarriageChildrenBaseIndex = parentsBaseIndex + 2;
-  const gertrudeIndex =
-    firstMarriageChildrenBaseIndex + firstMarriageChildren.length;
 
   /* Selecting a card also expands the branch that contains it, so the selected
      person is never hidden behind a collapsed fold. */
@@ -829,7 +770,7 @@ export function FamilyTreePage({
       <section aria-label="Lula Mae and Versie" className="relative mt-10">
         <BranchFold
           name="Lula Mae & Versie"
-          count={26}
+          count={LULA_VERSIE_BRANCH_INDICES.length}
           open={!collapsed.lulaVersie}
           onToggle={() => toggleBranch("lulaVersie")}
           dataOcid="tree.branch.lula_versie"
@@ -926,162 +867,149 @@ export function FamilyTreePage({
                 })}
               </div>
             </div>
+          </div>
+        )}
+      </section>
 
-            {/* Versie's maternal line: Harvey (father), Mary Louise Sims
-                (first wife), their children, and Gertrude (mother) */}
-            <section
-              aria-label="Versie's maternal line"
-              className="relative mt-2"
-            >
-              <div className="grid grid-cols-2 gap-3 sm:gap-4">
+      {/* Versie's maternal ancestry: Harvey Adams Sr. (grandfather) above
+          Gertrude Adams-Hill (mother) above Versie Smith (the person).
+          Ancestors upward, descendants downward. */}
+      <section aria-label="Versie's maternal family" className="relative mt-10">
+        <BranchFold
+          name="Versie's Maternal Family"
+          count={3}
+          open={!collapsed.versieMaternal}
+          onToggle={() => toggleBranch("versieMaternal")}
+          dataOcid="tree.branch.versie_maternal"
+        />
+        {/* Vertical trunk stays visible even when the branch is collapsed
+            so the tree structure reads at a glance */}
+        <div
+          className={`ft-trunk relative mx-auto h-8 ${
+            inSet(selected, [
+              HARVEY_INDEX,
+              GERTRUDE_INDEX,
+              VERSIE_MATERNAL_INDEX,
+            ])
+              ? "ft-connector-selected"
+              : ""
+          }`}
+          aria-hidden="true"
+        >
+          <span
+            className={`ft-junction absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ${
+              inSet(selected, [
+                HARVEY_INDEX,
+                GERTRUDE_INDEX,
+                VERSIE_MATERNAL_INDEX,
+              ])
+                ? "ft-connector-selected"
+                : ""
+            }`}
+            aria-hidden="true"
+          />
+        </div>
+
+        {!collapsed.versieMaternal && (
+          <div className="ft-branch-expanded">
+            {/* Harvey Adams Sr., Versie's maternal grandfather */}
+            <div className="flex justify-center">
+              <div className="w-full max-w-[calc(50%-0.375rem)] sm:max-w-[calc(50%-0.5rem)]">
                 <PersonCard
                   person={{
                     id: harveyAdamsSrProfile.id,
                     name: "Harvey Adams Sr.",
                     role: "Father",
                   }}
-                  index={parentsBaseIndex}
-                  selected={selected === parentsBaseIndex}
-                  onSelect={() => handleSelect(parentsBaseIndex)}
+                  index={HARVEY_INDEX}
+                  selected={selected === HARVEY_INDEX}
+                  onSelect={() => handleSelect(HARVEY_INDEX)}
                   onOpen={() => onOpenProfile(harveyAdamsSrProfile.id)}
-                  isMe={meIndex === parentsBaseIndex}
-                  onMarkMe={() => setMeIndex(parentsBaseIndex)}
+                  isMe={meIndex === HARVEY_INDEX}
+                  onMarkMe={() => setMeIndex(HARVEY_INDEX)}
                   profilePhoto={profilePhotos?.[harveyAdamsSrProfile.id]}
                 />
-                <PersonCard
-                  person={{
-                    id: maryLouiseSimsProfile.id,
-                    name: "Mary Louise Sims",
-                    role: "First Wife",
-                  }}
-                  index={parentsBaseIndex + 1}
-                  selected={selected === parentsBaseIndex + 1}
-                  onSelect={() => handleSelect(parentsBaseIndex + 1)}
-                  onOpen={() => onOpenProfile(maryLouiseSimsProfile.id)}
-                  isMe={meIndex === parentsBaseIndex + 1}
-                  onMarkMe={() => setMeIndex(parentsBaseIndex + 1)}
-                  profilePhoto={profilePhotos?.[maryLouiseSimsProfile.id]}
-                />
               </div>
+            </div>
 
-              {/* Horizontal relationship line between the two cards */}
-              <div
-                className={`ft-couple-line pointer-events-none absolute left-1/2 top-1/2 w-1/2 -translate-x-1/2 -translate-y-1/2 ${
-                  inSet(selected, [HARVEY_INDEX, MARY_LOUISE_INDEX])
+            {/* Vertical trunk down to Gertrude */}
+            <div
+              className={`ft-trunk relative mx-auto h-8 ${
+                inSet(selected, [HARVEY_INDEX, GERTRUDE_INDEX])
+                  ? "ft-connector-selected"
+                  : ""
+              }`}
+              aria-hidden="true"
+            >
+              <span
+                className={`ft-junction absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ${
+                  inSet(selected, [HARVEY_INDEX, GERTRUDE_INDEX])
                     ? "ft-connector-selected"
                     : ""
                 }`}
                 aria-hidden="true"
               />
+            </div>
 
-              {/* Vertical trunk dropping from the center of the couple down to
-                  the children, ending in a junction where it meets the branch
-                  line */}
-              <div
-                className={`ft-trunk relative mx-auto h-8 ${
-                  inSet(selected, [
-                    HARVEY_INDEX,
-                    MARY_LOUISE_INDEX,
-                    ...FIRST_MARRIAGE_CHILDREN_INDICES,
-                    GERTRUDE_INDEX,
-                  ])
+            {/* Gertrude Adams-Hill, Versie's mother */}
+            <div className="flex justify-center">
+              <div className="w-full max-w-[calc(50%-0.375rem)] sm:max-w-[calc(50%-0.5rem)]">
+                <PersonCard
+                  person={{
+                    id: gertrudeAdamsHillProfile.id,
+                    name: "Gertrude Adams-Hill",
+                    role: "Mother",
+                    years: "1913–",
+                  }}
+                  index={GERTRUDE_INDEX}
+                  selected={selected === GERTRUDE_INDEX}
+                  onSelect={() => handleSelect(GERTRUDE_INDEX)}
+                  onOpen={() => onOpenProfile(gertrudeAdamsHillProfile.id)}
+                  isMe={meIndex === GERTRUDE_INDEX}
+                  onMarkMe={() => setMeIndex(GERTRUDE_INDEX)}
+                  profilePhoto={profilePhotos?.[gertrudeAdamsHillProfile.id]}
+                />
+              </div>
+            </div>
+
+            {/* Vertical trunk down to Versie Smith */}
+            <div
+              className={`ft-trunk relative mx-auto h-8 ${
+                inSet(selected, [GERTRUDE_INDEX, VERSIE_MATERNAL_INDEX])
+                  ? "ft-connector-selected"
+                  : ""
+              }`}
+              aria-hidden="true"
+            >
+              <span
+                className={`ft-junction absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ${
+                  inSet(selected, [GERTRUDE_INDEX, VERSIE_MATERNAL_INDEX])
                     ? "ft-connector-selected"
                     : ""
                 }`}
                 aria-hidden="true"
-              >
-                <span
-                  className={`ft-junction absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ${
-                    inSet(selected, [
-                      HARVEY_INDEX,
-                      MARY_LOUISE_INDEX,
-                      ...FIRST_MARRIAGE_CHILDREN_INDICES,
-                      GERTRUDE_INDEX,
-                    ])
-                      ? "ft-connector-selected"
-                      : ""
-                  }`}
-                  aria-hidden="true"
+              />
+            </div>
+
+            {/* Versie Smith, the person whose maternal ancestry this is */}
+            <div className="flex justify-center">
+              <div className="w-full max-w-[calc(50%-0.375rem)] sm:max-w-[calc(50%-0.5rem)]">
+                <PersonCard
+                  person={{
+                    id: "versie-smith",
+                    name: "Versie Smith",
+                    role: "Husband",
+                  }}
+                  index={VERSIE_MATERNAL_INDEX}
+                  selected={selected === VERSIE_MATERNAL_INDEX}
+                  onSelect={() => handleSelect(VERSIE_MATERNAL_INDEX)}
+                  onOpen={() => onOpenProfile("versie-smith")}
+                  isMe={meIndex === VERSIE_MATERNAL_INDEX}
+                  onMarkMe={() => setMeIndex(VERSIE_MATERNAL_INDEX)}
+                  profilePhoto={profilePhotos?.["versie-smith"]}
                 />
               </div>
-
-              {/* Children of Harvey Adams Sr. and Mary Louise Sims */}
-              <div className="mt-2 space-y-6">
-                {Array.from({
-                  length: Math.ceil(
-                    firstMarriageChildren.length / CHILDREN_PER_ROW,
-                  ),
-                }).map((_, row) => {
-                  const rowChildren = firstMarriageChildren.slice(
-                    row * CHILDREN_PER_ROW,
-                    row * CHILDREN_PER_ROW + CHILDREN_PER_ROW,
-                  );
-                  return (
-                    <BranchRow
-                      key={rowChildren[0].name}
-                      rowChildren={rowChildren}
-                      rowOffset={
-                        firstMarriageChildrenBaseIndex + row * CHILDREN_PER_ROW
-                      }
-                      parentIndices={[HARVEY_INDEX, MARY_LOUISE_INDEX]}
-                      selected={selected}
-                      onSelect={handleSelect}
-                      meIndex={meIndex}
-                      onMarkMe={setMeIndex}
-                      onOpenProfile={onOpenProfile}
-                      profilePhotos={profilePhotos}
-                    />
-                  );
-                })}
-              </div>
-
-              {/* Vertical trunk dropping from the children down to Gertrude,
-                  ending in a junction where it meets the branch line */}
-              <div
-                className={`ft-trunk relative mx-auto h-8 ${
-                  inSet(selected, [
-                    ...FIRST_MARRIAGE_CHILDREN_INDICES,
-                    GERTRUDE_INDEX,
-                  ])
-                    ? "ft-connector-selected"
-                    : ""
-                }`}
-                aria-hidden="true"
-              >
-                <span
-                  className={`ft-junction absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ${
-                    inSet(selected, [
-                      ...FIRST_MARRIAGE_CHILDREN_INDICES,
-                      GERTRUDE_INDEX,
-                    ])
-                      ? "ft-connector-selected"
-                      : ""
-                  }`}
-                  aria-hidden="true"
-                />
-              </div>
-
-              {/* Gertrude Adams-Hill, mother of Versie Smith */}
-              <div className="mt-2 flex justify-center">
-                <div className="w-full max-w-[calc(50%-0.375rem)] sm:max-w-[calc(50%-0.5rem)]">
-                  <PersonCard
-                    person={{
-                      id: gertrudeAdamsHillProfile.id,
-                      name: "Gertrude Adams-Hill",
-                      role: "Mother",
-                      years: "1913–",
-                    }}
-                    index={gertrudeIndex}
-                    selected={selected === gertrudeIndex}
-                    onSelect={() => handleSelect(gertrudeIndex)}
-                    onOpen={() => onOpenProfile(gertrudeAdamsHillProfile.id)}
-                    isMe={meIndex === gertrudeIndex}
-                    onMarkMe={() => setMeIndex(gertrudeIndex)}
-                    profilePhoto={profilePhotos?.[gertrudeAdamsHillProfile.id]}
-                  />
-                </div>
-              </div>
-            </section>
+            </div>
           </div>
         )}
       </section>

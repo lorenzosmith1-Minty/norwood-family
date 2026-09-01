@@ -58,6 +58,16 @@ async function expandLulaVersieBranch(
   );
 }
 
+// The Versie's maternal family branch defaults to collapsed; expand it so its
+// ancestor cards and connectors render.
+async function expandVersieMaternalBranch(
+  user: ReturnType<typeof userEvent.setup>,
+) {
+  await user.click(
+    screen.getByRole("button", { name: /^Versie's Maternal Family \d+$/ }),
+  );
+}
+
 // The vertical trunk that descends from the center of a couple, sitting between
 // the two given sections.
 function trunkBetween(
@@ -87,56 +97,54 @@ function trunkBetween(
 describe("Family Tree connector characterization: lower tree sections", () => {
   it("renders a couple line, trunk, and junction for the Lula Mae and Versie couple", async () => {
     const user = userEvent.setup();
-    const { container } = renderApp();
+    renderApp();
     await openFamilyTree(user);
     await expandLulaVersieBranch(user);
 
     const lulaSection = screen.getByRole("region", {
       name: "Lula Mae and Versie",
     });
-    const maternalSection = screen.getByRole("region", {
-      name: "Versie's maternal line",
-    });
 
-    // A distinct horizontal couple line joins the two cards.
-    expect(lulaSection.querySelector(".ft-couple-line")).not.toBeNull();
+    // The Family Unit cluster joins the two spouse cards with a short local
+    // couple line.
+    const cluster = lulaSection.querySelector(".fu-cluster");
+    expect(cluster).not.toBeNull();
+    expect(cluster?.querySelector(".fu-couple-line")).not.toBeNull();
 
     // A vertical trunk descends from the couple's center and ends in a
     // junction where it meets the branch line.
-    const trunk = trunkBetween(lulaSection, maternalSection, container);
+    const trunk = lulaSection.querySelector(".ft-trunk");
     expect(trunk).not.toBeNull();
     expect(trunk?.className).toContain("h-8");
     expect(trunk?.querySelector(".ft-junction")).not.toBeNull();
   });
 
-  it("renders the maternal line connectors: couple line, trunks with junctions, and child stubs with chevrons", async () => {
+  it("renders the maternal ancestry connectors: trunks with junctions down the ancestor chain", async () => {
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
-    await expandLulaVersieBranch(user);
+    await expandVersieMaternalBranch(user);
 
     const maternalSection = screen.getByRole("region", {
-      name: "Versie's maternal line",
+      name: "Versie's maternal family",
     });
 
-    // Harvey Adams Sr. and Mary Louise Sims are joined by a horizontal couple
-    // line.
-    expect(maternalSection.querySelector(".ft-couple-line")).not.toBeNull();
+    // The ancestry branch is a vertical chain (Harvey above Gertrude above
+    // Versie), so it has no spouse couple line and no parent-to-child stubs.
+    expect(maternalSection.querySelector(".ft-couple-line")).toBeNull();
+    expect(maternalSection.querySelector(".ft-child-stub")).toBeNull();
+    expect(maternalSection.querySelector(".ft-chevron")).toBeNull();
 
-    // Two vertical trunks with junctions: one from the couple down to the
-    // children, one from the children down to Gertrude.
+    // Three vertical trunks with junctions: the section's persistent entry
+    // trunk (visible even when collapsed), one from Harvey down to Gertrude,
+    // and one from Gertrude down to Versie.
     const trunks = Array.from(
       maternalSection.querySelectorAll<HTMLElement>(".ft-trunk"),
     ).filter((el) => el.className.includes("h-8"));
-    expect(trunks).toHaveLength(2);
+    expect(trunks).toHaveLength(3);
     for (const trunk of trunks) {
       expect(trunk.querySelector(".ft-junction")).not.toBeNull();
     }
-
-    // Each of the 14 first-marriage children has a parent-to-child stub and a
-    // downward direction chevron.
-    expect(maternalSection.querySelectorAll(".ft-child-stub")).toHaveLength(14);
-    expect(maternalSection.querySelectorAll(".ft-chevron")).toHaveLength(14);
   });
 
   it("highlights the second row's branch bar and only the selected child's stub and chevron", async () => {

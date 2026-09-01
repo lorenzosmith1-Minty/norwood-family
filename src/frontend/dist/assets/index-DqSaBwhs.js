@@ -47396,34 +47396,6 @@ const claytonBranch = [
     ]
   }
 ];
-const firstMarriageChildren = [
-  { id: johnAdamsProfile.id, name: "John Adams", role: "Son" },
-  { id: louisAdamsSrProfile.id, name: "Louis Adams Sr.", role: "Son" },
-  { id: albertAdamsProfile.id, name: "Albert Adams", role: "Son" },
-  { id: charlesAdamsProfile.id, name: "Charles Adams", role: "Son" },
-  { id: homerAdamsProfile.id, name: "Homer Adams", role: "Son" },
-  { id: versieAdamsSrProfile.id, name: "Versie Adams Sr.", role: "Son" },
-  {
-    id: judgeGranberryAdamsProfile.id,
-    name: "Judge Granberry Adams",
-    role: "Son"
-  },
-  { id: fannieAdamsProfile.id, name: "Fannie Adams", role: "Daughter" },
-  {
-    id: gertrudeAdamsHillProfile.id,
-    name: "Gertrude Adams-Hill",
-    role: "Daughter"
-  },
-  { id: harveyAdamsJrProfile.id, name: "Harvey Adams Jr.", role: "Son" },
-  {
-    id: christineAdamsTuckerProfile.id,
-    name: "Christine Adams Tucker",
-    role: "Daughter"
-  },
-  { id: robertAdamsSrProfile.id, name: "Robert Adams Sr.", role: "Son" },
-  { id: ellaMaeAdamsProfile.id, name: "Ella Mae Adams", role: "Daughter" },
-  { id: eulaLeeAdamsProfile.id, name: "Eula Lee Adams", role: "Daughter" }
-];
 const secondMarriageChildren = [
   { id: "mildred-adams", name: "Mildred Adams", role: "Daughter" },
   { id: "christine-adams", name: "Christine Adams", role: "Daughter" }
@@ -47489,13 +47461,9 @@ const LULA_VERSIE_CHILDREN_INDICES = Array.from(
   (_2, i) => 28 + i
 );
 const HARVEY_INDEX = 28 + lulaVersieChildren.length;
-const MARY_LOUISE_INDEX = HARVEY_INDEX + 1;
-const FIRST_MARRIAGE_CHILDREN_INDICES = Array.from(
-  { length: firstMarriageChildren.length },
-  (_2, i) => MARY_LOUISE_INDEX + 1 + i
-);
-const GERTRUDE_INDEX = FIRST_MARRIAGE_CHILDREN_INDICES[FIRST_MARRIAGE_CHILDREN_INDICES.length - 1] + 1;
-const MARY_JANE_INDEX = GERTRUDE_INDEX + 1;
+const GERTRUDE_INDEX = HARVEY_INDEX + 1;
+const VERSIE_MATERNAL_INDEX = GERTRUDE_INDEX + 1;
+const MARY_JANE_INDEX = VERSIE_MATERNAL_INDEX + 1;
 const SECOND_MARRIAGE_CHILDREN_INDICES = [
   MARY_JANE_INDEX + 1,
   MARY_JANE_INDEX + 2
@@ -47508,9 +47476,14 @@ const MILDRED_CHILDREN_INDICES = [
 ];
 const CLAYTON_BRANCH_INDICES = Array.from({ length: 16 }, (_2, i) => 10 + i);
 const LULA_VERSIE_BRANCH_INDICES = Array.from(
-  { length: 2 + lulaVersieChildren.length + 17 },
+  { length: 2 + lulaVersieChildren.length },
   (_2, i) => 26 + i
 );
+const VERSIE_MATERNAL_BRANCH_INDICES = [
+  HARVEY_INDEX,
+  GERTRUDE_INDEX,
+  VERSIE_MATERNAL_INDEX
+];
 const HARVEY_SECOND_BRANCH_INDICES = Array.from(
   { length: 6 },
   (_2, i) => MARY_JANE_INDEX + i
@@ -47518,6 +47491,7 @@ const HARVEY_SECOND_BRANCH_INDICES = Array.from(
 const BRANCH_INDICES = {
   clayton: CLAYTON_BRANCH_INDICES,
   lulaVersie: LULA_VERSIE_BRANCH_INDICES,
+  versieMaternal: VERSIE_MATERNAL_BRANCH_INDICES,
   harveySecond: HARVEY_SECOND_BRANCH_INDICES
 };
 const CLAYTON_BRANCH_IDS = /* @__PURE__ */ new Set([
@@ -47541,23 +47515,12 @@ const CLAYTON_BRANCH_IDS = /* @__PURE__ */ new Set([
 const LULA_VERSIE_BRANCH_IDS = /* @__PURE__ */ new Set([
   "lula-mae",
   "versie-smith",
-  ...lulaVersieChildren.map((child) => child.id),
-  "gertrude-adams-hill",
+  ...lulaVersieChildren.map((child) => child.id)
+]);
+const VERSIE_MATERNAL_BRANCH_IDS = /* @__PURE__ */ new Set([
   "harvey-adams-sr",
-  "mary-louise-sims",
-  "john-adams",
-  "louis-adams-sr",
-  "albert-adams",
-  "charles-adams",
-  "homer-adams",
-  "versie-adams-sr",
-  "judge-granberry-adams",
-  "fannie-adams",
-  "harvey-adams-jr",
-  "christine-adams-tucker",
-  "robert-adams-sr",
-  "ella-mae-adams",
-  "eula-lee-adams"
+  "gertrude-adams-hill",
+  "versie-smith"
 ]);
 const HARVEY_SECOND_BRANCH_IDS = /* @__PURE__ */ new Set([
   "harvey-adams-sr",
@@ -47572,6 +47535,7 @@ const branchesForPerson = (id2) => {
   const branches = [];
   if (CLAYTON_BRANCH_IDS.has(id2)) branches.push("clayton");
   if (LULA_VERSIE_BRANCH_IDS.has(id2)) branches.push("lulaVersie");
+  if (VERSIE_MATERNAL_BRANCH_IDS.has(id2)) branches.push("versieMaternal");
   if (HARVEY_SECOND_BRANCH_IDS.has(id2)) branches.push("harveySecond");
   return branches;
 };
@@ -47800,6 +47764,7 @@ function FamilyTreePage({
     const initial = {
       clayton: true,
       lulaVersie: true,
+      versieMaternal: true,
       harveySecond: true
     };
     if (initialExpandedPersonId) {
@@ -47829,17 +47794,12 @@ function FamilyTreePage({
       role: "Father"
     },
     {
-      id: maryLouiseSimsProfile.id,
-      name: "Mary Louise Sims",
-      role: "First Wife"
-    },
-    ...firstMarriageChildren,
-    {
       id: gertrudeAdamsHillProfile.id,
       name: "Gertrude Adams-Hill",
       role: "Mother",
       years: "1913–"
     },
+    { id: "versie-smith", name: "Versie Smith", role: "Husband" },
     {
       id: "mary-jane-johnson",
       name: "Mary Jane Johnson",
@@ -47848,10 +47808,6 @@ function FamilyTreePage({
     ...secondMarriageChildren,
     ...mildredChildren
   ];
-  const coupleBaseIndex = couple.length + children.length + claytonBranch.flatMap((branch) => [branch.spouse, ...branch.children]).length;
-  const parentsBaseIndex = coupleBaseIndex + 2 + lulaVersieChildren.length;
-  const firstMarriageChildrenBaseIndex = parentsBaseIndex + 2;
-  const gertrudeIndex = firstMarriageChildrenBaseIndex + firstMarriageChildren.length;
   const handleSelect = (index2) => {
     setSelected(index2);
     setCollapsed((prev) => {
@@ -47976,7 +47932,7 @@ function FamilyTreePage({
         BranchFold,
         {
           name: "Lula Mae & Versie",
-          count: 26,
+          count: LULA_VERSIE_BRANCH_INDICES.length,
           open: !collapsed.lulaVersie,
           onToggle: () => toggleBranch("lulaVersie"),
           dataOcid: "tree.branch.lula_versie"
@@ -47996,211 +47952,186 @@ function FamilyTreePage({
           )
         }
       ),
-      !collapsed.lulaVersie && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "ft-branch-expanded", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "fu-cluster", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "fu-couple", children: [
+      !collapsed.lulaVersie && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "ft-branch-expanded", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "fu-cluster", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "fu-couple", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            PersonCard,
+            {
+              variant: "couple",
+              person: { id: "lula-mae", name: "Lula Mae", role: "Child" },
+              index: LULA_MAE_INDEX,
+              selected: selected === LULA_MAE_INDEX,
+              onSelect: () => handleSelect(LULA_MAE_INDEX),
+              onOpen: () => onOpenProfile("lula-mae"),
+              isMe: meIndex === LULA_MAE_INDEX,
+              onMarkMe: () => setMeIndex(LULA_MAE_INDEX),
+              profilePhoto: profilePhotos == null ? void 0 : profilePhotos["lula-mae"]
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "fu-couple-line", "aria-hidden": "true" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            PersonCard,
+            {
+              variant: "couple",
+              person: {
+                id: "versie-smith",
+                name: "Versie Smith",
+                role: "Husband"
+              },
+              index: VERSIE_INDEX,
+              selected: selected === VERSIE_INDEX,
+              onSelect: () => handleSelect(VERSIE_INDEX),
+              onOpen: () => onOpenProfile("versie-smith"),
+              isMe: meIndex === VERSIE_INDEX,
+              onMarkMe: () => setMeIndex(VERSIE_INDEX),
+              profilePhoto: profilePhotos == null ? void 0 : profilePhotos["versie-smith"]
+            }
+          )
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "fu-trunk", "aria-hidden": "true" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "fu-junction", "aria-hidden": "true" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "fu-children-label", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "fu-label-rule", "aria-hidden": "true" }),
+          "Their Children",
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "fu-label-rule", "aria-hidden": "true" })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "fu-children-grid", children: lulaVersieChildren.map((child, i) => {
+          const index2 = LULA_VERSIE_CHILDREN_INDICES[i];
+          return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col items-center", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "fu-child-stub", "aria-hidden": "true" }),
             /* @__PURE__ */ jsxRuntimeExports.jsx(
               PersonCard,
               {
-                variant: "couple",
-                person: { id: "lula-mae", name: "Lula Mae", role: "Child" },
-                index: LULA_MAE_INDEX,
-                selected: selected === LULA_MAE_INDEX,
-                onSelect: () => handleSelect(LULA_MAE_INDEX),
-                onOpen: () => onOpenProfile("lula-mae"),
-                isMe: meIndex === LULA_MAE_INDEX,
-                onMarkMe: () => setMeIndex(LULA_MAE_INDEX),
-                profilePhoto: profilePhotos == null ? void 0 : profilePhotos["lula-mae"]
-              }
-            ),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "fu-couple-line", "aria-hidden": "true" }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(
-              PersonCard,
-              {
-                variant: "couple",
-                person: {
-                  id: "versie-smith",
-                  name: "Versie Smith",
-                  role: "Husband"
-                },
-                index: VERSIE_INDEX,
-                selected: selected === VERSIE_INDEX,
-                onSelect: () => handleSelect(VERSIE_INDEX),
-                onOpen: () => onOpenProfile("versie-smith"),
-                isMe: meIndex === VERSIE_INDEX,
-                onMarkMe: () => setMeIndex(VERSIE_INDEX),
-                profilePhoto: profilePhotos == null ? void 0 : profilePhotos["versie-smith"]
+                variant: "child",
+                person: child,
+                index: index2,
+                selected: selected === index2,
+                onSelect: () => handleSelect(index2),
+                onOpen: () => onOpenProfile(child.id),
+                openOnSelect: false,
+                isMe: meIndex === index2,
+                onMarkMe: () => setMeIndex(index2),
+                profilePhoto: profilePhotos == null ? void 0 : profilePhotos[child.id]
               }
             )
-          ] }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "fu-trunk", "aria-hidden": "true" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "fu-junction", "aria-hidden": "true" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "fu-children-label", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "fu-label-rule", "aria-hidden": "true" }),
-            "Their Children",
-            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "fu-label-rule", "aria-hidden": "true" })
-          ] }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "fu-children-grid", children: lulaVersieChildren.map((child, i) => {
-            const index2 = LULA_VERSIE_CHILDREN_INDICES[i];
-            return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col items-center", children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "fu-child-stub", "aria-hidden": "true" }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx(
-                PersonCard,
-                {
-                  variant: "child",
-                  person: child,
-                  index: index2,
-                  selected: selected === index2,
-                  onSelect: () => handleSelect(index2),
-                  onOpen: () => onOpenProfile(child.id),
-                  openOnSelect: false,
-                  isMe: meIndex === index2,
-                  onMarkMe: () => setMeIndex(index2),
-                  profilePhoto: profilePhotos == null ? void 0 : profilePhotos[child.id]
-                }
-              )
-            ] }, child.id);
-          }) })
-        ] }),
-        /* @__PURE__ */ jsxRuntimeExports.jsxs(
-          "section",
+          ] }, child.id);
+        }) })
+      ] }) })
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { "aria-label": "Versie's maternal family", className: "relative mt-10", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        BranchFold,
+        {
+          name: "Versie's Maternal Family",
+          count: 3,
+          open: !collapsed.versieMaternal,
+          onToggle: () => toggleBranch("versieMaternal"),
+          dataOcid: "tree.branch.versie_maternal"
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "div",
+        {
+          className: `ft-trunk relative mx-auto h-8 ${inSet(selected, [
+            HARVEY_INDEX,
+            GERTRUDE_INDEX,
+            VERSIE_MATERNAL_INDEX
+          ]) ? "ft-connector-selected" : ""}`,
+          "aria-hidden": "true",
+          children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "span",
+            {
+              className: `ft-junction absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ${inSet(selected, [
+                HARVEY_INDEX,
+                GERTRUDE_INDEX,
+                VERSIE_MATERNAL_INDEX
+              ]) ? "ft-connector-selected" : ""}`,
+              "aria-hidden": "true"
+            }
+          )
+        }
+      ),
+      !collapsed.versieMaternal && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "ft-branch-expanded", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex justify-center", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "w-full max-w-[calc(50%-0.375rem)] sm:max-w-[calc(50%-0.5rem)]", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+          PersonCard,
           {
-            "aria-label": "Versie's maternal line",
-            className: "relative mt-2",
-            children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-2 gap-3 sm:gap-4", children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  PersonCard,
-                  {
-                    person: {
-                      id: harveyAdamsSrProfile.id,
-                      name: "Harvey Adams Sr.",
-                      role: "Father"
-                    },
-                    index: parentsBaseIndex,
-                    selected: selected === parentsBaseIndex,
-                    onSelect: () => handleSelect(parentsBaseIndex),
-                    onOpen: () => onOpenProfile(harveyAdamsSrProfile.id),
-                    isMe: meIndex === parentsBaseIndex,
-                    onMarkMe: () => setMeIndex(parentsBaseIndex),
-                    profilePhoto: profilePhotos == null ? void 0 : profilePhotos[harveyAdamsSrProfile.id]
-                  }
-                ),
-                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  PersonCard,
-                  {
-                    person: {
-                      id: maryLouiseSimsProfile.id,
-                      name: "Mary Louise Sims",
-                      role: "First Wife"
-                    },
-                    index: parentsBaseIndex + 1,
-                    selected: selected === parentsBaseIndex + 1,
-                    onSelect: () => handleSelect(parentsBaseIndex + 1),
-                    onOpen: () => onOpenProfile(maryLouiseSimsProfile.id),
-                    isMe: meIndex === parentsBaseIndex + 1,
-                    onMarkMe: () => setMeIndex(parentsBaseIndex + 1),
-                    profilePhoto: profilePhotos == null ? void 0 : profilePhotos[maryLouiseSimsProfile.id]
-                  }
-                )
-              ] }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx(
-                "div",
-                {
-                  className: `ft-couple-line pointer-events-none absolute left-1/2 top-1/2 w-1/2 -translate-x-1/2 -translate-y-1/2 ${inSet(selected, [HARVEY_INDEX, MARY_LOUISE_INDEX]) ? "ft-connector-selected" : ""}`,
-                  "aria-hidden": "true"
-                }
-              ),
-              /* @__PURE__ */ jsxRuntimeExports.jsx(
-                "div",
-                {
-                  className: `ft-trunk relative mx-auto h-8 ${inSet(selected, [
-                    HARVEY_INDEX,
-                    MARY_LOUISE_INDEX,
-                    ...FIRST_MARRIAGE_CHILDREN_INDICES,
-                    GERTRUDE_INDEX
-                  ]) ? "ft-connector-selected" : ""}`,
-                  "aria-hidden": "true",
-                  children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-                    "span",
-                    {
-                      className: `ft-junction absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ${inSet(selected, [
-                        HARVEY_INDEX,
-                        MARY_LOUISE_INDEX,
-                        ...FIRST_MARRIAGE_CHILDREN_INDICES,
-                        GERTRUDE_INDEX
-                      ]) ? "ft-connector-selected" : ""}`,
-                      "aria-hidden": "true"
-                    }
-                  )
-                }
-              ),
-              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-2 space-y-6", children: Array.from({
-                length: Math.ceil(
-                  firstMarriageChildren.length / CHILDREN_PER_ROW
-                )
-              }).map((_2, row) => {
-                const rowChildren = firstMarriageChildren.slice(
-                  row * CHILDREN_PER_ROW,
-                  row * CHILDREN_PER_ROW + CHILDREN_PER_ROW
-                );
-                return /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  BranchRow,
-                  {
-                    rowChildren,
-                    rowOffset: firstMarriageChildrenBaseIndex + row * CHILDREN_PER_ROW,
-                    parentIndices: [HARVEY_INDEX, MARY_LOUISE_INDEX],
-                    selected,
-                    onSelect: handleSelect,
-                    meIndex,
-                    onMarkMe: setMeIndex,
-                    onOpenProfile,
-                    profilePhotos
-                  },
-                  rowChildren[0].name
-                );
-              }) }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx(
-                "div",
-                {
-                  className: `ft-trunk relative mx-auto h-8 ${inSet(selected, [
-                    ...FIRST_MARRIAGE_CHILDREN_INDICES,
-                    GERTRUDE_INDEX
-                  ]) ? "ft-connector-selected" : ""}`,
-                  "aria-hidden": "true",
-                  children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-                    "span",
-                    {
-                      className: `ft-junction absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ${inSet(selected, [
-                        ...FIRST_MARRIAGE_CHILDREN_INDICES,
-                        GERTRUDE_INDEX
-                      ]) ? "ft-connector-selected" : ""}`,
-                      "aria-hidden": "true"
-                    }
-                  )
-                }
-              ),
-              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-2 flex justify-center", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "w-full max-w-[calc(50%-0.375rem)] sm:max-w-[calc(50%-0.5rem)]", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-                PersonCard,
-                {
-                  person: {
-                    id: gertrudeAdamsHillProfile.id,
-                    name: "Gertrude Adams-Hill",
-                    role: "Mother",
-                    years: "1913–"
-                  },
-                  index: gertrudeIndex,
-                  selected: selected === gertrudeIndex,
-                  onSelect: () => handleSelect(gertrudeIndex),
-                  onOpen: () => onOpenProfile(gertrudeAdamsHillProfile.id),
-                  isMe: meIndex === gertrudeIndex,
-                  onMarkMe: () => setMeIndex(gertrudeIndex),
-                  profilePhoto: profilePhotos == null ? void 0 : profilePhotos[gertrudeAdamsHillProfile.id]
-                }
-              ) }) })
-            ]
+            person: {
+              id: harveyAdamsSrProfile.id,
+              name: "Harvey Adams Sr.",
+              role: "Father"
+            },
+            index: HARVEY_INDEX,
+            selected: selected === HARVEY_INDEX,
+            onSelect: () => handleSelect(HARVEY_INDEX),
+            onOpen: () => onOpenProfile(harveyAdamsSrProfile.id),
+            isMe: meIndex === HARVEY_INDEX,
+            onMarkMe: () => setMeIndex(HARVEY_INDEX),
+            profilePhoto: profilePhotos == null ? void 0 : profilePhotos[harveyAdamsSrProfile.id]
           }
-        )
+        ) }) }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "div",
+          {
+            className: `ft-trunk relative mx-auto h-8 ${inSet(selected, [HARVEY_INDEX, GERTRUDE_INDEX]) ? "ft-connector-selected" : ""}`,
+            "aria-hidden": "true",
+            children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "span",
+              {
+                className: `ft-junction absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ${inSet(selected, [HARVEY_INDEX, GERTRUDE_INDEX]) ? "ft-connector-selected" : ""}`,
+                "aria-hidden": "true"
+              }
+            )
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex justify-center", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "w-full max-w-[calc(50%-0.375rem)] sm:max-w-[calc(50%-0.5rem)]", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+          PersonCard,
+          {
+            person: {
+              id: gertrudeAdamsHillProfile.id,
+              name: "Gertrude Adams-Hill",
+              role: "Mother",
+              years: "1913–"
+            },
+            index: GERTRUDE_INDEX,
+            selected: selected === GERTRUDE_INDEX,
+            onSelect: () => handleSelect(GERTRUDE_INDEX),
+            onOpen: () => onOpenProfile(gertrudeAdamsHillProfile.id),
+            isMe: meIndex === GERTRUDE_INDEX,
+            onMarkMe: () => setMeIndex(GERTRUDE_INDEX),
+            profilePhoto: profilePhotos == null ? void 0 : profilePhotos[gertrudeAdamsHillProfile.id]
+          }
+        ) }) }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "div",
+          {
+            className: `ft-trunk relative mx-auto h-8 ${inSet(selected, [GERTRUDE_INDEX, VERSIE_MATERNAL_INDEX]) ? "ft-connector-selected" : ""}`,
+            "aria-hidden": "true",
+            children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "span",
+              {
+                className: `ft-junction absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ${inSet(selected, [GERTRUDE_INDEX, VERSIE_MATERNAL_INDEX]) ? "ft-connector-selected" : ""}`,
+                "aria-hidden": "true"
+              }
+            )
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex justify-center", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "w-full max-w-[calc(50%-0.375rem)] sm:max-w-[calc(50%-0.5rem)]", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+          PersonCard,
+          {
+            person: {
+              id: "versie-smith",
+              name: "Versie Smith",
+              role: "Husband"
+            },
+            index: VERSIE_MATERNAL_INDEX,
+            selected: selected === VERSIE_MATERNAL_INDEX,
+            onSelect: () => handleSelect(VERSIE_MATERNAL_INDEX),
+            onOpen: () => onOpenProfile("versie-smith"),
+            isMe: meIndex === VERSIE_MATERNAL_INDEX,
+            onMarkMe: () => setMeIndex(VERSIE_MATERNAL_INDEX),
+            profilePhoto: profilePhotos == null ? void 0 : profilePhotos["versie-smith"]
+          }
+        ) }) })
       ] })
     ] }),
     /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { "aria-label": "Harvey's second marriage", className: "relative mt-10", children: [

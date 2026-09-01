@@ -65,7 +65,10 @@ describe("Family Tree collapsible-branch characterization: branch folds", () => 
 
     const claytonFold = screen.getByRole("button", { name: "Clayton 16" });
     const lulaVersieFold = screen.getByRole("button", {
-      name: "Lula Mae & Versie 26",
+      name: "Lula Mae & Versie 9",
+    });
+    const maternalFold = screen.getByRole("button", {
+      name: "Versie's Maternal Family 3",
     });
     const harveyFold = screen.getByRole("button", {
       name: "Harvey Adams Sr. 6",
@@ -73,6 +76,7 @@ describe("Family Tree collapsible-branch characterization: branch folds", () => 
 
     expect(claytonFold).toHaveAttribute("aria-expanded", "false");
     expect(lulaVersieFold).toHaveAttribute("aria-expanded", "false");
+    expect(maternalFold).toHaveAttribute("aria-expanded", "false");
     expect(harveyFold).toHaveAttribute("aria-expanded", "false");
 
     // Collapsed branches render no cards: the spouses and children of each
@@ -81,6 +85,9 @@ describe("Family Tree collapsible-branch characterization: branch folds", () => 
       screen.queryByRole("button", { name: /Erma T\. Williams/ }),
     ).toBeNull();
     expect(screen.queryByRole("button", { name: /Versie Smith/ })).toBeNull();
+    expect(
+      screen.queryByRole("button", { name: /^Harvey Adams Sr\.$/ }),
+    ).toBeNull();
     expect(
       screen.queryByRole("button", { name: /Mary Jane Johnson/ }),
     ).toBeNull();
@@ -175,7 +182,7 @@ describe("Family Tree collapsible-branch characterization: explored branch stays
 
     // Expand the Lula Mae & Versie branch so Versie's card is reachable.
     const lulaVersieFold = screen.getByRole("button", {
-      name: "Lula Mae & Versie 26",
+      name: "Lula Mae & Versie 9",
     });
     await user.click(lulaVersieFold);
     expect(lulaVersieFold).toHaveAttribute("aria-expanded", "true");
@@ -193,15 +200,21 @@ describe("Family Tree collapsible-branch characterization: explored branch stays
       "Family Tree",
     );
 
-    // The branch containing the explored person (Versie) starts expanded, so
-    // his maternal line is reachable without reopening the fold.
+    // The branches containing the explored person (Versie) start expanded:
+    // both the Lula Mae & Versie branch and the Versie's maternal family branch
+    // (Versie sits at the bottom of his maternal ancestry chain), so his
+    // ancestry is reachable without reopening the folds.
     expect(lulaVersieFold).toHaveAttribute("aria-expanded", "true");
-    const maternalLine = screen.getByRole("region", {
-      name: "Versie's maternal line",
+    const maternalFold = screen.getByRole("button", {
+      name: "Versie's Maternal Family 3",
     });
-    expect(maternalLine).toBeInTheDocument();
+    expect(maternalFold).toHaveAttribute("aria-expanded", "true");
+    const maternalFamily = screen.getByRole("region", {
+      name: "Versie's maternal family",
+    });
+    expect(maternalFamily).toBeInTheDocument();
     expect(
-      within(maternalLine).getByRole("button", {
+      within(maternalFamily).getByRole("button", {
         name: "Harvey Adams Sr.",
       }),
     ).toBeInTheDocument();

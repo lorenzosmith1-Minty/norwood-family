@@ -48,41 +48,19 @@ async function openFamilyTree(user: ReturnType<typeof userEvent.setup>) {
   await user.click(screen.getByRole("button", { name: "Explore the Family" }));
 }
 
-function maternalLine() {
-  return screen.getByRole("region", { name: "Versie's maternal line" });
+function maternalFamily() {
+  return screen.getByRole("region", { name: "Versie's maternal family" });
 }
 
-// The Lula Mae & Versie branch defaults to collapsed; expand it so the maternal
-// line (and its cards) render.
-async function expandLulaVersieBranch(
+// The Versie's maternal family branch defaults to collapsed; expand it so the
+// ancestor cards (Harvey, Gertrude, Versie) render.
+async function expandVersieMaternalBranch(
   user: ReturnType<typeof userEvent.setup>,
 ) {
   await user.click(
-    screen.getByRole("button", { name: /^Lula Mae & Versie \d+$/ }),
+    screen.getByRole("button", { name: /^Versie's Maternal Family \d+$/ }),
   );
 }
-
-// The 14 recorded children of Harvey Adams Sr. and Mary Louise Sims, in the
-// order they render in the Family Tree maternal line. Gertrude Adams-Hill is
-// the existing Gertrude profile (the first-marriage daughter who married a
-// Hill), distinct from the second-marriage Christine Adams. These are the
-// cards' accessible names (role labels are hidden by default).
-const FIRST_MARRIAGE_CHILDREN = [
-  "John Adams",
-  "Louis Adams Sr.",
-  "Albert Adams",
-  "Charles Adams",
-  "Homer Adams",
-  "Versie Adams Sr.",
-  "Judge Granberry Adams",
-  "Fannie Adams",
-  "Gertrude Adams-Hill",
-  "Harvey Adams Jr.",
-  "Christine Adams Tucker",
-  "Robert Adams Sr.",
-  "Ella Mae Adams",
-  "Eula Lee Adams",
-];
 
 // Characterization baseline for the Harvey Adams Sr. second-marriage expansion.
 // The request will add Person Profile pages for Mary Jane Johnson, Mildred
@@ -96,73 +74,39 @@ const FIRST_MARRIAGE_CHILDREN = [
 // Harvey and Mary Louise Sims remain the couple above the first-marriage
 // children with Gertrude below them, and the first-marriage children keep their
 // recorded order in the Heritage Branch under the Harvey anchor.
-describe("Harvey Adams Sr. second-marriage characterization: first-marriage branch stays intact", () => {
-  it("keeps the first-marriage children grouped and in recorded order in the Family Tree maternal line", async () => {
+describe("Harvey Adams Sr. second-marriage characterization: maternal ancestry stays intact", () => {
+  it("keeps the maternal ancestry chain in the Family Tree: Harvey above Gertrude above Versie, with no first-marriage cards", async () => {
     const user = userEvent.setup();
     renderApp();
     await openFamilyTree(user);
-    await expandLulaVersieBranch(user);
+    await expandVersieMaternalBranch(user);
 
-    const line = maternalLine();
-    const buttons = within(line).getAllByRole("button");
-
-    // Every first-marriage child renders in the maternal line. Exact-name
-    // matching disambiguates Gertrude Adams-Hill (the child card has no years;
-    // the Mother card carries "1913–").
-    const childButtons = FIRST_MARRIAGE_CHILDREN.map((name) =>
-      within(line).getByRole("button", { name: new RegExp(`^${name}$`) }),
-    );
-
-    // The children render in the recorded order.
-    for (let i = 0; i < childButtons.length - 1; i++) {
-      expect(
-        childButtons[i].compareDocumentPosition(childButtons[i + 1]) &
-          Node.DOCUMENT_POSITION_FOLLOWING,
-      ).toBeTruthy();
-    }
-
-    // The children form a contiguous run: the first and last child are exactly
-    // (count - 1) person cards apart, so no second-marriage card is interleaved
-    // between them.
-    const firstIndex = buttons.indexOf(childButtons[0]);
-    const lastIndex = buttons.indexOf(childButtons[childButtons.length - 1]);
-    expect(lastIndex - firstIndex).toBe(FIRST_MARRIAGE_CHILDREN.length - 1);
-  });
-
-  it("keeps Harvey and Mary Louise Sims as the couple above the first-marriage children, with Gertrude below them", async () => {
-    const user = userEvent.setup();
-    renderApp();
-    await openFamilyTree(user);
-    await expandLulaVersieBranch(user);
-
-    const line = maternalLine();
+    const line = maternalFamily();
     const harvey = within(line).getByRole("button", {
       name: /^Harvey Adams Sr\.$/,
     });
-    const maryLouise = within(line).getByRole("button", {
-      name: /^Mary Louise Sims$/,
-    });
-    const firstChild = within(line).getByRole("button", {
-      name: /^John Adams$/,
-    });
-    const gertrudeMother = within(line).getByRole("button", {
+    const gertrude = within(line).getByRole("button", {
       name: /Gertrude Adams-Hill 1913/,
     });
+    const versie = within(line).getByRole("button", {
+      name: /^Versie Smith$/,
+    });
 
-    // Harvey and Mary Louise render as the couple above the children.
+    // Ancestors upward, descendants downward: Harvey above Gertrude above
+    // Versie.
+    const follows = (a: Element, b: Element) =>
+      (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0;
+    expect(follows(harvey, gertrude)).toBe(true);
+    expect(follows(gertrude, versie)).toBe(true);
+
+    // The first-marriage branch (Mary Louise Sims and her 14 children) is no
+    // longer part of the Family Tree.
     expect(
-      harvey.compareDocumentPosition(firstChild) &
-        Node.DOCUMENT_POSITION_FOLLOWING,
-    ).toBeTruthy();
+      within(line).queryByRole("button", { name: /Mary Louise Sims/ }),
+    ).toBeNull();
     expect(
-      maryLouise.compareDocumentPosition(firstChild) &
-        Node.DOCUMENT_POSITION_FOLLOWING,
-    ).toBeTruthy();
-    // Gertrude (Versie's mother) renders below the first-marriage children.
-    expect(
-      firstChild.compareDocumentPosition(gertrudeMother) &
-        Node.DOCUMENT_POSITION_FOLLOWING,
-    ).toBeTruthy();
+      within(line).queryByRole("button", { name: /John Adams/ }),
+    ).toBeNull();
   });
 
   it("keeps the first-marriage children in recorded order under the Harvey anchor in the Heritage Branch", async () => {

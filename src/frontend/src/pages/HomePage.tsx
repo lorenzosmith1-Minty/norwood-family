@@ -58,31 +58,19 @@ export function HomePage({
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
       >
-        <div className="relative mb-8 w-56 sm:w-64">
+        <div className="relative mb-10 w-72 sm:w-80">
           <div
-            className="absolute -inset-3 rounded-[2rem] bg-accent/20 blur-2xl"
+            className="logo-halo absolute -inset-10 rounded-full blur-2xl"
             aria-hidden="true"
           />
           <img
-            src="/assets/generated/black-family-portrait.dim_800x900.png"
-            alt="A representative vintage sepia-toned portrait of a Black family of five, dressed in formal mid-century attire and posed in a living room, presented as an old photograph with worn, deckled edges."
-            className="relative w-full rounded-2xl shadow-elevated ring-1 ring-border"
-            width={800}
-            height={900}
+            src="/assets/norwood-logo.png"
+            alt="Norwood family tree logo — a tree silhouette with the Norwood name across the trunk and the tagline 'Our story across generations.' beneath the roots."
+            className="relative h-auto w-full"
+            width={1122}
+            height={1402}
           />
         </div>
-
-        <p className="mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-accent-foreground/70">
-          The Norwood Family
-        </p>
-        <h1 className="font-display text-4xl font-semibold leading-tight text-foreground sm:text-5xl">
-          Norwood Family
-          <br />
-          Connection
-        </h1>
-        <p className="mt-4 max-w-md text-lg text-muted-foreground">
-          Our story across generations.
-        </p>
       </motion.header>
 
       {/* Navigation cards */}

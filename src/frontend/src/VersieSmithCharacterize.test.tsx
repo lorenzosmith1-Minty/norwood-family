@@ -76,9 +76,9 @@ function completenessPercent(): string {
 describe("Versie Smith characterization: Lula Mae's existing behavior stays intact", () => {
   it("loads the app on the default route without a blank screen", () => {
     renderApp();
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      /Norwood Family\s*Connection/,
-    );
+    expect(
+      screen.getByRole("img", { name: /Norwood family tree logo/i }),
+    ).toHaveAttribute("src", "/assets/norwood-logo.png");
   });
 
   it("keeps Lula Mae's card under Erma's branch in the Family Tree", async () => {

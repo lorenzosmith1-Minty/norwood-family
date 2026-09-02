@@ -75,9 +75,9 @@ async function expandLulaVersieBranch(
 describe("Versie Smith characterization: existing profile and couple stay intact", () => {
   it("loads the app on the default route without a blank screen", () => {
     renderApp();
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      /Norwood Family\s*Connection/,
-    );
+    expect(
+      screen.getByRole("img", { name: /Norwood family tree logo/i }),
+    ).toHaveAttribute("src", "/assets/norwood-logo.png");
   });
 
   it("keeps the Lula Mae and Versie couple in the Family Tree with Versie's card opening his profile", async () => {

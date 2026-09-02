@@ -27,11 +27,13 @@ export function Layout({
         aria-hidden="true"
       />
       <header className="border-b border-border bg-card shadow-subtle">
-        <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-4 px-6 py-4">
-          <p className="font-display text-lg font-semibold text-foreground">
-            Norwood Family Connection
-          </p>
-          <div className="flex items-center gap-2">
+        <div className="mx-auto flex w-full max-w-3xl flex-wrap items-center justify-between gap-x-4 gap-y-3 px-6 py-3.5">
+          <div className="flex min-w-0 items-center gap-2.5">
+            <p className="font-display text-xl font-semibold tracking-tight text-foreground">
+              Norwood
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
               data-ocid="layout.branch_link"

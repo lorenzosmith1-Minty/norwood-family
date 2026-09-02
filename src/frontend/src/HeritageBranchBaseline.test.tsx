@@ -63,9 +63,9 @@ async function expandClaytonBranch(user: ReturnType<typeof userEvent.setup>) {
 describe("Heritage Branch View baseline: existing Family Tree stays intact", () => {
   it("loads the app on the default route without a blank screen", () => {
     renderApp();
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      /Norwood Family\s*Connection/,
-    );
+    expect(
+      screen.getByRole("img", { name: /Norwood family tree logo/i }),
+    ).toHaveAttribute("src", "/assets/norwood-logo.png");
   });
 
   it("keeps the existing Family Tree view reachable from Home", async () => {
@@ -134,9 +134,9 @@ describe("Heritage Branch View baseline: existing Family Tree stays intact", () 
     );
 
     await user.click(screen.getByRole("button", { name: /Back to Home/ }));
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      /Norwood Family\s*Connection/,
-    );
+    expect(
+      screen.getByRole("img", { name: /Norwood family tree logo/i }),
+    ).toHaveAttribute("src", "/assets/norwood-logo.png");
   });
 
   it("keeps Open Profile disabled for people without a profile entry", async () => {

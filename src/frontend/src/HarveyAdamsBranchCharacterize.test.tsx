@@ -76,9 +76,9 @@ async function expandVersieMaternalBranch(
 describe("Harvey Adams Sr. branch characterization: stable maternal-line behavior", () => {
   it("loads the app on the default route without a blank screen", () => {
     renderApp();
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      /Norwood Family\s*Connection/,
-    );
+    expect(
+      screen.getByRole("img", { name: /Norwood family tree logo/i }),
+    ).toHaveAttribute("src", "/assets/norwood-logo.png");
   });
 
   it("keeps Harvey and Gertrude as Versie's maternal ancestry in the Family Tree", async () => {

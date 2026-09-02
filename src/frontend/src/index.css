@@ -235,6 +235,16 @@
       );
   }
 
+  /* Home hero: warm bronze halo behind the Norwood tree logo */
+  .logo-halo {
+    background: radial-gradient(
+      circle at 50% 45%,
+      oklch(0.55 0.09 60 / 0.3),
+      oklch(0.55 0.09 60 / 0.1) 55%,
+      transparent 75%
+    );
+  }
+
   .photo-ring {
     box-shadow: 0 0 0 3px oklch(var(--photo-ring));
   }

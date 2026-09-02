@@ -185,8 +185,8 @@ describe("Approved archive items API consumer contract", () => {
 
   it("renders the app without a blank screen on the default route", () => {
     renderApp();
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      /Norwood Family\s*Connection/,
-    );
+    expect(
+      screen.getByRole("img", { name: /Norwood family tree logo/i }),
+    ).toHaveAttribute("src", "/assets/norwood-logo.png");
   });
 });

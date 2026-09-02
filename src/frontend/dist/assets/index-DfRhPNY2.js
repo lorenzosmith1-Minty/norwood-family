@@ -33769,9 +33769,9 @@ function Layout({
         "aria-hidden": "true"
       }
     ),
-    /* @__PURE__ */ jsxRuntimeExports.jsx("header", { className: "border-b border-border bg-card shadow-subtle", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto flex w-full max-w-3xl items-center justify-between gap-4 px-6 py-4", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-display text-lg font-semibold text-foreground", children: "Norwood Family Connection" }),
-      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx("header", { className: "border-b border-border bg-card shadow-subtle", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto flex w-full max-w-3xl flex-wrap items-center justify-between gap-x-4 gap-y-3 px-6 py-3.5", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex min-w-0 items-center gap-2.5", children: /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-display text-xl font-semibold tracking-tight text-foreground", children: "Norwood" }) }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap items-center gap-2", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsxs(
           "button",
           {
@@ -49217,41 +49217,32 @@ function HomePage({
   onOpenBranch
 }) {
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto flex w-full max-w-3xl flex-col items-center px-6 py-12 sm:py-16", children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
       motion.header,
       {
         className: "flex flex-col items-center text-center",
         initial: { opacity: 0, y: 16 },
         animate: { opacity: 1, y: 0 },
         transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] },
-        children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative mb-8 w-56 sm:w-64", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx(
-              "div",
-              {
-                className: "absolute -inset-3 rounded-[2rem] bg-accent/20 blur-2xl",
-                "aria-hidden": "true"
-              }
-            ),
-            /* @__PURE__ */ jsxRuntimeExports.jsx(
-              "img",
-              {
-                src: "/assets/generated/black-family-portrait.dim_800x900.png",
-                alt: "A representative vintage sepia-toned portrait of a Black family of five, dressed in formal mid-century attire and posed in a living room, presented as an old photograph with worn, deckled edges.",
-                className: "relative w-full rounded-2xl shadow-elevated ring-1 ring-border",
-                width: 800,
-                height: 900
-              }
-            )
-          ] }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-accent-foreground/70", children: "The Norwood Family" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("h1", { className: "font-display text-4xl font-semibold leading-tight text-foreground sm:text-5xl", children: [
-            "Norwood Family",
-            /* @__PURE__ */ jsxRuntimeExports.jsx("br", {}),
-            "Connection"
-          ] }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-4 max-w-md text-lg text-muted-foreground", children: "Our story across generations." })
-        ]
+        children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative mb-10 w-72 sm:w-80", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "div",
+            {
+              className: "logo-halo absolute -inset-10 rounded-full blur-2xl",
+              "aria-hidden": "true"
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "img",
+            {
+              src: "/assets/norwood-logo.png",
+              alt: "Norwood family tree logo — a tree silhouette with the Norwood name across the trunk and the tagline 'Our story across generations.' beneath the roots.",
+              className: "relative h-auto w-full",
+              width: 1122,
+              height: 1402
+            }
+          )
+        ] })
       }
     ),
     /* @__PURE__ */ jsxRuntimeExports.jsx(

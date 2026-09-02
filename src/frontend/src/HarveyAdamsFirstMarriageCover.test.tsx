@@ -182,6 +182,10 @@ describe("Harvey Adams Sr. first-marriage branch cover", () => {
     }
   });
 
+  // This journey re-enters the Heritage Branch and re-anchors on Harvey for
+  // each of the 13 children (~10 user interactions per case). It runs in ~3.4s
+  // in isolation but exceeds the 5000ms default under full-suite parallel load,
+  // so it gets an explicit, generous timeout rather than flaking.
   it("opens each first-marriage child profile from the Heritage Branch", async () => {
     const user = userEvent.setup();
     renderApp();
@@ -221,7 +225,7 @@ describe("Harvey Adams Sr. first-marriage branch cover", () => {
         screen.getByRole("button", { name: /Back to Family Tree/ }),
       );
     }
-  });
+  }, 15000);
 
   it("opens Gertrude Adams-Hill from her first-marriage child card (the existing Gertrude profile)", async () => {
     const user = userEvent.setup();

@@ -53,14 +53,15 @@ const NAV_LABELS = [
 ];
 
 describe("Home screen", () => {
-  it("renders the app title and subtitle on the default route", () => {
+  it("renders the Norwood brand and tagline on the default route", () => {
     renderApp();
 
-    const heading = screen.getByRole("heading", { level: 1 });
-    expect(heading).toHaveTextContent(/Norwood Family\s*Connection/);
-    expect(
-      screen.getByText("Our story across generations."),
-    ).toBeInTheDocument();
+    // The header shows 'Norwood' as the primary brand name.
+    expect(screen.getByText("Norwood")).toBeInTheDocument();
+    // The hero is a single logo image; the tagline lives inside the SVG, so it
+    // is asserted through the image's descriptive alt rather than DOM text.
+    const hero = screen.getByRole("img", { name: /Norwood family tree logo/i });
+    expect(hero.getAttribute("alt")).toContain("Our story across generations.");
   });
 
   it("shows all six navigation buttons with exact labels", () => {
@@ -92,23 +93,29 @@ describe("Home screen", () => {
     }
   });
 
-  it("displays an old-photograph image with a descriptive alt", () => {
+  it("displays the uploaded Norwood logo as the hero", () => {
     renderApp();
 
     const image = screen.getByRole("img", {
-      name: /vintage sepia-toned portrait of a Black family/i,
+      name: /Norwood family tree logo/i,
     });
     expect(image).toBeInTheDocument();
-    expect(image).toHaveAttribute(
-      "src",
-      "/assets/generated/black-family-portrait.dim_800x900.png",
-    );
+    expect(image).toHaveAttribute("src", "/assets/norwood-logo.png");
   });
 
-  it("shows the family eyebrow label above the title", () => {
-    renderApp();
+  it("shows 'Norwood' as the primary brand name in the header as the wordmark", () => {
+    const { container } = renderApp();
 
-    expect(screen.getByText("The Norwood Family")).toBeInTheDocument();
+    // The header brand name replaces the old 'Norwood Family Connection' text.
+    expect(screen.getByText("Norwood")).toBeInTheDocument();
+    expect(
+      screen.queryByText("Norwood Family Connection"),
+    ).not.toBeInTheDocument();
+    // The header uses the Norwood wordmark, not a recreated tree icon image.
+    // The top navigation header is the first <header> in the document (the hero
+    // is a separate <header> element further down).
+    const topHeader = container.querySelectorAll("header")[0];
+    expect(topHeader.querySelector("img")).toBeNull();
   });
 
   it("shows the closing family-history tagline", () => {
@@ -119,7 +126,7 @@ describe("Home screen", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders the hero as an image with a descriptive, non-identifying alt", () => {
+  it("renders the hero as a single logo image with a descriptive alt", () => {
     renderApp();
 
     // The hero is the only image on the Home screen.
@@ -127,29 +134,33 @@ describe("Home screen", () => {
     expect(image.tagName).toBe("IMG");
     const alt = image.getAttribute("alt") ?? "";
     expect(alt.length).toBeGreaterThan(0);
-    // Representative historical imagery must not claim to be an actual family photo.
-    expect(alt).not.toMatch(/norwood/i);
+    // The alt describes the Norwood tree logo and its tagline.
+    expect(alt).toMatch(/Norwood family tree logo/i);
+    // The logo is a tree silhouette with the Norwood name across the middle.
+    expect(alt).toMatch(/tree silhouette/i);
+    expect(alt).toMatch(/Norwood name across the trunk/i);
+    expect(alt).toMatch(/Our story across generations/);
   });
 
-  it("keeps the hero as a single representative image that is not labeled as an actual family photo", () => {
+  it("keeps the hero as a single logo image, not a family photograph", () => {
     renderApp();
 
-    // Exactly one image on the Home screen: the hero.
+    // Exactly one image on the Home screen: the hero logo. The header icon is
+    // aria-hidden and presentational, so it is not exposed as an image.
     const images = screen.getAllByRole("img");
     expect(images).toHaveLength(1);
 
     const alt = images[0].getAttribute("alt") ?? "";
-    // The image is representative historical imagery, not a claim of an actual
-    // Norwood family photograph.
-    expect(alt).not.toMatch(/norwood/i);
+    // The hero is the Norwood tree logo, not a claim of an actual family photo.
+    expect(alt).toMatch(/Norwood family tree logo/i);
     expect(alt).not.toMatch(/actual/i);
   });
 
-  it("applies the distinctive display typography to the title", () => {
+  it("applies the distinctive display typography to the brand name", () => {
     renderApp();
 
-    const heading = screen.getByRole("heading", { level: 1 });
-    expect(heading.className).toContain("font-display");
+    const brand = screen.getByText("Norwood");
+    expect(brand.className).toContain("font-display");
   });
 
   it("applies warm paper texture and clean card styling", () => {

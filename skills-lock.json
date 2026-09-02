@@ -4,17 +4,22 @@
     "connector-googlecalendar": {
       "source": "caffeinelabs/skills",
       "sourceType": "github",
-      "computedHash": "36b27367614f0c25e6c24484a81676f06be05b412a06dbc36b1f7e954839b274"
+      "computedHash": "200f50217eebea04acb7e1c53e00e48b9b5ee41fe9d7e2164b20e8e208305933"
     },
     "connector-googlemail": {
       "source": "caffeinelabs/skills",
       "sourceType": "github",
-      "computedHash": "af327fce44737cf1166fb600ddba74f583a9ed57a708ee759bdece32cd3f6400"
+      "computedHash": "e5c1257b42ede2011f18431a65cfdb2de38de52cfb9dfe1566da9178197aec66"
     },
     "connector-slack": {
       "source": "caffeinelabs/skills",
       "sourceType": "github",
       "computedHash": "9907d278b00a61c49332845d7690ab6c936faed00ca881627cdb1ba3ec8e44d7"
+    },
+    "connector-twilio": {
+      "source": "caffeinelabs/skills",
+      "sourceType": "github",
+      "computedHash": "5e5fbc6259d82a4b118299a433fd4803889c0868e94ad6942576d565fb2914fd"
     },
     "extension-authorization": {
       "source": "caffeinelabs/skills",
@@ -59,7 +64,7 @@
     "extension-http-outcalls": {
       "source": "caffeinelabs/skills",
       "sourceType": "github",
-      "computedHash": "ba1c6e5556a89a17e72e823300488db45944663971ed7ea60121f8aeb85024f9"
+      "computedHash": "7535d9e0264f16ff76e4ec7e588a627e8d6960e2a61007c4b6c477ca794333bb"
     },
     "extension-inference": {
       "source": "caffeinelabs/skills",
@@ -84,7 +89,7 @@
     "extension-oql": {
       "source": "caffeinelabs/skills",
       "sourceType": "github",
-      "computedHash": "ee0151a367978ccb13d37826c802d81bdbaf25285cda601c8b2ae5d253de1c80"
+      "computedHash": "2149fdb48f1b5859e9731b3740f9cd0f40e1381d21f74560011f08196b8583d5"
     },
     "extension-posting-to-x": {
       "source": "caffeinelabs/skills",
@@ -99,7 +104,7 @@
     "extension-querying-oql": {
       "source": "caffeinelabs/skills",
       "sourceType": "github",
-      "computedHash": "3f857ec86acc4e5068cc9017de80e112bf59ba3b5adedaee768afa03aaddfb21"
+      "computedHash": "2b3288c531170daa85e088c40d40bed66175463a819898c3f39fd8d93a2c12f9"
     },
     "extension-stripe": {
       "source": "caffeinelabs/skills",

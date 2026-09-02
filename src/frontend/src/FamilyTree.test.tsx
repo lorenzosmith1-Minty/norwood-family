@@ -76,9 +76,9 @@ describe("Family Tree screen", () => {
     renderApp();
 
     // Home is shown first.
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      /Norwood Family\s*Connection/,
-    );
+    expect(
+      screen.getByRole("img", { name: /Norwood family tree logo/i }),
+    ).toHaveAttribute("src", "/assets/norwood-logo.png");
 
     await openFamilyTree(user);
 
@@ -650,9 +650,9 @@ describe("Family Tree screen", () => {
 
     await user.click(screen.getByRole("button", { name: /Back to Home/ }));
 
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      /Norwood Family\s*Connection/,
-    );
+    expect(
+      screen.getByRole("img", { name: /Norwood family tree logo/i }),
+    ).toHaveAttribute("src", "/assets/norwood-logo.png");
   });
 
   it("keeps the couple side by side and the children in branching rows below", async () => {

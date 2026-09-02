@@ -9,7 +9,7 @@ export interface Person {
   years?: string;
 }
 
-export type CardVariant = "default" | "couple" | "child";
+export type CardVariant = "default" | "couple" | "child" | "relative";
 
 interface PersonCardProps {
   person: Person;
@@ -26,6 +26,9 @@ interface PersonCardProps {
   // You / This is Me reveal stays visible, and the profile opens through the
   // reveal's "Open Profile" button. Used by the Family Unit child cards.
   openOnSelect?: boolean;
+  // Relationship label shown on the compact "relative" card (Explore Family).
+  // Falls back to `person.role` when omitted.
+  relationLabel?: string;
 }
 
 function getInitials(name: string): string {
@@ -48,6 +51,7 @@ export function PersonCard({
   profilePhoto,
   variant = "default",
   openOnSelect = true,
+  relationLabel,
 }: PersonCardProps) {
   // Selecting a card records it as the current selection so the
   // Relation-to-You / This-is-Me reveal is available. By default the same
@@ -65,6 +69,44 @@ export function PersonCard({
   const photoAlt = profilePhoto
     ? `${person.name}'s profile photo`
     : (person.photo?.alt ?? `${person.name}'s initials`);
+
+  // Compact Explore Family relative card: portrait/initials + name + a simple
+  // relationship label. Tapping it recenters the view on that person.
+  if (variant === "relative") {
+    return (
+      <motion.button
+        type="button"
+        data-ocid={`explore.relative.${index + 1}`}
+        onClick={onSelect}
+        aria-pressed={selected}
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{
+          duration: 0.4,
+          delay: index * 0.05,
+          ease: [0.4, 0, 0.2, 1],
+        }}
+        className="ex-relative-card focus-visible:outline-none"
+      >
+        <span className="ex-relative-portrait" aria-hidden="true">
+          {photoSrc ? (
+            <img
+              src={photoSrc}
+              alt={photoAlt}
+              className="h-full w-full object-cover"
+              loading="lazy"
+            />
+          ) : (
+            getInitials(person.name)
+          )}
+        </span>
+        <span className="ex-relative-name">{person.name}</span>
+        <span className="ex-relative-relation">
+          {relationLabel ?? person.role}
+        </span>
+      </motion.button>
+    );
+  }
 
   const isFu = variant === "couple" || variant === "child";
   const cardClass = isFu

@@ -44,18 +44,15 @@ function renderApp() {
 
 afterEach(cleanup);
 
-async function openFamilyTree(user: ReturnType<typeof userEvent.setup>) {
+async function openExploreFamily(user: ReturnType<typeof userEvent.setup>) {
   await user.click(screen.getByRole("button", { name: "Explore the Family" }));
 }
 
-// The Lula Mae & Versie branch defaults to collapsed; expand it so its Family
-// Unit cluster renders.
-async function expandLulaVersieBranch(
+async function tapRelative(
   user: ReturnType<typeof userEvent.setup>,
+  name: RegExp,
 ) {
-  await user.click(
-    screen.getByRole("button", { name: /^Lula Mae & Versie \d+$/ }),
-  );
+  await user.click(screen.getByRole("button", { name }));
 }
 
 const SEVEN_CHILDREN: { name: string; storyLabel: string }[] = [
@@ -68,37 +65,27 @@ const SEVEN_CHILDREN: { name: string; storyLabel: string }[] = [
   { name: "Ed Smith", storyLabel: "His Story" },
 ];
 
-// The Family Unit child cards select on click (openOnSelect={false}) and reveal
-// an explicit 'Open Profile' button; the profile opens through that button
-// rather than navigating straight from the card click.
-async function openChildProfile(
-  user: ReturnType<typeof userEvent.setup>,
-  name: string,
-) {
-  const section = screen.getByRole("region", { name: "Lula Mae and Versie" });
-  await user.click(within(section).getByRole("button", { name }));
-  await user.click(
-    within(section).getByRole("button", { name: "Open Profile" }),
-  );
-}
-
 // Characterization baseline for the seven Lula Mae + Versie child profiles. The
-// intended change will give each child a real 'Relation to You' value and switch
-// their profile portrait from the placeholder SVG to an initials avatar. Those
-// two behaviors are intentionally changing and are NOT frozen here. These tests
-// protect the adjacent working behavior that must survive: each child profile
-// still opens from its Family Unit card (via the reveal's Open Profile button)
-// and still renders the full Person Profile template with only the recorded
-// facts (parents, siblings, evidence status) and no invented details.
+// request intentionally replaced the classic Family Tree with the focused
+// Explore Family navigator, so the old Family Unit cluster DOM is not asserted.
+// These tests protect the adjacent working behavior that must survive: each
+// child profile still opens from its relative card and still renders the full
+// Person Profile template with only the recorded facts (parents, evidence
+// status) and no invented details.
 describe("Lula Mae + Versie child profiles characterization: recorded facts and full template stay intact", () => {
-  it("opens each child profile from its Family Unit card and renders the full template", async () => {
+  it("opens each child profile from its relative card and renders the full template", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandLulaVersieBranch(user);
+    await openExploreFamily(user);
+
+    // Julia -> Clayton -> Lula Mae.
+    await tapRelative(user, /Clayton Norwood Child/);
+    await tapRelative(user, /Lula Mae Norwood Child/);
 
     for (const { name, storyLabel } of SEVEN_CHILDREN) {
-      await openChildProfile(user, name);
+      // Tap the child card to recenter, then open their profile.
+      await tapRelative(user, new RegExp(`${name} Child`));
+      await user.click(screen.getByRole("button", { name: "View Profile" }));
 
       // The profile page opens with the child's name as the heading.
       expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(name);
@@ -116,27 +103,26 @@ describe("Lula Mae + Versie child profiles characterization: recorded facts and 
         ).toBeInTheDocument();
       }
 
-      // Return to the Family Tree for the next child.
+      // Back to Explore Family (focused on the child), then recenter on Lula
+      // Mae via her Mother card for the next child.
       await user.click(
         screen.getByRole("button", { name: /Back to Family Tree/ }),
       );
-      const fold = screen.getByRole("button", {
-        name: /^Lula Mae & Versie \d+$/,
-      });
-      if (fold.getAttribute("aria-expanded") === "false") {
-        await user.click(fold);
-      }
+      await tapRelative(user, /Lula Mae Norwood Mother/);
     }
   });
 
   it("shows each child's recorded facts: parents Lula Mae and Versie, and evidence status Family history", async () => {
     const user = userEvent.setup();
     const { container } = renderApp();
-    await openFamilyTree(user);
-    await expandLulaVersieBranch(user);
+    await openExploreFamily(user);
+
+    await tapRelative(user, /Clayton Norwood Child/);
+    await tapRelative(user, /Lula Mae Norwood Child/);
 
     for (const { name } of SEVEN_CHILDREN) {
-      await openChildProfile(user, name);
+      await tapRelative(user, new RegExp(`${name} Child`));
+      await user.click(screen.getByRole("button", { name: "View Profile" }));
 
       const dl = container.querySelector("dl");
       expect(dl).not.toBeNull();
@@ -158,23 +144,21 @@ describe("Lula Mae + Versie child profiles characterization: recorded facts and 
       await user.click(
         screen.getByRole("button", { name: /Back to Family Tree/ }),
       );
-      const fold = screen.getByRole("button", {
-        name: /^Lula Mae & Versie \d+$/,
-      });
-      if (fold.getAttribute("aria-expanded") === "false") {
-        await user.click(fold);
-      }
+      await tapRelative(user, /Lula Mae Norwood Mother/);
     }
   });
 
   it("keeps each child's sources labeled as family-history notes, not documented records", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandLulaVersieBranch(user);
+    await openExploreFamily(user);
+
+    await tapRelative(user, /Clayton Norwood Child/);
+    await tapRelative(user, /Lula Mae Norwood Child/);
 
     for (const { name } of SEVEN_CHILDREN) {
-      await openChildProfile(user, name);
+      await tapRelative(user, new RegExp(`${name} Child`));
+      await user.click(screen.getByRole("button", { name: "View Profile" }));
 
       const sources = screen.getByRole("region", { name: "Sources" });
       expect(
@@ -187,12 +171,7 @@ describe("Lula Mae + Versie child profiles characterization: recorded facts and 
       await user.click(
         screen.getByRole("button", { name: /Back to Family Tree/ }),
       );
-      const fold = screen.getByRole("button", {
-        name: /^Lula Mae & Versie \d+$/,
-      });
-      if (fold.getAttribute("aria-expanded") === "false") {
-        await user.click(fold);
-      }
+      await tapRelative(user, /Lula Mae Norwood Mother/);
     }
   });
 });

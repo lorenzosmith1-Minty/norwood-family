@@ -44,154 +44,100 @@ function renderApp() {
 
 afterEach(cleanup);
 
-async function openFamilyTree(user: ReturnType<typeof userEvent.setup>) {
+async function openExploreFamily(user: ReturnType<typeof userEvent.setup>) {
   await user.click(screen.getByRole("button", { name: "Explore the Family" }));
 }
 
-// The Lula Mae & Versie branch defaults to collapsed; expand it so its cards
-// and connectors render.
-async function expandLulaVersieBranch(
-  user: ReturnType<typeof userEvent.setup>,
-) {
+// Recenter the Explore Family view on Harvey Adams Sr. by tapping each relative
+// card down the maternal ancestry chain: Julia -> Clayton -> Lula Mae -> Versie
+// Smith -> Gertrude Adams-Hill -> Harvey Adams Sr.
+async function focusHarvey(user: ReturnType<typeof userEvent.setup>) {
+  await openExploreFamily(user);
   await user.click(
-    screen.getByRole("button", { name: /^Lula Mae & Versie \d+$/ }),
+    screen.getByRole("button", { name: /Clayton Norwood Child/ }),
   );
-}
-
-// The Versie's maternal family branch defaults to collapsed; expand it so its
-// ancestor cards and connectors render.
-async function expandVersieMaternalBranch(
-  user: ReturnType<typeof userEvent.setup>,
-) {
   await user.click(
-    screen.getByRole("button", { name: /^Versie's Maternal Family \d+$/ }),
+    screen.getByRole("button", { name: /Lula Mae Norwood Child/ }),
+  );
+  await user.click(screen.getByRole("button", { name: /Versie Smith Spouse/ }));
+  await user.click(
+    screen.getByRole("button", { name: /Gertrude Adams-Hill Mother/ }),
+  );
+  await user.click(
+    screen.getByRole("button", { name: /Harvey Adams Sr\. Father/ }),
   );
 }
 
-// The vertical trunk that descends from the center of a couple, sitting between
-// the two given sections.
-function trunkBetween(
-  before: HTMLElement,
-  after: HTMLElement,
-  container: HTMLElement,
-): HTMLElement | null {
-  return (
-    Array.from(container.querySelectorAll<HTMLElement>(".ft-trunk")).find(
-      (el) =>
-        (before.compareDocumentPosition(el) &
-          Node.DOCUMENT_POSITION_FOLLOWING) !==
-          0 &&
-        (el.compareDocumentPosition(after) &
-          Node.DOCUMENT_POSITION_FOLLOWING) !==
-          0,
-    ) ?? null
-  );
-}
-
-// Characterization baseline for the family-tree connector system across the
-// lower tree sections. The request centers on the connector redesign, so these
-// tests protect the connector topology that must survive it: every couple in
-// the tree (not just the starting couple) keeps a horizontal couple line and a
-// vertical trunk ending in a junction, every parent-to-child connector keeps a
-// downward chevron, and selecting a child highlights only that child's row.
-describe("Family Tree connector characterization: lower tree sections", () => {
-  it("renders a couple line, trunk, and junction for the Lula Mae and Versie couple", async () => {
+// Characterization of the deeper maternal ancestry chain in the focused Explore
+// Family view. The request replaced the multi-generation tree with a focused
+// view, so the old lower-tree connector sections no longer exist. These tests
+// protect the working behavior that must survive: the user can still recenter
+// down the maternal ancestry chain (Harvey above Gertrude above Versie) and
+// reach Harvey's documented relationships (his two wives and children).
+describe("Explore Family maternal ancestry navigation", () => {
+  it("recenters down the maternal ancestry chain to Harvey Adams Sr.", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandLulaVersieBranch(user);
+    await focusHarvey(user);
 
-    const lulaSection = screen.getByRole("region", {
-      name: "Lula Mae and Versie",
-    });
-
-    // The Family Unit cluster joins the two spouse cards with a short local
-    // couple line.
-    const cluster = lulaSection.querySelector(".fu-cluster");
-    expect(cluster).not.toBeNull();
-    expect(cluster?.querySelector(".fu-couple-line")).not.toBeNull();
-
-    // A vertical trunk descends from the couple's center and ends in a
-    // junction where it meets the branch line.
-    const trunk = lulaSection.querySelector(".ft-trunk");
-    expect(trunk).not.toBeNull();
-    expect(trunk?.className).toContain("h-8");
-    expect(trunk?.querySelector(".ft-junction")).not.toBeNull();
+    // Harvey is now the focus person.
+    expect(screen.getByText("Harvey Adams Sr.")).toBeInTheDocument();
+    // His documented parents are absent (none recorded), but his two wives and
+    // children render.
+    expect(
+      screen.getByRole("button", { name: /Mary Louise Sims Spouse/ }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Mary Jane Johnson Spouse/ }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Gertrude Adams-Hill Child/ }),
+    ).toBeInTheDocument();
   });
 
-  it("renders the maternal ancestry connectors: trunks with junctions down the ancestor chain", async () => {
+  it("shows the maternal ancestry chain relationships around Versie Smith", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandVersieMaternalBranch(user);
-
-    const maternalSection = screen.getByRole("region", {
-      name: "Versie's maternal family",
-    });
-
-    // The ancestry branch is a vertical chain (Harvey above Gertrude above
-    // Versie), so it has no spouse couple line and no parent-to-child stubs.
-    expect(maternalSection.querySelector(".ft-couple-line")).toBeNull();
-    expect(maternalSection.querySelector(".ft-child-stub")).toBeNull();
-    expect(maternalSection.querySelector(".ft-chevron")).toBeNull();
-
-    // Three vertical trunks with junctions: the section's persistent entry
-    // trunk (visible even when collapsed), one from Harvey down to Gertrude,
-    // and one from Gertrude down to Versie.
-    const trunks = Array.from(
-      maternalSection.querySelectorAll<HTMLElement>(".ft-trunk"),
-    ).filter((el) => el.className.includes("h-8"));
-    expect(trunks).toHaveLength(3);
-    for (const trunk of trunks) {
-      expect(trunk.querySelector(".ft-junction")).not.toBeNull();
-    }
-  });
-
-  it("highlights the second row's branch bar and only the selected child's stub and chevron", async () => {
-    const user = userEvent.setup();
-    const { container } = renderApp();
-    await openFamilyTree(user);
-
-    const coupleSection = screen.getByRole("region", {
-      name: "Starting couple",
-    });
-    const childrenSection = screen.getByRole("region", { name: "Children" });
-
-    // Lula E. is a highlight-only child in the second row (no profile, so
-    // tapping selects rather than navigates).
-    await user.click(screen.getByRole("button", { name: /Lula E\./ }));
-
-    // The trunk and its junction highlight as the path from the couple down to
-    // the selected child, but the couple line itself does not.
-    const trunk = trunkBetween(coupleSection, childrenSection, container);
-    expect(trunk).not.toBeNull();
-    expect(trunk?.className).toContain("ft-connector-selected");
-    expect(trunk?.querySelector(".ft-junction")?.className).toContain(
-      "ft-connector-selected",
+    await openExploreFamily(user);
+    await user.click(
+      screen.getByRole("button", { name: /Clayton Norwood Child/ }),
     );
-    expect(
-      coupleSection.querySelector(".ft-couple-line")?.className,
-    ).not.toContain("ft-connector-selected");
+    await user.click(
+      screen.getByRole("button", { name: /Lula Mae Norwood Child/ }),
+    );
+    await user.click(
+      screen.getByRole("button", { name: /Versie Smith Spouse/ }),
+    );
 
-    // Only the second row's horizontal branch bar highlights.
-    const bars = Array.from(childrenSection.querySelectorAll(".ft-connector"));
-    expect(bars).toHaveLength(2);
-    expect(bars[0].className).not.toContain("ft-connector-selected");
-    expect(bars[1].className).toContain("ft-connector-selected");
-
-    // Exactly one stub and one chevron highlight: the selected child's, in the
-    // second row (after the second branch bar).
-    const selectedStubs = Array.from(
-      childrenSection.querySelectorAll(".ft-child-stub"),
-    ).filter((el) => el.className.includes("ft-connector-selected"));
-    const selectedChevrons = Array.from(
-      childrenSection.querySelectorAll(".ft-chevron"),
-    ).filter((el) => el.className.includes("ft-connector-selected"));
-    expect(selectedStubs).toHaveLength(1);
-    expect(selectedChevrons).toHaveLength(1);
+    // Versie is the focus. His mother (Gertrude) and spouse (Lula Mae) render.
+    expect(screen.getByText("Versie Smith")).toBeInTheDocument();
     expect(
-      bars[1].compareDocumentPosition(selectedStubs[0]) &
-        Node.DOCUMENT_POSITION_FOLLOWING,
-    ).toBeTruthy();
+      screen.getByRole("button", { name: /Gertrude Adams-Hill Mother/ }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Lula Mae Norwood Spouse/ }),
+    ).toBeInTheDocument();
+  });
+
+  it("recenters on a spouse and shows their own relationships", async () => {
+    const user = userEvent.setup();
+    renderApp();
+    await focusHarvey(user);
+
+    // Recenter on Mary Jane Johnson (Harvey's second wife).
+    await user.click(
+      screen.getByRole("button", { name: /Mary Jane Johnson Spouse/ }),
+    );
+    expect(screen.getByText("Mary Jane Johnson")).toBeInTheDocument();
+    // Her spouse (Harvey) and children (Mildred, Christine) render.
+    expect(
+      screen.getByRole("button", { name: /Harvey Adams Sr\. Spouse/ }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Mildred Adams Child/ }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Christine Adams Child/ }),
+    ).toBeInTheDocument();
   });
 });

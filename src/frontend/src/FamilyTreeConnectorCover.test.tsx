@@ -44,338 +44,116 @@ function renderApp() {
 
 afterEach(cleanup);
 
-async function openFamilyTree(user: ReturnType<typeof userEvent.setup>) {
+async function openExploreFamily(user: ReturnType<typeof userEvent.setup>) {
   await user.click(screen.getByRole("button", { name: "Explore the Family" }));
 }
 
-// The Clayton branch defaults to collapsed; expand it so its cards render.
-async function expandClaytonBranch(user: ReturnType<typeof userEvent.setup>) {
-  await user.click(screen.getByRole("button", { name: /^Clayton \d+$/ }));
-}
-
-async function openBranchFromHome(user: ReturnType<typeof userEvent.setup>) {
-  await user.click(
-    screen.getByRole("button", { name: "Heritage Branch View" }),
-  );
-}
-
-// The vertical trunk that descends from the center of the starting couple,
-// sitting between the couple and children sections.
-function coupleTrunk(container: HTMLElement): HTMLElement | null {
-  const coupleSection = screen.getByRole("region", {
-    name: "Starting couple",
-  });
-  const childrenSection = screen.getByRole("region", { name: "Children" });
-  return (
-    Array.from(container.querySelectorAll<HTMLElement>(".ft-trunk")).find(
-      (el) =>
-        (coupleSection.compareDocumentPosition(el) &
-          Node.DOCUMENT_POSITION_FOLLOWING) !==
-          0 &&
-        (el.compareDocumentPosition(childrenSection) &
-          Node.DOCUMENT_POSITION_FOLLOWING) !==
-          0,
-    ) ?? null
-  );
-}
-
-// Cover for the family-tree connector redesign: visible junction points where
-// the trunk meets the children's branch line, subtle downward direction
-// chevrons on parent-to-child connectors, and selection highlighting the
-// connector path that links a person to their spouse and children.
-describe("Family Tree connector cover", () => {
-  it("renders a visible junction point on each trunk where it meets the children's branch line", async () => {
-    const user = userEvent.setup();
-    const { container } = renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
-
-    const claytonBranch = screen.getByRole("region", {
-      name: "Clayton's branch",
-    });
-
-    // The couple trunk ends in a junction point where it meets the children's
-    // branch line.
-    const trunk = coupleTrunk(container);
-    expect(trunk).not.toBeNull();
-    expect(trunk?.querySelector(".ft-junction")).not.toBeNull();
-
-    // Clayton's branch has one junction per marriage (Ms. Hudson and Erma), so
-    // multiple marriages each get their own trunk and child branch.
-    const branchTrunks = Array.from(
-      claytonBranch.querySelectorAll<HTMLElement>(".ft-trunk"),
-    ).filter((el) => el.className.includes("h-6"));
-    expect(branchTrunks.length).toBeGreaterThanOrEqual(2);
-    for (const branchTrunk of branchTrunks) {
-      expect(branchTrunk.querySelector(".ft-junction")).not.toBeNull();
-    }
-  });
-
-  it("reconnects Clayton's trunk to the marriage bar with a junction and a couple line between the spouses", async () => {
+// The relationship zones of the focused Explore Family view. Each zone renders
+// only when the family record documents that relationship for the focus person.
+// This file covers the closest-relationship layout around a focus person: the
+// father/mother zones above, the spouse/siblings/children zones below, each
+// populated only when known.
+describe("Explore Family relationship zones", () => {
+  it("shows the focus person's closest relatives grouped into labeled zones", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
+    await openExploreFamily(user);
 
-    const claytonBranch = screen.getByRole("region", {
-      name: "Clayton's branch",
-    });
+    // Julia (default focus) has no documented parents, so no Father/Mother
+    // zones render. Her spouse and children do.
+    expect(screen.queryByText("Father")).not.toBeInTheDocument();
+    expect(screen.queryByText("Mother")).not.toBeInTheDocument();
+    // "Spouse" appears both as the zone label and on the relative card, so use
+    // the plural query.
+    expect(screen.getAllByText("Spouse").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Children").length).toBeGreaterThan(0);
+    expect(screen.queryByText("Siblings")).not.toBeInTheDocument();
 
-    // The trunk descends from Clayton's card down to the marriage bar. It is
-    // the absolute-positioned trunk (no h-6), distinct from the per-marriage
-    // trunks that drop from each spouse to their children.
-    const claytonTrunk = Array.from(
-      claytonBranch.querySelectorAll<HTMLElement>(".ft-trunk"),
-    ).find((el) => !el.className.includes("h-6"));
-    expect(claytonTrunk).toBeDefined();
-    expect(claytonTrunk?.querySelector(".ft-junction")).not.toBeNull();
-
-    // A distinct horizontal couple line joins the two spouses.
-    const coupleLine = claytonBranch.querySelector(".ft-couple-line");
-    expect(coupleLine).not.toBeNull();
-
-    // Selecting a highlight-only child of the first marriage lights up the
-    // marriage's own trunk and junction, showing the per-marriage trunk is
-    // wired to its branch (not left disconnected).
-    await user.click(
-      within(claytonBranch).getByRole("button", {
-        name: /Son \(died at birth\)/,
-      }),
-    );
-    const branchTrunks = Array.from(
-      claytonBranch.querySelectorAll<HTMLElement>(".ft-trunk"),
-    ).filter((el) => el.className.includes("h-6"));
-    expect(branchTrunks).toHaveLength(2);
-    expect(branchTrunks[0].className).toContain("ft-connector-selected");
-    expect(branchTrunks[0].querySelector(".ft-junction")?.className).toContain(
-      "ft-connector-selected",
-    );
-  });
-
-  it("renders a downward direction chevron on each parent-to-child connector", async () => {
-    const user = userEvent.setup();
-    renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
-
-    const childrenSection = screen.getByRole("region", { name: "Children" });
-    const claytonBranch = screen.getByRole("region", {
-      name: "Clayton's branch",
-    });
-
-    // One chevron per child under the couple (eight children).
-    const childChevrons = Array.from(
-      childrenSection.querySelectorAll(".ft-chevron"),
-    );
-    expect(childChevrons.length).toBe(8);
-
-    // Clayton's branch has one chevron per child across both marriages
-    // (four with Ms. Hudson, ten with Erma).
-    const branchChevrons = Array.from(
-      claytonBranch.querySelectorAll(".ft-chevron"),
-    );
-    expect(branchChevrons.length).toBe(14);
-  });
-
-  it("highlights the trunk, junction, and the selected child's connector when a child is selected", async () => {
-    const user = userEvent.setup();
-    const { container } = renderApp();
-    await openFamilyTree(user);
-
-    const coupleSection = screen.getByRole("region", {
-      name: "Starting couple",
-    });
-    const childrenSection = screen.getByRole("region", { name: "Children" });
-
-    const coupleLine = coupleSection.querySelector(".ft-couple-line");
-    expect(coupleLine).not.toBeNull();
-    expect(coupleLine?.className).not.toContain("ft-connector-selected");
-
-    const trunk = coupleTrunk(container);
-    expect(trunk).not.toBeNull();
-
-    // Select a highlight-only child (Isaiah Jr. has no profile, so tapping his
-    // card selects rather than navigates).
-    await user.click(screen.getByRole("button", { name: /Isaiah Jr\./ }));
-
-    // The trunk and its junction highlight as the path from the couple down to
-    // the selected child, but the couple line itself does not.
-    expect(trunk?.className).toContain("ft-connector-selected");
-    expect(trunk?.querySelector(".ft-junction")?.className).toContain(
-      "ft-connector-selected",
-    );
-    expect(coupleLine?.className).not.toContain("ft-connector-selected");
-
-    // Exactly one child stub and one chevron highlight: the selected child's.
-    const selectedStubs = Array.from(
-      childrenSection.querySelectorAll(".ft-child-stub"),
-    ).filter((el) => el.className.includes("ft-connector-selected"));
-    const selectedChevrons = Array.from(
-      childrenSection.querySelectorAll(".ft-chevron"),
-    ).filter((el) => el.className.includes("ft-connector-selected"));
-    expect(selectedStubs).toHaveLength(1);
-    expect(selectedChevrons).toHaveLength(1);
-  });
-
-  it("highlights only the selected marriage's branch when one of its children is selected", async () => {
-    const user = userEvent.setup();
-    renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
-
-    const claytonBranch = screen.getByRole("region", {
-      name: "Clayton's branch",
-    });
-
-    // Select 'Son (died at birth)', a highlight-only child of Ms. Hudson's
-    // first marriage (no profile, so tapping selects rather than navigates).
-    await user.click(
-      within(claytonBranch).getByRole("button", {
-        name: /Son \(died at birth\)/,
-      }),
-    );
-
-    // Ms. Hudson's branch trunk and junction highlight; Erma's do not.
-    const branchTrunks = Array.from(
-      claytonBranch.querySelectorAll<HTMLElement>(".ft-trunk"),
-    ).filter((el) => el.className.includes("h-6"));
-    expect(branchTrunks).toHaveLength(2);
-    expect(branchTrunks[0].className).toContain("ft-connector-selected");
-    expect(branchTrunks[1].className).not.toContain("ft-connector-selected");
-    expect(branchTrunks[0].querySelector(".ft-junction")?.className).toContain(
-      "ft-connector-selected",
-    );
+    // The spouse zone holds Isaiah; the children zone holds her eight children.
     expect(
-      branchTrunks[1].querySelector(".ft-junction")?.className,
-    ).not.toContain("ft-connector-selected");
-
-    // Exactly one child stub and one chevron highlight: the selected child's.
-    const selectedStubs = Array.from(
-      claytonBranch.querySelectorAll(".ft-child-stub"),
-    ).filter((el) => el.className.includes("ft-connector-selected"));
-    const selectedChevrons = Array.from(
-      claytonBranch.querySelectorAll(".ft-chevron"),
-    ).filter((el) => el.className.includes("ft-connector-selected"));
-    expect(selectedStubs).toHaveLength(1);
-    expect(selectedChevrons).toHaveLength(1);
-  });
-});
-
-describe("Heritage Branch connector cover", () => {
-  it("renders junction points and downward chevrons on the branch connectors", async () => {
-    const user = userEvent.setup();
-    const { container } = renderApp();
-    await openBranchFromHome(user);
-
-    // The default Julia anchor renders her spouse beside her and her eight
-    // children below, so the branch canvas carries a couple line, a trunk with
-    // a junction, and one chevron per child.
-    expect(container.querySelector(".ft-couple-line")).not.toBeNull();
-    expect(container.querySelector(".ft-trunk")).not.toBeNull();
-    expect(container.querySelector(".ft-junction")).not.toBeNull();
-    const chevrons = Array.from(container.querySelectorAll(".ft-chevron"));
-    expect(chevrons.length).toBe(8);
-  });
-
-  it("highlights the couple line and the children's connector path when the anchor is selected", async () => {
-    const user = userEvent.setup();
-    const { container } = renderApp();
-    await openBranchFromHome(user);
-
-    // Select the anchor (Julia). Every card in the Heritage Branch selects on
-    // tap, so the anchor's connector path to her spouse and children lights up.
-    await user.click(
-      screen.getByRole("button", { name: /Julia “Julie” Norwood, Matriarch/ }),
-    );
-
-    // The horizontal couple line between Julia and Isaiah highlights.
-    const coupleLine = Array.from(
-      container.querySelectorAll<HTMLElement>(".ft-couple-line"),
-    ).find((el) => el.className.includes("w-8"));
-    expect(coupleLine).toBeDefined();
-    expect(coupleLine?.className).toContain("ft-connector-selected");
-
-    // The children's row connector (trunk, junction, stubs, and chevrons)
-    // highlights as the path from the anchor down to her children.
-    expect(container.querySelector(".ft-trunk")?.className).toContain(
-      "ft-connector-selected",
-    );
-    expect(container.querySelector(".ft-junction")?.className).toContain(
-      "ft-connector-selected",
-    );
-    const stubs = Array.from(container.querySelectorAll(".ft-child-stub"));
-    const chevrons = Array.from(container.querySelectorAll(".ft-chevron"));
-    expect(stubs.length).toBe(8);
-    for (const stub of stubs) {
-      expect(stub.className).toContain("ft-connector-selected");
-    }
-    for (const chevron of chevrons) {
-      expect(chevron.className).toContain("ft-connector-selected");
+      screen.getByRole("button", { name: /Isaiah Norwood Spouse/ }),
+    ).toBeInTheDocument();
+    for (const name of [
+      "Clayton Norwood Child",
+      "isaiah-jr Child",
+      "edward Child",
+      "hattie Child",
+      "pinkie Child",
+      "louise Child",
+      "lillie Child",
+      "lula-e Child",
+    ]) {
+      expect(
+        screen.getByRole("button", { name: new RegExp(name) }),
+      ).toBeInTheDocument();
     }
   });
 
-  it("highlights the children's connector path but not the couple line when a child is selected", async () => {
+  it("recenters on a tapped relative and shows their own relationship zones", async () => {
     const user = userEvent.setup();
-    const { container } = renderApp();
-    await openBranchFromHome(user);
+    renderApp();
+    await openExploreFamily(user);
 
-    // Select Clayton, a child of the Julia anchor.
+    // Tap Clayton (Julia's child) to recenter on him.
     await user.click(
-      screen.getByRole("button", { name: /Clayton Norwood, Son/ }),
+      screen.getByRole("button", { name: /Clayton Norwood Child/ }),
     );
 
-    // The children's row connector highlights as the path from the anchor to
-    // the selected child.
-    expect(container.querySelector(".ft-trunk")?.className).toContain(
-      "ft-connector-selected",
-    );
-    expect(container.querySelector(".ft-junction")?.className).toContain(
-      "ft-connector-selected",
-    );
-    const selectedStubs = Array.from(
-      container.querySelectorAll(".ft-child-stub"),
-    ).filter((el) => el.className.includes("ft-connector-selected"));
-    expect(selectedStubs.length).toBe(8);
-
-    // The horizontal couple line between Julia and Isaiah does not highlight
-    // when a child is selected.
-    const coupleLine = Array.from(
-      container.querySelectorAll<HTMLElement>(".ft-couple-line"),
-    ).find((el) => el.className.includes("w-8"));
-    expect(coupleLine).toBeDefined();
-    expect(coupleLine?.className).not.toContain("ft-connector-selected");
+    // Clayton now shows his documented parents, spouses, siblings, and children.
+    expect(
+      screen.getByRole("button", { name: /Isaiah Norwood Father/ }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Julia “Julie” Norwood Mother/ }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Ms\. Hudson Spouse/ }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Erma T\. Williams Spouse/ }),
+    ).toBeInTheDocument();
+    // Siblings (shared parents with Julia/Isaiah).
+    expect(
+      screen.getByRole("button", { name: /isaiah-jr Sibling/ }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /edward Sibling/ }),
+    ).toBeInTheDocument();
+    // Children from both marriages.
+    expect(
+      screen.getByRole("button", { name: /Elbert Norwood Child/ }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Lula Mae Norwood Child/ }),
+    ).toBeInTheDocument();
   });
 
-  it("highlights only the couple line to the selected spouse, not the children's path", async () => {
+  it("shows only the documented relationships for a person with no parents or siblings", async () => {
     const user = userEvent.setup();
-    const { container } = renderApp();
-    await openBranchFromHome(user);
+    renderApp();
+    await openExploreFamily(user);
 
-    // Select Isaiah, Julia's spouse. The couple line between them highlights as
-    // the connector path to the spouse, but the children's row connector does
-    // not: Isaiah is not on the path from the anchor down to her children.
+    // Recenter on Erma (Clayton's second wife). She has no documented parents
+    // or siblings, only her spouse (Clayton) and children.
     await user.click(
-      screen.getByRole("button", { name: /Isaiah Norwood, Patriarch/ }),
+      screen.getByRole("button", { name: /Clayton Norwood Child/ }),
+    );
+    await user.click(
+      screen.getByRole("button", { name: /Erma T\. Williams Spouse/ }),
     );
 
-    const coupleLine = Array.from(
-      container.querySelectorAll<HTMLElement>(".ft-couple-line"),
-    ).find((el) => el.className.includes("w-8"));
-    expect(coupleLine).toBeDefined();
-    expect(coupleLine?.className).toContain("ft-connector-selected");
-
-    // The children's row connector (trunk, junction, stubs, and chevrons)
-    // stays unselected.
-    expect(container.querySelector(".ft-trunk")?.className).not.toContain(
-      "ft-connector-selected",
-    );
-    expect(container.querySelector(".ft-junction")?.className).not.toContain(
-      "ft-connector-selected",
-    );
-    const stubs = Array.from(container.querySelectorAll(".ft-child-stub"));
-    expect(stubs.length).toBe(8);
-    for (const stub of stubs) {
-      expect(stub.className).not.toContain("ft-connector-selected");
-    }
+    expect(screen.queryByText("Father")).not.toBeInTheDocument();
+    expect(screen.queryByText("Mother")).not.toBeInTheDocument();
+    expect(screen.queryByText("Siblings")).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Clayton Norwood Spouse/ }),
+    ).toBeInTheDocument();
+    // Erma's ten children with Clayton.
+    expect(
+      screen.getByRole("button", { name: /Columbus Norwood Child/ }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Lula Mae Norwood Child/ }),
+    ).toBeInTheDocument();
   });
 });

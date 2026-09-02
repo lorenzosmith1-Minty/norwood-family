@@ -45,57 +45,47 @@ function renderApp() {
 afterEach(cleanup);
 
 async function openBranchFromHome(user: ReturnType<typeof userEvent.setup>) {
-  await user.click(
-    screen.getByRole("button", { name: "Heritage Branch View" }),
-  );
+  await user.click(screen.getByRole("button", { name: "Heritage Branch" }));
 }
 
 // Characterization baseline for the four Erma T. Williams child profiles that
 // already exist (Columbus, Thomas Clayton 'Tip / TC', Alton, Robert Davis 'RD')
 // before the three new profiles (Ardeanus, Willie B., James) are added. These
-// four already open from the Heritage Branch via Open Profile, and that working
+// four already open from the Heritage Branch overview map, and that working
 // behavior must remain unchanged. The three new profiles are intentionally
 // changing (they will gain profiles and become openable), so they are NOT
 // asserted here.
 describe("Heritage Branch characterization: existing Erma child profiles open", () => {
-  it("opens each existing Erma child profile from the Heritage Branch via Open Profile", async () => {
+  it("opens each existing Erma child profile from the Heritage Branch overview", async () => {
     const user = userEvent.setup();
     renderApp();
     await openBranchFromHome(user);
 
-    // Each of the four existing profiles opens from its Heritage Branch card.
-    const cases: { card: RegExp; heading: string }[] = [
-      { card: /Columbus Norwood, Son/, heading: "Columbus Norwood" },
+    // Each of the four existing profiles opens from its Heritage Branch node.
+    const cases: { node: RegExp; heading: string }[] = [
+      { node: /Columbus Norwood, Son/, heading: "Columbus Norwood" },
       {
-        card: /Thomas Clayton “Tip \/ TC”, Son/,
+        node: /Thomas Clayton “Tip \/ TC” Norwood, Son/,
         heading: "Thomas Clayton “Tip / TC” Norwood",
       },
-      { card: /Alton Norwood, Son/, heading: "Alton Norwood" },
+      { node: /Alton Norwood, Son/, heading: "Alton Norwood" },
       {
-        card: /Robert Davis “RD”, Son/,
+        node: /Robert Davis “RD” Norwood, Son/,
         heading: "Robert Davis “RD” Norwood",
       },
     ];
 
-    for (const { card, heading } of cases) {
-      // Re-anchor the tree on Clayton to reveal his children, including Erma's.
-      // The branch view remounts on the default Julia anchor after each back
-      // navigation, so this must happen on every iteration.
-      await user.click(
-        screen.getByRole("button", { name: /Clayton Norwood, Son/ }),
-      );
-      await user.click(
-        screen.getByRole("button", { name: "Anchor Tree Here" }),
-      );
-
-      await user.click(screen.getByRole("button", { name: card }));
-      await user.click(screen.getByRole("button", { name: "Open Profile" }));
+    for (const { node, heading } of cases) {
+      // Tap the node to open Explore Family centered on the person, then open
+      // their profile.
+      await user.click(screen.getByRole("button", { name: node }));
+      await user.click(screen.getByRole("button", { name: "View Profile" }));
 
       expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
         heading,
       );
 
-      // Back to the Heritage Branch for the next profile.
+      // Back to Explore Family, then to the Heritage Branch for the next node.
       await user.click(
         screen.getByRole("button", { name: /Back to Family Tree/ }),
       );

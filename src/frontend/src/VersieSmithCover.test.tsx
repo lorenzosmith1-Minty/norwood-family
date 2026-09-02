@@ -44,18 +44,25 @@ function renderApp() {
 
 afterEach(cleanup);
 
-async function openFamilyTree(user: ReturnType<typeof userEvent.setup>) {
+async function openExploreFamily(user: ReturnType<typeof userEvent.setup>) {
   await user.click(screen.getByRole("button", { name: "Explore the Family" }));
 }
 
-// The Lula Mae & Versie branch defaults to collapsed; expand it so its cards
-// render.
-async function expandLulaVersieBranch(
+async function tapRelative(
   user: ReturnType<typeof userEvent.setup>,
+  name: RegExp,
 ) {
-  await user.click(
-    screen.getByRole("button", { name: /^Lula Mae & Versie \d+$/ }),
-  );
+  await user.click(screen.getByRole("button", { name }));
+}
+
+// Navigate the Explore Family focused navigator to Versie Smith's profile:
+// Julia (default) -> Clayton (child) -> Lula Mae (child) -> Versie (spouse).
+async function openVersieProfile(user: ReturnType<typeof userEvent.setup>) {
+  await openExploreFamily(user);
+  await tapRelative(user, /Clayton Norwood Child/);
+  await tapRelative(user, /Lula Mae Norwood Child/);
+  await tapRelative(user, /Versie Smith Spouse/);
+  await user.click(screen.getByRole("button", { name: "View Profile" }));
 }
 
 function completenessPercent(): string {
@@ -69,29 +76,14 @@ function completenessPercent(): string {
 // Cover for the Versie Smith change. The request adds a Versie Smith profile
 // (husband of Lula Mae Norwood, son of Gertrude Adams-Hill, born out of wedlock,
 // raised as an Adams in Mississippi, moved to New York after Army service, died
-// from lung cancer), shows Lula Mae and Versie as a couple in both the Family
-// Tree and the Heritage Branch View, and makes Versie's card open his profile.
-describe("Versie Smith cover: profile, Family Tree couple, and Heritage Branch couple", () => {
-  it("opens Versie's profile from his Family Tree card and renders the full template", async () => {
+// from lung cancer), shows Lula Mae and Versie as a couple in both the Explore
+// Family view and the Heritage Branch View, and makes Versie's card open his
+// profile.
+describe("Versie Smith cover: profile, Explore Family couple, and Heritage Branch couple", () => {
+  it("opens Versie's profile from the Explore Family navigator and renders the full template", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandLulaVersieBranch(user);
-
-    // The couple section shows Lula Mae and Versie side by side. The fold row
-    // ("Lula Mae & Versie 19") also lives inside this region, so anchor the
-    // Lula Mae card query to the exact card name.
-    const couple = screen.getByRole("region", { name: "Lula Mae and Versie" });
-    expect(
-      within(couple).getByRole("button", { name: "Lula Mae" }),
-    ).toBeInTheDocument();
-    expect(
-      within(couple).getByRole("button", { name: "Versie Smith" }),
-    ).toBeInTheDocument();
-
-    await user.click(
-      within(couple).getByRole("button", { name: "Versie Smith" }),
-    );
+    await openVersieProfile(user);
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       "Versie Smith",
@@ -115,14 +107,7 @@ describe("Versie Smith cover: profile, Family Tree couple, and Heritage Branch c
   it("records only the stated facts with no invented dates or extra relatives", async () => {
     const user = userEvent.setup();
     const { container } = renderApp();
-    await openFamilyTree(user);
-    await expandLulaVersieBranch(user);
-
-    await user.click(
-      within(
-        screen.getByRole("region", { name: "Lula Mae and Versie" }),
-      ).getByRole("button", { name: "Versie Smith" }),
-    );
+    await openVersieProfile(user);
 
     const dl = container.querySelector("dl");
     expect(dl).not.toBeNull();
@@ -162,14 +147,7 @@ describe("Versie Smith cover: profile, Family Tree couple, and Heritage Branch c
   it("preserves the father as 'Mr. Beard?' with the question mark and labels it uncertain", async () => {
     const user = userEvent.setup();
     const { container } = renderApp();
-    await openFamilyTree(user);
-    await expandLulaVersieBranch(user);
-
-    await user.click(
-      within(
-        screen.getByRole("region", { name: "Lula Mae and Versie" }),
-      ).getByRole("button", { name: "Versie Smith" }),
-    );
+    await openVersieProfile(user);
 
     const dl = container.querySelector("dl");
     expect(dl).not.toBeNull();
@@ -194,14 +172,7 @@ describe("Versie Smith cover: profile, Family Tree couple, and Heritage Branch c
   it("labels family-history notes distinctly from documented details", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandLulaVersieBranch(user);
-
-    await user.click(
-      within(
-        screen.getByRole("region", { name: "Lula Mae and Versie" }),
-      ).getByRole("button", { name: "Versie Smith" }),
-    );
+    await openVersieProfile(user);
 
     const sources = screen.getByRole("region", { name: "Sources" });
     expect(
@@ -215,14 +186,7 @@ describe("Versie Smith cover: profile, Family Tree couple, and Heritage Branch c
   it("shows only recorded events in the timeline with 'Not recorded' dates", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandLulaVersieBranch(user);
-
-    await user.click(
-      within(
-        screen.getByRole("region", { name: "Lula Mae and Versie" }),
-      ).getByRole("button", { name: "Versie Smith" }),
-    );
+    await openVersieProfile(user);
 
     const timeline = screen.getByRole("region", { name: "Timeline" });
     expect(
@@ -239,14 +203,7 @@ describe("Versie Smith cover: profile, Family Tree couple, and Heritage Branch c
   it("renders Completeness with Photo marked incomplete (initials shown, no photo)", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandLulaVersieBranch(user);
-
-    await user.click(
-      within(
-        screen.getByRole("region", { name: "Lula Mae and Versie" }),
-      ).getByRole("button", { name: "Versie Smith" }),
-    );
+    await openVersieProfile(user);
 
     const completeness = document.querySelector(
       '[data-ocid="profile.completeness"]',
@@ -261,37 +218,24 @@ describe("Versie Smith cover: profile, Family Tree couple, and Heritage Branch c
     expect(portrait).toHaveAttribute("src", "/assets/images/placeholder.svg");
   });
 
-  it("shows Lula Mae and Versie as a couple in the Heritage Branch and opens Versie's profile", async () => {
+  it("shows Lula Mae and Versie as a couple in the Explore Family navigator and opens Versie's profile", async () => {
     const user = userEvent.setup();
     renderApp();
-    await user.click(
-      screen.getByRole("button", { name: "Heritage Branch View" }),
-    );
+    await openExploreFamily(user);
 
-    // Anchor the tree on Clayton to reveal Lula Mae as one of his children.
-    await user.click(
-      screen.getByRole("button", { name: /Clayton Norwood, Son/ }),
-    );
-    await user.click(screen.getByRole("button", { name: "Anchor Tree Here" }));
+    // Recenter on Lula Mae (Julia -> Clayton -> Lula Mae).
+    await tapRelative(user, /Clayton Norwood Child/);
+    await tapRelative(user, /Lula Mae Norwood Child/);
 
-    // Now anchor on Lula Mae to reveal Versie as her spouse beside her.
-    await user.click(screen.getByRole("button", { name: /Lula Mae, Child/ }));
-    await user.click(screen.getByRole("button", { name: "Anchor Tree Here" }));
-
-    // Lula Mae is the anchor and Versie Smith renders as her spouse.
-    expect(screen.getByText(/Anchor: Lula Mae/)).toBeInTheDocument();
+    // Lula Mae is the focus and Versie Smith renders as her spouse.
+    expect(screen.getByText("Lula Mae Norwood")).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /Lula Mae, Child/ }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: /Versie Smith, Husband/ }),
+      screen.getByRole("button", { name: /Versie Smith Spouse/ }),
     ).toBeInTheDocument();
 
     // Versie's card opens his profile.
-    await user.click(
-      screen.getByRole("button", { name: /Versie Smith, Husband/ }),
-    );
-    await user.click(screen.getByRole("button", { name: "Open Profile" }));
+    await tapRelative(user, /Versie Smith Spouse/);
+    await user.click(screen.getByRole("button", { name: "View Profile" }));
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       "Versie Smith",

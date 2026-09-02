@@ -44,33 +44,41 @@ function renderApp() {
 
 afterEach(cleanup);
 
-async function openFamilyTree(user: ReturnType<typeof userEvent.setup>) {
+async function openExploreFamily(user: ReturnType<typeof userEvent.setup>) {
   await user.click(screen.getByRole("button", { name: "Explore the Family" }));
 }
 
-function claytonBranch() {
-  return screen.getByRole("region", { name: "Clayton's branch" });
+// Open Explore Family, recenter on Clayton, then open the given child's profile
+// from his card.
+async function openClaytonChildProfile(
+  user: ReturnType<typeof userEvent.setup>,
+  cardName: RegExp,
+) {
+  await openExploreFamily(user);
+  await user.click(
+    screen.getByRole("button", { name: /Clayton Norwood Child/ }),
+  );
+  await user.click(screen.getByRole("button", { name: cardName }));
+  await user.click(screen.getByRole("button", { name: "View Profile" }));
 }
 
-// The Clayton branch defaults to collapsed; expand it so its cards render.
-async function expandClaytonBranch(user: ReturnType<typeof userEvent.setup>) {
-  await user.click(screen.getByRole("button", { name: /^Clayton \d+$/ }));
+// After returning from a child's profile, the view is focused on that child.
+// Recenter on Clayton via his Father card for the next profile.
+async function recenterOnClayton(user: ReturnType<typeof userEvent.setup>) {
+  await user.click(
+    screen.getByRole("button", { name: /Clayton Norwood Father/ }),
+  );
 }
 
 // Cover for the three new Erma T. Williams child profiles (Ardeanus, Willie B.,
-// James). Each opens from its Family Tree card and its Heritage Branch card,
+// James). Each opens from its Explore Family card and its Heritage Branch node,
 // renders the full Person Profile template with recorded-only facts, an
 // initials-based portrait, and a timeline containing only recorded dates.
 describe("Family Tree cover: three new Erma T. Williams child profiles", () => {
   it("opens Ardeanus's profile from his card and renders the full template", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
-
-    await user.click(
-      within(claytonBranch()).getByRole("button", { name: /Ardeanus/ }),
-    );
+    await openClaytonChildProfile(user, /Ardeanus Norwood Child/);
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       "Ardeanus Norwood",
@@ -85,12 +93,7 @@ describe("Family Tree cover: three new Erma T. Williams child profiles", () => {
   it("shows Ardeanus's recorded facts: son of Clayton and Erma, born Dec. 3, 1929, California", async () => {
     const user = userEvent.setup();
     const { container } = renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
-
-    await user.click(
-      within(claytonBranch()).getByRole("button", { name: /Ardeanus/ }),
-    );
+    await openClaytonChildProfile(user, /Ardeanus Norwood Child/);
 
     const dl = container.querySelector("dl");
     expect(dl).not.toBeNull();
@@ -117,12 +120,7 @@ describe("Family Tree cover: three new Erma T. Williams child profiles", () => {
   it("opens Willie B.'s profile from his card and renders the full template", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
-
-    await user.click(
-      within(claytonBranch()).getByRole("button", { name: /Willie B\./ }),
-    );
+    await openClaytonChildProfile(user, /Willie B\. Norwood Child/);
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       "Willie B. Norwood",
@@ -137,12 +135,7 @@ describe("Family Tree cover: three new Erma T. Williams child profiles", () => {
   it("shows Willie B.'s recorded facts: son of Clayton and Erma, dates, Diamond Bar, U.S. Army Korea", async () => {
     const user = userEvent.setup();
     const { container } = renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
-
-    await user.click(
-      within(claytonBranch()).getByRole("button", { name: /Willie B\./ }),
-    );
+    await openClaytonChildProfile(user, /Willie B\. Norwood Child/);
 
     const dl = container.querySelector("dl");
     expect(dl).not.toBeNull();
@@ -175,12 +168,7 @@ describe("Family Tree cover: three new Erma T. Williams child profiles", () => {
   it("opens James's profile from his card and renders the full template", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
-
-    await user.click(
-      within(claytonBranch()).getByRole("button", { name: /James/ }),
-    );
+    await openClaytonChildProfile(user, /James Norwood Child/);
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       "James Norwood",
@@ -195,12 +183,7 @@ describe("Family Tree cover: three new Erma T. Williams child profiles", () => {
   it("shows James's recorded facts: son of Clayton and Erma, Chicago, with 'Not recorded' fallbacks", async () => {
     const user = userEvent.setup();
     const { container } = renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
-
-    await user.click(
-      within(claytonBranch()).getByRole("button", { name: /James/ }),
-    );
+    await openClaytonChildProfile(user, /James Norwood Child/);
 
     const dl = container.querySelector("dl");
     expect(dl).not.toBeNull();
@@ -227,13 +210,18 @@ describe("Family Tree cover: three new Erma T. Williams child profiles", () => {
   it("renders an initials-based portrait for each new profile", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
+    await openExploreFamily(user);
+    await user.click(
+      screen.getByRole("button", { name: /Clayton Norwood Child/ }),
+    );
 
-    for (const cardName of [/Ardeanus/, /Willie B\./, /James/]) {
-      await user.click(
-        within(claytonBranch()).getByRole("button", { name: cardName }),
-      );
+    for (const cardName of [
+      /Ardeanus Norwood Child/,
+      /Willie B\. Norwood Child/,
+      /James Norwood Child/,
+    ]) {
+      await user.click(screen.getByRole("button", { name: cardName }));
+      await user.click(screen.getByRole("button", { name: "View Profile" }));
 
       // No photograph exists, so the profile header renders the shared
       // initials placeholder portrait image.
@@ -246,19 +234,23 @@ describe("Family Tree cover: three new Erma T. Williams child profiles", () => {
       await user.click(
         screen.getByRole("button", { name: /Back to Family Tree/ }),
       );
+      await recenterOnClayton(user);
     }
   });
 
   it("shows only recorded dates in each new profile's timeline", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
+    await openExploreFamily(user);
+    await user.click(
+      screen.getByRole("button", { name: /Clayton Norwood Child/ }),
+    );
 
     // Ardeanus: only his recorded birth date appears.
     await user.click(
-      within(claytonBranch()).getByRole("button", { name: /Ardeanus/ }),
+      screen.getByRole("button", { name: /Ardeanus Norwood Child/ }),
     );
+    await user.click(screen.getByRole("button", { name: "View Profile" }));
     const ardeanusTimeline = screen.getByRole("region", { name: "Timeline" });
     expect(
       within(ardeanusTimeline).getByText("Dec. 3, 1929"),
@@ -269,11 +261,13 @@ describe("Family Tree cover: three new Erma T. Williams child profiles", () => {
     await user.click(
       screen.getByRole("button", { name: /Back to Family Tree/ }),
     );
+    await recenterOnClayton(user);
 
     // Willie B.: his recorded birth and death dates appear.
     await user.click(
-      within(claytonBranch()).getByRole("button", { name: /Willie B\./ }),
+      screen.getByRole("button", { name: /Willie B\. Norwood Child/ }),
     );
+    await user.click(screen.getByRole("button", { name: "View Profile" }));
     const willieTimeline = screen.getByRole("region", { name: "Timeline" });
     expect(
       within(willieTimeline).getByText("July 12, 1932"),
@@ -284,11 +278,13 @@ describe("Family Tree cover: three new Erma T. Williams child profiles", () => {
     await user.click(
       screen.getByRole("button", { name: /Back to Family Tree/ }),
     );
+    await recenterOnClayton(user);
 
     // James: no dates are recorded, so his timeline is empty.
     await user.click(
-      within(claytonBranch()).getByRole("button", { name: /James/ }),
+      screen.getByRole("button", { name: /James Norwood Child/ }),
     );
+    await user.click(screen.getByRole("button", { name: "View Profile" }));
     const jamesTimeline = screen.getByRole("region", { name: "Timeline" });
     expect(within(jamesTimeline).queryByRole("list")).not.toBeInTheDocument();
     expect(
@@ -299,13 +295,18 @@ describe("Family Tree cover: three new Erma T. Williams child profiles", () => {
   it("labels each new profile's sources as family-history notes, not documented records", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
+    await openExploreFamily(user);
+    await user.click(
+      screen.getByRole("button", { name: /Clayton Norwood Child/ }),
+    );
 
-    for (const cardName of [/Ardeanus/, /Willie B\./, /James/]) {
-      await user.click(
-        within(claytonBranch()).getByRole("button", { name: cardName }),
-      );
+    for (const cardName of [
+      /Ardeanus Norwood Child/,
+      /Willie B\. Norwood Child/,
+      /James Norwood Child/,
+    ]) {
+      await user.click(screen.getByRole("button", { name: cardName }));
+      await user.click(screen.getByRole("button", { name: "View Profile" }));
 
       const sources = screen.getByRole("region", { name: "Sources" });
       expect(
@@ -318,47 +319,32 @@ describe("Family Tree cover: three new Erma T. Williams child profiles", () => {
       await user.click(
         screen.getByRole("button", { name: /Back to Family Tree/ }),
       );
+      await recenterOnClayton(user);
     }
   });
 });
 
-describe("Heritage Branch cover: three new Erma child profiles open via Open Profile", () => {
-  async function openBranchFromHome(user: ReturnType<typeof userEvent.setup>) {
-    await user.click(
-      screen.getByRole("button", { name: "Heritage Branch View" }),
-    );
-  }
-
-  it("opens each new profile from its Heritage Branch card via Open Profile", async () => {
+describe("Heritage Branch cover: three new Erma child profiles open via the overview map", () => {
+  it("opens each new profile from its Heritage Branch node", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openBranchFromHome(user);
+    await user.click(screen.getByRole("button", { name: "Heritage Branch" }));
 
-    const cases: { card: RegExp; heading: string }[] = [
-      { card: /Ardeanus, Child/, heading: "Ardeanus Norwood" },
-      { card: /Willie B\., Child/, heading: "Willie B. Norwood" },
-      { card: /James, Child/, heading: "James Norwood" },
+    const cases: { node: RegExp; heading: string }[] = [
+      { node: /Ardeanus Norwood, Son/, heading: "Ardeanus Norwood" },
+      { node: /Willie B\. Norwood, Son/, heading: "Willie B. Norwood" },
+      { node: /James Norwood, Son/, heading: "James Norwood" },
     ];
 
-    for (const { card, heading } of cases) {
-      // Re-anchor the tree on Clayton to reveal his children, including Erma's.
-      // The branch view remounts on the default Julia anchor after each back
-      // navigation, so this must happen on every iteration.
-      await user.click(
-        screen.getByRole("button", { name: /Clayton Norwood, Son/ }),
-      );
-      await user.click(
-        screen.getByRole("button", { name: "Anchor Tree Here" }),
-      );
-
-      await user.click(screen.getByRole("button", { name: card }));
-      await user.click(screen.getByRole("button", { name: "Open Profile" }));
+    for (const { node, heading } of cases) {
+      await user.click(screen.getByRole("button", { name: node }));
+      await user.click(screen.getByRole("button", { name: "View Profile" }));
 
       expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
         heading,
       );
 
-      // Back to the Heritage Branch for the next profile.
+      // Back to Explore Family, then to the Heritage Branch for the next node.
       await user.click(
         screen.getByRole("button", { name: /Back to Family Tree/ }),
       );

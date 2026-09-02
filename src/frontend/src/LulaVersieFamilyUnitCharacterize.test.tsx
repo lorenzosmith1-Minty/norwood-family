@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom/vitest";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { cleanup, render, screen, within } from "@testing-library/react";
+import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
@@ -44,125 +44,99 @@ function renderApp() {
 
 afterEach(cleanup);
 
-async function openFamilyTree(user: ReturnType<typeof userEvent.setup>) {
+async function openExploreFamily(user: ReturnType<typeof userEvent.setup>) {
   await user.click(screen.getByRole("button", { name: "Explore the Family" }));
 }
 
-// The Lula Mae & Versie branch defaults to collapsed; expand it so its cards
-// render.
-async function expandLulaVersieBranch(
+async function tapRelative(
   user: ReturnType<typeof userEvent.setup>,
+  name: RegExp,
 ) {
-  await user.click(
-    screen.getByRole("button", { name: /^Lula Mae & Versie \d+$/ }),
-  );
+  await user.click(screen.getByRole("button", { name }));
 }
 
-// The Clayton branch defaults to collapsed; expand it so its cards render.
-async function expandClaytonBranch(user: ReturnType<typeof userEvent.setup>) {
-  await user.click(screen.getByRole("button", { name: /^Clayton \d+$/ }));
-}
-
-// Characterization baseline for the Lula Mae + Versie Smith branch redesign. The
-// request will intentionally change the Lula Mae + Versie section of the classic
-// Family Tree from its current hardcoded branch layout (couple + Versie's
-// maternal line) into a compact "Family Unit" cluster (couple at top, 'Their
-// Children' label, 7 compact clickable child cards). So the old maternal-line
-// layout is NOT frozen here. These tests protect the adjacent working behavior
-// that must survive the redesign: the Lula Mae + Versie couple stays present in
-// the Family Tree and Versie's card still opens his profile, Lula Mae's card
-// under Erma's branch (a different branch, untouched by the change) still opens
-// her profile, and the other major branches (Clayton, Harvey's second marriage)
-// remain intact.
+// Characterization baseline for the Lula Mae + Versie Smith family unit. The
+// request intentionally replaced the classic multi-generation Family Tree with
+// the focused Explore Family navigator, so the old branch-layout assertions are
+// not frozen. These tests protect the adjacent working behavior that must
+// survive: the Lula Mae + Versie couple stays present and navigable, Versie's
+// card still opens his profile, Lula Mae's card still opens her profile, and
+// the Clayton and Harvey Adams Sr. relationships remain intact.
 describe("Lula Mae + Versie Family Unit characterization: adjacent behavior stays intact", () => {
-  it("keeps the Lula Mae and Versie couple present in the Family Tree", async () => {
+  it("keeps the Lula Mae and Versie couple present in Explore Family", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandLulaVersieBranch(user);
+    await openExploreFamily(user);
 
-    // The couple remains present in the Lula Mae + Versie section. The fold row
-    // ("Lula Mae & Versie 19") also lives inside this region, so anchor the Lula
-    // Mae card query to the exact card name.
-    const couple = screen.getByRole("region", { name: "Lula Mae and Versie" });
+    // Recenter on Lula Mae (Julia -> Clayton -> Lula Mae).
+    await tapRelative(user, /Clayton Norwood Child/);
+    await tapRelative(user, /Lula Mae Norwood Child/);
+
+    // Lula Mae is the focus and Versie Smith renders as her spouse.
+    expect(screen.getByText("Lula Mae Norwood")).toBeInTheDocument();
     expect(
-      within(couple).getByRole("button", { name: "Lula Mae" }),
-    ).toBeInTheDocument();
-    expect(
-      within(couple).getByRole("button", { name: "Versie Smith" }),
+      screen.getByRole("button", { name: /Versie Smith Spouse/ }),
     ).toBeInTheDocument();
   });
 
-  it("keeps Versie's card opening his profile from the Family Tree", async () => {
+  it("keeps Versie's card opening his profile from Explore Family", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandLulaVersieBranch(user);
+    await openExploreFamily(user);
 
-    await user.click(
-      within(
-        screen.getByRole("region", { name: "Lula Mae and Versie" }),
-      ).getByRole("button", { name: "Versie Smith" }),
-    );
+    // Julia -> Clayton -> Lula Mae -> Versie.
+    await tapRelative(user, /Clayton Norwood Child/);
+    await tapRelative(user, /Lula Mae Norwood Child/);
+    await tapRelative(user, /Versie Smith Spouse/);
 
+    await user.click(screen.getByRole("button", { name: "View Profile" }));
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       "Versie Smith",
     );
     expect(screen.getByText("Husband of Lula Mae Norwood")).toBeInTheDocument();
   });
 
-  it("keeps Lula Mae's card under Erma's branch opening her profile", async () => {
+  it("keeps Lula Mae's card opening her profile from Explore Family", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
+    await openExploreFamily(user);
 
-    // Lula Mae remains a child in Clayton's branch (under Erma T. Williams),
-    // which is a different branch from the Lula Mae + Versie section and is not
-    // part of the redesign.
-    const branch = screen.getByRole("region", { name: "Clayton's branch" });
-    await user.click(within(branch).getByRole("button", { name: /Lula Mae/ }));
+    // Julia -> Clayton -> Lula Mae.
+    await tapRelative(user, /Clayton Norwood Child/);
+    await tapRelative(user, /Lula Mae Norwood Child/);
 
+    await user.click(screen.getByRole("button", { name: "View Profile" }));
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       "Lula Mae Norwood",
     );
     expect(screen.getByText("Daughter")).toBeInTheDocument();
   });
 
-  it("keeps the Clayton and Harvey's second-marriage branches intact", async () => {
+  it("keeps the Clayton and Harvey Adams Sr. relationships intact", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
-    await user.click(
-      screen.getByRole("button", { name: /^Harvey Adams Sr\. \d+$/ }),
-    );
+    await openExploreFamily(user);
 
-    // Clayton's branch still shows his two marriages and their children.
-    const claytonBranch = screen.getByRole("region", {
-      name: "Clayton's branch",
-    });
+    // Recenter on Clayton; his two documented spouses render beside him.
+    await tapRelative(user, /Clayton Norwood Child/);
     expect(
-      within(claytonBranch).getByRole("button", { name: /Ms\. Hudson/ }),
+      screen.getByRole("button", { name: /Ms\. Hudson Spouse/ }),
     ).toBeInTheDocument();
     expect(
-      within(claytonBranch).getByRole("button", { name: /Erma T\. Williams/ }),
+      screen.getByRole("button", { name: /Erma T\. Williams Spouse/ }),
     ).toBeInTheDocument();
 
-    // Harvey's second marriage still shows Mary Jane and their children.
-    const secondMarriage = screen.getByRole("region", {
-      name: "Harvey's second marriage",
-    });
+    // Recenter on Harvey Adams Sr. (Clayton -> Lula Mae -> Versie -> Gertrude
+    // -> Harvey); his two documented spouses render beside him.
+    await tapRelative(user, /Lula Mae Norwood Child/);
+    await tapRelative(user, /Versie Smith Spouse/);
+    await tapRelative(user, /Gertrude Adams-Hill Mother/);
+    await tapRelative(user, /Harvey Adams Sr\. Father/);
     expect(
-      within(secondMarriage).getByRole("button", { name: "Harvey Adams Sr." }),
+      screen.getByRole("button", { name: /Mary Louise Sims Spouse/ }),
     ).toBeInTheDocument();
     expect(
-      within(secondMarriage).getByRole("button", {
-        name: /Mary Jane Johnson/,
-      }),
-    ).toBeInTheDocument();
-    expect(
-      within(secondMarriage).getByRole("button", { name: /Mildred Adams/ }),
+      screen.getByRole("button", { name: /Mary Jane Johnson Spouse/ }),
     ).toBeInTheDocument();
   });
 });

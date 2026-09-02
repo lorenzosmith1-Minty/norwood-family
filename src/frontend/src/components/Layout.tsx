@@ -1,4 +1,4 @@
-import { Archive, GitBranch, ShieldCheck } from "lucide-react";
+import { Archive, GitBranch, ShieldCheck, TreePine } from "lucide-react";
 import type { ReactNode } from "react";
 
 interface LayoutProps {
@@ -11,6 +11,8 @@ interface LayoutProps {
   onArchiveClick?: () => void;
   /** Navigates to the Heritage Branch View. */
   onBranchClick?: () => void;
+  /** Navigates to the Explore Family view. */
+  onExploreClick?: () => void;
 }
 
 export function Layout({
@@ -19,6 +21,7 @@ export function Layout({
   onAdminClick,
   onArchiveClick,
   onBranchClick,
+  onExploreClick,
 }: LayoutProps) {
   return (
     <div className="relative flex min-h-screen flex-col bg-background">
@@ -34,6 +37,19 @@ export function Layout({
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              data-ocid="layout.explore_link"
+              onClick={onExploreClick}
+              className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3.5 py-1.5 text-xs font-semibold text-foreground transition-colors hover:border-accent/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            >
+              <TreePine
+                className="h-4 w-4 text-accent-foreground"
+                strokeWidth={1.75}
+                aria-hidden="true"
+              />
+              Explore Family
+            </button>
             <button
               type="button"
               data-ocid="layout.branch_link"

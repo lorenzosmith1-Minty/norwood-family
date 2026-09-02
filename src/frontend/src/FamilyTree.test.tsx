@@ -7,9 +7,9 @@ import App from "./App";
 
 // App renders useIsAdmin at the top level, which calls useActor from
 // @caffeineai/core-infrastructure. The real useActor requires an
-// InternetIdentityProvider, so these Family Tree tests stub the provider seam
-// with a minimal actor (isCallerAdmin is never reached because these renders
-// have no QueryClient, so the query stays disabled).
+// InternetIdentityProvider, so these tests stub the provider seam with a
+// minimal actor (isCallerAdmin is never reached because these renders have no
+// QueryClient, so the query stays disabled).
 const { mockActor } = vi.hoisted(() => {
   const mockActor = {
     async isCallerAdmin(): Promise<boolean> {
@@ -44,34 +44,23 @@ function renderApp() {
 
 afterEach(cleanup);
 
-const COUPLE = ["Julia “Julie” Norwood", "Isaiah Norwood"];
-
-const CHILDREN = [
-  "Clayton",
-  "Isaiah Jr.",
-  "Edward",
-  "Hattie",
-  "Pinkie",
-  "Louise",
-  "Lillie",
-  "Lula E.",
-];
-
-async function openFamilyTree(user: ReturnType<typeof userEvent.setup>) {
+async function openExploreFamily(user: ReturnType<typeof userEvent.setup>) {
   await user.click(screen.getByRole("button", { name: "Explore the Family" }));
 }
 
-// The Clayton branch defaults to collapsed; expand it so its cards render.
-async function expandClaytonBranch(user: ReturnType<typeof userEvent.setup>) {
-  await user.click(screen.getByRole("button", { name: /^Clayton \d+$/ }));
+async function tapRelative(
+  user: ReturnType<typeof userEvent.setup>,
+  name: RegExp,
+) {
+  await user.click(screen.getByRole("button", { name }));
 }
 
-function childrenSection() {
-  return screen.getByRole("region", { name: "Children" });
-}
-
-describe("Family Tree screen", () => {
-  it("navigates from Home to the Family Tree when 'Explore the Family' is tapped", async () => {
+// The Explore Family view is a focused navigator. Julia "Julie" Norwood is the
+// default anchor (no person is marked "Me"), and tapping a relative recenters
+// the view on that person. This file characterizes the new focused navigator
+// and the profile pages it opens, replacing the old full-tree layout tests.
+describe("Explore Family screen", () => {
+  it("navigates from Home to Explore Family when 'Explore the Family' is tapped", async () => {
     const user = userEvent.setup();
     renderApp();
 
@@ -80,171 +69,124 @@ describe("Family Tree screen", () => {
       screen.getByRole("img", { name: /Norwood family tree logo/i }),
     ).toHaveAttribute("src", "/assets/norwood-logo.png");
 
-    await openFamilyTree(user);
+    await openExploreFamily(user);
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      "Family Tree",
+      "Explore Family",
     );
   });
 
-  it("shows Julia 'Julie' Norwood and Isaiah Norwood as the starting couple", async () => {
+  it("defaults the focus to Julia 'Julie' Norwood with no 'Me' badge", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
+    await openExploreFamily(user);
 
-    const coupleSection = screen.getByRole("region", {
-      name: "Starting couple",
-    });
-    for (const name of COUPLE) {
-      expect(
-        within(coupleSection).getByRole("button", { name: new RegExp(name) }),
-      ).toBeInTheDocument();
-    }
+    // Julia is the default focus card.
+    expect(screen.getByText("Julia “Julie” Norwood")).toBeInTheDocument();
+    // No person is marked "Me", so no "This is me" badge is shown.
+    expect(screen.queryByText("This is me")).not.toBeInTheDocument();
   });
 
-  it("shows all eight children below the couple", async () => {
+  it("shows Julia's closest relatives grouped into labeled zones", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
+    await openExploreFamily(user);
 
-    const childrenSection = screen.getByRole("region", { name: "Children" });
-    for (const name of CHILDREN) {
-      expect(
-        within(childrenSection).getByRole("button", { name: new RegExp(name) }),
-      ).toBeInTheDocument();
-    }
-  });
-
-  it("shows the couple, the eight children, and Clayton's expanded branch", async () => {
-    const user = userEvent.setup();
-    renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
-
-    const coupleSection = screen.getByRole("region", {
-      name: "Starting couple",
-    });
-    const childrenSection = screen.getByRole("region", { name: "Children" });
-    const claytonBranch = screen.getByRole("region", {
-      name: "Clayton's branch",
-    });
-
-    expect(within(coupleSection).getAllByRole("button")).toHaveLength(2);
-    expect(within(childrenSection).getAllByRole("button")).toHaveLength(8);
-
-    // Clayton's branch shows his two spouses and their children.
+    // Julia's spouse (Isaiah) and children render as relative cards.
     expect(
-      within(claytonBranch).getByRole("button", { name: /Ms\. Hudson/ }),
+      screen.getByRole("button", { name: /Isaiah Norwood Spouse/ }),
     ).toBeInTheDocument();
-    expect(
-      within(claytonBranch).getByRole("button", {
-        name: /Erma T\. Williams/,
-      }),
-    ).toBeInTheDocument();
-    for (const name of [
-      "Elbert",
-      "Wellman",
-      "Wetherby",
-      "Son \\(died at birth\\)",
-      "Columbus",
-      "Thomas Clayton “Tip / TC”",
-      "Alton",
-      "Robert Davis “RD”",
-      "Ardeanus",
-      "Willie B.",
-      "James",
-      "Freddie",
-      "Zelia Mae",
-      "Lula Mae",
+    for (const child of [
+      "Clayton Norwood Child",
+      "isaiah-jr Child",
+      "edward Child",
+      "hattie Child",
+      "pinkie Child",
+      "louise Child",
+      "lillie Child",
+      "lula-e Child",
     ]) {
       expect(
-        within(claytonBranch).getByRole("button", { name: new RegExp(name) }),
+        screen.getByRole("button", { name: new RegExp(child) }),
       ).toBeInTheDocument();
     }
   });
 
-  it("selects and highlights only the tapped card, moving the highlight on another tap", async () => {
+  it("recenters the view when a relative card is tapped", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
+    await openExploreFamily(user);
 
-    const allPersonCards = screen
-      .getAllByRole("button")
-      .filter((button) =>
-        button.getAttribute("data-ocid")?.startsWith("tree.person."),
-      );
+    // Tap Clayton (a child of Julia). The view recenters on Clayton.
+    await tapRelative(user, /Clayton Norwood Child/);
+    expect(screen.getByText("Clayton Norwood")).toBeInTheDocument();
 
-    // Nothing selected initially.
-    for (const card of allPersonCards) {
-      expect(card).toHaveAttribute("aria-pressed", "false");
-    }
+    // Clayton's parents (Julia and Isaiah) now render as Father/Mother zones.
+    expect(
+      screen.getByRole("button", { name: /Julia “Julie” Norwood Mother/ }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Isaiah Norwood Father/ }),
+    ).toBeInTheDocument();
+  });
 
-    // Tap a child (Isaiah Jr.).
-    const isaiahJr = screen.getByRole("button", { name: /Isaiah Jr\./ });
-    await user.click(isaiahJr);
-    expect(isaiahJr).toHaveAttribute("aria-pressed", "true");
-    for (const card of allPersonCards) {
-      if (card === isaiahJr) continue;
-      expect(card).toHaveAttribute("aria-pressed", "false");
-    }
+  it("shows Clayton's two spouses and his children when focused", async () => {
+    const user = userEvent.setup();
+    renderApp();
+    await openExploreFamily(user);
+    await tapRelative(user, /Clayton Norwood Child/);
 
-    // Tap another child — the highlight moves.
-    const edward = screen.getByRole("button", { name: /Edward/ });
-    await user.click(edward);
-    expect(edward).toHaveAttribute("aria-pressed", "true");
-    expect(isaiahJr).toHaveAttribute("aria-pressed", "false");
-    for (const card of allPersonCards) {
-      if (card === edward) continue;
-      expect(card).toHaveAttribute("aria-pressed", "false");
+    // Clayton's spouses render in the Spouse zone.
+    expect(
+      screen.getByRole("button", { name: /Ms\. Hudson Spouse/ }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Erma T\. Williams Spouse/ }),
+    ).toBeInTheDocument();
+
+    // Clayton's children render in the Children zone.
+    for (const child of [
+      "Elbert Norwood Child",
+      "Wellman Norwood Child",
+      "Wetherby Norwood Child",
+      "Columbus Norwood Child",
+      "Thomas Clayton “Tip / TC” Norwood Child",
+      "Alton Norwood Child",
+      "Robert Davis “RD” Norwood Child",
+      "Ardeanus Norwood Child",
+      "Willie B. Norwood Child",
+      "James Norwood Child",
+      "Freddie Norwood Child",
+      "Zelia Mae Norwood Child",
+      "Lula Mae Norwood Child",
+    ]) {
+      expect(
+        screen.getByRole("button", { name: new RegExp(child) }),
+      ).toBeInTheDocument();
     }
   });
 
-  it("keeps child cards highlight-only: tapping a child does not navigate away", async () => {
+  it("opens Julia 'Julie' Norwood's Person Profile via View Profile", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
+    await openExploreFamily(user);
 
-    // Tapping a child card highlights it and stays on the Family Tree.
-    const isaiahJr = screen.getByRole("button", { name: /Isaiah Jr\./ });
-    await user.click(isaiahJr);
-    expect(isaiahJr).toHaveAttribute("aria-pressed", "true");
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      "Family Tree",
-    );
+    await user.click(screen.getByRole("button", { name: "View Profile" }));
 
-    // Tapping another child highlights it and stays on the Family Tree.
-    const edward = screen.getByRole("button", { name: /Edward/ });
-    await user.click(edward);
-    expect(edward).toHaveAttribute("aria-pressed", "true");
-    expect(isaiahJr).toHaveAttribute("aria-pressed", "false");
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      "Family Tree",
-    );
-  });
-
-  it("opens Julia 'Julie' Norwood's Person Profile when her card is tapped", async () => {
-    const user = userEvent.setup();
-    renderApp();
-    await openFamilyTree(user);
-
-    const julia = screen.getByRole("button", { name: /Julia/ });
-    await user.click(julia);
-
-    // The profile replaces the Family Tree view.
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       "Julia “Julie” Norwood",
     );
     expect(
-      screen.queryByRole("heading", { level: 1, name: "Family Tree" }),
+      screen.queryByRole("heading", { level: 1, name: "Explore Family" }),
     ).not.toBeInTheDocument();
   });
 
   it("shows the profile header facts for Julia", async () => {
     const user = userEvent.setup();
     const { container } = renderApp();
-    await openFamilyTree(user);
+    await openExploreFamily(user);
 
-    await user.click(screen.getByRole("button", { name: /Julia/ }));
+    await user.click(screen.getByRole("button", { name: "View Profile" }));
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       "Julia “Julie” Norwood",
@@ -276,36 +218,32 @@ describe("Family Tree screen", () => {
     expect(within(dl as HTMLElement).getByText("Mixed")).toBeInTheDocument();
   });
 
-  it("opens Isaiah Norwood's Person Profile when his card is tapped", async () => {
+  it("opens Isaiah Norwood's Person Profile from the Explore Family navigator", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
+    await openExploreFamily(user);
 
-    const isaiah = screen.getByRole("button", { name: /Isaiah Norwood/ });
-    await user.click(isaiah);
+    await tapRelative(user, /Isaiah Norwood Spouse/);
+    await user.click(screen.getByRole("button", { name: "View Profile" }));
 
-    // The profile replaces the Family Tree view.
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       "Isaiah Norwood",
     );
-    expect(
-      screen.queryByRole("heading", { level: 1, name: "Family Tree" }),
-    ).not.toBeInTheDocument();
   });
 
   it("shows the profile header facts for Isaiah", async () => {
     const user = userEvent.setup();
     const { container } = renderApp();
-    await openFamilyTree(user);
+    await openExploreFamily(user);
 
-    await user.click(screen.getByRole("button", { name: /Isaiah Norwood/ }));
+    await tapRelative(user, /Isaiah Norwood Spouse/);
+    await user.click(screen.getByRole("button", { name: "View Profile" }));
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       "Isaiah Norwood",
     );
     expect(screen.getByText("Patriarch")).toBeInTheDocument();
 
-    // The header facts are rendered as a definition list.
     const dl = container.querySelector("dl");
     expect(dl).not.toBeNull();
     expect(within(dl as HTMLElement).getByText("Born")).toBeInTheDocument();
@@ -323,16 +261,15 @@ describe("Family Tree screen", () => {
   it("shows the four profile sections for Isaiah as populated", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
+    await openExploreFamily(user);
 
-    await user.click(screen.getByRole("button", { name: /Isaiah Norwood/ }));
+    await tapRelative(user, /Isaiah Norwood Spouse/);
+    await user.click(screen.getByRole("button", { name: "View Profile" }));
 
-    // The four sections are present, with Isaiah's story labeled "His Story".
     for (const section of ["His Story", "Family", "Timeline", "Sources"]) {
       expect(screen.getByRole("region", { name: section })).toBeInTheDocument();
     }
 
-    // Each section is populated (not an empty placeholder).
     expect(screen.queryByText("Not yet populated")).not.toBeInTheDocument();
     expect(screen.getByRole("region", { name: "His Story" })).toHaveTextContent(
       "Isaiah Norwood was the patriarch",
@@ -345,14 +282,14 @@ describe("Family Tree screen", () => {
     );
   });
 
-  it("returns to the Family Tree when Isaiah's profile Back button is tapped", async () => {
+  it("returns to Explore Family when the profile Back button is tapped", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
+    await openExploreFamily(user);
 
-    await user.click(screen.getByRole("button", { name: /Isaiah Norwood/ }));
+    await user.click(screen.getByRole("button", { name: "View Profile" }));
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      "Isaiah Norwood",
+      "Julia “Julie” Norwood",
     );
 
     await user.click(
@@ -360,44 +297,36 @@ describe("Family Tree screen", () => {
     );
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      "Family Tree",
+      "Explore Family",
     );
   });
 
-  it("opens Clayton Norwood's Person Profile when his card is tapped", async () => {
+  it("opens Clayton Norwood's Person Profile from the Explore Family navigator", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
+    await openExploreFamily(user);
 
-    const clayton = within(childrenSection()).getByRole("button", {
-      name: /^Clayton/,
-    });
-    await user.click(clayton);
+    await tapRelative(user, /Clayton Norwood Child/);
+    await user.click(screen.getByRole("button", { name: "View Profile" }));
 
-    // The profile replaces the Family Tree view.
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       "Clayton Norwood",
     );
-    expect(
-      screen.queryByRole("heading", { level: 1, name: "Family Tree" }),
-    ).not.toBeInTheDocument();
   });
 
   it("shows the profile header facts for Clayton", async () => {
     const user = userEvent.setup();
     const { container } = renderApp();
-    await openFamilyTree(user);
+    await openExploreFamily(user);
 
-    await user.click(
-      within(childrenSection()).getByRole("button", { name: /^Clayton/ }),
-    );
+    await tapRelative(user, /Clayton Norwood Child/);
+    await user.click(screen.getByRole("button", { name: "View Profile" }));
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       "Clayton Norwood",
     );
     expect(screen.getByText("Son")).toBeInTheDocument();
 
-    // The header facts are rendered as a definition list.
     const dl = container.querySelector("dl");
     expect(dl).not.toBeNull();
     expect(within(dl as HTMLElement).getByText("Born")).toBeInTheDocument();
@@ -419,18 +348,15 @@ describe("Family Tree screen", () => {
   it("shows the four profile sections for Clayton as populated", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
+    await openExploreFamily(user);
 
-    await user.click(
-      within(childrenSection()).getByRole("button", { name: /^Clayton/ }),
-    );
+    await tapRelative(user, /Clayton Norwood Child/);
+    await user.click(screen.getByRole("button", { name: "View Profile" }));
 
-    // The four sections are present, with Clayton's story labeled "His Story".
     for (const section of ["His Story", "Family", "Timeline", "Sources"]) {
       expect(screen.getByRole("region", { name: section })).toBeInTheDocument();
     }
 
-    // Each section is populated (not an empty placeholder).
     expect(screen.queryByText("Not yet populated")).not.toBeInTheDocument();
     expect(screen.getByRole("region", { name: "His Story" })).toHaveTextContent(
       "1920 census",
@@ -452,9 +378,9 @@ describe("Family Tree screen", () => {
   it("shows the four profile sections: Her Story, Family, Timeline, and Sources", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
+    await openExploreFamily(user);
 
-    await user.click(screen.getByRole("button", { name: /Julia/ }));
+    await user.click(screen.getByRole("button", { name: "View Profile" }));
 
     for (const section of ["Her Story", "Family", "Timeline", "Sources"]) {
       expect(screen.getByRole("region", { name: section })).toBeInTheDocument();
@@ -464,45 +390,38 @@ describe("Family Tree screen", () => {
   it("renders the Timeline as an ordered list of card-styled entries with date/title/detail structure", async () => {
     const user = userEvent.setup();
     const { container } = renderApp();
-    await openFamilyTree(user);
+    await openExploreFamily(user);
 
-    await user.click(screen.getByRole("button", { name: /Julia/ }));
+    await user.click(screen.getByRole("button", { name: "View Profile" }));
 
     const timeline = screen.getByRole("region", { name: "Timeline" });
-    // The timeline is an ordered list so entries keep their chronological order.
     const list = timeline.querySelector("ol");
     expect(list).not.toBeNull();
 
     const entries = Array.from(timeline.querySelectorAll("ol > li"));
-    // The timeline is populated (not empty); the exact entry set is intentionally
-    // changing, so only the shared visual/layout structure is characterized here.
     expect(entries.length).toBeGreaterThan(0);
 
     for (const entry of entries) {
-      // Each entry keeps the warm card styling shared across the profile.
       expect(entry.className).toContain("bg-card");
       expect(entry.className).toContain("border");
       expect(entry.className).toContain("rounded-2xl");
-      // Each entry carries a date, a title, and a detail paragraph.
       expect(entry.querySelector("p")).not.toBeNull();
       expect(entry.querySelectorAll("p").length).toBeGreaterThanOrEqual(2);
     }
 
-    // The paper grain overlay is still rendered by the Layout on the profile.
     expect(container.querySelector(".paper-grain")).not.toBeNull();
   });
 
   it("shows the four requested Timeline entries in order on Julia's profile", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
+    await openExploreFamily(user);
 
-    await user.click(screen.getByRole("button", { name: /Julia/ }));
+    await user.click(screen.getByRole("button", { name: "View Profile" }));
 
     const timeline = screen.getByRole("region", { name: "Timeline" });
     const entries = Array.from(timeline.querySelectorAll("ol > li"));
 
-    // The four requested entries are present, in chronological order.
     expect(entries).toHaveLength(4);
 
     const expected = [
@@ -522,15 +441,11 @@ describe("Family Tree screen", () => {
   it("keeps the Sources section present with the shared warm card styling", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
+    await openExploreFamily(user);
 
-    await user.click(screen.getByRole("button", { name: /Julia/ }));
+    await user.click(screen.getByRole("button", { name: "View Profile" }));
 
     const sources = screen.getByRole("region", { name: "Sources" });
-    // The Sources section keeps the warm card surface shared across the profile.
-    // Only the shared visual structure is characterized here; the specific source
-    // cards inside are intentionally changing (single mixed-evidence card -> three
-    // distinct source cards), so their content is not frozen as a baseline.
     const card = sources.querySelector(".rounded-2xl");
     expect(card).not.toBeNull();
     expect(card?.className).toContain("bg-card");
@@ -540,16 +455,15 @@ describe("Family Tree screen", () => {
   it("shows the three requested source cards on Julia's profile", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
+    await openExploreFamily(user);
 
-    await user.click(screen.getByRole("button", { name: /Julia/ }));
+    await user.click(screen.getByRole("button", { name: "View Profile" }));
 
     const sources = screen.getByRole("region", { name: "Sources" });
     const cards = Array.from(sources.querySelectorAll(".rounded-2xl")).filter(
       (el) => el.querySelector("p"),
     );
 
-    // The three requested source cards are present.
     expect(cards).toHaveLength(3);
     for (const title of [
       "1880 U.S. Census",
@@ -563,19 +477,17 @@ describe("Family Tree screen", () => {
   it("distinguishes documented records from family-history notes with kind-driven badges", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
+    await openExploreFamily(user);
 
-    await user.click(screen.getByRole("button", { name: /Julia/ }));
+    await user.click(screen.getByRole("button", { name: "View Profile" }));
 
     const sources = screen.getByRole("region", { name: "Sources" });
 
-    // Documented records are labeled "Documented record".
     const censusCard = sources.querySelector(".rounded-2xl") as HTMLElement;
     expect(
       within(censusCard).getByText("Documented record"),
     ).toBeInTheDocument();
 
-    // The family-history note is labeled "Family-history note".
     const notesCard = Array.from(sources.querySelectorAll(".rounded-2xl")).find(
       (el) => within(el as HTMLElement).queryByText("Family Research Notes"),
     );
@@ -584,7 +496,6 @@ describe("Family Tree screen", () => {
       within(notesCard as HTMLElement).getByText("Family-history note"),
     ).toBeInTheDocument();
 
-    // The two documented records both carry the documented badge.
     const documentedBadges = within(sources).getAllByText("Documented record");
     expect(documentedBadges).toHaveLength(2);
   });
@@ -592,17 +503,14 @@ describe("Family Tree screen", () => {
   it("keeps the non-Timeline profile sections and header facts intact", async () => {
     const user = userEvent.setup();
     const { container } = renderApp();
-    await openFamilyTree(user);
+    await openExploreFamily(user);
 
-    await user.click(screen.getByRole("button", { name: /Julia/ }));
+    await user.click(screen.getByRole("button", { name: "View Profile" }));
 
-    // The other profile sections remain present alongside the Timeline.
     for (const section of ["Her Story", "Family", "Sources"]) {
       expect(screen.getByRole("region", { name: section })).toBeInTheDocument();
     }
 
-    // The header facts (definition list) are unchanged. Scope to the <dl> so
-    // the same dates appearing in the Timeline don't create ambiguity.
     const dl = container.querySelector("dl");
     expect(dl).not.toBeNull();
     expect(screen.getByText("Matriarch")).toBeInTheDocument();
@@ -620,403 +528,34 @@ describe("Family Tree screen", () => {
     ).toBeInTheDocument();
   });
 
-  it("returns to the Family Tree when the profile Back button is tapped", async () => {
+  it("opens Erma T. Williams' Person Profile from the Explore Family navigator", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
+    await openExploreFamily(user);
 
-    await user.click(screen.getByRole("button", { name: /Julia/ }));
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      "Julia “Julie” Norwood",
-    );
+    await tapRelative(user, /Clayton Norwood Child/);
+    await tapRelative(user, /Erma T\. Williams Spouse/);
+    await user.click(screen.getByRole("button", { name: "View Profile" }));
 
-    await user.click(
-      screen.getByRole("button", { name: /Back to Family Tree/ }),
-    );
-
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      "Family Tree",
-    );
-  });
-
-  it("returns to Home when the Back button is tapped", async () => {
-    const user = userEvent.setup();
-    renderApp();
-    await openFamilyTree(user);
-
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      "Family Tree",
-    );
-
-    await user.click(screen.getByRole("button", { name: /Back to Home/ }));
-
-    expect(
-      screen.getByRole("img", { name: /Norwood family tree logo/i }),
-    ).toHaveAttribute("src", "/assets/norwood-logo.png");
-  });
-
-  it("keeps the couple side by side and the children in branching rows below", async () => {
-    const user = userEvent.setup();
-    renderApp();
-    await openFamilyTree(user);
-
-    const coupleSection = screen.getByRole("region", {
-      name: "Starting couple",
-    });
-    const childrenSection = screen.getByRole("region", { name: "Children" });
-
-    // The couple section is positioned relative so the relationship line can
-    // sit between the two cards; the side-by-side grid lives on its inner div.
-    expect(coupleSection.className).toContain("relative");
-    const coupleGrid = coupleSection.querySelector(".grid");
-    expect(coupleGrid).not.toBeNull();
-    expect(coupleGrid?.className).toContain("grid-cols-2");
-
-    // The children are laid out in responsive grids (2 columns on mobile, 4 on
-    // larger), one grid per branching row.
-    const childGrids = Array.from(
-      childrenSection.querySelectorAll(".grid"),
-    ).filter((el) => el.querySelector('[data-ocid^="tree.person."]'));
-    expect(childGrids.length).toBeGreaterThan(0);
-    for (const grid of childGrids) {
-      expect(grid.className).toContain("grid-cols-2");
-      expect(grid.className).toContain("sm:grid-cols-4");
-    }
-  });
-
-  it("draws a horizontal couple connector, a vertical trunk with a junction, and branching lines with chevrons to each child", async () => {
-    const user = userEvent.setup();
-    const { container } = renderApp();
-    await openFamilyTree(user);
-
-    const coupleSection = screen.getByRole("region", {
-      name: "Starting couple",
-    });
-    const childrenSection = screen.getByRole("region", { name: "Children" });
-
-    // A distinct horizontal couple line spans the center of the couple section,
-    // between the two cards.
-    const horizontalLine = Array.from(
-      coupleSection.querySelectorAll("div"),
-    ).find(
-      (el) =>
-        el.className.includes("ft-couple-line") &&
-        el.className.includes("left-1/2") &&
-        el.className.includes("top-1/2"),
-    );
-    expect(horizontalLine).toBeDefined();
-    expect(horizontalLine?.className).toContain("w-1/2");
-
-    // A vertical trunk runs down from the couple section toward the children,
-    // ending in a visible junction point where it meets the branch line.
-    const verticalLine = Array.from(container.querySelectorAll("div")).find(
-      (el) => el.className.includes("ft-trunk") && el.className.includes("h-8"),
-    );
-    expect(verticalLine).toBeDefined();
-    expect(verticalLine?.querySelector(".ft-junction")).not.toBeNull();
-
-    // The vertical trunk sits between the couple and the children sections.
-    const coupleNode = coupleSection;
-    const childrenNode = childrenSection;
-    expect(
-      coupleNode.compareDocumentPosition(verticalLine as Element) &
-        Node.DOCUMENT_POSITION_FOLLOWING,
-    ).toBeTruthy();
-    expect(
-      (verticalLine as Element).compareDocumentPosition(childrenNode) &
-        Node.DOCUMENT_POSITION_FOLLOWING,
-    ).toBeTruthy();
-
-    // Each branching row has a horizontal branch bar spanning its width.
-    const branchBars = Array.from(
-      childrenSection.querySelectorAll("div"),
-    ).filter(
-      (el) =>
-        el.className.includes("ft-connector") &&
-        el.className.includes("left-0") &&
-        el.className.includes("right-0") &&
-        el.className.includes("top-0") &&
-        el.className.includes("h-px"),
-    );
-    expect(branchBars.length).toBeGreaterThan(0);
-
-    // Vertical stubs drop from each branch bar down to the children, each
-    // ending in a downward direction chevron.
-    const stubs = Array.from(childrenSection.querySelectorAll("div")).filter(
-      (el) =>
-        el.className.includes("ft-child-stub") && el.className.includes("h-6"),
-    );
-    expect(stubs.length).toBeGreaterThan(0);
-    const chevrons = Array.from(
-      childrenSection.querySelectorAll(".ft-chevron"),
-    );
-    expect(chevrons.length).toBeGreaterThan(0);
-  });
-
-  it("renders compact person cards showing only initials, name, and years by default", async () => {
-    const user = userEvent.setup();
-    const { container } = renderApp();
-    await openFamilyTree(user);
-
-    // The paper grain overlay is rendered by the Layout on every screen.
-    expect(container.querySelector(".paper-grain")).not.toBeNull();
-
-    const allPersonCards = screen
-      .getAllByRole("button")
-      .filter((button) =>
-        button.getAttribute("data-ocid")?.startsWith("tree.person."),
-      );
-    expect(allPersonCards.length).toBeGreaterThan(0);
-    for (const card of allPersonCards) {
-      // Compact card surface.
-      expect(card.className).toContain("ft-card");
-      // No relationship label (role chip) is shown by default.
-      expect(card.querySelector(".ft-role-chip")).toBeNull();
-      // The card shows the person's name.
-      expect(card.querySelector(".ft-card-name")).not.toBeNull();
-    }
-  });
-
-  it("shows a circular photo for the couple and initials placeholders for the children", async () => {
-    const user = userEvent.setup();
-    renderApp();
-    await openFamilyTree(user);
-
-    const coupleSection = screen.getByRole("region", {
-      name: "Starting couple",
-    });
-    const childrenSection = screen.getByRole("region", { name: "Children" });
-
-    // The couple cards render a circular photo area with an image.
-    const coupleImages = Array.from(coupleSection.querySelectorAll("img"));
-    expect(coupleImages).toHaveLength(2);
-    for (const img of coupleImages) {
-      expect(img.className).toContain("object-cover");
-      expect(img.getAttribute("alt")).toBeTruthy();
-    }
-
-    // The children cards render a circular initials placeholder instead of a photo.
-    const childrenImages = Array.from(childrenSection.querySelectorAll("img"));
-    expect(childrenImages).toHaveLength(0);
-
-    // Each child card shows initials derived from their name (first + last letter).
-    const clayton = within(childrenSection).getByRole("button", {
-      name: /Clayton/,
-    });
-    expect(clayton).toHaveTextContent("C");
-    const isaiahJr = within(childrenSection).getByRole("button", {
-      name: /Isaiah Jr\./,
-    });
-    expect(isaiahJr).toHaveTextContent("I");
-  });
-
-  it("keeps the couple's photo area and name clickable to open their profile", async () => {
-    const user = userEvent.setup();
-    renderApp();
-    await openFamilyTree(user);
-
-    // The whole couple card (photo area + name) is a single button that opens the profile.
-    const julia = screen.getByRole("button", { name: /Julia/ });
-    await user.click(julia);
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      "Julia “Julie” Norwood",
-    );
-  });
-
-  it("hides the Relation to You area until a card is selected", async () => {
-    const user = userEvent.setup();
-    renderApp();
-    await openFamilyTree(user);
-
-    const clayton = within(childrenSection()).getByRole("button", {
-      name: /^Clayton/,
-    });
-    expect(clayton).not.toHaveTextContent("Relation to You");
-  });
-
-  it("shows 'Relation to You: Not set' on a selected card with no relation value", async () => {
-    const user = userEvent.setup();
-    renderApp();
-    await openFamilyTree(user);
-
-    // Isaiah Jr. has no relation value populated yet.
-    const isaiahJr = screen.getByRole("button", { name: /Isaiah Jr\./ });
-    await user.click(isaiahJr);
-    expect(isaiahJr).toHaveAttribute("aria-pressed", "true");
-    expect(isaiahJr).toHaveTextContent("Relation to You");
-    expect(isaiahJr).toHaveTextContent("Not set");
-  });
-
-  it("shows the populated relation value on a selected card", async () => {
-    const user = userEvent.setup();
-    renderApp();
-    await openFamilyTree(user);
-
-    // Hattie has a relation value populated.
-    const hattie = screen.getByRole("button", { name: /Hattie/ });
-    await user.click(hattie);
-    expect(hattie).toHaveAttribute("aria-pressed", "true");
-    expect(hattie).toHaveTextContent("Relation to You");
-    expect(hattie).toHaveTextContent("grandaunt");
-  });
-
-  it("shows each selected card's own relation value", async () => {
-    const user = userEvent.setup();
-    renderApp();
-    await openFamilyTree(user);
-
-    const hattie = screen.getByRole("button", { name: /Hattie/ });
-    await user.click(hattie);
-    expect(hattie).toHaveTextContent("grandaunt");
-
-    const lula = screen.getByRole("button", { name: /Lula E\./ });
-    await user.click(lula);
-    expect(lula).toHaveTextContent("great-grandmother");
-    expect(hattie).not.toHaveTextContent("grandaunt");
-  });
-
-  it("shows the 'This is Me' action only on the selected card", async () => {
-    const user = userEvent.setup();
-    renderApp();
-    await openFamilyTree(user);
-
-    // No card is selected, so no 'This is Me' action is shown.
-    expect(screen.queryByRole("button", { name: "This is Me" })).toBeNull();
-
-    // Selecting a card reveals the action on that card.
-    const isaiahJr = screen.getByRole("button", { name: /Isaiah Jr\./ });
-    await user.click(isaiahJr);
-    expect(
-      screen.getByRole("button", { name: "This is Me" }),
-    ).toBeInTheDocument();
-
-    // Selecting a different card moves the action to that card.
-    const edward = screen.getByRole("button", { name: /Edward/ });
-    await user.click(edward);
-    expect(
-      screen.getByRole("button", { name: "This is Me" }),
-    ).toBeInTheDocument();
-  });
-
-  it("marks the selected card as 'Me' when 'This is Me' is tapped", async () => {
-    const user = userEvent.setup();
-    renderApp();
-    await openFamilyTree(user);
-
-    const isaiahJr = screen.getByRole("button", { name: /Isaiah Jr\./ });
-    await user.click(isaiahJr);
-    expect(isaiahJr).not.toHaveTextContent("This is me");
-
-    await user.click(screen.getByRole("button", { name: "This is Me" }));
-
-    // The card is now labeled 'This is me' and the action disappears.
-    expect(isaiahJr).toHaveTextContent("This is me");
-    expect(screen.queryByRole("button", { name: "This is Me" })).toBeNull();
-  });
-
-  it("moves the 'Me' label to the newly marked person", async () => {
-    const user = userEvent.setup();
-    renderApp();
-    await openFamilyTree(user);
-
-    const isaiahJr = screen.getByRole("button", { name: /Isaiah Jr\./ });
-    await user.click(isaiahJr);
-    await user.click(screen.getByRole("button", { name: "This is Me" }));
-    expect(isaiahJr).toHaveTextContent("This is me");
-
-    // Select and mark a second person.
-    const edward = screen.getByRole("button", { name: /Edward/ });
-    await user.click(edward);
-    await user.click(screen.getByRole("button", { name: "This is Me" }));
-
-    // Only the newly marked person keeps the label.
-    expect(edward).toHaveTextContent("This is me");
-    expect(isaiahJr).not.toHaveTextContent("This is me");
-  });
-
-  it("hides the 'This is me' label when the selection moves to another card", async () => {
-    const user = userEvent.setup();
-    renderApp();
-    await openFamilyTree(user);
-
-    const isaiahJr = screen.getByRole("button", { name: /Isaiah Jr\./ });
-    await user.click(isaiahJr);
-    await user.click(screen.getByRole("button", { name: "This is Me" }));
-    expect(isaiahJr).toHaveTextContent("This is me");
-
-    // Select a different card — the 'This is me' label hides on the deselected
-    // card (relationship details, including this-is-me, are only shown on the
-    // selected card).
-    const edward = screen.getByRole("button", { name: /Edward/ });
-    await user.click(edward);
-    expect(isaiahJr).not.toHaveTextContent("This is me");
-    expect(edward).not.toHaveTextContent("This is me");
-  });
-
-  it("keeps relation display unchanged when a card is marked 'Me'", async () => {
-    const user = userEvent.setup();
-    renderApp();
-    await openFamilyTree(user);
-
-    // Hattie has a stored relation value and is a highlight-only child card
-    // (she does not navigate to a profile), so she can be selected and marked.
-    const hattie = screen.getByRole("button", { name: /Hattie/ });
-    await user.click(hattie);
-    await user.click(screen.getByRole("button", { name: "This is Me" }));
-
-    // The stored relation value still displays on the selected card.
-    expect(hattie).toHaveTextContent("Relation to You");
-    expect(hattie).toHaveTextContent("grandaunt");
-
-    // A card without a stored value still shows 'Not set'.
-    const isaiahJr = screen.getByRole("button", { name: /Isaiah Jr\./ });
-    await user.click(isaiahJr);
-    expect(isaiahJr).toHaveTextContent("Relation to You");
-    expect(isaiahJr).toHaveTextContent("Not set");
-  });
-
-  it("opens Erma T. Williams' Person Profile when her card is tapped", async () => {
-    const user = userEvent.setup();
-    renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
-
-    const claytonBranch = screen.getByRole("region", {
-      name: "Clayton's branch",
-    });
-    const erma = within(claytonBranch).getByRole("button", {
-      name: /Erma T\. Williams/,
-    });
-    await user.click(erma);
-
-    // The profile replaces the Family Tree view.
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       "Erma T. Williams",
     );
-    expect(
-      screen.queryByRole("heading", { level: 1, name: "Family Tree" }),
-    ).not.toBeInTheDocument();
   });
 
   it("shows the profile header facts for Erma T. Williams", async () => {
     const user = userEvent.setup();
     const { container } = renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
+    await openExploreFamily(user);
 
-    const claytonBranch = screen.getByRole("region", {
-      name: "Clayton's branch",
-    });
-    await user.click(
-      within(claytonBranch).getByRole("button", { name: /Erma T\. Williams/ }),
-    );
+    await tapRelative(user, /Clayton Norwood Child/);
+    await tapRelative(user, /Erma T\. Williams Spouse/);
+    await user.click(screen.getByRole("button", { name: "View Profile" }));
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       "Erma T. Williams",
     );
     expect(screen.getByText("Wife of Clayton Norwood")).toBeInTheDocument();
 
-    // The header facts are rendered as a definition list.
     const dl = container.querySelector("dl");
     expect(dl).not.toBeNull();
     expect(
@@ -1038,15 +577,11 @@ describe("Family Tree screen", () => {
   it("labels Erma's story section 'Her Story'", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
+    await openExploreFamily(user);
 
-    const claytonBranch = screen.getByRole("region", {
-      name: "Clayton's branch",
-    });
-    await user.click(
-      within(claytonBranch).getByRole("button", { name: /Erma T\. Williams/ }),
-    );
+    await tapRelative(user, /Clayton Norwood Child/);
+    await tapRelative(user, /Erma T\. Williams Spouse/);
+    await user.click(screen.getByRole("button", { name: "View Profile" }));
 
     expect(
       screen.getByRole("region", { name: "Her Story" }),
@@ -1059,21 +594,16 @@ describe("Family Tree screen", () => {
   it("shows the four profile sections for Erma as populated", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
+    await openExploreFamily(user);
 
-    const claytonBranch = screen.getByRole("region", {
-      name: "Clayton's branch",
-    });
-    await user.click(
-      within(claytonBranch).getByRole("button", { name: /Erma T\. Williams/ }),
-    );
+    await tapRelative(user, /Clayton Norwood Child/);
+    await tapRelative(user, /Erma T\. Williams Spouse/);
+    await user.click(screen.getByRole("button", { name: "View Profile" }));
 
     for (const section of ["Her Story", "Family", "Timeline", "Sources"]) {
       expect(screen.getByRole("region", { name: section })).toBeInTheDocument();
     }
 
-    // Each section is populated (not an empty placeholder).
     expect(screen.queryByText("Not yet populated")).not.toBeInTheDocument();
     expect(screen.getByRole("region", { name: "Family" })).toHaveTextContent(
       "Clayton Norwood",
@@ -1092,25 +622,19 @@ describe("Family Tree screen", () => {
   it("renders the unresolved-conflict badge on Erma's profile", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
+    await openExploreFamily(user);
 
-    const claytonBranch = screen.getByRole("region", {
-      name: "Clayton's branch",
-    });
-    await user.click(
-      within(claytonBranch).getByRole("button", { name: /Erma T\. Williams/ }),
-    );
+    await tapRelative(user, /Clayton Norwood Child/);
+    await tapRelative(user, /Erma T\. Williams Spouse/);
+    await user.click(screen.getByRole("button", { name: "View Profile" }));
 
     const sources = screen.getByRole("region", { name: "Sources" });
 
-    // The documented records and family-history note keep their badges.
     expect(within(sources).getAllByText("Documented record")).toHaveLength(2);
     expect(
       within(sources).getByText("Family-history note"),
     ).toBeInTheDocument();
 
-    // The conflicting birth-year account is labeled an unresolved conflict.
     const conflictCard = Array.from(
       sources.querySelectorAll(".rounded-2xl"),
     ).find((el) =>

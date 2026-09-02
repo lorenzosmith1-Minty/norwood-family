@@ -5,8 +5,8 @@ import { AdminApprovalPage } from "./pages/AdminApprovalPage";
 import { ArchiveContributionPage } from "./pages/ArchiveContributionPage";
 import { ArchiveDetailPage } from "./pages/ArchiveDetailPage";
 import { ArchivePage } from "./pages/ArchivePage";
-import { FamilyTreePage } from "./pages/FamilyTreePage";
-import { HeritageBranchPage } from "./pages/HeritageBranchPage";
+import ExploreFamilyPage from "./pages/ExploreFamilyPage";
+import HeritageBranchPage from "./pages/HeritageBranchPage";
 import { HomePage } from "./pages/HomePage";
 import { PersonProfilePage, profiles } from "./pages/PersonProfilePage";
 
@@ -29,7 +29,10 @@ export default function App() {
   // Last tree person the user explored (opened a profile for). Passed to the
   // Family Tree so the branch containing that person starts expanded when the
   // user returns from the profile view. In-session navigation state only.
-  const [exploredPersonId, setExploredPersonId] = useState<string | null>(null);
+  const [, setExploredPersonId] = useState<string | null>(null);
+  // The person currently focused in the Explore Family view. When null, the
+  // view falls back to its default anchor (the person marked "Me" if present).
+  const [exploreFocusId, setExploreFocusId] = useState<string | null>(null);
   const { data: isAdmin = false } = useIsAdmin();
   // Tracks only explicitly-set (uploaded) profile photos. Default portraits are
   // resolved by each consumer via `profilePhoto ?? person.portrait.src`, so this
@@ -60,40 +63,41 @@ export default function App() {
     setView("archive-detail");
   }, []);
 
+  // Opens the Explore Family view centered on a given person. Used by the
+  // header "Explore Family" nav button (no focus change) and by the Heritage
+  // Branch View when a person is tapped to explore.
+  const openExploreFamily = useCallback((personId: string | null) => {
+    setExploreFocusId(personId);
+    setView("family-tree");
+  }, []);
+
   return (
     <Layout
       isAdmin={isAdmin}
       onAdminClick={() => setView("admin-approval")}
       onArchiveClick={() => setView("archive")}
       onBranchClick={() => setView("heritage-branch")}
+      onExploreClick={() => openExploreFamily(null)}
     >
       {view === "home" ? (
         <HomePage
-          onExplore={() => setView("family-tree")}
+          onExplore={() => openExploreFamily(null)}
           onAddToHistory={() => setView("archive-contribute")}
           onOpenArchive={() => setView("archive")}
           onOpenBranch={() => setView("heritage-branch")}
         />
       ) : view === "family-tree" ? (
-        <FamilyTreePage
-          onBack={() => setView("home")}
+        <ExploreFamilyPage
+          focusPersonId={exploreFocusId}
+          onSelectPerson={(id) => setExploreFocusId(id)}
           onOpenProfile={(id) => {
             setExploredPersonId(id);
             setProfileId(id);
             setView("profile");
           }}
-          profilePhotos={profilePhotos}
-          initialExpandedPersonId={exploredPersonId ?? undefined}
         />
       ) : view === "heritage-branch" ? (
-        <HeritageBranchPage
-          onBack={() => setView("family-tree")}
-          onOpenProfile={(id) => {
-            setProfileId(id);
-            setView("profile");
-          }}
-          profilePhotos={profilePhotos}
-        />
+        <HeritageBranchPage onOpenExploreFamily={openExploreFamily} />
       ) : view === "profile" ? (
         <PersonProfilePage
           person={profile}

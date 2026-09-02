@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom/vitest";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { cleanup, render, screen, within } from "@testing-library/react";
+import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
@@ -44,179 +44,75 @@ function renderApp() {
 
 afterEach(cleanup);
 
-async function openFamilyTree(user: ReturnType<typeof userEvent.setup>) {
+async function openExploreFamily(user: ReturnType<typeof userEvent.setup>) {
   await user.click(screen.getByRole("button", { name: "Explore the Family" }));
 }
 
-// Characterization baseline for the Family Tree collapsible-branch change. The
-// request will intentionally change the card layout (compact cards, hidden
-// relationship labels) and add collapsible descendant branches; the current
-// implementation already ships the collapsible branches, so these tests freeze
-// the branch behavior the request must preserve: collapsed branches show the
-// branch person's name and a descendant count, toggling expands/collapses the
-// branch, the branch holding the selected card cannot be collapsed, and the
-// branch containing a person whose profile was opened stays expanded when the
-// user returns from the profile view.
-describe("Family Tree collapsible-branch characterization: branch folds", () => {
-  it("shows each major descendant branch collapsed with the branch person's name and descendant count", async () => {
+// Characterization of the focused Explore Family navigation. The request
+// replaced the multi-generation tree (with its collapsible descendant branches)
+// with a focused view where tapping a relative card recenters on that person.
+// These tests protect the working navigation behavior that must survive: the
+// user can move through the family by recentering, the view always shows only
+// the focus person's closest relatives (never the full extended tree), and the
+// focus card's View Profile opens the existing profile.
+describe("Explore Family focused navigation", () => {
+  it("recenters on a tapped relative and shows only their closest relatives", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
+    await openExploreFamily(user);
 
-    const claytonFold = screen.getByRole("button", { name: "Clayton 16" });
-    const lulaVersieFold = screen.getByRole("button", {
-      name: "Lula Mae & Versie 9",
-    });
-    const maternalFold = screen.getByRole("button", {
-      name: "Versie's Maternal Family 3",
-    });
-    const harveyFold = screen.getByRole("button", {
-      name: "Harvey Adams Sr. 6",
-    });
-
-    expect(claytonFold).toHaveAttribute("aria-expanded", "false");
-    expect(lulaVersieFold).toHaveAttribute("aria-expanded", "false");
-    expect(maternalFold).toHaveAttribute("aria-expanded", "false");
-    expect(harveyFold).toHaveAttribute("aria-expanded", "false");
-
-    // Collapsed branches render no cards: the spouses and children of each
-    // branch are absent until the fold is opened.
+    // Start on Julia (default focus). Her closest relatives render.
+    expect(screen.getByText("Julia “Julie” Norwood")).toBeInTheDocument();
     expect(
-      screen.queryByRole("button", { name: /Erma T\. Williams/ }),
-    ).toBeNull();
-    expect(screen.queryByRole("button", { name: /Versie Smith/ })).toBeNull();
-    expect(
-      screen.queryByRole("button", { name: /^Harvey Adams Sr\.$/ }),
-    ).toBeNull();
-    expect(
-      screen.queryByRole("button", { name: /Mary Jane Johnson/ }),
-    ).toBeNull();
-  });
-
-  it("expands and collapses a branch from its fold row", async () => {
-    const user = userEvent.setup();
-    renderApp();
-    await openFamilyTree(user);
-
-    const claytonFold = screen.getByRole("button", { name: "Clayton 16" });
-    await user.click(claytonFold);
-    expect(claytonFold).toHaveAttribute("aria-expanded", "true");
-
-    const branch = screen.getByRole("region", { name: "Clayton's branch" });
-    expect(
-      within(branch).getByRole("button", { name: /Erma T\. Williams/ }),
-    ).toBeInTheDocument();
-    expect(
-      within(branch).getByRole("button", { name: /Columbus/ }),
+      screen.getByRole("button", { name: /Isaiah Norwood Spouse/ }),
     ).toBeInTheDocument();
 
-    // The fold row stays visible in the expanded state and collapses again.
-    await user.click(claytonFold);
-    expect(claytonFold).toHaveAttribute("aria-expanded", "false");
-    expect(
-      screen.queryByRole("button", { name: /Erma T\. Williams/ }),
-    ).toBeNull();
-  });
-
-  it("keeps the branch holding the selected card expanded when its fold is clicked", async () => {
-    const user = userEvent.setup();
-    renderApp();
-    await openFamilyTree(user);
-
-    const claytonFold = screen.getByRole("button", { name: "Clayton 16" });
-    await user.click(claytonFold);
-
-    // "Son (died at birth)" is a highlight-only child (no profile entry), so
-    // selecting him does not navigate away.
-    const son = screen.getByRole("button", { name: /Son \(died at birth\)/ });
-    await user.click(son);
-    expect(son).toHaveAttribute("aria-pressed", "true");
-
-    // Collapsing the branch that holds the selected card is refused, so the
-    // current selection stays visible.
-    await user.click(claytonFold);
-    expect(claytonFold).toHaveAttribute("aria-expanded", "true");
-    expect(
-      screen.getByRole("button", { name: /Son \(died at birth\)/ }),
-    ).toBeInTheDocument();
-  });
-});
-
-describe("Family Tree collapsible-branch characterization: explored branch stays expanded", () => {
-  it("keeps the branch of a person whose profile was opened expanded on return", async () => {
-    const user = userEvent.setup();
-    renderApp();
-    await openFamilyTree(user);
-
-    // Clayton's card lives in the always-visible Children section; opening his
-    // profile records him as the explored person.
-    const childrenSection = screen.getByRole("region", { name: "Children" });
+    // Tap Clayton to recenter on him.
     await user.click(
-      within(childrenSection).getByRole("button", { name: /^Clayton/ }),
+      screen.getByRole("button", { name: /Clayton Norwood Child/ }),
     );
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      /Clayton/,
-    );
-
-    await user.click(
-      screen.getByRole("button", { name: /Back to Family Tree/ }),
-    );
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      "Family Tree",
-    );
-
-    // The branch containing Clayton starts expanded: the fold reports open and
-    // his branch's cards render without any further interaction.
-    const claytonFold = screen.getByRole("button", { name: "Clayton 16" });
-    expect(claytonFold).toHaveAttribute("aria-expanded", "true");
-    const branch = screen.getByRole("region", { name: "Clayton's branch" });
+    expect(screen.getByText("Clayton Norwood")).toBeInTheDocument();
+    // His parents, spouses, and children now render around him.
     expect(
-      within(branch).getByRole("button", { name: /Erma T\. Williams/ }),
+      screen.getByRole("button", { name: /Julia “Julie” Norwood Mother/ }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Erma T\. Williams Spouse/ }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Elbert Norwood Child/ }),
     ).toBeInTheDocument();
   });
 
-  it("keeps the Lula Mae & Versie branch expanded after opening Versie's profile from it", async () => {
+  it("does not render the full extended family tree at any focus", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
+    await openExploreFamily(user);
 
-    // Expand the Lula Mae & Versie branch so Versie's card is reachable.
-    const lulaVersieFold = screen.getByRole("button", {
-      name: "Lula Mae & Versie 9",
-    });
-    await user.click(lulaVersieFold);
-    expect(lulaVersieFold).toHaveAttribute("aria-expanded", "true");
+    // A distant relative (Harvey Adams Sr.) is not present on the default view.
+    expect(screen.queryByText("Harvey Adams Sr.")).not.toBeInTheDocument();
 
-    // Versie's card opens his profile (he has a profile entry).
-    await user.click(screen.getByRole("button", { name: "Versie Smith" }));
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      /Versie/,
-    );
-
+    // Recenter on Clayton; his distant relatives are still absent.
     await user.click(
-      screen.getByRole("button", { name: /Back to Family Tree/ }),
+      screen.getByRole("button", { name: /Clayton Norwood Child/ }),
     );
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      "Family Tree",
-    );
+    expect(screen.queryByText("Harvey Adams Sr.")).not.toBeInTheDocument();
+    // No infinite-canvas surface is rendered.
+    expect(screen.queryByTestId("explore.canvas")).not.toBeInTheDocument();
+  });
 
-    // The branches containing the explored person (Versie) start expanded:
-    // both the Lula Mae & Versie branch and the Versie's maternal family branch
-    // (Versie sits at the bottom of his maternal ancestry chain), so his
-    // ancestry is reachable without reopening the folds.
-    expect(lulaVersieFold).toHaveAttribute("aria-expanded", "true");
-    const maternalFold = screen.getByRole("button", {
-      name: "Versie's Maternal Family 3",
-    });
-    expect(maternalFold).toHaveAttribute("aria-expanded", "true");
-    const maternalFamily = screen.getByRole("region", {
-      name: "Versie's maternal family",
-    });
-    expect(maternalFamily).toBeInTheDocument();
-    expect(
-      within(maternalFamily).getByRole("button", {
-        name: "Harvey Adams Sr.",
-      }),
-    ).toBeInTheDocument();
+  it("opens the focus person's profile via View Profile", async () => {
+    const user = userEvent.setup();
+    renderApp();
+    await openExploreFamily(user);
+
+    // Recenter on Clayton, then open his profile via the focus card's button.
+    await user.click(
+      screen.getByRole("button", { name: /Clayton Norwood Child/ }),
+    );
+    await user.click(screen.getByRole("button", { name: "View Profile" }));
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
+      "Clayton Norwood",
+    );
   });
 });

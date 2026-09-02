@@ -1,9 +1,17 @@
 import "@testing-library/jest-dom/vitest";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { cleanup, render, screen, within } from "@testing-library/react";
+import {
+  cleanup,
+  configure,
+  render,
+  screen,
+  within,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
+
+configure({ testIdAttribute: "data-ocid" });
 
 // App renders useIsAdmin at the top level, which calls useActor from
 // @caffeineai/core-infrastructure. The real useActor requires an
@@ -44,126 +52,101 @@ function renderApp() {
 
 afterEach(cleanup);
 
-async function openFamilyTree(user: ReturnType<typeof userEvent.setup>) {
-  await user.click(screen.getByRole("button", { name: "Explore the Family" }));
+async function openExploreFamily(user: ReturnType<typeof userEvent.setup>) {
+  // The header nav button is always labeled "Explore Family" (the home page
+  // has a separate "Explore the Family" button). Clicking the header button
+  // resets the focus to the default anchor (Julia).
+  await user.click(screen.getByRole("button", { name: /^Explore Family$/ }));
 }
 
-function maternalFamily() {
-  return screen.getByRole("region", { name: "Versie's maternal family" });
+// Recenter the Explore Family view on Harvey Adams Sr. by tapping each relative
+// card down the maternal ancestry chain. Clicking the header "Explore Family"
+// button first resets the focus to the default anchor (Julia), so this can be
+// re-run from any view to return to Harvey.
+async function focusHarvey(user: ReturnType<typeof userEvent.setup>) {
+  await openExploreFamily(user);
+  await user.click(
+    screen.getByRole("button", { name: /Clayton Norwood Child/ }),
+  );
+  await user.click(
+    screen.getByRole("button", { name: /Lula Mae Norwood Child/ }),
+  );
+  await user.click(screen.getByRole("button", { name: /Versie Smith Spouse/ }));
+  await user.click(
+    screen.getByRole("button", { name: /Gertrude Adams-Hill Mother/ }),
+  );
+  await user.click(
+    screen.getByRole("button", { name: /Harvey Adams Sr\. Father/ }),
+  );
 }
 
-// The Versie's maternal family branch defaults to collapsed; expand it so the
-// ancestor cards (Harvey, Gertrude, Versie) render.
-async function expandVersieMaternalBranch(
+// Recenter on a relative of the current focus, then open their profile via the
+// focus card's View Profile button.
+async function openProfileFromFocus(
   user: ReturnType<typeof userEvent.setup>,
+  relativeCardName: RegExp,
 ) {
-  await user.click(
-    screen.getByRole("button", { name: /^Versie's Maternal Family \d+$/ }),
-  );
+  await user.click(screen.getByRole("button", { name: relativeCardName }));
+  await user.click(screen.getByRole("button", { name: "View Profile" }));
 }
 
-// Re-anchor the Heritage Branch on Harvey Adams Sr., which reveals Mary
-// Louise Sims and the first-marriage children. Assumes the Heritage Branch is
-// already open (entered from Home or the Layout header).
-async function anchorHarvey(user: ReturnType<typeof userEvent.setup>) {
-  await user.click(
-    screen.getByRole("button", { name: /Clayton Norwood, Son/ }),
-  );
-  await user.click(screen.getByRole("button", { name: "Anchor Tree Here" }));
-  await user.click(screen.getByRole("button", { name: /Lula Mae, Child/ }));
-  await user.click(screen.getByRole("button", { name: "Anchor Tree Here" }));
-  await user.click(
-    screen.getByRole("button", { name: /Versie Smith, Husband/ }),
-  );
-  await user.click(screen.getByRole("button", { name: "Anchor Tree Here" }));
-  await user.click(
-    screen.getByRole("button", { name: /Gertrude Adams-Hill, Mother/ }),
-  );
-  await user.click(screen.getByRole("button", { name: "Anchor Tree Here" }));
-  await user.click(
-    screen.getByRole("button", { name: /Harvey Adams Sr\., Father/ }),
-  );
-  await user.click(screen.getByRole("button", { name: "Anchor Tree Here" }));
-}
-
-// Navigate from Home into the Heritage Branch and anchor on Harvey Adams Sr.
-async function navigateToHarveyAnchor(
-  user: ReturnType<typeof userEvent.setup>,
-) {
-  await user.click(
-    screen.getByRole("button", { name: "Heritage Branch View" }),
-  );
-  await anchorHarvey(user);
-}
-
-// The 14 recorded children of Harvey Adams Sr. and Mary Louise Sims, with the
-// Gertrude child mapping to the existing Gertrude Adams-Hill profile. Each
-// entry is the role-qualified accessible name of the Family Tree card.
+// The 14 recorded children of Harvey Adams Sr. and Mary Louise Sims, in the
+// order they appear in the family graph (Gertrude first, then the rest). Each
+// entry is the role-qualified accessible name of the Explore Family relative
+// card when Harvey is focused.
 const FIRST_MARRIAGE_CHILDREN = [
-  "John Adams Son",
-  "Louis Adams Sr. Son",
-  "Albert Adams Son",
-  "Charles Adams Son",
-  "Homer Adams Son",
-  "Versie Adams Sr. Son",
-  "Judge Granberry Adams Son",
-  "Fannie Adams Daughter",
-  "Gertrude Adams-Hill Daughter",
-  "Harvey Adams Jr. Son",
-  "Christine Adams Tucker Daughter",
-  "Robert Adams Sr. Son",
-  "Ella Mae Adams Daughter",
-  "Eula Lee Adams Daughter",
+  "Gertrude Adams-Hill Child",
+  "John Adams Child",
+  "Louis Adams Sr. Child",
+  "Albert Adams Child",
+  "Charles Adams Child",
+  "Homer Adams Child",
+  "Versie Adams Sr. Child",
+  "Judge Granberry Adams Child",
+  "Fannie Adams Child",
+  "Harvey Adams Jr. Child",
+  "Christine Adams Tucker Child",
+  "Robert Adams Sr. Child",
+  "Ella Mae Adams Child",
+  "Eula Lee Adams Child",
 ];
 
-// Cover for the Harvey Adams Sr. first-marriage branch: the branch moved out of
-// the Family Tree into the Heritage Branch (the Family Tree now shows only the
-// maternal ancestry chain Harvey → Gertrude → Versie). Mary Louise Sims as
-// first wife and the 14 recorded children (Gertrude Adams-Hill as the existing
-// Gertrude child) still render in the Heritage Branch under that marriage, each
-// card opens its profile, Christine Adams Tucker states she married a Tucker,
-// and Versie Adams Sr. remains distinct from Versie Smith.
+// Cover for the Harvey Adams Sr. first-marriage branch in the redesigned
+// Explore Family / Heritage Branch views. When Harvey is focused, Explore
+// Family shows both wives (Mary Louise Sims and Mary Jane Johnson) as spouse
+// cards and all 16 recorded children as child cards. Each first-marriage child
+// opens its profile via the focus card's View Profile button, Christine Adams
+// Tucker states she married a Tucker, Versie Adams Sr. remains distinct from
+// Versie Smith, and the Heritage Branch's Adams Maternal Line cluster shows
+// Harvey as the anchor with all children connected.
 describe("Harvey Adams Sr. first-marriage branch cover", () => {
-  it("keeps the first-marriage branch out of the Family Tree while the maternal ancestry chain remains", async () => {
+  it("shows Harvey's first-marriage connections in Explore Family", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandVersieMaternalBranch(user);
+    await focusHarvey(user);
 
-    const line = maternalFamily();
-    // The maternal ancestry chain (Harvey above Gertrude above Versie) remains.
+    // Mary Louise Sims (first wife) and Mary Jane Johnson (second wife) both
+    // render as spouse cards.
     expect(
-      within(line).getByRole("button", { name: /^Harvey Adams Sr\.$/ }),
+      screen.getByRole("button", { name: /Mary Louise Sims Spouse/ }),
     ).toBeInTheDocument();
     expect(
-      within(line).getByRole("button", { name: /Gertrude Adams-Hill 1913/ }),
-    ).toBeInTheDocument();
-    expect(
-      within(line).getByRole("button", { name: /^Versie Smith$/ }),
+      screen.getByRole("button", { name: /Mary Jane Johnson Spouse/ }),
     ).toBeInTheDocument();
 
-    // Mary Louise Sims and all 14 first-marriage children are no longer cards
-    // in the Family Tree.
-    expect(
-      within(line).queryByRole("button", { name: /^Mary Louise Sims$/ }),
-    ).toBeNull();
+    // All 14 first-marriage children render as child cards.
     for (const child of FIRST_MARRIAGE_CHILDREN) {
-      const name = child.replace(/ ([^ ]+)$/, "");
       expect(
-        within(line).queryByRole("button", { name: new RegExp(`^${name}$`) }),
-      ).toBeNull();
+        screen.getByRole("button", { name: new RegExp(child) }),
+      ).toBeInTheDocument();
     }
   });
 
-  it("opens Mary Louise Sims' profile from the Heritage Branch and renders the full template", async () => {
+  it("opens Mary Louise Sims' profile and renders the full template", async () => {
     const user = userEvent.setup();
     renderApp();
-    await navigateToHarveyAnchor(user);
-
-    await user.click(
-      screen.getByRole("button", { name: /Mary Louise Sims, First Wife/ }),
-    );
-    await user.click(screen.getByRole("button", { name: "Open Profile" }));
+    await focusHarvey(user);
+    await openProfileFromFocus(user, /Mary Louise Sims Spouse/);
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       "Mary Louise Sims",
@@ -182,42 +165,34 @@ describe("Harvey Adams Sr. first-marriage branch cover", () => {
     }
   });
 
-  // This journey re-enters the Heritage Branch and re-anchors on Harvey for
-  // each of the 13 children (~10 user interactions per case). It runs in ~3.4s
-  // in isolation but exceeds the 5000ms default under full-suite parallel load,
-  // so it gets an explicit, generous timeout rather than flaking.
-  it("opens each first-marriage child profile from the Heritage Branch", async () => {
+  it("opens each first-marriage child profile", async () => {
     const user = userEvent.setup();
     renderApp();
 
     const cases: { card: RegExp; heading: string }[] = [
-      { card: /John Adams, Son/, heading: "John Adams" },
-      { card: /Louis Adams Sr\., Son/, heading: "Louis Adams Sr." },
-      { card: /Albert Adams, Son/, heading: "Albert Adams" },
-      { card: /Charles Adams, Son/, heading: "Charles Adams" },
-      { card: /Homer Adams, Son/, heading: "Homer Adams" },
-      { card: /Versie Adams Sr\., Son/, heading: "Versie Adams Sr." },
-      { card: /Judge Granberry Adams, Son/, heading: "Judge Granberry Adams" },
-      { card: /Fannie Adams, Daughter/, heading: "Fannie Adams" },
-      { card: /Harvey Adams Jr\., Son/, heading: "Harvey Adams Jr." },
+      { card: /John Adams Child/, heading: "John Adams" },
+      { card: /Louis Adams Sr\. Child/, heading: "Louis Adams Sr." },
+      { card: /Albert Adams Child/, heading: "Albert Adams" },
+      { card: /Charles Adams Child/, heading: "Charles Adams" },
+      { card: /Homer Adams Child/, heading: "Homer Adams" },
+      { card: /Versie Adams Sr\. Child/, heading: "Versie Adams Sr." },
+      { card: /Judge Granberry Adams Child/, heading: "Judge Granberry Adams" },
+      { card: /Fannie Adams Child/, heading: "Fannie Adams" },
+      { card: /Harvey Adams Jr\. Child/, heading: "Harvey Adams Jr." },
       {
-        card: /Christine Adams Tucker, Daughter/,
+        card: /Christine Adams Tucker Child/,
         heading: "Christine Adams Tucker",
       },
-      { card: /Robert Adams Sr\., Son/, heading: "Robert Adams Sr." },
-      { card: /Ella Mae Adams, Daughter/, heading: "Ella Mae Adams" },
-      { card: /Eula Lee Adams, Daughter/, heading: "Eula Lee Adams" },
+      { card: /Robert Adams Sr\. Child/, heading: "Robert Adams Sr." },
+      { card: /Ella Mae Adams Child/, heading: "Ella Mae Adams" },
+      { card: /Eula Lee Adams Child/, heading: "Eula Lee Adams" },
     ];
 
     for (const { card, heading } of cases) {
-      // After "Back to Family Tree" the app renders the Family Tree page, not
-      // the Heritage Branch, so re-enter the branch via the Layout header and
-      // re-anchor on Harvey before each profile open.
-      await user.click(screen.getByRole("button", { name: "Heritage Branch" }));
-      await anchorHarvey(user);
-
-      await user.click(screen.getByRole("button", { name: card }));
-      await user.click(screen.getByRole("button", { name: "Open Profile" }));
+      // After "Back to Family Tree" the focus is the person whose profile was
+      // opened, so re-focus on Harvey before each profile open.
+      await focusHarvey(user);
+      await openProfileFromFocus(user, card);
       expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
         heading,
       );
@@ -230,14 +205,11 @@ describe("Harvey Adams Sr. first-marriage branch cover", () => {
   it("opens Gertrude Adams-Hill from her first-marriage child card (the existing Gertrude profile)", async () => {
     const user = userEvent.setup();
     renderApp();
-    await navigateToHarveyAnchor(user);
+    await focusHarvey(user);
 
     // The Gertrude child card in the first-marriage list opens the existing
     // Gertrude Adams-Hill profile, not a separate Gertrude Adams profile.
-    await user.click(
-      screen.getByRole("button", { name: /Gertrude Adams-Hill, Mother/ }),
-    );
-    await user.click(screen.getByRole("button", { name: "Open Profile" }));
+    await openProfileFromFocus(user, /Gertrude Adams-Hill Child/);
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       "Gertrude Adams-Hill",
@@ -250,12 +222,8 @@ describe("Harvey Adams Sr. first-marriage branch cover", () => {
   it("keeps Christine Adams Tucker's profile stating she married a Tucker", async () => {
     const user = userEvent.setup();
     const { container } = renderApp();
-    await navigateToHarveyAnchor(user);
-
-    await user.click(
-      screen.getByRole("button", { name: /Christine Adams Tucker, Daughter/ }),
-    );
-    await user.click(screen.getByRole("button", { name: "Open Profile" }));
+    await focusHarvey(user);
+    await openProfileFromFocus(user, /Christine Adams Tucker Child/);
 
     const dl = container.querySelector("dl");
     expect(dl).not.toBeNull();
@@ -272,13 +240,9 @@ describe("Harvey Adams Sr. first-marriage branch cover", () => {
   it("keeps Versie Adams Sr. distinct from Versie Smith", async () => {
     const user = userEvent.setup();
     renderApp();
-    await navigateToHarveyAnchor(user);
+    await focusHarvey(user);
+    await openProfileFromFocus(user, /Versie Adams Sr\. Child/);
 
-    // Versie Adams Sr. is a first-marriage child of Harvey and Mary Louise.
-    await user.click(
-      screen.getByRole("button", { name: /Versie Adams Sr\., Son/ }),
-    );
-    await user.click(screen.getByRole("button", { name: "Open Profile" }));
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       "Versie Adams Sr.",
     );
@@ -291,44 +255,48 @@ describe("Harvey Adams Sr. first-marriage branch cover", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("shows the same first-marriage branch in the Heritage Branch with all children connected", async () => {
+  it("shows the first-marriage branch in the Heritage Branch with all children connected", async () => {
     const user = userEvent.setup();
     renderApp();
-    await navigateToHarveyAnchor(user);
-
-    expect(screen.getByText(/Anchor: Harvey Adams Sr\./)).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: /Mary Louise Sims, First Wife/ }),
-    ).toBeInTheDocument();
-    // In the Heritage Branch the cards use comma-separated accessible names,
-    // e.g. "John Adams, Son" (comma before the role). Gertrude is rendered
-    // with her branch role "Mother" (she is Versie Smith's mother), not
-    // "Daughter" as in the Family Tree.
-    const heritageChildren = FIRST_MARRIAGE_CHILDREN.map((name) =>
-      name === "Gertrude Adams-Hill Daughter"
-        ? "Gertrude Adams-Hill, Mother"
-        : name.replace(/ ([^ ]+)$/, ", $1"),
+    await user.click(
+      screen.getByRole("button", { name: "Heritage Branch View" }),
     );
-    for (const child of heritageChildren) {
+
+    // The Adams Maternal Line cluster anchors on Harvey and lists all 16
+    // children (both marriages) as connected nodes.
+    const adams = screen.getByTestId("hb.cluster.5");
+    expect(
+      within(adams).getByRole("button", {
+        name: /Harvey Adams Sr\., Father of Gertrude Adams-Hill/,
+      }),
+    ).toBeInTheDocument();
+    expect(within(adams).getByTestId("hb.cluster.5.count")).toHaveTextContent(
+      "16 children · 2 marriages",
+    );
+    for (const child of FIRST_MARRIAGE_CHILDREN) {
+      const name = child.replace(/ Child$/, "");
       expect(
-        screen.getByRole("button", { name: new RegExp(child) }),
+        within(adams).getByRole("button", {
+          name: new RegExp(`^${name}, `),
+        }),
       ).toBeInTheDocument();
     }
   });
 
-  it("opens a first-marriage child profile from the Heritage Branch via Open Profile", async () => {
+  it("opens a first-marriage child profile from the Heritage Branch", async () => {
     const user = userEvent.setup();
     renderApp();
-    await navigateToHarveyAnchor(user);
-
-    // Open Christine Adams Tucker's profile from her Heritage Branch card.
     await user.click(
-      screen.getByRole("button", { name: /Christine Adams Tucker, Daughter/ }),
+      screen.getByRole("button", { name: "Heritage Branch View" }),
     );
-    await user.click(screen.getByRole("button", { name: "Open Profile" }));
 
+    // Tap a first-marriage child node in the Adams Maternal Line cluster.
+    await user.click(screen.getByRole("button", { name: /John Adams, Son/ }));
+
+    // Explore Family opens centered on John Adams.
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      "Christine Adams Tucker",
+      "Explore Family",
     );
+    expect(screen.getByText("John Adams")).toBeInTheDocument();
   });
 });

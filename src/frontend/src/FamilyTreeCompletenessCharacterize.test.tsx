@@ -44,17 +44,26 @@ function renderApp() {
 
 afterEach(cleanup);
 
-async function openFamilyTree(user: ReturnType<typeof userEvent.setup>) {
+async function openExploreFamily(user: ReturnType<typeof userEvent.setup>) {
   await user.click(screen.getByRole("button", { name: "Explore the Family" }));
 }
 
-// The Clayton branch defaults to collapsed; expand it so its cards render.
-async function expandClaytonBranch(user: ReturnType<typeof userEvent.setup>) {
-  await user.click(screen.getByRole("button", { name: /^Clayton \d+$/ }));
+async function tapRelative(
+  user: ReturnType<typeof userEvent.setup>,
+  name: RegExp,
+) {
+  await user.click(screen.getByRole("button", { name }));
 }
 
-function claytonBranch() {
-  return screen.getByRole("region", { name: "Clayton's branch" });
+// Navigate to a Clayton child's profile via the Explore Family navigator.
+async function openClaytonChildProfile(
+  user: ReturnType<typeof userEvent.setup>,
+  child: RegExp,
+) {
+  await openExploreFamily(user);
+  await tapRelative(user, /Clayton Norwood Child/);
+  await tapRelative(user, child);
+  await user.click(screen.getByRole("button", { name: "View Profile" }));
 }
 
 function completenessPercent(): string {
@@ -66,21 +75,16 @@ function completenessPercent(): string {
 }
 
 // Characterization baseline for the Person Profile Completeness section. The
-// request adds three new profiles (Freddie, Zelia Mae, Lula Mae) that will rely
-// on this template behavior, so the section itself must remain unchanged: it
-// renders all seven field labels and computes a percentage from the recorded vs
-// missing fields. These tests freeze the behavior on existing profiles (Wellman
-// and James) that are not part of the change.
+// request adds new profiles that rely on this template behavior, so the section
+// itself must remain unchanged: it renders all seven field labels and computes a
+// percentage from the recorded vs missing fields. These tests freeze the
+// behavior on existing profiles (Wellman and James) that are not part of the
+// change, reached through the new Explore Family navigator.
 describe("Person Profile Completeness characterization", () => {
   it("renders all seven completeness field labels on a profile", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
-
-    await user.click(
-      within(claytonBranch()).getByRole("button", { name: /Wellman/ }),
-    );
+    await openClaytonChildProfile(user, /Wellman Norwood Child/);
 
     const completeness = document.querySelector(
       '[data-ocid="profile.completeness"]',
@@ -104,31 +108,16 @@ describe("Person Profile Completeness characterization", () => {
   it("reflects recorded vs missing fields for a sparse profile (Wellman, 43%)", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
+    await openClaytonChildProfile(user, /Wellman Norwood Child/);
 
-    await user.click(
-      within(claytonBranch()).getByRole("button", { name: /Wellman/ }),
-    );
-
-    // Wellman has a story, a single timeline entry, and a source, but no photo,
-    // no birth/death facts, and no family relationships: 3 of 7 fields done.
     expect(completenessPercent()).toBe("43%");
   });
 
   it("reflects recorded vs missing fields for a profile with more recorded facts (James, 57%)", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
+    await openClaytonChildProfile(user, /James Norwood Child/);
 
-    await user.click(
-      within(claytonBranch()).getByRole("button", { name: /James/ }),
-    );
-
-    // James has birth/death facts (recorded as "Not recorded"), a story, and a
-    // source, but no photo, no family relationships, and an empty timeline:
-    // 4 of 7 fields done.
     expect(completenessPercent()).toBe("57%");
   });
 });

@@ -581,6 +581,22 @@ video {
     --fu-surface-foreground: 0.3 0.04 45;
     --fu-label: 0.42 0.11 35;
 
+    /* Explore Family: focused relationship navigator (one focus person +
+       closest relatives in a radial constellation) */
+    --ex-focus: 0.42 0.11 35;
+    --ex-focus-foreground: 0.96 0.02 70;
+    --ex-zone: 0.5 0.03 45;
+    --ex-relation: 0.42 0.11 35;
+    --ex-ring: 0.55 0.09 60;
+
+    /* Heritage Branch View: 10,000-foot family map (major couples, branch
+       clusters, descendant/branch counts) */
+    --hb-cluster: 0.93 0.025 70;
+    --hb-cluster-foreground: 0.3 0.04 45;
+    --hb-couple: 0.55 0.09 60;
+    --hb-couple-foreground: 0.96 0.02 70;
+    --hb-count: 0.42 0.11 35;
+
     --sidebar: 0.985 0.015 70;
     --sidebar-foreground: 0.22 0.04 45;
     --sidebar-primary: 0.42 0.11 35;
@@ -667,6 +683,22 @@ video {
     --fu-surface: 0.21 0.02 55;
     --fu-surface-foreground: 0.85 0.02 60;
     --fu-label: 0.72 0.14 60;
+
+    /* Explore Family: focused relationship navigator (one focus person +
+       closest relatives in a radial constellation) */
+    --ex-focus: 0.72 0.14 60;
+    --ex-focus-foreground: 0.16 0.02 55;
+    --ex-zone: 0.7 0.1 55;
+    --ex-relation: 0.72 0.14 60;
+    --ex-ring: 0.72 0.14 60;
+
+    /* Heritage Branch View: 10,000-foot family map (major couples, branch
+       clusters, descendant/branch counts) */
+    --hb-cluster: 0.22 0.02 55;
+    --hb-cluster-foreground: 0.85 0.02 60;
+    --hb-couple: 0.58 0.12 30;
+    --hb-couple-foreground: 0.95 0.01 60;
+    --hb-count: 0.72 0.14 60;
 
     --sidebar: 0.2 0.02 55;
     --sidebar-foreground: 0.93 0.02 60;
@@ -817,17 +849,8 @@ video {
 .top-4 {
   top: 1rem;
 }
-.top-\[18px\] {
-  top: 18px;
-}
 .top-\[1px\] {
   top: 1px;
-}
-.top-\[22px\] {
-  top: 22px;
-}
-.top-\[30px\] {
-  top: 30px;
 }
 .top-\[50\%\] {
   top: 50%;
@@ -1103,8 +1126,8 @@ video {
 .h-\[1\.15rem\] {
   height: 1.15rem;
 }
-.h-\[18px\] {
-  height: 18px;
+.h-\[4\.5rem\] {
+  height: 4.5rem;
 }
 .h-\[calc\(100\%-1px\)\] {
   height: calc(100% - 1px);
@@ -1229,6 +1252,9 @@ video {
 .w-\[100px\] {
   width: 100px;
 }
+.w-\[4\.5rem\] {
+  width: 4.5rem;
+}
 .w-auto {
   width: auto;
 }
@@ -1273,6 +1299,9 @@ video {
 .min-w-\[var\(--radix-select-trigger-width\)\] {
   min-width: var(--radix-select-trigger-width);
 }
+.max-w-2xl {
+  max-width: 42rem;
+}
 .max-w-3xl {
   max-width: 48rem;
 }
@@ -1282,8 +1311,14 @@ video {
 .max-w-6xl {
   max-width: 72rem;
 }
+.max-w-\[3\.5rem\] {
+  max-width: 3.5rem;
+}
 .max-w-\[4\.5rem\] {
   max-width: 4.5rem;
+}
+.max-w-\[5rem\] {
+  max-width: 5rem;
 }
 .max-w-\[6\.5rem\] {
   max-width: 6.5rem;
@@ -1738,9 +1773,6 @@ video {
   --tw-bg-opacity: 1;
   background-color: oklch(var(--muted) / var(--tw-bg-opacity, 1));
 }
-.bg-muted\/40 {
-  background-color: oklch(var(--muted) / 0.4);
-}
 .bg-muted\/50 {
   background-color: oklch(var(--muted) / 0.5);
 }
@@ -1887,6 +1919,10 @@ video {
 .py-4 {
   padding-top: 1rem;
   padding-bottom: 1rem;
+}
+.py-5 {
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
 }
 .py-6 {
   padding-top: 1.5rem;
@@ -3946,6 +3982,466 @@ video {
       height: 0.6rem;
     }
   }
+/* ---- Explore Family: focused relationship navigator ---- */
+/* Constellation stage: bounded, mobile-first, centered column; no infinite
+     canvas. One focus person with only their closest relatives around them. */
+.ex-stage {
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  width: 100%;
+  max-width: 28rem;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+/* Large focus card: the centered person, bronze halo emphasis */
+.ex-focus-card {
+  position: relative;
+  display: flex;
+  width: 100%;
+  max-width: 20rem;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 1rem;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  background-color: oklch(var(--card));
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
+  text-align: center;
+    box-shadow: 0 0 0 3px oklch(var(--ex-ring) / 0.35), 0 12px 32px -8px
+      oklch(0.36 0.05 45 / 0.24);
+    animation: recenter 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+.ex-focus-card:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(var(--ring) / 0.35), 0 0 0 6px
+      oklch(var(--ex-ring) / 0.25);
+  }
+.ex-focus-portrait {
+  display: flex;
+  height: 4.5rem;
+  width: 4.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  font-family: var(--font-display), serif;
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 600;
+    background-color: oklch(var(--muted));
+    color: oklch(var(--muted-foreground));
+    box-shadow: 0 0 0 3px oklch(var(--ex-ring));
+    overflow: hidden;
+}
+.ex-focus-portrait img {
+  height: 100%;
+  width: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.ex-focus-name {
+  font-family: var(--font-display), serif;
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 600;
+  line-height: 1.25;
+    color: oklch(var(--foreground));
+}
+.ex-focus-years {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  --tw-numeric-spacing: tabular-nums;
+  font-variant-numeric: var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction);
+    color: oklch(var(--muted-foreground));
+}
+.ex-focus-relation {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+    color: oklch(var(--ex-relation));
+}
+.ex-focus-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: 9999px;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+    color: oklch(var(--ex-focus-foreground));
+    background-color: oklch(var(--ex-focus));
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.18);
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow
+      0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.ex-focus-action:hover {
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.24);
+  }
+/* This-is-me badge on the focus card */
+.ex-me-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 9999px;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+    color: oklch(var(--success));
+    background-color: oklch(var(--success) / 0.12);
+}
+.ex-me-badge::before {
+    content: "";
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 9999px;
+    background-color: oklch(var(--success));
+  }
+/* Relationship zone: a labeled band holding one or more relative cards */
+.ex-zone {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+.ex-zone-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+    color: oklch(var(--ex-zone));
+}
+.ex-zone-label::before,
+  .ex-zone-label::after {
+    content: "";
+    width: 1.5rem;
+    height: 1px;
+    background-color: oklch(var(--connector-line-soft));
+  }
+.ex-zone-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+/* Compact relative card: portrait + name + relationship label */
+.ex-relative-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  background-color: oklch(var(--card));
+  padding-left: 0.625rem;
+  padding-right: 0.625rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  text-align: center;
+    min-width: 4.5rem;
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.1);
+    transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+}
+.ex-relative-card:hover,
+  .ex-relative-card:focus-within {
+    transform: translateY(-2px);
+    border-color: oklch(var(--ex-ring) / 0.6);
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.2);
+  }
+.ex-relative-card:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(var(--ring) / 0.25);
+  }
+.ex-relative-portrait {
+  display: flex;
+  height: 3rem;
+  width: 3rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  font-family: var(--font-display), serif;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 600;
+    background-color: oklch(var(--muted));
+    color: oklch(var(--muted-foreground));
+    box-shadow: 0 0 0 2px oklch(var(--photo-ring-soft));
+    overflow: hidden;
+}
+.ex-relative-portrait img {
+  height: 100%;
+  width: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.ex-relative-name {
+  max-width: 4.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.25;
+    color: oklch(var(--foreground));
+}
+.ex-relative-relation {
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+    color: oklch(var(--muted-foreground));
+}
+/* Short local stub: minimal directional connector, never a long line */
+.ex-connector {
+    width: 2px;
+    height: 0.75rem;
+    background-color: oklch(var(--connector-line-soft));
+    border-radius: 9999px;
+  }
+/* ---- Heritage Branch View: 10,000-foot family map ---- */
+/* Bounded overview map: paper wash, no infinite canvas */
+.hb-map {
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  max-width: 42rem;
+    background-color: oklch(var(--card) / 0.4);
+}
+/* Branch cluster: a framed plate grouping one major line's descendants */
+.hb-cluster {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+    background-color: oklch(var(--hb-cluster));
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.1);
+    animation: fold-in 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+.hb-cluster-head {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.hb-cluster-title {
+  font-family: var(--font-display), serif;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  line-height: 1.25;
+    color: oklch(var(--hb-cluster-foreground));
+}
+.hb-cluster-grid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+/* Major couple / branch anchor node: the head of a line */
+.hb-couple-anchor {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
+  text-align: center;
+    background-color: oklch(var(--hb-couple));
+    color: oklch(var(--hb-couple-foreground));
+    box-shadow: 0 0 0 2px oklch(var(--hb-couple) / 0.4), 0 4px 12px -4px
+      oklch(0.36 0.05 45 / 0.18);
+    cursor: pointer;
+    min-width: 5rem;
+    transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+}
+.hb-couple-anchor:hover,
+  .hb-couple-anchor:focus-within {
+    transform: translateY(-2px);
+    box-shadow: 0 0 0 3px oklch(var(--hb-couple) / 0.5), 0 12px 32px -8px
+      oklch(0.36 0.05 45 / 0.24);
+  }
+.hb-couple-anchor:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(var(--ring) / 0.35);
+  }
+.hb-couple-portrait {
+  display: flex;
+  height: 2.5rem;
+  width: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  font-family: var(--font-display), serif;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+    background-color: oklch(var(--hb-couple-foreground) / 0.14);
+    color: oklch(var(--hb-couple-foreground));
+    box-shadow: 0 0 0 2px oklch(var(--hb-couple-foreground) / 0.5);
+    overflow: hidden;
+}
+.hb-couple-portrait img {
+  height: 100%;
+  width: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.hb-couple-name {
+  max-width: 5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.25;
+    color: oklch(var(--hb-couple-foreground));
+}
+/* Compact descendant node */
+.hb-node {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: var(--radius);
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  background-color: oklch(var(--card));
+  padding-left: 0.375rem;
+  padding-right: 0.375rem;
+  padding-top: 0.375rem;
+  padding-bottom: 0.375rem;
+  text-align: center;
+    min-width: 3.5rem;
+    box-shadow: 0 1px 2px -1px oklch(0.36 0.05 45 / 0.1);
+    cursor: pointer;
+    transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+}
+.hb-node:hover,
+  .hb-node:focus-within {
+    transform: translateY(-1px);
+    border-color: oklch(var(--photo-ring) / 0.6);
+    box-shadow: 0 4px 12px -4px oklch(0.36 0.05 45 / 0.16);
+  }
+.hb-node-portrait {
+  display: flex;
+  height: 2.25rem;
+  width: 2.25rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  font-family: var(--font-display), serif;
+  font-size: 10px;
+  font-weight: 600;
+    background-color: oklch(var(--muted));
+    color: oklch(var(--muted-foreground));
+    box-shadow: 0 0 0 2px oklch(var(--photo-ring-soft));
+    overflow: hidden;
+}
+.hb-node-portrait img {
+  height: 100%;
+  width: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.hb-node-name {
+  max-width: 3.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.25;
+    color: oklch(var(--foreground));
+}
+/* Descendant / branch count chip */
+.hb-count-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 9999px;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  background-color: oklch(var(--card));
+  padding-left: 0.375rem;
+  padding-right: 0.375rem;
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
+  font-size: 9px;
+  font-weight: 700;
+  --tw-numeric-spacing: tabular-nums;
+  font-variant-numeric: var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction);
+    color: oklch(var(--hb-count));
+}
+.hb-count-chip::before {
+    content: "";
+    width: 0.3rem;
+    height: 0.3rem;
+    border-radius: 9999px;
+    background-color: oklch(var(--hb-count));
+  }
+/* Branch connector: short curved line within a cluster */
+.hb-connector {
+    display: block;
+    color: oklch(var(--branch-line-soft));
+  }
+.hb-connector path {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+  }
 .\[--cell-size\:--spacing\(8\)\] {
   --cell-size: var(--spacing(8));
 }
@@ -5433,11 +5929,6 @@ video {
 
   .sm\:gap-4 {
     gap: 1rem;
-  }
-
-  .sm\:px-6 {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
   }
 
   .sm\:py-10 {

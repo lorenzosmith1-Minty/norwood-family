@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom/vitest";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { cleanup, render, screen, within } from "@testing-library/react";
+import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
@@ -44,18 +44,15 @@ function renderApp() {
 
 afterEach(cleanup);
 
-async function openFamilyTree(user: ReturnType<typeof userEvent.setup>) {
+async function openExploreFamily(user: ReturnType<typeof userEvent.setup>) {
   await user.click(screen.getByRole("button", { name: "Explore the Family" }));
 }
 
-// The Lula Mae & Versie branch defaults to collapsed; expand it so its Family
-// Unit cluster renders.
-async function expandLulaVersieBranch(
+async function tapRelative(
   user: ReturnType<typeof userEvent.setup>,
+  name: RegExp,
 ) {
-  await user.click(
-    screen.getByRole("button", { name: /^Lula Mae & Versie \d+$/ }),
-  );
+  await user.click(screen.getByRole("button", { name }));
 }
 
 const SEVEN_CHILDREN = [
@@ -68,101 +65,63 @@ const SEVEN_CHILDREN = [
   "Ed Smith",
 ];
 
-// Characterization baseline for the Adams-family placement change. The request
-// will intentionally move the Adams family (Harvey Adams Sr., Mary Louise Sims,
-// their children, and Gertrude Adams-Hill) out of the Lula Mae + Versie section
-// into a separate collapsed maternal ancestry branch for Versie. So the current
-// Adams-below-the-children layout is NOT frozen here. These tests protect the
-// adjacent working behavior that must survive the change: the Lula Mae + Versie
-// Family Unit cluster stays a self-contained plate holding only the couple at
-// top, the 'Their Children' label, and the seven compact child cards — with the
-// Adams family outside that plate — and the cluster keeps its internal order
-// (couple, label, then children).
-describe("Lula Mae + Versie Family Unit cluster characterization: self-contained plate", () => {
-  it("keeps the Family Unit cluster self-contained: only the couple, 'Their Children' label, and 7 children", async () => {
+// Characterization baseline for the Lula Mae + Versie family unit. The request
+// intentionally replaced the classic Family Tree with the focused Explore
+// Family navigator, so the old Family Unit cluster plate DOM is not frozen.
+// These tests protect the adjacent working behavior that must survive: focusing
+// on Lula Mae shows Versie as her spouse and the seven children as relative
+// cards, and the Adams family (not a direct relative of Lula Mae) is not shown
+// on that view.
+describe("Lula Mae + Versie Family Unit cluster characterization: self-contained view", () => {
+  it("keeps the Lula Mae focus self-contained: spouse, seven children, and no Adams family", async () => {
     const user = userEvent.setup();
-    const { container } = renderApp();
-    await openFamilyTree(user);
-    await expandLulaVersieBranch(user);
+    renderApp();
+    await openExploreFamily(user);
 
-    // The Family Unit cluster is the framed plate holding the couple, label,
-    // and children. The Adams family renders outside this plate (currently as a
-    // sibling section; after the change as a separate branch), so none of its
-    // cards live inside the cluster.
-    const cluster = container.querySelector(".fu-cluster");
-    expect(cluster).not.toBeNull();
+    // Julia -> Clayton -> Lula Mae.
+    await tapRelative(user, /Clayton Norwood Child/);
+    await tapRelative(user, /Lula Mae Norwood Child/);
 
-    // The couple sits at the top of the cluster.
+    // Lula Mae is the focus; Versie renders as her spouse.
+    expect(screen.getByText("Lula Mae Norwood")).toBeInTheDocument();
     expect(
-      within(cluster as HTMLElement).getByRole("button", { name: "Lula Mae" }),
-    ).toBeInTheDocument();
-    expect(
-      within(cluster as HTMLElement).getByRole("button", {
-        name: "Versie Smith",
-      }),
+      screen.getByRole("button", { name: /Versie Smith Spouse/ }),
     ).toBeInTheDocument();
 
-    // The 'Their Children' label is inside the cluster.
-    expect(
-      within(cluster as HTMLElement).getByText("Their Children"),
-    ).toBeInTheDocument();
-
-    // All seven children render inside the cluster.
+    // All seven children render as relative cards.
     for (const name of SEVEN_CHILDREN) {
       expect(
-        within(cluster as HTMLElement).getByRole("button", { name }),
+        screen.getByRole("button", { name: new RegExp(`${name} Child`) }),
       ).toBeInTheDocument();
     }
 
-    // The Adams family cards are NOT inside the cluster plate: the cluster is
-    // self-contained and ends with the seven children.
+    // The Adams family is not a direct relative of Lula Mae, so none of its
+    // members render on this focused view.
     expect(
-      within(cluster as HTMLElement).queryByRole("button", {
-        name: /Harvey Adams Sr\./,
-      }),
-    ).toBeNull();
+      screen.queryByRole("button", { name: /Harvey Adams Sr\./ }),
+    ).not.toBeInTheDocument();
     expect(
-      within(cluster as HTMLElement).queryByRole("button", {
-        name: /Mary Louise Sims/,
-      }),
-    ).toBeNull();
+      screen.queryByRole("button", { name: /Mary Louise Sims/ }),
+    ).not.toBeInTheDocument();
     expect(
-      within(cluster as HTMLElement).queryByRole("button", {
-        name: /Gertrude Adams-Hill/,
-      }),
-    ).toBeNull();
+      screen.queryByRole("button", { name: /Gertrude Adams-Hill/ }),
+    ).not.toBeInTheDocument();
   });
 
-  it("keeps the cluster's internal order: couple at top, 'Their Children' label, then the children", async () => {
+  it("keeps the zones in order: spouse beside the focus, children below", async () => {
     const user = userEvent.setup();
-    const { container } = renderApp();
-    await openFamilyTree(user);
-    await expandLulaVersieBranch(user);
+    renderApp();
+    await openExploreFamily(user);
 
-    const cluster = container.querySelector(".fu-cluster");
-    expect(cluster).not.toBeNull();
+    await tapRelative(user, /Clayton Norwood Child/);
+    await tapRelative(user, /Lula Mae Norwood Child/);
 
-    const lulaMae = within(cluster as HTMLElement).getByRole("button", {
-      name: "Lula Mae",
-    });
-    const versie = within(cluster as HTMLElement).getByRole("button", {
-      name: "Versie Smith",
-    });
-    const label = within(cluster as HTMLElement).getByText("Their Children");
-    const firstChild = within(cluster as HTMLElement).getByRole("button", {
-      name: "Lorenzo Smith Sr.",
-    });
-    const lastChild = within(cluster as HTMLElement).getByRole("button", {
-      name: "Ed Smith",
-    });
-
-    const follows = (a: Element, b: Element) =>
-      (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0;
-
-    // Couple at top, label between the couple and the children, children last.
-    expect(follows(lulaMae, label)).toBe(true);
-    expect(follows(versie, label)).toBe(true);
-    expect(follows(label, firstChild)).toBe(true);
-    expect(follows(firstChild, lastChild)).toBe(true);
+    // The Spouse zone label precedes the Children zone label in document order.
+    const spouse = screen.getAllByText("Spouse")[0];
+    const children = screen.getAllByText("Children")[0];
+    expect(
+      spouse.compareDocumentPosition(children) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
   });
 });

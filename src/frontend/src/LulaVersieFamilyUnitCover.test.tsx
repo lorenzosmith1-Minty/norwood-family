@@ -1,10 +1,9 @@
 import "@testing-library/jest-dom/vitest";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { cleanup, render, screen, within } from "@testing-library/react";
+import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
-import { FamilyTreePage } from "./pages/FamilyTreePage";
 
 // App renders useIsAdmin at the top level, which calls useActor from
 // @caffeineai/core-infrastructure. The real useActor requires an
@@ -45,18 +44,15 @@ function renderApp() {
 
 afterEach(cleanup);
 
-async function openFamilyTree(user: ReturnType<typeof userEvent.setup>) {
+async function openExploreFamily(user: ReturnType<typeof userEvent.setup>) {
   await user.click(screen.getByRole("button", { name: "Explore the Family" }));
 }
 
-// The Lula Mae & Versie branch defaults to collapsed; expand it so its Family
-// Unit cluster renders.
-async function expandLulaVersieBranch(
+async function tapRelative(
   user: ReturnType<typeof userEvent.setup>,
+  name: RegExp,
 ) {
-  await user.click(
-    screen.getByRole("button", { name: /^Lula Mae & Versie \d+$/ }),
-  );
+  await user.click(screen.getByRole("button", { name }));
 }
 
 const SEVEN_CHILDREN = [
@@ -69,105 +65,78 @@ const SEVEN_CHILDREN = [
   "Ed Smith",
 ];
 
-// Cover for the Family Unit cluster redesign and the seven new child profiles.
-// The Lula Mae + Versie section now renders as a compact Family Unit cluster
-// (couple at top, 'Their Children' label, 7 compact clickable child cards), each
-// child card opens that child's profile page, and selecting a child card shows
-// Relation to You and This is Me.
+// Cover for the Lula Mae + Versie family unit and the seven child profiles. The
+// request intentionally replaced the classic Family Tree with the focused
+// Explore Family navigator, so the old Family Unit cluster DOM is not asserted.
+// These tests protect the accepted behavior that survives: focusing on Lula Mae
+// shows Versie as her spouse and all seven children as relative cards, and each
+// child's card opens that child's profile page.
 describe("Lula Mae + Versie Family Unit cover: compact cluster and seven child profiles", () => {
-  it("renders the Family Unit cluster with the couple at top, 'Their Children' label, and 7 child cards", async () => {
+  it("shows the couple and all seven child cards when focused on Lula Mae", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandLulaVersieBranch(user);
+    await openExploreFamily(user);
 
-    const section = screen.getByRole("region", { name: "Lula Mae and Versie" });
+    // Julia -> Clayton -> Lula Mae.
+    await tapRelative(user, /Clayton Norwood Child/);
+    await tapRelative(user, /Lula Mae Norwood Child/);
 
-    // The couple sits at the top of the cluster.
+    // Lula Mae is the focus; Versie renders as her spouse.
+    expect(screen.getByText("Lula Mae Norwood")).toBeInTheDocument();
     expect(
-      within(section).getByRole("button", { name: "Lula Mae" }),
-    ).toBeInTheDocument();
-    expect(
-      within(section).getByRole("button", { name: "Versie Smith" }),
+      screen.getByRole("button", { name: /Versie Smith Spouse/ }),
     ).toBeInTheDocument();
 
-    // The 'Their Children' label is present.
-    expect(within(section).getByText("Their Children")).toBeInTheDocument();
-
-    // All seven child cards render with their correct names.
+    // All seven children render as relative cards.
     for (const name of SEVEN_CHILDREN) {
-      expect(within(section).getByRole("button", { name })).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: new RegExp(`${name} Child`) }),
+      ).toBeInTheDocument();
     }
   });
 
-  it("opens each child's profile page via the reveal's Open Profile button", async () => {
+  it("opens each child's profile page via View Profile", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandLulaVersieBranch(user);
+    await openExploreFamily(user);
+
+    // Julia -> Clayton -> Lula Mae.
+    await tapRelative(user, /Clayton Norwood Child/);
+    await tapRelative(user, /Lula Mae Norwood Child/);
 
     for (const name of SEVEN_CHILDREN) {
-      // Re-query the section each iteration: navigating away and back
-      // re-renders the tree, so a captured element goes stale.
-      const section = screen.getByRole("region", {
-        name: "Lula Mae and Versie",
-      });
-      // Clicking a child card selects it (openOnSelect={false}) and reveals
-      // the Relation to You / This is Me area with an explicit Open Profile
-      // button; it no longer navigates straight to the profile.
-      await user.click(within(section).getByRole("button", { name }));
-      await user.click(
-        within(section).getByRole("button", { name: "Open Profile" }),
-      );
+      // Tap the child card to recenter on them, then open their profile.
+      await tapRelative(user, new RegExp(`${name} Child`));
+      await user.click(screen.getByRole("button", { name: "View Profile" }));
 
-      // The profile page opens with the child's name as the heading.
       expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(name);
 
-      // Return to the Family Tree. The branch containing the explored child
-      // starts expanded on return, so re-expand only if it is currently
-      // collapsed.
+      // Back to Explore Family (now focused on the child), then recenter on
+      // Lula Mae via her Mother card for the next child.
       await user.click(
         screen.getByRole("button", { name: /Back to Family Tree/ }),
       );
-      const fold = screen.getByRole("button", {
-        name: /^Lula Mae & Versie \d+$/,
-      });
-      if (fold.getAttribute("aria-expanded") === "false") {
-        await user.click(fold);
-      }
+      await tapRelative(user, /Lula Mae Norwood Mother/);
     }
   });
 
-  it("shows a real Relation to You value, This is Me, and Open Profile when a child card is selected", async () => {
+  it("renders each child card with its relationship label and recenters on tap", async () => {
     const user = userEvent.setup();
-    // Render the Family Tree directly with a no-op profile opener so selecting
-    // a child card reveals its details without navigating away.
-    render(
-      <FamilyTreePage
-        onBack={() => {}}
-        onOpenProfile={() => {}}
-        profilePhotos={{}}
-      />,
-    );
-    await expandLulaVersieBranch(user);
+    renderApp();
+    await openExploreFamily(user);
 
-    const section = screen.getByRole("region", { name: "Lula Mae and Versie" });
-    const child = within(section).getByRole("button", {
-      name: "Lorenzo Smith Sr.",
+    // Julia -> Clayton -> Lula Mae.
+    await tapRelative(user, /Clayton Norwood Child/);
+    await tapRelative(user, /Lula Mae Norwood Child/);
+
+    // The first child card carries the "Child" relationship label.
+    const child = screen.getByRole("button", {
+      name: /Lorenzo Smith Sr\. Child/,
     });
+    expect(child).toBeInTheDocument();
 
-    // Selecting the card reveals its relationship details, the This is Me
-    // action, and the Open Profile action.
+    // Tapping it recenters the view on that child.
     await user.click(child);
-    expect(child).toHaveAttribute("aria-pressed", "true");
-    // The reveal shows a real recorded relation value, not 'Not set'.
-    expect(child).toHaveTextContent("Relation to You: granduncle");
-    expect(child).not.toHaveTextContent("Not set");
-    expect(
-      within(section).getByRole("button", { name: "This is Me" }),
-    ).toBeInTheDocument();
-    expect(
-      within(section).getByRole("button", { name: "Open Profile" }),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Lorenzo Smith Sr.")).toBeInTheDocument();
   });
 });

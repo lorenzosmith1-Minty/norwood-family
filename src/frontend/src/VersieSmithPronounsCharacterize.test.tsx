@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom/vitest";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { cleanup, render, screen, within } from "@testing-library/react";
+import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
@@ -46,15 +46,15 @@ afterEach(cleanup);
 
 async function openVersieProfile(user: ReturnType<typeof userEvent.setup>) {
   await user.click(screen.getByRole("button", { name: "Explore the Family" }));
-  // The Lula Mae & Versie branch defaults to collapsed; expand it so its cards
-  // render.
+  // Recenter through the Explore Family focused navigator to Versie Smith.
   await user.click(
-    screen.getByRole("button", { name: /^Lula Mae & Versie \d+$/ }),
+    screen.getByRole("button", { name: /Clayton Norwood Child/ }),
   );
-  const couple = screen.getByRole("region", { name: "Lula Mae and Versie" });
   await user.click(
-    within(couple).getByRole("button", { name: "Versie Smith" }),
+    screen.getByRole("button", { name: /Lula Mae Norwood Child/ }),
   );
+  await user.click(screen.getByRole("button", { name: /Versie Smith Spouse/ }));
+  await user.click(screen.getByRole("button", { name: "View Profile" }));
 }
 
 // Characterization baseline for the verification request: Versie Smith's profile

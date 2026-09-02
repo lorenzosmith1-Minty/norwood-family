@@ -44,22 +44,20 @@ function renderApp() {
 
 afterEach(cleanup);
 
-async function openFamilyTree(user: ReturnType<typeof userEvent.setup>) {
+async function openExploreFamily(user: ReturnType<typeof userEvent.setup>) {
   await user.click(screen.getByRole("button", { name: "Explore the Family" }));
 }
 
-function maternalFamily() {
-  return screen.getByRole("region", { name: "Versie's maternal family" });
+async function tap(user: ReturnType<typeof userEvent.setup>, name: RegExp) {
+  await user.click(screen.getByRole("button", { name }));
 }
 
-// The Versie's maternal family branch defaults to collapsed; expand it so the
-// ancestor cards (Harvey, Gertrude, Versie) render.
-async function expandVersieMaternalBranch(
-  user: ReturnType<typeof userEvent.setup>,
-) {
-  await user.click(
-    screen.getByRole("button", { name: /^Versie's Maternal Family \d+$/ }),
-  );
+// Navigate the Explore Family chain to focus on Versie Smith.
+async function focusVersie(user: ReturnType<typeof userEvent.setup>) {
+  await openExploreFamily(user);
+  await tap(user, /Clayton Norwood Child/);
+  await tap(user, /Lula Mae Norwood Child/);
+  await tap(user, /Versie Smith Spouse/);
 }
 
 // Characterization baseline for the Harvey Adams Sr. first-marriage branch
@@ -81,41 +79,30 @@ describe("Harvey Adams Sr. branch characterization: stable maternal-line behavio
     ).toHaveAttribute("src", "/assets/norwood-logo.png");
   });
 
-  it("keeps Harvey and Gertrude as Versie's maternal ancestry in the Family Tree", async () => {
+  it("keeps Harvey and Gertrude as Versie's maternal ancestry", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandVersieMaternalBranch(user);
+    await focusVersie(user);
 
-    const line = maternalFamily();
+    // Focusing on Versie shows Gertrude as his mother.
     expect(
-      within(line).getByRole("button", { name: /Harvey Adams Sr\./ }),
+      screen.getByRole("button", { name: /Gertrude Adams-Hill Mother/ }),
     ).toBeInTheDocument();
-    // Gertrude appears once as Versie's Mother card, carrying her years
-    // ("1913–"); the first-marriage child card is gone from the tree.
+
+    // Focusing on Gertrude shows Harvey as her father.
+    await tap(user, /Gertrude Adams-Hill Mother/);
     expect(
-      within(line).getByRole("button", { name: /Gertrude Adams-Hill 1913/ }),
-    ).toBeInTheDocument();
-    expect(
-      within(line).queryByRole("button", { name: /^Gertrude Adams-Hill$/ }),
-    ).toBeNull();
-    // Versie Smith (the person) sits at the bottom of the ancestry chain.
-    expect(
-      within(line).getByRole("button", { name: /^Versie Smith$/ }),
+      screen.getByRole("button", { name: /Harvey Adams Sr\. Father/ }),
     ).toBeInTheDocument();
   });
 
-  it("opens Harvey's profile from his Family Tree card and renders the full template", async () => {
+  it("opens Harvey's profile from his card and renders the full template", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandVersieMaternalBranch(user);
-
-    await user.click(
-      within(maternalFamily()).getByRole("button", {
-        name: /Harvey Adams Sr\./,
-      }),
-    );
+    await focusVersie(user);
+    await tap(user, /Gertrude Adams-Hill Mother/);
+    await tap(user, /Harvey Adams Sr\. Father/);
+    await user.click(screen.getByRole("button", { name: "View Profile" }));
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       "Harvey Adams Sr.",
@@ -141,14 +128,10 @@ describe("Harvey Adams Sr. branch characterization: stable maternal-line behavio
   it("keeps Harvey's occupation, livestock, and married-twice facts", async () => {
     const user = userEvent.setup();
     const { container } = renderApp();
-    await openFamilyTree(user);
-    await expandVersieMaternalBranch(user);
-
-    await user.click(
-      within(maternalFamily()).getByRole("button", {
-        name: /Harvey Adams Sr\./,
-      }),
-    );
+    await focusVersie(user);
+    await tap(user, /Gertrude Adams-Hill Mother/);
+    await tap(user, /Harvey Adams Sr\. Father/);
+    await user.click(screen.getByRole("button", { name: "View Profile" }));
 
     const dl = container.querySelector("dl");
     expect(dl).not.toBeNull();
@@ -169,14 +152,10 @@ describe("Harvey Adams Sr. branch characterization: stable maternal-line behavio
   it("keeps both wives as spouse cards in Harvey's Family section", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandVersieMaternalBranch(user);
-
-    await user.click(
-      within(maternalFamily()).getByRole("button", {
-        name: /Harvey Adams Sr\./,
-      }),
-    );
+    await focusVersie(user);
+    await tap(user, /Gertrude Adams-Hill Mother/);
+    await tap(user, /Harvey Adams Sr\. Father/);
+    await user.click(screen.getByRole("button", { name: "View Profile" }));
 
     const family = screen.getByRole("region", { name: "Family" });
     expect(within(family).getByText("Mary Louise Sims")).toBeInTheDocument();
@@ -188,41 +167,15 @@ describe("Harvey Adams Sr. branch characterization: stable maternal-line behavio
   it("keeps Harvey opening from the Heritage Branch as Gertrude's father", async () => {
     const user = userEvent.setup();
     renderApp();
+    await user.click(screen.getByRole("button", { name: "Heritage Branch" }));
+
+    // Harvey's node opens Explore Family centered on him, then his profile.
     await user.click(
-      screen.getByRole("button", { name: "Heritage Branch View" }),
+      screen.getByRole("button", {
+        name: /Harvey Adams Sr\., Father of Gertrude Adams-Hill/,
+      }),
     );
-
-    // Anchor on Clayton to reveal Lula Mae as one of his children.
-    await user.click(
-      screen.getByRole("button", { name: /Clayton Norwood, Son/ }),
-    );
-    await user.click(screen.getByRole("button", { name: "Anchor Tree Here" }));
-
-    // Anchor on Lula Mae to reveal Versie as her spouse.
-    await user.click(screen.getByRole("button", { name: /Lula Mae, Child/ }));
-    await user.click(screen.getByRole("button", { name: "Anchor Tree Here" }));
-
-    // Anchor on Versie to reveal Gertrude as his parent.
-    await user.click(
-      screen.getByRole("button", { name: /Versie Smith, Husband/ }),
-    );
-    await user.click(screen.getByRole("button", { name: "Anchor Tree Here" }));
-
-    // Anchor on Gertrude to reveal Harvey as her parent.
-    await user.click(
-      screen.getByRole("button", { name: /Gertrude Adams-Hill, Mother/ }),
-    );
-    await user.click(screen.getByRole("button", { name: "Anchor Tree Here" }));
-
-    expect(screen.getByText(/Anchor: Gertrude Adams-Hill/)).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: /Harvey Adams Sr\., Father/ }),
-    ).toBeInTheDocument();
-
-    await user.click(
-      screen.getByRole("button", { name: /Harvey Adams Sr\., Father/ }),
-    );
-    await user.click(screen.getByRole("button", { name: "Open Profile" }));
+    await user.click(screen.getByRole("button", { name: "View Profile" }));
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       "Harvey Adams Sr.",
@@ -232,14 +185,9 @@ describe("Harvey Adams Sr. branch characterization: stable maternal-line behavio
   it("keeps Gertrude's profile rendering unchanged", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandVersieMaternalBranch(user);
-
-    await user.click(
-      within(maternalFamily()).getByRole("button", {
-        name: /Gertrude Adams-Hill 1913/,
-      }),
-    );
+    await focusVersie(user);
+    await tap(user, /Gertrude Adams-Hill Mother/);
+    await user.click(screen.getByRole("button", { name: "View Profile" }));
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       "Gertrude Adams-Hill",

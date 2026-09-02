@@ -44,17 +44,18 @@ function renderApp() {
 
 afterEach(cleanup);
 
-async function openFamilyTree(user: ReturnType<typeof userEvent.setup>) {
+// Open the Explore Family focused navigator, recenter on Clayton, then open the
+// given child's profile from his card.
+async function openClaytonChildProfile(
+  user: ReturnType<typeof userEvent.setup>,
+  cardName: RegExp,
+) {
   await user.click(screen.getByRole("button", { name: "Explore the Family" }));
-}
-
-function claytonBranch() {
-  return screen.getByRole("region", { name: "Clayton's branch" });
-}
-
-// The Clayton branch defaults to collapsed; expand it so its cards render.
-async function expandClaytonBranch(user: ReturnType<typeof userEvent.setup>) {
-  await user.click(screen.getByRole("button", { name: /^Clayton \d+$/ }));
+  await user.click(
+    screen.getByRole("button", { name: /Clayton Norwood Child/ }),
+  );
+  await user.click(screen.getByRole("button", { name: cardName }));
+  await user.click(screen.getByRole("button", { name: "View Profile" }));
 }
 
 // Cover for the intentionally-changed behavior: the four Erma T. Williams branch
@@ -67,12 +68,7 @@ describe("Family Tree cover: four new Erma T. Williams child profiles", () => {
   it("opens Columbus's profile from his card and renders the full template", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
-
-    await user.click(
-      within(claytonBranch()).getByRole("button", { name: /Columbus/ }),
-    );
+    await openClaytonChildProfile(user, /Columbus Norwood Child/);
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       "Columbus Norwood",
@@ -88,12 +84,7 @@ describe("Family Tree cover: four new Erma T. Williams child profiles", () => {
   it("shows Columbus's recorded facts: son of Clayton and Erma, Ogden Utah, no additional details", async () => {
     const user = userEvent.setup();
     const { container } = renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
-
-    await user.click(
-      within(claytonBranch()).getByRole("button", { name: /Columbus/ }),
-    );
+    await openClaytonChildProfile(user, /Columbus Norwood Child/);
 
     const dl = container.querySelector("dl");
     expect(dl).not.toBeNull();
@@ -121,14 +112,7 @@ describe("Family Tree cover: four new Erma T. Williams child profiles", () => {
   it("opens Thomas Clayton 'Tip / TC''s profile from his card and renders the full template", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
-
-    await user.click(
-      within(claytonBranch()).getByRole("button", {
-        name: /Thomas Clayton/,
-      }),
-    );
+    await openClaytonChildProfile(user, /Thomas Clayton/);
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       "Thomas Clayton “Tip / TC” Norwood",
@@ -143,14 +127,7 @@ describe("Family Tree cover: four new Erma T. Williams child profiles", () => {
   it("shows Thomas Clayton's recorded facts: son of Clayton and Erma, Mississippi, daughters Vanessa and Denise, Vanessa in Texas", async () => {
     const user = userEvent.setup();
     const { container } = renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
-
-    await user.click(
-      within(claytonBranch()).getByRole("button", {
-        name: /Thomas Clayton/,
-      }),
-    );
+    await openClaytonChildProfile(user, /Thomas Clayton/);
 
     const dl = container.querySelector("dl");
     expect(dl).not.toBeNull();
@@ -176,12 +153,7 @@ describe("Family Tree cover: four new Erma T. Williams child profiles", () => {
   it("opens Alton's profile from his card and renders the full template", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
-
-    await user.click(
-      within(claytonBranch()).getByRole("button", { name: /Alton/ }),
-    );
+    await openClaytonChildProfile(user, /Alton Norwood Child/);
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       "Alton Norwood",
@@ -196,12 +168,7 @@ describe("Family Tree cover: four new Erma T. Williams child profiles", () => {
   it("shows Alton's recorded facts: son of Clayton and Erma, Chicago, no additional details", async () => {
     const user = userEvent.setup();
     const { container } = renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
-
-    await user.click(
-      within(claytonBranch()).getByRole("button", { name: /Alton/ }),
-    );
+    await openClaytonChildProfile(user, /Alton Norwood Child/);
 
     const dl = container.querySelector("dl");
     expect(dl).not.toBeNull();
@@ -225,12 +192,7 @@ describe("Family Tree cover: four new Erma T. Williams child profiles", () => {
   it("opens Robert Davis 'RD''s profile from his card and renders the full template", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
-
-    await user.click(
-      within(claytonBranch()).getByRole("button", { name: /Robert Davis/ }),
-    );
+    await openClaytonChildProfile(user, /Robert Davis/);
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       "Robert Davis “RD” Norwood",
@@ -245,12 +207,7 @@ describe("Family Tree cover: four new Erma T. Williams child profiles", () => {
   it("shows Robert Davis's recorded facts: son of Clayton and Erma, Aug. 22, 1927 – March 28, 1987, Los Angeles", async () => {
     const user = userEvent.setup();
     const { container } = renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
-
-    await user.click(
-      within(claytonBranch()).getByRole("button", { name: /Robert Davis/ }),
-    );
+    await openClaytonChildProfile(user, /Robert Davis/);
 
     const dl = container.querySelector("dl");
     expect(dl).not.toBeNull();
@@ -277,18 +234,21 @@ describe("Family Tree cover: four new Erma T. Williams child profiles", () => {
   it("labels each new profile's sources as family-history notes, not documented records", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
+    await user.click(
+      screen.getByRole("button", { name: "Explore the Family" }),
+    );
+    await user.click(
+      screen.getByRole("button", { name: /Clayton Norwood Child/ }),
+    );
 
     for (const cardName of [
-      /Columbus/,
+      /Columbus Norwood Child/,
       /Thomas Clayton/,
-      /Alton/,
+      /Alton Norwood Child/,
       /Robert Davis/,
     ]) {
-      await user.click(
-        within(claytonBranch()).getByRole("button", { name: cardName }),
-      );
+      await user.click(screen.getByRole("button", { name: cardName }));
+      await user.click(screen.getByRole("button", { name: "View Profile" }));
 
       const sources = screen.getByRole("region", { name: "Sources" });
       // Each of the four profiles carries only the family-history note, so the
@@ -300,9 +260,13 @@ describe("Family Tree cover: four new Erma T. Williams child profiles", () => {
         within(sources).queryByText("Documented record"),
       ).not.toBeInTheDocument();
 
-      // Back to the tree for the next profile.
+      // Back to the tree, then recenter on Clayton (his Father card) for the
+      // next profile.
       await user.click(
         screen.getByRole("button", { name: /Back to Family Tree/ }),
+      );
+      await user.click(
+        screen.getByRole("button", { name: /Clayton Norwood Father/ }),
       );
     }
   });

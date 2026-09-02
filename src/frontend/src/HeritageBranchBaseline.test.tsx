@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom/vitest";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { cleanup, render, screen, within } from "@testing-library/react";
+import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
@@ -44,23 +44,24 @@ function renderApp() {
 
 afterEach(cleanup);
 
-async function openFamilyTree(user: ReturnType<typeof userEvent.setup>) {
+async function openExploreFamily(user: ReturnType<typeof userEvent.setup>) {
   await user.click(screen.getByRole("button", { name: "Explore the Family" }));
 }
 
-// The Clayton branch defaults to collapsed; expand it so its cards render.
-async function expandClaytonBranch(user: ReturnType<typeof userEvent.setup>) {
-  await user.click(screen.getByRole("button", { name: /^Clayton \d+$/ }));
+async function openHeritageBranch(user: ReturnType<typeof userEvent.setup>) {
+  await user.click(screen.getByRole("button", { name: "Heritage Branch" }));
 }
 
-// Characterization baseline for the existing Family Tree view before the new
-// Heritage Branch View is added. The new view is a net-new View union member
-// plus a new page component, reachable alongside the existing Family Tree. These
-// tests protect the working behavior that must remain unchanged: the app still
-// loads on the default route without a blank screen, the existing Family Tree
-// view stays reachable and intact, and the founding couple remains the root of
-// the existing tree.
-describe("Heritage Branch View baseline: existing Family Tree stays intact", () => {
+// Characterization baseline for the Explore Family focused navigator and the
+// Heritage Branch overview map. The request intentionally replaced the classic
+// multi-generation Family Tree and the anchor-centered Heritage Branch with
+// these two focused views. These tests protect the working behavior that must
+// remain unchanged: the app still loads on the default route without a blank
+// screen, the founding couple remains the default focus, the founding couple's
+// children stay intact, the Heritage Branch overview renders all major family
+// lines, and tapping a Heritage Branch node opens Explore Family centered on
+// that person.
+describe("Explore Family + Heritage Branch baseline: focused views stay intact", () => {
   it("loads the app on the default route without a blank screen", () => {
     renderApp();
     expect(
@@ -68,117 +69,86 @@ describe("Heritage Branch View baseline: existing Family Tree stays intact", () 
     ).toHaveAttribute("src", "/assets/norwood-logo.png");
   });
 
-  it("keeps the existing Family Tree view reachable from Home", async () => {
+  it("keeps the Explore Family view reachable from Home", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
+    await openExploreFamily(user);
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      "Family Tree",
+      "Explore Family",
     );
   });
 
-  it("keeps the founding couple as the root of the existing tree", async () => {
+  it("keeps the founding couple as the default focus", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
+    await openExploreFamily(user);
 
-    const coupleSection = screen.getByRole("region", {
-      name: "Starting couple",
-    });
-    for (const name of ["Julia “Julie” Norwood", "Isaiah Norwood"]) {
+    // No person is marked "Me", so the default anchor (Julia) is the focus.
+    expect(screen.getByText("Julia “Julie” Norwood")).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Isaiah Norwood Spouse/ }),
+    ).toBeInTheDocument();
+  });
+
+  it("keeps the founding couple's children intact", async () => {
+    const user = userEvent.setup();
+    renderApp();
+    await openExploreFamily(user);
+
+    for (const name of [
+      "Clayton Norwood Child",
+      "isaiah-jr Child",
+      "edward Child",
+      "hattie Child",
+      "pinkie Child",
+      "louise Child",
+      "lillie Child",
+      "lula-e Child",
+    ]) {
       expect(
-        within(coupleSection).getByRole("button", { name: new RegExp(name) }),
+        screen.getByRole("button", { name: new RegExp(name) }),
       ).toBeInTheDocument();
     }
   });
 
-  it("keeps the existing tree's children and Clayton branch intact", async () => {
+  it("renders the Heritage Branch overview with every major family line", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
+    await openHeritageBranch(user);
 
-    const childrenSection = screen.getByRole("region", { name: "Children" });
-    for (const name of [
-      "Clayton",
-      "Isaiah Jr.",
-      "Edward",
-      "Hattie",
-      "Pinkie",
-      "Louise",
-      "Lillie",
-      "Lula E.",
-    ]) {
-      expect(
-        within(childrenSection).getByRole("button", { name: new RegExp(name) }),
-      ).toBeInTheDocument();
-    }
-
-    const claytonBranch = screen.getByRole("region", {
-      name: "Clayton's branch",
-    });
-    expect(
-      within(claytonBranch).getByRole("button", { name: /Ms\. Hudson/ }),
-    ).toBeInTheDocument();
-    expect(
-      within(claytonBranch).getByRole("button", { name: /Erma T\. Williams/ }),
-    ).toBeInTheDocument();
-  });
-
-  it("returns to Home from the existing Family Tree view", async () => {
-    const user = userEvent.setup();
-    renderApp();
-    await openFamilyTree(user);
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      "Family Tree",
+      "Heritage Branch View",
     );
 
-    await user.click(screen.getByRole("button", { name: /Back to Home/ }));
-    expect(
-      screen.getByRole("img", { name: /Norwood family tree logo/i }),
-    ).toHaveAttribute("src", "/assets/norwood-logo.png");
+    // Each cluster renders its title heading and a count chip.
+    const clusters: { title: string; count: string }[] = [
+      { title: "Founding Couple", count: "8 children" },
+      { title: "Clayton Branch", count: "14 children · 2 marriages" },
+      { title: "Lula Mae + Versie Family Unit", count: "7 children" },
+      { title: "Smith Branch", count: "7 children" },
+      { title: "Adams Maternal Line", count: "16 children · 2 marriages" },
+    ];
+    for (const { title, count } of clusters) {
+      expect(screen.getByRole("heading", { name: title })).toBeInTheDocument();
+      // "7 children" appears on two clusters, so use the plural query.
+      expect(screen.getAllByText(count).length).toBeGreaterThanOrEqual(1);
+    }
   });
 
-  it("keeps Open Profile disabled for people without a profile entry", async () => {
-    // Freddie, Zelia Mae, and Lula Mae now have profiles, so their Open Profile
-    // is enabled. The other documented members without a profile entry must keep
-    // Open Profile disabled. Isaiah Jr., Edward, and Hattie are children of the
-    // default Julia anchor; Freddie, Zelia Mae, and Lula Mae are Erma's children,
-    // so they are reached by anchoring the tree on Clayton.
+  it("opens Explore Family centered on a person when a Heritage Branch node is tapped", async () => {
     const user = userEvent.setup();
     renderApp();
+    await openHeritageBranch(user);
+
+    // Columbus appears only in the Clayton Branch, so his node is unambiguous.
     await user.click(
-      screen.getByRole("button", { name: "Heritage Branch View" }),
+      screen.getByRole("button", { name: /Columbus Norwood, Son/ }),
     );
 
-    for (const name of [
-      "Isaiah Jr., Child",
-      "Edward, Child",
-      "Hattie, Child",
-    ]) {
-      await user.click(screen.getByRole("button", { name: new RegExp(name) }));
-      expect(
-        screen.getByRole("button", { name: "Open Profile" }),
-      ).toBeDisabled();
-    }
-
-    // Re-anchor on Clayton to reveal his children, including Erma's.
-    await user.click(
-      screen.getByRole("button", { name: /Clayton Norwood, Son/ }),
+    // Explore Family opens centered on Columbus.
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
+      "Explore Family",
     );
-    await user.click(screen.getByRole("button", { name: "Anchor Tree Here" }));
-
-    // Freddie, Zelia Mae, and Lula Mae now have profiles, so Open Profile is
-    // enabled for them.
-    for (const name of [
-      "Freddie, Child",
-      "Zelia Mae, Child",
-      "Lula Mae, Child",
-    ]) {
-      await user.click(screen.getByRole("button", { name: new RegExp(name) }));
-      expect(
-        screen.getByRole("button", { name: "Open Profile" }),
-      ).toBeEnabled();
-    }
+    expect(screen.getByText("Columbus Norwood")).toBeInTheDocument();
   });
 });

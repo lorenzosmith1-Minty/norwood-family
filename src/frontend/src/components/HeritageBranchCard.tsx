@@ -20,6 +20,9 @@ interface HeritageBranchCardProps {
   onSelect: () => void;
   profilePhoto?: string;
   index: number;
+  // "branch" (default) renders the anchor-centered tree card; "hb-node" and
+  // "hb-couple" render the compact 10,000-foot map nodes.
+  variant?: "branch" | "hb-node" | "hb-couple";
 }
 
 function getInitials(name: string): string {
@@ -42,11 +45,49 @@ export function HeritageBranchCard({
   onSelect,
   profilePhoto,
   index,
+  variant = "branch",
 }: HeritageBranchCardProps) {
   const photoSrc = profilePhoto ?? portrait?.src;
   const photoAlt = profilePhoto
     ? `${person.name}'s profile photo`
     : (portrait?.alt ?? `${person.name}'s initials`);
+
+  // Compact 10,000-foot map node: portrait/initials + name. "hb-couple" marks
+  // a major couple / branch anchor; "hb-node" is a compact descendant.
+  if (variant === "hb-node" || variant === "hb-couple") {
+    const isCouple = variant === "hb-couple";
+    return (
+      <motion.button
+        type="button"
+        data-ocid={`hb.node.${index + 1}`}
+        onClick={onSelect}
+        aria-pressed={selected}
+        aria-label={`${person.name}, ${person.role}`}
+        initial={{ opacity: 0, scale: 0.92, y: 6 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{
+          duration: 0.4,
+          delay: index * 0.05,
+          ease: [0.4, 0, 0.2, 1],
+        }}
+        className={`${isCouple ? "hb-couple-anchor" : "hb-node"} focus-visible:outline-none`}
+      >
+        <span
+          className={isCouple ? "hb-couple-portrait" : "hb-node-portrait"}
+          aria-hidden="true"
+        >
+          {photoSrc ? (
+            <img src={photoSrc} alt={photoAlt} loading="lazy" />
+          ) : (
+            getInitials(person.name)
+          )}
+        </span>
+        <span className={isCouple ? "hb-couple-name" : "hb-node-name"}>
+          {person.name}
+        </span>
+      </motion.button>
+    );
+  }
 
   const cardClass = [
     "branch-card",

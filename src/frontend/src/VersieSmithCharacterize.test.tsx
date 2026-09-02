@@ -44,17 +44,24 @@ function renderApp() {
 
 afterEach(cleanup);
 
-async function openFamilyTree(user: ReturnType<typeof userEvent.setup>) {
+async function openExploreFamily(user: ReturnType<typeof userEvent.setup>) {
   await user.click(screen.getByRole("button", { name: "Explore the Family" }));
 }
 
-function claytonBranch() {
-  return screen.getByRole("region", { name: "Clayton's branch" });
+async function tapRelative(
+  user: ReturnType<typeof userEvent.setup>,
+  name: RegExp,
+) {
+  await user.click(screen.getByRole("button", { name }));
 }
 
-// The Clayton branch defaults to collapsed; expand it so its cards render.
-async function expandClaytonBranch(user: ReturnType<typeof userEvent.setup>) {
-  await user.click(screen.getByRole("button", { name: /^Clayton \d+$/ }));
+// Navigate the Explore Family focused navigator to Lula Mae's profile:
+// Julia (default) -> Clayton (child) -> Lula Mae (child).
+async function openLulaMaeProfile(user: ReturnType<typeof userEvent.setup>) {
+  await openExploreFamily(user);
+  await tapRelative(user, /Clayton Norwood Child/);
+  await tapRelative(user, /Lula Mae Norwood Child/);
+  await user.click(screen.getByRole("button", { name: "View Profile" }));
 }
 
 function completenessPercent(): string {
@@ -66,11 +73,11 @@ function completenessPercent(): string {
 }
 
 // Characterization baseline for the Versie Smith change. The request adds a new
-// Versie Smith profile and shows Lula Mae and Versie as a couple in the Family
-// Tree and Heritage Branch View. This protects the adjacent working behavior
-// that must remain unchanged: Lula Mae's existing card stays under Erma's
-// branch in the Family Tree and still opens her profile, her existing profile
-// keeps rendering the full template with Versie Smith as husband and
+// Versie Smith profile and shows Lula Mae and Versie as a couple in the Explore
+// Family view and Heritage Branch View. This protects the adjacent working
+// behavior that must remain unchanged: Lula Mae's existing card stays under
+// Clayton in the Explore Family view and still opens her profile, her existing
+// profile keeps rendering the full template with Versie Smith as husband and
 // family-history sources, and the app still loads on the default route without
 // a blank screen.
 describe("Versie Smith characterization: Lula Mae's existing behavior stays intact", () => {
@@ -81,44 +88,37 @@ describe("Versie Smith characterization: Lula Mae's existing behavior stays inta
     ).toHaveAttribute("src", "/assets/norwood-logo.png");
   });
 
-  it("keeps Lula Mae's card under Erma's branch in the Family Tree", async () => {
+  it("keeps Lula Mae's card under Clayton in the Explore Family view", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
+    await openExploreFamily(user);
+    await tapRelative(user, /Clayton Norwood Child/);
 
-    // Lula Mae remains a child in Clayton's branch (under Erma T. Williams),
-    // alongside the other Erma children.
-    const branch = claytonBranch();
+    // Lula Mae remains a child of Clayton, alongside the other Erma children.
     expect(
-      within(branch).getByRole("button", { name: /Lula Mae/ }),
+      screen.getByRole("button", { name: /Lula Mae Norwood Child/ }),
     ).toBeInTheDocument();
     for (const sibling of [
-      "Columbus",
-      "Thomas Clayton “Tip / TC”",
-      "Alton",
-      "Robert Davis “RD”",
-      "Ardeanus",
-      "Willie B.",
-      "James",
-      "Freddie",
-      "Zelia Mae",
+      "Columbus Norwood Child",
+      "Thomas Clayton “Tip / TC” Norwood Child",
+      "Alton Norwood Child",
+      "Robert Davis “RD” Norwood Child",
+      "Ardeanus Norwood Child",
+      "Willie B. Norwood Child",
+      "James Norwood Child",
+      "Freddie Norwood Child",
+      "Zelia Mae Norwood Child",
     ]) {
       expect(
-        within(branch).getByRole("button", { name: new RegExp(sibling) }),
+        screen.getByRole("button", { name: new RegExp(sibling) }),
       ).toBeInTheDocument();
     }
   });
 
-  it("opens Lula Mae's profile from her Family Tree card", async () => {
+  it("opens Lula Mae's profile from the Explore Family navigator", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
-
-    await user.click(
-      within(claytonBranch()).getByRole("button", { name: /Lula Mae/ }),
-    );
+    await openLulaMaeProfile(user);
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       "Lula Mae Norwood",
@@ -129,12 +129,7 @@ describe("Versie Smith characterization: Lula Mae's existing behavior stays inta
   it("keeps Lula Mae's profile listing Versie Smith as husband with family-history sources", async () => {
     const user = userEvent.setup();
     const { container } = renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
-
-    await user.click(
-      within(claytonBranch()).getByRole("button", { name: /Lula Mae/ }),
-    );
+    await openLulaMaeProfile(user);
 
     // The header facts still list Versie Smith as her husband.
     const dl = container.querySelector("dl");
@@ -161,12 +156,7 @@ describe("Versie Smith characterization: Lula Mae's existing behavior stays inta
   it("keeps Lula Mae's completeness at 86% with Photo incomplete", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
-
-    await user.click(
-      within(claytonBranch()).getByRole("button", { name: /Lula Mae/ }),
-    );
+    await openLulaMaeProfile(user);
 
     const completeness = document.querySelector(
       '[data-ocid="profile.completeness"]',
@@ -182,24 +172,20 @@ describe("Versie Smith characterization: Lula Mae's existing behavior stays inta
   });
 
   it("keeps the other Erma child profiles rendering unchanged", async () => {
-    const user = userEvent.setup();
-    renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
-
     for (const { card, heading } of [
-      { card: /Freddie/, heading: "Freddie Norwood" },
-      { card: /Zelia Mae/, heading: "Zelia Mae Norwood" },
+      { card: /Freddie Norwood Child/, heading: "Freddie Norwood" },
+      { card: /Zelia Mae Norwood Child/, heading: "Zelia Mae Norwood" },
     ]) {
-      await user.click(
-        within(claytonBranch()).getByRole("button", { name: card }),
-      );
+      const user = userEvent.setup();
+      renderApp();
+      await openExploreFamily(user);
+      await tapRelative(user, /Clayton Norwood Child/);
+      await tapRelative(user, card);
+      await user.click(screen.getByRole("button", { name: "View Profile" }));
       expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
         heading,
       );
-      await user.click(
-        screen.getByRole("button", { name: /Back to Family Tree/ }),
-      );
+      cleanup();
     }
   });
 });

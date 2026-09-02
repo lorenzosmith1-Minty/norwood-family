@@ -44,17 +44,30 @@ function renderApp() {
 
 afterEach(cleanup);
 
-async function openFamilyTree(user: ReturnType<typeof userEvent.setup>) {
+async function openExploreFamily(user: ReturnType<typeof userEvent.setup>) {
   await user.click(screen.getByRole("button", { name: "Explore the Family" }));
 }
 
-function claytonBranch() {
-  return screen.getByRole("region", { name: "Clayton's branch" });
+// Open Explore Family, recenter on Clayton, then open the given child's profile
+// from his card.
+async function openClaytonChildProfile(
+  user: ReturnType<typeof userEvent.setup>,
+  cardName: RegExp,
+) {
+  await openExploreFamily(user);
+  await user.click(
+    screen.getByRole("button", { name: /Clayton Norwood Child/ }),
+  );
+  await user.click(screen.getByRole("button", { name: cardName }));
+  await user.click(screen.getByRole("button", { name: "View Profile" }));
 }
 
-// The Clayton branch defaults to collapsed; expand it so its cards render.
-async function expandClaytonBranch(user: ReturnType<typeof userEvent.setup>) {
-  await user.click(screen.getByRole("button", { name: /^Clayton \d+$/ }));
+// After returning from a child's profile, the view is focused on that child.
+// Recenter on Clayton via his Father card for the next profile.
+async function recenterOnClayton(user: ReturnType<typeof userEvent.setup>) {
+  await user.click(
+    screen.getByRole("button", { name: /Clayton Norwood Father/ }),
+  );
 }
 
 function completenessPercent(): string {
@@ -66,7 +79,7 @@ function completenessPercent(): string {
 }
 
 // Cover for the three new Erma T. Williams child profiles (Freddie, Zelia Mae,
-// Lula Mae). Each opens from its Family Tree card, renders the full Person
+// Lula Mae). Each opens from its Explore Family card, renders the full Person
 // Profile template (Header, Story, Family, Timeline, Sources, Photos,
 // Completeness) with an initials placeholder portrait, shows only recorded
 // facts, labels family-history notes separately from documented details, and
@@ -75,12 +88,7 @@ describe("Family Tree cover: Freddie, Zelia Mae, and Lula Mae profiles", () => {
   it("opens Freddie's profile from his card and renders the full template", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
-
-    await user.click(
-      within(claytonBranch()).getByRole("button", { name: /Freddie/ }),
-    );
+    await openClaytonChildProfile(user, /Freddie Norwood Child/);
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       "Freddie Norwood",
@@ -104,12 +112,7 @@ describe("Family Tree cover: Freddie, Zelia Mae, and Lula Mae profiles", () => {
   it("shows Freddie's recorded facts: son of Clayton and Erma, Mississippi, 1938-1985, Ebenezer Cemetery, daughter Felecia Anita Beasly", async () => {
     const user = userEvent.setup();
     const { container } = renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
-
-    await user.click(
-      within(claytonBranch()).getByRole("button", { name: /Freddie/ }),
-    );
+    await openClaytonChildProfile(user, /Freddie Norwood Child/);
 
     const dl = container.querySelector("dl");
     expect(dl).not.toBeNull();
@@ -141,12 +144,7 @@ describe("Family Tree cover: Freddie, Zelia Mae, and Lula Mae profiles", () => {
   it("opens Zelia Mae's profile from her card and renders the full template", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
-
-    await user.click(
-      within(claytonBranch()).getByRole("button", { name: /Zelia Mae/ }),
-    );
+    await openClaytonChildProfile(user, /Zelia Mae Norwood Child/);
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       "Zelia Mae Norwood",
@@ -170,12 +168,7 @@ describe("Family Tree cover: Freddie, Zelia Mae, and Lula Mae profiles", () => {
   it("shows Zelia Mae's recorded facts: daughter of Clayton and Erma, Mississippi, married twice, no children, Prent Sims and Carter", async () => {
     const user = userEvent.setup();
     const { container } = renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
-
-    await user.click(
-      within(claytonBranch()).getByRole("button", { name: /Zelia Mae/ }),
-    );
+    await openClaytonChildProfile(user, /Zelia Mae Norwood Child/);
 
     const dl = container.querySelector("dl");
     expect(dl).not.toBeNull();
@@ -205,12 +198,7 @@ describe("Family Tree cover: Freddie, Zelia Mae, and Lula Mae profiles", () => {
   it("labels Prent Sims' June 11, 1914 - April 11, 1970 dates as his lifespan, not a marriage date", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
-
-    await user.click(
-      within(claytonBranch()).getByRole("button", { name: /Zelia Mae/ }),
-    );
+    await openClaytonChildProfile(user, /Zelia Mae Norwood Child/);
 
     // The story explicitly distinguishes Prent Sims' dates as his lifespan.
     const story = screen.getByRole("region", { name: "His Story" });
@@ -232,12 +220,7 @@ describe("Family Tree cover: Freddie, Zelia Mae, and Lula Mae profiles", () => {
   it("opens Lula Mae's profile from her card and renders the full template", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
-
-    await user.click(
-      within(claytonBranch()).getByRole("button", { name: /Lula Mae/ }),
-    );
+    await openClaytonChildProfile(user, /Lula Mae Norwood Child/);
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       "Lula Mae Norwood",
@@ -261,12 +244,7 @@ describe("Family Tree cover: Freddie, Zelia Mae, and Lula Mae profiles", () => {
   it("shows Lula Mae's recorded facts: daughter of Clayton and Erma, New York / New Jersey, married Versie Smith, both from Mississippi", async () => {
     const user = userEvent.setup();
     const { container } = renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
-
-    await user.click(
-      within(claytonBranch()).getByRole("button", { name: /Lula Mae/ }),
-    );
+    await openClaytonChildProfile(user, /Lula Mae Norwood Child/);
 
     const dl = container.querySelector("dl");
     expect(dl).not.toBeNull();
@@ -294,13 +272,18 @@ describe("Family Tree cover: Freddie, Zelia Mae, and Lula Mae profiles", () => {
   it("renders an initials placeholder portrait for each new profile", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
+    await openExploreFamily(user);
+    await user.click(
+      screen.getByRole("button", { name: /Clayton Norwood Child/ }),
+    );
 
-    for (const cardName of [/Freddie/, /Zelia Mae/, /Lula Mae/]) {
-      await user.click(
-        within(claytonBranch()).getByRole("button", { name: cardName }),
-      );
+    for (const cardName of [
+      /Freddie Norwood Child/,
+      /Zelia Mae Norwood Child/,
+      /Lula Mae Norwood Child/,
+    ]) {
+      await user.click(screen.getByRole("button", { name: cardName }));
+      await user.click(screen.getByRole("button", { name: "View Profile" }));
 
       // No photograph exists, so the profile header renders the shared
       // initials placeholder portrait image.
@@ -313,19 +296,25 @@ describe("Family Tree cover: Freddie, Zelia Mae, and Lula Mae profiles", () => {
       await user.click(
         screen.getByRole("button", { name: /Back to Family Tree/ }),
       );
+      await recenterOnClayton(user);
     }
   });
 
   it("labels each new profile's sources as family-history notes, not documented records", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
+    await openExploreFamily(user);
+    await user.click(
+      screen.getByRole("button", { name: /Clayton Norwood Child/ }),
+    );
 
-    for (const cardName of [/Freddie/, /Zelia Mae/, /Lula Mae/]) {
-      await user.click(
-        within(claytonBranch()).getByRole("button", { name: cardName }),
-      );
+    for (const cardName of [
+      /Freddie Norwood Child/,
+      /Zelia Mae Norwood Child/,
+      /Lula Mae Norwood Child/,
+    ]) {
+      await user.click(screen.getByRole("button", { name: cardName }));
+      await user.click(screen.getByRole("button", { name: "View Profile" }));
 
       const sources = screen.getByRole("region", { name: "Sources" });
       expect(
@@ -338,19 +327,23 @@ describe("Family Tree cover: Freddie, Zelia Mae, and Lula Mae profiles", () => {
       await user.click(
         screen.getByRole("button", { name: /Back to Family Tree/ }),
       );
+      await recenterOnClayton(user);
     }
   });
 
   it("shows only recorded events in each new profile's timeline", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
+    await openExploreFamily(user);
+    await user.click(
+      screen.getByRole("button", { name: /Clayton Norwood Child/ }),
+    );
 
     // Freddie: only his recorded birth, death, and burial events appear.
     await user.click(
-      within(claytonBranch()).getByRole("button", { name: /Freddie/ }),
+      screen.getByRole("button", { name: /Freddie Norwood Child/ }),
     );
+    await user.click(screen.getByRole("button", { name: "View Profile" }));
     const freddieTimeline = screen.getByRole("region", { name: "Timeline" });
     expect(within(freddieTimeline).getByText("1938")).toBeInTheDocument();
     // 1985 appears twice: once for the death event and once for the burial.
@@ -361,12 +354,14 @@ describe("Family Tree cover: Freddie, Zelia Mae, and Lula Mae profiles", () => {
     await user.click(
       screen.getByRole("button", { name: /Back to Family Tree/ }),
     );
+    await recenterOnClayton(user);
 
     // Zelia Mae: only her two marriages and the no-children note appear; no
     // invented birth or death dates.
     await user.click(
-      within(claytonBranch()).getByRole("button", { name: /Zelia Mae/ }),
+      screen.getByRole("button", { name: /Zelia Mae Norwood Child/ }),
     );
+    await user.click(screen.getByRole("button", { name: "View Profile" }));
     const zeliaTimeline = screen.getByRole("region", { name: "Timeline" });
     expect(
       within(zeliaTimeline).getByText("Marries Prent Sims"),
@@ -379,11 +374,13 @@ describe("Family Tree cover: Freddie, Zelia Mae, and Lula Mae profiles", () => {
     await user.click(
       screen.getByRole("button", { name: /Back to Family Tree/ }),
     );
+    await recenterOnClayton(user);
 
     // Lula Mae: only her marriage to Versie Smith appears.
     await user.click(
-      within(claytonBranch()).getByRole("button", { name: /Lula Mae/ }),
+      screen.getByRole("button", { name: /Lula Mae Norwood Child/ }),
     );
+    await user.click(screen.getByRole("button", { name: "View Profile" }));
     const lulaTimeline = screen.getByRole("region", { name: "Timeline" });
     expect(
       within(lulaTimeline).getByText("Marries Versie Smith"),
@@ -394,15 +391,20 @@ describe("Family Tree cover: Freddie, Zelia Mae, and Lula Mae profiles", () => {
   it("reflects recorded vs missing fields in the Completeness section for each new profile", async () => {
     const user = userEvent.setup();
     renderApp();
-    await openFamilyTree(user);
-    await expandClaytonBranch(user);
+    await openExploreFamily(user);
+    await user.click(
+      screen.getByRole("button", { name: /Clayton Norwood Child/ }),
+    );
 
     // Each of the three profiles has birth/death facts, family relationships, a
     // story, a timeline, and a source, but no photo: 6 of 7 fields done.
-    for (const cardName of [/Freddie/, /Zelia Mae/, /Lula Mae/]) {
-      await user.click(
-        within(claytonBranch()).getByRole("button", { name: cardName }),
-      );
+    for (const cardName of [
+      /Freddie Norwood Child/,
+      /Zelia Mae Norwood Child/,
+      /Lula Mae Norwood Child/,
+    ]) {
+      await user.click(screen.getByRole("button", { name: cardName }));
+      await user.click(screen.getByRole("button", { name: "View Profile" }));
 
       const completeness = document.querySelector(
         '[data-ocid="profile.completeness"]',
@@ -426,43 +428,34 @@ describe("Family Tree cover: Freddie, Zelia Mae, and Lula Mae profiles", () => {
       await user.click(
         screen.getByRole("button", { name: /Back to Family Tree/ }),
       );
+      await recenterOnClayton(user);
     }
   });
 });
 
-describe("Heritage Branch cover: Freddie, Zelia Mae, and Lula Mae open via Open Profile", () => {
-  it("opens each new profile from its Heritage Branch card via Open Profile", async () => {
+describe("Heritage Branch cover: Freddie, Zelia Mae, and Lula Mae open via the overview map", () => {
+  it("opens each new profile from its Heritage Branch node", async () => {
     const user = userEvent.setup();
     renderApp();
-    await user.click(
-      screen.getByRole("button", { name: "Heritage Branch View" }),
-    );
+    await user.click(screen.getByRole("button", { name: "Heritage Branch" }));
 
-    const cases: { card: RegExp; heading: string }[] = [
-      { card: /Freddie, Child/, heading: "Freddie Norwood" },
-      { card: /Zelia Mae, Child/, heading: "Zelia Mae Norwood" },
-      { card: /Lula Mae, Child/, heading: "Lula Mae Norwood" },
+    const cases: { node: RegExp; heading: string }[] = [
+      { node: /Freddie Norwood, Son/, heading: "Freddie Norwood" },
+      { node: /Zelia Mae Norwood, Daughter/, heading: "Zelia Mae Norwood" },
+      // Lula Mae appears as both a Clayton Branch node and a Lula-Versie anchor,
+      // so take the first match.
+      { node: /Lula Mae Norwood, Daughter/, heading: "Lula Mae Norwood" },
     ];
 
-    for (const { card, heading } of cases) {
-      // Re-anchor the tree on Clayton to reveal his children, including Erma's.
-      // The branch view remounts on the default Julia anchor after each back
-      // navigation, so this must happen on every iteration.
-      await user.click(
-        screen.getByRole("button", { name: /Clayton Norwood, Son/ }),
-      );
-      await user.click(
-        screen.getByRole("button", { name: "Anchor Tree Here" }),
-      );
-
-      await user.click(screen.getByRole("button", { name: card }));
-      await user.click(screen.getByRole("button", { name: "Open Profile" }));
+    for (const { node, heading } of cases) {
+      await user.click(screen.getAllByRole("button", { name: node })[0]);
+      await user.click(screen.getByRole("button", { name: "View Profile" }));
 
       expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
         heading,
       );
 
-      // Back to the Heritage Branch for the next profile.
+      // Back to Explore Family, then to the Heritage Branch for the next node.
       await user.click(
         screen.getByRole("button", { name: /Back to Family Tree/ }),
       );

@@ -102,19 +102,28 @@
     --fu-label: 0.42 0.11 35;
 
     /* Explore Family: focused relationship navigator (one focus person +
-       closest relatives in a radial constellation) */
+       closest relatives in a tight radial constellation) */
     --ex-focus: 0.42 0.11 35;
     --ex-focus-foreground: 0.96 0.02 70;
     --ex-zone: 0.5 0.03 45;
     --ex-relation: 0.42 0.11 35;
     --ex-ring: 0.55 0.09 60;
+    --ex-parent: 0.55 0.09 60;
+    --ex-parent-foreground: 0.96 0.02 70;
+    --ex-sibling: 0.42 0.11 35;
+    --ex-spouse: 0.48 0.1 45;
+    --ex-child: 0.42 0.11 35;
 
-    /* Heritage Branch View: 10,000-foot family map (major couples, branch
-       clusters, descendant/branch counts) */
+    /* Heritage Branch View: 10,000-foot family map (major family units,
+       branch anchors, descendant/branch counts) */
     --hb-cluster: 0.93 0.025 70;
     --hb-cluster-foreground: 0.3 0.04 45;
     --hb-couple: 0.55 0.09 60;
     --hb-couple-foreground: 0.96 0.02 70;
+    --hb-unit: 0.95 0.02 72;
+    --hb-unit-foreground: 0.3 0.04 45;
+    --hb-branch: 0.42 0.11 35;
+    --hb-branch-foreground: 0.96 0.02 70;
     --hb-count: 0.42 0.11 35;
 
     --sidebar: 0.985 0.015 70;
@@ -205,19 +214,28 @@
     --fu-label: 0.72 0.14 60;
 
     /* Explore Family: focused relationship navigator (one focus person +
-       closest relatives in a radial constellation) */
+       closest relatives in a tight radial constellation) */
     --ex-focus: 0.72 0.14 60;
     --ex-focus-foreground: 0.16 0.02 55;
     --ex-zone: 0.7 0.1 55;
     --ex-relation: 0.72 0.14 60;
     --ex-ring: 0.72 0.14 60;
+    --ex-parent: 0.58 0.12 30;
+    --ex-parent-foreground: 0.95 0.01 60;
+    --ex-sibling: 0.72 0.14 60;
+    --ex-spouse: 0.65 0.12 45;
+    --ex-child: 0.72 0.14 60;
 
-    /* Heritage Branch View: 10,000-foot family map (major couples, branch
-       clusters, descendant/branch counts) */
+    /* Heritage Branch View: 10,000-foot family map (major family units,
+       branch anchors, descendant/branch counts) */
     --hb-cluster: 0.22 0.02 55;
     --hb-cluster-foreground: 0.85 0.02 60;
     --hb-couple: 0.58 0.12 30;
     --hb-couple-foreground: 0.95 0.01 60;
+    --hb-unit: 0.21 0.02 55;
+    --hb-unit-foreground: 0.85 0.02 60;
+    --hb-branch: 0.72 0.14 60;
+    --hb-branch-foreground: 0.16 0.02 55;
     --hb-count: 0.72 0.14 60;
 
     --sidebar: 0.2 0.02 55;
@@ -1303,14 +1321,111 @@
   /* ---- Explore Family: focused relationship navigator ---- */
 
   /* Constellation stage: bounded, mobile-first, centered column; no infinite
-     canvas. One focus person with only their closest relatives around them. */
+     canvas. One focus person with only their closest relatives around them.
+     The layout is a tight radial constellation — parents above (father
+     upper-left, mother upper-right), spouse beside, siblings in a compact
+     row, children directly below — so the relationship reads at a glance
+     with no long vertical stacking or connector lines. */
   .ex-stage {
-    @apply relative mx-auto flex w-full max-w-md flex-col items-center gap-4 px-4 py-4;
+    @apply relative mx-auto flex w-full max-w-md flex-col items-center gap-3 px-4 py-4;
   }
 
-  /* Large focus card: the centered person, bronze halo emphasis */
+  /* Parent row: father upper-left, mother upper-right of the focus card.
+     Two compact cards flank a short centered gap; shown only when known. */
+  .ex-parent-row {
+    @apply flex w-full items-center justify-center gap-3;
+  }
+  .ex-parent-card {
+    @apply relative flex flex-col items-center gap-1 rounded-xl border border-border/60 px-2.5 py-2 text-center;
+    min-width: 4.5rem;
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.1);
+    transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+  }
+  .ex-parent-card:hover,
+  .ex-parent-card:focus-within {
+    transform: translateY(-2px);
+    border-color: oklch(var(--ex-ring) / 0.6);
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.2);
+  }
+  .ex-parent-card:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(var(--ring) / 0.25);
+  }
+  .ex-parent-portrait {
+    @apply flex h-12 w-12 items-center justify-center rounded-full font-display text-base font-semibold;
+    background-color: oklch(var(--muted));
+    color: oklch(var(--muted-foreground));
+    box-shadow: 0 0 0 2px oklch(var(--ex-parent));
+    overflow: hidden;
+  }
+  .ex-parent-portrait img {
+    @apply h-full w-full object-cover;
+  }
+  .ex-parent-name {
+    @apply max-w-[4.5rem] truncate text-[11px] font-semibold leading-tight;
+    color: oklch(var(--foreground));
+  }
+  .ex-parent-relation {
+    @apply text-[9px] font-semibold uppercase tracking-[0.14em];
+    color: oklch(var(--ex-parent));
+  }
+
+  /* Spouse row: partner card sits directly beside the focus person */
+  .ex-spouse-row {
+    @apply flex w-full items-center justify-center gap-3;
+  }
+  .ex-spouse-card {
+    @apply relative flex flex-col items-center gap-1 rounded-xl border border-border/60 bg-card px-2.5 py-2 text-center;
+    min-width: 4.5rem;
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.1);
+    transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+  }
+  .ex-spouse-card:hover,
+  .ex-spouse-card:focus-within {
+    transform: translateY(-2px);
+    border-color: oklch(var(--ex-ring) / 0.6);
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.2);
+  }
+  .ex-spouse-portrait {
+    @apply flex h-12 w-12 items-center justify-center rounded-full font-display text-base font-semibold;
+    background-color: oklch(var(--muted));
+    color: oklch(var(--muted-foreground));
+    box-shadow: 0 0 0 2px oklch(var(--ex-spouse));
+    overflow: hidden;
+  }
+  .ex-spouse-portrait img {
+    @apply h-full w-full object-cover;
+  }
+  .ex-spouse-name {
+    @apply max-w-[4.5rem] truncate text-[11px] font-semibold leading-tight;
+    color: oklch(var(--foreground));
+  }
+  .ex-spouse-relation {
+    @apply text-[9px] font-semibold uppercase tracking-[0.14em];
+    color: oklch(var(--ex-spouse));
+  }
+
+  /* Children row: compact cards directly below the focus person */
+  .ex-children-row {
+    @apply flex w-full flex-wrap items-center justify-center gap-2;
+  }
+
+  /* Large focus card: the centered person, bronze halo emphasis. A landscape
+     card that stays the dominant visual anchor while leaving room for the
+     compact spouse stack on its left. On mobile the card is sized (w-52) so
+     that spouse + focus fit fully within the viewport — it never extends
+     beyond the viewport and never pushes the spouse off-screen. On desktop it
+     grows (sm:w-72) to use the extra whitespace while preserving the same
+     relationship order. It must NOT be w-full — a width of 100% makes the card
+     claim the whole band and pushes the spouse off-screen. */
   .ex-focus-card {
-    @apply relative flex w-full max-w-xs flex-col items-center gap-2 rounded-2xl border border-border/60 bg-card px-5 py-5 text-center;
+    @apply relative flex w-52 shrink-0 items-center gap-3 rounded-2xl border border-border/60 bg-card px-4 py-3 text-left sm:w-72 sm:gap-4 sm:px-5 sm:py-4;
     box-shadow: 0 0 0 3px oklch(var(--ex-ring) / 0.35), 0 12px 32px -8px
       oklch(0.36 0.05 45 / 0.24);
     animation: recenter 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
@@ -1321,7 +1436,7 @@
       oklch(var(--ex-ring) / 0.25);
   }
   .ex-focus-portrait {
-    @apply flex h-[4.5rem] w-[4.5rem] items-center justify-center rounded-full font-display text-2xl font-semibold;
+    @apply flex h-16 w-16 shrink-0 items-center justify-center rounded-full font-display text-xl font-semibold sm:h-20 sm:w-20 sm:text-2xl;
     background-color: oklch(var(--muted));
     color: oklch(var(--muted-foreground));
     box-shadow: 0 0 0 3px oklch(var(--ex-ring));
@@ -1330,20 +1445,23 @@
   .ex-focus-portrait img {
     @apply h-full w-full object-cover;
   }
+  .ex-focus-body {
+    @apply flex min-w-0 flex-1 flex-col items-start gap-1;
+  }
   .ex-focus-name {
-    @apply font-display text-2xl font-semibold leading-tight;
+    @apply max-w-full truncate font-display text-lg font-semibold leading-tight sm:text-xl;
     color: oklch(var(--foreground));
   }
   .ex-focus-years {
-    @apply text-sm font-medium tabular-nums;
+    @apply text-xs font-medium tabular-nums sm:text-sm;
     color: oklch(var(--muted-foreground));
   }
   .ex-focus-relation {
-    @apply text-xs font-semibold uppercase tracking-[0.18em];
+    @apply text-[10px] font-semibold uppercase tracking-[0.18em] sm:text-xs;
     color: oklch(var(--ex-relation));
   }
   .ex-focus-action {
-    @apply inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold;
+    @apply mt-1 inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold sm:px-4 sm:py-2 sm:text-sm;
     color: oklch(var(--ex-focus-foreground));
     background-color: oklch(var(--ex-focus));
     box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.18);
@@ -1426,6 +1544,66 @@
     color: oklch(var(--muted-foreground));
   }
 
+  /* Center band: the focus card is the true center, with spouse(s) stacked
+     immediately to its LEFT at roughly half size. The band is sized so the
+     compact spouse card and the focus card fit fully within the mobile
+     viewport — no horizontal scrolling, no clipped cards, and the spouse never
+     pushes the focus card off-screen. The pair is centered as a unit. */
+  .ex-center-band {
+    @apply flex w-full items-center justify-center gap-2 sm:gap-3;
+  }
+  .ex-spouse-stack {
+    @apply flex flex-col items-center justify-center gap-2;
+  }
+
+  /* Half-size spouse card: smaller portrait/name/relation than the focus
+     card. Multiple spouses stack vertically to the left of the focus. The
+     card is compact (w-16 on mobile) so it fits fully within the viewport
+     beside the focus card without clipping or pushing it off-screen. */
+  .ex-spouse-half {
+    @apply relative flex w-16 flex-col items-center gap-1 rounded-xl border border-border/60 bg-card px-1.5 py-2 text-center sm:w-24 sm:px-2 sm:py-2.5;
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.1);
+    transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+  }
+  .ex-spouse-half:hover,
+  .ex-spouse-half:focus-within {
+    transform: translateY(-2px);
+    border-color: oklch(var(--ex-ring) / 0.6);
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.2);
+  }
+  .ex-spouse-half:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(var(--ring) / 0.25);
+  }
+  .ex-spouse-half-portrait {
+    @apply flex h-10 w-10 items-center justify-center rounded-full font-display text-sm font-semibold sm:h-11 sm:w-11;
+    background-color: oklch(var(--muted));
+    color: oklch(var(--muted-foreground));
+    box-shadow: 0 0 0 2px oklch(var(--ex-spouse));
+    overflow: hidden;
+  }
+  .ex-spouse-half-portrait img {
+    @apply h-full w-full object-cover;
+  }
+  .ex-spouse-half-name {
+    @apply max-w-[4rem] truncate text-[10px] font-semibold leading-tight sm:max-w-[5rem];
+    color: oklch(var(--foreground));
+  }
+  .ex-spouse-half-relation {
+    @apply text-[8px] font-semibold uppercase tracking-[0.14em];
+    color: oklch(var(--ex-spouse));
+  }
+
+  /* Siblings: compact section BELOW the focus card. Cards wrap naturally into
+     multiple rows on mobile so every sibling stays fully visible with no
+     horizontal scrolling. */
+  .ex-siblings-row {
+    @apply flex w-full flex-wrap items-center justify-center gap-2;
+  }
+
   /* Short local stub: minimal directional connector, never a long line */
   .ex-connector {
     width: 2px;
@@ -1458,6 +1636,97 @@
   }
   .hb-cluster-grid {
     @apply flex flex-wrap items-center justify-center gap-2;
+  }
+
+  /* Family-unit card: a compact self-contained unit (e.g. "Lula Mae +
+     Versie Family Unit — 7 children") shown as one tappable plate, not a
+     full tree. Warm aged-paper surface with a bronze count chip. */
+  .hb-unit-card {
+    @apply relative flex flex-col items-center gap-1.5 rounded-xl border border-border/60 px-3 py-3 text-center;
+    background-color: oklch(var(--hb-unit));
+    color: oklch(var(--hb-unit-foreground));
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.1);
+    cursor: pointer;
+    min-width: 6.5rem;
+    transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .hb-unit-card:hover,
+  .hb-unit-card:focus-within {
+    transform: translateY(-2px);
+    border-color: oklch(var(--hb-count) / 0.6);
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.2);
+  }
+  .hb-unit-card:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(var(--ring) / 0.25);
+  }
+  .hb-unit-portrait {
+    @apply flex h-11 w-11 items-center justify-center rounded-full font-display text-sm font-semibold;
+    background-color: oklch(var(--muted));
+    color: oklch(var(--muted-foreground));
+    box-shadow: 0 0 0 2px oklch(var(--hb-count) / 0.5);
+    overflow: hidden;
+  }
+  .hb-unit-portrait img {
+    @apply h-full w-full object-cover;
+  }
+  .hb-unit-name {
+    @apply max-w-[6rem] truncate text-[11px] font-semibold leading-tight;
+    color: oklch(var(--hb-unit-foreground));
+  }
+
+  /* Branch anchor card: a major line head (e.g. "Clayton Branch" or
+     "Versie's Maternal / Adams Line") rendered as a compact bronze plate
+     with a descendant/branch count chip. Tapping it opens Explore Family
+     on the anchor person. */
+  .hb-branch-card {
+    @apply relative flex flex-col items-center gap-1.5 rounded-xl border border-border/60 px-3 py-3 text-center;
+    background-color: oklch(var(--hb-branch));
+    color: oklch(var(--hb-branch-foreground));
+    box-shadow: 0 0 0 2px oklch(var(--hb-branch) / 0.4), 0 4px 12px -4px
+      oklch(0.36 0.05 45 / 0.18);
+    cursor: pointer;
+    min-width: 6.5rem;
+    transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .hb-branch-card:hover,
+  .hb-branch-card:focus-within {
+    transform: translateY(-2px);
+    box-shadow: 0 0 0 3px oklch(var(--hb-branch) / 0.5), 0 12px 32px -8px
+      oklch(0.36 0.05 45 / 0.24);
+  }
+  .hb-branch-card:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(var(--ring) / 0.35);
+  }
+  .hb-branch-portrait {
+    @apply flex h-10 w-10 items-center justify-center rounded-full font-display text-sm font-semibold;
+    background-color: oklch(var(--hb-branch-foreground) / 0.14);
+    color: oklch(var(--hb-branch-foreground));
+    box-shadow: 0 0 0 2px oklch(var(--hb-branch-foreground) / 0.5);
+    overflow: hidden;
+  }
+  .hb-branch-portrait img {
+    @apply h-full w-full object-cover;
+  }
+  .hb-branch-name {
+    @apply max-w-[6rem] truncate text-[11px] font-semibold leading-tight;
+    color: oklch(var(--hb-branch-foreground));
+  }
+  .hb-branch-count {
+    @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[9px] font-bold tabular-nums;
+    background-color: oklch(var(--hb-branch-foreground) / 0.14);
+    color: oklch(var(--hb-branch-foreground));
+  }
+  .hb-branch-count::before {
+    content: "";
+    width: 0.3rem;
+    height: 0.3rem;
+    border-radius: 9999px;
+    background-color: oklch(var(--hb-branch-foreground));
   }
 
   /* Major couple / branch anchor node: the head of a line */

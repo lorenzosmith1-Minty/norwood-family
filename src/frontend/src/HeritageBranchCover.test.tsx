@@ -84,19 +84,16 @@ describe("Heritage Branch View", () => {
     );
   });
 
-  it("renders simplified nodes grouped into branch clusters with counts", async () => {
+  it("renders simplified nodes grouped into branch clusters without hardcoded counts", async () => {
     const user = userEvent.setup();
     renderApp();
     await openBranchFromHome(user);
 
-    // The Founding Couple cluster shows the two anchors and a count chip.
-    const founding = screen.getByTestId("hb.cluster.1");
+    // The Founding Couple cluster shows the two anchors.
+    const founding = screen.getByTestId("hb.unit_cluster.1");
     expect(
       within(founding).getByRole("heading", { name: "Founding Couple" }),
     ).toBeInTheDocument();
-    expect(
-      within(founding).getByTestId("hb.cluster.1.count"),
-    ).toHaveTextContent("8 children");
     expect(
       within(founding).getByRole("button", {
         name: /Julia “Julie” Norwood, Matriarch/,
@@ -108,11 +105,23 @@ describe("Heritage Branch View", () => {
       }),
     ).toBeInTheDocument();
 
-    // The Clayton Branch carries a descendant + marriage count.
-    const clayton = screen.getByTestId("hb.cluster.2");
-    expect(within(clayton).getByTestId("hb.cluster.2.count")).toHaveTextContent(
-      "14 children · 2 marriages",
-    );
+    // The Clayton Branch renders as a compact anchor card.
+    const clayton = screen.getByTestId("hb.branch_cluster.1");
+    expect(
+      within(clayton).getByRole("button", {
+        name: /Clayton Norwood, Son/,
+      }),
+    ).toBeInTheDocument();
+
+    // No descendant/branch count chips render: counts are only shown when
+    // computed directly from the stored relationship graph, and none are
+    // computed here, so the hardcoded counts are gone.
+    expect(screen.queryByText("8 children")).not.toBeInTheDocument();
+    expect(screen.queryByText("72 Descendants")).not.toBeInTheDocument();
+    expect(screen.queryByText("7 children")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("16 children · 2 marriages"),
+    ).not.toBeInTheDocument();
   });
 
   it("is a bounded overview with no infinite canvas and no full extended tree", async () => {

@@ -9,7 +9,17 @@ export interface Person {
   years?: string;
 }
 
-export type CardVariant = "default" | "couple" | "child" | "relative";
+export type CardVariant =
+  | "default"
+  | "couple"
+  | "child"
+  | "relative"
+  | "focus"
+  | "spouse-half";
+
+/** The relationship role of a compact Explore Family relative card. Selects
+ *  the role-specific --ex-* token styling (parent, spouse, sibling, child). */
+export type RelativeRole = "father" | "mother" | "spouse" | "sibling" | "child";
 
 interface PersonCardProps {
   person: Person;
@@ -29,6 +39,10 @@ interface PersonCardProps {
   // Relationship label shown on the compact "relative" card (Explore Family).
   // Falls back to `person.role` when omitted.
   relationLabel?: string;
+  // Relationship role of a compact "relative" card. Maps to the role-specific
+  // --ex-* token styling (father/mother use the parent card, spouse the spouse
+  // card, sibling/child the generic relative card). Defaults to "sibling".
+  role?: RelativeRole;
 }
 
 function getInitials(name: string): string {
@@ -52,6 +66,7 @@ export function PersonCard({
   variant = "default",
   openOnSelect = true,
   relationLabel,
+  role = "sibling",
 }: PersonCardProps) {
   // Selecting a card records it as the current selection so the
   // Relation-to-You / This-is-Me reveal is available. By default the same
@@ -71,8 +86,32 @@ export function PersonCard({
     : (person.photo?.alt ?? `${person.name}'s initials`);
 
   // Compact Explore Family relative card: portrait/initials + name + a simple
-  // relationship label. Tapping it recenters the view on that person.
+  // relationship label. Tapping it recenters the view on that person. The
+  // card picks role-specific --ex-* token styling so parents, spouse, siblings
+  // and children read distinctly in the positional constellation.
   if (variant === "relative") {
+    const isParent = role === "father" || role === "mother";
+    const isSpouse = role === "spouse";
+    const cardClass = isParent
+      ? "ex-parent-card"
+      : isSpouse
+        ? "ex-spouse-card"
+        : "ex-relative-card";
+    const portraitClass = isParent
+      ? "ex-parent-portrait"
+      : isSpouse
+        ? "ex-spouse-portrait"
+        : "ex-relative-portrait";
+    const nameClass = isParent
+      ? "ex-parent-name"
+      : isSpouse
+        ? "ex-spouse-name"
+        : "ex-relative-name";
+    const relationClass = isParent
+      ? "ex-parent-relation"
+      : isSpouse
+        ? "ex-spouse-relation"
+        : "ex-relative-relation";
     return (
       <motion.button
         type="button"
@@ -86,9 +125,9 @@ export function PersonCard({
           delay: index * 0.05,
           ease: [0.4, 0, 0.2, 1],
         }}
-        className="ex-relative-card focus-visible:outline-none"
+        className={`${cardClass} focus-visible:outline-none`}
       >
-        <span className="ex-relative-portrait" aria-hidden="true">
+        <span className={portraitClass} aria-hidden="true">
           {photoSrc ? (
             <img
               src={photoSrc}
@@ -100,8 +139,96 @@ export function PersonCard({
             getInitials(person.name)
           )}
         </span>
-        <span className="ex-relative-name">{person.name}</span>
-        <span className="ex-relative-relation">
+        <span className={nameClass}>{person.name}</span>
+        <span className={relationClass}>{relationLabel ?? person.role}</span>
+      </motion.button>
+    );
+  }
+
+  // Large focus card: the centered person in the Explore Family navigator.
+  // Landscape-style card — bronze-ringed portrait on the left, with name,
+  // years, Relation to You, optional This-is-Me badge, and a View Profile
+  // action in a compact column on the right so nothing stacks excessively.
+  if (variant === "focus") {
+    return (
+      <motion.div
+        data-ocid={`explore.focus.${index + 1}`}
+        initial={{ opacity: 0, scale: 0.96 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{
+          duration: 0.4,
+          ease: [0.4, 0, 0.2, 1],
+        }}
+        className="ex-focus-card"
+      >
+        <span className="ex-focus-portrait" aria-hidden="true">
+          {photoSrc ? (
+            <img
+              src={photoSrc}
+              alt={photoAlt}
+              className="h-full w-full object-cover"
+              loading="lazy"
+            />
+          ) : (
+            getInitials(person.name)
+          )}
+        </span>
+        <span className="ex-focus-body">
+          <span className="ex-focus-name">{person.name}</span>
+          {person.years && (
+            <span className="ex-focus-years">{person.years}</span>
+          )}
+          <span className="ex-focus-relation">
+            {relationLabel ?? person.role}
+          </span>
+          {isMe && <span className="ex-me-badge">This is me</span>}
+          {onOpen && (
+            <button
+              type="button"
+              data-ocid={`explore.focus.${index + 1}.view_profile`}
+              onClick={onOpen}
+              className="ex-focus-action"
+            >
+              View Profile
+            </button>
+          )}
+        </span>
+      </motion.div>
+    );
+  }
+
+  // Half-size spouse card: sits immediately left of the focus card at roughly
+  // half its size. Multiple spouses stack vertically in the spouse column.
+  if (variant === "spouse-half") {
+    return (
+      <motion.button
+        type="button"
+        data-ocid={`explore.spouse.${index + 1}`}
+        onClick={onSelect}
+        aria-pressed={selected}
+        initial={{ opacity: 0, x: -8 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{
+          duration: 0.4,
+          delay: index * 0.05,
+          ease: [0.4, 0, 0.2, 1],
+        }}
+        className="ex-spouse-half focus-visible:outline-none"
+      >
+        <span className="ex-spouse-half-portrait" aria-hidden="true">
+          {photoSrc ? (
+            <img
+              src={photoSrc}
+              alt={photoAlt}
+              className="h-full w-full object-cover"
+              loading="lazy"
+            />
+          ) : (
+            getInitials(person.name)
+          )}
+        </span>
+        <span className="ex-spouse-half-name">{person.name}</span>
+        <span className="ex-spouse-half-relation">
           {relationLabel ?? person.role}
         </span>
       </motion.button>

@@ -142,37 +142,32 @@ describe("Harvey Adams Sr. second-marriage characterization: maternal ancestry s
     }
   });
 
-  it("keeps the first-marriage children in recorded order under the Harvey anchor in the Heritage Branch", async () => {
+  it("keeps the Adams Line as a compact branch card in the Heritage Branch", async () => {
     const user = userEvent.setup();
     renderApp();
     await user.click(
       screen.getByRole("button", { name: "Heritage Branch View" }),
     );
 
-    // The Adams Maternal Line cluster anchors on Harvey and lists all children
-    // as connected nodes.
-    const adams = screen.getByTestId("hb.cluster.5");
+    // The Adams Line renders as a compact branch-anchor card for Harvey, not
+    // as a cluster of every individual child.
+    const adams = screen.getByTestId("hb.branch_cluster.3");
     expect(
       within(adams).getByRole("button", {
         name: /Harvey Adams Sr\., Father of Gertrude Adams-Hill/,
       }),
     ).toBeInTheDocument();
 
-    // The first-marriage children render in the recorded order (Gertrude
-    // first, then the rest), followed by the second-marriage children.
-    const childButtons = [
-      ...FIRST_MARRIAGE_CHILDREN,
-      ...SECOND_MARRIAGE_CHILDREN,
-    ].map((name) =>
-      within(adams).getByRole("button", {
-        name: new RegExp(`^${name}, `),
-      }),
-    );
-    for (let i = 0; i < childButtons.length - 1; i++) {
-      expect(
-        childButtons[i].compareDocumentPosition(childButtons[i + 1]) &
-          Node.DOCUMENT_POSITION_FOLLOWING,
-      ).toBeTruthy();
-    }
+    // The hardcoded marriage/child count was removed: no count chip renders
+    // because no count is computed from the stored relationship graph.
+    expect(
+      within(adams).queryByText("16 children · 2 marriages"),
+    ).not.toBeInTheDocument();
+
+    // The overview does not recreate the full tree: individual children are not
+    // rendered as separate nodes.
+    expect(
+      screen.queryByRole("button", { name: /Gertrude Adams-Hill, Daughter/ }),
+    ).not.toBeInTheDocument();
   });
 });

@@ -42,9 +42,45 @@ export interface FamilyGraphNode {
   mother?: string;
   spouses: string[];
   children: string[];
+  /**
+   * Lifecycle status of this person/relationship in the shared graph.
+   * Absent means "approved" (already part of the shared family graph).
+   * Future contribution work can stage additions as "pending" before they
+   * are merged in. Type-level preparation only — no workflow is wired here.
+   */
+  status?: RelationshipStatus;
 }
 
 export type FamilyGraph = Record<string, FamilyGraphNode>;
+
+/** Lifecycle status of a person or relationship in the shared graph. */
+export type RelationshipStatus = "approved" | "pending";
+
+/**
+ * A proposed relationship addition staged for review before it joins the
+ * shared graph. Future contribution work can build the pending-review
+ * workflow on top of this shape — a living family member proposes a Parent,
+ * Spouse/Partner, Sibling, or Child, and it enters a pending state until
+ * approved. Type-level preparation only; no UI or workflow is built here.
+ */
+export interface PendingRelationship {
+  id: string;
+  /** The person the relationship is being added to. */
+  personId: string;
+  /** The person being added as a relative. */
+  relatedPersonId: string;
+  relation: FamilyRelation;
+  status: "pending";
+  submittedBy?: string;
+  submittedAt?: number;
+}
+
+/**
+ * Staging area for proposed relationship additions awaiting review. Starts
+ * empty; future contribution work appends PendingRelationship entries here
+ * before they are merged into FAMILY_GRAPH.
+ */
+export const PENDING_RELATIONSHIPS: PendingRelationship[] = [];
 
 /** The founding-couple anchor used when no person is marked "Me". */
 export const DEFAULT_ANCHOR_ID = "julia";
@@ -477,6 +513,12 @@ export const FAMILY_GRAPH: FamilyGraph = {
     id: "lorenzoSmithSr",
     father: "versie-smith",
     mother: "lula-mae",
+    spouses: [],
+    children: ["lorenzoSmithJr"],
+  },
+  lorenzoSmithJr: {
+    id: "lorenzoSmithJr",
+    father: "lorenzoSmithSr",
     spouses: [],
     children: [],
   },

@@ -45084,7 +45084,7 @@ const lorenzoSmithSrProfile = {
   family: {
     spouseName: "Lula Mae Norwood and Versie Smith",
     spouseRole: "Parents",
-    childrenText: "Lorenzo Smith Sr. is one of seven children of Lula Mae Norwood and Versie Smith. His siblings are Versie Smith Jr., Herbert Smith, Alonzo Smith, Sherri Smith, Beatrice Smith, and Ed Smith."
+    childrenText: "Lorenzo Smith Sr. was the son of Lula Mae Norwood and Versie Smith, one of seven children. He had one child, Lorenzo Smith Jr. His siblings are Versie Smith Jr., Herbert Smith, Alonzo Smith, Sherri Smith, Beatrice Smith, and Ed Smith."
   },
   timeline: [
     {
@@ -45098,7 +45098,7 @@ const lorenzoSmithSrProfile = {
       kind: "family-history",
       title: "Family Research Notes",
       source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
-      detail: "A family-history note identifying Lorenzo Smith Sr. as a son of Lula Mae Norwood and Versie Smith, one of seven children. No additional details about him are recorded. This is a family account, not a documented record."
+      detail: "A family-history note identifying Lorenzo Smith Sr. as a son of Lula Mae Norwood and Versie Smith, one of seven children, and the father of Lorenzo Smith Jr. No additional details about him are recorded. This is a family account, not a documented record."
     }
   ]
 };
@@ -45398,7 +45398,7 @@ const profiles = {
   beatriceSmith: beatriceSmithProfile,
   edSmith: edSmithProfile
 };
-function getInitials$4(name) {
+function getInitials$3(name) {
   var _a2;
   const parts = name.split(/\s+/).filter((part) => part.length > 0 && /[A-Za-z]/.test(part.charAt(0)));
   const first = ((_a2 = parts[0]) == null ? void 0 : _a2.charAt(0)) ?? "";
@@ -45768,7 +45768,7 @@ function PersonProfilePage({
               {
                 "data-ocid": "profile.header.initials",
                 className: "flex aspect-[4/5] w-full items-center justify-center rounded-xl bg-secondary",
-                children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-display text-6xl font-semibold text-accent-foreground", children: getInitials$4(person.name) })
+                children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-display text-6xl font-semibold text-accent-foreground", children: getInitials$3(person.name) })
               }
             ) }),
             /* @__PURE__ */ jsxRuntimeExports.jsx("figcaption", { className: "mt-2 text-center text-xs italic leading-relaxed text-muted-foreground", children: profilePhoto ? "Uploaded profile photo." : `Representative historical portrait — not an actual photograph of ${person.name.split(" ")[0]} Norwood.` })
@@ -46968,7 +46968,7 @@ function formatContributor(contributor) {
   const text = contributor.toText();
   return text.length > 18 ? `${text.slice(0, 5)}…${text.slice(-4)}` : text;
 }
-function getInitials$3(name) {
+function getInitials$2(name) {
   var _a2;
   const parts = name.split(/\s+/).filter((part) => part.length > 0 && /[A-Za-z]/.test(part.charAt(0)));
   const first = ((_a2 = parts[0]) == null ? void 0 : _a2.charAt(0)) ?? "";
@@ -47009,7 +47009,7 @@ function ArchiveCard({ item, index: index2, onOpen }) {
             /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "contributed" })
           ] }),
           relatedMembers.length > 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-auto flex flex-wrap items-center gap-1.5 pt-1", children: relatedMembers.map((profile) => /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "member-chip", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "member-avatar", "aria-hidden": "true", children: getInitials$3(profile.name) }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "member-avatar", "aria-hidden": "true", children: getInitials$2(profile.name) }),
             profile.name
           ] }, profile.id)) }) : null
         ] })
@@ -47227,7 +47227,7 @@ function ArchivePage({ onBack, onOpenArchiveItem }) {
     ) }, item.id.toString())) }) })
   ] });
 }
-function getInitials$2(name) {
+function getInitials$1(name) {
   var _a2;
   const parts = name.split(/\s+/).filter((part) => part.length > 0 && /[A-Za-z]/.test(part.charAt(0)));
   const first = ((_a2 = parts[0]) == null ? void 0 : _a2.charAt(0)) ?? "";
@@ -47245,7 +47245,8 @@ function PersonCard({
   profilePhoto,
   variant = "default",
   openOnSelect = true,
-  relationLabel
+  relationLabel,
+  role = "sibling"
 }) {
   var _a2, _b2;
   const handleClick = () => {
@@ -47257,6 +47258,12 @@ function PersonCard({
   const photoSrc = profilePhoto ?? ((_a2 = person.photo) == null ? void 0 : _a2.src);
   const photoAlt = profilePhoto ? `${person.name}'s profile photo` : ((_b2 = person.photo) == null ? void 0 : _b2.alt) ?? `${person.name}'s initials`;
   if (variant === "relative") {
+    const isParent = role === "father" || role === "mother";
+    const isSpouse = role === "spouse";
+    const cardClass2 = isParent ? "ex-parent-card" : isSpouse ? "ex-spouse-card" : "ex-relative-card";
+    const portraitClass2 = isParent ? "ex-parent-portrait" : isSpouse ? "ex-spouse-portrait" : "ex-relative-portrait";
+    const nameClass2 = isParent ? "ex-parent-name" : isSpouse ? "ex-spouse-name" : "ex-relative-name";
+    const relationClass = isParent ? "ex-parent-relation" : isSpouse ? "ex-spouse-relation" : "ex-relative-relation";
     return /* @__PURE__ */ jsxRuntimeExports.jsxs(
       motion.button,
       {
@@ -47271,9 +47278,9 @@ function PersonCard({
           delay: index2 * 0.05,
           ease: [0.4, 0, 0.2, 1]
         },
-        className: "ex-relative-card focus-visible:outline-none",
+        className: `${cardClass2} focus-visible:outline-none`,
         children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-relative-portrait", "aria-hidden": "true", children: photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: portraitClass2, "aria-hidden": "true", children: photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx(
             "img",
             {
               src: photoSrc,
@@ -47281,9 +47288,83 @@ function PersonCard({
               className: "h-full w-full object-cover",
               loading: "lazy"
             }
-          ) : getInitials$2(person.name) }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-relative-name", children: person.name }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-relative-relation", children: relationLabel ?? person.role })
+          ) : getInitials$1(person.name) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: nameClass2, children: person.name }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: relationClass, children: relationLabel ?? person.role })
+        ]
+      }
+    );
+  }
+  if (variant === "focus") {
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      motion.div,
+      {
+        "data-ocid": `explore.focus.${index2 + 1}`,
+        initial: { opacity: 0, scale: 0.96 },
+        animate: { opacity: 1, scale: 1 },
+        transition: {
+          duration: 0.4,
+          ease: [0.4, 0, 0.2, 1]
+        },
+        className: "ex-focus-card",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-focus-portrait", "aria-hidden": "true", children: photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "img",
+            {
+              src: photoSrc,
+              alt: photoAlt,
+              className: "h-full w-full object-cover",
+              loading: "lazy"
+            }
+          ) : getInitials$1(person.name) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "ex-focus-body", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-focus-name", children: person.name }),
+            person.years && /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-focus-years", children: person.years }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-focus-relation", children: relationLabel ?? person.role }),
+            isMe && /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-me-badge", children: "This is me" }),
+            onOpen && /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "button",
+              {
+                type: "button",
+                "data-ocid": `explore.focus.${index2 + 1}.view_profile`,
+                onClick: onOpen,
+                className: "ex-focus-action",
+                children: "View Profile"
+              }
+            )
+          ] })
+        ]
+      }
+    );
+  }
+  if (variant === "spouse-half") {
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      motion.button,
+      {
+        type: "button",
+        "data-ocid": `explore.spouse.${index2 + 1}`,
+        onClick: onSelect,
+        "aria-pressed": selected,
+        initial: { opacity: 0, x: -8 },
+        animate: { opacity: 1, x: 0 },
+        transition: {
+          duration: 0.4,
+          delay: index2 * 0.05,
+          ease: [0.4, 0, 0.2, 1]
+        },
+        className: "ex-spouse-half focus-visible:outline-none",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-spouse-half-portrait", "aria-hidden": "true", children: photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "img",
+            {
+              src: photoSrc,
+              alt: photoAlt,
+              className: "h-full w-full object-cover",
+              loading: "lazy"
+            }
+          ) : getInitials$1(person.name) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-spouse-half-name", children: person.name }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-spouse-half-relation", children: relationLabel ?? person.role })
         ]
       }
     );
@@ -47317,7 +47398,7 @@ function PersonCard({
               className: "h-full w-full object-cover",
               loading: "lazy"
             }
-          ) }) : /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: portraitClass, "aria-hidden": "true", children: getInitials$2(person.name) }),
+          ) }) : /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: portraitClass, "aria-hidden": "true", children: getInitials$1(person.name) }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: nameClass, children: person.name }),
           person.years && /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ft-card-years", children: person.years }),
           selected && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "ft-card-detail", children: [
@@ -47778,6 +47859,12 @@ const FAMILY_GRAPH = {
     father: "versie-smith",
     mother: "lula-mae",
     spouses: [],
+    children: ["lorenzoSmithJr"]
+  },
+  lorenzoSmithJr: {
+    id: "lorenzoSmithJr",
+    father: "lorenzoSmithSr",
+    spouses: [],
     children: []
   },
   versieSmithJr: {
@@ -47897,18 +47984,22 @@ function getYears(profile) {
   if (bornYear) return `${bornYear}–`;
   return diedYear;
 }
-function getInitials$1(name) {
-  var _a2;
-  const parts = name.split(/\s+/).filter((part) => part.length > 0 && /[A-Za-z]/.test(part.charAt(0)));
-  const first = ((_a2 = parts[0]) == null ? void 0 : _a2.charAt(0)) ?? "";
-  const last = parts.length > 1 ? parts[parts.length - 1].charAt(0) : "";
-  return (first + last).toUpperCase();
+function toPerson$1(ref) {
+  const profile = profiles[ref.personId];
+  return {
+    id: ref.personId,
+    name: (profile == null ? void 0 : profile.name) ?? ref.personId,
+    role: ref.label,
+    photo: profile == null ? void 0 : profile.portrait
+  };
 }
 function RelativeZone({
   label,
   relatives,
   onSelectPerson,
-  className = ""
+  className = "",
+  rowClassName,
+  relationRole
 }) {
   if (relatives.length === 0) return null;
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(
@@ -47918,27 +48009,19 @@ function RelativeZone({
       "data-ocid": `explore.zone.${label.toLowerCase()}`,
       children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-zone-label", children: label }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "ex-zone-row", children: relatives.map((ref, index2) => {
-          const profile = profiles[ref.personId];
-          const person = {
-            id: ref.personId,
-            name: (profile == null ? void 0 : profile.name) ?? ref.personId,
-            role: ref.label,
-            photo: profile == null ? void 0 : profile.portrait
-          };
-          return /* @__PURE__ */ jsxRuntimeExports.jsx(
-            PersonCard,
-            {
-              person,
-              selected: false,
-              onSelect: () => onSelectPerson(ref.personId),
-              index: index2,
-              variant: "relative",
-              relationLabel: ref.label
-            },
-            ref.personId
-          );
-        }) })
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: rowClassName, children: relatives.map((ref, index2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+          PersonCard,
+          {
+            person: toPerson$1(ref),
+            selected: false,
+            onSelect: () => onSelectPerson(ref.personId),
+            index: index2,
+            variant: "relative",
+            relationLabel: ref.label,
+            role: relationRole
+          },
+          ref.personId
+        )) })
       ]
     }
   );
@@ -47964,13 +48047,15 @@ function ExploreFamilyPage({
       /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "font-display text-xl font-semibold text-foreground", children: "Explore Family" }),
       /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-1 text-sm text-muted-foreground", children: "Tap a relative to move through the family." })
     ] }),
-    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex w-full items-start justify-center gap-3", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "ex-parent-row", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx(
         RelativeZone,
         {
           label: "Father",
           relatives: relatives.father,
-          onSelectPerson
+          onSelectPerson,
+          rowClassName: "ex-parent-row",
+          relationRole: "father"
         }
       ),
       /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -47978,52 +48063,62 @@ function ExploreFamilyPage({
         {
           label: "Mother",
           relatives: relatives.mother,
-          onSelectPerson
+          onSelectPerson,
+          rowClassName: "ex-parent-row",
+          relationRole: "mother"
         }
       )
     ] }),
     /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-connector", "aria-hidden": "true" }),
-    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "ex-focus-card", "data-ocid": "explore.focus_card", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-focus-portrait", "aria-hidden": "true", children: focus.portrait.src ? /* @__PURE__ */ jsxRuntimeExports.jsx(
-        "img",
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "ex-center-band", children: [
+      relatives.spouse.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "div",
         {
-          src: focus.portrait.src,
-          alt: focus.portrait.alt,
-          className: "h-full w-full object-cover"
+          className: "ex-spouse-stack shrink-0",
+          "data-ocid": "explore.zone.spouse",
+          children: relatives.spouse.map((ref, index2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+            PersonCard,
+            {
+              person: toPerson$1(ref),
+              selected: false,
+              onSelect: () => onSelectPerson(ref.personId),
+              index: index2,
+              variant: "spouse-half",
+              relationLabel: ref.label
+            },
+            ref.personId
+          ))
         }
-      ) : getInitials$1(focus.name) }),
-      isMe && /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-me-badge", children: "This is me" }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-focus-name", children: focus.name }),
-      years && /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-focus-years", children: years }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-focus-relation", children: relationText }),
+      ),
       /* @__PURE__ */ jsxRuntimeExports.jsx(
-        "button",
+        PersonCard,
         {
-          type: "button",
-          "data-ocid": "explore.view_profile",
-          onClick: () => onOpenProfile(resolvedId),
-          className: "ex-focus-action focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-          children: "View Profile"
+          person: {
+            id: resolvedId,
+            name: focus.name,
+            role: relationText,
+            photo: focus.portrait,
+            years
+          },
+          selected: false,
+          onSelect: () => onSelectPerson(resolvedId),
+          index: 0,
+          variant: "focus",
+          isMe,
+          relationLabel: relationText,
+          onOpen: () => onOpenProfile(resolvedId)
         }
       )
     ] }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-connector", "aria-hidden": "true" }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(
-      RelativeZone,
-      {
-        label: "Spouse",
-        relatives: relatives.spouse,
-        onSelectPerson,
-        className: "w-full"
-      }
-    ),
     /* @__PURE__ */ jsxRuntimeExports.jsx(
       RelativeZone,
       {
         label: "Siblings",
         relatives: relatives.siblings,
         onSelectPerson,
-        className: "w-full"
+        className: "w-full",
+        rowClassName: "ex-siblings-row",
+        relationRole: "sibling"
       }
     ),
     /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -48032,7 +48127,9 @@ function ExploreFamilyPage({
         label: "Children",
         relatives: relatives.children,
         onSelectPerson,
-        className: "w-full"
+        className: "w-full",
+        rowClassName: "ex-children-row",
+        relationRole: "child"
       }
     )
   ] });
@@ -48055,10 +48152,47 @@ function HeritageBranchCard({
   onSelect,
   profilePhoto,
   index: index2,
-  variant = "branch"
+  variant = "branch",
+  count
 }) {
   const photoSrc = profilePhoto ?? (portrait == null ? void 0 : portrait.src);
   const photoAlt = profilePhoto ? `${person.name}'s profile photo` : (portrait == null ? void 0 : portrait.alt) ?? `${person.name}'s initials`;
+  if (variant === "hb-unit" || variant === "hb-branch") {
+    const isBranch = variant === "hb-branch";
+    const cardClass2 = isBranch ? "hb-branch-card" : "hb-unit-card";
+    const portraitClass = isBranch ? "hb-branch-portrait" : "hb-unit-portrait";
+    const nameClass = isBranch ? "hb-branch-name" : "hb-unit-name";
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      motion.button,
+      {
+        type: "button",
+        "data-ocid": `hb.${isBranch ? "branch" : "unit"}.${index2 + 1}`,
+        onClick: onSelect,
+        "aria-pressed": selected,
+        "aria-label": `${person.name}, ${person.role}`,
+        initial: { opacity: 0, scale: 0.92, y: 6 },
+        animate: { opacity: 1, scale: 1, y: 0 },
+        transition: {
+          duration: 0.4,
+          delay: index2 * 0.05,
+          ease: [0.4, 0, 0.2, 1]
+        },
+        className: `${cardClass2} focus-visible:outline-none`,
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: portraitClass, "aria-hidden": "true", children: photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: photoSrc, alt: photoAlt, loading: "lazy" }) : getInitials(person.name) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: nameClass, children: person.name }),
+          count && /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "span",
+            {
+              className: "hb-branch-count",
+              "data-ocid": `hb.${isBranch ? "branch" : "unit"}.${index2 + 1}.count`,
+              children: count
+            }
+          )
+        ]
+      }
+    );
+  }
   if (variant === "hb-node" || variant === "hb-couple") {
     const isCouple = variant === "hb-couple";
     return /* @__PURE__ */ jsxRuntimeExports.jsxs(
@@ -48173,89 +48307,33 @@ function toPerson(id2) {
     children: (node == null ? void 0 : node.children) ?? []
   };
 }
-const CLUSTERS = [
+const FAMILY_UNITS = [
   {
     id: "founding",
     title: "Founding Couple",
-    anchorIds: ["julia", "isaiah"],
-    nodeIds: [
-      "clayton",
-      "isaiah-jr",
-      "edward",
-      "hattie",
-      "pinkie",
-      "louise",
-      "lillie",
-      "lula-e"
-    ],
-    countLabel: "8 children"
-  },
-  {
-    id: "clayton",
-    title: "Clayton Branch",
-    anchorIds: ["clayton"],
-    nodeIds: [
-      "elbert",
-      "wellman",
-      "wetherby",
-      "columbus",
-      "thomas-clayton",
-      "alton",
-      "robert-davis",
-      "ardeanus",
-      "willie-b",
-      "james",
-      "freddie",
-      "zelia-mae",
-      "lula-mae"
-    ],
-    countLabel: "14 children · 2 marriages"
+    personIds: ["julia", "isaiah"]
   },
   {
     id: "lula-versie",
     title: "Lula Mae + Versie Family Unit",
-    anchorIds: ["lula-mae", "versie-smith"],
-    nodeIds: [],
-    countLabel: "7 children"
+    personIds: ["lula-mae", "versie-smith"]
+  }
+];
+const BRANCH_ANCHORS = [
+  {
+    id: "clayton",
+    title: "Clayton Branch",
+    personId: "clayton"
   },
   {
     id: "smith",
     title: "Smith Branch",
-    anchorIds: [],
-    nodeIds: [
-      "lorenzoSmithSr",
-      "versieSmithJr",
-      "herbertSmith",
-      "alonzoSmith",
-      "sherriSmith",
-      "beatriceSmith",
-      "edSmith"
-    ],
-    countLabel: "7 children"
+    personId: "lorenzoSmithSr"
   },
   {
     id: "adams",
-    title: "Adams Maternal Line",
-    anchorIds: ["harvey-adams-sr"],
-    nodeIds: [
-      "gertrude-adams-hill",
-      "john-adams",
-      "louis-adams-sr",
-      "albert-adams",
-      "charles-adams",
-      "homer-adams",
-      "versie-adams-sr",
-      "judge-granberry-adams",
-      "fannie-adams",
-      "harvey-adams-jr",
-      "christine-adams-tucker",
-      "robert-adams-sr",
-      "ella-mae-adams",
-      "eula-lee-adams",
-      "mildred-adams",
-      "christine-adams"
-    ],
-    countLabel: "16 children · 2 marriages"
+    title: "Versie's Maternal / Adams Line",
+    personId: "harvey-adams-sr"
   }
 ];
 function ClusterConnector() {
@@ -48272,11 +48350,11 @@ function ClusterConnector() {
 function HeritageBranchPage({
   onOpenExploreFamily
 }) {
-  let nodeIndex = 0;
-  const renderNode = (id2, variant) => {
+  let cardIndex = 0;
+  const renderUnitCard = (id2) => {
     const person = toPerson(id2);
     const profile = profiles[id2];
-    const idx = nodeIndex++;
+    const idx = cardIndex++;
     return /* @__PURE__ */ jsxRuntimeExports.jsx(
       HeritageBranchCard,
       {
@@ -48286,11 +48364,31 @@ function HeritageBranchPage({
         selected: false,
         isAnchor: false,
         isMe: false,
-        hasDescendants: person.children.length > 0,
-        variant,
+        hasDescendants: false,
+        variant: "hb-unit",
         onSelect: () => onOpenExploreFamily(id2)
       },
       id2
+    );
+  };
+  const renderBranchCard = (anchor) => {
+    const person = toPerson(anchor.personId);
+    const profile = profiles[anchor.personId];
+    const idx = cardIndex++;
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(
+      HeritageBranchCard,
+      {
+        person,
+        portrait: profile == null ? void 0 : profile.portrait,
+        index: idx,
+        selected: false,
+        isAnchor: false,
+        isMe: false,
+        hasDescendants: false,
+        variant: "hb-branch",
+        onSelect: () => onOpenExploreFamily(anchor.personId)
+      },
+      anchor.id
     );
   };
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto flex w-full max-w-2xl flex-col px-4 py-6 sm:py-10", children: [
@@ -48314,35 +48412,47 @@ function HeritageBranchPage({
             "The Norwood Family"
           ] }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "font-display text-3xl font-semibold leading-tight text-foreground sm:text-4xl", children: "Heritage Branch View" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-3 max-w-md text-base text-muted-foreground", children: "A 10,000-foot view of how the major family lines connect. Tap any person to open Explore Family focused on them." })
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-3 max-w-md text-base text-muted-foreground", children: "A 10,000-foot map of the major family units and branch lines. Tap any card to open Explore Family focused on that person." })
         ]
       }
     ),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
       motion.div,
       {
         className: "hb-map mt-8",
         initial: { opacity: 0, y: 16 },
         animate: { opacity: 1, y: 0 },
         transition: { duration: 0.6, delay: 0.1, ease: [0.4, 0, 0.2, 1] },
-        children: CLUSTERS.map((cluster, ci) => /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
-          ci > 0 && /* @__PURE__ */ jsxRuntimeExports.jsx(ClusterConnector, {}),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { className: "hb-cluster", "data-ocid": `hb.cluster.${ci + 1}`, children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "hb-cluster-head", children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "hb-cluster-title", children: cluster.title }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx(
-                "span",
-                {
-                  className: "hb-count-chip",
-                  "data-ocid": `hb.cluster.${ci + 1}.count`,
-                  children: cluster.countLabel
-                }
-              )
-            ] }),
-            cluster.anchorIds.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "hb-cluster-grid", children: cluster.anchorIds.map((id2) => renderNode(id2, "hb-couple")) }),
-            cluster.nodeIds.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "hb-cluster-grid", children: cluster.nodeIds.map((id2) => renderNode(id2, "hb-node")) })
-          ] })
-        ] }, cluster.id))
+        children: [
+          FAMILY_UNITS.map((unit, ui) => /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+            ui > 0 && /* @__PURE__ */ jsxRuntimeExports.jsx(ClusterConnector, {}),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "section",
+              {
+                className: "hb-cluster",
+                "data-ocid": `hb.unit_cluster.${ui + 1}`,
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "hb-cluster-head", children: /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "hb-cluster-title", children: unit.title }) }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "hb-cluster-grid", children: unit.personIds.map((id2) => renderUnitCard(id2)) })
+                ]
+              }
+            )
+          ] }, unit.id)),
+          BRANCH_ANCHORS.map((anchor, bi) => /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(ClusterConnector, {}),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "section",
+              {
+                className: "hb-cluster",
+                "data-ocid": `hb.branch_cluster.${bi + 1}`,
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "hb-cluster-head", children: /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "hb-cluster-title", children: anchor.title }) }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "hb-cluster-grid", children: renderBranchCard(anchor) })
+                ]
+              }
+            )
+          ] }, anchor.id))
+        ]
       }
     ),
     /* @__PURE__ */ jsxRuntimeExports.jsxs(
@@ -48354,7 +48464,7 @@ function HeritageBranchPage({
         transition: { duration: 0.6, delay: 0.2, ease: [0.4, 0, 0.2, 1] },
         children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx(Users, { className: "mt-0.5 h-4 w-4 shrink-0", "aria-hidden": "true" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { children: "This is a simplified overview of the major family lines. Tap any person to open Explore Family centered on them for the full detail." })
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { children: "This is a simplified overview of the major family lines. Tap any card to open Explore Family centered on that person for the full detail." })
         ]
       }
     )

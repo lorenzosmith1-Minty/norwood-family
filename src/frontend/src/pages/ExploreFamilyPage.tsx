@@ -1,4 +1,8 @@
-import { type Person, PersonCard } from "../components/PersonCard";
+import {
+  type Person,
+  PersonCard,
+  type RelativeRole,
+} from "../components/PersonCard";
 import { useExploreFamily } from "../hooks/useExploreFamily";
 import type { RelativeRef } from "../types/family";
 import { type PersonProfile, profiles } from "./PersonProfilePage";
@@ -31,27 +35,36 @@ function getYears(profile: PersonProfile): string | undefined {
   return diedYear;
 }
 
-function getInitials(name: string): string {
-  const parts = name
-    .split(/\s+/)
-    .filter((part) => part.length > 0 && /[A-Za-z]/.test(part.charAt(0)));
-  const first = parts[0]?.charAt(0) ?? "";
-  const last = parts.length > 1 ? parts[parts.length - 1].charAt(0) : "";
-  return (first + last).toUpperCase();
+/** Build a PersonCard `Person` from a relative reference, pulling the name and
+ *  portrait from the shared profile record when one exists. */
+function toPerson(ref: RelativeRef): Person {
+  const profile = profiles[ref.personId];
+  return {
+    id: ref.personId,
+    name: profile?.name ?? ref.personId,
+    role: ref.label,
+    photo: profile?.portrait,
+  };
 }
 
 /** A labeled band of compact relative cards. Renders nothing when the group
- *  is empty (i.e. the relationship is not documented for the focus person). */
+ *  is empty (i.e. the relationship is not documented for the focus person).
+ *  `rowClassName` selects the dedicated positional row utility so each
+ *  relationship kind sits in its intended spot in the constellation. */
 function RelativeZone({
   label,
   relatives,
   onSelectPerson,
   className = "",
+  rowClassName,
+  relationRole,
 }: {
   label: string;
   relatives: RelativeRef[];
   onSelectPerson: (id: string) => void;
   className?: string;
+  rowClassName: string;
+  relationRole: RelativeRole;
 }) {
   if (relatives.length === 0) return null;
   return (
@@ -60,27 +73,19 @@ function RelativeZone({
       data-ocid={`explore.zone.${label.toLowerCase()}`}
     >
       <span className="ex-zone-label">{label}</span>
-      <div className="ex-zone-row">
-        {relatives.map((ref, index) => {
-          const profile = profiles[ref.personId];
-          const person: Person = {
-            id: ref.personId,
-            name: profile?.name ?? ref.personId,
-            role: ref.label,
-            photo: profile?.portrait,
-          };
-          return (
-            <PersonCard
-              key={ref.personId}
-              person={person}
-              selected={false}
-              onSelect={() => onSelectPerson(ref.personId)}
-              index={index}
-              variant="relative"
-              relationLabel={ref.label}
-            />
-          );
-        })}
+      <div className={rowClassName}>
+        {relatives.map((ref, index) => (
+          <PersonCard
+            key={ref.personId}
+            person={toPerson(ref)}
+            selected={false}
+            onSelect={() => onSelectPerson(ref.personId)}
+            index={index}
+            variant="relative"
+            relationLabel={ref.label}
+            role={relationRole}
+          />
+        ))}
       </div>
     </div>
   );
@@ -124,73 +129,89 @@ export default function ExploreFamilyPage({
         </p>
       </header>
 
-      {/* Parents: father above-left, mother above-right */}
-      <div className="flex w-full items-start justify-center gap-3">
+      {/* Parents: father upper-left, mother upper-right of the focus card */}
+      <div className="ex-parent-row">
         <RelativeZone
           label="Father"
           relatives={relatives.father}
           onSelectPerson={onSelectPerson}
+          rowClassName="ex-parent-row"
+          relationRole="father"
         />
         <RelativeZone
           label="Mother"
           relatives={relatives.mother}
           onSelectPerson={onSelectPerson}
+          rowClassName="ex-parent-row"
+          relationRole="mother"
         />
       </div>
 
       <span className="ex-connector" aria-hidden="true" />
 
-      {/* Focus person */}
-      <div className="ex-focus-card" data-ocid="explore.focus_card">
-        <span className="ex-focus-portrait" aria-hidden="true">
-          {focus.portrait.src ? (
-            <img
-              src={focus.portrait.src}
-              alt={focus.portrait.alt}
-              className="h-full w-full object-cover"
-            />
-          ) : (
-            getInitials(focus.name)
-          )}
-        </span>
-        {isMe && <span className="ex-me-badge">This is me</span>}
-        <span className="ex-focus-name">{focus.name}</span>
-        {years && <span className="ex-focus-years">{years}</span>}
-        <span className="ex-focus-relation">{relationText}</span>
-        <button
-          type="button"
-          data-ocid="explore.view_profile"
-          onClick={() => onOpenProfile(resolvedId)}
-          className="ex-focus-action focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-        >
-          View Profile
-        </button>
+      {/* Center band: spouse(s) immediately LEFT of the focus card at half
+          size and the focus card as the largest centered card. The band is
+          sized so spouse + focus fit fully within the mobile viewport — the
+          spouse card is compact and never clipped, and never pushes the focus
+          card off-screen. */}
+      <div className="ex-center-band">
+        {relatives.spouse.length > 0 && (
+          <div
+            className="ex-spouse-stack shrink-0"
+            data-ocid="explore.zone.spouse"
+          >
+            {relatives.spouse.map((ref, index) => (
+              <PersonCard
+                key={ref.personId}
+                person={toPerson(ref)}
+                selected={false}
+                onSelect={() => onSelectPerson(ref.personId)}
+                index={index}
+                variant="spouse-half"
+                relationLabel={ref.label}
+              />
+            ))}
+          </div>
+        )}
+
+        <PersonCard
+          person={{
+            id: resolvedId,
+            name: focus.name,
+            role: relationText,
+            photo: focus.portrait,
+            years,
+          }}
+          selected={false}
+          onSelect={() => onSelectPerson(resolvedId)}
+          index={0}
+          variant="focus"
+          isMe={isMe}
+          relationLabel={relationText}
+          onOpen={() => onOpenProfile(resolvedId)}
+        />
       </div>
 
-      <span className="ex-connector" aria-hidden="true" />
-
-      {/* Spouse/partner beside the focus */}
-      <RelativeZone
-        label="Spouse"
-        relatives={relatives.spouse}
-        onSelectPerson={onSelectPerson}
-        className="w-full"
-      />
-
-      {/* Siblings to the side */}
+      {/* Siblings: a compact section BELOW the focus card that wraps into
+          multiple rows on mobile. All sibling cards stay fully visible with
+          no horizontal scrolling. */}
       <RelativeZone
         label="Siblings"
         relatives={relatives.siblings}
         onSelectPerson={onSelectPerson}
         className="w-full"
+        rowClassName="ex-siblings-row"
+        relationRole="sibling"
       />
 
-      {/* Children below */}
+      {/* Children directly below the Siblings section */}
       <RelativeZone
         label="Children"
         relatives={relatives.children}
         onSelectPerson={onSelectPerson}
         className="w-full"
+        rowClassName="ex-children-row"
+        relationRole="child"
       />
     </div>
   );

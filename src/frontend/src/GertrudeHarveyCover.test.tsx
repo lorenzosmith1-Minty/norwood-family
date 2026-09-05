@@ -316,17 +316,25 @@ describe("Gertrude Adams-Hill and Harvey Adams Sr. cover", () => {
     expect(portrait).toHaveAttribute("src", "/assets/images/placeholder.svg");
   });
 
-  it("shows Gertrude as Versie's mother in the Heritage Branch and opens her profile", async () => {
+  it("shows Gertrude as Versie's mother in Explore Family and opens her profile", async () => {
     const user = userEvent.setup();
     renderApp();
-    await user.click(screen.getByRole("button", { name: "Heritage Branch" }));
 
-    // Gertrude's node opens Explore Family centered on her, then her profile.
-    await user.click(
-      screen.getByRole("button", {
+    // The Heritage Branch is a compact overview: Gertrude is not rendered as a
+    // separate node. Her maternal connection is reached through Explore Family.
+    await user.click(screen.getByRole("button", { name: "Heritage Branch" }));
+    expect(
+      screen.queryByRole("button", {
         name: /Gertrude Adams-Hill, Daughter of Harvey Adams Sr\./,
       }),
-    );
+    ).not.toBeInTheDocument();
+
+    // Navigate Explore Family to Versie, then to Gertrude as his mother.
+    await user.click(screen.getByRole("button", { name: /^Explore Family$/ }));
+    await tap(user, /Clayton Norwood Child/);
+    await tap(user, /Lula Mae Norwood Child/);
+    await tap(user, /Versie Smith Spouse/);
+    await tap(user, /Gertrude Adams-Hill Mother/);
     await user.click(screen.getByRole("button", { name: "View Profile" }));
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(

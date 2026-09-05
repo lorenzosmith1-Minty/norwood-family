@@ -2,11 +2,8 @@ import { ArrowLeft, TreePine } from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";
 import { type Person, PersonCard } from "../components/PersonCard";
-import {
-  gertrudeAdamsHillProfile,
-  harveyAdamsSrProfile,
-  profiles,
-} from "./PersonProfilePage";
+import { FAMILY_GRAPH } from "../types/family";
+import { profiles } from "./PersonProfilePage";
 
 interface FamilyTreePageProps {
   onBack: () => void;
@@ -18,144 +15,157 @@ interface FamilyTreePageProps {
   initialExpandedPersonId?: string;
 }
 
-const couple: (Person & { id: string })[] = [
-  {
-    id: "julia",
+/* Tree-specific display metadata (name, role, years, relationToYou) for each
+   person the tree renders. The relationships and structure come from the
+   shared FAMILY_GRAPH; this map only supplies the presentation strings the
+   tree shows, so the visible layout is unchanged. */
+const TREE_PERSON: Record<
+  string,
+  { name: string; role: string; years?: string; relationToYou?: string }
+> = {
+  julia: {
     name: "Julia “Julie” Norwood",
     role: "Matriarch",
-    photo: profiles.julia.portrait,
     years: "1860–1936",
   },
-  {
-    id: "isaiah",
-    name: "Isaiah Norwood",
-    role: "Patriarch",
-    photo: profiles.isaiah.portrait,
-    years: "1858–",
-  },
-];
-
-const children: Person[] = [
-  {
-    id: "clayton",
+  isaiah: { name: "Isaiah Norwood", role: "Patriarch", years: "1858–" },
+  clayton: {
     name: "Clayton",
     role: "Child",
     relationToYou: "uncle",
     years: "1883–",
   },
-  { name: "Isaiah Jr.", role: "Child" },
-  { name: "Edward", role: "Child" },
-  { name: "Hattie", role: "Child", relationToYou: "grandaunt" },
-  { name: "Pinkie", role: "Child" },
-  { name: "Louise", role: "Child" },
-  { name: "Lillie", role: "Child" },
-  { name: "Lula E.", role: "Child", relationToYou: "great-grandmother" },
-];
-
-const claytonBranch: { spouse: Person; children: Person[] }[] = [
-  {
-    spouse: { id: "hudson", name: "Ms. Hudson", role: "First Wife" },
-    children: [
-      { id: "elbert", name: "Elbert", role: "Child" },
-      { id: "wellman", name: "Wellman", role: "Child" },
-      { id: "wetherby", name: "Wetherby", role: "Child" },
-      { name: "Son (died at birth)", role: "Child" },
-    ],
+  "isaiah-jr": { name: "Isaiah Jr.", role: "Child" },
+  edward: { name: "Edward", role: "Child" },
+  hattie: { name: "Hattie", role: "Child", relationToYou: "grandaunt" },
+  pinkie: { name: "Pinkie", role: "Child" },
+  louise: { name: "Louise", role: "Child" },
+  lillie: { name: "Lillie", role: "Child" },
+  "lula-e": {
+    name: "Lula E.",
+    role: "Child",
+    relationToYou: "great-grandmother",
   },
-  {
-    spouse: {
-      id: "erma",
-      name: "Erma T. Williams",
-      role: "Second Wife",
-      years: "1897–1977",
-    },
-    children: [
-      { id: "columbus", name: "Columbus", role: "Child" },
-      {
-        id: "thomas-clayton",
-        name: "Thomas Clayton “Tip / TC”",
-        role: "Child",
-      },
-      { id: "alton", name: "Alton", role: "Child" },
-      { id: "robert-davis", name: "Robert Davis “RD”", role: "Child" },
-      {
-        id: "ardeanus",
-        name: "Ardeanus",
-        role: "Child",
-        years: "1929–",
-      },
-      { id: "willie-b", name: "Willie B.", role: "Child", years: "1932–1995" },
-      { id: "james", name: "James", role: "Child", years: "1927–1987" },
-      { id: "freddie", name: "Freddie", role: "Child", years: "1938–1985" },
-      { id: "zelia-mae", name: "Zelia Mae", role: "Child" },
-      { id: "lula-mae", name: "Lula Mae", role: "Child" },
-    ],
-  },
-];
-
-/* Harvey Adams Sr.'s second marriage to Mary Jane Johnson, and the daughters
-   of that marriage's child Mildred. These mirror the fixed layout order below
-   (Mary Jane as second wife, Mildred + Christine as children, then Mildred's
-   daughters Tammy, Punchy, and Patricia Rollins). */
-const secondMarriageChildren: Person[] = [
-  { id: "mildred-adams", name: "Mildred Adams", role: "Daughter" },
-  { id: "christine-adams", name: "Christine Adams", role: "Daughter" },
-];
-
-const mildredChildren: Person[] = [
-  { id: "tammy", name: "Tammy", role: "Daughter" },
-  { id: "punchy", name: "Punchy", role: "Daughter" },
-  { id: "patricia-rollins", name: "Patricia Rollins", role: "Daughter" },
-];
-
-/* The seven children of Lula Mae Norwood and Versie Smith, shown as a compact
-   Family Unit cluster. Profile ids were added to the profiles record by a
-   parallel task; dates are deliberately omitted to respect the confirmed-facts
-   boundary. */
-const lulaVersieChildren: (Person & { id: string })[] = [
-  {
-    id: "lorenzoSmithSr",
+  hudson: { name: "Ms. Hudson", role: "First Wife" },
+  erma: { name: "Erma T. Williams", role: "Second Wife", years: "1897–1977" },
+  elbert: { name: "Elbert", role: "Child" },
+  wellman: { name: "Wellman", role: "Child" },
+  wetherby: { name: "Wetherby", role: "Child" },
+  "clayton-son-died": { name: "Son (died at birth)", role: "Child" },
+  columbus: { name: "Columbus", role: "Child" },
+  "thomas-clayton": { name: "Thomas Clayton “Tip / TC”", role: "Child" },
+  alton: { name: "Alton", role: "Child" },
+  "robert-davis": { name: "Robert Davis “RD”", role: "Child" },
+  ardeanus: { name: "Ardeanus", role: "Child", years: "1929–" },
+  "willie-b": { name: "Willie B.", role: "Child", years: "1932–1995" },
+  james: { name: "James", role: "Child", years: "1927–1987" },
+  freddie: { name: "Freddie", role: "Child", years: "1938–1985" },
+  "zelia-mae": { name: "Zelia Mae", role: "Child" },
+  "lula-mae": { name: "Lula Mae", role: "Child" },
+  "versie-smith": { name: "Versie Smith", role: "Husband" },
+  lorenzoSmithSr: {
     name: "Lorenzo Smith Sr.",
     role: "Son",
     relationToYou: "granduncle",
   },
-  {
-    id: "versieSmithJr",
+  versieSmithJr: {
     name: "Versie Smith Jr.",
     role: "Son",
     relationToYou: "granduncle",
   },
-  {
-    id: "herbertSmith",
+  herbertSmith: {
     name: "Herbert Smith",
     role: "Son",
     relationToYou: "granduncle",
   },
-  {
-    id: "alonzoSmith",
+  alonzoSmith: {
     name: "Alonzo Smith",
     role: "Son",
     relationToYou: "granduncle",
   },
-  {
-    id: "sherriSmith",
+  sherriSmith: {
     name: "Sherri Smith",
     role: "Daughter",
     relationToYou: "grandaunt",
   },
-  {
-    id: "beatriceSmith",
+  beatriceSmith: {
     name: "Beatrice Smith",
     role: "Daughter",
     relationToYou: "grandaunt",
   },
-  {
-    id: "edSmith",
-    name: "Ed Smith",
-    role: "Son",
-    relationToYou: "granduncle",
+  edSmith: { name: "Ed Smith", role: "Son", relationToYou: "granduncle" },
+  "harvey-adams-sr": { name: "Harvey Adams Sr.", role: "Father" },
+  "gertrude-adams-hill": {
+    name: "Gertrude Adams-Hill",
+    role: "Mother",
+    years: "1913–",
   },
-];
+  "mary-jane-johnson": { name: "Mary Jane Johnson", role: "Second Wife" },
+  "mildred-adams": { name: "Mildred Adams", role: "Daughter" },
+  "christine-adams": { name: "Christine Adams", role: "Daughter" },
+  tammy: { name: "Tammy", role: "Daughter" },
+  punchy: { name: "Punchy", role: "Daughter" },
+  "patricia-rollins": { name: "Patricia Rollins", role: "Daughter" },
+};
+
+/* Build a Person for a graph id: presentation strings from TREE_PERSON (with
+   profile fallback), portrait from the profile for the founding couple. */
+function personFromId(id: string): Person & { id: string } {
+  const meta = TREE_PERSON[id];
+  const profile = profiles[id];
+  const isCouple = id === "julia" || id === "isaiah";
+  return {
+    id,
+    name: meta?.name ?? profile?.name ?? id,
+    role: meta?.role ?? profile?.role ?? "",
+    ...(meta?.years ? { years: meta.years } : {}),
+    ...(meta?.relationToYou ? { relationToYou: meta.relationToYou } : {}),
+    ...(isCouple && profile ? { photo: profile.portrait } : {}),
+  };
+}
+
+/* ---- Branch structure derived from the shared FAMILY_GRAPH ---- */
+const graph = FAMILY_GRAPH;
+
+/* Founding couple and their eight children. */
+const coupleIds = [graph.julia.id, ...graph.julia.spouses];
+const childrenIds = graph.julia.children;
+
+/* Clayton's two marriages and the children of each. */
+const claytonNode = graph.clayton;
+const claytonSpouseIds = claytonNode.spouses;
+const claytonBranches = claytonSpouseIds.map((spouseId) => ({
+  spouseId,
+  childrenIds: graph[spouseId].children,
+}));
+
+/* Lula Mae & Versie couple and their seven children. */
+const lulaMaeId = "lula-mae";
+const versieId = "versie-smith";
+const lulaVersieChildrenIds = graph[lulaMaeId].children;
+
+/* Versie's maternal ancestry: Harvey (grandfather) above Gertrude (mother)
+   above Versie. */
+const harveyId = "harvey-adams-sr";
+const gertrudeId = "gertrude-adams-hill";
+
+/* Harvey's second marriage to Mary Jane Johnson, their children Mildred and
+   Christine, and Mildred's daughters. */
+const maryJaneId = "mary-jane-johnson";
+const secondMarriageChildrenIds = graph[maryJaneId].children;
+const mildredId = "mildred-adams";
+const mildredChildrenIds = graph[mildredId].children;
+
+/* Person objects derived from the graph ids. */
+const couple = coupleIds.map(personFromId);
+const children = childrenIds.map(personFromId);
+const claytonBranch = claytonBranches.map((branch) => ({
+  spouse: personFromId(branch.spouseId),
+  children: branch.childrenIds.map(personFromId),
+}));
+const lulaVersieChildren = lulaVersieChildrenIds.map(personFromId);
+const secondMarriageChildren = secondMarriageChildrenIds.map(personFromId);
+const mildredChildren = mildredChildrenIds.map(personFromId);
 
 const CHILDREN_PER_ROW = 4;
 
@@ -164,40 +174,59 @@ const CHILDREN_PER_ROW = 4;
    order below (couple, children, Clayton branch, Lula Mae/Versie, Versie's
    maternal ancestry, Harvey's second marriage). */
 const COUPLE_INDICES = [0, 1];
-const CHILDREN_INDICES = [2, 3, 4, 5, 6, 7, 8, 9];
+const CHILDREN_INDICES = Array.from(
+  { length: childrenIds.length },
+  (_, i) => coupleIds.length + i,
+);
 const CLAYTON_INDEX = 2;
-const CLAYTON_SPOUSE_INDICES = [10, 11];
-const LULA_MAE_INDEX = 26;
-const VERSIE_INDEX = 27;
-const LULA_VERSIE_CHILDREN_INDICES = Array.from(
-  { length: lulaVersieChildren.length },
-  (_, i) => 28 + i,
+const claytonSpouseStart = coupleIds.length + childrenIds.length;
+const CLAYTON_SPOUSE_INDICES = claytonSpouseIds.map(
+  (_, i) => claytonSpouseStart + i,
+);
+const claytonChildrenStart = claytonSpouseStart + claytonSpouseIds.length;
+const claytonChildrenCounts = claytonBranches.map(
+  (branch) => branch.childrenIds.length,
+);
+const LULA_MAE_INDEX =
+  claytonChildrenStart + claytonChildrenCounts[0] + claytonChildrenCounts[1];
+const VERSIE_INDEX = LULA_MAE_INDEX + 1;
+const lulaVersieChildrenStart = VERSIE_INDEX + 1;
+const LULA_VERSIE_CHILDREN_INDICES = lulaVersieChildrenIds.map(
+  (_, i) => lulaVersieChildrenStart + i,
 );
 /* Versie's maternal ancestry branch: Harvey Adams Sr. (grandfather) at the
    top, Gertrude Adams-Hill (mother) in the middle, Versie Smith (the person)
    at the bottom. Ancestors upward, descendants downward. */
-const HARVEY_INDEX = 28 + lulaVersieChildren.length;
+const HARVEY_INDEX = lulaVersieChildrenStart + lulaVersieChildrenIds.length;
 const GERTRUDE_INDEX = HARVEY_INDEX + 1;
 const VERSIE_MATERNAL_INDEX = GERTRUDE_INDEX + 1;
 const MARY_JANE_INDEX = VERSIE_MATERNAL_INDEX + 1;
-const SECOND_MARRIAGE_CHILDREN_INDICES = [
-  MARY_JANE_INDEX + 1,
-  MARY_JANE_INDEX + 2,
-];
+const secondMarriageChildrenStart = MARY_JANE_INDEX + 1;
+const SECOND_MARRIAGE_CHILDREN_INDICES = secondMarriageChildrenIds.map(
+  (_, i) => secondMarriageChildrenStart + i,
+);
 const MILDRED_INDEX = SECOND_MARRIAGE_CHILDREN_INDICES[0];
-const MILDRED_CHILDREN_INDICES = [
-  MILDRED_INDEX + 2,
-  MILDRED_INDEX + 3,
-  MILDRED_INDEX + 4,
-];
+const mildredChildrenStart =
+  secondMarriageChildrenStart + secondMarriageChildrenIds.length;
+const MILDRED_CHILDREN_INDICES = mildredChildrenIds.map(
+  (_, i) => mildredChildrenStart + i,
+);
 
 /* Collapsible major descendant branches. Each maps to the contiguous run of
    person indices it owns so the tree can (a) show a descendant count when
    collapsed, and (b) auto-expand the branch containing the selected card. */
-const CLAYTON_BRANCH_INDICES = Array.from({ length: 16 }, (_, i) => 10 + i);
+const CLAYTON_BRANCH_INDICES = Array.from(
+  {
+    length:
+      claytonSpouseIds.length +
+      claytonChildrenCounts[0] +
+      claytonChildrenCounts[1],
+  },
+  (_, i) => claytonSpouseStart + i,
+);
 const LULA_VERSIE_BRANCH_INDICES = Array.from(
-  { length: 2 + lulaVersieChildren.length },
-  (_, i) => 26 + i,
+  { length: 2 + lulaVersieChildrenIds.length },
+  (_, i) => LULA_MAE_INDEX + i,
 );
 /* Versie's maternal ancestry branch: Harvey Adams Sr. and Gertrude Adams-Hill
    above Versie Smith (ancestors upward, descendants downward). */
@@ -207,7 +236,7 @@ const VERSIE_MATERNAL_BRANCH_INDICES = [
   VERSIE_MATERNAL_INDEX,
 ];
 const HARVEY_SECOND_BRANCH_INDICES = Array.from(
-  { length: 6 },
+  { length: 1 + secondMarriageChildrenIds.length + mildredChildrenIds.length },
   (_, i) => MARY_JANE_INDEX + i,
 );
 
@@ -221,46 +250,26 @@ const BRANCH_INDICES: Record<string, number[]> = {
 /* Person ids that live inside each collapsible branch, used to decide which
    branch should start expanded when arriving from a profile view. */
 const CLAYTON_BRANCH_IDS = new Set([
-  "clayton",
-  "hudson",
-  "elbert",
-  "wellman",
-  "wetherby",
-  "erma",
-  "columbus",
-  "thomas-clayton",
-  "alton",
-  "robert-davis",
-  "ardeanus",
-  "willie-b",
-  "james",
-  "freddie",
-  "zelia-mae",
-  "lula-mae",
+  claytonNode.id,
+  ...claytonSpouseIds,
+  ...claytonBranches.flatMap((branch) => branch.childrenIds),
 ]);
 
 const LULA_VERSIE_BRANCH_IDS = new Set([
-  "lula-mae",
-  "versie-smith",
-  ...lulaVersieChildren.map((child) => child.id),
+  lulaMaeId,
+  versieId,
+  ...lulaVersieChildrenIds,
 ]);
 
 /* Versie's maternal ancestry branch: Harvey Adams Sr. and Gertrude Adams-Hill
    are Versie Smith's ancestors, shown above her. */
-const VERSIE_MATERNAL_BRANCH_IDS = new Set([
-  "harvey-adams-sr",
-  "gertrude-adams-hill",
-  "versie-smith",
-]);
+const VERSIE_MATERNAL_BRANCH_IDS = new Set([harveyId, gertrudeId, versieId]);
 
 const HARVEY_SECOND_BRANCH_IDS = new Set([
-  "harvey-adams-sr",
-  "mary-jane-johnson",
-  "mildred-adams",
-  "christine-adams",
-  "tammy",
-  "punchy",
-  "patricia-rollins",
+  harveyId,
+  maryJaneId,
+  ...secondMarriageChildrenIds,
+  ...mildredChildrenIds,
 ]);
 
 /* Every branch key that contains the given person id. A person can appear in
@@ -280,19 +289,17 @@ const inSet = (selected: number | null, set: number[]) =>
 
 interface BranchFoldProps {
   name: string;
-  count: number;
   onToggle: () => void;
   dataOcid: string;
   open?: boolean;
 }
 
-/* Persistent branch summary row: branch person name + descendant count chip +
-   expand/collapse affordance. Rendered in BOTH the collapsed and expanded
-   states so an expanded branch always shows a control to collapse it again.
-   The whole row is the tap target (min 44px). */
+/* Persistent branch summary row: branch person name + expand/collapse
+   affordance. Rendered in BOTH the collapsed and expanded states so an
+   expanded branch always shows a control to collapse it again. The whole row
+   is the tap target (min 44px). */
 function BranchFold({
   name,
-  count,
   onToggle,
   dataOcid,
   open = false,
@@ -306,7 +313,6 @@ function BranchFold({
       className={`ft-branch-fold ${open ? "ft-branch-fold-open" : ""}`}
     >
       <span className="ft-branch-fold-name">{name}</span>
-      <span className="ft-branch-fold-count">{count}</span>
       <span className="ft-branch-fold-toggle" aria-hidden="true">
         <span className="ft-fold-chevron" />
       </span>
@@ -465,7 +471,6 @@ function ClaytonBranch({
 
       <BranchFold
         name="Clayton"
-        count={16}
         open={!collapsed}
         onToggle={onToggle}
         dataOcid="tree.branch.clayton"
@@ -604,26 +609,13 @@ export function FamilyTreePage({
     ...couple,
     ...children,
     ...claytonBranch.flatMap((branch) => [branch.spouse, ...branch.children]),
-    { id: "lula-mae", name: "Lula Mae", role: "Child" },
-    { id: "versie-smith", name: "Versie Smith", role: "Husband" },
+    personFromId(lulaMaeId),
+    personFromId(versieId),
     ...lulaVersieChildren,
-    {
-      id: harveyAdamsSrProfile.id,
-      name: "Harvey Adams Sr.",
-      role: "Father",
-    },
-    {
-      id: gertrudeAdamsHillProfile.id,
-      name: "Gertrude Adams-Hill",
-      role: "Mother",
-      years: "1913–",
-    },
-    { id: "versie-smith", name: "Versie Smith", role: "Husband" },
-    {
-      id: "mary-jane-johnson",
-      name: "Mary Jane Johnson",
-      role: "Second Wife",
-    },
+    personFromId(harveyId),
+    personFromId(gertrudeId),
+    personFromId(versieId),
+    personFromId(maryJaneId),
     ...secondMarriageChildren,
     ...mildredChildren,
   ];
@@ -770,7 +762,6 @@ export function FamilyTreePage({
       <section aria-label="Lula Mae and Versie" className="relative mt-10">
         <BranchFold
           name="Lula Mae & Versie"
-          count={LULA_VERSIE_BRANCH_INDICES.length}
           open={!collapsed.lulaVersie}
           onToggle={() => toggleBranch("lulaVersie")}
           dataOcid="tree.branch.lula_versie"
@@ -877,7 +868,6 @@ export function FamilyTreePage({
       <section aria-label="Versie's maternal family" className="relative mt-10">
         <BranchFold
           name="Versie's Maternal Family"
-          count={3}
           open={!collapsed.versieMaternal}
           onToggle={() => toggleBranch("versieMaternal")}
           dataOcid="tree.branch.versie_maternal"
@@ -917,17 +907,17 @@ export function FamilyTreePage({
               <div className="w-full max-w-[calc(50%-0.375rem)] sm:max-w-[calc(50%-0.5rem)]">
                 <PersonCard
                   person={{
-                    id: harveyAdamsSrProfile.id,
+                    id: harveyId,
                     name: "Harvey Adams Sr.",
                     role: "Father",
                   }}
                   index={HARVEY_INDEX}
                   selected={selected === HARVEY_INDEX}
                   onSelect={() => handleSelect(HARVEY_INDEX)}
-                  onOpen={() => onOpenProfile(harveyAdamsSrProfile.id)}
+                  onOpen={() => onOpenProfile(harveyId)}
                   isMe={meIndex === HARVEY_INDEX}
                   onMarkMe={() => setMeIndex(HARVEY_INDEX)}
-                  profilePhoto={profilePhotos?.[harveyAdamsSrProfile.id]}
+                  profilePhoto={profilePhotos?.[harveyId]}
                 />
               </div>
             </div>
@@ -956,7 +946,7 @@ export function FamilyTreePage({
               <div className="w-full max-w-[calc(50%-0.375rem)] sm:max-w-[calc(50%-0.5rem)]">
                 <PersonCard
                   person={{
-                    id: gertrudeAdamsHillProfile.id,
+                    id: gertrudeId,
                     name: "Gertrude Adams-Hill",
                     role: "Mother",
                     years: "1913–",
@@ -964,10 +954,10 @@ export function FamilyTreePage({
                   index={GERTRUDE_INDEX}
                   selected={selected === GERTRUDE_INDEX}
                   onSelect={() => handleSelect(GERTRUDE_INDEX)}
-                  onOpen={() => onOpenProfile(gertrudeAdamsHillProfile.id)}
+                  onOpen={() => onOpenProfile(gertrudeId)}
                   isMe={meIndex === GERTRUDE_INDEX}
                   onMarkMe={() => setMeIndex(GERTRUDE_INDEX)}
-                  profilePhoto={profilePhotos?.[gertrudeAdamsHillProfile.id]}
+                  profilePhoto={profilePhotos?.[gertrudeId]}
                 />
               </div>
             </div>
@@ -1019,7 +1009,6 @@ export function FamilyTreePage({
       <section aria-label="Harvey's second marriage" className="relative mt-10">
         <BranchFold
           name="Harvey Adams Sr."
-          count={6}
           open={!collapsed.harveySecond}
           onToggle={() => toggleBranch("harveySecond")}
           dataOcid="tree.branch.harvey_second"
@@ -1060,17 +1049,17 @@ export function FamilyTreePage({
             <div className="grid grid-cols-2 gap-3 sm:gap-4">
               <PersonCard
                 person={{
-                  id: harveyAdamsSrProfile.id,
+                  id: harveyId,
                   name: "Harvey Adams Sr.",
                   role: "Father",
                 }}
                 index={HARVEY_INDEX}
                 selected={selected === HARVEY_INDEX}
                 onSelect={() => handleSelect(HARVEY_INDEX)}
-                onOpen={() => onOpenProfile(harveyAdamsSrProfile.id)}
+                onOpen={() => onOpenProfile(harveyId)}
                 isMe={meIndex === HARVEY_INDEX}
                 onMarkMe={() => setMeIndex(HARVEY_INDEX)}
-                profilePhoto={profilePhotos?.[harveyAdamsSrProfile.id]}
+                profilePhoto={profilePhotos?.[harveyId]}
               />
               <PersonCard
                 person={{

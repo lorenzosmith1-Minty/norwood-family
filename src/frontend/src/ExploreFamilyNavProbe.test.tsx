@@ -71,7 +71,7 @@ describe("Explore Family focused navigator", () => {
     await openExploreFamily(user);
 
     // The default focus is the founding matriarch Julia (no person is marked Me).
-    const focusCard = screen.getByTestId("explore.focus_card");
+    const focusCard = screen.getByTestId("explore.focus.1");
     expect(
       within(focusCard).getByText("Julia “Julie” Norwood"),
     ).toBeInTheDocument();

@@ -255,48 +255,56 @@ describe("Harvey Adams Sr. first-marriage branch cover", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("shows the first-marriage branch in the Heritage Branch with all children connected", async () => {
+  it("shows the Adams Line as a compact branch card without a hardcoded count", async () => {
     const user = userEvent.setup();
     renderApp();
     await user.click(
       screen.getByRole("button", { name: "Heritage Branch View" }),
     );
 
-    // The Adams Maternal Line cluster anchors on Harvey and lists all 16
-    // children (both marriages) as connected nodes.
-    const adams = screen.getByTestId("hb.cluster.5");
+    // The Adams Line renders as a compact branch-anchor card for Harvey, not
+    // as a cluster of every individual child.
+    const adams = screen.getByTestId("hb.branch_cluster.3");
     expect(
       within(adams).getByRole("button", {
         name: /Harvey Adams Sr\., Father of Gertrude Adams-Hill/,
       }),
     ).toBeInTheDocument();
-    expect(within(adams).getByTestId("hb.cluster.5.count")).toHaveTextContent(
-      "16 children · 2 marriages",
-    );
-    for (const child of FIRST_MARRIAGE_CHILDREN) {
-      const name = child.replace(/ Child$/, "");
-      expect(
-        within(adams).getByRole("button", {
-          name: new RegExp(`^${name}, `),
-        }),
-      ).toBeInTheDocument();
-    }
+
+    // The hardcoded marriage/child count was removed: no count chip renders
+    // because no count is computed from the stored relationship graph.
+    expect(
+      within(adams).queryByText("16 children · 2 marriages"),
+    ).not.toBeInTheDocument();
+
+    // The overview does not recreate the full tree: individual children are not
+    // rendered as separate nodes.
+    expect(
+      screen.queryByRole("button", { name: /John Adams, Son/ }),
+    ).not.toBeInTheDocument();
   });
 
-  it("opens a first-marriage child profile from the Heritage Branch", async () => {
+  it("opens a first-marriage child profile from the Adams Line anchor", async () => {
     const user = userEvent.setup();
     renderApp();
     await user.click(
       screen.getByRole("button", { name: "Heritage Branch View" }),
     );
 
-    // Tap a first-marriage child node in the Adams Maternal Line cluster.
-    await user.click(screen.getByRole("button", { name: /John Adams, Son/ }));
+    // Tap the Adams Line branch card to open Explore Family centered on Harvey.
+    await user.click(
+      screen.getByRole("button", {
+        name: /Harvey Adams Sr\., Father of Gertrude Adams-Hill/,
+      }),
+    );
 
-    // Explore Family opens centered on John Adams.
+    // Explore Family opens centered on Harvey, whose children include John.
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       "Explore Family",
     );
-    expect(screen.getByText("John Adams")).toBeInTheDocument();
+    expect(screen.getByText("Harvey Adams Sr.")).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /John Adams Child/ }),
+    ).toBeInTheDocument();
   });
 });

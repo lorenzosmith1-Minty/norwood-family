@@ -42,109 +42,65 @@ function toPerson(id: string): HeritagePerson {
   };
 }
 
-interface Cluster {
+/**
+ * A compact family-unit plate: a couple (two hb-unit cards side by side).
+ * Represents a whole unit as one tappable cluster instead of every individual
+ * person.
+ */
+interface FamilyUnit {
   id: string;
   title: string;
-  /** Major couple / branch anchor nodes rendered as hb-couple cards. */
-  anchorIds: string[];
-  /** Compact descendant nodes rendered as hb-node cards. */
-  nodeIds: string[];
-  /** Short summary shown in the hb-count-chip, e.g. "14 children". */
-  countLabel: string;
+  personIds: string[];
 }
 
 /**
- * The bounded 10,000-foot map. Each cluster groups one major line's head and
- * descendants so the whole family reads as a scannable overview without every
- * detail at once. Only documented relationships from FAMILY_GRAPH are shown.
+ * A compact branch-anchor plate: one line head (hb-branch card) for a major
+ * branch line.
  */
-const CLUSTERS: Cluster[] = [
+interface BranchAnchor {
+  id: string;
+  title: string;
+  personId: string;
+}
+
+/**
+ * The bounded 10,000-foot map. Major family units and branch anchors render as
+ * compact cards instead of every individual person, so the whole family reads
+ * as a scannable overview. Only documented relationships from FAMILY_GRAPH are
+ * shown, and tapping any card opens Explore Family on the anchor person.
+ */
+const FAMILY_UNITS: FamilyUnit[] = [
   {
     id: "founding",
     title: "Founding Couple",
-    anchorIds: ["julia", "isaiah"],
-    nodeIds: [
-      "clayton",
-      "isaiah-jr",
-      "edward",
-      "hattie",
-      "pinkie",
-      "louise",
-      "lillie",
-      "lula-e",
-    ],
-    countLabel: "8 children",
-  },
-  {
-    id: "clayton",
-    title: "Clayton Branch",
-    anchorIds: ["clayton"],
-    nodeIds: [
-      "elbert",
-      "wellman",
-      "wetherby",
-      "columbus",
-      "thomas-clayton",
-      "alton",
-      "robert-davis",
-      "ardeanus",
-      "willie-b",
-      "james",
-      "freddie",
-      "zelia-mae",
-      "lula-mae",
-    ],
-    countLabel: "14 children · 2 marriages",
+    personIds: ["julia", "isaiah"],
   },
   {
     id: "lula-versie",
     title: "Lula Mae + Versie Family Unit",
-    anchorIds: ["lula-mae", "versie-smith"],
-    nodeIds: [],
-    countLabel: "7 children",
+    personIds: ["lula-mae", "versie-smith"],
+  },
+];
+
+const BRANCH_ANCHORS: BranchAnchor[] = [
+  {
+    id: "clayton",
+    title: "Clayton Branch",
+    personId: "clayton",
   },
   {
     id: "smith",
     title: "Smith Branch",
-    anchorIds: [],
-    nodeIds: [
-      "lorenzoSmithSr",
-      "versieSmithJr",
-      "herbertSmith",
-      "alonzoSmith",
-      "sherriSmith",
-      "beatriceSmith",
-      "edSmith",
-    ],
-    countLabel: "7 children",
+    personId: "lorenzoSmithSr",
   },
   {
     id: "adams",
-    title: "Adams Maternal Line",
-    anchorIds: ["harvey-adams-sr"],
-    nodeIds: [
-      "gertrude-adams-hill",
-      "john-adams",
-      "louis-adams-sr",
-      "albert-adams",
-      "charles-adams",
-      "homer-adams",
-      "versie-adams-sr",
-      "judge-granberry-adams",
-      "fannie-adams",
-      "harvey-adams-jr",
-      "christine-adams-tucker",
-      "robert-adams-sr",
-      "ella-mae-adams",
-      "eula-lee-adams",
-      "mildred-adams",
-      "christine-adams",
-    ],
-    countLabel: "16 children · 2 marriages",
+    title: "Versie's Maternal / Adams Line",
+    personId: "harvey-adams-sr",
   },
 ];
 
-/** Short curved descent connector between clusters. */
+/** Short curved descent connector between map plates. */
 function ClusterConnector() {
   return (
     <svg
@@ -160,13 +116,13 @@ function ClusterConnector() {
 export default function HeritageBranchPage({
   onOpenExploreFamily,
 }: HeritageBranchPageProps) {
-  // Running index across the whole map so every node gets a unique data-ocid.
-  let nodeIndex = 0;
+  // Running index across the whole map so every card gets a unique data-ocid.
+  let cardIndex = 0;
 
-  const renderNode = (id: string, variant: "hb-node" | "hb-couple") => {
+  const renderUnitCard = (id: string) => {
     const person = toPerson(id);
     const profile = profiles[id];
-    const idx = nodeIndex++;
+    const idx = cardIndex++;
     return (
       <HeritageBranchCard
         key={id}
@@ -176,9 +132,29 @@ export default function HeritageBranchPage({
         selected={false}
         isAnchor={false}
         isMe={false}
-        hasDescendants={person.children.length > 0}
-        variant={variant}
+        hasDescendants={false}
+        variant="hb-unit"
         onSelect={() => onOpenExploreFamily(id)}
+      />
+    );
+  };
+
+  const renderBranchCard = (anchor: BranchAnchor) => {
+    const person = toPerson(anchor.personId);
+    const profile = profiles[anchor.personId];
+    const idx = cardIndex++;
+    return (
+      <HeritageBranchCard
+        key={anchor.id}
+        person={person}
+        portrait={profile?.portrait}
+        index={idx}
+        selected={false}
+        isAnchor={false}
+        isMe={false}
+        hasDescendants={false}
+        variant="hb-branch"
+        onSelect={() => onOpenExploreFamily(anchor.personId)}
       />
     );
   };
@@ -204,8 +180,8 @@ export default function HeritageBranchPage({
           Heritage Branch View
         </h1>
         <p className="mt-3 max-w-md text-base text-muted-foreground">
-          A 10,000-foot view of how the major family lines connect. Tap any
-          person to open Explore Family focused on them.
+          A 10,000-foot map of the major family units and branch lines. Tap any
+          card to open Explore Family focused on that person.
         </p>
       </motion.header>
 
@@ -216,31 +192,36 @@ export default function HeritageBranchPage({
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.1, ease: [0.4, 0, 0.2, 1] }}
       >
-        {CLUSTERS.map((cluster, ci) => (
-          <div key={cluster.id}>
-            {ci > 0 && <ClusterConnector />}
-            <section className="hb-cluster" data-ocid={`hb.cluster.${ci + 1}`}>
+        {/* Family units: couple plates */}
+        {FAMILY_UNITS.map((unit, ui) => (
+          <div key={unit.id}>
+            {ui > 0 && <ClusterConnector />}
+            <section
+              className="hb-cluster"
+              data-ocid={`hb.unit_cluster.${ui + 1}`}
+            >
               <div className="hb-cluster-head">
-                <h2 className="hb-cluster-title">{cluster.title}</h2>
-                <span
-                  className="hb-count-chip"
-                  data-ocid={`hb.cluster.${ci + 1}.count`}
-                >
-                  {cluster.countLabel}
-                </span>
+                <h2 className="hb-cluster-title">{unit.title}</h2>
               </div>
+              <div className="hb-cluster-grid">
+                {unit.personIds.map((id) => renderUnitCard(id))}
+              </div>
+            </section>
+          </div>
+        ))}
 
-              {cluster.anchorIds.length > 0 && (
-                <div className="hb-cluster-grid">
-                  {cluster.anchorIds.map((id) => renderNode(id, "hb-couple"))}
-                </div>
-              )}
-
-              {cluster.nodeIds.length > 0 && (
-                <div className="hb-cluster-grid">
-                  {cluster.nodeIds.map((id) => renderNode(id, "hb-node"))}
-                </div>
-              )}
+        {/* Branch anchors: line-head plates */}
+        {BRANCH_ANCHORS.map((anchor, bi) => (
+          <div key={anchor.id}>
+            <ClusterConnector />
+            <section
+              className="hb-cluster"
+              data-ocid={`hb.branch_cluster.${bi + 1}`}
+            >
+              <div className="hb-cluster-head">
+                <h2 className="hb-cluster-title">{anchor.title}</h2>
+              </div>
+              <div className="hb-cluster-grid">{renderBranchCard(anchor)}</div>
             </section>
           </div>
         ))}
@@ -255,8 +236,8 @@ export default function HeritageBranchPage({
       >
         <Users className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
         <p>
-          This is a simplified overview of the major family lines. Tap any
-          person to open Explore Family centered on them for the full detail.
+          This is a simplified overview of the major family lines. Tap any card
+          to open Explore Family centered on that person for the full detail.
         </p>
       </motion.footer>
     </div>

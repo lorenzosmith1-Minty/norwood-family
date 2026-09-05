@@ -2188,7 +2188,7 @@ export const lorenzoSmithSrProfile: PersonProfile = {
     spouseName: "Lula Mae Norwood and Versie Smith",
     spouseRole: "Parents",
     childrenText:
-      "Lorenzo Smith Sr. is one of seven children of Lula Mae Norwood and Versie Smith. His siblings are Versie Smith Jr., Herbert Smith, Alonzo Smith, Sherri Smith, Beatrice Smith, and Ed Smith.",
+      "Lorenzo Smith Sr. was the son of Lula Mae Norwood and Versie Smith, one of seven children. He had one child, Lorenzo Smith Jr. His siblings are Versie Smith Jr., Herbert Smith, Alonzo Smith, Sherri Smith, Beatrice Smith, and Ed Smith.",
   },
   timeline: [
     {
@@ -2204,7 +2204,7 @@ export const lorenzoSmithSrProfile: PersonProfile = {
       title: "Family Research Notes",
       source: "NORWOOD FAMILY CONNECTION (From Alonzo Smith)",
       detail:
-        "A family-history note identifying Lorenzo Smith Sr. as a son of Lula Mae Norwood and Versie Smith, one of seven children. No additional details about him are recorded. This is a family account, not a documented record.",
+        "A family-history note identifying Lorenzo Smith Sr. as a son of Lula Mae Norwood and Versie Smith, one of seven children, and the father of Lorenzo Smith Jr. No additional details about him are recorded. This is a family account, not a documented record.",
     },
   ],
 };

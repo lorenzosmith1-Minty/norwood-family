@@ -120,35 +120,42 @@ describe("Explore Family + Heritage Branch baseline: focused views stay intact",
       "Heritage Branch View",
     );
 
-    // Each cluster renders its title heading and a count chip.
-    const clusters: { title: string; count: string }[] = [
-      { title: "Founding Couple", count: "8 children" },
-      { title: "Clayton Branch", count: "14 children · 2 marriages" },
-      { title: "Lula Mae + Versie Family Unit", count: "7 children" },
-      { title: "Smith Branch", count: "7 children" },
-      { title: "Adams Maternal Line", count: "16 children · 2 marriages" },
+    // Each cluster renders its title heading.
+    const clusters: string[] = [
+      "Founding Couple",
+      "Lula Mae + Versie Family Unit",
+      "Clayton Branch",
+      "Smith Branch",
+      "Versie's Maternal / Adams Line",
     ];
-    for (const { title, count } of clusters) {
+    for (const title of clusters) {
       expect(screen.getByRole("heading", { name: title })).toBeInTheDocument();
-      // "7 children" appears on two clusters, so use the plural query.
-      expect(screen.getAllByText(count).length).toBeGreaterThanOrEqual(1);
     }
+
+    // The hardcoded descendant/branch counts were removed: no count chip text
+    // is shown because no count is computed from the stored relationship graph.
+    expect(screen.queryByText("8 children")).not.toBeInTheDocument();
+    expect(screen.queryByText("7 children")).not.toBeInTheDocument();
+    expect(screen.queryByText("72 Descendants")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("16 children · 2 marriages"),
+    ).not.toBeInTheDocument();
   });
 
-  it("opens Explore Family centered on a person when a Heritage Branch node is tapped", async () => {
+  it("opens Explore Family centered on a person when a Heritage Branch card is tapped", async () => {
     const user = userEvent.setup();
     renderApp();
     await openHeritageBranch(user);
 
-    // Columbus appears only in the Clayton Branch, so his node is unambiguous.
+    // The Clayton Branch anchor card opens Explore Family centered on Clayton.
     await user.click(
-      screen.getByRole("button", { name: /Columbus Norwood, Son/ }),
+      screen.getByRole("button", { name: /Clayton Norwood, Son/ }),
     );
 
-    // Explore Family opens centered on Columbus.
+    // Explore Family opens centered on Clayton.
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
       "Explore Family",
     );
-    expect(screen.getByText("Columbus Norwood")).toBeInTheDocument();
+    expect(screen.getByText("Clayton Norwood")).toBeInTheDocument();
   });
 });

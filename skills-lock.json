@@ -4,7 +4,7 @@
     "connector-googlecalendar": {
       "source": "caffeinelabs/skills",
       "sourceType": "github",
-      "computedHash": "200f50217eebea04acb7e1c53e00e48b9b5ee41fe9d7e2164b20e8e208305933"
+      "computedHash": "a743aa54fbfcd4aa195057f44e346634e6dc604d2fe8d36bd03da454f7e67d44"
     },
     "connector-googlemail": {
       "source": "caffeinelabs/skills",

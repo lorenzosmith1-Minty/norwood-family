@@ -433,33 +433,49 @@ describe("Family Tree cover: Freddie, Zelia Mae, and Lula Mae profiles", () => {
   });
 });
 
-describe("Heritage Branch cover: Freddie, Zelia Mae, and Lula Mae open via the overview map", () => {
-  it("opens each new profile from its Heritage Branch node", async () => {
+describe("Heritage Branch cover: Freddie, Zelia Mae, and Lula Mae open via Explore Family", () => {
+  it("opens each new profile from Clayton's child cards, not as separate Heritage Branch nodes", async () => {
     const user = userEvent.setup();
     renderApp();
     await user.click(screen.getByRole("button", { name: "Heritage Branch" }));
 
-    const cases: { node: RegExp; heading: string }[] = [
-      { node: /Freddie Norwood, Son/, heading: "Freddie Norwood" },
-      { node: /Zelia Mae Norwood, Daughter/, heading: "Zelia Mae Norwood" },
-      // Lula Mae appears as both a Clayton Branch node and a Lula-Versie anchor,
-      // so take the first match.
-      { node: /Lula Mae Norwood, Daughter/, heading: "Lula Mae Norwood" },
+    // The Heritage Branch is a compact overview: these individuals are not
+    // rendered as separate nodes.
+    expect(
+      screen.queryByRole("button", { name: /Freddie Norwood, Son/ }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /Zelia Mae Norwood, Daughter/ }),
+    ).not.toBeInTheDocument();
+
+    // They remain reachable through Explore Family from Clayton's child cards.
+    const cases: { card: RegExp; heading: string }[] = [
+      { card: /Freddie Norwood Child/, heading: "Freddie Norwood" },
+      { card: /Zelia Mae Norwood Child/, heading: "Zelia Mae Norwood" },
+      { card: /Lula Mae Norwood Child/, heading: "Lula Mae Norwood" },
     ];
 
-    for (const { node, heading } of cases) {
-      await user.click(screen.getAllByRole("button", { name: node })[0]);
+    for (const { card, heading } of cases) {
+      // The header "Explore Family" button resets the focus to the default
+      // anchor (Julia); recenter on Clayton, then open the child's profile.
+      await user.click(
+        screen.getByRole("button", { name: /^Explore Family$/ }),
+      );
+      await user.click(
+        screen.getByRole("button", { name: /Clayton Norwood Child/ }),
+      );
+      await user.click(screen.getByRole("button", { name: card }));
       await user.click(screen.getByRole("button", { name: "View Profile" }));
 
       expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
         heading,
       );
 
-      // Back to Explore Family, then to the Heritage Branch for the next node.
+      // Back to Explore Family, then to Clayton for the next child.
       await user.click(
         screen.getByRole("button", { name: /Back to Family Tree/ }),
       );
-      await user.click(screen.getByRole("button", { name: "Heritage Branch" }));
+      await recenterOnClayton(user);
     }
   });
 });

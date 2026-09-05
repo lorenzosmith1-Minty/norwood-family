@@ -49,47 +49,61 @@ async function openBranchFromHome(user: ReturnType<typeof userEvent.setup>) {
 }
 
 // Characterization baseline for the four Erma T. Williams child profiles that
-// already exist (Columbus, Thomas Clayton 'Tip / TC', Alton, Robert Davis 'RD')
-// before the three new profiles (Ardeanus, Willie B., James) are added. These
-// four already open from the Heritage Branch overview map, and that working
-// behavior must remain unchanged. The three new profiles are intentionally
-// changing (they will gain profiles and become openable), so they are NOT
-// asserted here.
+// already exist (Columbus, Thomas Clayton 'Tip / TC', Alton, Robert Davis 'RD').
+// The redesigned Heritage Branch no longer renders every individual person as a
+// map node — it shows compact family-unit and branch-anchor cards instead — so
+// these profiles are no longer reachable directly from the Heritage Branch
+// overview. They remain reachable through Explore Family: tapping the Clayton
+// Branch anchor card opens Explore Family centered on Clayton, whose children
+// include these four profiles. This test protects that working path.
 describe("Heritage Branch characterization: existing Erma child profiles open", () => {
-  it("opens each existing Erma child profile from the Heritage Branch overview", async () => {
+  it("opens each existing Erma child profile via the Clayton Branch anchor", async () => {
     const user = userEvent.setup();
     renderApp();
     await openBranchFromHome(user);
 
-    // Each of the four existing profiles opens from its Heritage Branch node.
-    const cases: { node: RegExp; heading: string }[] = [
-      { node: /Columbus Norwood, Son/, heading: "Columbus Norwood" },
+    // The Heritage Branch is a compact overview: it does not list every
+    // individual person, so the Erma children are not shown as separate nodes.
+    expect(
+      screen.queryByRole("button", { name: /Columbus Norwood, Son/ }),
+    ).not.toBeInTheDocument();
+
+    // Tapping the Clayton Branch anchor card opens Explore Family on Clayton.
+    await user.click(
+      screen.getByRole("button", { name: /Clayton Norwood, Son/ }),
+    );
+
+    // Each of the four existing profiles opens from Clayton's child cards.
+    const cases: { card: RegExp; heading: string }[] = [
+      { card: /Columbus Norwood Child/, heading: "Columbus Norwood" },
       {
-        node: /Thomas Clayton “Tip \/ TC” Norwood, Son/,
+        card: /Thomas Clayton “Tip \/ TC” Norwood Child/,
         heading: "Thomas Clayton “Tip / TC” Norwood",
       },
-      { node: /Alton Norwood, Son/, heading: "Alton Norwood" },
+      { card: /Alton Norwood Child/, heading: "Alton Norwood" },
       {
-        node: /Robert Davis “RD” Norwood, Son/,
+        card: /Robert Davis “RD” Norwood Child/,
         heading: "Robert Davis “RD” Norwood",
       },
     ];
 
-    for (const { node, heading } of cases) {
-      // Tap the node to open Explore Family centered on the person, then open
-      // their profile.
-      await user.click(screen.getByRole("button", { name: node }));
+    for (const { card, heading } of cases) {
+      // Tap the child card to focus them, then open their profile.
+      await user.click(screen.getByRole("button", { name: card }));
       await user.click(screen.getByRole("button", { name: "View Profile" }));
 
       expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
         heading,
       );
 
-      // Back to Explore Family, then to the Heritage Branch for the next node.
+      // Back to Explore Family (focused on the child), then to Clayton via his
+      // Father card for the next child.
       await user.click(
         screen.getByRole("button", { name: /Back to Family Tree/ }),
       );
-      await user.click(screen.getByRole("button", { name: "Heritage Branch" }));
+      await user.click(
+        screen.getByRole("button", { name: /Clayton Norwood Father/ }),
+      );
     }
   });
 });

@@ -94,8 +94,12 @@ intact if the account's email or authentication provider changes later.
   when the person is not tracked, `#err(#DeceasedProfile)` for a deceased
   profile (deceased profiles can never be claimed), `#err(#AlreadyClaimed)` when
   the profile is already claimed, and `#err(#AlreadyPending)` when a pending
-  claim already exists for that person. On success it records a
-  `#ProfileClaimRequested` notification to the caller.
+  claim already exists for that person. Duplicate-claim prevention is per
+  account + personId: a second `requestProfileClaim` for the same person by the
+  same signed-in caller (or by any caller, since only one pending claim may
+  exist per person) is rejected with `#err(#AlreadyPending)` rather than
+  creating a second claim. On success it records a `#ProfileClaimRequested`
+  notification to the caller.
 - `listProfileClaims() : async [ProfileClaim]` — query. Family Steward only.
   Lists all profile claim requests for the review area.
 - `getMyProfileClaim(personId : Text) : async ?ProfileClaim` — query. Returns
@@ -105,13 +109,18 @@ intact if the account's email or authentication provider changes later.
   current user already has a pending claim on a profile without needing Family
   Steward privileges.
 - `getMyProfile() : async ?PersonProfile` — query. Returns the signed-in
-  caller's own linked/claimed Person Profile (the profile whose
-  `claimedByUserId` equals the caller), or, when none is linked, the caller's
-  pending profile (a profile created via `createMyself` keyed by the caller's
-  principal, or a profile with a pending claim by the caller). Returns `null`
+  caller's own linked/claimed Person Profile, or, when none is linked, the
+  caller's pending profile. Resolution order is strict: (1) the profile whose
+  `claimedByUserId` equals the caller (an approved claim or a `createMyself`
+  profile); (2) a profile created via `createMyself` keyed by the caller's
+  principal; (3) a profile with a pending claim by the caller. Returns `null`
   when the caller has no profile. Not gated to admin — any signed-in caller may
   query their own profile. This lets the navbar show the linked or pending
-  profile's display name without needing Family Steward privileges.
+  profile's display name without needing Family Steward privileges. Because a
+  pending claim is re-pointed to the canonical `lorenzoSmithJr` personId (see
+  the canonical-record note below), a caller with a pending claim on Lorenzo
+  Smith Jr. resolves here to that same canonical profile, not to a detached
+  test record.
 - `getMyRelationshipRequests() : async [RelationshipRequest]` — query. Returns
   the signed-in caller's own pending relationship requests — those involving a
   profile the caller owns or created. Not gated to admin — any signed-in caller
@@ -169,12 +178,23 @@ intact if the account's email or authentication provider changes later.
   state. Returns the updated request, or `null` when no request with that id
   exists.
 - `updateOwnProfile(personId : Text, edits : ProfileEdits) : async Result<PersonProfile, EditError>` —
-  update. Updates an approved owner's own living profile fields (preferred name,
-  story, occupation, birth information, timeline, privacy settings). Never
-  rewrites family relationships directly. Requires a signed-in caller; returns
-  `#err(#NotSignedIn)` for an anonymous caller, `#err(#ProfileNotFound)` when
-  the person is not tracked, `#err(#NotOwner)` when the caller is not the
-  profile's owner, and `#err(#DeceasedProfile)` for a deceased profile.
+  update. Updates an approved owner's own living profile fields: identity
+  (preferred/display name, first, middle, last, suffix, nickname), basic
+  information (birth date/year, birthplace, current location, occupation,
+  living/deceased status), about (short bio, longer story), timeline, and
+  privacy settings. Each `ProfileEdits` field that is `null` leaves the current
+  value unchanged. It updates the existing canonical Person record in place —
+  it never creates a new person, and it preserves `personId`, claim ownership
+  (`claimStatus`/`claimedByUserId`), confirmed relationships, archive links,
+  notifications, and verification history. It never rewrites family
+  relationships directly; any relationship addition or change must go through
+  `proposeRelationship`. A profile already `#Deceased` remains non-editable
+  (returns `#err(#DeceasedProfile)`); a living profile may be marked
+  `#Deceased` via `edits.livingStatus`, after which it can no longer be edited.
+  Requires a signed-in caller; returns `#err(#NotSignedIn)` for an anonymous
+  caller, `#err(#ProfileNotFound)` when the person is not tracked,
+  `#err(#NotOwner)` when the caller is not the profile's owner, and
+  `#err(#DeceasedProfile)` for a deceased profile.
 - `listNotifications() : async [Notification]` — query. Returns the in-app
   notification records addressed to the signed-in caller.
 - `removeDuplicateProfile(personId : Text) : async Result<(), RemoveError>` —
@@ -223,9 +243,11 @@ The ownership entities are flattened views of the corresponding records.
 `profile` rows (primary key `personId`) carry `name`, `livingStatus`
 (`\"Living\"`/`\"Deceased\"`), `claimStatus` (`\"Unclaimed\"`/`\"Claimed\"`),
 `claimedByUserId` (the claiming principal rendered as text, `\"\"` when
-unclaimed), and the owner-editable fields `preferredName`, `story`,
-`occupation`, `birthInfo`, and `privacySettings` (each `\"\"` when absent). The
-array-valued `timeline` is not exposed. `claim` rows (primary key `id`) carry
+unclaimed), and the owner-editable fields `preferredName`, `firstName`,
+`middleName`, `lastName`, `suffix`, `nickname`, `story`, `shortBio`,
+`longerStory`, `occupation`, `birthInfo`, `birthDate`, `birthplace`,
+`currentLocation`, and `privacySettings` (each `\"\"` when absent). The
+array-valued `timeline` is not exposed (OQL has no array value type). `claim` rows (primary key `id`) carry
 `personId`, `requestingUserId` (principal text), `status`
 (`\"Pending\"`/`\"Approved\"`/`\"Rejected\"`), `submittedDate` (nanoseconds since
 epoch, `Int`), `reviewedBy` (principal text, `\"\"` when unreviewed), and
@@ -349,7 +371,16 @@ already reference the caller's stable principal (`requestingUserId`,
 ## Units and encodings
 
 - `PersonId` is a `Text` identifier of a person in the family tree (e.g.
-  `\"julia\"`, `\"clayton\"`).
+  `\"julia\"`, `\"clayton\"`). The canonical Lorenzo Smith Jr. record is
+  `\"lorenzoSmithJr\"` — the single authoritative Person record for Lorenzo
+  Smith Jr., seeded as the child of Lorenzo Smith Sr. and used consistently by
+  the child relationship, Explore Family, Family Tree, Add Myself duplicate
+  matching, This is Me claim requests, My Profile, profile routing, and
+  notifications. Any runtime-created duplicate Lorenzo Smith Jr. profile is
+  migrated away: pending claims and relationship requests referencing a
+  duplicate are re-pointed to `\"lorenzoSmithJr\"` (preserving the pending claim
+  and its `requestingUserId`), and the duplicate profile is removed, so exactly
+  one Lorenzo Smith Jr. Person record remains.
 - `PhotoId` is a `Nat`, unique only within a person's gallery.
 - `uploadedAt` is an `Int` count of nanoseconds since the Unix epoch
   (`Time.now()`).
@@ -383,9 +414,11 @@ already reference the caller's stable principal (`requestingUserId`,
   `#RelationshipReviewed`.
 - `PersonProfile` fields: `personId` (`Text`), `name` (`Text`),
   `livingStatus`, `claimStatus`, `claimedByUserId` (`?Principal`, `null` when
-  unclaimed), and the owner-editable optionals `preferredName`, `story`,
-  `occupation`, `birthInfo`, `timeline` (`?[Text]`), and `privacySettings`
-  (each `null` when unset).
+  unclaimed), and the owner-editable optionals `preferredName`, `firstName`,
+  `middleName`, `lastName`, `suffix`, `nickname`, `story`, `shortBio`,
+  `longerStory`, `occupation`, `birthInfo`, `birthDate`, `birthplace`,
+  `currentLocation`, `timeline` (`?[Text]`), and `privacySettings` (each `null`
+  when unset).
 - `ProfileClaim` fields: `id` (`Nat`), `personId` (`Text`),
   `requestingUserId` (`Principal`), `status`, `submittedDate` (`Int`,
   nanoseconds since epoch), `reviewedBy` (`?Principal`, `null` when
@@ -399,9 +432,12 @@ already reference the caller's stable principal (`requestingUserId`,
 - `Notification` fields: `id` (`Nat`), `recipient` (`Principal`),
   `notificationType`, `message` (`Text`), `createdAt` (`Int`), and `read`
   (`Bool`).
-- `ProfileEdits` carries the owner-editable optionals `preferredName`, `story`,
-  `occupation`, `birthInfo`, `timeline` (`?[Text]`), and `privacySettings`;
-  each `null` field leaves the current value unchanged.
+- `ProfileEdits` carries the owner-editable optionals `preferredName`,
+  `firstName`, `middleName`, `lastName`, `suffix`, `nickname`, `story`,
+  `shortBio`, `longerStory`, `occupation`, `birthInfo`, `birthDate`,
+  `birthplace`, `currentLocation`, `livingStatus`, `timeline` (`?[Text]`), and
+  `privacySettings`; each `null` field leaves the current value unchanged.
+  `birthDate` is free text holding either a full date or a year-only value.
 - `PersonMatch` fields: `personId` (`Text`), `name` (`Text`), and `parents`
   (`[Text]`).
 - `AccountId` is a `Principal` — the signed-in caller's stable internal account
@@ -438,6 +474,16 @@ owner editing via `updateOwnProfile`. A deceased profile can never be claimed
 observe their own claim state on a profile at any time via `getMyProfileClaim`
 (returns `null` when they have no claim on it), and can resolve their own linked
 or pending profile at any time via `getMyProfile`.
+
+While a pending claim exists for a person, that person's profile page shows
+`PENDING CLAIM` status (\"Your claim to this profile is awaiting Family Steward
+review\") and hides `UNCLAIMED` and the \"This is Me\" action for the claiming
+user. The pending claim does not change the profile's `claimStatus` field (it
+stays `#Unclaimed` until approval) — the frontend derives the pending state from
+`getMyProfileClaim` / `getMyProfile`, not from `claimStatus`. Because the pending
+claim is re-pointed to the canonical `lorenzoSmithJr` personId, the profile page,
+the father's child card, Explore Family, and My Profile all resolve to that same
+canonical record.
 
 Relationship requests follow a propose → approve/reject lifecycle.
 `proposeRelationship` creates a `#Pending` request that is never treated as
@@ -483,6 +529,11 @@ without needing Family Steward privileges.
   changes nothing. They only transition claims currently in `#Pending` state.
   Approving a claim is not destructive — it marks the profile claimed and
   associates it with the claimant; rejecting leaves the profile unclaimed.
+  Approving the pending claim on the canonical `lorenzoSmithJr` record sets that
+  same profile's `claimStatus` to `#Claimed` and `claimedByUserId` to the
+  signed-in claimant's principal; it never creates a new Person record and never
+  recreates family relationships, so the child relationship under Lorenzo Smith
+  Sr. and the shared family graph remain intact.
 - `createMyself` is not idempotent: each call creates a new minimal profile
   keyed by the caller's principal, so a retry that actually succeeded would
   overwrite the caller's existing profile with a fresh one. The frontend should
@@ -499,7 +550,10 @@ without needing Family Steward privileges.
   returns a request to `#Pending` and is idempotent (setting an already-pending
   request pending is a no-op that returns the updated record).
 - `updateOwnProfile` is idempotent: applying the same edits again yields the
-  same profile. It only ever updates the caller's own living profile and never
+  same profile. It updates the existing canonical Person record in place —
+  preserving `personId`, claim ownership, confirmed relationships, archive
+  links, notifications, and verification history — and never creates a new
+  person. It only ever updates the caller's own living profile and never
   rewrites family relationships; any relationship addition or change must go
   through `proposeRelationship`.
 - `bindAuthMethod` is idempotent: binding an authentication method that is

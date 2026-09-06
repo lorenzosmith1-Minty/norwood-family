@@ -279,9 +279,19 @@ module {
       claimStatus = #Claimed;
       claimedByUserId = ?caller;
       preferredName = null;
+      firstName = null;
+      middleName = null;
+      lastName = null;
+      suffix = null;
+      nickname = null;
       story = null;
+      shortBio = null;
+      longerStory = null;
       occupation = null;
       birthInfo = null;
+      birthDate = null;
+      birthplace = null;
+      currentLocation = null;
       timeline = null;
       privacySettings = null;
     };
@@ -460,10 +470,24 @@ module {
         };
         let updated : Types.PersonProfile = {
           profile with
+          livingStatus = switch (edits.livingStatus) {
+            case (?v) v;
+            case null profile.livingStatus;
+          };
           preferredName = pick(edits.preferredName, profile.preferredName);
+          firstName = pick(edits.firstName, profile.firstName);
+          middleName = pick(edits.middleName, profile.middleName);
+          lastName = pick(edits.lastName, profile.lastName);
+          suffix = pick(edits.suffix, profile.suffix);
+          nickname = pick(edits.nickname, profile.nickname);
           story = pick(edits.story, profile.story);
+          shortBio = pick(edits.shortBio, profile.shortBio);
+          longerStory = pick(edits.longerStory, profile.longerStory);
           occupation = pick(edits.occupation, profile.occupation);
           birthInfo = pick(edits.birthInfo, profile.birthInfo);
+          birthDate = pick(edits.birthDate, profile.birthDate);
+          birthplace = pick(edits.birthplace, profile.birthplace);
+          currentLocation = pick(edits.currentLocation, profile.currentLocation);
           timeline = pick(edits.timeline, profile.timeline);
           privacySettings = pick(edits.privacySettings, profile.privacySettings);
         };
@@ -543,9 +567,19 @@ module {
           case null "";
         };
         preferredName = profile.preferredName ?? "";
+        firstName = profile.firstName ?? "";
+        middleName = profile.middleName ?? "";
+        lastName = profile.lastName ?? "";
+        suffix = profile.suffix ?? "";
+        nickname = profile.nickname ?? "";
         story = profile.story ?? "";
+        shortBio = profile.shortBio ?? "";
+        longerStory = profile.longerStory ?? "";
         occupation = profile.occupation ?? "";
         birthInfo = profile.birthInfo ?? "";
+        birthDate = profile.birthDate ?? "";
+        birthplace = profile.birthplace ?? "";
+        currentLocation = profile.currentLocation ?? "";
         privacySettings = profile.privacySettings ?? "";
       });
     };

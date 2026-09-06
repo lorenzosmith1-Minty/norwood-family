@@ -1,16 +1,17 @@
 {
-  "overview": "Norwood Family is a family history and genealogy app where family members explore their shared family tree, claim their own profiles, and connect with relatives.",
+  "overview": "A family tree app for the Norwood family where members can claim their own profiles and edit their personal information.",
   "features": [
-    "Explore the shared family tree and heritage branches",
-    "Claim your own person profile through Steward approval",
-    "Add yourself and connect to family relationships",
-    "Browse family photos and archive items"
+    "Claim your own family profile",
+    "Edit your personal information on your claimed profile",
+    "Upload and manage profile photos",
+    "Add personal timeline entries",
+    "View family relationships and history"
   ],
-  "category": "family-history",
+  "category": "family-tree",
   "tags": [
     "family",
     "genealogy",
-    "family-tree"
+    "community"
   ],
-  "last_updated": "2026-09-05T16:05:49.264Z"
+  "last_updated": "2026-09-06T22:20:10.020Z"
 }

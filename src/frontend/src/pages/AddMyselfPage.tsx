@@ -20,7 +20,7 @@ import {
 import { useProposeRelationship } from "../hooks/useRelationshipRequests";
 import { namesMatch } from "../lib/nameMatch";
 import { saveOriginatingView } from "../lib/originatingView";
-import { FAMILY_GRAPH } from "../types/family";
+import { FAMILY_GRAPH, resolveDisplayName } from "../types/family";
 import type { PersonMatch } from "../types/ownership";
 import { RELATIONSHIP_TYPE_LABELS } from "../types/ownership";
 import { profiles } from "./PersonProfilePage";
@@ -128,22 +128,13 @@ function initials(name: string): string {
 }
 
 /**
- * Derive a display name from a graph id when no profile record exists for it
- * (e.g. "lorenzoSmithJr" -> "Lorenzo Smith Jr"). Graph-only nodes are still
- * part of the authoritative shared family graph, so they must be searchable.
+ * Resolve a person's display name from the shared profiles record or the graph
+ * id. Uses the shared resolveDisplayName resolver so graph-only nodes (e.g.
+ * the canonical lorenzoSmithJr) render their canonical display name with exact
+ * capitalization and spacing instead of leaking the raw id.
  */
-function displayNameForId(id: string): string {
-  return id
-    .replace(/([a-z])([A-Z])/g, "$1 $2")
-    .replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2")
-    .split(/\s+/)
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(" ");
-}
-
-/** Resolve a person's display name from the shared profiles record or the graph id. */
 function personDisplayName(id: string): string {
-  return profiles[id]?.name ?? displayNameForId(id);
+  return resolveDisplayName(id, profiles);
 }
 
 /**
@@ -171,14 +162,23 @@ function buildLocalMatches(name: string): PersonMatch[] {
   return matches;
 }
 
-/** Merge backend matches with local matches, de-duplicated by person id. */
+/**
+ * Merge backend matches with local matches, de-duplicated by person id.
+ *
+ * Local matches (derived from the authoritative shared FAMILY_GRAPH) take
+ * precedence over backend matches. This guarantees that a canonical graph
+ * record such as "lorenzoSmithJr" is always surfaced first and never shadowed
+ * by a principal-keyed duplicate profile the backend may have tracked from a
+ * prior createMyself call — so "This is Me" always opens/claims the canonical
+ * record, never a duplicate.
+ */
 function mergeMatches(
   local: PersonMatch[],
   backend: PersonMatch[],
 ): PersonMatch[] {
   const seen = new Set<string>();
   const merged: PersonMatch[] = [];
-  for (const match of [...backend, ...local]) {
+  for (const match of [...local, ...backend]) {
     if (seen.has(match.personId)) continue;
     seen.add(match.personId);
     merged.push(match);

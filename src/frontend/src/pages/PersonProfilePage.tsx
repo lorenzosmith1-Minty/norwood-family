@@ -24,6 +24,7 @@ import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { ClaimButton } from "../components/ClaimButton";
 import { StatusBadge } from "../components/StatusBadge";
+import { useIsAdmin } from "../hooks/useArchiveStorage";
 import {
   useAddPhoto,
   usePhotos,
@@ -2562,13 +2563,30 @@ export function backendProfileToPersonProfile(
   backend: BackendPersonProfile,
 ): PersonProfile {
   const name = backend.preferredName || backend.name;
+  // An approved/claimed profile renders the normal claimed state; only a
+  // genuinely pending profile (a claim awaiting review, or a newly created
+  // profile awaiting a confirmed connection) shows the pending label.
+  const isClaimed = backend.claimStatus === ClaimStatus.Claimed;
+  // Surface the owner-editable fields on the profile page. The editor writes
+  // birthDate/birthplace/currentLocation/occupation and shortBio/longerStory,
+  // so map them into the frontend facts/story so edits appear immediately.
+  const facts: ProfileFact[] = [];
+  if (backend.birthDate)
+    facts.push({ label: "Born", value: backend.birthDate });
+  if (backend.birthplace)
+    facts.push({ label: "Birthplace", value: backend.birthplace });
+  if (backend.currentLocation)
+    facts.push({ label: "Location", value: backend.currentLocation });
+  if (backend.occupation)
+    facts.push({ label: "Occupation", value: backend.occupation });
+  const story = backend.shortBio || backend.longerStory || backend.story || "";
   return {
     id: backend.personId,
     name,
-    role: "Pending profile",
+    role: isClaimed ? "Family member" : "Pending profile",
     portrait: { src: "", alt: `Profile for ${name}` },
-    facts: [],
-    story: backend.story ?? "",
+    facts,
+    story,
     family: { spouseName: "", spouseRole: "", childrenText: "" },
     timeline: (backend.timeline ?? []).map((text, index) => ({
       date: "",
@@ -2607,12 +2625,34 @@ interface CompletenessField {
 function computeCompleteness(
   person: PersonProfile,
   hasProfilePhoto: boolean,
+  backend?: BackendPersonProfile,
 ): {
   fields: CompletenessField[];
   done: number;
   total: number;
   percent: number;
 } {
+  // "Birth information" and "Story" are done when EITHER the backend editable
+  // fields the owner can change OR the static frontend facts/story are present.
+  // The two sources are OR'd together, never replaced, so a profile with a
+  // static 'Born' fact but empty backend birth fields still counts as done.
+  const isLiving =
+    backend?.livingStatus === LivingStatus.Living ||
+    person.livingStatus === "living";
+  const birthInfoDone =
+    Boolean(
+      backend?.birthDate ||
+        backend?.birthplace ||
+        backend?.currentLocation ||
+        backend?.occupation,
+    ) ||
+    person.facts.some(
+      (fact) => fact.label === "Born" || fact.label === "Birth year",
+    );
+  const storyDone =
+    Boolean(backend?.shortBio || backend?.longerStory || backend?.story) ||
+    Boolean(person.story);
+
   const fields: CompletenessField[] = [
     {
       label: "Photo",
@@ -2620,23 +2660,24 @@ function computeCompleteness(
         hasProfilePhoto ||
         Boolean(person.portrait.src && person.portrait.src !== PLACEHOLDER_SRC),
     },
-    {
-      label: "Birth information",
-      done: person.facts.some(
-        (fact) => fact.label === "Born" || fact.label === "Birth year",
-      ),
-    },
-    {
-      label: "Death information",
-      done: person.facts.some((fact) => fact.label === "Died"),
-    },
+    { label: "Birth information", done: birthInfoDone },
+    // Living profiles are never penalized for missing death information, so the
+    // "Death information" field is only counted for deceased/historical profiles.
+    ...(isLiving
+      ? []
+      : [
+          {
+            label: "Death information",
+            done: person.facts.some((fact) => fact.label === "Died"),
+          },
+        ]),
     {
       label: "Family relationships",
       done: Boolean(
         person.family.spouseName || (person.family.spouses?.length ?? 0) > 0,
       ),
     },
-    { label: "Story", done: Boolean(person.story) },
+    { label: "Story", done: storyDone },
     { label: "Timeline", done: person.timeline.length > 0 },
     { label: "Sources", done: person.sources.length > 0 },
   ];
@@ -2962,6 +3003,7 @@ export function PersonProfilePage({
   const { identity } = useInternetIdentity();
   const { data: myClaim } = useMyProfileClaim(person.id);
   const { data: relationshipRequests = [] } = useMyRelationshipRequests();
+  const { data: isSteward = false } = useIsAdmin();
 
   const currentPrincipal = identity?.getPrincipal().toString();
   const isOwner = Boolean(
@@ -2969,6 +3011,15 @@ export function PersonProfilePage({
       currentPrincipal &&
       backendProfile.claimedByUserId.toString() === currentPrincipal,
   );
+  // A profile claimed by a different user must never be overwritten, even by a
+  // steward. A steward may edit unclaimed/deceased/historical profiles (those
+  // not claimed by another user) per existing steward permissions.
+  const isClaimedByAnother = Boolean(
+    backendProfile?.claimedByUserId &&
+      currentPrincipal &&
+      backendProfile.claimedByUserId.toString() !== currentPrincipal,
+  );
+  const canEdit = isOwner || (isSteward && !isClaimedByAnother);
   const hasPendingClaim = Boolean(
     myClaim?.personId === person.id &&
       myClaim.status === "Pending" &&
@@ -3009,11 +3060,30 @@ export function PersonProfilePage({
   const claimable = isProfileClaimable(graphNode);
 
   const hasProfilePhoto = Boolean(profilePhoto);
-  const completeness = computeCompleteness(person, hasProfilePhoto);
+  const completeness = computeCompleteness(
+    person,
+    hasProfilePhoto,
+    backendProfile ?? undefined,
+  );
   const portraitSrc = profilePhoto ?? person.portrait.src;
   const portraitAlt = profilePhoto
     ? `${person.name}'s profile photo`
     : person.portrait.alt;
+
+  // Living profiles without an uploaded photo use the initials placeholder with
+  // no representative-portrait wording. The representative disclosure appears
+  // only for historical profiles that explicitly use representative imagery (a
+  // real portrait, not the initials placeholder).
+  const isLivingProfile =
+    backendProfile?.livingStatus === LivingStatus.Living ||
+    person.livingStatus === "living";
+  const usesRepresentativeImage =
+    Boolean(person.portrait.src) && person.portrait.src !== PLACEHOLDER_SRC;
+  const portraitCaption = profilePhoto
+    ? "Uploaded profile photo."
+    : !isLivingProfile && usesRepresentativeImage
+      ? `Representative historical portrait — not an actual photograph of ${person.name.split(" ")[0]} Norwood.`
+      : "";
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col px-6 py-8 sm:py-12">
@@ -3072,11 +3142,11 @@ export function PersonProfilePage({
               </div>
             )}
           </div>
-          <figcaption className="mt-2 text-center text-xs italic leading-relaxed text-muted-foreground">
-            {profilePhoto
-              ? "Uploaded profile photo."
-              : `Representative historical portrait — not an actual photograph of ${person.name.split(" ")[0]} Norwood.`}
-          </figcaption>
+          {portraitCaption ? (
+            <figcaption className="mt-2 text-center text-xs italic leading-relaxed text-muted-foreground">
+              {portraitCaption}
+            </figcaption>
+          ) : null}
         </figure>
 
         {/* Profile completeness indicator */}
@@ -3162,7 +3232,7 @@ export function PersonProfilePage({
                   ["--status-pending" as string]: "var(--claim-pending)",
                 }}
               >
-                Profile claim pending
+                Pending claim
               </span>
             ) : hasPendingRelationship ? (
               <span
@@ -3182,7 +3252,7 @@ export function PersonProfilePage({
               data-ocid="profile.claim_section.loading_state"
               className="mt-3 h-10 animate-pulse rounded-full bg-muted"
             />
-          ) : isOwner ? (
+          ) : canEdit ? (
             <div className="mt-3 flex flex-col items-start gap-3">
               <p className="flex items-center gap-2 text-sm text-muted-foreground">
                 <UserCheck
@@ -3192,7 +3262,9 @@ export function PersonProfilePage({
                 />
                 {hasPendingRelationship
                   ? "This is your pending profile. Your family connection is awaiting confirmation by a steward."
-                  : "You own this profile. You can edit your personal details."}
+                  : isOwner
+                    ? "You own this profile. You can edit your personal details."
+                    : "You are a Family Steward. You can edit this profile."}
               </p>
               <button
                 type="button"
@@ -3207,8 +3279,7 @@ export function PersonProfilePage({
           ) : hasPendingClaim ? (
             <div className="mt-3 flex flex-col items-start gap-3">
               <p className="text-sm text-muted-foreground">
-                Your claim is pending review by a family steward. Once approved,
-                you'll be linked to this profile.
+                Your claim to this profile is awaiting Family Steward review.
               </p>
             </div>
           ) : claimable ? (

@@ -68,6 +68,11 @@ const TREE_PERSON: Record<
     role: "Son",
     relationToYou: "granduncle",
   },
+  lorenzoSmithJr: {
+    name: "Lorenzo Smith Jr.",
+    role: "Son",
+    relationToYou: "grandnephew",
+  },
   versieSmithJr: {
     name: "Versie Smith Jr.",
     role: "Son",
@@ -144,6 +149,10 @@ const lulaMaeId = "lula-mae";
 const versieId = "versie-smith";
 const lulaVersieChildrenIds = graph[lulaMaeId].children;
 
+/* Lorenzo Smith Jr., the canonical son of Lorenzo Smith Sr. (one of Lula Mae
+   & Versie's children). Rendered as a child beneath Lorenzo Smith Sr. */
+const lorenzoJrId = "lorenzoSmithJr";
+
 /* Versie's maternal ancestry: Harvey (grandfather) above Gertrude (mother)
    above Versie. */
 const harveyId = "harvey-adams-sr";
@@ -194,10 +203,13 @@ const lulaVersieChildrenStart = VERSIE_INDEX + 1;
 const LULA_VERSIE_CHILDREN_INDICES = lulaVersieChildrenIds.map(
   (_, i) => lulaVersieChildrenStart + i,
 );
+/* Lorenzo Smith Jr. sits directly after Lula Mae & Versie's children, as the
+   child of Lorenzo Smith Sr. */
+const LORENZO_JR_INDEX = lulaVersieChildrenStart + lulaVersieChildrenIds.length;
 /* Versie's maternal ancestry branch: Harvey Adams Sr. (grandfather) at the
    top, Gertrude Adams-Hill (mother) in the middle, Versie Smith (the person)
    at the bottom. Ancestors upward, descendants downward. */
-const HARVEY_INDEX = lulaVersieChildrenStart + lulaVersieChildrenIds.length;
+const HARVEY_INDEX = LORENZO_JR_INDEX + 1;
 const GERTRUDE_INDEX = HARVEY_INDEX + 1;
 const VERSIE_MATERNAL_INDEX = GERTRUDE_INDEX + 1;
 const MARY_JANE_INDEX = VERSIE_MATERNAL_INDEX + 1;
@@ -225,7 +237,7 @@ const CLAYTON_BRANCH_INDICES = Array.from(
   (_, i) => claytonSpouseStart + i,
 );
 const LULA_VERSIE_BRANCH_INDICES = Array.from(
-  { length: 2 + lulaVersieChildrenIds.length },
+  { length: 3 + lulaVersieChildrenIds.length },
   (_, i) => LULA_MAE_INDEX + i,
 );
 /* Versie's maternal ancestry branch: Harvey Adams Sr. and Gertrude Adams-Hill
@@ -259,6 +271,7 @@ const LULA_VERSIE_BRANCH_IDS = new Set([
   lulaMaeId,
   versieId,
   ...lulaVersieChildrenIds,
+  lorenzoJrId,
 ]);
 
 /* Versie's maternal ancestry branch: Harvey Adams Sr. and Gertrude Adams-Hill
@@ -612,6 +625,7 @@ export function FamilyTreePage({
     personFromId(lulaMaeId),
     personFromId(versieId),
     ...lulaVersieChildren,
+    personFromId(lorenzoJrId),
     personFromId(harveyId),
     personFromId(gertrudeId),
     personFromId(versieId),
@@ -856,6 +870,40 @@ export function FamilyTreePage({
                     </div>
                   );
                 })}
+              </div>
+
+              {/* Lorenzo Smith Jr., the son of Lorenzo Smith Sr. (one of the
+                  children above). Rendered as a child beneath his father. */}
+              <div className="mt-5 flex flex-col items-center">
+                <div
+                  className={`ft-trunk relative mx-auto h-6 ${
+                    inSet(selected, [LORENZO_JR_INDEX])
+                      ? "ft-connector-selected"
+                      : ""
+                  }`}
+                  aria-hidden="true"
+                >
+                  <span
+                    className={`ft-junction absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ${
+                      inSet(selected, [LORENZO_JR_INDEX])
+                        ? "ft-connector-selected"
+                        : ""
+                    }`}
+                    aria-hidden="true"
+                  />
+                </div>
+                <PersonCard
+                  variant="child"
+                  person={personFromId(lorenzoJrId)}
+                  index={LORENZO_JR_INDEX}
+                  selected={selected === LORENZO_JR_INDEX}
+                  onSelect={() => handleSelect(LORENZO_JR_INDEX)}
+                  onOpen={() => onOpenProfile(lorenzoJrId)}
+                  openOnSelect={false}
+                  isMe={meIndex === LORENZO_JR_INDEX}
+                  onMarkMe={() => setMeIndex(LORENZO_JR_INDEX)}
+                  profilePhoto={profilePhotos?.[lorenzoJrId]}
+                />
               </div>
             </div>
           </div>

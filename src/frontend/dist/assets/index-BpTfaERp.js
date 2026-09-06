@@ -34085,15 +34085,25 @@ const LivingStatus$1 = Variant({
 const PersonProfile = Record({
   "occupation": Opt(Text),
   "privacySettings": Opt(Text),
+  "nickname": Opt(Text),
   "claimedByUserId": Opt(Principal2),
+  "birthDate": Opt(Text),
   "birthInfo": Opt(Text),
   "claimStatus": ClaimStatus$1,
   "livingStatus": LivingStatus$1,
   "name": Text,
+  "longerStory": Opt(Text),
   "personId": PersonId,
   "story": Opt(Text),
+  "middleName": Opt(Text),
+  "suffix": Opt(Text),
   "preferredName": Opt(Text),
-  "timeline": Opt(Vec(Text))
+  "currentLocation": Opt(Text),
+  "birthplace": Opt(Text),
+  "lastName": Opt(Text),
+  "shortBio": Opt(Text),
+  "timeline": Opt(Vec(Text)),
+  "firstName": Opt(Text)
 });
 const CreateError = Variant({ "NotSignedIn": Null });
 const Result_6 = Variant({
@@ -34182,10 +34192,21 @@ const PersonMatch = Record({
 const ProfileEdits = Record({
   "occupation": Opt(Text),
   "privacySettings": Opt(Text),
+  "nickname": Opt(Text),
+  "birthDate": Opt(Text),
   "birthInfo": Opt(Text),
+  "livingStatus": Opt(LivingStatus$1),
+  "longerStory": Opt(Text),
   "story": Opt(Text),
+  "middleName": Opt(Text),
+  "suffix": Opt(Text),
   "preferredName": Opt(Text),
-  "timeline": Opt(Vec(Text))
+  "currentLocation": Opt(Text),
+  "birthplace": Opt(Text),
+  "lastName": Opt(Text),
+  "shortBio": Opt(Text),
+  "timeline": Opt(Vec(Text)),
+  "firstName": Opt(Text)
 });
 const EditError$1 = Variant({
   "ProfileNotFound": Null,
@@ -34485,15 +34506,25 @@ const idlFactory = ({ IDL: IDL2 }) => {
   const PersonProfile2 = IDL2.Record({
     "occupation": IDL2.Opt(IDL2.Text),
     "privacySettings": IDL2.Opt(IDL2.Text),
+    "nickname": IDL2.Opt(IDL2.Text),
     "claimedByUserId": IDL2.Opt(IDL2.Principal),
+    "birthDate": IDL2.Opt(IDL2.Text),
     "birthInfo": IDL2.Opt(IDL2.Text),
     "claimStatus": ClaimStatus2,
     "livingStatus": LivingStatus2,
     "name": IDL2.Text,
+    "longerStory": IDL2.Opt(IDL2.Text),
     "personId": PersonId2,
     "story": IDL2.Opt(IDL2.Text),
+    "middleName": IDL2.Opt(IDL2.Text),
+    "suffix": IDL2.Opt(IDL2.Text),
     "preferredName": IDL2.Opt(IDL2.Text),
-    "timeline": IDL2.Opt(IDL2.Vec(IDL2.Text))
+    "currentLocation": IDL2.Opt(IDL2.Text),
+    "birthplace": IDL2.Opt(IDL2.Text),
+    "lastName": IDL2.Opt(IDL2.Text),
+    "shortBio": IDL2.Opt(IDL2.Text),
+    "timeline": IDL2.Opt(IDL2.Vec(IDL2.Text)),
+    "firstName": IDL2.Opt(IDL2.Text)
   });
   const CreateError2 = IDL2.Variant({ "NotSignedIn": IDL2.Null });
   const Result_62 = IDL2.Variant({ "ok": PersonProfile2, "err": CreateError2 });
@@ -34570,10 +34601,21 @@ const idlFactory = ({ IDL: IDL2 }) => {
   const ProfileEdits2 = IDL2.Record({
     "occupation": IDL2.Opt(IDL2.Text),
     "privacySettings": IDL2.Opt(IDL2.Text),
+    "nickname": IDL2.Opt(IDL2.Text),
+    "birthDate": IDL2.Opt(IDL2.Text),
     "birthInfo": IDL2.Opt(IDL2.Text),
+    "livingStatus": IDL2.Opt(LivingStatus2),
+    "longerStory": IDL2.Opt(IDL2.Text),
     "story": IDL2.Opt(IDL2.Text),
+    "middleName": IDL2.Opt(IDL2.Text),
+    "suffix": IDL2.Opt(IDL2.Text),
     "preferredName": IDL2.Opt(IDL2.Text),
-    "timeline": IDL2.Opt(IDL2.Vec(IDL2.Text))
+    "currentLocation": IDL2.Opt(IDL2.Text),
+    "birthplace": IDL2.Opt(IDL2.Text),
+    "lastName": IDL2.Opt(IDL2.Text),
+    "shortBio": IDL2.Opt(IDL2.Text),
+    "timeline": IDL2.Opt(IDL2.Vec(IDL2.Text)),
+    "firstName": IDL2.Opt(IDL2.Text)
   });
   const EditError2 = IDL2.Variant({
     "ProfileNotFound": IDL2.Null,
@@ -35491,14 +35533,14 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.updateOwnProfile(arg0, to_candid_ProfileEdits_n117(this._uploadFile, this._downloadFile, arg1));
-        return from_candid_Result_n119(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_n121(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.updateOwnProfile(arg0, to_candid_ProfileEdits_n117(this._uploadFile, this._downloadFile, arg1));
-      return from_candid_Result_n119(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_n121(this._uploadFile, this._downloadFile, result);
     }
   }
 }
@@ -35532,8 +35574,8 @@ function from_candid_ClaimStatus_n57(_uploadFile, _downloadFile, value) {
 function from_candid_CreateError_n62(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n63(_uploadFile, _downloadFile, value);
 }
-function from_candid_EditError_n121(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n122(_uploadFile, _downloadFile, value);
+function from_candid_EditError_n123(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n124(_uploadFile, _downloadFile, value);
 }
 function from_candid_Error_n10(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n11(_uploadFile, _downloadFile, value);
@@ -35613,8 +35655,8 @@ function from_candid_Result_8_n8(_uploadFile, _downloadFile, value) {
 function from_candid_Result__1_n64(_uploadFile, _downloadFile, value) {
   return from_candid_record_n65(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_n119(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n120(_uploadFile, _downloadFile, value);
+function from_candid_Result_n121(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n122(_uploadFile, _downloadFile, value);
 }
 function from_candid_SourceStatus_n26(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n27(_uploadFile, _downloadFile, value);
@@ -35733,15 +35775,25 @@ function from_candid_record_n56(_uploadFile, _downloadFile, value) {
   return {
     occupation: record_opt_to_undefined(from_candid_opt_n25(_uploadFile, _downloadFile, value.occupation)),
     privacySettings: record_opt_to_undefined(from_candid_opt_n25(_uploadFile, _downloadFile, value.privacySettings)),
+    nickname: record_opt_to_undefined(from_candid_opt_n25(_uploadFile, _downloadFile, value.nickname)),
     claimedByUserId: record_opt_to_undefined(from_candid_opt_n33(_uploadFile, _downloadFile, value.claimedByUserId)),
+    birthDate: record_opt_to_undefined(from_candid_opt_n25(_uploadFile, _downloadFile, value.birthDate)),
     birthInfo: record_opt_to_undefined(from_candid_opt_n25(_uploadFile, _downloadFile, value.birthInfo)),
     claimStatus: from_candid_ClaimStatus_n57(_uploadFile, _downloadFile, value.claimStatus),
     livingStatus: from_candid_LivingStatus_n59(_uploadFile, _downloadFile, value.livingStatus),
     name: value.name,
+    longerStory: record_opt_to_undefined(from_candid_opt_n25(_uploadFile, _downloadFile, value.longerStory)),
     personId: value.personId,
     story: record_opt_to_undefined(from_candid_opt_n25(_uploadFile, _downloadFile, value.story)),
+    middleName: record_opt_to_undefined(from_candid_opt_n25(_uploadFile, _downloadFile, value.middleName)),
+    suffix: record_opt_to_undefined(from_candid_opt_n25(_uploadFile, _downloadFile, value.suffix)),
     preferredName: record_opt_to_undefined(from_candid_opt_n25(_uploadFile, _downloadFile, value.preferredName)),
-    timeline: record_opt_to_undefined(from_candid_opt_n61(_uploadFile, _downloadFile, value.timeline))
+    currentLocation: record_opt_to_undefined(from_candid_opt_n25(_uploadFile, _downloadFile, value.currentLocation)),
+    birthplace: record_opt_to_undefined(from_candid_opt_n25(_uploadFile, _downloadFile, value.birthplace)),
+    lastName: record_opt_to_undefined(from_candid_opt_n25(_uploadFile, _downloadFile, value.lastName)),
+    shortBio: record_opt_to_undefined(from_candid_opt_n25(_uploadFile, _downloadFile, value.shortBio)),
+    timeline: record_opt_to_undefined(from_candid_opt_n61(_uploadFile, _downloadFile, value.timeline)),
+    firstName: record_opt_to_undefined(from_candid_opt_n25(_uploadFile, _downloadFile, value.firstName))
   };
 }
 function from_candid_record_n65(_uploadFile, _downloadFile, value) {
@@ -35835,16 +35887,16 @@ function from_candid_variant_n11(_uploadFile, _downloadFile, value) {
     FrontendOriginMismatch: value.FrontendOriginMismatch
   } : value;
 }
-function from_candid_variant_n120(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n122(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
     ok: from_candid_PersonProfile_n55(_uploadFile, _downloadFile, value.ok)
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_EditError_n121(_uploadFile, _downloadFile, value.err)
+    err: from_candid_EditError_n123(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n122(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n124(_uploadFile, _downloadFile, value) {
   return "ProfileNotFound" in value ? "ProfileNotFound" : "NotSignedIn" in value ? "NotSignedIn" : "NotOwner" in value ? "NotOwner" : "DeceasedProfile" in value ? "DeceasedProfile" : value;
 }
 function from_candid_variant_n20(_uploadFile, _downloadFile, value) {
@@ -35997,6 +36049,9 @@ function to_candid_AuthMethod_n42(_uploadFile, _downloadFile, value) {
 async function to_candid_ExternalBlob_n12(_uploadFile, _downloadFile, value) {
   return await _uploadFile(value);
 }
+function to_candid_LivingStatus_n119(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n120(_uploadFile, _downloadFile, value);
+}
 function to_candid_PrivacyLevel_n115(_uploadFile, _downloadFile, value) {
   return to_candid_variant_n116(_uploadFile, _downloadFile, value);
 }
@@ -36028,10 +36083,21 @@ function to_candid_record_n118(_uploadFile, _downloadFile, value) {
   return {
     occupation: value.occupation ? candid_some(value.occupation) : candid_none(),
     privacySettings: value.privacySettings ? candid_some(value.privacySettings) : candid_none(),
+    nickname: value.nickname ? candid_some(value.nickname) : candid_none(),
+    birthDate: value.birthDate ? candid_some(value.birthDate) : candid_none(),
     birthInfo: value.birthInfo ? candid_some(value.birthInfo) : candid_none(),
+    livingStatus: value.livingStatus ? candid_some(to_candid_LivingStatus_n119(_uploadFile, _downloadFile, value.livingStatus)) : candid_none(),
+    longerStory: value.longerStory ? candid_some(value.longerStory) : candid_none(),
     story: value.story ? candid_some(value.story) : candid_none(),
+    middleName: value.middleName ? candid_some(value.middleName) : candid_none(),
+    suffix: value.suffix ? candid_some(value.suffix) : candid_none(),
     preferredName: value.preferredName ? candid_some(value.preferredName) : candid_none(),
-    timeline: value.timeline ? candid_some(value.timeline) : candid_none()
+    currentLocation: value.currentLocation ? candid_some(value.currentLocation) : candid_none(),
+    birthplace: value.birthplace ? candid_some(value.birthplace) : candid_none(),
+    lastName: value.lastName ? candid_some(value.lastName) : candid_none(),
+    shortBio: value.shortBio ? candid_some(value.shortBio) : candid_none(),
+    timeline: value.timeline ? candid_some(value.timeline) : candid_none(),
+    firstName: value.firstName ? candid_some(value.firstName) : candid_none()
   };
 }
 function to_candid_record_n3(_uploadFile, _downloadFile, value) {
@@ -36076,6 +36142,13 @@ function to_candid_variant_n116(_uploadFile, _downloadFile, value) {
     Public: null
   } : value == "FamilyOnly" ? {
     FamilyOnly: null
+  } : value;
+}
+function to_candid_variant_n120(_uploadFile, _downloadFile, value) {
+  return value == "Living" ? {
+    Living: null
+  } : value == "Deceased" ? {
+    Deceased: null
   } : value;
 }
 function to_candid_variant_n41(_uploadFile, _downloadFile, value) {
@@ -36769,293 +36842,26 @@ function useRejectArchiveItem() {
     }
   });
 }
-function usePersonProfile(personId, options) {
-  const { actor, isFetching } = useActor(createActor);
-  return useQuery({
-    queryKey: ["personProfile", personId],
-    queryFn: async () => {
-      if (!actor) return null;
-      return actor.getPersonProfile(personId);
-    },
-    enabled: ((options == null ? void 0 : options.enabled) ?? true) && !!actor && !isFetching
-  });
-}
-function useMyProfileClaim(personId) {
-  const { actor, isFetching } = useActor(createActor);
-  return useQuery({
-    queryKey: ["myProfileClaim", personId],
-    queryFn: async () => {
-      if (!actor) return null;
-      return actor.getMyProfileClaim(personId);
-    },
-    enabled: !!actor && !isFetching
-  });
-}
-function useMyProfile() {
-  const { actor, isFetching } = useActor(createActor);
-  return useQuery({
-    queryKey: ["myProfile"],
-    queryFn: async () => {
-      if (!actor) return null;
-      return actor.getMyProfile();
-    },
-    enabled: !!actor && !isFetching
-  });
-}
-function useListProfileClaims() {
-  const { actor, isFetching } = useActor(createActor);
-  return useQuery({
-    queryKey: ["profileClaims"],
-    queryFn: async () => {
-      if (!actor) return [];
-      return actor.listProfileClaims();
-    },
-    enabled: !!actor && !isFetching
-  });
-}
-function useRequestProfileClaim() {
-  const { actor } = useActor(createActor);
-  const queryClient2 = useQueryClient();
-  return useMutation({
-    mutationFn: async (personId) => {
-      if (!actor) throw new Error("Backend is not ready");
-      return actor.requestProfileClaim(personId);
-    },
-    onSuccess: () => {
-      void queryClient2.invalidateQueries({ queryKey: ["profileClaims"] });
-      void queryClient2.invalidateQueries({ queryKey: ["personProfile"] });
-      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
-    }
-  });
-}
-function useApproveProfileClaim() {
-  const { actor } = useActor(createActor);
-  const queryClient2 = useQueryClient();
-  return useMutation({
-    mutationFn: async (claimId) => {
-      if (!actor) throw new Error("Backend is not ready");
-      return actor.approveProfileClaim(claimId);
-    },
-    onSuccess: () => {
-      void queryClient2.invalidateQueries({ queryKey: ["profileClaims"] });
-      void queryClient2.invalidateQueries({ queryKey: ["personProfile"] });
-      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
-    }
-  });
-}
-function useRejectProfileClaim() {
-  const { actor } = useActor(createActor);
-  const queryClient2 = useQueryClient();
-  return useMutation({
-    mutationFn: async (claimId) => {
-      if (!actor) throw new Error("Backend is not ready");
-      return actor.rejectProfileClaim(claimId);
-    },
-    onSuccess: () => {
-      void queryClient2.invalidateQueries({ queryKey: ["profileClaims"] });
-      void queryClient2.invalidateQueries({ queryKey: ["personProfile"] });
-      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
-    }
-  });
-}
-function useSearchPossibleMatches() {
-  const { actor } = useActor(createActor);
-  return useMutation({
-    mutationFn: async (name) => {
-      if (!actor) throw new Error("Backend is not ready");
-      return actor.searchPossibleMatches(name);
-    }
-  });
-}
-function useCreateMyself() {
-  const { actor } = useActor(createActor);
-  const queryClient2 = useQueryClient();
-  return useMutation({
-    mutationFn: async (name) => {
-      if (!actor) throw new Error("Backend is not ready");
-      return actor.createMyself(name);
-    },
-    onSuccess: () => {
-      void queryClient2.invalidateQueries({ queryKey: ["personProfile"] });
-    }
-  });
-}
-function useUpdateOwnProfile() {
-  const { actor } = useActor(createActor);
-  const queryClient2 = useQueryClient();
-  return useMutation({
-    mutationFn: async ({
-      personId,
-      edits
-    }) => {
-      if (!actor) throw new Error("Backend is not ready");
-      return actor.updateOwnProfile(personId, edits);
-    },
-    onSuccess: (_data, variables) => {
-      void queryClient2.invalidateQueries({
-        queryKey: ["personProfile", variables.personId]
-      });
-    }
-  });
-}
-function useNavbarIdentity() {
-  const { isAuthenticated } = useAuth();
-  const { data: profile } = useMyProfile();
-  if (!isAuthenticated || !profile) {
-    return { displayName: "", status: "none" };
-  }
-  const displayName = profile.preferredName || profile.name;
-  const status = profile.claimStatus === ClaimStatus.Claimed ? "linked" : "pending";
-  return { displayName, status, personId: profile.personId };
-}
-const ORIGINATING_VIEW_KEY = "app.originatingView.v1";
-function saveOriginatingView(origin) {
-  try {
-    sessionStorage.setItem(ORIGINATING_VIEW_KEY, JSON.stringify(origin));
-  } catch {
-  }
-}
-function loadOriginatingView() {
-  try {
-    const raw = sessionStorage.getItem(ORIGINATING_VIEW_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw);
-    if (!parsed || typeof parsed.view !== "string") return null;
-    return parsed;
-  } catch {
-    return null;
-  }
-}
-function clearOriginatingView() {
-  try {
-    sessionStorage.removeItem(ORIGINATING_VIEW_KEY);
-  } catch {
-  }
-}
-function useMyRelationshipRequests() {
-  const { actor, isFetching } = useActor(createActor);
-  return useQuery({
-    queryKey: ["myRelationshipRequests"],
-    queryFn: async () => {
-      if (!actor) return [];
-      return actor.getMyRelationshipRequests();
-    },
-    enabled: !!actor && !isFetching
-  });
-}
-function useListRelationshipRequests() {
-  const { actor, isFetching } = useActor(createActor);
-  return useQuery({
-    queryKey: ["relationshipRequests"],
-    queryFn: async () => {
-      if (!actor) return [];
-      return actor.listRelationshipRequests();
-    },
-    enabled: !!actor && !isFetching
-  });
-}
-function useProposeRelationship() {
-  const { actor } = useActor(createActor);
-  const queryClient2 = useQueryClient();
-  return useMutation({
-    mutationFn: async ({
-      fromPersonId,
-      toPersonId,
-      relationshipType
-    }) => {
-      if (!actor) throw new Error("Backend is not ready");
-      return actor.proposeRelationship(
-        fromPersonId,
-        toPersonId,
-        relationshipType
-      );
-    },
-    onSuccess: () => {
-      void queryClient2.invalidateQueries({
-        queryKey: ["relationshipRequests"]
-      });
-      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
-    }
-  });
-}
-function useApproveRelationshipRequest() {
-  const { actor } = useActor(createActor);
-  const queryClient2 = useQueryClient();
-  return useMutation({
-    mutationFn: async (requestId) => {
-      if (!actor) throw new Error("Backend is not ready");
-      return actor.approveRelationshipRequest(requestId);
-    },
-    onSuccess: () => {
-      void queryClient2.invalidateQueries({
-        queryKey: ["relationshipRequests"]
-      });
-      void queryClient2.invalidateQueries({
-        queryKey: ["confirmedRelationships"]
-      });
-      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
-    }
-  });
-}
-function useRejectRelationshipRequest() {
-  const { actor } = useActor(createActor);
-  const queryClient2 = useQueryClient();
-  return useMutation({
-    mutationFn: async (requestId) => {
-      if (!actor) throw new Error("Backend is not ready");
-      return actor.rejectRelationshipRequest(requestId);
-    },
-    onSuccess: () => {
-      void queryClient2.invalidateQueries({
-        queryKey: ["relationshipRequests"]
-      });
-      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
-    }
-  });
-}
-function useSetRelationshipRequestPending() {
-  const { actor } = useActor(createActor);
-  const queryClient2 = useQueryClient();
-  return useMutation({
-    mutationFn: async (requestId) => {
-      if (!actor) throw new Error("Backend is not ready");
-      return actor.setRelationshipRequestPending(requestId);
-    },
-    onSuccess: () => {
-      void queryClient2.invalidateQueries({
-        queryKey: ["relationshipRequests"]
-      });
-      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
-    }
-  });
-}
-function useListConfirmedRelationships() {
-  const { actor, isFetching } = useActor(createActor);
-  return useQuery({
-    queryKey: ["confirmedRelationships"],
-    queryFn: async () => {
-      if (!actor) return [];
-      return actor.listConfirmedRelationships();
-    },
-    enabled: !!actor && !isFetching
-  });
-}
-const SUFFIX_VARIANTS = {
-  jr: "jr",
-  sr: "sr",
-  ii: "ii",
-  iii: "iii",
-  iv: "iv"
+const CANONICAL_DISPLAY_NAMES = {
+  lorenzoSmithJr: "Lorenzo Smith Jr."
 };
-function normalizeName(name) {
-  return name.toLowerCase().replace(/[.,'"“”‘’]/g, "").replace(/\s+/g, " ").trim().split(" ").map((part) => SUFFIX_VARIANTS[part] ?? part).join(" ");
+function resolveDisplayName(id2, profiles2) {
+  const canonical = CANONICAL_DISPLAY_NAMES[id2];
+  if (canonical) return canonical;
+  const profile = profiles2[id2];
+  if (profile == null ? void 0 : profile.name) return profile.name;
+  return id2;
 }
-function namesMatch(a2, b2) {
-  const na = normalizeName(a2);
-  const nb = normalizeName(b2);
-  if (!na || !nb) return false;
-  if (na === nb) return true;
-  return na.includes(nb) || nb.includes(na);
+function resolveBackendDisplayName(id2, backend) {
+  var _a2;
+  if ((_a2 = backend.preferredName) == null ? void 0 : _a2.trim()) return backend.preferredName.trim();
+  const canonical = CANONICAL_DISPLAY_NAMES[id2];
+  if (canonical) return canonical;
+  const fullName = [backend.firstName, backend.lastName].filter((part) => part == null ? void 0 : part.trim()).join(" ");
+  if (fullName)
+    return backend.suffix ? `${fullName} ${backend.suffix}` : fullName;
+  if (backend.name) return backend.name;
+  return id2;
 }
 function isProfileClaimable(node) {
   if (!node) return false;
@@ -37623,6 +37429,319 @@ function overlayConfirmedRelationships(base, confirmed) {
   }
   return graph;
 }
+function usePersonProfile(personId, options) {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["personProfile", personId],
+    queryFn: async () => {
+      if (!actor) return null;
+      return actor.getPersonProfile(personId);
+    },
+    enabled: ((options == null ? void 0 : options.enabled) ?? true) && !!actor && !isFetching
+  });
+}
+function useMyProfileClaim(personId) {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["myProfileClaim", personId],
+    queryFn: async () => {
+      if (!actor) return null;
+      return actor.getMyProfileClaim(personId);
+    },
+    enabled: !!actor && !isFetching
+  });
+}
+function useMyProfile() {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["myProfile"],
+    queryFn: async () => {
+      if (!actor) return null;
+      return actor.getMyProfile();
+    },
+    enabled: !!actor && !isFetching
+  });
+}
+function useListProfileClaims() {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["profileClaims"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.listProfileClaims();
+    },
+    enabled: !!actor && !isFetching
+  });
+}
+function useRequestProfileClaim() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (personId) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.requestProfileClaim(personId);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({ queryKey: ["profileClaims"] });
+      void queryClient2.invalidateQueries({ queryKey: ["personProfile"] });
+      void queryClient2.invalidateQueries({ queryKey: ["myProfileClaim"] });
+      void queryClient2.invalidateQueries({ queryKey: ["myProfile"] });
+      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
+    }
+  });
+}
+function useApproveProfileClaim() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (claimId) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.approveProfileClaim(claimId);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({ queryKey: ["profileClaims"] });
+      void queryClient2.invalidateQueries({ queryKey: ["personProfile"] });
+      void queryClient2.invalidateQueries({ queryKey: ["myProfileClaim"] });
+      void queryClient2.invalidateQueries({ queryKey: ["myProfile"] });
+      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
+    }
+  });
+}
+function useRejectProfileClaim() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (claimId) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.rejectProfileClaim(claimId);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({ queryKey: ["profileClaims"] });
+      void queryClient2.invalidateQueries({ queryKey: ["personProfile"] });
+      void queryClient2.invalidateQueries({ queryKey: ["myProfileClaim"] });
+      void queryClient2.invalidateQueries({ queryKey: ["myProfile"] });
+      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
+    }
+  });
+}
+function useSearchPossibleMatches() {
+  const { actor } = useActor(createActor);
+  return useMutation({
+    mutationFn: async (name) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.searchPossibleMatches(name);
+    }
+  });
+}
+function useCreateMyself() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (name) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.createMyself(name);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({ queryKey: ["personProfile"] });
+    }
+  });
+}
+function useUpdateOwnProfile() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      personId,
+      edits
+    }) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.updateOwnProfile(personId, edits);
+    },
+    onSuccess: (_data, variables) => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["personProfile", variables.personId]
+      });
+      void queryClient2.invalidateQueries({ queryKey: ["myProfile"] });
+      void queryClient2.invalidateQueries({ queryKey: ["myProfileClaim"] });
+      void queryClient2.invalidateQueries({ queryKey: ["profileClaims"] });
+      void queryClient2.invalidateQueries({
+        queryKey: ["confirmedRelationships"]
+      });
+      void queryClient2.invalidateQueries({
+        queryKey: ["myRelationshipRequests"]
+      });
+      void queryClient2.invalidateQueries({
+        queryKey: ["photos", variables.personId]
+      });
+      void queryClient2.invalidateQueries({
+        queryKey: ["profilePhoto", variables.personId]
+      });
+    }
+  });
+}
+function useNavbarIdentity() {
+  const { isAuthenticated } = useAuth();
+  const { data: profile } = useMyProfile();
+  if (!isAuthenticated || !profile) {
+    return { displayName: "", status: "none" };
+  }
+  const displayName = resolveBackendDisplayName(profile.personId, profile);
+  const status = profile.claimStatus === ClaimStatus.Claimed ? "linked" : "pending";
+  return { displayName, status, personId: profile.personId };
+}
+const ORIGINATING_VIEW_KEY = "app.originatingView.v1";
+function saveOriginatingView(origin) {
+  try {
+    sessionStorage.setItem(ORIGINATING_VIEW_KEY, JSON.stringify(origin));
+  } catch {
+  }
+}
+function loadOriginatingView() {
+  try {
+    const raw = sessionStorage.getItem(ORIGINATING_VIEW_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed.view !== "string") return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+function clearOriginatingView() {
+  try {
+    sessionStorage.removeItem(ORIGINATING_VIEW_KEY);
+  } catch {
+  }
+}
+function useMyRelationshipRequests() {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["myRelationshipRequests"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.getMyRelationshipRequests();
+    },
+    enabled: !!actor && !isFetching
+  });
+}
+function useListRelationshipRequests() {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["relationshipRequests"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.listRelationshipRequests();
+    },
+    enabled: !!actor && !isFetching
+  });
+}
+function useProposeRelationship() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      fromPersonId,
+      toPersonId,
+      relationshipType
+    }) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.proposeRelationship(
+        fromPersonId,
+        toPersonId,
+        relationshipType
+      );
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["relationshipRequests"]
+      });
+      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
+    }
+  });
+}
+function useApproveRelationshipRequest() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (requestId) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.approveRelationshipRequest(requestId);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["relationshipRequests"]
+      });
+      void queryClient2.invalidateQueries({
+        queryKey: ["confirmedRelationships"]
+      });
+      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
+    }
+  });
+}
+function useRejectRelationshipRequest() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (requestId) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.rejectRelationshipRequest(requestId);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["relationshipRequests"]
+      });
+      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
+    }
+  });
+}
+function useSetRelationshipRequestPending() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (requestId) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.setRelationshipRequestPending(requestId);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["relationshipRequests"]
+      });
+      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
+    }
+  });
+}
+function useListConfirmedRelationships() {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["confirmedRelationships"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.listConfirmedRelationships();
+    },
+    enabled: !!actor && !isFetching
+  });
+}
+const SUFFIX_VARIANTS = {
+  jr: "jr",
+  sr: "sr",
+  ii: "ii",
+  iii: "iii",
+  iv: "iv"
+};
+function normalizeName(name) {
+  return name.toLowerCase().replace(/[.,'"“”‘’]/g, "").replace(/\s+/g, " ").trim().split(" ").map((part) => SUFFIX_VARIANTS[part] ?? part).join(" ");
+}
+function namesMatch(a2, b2) {
+  const na = normalizeName(a2);
+  const nb = normalizeName(b2);
+  if (!na || !nb) return false;
+  if (na === nb) return true;
+  return na.includes(nb) || nb.includes(na);
+}
+const PRIVACY_OPTIONS = [
+  { value: PrivacyLevel.FamilyOnly, label: "Family only" },
+  { value: PrivacyLevel.Private, label: "Private" }
+];
 ({
   [RelationshipStatus.Confirmed]: "Confirmed",
   [RelationshipStatus.Pending]: "Pending",
@@ -47948,13 +48067,24 @@ const profiles = {
 };
 function backendProfileToPersonProfile(backend) {
   const name = backend.preferredName || backend.name;
+  const isClaimed = backend.claimStatus === ClaimStatus.Claimed;
+  const facts = [];
+  if (backend.birthDate)
+    facts.push({ label: "Born", value: backend.birthDate });
+  if (backend.birthplace)
+    facts.push({ label: "Birthplace", value: backend.birthplace });
+  if (backend.currentLocation)
+    facts.push({ label: "Location", value: backend.currentLocation });
+  if (backend.occupation)
+    facts.push({ label: "Occupation", value: backend.occupation });
+  const story = backend.shortBio || backend.longerStory || backend.story || "";
   return {
     id: backend.personId,
     name,
-    role: "Pending profile",
+    role: isClaimed ? "Family member" : "Pending profile",
     portrait: { src: "", alt: `Profile for ${name}` },
-    facts: [],
-    story: backend.story ?? "",
+    facts,
+    story,
     family: { spouseName: "", spouseRole: "", childrenText: "" },
     timeline: (backend.timeline ?? []).map((text, index2) => ({
       date: "",
@@ -47964,7 +48094,7 @@ function backendProfileToPersonProfile(backend) {
     sources: []
   };
 }
-function getInitials$3(name) {
+function getInitials$4(name) {
   var _a2;
   const parts = name.split(/\s+/).filter((part) => part.length > 0 && /[A-Za-z]/.test(part.charAt(0)));
   const first = ((_a2 = parts[0]) == null ? void 0 : _a2.charAt(0)) ?? "";
@@ -47972,30 +48102,36 @@ function getInitials$3(name) {
   return (first + last).toUpperCase();
 }
 const PLACEHOLDER_SRC = "/assets/images/placeholder.svg";
-function computeCompleteness(person, hasProfilePhoto) {
+function computeCompleteness(person, hasProfilePhoto, backend) {
   var _a2;
+  const isLiving = (backend == null ? void 0 : backend.livingStatus) === LivingStatus.Living || person.livingStatus === "living";
+  const birthInfoDone = Boolean(
+    (backend == null ? void 0 : backend.birthDate) || (backend == null ? void 0 : backend.birthplace) || (backend == null ? void 0 : backend.currentLocation) || (backend == null ? void 0 : backend.occupation)
+  ) || person.facts.some(
+    (fact) => fact.label === "Born" || fact.label === "Birth year"
+  );
+  const storyDone = Boolean((backend == null ? void 0 : backend.shortBio) || (backend == null ? void 0 : backend.longerStory) || (backend == null ? void 0 : backend.story)) || Boolean(person.story);
   const fields = [
     {
       label: "Photo",
       done: hasProfilePhoto || Boolean(person.portrait.src && person.portrait.src !== PLACEHOLDER_SRC)
     },
-    {
-      label: "Birth information",
-      done: person.facts.some(
-        (fact) => fact.label === "Born" || fact.label === "Birth year"
-      )
-    },
-    {
-      label: "Death information",
-      done: person.facts.some((fact) => fact.label === "Died")
-    },
+    { label: "Birth information", done: birthInfoDone },
+    // Living profiles are never penalized for missing death information, so the
+    // "Death information" field is only counted for deceased/historical profiles.
+    ...isLiving ? [] : [
+      {
+        label: "Death information",
+        done: person.facts.some((fact) => fact.label === "Died")
+      }
+    ],
     {
       label: "Family relationships",
       done: Boolean(
         person.family.spouseName || (((_a2 = person.family.spouses) == null ? void 0 : _a2.length) ?? 0) > 0
       )
     },
-    { label: "Story", done: Boolean(person.story) },
+    { label: "Story", done: storyDone },
     { label: "Timeline", done: person.timeline.length > 0 },
     { label: "Sources", done: person.sources.length > 0 }
   ];
@@ -48287,10 +48423,15 @@ function PersonProfilePage({
   const { identity } = useInternetIdentity();
   const { data: myClaim } = useMyProfileClaim(person.id);
   const { data: relationshipRequests = [] } = useMyRelationshipRequests();
+  const { data: isSteward = false } = useIsAdmin();
   const currentPrincipal = identity == null ? void 0 : identity.getPrincipal().toString();
   const isOwner = Boolean(
     (backendProfile == null ? void 0 : backendProfile.claimedByUserId) && currentPrincipal && backendProfile.claimedByUserId.toString() === currentPrincipal
   );
+  const isClaimedByAnother = Boolean(
+    (backendProfile == null ? void 0 : backendProfile.claimedByUserId) && currentPrincipal && backendProfile.claimedByUserId.toString() !== currentPrincipal
+  );
+  const canEdit = isOwner || isSteward && !isClaimedByAnother;
   const hasPendingClaim = Boolean(
     (myClaim == null ? void 0 : myClaim.personId) === person.id && myClaim.status === "Pending" && myClaim.requestingUserId.toString() === currentPrincipal
   );
@@ -48305,9 +48446,16 @@ function PersonProfilePage({
   } : void 0;
   const claimable = isProfileClaimable(graphNode);
   const hasProfilePhoto = Boolean(profilePhoto);
-  const completeness = computeCompleteness(person, hasProfilePhoto);
+  const completeness = computeCompleteness(
+    person,
+    hasProfilePhoto,
+    backendProfile ?? void 0
+  );
   const portraitSrc = profilePhoto ?? person.portrait.src;
   const portraitAlt = profilePhoto ? `${person.name}'s profile photo` : person.portrait.alt;
+  const isLivingProfile = (backendProfile == null ? void 0 : backendProfile.livingStatus) === LivingStatus.Living || person.livingStatus === "living";
+  const usesRepresentativeImage = Boolean(person.portrait.src) && person.portrait.src !== PLACEHOLDER_SRC;
+  const portraitCaption = profilePhoto ? "Uploaded profile photo." : !isLivingProfile && usesRepresentativeImage ? `Representative historical portrait — not an actual photograph of ${person.name.split(" ")[0]} Norwood.` : "";
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto flex w-full max-w-3xl flex-col px-6 py-8 sm:py-12", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx(
       motion.div,
@@ -48358,10 +48506,10 @@ function PersonProfilePage({
               {
                 "data-ocid": "profile.header.initials",
                 className: "flex aspect-[4/5] w-full items-center justify-center rounded-xl bg-secondary",
-                children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-display text-6xl font-semibold text-accent-foreground", children: getInitials$3(person.name) })
+                children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-display text-6xl font-semibold text-accent-foreground", children: getInitials$4(person.name) })
               }
             ) }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("figcaption", { className: "mt-2 text-center text-xs italic leading-relaxed text-muted-foreground", children: profilePhoto ? "Uploaded profile photo." : `Representative historical portrait — not an actual photograph of ${person.name.split(" ")[0]} Norwood.` })
+            portraitCaption ? /* @__PURE__ */ jsxRuntimeExports.jsx("figcaption", { className: "mt-2 text-center text-xs italic leading-relaxed text-muted-foreground", children: portraitCaption }) : null
           ] }),
           /* @__PURE__ */ jsxRuntimeExports.jsxs(
             "div",
@@ -48448,7 +48596,7 @@ function PersonProfilePage({
                       style: {
                         ["--status-pending"]: "var(--claim-pending)"
                       },
-                      children: "Profile claim pending"
+                      children: "Pending claim"
                     }
                   ) : hasPendingRelationship ? /* @__PURE__ */ jsxRuntimeExports.jsx(
                     "span",
@@ -48466,7 +48614,7 @@ function PersonProfilePage({
                     "data-ocid": "profile.claim_section.loading_state",
                     className: "mt-3 h-10 animate-pulse rounded-full bg-muted"
                   }
-                ) : isOwner ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-3 flex flex-col items-start gap-3", children: [
+                ) : canEdit ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-3 flex flex-col items-start gap-3", children: [
                   /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "flex items-center gap-2 text-sm text-muted-foreground", children: [
                     /* @__PURE__ */ jsxRuntimeExports.jsx(
                       UserCheck,
@@ -48476,7 +48624,7 @@ function PersonProfilePage({
                         "aria-hidden": "true"
                       }
                     ),
-                    hasPendingRelationship ? "This is your pending profile. Your family connection is awaiting confirmation by a steward." : "You own this profile. You can edit your personal details."
+                    hasPendingRelationship ? "This is your pending profile. Your family connection is awaiting confirmation by a steward." : isOwner ? "You own this profile. You can edit your personal details." : "You are a Family Steward. You can edit this profile."
                   ] }),
                   /* @__PURE__ */ jsxRuntimeExports.jsxs(
                     "button",
@@ -48491,7 +48639,7 @@ function PersonProfilePage({
                       ]
                     }
                   )
-                ] }) : hasPendingClaim ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-3 flex flex-col items-start gap-3", children: /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: "Your claim is pending review by a family steward. Once approved, you'll be linked to this profile." }) }) : claimable ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-3 flex flex-col items-start gap-3", children: [
+                ] }) : hasPendingClaim ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-3 flex flex-col items-start gap-3", children: /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: "Your claim to this profile is awaiting Family Steward review." }) }) : claimable ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-3 flex flex-col items-start gap-3", children: [
                   /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: "Is this you? Claim this profile to manage your personal details." }),
                   /* @__PURE__ */ jsxRuntimeExports.jsx(ClaimButton, { personId: person.id, profile: backendProfile })
                 ] }) : /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-3 text-sm text-muted-foreground", children: (backendProfile == null ? void 0 : backendProfile.livingStatus) === LivingStatus.Deceased ? "This profile is not claimable." : "This profile is owned by a family member." })
@@ -48679,12 +48827,8 @@ const RELATIONSHIP_OPTIONS$1 = [
 function initials(name) {
   return name.split(/\s+/).slice(0, 2).map((part) => part.charAt(0)).join("").toUpperCase();
 }
-function displayNameForId(id2) {
-  return id2.replace(/([a-z])([A-Z])/g, "$1 $2").replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2").split(/\s+/).map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(" ");
-}
 function personDisplayName(id2) {
-  var _a2;
-  return ((_a2 = profiles[id2]) == null ? void 0 : _a2.name) ?? displayNameForId(id2);
+  return resolveDisplayName(id2, profiles);
 }
 function buildLocalMatches(name) {
   const query = name.trim();
@@ -48706,7 +48850,7 @@ function buildLocalMatches(name) {
 function mergeMatches(local, backend) {
   const seen = /* @__PURE__ */ new Set();
   const merged = [];
-  for (const match of [...backend, ...local]) {
+  for (const match of [...local, ...backend]) {
     if (seen.has(match.personId)) continue;
     seen.add(match.personId);
     merged.push(match);
@@ -50560,7 +50704,7 @@ function formatContributor(contributor) {
   const text = contributor.toText();
   return text.length > 18 ? `${text.slice(0, 5)}…${text.slice(-4)}` : text;
 }
-function getInitials$2(name) {
+function getInitials$3(name) {
   var _a2;
   const parts = name.split(/\s+/).filter((part) => part.length > 0 && /[A-Za-z]/.test(part.charAt(0)));
   const first = ((_a2 = parts[0]) == null ? void 0 : _a2.charAt(0)) ?? "";
@@ -50601,7 +50745,7 @@ function ArchiveCard({ item, index: index2, onOpen }) {
             /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "contributed" })
           ] }),
           relatedMembers.length > 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-auto flex flex-wrap items-center gap-1.5 pt-1", children: relatedMembers.map((profile) => /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "member-chip", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "member-avatar", "aria-hidden": "true", children: getInitials$2(profile.name) }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "member-avatar", "aria-hidden": "true", children: getInitials$3(profile.name) }),
             profile.name
           ] }, profile.id)) }) : null
         ] })
@@ -50819,7 +50963,7 @@ function ArchivePage({ onBack, onOpenArchiveItem }) {
     ) }, item.id.toString())) }) })
   ] });
 }
-function getInitials$1(name) {
+function getInitials$2(name) {
   var _a2;
   const parts = name.split(/\s+/).filter((part) => part.length > 0 && /[A-Za-z]/.test(part.charAt(0)));
   const first = ((_a2 = parts[0]) == null ? void 0 : _a2.charAt(0)) ?? "";
@@ -50880,7 +51024,7 @@ function PersonCard({
               className: "h-full w-full object-cover",
               loading: "lazy"
             }
-          ) : getInitials$1(person.name) }),
+          ) : getInitials$2(person.name) }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: nameClass2, children: person.name }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: relationClass, children: relationLabel ?? person.role })
         ]
@@ -50908,7 +51052,7 @@ function PersonCard({
               className: "h-full w-full object-cover",
               loading: "lazy"
             }
-          ) : getInitials$1(person.name) }),
+          ) : getInitials$2(person.name) }),
           /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "ex-focus-body", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-focus-name", children: person.name }),
             person.years && /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-focus-years", children: person.years }),
@@ -50954,7 +51098,7 @@ function PersonCard({
               className: "h-full w-full object-cover",
               loading: "lazy"
             }
-          ) : getInitials$1(person.name) }),
+          ) : getInitials$2(person.name) }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-spouse-half-name", children: person.name }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-spouse-half-relation", children: relationLabel ?? person.role })
         ]
@@ -50990,7 +51134,7 @@ function PersonCard({
               className: "h-full w-full object-cover",
               loading: "lazy"
             }
-          ) }) : /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: portraitClass, "aria-hidden": "true", children: getInitials$1(person.name) }),
+          ) }) : /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: portraitClass, "aria-hidden": "true", children: getInitials$2(person.name) }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: nameClass, children: person.name }),
           person.years && /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ft-card-years", children: person.years }),
           selected && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "ft-card-detail", children: [
@@ -51058,9 +51202,27 @@ function toPerson$1(ref) {
   const profile = profiles[ref.personId];
   return {
     id: ref.personId,
-    name: (profile == null ? void 0 : profile.name) ?? ref.personId,
+    name: resolveDisplayName(ref.personId, profiles),
     role: ref.label,
     photo: profile == null ? void 0 : profile.portrait
+  };
+}
+function buildGraphFallbackProfile(id2) {
+  if (!FAMILY_GRAPH[id2]) return void 0;
+  const displayName = resolveDisplayName(id2, profiles);
+  return {
+    id: id2,
+    name: displayName,
+    role: "Family member",
+    portrait: {
+      src: "/assets/images/placeholder.svg",
+      alt: `An initials placeholder portrait for ${displayName}, since no profile record exists for them.`
+    },
+    facts: [],
+    story: "",
+    family: { spouseName: "", spouseRole: "", childrenText: "" },
+    timeline: [],
+    sources: []
   };
 }
 function RelativeZone({
@@ -51106,12 +51268,13 @@ function ExploreFamilyPage({
     focus,
     relatives
   } = useExploreFamily(focusPersonId, profiles);
-  if (!focus) {
+  const focusProfile = focus ?? buildGraphFallbackProfile(resolvedId);
+  if (!focusProfile) {
     return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "ex-stage", "data-ocid": "explore.empty_state", children: /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: "No family member found to explore." }) });
   }
-  const years = getYears(focus);
-  const isMe = focus.relationToYou === "me" || focus.me === true;
-  const relationText = focus.relationToYou ?? "Family member";
+  const years = getYears(focusProfile);
+  const isMe = focusProfile.relationToYou === "me" || focusProfile.me === true;
+  const relationText = focusProfile.relationToYou ?? "Family member";
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "ex-stage", "data-ocid": "explore.page", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsxs("header", { className: "w-full text-center", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "font-display text-xl font-semibold text-foreground", children: "Explore Family" }),
@@ -51165,9 +51328,9 @@ function ExploreFamilyPage({
         {
           person: {
             id: resolvedId,
-            name: focus.name,
+            name: focusProfile.name,
             role: relationText,
-            photo: focus.portrait,
+            photo: focusProfile.portrait,
             years
           },
           selected: false,
@@ -51218,8 +51381,7 @@ function formatPrincipal(principal) {
   return text.length > 18 ? `${text.slice(0, 5)}…${text.slice(-4)}` : text;
 }
 function personName(personId) {
-  var _a2;
-  return ((_a2 = profiles[personId]) == null ? void 0 : _a2.name) ?? personId;
+  return resolveDisplayName(personId, profiles);
 }
 function FamilyStewardReviewPage({
   onBack
@@ -51547,7 +51709,7 @@ function RelationshipCard({
     }
   );
 }
-function getInitials(name) {
+function getInitials$1(name) {
   var _a2;
   const parts = name.split(/\s+/).filter((part) => part.length > 0 && /[A-Za-z]/.test(part.charAt(0)));
   const first = ((_a2 = parts[0]) == null ? void 0 : _a2.charAt(0)) ?? "";
@@ -51592,7 +51754,7 @@ function HeritageBranchCard({
         },
         className: `${cardClass2} focus-visible:outline-none`,
         children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: portraitClass, "aria-hidden": "true", children: photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: photoSrc, alt: photoAlt, loading: "lazy" }) : getInitials(person.name) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: portraitClass, "aria-hidden": "true", children: photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: photoSrc, alt: photoAlt, loading: "lazy" }) : getInitials$1(person.name) }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: nameClass, children: person.name }),
           count && /* @__PURE__ */ jsxRuntimeExports.jsx(
             "span",
@@ -51630,7 +51792,7 @@ function HeritageBranchCard({
             {
               className: isCouple ? "hb-couple-portrait" : "hb-node-portrait",
               "aria-hidden": "true",
-              children: photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: photoSrc, alt: photoAlt, loading: "lazy" }) : getInitials(person.name)
+              children: photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: photoSrc, alt: photoAlt, loading: "lazy" }) : getInitials$1(person.name)
             }
           ),
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: isCouple ? "hb-couple-name" : "hb-node-name", children: person.name })
@@ -51666,7 +51828,7 @@ function HeritageBranchCard({
           {
             className: `branch-portrait ${large ? "h-16 w-16 text-xl" : ""}`,
             "aria-hidden": "true",
-            children: photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: photoSrc, alt: photoAlt, loading: "lazy" }) : getInitials(person.name)
+            children: photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: photoSrc, alt: photoAlt, loading: "lazy" }) : getInitials$1(person.name)
           }
         ),
         /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: `branch-card-name ${large ? "text-sm" : ""}`, children: person.name }),
@@ -52183,11 +52345,325 @@ const EDIT_ERROR_LABELS = {
   [EditError.NotOwner]: "Only the approved owner of this profile can edit it.",
   [EditError.DeceasedProfile]: "This profile is for a deceased person and cannot be edited."
 };
-const PRIVACY_OPTIONS = [
-  { value: PrivacyLevel.Public, label: "Public" },
-  { value: PrivacyLevel.FamilyOnly, label: "Family only" },
-  { value: PrivacyLevel.Private, label: "Private" }
-];
+const SUFFIX_OPTIONS = ["", "Jr.", "Sr.", "II", "III", "IV"];
+const EMPTY_DRAFT = {
+  preferredName: "",
+  firstName: "",
+  middleName: "",
+  lastName: "",
+  suffix: "",
+  nickname: "",
+  birthDate: "",
+  birthYearOnly: false,
+  birthplace: "",
+  currentLocation: "",
+  occupation: "",
+  livingStatus: LivingStatus.Living,
+  shortBio: "",
+  longerStory: "",
+  timeline: [],
+  privacySettings: PrivacyLevel.FamilyOnly
+};
+const draftKey = (personId) => `norwood.profile-edit.draft.${personId}`;
+function serializeTimelineEntry(entry) {
+  const parts = [];
+  if (entry.date.trim()) parts.push(entry.date.trim());
+  if (entry.title.trim()) parts.push(entry.title.trim());
+  const detail = entry.detail.trim() + (entry.location.trim() ? ` (${entry.location.trim()})` : "");
+  if (detail) parts.push(detail);
+  return parts.join(" — ");
+}
+function parseTimelineLine(line) {
+  const parts = line.split(" — ");
+  if (parts.length >= 2) {
+    return {
+      id: 0,
+      date: parts[0],
+      title: parts[1],
+      detail: parts.slice(2).join(" — "),
+      location: ""
+    };
+  }
+  return { id: 0, date: "", title: "", detail: line, location: "" };
+}
+function fromBackend(backend) {
+  return {
+    preferredName: backend.preferredName ?? "",
+    firstName: backend.firstName ?? "",
+    middleName: backend.middleName ?? "",
+    lastName: backend.lastName ?? "",
+    suffix: backend.suffix ?? "",
+    nickname: backend.nickname ?? "",
+    birthDate: backend.birthDate ?? "",
+    birthYearOnly: false,
+    birthplace: backend.birthplace ?? "",
+    currentLocation: backend.currentLocation ?? "",
+    occupation: backend.occupation ?? "",
+    livingStatus: backend.livingStatus ?? LivingStatus.Living,
+    shortBio: backend.shortBio ?? "",
+    longerStory: backend.longerStory ?? "",
+    timeline: (backend.timeline ?? []).map((line, index2) => ({
+      ...parseTimelineLine(line),
+      id: index2
+    })),
+    privacySettings: backend.privacySettings ?? PrivacyLevel.FamilyOnly
+  };
+}
+function toEdits(draft) {
+  return {
+    preferredName: draft.preferredName.trim(),
+    firstName: draft.firstName.trim(),
+    middleName: draft.middleName.trim(),
+    lastName: draft.lastName.trim(),
+    suffix: draft.suffix.trim(),
+    nickname: draft.nickname.trim(),
+    birthDate: draft.birthDate.trim(),
+    birthplace: draft.birthplace.trim(),
+    currentLocation: draft.currentLocation.trim(),
+    occupation: draft.occupation.trim(),
+    livingStatus: draft.livingStatus,
+    shortBio: draft.shortBio.trim(),
+    longerStory: draft.longerStory.trim(),
+    timeline: draft.timeline.map(serializeTimelineEntry).filter((line) => line.trim() !== ""),
+    privacySettings: draft.privacySettings.trim()
+  };
+}
+function isValidDateOrYear(value) {
+  const trimmed = value.trim();
+  if (!trimmed) return true;
+  if (/^\d{4}$/.test(trimmed)) return true;
+  const date = new Date(trimmed);
+  return !Number.isNaN(date.getTime());
+}
+function validate(draft) {
+  const errors = {};
+  const hasDisplayName = draft.preferredName.trim() !== "" || draft.firstName.trim() !== "" && draft.lastName.trim() !== "";
+  if (!hasDisplayName) {
+    errors.displayName = "Add a display name or a first and last name so this profile can be identified.";
+  }
+  if (!isValidDateOrYear(draft.birthDate)) {
+    errors.birthDate = "Enter a valid date or a 4-digit year.";
+  }
+  return errors;
+}
+function getInitials(name) {
+  var _a2;
+  const parts = name.split(/\s+/).filter((part) => part.length > 0 && /[A-Za-z]/.test(part.charAt(0)));
+  const first = ((_a2 = parts[0]) == null ? void 0 : _a2.charAt(0)) ?? "";
+  const last = parts.length > 1 ? parts[parts.length - 1].charAt(0) : "";
+  return (first + last).toUpperCase();
+}
+function EditPhotoSection({
+  personId,
+  displayName
+}) {
+  const { data: photos = [], isLoading } = usePhotos(personId);
+  const { data: profilePhoto } = useProfilePhoto(personId);
+  const addPhoto = useAddPhoto();
+  const setProfilePhoto = useSetProfilePhoto();
+  const removePhoto = useRemovePhoto();
+  const [progress2, setProgress] = reactExports.useState(null);
+  const fileInputRef = reactExports.useRef(null);
+  const profilePhotoUrl = profilePhoto == null ? void 0 : profilePhoto.blob.getDirectURL();
+  const handleFile = async (file) => {
+    if (!file) return;
+    setProgress(0);
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    const blob = ExternalBlob$1.fromBytes(
+      bytes,
+      file.type,
+      file.name
+    ).withUploadProgress(setProgress);
+    addPhoto.mutate(
+      { personId, blob, filename: file.name, mimeType: file.type },
+      { onSuccess: () => setProgress(null), onError: () => setProgress(null) }
+    );
+  };
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-4", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-4", children: [
+      profilePhotoUrl ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "img",
+        {
+          src: profilePhotoUrl,
+          alt: "Your current profile",
+          className: "h-20 w-20 rounded-full object-cover photo-ring"
+        }
+      ) : /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "div",
+        {
+          "data-ocid": "profile_edit.photo_placeholder",
+          className: "flex h-20 w-20 items-center justify-center rounded-full font-display text-2xl font-semibold photo-ring",
+          style: {
+            backgroundColor: "oklch(var(--muted))",
+            color: "oklch(var(--muted-foreground))"
+          },
+          children: getInitials(displayName) || "?"
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-1.5", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm font-semibold text-foreground", children: profilePhotoUrl ? "Profile photo set" : "No profile photo yet" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-muted-foreground", children: profilePhotoUrl ? "Your initials placeholder is replaced by this photo." : "Your initials are shown until you add a photo." })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap items-center gap-3", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "input",
+        {
+          ref: fileInputRef,
+          type: "file",
+          accept: "image/*",
+          className: "sr-only",
+          "data-ocid": "profile_edit.photo_input",
+          onChange: (event) => {
+            var _a2;
+            const file = (_a2 = event.target.files) == null ? void 0 : _a2[0];
+            if (file) void handleFile(file);
+            event.target.value = "";
+          }
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "profile_edit.photo_upload_button",
+          onClick: () => {
+            var _a2;
+            return (_a2 = fileInputRef.current) == null ? void 0 : _a2.click();
+          },
+          disabled: addPhoto.isPending,
+          className: "add-photo-action focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-60",
+          children: [
+            addPhoto.isPending ? /* @__PURE__ */ jsxRuntimeExports.jsx(LoaderCircle, { className: "h-4 w-4 animate-spin", "aria-hidden": "true" }) : /* @__PURE__ */ jsxRuntimeExports.jsx(ImagePlus, { className: "h-4 w-4", "aria-hidden": "true" }),
+            addPhoto.isPending ? "Uploading…" : "Upload photo"
+          ]
+        }
+      ),
+      profilePhotoUrl ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "profile_edit.photo_remove_button",
+          onClick: () => {
+            if (profilePhoto) {
+              removePhoto.mutate({ personId, photoId: profilePhoto.id });
+            }
+          },
+          disabled: removePhoto.isPending,
+          className: "remove-photo-action focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-60",
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Trash2, { className: "h-3.5 w-3.5", "aria-hidden": "true" }),
+            "Remove photo"
+          ]
+        }
+      ) : null
+    ] }),
+    progress2 !== null ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { "data-ocid": "profile_edit.photo_progress", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "div",
+        {
+          className: "progress-track",
+          role: "progressbar",
+          tabIndex: 0,
+          "aria-valuenow": progress2,
+          "aria-valuemin": 0,
+          "aria-valuemax": 100,
+          children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "progress-fill", style: { width: `${progress2}%` } })
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "mt-1 text-xs text-muted-foreground", children: [
+        "Uploading… ",
+        progress2,
+        "%"
+      ] })
+    ] }) : null,
+    isLoading ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "grid grid-cols-3 gap-3", children: [0, 1, 2].map((i) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "div",
+      {
+        className: "aspect-square animate-pulse rounded-lg bg-muted"
+      },
+      `photo-skeleton-${i}`
+    )) }) : photos.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "div",
+      {
+        "data-ocid": "profile_edit.photo_empty_state",
+        className: "flex flex-col items-center gap-2 rounded-xl border border-dashed border-border/70 px-4 py-6 text-center",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            Camera,
+            {
+              className: "h-6 w-6 text-muted-foreground",
+              strokeWidth: 1.5,
+              "aria-hidden": "true"
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: "No photos in your gallery yet. Upload one to set it as your profile photo." })
+        ]
+      }
+    ) : /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "grid grid-cols-3 gap-3", children: photos.map((photo, index2) => {
+      const url = photo.blob.getDirectURL();
+      const isProfile = url === profilePhotoUrl;
+      return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "div",
+        {
+          className: "gallery-thumb group",
+          "data-ocid": `profile_edit.photo_item.${index2 + 1}`,
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "img",
+              {
+                src: url,
+                alt: photo.filename,
+                className: "aspect-square w-full object-cover",
+                loading: "lazy"
+              }
+            ),
+            isProfile ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "span",
+              {
+                "data-ocid": `profile_edit.photo_item.${index2 + 1}.profile_badge`,
+                className: "photo-badge absolute left-2 top-2",
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { className: "h-3 w-3", "aria-hidden": "true" }),
+                  "Profile"
+                ]
+              }
+            ) : null,
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "photo-hover-overlay", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "button",
+                {
+                  type: "button",
+                  "data-ocid": `profile_edit.photo_item.${index2 + 1}.set_profile`,
+                  onClick: () => setProfilePhoto.mutate({ personId, photoId: photo.id }),
+                  disabled: isProfile || setProfilePhoto.isPending,
+                  className: "set-profile-photo focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-60",
+                  children: isProfile ? "Profile Photo" : "Set as Profile Photo"
+                }
+              ),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                "button",
+                {
+                  type: "button",
+                  "data-ocid": `profile_edit.photo_item.${index2 + 1}.remove`,
+                  onClick: () => removePhoto.mutate({ personId, photoId: photo.id }),
+                  disabled: removePhoto.isPending,
+                  "aria-label": `Remove ${photo.filename}`,
+                  className: "remove-photo-action focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-60",
+                  children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(Trash2, { className: "h-3.5 w-3.5", "aria-hidden": "true" }),
+                    "Remove"
+                  ]
+                }
+              )
+            ] })
+          ]
+        },
+        photo.id.toString()
+      );
+    }) })
+  ] });
+}
 function ProfileEditPage({
   personId,
   onBack
@@ -52195,49 +52671,98 @@ function ProfileEditPage({
   const { data: backendProfile, isLoading } = usePersonProfile(personId);
   const { isAuthenticated, login, identity } = useInternetIdentity();
   const update = useUpdateOwnProfile();
+  const providersPresent = useProvidersPresent();
   const currentPrincipal = identity == null ? void 0 : identity.getPrincipal().toString();
   const isOwner = Boolean(
     (backendProfile == null ? void 0 : backendProfile.claimedByUserId) && currentPrincipal && backendProfile.claimedByUserId.toString() === currentPrincipal
   );
   const isLiving = (backendProfile == null ? void 0 : backendProfile.livingStatus) === LivingStatus.Living;
   const isClaimed = (backendProfile == null ? void 0 : backendProfile.claimStatus) === ClaimStatus.Claimed;
-  const canEdit = isOwner && isLiving && isClaimed;
-  const [preferredName, setPreferredName] = reactExports.useState("");
-  const [story, setStory] = reactExports.useState("");
-  const [occupation, setOccupation] = reactExports.useState("");
-  const [birthInfo, setBirthInfo] = reactExports.useState("");
-  const [timeline, setTimeline] = reactExports.useState([]);
-  const [privacySettings, setPrivacySettings] = reactExports.useState("");
-  const [saveState, setSaveState] = reactExports.useState("idle");
-  const [saveError, setSaveError] = reactExports.useState("");
-  const [toPersonId, setToPersonId] = reactExports.useState("");
+  const { data: isSteward = false } = useIsAdmin();
+  const isClaimedByAnother = Boolean(
+    (backendProfile == null ? void 0 : backendProfile.claimedByUserId) && currentPrincipal && backendProfile.claimedByUserId.toString() !== currentPrincipal
+  );
+  const canEdit = isOwner && isLiving && isClaimed || isSteward && !isClaimedByAnother;
+  const restoredFromStorage = reactExports.useRef(false);
+  const [draft, setDraft] = reactExports.useState(() => {
+    try {
+      const raw = localStorage.getItem(draftKey(personId));
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === "object" && "preferredName" in parsed) {
+          restoredFromStorage.current = true;
+          return parsed;
+        }
+      }
+    } catch {
+    }
+    return EMPTY_DRAFT;
+  });
   const initialized = reactExports.useRef(false);
   reactExports.useEffect(() => {
     if (backendProfile && !initialized.current) {
       initialized.current = true;
-      setPreferredName(backendProfile.preferredName ?? "");
-      setStory(backendProfile.story ?? "");
-      setOccupation(backendProfile.occupation ?? "");
-      setBirthInfo(backendProfile.birthInfo ?? "");
-      setTimeline(
-        (backendProfile.timeline ?? []).map((text, index2) => ({
-          id: index2,
-          text
-        }))
-      );
-      setPrivacySettings(backendProfile.privacySettings ?? "");
+      if (!restoredFromStorage.current) {
+        setDraft(fromBackend(backendProfile));
+      }
     }
   }, [backendProfile]);
-  const people = Object.values(profiles).filter((p2) => p2.id !== personId);
+  const [draftStatus, setDraftStatus] = reactExports.useState("saved");
+  const [saveState, setSaveState] = reactExports.useState("idle");
+  const [saveError, setSaveError] = reactExports.useState("");
+  const [errors, setErrors] = reactExports.useState({});
+  const [toPersonId, setToPersonId] = reactExports.useState("");
+  reactExports.useEffect(() => {
+    if (!backendProfile) return;
+    const timer = setTimeout(() => {
+      try {
+        localStorage.setItem(draftKey(personId), JSON.stringify(draft));
+        setDraftStatus("saved");
+      } catch {
+      }
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [draft, personId, backendProfile]);
+  const setField = (key, value) => {
+    setDraft((current) => ({ ...current, [key]: value }));
+    setDraftStatus("unsaved");
+  };
+  const updateTimelineEntry = (id2, patch) => {
+    setDraft((current) => ({
+      ...current,
+      timeline: current.timeline.map(
+        (entry) => entry.id === id2 ? { ...entry, ...patch } : entry
+      )
+    }));
+    setDraftStatus("unsaved");
+  };
+  const removeTimelineEntry = (id2) => {
+    setDraft((current) => ({
+      ...current,
+      timeline: current.timeline.filter((entry) => entry.id !== id2)
+    }));
+    setDraftStatus("unsaved");
+  };
+  const addTimelineEntry = () => {
+    setDraft((current) => ({
+      ...current,
+      timeline: [
+        ...current.timeline,
+        { id: Date.now(), date: "", title: "", detail: "", location: "" }
+      ]
+    }));
+    setDraftStatus("unsaved");
+  };
+  const displayName = draft.preferredName.trim() || [draft.firstName, draft.lastName].filter(Boolean).join(" ") || (backendProfile == null ? void 0 : backendProfile.name) || "";
   const handleSave = () => {
-    const edits = {
-      preferredName: preferredName.trim(),
-      story: story.trim(),
-      occupation: occupation.trim(),
-      birthInfo: birthInfo.trim(),
-      timeline: timeline.map((entry) => entry.text).filter((text) => text.trim() !== ""),
-      privacySettings: privacySettings.trim()
-    };
+    const validationErrors = validate(draft);
+    setErrors(validationErrors);
+    if (Object.keys(validationErrors).length > 0) {
+      setSaveState("error");
+      setSaveError("Please fix the highlighted fields before saving.");
+      return;
+    }
+    const edits = toEdits(draft);
     setSaveState("saving");
     update.mutate(
       { personId, edits },
@@ -52245,6 +52770,12 @@ function ProfileEditPage({
         onSuccess: (data) => {
           if (data.__kind__ === "ok") {
             setSaveState("saved");
+            try {
+              localStorage.removeItem(draftKey(personId));
+            } catch {
+            }
+            setDraft(fromBackend(data.ok));
+            setDraftStatus("saved");
           } else {
             setSaveState("error");
             setSaveError(
@@ -52259,25 +52790,7 @@ function ProfileEditPage({
       }
     );
   };
-  const updateTimelineEntry = (id2, value) => {
-    setTimeline(
-      (current) => current.map(
-        (entry) => entry.id === id2 ? { ...entry, text: value } : entry
-      )
-    );
-  };
-  const removeTimelineEntry = (id2) => {
-    setTimeline((current) => current.filter((entry) => entry.id !== id2));
-  };
-  const addTimelineEntry = () => {
-    setTimeline((current) => [...current, { id: Date.now(), text: "" }]);
-  };
-  const privacyOptions = PRIVACY_OPTIONS.some(
-    (option) => option.value === privacySettings
-  ) ? PRIVACY_OPTIONS : [
-    ...PRIVACY_OPTIONS,
-    { value: privacySettings, label: privacySettings || "Not set" }
-  ];
+  const people = Object.values(profiles).filter((p2) => p2.id !== personId);
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-6 py-8", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsxs(
       "button",
@@ -52352,11 +52865,19 @@ function ProfileEditPage({
       }
     ) : /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap items-center gap-3", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx(StatusBadge, { kind: "claim", status: "Claimed" }),
+        isClaimed ? /* @__PURE__ */ jsxRuntimeExports.jsx(StatusBadge, { kind: "claim", status: "Claimed" }) : /* @__PURE__ */ jsxRuntimeExports.jsx(StatusBadge, { kind: "claim", status: "Unclaimed" }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "inline-flex items-center gap-1.5 text-sm font-semibold text-success", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx(UserCheck, { className: "h-4 w-4", "aria-hidden": "true" }),
-          "You own this profile"
-        ] })
+          isOwner ? "You own this profile" : "Editing as Family Steward"
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "span",
+          {
+            "data-ocid": "profile_edit.draft_status",
+            className: `draft-status ${draftStatus === "saved" ? "draft-saved" : "draft-unsaved"}`,
+            children: draftStatus === "saved" ? "Draft saved" : "Unsaved changes"
+          }
+        )
       ] }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs(
         "form",
@@ -52367,8 +52888,9 @@ function ProfileEditPage({
             handleSave();
           },
           children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { className: "flex flex-col gap-4 rounded-xl border border-border/60 bg-card p-5", children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display text-xl font-semibold text-foreground", children: "Personal details" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { className: "edit-section-card", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "edit-section-head", children: /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "edit-section-title", children: "Identity" }) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "edit-section-hint", children: "How you are known across the family tree and profile." }),
               /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "owner-field-group", children: [
                 /* @__PURE__ */ jsxRuntimeExports.jsx("label", { htmlFor: "preferred-name", className: "field-label", children: "Preferred / display name" }),
                 /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -52377,93 +52899,376 @@ function ProfileEditPage({
                     id: "preferred-name",
                     "data-ocid": "profile_edit.preferred_name_input",
                     type: "text",
-                    value: preferredName,
-                    onChange: (event) => setPreferredName(event.target.value),
+                    value: draft.preferredName,
+                    onChange: (event) => setField("preferredName", event.target.value),
                     className: "form-input",
                     placeholder: "How you'd like to be known"
                   }
                 ),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "owner-editable-hint", children: "Shown on your profile card and in the family tree." })
+                errors.displayName ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  "p",
+                  {
+                    "data-ocid": "profile_edit.display_name_error",
+                    className: "text-sm text-destructive",
+                    children: errors.displayName
+                  }
+                ) : null
+              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "edit-field-grid", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "owner-field-group", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("label", { htmlFor: "first-name", className: "field-label", children: "First name" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "input",
+                    {
+                      id: "first-name",
+                      "data-ocid": "profile_edit.first_name_input",
+                      type: "text",
+                      value: draft.firstName,
+                      onChange: (event) => setField("firstName", event.target.value),
+                      className: "form-input"
+                    }
+                  )
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "owner-field-group", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("label", { htmlFor: "middle-name", className: "field-label", children: "Middle name or initial" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "input",
+                    {
+                      id: "middle-name",
+                      "data-ocid": "profile_edit.middle_name_input",
+                      type: "text",
+                      value: draft.middleName,
+                      onChange: (event) => setField("middleName", event.target.value),
+                      className: "form-input"
+                    }
+                  )
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "owner-field-group", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("label", { htmlFor: "last-name", className: "field-label", children: "Last name" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "input",
+                    {
+                      id: "last-name",
+                      "data-ocid": "profile_edit.last_name_input",
+                      type: "text",
+                      value: draft.lastName,
+                      onChange: (event) => setField("lastName", event.target.value),
+                      className: "form-input"
+                    }
+                  )
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "owner-field-group", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("label", { htmlFor: "suffix", className: "field-label", children: "Suffix" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "select",
+                    {
+                      id: "suffix",
+                      "data-ocid": "profile_edit.suffix_select",
+                      value: draft.suffix,
+                      onChange: (event) => setField("suffix", event.target.value),
+                      className: "form-select",
+                      children: SUFFIX_OPTIONS.map((option) => /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: option, children: option || "None" }, option))
+                    }
+                  )
+                ] })
               ] }),
               /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "owner-field-group", children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx("label", { htmlFor: "occupation", className: "field-label", children: "Occupation" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("label", { htmlFor: "nickname", className: "field-label", children: "Nickname / known as" }),
                 /* @__PURE__ */ jsxRuntimeExports.jsx(
                   "input",
                   {
-                    id: "occupation",
-                    "data-ocid": "profile_edit.occupation_input",
+                    id: "nickname",
+                    "data-ocid": "profile_edit.nickname_input",
                     type: "text",
-                    value: occupation,
-                    onChange: (event) => setOccupation(event.target.value),
+                    value: draft.nickname,
+                    onChange: (event) => setField("nickname", event.target.value),
                     className: "form-input",
-                    placeholder: "Your work or calling"
+                    placeholder: "e.g. Julie, Tip"
                   }
                 )
+              ] })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { className: "edit-section-card", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "edit-section-head", children: /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "edit-section-title", children: "Basic Information" }) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "edit-field-grid", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "owner-field-group", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("label", { htmlFor: "birth-date", className: "field-label", children: "Birth date" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "input",
+                    {
+                      id: "birth-date",
+                      "data-ocid": "profile_edit.birth_date_input",
+                      type: "text",
+                      value: draft.birthDate,
+                      onChange: (event) => setField("birthDate", event.target.value),
+                      className: "form-input",
+                      placeholder: "e.g. June 12, 1990 or 1990"
+                    }
+                  ),
+                  errors.birthDate ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "p",
+                    {
+                      "data-ocid": "profile_edit.birth_date_error",
+                      className: "text-sm text-destructive",
+                      children: errors.birthDate
+                    }
+                  ) : null
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "owner-field-group", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("label", { htmlFor: "birthplace", className: "field-label", children: "Birthplace" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "input",
+                    {
+                      id: "birthplace",
+                      "data-ocid": "profile_edit.birthplace_input",
+                      type: "text",
+                      value: draft.birthplace,
+                      onChange: (event) => setField("birthplace", event.target.value),
+                      className: "form-input",
+                      placeholder: "City, state or country"
+                    }
+                  )
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "owner-field-group", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("label", { htmlFor: "current-location", className: "field-label", children: "Current city / state or location" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "input",
+                    {
+                      id: "current-location",
+                      "data-ocid": "profile_edit.current_location_input",
+                      type: "text",
+                      value: draft.currentLocation,
+                      onChange: (event) => setField("currentLocation", event.target.value),
+                      className: "form-input",
+                      placeholder: "Where you live now"
+                    }
+                  )
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "owner-field-group", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("label", { htmlFor: "occupation", className: "field-label", children: "Occupation / profession" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "input",
+                    {
+                      id: "occupation",
+                      "data-ocid": "profile_edit.occupation_input",
+                      type: "text",
+                      value: draft.occupation,
+                      onChange: (event) => setField("occupation", event.target.value),
+                      className: "form-input",
+                      placeholder: "Your work or calling"
+                    }
+                  )
+                ] })
               ] }),
-              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "owner-field-group", children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx("label", { htmlFor: "birth-info", className: "field-label", children: "Birth information" }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  "input",
-                  {
-                    id: "birth-info",
-                    "data-ocid": "profile_edit.birth_info_input",
-                    type: "text",
-                    value: birthInfo,
-                    onChange: (event) => setBirthInfo(event.target.value),
-                    className: "form-input",
-                    placeholder: "Date and place of birth"
-                  }
-                )
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "edit-inline-field", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-sm font-semibold text-foreground", children: "Living status" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("label", { className: "inline-flex items-center gap-1.5 text-sm text-foreground", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      "input",
+                      {
+                        type: "radio",
+                        name: "living-status",
+                        value: LivingStatus.Living,
+                        checked: draft.livingStatus === LivingStatus.Living,
+                        onChange: () => setField("livingStatus", LivingStatus.Living),
+                        "data-ocid": "profile_edit.living_radio",
+                        className: "accent-primary"
+                      }
+                    ),
+                    "Living"
+                  ] }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("label", { className: "inline-flex items-center gap-1.5 text-sm text-foreground", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      "input",
+                      {
+                        type: "radio",
+                        name: "living-status",
+                        value: LivingStatus.Deceased,
+                        checked: draft.livingStatus === LivingStatus.Deceased,
+                        onChange: () => setField("livingStatus", LivingStatus.Deceased),
+                        "data-ocid": "profile_edit.deceased_radio",
+                        className: "accent-primary"
+                      }
+                    ),
+                    "Deceased"
+                  ] })
+                ] })
               ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "edit-section-hint", children: isOwner ? "Only living profiles can be edited. Deceased profiles are preserved as historical records." : "As a Family Steward you may update the living status of unclaimed or historical profiles." })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { className: "edit-section-card", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "edit-section-head", children: /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "edit-section-title", children: "About" }) }),
               /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "owner-field-group", children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx("label", { htmlFor: "story", className: "field-label", children: "Story / biography" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("label", { htmlFor: "short-bio", className: "field-label", children: "Short biography / About me" }),
                 /* @__PURE__ */ jsxRuntimeExports.jsx(
                   "textarea",
                   {
-                    id: "story",
-                    "data-ocid": "profile_edit.story_input",
-                    value: story,
-                    onChange: (event) => setStory(event.target.value),
+                    id: "short-bio",
+                    "data-ocid": "profile_edit.short_bio_input",
+                    value: draft.shortBio,
+                    onChange: (event) => setField("shortBio", event.target.value),
+                    className: "form-textarea",
+                    placeholder: "A few sentences about yourself"
+                  }
+                )
+              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "owner-field-group", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("label", { htmlFor: "longer-story", className: "field-label", children: "Longer personal story" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  "textarea",
+                  {
+                    id: "longer-story",
+                    "data-ocid": "profile_edit.longer_story_input",
+                    value: draft.longerStory,
+                    onChange: (event) => setField("longerStory", event.target.value),
                     className: "form-textarea",
                     placeholder: "Tell your story in your own words"
                   }
                 )
               ] })
             ] }),
-            /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { className: "flex flex-col gap-4 rounded-xl border border-border/60 bg-card p-5", children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display text-xl font-semibold text-foreground", children: "Personal timeline" }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "owner-editable-hint", children: 'Add milestones from your life. Each entry is a short line, e.g. "Graduated high school, 1998".' }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-col gap-2", children: timeline.map((entry, index2) => /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  "input",
-                  {
-                    "data-ocid": `profile_edit.timeline_input.${index2 + 1}`,
-                    type: "text",
-                    value: entry.text,
-                    onChange: (event) => updateTimelineEntry(entry.id, event.target.value),
-                    className: "form-input",
-                    placeholder: "Timeline entry"
-                  }
-                ),
-                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  "button",
-                  {
-                    type: "button",
-                    "data-ocid": `profile_edit.timeline_remove.${index2 + 1}`,
-                    onClick: () => removeTimelineEntry(entry.id),
-                    "aria-label": "Remove timeline entry",
-                    className: "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border/60 text-muted-foreground transition-colors hover:border-destructive hover:text-destructive",
-                    children: /* @__PURE__ */ jsxRuntimeExports.jsx(Trash2, { className: "h-4 w-4", "aria-hidden": "true" })
-                  }
-                )
-              ] }, entry.id)) }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { className: "edit-section-card", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "edit-section-head", children: /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "edit-section-title", children: "Photo" }) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "edit-section-hint", children: "Upload a profile photo, choose one from your gallery, or remove it to return to your initials placeholder." }),
+              providersPresent ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+                EditPhotoSection,
+                {
+                  personId,
+                  displayName
+                }
+              ) : /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: "Photo management is unavailable right now." })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { className: "edit-section-card", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "edit-section-head", children: /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "edit-section-title", children: "Timeline" }) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "edit-section-hint", children: "Add milestones from your life. Each entry has a date or year, a title, a description, and an optional location." }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-col gap-3", children: draft.timeline.map((entry, index2) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                "div",
+                {
+                  className: "timeline-entry-card",
+                  "data-ocid": `profile_edit.timeline_item.${index2 + 1}`,
+                  children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "edit-field-grid", children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "owner-field-group", children: [
+                        /* @__PURE__ */ jsxRuntimeExports.jsx(
+                          "label",
+                          {
+                            htmlFor: `timeline-date-${entry.id}`,
+                            className: "field-label",
+                            children: "Date or year"
+                          }
+                        ),
+                        /* @__PURE__ */ jsxRuntimeExports.jsx(
+                          "input",
+                          {
+                            id: `timeline-date-${entry.id}`,
+                            "data-ocid": `profile_edit.timeline_item.${index2 + 1}.date`,
+                            type: "text",
+                            value: entry.date,
+                            onChange: (event) => updateTimelineEntry(entry.id, {
+                              date: event.target.value
+                            }),
+                            className: "form-input",
+                            placeholder: "e.g. 1998"
+                          }
+                        )
+                      ] }),
+                      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "owner-field-group", children: [
+                        /* @__PURE__ */ jsxRuntimeExports.jsx(
+                          "label",
+                          {
+                            htmlFor: `timeline-title-${entry.id}`,
+                            className: "field-label",
+                            children: "Title"
+                          }
+                        ),
+                        /* @__PURE__ */ jsxRuntimeExports.jsx(
+                          "input",
+                          {
+                            id: `timeline-title-${entry.id}`,
+                            "data-ocid": `profile_edit.timeline_item.${index2 + 1}.title`,
+                            type: "text",
+                            value: entry.title,
+                            onChange: (event) => updateTimelineEntry(entry.id, {
+                              title: event.target.value
+                            }),
+                            className: "form-input",
+                            placeholder: "e.g. Graduated high school"
+                          }
+                        )
+                      ] })
+                    ] }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "owner-field-group", children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsx(
+                        "label",
+                        {
+                          htmlFor: `timeline-detail-${entry.id}`,
+                          className: "field-label",
+                          children: "Description"
+                        }
+                      ),
+                      /* @__PURE__ */ jsxRuntimeExports.jsx(
+                        "textarea",
+                        {
+                          id: `timeline-detail-${entry.id}`,
+                          "data-ocid": `profile_edit.timeline_item.${index2 + 1}.detail`,
+                          value: entry.detail,
+                          onChange: (event) => updateTimelineEntry(entry.id, {
+                            detail: event.target.value
+                          }),
+                          className: "form-textarea",
+                          placeholder: "What happened"
+                        }
+                      )
+                    ] }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "owner-field-group", children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsx(
+                        "label",
+                        {
+                          htmlFor: `timeline-location-${entry.id}`,
+                          className: "field-label",
+                          children: "Location (optional)"
+                        }
+                      ),
+                      /* @__PURE__ */ jsxRuntimeExports.jsx(
+                        "input",
+                        {
+                          id: `timeline-location-${entry.id}`,
+                          "data-ocid": `profile_edit.timeline_item.${index2 + 1}.location`,
+                          type: "text",
+                          value: entry.location,
+                          onChange: (event) => updateTimelineEntry(entry.id, {
+                            location: event.target.value
+                          }),
+                          className: "form-input",
+                          placeholder: "Where it happened"
+                        }
+                      )
+                    ] }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "timeline-entry-actions", children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                      "button",
+                      {
+                        type: "button",
+                        "data-ocid": `profile_edit.timeline_item.${index2 + 1}.remove`,
+                        onClick: () => removeTimelineEntry(entry.id),
+                        className: "timeline-entry-action timeline-entry-remove",
+                        children: [
+                          /* @__PURE__ */ jsxRuntimeExports.jsx(Trash2, { className: "h-3.5 w-3.5", "aria-hidden": "true" }),
+                          "Remove"
+                        ]
+                      }
+                    ) })
+                  ]
+                },
+                entry.id
+              )) }),
               /* @__PURE__ */ jsxRuntimeExports.jsxs(
                 "button",
                 {
                   type: "button",
                   "data-ocid": "profile_edit.timeline_add_button",
                   onClick: addTimelineEntry,
-                  className: "inline-flex w-fit items-center gap-1.5 rounded-full border border-border/60 px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:border-primary",
+                  className: "timeline-add",
                   children: [
                     /* @__PURE__ */ jsxRuntimeExports.jsx(Plus, { className: "h-4 w-4", "aria-hidden": "true" }),
                     "Add timeline entry"
@@ -52471,22 +53276,54 @@ function ProfileEditPage({
                 }
               )
             ] }),
-            /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { className: "flex flex-col gap-4 rounded-xl border border-border/60 bg-card p-5", children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display text-xl font-semibold text-foreground", children: "Privacy settings" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { className: "edit-section-card", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "edit-section-head", children: /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "edit-section-title", children: "Privacy" }) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "edit-section-hint", children: "Choose who can see your editable personal fields." }),
               /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "owner-field-group", children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx("label", { htmlFor: "privacy", className: "field-label", children: "Who can see your profile" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("label", { htmlFor: "privacy", className: "field-label", children: "Visibility" }),
                 /* @__PURE__ */ jsxRuntimeExports.jsx(
                   "select",
                   {
                     id: "privacy",
                     "data-ocid": "profile_edit.privacy_select",
-                    value: privacySettings,
-                    onChange: (event) => setPrivacySettings(event.target.value),
+                    value: draft.privacySettings,
+                    onChange: (event) => setField("privacySettings", event.target.value),
                     className: "form-select",
-                    children: privacyOptions.map((option) => /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: option.value, children: option.label }, option.value))
+                    children: PRIVACY_OPTIONS.map((option) => /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: option.value, children: option.label }, option.value))
                   }
-                ),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "owner-editable-hint", children: "Choose how much of your profile is visible to others." })
+                )
+              ] })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { className: "edit-section-card", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "edit-section-head", children: /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "edit-section-title", children: "Family relationships" }) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "owner-relationship-note", children: "Family relationships are confirmed separately to protect the accuracy of the family tree. To add or change a relationship, propose a Relationship Request below — it stays pending until a Family Steward confirms it." }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "owner-field-group", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("label", { htmlFor: "rel-person", className: "field-label", children: "Connect to a family member" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                  "select",
+                  {
+                    id: "rel-person",
+                    "data-ocid": "profile_edit.relationship_person_select",
+                    value: toPersonId,
+                    onChange: (event) => setToPersonId(event.target.value),
+                    className: "form-select",
+                    children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: "", children: "Choose a family member…" }),
+                      people.map((person) => /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: person.id, children: person.name }, person.id))
+                    ]
+                  }
+                )
+              ] }),
+              toPersonId ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+                RelationshipRequestForm,
+                {
+                  fromPersonId: personId,
+                  toPersonId,
+                  onSuccess: () => setToPersonId("")
+                }
+              ) : /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "flex items-center gap-1.5 text-sm text-muted-foreground", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(Link2, { className: "h-4 w-4", "aria-hidden": "true" }),
+                "Select a family member to propose a relationship."
               ] })
             ] }),
             saveState === "saved" ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
@@ -52508,60 +53345,40 @@ function ProfileEditPage({
                 children: saveError
               }
             ) : null,
-            /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex items-center gap-3", children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
-              "button",
-              {
-                type: "submit",
-                "data-ocid": "profile_edit.save_button",
-                disabled: update.isPending,
-                className: "owner-save disabled:cursor-not-allowed disabled:opacity-60",
-                children: [
-                  update.isPending ? /* @__PURE__ */ jsxRuntimeExports.jsx(
-                    LoaderCircle,
-                    {
-                      className: "h-4 w-4 animate-spin",
-                      "aria-hidden": "true"
-                    }
-                  ) : /* @__PURE__ */ jsxRuntimeExports.jsx(Save, { className: "h-4 w-4", "aria-hidden": "true" }),
-                  update.isPending ? "Saving…" : "Save changes"
-                ]
-              }
-            ) })
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "edit-action-bar", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                "button",
+                {
+                  type: "submit",
+                  "data-ocid": "profile_edit.save_button",
+                  disabled: update.isPending,
+                  className: "owner-save disabled:cursor-not-allowed disabled:opacity-60",
+                  children: [
+                    update.isPending ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      LoaderCircle,
+                      {
+                        className: "h-4 w-4 animate-spin",
+                        "aria-hidden": "true"
+                      }
+                    ) : /* @__PURE__ */ jsxRuntimeExports.jsx(Save, { className: "h-4 w-4", "aria-hidden": "true" }),
+                    update.isPending ? "Saving…" : "Save changes"
+                  ]
+                }
+              ),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "button",
+                {
+                  type: "button",
+                  "data-ocid": "profile_edit.cancel_button",
+                  onClick: onBack,
+                  className: "edit-cancel",
+                  children: "Cancel"
+                }
+              )
+            ] })
           ]
         }
-      ),
-      /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { className: "flex flex-col gap-4 rounded-xl border border-border/60 bg-card p-5", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display text-xl font-semibold text-foreground", children: "Family relationships" }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "owner-relationship-note", children: "Family relationships are part of the shared family graph and are never rewritten directly by profile editing. To add or change a relationship, propose a Relationship Request below — it stays pending until a Family Steward confirms it." }),
-        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "owner-field-group", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx("label", { htmlFor: "rel-person", className: "field-label", children: "Connect to a family member" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs(
-            "select",
-            {
-              id: "rel-person",
-              "data-ocid": "profile_edit.relationship_person_select",
-              value: toPersonId,
-              onChange: (event) => setToPersonId(event.target.value),
-              className: "form-select",
-              children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: "", children: "Choose a family member…" }),
-                people.map((person) => /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: person.id, children: person.name }, person.id))
-              ]
-            }
-          )
-        ] }),
-        toPersonId ? /* @__PURE__ */ jsxRuntimeExports.jsx(
-          RelationshipRequestForm,
-          {
-            fromPersonId: personId,
-            toPersonId,
-            onSuccess: () => setToPersonId("")
-          }
-        ) : /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "flex items-center gap-1.5 text-sm text-muted-foreground", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx(Link2, { className: "h-4 w-4", "aria-hidden": "true" }),
-          "Select a family member to propose a relationship."
-        ] })
-      ] })
+      )
     ] })
   ] });
 }

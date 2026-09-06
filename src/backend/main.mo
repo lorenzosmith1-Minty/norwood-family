@@ -48,7 +48,18 @@ actor {
           func() : Iter.Iter<Types.PhotoRow> = ObjectStorageLib.photoRows(galleries),
           "Photo",
           "key",
-        ),
+        )
+        .sample({
+          key = "";
+          personId = "";
+          id = 0;
+          filename = "";
+          mimeType = "";
+          uploadedAt = 0;
+          uploadedBy = Principal.fromText("aaaaa-aa");
+          isProfilePhoto = false;
+        })
+        .controllerOnly(),
       ),
       OQL.Entity.manual<ArchiveTypes.ArchiveItemRow>(
         "archiveItem",
@@ -93,9 +104,19 @@ actor {
         claimStatus = "";
         claimedByUserId = "";
         preferredName = "";
+        firstName = "";
+        middleName = "";
+        lastName = "";
+        suffix = "";
+        nickname = "";
         story = "";
+        shortBio = "";
+        longerStory = "";
         occupation = "";
         birthInfo = "";
+        birthDate = "";
+        birthplace = "";
+        currentLocation = "";
         privacySettings = "";
       })
       .controllerOnly()

@@ -5,6 +5,7 @@ import {
   EditError,
   LivingStatus,
   NotificationType,
+  PrivacyLevel,
   RelationshipError,
   RelationshipStatus,
   RelationshipType,
@@ -80,6 +81,56 @@ export interface Notification {
   read: boolean;
 }
 
+/**
+ * A single editable timeline entry in the Edit My Profile form. The backend
+ * stores timeline as free-text lines (?[Text]), so each structured entry is
+ * serialized to a line on save and parsed back on load. `location` is optional
+ * and appended to the detail when present.
+ */
+export interface TimelineDraft {
+  /** Stable local id used only for React keys while editing. */
+  id: number;
+  /** Date or year, e.g. "1998" or "June 1998". Optional. */
+  date: string;
+  /** Short title of the milestone. Optional. */
+  title: string;
+  /** Longer description of the milestone. Optional. */
+  detail: string;
+  /** Optional location associated with the entry. */
+  location: string;
+}
+
+/**
+ * The full editable form state of the expanded Edit My Profile page. Owned in
+ * local state (and autosaved to localStorage as a draft), then mapped to a
+ * backend ProfileEdits on save. Never a backend-owned record itself.
+ */
+export interface ProfileDraft {
+  preferredName: string;
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  suffix: string;
+  nickname: string;
+  birthDate: string;
+  /** When true, only the birth year is known (birthDate holds a year). */
+  birthYearOnly: boolean;
+  birthplace: string;
+  currentLocation: string;
+  occupation: string;
+  livingStatus: LivingStatus;
+  shortBio: string;
+  longerStory: string;
+  timeline: TimelineDraft[];
+  privacySettings: string;
+}
+
+/** Visibility options for editable personal fields (Family / Private only). */
+export const PRIVACY_OPTIONS: { value: string; label: string }[] = [
+  { value: PrivacyLevel.FamilyOnly, label: "Family only" },
+  { value: PrivacyLevel.Private, label: "Private" },
+];
+
 export type {
   BackendNotification,
   BackendPersonProfile,
@@ -93,6 +144,7 @@ export {
   EditError,
   LivingStatus,
   NotificationType,
+  PrivacyLevel,
   RelationshipError,
   RelationshipStatus,
   RelationshipType,

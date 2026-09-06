@@ -52,6 +52,8 @@ module {
   /// fields an approved owner may update. The authoritative relationship graph
   /// and most display content live in the frontend's shared person/family
   /// graph; the backend tracks ownership state and the owner-editable fields.
+  /// All owner-editable fields are optional so existing records migrate without
+  /// data loss.
   public type PersonProfile = {
     personId : PersonId;
     name : Text;
@@ -59,9 +61,19 @@ module {
     claimStatus : ClaimStatus;
     claimedByUserId : ?Principal;
     preferredName : ?Text;
+    firstName : ?Text;
+    middleName : ?Text;
+    lastName : ?Text;
+    suffix : ?Text;
+    nickname : ?Text;
     story : ?Text;
+    shortBio : ?Text;
+    longerStory : ?Text;
     occupation : ?Text;
     birthInfo : ?Text;
+    birthDate : ?Text;
+    birthplace : ?Text;
+    currentLocation : ?Text;
     timeline : ?[Text];
     privacySettings : ?Text;
   };
@@ -129,12 +141,24 @@ module {
   };
 
   /// Editable personal-profile fields an approved owner may update. Ordinary
-  /// profile editing never directly rewrites family relationships.
+  /// profile editing never directly rewrites family relationships. Each
+  /// optional field, when `null`, leaves the current value unchanged.
   public type ProfileEdits = {
     preferredName : ?Text;
+    firstName : ?Text;
+    middleName : ?Text;
+    lastName : ?Text;
+    suffix : ?Text;
+    nickname : ?Text;
     story : ?Text;
+    shortBio : ?Text;
+    longerStory : ?Text;
     occupation : ?Text;
     birthInfo : ?Text;
+    birthDate : ?Text;
+    birthplace : ?Text;
+    currentLocation : ?Text;
+    livingStatus : ?LivingStatus;
     timeline : ?[Text];
     privacySettings : ?Text;
   };
@@ -188,9 +212,19 @@ module {
     claimStatus : Text;
     claimedByUserId : Text;
     preferredName : Text;
+    firstName : Text;
+    middleName : Text;
+    lastName : Text;
+    suffix : Text;
+    nickname : Text;
     story : Text;
+    shortBio : Text;
+    longerStory : Text;
     occupation : Text;
     birthInfo : Text;
+    birthDate : Text;
+    birthplace : Text;
+    currentLocation : Text;
     privacySettings : Text;
   };
 

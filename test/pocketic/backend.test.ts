@@ -11,12 +11,18 @@ let pic: PocketIc | undefined;
 let actor: _SERVICE;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let canisterId: any;
+// A dedicated canister for the profile-claim flow tests, so their state (a
+// pending claim, then an approved claim on the canonical Lorenzo Smith Jr.
+// profile) never leaks into the shared `actor` canister the other tests use.
+let claimActor: _SERVICE;
 
 beforeAll(async () => {
   pic = await PocketIc.create(PIC_URL);
   const setup = await pic.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
   actor = setup.actor;
   canisterId = setup.canisterId;
+  const claimSetup = await pic.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
+  claimActor = claimSetup.actor;
 });
 
 afterAll(async () => {
@@ -245,4 +251,209 @@ it("binds Google and Apple auth methods to the same account and reflects them", 
   // Both methods are bound to the same stable account id.
   const methods = await actor.getMyAuthMethods();
   expect(methods).toEqual({ ok: { google: true, apple: true } });
+});
+
+// ---------------------------------------------------------------------------
+// Profile claim flow (cover for the canonical Lorenzo Smith Jr. claim change).
+// The build reconciles the canonical `lorenzoSmithJr` personId across the claim
+// flow: a pending claim surfaces on the profile, approval marks the canonical
+// profile CLAIMED with claimedByUserId set to the claiming account, and no new
+// Person record is created. These tests run against a dedicated canister so the
+// approved-claim state does not leak into the shared `actor` canister.
+// ---------------------------------------------------------------------------
+
+const claimantIdentity = createIdentity("lorenzo-claimant-seed");
+const stewardIdentity = createIdentity("lorenzo-steward-seed");
+const CLAIMANT = claimantIdentity.getPrincipal();
+const STEWARD = stewardIdentity.getPrincipal();
+
+it("round-trips a profile claim: request -> approve -> claimed with owner, no new record", async () => {
+  // A signed-in user claims the canonical Lorenzo Smith Jr. profile.
+  claimActor.setIdentity(claimantIdentity);
+  const requested = await claimActor.requestProfileClaim("lorenzoSmithJr");
+  expect(requested).toEqual({
+    ok: expect.objectContaining({
+      personId: "lorenzoSmithJr",
+      requestingUserId: CLAIMANT,
+      status: { Pending: null },
+    }),
+  });
+  const claimId = (requested as { ok: { id: bigint } }).ok.id;
+
+  // The caller can observe their own pending claim on the canonical profile.
+  const myClaim = await claimActor.getMyProfileClaim("lorenzoSmithJr");
+  expect(myClaim).toEqual([
+    expect.objectContaining({
+      id: claimId,
+      personId: "lorenzoSmithJr",
+      status: { Pending: null },
+    }),
+  ]);
+
+  // getMyProfile resolves the canonical profile being claimed.
+  const myProfile = await claimActor.getMyProfile();
+  expect(myProfile).toEqual([
+    expect.objectContaining({
+      personId: "lorenzoSmithJr",
+      name: "Lorenzo Smith Jr.",
+    }),
+  ]);
+
+  // A Family Steward approves the claim.
+  claimActor.setIdentity(stewardIdentity);
+  await claimActor._initialize_access_control();
+  const approved = await claimActor.approveProfileClaim(claimId);
+  expect(approved).toEqual([
+    expect.objectContaining({ id: claimId, status: { Approved: null } }),
+  ]);
+
+  // The canonical profile is now CLAIMED with claimedByUserId set to the
+  // claiming account, and no new Person record was created (the same
+  // lorenzoSmithJr personId remains).
+  const profile = await claimActor.getPersonProfile("lorenzoSmithJr");
+  expect(profile).toEqual([
+    expect.objectContaining({
+      personId: "lorenzoSmithJr",
+      claimStatus: { Claimed: null },
+      claimedByUserId: [CLAIMANT],
+    }),
+  ]);
+});
+
+it("prevents duplicate claim submissions for the same person", async () => {
+  // A fresh canister so the pending-claim state is clean (the claim-flow test
+  // above approved a claim on the same canonical profile).
+  const dupSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
+  const dupActor = dupSetup.actor;
+
+  // A signed-in user claims the canonical profile, then a second submission for
+  // the same person is rejected as AlreadyPending (duplicate-claim prevention).
+  dupActor.setIdentity(claimantIdentity);
+  const first = await dupActor.requestProfileClaim("lorenzoSmithJr");
+  expect(first).toEqual({
+    ok: expect.objectContaining({ personId: "lorenzoSmithJr" }),
+  });
+  const second = await dupActor.requestProfileClaim("lorenzoSmithJr");
+  expect(second).toEqual({ err: { AlreadyPending: null } });
+});
+
+// ---------------------------------------------------------------------------
+// updateOwnProfile (cover for the profile-edit backend seam). The claim-flow
+// test above approved a claim on the canonical lorenzoSmithJr profile with
+// CLAIMANT as the owner, so this canister already has a CLAIMED living profile
+// to edit. updateOwnProfile must update the SAME canonical record in place
+// (same personId, claim stays CLAIMED, claimedByUserId preserved, no duplicate
+// created) and must reject a caller who is not the owner.
+// ---------------------------------------------------------------------------
+
+it("updates the canonical record in place via updateOwnProfile, preserving claim ownership", async () => {
+  // The claim-flow test left lorenzoSmithJr CLAIMED by CLAIMANT on claimActor.
+  claimActor.setIdentity(claimantIdentity);
+
+  const edits = {
+    preferredName: ["Lorenzo Smith Jr."],
+    firstName: ["Lorenzo"],
+    middleName: [],
+    lastName: ["Smith"],
+    suffix: ["Jr."],
+    nickname: [],
+    birthDate: ["1990"],
+    birthplace: ["Chicago, IL"],
+    currentLocation: [],
+    occupation: ["Family historian"],
+    livingStatus: [],
+    shortBio: ["A family historian."],
+    longerStory: [],
+    story: [],
+    birthInfo: [],
+    timeline: [],
+    privacySettings: [],
+  };
+
+  const result = await claimActor.updateOwnProfile("lorenzoSmithJr", edits);
+  expect(result).toEqual({
+    ok: expect.objectContaining({
+      personId: "lorenzoSmithJr",
+      preferredName: ["Lorenzo Smith Jr."],
+      firstName: ["Lorenzo"],
+      lastName: ["Smith"],
+      suffix: ["Jr."],
+      birthDate: ["1990"],
+      birthplace: ["Chicago, IL"],
+      occupation: ["Family historian"],
+      shortBio: ["A family historian."],
+      // Claim ownership is preserved: still CLAIMED by the same owner.
+      claimStatus: { Claimed: null },
+      claimedByUserId: [CLAIMANT],
+    }),
+  });
+
+  // The canonical record is updated IN PLACE: same personId, no duplicate
+  // record was created, and the edits are readable back through the public API.
+  const profile = await claimActor.getPersonProfile("lorenzoSmithJr");
+  expect(profile).toEqual([
+    expect.objectContaining({
+      personId: "lorenzoSmithJr",
+      preferredName: ["Lorenzo Smith Jr."],
+      firstName: ["Lorenzo"],
+      lastName: ["Smith"],
+      suffix: ["Jr."],
+      birthDate: ["1990"],
+      birthplace: ["Chicago, IL"],
+      occupation: ["Family historian"],
+      shortBio: ["A family historian."],
+      claimStatus: { Claimed: null },
+      claimedByUserId: [CLAIMANT],
+    }),
+  ]);
+});
+
+it("rejects a non-owner from updateOwnProfile with NotOwner", async () => {
+  // A fresh canister where lorenzoSmithJr is claimed by CLAIMANT, but a
+  // different signed-in user (STEWARD) attempts to edit it.
+  const nonOwnerSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
+  const nonOwnerActor = nonOwnerSetup.actor;
+
+  nonOwnerActor.setIdentity(claimantIdentity);
+  await nonOwnerActor.requestProfileClaim("lorenzoSmithJr");
+  const claimId = (
+    (await nonOwnerActor.getMyProfileClaim("lorenzoSmithJr")) as Array<{ id: bigint }>
+  )[0].id;
+  nonOwnerActor.setIdentity(stewardIdentity);
+  await nonOwnerActor._initialize_access_control();
+  await nonOwnerActor.approveProfileClaim(claimId);
+
+  // STEWARD is signed in but is not the owner of the claimed profile.
+  nonOwnerActor.setIdentity(stewardIdentity);
+  const result = await nonOwnerActor.updateOwnProfile("lorenzoSmithJr", {
+    preferredName: ["Hijacked"],
+    firstName: [],
+    middleName: [],
+    lastName: [],
+    suffix: [],
+    nickname: [],
+    birthDate: [],
+    birthplace: [],
+    currentLocation: [],
+    occupation: [],
+    livingStatus: [],
+    shortBio: [],
+    longerStory: [],
+    story: [],
+    birthInfo: [],
+    timeline: [],
+    privacySettings: [],
+  });
+  expect(result).toEqual({ err: { NotOwner: null } });
+
+  // The canonical record was not modified by the rejected edit.
+  const profile = await nonOwnerActor.getPersonProfile("lorenzoSmithJr");
+  expect(profile).toEqual([
+    expect.objectContaining({
+      personId: "lorenzoSmithJr",
+      preferredName: [],
+      claimStatus: { Claimed: null },
+      claimedByUserId: [CLAIMANT],
+    }),
+  ]);
 });

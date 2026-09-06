@@ -141,6 +141,10 @@ export default {
           from: { opacity: "0", transform: "translateY(8px)" },
           to: { opacity: "1", transform: "translateY(0)" },
         },
+        "draft-pulse": {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.45" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -155,6 +159,7 @@ export default {
         "detail-in": "detail-in 0.25s cubic-bezier(0.4, 0, 0.2, 1) both",
         "fold-in": "fold-in 0.3s cubic-bezier(0.4, 0, 0.2, 1) both",
         "signin-pop": "signin-pop 0.35s cubic-bezier(0.4, 0, 0.2, 1) both",
+        "draft-pulse": "draft-pulse 2s ease-in-out infinite",
       },
     },
   },

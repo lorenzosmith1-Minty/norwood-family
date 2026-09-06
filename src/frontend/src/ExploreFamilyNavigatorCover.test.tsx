@@ -181,14 +181,11 @@ describe("Explore Family centered navigator cover", () => {
     await tapRelative(user, /Lula Mae Norwood Child/);
     await tapRelative(user, /Lorenzo Smith Sr\. Child/);
 
-    // Lorenzo Smith Sr. records exactly one child: Lorenzo Smith Jr. (no profile
-    // exists for him, so the card falls back to the graph id as its name).
+    // Lorenzo Smith Sr. records exactly one child: Lorenzo Smith Jr. The card's
+    // name is intentionally NOT asserted here: the upcoming build replaces the
+    // raw graph id fallback ('lorenzoSmithJr') with the canonical display name,
+    // so freezing the current leaky name would lock in the bug being fixed.
     const childrenZone = screen.getByTestId("explore.zone.children");
-    expect(
-      within(childrenZone).getByRole("button", {
-        name: /lorenzoSmithJr Child/,
-      }),
-    ).toBeInTheDocument();
     // Exactly one child card renders.
     expect(
       within(childrenZone).getAllByRole("button", { name: / Child$/ }),

@@ -134,11 +134,22 @@ type Relationship =
  };
 type ProfileEdits = 
  record {
+   birthDate: opt text;
    birthInfo: opt text;
+   birthplace: opt text;
+   currentLocation: opt text;
+   firstName: opt text;
+   lastName: opt text;
+   livingStatus: opt LivingStatus;
+   longerStory: opt text;
+   middleName: opt text;
+   nickname: opt text;
    occupation: opt text;
    preferredName: opt text;
    privacySettings: opt text;
+   shortBio: opt text;
    story: opt text;
+   suffix: opt text;
    timeline: opt vec text;
  };
 type ProfileClaimStatus = 
@@ -175,16 +186,26 @@ type Photo =
  };
 type PersonProfile = 
  record {
+   birthDate: opt text;
    birthInfo: opt text;
+   birthplace: opt text;
    claimStatus: ClaimStatus;
    claimedByUserId: opt principal;
+   currentLocation: opt text;
+   firstName: opt text;
+   lastName: opt text;
    livingStatus: LivingStatus;
+   longerStory: opt text;
+   middleName: opt text;
    name: text;
+   nickname: opt text;
    occupation: opt text;
    personId: PersonId;
    preferredName: opt text;
    privacySettings: opt text;
+   shortBio: opt text;
    story: opt text;
+   suffix: opt text;
    timeline: opt vec text;
  };
 type PersonMatch = 

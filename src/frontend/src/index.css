@@ -150,6 +150,14 @@
     /* Owner profile editing: editable-field emphasis */
     --owner-accent: 0.42 0.11 35;
 
+    /* Edit My Profile: sectioned form on warm paper — section accent + rule,
+       draft autosave status, and the section card plate surface */
+    --edit-section: 0.42 0.11 35;
+    --edit-rule: 0.55 0.09 60 / 0.35;
+    --edit-surface: 0.95 0.02 72;
+    --draft-saved: 0.55 0.12 150;
+    --draft-unsaved: 0.55 0.09 60;
+
     /* Consumer sign-in (Google + Apple): warm paper auth surface + familiar
        provider buttons. Brand logos are inline SVGs carrying their own
        colors; button surfaces and text use these tokens. */
@@ -299,6 +307,14 @@
 
     /* Owner profile editing: editable-field emphasis */
     --owner-accent: 0.72 0.14 60;
+
+    /* Edit My Profile: sectioned form on warm paper — section accent + rule,
+       draft autosave status, and the section card plate surface */
+    --edit-section: 0.72 0.14 60;
+    --edit-rule: 0.58 0.12 30 / 0.4;
+    --edit-surface: 0.21 0.02 55;
+    --draft-saved: 0.6 0.15 150;
+    --draft-unsaved: 0.72 0.14 60;
 
     /* Consumer sign-in (Google + Apple): warm paper auth surface + familiar
        provider buttons. Brand logos are inline SVGs carrying their own
@@ -2258,6 +2274,169 @@
     @apply rounded-lg border border-dashed border-border/70 px-3.5 py-2.5 text-xs leading-relaxed;
     background-color: oklch(var(--card) / 0.5);
     color: oklch(var(--muted-foreground));
+  }
+
+  /* ---- Edit My Profile: expanded sectioned form ---- */
+
+  /* Section card: a warm paper plate grouping one form section. Rows stack
+     with clear headings so the long form stays scannable on mobile. */
+  .edit-section-card {
+    @apply flex flex-col gap-4 rounded-xl border border-border/60 p-4 sm:p-5;
+    background-color: oklch(var(--edit-surface));
+    box-shadow: 0 1px 2px -1px oklch(0.36 0.05 45 / 0.08);
+  }
+
+  /* Section heading: tracked caption + short bronze rule, echoing the
+     .field-label language but larger and with a leading rule to anchor each
+     section of the form. */
+  .edit-section-head {
+    @apply flex items-center gap-2.5;
+  }
+  .edit-section-head::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background-color: oklch(var(--edit-section));
+    flex-shrink: 0;
+  }
+  .edit-section-title {
+    @apply text-xs font-semibold uppercase tracking-[0.2em];
+    color: oklch(var(--edit-section));
+  }
+  .edit-section-hint {
+    @apply text-xs leading-relaxed;
+    color: oklch(var(--muted-foreground));
+  }
+
+  /* Two-column field grid for compact pairs (first/middle, city/state) on
+     wider screens; always single column on mobile. */
+  .edit-field-grid {
+    @apply grid grid-cols-1 gap-4 sm:grid-cols-2;
+  }
+
+  /* Inline field row: label + control side by side for short inputs */
+  .edit-inline-field {
+    @apply flex items-center justify-between gap-3;
+  }
+
+  /* Timeline entry card: a framed row within the Timeline section. Each
+     entry is a small plate with date, title, description, and edit/remove
+     actions. */
+  .timeline-entry-card {
+    @apply flex flex-col gap-2 rounded-lg border border-border/60 bg-card p-3.5;
+    transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .timeline-entry-card:hover,
+  .timeline-entry-card:focus-within {
+    border-color: oklch(var(--photo-ring) / 0.6);
+  }
+  .timeline-entry-head {
+    @apply flex items-start justify-between gap-2;
+  }
+  .timeline-entry-title {
+    @apply font-display text-sm font-semibold leading-tight;
+    color: oklch(var(--foreground));
+  }
+  .timeline-entry-date {
+    @apply text-[11px] font-semibold uppercase tracking-[0.14em] tabular-nums;
+    color: oklch(var(--edit-section));
+  }
+  .timeline-entry-detail {
+    @apply text-sm leading-relaxed;
+    color: oklch(var(--muted-foreground));
+  }
+  .timeline-entry-actions {
+    @apply flex flex-wrap items-center gap-2;
+  }
+  .timeline-entry-action {
+    @apply inline-flex min-h-[36px] items-center gap-1 rounded-full border border-border/60 px-3 py-1 text-xs font-semibold;
+    background-color: oklch(var(--card));
+    color: oklch(var(--foreground));
+    transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .timeline-entry-action:hover {
+    border-color: oklch(var(--photo-ring));
+  }
+  .timeline-entry-remove {
+    color: oklch(var(--destructive));
+  }
+  .timeline-entry-remove:hover {
+    border-color: oklch(var(--destructive) / 0.5);
+  }
+
+  /* Add-timeline-entry affordance: dashed plate that invites a new entry */
+  .timeline-add {
+    @apply inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border/80 px-4 py-2.5 text-sm font-semibold;
+    background-color: oklch(var(--card) / 0.5);
+    color: oklch(var(--muted-foreground));
+    transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .timeline-add:hover,
+  .timeline-add:focus-visible {
+    border-color: oklch(var(--photo-ring));
+    color: oklch(var(--edit-section));
+    background-color: oklch(var(--card));
+  }
+  .timeline-add:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(var(--ring) / 0.25);
+  }
+
+  /* Draft autosave status chip: saved (warm green) / unsaved (bronze).
+     A quiet reassurance that local work is protected on accidental nav. */
+  .draft-status {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-border/60 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em];
+    background-color: oklch(var(--card));
+  }
+  .draft-status::before {
+    content: "";
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 9999px;
+  }
+  .draft-saved {
+    color: oklch(var(--draft-saved));
+  }
+  .draft-saved::before {
+    background-color: oklch(var(--draft-saved));
+    animation: draft-pulse 2s ease-in-out infinite;
+  }
+  .draft-unsaved {
+    color: oklch(var(--draft-unsaved));
+  }
+  .draft-unsaved::before {
+    background-color: oklch(var(--draft-unsaved));
+  }
+
+  /* Cancel / back action: quiet outline pill that discards the draft */
+  .edit-cancel {
+    @apply inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full border border-border/60 px-5 py-2.5 text-sm font-semibold;
+    background-color: oklch(var(--card));
+    color: oklch(var(--foreground));
+    transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .edit-cancel:hover,
+  .edit-cancel:focus-visible {
+    border-color: oklch(var(--photo-ring));
+    color: oklch(var(--edit-section));
+  }
+  .edit-cancel:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(var(--ring) / 0.25);
+  }
+
+  /* Sticky save bar: keeps Save + Cancel reachable while scrolling the long
+     form on mobile. Sits on a paper surface above the content. */
+  .edit-action-bar {
+    @apply sticky bottom-0 z-10 -mx-4 flex items-center gap-3 border-t border-border/60 px-4 py-3 sm:mx-0 sm:px-0;
+    background-color: oklch(var(--background) / 0.9);
+    backdrop-filter: blur(8px);
   }
 
   /* ---- Consumer Sign-In (Google + Apple) ---- */

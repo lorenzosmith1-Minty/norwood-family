@@ -81,3 +81,113 @@ it("carries photos written by the previous version through the upgrade", async (
     ok: accountIdentity.getPrincipal(),
   });
 });
+
+// The expanded Edit My Profile build adds a new migration (20260906_020000.mo)
+// that introduces the separate owner-editable identity/basic/about fields
+// (firstName, middleName, lastName, suffix, nickname, shortBio, longerStory,
+// birthDate, birthplace, currentLocation) to every existing Person Profile,
+// defaulting each to null (unset). The earlier duplicate-removal migration
+// (20260906_010000.mo) is already in the previous revision's chain tail, so it
+// does not re-run on this upgrade. This test installs the previous revision,
+// creates a profile via createMyself, upgrades to this build (replaying the new
+// migration), and asserts the expanded fields are added while the canonical
+// record and its identity survive.
+it("adds the expanded owner-editable fields to existing profiles on upgrade", async () => {
+  // 1. Install the version the user is actually running.
+  const previous = await pic!.setupCanister<_SERVICE>({
+    idlFactory,
+    wasm: PREVIOUS_WASM,
+  });
+
+  // 2. A signed-in user creates a profile via createMyself (keyed by the
+  //    caller's principal).
+  const identity = createIdentity("field-expansion-seed");
+  previous.actor.setIdentity(identity);
+  const created = await previous.actor.createMyself("Lorenzo Smith Jr.");
+  expect(created).toEqual({
+    ok: expect.objectContaining({ name: "Lorenzo Smith Jr." }),
+  });
+  const personId = identity.getPrincipal().toText();
+
+  // 3. Upgrade to the version this build produces. The new migration runs here.
+  await pic!.upgradeCanister({
+    canisterId: previous.canisterId,
+    wasm: BACKEND_WASM,
+    upgradeModeOptions: {
+      skip_pre_upgrade: [],
+      wasm_memory_persistence: [{ keep: null }],
+    },
+  });
+
+  // 4. Read through the NEW API: the expanded owner-editable fields are present
+  //    (defaulting to unset) and the profile's identity survives.
+  const upgraded = pic!.createActor<_SERVICE>(idlFactory, previous.canisterId);
+  const profile = await upgraded.getPersonProfile(personId);
+  expect(profile).toEqual([
+    expect.objectContaining({
+      personId,
+      name: "Lorenzo Smith Jr.",
+      firstName: [],
+      lastName: [],
+      birthDate: [],
+      shortBio: [],
+    }),
+  ]);
+});
+
+// The expanded Edit My Profile migration (20260906_020000.mo) carries all other
+// state through unchanged, so a pending relationship request written by the
+// previous version survives the upgrade with its person ids intact. This test
+// installs the previous revision, files a pending relationship request, upgrades
+// to this build, and asserts the request is preserved.
+it("preserves a pending relationship request through the upgrade", async () => {
+  // 1. Install the version the user is actually running.
+  const previous = await pic!.setupCanister<_SERVICE>({
+    idlFactory,
+    wasm: PREVIOUS_WASM,
+  });
+
+  // 2. A signed-in user creates a profile and files a pending relationship
+  //    request referencing it.
+  const identity = createIdentity("rel-preserve-seed");
+  previous.actor.setIdentity(identity);
+  const created = await previous.actor.createMyself("Lorenzo Smith Jr.");
+  expect(created).toEqual({
+    ok: expect.objectContaining({ name: "Lorenzo Smith Jr." }),
+  });
+  const personId = identity.getPrincipal().toText();
+  const rel = await previous.actor.proposeRelationship(
+    personId,
+    "lorenzoSmithSr",
+    { Child: null },
+  );
+  expect(rel).toEqual({
+    ok: expect.objectContaining({
+      requestingPersonId: personId,
+      status: { Pending: null },
+    }),
+  });
+  const relId = (rel as { ok: { id: bigint } }).ok.id;
+
+  // 3. Upgrade to the version this build produces. The new migration runs here.
+  await pic!.upgradeCanister({
+    canisterId: previous.canisterId,
+    wasm: BACKEND_WASM,
+    upgradeModeOptions: {
+      skip_pre_upgrade: [],
+      wasm_memory_persistence: [{ keep: null }],
+    },
+  });
+
+  // 4. Read through the NEW API: the pending relationship request is preserved
+  //    with its person ids intact.
+  const upgraded = pic!.createActor<_SERVICE>(idlFactory, previous.canisterId);
+  const preservedRel = await upgraded.getRelationshipRequest(relId);
+  expect(preservedRel).toEqual([
+    expect.objectContaining({
+      id: relId,
+      requestingPersonId: personId,
+      status: { Pending: null },
+    }),
+  ]);
+});

@@ -101,6 +101,12 @@ export function useRequestProfileClaim() {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["profileClaims"] });
       void queryClient.invalidateQueries({ queryKey: ["personProfile"] });
+      // The caller's own claim and identity change the moment a claim is
+      // submitted: the ClaimButton must immediately surface the pending state
+      // (hiding 'This is Me' to prevent a duplicate submission) and the navbar
+      // identity must resolve the newly pending profile.
+      void queryClient.invalidateQueries({ queryKey: ["myProfileClaim"] });
+      void queryClient.invalidateQueries({ queryKey: ["myProfile"] });
       void queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
   });
@@ -118,6 +124,8 @@ export function useApproveProfileClaim() {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["profileClaims"] });
       void queryClient.invalidateQueries({ queryKey: ["personProfile"] });
+      void queryClient.invalidateQueries({ queryKey: ["myProfileClaim"] });
+      void queryClient.invalidateQueries({ queryKey: ["myProfile"] });
       void queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
   });
@@ -135,6 +143,8 @@ export function useRejectProfileClaim() {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["profileClaims"] });
       void queryClient.invalidateQueries({ queryKey: ["personProfile"] });
+      void queryClient.invalidateQueries({ queryKey: ["myProfileClaim"] });
+      void queryClient.invalidateQueries({ queryKey: ["myProfile"] });
       void queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
   });
@@ -177,6 +187,12 @@ export function useCreateMyself() {
  * Updates the current user's own approved personal-profile fields (photo,
  * preferred name, story, occupation, birth info, timeline, privacy settings).
  * Only the owner of a claimed living profile may edit.
+ *
+ * On success it invalidates every query key that consumes shared profile data
+ * so a saved edit propagates immediately to the navbar identity (myProfile),
+ * the profile page (personProfile), the family exploration views
+ * (confirmedRelationships / myRelationshipRequests), and the photo gallery
+ * (photos / profilePhoto).
  */
 export function useUpdateOwnProfile() {
   const { actor } = useActor(createActor);
@@ -195,6 +211,25 @@ export function useUpdateOwnProfile() {
     onSuccess: (_data, variables) => {
       void queryClient.invalidateQueries({
         queryKey: ["personProfile", variables.personId],
+      });
+      // The navbar identity resolves from myProfile (preferredName || name),
+      // so a display-name edit must refresh it immediately.
+      void queryClient.invalidateQueries({ queryKey: ["myProfile"] });
+      void queryClient.invalidateQueries({ queryKey: ["myProfileClaim"] });
+      void queryClient.invalidateQueries({ queryKey: ["profileClaims"] });
+      // Shared family data and photo state are consumed across the profile,
+      // Explore Family, Family Tree, and Heritage views.
+      void queryClient.invalidateQueries({
+        queryKey: ["confirmedRelationships"],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["myRelationshipRequests"],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["photos", variables.personId],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["profilePhoto", variables.personId],
       });
     },
   });

@@ -4,7 +4,11 @@ import {
   type RelativeRole,
 } from "../components/PersonCard";
 import { useExploreFamily } from "../hooks/useExploreFamily";
-import type { RelativeRef } from "../types/family";
+import {
+  FAMILY_GRAPH,
+  type RelativeRef,
+  resolveDisplayName,
+} from "../types/family";
 import { type PersonProfile, profiles } from "./PersonProfilePage";
 
 export interface ExploreFamilyPageProps {
@@ -36,14 +40,43 @@ function getYears(profile: PersonProfile): string | undefined {
 }
 
 /** Build a PersonCard `Person` from a relative reference, pulling the name and
- *  portrait from the shared profile record when one exists. */
+ *  portrait from the shared profile record when one exists. The display name
+ *  resolves through the shared resolver so graph-only nodes (e.g.
+ *  lorenzoSmithJr) never leak their raw id. */
 function toPerson(ref: RelativeRef): Person {
   const profile = profiles[ref.personId];
   return {
     id: ref.personId,
-    name: profile?.name ?? ref.personId,
+    name: resolveDisplayName(ref.personId, profiles),
     role: ref.label,
     photo: profile?.portrait,
+  };
+}
+
+/**
+ * Build a minimal profile for a graph-only node — a person present in the
+ * shared FAMILY_GRAPH but with no profile record (e.g. lorenzoSmithJr). Explore
+ * Family can still center on such a person and show their confirmed relatives,
+ * using the canonical display name as the name fallback. Returns undefined when
+ * the person is not part of the shared graph at all, in which case the view
+ * shows its empty state.
+ */
+function buildGraphFallbackProfile(id: string): PersonProfile | undefined {
+  if (!FAMILY_GRAPH[id]) return undefined;
+  const displayName = resolveDisplayName(id, profiles);
+  return {
+    id,
+    name: displayName,
+    role: "Family member",
+    portrait: {
+      src: "/assets/images/placeholder.svg",
+      alt: `An initials placeholder portrait for ${displayName}, since no profile record exists for them.`,
+    },
+    facts: [],
+    story: "",
+    family: { spouseName: "", spouseRole: "", childrenText: "" },
+    timeline: [],
+    sources: [],
   };
 }
 
@@ -102,7 +135,14 @@ export default function ExploreFamilyPage({
     relatives,
   } = useExploreFamily(focusPersonId, profiles);
 
-  if (!focus) {
+  // A graph-only node (e.g. lorenzoSmithJr) has no profile record, so the hook
+  // returns no focus. Fall back to a synthesized profile so the view still
+  // centers on the person and shows their confirmed relatives from the shared
+  // graph. Only when the person is absent from both the profiles and the shared
+  // graph do we show the empty state.
+  const focusProfile = focus ?? buildGraphFallbackProfile(resolvedId);
+
+  if (!focusProfile) {
     return (
       <div className="ex-stage" data-ocid="explore.empty_state">
         <p className="text-sm text-muted-foreground">
@@ -112,11 +152,11 @@ export default function ExploreFamilyPage({
     );
   }
 
-  const years = getYears(focus);
+  const years = getYears(focusProfile);
   const isMe =
-    focus.relationToYou === "me" ||
-    (focus as PersonProfile & { me?: boolean }).me === true;
-  const relationText = focus.relationToYou ?? "Family member";
+    focusProfile.relationToYou === "me" ||
+    (focusProfile as PersonProfile & { me?: boolean }).me === true;
+  const relationText = focusProfile.relationToYou ?? "Family member";
 
   return (
     <div className="ex-stage" data-ocid="explore.page">
@@ -177,9 +217,9 @@ export default function ExploreFamilyPage({
         <PersonCard
           person={{
             id: resolvedId,
-            name: focus.name,
+            name: focusProfile.name,
             role: relationText,
-            photo: focus.portrait,
+            photo: focusProfile.portrait,
             years,
           }}
           selected={false}

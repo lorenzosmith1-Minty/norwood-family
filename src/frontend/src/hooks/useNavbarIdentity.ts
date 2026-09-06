@@ -1,4 +1,5 @@
 import { ClaimStatus } from "@/backend";
+import { resolveBackendDisplayName } from "../types/family";
 import { useAuth } from "./useAuth";
 import { useMyProfile } from "./useProfileClaims";
 
@@ -38,7 +39,7 @@ export function useNavbarIdentity(): NavbarIdentity {
     return { displayName: "", status: "none" };
   }
 
-  const displayName = profile.preferredName || profile.name;
+  const displayName = resolveBackendDisplayName(profile.personId, profile);
   const status =
     profile.claimStatus === ClaimStatus.Claimed ? "linked" : "pending";
 

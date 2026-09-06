@@ -543,10 +543,16 @@ describe("Profile claim flow", () => {
     await openProfile(user, /Clayton Norwood/);
 
     // The claim button reflects the pending claim instead of offering "This is Me".
-    // The accepted requirement shows the pending state as "Profile claim pending".
+    // The accepted requirement shows the pending state as a "Pending claim" badge
+    // with the Family Steward review message.
     const claimSection = screen.getByTestId("profile.claim_section");
     expect(
-      await within(claimSection).findByText("Profile claim pending"),
+      await within(claimSection).findByText("Pending claim"),
+    ).toBeInTheDocument();
+    expect(
+      within(claimSection).getByText(
+        "Your claim to this profile is awaiting Family Steward review.",
+      ),
     ).toBeInTheDocument();
     expect(
       within(claimSection).queryByRole("button", { name: "This is Me" }),
@@ -655,10 +661,13 @@ describe("Add Myself to This Family flow", () => {
     await user.type(screen.getByTestId("add_myself.name_input"), "Clayton");
     await user.click(screen.getByTestId("add_myself.search_button"));
 
-    // The match card shows the name and parents.
+    // The match card shows the name and parents. Local matches derived from the
+    // authoritative shared FAMILY_GRAPH take precedence over backend matches, so
+    // the parents come from the graph's father/mother edges (Isaiah first, then
+    // Julia), not from the mocked backend match.
     expect(await screen.findByText("Clayton Norwood")).toBeInTheDocument();
     expect(
-      screen.getByText("Child of Julia Norwood and Isaiah Norwood"),
+      screen.getByText("Child of Isaiah Norwood and Julia “Julie” Norwood"),
     ).toBeInTheDocument();
   });
 });

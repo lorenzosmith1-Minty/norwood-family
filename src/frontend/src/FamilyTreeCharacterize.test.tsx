@@ -1,9 +1,18 @@
 import "@testing-library/jest-dom/vitest";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { cleanup, render, screen, within } from "@testing-library/react";
+import {
+  cleanup,
+  configure,
+  render,
+  screen,
+  within,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
+
+// The generated components use data-ocid for test ids.
+configure({ testIdAttribute: "data-ocid" });
 
 // App renders useIsAdmin at the top level, which calls useActor from
 // @caffeineai/core-infrastructure. The real useActor requires an
@@ -115,19 +124,20 @@ describe("Explore Family characterization: Clayton's children open their profile
     renderApp();
     await focusClayton(user);
 
-    // The son who died at birth has no profile record, so it renders with its
-    // raw id and no profile page. Tapping it recenters the view on a person
-    // with no profile, which shows the empty state (no View Profile action).
+    // The son who died at birth has no profile record, but it is part of the
+    // shared FAMILY_GRAPH. Explore Family now renders a synthesized fallback
+    // profile for graph-only nodes (never the empty state), so tapping it
+    // recenters the view on the person and shows their confirmed relatives.
     const son = screen.getByRole("button", {
       name: /clayton-son-died Child/,
     });
     await user.click(son);
-    expect(
-      screen.getByText("No family member found to explore."),
-    ).toBeInTheDocument();
-    expect(
-      screen.queryByRole("button", { name: "View Profile" }),
-    ).not.toBeInTheDocument();
+
+    // The empty state is never shown for a person present in the shared graph.
+    expect(screen.queryByTestId("explore.empty_state")).not.toBeInTheDocument();
+    // The focus card falls back to the raw graph id as its name.
+    const focusCard = screen.getByTestId("explore.focus.1");
+    expect(within(focusCard).getByText("clayton-son-died")).toBeInTheDocument();
   });
 
   it("keeps the Ms. Hudson branch children clickable to open their profiles", async () => {

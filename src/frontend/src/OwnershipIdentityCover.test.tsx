@@ -238,10 +238,11 @@ describe("Add Myself search finds the existing Lorenzo Smith Jr. record", () => 
     );
     await user.click(screen.getByTestId("add_myself.search_button"));
 
-    // The match card shows the existing record's name and its parent. The
-    // graph-only node's display name is derived from its id ("Lorenzo Smith
-    // Jr" — no trailing period, since it has no static profile record).
-    expect(await screen.findByText("Lorenzo Smith Jr")).toBeInTheDocument();
+    // The match card shows the existing record's canonical display name and its
+    // parent. The graph-only node resolves through the shared resolveDisplayName
+    // resolver, so it surfaces the canonical "Lorenzo Smith Jr." (exact
+    // capitalization and spacing) rather than leaking the raw id.
+    expect(await screen.findByText("Lorenzo Smith Jr.")).toBeInTheDocument();
     expect(screen.getByText("Child of Lorenzo Smith Sr.")).toBeInTheDocument();
 
     // The empty "create my profile" state is NOT shown — a strong existing
@@ -261,7 +262,7 @@ describe("Add Myself search finds the existing Lorenzo Smith Jr. record", () => 
     );
     await user.click(screen.getByTestId("add_myself.search_button"));
 
-    expect(await screen.findByText("Lorenzo Smith Jr")).toBeInTheDocument();
+    expect(await screen.findByText("Lorenzo Smith Jr.")).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: "This is Me" }),
     ).toBeInTheDocument();

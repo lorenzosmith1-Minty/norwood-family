@@ -12,15 +12,25 @@ export type { ExternalBlob } from "@caffeineai/object-storage";
 export interface PersonProfile {
     occupation?: string;
     privacySettings?: string;
+    nickname?: string;
     claimedByUserId?: Principal;
+    birthDate?: string;
     birthInfo?: string;
     claimStatus: ClaimStatus;
     livingStatus: LivingStatus;
     name: string;
+    longerStory?: string;
     personId: PersonId;
     story?: string;
+    middleName?: string;
+    suffix?: string;
     preferredName?: string;
+    currentLocation?: string;
+    birthplace?: string;
+    lastName?: string;
+    shortBio?: string;
     timeline?: Array<string>;
+    firstName?: string;
 }
 export type Result_2 = {
     __kind__: "ok";
@@ -32,10 +42,21 @@ export type Result_2 = {
 export interface ProfileEdits {
     occupation?: string;
     privacySettings?: string;
+    nickname?: string;
+    birthDate?: string;
     birthInfo?: string;
+    livingStatus?: LivingStatus;
+    longerStory?: string;
     story?: string;
+    middleName?: string;
+    suffix?: string;
     preferredName?: string;
+    currentLocation?: string;
+    birthplace?: string;
+    lastName?: string;
+    shortBio?: string;
     timeline?: Array<string>;
+    firstName?: string;
 }
 export interface RelationshipRequest {
     id: bigint;

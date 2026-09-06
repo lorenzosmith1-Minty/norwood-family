@@ -12,6 +12,7 @@ import {
   useRejectRelationshipRequest,
   useSetRelationshipRequestPending,
 } from "../hooks/useRelationshipRequests";
+import { resolveDisplayName } from "../types/family";
 import type { ProfileClaim, RelationshipRequest } from "../types/ownership";
 import { RELATIONSHIP_TYPE_LABELS } from "../types/ownership";
 import { profiles } from "./PersonProfilePage";
@@ -37,9 +38,11 @@ function formatPrincipal(principal: { toText(): string }): string {
   return text.length > 18 ? `${text.slice(0, 5)}…${text.slice(-4)}` : text;
 }
 
-/** Resolves a person's display name from the shared profiles record. */
+/** Resolves a person's display name from the shared profiles record, the
+ *  canonical display-name mapping, or the graph id — so graph-only nodes (e.g.
+ *  lorenzoSmithJr) surface the canonical name and never leak their raw id. */
 function personName(personId: string): string {
-  return profiles[personId]?.name ?? personId;
+  return resolveDisplayName(personId, profiles);
 }
 
 export function FamilyStewardReviewPage({

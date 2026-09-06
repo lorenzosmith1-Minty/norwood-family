@@ -8,6 +8,72 @@ import type { PersonProfile } from "../pages/PersonProfilePage";
 export type { PersonProfile } from "../pages/PersonProfilePage";
 
 /**
+ * Canonical user-facing display names for graph-only nodes that have no entry
+ * in the static `profiles` record. Keyed by the internal personId; the value
+ * is the exact display string shown to users. Never surface the raw id.
+ */
+export const CANONICAL_DISPLAY_NAMES: Record<string, string> = {
+  lorenzoSmithJr: "Lorenzo Smith Jr.",
+};
+
+/**
+ * Resolve the user-facing display name for a person id. Priority:
+ *   1. The canonical display-name mapping (e.g. lorenzoSmithJr -> "Lorenzo
+ *      Smith Jr."), so the canonical name is always used with exact
+ *      capitalization and spacing.
+ *   2. The profile record's name, when one exists.
+ *   3. The raw id, as a last-resort fallback for graph-only nodes with no
+ *      canonical mapping and no profile record.
+ * The canonical mapping guarantees the canonical profile never leaks its raw
+ * id into a user-facing surface.
+ */
+export function resolveDisplayName(
+  id: string,
+  profiles: Record<string, PersonProfile>,
+): string {
+  const canonical = CANONICAL_DISPLAY_NAMES[id];
+  if (canonical) return canonical;
+  const profile = profiles[id];
+  if (profile?.name) return profile.name;
+  return id;
+}
+
+/**
+ * Resolve the user-facing display name for a backend PersonProfile record
+ * (the expanded shape with preferredName/firstName/lastName/suffix). Priority:
+ *   1. The profile's preferredName, when set — so a display-name edit made in
+ *      the editor immediately reflects in the navigation identity.
+ *   2. The canonical display-name mapping (e.g. lorenzoSmithJr), so the
+ *      canonical name is still used with exact capitalization and spacing when
+ *      no preferredName has been set.
+ *   3. A composed full name from first/last/suffix, when available.
+ *   4. The profile's raw name.
+ *   5. The raw id, as a last-resort fallback.
+ * Never surfaces an internal id or account identifier.
+ */
+export function resolveBackendDisplayName(
+  id: string,
+  backend: {
+    preferredName?: string;
+    firstName?: string;
+    lastName?: string;
+    suffix?: string;
+    name: string;
+  },
+): string {
+  if (backend.preferredName?.trim()) return backend.preferredName.trim();
+  const canonical = CANONICAL_DISPLAY_NAMES[id];
+  if (canonical) return canonical;
+  const fullName = [backend.firstName, backend.lastName]
+    .filter((part) => part?.trim())
+    .join(" ");
+  if (fullName)
+    return backend.suffix ? `${fullName} ${backend.suffix}` : fullName;
+  if (backend.name) return backend.name;
+  return id;
+}
+
+/**
  * The closest-relationship kinds the two family exploration views surface.
  * Each is shown only when the family record documents it for the focus person.
  */

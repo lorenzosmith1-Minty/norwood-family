@@ -1,80 +1,62 @@
 # Design Brief
 
 ## Direction
-Norwood — the warm sepia family archive extended into a consumer sign-in experience: familiar 'Continue with Google' and 'Continue with Apple' buttons on a warm paper auth panel, used at login, Add Myself final submission, and 'This is Me' claims.
+Norwood — the warm sepia family archive extended into a mobile-first Edit My Profile form: a sectioned personal record on aged paper (Identity, Basic Information, About, Photo, Timeline, Privacy) with clear section headings, a sticky save/cancel bar, and a local draft-autosave reassurance.
 
 ## Tone
-Refined, emotional, minimal — warm paper-and-ink contrast of vintage imagery with crisp contemporary type; the family reads as a calm, tappable constellation and signing in feels like taking a place in the family, not a cold enterprise login.
+Refined, emotional, minimal — the same warm paper-and-ink contrast as the rest of the family app; editing a profile feels like carefully filling in a family record, calm and tappable, never a cold enterprise form.
 
 ## Differentiation
-A warm bronze-haloed auth panel hosting two instantly recognizable provider buttons — Google's white card with its multi-color 'G', Apple's near-black card with its white logo — turns a security step into a warm 'save your place in the family' moment, with a single stable account identity separate from the person profile.
+A long personal form that reads like a family record — sectioned warm paper plates with bronze section headings, a quiet draft-autosave status chip that reassures work is protected, and a sticky save/cancel bar that stays reachable while scrolling.
 
 ## Color Palette
-| Token      | OKLCH        | Role                              |
-| ---------- | ------------ | --------------------------------- |
-| background | 0.96 0.02 70 | warm cream paper                  |
-| foreground | 0.22 0.04 45 | deep ink-brown text               |
-| card       | 0.985 0.015 70 | clean paper card               |
-| primary    | 0.42 0.11 35 | sepia/terracotta accent           |
-| accent     | 0.55 0.09 60 | dusty bronze highlight            |
-| muted      | 0.92 0.02 70 | soft paper wash                   |
-| border     | 0.86 0.03 70 | faint aged-paper edge             |
-| photo-ring | 0.55 0.09 60 | warm bronze ring for profile photo |
-| signin-card | 0.985 0.015 70 | warm paper auth panel (0.2 0.02 55 dark) |
-| signin-hint | 0.5 0.03 45 | auth subtitle/footnote (0.7 0.1 55 dark) |
-| signin-google-bg | 0.99 0.005 90 | Google button white surface |
-| signin-google-fg | 0.24 0.03 45 | Google button dark ink text |
-| signin-apple-bg | 0.2 0.01 30 | Apple button near-black surface |
-| signin-apple-fg | 0.96 0.01 60 | Apple button white text |
-| success    | 0.55 0.12 150 | warm green — this-is-me badge     |
-| claim-pending | 0.55 0.09 60 | pending claim (0.72 0.14 60 dark) |
-| rel-confirmed | 0.55 0.12 150 | confirmed relationship (0.6 0.15 150 dark) |
-| rel-disputed | 0.5 0.2 25 | disputed relationship (0.55 0.2 25 dark) |
-| notif-unread | 0.55 0.09 60 | unread notification (0.72 0.14 60 dark) |
-| owner-accent | 0.42 0.11 35 | owner-edit emphasis (0.72 0.14 60 dark) |
+| Token      | OKLCH (light) | OKLCH (dark) | Role                              |
+| ---------- | ------------- | ------------ | --------------------------------- |
+| background | 0.96 0.02 70  | 0.16 0.02 55 | warm cream paper                  |
+| foreground | 0.22 0.04 45  | 0.93 0.02 60 | deep ink-brown text               |
+| card       | 0.985 0.015 70 | 0.2 0.02 55 | clean paper card                |
+| primary    | 0.42 0.11 35  | 0.72 0.14 60 | sepia/terracotta accent           |
+| accent     | 0.55 0.09 60  | 0.58 0.12 30 | dusty bronze highlight            |
+| muted      | 0.92 0.02 70  | 0.24 0.02 55 | soft paper wash                   |
+| border     | 0.86 0.03 70  | 0.28 0.02 55 | faint aged-paper edge             |
+| photo-ring | 0.55 0.09 60  | 0.72 0.14 60 | warm bronze ring for profile photo |
+| edit-section | 0.42 0.11 35 | 0.72 0.14 60 | section heading accent          |
+| edit-surface | 0.95 0.02 72 | 0.21 0.02 55 | section card plate              |
+| draft-saved | 0.55 0.12 150 | 0.6 0.15 150 | autosave confirmation (warm green) |
+| draft-unsaved | 0.55 0.09 60 | 0.72 0.14 60 | dirty/unsaved indicator (bronze) |
+| owner-accent | 0.42 0.11 35 | 0.72 0.14 60 | save button + owner emphasis   |
+| destructive | 0.5 0.2 25    | 0.55 0.2 25  | remove-photo / remove-timeline   |
 ## Typography
-- Display: Fraunces — auth titles, focus names, unit titles (warm serif)
-- Body: General Sans — labels, buttons, relationship text (clean modern contrast)
-- Scale: auth title `text-xl font-semibold`, sign-in button `text-[15px] font-semibold`, section labels `text-xs uppercase tracking-[0.2em]`, body `text-base`
+- Display: Fraunces — section titles, timeline entry titles, focus names (warm serif)
+- Body: General Sans — labels, inputs, buttons, hint text (clean modern contrast)
+- Scale: section title `text-xs uppercase tracking-[0.2em]`, field label `text-xs uppercase tracking-[0.2em]`, input `text-sm`, timeline entry title `font-display text-sm`, body `text-base`
 ## Elevation & Depth
-Layered paper — cream background, lighter cards, warm brown subtle/elevated shadows; the sign-in panel carries a bronze halo (`shadow-signin` 3px `--photo-ring`), provider buttons lift on hover, compact relative/unit cards lift on hover, clusters sit as flat framed plates.
+Layered paper — cream background, warmer `--edit-surface` section plates, warm brown subtle/elevated shadows; section cards sit as flat framed plates, the sticky action bar floats above content on a blurred paper surface, cards lift gently on hover.
 ## Structural Zones
 | Zone    | Background  | Border   | Notes                          |
 | ------- | ----------- | -------- | ------------------------------ |
-| Header  | bg-card     | border-b | title + anchor chip over paper |
-| Content | bg-background / bg-card/40 | — | sign-in panel / Explore stage / HB map on paper wash |
-| Footer  | bg-muted/40 | border-t | subtle closing line            |
+| Header  | bg-card     | border-b | title + back + draft status over paper |
+| Content | bg-background | —      | stacked `.edit-section-card` plates, gap-4 |
+| Footer  | bg-muted/40 | border-t | closing line + privacy note    |
+| Action  | bg-background/90 | border-t | sticky save/cancel bar (blur) |
 ## Spacing & Rhythm
-Mobile-first centered single column (`max-w-sm` auth panel, `max-w-md` stage, `max-w-2xl` map), `px-4` gutters, tight `gap-3` between sign-in buttons and constellation rows; auth panel `p-6 sm:p-7`, `gap-5` between head/buttons/footnote.
+Mobile-first single column (`max-w-2xl` centered form), `px-4` gutters; sections stacked `gap-4`, fields `gap-4` in `.edit-field-grid` (single column on mobile, `sm:grid-cols-2` for pairs), section card `p-4 sm:p-5`, sticky bar `py-3`.
 ## Component Patterns
-- Sign-in: `.signin-panel` warm paper card + bronze halo; `.signin-google` white pill (Google 'G' SVG) + `.signin-apple` near-black pill (Apple SVG); `.signin-divider` 'or' separator; `.signin-footnote` trust note; all min 48px
-- Buttons: `.ex-focus-action` pill bg-ex-focus; `.branch-action` pills; `.this-is-me-action` sepia pill; rounded-full, hover shadow-elevated
-- Cards: rounded-xl, bg-card, border-border/60, shadow-subtle; focus card rounded-2xl + bronze halo
-- Explore layout: `.ex-center-band` (spouse-left + focus-center), `.ex-parent-row`, `.ex-siblings-row`, `.ex-children-row`
-- HB cards: `.hb-unit-card`, `.hb-branch-card`, `.hb-couple-anchor`, `.hb-node`; `.hb-count-chip`
-## Consumer Sign-In (Google + Apple)
-- Auth panel `.signin-panel` hosts a crest mark, title, subtitle, then two full-width provider buttons stacked with an 'or' divider and a trust footnote
-- Google button: white surface (`.signin-google`), dark ink text, inline Google 'G' SVG carrying brand colors — familiar consumer look
-- Apple button: near-black surface (`.signin-apple`), white text, inline Apple logo SVG — familiar consumer look
-- Used identically at login, at Add Myself final submission ('Save your place in the family'), and for 'This is Me' claims; sign-in is deferred to final submission and returns to the exact state
-- Account Identity is a stable internal ID separate from the Person Profile; no passwords, no email sign-in, never auto-approve claims
-## Add Myself & This is Me
-- Add Myself: no auth up front; at final submission show the sign-in panel with 'Save your place in the family' + 'Sign in securely to create your Norwood profile and send this family connection for confirmation.'
-- This is Me: `.this-is-me-action` sepia pill invites ownership; claiming opens the same sign-in panel with Google + Apple options
-- Claim status badges (`.claim-badge` + `-unclaimed`/`-claimed`/`-pending`); `.owner-ring` bronze halo marks owned portraits; `.claim-banner` shows pending claims
-- Pending claim profile: reuse `.status-pill` + `.status-pending` (dusty bronze `--claim-pending`) labeled 'Profile claim pending' — no new token, no restyle
-- Pending new-profile relationship: reuse `.status-pill` + `.status-pending` (dusty bronze `--rel-pending`) labeled 'Family connection pending confirmation'
-- Duplicate matching: `.match-card` with `.match-this-is-me` / `.match-none`; `.relation-picker` for Parent/Child/Sibling/Spouse or Partner
-## Navigation Identity
-- Navbar never shows raw auth/account IDs; label resolves to the linked/approved Person Profile display name, else the pending personal profile's display name, else 'My Account' (no profile) or 'Complete Profile' (pending personal profile) — plain text label, no new styling
+- Section card: `.edit-section-card` rounded-xl warm plate + `.edit-section-head` bronze dot + `.edit-section-title` tracked caption + `.edit-section-hint`
+- Fields: reuse `.form-input`/`.form-textarea`/`.form-select` + `.field-label`; `.edit-field-grid` for compact pairs
+- Save: `.owner-save` sepia pill (min 44px); Cancel/back: `.edit-cancel` quiet outline pill
+- Timeline: `.timeline-entry-card` framed plate (date, title, detail) + `.timeline-entry-action` edit/remove + `.timeline-add` dashed add plate
+- Draft status: `.draft-status` + `.draft-saved` (pulsing warm-green dot) / `.draft-unsaved` (bronze dot)
+- Photo: reuse `.photo-ring`/`.photo-hover-overlay`/`.dropzone`/`.remove-photo-action`; initials placeholder when no photo
 ## Motion
-- Entrance: staggered `fade-up` (0.6s), `fold-in` (0.3s) on clusters and sign-in panel; `signin-pop` (0.35s) on provider buttons
-- Hover: card lift + shadow-elevated 0.3s; sign-in buttons lift 1px + deepen shadow 0.3s
-- Explore: `recenter` (0.4s), `halo-pulse` (3.5s), `anchor-glow` (3s); HB map: `branch-in` (0.4s), `detail-in` (0.25s)
+- Entrance: `fold-in` (0.3s) on section cards; `fade-up` (0.6s) on the form head
+- Hover: card lift + shadow-elevated 0.3s; timeline entry border warms to bronze 0.3s
+- Draft: `draft-pulse` (2s) breathing dot on the saved confirmation
 ## Constraints
-- Token-only styling — no raw hex/rgb in components (brand logos are inline SVGs that carry their own colors); mobile-first; large tappable targets (min 44px) with visible focus rings
-- Add only sign-in tokens (`--signin-*`) and styles — do NOT restyle existing Home, Explore Family, Heritage Branch, Family Tree, Archive, profile, or claim cards
-- Do NOT build email sign-in, passwords, or mocked auth; do not remove the working Internet Identity path before the replacement is verified
-- Preserve all family data, profiles, graph, claims, notifications, Archive, Explore Family, and Heritage Branch; never auto-approve claims
+- Token-only styling — no raw hex/rgb in components; mobile-first; large tappable targets (min 44px) with visible focus rings
+- Extend the existing Norwood identity — do NOT redesign the profile page, Explore Family, Heritage Branch, Family Tree, Archive, or navigation
+- Do NOT build a Public visibility option for editable fields; do NOT build structured timeline media attachments
+- Never expose email/auth/account credentials; never surface internal identifiers (personIds/slugs) in user-facing name displays
+- Living profiles without an uploaded photo use the initials/photo placeholder; do not directly edit relationships
 ## Signature Detail
-The warm bronze-haloed auth panel with two instantly recognizable provider buttons — Google's white card and Apple's near-black card — turns the sign-in step into a warm 'save your place in the family' moment, extending the same paper-and-ink language used across the family tree, archive, and heritage views.
+The long personal form is tamed into warm paper section plates with bronze section headings and a quiet breathing draft-autosave dot — so editing a family record feels like carefully tending a page in the family archive, with every change protected as you go.

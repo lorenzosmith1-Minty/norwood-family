@@ -34,14 +34,128 @@ type SourceStatus =
    Unverified;
  };
 type Result__1 = 
+ record {
+   hasMore: bool;
+   rows: vec vec Cell;
+ };
+type Result_8 = 
  variant {
    err: Error;
    ok;
  };
+type Result_7 = 
+ variant {
+   err: AccountError;
+   ok: Account;
+ };
+type Result_6 = 
+ variant {
+   err: CreateError;
+   ok: PersonProfile;
+ };
+type Result_5 = 
+ variant {
+   err: AccountError;
+   ok: AccountId;
+ };
+type Result_4 = 
+ variant {
+   err: AccountError;
+   ok: AuthMethods;
+ };
+type Result_3 = 
+ variant {
+   err: RelationshipError;
+   ok: RelationshipRequest;
+ };
+type Result_2 = 
+ variant {
+   err: RemoveError;
+   ok;
+ };
+type Result_1 = 
+ variant {
+   err: ClaimError;
+   ok: ProfileClaim;
+ };
 type Result = 
+ variant {
+   err: EditError;
+   ok: PersonProfile;
+ };
+type RemoveError = 
+ variant {
+   NotSignedIn;
+   ProfileNotFound;
+ };
+type RelationshipType = 
+ variant {
+   Child;
+   Parent;
+   Sibling;
+   SpousePartner;
+ };
+type RelationshipStatus = 
+ variant {
+   Confirmed;
+   Disputed;
+   Pending;
+ };
+type RelationshipRequestStatus = 
+ variant {
+   Approved;
+   Pending;
+   Rejected;
+ };
+type RelationshipRequest = 
  record {
-   hasMore: bool;
-   rows: vec vec Cell;
+   id: nat;
+   proposedRelationship: RelationshipType;
+   relatedPersonId: PersonId;
+   requestingPersonId: PersonId;
+   reviewedDate: opt int;
+   reviewer: opt principal;
+   status: RelationshipRequestStatus;
+   submittedDate: int;
+ };
+type RelationshipError = 
+ variant {
+   DuplicateRequest;
+   NotSignedIn;
+   PersonNotFound;
+ };
+type Relationship = 
+ record {
+   fromPersonId: PersonId;
+   id: nat;
+   relationshipType: RelationshipType;
+   status: RelationshipStatus;
+   toPersonId: PersonId;
+ };
+type ProfileEdits = 
+ record {
+   birthInfo: opt text;
+   occupation: opt text;
+   preferredName: opt text;
+   privacySettings: opt text;
+   story: opt text;
+   timeline: opt vec text;
+ };
+type ProfileClaimStatus = 
+ variant {
+   Approved;
+   Pending;
+   Rejected;
+ };
+type ProfileClaim = 
+ record {
+   id: nat;
+   personId: PersonId;
+   requestingUserId: principal;
+   reviewedBy: opt principal;
+   reviewedDate: opt int;
+   status: ProfileClaimStatus;
+   submittedDate: int;
  };
 type PrivacyLevel = 
  variant {
@@ -59,7 +173,49 @@ type Photo =
    uploadedAt: int;
    uploadedBy: principal;
  };
+type PersonProfile = 
+ record {
+   birthInfo: opt text;
+   claimStatus: ClaimStatus;
+   claimedByUserId: opt principal;
+   livingStatus: LivingStatus;
+   name: text;
+   occupation: opt text;
+   personId: PersonId;
+   preferredName: opt text;
+   privacySettings: opt text;
+   story: opt text;
+   timeline: opt vec text;
+ };
+type PersonMatch = 
+ record {
+   name: text;
+   parents: vec text;
+   personId: PersonId;
+ };
 type PersonId = text;
+type NotificationType = 
+ variant {
+   ProfileClaimRequested;
+   ProfileClaimReviewed;
+   RelationshipRequested;
+   RelationshipReviewed;
+ };
+type NotificationId = nat;
+type Notification = 
+ record {
+   createdAt: int;
+   id: nat;
+   message: text;
+   notificationType: NotificationType;
+   read: bool;
+   recipient: principal;
+ };
+type LivingStatus = 
+ variant {
+   Deceased;
+   Living;
+ };
 type ExternalBlob = blob;
 type Error = 
  variant {
@@ -83,10 +239,41 @@ type Error =
    UnknownNonce;
    UntrustedSsoSource: record {domain: text;};
  };
+type EditError = 
+ variant {
+   DeceasedProfile;
+   NotOwner;
+   NotSignedIn;
+   ProfileNotFound;
+ };
+type CreateError = variant {NotSignedIn;};
+type ClaimStatus = 
+ variant {
+   Claimed;
+   Unclaimed;
+ };
+type ClaimError = 
+ variant {
+   AlreadyClaimed;
+   AlreadyPending;
+   DeceasedProfile;
+   NotSignedIn;
+   ProfileNotFound;
+ };
 type Cell = 
  record {
    name: text;
    value: Value;
+ };
+type AuthMethods = 
+ record {
+   apple: bool;
+   google: bool;
+ };
+type AuthMethod = 
+ variant {
+   Apple;
+   Google;
  };
 type ArchiveItemType = 
  variant {
@@ -124,6 +311,18 @@ type ArchiveItem =
    title: text;
    year: opt nat;
  };
+type AccountId = principal;
+type AccountError = 
+ variant {
+   AccountNotFound;
+   NotSignedIn;
+ };
+type Account = 
+ record {
+   authMethods: vec AuthMethod;
+   createdAt: int;
+   id: AccountId;
+ };
 service : {
   _immutableObjectStorageBlobsAreLive: (hashes: vec blob) -> (vec bool) query;
   _immutableObjectStorageBlobsToDelete: () -> (vec blob) query;
@@ -135,26 +334,52 @@ service : {
    (_ImmutableObjectStorageRefillResult);
   _immutableObjectStorageUpdateGatewayPrincipals: () -> ();
   _initialize_access_control: () -> ();
-  _internet_identity_sign_in_finish: () -> (Result__1);
+  _internet_identity_sign_in_finish: () -> (Result_8);
   _internet_identity_sign_in_start: () -> (blob);
   addPhoto: (personId: PersonId, filename: text, mimeType: text, "blob":
    ExternalBlob) -> (Photo);
   approveArchiveItem: (id: ArchiveItemId) -> (opt ArchiveItem);
+  approveProfileClaim: (claimId: nat) -> (opt ProfileClaim);
+  approveRelationshipRequest: (requestId: nat) -> (opt RelationshipRequest);
   assignCallerUserRole: (user: principal, role: UserRole) -> ();
-  execute: (qJson: text) -> (Result) query;
+  bindAuthMethod: (method: AuthMethod) -> (Result_7);
+  createMyself: (name: text) -> (Result_6);
+  execute: (qJson: text) -> (Result__1) query;
   getApiDoc: () -> (text) query;
   getCallerUserRole: () -> (UserRole) query;
+  getMyAccountId: () -> (Result_5) query;
+  getMyAuthMethods: () -> (Result_4) query;
+  getMyProfile: () -> (opt PersonProfile) query;
+  getMyProfileClaim: (personId: PersonId) -> (opt ProfileClaim) query;
+  getMyRelationshipRequests: () -> (vec RelationshipRequest) query;
+  getPersonProfile: (personId: PersonId) -> (opt PersonProfile) query;
   getProfilePhoto: (personId: PersonId) -> (opt Photo) query;
+  getRelationshipRequest: (id: nat) -> (opt RelationshipRequest) query;
   isCallerAdmin: () -> (bool) query;
   listApprovedArchiveItems: () -> (vec ArchiveItem) query;
+  listConfirmedRelationships: () -> (vec Relationship) query;
+  listNotifications: () -> (vec Notification) query;
   listPendingArchiveItems: () -> (vec ArchiveItem) query;
   listPhotos: (personId: PersonId) -> (vec Photo) query;
+  listProfileClaims: () -> (vec ProfileClaim) query;
+  listRelationshipRequests: () -> (vec RelationshipRequest) query;
+  markNotificationRead: (id: NotificationId) -> (opt Notification);
+  proposeRelationship: (fromPersonId: PersonId, toPersonId: PersonId,
+   relationshipType: RelationshipType) -> (Result_3);
   rejectArchiveItem: (id: ArchiveItemId) -> (opt ArchiveItem);
+  rejectProfileClaim: (claimId: nat) -> (opt ProfileClaim);
+  rejectRelationshipRequest: (requestId: nat) -> (opt RelationshipRequest);
+  removeDuplicateProfile: (personId: PersonId) -> (Result_2);
   removePhoto: (personId: PersonId, photoId: PhotoId) -> (bool);
+  requestProfileClaim: (personId: PersonId) -> (Result_1);
   schema: () -> (text) query;
+  searchPossibleMatches: (name: text) -> (vec PersonMatch) query;
   setProfilePhoto: (personId: PersonId, photoId: PhotoId) -> (opt Photo);
+  setRelationshipRequestPending: (requestId: nat) ->
+   (opt RelationshipRequest);
   submitArchiveItem: (title: text, description: text, itemType:
    ArchiveItemType, "blob": ExternalBlob, era: text, year: opt nat, tags:
    vec text, relatedMemberIds: vec text, relatedBranchId: opt text,
    sourceStatus: SourceStatus, privacyLevel: PrivacyLevel) -> (ArchiveItem);
+  updateOwnProfile: (personId: PersonId, edits: ProfileEdits) -> (Result);
 }

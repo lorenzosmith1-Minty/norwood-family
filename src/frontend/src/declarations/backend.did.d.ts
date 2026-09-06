@@ -10,6 +10,14 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
+export interface Account {
+  'id' : AccountId,
+  'createdAt' : bigint,
+  'authMethods' : Array<AuthMethod>,
+}
+export type AccountError = { 'AccountNotFound' : null } |
+  { 'NotSignedIn' : null };
+export type AccountId = Principal;
 export interface ArchiveItem {
   'id' : ArchiveItemId,
   'era' : string,
@@ -39,7 +47,22 @@ export type ArchiveItemType = { 'Research' : null } |
   { 'Audio' : null } |
   { 'Other' : null } |
   { 'Video' : null };
+export type AuthMethod = { 'Google' : null } |
+  { 'Apple' : null };
+export interface AuthMethods { 'apple' : boolean, 'google' : boolean }
 export interface Cell { 'value' : Value, 'name' : string }
+export type ClaimError = { 'AlreadyPending' : null } |
+  { 'ProfileNotFound' : null } |
+  { 'AlreadyClaimed' : null } |
+  { 'NotSignedIn' : null } |
+  { 'DeceasedProfile' : null };
+export type ClaimStatus = { 'Unclaimed' : null } |
+  { 'Claimed' : null };
+export type CreateError = { 'NotSignedIn' : null };
+export type EditError = { 'ProfileNotFound' : null } |
+  { 'NotSignedIn' : null } |
+  { 'NotOwner' : null } |
+  { 'DeceasedProfile' : null };
 export type Error = { 'FrontendOriginsNotConfigured' : null } |
   {
     'MixedSsoSources' : {
@@ -56,7 +79,40 @@ export type Error = { 'FrontendOriginsNotConfigured' : null } |
   { 'MissingField' : string } |
   { 'FrontendOriginMismatch' : { 'got' : string, 'expected' : Array<string> } };
 export type ExternalBlob = Uint8Array;
+export type LivingStatus = { 'Living' : null } |
+  { 'Deceased' : null };
+export interface Notification {
+  'id' : bigint,
+  'notificationType' : NotificationType,
+  'createdAt' : bigint,
+  'read' : boolean,
+  'recipient' : Principal,
+  'message' : string,
+}
+export type NotificationId = bigint;
+export type NotificationType = { 'RelationshipRequested' : null } |
+  { 'RelationshipReviewed' : null } |
+  { 'ProfileClaimReviewed' : null } |
+  { 'ProfileClaimRequested' : null };
 export type PersonId = string;
+export interface PersonMatch {
+  'name' : string,
+  'personId' : PersonId,
+  'parents' : Array<string>,
+}
+export interface PersonProfile {
+  'occupation' : [] | [string],
+  'privacySettings' : [] | [string],
+  'claimedByUserId' : [] | [Principal],
+  'birthInfo' : [] | [string],
+  'claimStatus' : ClaimStatus,
+  'livingStatus' : LivingStatus,
+  'name' : string,
+  'personId' : PersonId,
+  'story' : [] | [string],
+  'preferredName' : [] | [string],
+  'timeline' : [] | [Array<string>],
+}
 export interface Photo {
   'id' : PhotoId,
   'blob' : ExternalBlob,
@@ -69,9 +125,77 @@ export type PhotoId = bigint;
 export type PrivacyLevel = { 'Private' : null } |
   { 'Public' : null } |
   { 'FamilyOnly' : null };
-export interface Result { 'hasMore' : boolean, 'rows' : Array<Array<Cell>> }
-export type Result__1 = { 'ok' : null } |
+export interface ProfileClaim {
+  'id' : bigint,
+  'submittedDate' : bigint,
+  'status' : ProfileClaimStatus,
+  'reviewedDate' : [] | [bigint],
+  'reviewedBy' : [] | [Principal],
+  'personId' : PersonId,
+  'requestingUserId' : Principal,
+}
+export type ProfileClaimStatus = { 'Approved' : null } |
+  { 'Rejected' : null } |
+  { 'Pending' : null };
+export interface ProfileEdits {
+  'occupation' : [] | [string],
+  'privacySettings' : [] | [string],
+  'birthInfo' : [] | [string],
+  'story' : [] | [string],
+  'preferredName' : [] | [string],
+  'timeline' : [] | [Array<string>],
+}
+export interface Relationship {
+  'id' : bigint,
+  'status' : RelationshipStatus,
+  'fromPersonId' : PersonId,
+  'toPersonId' : PersonId,
+  'relationshipType' : RelationshipType,
+}
+export type RelationshipError = { 'DuplicateRequest' : null } |
+  { 'NotSignedIn' : null } |
+  { 'PersonNotFound' : null };
+export interface RelationshipRequest {
+  'id' : bigint,
+  'submittedDate' : bigint,
+  'status' : RelationshipRequestStatus,
+  'reviewedDate' : [] | [bigint],
+  'relatedPersonId' : PersonId,
+  'requestingPersonId' : PersonId,
+  'proposedRelationship' : RelationshipType,
+  'reviewer' : [] | [Principal],
+}
+export type RelationshipRequestStatus = { 'Approved' : null } |
+  { 'Rejected' : null } |
+  { 'Pending' : null };
+export type RelationshipStatus = { 'Disputed' : null } |
+  { 'Confirmed' : null } |
+  { 'Pending' : null };
+export type RelationshipType = { 'Parent' : null } |
+  { 'Sibling' : null } |
+  { 'SpousePartner' : null } |
+  { 'Child' : null };
+export type RemoveError = { 'ProfileNotFound' : null } |
+  { 'NotSignedIn' : null };
+export type Result = { 'ok' : PersonProfile } |
+  { 'err' : EditError };
+export type Result_1 = { 'ok' : ProfileClaim } |
+  { 'err' : ClaimError };
+export type Result_2 = { 'ok' : null } |
+  { 'err' : RemoveError };
+export type Result_3 = { 'ok' : RelationshipRequest } |
+  { 'err' : RelationshipError };
+export type Result_4 = { 'ok' : AuthMethods } |
+  { 'err' : AccountError };
+export type Result_5 = { 'ok' : AccountId } |
+  { 'err' : AccountError };
+export type Result_6 = { 'ok' : PersonProfile } |
+  { 'err' : CreateError };
+export type Result_7 = { 'ok' : Account } |
+  { 'err' : AccountError };
+export type Result_8 = { 'ok' : null } |
   { 'err' : Error };
+export interface Result__1 { 'hasMore' : boolean, 'rows' : Array<Array<Cell>> }
 export type SourceStatus = { 'Copy' : null } |
   { 'Unverified' : null } |
   { 'Transcribed' : null } |
@@ -116,23 +240,58 @@ export interface _SERVICE {
   >,
   '_immutableObjectStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
   '_initialize_access_control' : ActorMethod<[], undefined>,
-  '_internet_identity_sign_in_finish' : ActorMethod<[], Result__1>,
+  '_internet_identity_sign_in_finish' : ActorMethod<[], Result_8>,
   '_internet_identity_sign_in_start' : ActorMethod<[], Uint8Array>,
   'addPhoto' : ActorMethod<[PersonId, string, string, ExternalBlob], Photo>,
   'approveArchiveItem' : ActorMethod<[ArchiveItemId], [] | [ArchiveItem]>,
+  'approveProfileClaim' : ActorMethod<[bigint], [] | [ProfileClaim]>,
+  'approveRelationshipRequest' : ActorMethod<
+    [bigint],
+    [] | [RelationshipRequest]
+  >,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
-  'execute' : ActorMethod<[string], Result>,
+  'bindAuthMethod' : ActorMethod<[AuthMethod], Result_7>,
+  'createMyself' : ActorMethod<[string], Result_6>,
+  'execute' : ActorMethod<[string], Result__1>,
   'getApiDoc' : ActorMethod<[], string>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
+  'getMyAccountId' : ActorMethod<[], Result_5>,
+  'getMyAuthMethods' : ActorMethod<[], Result_4>,
+  'getMyProfile' : ActorMethod<[], [] | [PersonProfile]>,
+  'getMyProfileClaim' : ActorMethod<[PersonId], [] | [ProfileClaim]>,
+  'getMyRelationshipRequests' : ActorMethod<[], Array<RelationshipRequest>>,
+  'getPersonProfile' : ActorMethod<[PersonId], [] | [PersonProfile]>,
   'getProfilePhoto' : ActorMethod<[PersonId], [] | [Photo]>,
+  'getRelationshipRequest' : ActorMethod<[bigint], [] | [RelationshipRequest]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
   'listApprovedArchiveItems' : ActorMethod<[], Array<ArchiveItem>>,
+  'listConfirmedRelationships' : ActorMethod<[], Array<Relationship>>,
+  'listNotifications' : ActorMethod<[], Array<Notification>>,
   'listPendingArchiveItems' : ActorMethod<[], Array<ArchiveItem>>,
   'listPhotos' : ActorMethod<[PersonId], Array<Photo>>,
+  'listProfileClaims' : ActorMethod<[], Array<ProfileClaim>>,
+  'listRelationshipRequests' : ActorMethod<[], Array<RelationshipRequest>>,
+  'markNotificationRead' : ActorMethod<[NotificationId], [] | [Notification]>,
+  'proposeRelationship' : ActorMethod<
+    [PersonId, PersonId, RelationshipType],
+    Result_3
+  >,
   'rejectArchiveItem' : ActorMethod<[ArchiveItemId], [] | [ArchiveItem]>,
+  'rejectProfileClaim' : ActorMethod<[bigint], [] | [ProfileClaim]>,
+  'rejectRelationshipRequest' : ActorMethod<
+    [bigint],
+    [] | [RelationshipRequest]
+  >,
+  'removeDuplicateProfile' : ActorMethod<[PersonId], Result_2>,
   'removePhoto' : ActorMethod<[PersonId, PhotoId], boolean>,
+  'requestProfileClaim' : ActorMethod<[PersonId], Result_1>,
   'schema' : ActorMethod<[], string>,
+  'searchPossibleMatches' : ActorMethod<[string], Array<PersonMatch>>,
   'setProfilePhoto' : ActorMethod<[PersonId, PhotoId], [] | [Photo]>,
+  'setRelationshipRequestPending' : ActorMethod<
+    [bigint],
+    [] | [RelationshipRequest]
+  >,
   'submitArchiveItem' : ActorMethod<
     [
       string,
@@ -149,6 +308,7 @@ export interface _SERVICE {
     ],
     ArchiveItem
   >,
+  'updateOwnProfile' : ActorMethod<[PersonId, ProfileEdits], Result>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

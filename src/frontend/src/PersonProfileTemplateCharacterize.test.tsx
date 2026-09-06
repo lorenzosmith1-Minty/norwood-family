@@ -9,7 +9,7 @@ import { PersonProfilePage, juliaProfile } from "./pages/PersonProfilePage";
 // InternetIdentityProvider, so these direct-render tests stub the provider seam
 // with a minimal actor exposing the photo methods (never reached because the
 // gallery starts empty).
-const { mockActor } = vi.hoisted(() => {
+const { mockActor, mockBackendProfile } = vi.hoisted(() => {
   const mockActor = {
     async listPhotos(): Promise<unknown[]> {
       return [];
@@ -17,12 +17,40 @@ const { mockActor } = vi.hoisted(() => {
     async getProfilePhoto(): Promise<null> {
       return null;
     },
+    async getPersonProfile(): Promise<unknown> {
+      return mockBackendProfile;
+    },
+    async getMyProfileClaim(): Promise<null> {
+      return null;
+    },
   };
-  return { mockActor };
+  // Julia is a deceased, unclaimed profile in the seeded backend data, so the
+  // claim section renders the "not claimable" state rather than a claim action.
+  const mockBackendProfile = {
+    personId: "julia",
+    name: "Julia “Julie” Norwood",
+    livingStatus: "Deceased",
+    claimStatus: "Unclaimed",
+    claimedByUserId: null,
+    preferredName: null,
+    story: null,
+    occupation: null,
+    birthInfo: null,
+    timeline: null,
+    privacySettings: null,
+  };
+  return { mockActor, mockBackendProfile };
 });
 
 vi.mock("@caffeineai/core-infrastructure", () => ({
   useActor: () => ({ actor: mockActor, isFetching: false }),
+  useInternetIdentity: () => ({
+    isAuthenticated: false,
+    login: () => {},
+    identity: null,
+    isInitializing: false,
+    isLoggingIn: false,
+  }),
 }));
 
 // PersonProfilePage's photo hooks use useQuery, so every render must be wrapped

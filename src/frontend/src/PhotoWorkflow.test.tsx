@@ -84,9 +84,49 @@ const { mockActor, resetPhotos } = vi.hoisted(() => {
 // Replace useActor with a hook that always returns the in-memory actor. The
 // real useActor depends on useInternetIdentity + createActorWithConfig, which
 // are not needed for a deterministic photo-workflow test.
+//
+// PersonProfilePage also reads the backend profile (usePersonProfile /
+// useMyProfileClaim) and the caller's identity (useInternetIdentity) to render
+// the claim section. The photo workflow does not exercise claims, so the mock
+// returns a deceased, unclaimed profile (no claim action) and a signed-out
+// identity.
+const { mockBackendProfile } = vi.hoisted(() => {
+  const mockBackendProfile = {
+    personId: "julia",
+    name: "Julia “Julie” Norwood",
+    livingStatus: "Deceased",
+    claimStatus: "Unclaimed",
+    claimedByUserId: null,
+    preferredName: null,
+    story: null,
+    occupation: null,
+    birthInfo: null,
+    timeline: null,
+    privacySettings: null,
+  };
+  return { mockBackendProfile };
+});
+
 vi.mock("@caffeineai/core-infrastructure", () => ({
   useActor: () => ({ actor: mockActor, isFetching: false }),
+  useInternetIdentity: () => ({
+    isAuthenticated: false,
+    login: () => {},
+    identity: null,
+    isInitializing: false,
+    isLoggingIn: false,
+  }),
 }));
+
+vi.mock("./hooks/useProfileClaims", async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import("./hooks/useProfileClaims")>();
+  return {
+    ...actual,
+    usePersonProfile: () => ({ data: mockBackendProfile, isLoading: false }),
+    useMyProfileClaim: () => ({ data: null }),
+  };
+});
 
 afterEach(cleanup);
 beforeEach(resetPhotos);

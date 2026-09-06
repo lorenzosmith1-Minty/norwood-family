@@ -1,10 +1,16 @@
 import { GitBranch, Users } from "lucide-react";
 import { motion } from "motion/react";
+import { useMemo } from "react";
 import {
   HeritageBranchCard,
   type HeritagePerson,
 } from "../components/HeritageBranchCard";
-import { FAMILY_GRAPH } from "../types/family";
+import { useListConfirmedRelationships } from "../hooks/useRelationshipRequests";
+import {
+  FAMILY_GRAPH,
+  type FamilyGraph,
+  overlayConfirmedRelationships,
+} from "../types/family";
 import { profiles } from "./PersonProfilePage";
 
 interface HeritageBranchPageProps {
@@ -28,8 +34,8 @@ const NAME_FALLBACK: Record<string, string> = {
 };
 
 /** Convert a shared graph node into the compact map card's person shape. */
-function toPerson(id: string): HeritagePerson {
-  const node = FAMILY_GRAPH[id];
+function toPerson(id: string, graph: FamilyGraph): HeritagePerson {
+  const node = graph[id];
   return {
     id,
     name: profiles[id]?.name ?? NAME_FALLBACK[id] ?? id,
@@ -116,11 +122,21 @@ function ClusterConnector() {
 export default function HeritageBranchPage({
   onOpenExploreFamily,
 }: HeritageBranchPageProps) {
+  // Overlay the backend's confirmed relationships onto the shared graph at
+  // render time so approved relationship requests appear in the map without
+  // mutating the static FAMILY_GRAPH. Falls back to the static graph when the
+  // user is not signed in (no confirmed relationships loaded).
+  const { data: confirmed = [] } = useListConfirmedRelationships();
+  const graph = useMemo(
+    () => overlayConfirmedRelationships(FAMILY_GRAPH, confirmed),
+    [confirmed],
+  );
+
   // Running index across the whole map so every card gets a unique data-ocid.
   let cardIndex = 0;
 
   const renderUnitCard = (id: string) => {
-    const person = toPerson(id);
+    const person = toPerson(id, graph);
     const profile = profiles[id];
     const idx = cardIndex++;
     return (
@@ -140,7 +156,7 @@ export default function HeritageBranchPage({
   };
 
   const renderBranchCard = (anchor: BranchAnchor) => {
-    const person = toPerson(anchor.personId);
+    const person = toPerson(anchor.personId, graph);
     const profile = profiles[anchor.personId];
     const idx = cardIndex++;
     return (

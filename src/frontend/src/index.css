@@ -126,6 +126,44 @@
     --hb-branch-foreground: 0.96 0.02 70;
     --hb-count: 0.42 0.11 35;
 
+    /* Profile ownership & claim workflow: unclaimed / claimed / pending */
+    --claim-unclaimed: 0.5 0.03 45;
+    --claim-claimed: 0.55 0.12 150;
+    --claim-pending: 0.55 0.09 60;
+
+    /* Relationship verification status: confirmed / pending / disputed */
+    --rel-confirmed: 0.55 0.12 150;
+    --rel-pending: 0.55 0.09 60;
+    --rel-disputed: 0.5 0.2 25;
+
+    /* Family Steward review surface + approve/reject/pending actions */
+    --steward-surface: 0.95 0.02 72;
+    --steward-approve: 0.55 0.12 150;
+    --steward-reject: 0.5 0.2 25;
+    --steward-pending: 0.55 0.09 60;
+
+    /* In-app notifications: unread emphasis + unread-count badge */
+    --notif-unread: 0.55 0.09 60;
+    --notif-read: 0.5 0.03 45;
+    --notif-badge: 0.5 0.2 25;
+
+    /* Owner profile editing: editable-field emphasis */
+    --owner-accent: 0.42 0.11 35;
+
+    /* Consumer sign-in (Google + Apple): warm paper auth surface + familiar
+       provider buttons. Brand logos are inline SVGs carrying their own
+       colors; button surfaces and text use these tokens. */
+    --signin-card: 0.985 0.015 70;
+    --signin-card-foreground: 0.22 0.04 45;
+    --signin-divider: 0.86 0.03 70;
+    --signin-hint: 0.5 0.03 45;
+    --signin-google-bg: 0.99 0.005 90;
+    --signin-google-fg: 0.24 0.03 45;
+    --signin-google-border: 0.86 0.03 70;
+    --signin-apple-bg: 0.2 0.01 30;
+    --signin-apple-fg: 0.96 0.01 60;
+    --signin-apple-hover: 0.28 0.01 30;
+
     --sidebar: 0.985 0.015 70;
     --sidebar-foreground: 0.22 0.04 45;
     --sidebar-primary: 0.42 0.11 35;
@@ -237,6 +275,44 @@
     --hb-branch: 0.72 0.14 60;
     --hb-branch-foreground: 0.16 0.02 55;
     --hb-count: 0.72 0.14 60;
+
+    /* Profile ownership & claim workflow: unclaimed / claimed / pending */
+    --claim-unclaimed: 0.7 0.1 55;
+    --claim-claimed: 0.6 0.15 150;
+    --claim-pending: 0.72 0.14 60;
+
+    /* Relationship verification status: confirmed / pending / disputed */
+    --rel-confirmed: 0.6 0.15 150;
+    --rel-pending: 0.72 0.14 60;
+    --rel-disputed: 0.55 0.2 25;
+
+    /* Family Steward review surface + approve/reject/pending actions */
+    --steward-surface: 0.21 0.02 55;
+    --steward-approve: 0.6 0.15 150;
+    --steward-reject: 0.55 0.2 25;
+    --steward-pending: 0.72 0.14 60;
+
+    /* In-app notifications: unread emphasis + unread-count badge */
+    --notif-unread: 0.72 0.14 60;
+    --notif-read: 0.7 0.1 55;
+    --notif-badge: 0.55 0.2 25;
+
+    /* Owner profile editing: editable-field emphasis */
+    --owner-accent: 0.72 0.14 60;
+
+    /* Consumer sign-in (Google + Apple): warm paper auth surface + familiar
+       provider buttons. Brand logos are inline SVGs carrying their own
+       colors; button surfaces and text use these tokens. */
+    --signin-card: 0.2 0.02 55;
+    --signin-card-foreground: 0.93 0.02 60;
+    --signin-divider: 0.28 0.02 55;
+    --signin-hint: 0.7 0.1 55;
+    --signin-google-bg: 0.99 0.005 90;
+    --signin-google-fg: 0.24 0.03 45;
+    --signin-google-border: 0.28 0.02 55;
+    --signin-apple-bg: 0.2 0.01 30;
+    --signin-apple-fg: 0.96 0.01 60;
+    --signin-apple-hover: 0.28 0.01 30;
 
     --sidebar: 0.2 0.02 55;
     --sidebar-foreground: 0.93 0.02 60;
@@ -1820,5 +1896,474 @@
     stroke: currentColor;
     stroke-width: 1.5;
     stroke-linecap: round;
+  }
+
+  /* ---- Profile Ownership & Claim workflow ---- */
+
+  /* Claim status badge: unclaimed / claimed / pending (reuses the dot-pill
+     pattern from .status-pill) */
+  .claim-badge {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-border/60 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em];
+    background-color: oklch(var(--card));
+  }
+  .claim-badge::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+  }
+  .claim-badge-unclaimed {
+    color: oklch(var(--claim-unclaimed));
+  }
+  .claim-badge-unclaimed::before {
+    background-color: oklch(var(--claim-unclaimed));
+  }
+  .claim-badge-claimed {
+    color: oklch(var(--claim-claimed));
+  }
+  .claim-badge-claimed::before {
+    background-color: oklch(var(--claim-claimed));
+  }
+  .claim-badge-pending {
+    color: oklch(var(--claim-pending));
+  }
+  .claim-badge-pending::before {
+    background-color: oklch(var(--claim-pending));
+  }
+
+  /* 'This is Me' claim action: warm sepia pill that invites ownership */
+  .this-is-me-action {
+    @apply inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold;
+    color: oklch(var(--primary-foreground));
+    background-color: oklch(var(--primary));
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.18);
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow
+      0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .this-is-me-action:hover {
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.24);
+  }
+  .this-is-me-action:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(var(--ring) / 0.35);
+  }
+
+  /* Claimed / owned profile: bronze halo ring on the owner portrait */
+  .owner-ring {
+    box-shadow: 0 0 0 3px oklch(var(--owner-accent));
+  }
+
+  /* Claim banner: pending claim notice on an unclaimed living profile */
+  .claim-banner {
+    @apply flex flex-col gap-2 rounded-xl border border-border/60 bg-card p-4;
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.1);
+  }
+  .claim-banner-title {
+    @apply font-display text-base font-semibold;
+    color: oklch(var(--foreground));
+  }
+  .claim-banner-hint {
+    @apply text-sm leading-relaxed;
+    color: oklch(var(--muted-foreground));
+  }
+
+  /* ---- Add Myself to This Family & duplicate matching ---- */
+
+  /* Duplicate-match card: a possible existing person with 'This is Me' or
+     'None of these are me' options */
+  .match-card {
+    @apply flex items-center gap-3 rounded-xl border border-border/60 bg-card p-3;
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.1);
+    transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .match-card:hover,
+  .match-card:focus-within {
+    border-color: oklch(var(--photo-ring) / 0.6);
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.2);
+  }
+  .match-card-portrait {
+    @apply flex h-12 w-12 shrink-0 items-center justify-center rounded-full font-display text-base font-semibold;
+    background-color: oklch(var(--muted));
+    color: oklch(var(--muted-foreground));
+    box-shadow: 0 0 0 2px oklch(var(--photo-ring-soft));
+    overflow: hidden;
+  }
+  .match-card-portrait img {
+    @apply h-full w-full object-cover;
+  }
+  .match-card-body {
+    @apply flex min-w-0 flex-1 flex-col gap-0.5;
+  }
+  .match-card-name {
+    @apply truncate font-display text-sm font-semibold leading-tight;
+    color: oklch(var(--foreground));
+  }
+  .match-card-parents {
+    @apply text-xs leading-snug;
+    color: oklch(var(--muted-foreground));
+  }
+  .match-card-actions {
+    @apply flex flex-col gap-2;
+  }
+  .match-this-is-me {
+    @apply inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold;
+    color: oklch(var(--primary-foreground));
+    background-color: oklch(var(--primary));
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .match-this-is-me:hover {
+    background-color: oklch(var(--primary) / 0.9);
+  }
+  .match-none {
+    @apply inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-full border border-border/60 px-4 py-2 text-sm font-semibold;
+    background-color: oklch(var(--card));
+    color: oklch(var(--foreground));
+    transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .match-none:hover {
+    border-color: oklch(var(--photo-ring));
+  }
+
+  /* Connection picker: choose Parent / Child / Sibling / Spouse or Partner */
+  .relation-picker {
+    @apply flex flex-wrap gap-2;
+  }
+  .relation-option {
+    @apply inline-flex min-h-[44px] items-center gap-1.5 rounded-full border border-border/60 px-4 py-2 text-sm font-semibold;
+    background-color: oklch(var(--card));
+    color: oklch(var(--foreground));
+    transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color
+      0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .relation-option:hover {
+    border-color: oklch(var(--photo-ring));
+  }
+  .relation-option-selected {
+    background-color: oklch(var(--owner-accent));
+    color: oklch(var(--primary-foreground));
+    border-color: oklch(var(--owner-accent));
+  }
+
+  /* ---- Relationship Requests & verification ---- */
+
+  /* Relationship verification status badge: confirmed / pending / disputed */
+  .rel-status {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-border/60 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em];
+    background-color: oklch(var(--card));
+  }
+  .rel-status::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+  }
+  .rel-confirmed {
+    color: oklch(var(--rel-confirmed));
+  }
+  .rel-confirmed::before {
+    background-color: oklch(var(--rel-confirmed));
+  }
+  .rel-pending {
+    color: oklch(var(--rel-pending));
+  }
+  .rel-pending::before {
+    background-color: oklch(var(--rel-pending));
+  }
+  .rel-disputed {
+    color: oklch(var(--rel-disputed));
+  }
+  .rel-disputed::before {
+    background-color: oklch(var(--rel-disputed));
+  }
+
+  /* Relationship request card: proposed connection awaiting confirmation */
+  .rel-request-card {
+    @apply flex flex-col gap-3 rounded-xl border border-border/60 bg-card p-4;
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.1);
+  }
+  .rel-request-head {
+    @apply flex items-center justify-between gap-2;
+  }
+  .rel-request-title {
+    @apply font-display text-base font-semibold leading-tight;
+    color: oklch(var(--foreground));
+  }
+  .rel-request-detail {
+    @apply text-sm leading-relaxed;
+    color: oklch(var(--muted-foreground));
+  }
+  .rel-request-actions {
+    @apply flex flex-wrap items-center gap-2;
+  }
+
+  /* ---- Family Steward review area ---- */
+
+  /* Steward panel: groups claim + relationship requests for action */
+  .steward-panel {
+    @apply flex flex-col gap-4;
+  }
+  .steward-section {
+    @apply flex flex-col gap-3 rounded-xl border border-border/60 p-4;
+    background-color: oklch(var(--steward-surface));
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.1);
+  }
+  .steward-section-title {
+    @apply text-xs font-semibold uppercase tracking-[0.2em];
+    color: oklch(var(--muted-foreground));
+  }
+
+  /* Review request card: one claim or relationship request with actions */
+  .review-card {
+    @apply flex flex-col gap-3 rounded-xl border border-border/60 bg-card p-4;
+    box-shadow: 0 1px 2px -1px oklch(0.36 0.05 45 / 0.08);
+  }
+  .review-card-head {
+    @apply flex items-start justify-between gap-2;
+  }
+  .review-card-title {
+    @apply font-display text-sm font-semibold leading-tight;
+    color: oklch(var(--foreground));
+  }
+  .review-card-meta {
+    @apply text-xs leading-snug;
+    color: oklch(var(--muted-foreground));
+  }
+  .review-card-actions {
+    @apply flex flex-wrap items-center gap-2;
+  }
+
+  /* Steward actions: approve (warm green) / reject (terracotta) / pending (bronze) */
+  .steward-approve {
+    @apply inline-flex min-h-[44px] items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold;
+    color: oklch(var(--steward-approve));
+    background-color: oklch(var(--steward-approve) / 0.12);
+    border: 1px solid oklch(var(--steward-approve) / 0.35);
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color
+      0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .steward-approve:hover {
+    background-color: oklch(var(--steward-approve) / 0.2);
+  }
+  .steward-reject {
+    @apply inline-flex min-h-[44px] items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold;
+    color: oklch(var(--steward-reject));
+    background-color: oklch(var(--steward-reject) / 0.1);
+    border: 1px solid oklch(var(--steward-reject) / 0.35);
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color
+      0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .steward-reject:hover {
+    background-color: oklch(var(--steward-reject) / 0.18);
+  }
+  .steward-pending-action {
+    @apply inline-flex min-h-[44px] items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold;
+    color: oklch(var(--steward-pending));
+    background-color: oklch(var(--card));
+    border: 1px solid oklch(var(--steward-pending) / 0.35);
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color
+      0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .steward-pending-action:hover {
+    background-color: oklch(var(--steward-pending) / 0.12);
+  }
+
+  /* ---- In-app notifications ---- */
+
+  /* Notification badge: unread-count dot on the bell / nav */
+  .notif-badge {
+    @apply inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[10px] font-bold tabular-nums;
+    color: oklch(var(--primary-foreground));
+    background-color: oklch(var(--notif-badge));
+    box-shadow: 0 0 0 2px oklch(var(--card));
+  }
+
+  /* Notification list + item */
+  .notif-list {
+    @apply flex flex-col gap-2;
+  }
+  .notif-item {
+    @apply flex items-start gap-3 rounded-xl border border-border/60 bg-card p-4;
+    box-shadow: 0 1px 2px -1px oklch(0.36 0.05 45 / 0.08);
+    transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color
+      0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .notif-item:hover,
+  .notif-item:focus-within {
+    border-color: oklch(var(--notif-unread) / 0.6);
+  }
+  .notif-item-unread {
+    background-color: oklch(var(--notif-unread) / 0.06);
+    border-color: oklch(var(--notif-unread) / 0.35);
+  }
+  .notif-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background-color: oklch(var(--notif-unread));
+    margin-top: 0.35rem;
+    flex-shrink: 0;
+  }
+  .notif-item-read .notif-dot {
+    background-color: oklch(var(--notif-read));
+  }
+  .notif-body {
+    @apply flex min-w-0 flex-1 flex-col gap-1;
+  }
+  .notif-title {
+    @apply text-sm font-semibold leading-snug;
+    color: oklch(var(--foreground));
+  }
+  .notif-detail {
+    @apply text-xs leading-snug;
+    color: oklch(var(--muted-foreground));
+  }
+  .notif-time {
+    @apply text-[11px] font-medium;
+    color: oklch(var(--muted-foreground));
+  }
+  .notif-item-unread .notif-title {
+    color: oklch(var(--notif-unread));
+  }
+
+  /* ---- Owner profile editing ---- */
+
+  /* Editable owner form: reuses .form-input/.form-textarea/.field-label */
+  .owner-form {
+    @apply flex flex-col gap-5;
+  }
+  .owner-field-group {
+    @apply flex flex-col gap-1.5;
+  }
+  .owner-editable-hint {
+    @apply text-xs leading-snug;
+    color: oklch(var(--muted-foreground));
+  }
+  .owner-save {
+    @apply inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold;
+    color: oklch(var(--primary-foreground));
+    background-color: oklch(var(--owner-accent));
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.18);
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow
+      0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .owner-save:hover {
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.24);
+  }
+  .owner-save:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(var(--ring) / 0.35);
+  }
+  .owner-relationship-note {
+    @apply rounded-lg border border-dashed border-border/70 px-3.5 py-2.5 text-xs leading-relaxed;
+    background-color: oklch(var(--card) / 0.5);
+    color: oklch(var(--muted-foreground));
+  }
+
+  /* ---- Consumer Sign-In (Google + Apple) ---- */
+
+  /* Auth panel: a warm paper card that hosts the sign-in options. Used at
+     login, at Add Myself final submission, and for 'This is Me' claims. */
+  .signin-panel {
+    @apply mx-auto flex w-full max-w-sm flex-col gap-5 rounded-2xl border border-border/60 p-6 sm:p-7;
+    background-color: oklch(var(--signin-card));
+    color: oklch(var(--signin-card-foreground));
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.14), 0 0 0 3px
+      oklch(var(--photo-ring) / 0.18);
+    animation: fold-in 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+
+  /* Auth panel heading block: crest mark + title + hint */
+  .signin-head {
+    @apply flex flex-col items-center gap-2 text-center;
+  }
+  .signin-crest {
+    @apply flex h-14 w-14 items-center justify-center rounded-full;
+    background-color: oklch(var(--photo-ring) / 0.14);
+    box-shadow: 0 0 0 2px oklch(var(--photo-ring) / 0.5);
+    color: oklch(var(--owner-accent));
+  }
+  .signin-title {
+    @apply font-display text-xl font-semibold leading-snug;
+    color: oklch(var(--signin-card-foreground));
+  }
+  .signin-subtitle {
+    @apply text-sm leading-relaxed;
+    color: oklch(var(--signin-hint));
+  }
+
+  /* Sign-in button stack */
+  .signin-stack {
+    @apply flex flex-col gap-3;
+  }
+
+  /* Shared button base: full-width, familiar consumer auth shape */
+  .signin-btn {
+    @apply inline-flex min-h-[48px] w-full items-center justify-center gap-3 rounded-full px-5 text-[15px] font-semibold;
+    transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .signin-btn:hover {
+    transform: translateY(-1px);
+  }
+  .signin-btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(var(--ring) / 0.4);
+  }
+  .signin-btn .signin-logo {
+    @apply flex h-5 w-5 shrink-0 items-center justify-center;
+  }
+  .signin-btn .signin-logo svg {
+    @apply h-5 w-5;
+  }
+
+  /* Google: white surface, dark ink text, faint edge — the Google 'G' logo
+     (inline SVG) carries its own brand colors. */
+  .signin-google {
+    background-color: oklch(var(--signin-google-bg));
+    color: oklch(var(--signin-google-fg));
+    border: 1px solid oklch(var(--signin-google-border));
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.14);
+  }
+  .signin-google:hover {
+    background-color: oklch(var(--signin-google-bg) / 0.92);
+    box-shadow: 0 8px 20px -6px oklch(0.36 0.05 45 / 0.2);
+  }
+
+  /* Apple: near-black surface, white text + Apple logo (inline SVG). */
+  .signin-apple {
+    background-color: oklch(var(--signin-apple-bg));
+    color: oklch(var(--signin-apple-fg));
+    border: 1px solid oklch(var(--signin-apple-bg));
+    box-shadow: 0 2px 8px -2px oklch(0.2 0.01 30 / 0.4);
+  }
+  .signin-apple:hover {
+    background-color: oklch(var(--signin-apple-hover));
+    box-shadow: 0 8px 20px -6px oklch(0.2 0.01 30 / 0.5);
+  }
+
+  /* Divider with centered 'or' between the two provider buttons */
+  .signin-divider {
+    @apply flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.2em];
+    color: oklch(var(--signin-hint));
+  }
+  .signin-divider::before,
+  .signin-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background-color: oklch(var(--signin-divider));
+  }
+
+  /* Trust / privacy footnote under the buttons */
+  .signin-footnote {
+    @apply text-center text-xs leading-relaxed;
+    color: oklch(var(--signin-hint));
+  }
+  .signin-footnote strong {
+    @apply font-semibold;
+    color: oklch(var(--signin-card-foreground));
   }
 }

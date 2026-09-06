@@ -606,6 +606,44 @@ video {
     --hb-branch-foreground: 0.96 0.02 70;
     --hb-count: 0.42 0.11 35;
 
+    /* Profile ownership & claim workflow: unclaimed / claimed / pending */
+    --claim-unclaimed: 0.5 0.03 45;
+    --claim-claimed: 0.55 0.12 150;
+    --claim-pending: 0.55 0.09 60;
+
+    /* Relationship verification status: confirmed / pending / disputed */
+    --rel-confirmed: 0.55 0.12 150;
+    --rel-pending: 0.55 0.09 60;
+    --rel-disputed: 0.5 0.2 25;
+
+    /* Family Steward review surface + approve/reject/pending actions */
+    --steward-surface: 0.95 0.02 72;
+    --steward-approve: 0.55 0.12 150;
+    --steward-reject: 0.5 0.2 25;
+    --steward-pending: 0.55 0.09 60;
+
+    /* In-app notifications: unread emphasis + unread-count badge */
+    --notif-unread: 0.55 0.09 60;
+    --notif-read: 0.5 0.03 45;
+    --notif-badge: 0.5 0.2 25;
+
+    /* Owner profile editing: editable-field emphasis */
+    --owner-accent: 0.42 0.11 35;
+
+    /* Consumer sign-in (Google + Apple): warm paper auth surface + familiar
+       provider buttons. Brand logos are inline SVGs carrying their own
+       colors; button surfaces and text use these tokens. */
+    --signin-card: 0.985 0.015 70;
+    --signin-card-foreground: 0.22 0.04 45;
+    --signin-divider: 0.86 0.03 70;
+    --signin-hint: 0.5 0.03 45;
+    --signin-google-bg: 0.99 0.005 90;
+    --signin-google-fg: 0.24 0.03 45;
+    --signin-google-border: 0.86 0.03 70;
+    --signin-apple-bg: 0.2 0.01 30;
+    --signin-apple-fg: 0.96 0.01 60;
+    --signin-apple-hover: 0.28 0.01 30;
+
     --sidebar: 0.985 0.015 70;
     --sidebar-foreground: 0.22 0.04 45;
     --sidebar-primary: 0.42 0.11 35;
@@ -717,6 +755,44 @@ video {
     --hb-branch: 0.72 0.14 60;
     --hb-branch-foreground: 0.16 0.02 55;
     --hb-count: 0.72 0.14 60;
+
+    /* Profile ownership & claim workflow: unclaimed / claimed / pending */
+    --claim-unclaimed: 0.7 0.1 55;
+    --claim-claimed: 0.6 0.15 150;
+    --claim-pending: 0.72 0.14 60;
+
+    /* Relationship verification status: confirmed / pending / disputed */
+    --rel-confirmed: 0.6 0.15 150;
+    --rel-pending: 0.72 0.14 60;
+    --rel-disputed: 0.55 0.2 25;
+
+    /* Family Steward review surface + approve/reject/pending actions */
+    --steward-surface: 0.21 0.02 55;
+    --steward-approve: 0.6 0.15 150;
+    --steward-reject: 0.55 0.2 25;
+    --steward-pending: 0.72 0.14 60;
+
+    /* In-app notifications: unread emphasis + unread-count badge */
+    --notif-unread: 0.72 0.14 60;
+    --notif-read: 0.7 0.1 55;
+    --notif-badge: 0.55 0.2 25;
+
+    /* Owner profile editing: editable-field emphasis */
+    --owner-accent: 0.72 0.14 60;
+
+    /* Consumer sign-in (Google + Apple): warm paper auth surface + familiar
+       provider buttons. Brand logos are inline SVGs carrying their own
+       colors; button surfaces and text use these tokens. */
+    --signin-card: 0.2 0.02 55;
+    --signin-card-foreground: 0.93 0.02 60;
+    --signin-divider: 0.28 0.02 55;
+    --signin-hint: 0.7 0.1 55;
+    --signin-google-bg: 0.99 0.005 90;
+    --signin-google-fg: 0.24 0.03 45;
+    --signin-google-border: 0.28 0.02 55;
+    --signin-apple-bg: 0.2 0.01 30;
+    --signin-apple-fg: 0.96 0.01 60;
+    --signin-apple-hover: 0.28 0.01 30;
 
     --sidebar: 0.2 0.02 55;
     --sidebar-foreground: 0.93 0.02 60;
@@ -1099,6 +1175,9 @@ video {
   width: 100%;
   height: 100%;
 }
+.\!h-9 {
+  height: 2.25rem !important;
+}
 .h-1\.5 {
   height: 0.375rem;
 }
@@ -1123,6 +1202,12 @@ video {
 .h-2\.5 {
   height: 0.625rem;
 }
+.h-20 {
+  height: 5rem;
+}
+.h-24 {
+  height: 6rem;
+}
 .h-3 {
   height: 0.75rem;
 }
@@ -1131,6 +1216,9 @@ video {
 }
 .h-4 {
   height: 1rem;
+}
+.h-40 {
+  height: 10rem;
 }
 .h-5 {
   height: 1.25rem;
@@ -1171,6 +1259,9 @@ video {
 .h-svh {
   height: 100svh;
 }
+.max-h-72 {
+  max-height: 18rem;
+}
 .max-h-\[300px\] {
   max-height: 300px;
 }
@@ -1189,6 +1280,9 @@ video {
 .min-h-\[44px\] {
   min-height: 44px;
 }
+.min-h-\[48px\] {
+  min-height: 48px;
+}
 .min-h-\[7rem\] {
   min-height: 7rem;
 }
@@ -1197,6 +1291,9 @@ video {
 }
 .min-h-svh {
   min-height: 100svh;
+}
+.\!w-9 {
+  width: 2.25rem !important;
 }
 .w-0 {
   width: 0px;
@@ -1237,6 +1334,12 @@ video {
 .w-2\/3 {
   width: 66.666667%;
 }
+.w-20 {
+  width: 5rem;
+}
+.w-24 {
+  width: 6rem;
+}
 .w-3 {
   width: 0.75rem;
 }
@@ -1251,6 +1354,9 @@ video {
 }
 .w-40 {
   width: 10rem;
+}
+.w-48 {
+  width: 12rem;
 }
 .w-5 {
   width: 1.25rem;
@@ -1335,6 +1441,9 @@ video {
 .max-w-6xl {
   max-width: 72rem;
 }
+.max-w-\[12rem\] {
+  max-width: 12rem;
+}
 .max-w-\[3\.5rem\] {
   max-width: 3.5rem;
 }
@@ -1372,11 +1481,17 @@ video {
 .max-w-sm {
   max-width: 24rem;
 }
+.max-w-xl {
+  max-width: 36rem;
+}
 .max-w-xs {
   max-width: 20rem;
 }
 .flex-1 {
   flex: 1 1 0%;
+}
+.flex-shrink {
+  flex-shrink: 1;
 }
 .shrink-0 {
   flex-shrink: 0;
@@ -1595,6 +1710,11 @@ video {
   margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(0.5rem * var(--tw-space-y-reverse));
 }
+.space-y-3 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(0.75rem * var(--tw-space-y-reverse));
+}
 .space-y-4 > :not([hidden]) ~ :not([hidden]) {
   --tw-space-y-reverse: 0;
   margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
@@ -1728,6 +1848,9 @@ video {
 .border-accent\/40 {
   border-color: oklch(var(--accent) / 0.4);
 }
+.border-accent\/60 {
+  border-color: oklch(var(--accent) / 0.6);
+}
 .border-border {
   --tw-border-opacity: 1;
   border-color: oklch(var(--border) / var(--tw-border-opacity, 1));
@@ -1769,6 +1892,9 @@ video {
 .bg-accent {
   --tw-bg-opacity: 1;
   background-color: oklch(var(--accent) / var(--tw-bg-opacity, 1));
+}
+.bg-accent\/10 {
+  background-color: oklch(var(--accent) / 0.1);
 }
 .bg-accent\/15 {
   background-color: oklch(var(--accent) / 0.15);
@@ -1926,6 +2052,10 @@ video {
   padding-top: 3rem;
   padding-bottom: 3rem;
 }
+.py-14 {
+  padding-top: 3.5rem;
+  padding-bottom: 3.5rem;
+}
 .py-16 {
   padding-top: 4rem;
   padding-bottom: 4rem;
@@ -1937,6 +2067,10 @@ video {
 .py-2\.5 {
   padding-top: 0.625rem;
   padding-bottom: 0.625rem;
+}
+.py-24 {
+  padding-top: 6rem;
+  padding-bottom: 6rem;
 }
 .py-3 {
   padding-top: 0.75rem;
@@ -2018,6 +2152,10 @@ video {
 .font-mono {
   font-family: var(--font-mono), monospace;
 }
+.\!text-xs {
+  font-size: 0.75rem !important;
+  line-height: 1rem !important;
+}
 .text-2xl {
   font-size: 1.5rem;
   line-height: 2rem;
@@ -2041,6 +2179,9 @@ video {
 }
 .text-\[11px\] {
   font-size: 11px;
+}
+.text-\[15px\] {
+  font-size: 15px;
 }
 .text-\[8px\] {
   font-size: 8px;
@@ -2145,6 +2286,9 @@ video {
 .text-muted-foreground {
   --tw-text-opacity: 1;
   color: oklch(var(--muted-foreground) / var(--tw-text-opacity, 1));
+}
+.text-muted-foreground\/70 {
+  color: oklch(var(--muted-foreground) / 0.7);
 }
 .text-popover-foreground {
   color: oklch(var(--popover-foreground));
@@ -5018,6 +5162,773 @@ video {
     stroke-width: 1.5;
     stroke-linecap: round;
   }
+/* ---- Profile Ownership & Claim workflow ---- */
+/* Claim status badge: unclaimed / claimed / pending (reuses the dot-pill
+     pattern from .status-pill) */
+.claim-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: 9999px;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  padding-left: 0.625rem;
+  padding-right: 0.625rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+    background-color: oklch(var(--card));
+}
+.claim-badge::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+  }
+.claim-badge-unclaimed {
+    color: oklch(var(--claim-unclaimed));
+  }
+.claim-badge-unclaimed::before {
+    background-color: oklch(var(--claim-unclaimed));
+  }
+.claim-badge-claimed {
+    color: oklch(var(--claim-claimed));
+  }
+.claim-badge-claimed::before {
+    background-color: oklch(var(--claim-claimed));
+  }
+.claim-badge-pending {
+    color: oklch(var(--claim-pending));
+  }
+.claim-badge-pending::before {
+    background-color: oklch(var(--claim-pending));
+  }
+/* 'This is Me' claim action: warm sepia pill that invites ownership */
+.this-is-me-action {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+    color: oklch(var(--primary-foreground));
+    background-color: oklch(var(--primary));
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.18);
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow
+      0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.this-is-me-action:hover {
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.24);
+  }
+.this-is-me-action:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(var(--ring) / 0.35);
+  }
+/* Claimed / owned profile: bronze halo ring on the owner portrait */
+.owner-ring {
+    box-shadow: 0 0 0 3px oklch(var(--owner-accent));
+  }
+/* Claim banner: pending claim notice on an unclaimed living profile */
+.claim-banner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  background-color: oklch(var(--card));
+  padding: 1rem;
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.1);
+}
+.claim-banner-title {
+  font-family: var(--font-display), serif;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 600;
+    color: oklch(var(--foreground));
+}
+.claim-banner-hint {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  line-height: 1.625;
+    color: oklch(var(--muted-foreground));
+}
+/* ---- Add Myself to This Family & duplicate matching ---- */
+/* Duplicate-match card: a possible existing person with 'This is Me' or
+     'None of these are me' options */
+.match-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  background-color: oklch(var(--card));
+  padding: 0.75rem;
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.1);
+    transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+}
+.match-card:hover,
+  .match-card:focus-within {
+    border-color: oklch(var(--photo-ring) / 0.6);
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.2);
+  }
+.match-card-portrait {
+  display: flex;
+  height: 3rem;
+  width: 3rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  font-family: var(--font-display), serif;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 600;
+    background-color: oklch(var(--muted));
+    color: oklch(var(--muted-foreground));
+    box-shadow: 0 0 0 2px oklch(var(--photo-ring-soft));
+    overflow: hidden;
+}
+.match-card-portrait img {
+  height: 100%;
+  width: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.match-card-body {
+  display: flex;
+  min-width: 0px;
+  flex: 1 1 0%;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+.match-card-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-display), serif;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  line-height: 1.25;
+    color: oklch(var(--foreground));
+}
+.match-card-parents {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  line-height: 1.375;
+    color: oklch(var(--muted-foreground));
+}
+.match-card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.match-this-is-me {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  border-radius: 9999px;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+    color: oklch(var(--primary-foreground));
+    background-color: oklch(var(--primary));
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.match-this-is-me:hover {
+    background-color: oklch(var(--primary) / 0.9);
+  }
+.match-none {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  border-radius: 9999px;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+    background-color: oklch(var(--card));
+    color: oklch(var(--foreground));
+    transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.match-none:hover {
+    border-color: oklch(var(--photo-ring));
+  }
+/* Connection picker: choose Parent / Child / Sibling / Spouse or Partner */
+.relation-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.relation-option {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: 9999px;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+    background-color: oklch(var(--card));
+    color: oklch(var(--foreground));
+    transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color
+      0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.relation-option:hover {
+    border-color: oklch(var(--photo-ring));
+  }
+.relation-option-selected {
+    background-color: oklch(var(--owner-accent));
+    color: oklch(var(--primary-foreground));
+    border-color: oklch(var(--owner-accent));
+  }
+/* ---- Relationship Requests & verification ---- */
+/* Relationship verification status badge: confirmed / pending / disputed */
+.rel-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: 9999px;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  padding-left: 0.625rem;
+  padding-right: 0.625rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+    background-color: oklch(var(--card));
+}
+.rel-status::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+  }
+.rel-confirmed {
+    color: oklch(var(--rel-confirmed));
+  }
+.rel-confirmed::before {
+    background-color: oklch(var(--rel-confirmed));
+  }
+.rel-pending {
+    color: oklch(var(--rel-pending));
+  }
+.rel-pending::before {
+    background-color: oklch(var(--rel-pending));
+  }
+.rel-disputed {
+    color: oklch(var(--rel-disputed));
+  }
+.rel-disputed::before {
+    background-color: oklch(var(--rel-disputed));
+  }
+/* Relationship request card: proposed connection awaiting confirmation */
+.rel-request-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  background-color: oklch(var(--card));
+  padding: 1rem;
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.1);
+}
+.rel-request-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.rel-request-title {
+  font-family: var(--font-display), serif;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 600;
+  line-height: 1.25;
+    color: oklch(var(--foreground));
+}
+.rel-request-detail {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  line-height: 1.625;
+    color: oklch(var(--muted-foreground));
+}
+.rel-request-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+/* ---- Family Steward review area ---- */
+/* Steward panel: groups claim + relationship requests for action */
+.steward-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.steward-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  padding: 1rem;
+    background-color: oklch(var(--steward-surface));
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.1);
+}
+.steward-section-title {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+    color: oklch(var(--muted-foreground));
+}
+/* Review request card: one claim or relationship request with actions */
+.review-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  background-color: oklch(var(--card));
+  padding: 1rem;
+    box-shadow: 0 1px 2px -1px oklch(0.36 0.05 45 / 0.08);
+}
+.review-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.review-card-title {
+  font-family: var(--font-display), serif;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  line-height: 1.25;
+    color: oklch(var(--foreground));
+}
+.review-card-meta {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  line-height: 1.375;
+    color: oklch(var(--muted-foreground));
+}
+.review-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+/* Steward actions: approve (warm green) / reject (terracotta) / pending (bronze) */
+.steward-approve {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: 9999px;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+    color: oklch(var(--steward-approve));
+    background-color: oklch(var(--steward-approve) / 0.12);
+    border: 1px solid oklch(var(--steward-approve) / 0.35);
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color
+      0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.steward-approve:hover {
+    background-color: oklch(var(--steward-approve) / 0.2);
+  }
+.steward-reject {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: 9999px;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+    color: oklch(var(--steward-reject));
+    background-color: oklch(var(--steward-reject) / 0.1);
+    border: 1px solid oklch(var(--steward-reject) / 0.35);
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color
+      0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.steward-reject:hover {
+    background-color: oklch(var(--steward-reject) / 0.18);
+  }
+.steward-pending-action {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: 9999px;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+    color: oklch(var(--steward-pending));
+    background-color: oklch(var(--card));
+    border: 1px solid oklch(var(--steward-pending) / 0.35);
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color
+      0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.steward-pending-action:hover {
+    background-color: oklch(var(--steward-pending) / 0.12);
+  }
+/* ---- In-app notifications ---- */
+/* Notification badge: unread-count dot on the bell / nav */
+.notif-badge {
+  display: inline-flex;
+  height: 1.25rem;
+  min-width: 1.25rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+  font-size: 10px;
+  font-weight: 700;
+  --tw-numeric-spacing: tabular-nums;
+  font-variant-numeric: var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction);
+    color: oklch(var(--primary-foreground));
+    background-color: oklch(var(--notif-badge));
+    box-shadow: 0 0 0 2px oklch(var(--card));
+}
+/* Notification list + item */
+.notif-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.notif-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  background-color: oklch(var(--card));
+  padding: 1rem;
+    box-shadow: 0 1px 2px -1px oklch(0.36 0.05 45 / 0.08);
+    transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color
+      0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.notif-item:hover,
+  .notif-item:focus-within {
+    border-color: oklch(var(--notif-unread) / 0.6);
+  }
+.notif-item-unread {
+    background-color: oklch(var(--notif-unread) / 0.06);
+    border-color: oklch(var(--notif-unread) / 0.35);
+  }
+.notif-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background-color: oklch(var(--notif-unread));
+    margin-top: 0.35rem;
+    flex-shrink: 0;
+  }
+.notif-item-read .notif-dot {
+    background-color: oklch(var(--notif-read));
+  }
+.notif-body {
+  display: flex;
+  min-width: 0px;
+  flex: 1 1 0%;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.notif-title {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  line-height: 1.375;
+    color: oklch(var(--foreground));
+}
+.notif-detail {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  line-height: 1.375;
+    color: oklch(var(--muted-foreground));
+}
+.notif-time {
+  font-size: 11px;
+  font-weight: 500;
+    color: oklch(var(--muted-foreground));
+}
+.notif-item-unread .notif-title {
+    color: oklch(var(--notif-unread));
+  }
+/* ---- Owner profile editing ---- */
+/* Editable owner form: reuses .form-input/.form-textarea/.field-label */
+.owner-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.owner-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+.owner-editable-hint {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  line-height: 1.375;
+    color: oklch(var(--muted-foreground));
+}
+.owner-save {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+    color: oklch(var(--primary-foreground));
+    background-color: oklch(var(--owner-accent));
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.18);
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow
+      0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.owner-save:hover {
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.24);
+  }
+.owner-save:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(var(--ring) / 0.35);
+  }
+.owner-relationship-note {
+  border-radius: var(--radius);
+  border-width: 1px;
+  border-style: dashed;
+  border-color: oklch(var(--border) / 0.7);
+  padding-left: 0.875rem;
+  padding-right: 0.875rem;
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  line-height: 1.625;
+    background-color: oklch(var(--card) / 0.5);
+    color: oklch(var(--muted-foreground));
+}
+/* ---- Consumer Sign-In (Google + Apple) ---- */
+/* Auth panel: a warm paper card that hosts the sign-in options. Used at
+     login, at Add Myself final submission, and for 'This is Me' claims. */
+.signin-panel {
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  width: 100%;
+  max-width: 24rem;
+  flex-direction: column;
+  gap: 1.25rem;
+  border-radius: 1rem;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  padding: 1.5rem;
+}
+@media (min-width: 640px) {
+
+  .signin-panel {
+    padding: 1.75rem;
+  }
+}
+.signin-panel {
+    background-color: oklch(var(--signin-card));
+    color: oklch(var(--signin-card-foreground));
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.14), 0 0 0 3px
+      oklch(var(--photo-ring) / 0.18);
+    animation: fold-in 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+/* Auth panel heading block: crest mark + title + hint */
+.signin-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: center;
+}
+.signin-crest {
+  display: flex;
+  height: 3.5rem;
+  width: 3.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+    background-color: oklch(var(--photo-ring) / 0.14);
+    box-shadow: 0 0 0 2px oklch(var(--photo-ring) / 0.5);
+    color: oklch(var(--owner-accent));
+}
+.signin-title {
+  font-family: var(--font-display), serif;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+  line-height: 1.375;
+    color: oklch(var(--signin-card-foreground));
+}
+.signin-subtitle {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  line-height: 1.625;
+    color: oklch(var(--signin-hint));
+}
+/* Sign-in button stack */
+.signin-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+/* Shared button base: full-width, familiar consumer auth shape */
+.signin-btn {
+  display: inline-flex;
+  min-height: 48px;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  border-radius: 9999px;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  font-size: 15px;
+  font-weight: 600;
+    transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+}
+.signin-btn:hover {
+    transform: translateY(-1px);
+  }
+.signin-btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(var(--ring) / 0.4);
+  }
+.signin-btn .signin-logo {
+  display: flex;
+  height: 1.25rem;
+  width: 1.25rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+}
+.signin-btn .signin-logo svg {
+  height: 1.25rem;
+  width: 1.25rem;
+}
+/* Google: white surface, dark ink text, faint edge — the Google 'G' logo
+     (inline SVG) carries its own brand colors. */
+.signin-google {
+    background-color: oklch(var(--signin-google-bg));
+    color: oklch(var(--signin-google-fg));
+    border: 1px solid oklch(var(--signin-google-border));
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.14);
+  }
+.signin-google:hover {
+    background-color: oklch(var(--signin-google-bg) / 0.92);
+    box-shadow: 0 8px 20px -6px oklch(0.36 0.05 45 / 0.2);
+  }
+/* Apple: near-black surface, white text + Apple logo (inline SVG). */
+.signin-apple {
+    background-color: oklch(var(--signin-apple-bg));
+    color: oklch(var(--signin-apple-fg));
+    border: 1px solid oklch(var(--signin-apple-bg));
+    box-shadow: 0 2px 8px -2px oklch(0.2 0.01 30 / 0.4);
+  }
+.signin-apple:hover {
+    background-color: oklch(var(--signin-apple-hover));
+    box-shadow: 0 8px 20px -6px oklch(0.2 0.01 30 / 0.5);
+  }
+/* Divider with centered 'or' between the two provider buttons */
+.signin-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+    color: oklch(var(--signin-hint));
+}
+.signin-divider::before,
+  .signin-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background-color: oklch(var(--signin-divider));
+  }
+/* Trust / privacy footnote under the buttons */
+.signin-footnote {
+  text-align: center;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  line-height: 1.625;
+    color: oklch(var(--signin-hint));
+}
+.signin-footnote strong {
+  font-weight: 600;
+    color: oklch(var(--signin-card-foreground));
+}
 .\[--cell-size\:--spacing\(8\)\] {
   --cell-size: var(--spacing(8));
 }
@@ -5164,6 +6075,10 @@ video {
   border-bottom-right-radius: calc(var(--radius) - 2px);
 }
 
+.last\:border-0:last-child {
+  border-width: 0px;
+}
+
 .last\:border-b-0:last-child {
   border-bottom-width: 0px;
 }
@@ -5175,6 +6090,16 @@ video {
 
 .hover\:border-accent\/50:hover {
   border-color: oklch(var(--accent) / 0.5);
+}
+
+.hover\:border-destructive:hover {
+  --tw-border-opacity: 1;
+  border-color: oklch(var(--destructive) / var(--tw-border-opacity, 1));
+}
+
+.hover\:border-primary:hover {
+  --tw-border-opacity: 1;
+  border-color: oklch(var(--primary) / var(--tw-border-opacity, 1));
 }
 
 .hover\:bg-accent:hover {
@@ -5209,6 +6134,11 @@ video {
 
 .hover\:text-accent-foreground:hover {
   color: oklch(var(--accent-foreground));
+}
+
+.hover\:text-destructive:hover {
+  --tw-text-opacity: 1;
+  color: oklch(var(--destructive) / var(--tw-text-opacity, 1));
 }
 
 .hover\:text-foreground:hover {
@@ -5327,6 +6257,10 @@ video {
   --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
   --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color);
   box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+}
+
+.focus-visible\:ring-inset:focus-visible {
+  --tw-ring-inset: inset;
 }
 
 .focus-visible\:ring-destructive\/20:focus-visible {

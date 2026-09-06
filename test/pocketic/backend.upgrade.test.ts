@@ -1,4 +1,4 @@
-import { PocketIc } from "@dfinity/pic";
+import { PocketIc, createIdentity } from "@dfinity/pic";
 import { afterAll, beforeAll, expect, it } from "vitest";
 
 import { idlFactory } from "../../src/frontend/src/declarations/backend.did.js";
@@ -64,4 +64,20 @@ it("carries photos written by the previous version through the upgrade", async (
   expect(profile).toEqual([
     expect.objectContaining({ filename: "julia-old.png" }),
   ]);
+
+  // The migration initializes the new account-identity map: a signed-in caller
+  // can bind an auth method and read their stable account id after the upgrade.
+  const accountIdentity = createIdentity("upgrade-account-seed");
+  upgraded.setIdentity(accountIdentity);
+  const bound = await upgraded.bindAuthMethod({ Google: null });
+  expect(bound).toEqual({
+    ok: {
+      id: accountIdentity.getPrincipal(),
+      createdAt: expect.any(BigInt),
+      authMethods: [{ Google: null }],
+    },
+  });
+  await expect(upgraded.getMyAccountId()).resolves.toEqual({
+    ok: accountIdentity.getPrincipal(),
+  });
 });

@@ -192,3 +192,57 @@ it("does not let a non-admin list or approve pending contributions", async () =>
   await expect(actor.approveArchiveItem(0n)).rejects.toThrow();
   await expect(actor.rejectArchiveItem(0n)).rejects.toThrow();
 });
+
+// ---------------------------------------------------------------------------
+// Account identity (cover for the Google/Apple sign-in change). The account id
+// is the caller's stable ICP Principal — never an email or a Google/Apple
+// provider identifier — and Google/Apple are authentication methods bound to
+// that same account. Anonymous callers are rejected with #NotSignedIn.
+// ---------------------------------------------------------------------------
+
+it("rejects an anonymous caller from account-identity methods", async () => {
+  // A fresh actor defaults to the anonymous caller.
+  const anonymousActor = pic!.createActor<_SERVICE>(idlFactory, canisterId);
+  await expect(anonymousActor.getMyAccountId()).resolves.toEqual({
+    err: { NotSignedIn: null },
+  });
+  await expect(anonymousActor.getMyAuthMethods()).resolves.toEqual({
+    err: { NotSignedIn: null },
+  });
+  await expect(
+    anonymousActor.bindAuthMethod({ Google: null }),
+  ).resolves.toEqual({ err: { NotSignedIn: null } });
+});
+
+it("returns the caller's stable principal as the account id", async () => {
+  actor.setIdentity(contributorIdentity);
+  const result = await actor.getMyAccountId();
+  expect(result).toEqual({ ok: CONTRIBUTOR });
+});
+
+it("binds Google and Apple auth methods to the same account and reflects them", async () => {
+  actor.setIdentity(contributorIdentity);
+
+  // Bind Google, then Apple, to the same account.
+  const googleAccount = await actor.bindAuthMethod({ Google: null });
+  expect(googleAccount).toEqual({
+    ok: {
+      id: CONTRIBUTOR,
+      createdAt: expect.any(BigInt),
+      authMethods: [{ Google: null }],
+    },
+  });
+
+  const appleAccount = await actor.bindAuthMethod({ Apple: null });
+  expect(appleAccount).toEqual({
+    ok: {
+      id: CONTRIBUTOR,
+      createdAt: expect.any(BigInt),
+      authMethods: [{ Google: null }, { Apple: null }],
+    },
+  });
+
+  // Both methods are bound to the same stable account id.
+  const methods = await actor.getMyAuthMethods();
+  expect(methods).toEqual({ ok: { google: true, apple: true } });
+});

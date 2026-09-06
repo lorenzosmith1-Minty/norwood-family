@@ -9,7 +9,13 @@ import {
 import { ExternalBlob } from "@caffeineai/object-storage";
 import { Principal } from "@icp-sdk/core/principal";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { cleanup, render, screen, within } from "@testing-library/react";
+import {
+  cleanup,
+  configure,
+  render,
+  screen,
+  within,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {
   afterEach,
@@ -21,6 +27,9 @@ import {
   vi,
 } from "vitest";
 import App from "./App";
+
+// The generated components use data-ocid for test ids.
+configure({ testIdAttribute: "data-ocid" });
 
 // A stateful in-memory actor standing in for the real backend so the archive
 // contribution and admin-approval journeys can be exercised end to end without
@@ -176,7 +185,9 @@ describe("Archive contribution: anonymous sign-in gate", () => {
     expect(
       screen.getByRole("heading", { name: "Sign in to add to our history" }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Sign in" })).toBeInTheDocument();
+    expect(
+      screen.getByTestId("archive.signin.primary_button"),
+    ).toBeInTheDocument();
     // The eight type choices are not shown until the user is signed in.
     expect(
       screen.queryByRole("button", { name: /Add Photo/ }),

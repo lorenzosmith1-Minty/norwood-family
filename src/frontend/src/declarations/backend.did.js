@@ -40,7 +40,7 @@ export const Error = IDL.Variant({
     'expected' : IDL.Vec(IDL.Text),
   }),
 });
-export const Result__1 = IDL.Variant({ 'ok' : IDL.Null, 'err' : Error });
+export const Result_8 = IDL.Variant({ 'ok' : IDL.Null, 'err' : Error });
 export const PersonId = IDL.Text;
 export const ExternalBlob = IDL.Vec(IDL.Nat8);
 export const PhotoId = IDL.Nat;
@@ -96,10 +96,86 @@ export const ArchiveItem = IDL.Record({
   'sourceStatus' : SourceStatus,
   'contributor' : IDL.Principal,
 });
+export const ProfileClaimStatus = IDL.Variant({
+  'Approved' : IDL.Null,
+  'Rejected' : IDL.Null,
+  'Pending' : IDL.Null,
+});
+export const ProfileClaim = IDL.Record({
+  'id' : IDL.Nat,
+  'submittedDate' : IDL.Int,
+  'status' : ProfileClaimStatus,
+  'reviewedDate' : IDL.Opt(IDL.Int),
+  'reviewedBy' : IDL.Opt(IDL.Principal),
+  'personId' : PersonId,
+  'requestingUserId' : IDL.Principal,
+});
+export const RelationshipRequestStatus = IDL.Variant({
+  'Approved' : IDL.Null,
+  'Rejected' : IDL.Null,
+  'Pending' : IDL.Null,
+});
+export const RelationshipType = IDL.Variant({
+  'Parent' : IDL.Null,
+  'Sibling' : IDL.Null,
+  'SpousePartner' : IDL.Null,
+  'Child' : IDL.Null,
+});
+export const RelationshipRequest = IDL.Record({
+  'id' : IDL.Nat,
+  'submittedDate' : IDL.Int,
+  'status' : RelationshipRequestStatus,
+  'reviewedDate' : IDL.Opt(IDL.Int),
+  'relatedPersonId' : PersonId,
+  'requestingPersonId' : PersonId,
+  'proposedRelationship' : RelationshipType,
+  'reviewer' : IDL.Opt(IDL.Principal),
+});
 export const UserRole = IDL.Variant({
   'admin' : IDL.Null,
   'user' : IDL.Null,
   'guest' : IDL.Null,
+});
+export const AuthMethod = IDL.Variant({
+  'Google' : IDL.Null,
+  'Apple' : IDL.Null,
+});
+export const AccountId = IDL.Principal;
+export const Account = IDL.Record({
+  'id' : AccountId,
+  'createdAt' : IDL.Int,
+  'authMethods' : IDL.Vec(AuthMethod),
+});
+export const AccountError = IDL.Variant({
+  'AccountNotFound' : IDL.Null,
+  'NotSignedIn' : IDL.Null,
+});
+export const Result_7 = IDL.Variant({ 'ok' : Account, 'err' : AccountError });
+export const ClaimStatus = IDL.Variant({
+  'Unclaimed' : IDL.Null,
+  'Claimed' : IDL.Null,
+});
+export const LivingStatus = IDL.Variant({
+  'Living' : IDL.Null,
+  'Deceased' : IDL.Null,
+});
+export const PersonProfile = IDL.Record({
+  'occupation' : IDL.Opt(IDL.Text),
+  'privacySettings' : IDL.Opt(IDL.Text),
+  'claimedByUserId' : IDL.Opt(IDL.Principal),
+  'birthInfo' : IDL.Opt(IDL.Text),
+  'claimStatus' : ClaimStatus,
+  'livingStatus' : LivingStatus,
+  'name' : IDL.Text,
+  'personId' : PersonId,
+  'story' : IDL.Opt(IDL.Text),
+  'preferredName' : IDL.Opt(IDL.Text),
+  'timeline' : IDL.Opt(IDL.Vec(IDL.Text)),
+});
+export const CreateError = IDL.Variant({ 'NotSignedIn' : IDL.Null });
+export const Result_6 = IDL.Variant({
+  'ok' : PersonProfile,
+  'err' : CreateError,
 });
 export const Value = IDL.Variant({
   'int' : IDL.Int,
@@ -110,10 +186,91 @@ export const Value = IDL.Variant({
   'text' : IDL.Text,
 });
 export const Cell = IDL.Record({ 'value' : Value, 'name' : IDL.Text });
-export const Result = IDL.Record({
+export const Result__1 = IDL.Record({
   'hasMore' : IDL.Bool,
   'rows' : IDL.Vec(IDL.Vec(Cell)),
 });
+export const Result_5 = IDL.Variant({ 'ok' : AccountId, 'err' : AccountError });
+export const AuthMethods = IDL.Record({
+  'apple' : IDL.Bool,
+  'google' : IDL.Bool,
+});
+export const Result_4 = IDL.Variant({
+  'ok' : AuthMethods,
+  'err' : AccountError,
+});
+export const RelationshipStatus = IDL.Variant({
+  'Disputed' : IDL.Null,
+  'Confirmed' : IDL.Null,
+  'Pending' : IDL.Null,
+});
+export const Relationship = IDL.Record({
+  'id' : IDL.Nat,
+  'status' : RelationshipStatus,
+  'fromPersonId' : PersonId,
+  'toPersonId' : PersonId,
+  'relationshipType' : RelationshipType,
+});
+export const NotificationType = IDL.Variant({
+  'RelationshipRequested' : IDL.Null,
+  'RelationshipReviewed' : IDL.Null,
+  'ProfileClaimReviewed' : IDL.Null,
+  'ProfileClaimRequested' : IDL.Null,
+});
+export const Notification = IDL.Record({
+  'id' : IDL.Nat,
+  'notificationType' : NotificationType,
+  'createdAt' : IDL.Int,
+  'read' : IDL.Bool,
+  'recipient' : IDL.Principal,
+  'message' : IDL.Text,
+});
+export const NotificationId = IDL.Nat;
+export const RelationshipError = IDL.Variant({
+  'DuplicateRequest' : IDL.Null,
+  'NotSignedIn' : IDL.Null,
+  'PersonNotFound' : IDL.Null,
+});
+export const Result_3 = IDL.Variant({
+  'ok' : RelationshipRequest,
+  'err' : RelationshipError,
+});
+export const RemoveError = IDL.Variant({
+  'ProfileNotFound' : IDL.Null,
+  'NotSignedIn' : IDL.Null,
+});
+export const Result_2 = IDL.Variant({ 'ok' : IDL.Null, 'err' : RemoveError });
+export const ClaimError = IDL.Variant({
+  'AlreadyPending' : IDL.Null,
+  'ProfileNotFound' : IDL.Null,
+  'AlreadyClaimed' : IDL.Null,
+  'NotSignedIn' : IDL.Null,
+  'DeceasedProfile' : IDL.Null,
+});
+export const Result_1 = IDL.Variant({
+  'ok' : ProfileClaim,
+  'err' : ClaimError,
+});
+export const PersonMatch = IDL.Record({
+  'name' : IDL.Text,
+  'personId' : PersonId,
+  'parents' : IDL.Vec(IDL.Text),
+});
+export const ProfileEdits = IDL.Record({
+  'occupation' : IDL.Opt(IDL.Text),
+  'privacySettings' : IDL.Opt(IDL.Text),
+  'birthInfo' : IDL.Opt(IDL.Text),
+  'story' : IDL.Opt(IDL.Text),
+  'preferredName' : IDL.Opt(IDL.Text),
+  'timeline' : IDL.Opt(IDL.Vec(IDL.Text)),
+});
+export const EditError = IDL.Variant({
+  'ProfileNotFound' : IDL.Null,
+  'NotSignedIn' : IDL.Null,
+  'NotOwner' : IDL.Null,
+  'DeceasedProfile' : IDL.Null,
+});
+export const Result = IDL.Variant({ 'ok' : PersonProfile, 'err' : EditError });
 
 export const idlService = IDL.Service({
   '_immutableObjectStorageBlobsAreLive' : IDL.Func(
@@ -143,7 +300,7 @@ export const idlService = IDL.Service({
     ),
   '_immutableObjectStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
   '_initialize_access_control' : IDL.Func([], [], []),
-  '_internet_identity_sign_in_finish' : IDL.Func([], [Result__1], []),
+  '_internet_identity_sign_in_finish' : IDL.Func([], [Result_8], []),
   '_internet_identity_sign_in_start' : IDL.Func([], [IDL.Vec(IDL.Nat8)], []),
   'addPhoto' : IDL.Func(
       [PersonId, IDL.Text, IDL.Text, ExternalBlob],
@@ -151,19 +308,90 @@ export const idlService = IDL.Service({
       [],
     ),
   'approveArchiveItem' : IDL.Func([ArchiveItemId], [IDL.Opt(ArchiveItem)], []),
+  'approveProfileClaim' : IDL.Func([IDL.Nat], [IDL.Opt(ProfileClaim)], []),
+  'approveRelationshipRequest' : IDL.Func(
+      [IDL.Nat],
+      [IDL.Opt(RelationshipRequest)],
+      [],
+    ),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-  'execute' : IDL.Func([IDL.Text], [Result], ['query']),
+  'bindAuthMethod' : IDL.Func([AuthMethod], [Result_7], []),
+  'createMyself' : IDL.Func([IDL.Text], [Result_6], []),
+  'execute' : IDL.Func([IDL.Text], [Result__1], ['query']),
   'getApiDoc' : IDL.Func([], [IDL.Text], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+  'getMyAccountId' : IDL.Func([], [Result_5], ['query']),
+  'getMyAuthMethods' : IDL.Func([], [Result_4], ['query']),
+  'getMyProfile' : IDL.Func([], [IDL.Opt(PersonProfile)], ['query']),
+  'getMyProfileClaim' : IDL.Func(
+      [PersonId],
+      [IDL.Opt(ProfileClaim)],
+      ['query'],
+    ),
+  'getMyRelationshipRequests' : IDL.Func(
+      [],
+      [IDL.Vec(RelationshipRequest)],
+      ['query'],
+    ),
+  'getPersonProfile' : IDL.Func(
+      [PersonId],
+      [IDL.Opt(PersonProfile)],
+      ['query'],
+    ),
   'getProfilePhoto' : IDL.Func([PersonId], [IDL.Opt(Photo)], ['query']),
+  'getRelationshipRequest' : IDL.Func(
+      [IDL.Nat],
+      [IDL.Opt(RelationshipRequest)],
+      ['query'],
+    ),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
   'listApprovedArchiveItems' : IDL.Func([], [IDL.Vec(ArchiveItem)], ['query']),
+  'listConfirmedRelationships' : IDL.Func(
+      [],
+      [IDL.Vec(Relationship)],
+      ['query'],
+    ),
+  'listNotifications' : IDL.Func([], [IDL.Vec(Notification)], ['query']),
   'listPendingArchiveItems' : IDL.Func([], [IDL.Vec(ArchiveItem)], ['query']),
   'listPhotos' : IDL.Func([PersonId], [IDL.Vec(Photo)], ['query']),
+  'listProfileClaims' : IDL.Func([], [IDL.Vec(ProfileClaim)], ['query']),
+  'listRelationshipRequests' : IDL.Func(
+      [],
+      [IDL.Vec(RelationshipRequest)],
+      ['query'],
+    ),
+  'markNotificationRead' : IDL.Func(
+      [NotificationId],
+      [IDL.Opt(Notification)],
+      [],
+    ),
+  'proposeRelationship' : IDL.Func(
+      [PersonId, PersonId, RelationshipType],
+      [Result_3],
+      [],
+    ),
   'rejectArchiveItem' : IDL.Func([ArchiveItemId], [IDL.Opt(ArchiveItem)], []),
+  'rejectProfileClaim' : IDL.Func([IDL.Nat], [IDL.Opt(ProfileClaim)], []),
+  'rejectRelationshipRequest' : IDL.Func(
+      [IDL.Nat],
+      [IDL.Opt(RelationshipRequest)],
+      [],
+    ),
+  'removeDuplicateProfile' : IDL.Func([PersonId], [Result_2], []),
   'removePhoto' : IDL.Func([PersonId, PhotoId], [IDL.Bool], []),
+  'requestProfileClaim' : IDL.Func([PersonId], [Result_1], []),
   'schema' : IDL.Func([], [IDL.Text], ['query']),
+  'searchPossibleMatches' : IDL.Func(
+      [IDL.Text],
+      [IDL.Vec(PersonMatch)],
+      ['query'],
+    ),
   'setProfilePhoto' : IDL.Func([PersonId, PhotoId], [IDL.Opt(Photo)], []),
+  'setRelationshipRequestPending' : IDL.Func(
+      [IDL.Nat],
+      [IDL.Opt(RelationshipRequest)],
+      [],
+    ),
   'submitArchiveItem' : IDL.Func(
       [
         IDL.Text,
@@ -181,6 +409,7 @@ export const idlService = IDL.Service({
       [ArchiveItem],
       [],
     ),
+  'updateOwnProfile' : IDL.Func([PersonId, ProfileEdits], [Result], []),
 });
 
 export const idlInitArgs = [];
@@ -218,7 +447,7 @@ export const idlFactory = ({ IDL }) => {
       'expected' : IDL.Vec(IDL.Text),
     }),
   });
-  const Result__1 = IDL.Variant({ 'ok' : IDL.Null, 'err' : Error });
+  const Result_8 = IDL.Variant({ 'ok' : IDL.Null, 'err' : Error });
   const PersonId = IDL.Text;
   const ExternalBlob = IDL.Vec(IDL.Nat8);
   const PhotoId = IDL.Nat;
@@ -274,11 +503,81 @@ export const idlFactory = ({ IDL }) => {
     'sourceStatus' : SourceStatus,
     'contributor' : IDL.Principal,
   });
+  const ProfileClaimStatus = IDL.Variant({
+    'Approved' : IDL.Null,
+    'Rejected' : IDL.Null,
+    'Pending' : IDL.Null,
+  });
+  const ProfileClaim = IDL.Record({
+    'id' : IDL.Nat,
+    'submittedDate' : IDL.Int,
+    'status' : ProfileClaimStatus,
+    'reviewedDate' : IDL.Opt(IDL.Int),
+    'reviewedBy' : IDL.Opt(IDL.Principal),
+    'personId' : PersonId,
+    'requestingUserId' : IDL.Principal,
+  });
+  const RelationshipRequestStatus = IDL.Variant({
+    'Approved' : IDL.Null,
+    'Rejected' : IDL.Null,
+    'Pending' : IDL.Null,
+  });
+  const RelationshipType = IDL.Variant({
+    'Parent' : IDL.Null,
+    'Sibling' : IDL.Null,
+    'SpousePartner' : IDL.Null,
+    'Child' : IDL.Null,
+  });
+  const RelationshipRequest = IDL.Record({
+    'id' : IDL.Nat,
+    'submittedDate' : IDL.Int,
+    'status' : RelationshipRequestStatus,
+    'reviewedDate' : IDL.Opt(IDL.Int),
+    'relatedPersonId' : PersonId,
+    'requestingPersonId' : PersonId,
+    'proposedRelationship' : RelationshipType,
+    'reviewer' : IDL.Opt(IDL.Principal),
+  });
   const UserRole = IDL.Variant({
     'admin' : IDL.Null,
     'user' : IDL.Null,
     'guest' : IDL.Null,
   });
+  const AuthMethod = IDL.Variant({ 'Google' : IDL.Null, 'Apple' : IDL.Null });
+  const AccountId = IDL.Principal;
+  const Account = IDL.Record({
+    'id' : AccountId,
+    'createdAt' : IDL.Int,
+    'authMethods' : IDL.Vec(AuthMethod),
+  });
+  const AccountError = IDL.Variant({
+    'AccountNotFound' : IDL.Null,
+    'NotSignedIn' : IDL.Null,
+  });
+  const Result_7 = IDL.Variant({ 'ok' : Account, 'err' : AccountError });
+  const ClaimStatus = IDL.Variant({
+    'Unclaimed' : IDL.Null,
+    'Claimed' : IDL.Null,
+  });
+  const LivingStatus = IDL.Variant({
+    'Living' : IDL.Null,
+    'Deceased' : IDL.Null,
+  });
+  const PersonProfile = IDL.Record({
+    'occupation' : IDL.Opt(IDL.Text),
+    'privacySettings' : IDL.Opt(IDL.Text),
+    'claimedByUserId' : IDL.Opt(IDL.Principal),
+    'birthInfo' : IDL.Opt(IDL.Text),
+    'claimStatus' : ClaimStatus,
+    'livingStatus' : LivingStatus,
+    'name' : IDL.Text,
+    'personId' : PersonId,
+    'story' : IDL.Opt(IDL.Text),
+    'preferredName' : IDL.Opt(IDL.Text),
+    'timeline' : IDL.Opt(IDL.Vec(IDL.Text)),
+  });
+  const CreateError = IDL.Variant({ 'NotSignedIn' : IDL.Null });
+  const Result_6 = IDL.Variant({ 'ok' : PersonProfile, 'err' : CreateError });
   const Value = IDL.Variant({
     'int' : IDL.Int,
     'nat' : IDL.Nat,
@@ -288,10 +587,82 @@ export const idlFactory = ({ IDL }) => {
     'text' : IDL.Text,
   });
   const Cell = IDL.Record({ 'value' : Value, 'name' : IDL.Text });
-  const Result = IDL.Record({
+  const Result__1 = IDL.Record({
     'hasMore' : IDL.Bool,
     'rows' : IDL.Vec(IDL.Vec(Cell)),
   });
+  const Result_5 = IDL.Variant({ 'ok' : AccountId, 'err' : AccountError });
+  const AuthMethods = IDL.Record({ 'apple' : IDL.Bool, 'google' : IDL.Bool });
+  const Result_4 = IDL.Variant({ 'ok' : AuthMethods, 'err' : AccountError });
+  const RelationshipStatus = IDL.Variant({
+    'Disputed' : IDL.Null,
+    'Confirmed' : IDL.Null,
+    'Pending' : IDL.Null,
+  });
+  const Relationship = IDL.Record({
+    'id' : IDL.Nat,
+    'status' : RelationshipStatus,
+    'fromPersonId' : PersonId,
+    'toPersonId' : PersonId,
+    'relationshipType' : RelationshipType,
+  });
+  const NotificationType = IDL.Variant({
+    'RelationshipRequested' : IDL.Null,
+    'RelationshipReviewed' : IDL.Null,
+    'ProfileClaimReviewed' : IDL.Null,
+    'ProfileClaimRequested' : IDL.Null,
+  });
+  const Notification = IDL.Record({
+    'id' : IDL.Nat,
+    'notificationType' : NotificationType,
+    'createdAt' : IDL.Int,
+    'read' : IDL.Bool,
+    'recipient' : IDL.Principal,
+    'message' : IDL.Text,
+  });
+  const NotificationId = IDL.Nat;
+  const RelationshipError = IDL.Variant({
+    'DuplicateRequest' : IDL.Null,
+    'NotSignedIn' : IDL.Null,
+    'PersonNotFound' : IDL.Null,
+  });
+  const Result_3 = IDL.Variant({
+    'ok' : RelationshipRequest,
+    'err' : RelationshipError,
+  });
+  const RemoveError = IDL.Variant({
+    'ProfileNotFound' : IDL.Null,
+    'NotSignedIn' : IDL.Null,
+  });
+  const Result_2 = IDL.Variant({ 'ok' : IDL.Null, 'err' : RemoveError });
+  const ClaimError = IDL.Variant({
+    'AlreadyPending' : IDL.Null,
+    'ProfileNotFound' : IDL.Null,
+    'AlreadyClaimed' : IDL.Null,
+    'NotSignedIn' : IDL.Null,
+    'DeceasedProfile' : IDL.Null,
+  });
+  const Result_1 = IDL.Variant({ 'ok' : ProfileClaim, 'err' : ClaimError });
+  const PersonMatch = IDL.Record({
+    'name' : IDL.Text,
+    'personId' : PersonId,
+    'parents' : IDL.Vec(IDL.Text),
+  });
+  const ProfileEdits = IDL.Record({
+    'occupation' : IDL.Opt(IDL.Text),
+    'privacySettings' : IDL.Opt(IDL.Text),
+    'birthInfo' : IDL.Opt(IDL.Text),
+    'story' : IDL.Opt(IDL.Text),
+    'preferredName' : IDL.Opt(IDL.Text),
+    'timeline' : IDL.Opt(IDL.Vec(IDL.Text)),
+  });
+  const EditError = IDL.Variant({
+    'ProfileNotFound' : IDL.Null,
+    'NotSignedIn' : IDL.Null,
+    'NotOwner' : IDL.Null,
+    'DeceasedProfile' : IDL.Null,
+  });
+  const Result = IDL.Variant({ 'ok' : PersonProfile, 'err' : EditError });
   
   return IDL.Service({
     '_immutableObjectStorageBlobsAreLive' : IDL.Func(
@@ -321,7 +692,7 @@ export const idlFactory = ({ IDL }) => {
       ),
     '_immutableObjectStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
     '_initialize_access_control' : IDL.Func([], [], []),
-    '_internet_identity_sign_in_finish' : IDL.Func([], [Result__1], []),
+    '_internet_identity_sign_in_finish' : IDL.Func([], [Result_8], []),
     '_internet_identity_sign_in_start' : IDL.Func([], [IDL.Vec(IDL.Nat8)], []),
     'addPhoto' : IDL.Func(
         [PersonId, IDL.Text, IDL.Text, ExternalBlob],
@@ -333,23 +704,94 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Opt(ArchiveItem)],
         [],
       ),
+    'approveProfileClaim' : IDL.Func([IDL.Nat], [IDL.Opt(ProfileClaim)], []),
+    'approveRelationshipRequest' : IDL.Func(
+        [IDL.Nat],
+        [IDL.Opt(RelationshipRequest)],
+        [],
+      ),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-    'execute' : IDL.Func([IDL.Text], [Result], ['query']),
+    'bindAuthMethod' : IDL.Func([AuthMethod], [Result_7], []),
+    'createMyself' : IDL.Func([IDL.Text], [Result_6], []),
+    'execute' : IDL.Func([IDL.Text], [Result__1], ['query']),
     'getApiDoc' : IDL.Func([], [IDL.Text], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+    'getMyAccountId' : IDL.Func([], [Result_5], ['query']),
+    'getMyAuthMethods' : IDL.Func([], [Result_4], ['query']),
+    'getMyProfile' : IDL.Func([], [IDL.Opt(PersonProfile)], ['query']),
+    'getMyProfileClaim' : IDL.Func(
+        [PersonId],
+        [IDL.Opt(ProfileClaim)],
+        ['query'],
+      ),
+    'getMyRelationshipRequests' : IDL.Func(
+        [],
+        [IDL.Vec(RelationshipRequest)],
+        ['query'],
+      ),
+    'getPersonProfile' : IDL.Func(
+        [PersonId],
+        [IDL.Opt(PersonProfile)],
+        ['query'],
+      ),
     'getProfilePhoto' : IDL.Func([PersonId], [IDL.Opt(Photo)], ['query']),
+    'getRelationshipRequest' : IDL.Func(
+        [IDL.Nat],
+        [IDL.Opt(RelationshipRequest)],
+        ['query'],
+      ),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
     'listApprovedArchiveItems' : IDL.Func(
         [],
         [IDL.Vec(ArchiveItem)],
         ['query'],
       ),
+    'listConfirmedRelationships' : IDL.Func(
+        [],
+        [IDL.Vec(Relationship)],
+        ['query'],
+      ),
+    'listNotifications' : IDL.Func([], [IDL.Vec(Notification)], ['query']),
     'listPendingArchiveItems' : IDL.Func([], [IDL.Vec(ArchiveItem)], ['query']),
     'listPhotos' : IDL.Func([PersonId], [IDL.Vec(Photo)], ['query']),
+    'listProfileClaims' : IDL.Func([], [IDL.Vec(ProfileClaim)], ['query']),
+    'listRelationshipRequests' : IDL.Func(
+        [],
+        [IDL.Vec(RelationshipRequest)],
+        ['query'],
+      ),
+    'markNotificationRead' : IDL.Func(
+        [NotificationId],
+        [IDL.Opt(Notification)],
+        [],
+      ),
+    'proposeRelationship' : IDL.Func(
+        [PersonId, PersonId, RelationshipType],
+        [Result_3],
+        [],
+      ),
     'rejectArchiveItem' : IDL.Func([ArchiveItemId], [IDL.Opt(ArchiveItem)], []),
+    'rejectProfileClaim' : IDL.Func([IDL.Nat], [IDL.Opt(ProfileClaim)], []),
+    'rejectRelationshipRequest' : IDL.Func(
+        [IDL.Nat],
+        [IDL.Opt(RelationshipRequest)],
+        [],
+      ),
+    'removeDuplicateProfile' : IDL.Func([PersonId], [Result_2], []),
     'removePhoto' : IDL.Func([PersonId, PhotoId], [IDL.Bool], []),
+    'requestProfileClaim' : IDL.Func([PersonId], [Result_1], []),
     'schema' : IDL.Func([], [IDL.Text], ['query']),
+    'searchPossibleMatches' : IDL.Func(
+        [IDL.Text],
+        [IDL.Vec(PersonMatch)],
+        ['query'],
+      ),
     'setProfilePhoto' : IDL.Func([PersonId, PhotoId], [IDL.Opt(Photo)], []),
+    'setRelationshipRequestPending' : IDL.Func(
+        [IDL.Nat],
+        [IDL.Opt(RelationshipRequest)],
+        [],
+      ),
     'submitArchiveItem' : IDL.Func(
         [
           IDL.Text,
@@ -367,6 +809,7 @@ export const idlFactory = ({ IDL }) => {
         [ArchiveItem],
         [],
       ),
+    'updateOwnProfile' : IDL.Func([PersonId, ProfileEdits], [Result], []),
   });
 };
 

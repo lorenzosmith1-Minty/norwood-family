@@ -1,3 +1,8 @@
+import {
+  RelationshipStatus as BackendRelationshipStatus,
+  RelationshipType,
+} from "@/backend";
+import type { Relationship } from "@/backend";
 import type { PersonProfile } from "../pages/PersonProfilePage";
 
 export type { PersonProfile } from "../pages/PersonProfilePage";
@@ -49,12 +54,44 @@ export interface FamilyGraphNode {
    * are merged in. Type-level preparation only — no workflow is wired here.
    */
   status?: RelationshipStatus;
+  /**
+   * Lifecycle status of this person. Absent means "living". Deceased
+   * profiles are never claimable.
+   */
+  livingStatus?: LivingStatus;
+  /**
+   * Ownership status of this person's profile. Absent means "unclaimed".
+   * A claimed profile is owned by exactly one user.
+   */
+  claimStatus?: ClaimStatus;
 }
 
 export type FamilyGraph = Record<string, FamilyGraphNode>;
 
 /** Lifecycle status of a person or relationship in the shared graph. */
 export type RelationshipStatus = "approved" | "pending";
+
+/**
+ * Lifecycle status of a person in the shared graph. Absent means "living"
+ * (the default). Deceased profiles are never claimable.
+ */
+export type LivingStatus = "living" | "deceased";
+
+/**
+ * Ownership status of a person's profile in the shared graph. Absent means
+ * "unclaimed". A claimed profile is owned by exactly one user.
+ */
+export type ClaimStatus = "unclaimed" | "claimed";
+
+/**
+ * True when a person's profile may be claimed: it must be living (not
+ * deceased) and not already owned by a user. Deceased profiles are never
+ * claimable, and a claimed profile is owned by exactly one user.
+ */
+export function isProfileClaimable(node: FamilyGraphNode | undefined): boolean {
+  if (!node) return false;
+  return node.livingStatus !== "deceased" && node.claimStatus !== "claimed";
+}
 
 /**
  * A proposed relationship addition staged for review before it joins the
@@ -642,4 +679,74 @@ export function resolveDefaultFocus(
       (p as PersonProfile & { me?: boolean }).me === true,
   );
   return me?.id ?? DEFAULT_ANCHOR_ID;
+}
+
+/**
+ * Overlay confirmed relationships from the backend onto a base family graph,
+ * returning a NEW graph (the base is never mutated). Each confirmed
+ * relationship is mapped onto the graph's edge model. The flows that create
+ * these requests use fromPersonId = the new/owner person and toPersonId = the
+ * selected existing member, where picking 'Parent' means "the selected
+ * existing member is my parent" and 'Child' means "the selected existing
+ * member is my child". So:
+ *   - Parent        -> to is the parent of from (from.father/mother = to.id)
+ *   - Child         -> from is the parent of to (to.father/mother = from.id)
+ *   - SpousePartner -> each person is added to the other's spouses
+ *   - Sibling       -> derived from shared parents, so it needs no edge here
+ * People referenced by a confirmed relationship but missing from the base
+ * graph are created as empty nodes so the graph stays complete.
+ *
+ * Only Confirmed relationships are applied; Pending/Disputed ones are ignored
+ * so the shared graph never reflects unconfirmed connections.
+ */
+export function overlayConfirmedRelationships(
+  base: FamilyGraph,
+  confirmed: Relationship[],
+): FamilyGraph {
+  const graph: FamilyGraph = {};
+  for (const [id, node] of Object.entries(base)) {
+    graph[id] = {
+      ...node,
+      spouses: [...node.spouses],
+      children: [...node.children],
+    };
+  }
+
+  const ensureNode = (id: string): FamilyGraphNode => {
+    if (!graph[id]) {
+      graph[id] = { id, spouses: [], children: [] };
+    }
+    return graph[id];
+  };
+
+  const addUnique = (list: string[], id: string): string[] =>
+    list.includes(id) ? list : [...list, id];
+
+  for (const rel of confirmed) {
+    if (rel.status !== BackendRelationshipStatus.Confirmed) continue;
+    const from = ensureNode(rel.fromPersonId);
+    const to = ensureNode(rel.toPersonId);
+    switch (rel.relationshipType) {
+      case RelationshipType.Parent:
+        // 'Parent' means the selected existing member (to) is my parent, so
+        // the new/owner person (from) fills the child's father/mother slot.
+        if (!from.father) from.father = to.id;
+        else if (!from.mother) from.mother = to.id;
+        break;
+      case RelationshipType.Child:
+        // 'Child' means the selected existing member (to) is my child, so the
+        // new/owner person (from) is the parent and to is added to children.
+        from.children = addUnique(from.children, to.id);
+        break;
+      case RelationshipType.SpousePartner:
+        from.spouses = addUnique(from.spouses, to.id);
+        to.spouses = addUnique(to.spouses, from.id);
+        break;
+      case RelationshipType.Sibling:
+        // Siblings are derived from shared parents in this graph model, so a
+        // confirmed sibling relationship needs no explicit edge here.
+        break;
+    }
+  }
+  return graph;
 }

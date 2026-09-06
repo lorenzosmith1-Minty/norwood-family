@@ -83,6 +83,8 @@ export default {
         elevated:
           "0 12px 32px -8px rgba(93, 64, 55, 0.18), 0 4px 12px -4px rgba(93, 64, 55, 0.12)",
         fold: "0 1px 2px -1px rgba(93, 64, 55, 0.08)",
+        signin:
+          "0 12px 32px -8px rgba(93, 64, 55, 0.16), 0 0 0 3px rgba(176, 133, 92, 0.18)",
       },
       keyframes: {
         "accordion-down": {
@@ -135,6 +137,10 @@ export default {
           from: { opacity: "0", transform: "scale(0.98) translateY(4px)" },
           to: { opacity: "1", transform: "scale(1) translateY(0)" },
         },
+        "signin-pop": {
+          from: { opacity: "0", transform: "translateY(8px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -148,6 +154,7 @@ export default {
         "halo-pulse": "halo-pulse 3.5s ease-in-out infinite",
         "detail-in": "detail-in 0.25s cubic-bezier(0.4, 0, 0.2, 1) both",
         "fold-in": "fold-in 0.3s cubic-bezier(0.4, 0, 0.2, 1) both",
+        "signin-pop": "signin-pop 0.35s cubic-bezier(0.4, 0, 0.2, 1) both",
       },
     },
   },

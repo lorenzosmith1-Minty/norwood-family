@@ -1,4 +1,5 @@
-import type { Photo } from "@/backend";
+import type { PersonProfile as BackendPersonProfile, Photo } from "@/backend";
+import { useInternetIdentity } from "@caffeineai/core-infrastructure";
 import { ExternalBlob } from "@caffeineai/object-storage";
 import {
   AlertTriangle,
@@ -13,12 +14,16 @@ import {
   Loader2,
   type LucideIcon,
   NotebookPen,
+  Pencil,
   ScrollText,
   Trash2,
+  UserCheck,
   Users,
 } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
+import { ClaimButton } from "../components/ClaimButton";
+import { StatusBadge } from "../components/StatusBadge";
 import {
   useAddPhoto,
   usePhotos,
@@ -27,6 +32,10 @@ import {
   useRemovePhoto,
   useSetProfilePhoto,
 } from "../hooks/usePhotoStorage";
+import { useMyProfileClaim, usePersonProfile } from "../hooks/useProfileClaims";
+import { useMyRelationshipRequests } from "../hooks/useRelationshipRequests";
+import { type FamilyGraphNode, isProfileClaimable } from "../types/family";
+import { ClaimStatus, LivingStatus } from "../types/ownership";
 
 export interface ProfileFact {
   label: string;
@@ -2542,11 +2551,41 @@ export const profiles: Record<string, PersonProfile> = {
   edSmith: edSmithProfile,
 };
 
+/**
+ * Builds a minimal frontend PersonProfile from a backend PersonProfile record.
+ * Used to render a genuinely new, account-owned profile (created via
+ * createMyself and keyed by the caller's principal) that has no entry in the
+ * static `profiles` record, so the "My Profile" view shows the pending profile
+ * instead of falling back to another person or an empty page.
+ */
+export function backendProfileToPersonProfile(
+  backend: BackendPersonProfile,
+): PersonProfile {
+  const name = backend.preferredName || backend.name;
+  return {
+    id: backend.personId,
+    name,
+    role: "Pending profile",
+    portrait: { src: "", alt: `Profile for ${name}` },
+    facts: [],
+    story: backend.story ?? "",
+    family: { spouseName: "", spouseRole: "", childrenText: "" },
+    timeline: (backend.timeline ?? []).map((text, index) => ({
+      date: "",
+      title: `Timeline entry ${index + 1}`,
+      detail: text,
+    })),
+    sources: [],
+  };
+}
+
 interface PersonProfilePageProps {
   onBack: () => void;
   person: PersonProfile;
   profilePhoto?: string;
   onProfilePhotoChange: (personId: string, url: string | null) => void;
+  /** Navigates to the profile-edit page for the owner of a claimed profile. */
+  onEditProfile?: () => void;
 }
 
 function getInitials(name: string): string {
@@ -2890,6 +2929,7 @@ export function PersonProfilePage({
   person,
   profilePhoto,
   onProfilePhotoChange,
+  onEditProfile,
 }: PersonProfilePageProps) {
   const storyLabel =
     person.id === "julia" ||
@@ -2911,6 +2951,62 @@ export function PersonProfilePage({
     person.id === "beatriceSmith"
       ? "Her Story"
       : "His Story";
+
+  // Profile ownership & claim status. The backend profile is the authoritative
+  // source for living/deceased and claimed/unclaimed state; the shared graph
+  // node is derived from it so isProfileClaimable can gate the 'This is Me'
+  // action (deceased profiles are never claimable).
+  const { data: backendProfile, isLoading: profileLoading } = usePersonProfile(
+    person.id,
+  );
+  const { identity } = useInternetIdentity();
+  const { data: myClaim } = useMyProfileClaim(person.id);
+  const { data: relationshipRequests = [] } = useMyRelationshipRequests();
+
+  const currentPrincipal = identity?.getPrincipal().toString();
+  const isOwner = Boolean(
+    backendProfile?.claimedByUserId &&
+      currentPrincipal &&
+      backendProfile.claimedByUserId.toString() === currentPrincipal,
+  );
+  const hasPendingClaim = Boolean(
+    myClaim?.personId === person.id &&
+      myClaim.status === "Pending" &&
+      myClaim.requestingUserId.toString() === currentPrincipal,
+  );
+  // A genuinely new person (created via createMyself) proposes a connection to
+  // an existing family member. Until a Family Steward approves that request the
+  // person exists in a pending/account-owned state and must not appear as a
+  // confirmed relative in the shared family graph. This flag drives the
+  // 'Family connection pending confirmation' badge and the pending-profile
+  // editing affordance.
+  const hasPendingRelationship = relationshipRequests.some(
+    (req) => req.requestingPersonId === person.id && req.status === "Pending",
+  );
+
+  const claimBadgeStatus =
+    backendProfile?.claimStatus === ClaimStatus.Claimed
+      ? "Claimed"
+      : hasPendingClaim
+        ? "Pending"
+        : "Unclaimed";
+
+  const graphNode: FamilyGraphNode | undefined = backendProfile
+    ? {
+        id: person.id,
+        spouses: [],
+        children: [],
+        livingStatus:
+          backendProfile.livingStatus === LivingStatus.Deceased
+            ? "deceased"
+            : "living",
+        claimStatus:
+          backendProfile.claimStatus === ClaimStatus.Claimed
+            ? "claimed"
+            : "unclaimed",
+      }
+    : undefined;
+  const claimable = isProfileClaimable(graphNode);
 
   const hasProfilePhoto = Boolean(profilePhoto);
   const completeness = computeCompleteness(person, hasProfilePhoto);
@@ -3043,6 +3139,93 @@ export function PersonProfilePage({
             </div>
           ))}
         </dl>
+
+        {/* Profile ownership & claim status */}
+        <div
+          data-ocid="profile.claim_section"
+          className="mt-6 w-full max-w-md rounded-2xl border border-border bg-card px-4 py-4 text-left shadow-subtle"
+        >
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+              Profile status
+            </p>
+            {profileLoading ? (
+              <span
+                data-ocid="profile.claim_section.loading_state"
+                className="h-6 w-20 animate-pulse rounded-full bg-muted"
+              />
+            ) : hasPendingClaim ? (
+              <span
+                data-ocid="profile.claim_section.pending_badge"
+                className="status-pill status-pending"
+                style={{
+                  ["--status-pending" as string]: "var(--claim-pending)",
+                }}
+              >
+                Profile claim pending
+              </span>
+            ) : hasPendingRelationship ? (
+              <span
+                data-ocid="profile.claim_section.rel_pending_badge"
+                className="status-pill status-pending"
+                style={{ ["--status-pending" as string]: "var(--rel-pending)" }}
+              >
+                Family connection pending confirmation
+              </span>
+            ) : (
+              <StatusBadge kind="claim" status={claimBadgeStatus} />
+            )}
+          </div>
+
+          {profileLoading ? (
+            <div
+              data-ocid="profile.claim_section.loading_state"
+              className="mt-3 h-10 animate-pulse rounded-full bg-muted"
+            />
+          ) : isOwner ? (
+            <div className="mt-3 flex flex-col items-start gap-3">
+              <p className="flex items-center gap-2 text-sm text-muted-foreground">
+                <UserCheck
+                  className="h-4 w-4 shrink-0 text-success"
+                  strokeWidth={2}
+                  aria-hidden="true"
+                />
+                {hasPendingRelationship
+                  ? "This is your pending profile. Your family connection is awaiting confirmation by a steward."
+                  : "You own this profile. You can edit your personal details."}
+              </p>
+              <button
+                type="button"
+                data-ocid="profile.edit_button"
+                onClick={() => onEditProfile?.()}
+                className="this-is-me-action focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              >
+                <Pencil className="h-4 w-4" aria-hidden="true" />
+                Edit My Profile
+              </button>
+            </div>
+          ) : hasPendingClaim ? (
+            <div className="mt-3 flex flex-col items-start gap-3">
+              <p className="text-sm text-muted-foreground">
+                Your claim is pending review by a family steward. Once approved,
+                you'll be linked to this profile.
+              </p>
+            </div>
+          ) : claimable ? (
+            <div className="mt-3 flex flex-col items-start gap-3">
+              <p className="text-sm text-muted-foreground">
+                Is this you? Claim this profile to manage your personal details.
+              </p>
+              <ClaimButton personId={person.id} profile={backendProfile} />
+            </div>
+          ) : (
+            <p className="mt-3 text-sm text-muted-foreground">
+              {backendProfile?.livingStatus === LivingStatus.Deceased
+                ? "This profile is not claimable."
+                : "This profile is owned by a family member."}
+            </p>
+          )}
+        </div>
       </motion.header>
 
       {/* Story */}

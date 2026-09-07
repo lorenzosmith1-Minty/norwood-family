@@ -24,12 +24,17 @@ import type { PersonProfile } from "./pages/PersonProfilePage";
 function renderTree() {
   const onBack = vi.fn();
   const onOpenProfile = vi.fn();
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
   render(
-    <FamilyTreePage
-      onBack={onBack}
-      onOpenProfile={onOpenProfile}
-      profilePhotos={{}}
-    />,
+    <QueryClientProvider client={queryClient}>
+      <FamilyTreePage
+        onBack={onBack}
+        onOpenProfile={onOpenProfile}
+        profilePhotos={{}}
+      />
+    </QueryClientProvider>,
   );
   return { onBack, onOpenProfile };
 }
@@ -166,6 +171,12 @@ const { mockActor } = vi.hoisted(() => {
   const mockActor = {
     async listConfirmedRelationships(): Promise<unknown[]> {
       return [];
+    },
+    async getPersonProfile(): Promise<null> {
+      return null;
+    },
+    async getProfilePhoto(): Promise<null> {
+      return null;
     },
   };
   return { mockActor };

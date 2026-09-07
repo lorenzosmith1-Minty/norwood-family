@@ -25,8 +25,10 @@ import { useEffect, useRef, useState } from "react";
 import { ClaimButton } from "../components/ClaimButton";
 import { StatusBadge } from "../components/StatusBadge";
 import { useIsAdmin } from "../hooks/useArchiveStorage";
+import { useCanonicalPerson } from "../hooks/useCanonicalPerson";
 import {
   useAddPhoto,
+  useEnsureLorenzoProfilePhoto,
   usePhotos,
   useProfilePhoto,
   useProvidersPresent,
@@ -35,7 +37,12 @@ import {
 } from "../hooks/usePhotoStorage";
 import { useMyProfileClaim, usePersonProfile } from "../hooks/useProfileClaims";
 import { useMyRelationshipRequests } from "../hooks/useRelationshipRequests";
-import { type FamilyGraphNode, isProfileClaimable } from "../types/family";
+import {
+  FAMILY_GRAPH,
+  type FamilyGraphNode,
+  isProfileClaimable,
+  resolveDisplayName,
+} from "../types/family";
 import { ClaimStatus, LivingStatus } from "../types/ownership";
 
 export interface ProfileFact {
@@ -2723,6 +2730,57 @@ function EmptySection() {
   );
 }
 
+/**
+ * A family member avatar + name row in the profile Family section. Resolves the
+ * canonical display name and profile photo from the shared backend Person
+ * Profile record keyed by personId (via useCanonicalPerson), so a saved profile
+ * photo or preferred-name edit propagates immediately. Falls back to initials
+ * when no canonical profile photo exists.
+ */
+function FamilyMember({
+  personId,
+  fallbackName,
+  role,
+}: {
+  personId: string;
+  fallbackName: string;
+  role?: string;
+}) {
+  const canonical = useCanonicalPerson(personId, fallbackName);
+  return (
+    <div className="flex items-center gap-3">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-secondary font-display text-base font-semibold text-accent-foreground">
+        {canonical.isLoading ? (
+          <span
+            data-ocid="profile.family_member.loading_state"
+            className="h-full w-full animate-pulse rounded-full bg-muted"
+            aria-hidden="true"
+          />
+        ) : canonical.profilePhotoUrl ? (
+          <img
+            src={canonical.profilePhotoUrl}
+            alt={`${canonical.displayName}'s portrait`}
+            className="h-full w-full object-cover"
+            loading="lazy"
+          />
+        ) : (
+          getInitials(canonical.displayName)
+        )}
+      </span>
+      <div className="min-w-0">
+        <p className="font-display text-base font-semibold text-foreground">
+          {canonical.displayName}
+        </p>
+        {role ? (
+          <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+            {role}
+          </p>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
 interface PhotoGalleryProps {
   personId: string;
   personName: string;
@@ -3000,6 +3058,12 @@ export function PersonProfilePage({
   const { data: backendProfile, isLoading: profileLoading } = usePersonProfile(
     person.id,
   );
+
+  // Idempotently ensure lorenzoSmithJr has a real profile photo uploaded and
+  // set on first load, so the canonical photo resolver finds it and the child
+  // card on Lorenzo Smith Sr.'s profile renders the photo immediately. Runs
+  // whenever a profile view loads; it only uploads/sets when no photo exists.
+  useEnsureLorenzoProfilePhoto();
   const { identity } = useInternetIdentity();
   const { data: myClaim } = useMyProfileClaim(person.id);
   const { data: relationshipRequests = [] } = useMyRelationshipRequests();
@@ -3059,14 +3123,35 @@ export function PersonProfilePage({
     : undefined;
   const claimable = isProfileClaimable(graphNode);
 
-  const hasProfilePhoto = Boolean(profilePhoto);
+  // The shared family graph node for this person, used to resolve the personIds
+  // of the spouse/child family members shown in the Family section so their
+  // avatars resolve the canonical profile photo via the shared resolver.
+  const familyGraphNode = FAMILY_GRAPH[person.id];
+  const childIds = familyGraphNode?.children ?? [];
+
+  // Resolve the canonical display name and profile photo from the shared
+  // backend Person Profile record keyed by personId, exactly as every card
+  // surface does (useCanonicalPerson -> useProfilePhoto -> Photo.blob
+  // .getDirectURL()). The canonical photo wins; when a canonical profile exists
+  // but has no selected photo, the hero falls back to initials. Only when no
+  // canonical profile exists (a static-only historical person) do we fall back
+  // to the static portrait URL snapshot. We never rely on the profilePhoto prop
+  // (App never passes it) as the source of truth.
+  const canonical = useCanonicalPerson(person.id, person.name);
+  const hasProfilePhoto = Boolean(canonical.profilePhotoUrl);
   const completeness = computeCompleteness(
     person,
     hasProfilePhoto,
     backendProfile ?? undefined,
   );
-  const portraitSrc = profilePhoto ?? person.portrait.src;
-  const portraitAlt = profilePhoto
+  const portraitSrc =
+    canonical.profilePhotoUrl ??
+    (!canonical.hasCanonicalProfile
+      ? (profilePhoto ?? person.portrait.src)
+      : undefined);
+  // The alt/caption describe a real uploaded photo only when a canonical photo
+  // is actually shown; the static portrait/placeholder keeps its own alt.
+  const portraitAlt = hasProfilePhoto
     ? `${person.name}'s profile photo`
     : person.portrait.alt;
 
@@ -3079,7 +3164,7 @@ export function PersonProfilePage({
     person.livingStatus === "living";
   const usesRepresentativeImage =
     Boolean(person.portrait.src) && person.portrait.src !== PLACEHOLDER_SRC;
-  const portraitCaption = profilePhoto
+  const portraitCaption = hasProfilePhoto
     ? "Uploaded profile photo."
     : !isLivingProfile && usesRepresentativeImage
       ? `Representative historical portrait — not an actual photograph of ${person.name.split(" ")[0]} Norwood.`
@@ -3329,29 +3414,45 @@ export function PersonProfilePage({
         {person.family.spouseName ? (
           <div className="mt-3 flex flex-col gap-3">
             {person.family.spouses ? (
-              person.family.spouses.map((spouse) => (
-                <div
-                  key={spouse.name}
-                  className="rounded-2xl border border-border bg-card px-4 py-3 shadow-subtle"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary font-display text-base font-semibold text-accent-foreground">
-                      {spouse.name.charAt(0)}
-                    </span>
-                    <div className="min-w-0">
-                      <p className="font-display text-base font-semibold text-foreground">
-                        {spouse.name}
-                      </p>
-                      <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                        {spouse.role}
-                      </p>
-                    </div>
+              person.family.spouses.map((spouse, index) => {
+                // Resolve the spouse's canonical profile photo/name from the
+                // shared graph personId (index-aligned with the static spouse
+                // list) so a saved profile edit propagates immediately. When no
+                // graph personId is available, fall back to the static initials
+                // circle.
+                const spouseId = familyGraphNode?.spouses?.[index];
+                return (
+                  <div
+                    key={spouse.name}
+                    className="rounded-2xl border border-border bg-card px-4 py-3 shadow-subtle"
+                  >
+                    {spouseId ? (
+                      <FamilyMember
+                        personId={spouseId}
+                        fallbackName={spouse.name}
+                        role={spouse.role}
+                      />
+                    ) : (
+                      <div className="flex items-center gap-3">
+                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary font-display text-base font-semibold text-accent-foreground">
+                          {spouse.name.charAt(0)}
+                        </span>
+                        <div className="min-w-0">
+                          <p className="font-display text-base font-semibold text-foreground">
+                            {spouse.name}
+                          </p>
+                          <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                            {spouse.role}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                      Children: {spouse.children.join(", ")}
+                    </p>
                   </div>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                    Children: {spouse.children.join(", ")}
-                  </p>
-                </div>
-              ))
+                );
+              })
             ) : (
               <div className="flex items-center gap-3 rounded-2xl border border-border bg-card px-4 py-3 shadow-subtle">
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary font-display text-base font-semibold text-accent-foreground">
@@ -3367,6 +3468,22 @@ export function PersonProfilePage({
                 </div>
               </div>
             )}
+            {childIds.length > 0 ? (
+              <div className="rounded-2xl border border-border bg-card px-4 py-3 shadow-subtle">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                  Children
+                </p>
+                <div className="mt-3 flex flex-col gap-3">
+                  {childIds.map((childId) => (
+                    <FamilyMember
+                      key={childId}
+                      personId={childId}
+                      fallbackName={resolveDisplayName(childId, profiles)}
+                    />
+                  ))}
+                </div>
+              </div>
+            ) : null}
             <p className="text-base leading-relaxed text-muted-foreground">
               {person.family.childrenText}
             </p>

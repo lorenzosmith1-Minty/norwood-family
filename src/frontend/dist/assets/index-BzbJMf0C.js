@@ -36663,6 +36663,8 @@ function LoginSurface() {
     ) : /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "signin-footnote", children: "Your account is private and secure. We never post to your Google or Apple account, and your identity stays yours." })
   ] });
 }
+const LORENZO_SMITH_JR_ID = "lorenzoSmithJr";
+const LORENZO_SMITH_JR_PORTRAIT_SRC = "/assets/generated/lorenzo-smith-jr-portrait.dim_800x900.png";
 function useProvidersPresent() {
   return reactExports.useContext(QueryClientContext) !== void 0;
 }
@@ -36752,6 +36754,43 @@ function useSetProfilePhoto() {
       });
     }
   });
+}
+function useEnsureLorenzoProfilePhoto() {
+  const providersPresent = useProvidersPresent();
+  const { data: profilePhoto, isLoading } = useProfilePhoto(LORENZO_SMITH_JR_ID);
+  const addPhoto = useAddPhoto();
+  const setProfilePhoto = useSetProfilePhoto();
+  const attemptedRef = reactExports.useRef(false);
+  reactExports.useEffect(() => {
+    if (!providersPresent || isLoading || attemptedRef.current) return;
+    if (profilePhoto) {
+      attemptedRef.current = true;
+      return;
+    }
+    attemptedRef.current = true;
+    void (async () => {
+      try {
+        const response = await fetch(LORENZO_SMITH_JR_PORTRAIT_SRC);
+        const bytes = new Uint8Array(await response.arrayBuffer());
+        const blob = ExternalBlob$1.fromBytes(
+          bytes,
+          "image/png",
+          "lorenzo-smith-jr.png"
+        );
+        const photo = await addPhoto.mutateAsync({
+          personId: LORENZO_SMITH_JR_ID,
+          blob,
+          filename: "lorenzo-smith-jr.png",
+          mimeType: "image/png"
+        });
+        await setProfilePhoto.mutateAsync({
+          personId: LORENZO_SMITH_JR_ID,
+          photoId: photo.id
+        });
+      } catch {
+      }
+    })();
+  }, [providersPresent, isLoading, profilePhoto, addPhoto, setProfilePhoto]);
 }
 function useIsAdmin() {
   const providersPresent = useProvidersPresent();
@@ -45852,6 +45891,24 @@ function StatusBadge({ kind, status }) {
     }
   );
 }
+function useCanonicalPerson(personId, fallbackName) {
+  const { data: backendProfile } = usePersonProfile(personId ?? "", {
+    enabled: Boolean(personId)
+  });
+  const { data: profilePhoto, isLoading: photoLoading } = useProfilePhoto(
+    personId ?? ""
+  );
+  const hasCanonicalProfile = Boolean(backendProfile);
+  const displayName = backendProfile ? resolveBackendDisplayName(personId ?? "", backendProfile) : fallbackName;
+  const profilePhotoUrl = profilePhoto ? profilePhoto.blob.getDirectURL() : null;
+  const photoPending = photoLoading || hasCanonicalProfile && !profilePhotoUrl;
+  return {
+    displayName,
+    profilePhotoUrl,
+    hasCanonicalProfile,
+    isLoading: Boolean(personId) && photoPending
+  };
+}
 const juliaProfile = {
   id: "julia",
   name: "Julia “Julie” Norwood",
@@ -48168,6 +48225,35 @@ function EmptySection() {
     }
   );
 }
+function FamilyMember({
+  personId,
+  fallbackName,
+  role
+}) {
+  const canonical = useCanonicalPerson(personId, fallbackName);
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-secondary font-display text-base font-semibold text-accent-foreground", children: canonical.isLoading ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "span",
+      {
+        "data-ocid": "profile.family_member.loading_state",
+        className: "h-full w-full animate-pulse rounded-full bg-muted",
+        "aria-hidden": "true"
+      }
+    ) : canonical.profilePhotoUrl ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "img",
+      {
+        src: canonical.profilePhotoUrl,
+        alt: `${canonical.displayName}'s portrait`,
+        className: "h-full w-full object-cover",
+        loading: "lazy"
+      }
+    ) : getInitials$4(canonical.displayName) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-display text-base font-semibold text-foreground", children: canonical.displayName }),
+      role ? /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs uppercase tracking-[0.18em] text-muted-foreground", children: role }) : null
+    ] })
+  ] });
+}
 function PhotoGallery({
   personId,
   personName: personName2,
@@ -48420,6 +48506,7 @@ function PersonProfilePage({
   const { data: backendProfile, isLoading: profileLoading } = usePersonProfile(
     person.id
   );
+  useEnsureLorenzoProfilePhoto();
   const { identity } = useInternetIdentity();
   const { data: myClaim } = useMyProfileClaim(person.id);
   const { data: relationshipRequests = [] } = useMyRelationshipRequests();
@@ -48445,17 +48532,20 @@ function PersonProfilePage({
     claimStatus: backendProfile.claimStatus === ClaimStatus.Claimed ? "claimed" : "unclaimed"
   } : void 0;
   const claimable = isProfileClaimable(graphNode);
-  const hasProfilePhoto = Boolean(profilePhoto);
+  const familyGraphNode = FAMILY_GRAPH[person.id];
+  const childIds = (familyGraphNode == null ? void 0 : familyGraphNode.children) ?? [];
+  const canonical = useCanonicalPerson(person.id, person.name);
+  const hasProfilePhoto = Boolean(canonical.profilePhotoUrl);
   const completeness = computeCompleteness(
     person,
     hasProfilePhoto,
     backendProfile ?? void 0
   );
-  const portraitSrc = profilePhoto ?? person.portrait.src;
-  const portraitAlt = profilePhoto ? `${person.name}'s profile photo` : person.portrait.alt;
+  const portraitSrc = canonical.profilePhotoUrl ?? (!canonical.hasCanonicalProfile ? profilePhoto ?? person.portrait.src : void 0);
+  const portraitAlt = hasProfilePhoto ? `${person.name}'s profile photo` : person.portrait.alt;
   const isLivingProfile = (backendProfile == null ? void 0 : backendProfile.livingStatus) === LivingStatus.Living || person.livingStatus === "living";
   const usesRepresentativeImage = Boolean(person.portrait.src) && person.portrait.src !== PLACEHOLDER_SRC;
-  const portraitCaption = profilePhoto ? "Uploaded profile photo." : !isLivingProfile && usesRepresentativeImage ? `Representative historical portrait — not an actual photograph of ${person.name.split(" ")[0]} Norwood.` : "";
+  const portraitCaption = hasProfilePhoto ? "Uploaded profile photo." : !isLivingProfile && usesRepresentativeImage ? `Representative historical portrait — not an actual photograph of ${person.name.split(" ")[0]} Norwood.` : "";
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto flex w-full max-w-3xl flex-col px-6 py-8 sm:py-12", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx(
       motion.div,
@@ -48674,32 +48764,54 @@ function PersonProfilePage({
         children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx(SectionHeader, { icon: Users, label: "Family" }),
           person.family.spouseName ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-3 flex flex-col gap-3", children: [
-            person.family.spouses ? person.family.spouses.map((spouse) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
-              "div",
-              {
-                className: "rounded-2xl border border-border bg-card px-4 py-3 shadow-subtle",
-                children: [
-                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3", children: [
-                    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary font-display text-base font-semibold text-accent-foreground", children: spouse.name.charAt(0) }),
-                    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
-                      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-display text-base font-semibold text-foreground", children: spouse.name }),
-                      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs uppercase tracking-[0.18em] text-muted-foreground", children: spouse.role })
+            person.family.spouses ? person.family.spouses.map((spouse, index2) => {
+              var _a2;
+              const spouseId = (_a2 = familyGraphNode == null ? void 0 : familyGraphNode.spouses) == null ? void 0 : _a2[index2];
+              return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                "div",
+                {
+                  className: "rounded-2xl border border-border bg-card px-4 py-3 shadow-subtle",
+                  children: [
+                    spouseId ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      FamilyMember,
+                      {
+                        personId: spouseId,
+                        fallbackName: spouse.name,
+                        role: spouse.role
+                      }
+                    ) : /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3", children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary font-display text-base font-semibold text-accent-foreground", children: spouse.name.charAt(0) }),
+                      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-display text-base font-semibold text-foreground", children: spouse.name }),
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs uppercase tracking-[0.18em] text-muted-foreground", children: spouse.role })
+                      ] })
+                    ] }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "mt-2 text-sm leading-relaxed text-muted-foreground", children: [
+                      "Children: ",
+                      spouse.children.join(", ")
                     ] })
-                  ] }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "mt-2 text-sm leading-relaxed text-muted-foreground", children: [
-                    "Children: ",
-                    spouse.children.join(", ")
-                  ] })
-                ]
-              },
-              spouse.name
-            )) : /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3 rounded-2xl border border-border bg-card px-4 py-3 shadow-subtle", children: [
+                  ]
+                },
+                spouse.name
+              );
+            }) : /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3 rounded-2xl border border-border bg-card px-4 py-3 shadow-subtle", children: [
               /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary font-display text-base font-semibold text-accent-foreground", children: person.family.spouseName.charAt(0) }),
               /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
                 /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-display text-base font-semibold text-foreground", children: person.family.spouseName }),
                 /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs uppercase tracking-[0.18em] text-muted-foreground", children: person.family.spouseRole })
               ] })
             ] }),
+            childIds.length > 0 ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "rounded-2xl border border-border bg-card px-4 py-3 shadow-subtle", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground", children: "Children" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-3 flex flex-col gap-3", children: childIds.map((childId) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+                FamilyMember,
+                {
+                  personId: childId,
+                  fallbackName: resolveDisplayName(childId, profiles)
+                },
+                childId
+              )) })
+            ] }) : null,
             /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-base leading-relaxed text-muted-foreground", children: person.family.childrenText })
           ] }) : /* @__PURE__ */ jsxRuntimeExports.jsx(EmptySection, {})
         ]
@@ -50985,14 +51097,16 @@ function PersonCard({
   role = "sibling"
 }) {
   var _a2, _b2;
+  const canonical = useCanonicalPerson(person.id, person.name);
+  const displayName = canonical.displayName;
+  const photoSrc = canonical.profilePhotoUrl ?? (!canonical.hasCanonicalProfile ? profilePhoto ?? ((_a2 = person.photo) == null ? void 0 : _a2.src) : void 0);
+  const photoAlt = photoSrc ? `${displayName}'s profile photo` : ((_b2 = person.photo) == null ? void 0 : _b2.alt) ?? `${displayName}'s initials`;
   const handleClick = () => {
     onSelect();
     if (openOnSelect) {
       onOpen == null ? void 0 : onOpen();
     }
   };
-  const photoSrc = profilePhoto ?? ((_a2 = person.photo) == null ? void 0 : _a2.src);
-  const photoAlt = profilePhoto ? `${person.name}'s profile photo` : ((_b2 = person.photo) == null ? void 0 : _b2.alt) ?? `${person.name}'s initials`;
   if (variant === "relative") {
     const isParent = role === "father" || role === "mother";
     const isSpouse = role === "spouse";
@@ -51016,7 +51130,7 @@ function PersonCard({
         },
         className: `${cardClass2} focus-visible:outline-none`,
         children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: portraitClass2, "aria-hidden": "true", children: photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: portraitClass2, "aria-hidden": "true", children: canonical.isLoading ? /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "h-full w-full animate-pulse rounded-full bg-muted" }) : photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx(
             "img",
             {
               src: photoSrc,
@@ -51024,8 +51138,8 @@ function PersonCard({
               className: "h-full w-full object-cover",
               loading: "lazy"
             }
-          ) : getInitials$2(person.name) }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: nameClass2, children: person.name }),
+          ) : getInitials$2(displayName) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: nameClass2, children: displayName }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: relationClass, children: relationLabel ?? person.role })
         ]
       }
@@ -51044,7 +51158,7 @@ function PersonCard({
         },
         className: "ex-focus-card",
         children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-focus-portrait", "aria-hidden": "true", children: photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-focus-portrait", "aria-hidden": "true", children: canonical.isLoading ? /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "h-full w-full animate-pulse rounded-full bg-muted" }) : photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx(
             "img",
             {
               src: photoSrc,
@@ -51052,9 +51166,9 @@ function PersonCard({
               className: "h-full w-full object-cover",
               loading: "lazy"
             }
-          ) : getInitials$2(person.name) }),
+          ) : getInitials$2(displayName) }),
           /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "ex-focus-body", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-focus-name", children: person.name }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-focus-name", children: displayName }),
             person.years && /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-focus-years", children: person.years }),
             /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-focus-relation", children: relationLabel ?? person.role }),
             isMe && /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-me-badge", children: "This is me" }),
@@ -51090,7 +51204,7 @@ function PersonCard({
         },
         className: "ex-spouse-half focus-visible:outline-none",
         children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-spouse-half-portrait", "aria-hidden": "true", children: photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-spouse-half-portrait", "aria-hidden": "true", children: canonical.isLoading ? /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "h-full w-full animate-pulse rounded-full bg-muted" }) : photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx(
             "img",
             {
               src: photoSrc,
@@ -51098,8 +51212,8 @@ function PersonCard({
               className: "h-full w-full object-cover",
               loading: "lazy"
             }
-          ) : getInitials$2(person.name) }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-spouse-half-name", children: person.name }),
+          ) : getInitials$2(displayName) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-spouse-half-name", children: displayName }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-spouse-half-relation", children: relationLabel ?? person.role })
         ]
       }
@@ -51126,7 +51240,7 @@ function PersonCard({
         },
         className: cardClass,
         children: [
-          photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: portraitClass, "aria-hidden": "true", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+          canonical.isLoading ? /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: portraitClass, "aria-hidden": "true", children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "h-full w-full animate-pulse rounded-full bg-muted" }) }) : photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: portraitClass, "aria-hidden": "true", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
             "img",
             {
               src: photoSrc,
@@ -51134,8 +51248,8 @@ function PersonCard({
               className: "h-full w-full object-cover",
               loading: "lazy"
             }
-          ) }) : /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: portraitClass, "aria-hidden": "true", children: getInitials$2(person.name) }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: nameClass, children: person.name }),
+          ) }) : /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: portraitClass, "aria-hidden": "true", children: getInitials$2(displayName) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: nameClass, children: displayName }),
           person.years && /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ft-card-years", children: person.years }),
           selected && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "ft-card-detail", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ft-role-chip", children: person.role }),
@@ -51172,17 +51286,42 @@ function PersonCard({
     ] })
   ] });
 }
+function mergeCanonicalProfile(staticProfile, canonical) {
+  if (!staticProfile) return canonical;
+  const canonicalByLabel = new Map(
+    canonical.facts.map((fact) => [fact.label, fact])
+  );
+  const staticLabels = new Set(staticProfile.facts.map((fact) => fact.label));
+  const facts = [
+    ...staticProfile.facts.map(
+      (fact) => canonicalByLabel.get(fact.label) ?? fact
+    ),
+    ...canonical.facts.filter((fact) => !staticLabels.has(fact.label))
+  ];
+  return {
+    ...staticProfile,
+    name: canonical.name || staticProfile.name,
+    facts,
+    story: canonical.story || staticProfile.story
+  };
+}
 function useExploreFamily(focusPersonId, profiles2) {
   const { data: confirmed = [] } = useListConfirmedRelationships();
+  const resolvedId = focusPersonId ?? resolveDefaultFocus(profiles2);
+  const { data: backendProfile } = usePersonProfile(resolvedId);
   return reactExports.useMemo(() => {
     const graph = overlayConfirmedRelationships(FAMILY_GRAPH, confirmed);
-    const resolvedId = focusPersonId ?? resolveDefaultFocus(profiles2);
+    const staticProfile = profiles2[resolvedId];
+    const focus = backendProfile ? mergeCanonicalProfile(
+      staticProfile,
+      backendProfileToPersonProfile(backendProfile)
+    ) : staticProfile;
     return {
       focusPersonId: resolvedId,
-      focus: profiles2[resolvedId],
+      focus,
       relatives: getClosestRelatives(resolvedId, graph)
     };
-  }, [focusPersonId, profiles2, confirmed]);
+  }, [resolvedId, profiles2, confirmed, backendProfile]);
 }
 function extractYear(value) {
   const match = value.match(/\b(1[89]\d{2}|20\d{2})\b/);
@@ -51730,8 +51869,10 @@ function HeritageBranchCard({
   variant = "branch",
   count
 }) {
-  const photoSrc = profilePhoto ?? (portrait == null ? void 0 : portrait.src);
-  const photoAlt = profilePhoto ? `${person.name}'s profile photo` : (portrait == null ? void 0 : portrait.alt) ?? `${person.name}'s initials`;
+  const canonical = useCanonicalPerson(person.id, person.name);
+  const displayName = canonical.displayName;
+  const photoSrc = canonical.profilePhotoUrl ?? (!canonical.hasCanonicalProfile ? profilePhoto ?? (portrait == null ? void 0 : portrait.src) : void 0);
+  const photoAlt = photoSrc ? `${displayName}'s profile photo` : (portrait == null ? void 0 : portrait.alt) ?? `${displayName}'s initials`;
   if (variant === "hb-unit" || variant === "hb-branch") {
     const isBranch = variant === "hb-branch";
     const cardClass2 = isBranch ? "hb-branch-card" : "hb-unit-card";
@@ -51744,7 +51885,7 @@ function HeritageBranchCard({
         "data-ocid": `hb.${isBranch ? "branch" : "unit"}.${index2 + 1}`,
         onClick: onSelect,
         "aria-pressed": selected,
-        "aria-label": `${person.name}, ${person.role}`,
+        "aria-label": `${displayName}, ${person.role}`,
         initial: { opacity: 0, scale: 0.92, y: 6 },
         animate: { opacity: 1, scale: 1, y: 0 },
         transition: {
@@ -51754,8 +51895,8 @@ function HeritageBranchCard({
         },
         className: `${cardClass2} focus-visible:outline-none`,
         children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: portraitClass, "aria-hidden": "true", children: photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: photoSrc, alt: photoAlt, loading: "lazy" }) : getInitials$1(person.name) }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: nameClass, children: person.name }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: portraitClass, "aria-hidden": "true", children: photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: photoSrc, alt: photoAlt, loading: "lazy" }) : getInitials$1(displayName) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: nameClass, children: displayName }),
           count && /* @__PURE__ */ jsxRuntimeExports.jsx(
             "span",
             {
@@ -51777,7 +51918,7 @@ function HeritageBranchCard({
         "data-ocid": `hb.node.${index2 + 1}`,
         onClick: onSelect,
         "aria-pressed": selected,
-        "aria-label": `${person.name}, ${person.role}`,
+        "aria-label": `${displayName}, ${person.role}`,
         initial: { opacity: 0, scale: 0.92, y: 6 },
         animate: { opacity: 1, scale: 1, y: 0 },
         transition: {
@@ -51792,10 +51933,10 @@ function HeritageBranchCard({
             {
               className: isCouple ? "hb-couple-portrait" : "hb-node-portrait",
               "aria-hidden": "true",
-              children: photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: photoSrc, alt: photoAlt, loading: "lazy" }) : getInitials$1(person.name)
+              children: photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: photoSrc, alt: photoAlt, loading: "lazy" }) : getInitials$1(displayName)
             }
           ),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: isCouple ? "hb-couple-name" : "hb-node-name", children: person.name })
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: isCouple ? "hb-couple-name" : "hb-node-name", children: displayName })
         ]
       }
     );
@@ -51813,7 +51954,7 @@ function HeritageBranchCard({
       "data-ocid": `branch.person.${index2 + 1}`,
       onClick: onSelect,
       "aria-pressed": selected,
-      "aria-label": `${person.name}, ${person.role}`,
+      "aria-label": `${displayName}, ${person.role}`,
       initial: { opacity: 0, scale: 0.92, y: 6 },
       animate: { opacity: 1, scale: 1, y: 0 },
       transition: {
@@ -51828,10 +51969,10 @@ function HeritageBranchCard({
           {
             className: `branch-portrait ${large ? "h-16 w-16 text-xl" : ""}`,
             "aria-hidden": "true",
-            children: photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: photoSrc, alt: photoAlt, loading: "lazy" }) : getInitials$1(person.name)
+            children: photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: photoSrc, alt: photoAlt, loading: "lazy" }) : getInitials$1(displayName)
           }
         ),
-        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: `branch-card-name ${large ? "text-sm" : ""}`, children: person.name }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: `branch-card-name ${large ? "text-sm" : ""}`, children: displayName }),
         /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "branch-card-relation", children: person.role }),
         isAnchor && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "branch-anchor-chip mt-1", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "branch-anchor-dot", "aria-hidden": "true" }),
@@ -53434,9 +53575,6 @@ function App() {
     status: identityStatus,
     personId: myPersonId
   } = useNavbarIdentity();
-  const [profilePhotos, setProfilePhotos] = reactExports.useState(
-    () => ({})
-  );
   const profile = profiles[profileId] ?? profiles.julia;
   const isStaticProfile = Boolean(profiles[profileId]);
   const { data: myBackendProfile } = usePersonProfile(profileId, {
@@ -53458,19 +53596,6 @@ function App() {
   reactExports.useEffect(() => {
     clearOriginatingView();
   }, []);
-  const handleProfilePhotoChange = reactExports.useCallback(
-    (personId, url) => {
-      setProfilePhotos((current) => {
-        if (url === null) {
-          const next = { ...current };
-          delete next[personId];
-          return next;
-        }
-        return { ...current, [personId]: url };
-      });
-    },
-    []
-  );
   const openArchiveItem = reactExports.useCallback((id2) => {
     setSelectedArchiveItemId(id2);
     setView("archive-detail");
@@ -53532,8 +53657,8 @@ function App() {
         {
           person: resolvedProfile ?? profile,
           onBack: () => setView("family-tree"),
-          profilePhoto: profilePhotos[profileId],
-          onProfilePhotoChange: handleProfilePhotoChange,
+          onProfilePhotoChange: () => {
+          },
           onEditProfile: () => setView("profile-edit")
         }
       ) : /* @__PURE__ */ jsxRuntimeExports.jsx(ProfileLoadingState, {}) : view === "my-profile" ? isStaticProfile || resolvedProfile ? /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -53541,8 +53666,8 @@ function App() {
         {
           person: resolvedProfile ?? profile,
           onBack: () => setView("home"),
-          profilePhoto: profilePhotos[profileId],
-          onProfilePhotoChange: handleProfilePhotoChange,
+          onProfilePhotoChange: () => {
+          },
           onEditProfile: () => setView("profile-edit")
         }
       ) : (

@@ -1,8 +1,39 @@
 import "@testing-library/jest-dom/vitest";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { FamilyTreePage } from "./pages/FamilyTreePage";
+
+// Every PersonCard now resolves its canonical display name and profile photo
+// from the shared backend Person Profile record via useCanonicalPerson, which
+// calls usePersonProfile/useProfilePhoto (useActor + useQuery). These tests
+// render FamilyTreePage directly, so stub the provider seam (useActor) and wrap
+// the render in a QueryClientProvider. No backend profile or photo is seeded,
+// so every card falls back to its inline name and initials placeholder — the
+// rendering contract these tests freeze.
+const { mockActor } = vi.hoisted(() => {
+  const mockActor = {
+    async getPersonProfile(): Promise<null> {
+      return null;
+    },
+    async getProfilePhoto(): Promise<null> {
+      return null;
+    },
+  };
+  return { mockActor };
+});
+
+vi.mock("@caffeineai/core-infrastructure", () => ({
+  useActor: () => ({ actor: mockActor, isFetching: false }),
+  useInternetIdentity: () => ({
+    isAuthenticated: false,
+    login: () => {},
+    identity: null,
+    isInitializing: false,
+    isLoggingIn: false,
+  }),
+}));
 
 // The FamilyTreePage component is the full multi-generation Norwood family tree
 // renderer. It is NOT currently wired into App.tsx (the "family-tree" view shows
@@ -26,13 +57,18 @@ function renderTree(
 ) {
   const onBack = vi.fn();
   const onOpenProfile = props.onOpenProfile ?? vi.fn();
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
   render(
-    <FamilyTreePage
-      onBack={onBack}
-      onOpenProfile={onOpenProfile}
-      profilePhotos={{}}
-      initialExpandedPersonId={props.initialExpandedPersonId}
-    />,
+    <QueryClientProvider client={queryClient}>
+      <FamilyTreePage
+        onBack={onBack}
+        onOpenProfile={onOpenProfile}
+        profilePhotos={{}}
+        initialExpandedPersonId={props.initialExpandedPersonId}
+      />
+    </QueryClientProvider>,
   );
   return { onBack, onOpenProfile };
 }
@@ -126,21 +162,27 @@ describe("FamilyTreePage characterization: rendering contract", () => {
     expect(screen.getByText("Erma T. Williams")).toBeInTheDocument();
 
     // Children of the first marriage.
-    for (const name of ["Elbert", "Wellman", "Wetherby"]) {
+    for (const name of [
+      "Elbert Norwood",
+      "Wellman Norwood",
+      "Wetherby Norwood",
+    ]) {
       expect(screen.getByText(name)).toBeInTheDocument();
     }
-    // Children of the second marriage.
+    // Children of the second marriage. The tree resolves each person's display
+    // name from the canonical shared Person Profile record (personFromId ->
+    // profiles[id].name), so these render with their full canonical names.
     for (const name of [
-      "Columbus",
-      "Thomas Clayton “Tip / TC”",
-      "Alton",
-      "Robert Davis “RD”",
-      "Ardeanus",
-      "Willie B.",
-      "James",
-      "Freddie",
-      "Zelia Mae",
-      "Lula Mae",
+      "Columbus Norwood",
+      "Thomas Clayton “Tip / TC” Norwood",
+      "Alton Norwood",
+      "Robert Davis “RD” Norwood",
+      "Ardeanus Norwood",
+      "Willie B. Norwood",
+      "James Norwood",
+      "Freddie Norwood",
+      "Zelia Mae Norwood",
+      "Lula Mae Norwood",
     ]) {
       expect(screen.getByText(name)).toBeInTheDocument();
     }
@@ -157,7 +199,7 @@ describe("FamilyTreePage characterization: rendering contract", () => {
     );
 
     // The couple renders with the "couple" PersonCard variant.
-    expect(screen.getByText("Lula Mae")).toBeInTheDocument();
+    expect(screen.getByText("Lula Mae Norwood")).toBeInTheDocument();
     expect(screen.getByText("Versie Smith")).toBeInTheDocument();
 
     // The seven children render with the "child" variant.
@@ -229,19 +271,19 @@ describe("FamilyTreePage characterization: rendering contract", () => {
       // Clayton branch
       "Ms. Hudson",
       "Erma T. Williams",
-      "Elbert",
-      "Wellman",
-      "Wetherby",
-      "Columbus",
-      "Thomas Clayton “Tip / TC”",
-      "Alton",
-      "Robert Davis “RD”",
-      "Ardeanus",
-      "Willie B.",
-      "James",
-      "Freddie",
-      "Zelia Mae",
-      "Lula Mae",
+      "Elbert Norwood",
+      "Wellman Norwood",
+      "Wetherby Norwood",
+      "Columbus Norwood",
+      "Thomas Clayton “Tip / TC” Norwood",
+      "Alton Norwood",
+      "Robert Davis “RD” Norwood",
+      "Ardeanus Norwood",
+      "Willie B. Norwood",
+      "James Norwood",
+      "Freddie Norwood",
+      "Zelia Mae Norwood",
+      "Lula Mae Norwood",
       // Lula Mae & Versie
       "Versie Smith",
       "Lorenzo Smith Sr.",
@@ -318,6 +360,6 @@ describe("FamilyTreePage characterization: selection and branch behavior", () =>
       '[data-ocid="tree.branch.clayton"]',
     );
     expect(claytonFold).toHaveAttribute("aria-expanded", "true");
-    expect(screen.getByText("Elbert")).toBeInTheDocument();
+    expect(screen.getByText("Elbert Norwood")).toBeInTheDocument();
   });
 });

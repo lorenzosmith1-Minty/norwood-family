@@ -1,4 +1,5 @@
 import "@testing-library/jest-dom/vitest";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { FamilyTreePage } from "./pages/FamilyTreePage";
@@ -38,13 +39,46 @@ vi.mock("./types/family", async (importOriginal) => {
   };
 });
 
+// Every PersonCard resolves its canonical display name and profile photo from
+// the shared backend Person Profile record via useCanonicalPerson (useActor +
+// useQuery). Stub the provider seam and wrap the render in a QueryClientProvider
+// so the tree renders with inline fallback names, which is what these tests
+// assert.
+const { mockActor } = vi.hoisted(() => {
+  const mockActor = {
+    async getPersonProfile(): Promise<null> {
+      return null;
+    },
+    async getProfilePhoto(): Promise<null> {
+      return null;
+    },
+  };
+  return { mockActor };
+});
+
+vi.mock("@caffeineai/core-infrastructure", () => ({
+  useActor: () => ({ actor: mockActor, isFetching: false }),
+  useInternetIdentity: () => ({
+    isAuthenticated: false,
+    login: () => {},
+    identity: null,
+    isInitializing: false,
+    isLoggingIn: false,
+  }),
+}));
+
 function renderTree() {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
   render(
-    <FamilyTreePage
-      onBack={() => {}}
-      onOpenProfile={() => {}}
-      profilePhotos={{}}
-    />,
+    <QueryClientProvider client={queryClient}>
+      <FamilyTreePage
+        onBack={() => {}}
+        onOpenProfile={() => {}}
+        profilePhotos={{}}
+      />
+    </QueryClientProvider>,
   );
 }
 

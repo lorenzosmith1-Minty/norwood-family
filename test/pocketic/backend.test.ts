@@ -44,6 +44,21 @@ it("reports the anonymous caller's default role without trapping", async () => {
   await expect(actor.getCallerUserRole()).resolves.toBeDefined();
 });
 
+it("seeds lorenzoSmithJr's preferredName as 'Waxx Minty'", async () => {
+  // The 20260907_000000.mo migration sets the canonical child profile's
+  // preferredName to 'Waxx Minty' so the child card on Lorenzo Smith Sr.'s
+  // profile resolves the canonical display name. The `name` field stays
+  // 'Lorenzo Smith Jr.'; only the preferredName is the canonical display name.
+  const profile = await actor.getPersonProfile("lorenzoSmithJr");
+  expect(profile).toEqual([
+    expect.objectContaining({
+      personId: "lorenzoSmithJr",
+      name: "Lorenzo Smith Jr.",
+      preferredName: ["Waxx Minty"],
+    }),
+  ]);
+});
+
 // Characterization baseline for the existing photo workflow before the archive
 // feature is added. The archive feature will add new contribution methods but
 // must not change the existing per-person photo gallery API, so the full
@@ -446,12 +461,14 @@ it("rejects a non-owner from updateOwnProfile with NotOwner", async () => {
   });
   expect(result).toEqual({ err: { NotOwner: null } });
 
-  // The canonical record was not modified by the rejected edit.
+  // The canonical record was not modified by the rejected edit. The seeded
+  // preferredName 'Waxx Minty' (set by the 20260907_000000.mo migration) is
+  // preserved — the rejected edit did not overwrite it.
   const profile = await nonOwnerActor.getPersonProfile("lorenzoSmithJr");
   expect(profile).toEqual([
     expect.objectContaining({
       personId: "lorenzoSmithJr",
-      preferredName: [],
+      preferredName: ["Waxx Minty"],
       claimStatus: { Claimed: null },
       claimedByUserId: [CLAIMANT],
     }),

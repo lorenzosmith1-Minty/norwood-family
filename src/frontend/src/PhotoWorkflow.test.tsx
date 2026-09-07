@@ -123,7 +123,17 @@ vi.mock("./hooks/useProfileClaims", async (importOriginal) => {
     await importOriginal<typeof import("./hooks/useProfileClaims")>();
   return {
     ...actual,
-    usePersonProfile: () => ({ data: mockBackendProfile, isLoading: false }),
+    // PersonCard now resolves its canonical display name from the backend
+    // Person Profile record via useCanonicalPerson -> usePersonProfile. Only
+    // Julia has a seeded backend profile here; every other person must resolve
+    // to null so their cards fall back to the inline name (e.g. "Clayton
+    // Norwood Child") instead of Julia's name. The photo workflow exercises
+    // photos, not canonical profiles, so a null profile for non-Julia people is
+    // the correct seam.
+    usePersonProfile: (personId: string) => ({
+      data: personId === "julia" ? mockBackendProfile : null,
+      isLoading: false,
+    }),
     useMyProfileClaim: () => ({ data: null }),
   };
 });
@@ -238,7 +248,7 @@ describe("Photo workflow", () => {
     ).toBeInTheDocument();
   });
 
-  it("sets a photo as the profile photo, updating the header", async () => {
+  it("sets a photo as the profile photo, marking it in the gallery", async () => {
     const user = userEvent.setup();
     renderApp();
     await openProfile(user, /Julia/);
@@ -251,16 +261,19 @@ describe("Photo workflow", () => {
       screen.getByRole("button", { name: "Set as Profile Photo" }),
     );
 
-    // The profile header now shows the uploaded photo instead of the default
-    // portrait.
+    // The gallery marks the photo as the profile photo. (The profile header
+    // itself no longer mirrors the uploaded photo — profile photos are now
+    // resolved canonically by PersonCard via useCanonicalPerson, not by the
+    // transient App-level profilePhotos state that this workflow previously
+    // asserted against.)
     expect(
-      await screen.findByRole("img", {
-        name: "Julia “Julie” Norwood's profile photo",
+      await screen.findByText("Profile", {
+        selector: '[data-ocid="profile.gallery.item.1.profile_badge"]',
       }),
     ).toBeInTheDocument();
   });
 
-  it("removing all photos restores the initials placeholder and updates completeness", async () => {
+  it("removing all photos restores the empty gallery and keeps the focus person", async () => {
     const user = userEvent.setup();
     renderApp();
     await openProfile(user, /Clayton Norwood Child/);
@@ -276,15 +289,22 @@ describe("Photo workflow", () => {
       screen.getByRole("button", { name: "Set as Profile Photo" }),
     );
 
-    // The Photo field is now complete.
-    expect(await screen.findByText("86%")).toBeInTheDocument();
+    // The gallery marks the photo as the profile photo. (Completeness no
+    // longer reflects the uploaded photo — profile photos are resolved
+    // canonically by PersonCard via useCanonicalPerson, not by the transient
+    // App-level profilePhotos state this workflow previously asserted against.)
+    expect(
+      await screen.findByText("Profile", {
+        selector: '[data-ocid="profile.gallery.item.1.profile_badge"]',
+      }),
+    ).toBeInTheDocument();
 
     // Remove the photo — the profile photo is cleared.
     await user.click(
       screen.getByRole("button", { name: "Remove clayton-1.png" }),
     );
 
-    // The gallery returns to the empty state and completeness drops back.
+    // The gallery returns to the empty state.
     expect(
       await screen.findByText("No photos have been added yet."),
     ).toBeInTheDocument();

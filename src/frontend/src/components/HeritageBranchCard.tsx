@@ -1,4 +1,5 @@
 import { motion } from "motion/react";
+import { useCanonicalPerson } from "../hooks/useCanonicalPerson";
 
 export interface HeritagePerson {
   id: string;
@@ -52,10 +53,26 @@ export function HeritageBranchCard({
   variant = "branch",
   count,
 }: HeritageBranchCardProps) {
-  const photoSrc = profilePhoto ?? portrait?.src;
-  const photoAlt = profilePhoto
-    ? `${person.name}'s profile photo`
-    : (portrait?.alt ?? `${person.name}'s initials`);
+  // Resolve the canonical display name and profile photo from the shared
+  // backend Person Profile record keyed by personId. When a backend canonical
+  // record exists, its preferredName-first display name and durable profile
+  // photo win over the inline/static data, so an edit to the claimed profile
+  // propagates to this card without manual edits. When no backend record
+  // exists (a static-only or graph-only person), the card falls back to the
+  // inline person name and portrait.
+  const canonical = useCanonicalPerson(person.id, person.name);
+  const displayName = canonical.displayName;
+  // Canonical photo wins; when a canonical profile exists but has no real
+  // photo, show the initials placeholder (null). Only when no canonical
+  // profile exists do we fall back to the inline/static portrait.
+  const photoSrc =
+    canonical.profilePhotoUrl ??
+    (!canonical.hasCanonicalProfile
+      ? (profilePhoto ?? portrait?.src)
+      : undefined);
+  const photoAlt = photoSrc
+    ? `${displayName}'s profile photo`
+    : (portrait?.alt ?? `${displayName}'s initials`);
 
   // Compact family-unit / branch-anchor plate: a single tappable card that
   // represents a whole unit or line head with an optional count chip, instead
@@ -72,7 +89,7 @@ export function HeritageBranchCard({
         data-ocid={`hb.${isBranch ? "branch" : "unit"}.${index + 1}`}
         onClick={onSelect}
         aria-pressed={selected}
-        aria-label={`${person.name}, ${person.role}`}
+        aria-label={`${displayName}, ${person.role}`}
         initial={{ opacity: 0, scale: 0.92, y: 6 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{
@@ -86,10 +103,10 @@ export function HeritageBranchCard({
           {photoSrc ? (
             <img src={photoSrc} alt={photoAlt} loading="lazy" />
           ) : (
-            getInitials(person.name)
+            getInitials(displayName)
           )}
         </span>
-        <span className={nameClass}>{person.name}</span>
+        <span className={nameClass}>{displayName}</span>
         {count && (
           <span
             className="hb-branch-count"
@@ -112,7 +129,7 @@ export function HeritageBranchCard({
         data-ocid={`hb.node.${index + 1}`}
         onClick={onSelect}
         aria-pressed={selected}
-        aria-label={`${person.name}, ${person.role}`}
+        aria-label={`${displayName}, ${person.role}`}
         initial={{ opacity: 0, scale: 0.92, y: 6 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{
@@ -129,11 +146,11 @@ export function HeritageBranchCard({
           {photoSrc ? (
             <img src={photoSrc} alt={photoAlt} loading="lazy" />
           ) : (
-            getInitials(person.name)
+            getInitials(displayName)
           )}
         </span>
         <span className={isCouple ? "hb-couple-name" : "hb-node-name"}>
-          {person.name}
+          {displayName}
         </span>
       </motion.button>
     );
@@ -154,7 +171,7 @@ export function HeritageBranchCard({
       data-ocid={`branch.person.${index + 1}`}
       onClick={onSelect}
       aria-pressed={selected}
-      aria-label={`${person.name}, ${person.role}`}
+      aria-label={`${displayName}, ${person.role}`}
       initial={{ opacity: 0, scale: 0.92, y: 6 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       transition={{
@@ -171,11 +188,11 @@ export function HeritageBranchCard({
         {photoSrc ? (
           <img src={photoSrc} alt={photoAlt} loading="lazy" />
         ) : (
-          getInitials(person.name)
+          getInitials(displayName)
         )}
       </span>
       <span className={`branch-card-name ${large ? "text-sm" : ""}`}>
-        {person.name}
+        {displayName}
       </span>
       <span className="branch-card-relation">{person.role}</span>
       {isAnchor && (

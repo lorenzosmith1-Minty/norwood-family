@@ -82,6 +82,58 @@ it("carries photos written by the previous version through the upgrade", async (
   });
 });
 
+// The 20260907_000000.mo migration sets the canonical lorenzoSmithJr profile's
+// preferredName to 'Waxx Minty' so the child card on Lorenzo Smith Sr.'s profile
+// resolves the canonical display name. The previous revision already carries
+// this migration (it was added in the prior canonical-display-name build), so
+// installing it seeds lorenzoSmithJr with preferredName 'Waxx Minty'. This test
+// installs the previous revision, upgrades to this build (replaying the
+// migration chain), and asserts the preferredName stays 'Waxx Minty' while the
+// `name` field is unchanged.
+it("keeps lorenzoSmithJr's preferredName as 'Waxx Minty' on upgrade", async () => {
+  // 1. Install the version the user is actually running. The seed migration
+  //    (20260905_080000.mo) and the canonical-display-name migration
+  //    (20260907_000000.mo) run here, seeding lorenzoSmithJr with preferredName
+  //    'Waxx Minty'.
+  const previous = await pic!.setupCanister<_SERVICE>({
+    idlFactory,
+    wasm: PREVIOUS_WASM,
+  });
+
+  // 2. Confirm the previous revision seeded lorenzoSmithJr with the Waxx Minty
+  //    preferredName.
+  const before = await previous.actor.getPersonProfile("lorenzoSmithJr");
+  expect(before).toEqual([
+    expect.objectContaining({
+      personId: "lorenzoSmithJr",
+      name: "Lorenzo Smith Jr.",
+      preferredName: ["Waxx Minty"],
+    }),
+  ]);
+
+  // 3. Upgrade to the version this build produces. The new migration runs here.
+  await pic!.upgradeCanister({
+    canisterId: previous.canisterId,
+    wasm: BACKEND_WASM,
+    upgradeModeOptions: {
+      skip_pre_upgrade: [],
+      wasm_memory_persistence: [{ keep: null }],
+    },
+  });
+
+  // 4. Read through the NEW API: the preferredName is now 'Waxx Minty' and the
+  //    `name` field is unchanged.
+  const upgraded = pic!.createActor<_SERVICE>(idlFactory, previous.canisterId);
+  const profile = await upgraded.getPersonProfile("lorenzoSmithJr");
+  expect(profile).toEqual([
+    expect.objectContaining({
+      personId: "lorenzoSmithJr",
+      name: "Lorenzo Smith Jr.",
+      preferredName: ["Waxx Minty"],
+    }),
+  ]);
+});
+
 // The expanded Edit My Profile build adds a new migration (20260906_020000.mo)
 // that introduces the separate owner-editable identity/basic/about fields
 // (firstName, middleName, lastName, suffix, nickname, shortBio, longerStory,

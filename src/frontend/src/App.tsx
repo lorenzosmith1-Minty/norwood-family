@@ -121,13 +121,6 @@ export default function App() {
     status: identityStatus,
     personId: myPersonId,
   } = useNavbarIdentity();
-  // Tracks only explicitly-set (uploaded) profile photos. Default portraits are
-  // resolved by each consumer via `profilePhoto ?? person.portrait.src`, so this
-  // map starts empty — seeding it with default portraits would make every card
-  // render an image (including Clayton's initials placeholder).
-  const [profilePhotos, setProfilePhotos] = useState<Record<string, string>>(
-    () => ({}),
-  );
 
   const profile = profiles[profileId] ?? profiles.julia;
 
@@ -176,20 +169,6 @@ export default function App() {
   useEffect(() => {
     clearOriginatingView();
   }, []);
-
-  const handleProfilePhotoChange = useCallback(
-    (personId: string, url: string | null) => {
-      setProfilePhotos((current) => {
-        if (url === null) {
-          const next = { ...current };
-          delete next[personId];
-          return next;
-        }
-        return { ...current, [personId]: url };
-      });
-    },
-    [],
-  );
 
   const openArchiveItem = useCallback((id: bigint) => {
     setSelectedArchiveItemId(id);
@@ -261,8 +240,7 @@ export default function App() {
           <PersonProfilePage
             person={resolvedProfile ?? profile}
             onBack={() => setView("family-tree")}
-            profilePhoto={profilePhotos[profileId]}
-            onProfilePhotoChange={handleProfilePhotoChange}
+            onProfilePhotoChange={() => {}}
             onEditProfile={() => setView("profile-edit")}
           />
         ) : (
@@ -273,8 +251,7 @@ export default function App() {
           <PersonProfilePage
             person={resolvedProfile ?? profile}
             onBack={() => setView("home")}
-            profilePhoto={profilePhotos[profileId]}
-            onProfilePhotoChange={handleProfilePhotoChange}
+            onProfilePhotoChange={() => {}}
             onEditProfile={() => setView("profile-edit")}
           />
         ) : (

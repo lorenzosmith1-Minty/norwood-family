@@ -8,6 +8,10 @@ import { profiles } from "./PersonProfilePage";
 interface FamilyTreePageProps {
   onBack: () => void;
   onOpenProfile: (id: string) => void;
+  /* Retained for test compatibility only. Profile photos are no longer passed
+     through this transient map — every PersonCard resolves the canonical
+     display name and profile photo from the shared backend Person Profile
+     record via useCanonicalPerson(person.id, person.name) internally. */
   profilePhotos?: Record<string, string>;
   /* Person id whose branch should start expanded when the page mounts. Used
      when returning from a profile view so the branch being explored stays
@@ -15,10 +19,13 @@ interface FamilyTreePageProps {
   initialExpandedPersonId?: string;
 }
 
-/* Tree-specific display metadata (name, role, years, relationToYou) for each
-   person the tree renders. The relationships and structure come from the
-   shared FAMILY_GRAPH; this map only supplies the presentation strings the
-   tree shows, so the visible layout is unchanged. */
+/* Tree-specific presentation metadata (name fallback, role, years,
+   relationToYou) for each person the tree renders. The relationships and
+   structure come from the shared FAMILY_GRAPH; this map only supplies the
+   presentation strings the tree shows, so the visible layout is unchanged.
+   The display name is sourced from the canonical Person Profile record first
+   (see personFromId); the name here is only a fallback for graph-only nodes
+   that have no canonical profile. */
 const TREE_PERSON: Record<
   string,
   { name: string; role: string; years?: string; relationToYou?: string }
@@ -113,15 +120,21 @@ const TREE_PERSON: Record<
   "patricia-rollins": { name: "Patricia Rollins", role: "Daughter" },
 };
 
-/* Build a Person for a graph id: presentation strings from TREE_PERSON (with
-   profile fallback), portrait from the profile for the founding couple. */
+/* Build a Person for a graph id from the canonical shared Person Profile record
+   keyed by personId. The display name comes from the canonical profile first
+   (falling back to the tree's presentation name only for graph-only nodes that
+   have no canonical profile); role/years/relationToYou are tree presentation
+   strings. PersonCard then resolves the authoritative display name and profile
+   photo from the backend via useCanonicalPerson, so an edit to the claimed
+   profile (e.g. a preferred-name change or a new profile photo) propagates to
+   every card without manual card edits. */
 function personFromId(id: string): Person & { id: string } {
   const meta = TREE_PERSON[id];
   const profile = profiles[id];
   const isCouple = id === "julia" || id === "isaiah";
   return {
     id,
-    name: meta?.name ?? profile?.name ?? id,
+    name: profile?.name ?? meta?.name ?? id,
     role: meta?.role ?? profile?.role ?? "",
     ...(meta?.years ? { years: meta.years } : {}),
     ...(meta?.relationToYou ? { relationToYou: meta.relationToYou } : {}),
@@ -342,7 +355,6 @@ interface BranchRowProps {
   meIndex: number | null;
   onMarkMe: (index: number) => void;
   onOpenProfile?: (id: string) => void;
-  profilePhotos?: Record<string, string>;
 }
 
 function BranchRow({
@@ -354,7 +366,6 @@ function BranchRow({
   meIndex,
   onMarkMe,
   onOpenProfile,
-  profilePhotos,
 }: BranchRowProps) {
   const barSelected =
     inSet(selected, parentIndices) ||
@@ -411,7 +422,6 @@ function BranchRow({
               }
               isMe={meIndex === index}
               onMarkMe={() => onMarkMe(index)}
-              profilePhoto={person.id ? profilePhotos?.[person.id] : undefined}
             />
           );
         })}
@@ -428,7 +438,6 @@ interface ClaytonBranchProps {
   meIndex: number | null;
   onMarkMe: (index: number) => void;
   onOpenProfile?: (id: string) => void;
-  profilePhotos?: Record<string, string>;
   collapsed: boolean;
   onToggle: () => void;
 }
@@ -441,7 +450,6 @@ function ClaytonBranch({
   meIndex,
   onMarkMe,
   onOpenProfile,
-  profilePhotos,
   collapsed,
   onToggle,
 }: ClaytonBranchProps) {
@@ -508,11 +516,6 @@ function ClaytonBranch({
                   }
                   isMe={meIndex === spouseIndices[i]}
                   onMarkMe={() => onMarkMe(spouseIndices[i])}
-                  profilePhoto={
-                    branch.spouse.id
-                      ? profilePhotos?.[branch.spouse.id]
-                      : undefined
-                  }
                 />
               ))}
             </div>
@@ -573,7 +576,6 @@ function ClaytonBranch({
                         meIndex={meIndex}
                         onMarkMe={onMarkMe}
                         onOpenProfile={onOpenProfile}
-                        profilePhotos={profilePhotos}
                       />
                     );
                   })}
@@ -590,7 +592,6 @@ function ClaytonBranch({
 export function FamilyTreePage({
   onBack,
   onOpenProfile,
-  profilePhotos,
   initialExpandedPersonId,
 }: FamilyTreePageProps) {
   const [selected, setSelected] = useState<number | null>(null);
@@ -706,7 +707,6 @@ export function FamilyTreePage({
               onOpen={() => onOpenProfile(couple[index].id)}
               isMe={meIndex === index}
               onMarkMe={() => setMeIndex(index)}
-              profilePhoto={profilePhotos?.[couple[index].id]}
             />
           ))}
         </div>
@@ -753,7 +753,6 @@ export function FamilyTreePage({
             meIndex={meIndex}
             onMarkMe={setMeIndex}
             onOpenProfile={onOpenProfile}
-            profilePhotos={profilePhotos}
           />
         ))}
       </section>
@@ -767,7 +766,6 @@ export function FamilyTreePage({
         meIndex={meIndex}
         onMarkMe={setMeIndex}
         onOpenProfile={onOpenProfile}
-        profilePhotos={profilePhotos}
         collapsed={collapsed.clayton}
         onToggle={() => toggleBranch("clayton")}
       />
@@ -810,30 +808,24 @@ export function FamilyTreePage({
               <div className="fu-couple">
                 <PersonCard
                   variant="couple"
-                  person={{ id: "lula-mae", name: "Lula Mae", role: "Child" }}
+                  person={personFromId("lula-mae")}
                   index={LULA_MAE_INDEX}
                   selected={selected === LULA_MAE_INDEX}
                   onSelect={() => handleSelect(LULA_MAE_INDEX)}
                   onOpen={() => onOpenProfile("lula-mae")}
                   isMe={meIndex === LULA_MAE_INDEX}
                   onMarkMe={() => setMeIndex(LULA_MAE_INDEX)}
-                  profilePhoto={profilePhotos?.["lula-mae"]}
                 />
                 <span className="fu-couple-line" aria-hidden="true" />
                 <PersonCard
                   variant="couple"
-                  person={{
-                    id: "versie-smith",
-                    name: "Versie Smith",
-                    role: "Husband",
-                  }}
+                  person={personFromId("versie-smith")}
                   index={VERSIE_INDEX}
                   selected={selected === VERSIE_INDEX}
                   onSelect={() => handleSelect(VERSIE_INDEX)}
                   onOpen={() => onOpenProfile("versie-smith")}
                   isMe={meIndex === VERSIE_INDEX}
                   onMarkMe={() => setMeIndex(VERSIE_INDEX)}
-                  profilePhoto={profilePhotos?.["versie-smith"]}
                 />
               </div>
 
@@ -865,7 +857,6 @@ export function FamilyTreePage({
                         openOnSelect={false}
                         isMe={meIndex === index}
                         onMarkMe={() => setMeIndex(index)}
-                        profilePhoto={profilePhotos?.[child.id]}
                       />
                     </div>
                   );
@@ -902,7 +893,6 @@ export function FamilyTreePage({
                   openOnSelect={false}
                   isMe={meIndex === LORENZO_JR_INDEX}
                   onMarkMe={() => setMeIndex(LORENZO_JR_INDEX)}
-                  profilePhoto={profilePhotos?.[lorenzoJrId]}
                 />
               </div>
             </div>
@@ -954,18 +944,13 @@ export function FamilyTreePage({
             <div className="flex justify-center">
               <div className="w-full max-w-[calc(50%-0.375rem)] sm:max-w-[calc(50%-0.5rem)]">
                 <PersonCard
-                  person={{
-                    id: harveyId,
-                    name: "Harvey Adams Sr.",
-                    role: "Father",
-                  }}
+                  person={personFromId(harveyId)}
                   index={HARVEY_INDEX}
                   selected={selected === HARVEY_INDEX}
                   onSelect={() => handleSelect(HARVEY_INDEX)}
                   onOpen={() => onOpenProfile(harveyId)}
                   isMe={meIndex === HARVEY_INDEX}
                   onMarkMe={() => setMeIndex(HARVEY_INDEX)}
-                  profilePhoto={profilePhotos?.[harveyId]}
                 />
               </div>
             </div>
@@ -993,19 +978,13 @@ export function FamilyTreePage({
             <div className="flex justify-center">
               <div className="w-full max-w-[calc(50%-0.375rem)] sm:max-w-[calc(50%-0.5rem)]">
                 <PersonCard
-                  person={{
-                    id: gertrudeId,
-                    name: "Gertrude Adams-Hill",
-                    role: "Mother",
-                    years: "1913–",
-                  }}
+                  person={personFromId(gertrudeId)}
                   index={GERTRUDE_INDEX}
                   selected={selected === GERTRUDE_INDEX}
                   onSelect={() => handleSelect(GERTRUDE_INDEX)}
                   onOpen={() => onOpenProfile(gertrudeId)}
                   isMe={meIndex === GERTRUDE_INDEX}
                   onMarkMe={() => setMeIndex(GERTRUDE_INDEX)}
-                  profilePhoto={profilePhotos?.[gertrudeId]}
                 />
               </div>
             </div>
@@ -1033,18 +1012,13 @@ export function FamilyTreePage({
             <div className="flex justify-center">
               <div className="w-full max-w-[calc(50%-0.375rem)] sm:max-w-[calc(50%-0.5rem)]">
                 <PersonCard
-                  person={{
-                    id: "versie-smith",
-                    name: "Versie Smith",
-                    role: "Husband",
-                  }}
+                  person={personFromId("versie-smith")}
                   index={VERSIE_MATERNAL_INDEX}
                   selected={selected === VERSIE_MATERNAL_INDEX}
                   onSelect={() => handleSelect(VERSIE_MATERNAL_INDEX)}
                   onOpen={() => onOpenProfile("versie-smith")}
                   isMe={meIndex === VERSIE_MATERNAL_INDEX}
                   onMarkMe={() => setMeIndex(VERSIE_MATERNAL_INDEX)}
-                  profilePhoto={profilePhotos?.["versie-smith"]}
                 />
               </div>
             </div>
@@ -1096,32 +1070,22 @@ export function FamilyTreePage({
             {/* Harvey and Mary Jane Johnson as a couple */}
             <div className="grid grid-cols-2 gap-3 sm:gap-4">
               <PersonCard
-                person={{
-                  id: harveyId,
-                  name: "Harvey Adams Sr.",
-                  role: "Father",
-                }}
+                person={personFromId(harveyId)}
                 index={HARVEY_INDEX}
                 selected={selected === HARVEY_INDEX}
                 onSelect={() => handleSelect(HARVEY_INDEX)}
                 onOpen={() => onOpenProfile(harveyId)}
                 isMe={meIndex === HARVEY_INDEX}
                 onMarkMe={() => setMeIndex(HARVEY_INDEX)}
-                profilePhoto={profilePhotos?.[harveyId]}
               />
               <PersonCard
-                person={{
-                  id: "mary-jane-johnson",
-                  name: "Mary Jane Johnson",
-                  role: "Second Wife",
-                }}
+                person={personFromId("mary-jane-johnson")}
                 index={MARY_JANE_INDEX}
                 selected={selected === MARY_JANE_INDEX}
                 onSelect={() => handleSelect(MARY_JANE_INDEX)}
                 onOpen={() => onOpenProfile("mary-jane-johnson")}
                 isMe={meIndex === MARY_JANE_INDEX}
                 onMarkMe={() => setMeIndex(MARY_JANE_INDEX)}
-                profilePhoto={profilePhotos?.["mary-jane-johnson"]}
               />
             </div>
 
@@ -1177,7 +1141,6 @@ export function FamilyTreePage({
                 meIndex={meIndex}
                 onMarkMe={setMeIndex}
                 onOpenProfile={onOpenProfile}
-                profilePhotos={profilePhotos}
               />
             </div>
 
@@ -1212,7 +1175,6 @@ export function FamilyTreePage({
                 meIndex={meIndex}
                 onMarkMe={setMeIndex}
                 onOpenProfile={onOpenProfile}
-                profilePhotos={profilePhotos}
               />
             </div>
           </div>

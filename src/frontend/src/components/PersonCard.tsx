@@ -1,4 +1,5 @@
 import { motion } from "motion/react";
+import { useCanonicalPerson } from "../hooks/useCanonicalPerson";
 
 export interface Person {
   id?: string;
@@ -68,6 +69,27 @@ export function PersonCard({
   relationLabel,
   role = "sibling",
 }: PersonCardProps) {
+  // Resolve the canonical display name and profile photo from the shared
+  // backend Person Profile record keyed by personId. When a backend canonical
+  // record exists, its preferredName-first display name and durable profile
+  // photo win over the inline duplicated data, so an edit to the claimed
+  // profile propagates to every card variant without manual card edits. When
+  // no backend record exists (a static-only or graph-only person), the card
+  // falls back to the inline person data.
+  const canonical = useCanonicalPerson(person.id, person.name);
+  const displayName = canonical.displayName;
+  // Canonical photo wins; when a canonical profile exists but has no real
+  // photo, show the initials placeholder (null). Only when no canonical
+  // profile exists do we fall back to the inline/static portrait.
+  const photoSrc =
+    canonical.profilePhotoUrl ??
+    (!canonical.hasCanonicalProfile
+      ? (profilePhoto ?? person.photo?.src)
+      : undefined);
+  const photoAlt = photoSrc
+    ? `${displayName}'s profile photo`
+    : (person.photo?.alt ?? `${displayName}'s initials`);
+
   // Selecting a card records it as the current selection so the
   // Relation-to-You / This-is-Me reveal is available. By default the same
   // click also opens the person's profile (onOpen); the Family Unit child
@@ -79,11 +101,6 @@ export function PersonCard({
       onOpen?.();
     }
   };
-
-  const photoSrc = profilePhoto ?? person.photo?.src;
-  const photoAlt = profilePhoto
-    ? `${person.name}'s profile photo`
-    : (person.photo?.alt ?? `${person.name}'s initials`);
 
   // Compact Explore Family relative card: portrait/initials + name + a simple
   // relationship label. Tapping it recenters the view on that person. The
@@ -128,7 +145,9 @@ export function PersonCard({
         className={`${cardClass} focus-visible:outline-none`}
       >
         <span className={portraitClass} aria-hidden="true">
-          {photoSrc ? (
+          {canonical.isLoading ? (
+            <span className="h-full w-full animate-pulse rounded-full bg-muted" />
+          ) : photoSrc ? (
             <img
               src={photoSrc}
               alt={photoAlt}
@@ -136,10 +155,10 @@ export function PersonCard({
               loading="lazy"
             />
           ) : (
-            getInitials(person.name)
+            getInitials(displayName)
           )}
         </span>
-        <span className={nameClass}>{person.name}</span>
+        <span className={nameClass}>{displayName}</span>
         <span className={relationClass}>{relationLabel ?? person.role}</span>
       </motion.button>
     );
@@ -162,7 +181,9 @@ export function PersonCard({
         className="ex-focus-card"
       >
         <span className="ex-focus-portrait" aria-hidden="true">
-          {photoSrc ? (
+          {canonical.isLoading ? (
+            <span className="h-full w-full animate-pulse rounded-full bg-muted" />
+          ) : photoSrc ? (
             <img
               src={photoSrc}
               alt={photoAlt}
@@ -170,11 +191,11 @@ export function PersonCard({
               loading="lazy"
             />
           ) : (
-            getInitials(person.name)
+            getInitials(displayName)
           )}
         </span>
         <span className="ex-focus-body">
-          <span className="ex-focus-name">{person.name}</span>
+          <span className="ex-focus-name">{displayName}</span>
           {person.years && (
             <span className="ex-focus-years">{person.years}</span>
           )}
@@ -216,7 +237,9 @@ export function PersonCard({
         className="ex-spouse-half focus-visible:outline-none"
       >
         <span className="ex-spouse-half-portrait" aria-hidden="true">
-          {photoSrc ? (
+          {canonical.isLoading ? (
+            <span className="h-full w-full animate-pulse rounded-full bg-muted" />
+          ) : photoSrc ? (
             <img
               src={photoSrc}
               alt={photoAlt}
@@ -224,10 +247,10 @@ export function PersonCard({
               loading="lazy"
             />
           ) : (
-            getInitials(person.name)
+            getInitials(displayName)
           )}
         </span>
-        <span className="ex-spouse-half-name">{person.name}</span>
+        <span className="ex-spouse-half-name">{displayName}</span>
         <span className="ex-spouse-half-relation">
           {relationLabel ?? person.role}
         </span>
@@ -268,7 +291,11 @@ export function PersonCard({
         }}
         className={cardClass}
       >
-        {photoSrc ? (
+        {canonical.isLoading ? (
+          <span className={portraitClass} aria-hidden="true">
+            <span className="h-full w-full animate-pulse rounded-full bg-muted" />
+          </span>
+        ) : photoSrc ? (
           <span className={portraitClass} aria-hidden="true">
             <img
               src={photoSrc}
@@ -279,10 +306,10 @@ export function PersonCard({
           </span>
         ) : (
           <span className={portraitClass} aria-hidden="true">
-            {getInitials(person.name)}
+            {getInitials(displayName)}
           </span>
         )}
-        <span className={nameClass}>{person.name}</span>
+        <span className={nameClass}>{displayName}</span>
         {person.years && <span className="ft-card-years">{person.years}</span>}
         {selected && (
           <span className="ft-card-detail">

@@ -66,14 +66,13 @@ export function useCanonicalPerson(
     ? profilePhoto.blob.getDirectURL()
     : null;
 
-  // The loading state is driven by the profile-photo lookup, not the profile
-  // lookup: while the photo query is pending, or while a canonical profile
-  // exists but its photo has not resolved yet (e.g. the first-load bootstrap is
-  // still uploading it), the card must show a loading skeleton rather than a
-  // premature initials fallback so no stale initials flash before the canonical
-  // photo resolves.
-  const photoPending =
-    photoLoading || (hasCanonicalProfile && !profilePhotoUrl);
+  // The loading state is driven ONLY by the pending profile-photo query. Once
+  // the photo query resolves (even to null), isLoading becomes false and the
+  // component falls back to initials when there is genuinely no photo. This
+  // keeps the loading skeleton while async photo data is being fetched (for
+  // profiles that DO have a photo) while allowing photo-less profiles to
+  // resolve to initials instead of a permanent skeleton.
+  const photoPending = photoLoading;
 
   return {
     displayName,

@@ -282,33 +282,34 @@ describe("Lorenzo Smith Sr. child card shows a loading skeleton until the canoni
     expect(screen.queryByText("WM")).not.toBeInTheDocument();
   });
 
-  it("keeps the loading skeleton (not initials) when the canonical child has no photo yet", async () => {
+  it("resolves to initials (not a skeleton) once the photo query resolves with no photo", async () => {
     // The canonical child profile exists but has no selected profile photo. The
-    // first-load fix drives the loading state from the profile-photo lookup
-    // (hasCanonicalProfile && !profilePhotoUrl), so even after the person lookup
-    // resolves, the child card must keep showing the loading skeleton rather
-    // than a premature initials placeholder while the canonical photo is
-    // bootstrapped.
+    // first-load fix drives the loading state ONLY from the pending profile-photo
+    // query, so while the photo query is pending the child card shows the loading
+    // skeleton, and once it resolves (to null) the card resolves to the initials
+    // placeholder rather than a permanent skeleton.
     seedWaxxMintyProfile();
-    const personGate = mockActor.holdPersonPending();
+    const photoGate = mockActor.holdPhotoPending();
     renderLorenzoSmithSrProfile();
 
+    // While the canonical photo query is pending, the child card shows the
+    // loading skeleton — not a premature initials placeholder.
     const loadingState = await screen.findByTestId(
       "profile.family_member.loading_state",
     );
     expect(loadingState).toBeInTheDocument();
     expect(screen.queryByText("WM")).not.toBeInTheDocument();
 
-    // Resolve the pending person lookup (no photo seeded). The canonical
-    // profile now exists but still has no photo, so the loading skeleton
-    // persists — no initials placeholder appears.
-    personGate.resolve(seedWaxxMintyProfile());
+    // Resolve the pending photo lookup to null (no photo seeded). The canonical
+    // profile now exists but has no photo, so the card resolves to the initials
+    // placeholder — the loading skeleton is gone.
+    photoGate.resolve(null);
 
     expect(await screen.findByText("Waxx Minty")).toBeInTheDocument();
     expect(
-      screen.getByTestId("profile.family_member.loading_state"),
-    ).toBeInTheDocument();
+      screen.queryByTestId("profile.family_member.loading_state"),
+    ).not.toBeInTheDocument();
     expect(waxxChildCard().querySelector("img")).toBeNull();
-    expect(screen.queryByText("WM")).not.toBeInTheDocument();
+    expect(screen.getByText("WM")).toBeInTheDocument();
   });
 });

@@ -36663,8 +36663,6 @@ function LoginSurface() {
     ) : /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "signin-footnote", children: "Your account is private and secure. We never post to your Google or Apple account, and your identity stays yours." })
   ] });
 }
-const LORENZO_SMITH_JR_ID = "lorenzoSmithJr";
-const LORENZO_SMITH_JR_PORTRAIT_SRC = "/assets/generated/lorenzo-smith-jr-portrait.dim_800x900.png";
 function useProvidersPresent() {
   return reactExports.useContext(QueryClientContext) !== void 0;
 }
@@ -36754,43 +36752,6 @@ function useSetProfilePhoto() {
       });
     }
   });
-}
-function useEnsureLorenzoProfilePhoto() {
-  const providersPresent = useProvidersPresent();
-  const { data: profilePhoto, isLoading } = useProfilePhoto(LORENZO_SMITH_JR_ID);
-  const addPhoto = useAddPhoto();
-  const setProfilePhoto = useSetProfilePhoto();
-  const attemptedRef = reactExports.useRef(false);
-  reactExports.useEffect(() => {
-    if (!providersPresent || isLoading || attemptedRef.current) return;
-    if (profilePhoto) {
-      attemptedRef.current = true;
-      return;
-    }
-    attemptedRef.current = true;
-    void (async () => {
-      try {
-        const response = await fetch(LORENZO_SMITH_JR_PORTRAIT_SRC);
-        const bytes = new Uint8Array(await response.arrayBuffer());
-        const blob = ExternalBlob$1.fromBytes(
-          bytes,
-          "image/png",
-          "lorenzo-smith-jr.png"
-        );
-        const photo = await addPhoto.mutateAsync({
-          personId: LORENZO_SMITH_JR_ID,
-          blob,
-          filename: "lorenzo-smith-jr.png",
-          mimeType: "image/png"
-        });
-        await setProfilePhoto.mutateAsync({
-          personId: LORENZO_SMITH_JR_ID,
-          photoId: photo.id
-        });
-      } catch {
-      }
-    })();
-  }, [providersPresent, isLoading, profilePhoto, addPhoto, setProfilePhoto]);
 }
 function useIsAdmin() {
   const providersPresent = useProvidersPresent();
@@ -45901,7 +45862,7 @@ function useCanonicalPerson(personId, fallbackName) {
   const hasCanonicalProfile = Boolean(backendProfile);
   const displayName = backendProfile ? resolveBackendDisplayName(personId ?? "", backendProfile) : fallbackName;
   const profilePhotoUrl = profilePhoto ? profilePhoto.blob.getDirectURL() : null;
-  const photoPending = photoLoading || hasCanonicalProfile && !profilePhotoUrl;
+  const photoPending = photoLoading;
   return {
     displayName,
     profilePhotoUrl,
@@ -48506,7 +48467,6 @@ function PersonProfilePage({
   const { data: backendProfile, isLoading: profileLoading } = usePersonProfile(
     person.id
   );
-  useEnsureLorenzoProfilePhoto();
   const { identity } = useInternetIdentity();
   const { data: myClaim } = useMyProfileClaim(person.id);
   const { data: relationshipRequests = [] } = useMyRelationshipRequests();

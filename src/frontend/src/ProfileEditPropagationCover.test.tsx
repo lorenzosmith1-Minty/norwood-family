@@ -232,12 +232,11 @@ describe("Profile-edit propagation to PersonCard variants", () => {
     expect(getProfile("lorenzoSmithJr")?.personId).toBe("lorenzoSmithJr");
   });
 
-  it("shows a loading skeleton (not initials) on cards with no saved profile photo yet", async () => {
+  it("resolves to initials (not a skeleton) on cards with no saved profile photo", async () => {
     // The claimed profile has an edited preferred name but no saved photo. The
-    // first-load fix drives the loading state from the profile-photo lookup
-    // (hasCanonicalProfile && !profilePhotoUrl), so the card must show a loading
-    // skeleton rather than a premature initials placeholder while the canonical
-    // photo is bootstrapped.
+    // first-load fix drives the loading state ONLY from the pending profile-photo
+    // query, so once the photo query resolves (to null) the card resolves to the
+    // initials placeholder rather than a permanent loading skeleton.
     seedClaimedProfile("lorenzoSmithJr", "Lorenzo Smith Jr.", "Waxx");
     const user = userEvent.setup();
     renderApp();
@@ -249,9 +248,10 @@ describe("Profile-edit propagation to PersonCard variants", () => {
       name: /Waxx Child/,
     });
 
-    // No image renders; the loading skeleton shows instead of the initials.
+    // No image renders; the card resolves to the initials placeholder (W) once
+    // the photo query resolves, not a permanent loading skeleton.
     expect(within(childCard).queryByRole("img")).not.toBeInTheDocument();
-    expect(childCard.querySelector(".animate-pulse")).not.toBeNull();
-    expect(within(childCard).queryByText("W")).not.toBeInTheDocument();
+    expect(childCard.querySelector(".animate-pulse")).toBeNull();
+    expect(within(childCard).getByText("W")).toBeInTheDocument();
   });
 });

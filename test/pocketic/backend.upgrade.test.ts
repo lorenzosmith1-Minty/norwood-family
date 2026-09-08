@@ -134,17 +134,19 @@ it("keeps lorenzoSmithJr's preferredName as 'Waxx Minty' on upgrade", async () =
   ]);
 });
 
-// The expanded Edit My Profile build adds a new migration (20260906_020000.mo)
-// that introduces the separate owner-editable identity/basic/about fields
+// The expanded Edit My Profile build adds a migration (20260906_020000.mo) that
+// introduces the separate owner-editable identity/basic/about fields
 // (firstName, middleName, lastName, suffix, nickname, shortBio, longerStory,
 // birthDate, birthplace, currentLocation) to every existing Person Profile,
-// defaulting each to null (unset). The earlier duplicate-removal migration
-// (20260906_010000.mo) is already in the previous revision's chain tail, so it
-// does not re-run on this upgrade. This test installs the previous revision,
+// defaulting each to null (unset). The later duplicate-consolidation migration
+// (20260908_000000.mo) removes any runtime-created duplicate Lorenzo Smith Jr.
+// profile (keyed by the caller's principal) and consolidates it into the
+// canonical lorenzoSmithJr record. This test installs the previous revision,
 // creates a profile via createMyself, upgrades to this build (replaying the new
-// migration), and asserts the expanded fields are added while the canonical
-// record and its identity survive.
-it("adds the expanded owner-editable fields to existing profiles on upgrade", async () => {
+// migrations), and asserts the duplicate is consolidated into the canonical
+// record, which carries the expanded owner-editable fields while its identity
+// survives.
+it("consolidates a duplicate Lorenzo Smith Jr. profile into the canonical record with expanded fields on upgrade", async () => {
   // 1. Install the version the user is actually running.
   const previous = await pic!.setupCanister<_SERVICE>({
     idlFactory,
@@ -152,7 +154,7 @@ it("adds the expanded owner-editable fields to existing profiles on upgrade", as
   });
 
   // 2. A signed-in user creates a profile via createMyself (keyed by the
-  //    caller's principal).
+  //    caller's principal). This is a duplicate of the canonical record.
   const identity = createIdentity("field-expansion-seed");
   previous.actor.setIdentity(identity);
   const created = await previous.actor.createMyself("Lorenzo Smith Jr.");
@@ -161,7 +163,7 @@ it("adds the expanded owner-editable fields to existing profiles on upgrade", as
   });
   const personId = identity.getPrincipal().toText();
 
-  // 3. Upgrade to the version this build produces. The new migration runs here.
+  // 3. Upgrade to the version this build produces. The new migrations run here.
   await pic!.upgradeCanister({
     canisterId: previous.canisterId,
     wasm: BACKEND_WASM,
@@ -171,13 +173,17 @@ it("adds the expanded owner-editable fields to existing profiles on upgrade", as
     },
   });
 
-  // 4. Read through the NEW API: the expanded owner-editable fields are present
-  //    (defaulting to unset) and the profile's identity survives.
+  // 4. Read through the NEW API: the duplicate principal-keyed profile is
+  //    consolidated into the canonical record, so it no longer resolves on its
+  //    own, while the canonical lorenzoSmithJr record survives with the expanded
+  //    owner-editable fields (defaulting to unset).
   const upgraded = pic!.createActor<_SERVICE>(idlFactory, previous.canisterId);
-  const profile = await upgraded.getPersonProfile(personId);
-  expect(profile).toEqual([
+  const removed = await upgraded.getPersonProfile(personId);
+  expect(removed).toEqual([]);
+  const canonical = await upgraded.getPersonProfile("lorenzoSmithJr");
+  expect(canonical).toEqual([
     expect.objectContaining({
-      personId,
+      personId: "lorenzoSmithJr",
       name: "Lorenzo Smith Jr.",
       firstName: [],
       lastName: [],
@@ -189,10 +195,15 @@ it("adds the expanded owner-editable fields to existing profiles on upgrade", as
 
 // The expanded Edit My Profile migration (20260906_020000.mo) carries all other
 // state through unchanged, so a pending relationship request written by the
-// previous version survives the upgrade with its person ids intact. This test
-// installs the previous revision, files a pending relationship request, upgrades
-// to this build, and asserts the request is preserved.
-it("preserves a pending relationship request through the upgrade", async () => {
+// previous version survives the upgrade. The later duplicate-consolidation
+// migration (20260908_000000.mo) re-points, not drops, any pending relationship
+// request referencing a removed duplicate personId to the canonical personId, so
+// the child relationship under Lorenzo Smith Sr. resolves to the canonical
+// record. This test installs the previous revision, files a pending relationship
+// request from a duplicate Lorenzo Smith Jr. profile, upgrades to this build,
+// and asserts the request is preserved with its requesting person re-pointed to
+// the canonical record.
+it("preserves a pending relationship request through the upgrade, re-pointing the duplicate requester to the canonical record", async () => {
   // 1. Install the version the user is actually running.
   const previous = await pic!.setupCanister<_SERVICE>({
     idlFactory,
@@ -232,14 +243,119 @@ it("preserves a pending relationship request through the upgrade", async () => {
   });
 
   // 4. Read through the NEW API: the pending relationship request is preserved
-  //    with its person ids intact.
+  //    with its person ids intact, but the duplicate requester is re-pointed to
+  //    the canonical lorenzoSmithJr record.
   const upgraded = pic!.createActor<_SERVICE>(idlFactory, previous.canisterId);
   const preservedRel = await upgraded.getRelationshipRequest(relId);
   expect(preservedRel).toEqual([
     expect.objectContaining({
       id: relId,
-      requestingPersonId: personId,
+      requestingPersonId: "lorenzoSmithJr",
+      relatedPersonId: "lorenzoSmithSr",
       status: { Pending: null },
     }),
   ]);
+});
+
+// The claim-restoration migration (20260908_120000.mo) restores the canonical
+// Lorenzo Smith Jr. / Waxx Minty profile to CLAIMED from an existing approved
+// claim and consolidates a duplicate's uploaded gallery into the canonical
+// gallery, so the previously approved ownership and the user's real photos
+// survive a redeploy. This test installs the previous revision, creates a
+// duplicate Lorenzo Smith Jr. profile with an uploaded photo, files and approves
+// a claim on the canonical profile, upgrades to this build (replaying the new
+// migration), and asserts the canonical record stays CLAIMED by the same owner,
+// the duplicate is removed (exactly one canonical record remains), and the
+// duplicate's photo is restored into the canonical gallery.
+it("restores the canonical claim and consolidates a duplicate's gallery on upgrade", async () => {
+  // 1. Install the version the user is actually running.
+  const previous = await pic!.setupCanister<_SERVICE>({
+    idlFactory,
+    wasm: PREVIOUS_WASM,
+  });
+
+  const claimant = createIdentity("restore-claimant-seed");
+  const steward = createIdentity("restore-steward-seed");
+  const CLAIMANT = claimant.getPrincipal();
+
+  // Register the steward as the first caller (admin) and the claimant as a user.
+  previous.actor.setIdentity(steward);
+  await previous.actor._initialize_access_control();
+  previous.actor.setIdentity(claimant);
+  await previous.actor._initialize_access_control();
+
+  // 2. The claimant creates a duplicate Lorenzo Smith Jr. profile (keyed by the
+  //    caller's principal) and uploads a real photo to its gallery.
+  previous.actor.setIdentity(claimant);
+  const created = await previous.actor.createMyself("Lorenzo Smith Jr.");
+  expect(created).toEqual({
+    ok: expect.objectContaining({ name: "Lorenzo Smith Jr." }),
+  });
+  const dupId = CLAIMANT.toText();
+  await previous.actor.addPhoto(
+    dupId,
+    "dup-waxx.png",
+    "image/png",
+    new Uint8Array([1, 2, 3]),
+  );
+
+  // 3. The claimant files a claim on the canonical profile and the steward
+  //    approves it, so the canonical record is CLAIMED by the claimant.
+  const pending = await previous.actor.requestProfileClaim("lorenzoSmithJr");
+  expect(pending).toEqual({
+    ok: expect.objectContaining({
+      personId: "lorenzoSmithJr",
+      status: { Pending: null },
+    }),
+  });
+  const claimId = (pending as { ok: { id: bigint } }).ok.id;
+  previous.actor.setIdentity(steward);
+  const approved = await previous.actor.approveProfileClaim(claimId);
+  expect(approved).toEqual([
+    expect.objectContaining({ id: claimId, status: { Approved: null } }),
+  ]);
+
+  // 4. Upgrade to the version this build produces. The new migration runs here.
+  await pic!.upgradeCanister({
+    canisterId: previous.canisterId,
+    wasm: BACKEND_WASM,
+    upgradeModeOptions: {
+      skip_pre_upgrade: [],
+      wasm_memory_persistence: [{ keep: null }],
+    },
+  });
+
+  // 5. Read through the NEW API: the canonical profile stays CLAIMED by the
+  //    same owner, the duplicate is removed (exactly one canonical record
+  //    remains), and the duplicate's photo is restored into the canonical
+  //    gallery.
+  const upgraded = pic!.createActor<_SERVICE>(idlFactory, previous.canisterId);
+
+  // The duplicate profile is removed; exactly one canonical record remains.
+  expect(await upgraded.getPersonProfile(dupId)).toEqual([]);
+  const canonical = await upgraded.getPersonProfile("lorenzoSmithJr");
+  expect(canonical).toEqual([
+    expect.objectContaining({
+      personId: "lorenzoSmithJr",
+      name: "Lorenzo Smith Jr.",
+      claimStatus: { Claimed: null },
+      claimedByUserId: [CLAIMANT],
+    }),
+  ]);
+
+  // The approved claim is preserved on the canonical personId.
+  upgraded.setIdentity(steward);
+  const claims = await upgraded.listProfileClaims();
+  const canonicalApproved = claims.filter(
+    (c) => c.personId === "lorenzoSmithJr" && c.status.Approved !== undefined,
+  );
+  expect(canonicalApproved).toHaveLength(1);
+  expect(canonicalApproved[0]).toMatchObject({
+    personId: "lorenzoSmithJr",
+    requestingUserId: CLAIMANT,
+  });
+
+  // The duplicate's uploaded photo is restored into the canonical gallery.
+  const photos = await upgraded.listPhotos("lorenzoSmithJr");
+  expect(photos.some((p) => p.filename === "dup-waxx.png")).toBe(true);
 });

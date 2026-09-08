@@ -28,7 +28,6 @@ import { useIsAdmin } from "../hooks/useArchiveStorage";
 import { useCanonicalPerson } from "../hooks/useCanonicalPerson";
 import {
   useAddPhoto,
-  useEnsureLorenzoProfilePhoto,
   usePhotos,
   useProfilePhoto,
   useProvidersPresent,
@@ -3059,11 +3058,6 @@ export function PersonProfilePage({
     person.id,
   );
 
-  // Idempotently ensure lorenzoSmithJr has a real profile photo uploaded and
-  // set on first load, so the canonical photo resolver finds it and the child
-  // card on Lorenzo Smith Sr.'s profile renders the photo immediately. Runs
-  // whenever a profile view loads; it only uploads/sets when no photo exists.
-  useEnsureLorenzoProfilePhoto();
   const { identity } = useInternetIdentity();
   const { data: myClaim } = useMyProfileClaim(person.id);
   const { data: relationshipRequests = [] } = useMyRelationshipRequests();

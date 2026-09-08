@@ -24,11 +24,12 @@ import App from "./App";
 // PersonCard routing. These tests freeze the working behavior that must NOT
 // change:
 //
-//  1. The profile page for the canonical Lorenzo Smith Jr. record shows PENDING
-//     CLAIM status when the signed-in user has a pending claim on it, and hides
-//     the UNCLAIMED badge and the 'This is Me' claim action.
-//  2. "My Profile" opens the canonical Person Profile being claimed when the
-//     signed-in account has a pending claim on it.
+//  1. The profile page for the canonical Lorenzo Smith Jr. record shows CLAIMED
+//     status when the signed-in user is the restored owner, and hides the
+//     UNCLAIMED badge, the 'This is Me' claim action, and the 'Pending claim'
+//     badge (no re-claim required).
+//  2. "My Profile" opens the canonical Person Profile owned by the caller when
+//     the signed-in account owns it.
 //
 // The generated components use data-ocid for test ids.
 configure({ testIdAttribute: "data-ocid" });
@@ -50,12 +51,10 @@ const {
   getAuthenticated,
   getCurrentPrincipal,
   seedProfile,
-  seedClaim,
 } = vi.hoisted(() => {
   let isAuthenticated = false;
   let currentPrincipal = "aaaaa-aa";
   let profiles: Record<string, PersonProfile> = {};
-  let claims: ProfileClaim[] = [];
 
   const mockActor = {
     async isCallerAdmin(): Promise<boolean> {
@@ -65,27 +64,16 @@ const {
       return profiles[personId] ?? null;
     },
     async getMyProfile(): Promise<PersonProfile | null> {
-      // Mirrors the real backend's getMyProfile: a profile with a pending claim
-      // by the caller is returned as the caller's own profile.
-      for (const claim of claims) {
-        if (
-          claim.requestingUserId.toString() === currentPrincipal &&
-          claim.status === "Pending"
-        ) {
-          const profile = profiles[claim.personId];
-          if (profile) return profile;
-        }
-      }
-      return null;
-    },
-    async getMyProfileClaim(personId: string): Promise<ProfileClaim | null> {
-      return (
-        claims.find(
-          (c) =>
-            c.personId === personId &&
-            c.requestingUserId.toString() === currentPrincipal,
-        ) ?? null
+      // Mirrors the real backend's getMyProfile: a profile claimed by the
+      // caller is returned as the caller's own profile.
+      const owned = Object.values(profiles).find(
+        (p) => p.claimedByUserId?.toString() === currentPrincipal,
       );
+      return owned ?? null;
+    },
+    async getMyProfileClaim(_personId: string): Promise<ProfileClaim | null> {
+      // The restored owner has no pending claim; the profile is already CLAIMED.
+      return null;
     },
     async getMyRelationshipRequests(): Promise<never[]> {
       return [];
@@ -101,7 +89,6 @@ const {
       isAuthenticated = false;
       currentPrincipal = "aaaaa-aa";
       profiles = {};
-      claims = [];
     },
     setAuthenticated: (v: boolean) => {
       isAuthenticated = v;
@@ -113,9 +100,6 @@ const {
     getCurrentPrincipal: () => currentPrincipal,
     seedProfile: (profile: PersonProfile) => {
       profiles = { ...profiles, [profile.personId]: profile };
-    },
-    seedClaim: (claim: ProfileClaim) => {
-      claims = [...claims, claim];
     },
   };
 });
@@ -153,13 +137,13 @@ function renderApp() {
   );
 }
 
-function seedLivingUnclaimed(personId: string, name: string): PersonProfile {
+function seedClaimedProfile(personId: string, name: string): PersonProfile {
   const profile: PersonProfile = {
     personId,
     name,
     livingStatus: LivingStatus.Living,
-    claimStatus: ClaimStatus.Unclaimed,
-    claimedByUserId: undefined,
+    claimStatus: ClaimStatus.Claimed,
+    claimedByUserId: Principal.fromText(ACCOUNT),
     preferredName: undefined,
     story: undefined,
     occupation: undefined,
@@ -171,24 +155,13 @@ function seedLivingUnclaimed(personId: string, name: string): PersonProfile {
   return profile;
 }
 
-function seedPendingClaim(personId: string, account: string) {
-  seedClaim({
-    id: 1n,
-    personId,
-    requestingUserId: Principal.fromText(account),
-    status: "Pending",
-    submittedDate: 1_700_000_000_000_000_000n,
-  });
-}
-
-describe("Canonical Lorenzo Smith Jr. profile shows PENDING CLAIM while a claim is pending", () => {
-  it("shows 'Profile claim pending' and hides UNCLAIMED and 'This is Me' for the canonical profile", async () => {
+describe("Canonical Lorenzo Smith Jr. profile shows CLAIMED for the restored owner", () => {
+  it("shows 'Claimed' with the owner edit entry and hides UNCLAIMED and 'This is Me' for the canonical profile", async () => {
     setAuthenticated(true);
     setCurrentPrincipal(ACCOUNT);
-    // The canonical Lorenzo Smith Jr. profile exists in the backend and the
-    // signed-in account has a pending claim on it.
-    seedLivingUnclaimed("lorenzoSmithJr", "Lorenzo Smith Jr.");
-    seedPendingClaim("lorenzoSmithJr", ACCOUNT);
+    // The canonical Lorenzo Smith Jr. profile exists in the backend and is
+    // already CLAIMED by the signed-in account (the restored approved claim).
+    seedClaimedProfile("lorenzoSmithJr", "Lorenzo Smith Jr.");
     const user = userEvent.setup();
     renderApp();
 
@@ -210,55 +183,64 @@ describe("Canonical Lorenzo Smith Jr. profile shows PENDING CLAIM while a claim 
       "Lorenzo Smith Jr.",
     );
 
-    // PENDING CLAIM status is shown for the signed-in user's pending claim:
-    // the "Pending claim" badge plus the Family Steward review message.
+    // CLAIMED status is shown for the restored owner: the "Claimed" badge plus
+    // the owner edit entry. The user is not asked to claim again.
     const claimSection = screen.getByTestId("profile.claim_section");
     expect(
-      await within(claimSection).findByText("Pending claim"),
+      await within(claimSection).findByText("Claimed"),
     ).toBeInTheDocument();
     expect(
       within(claimSection).getByText(
-        "Your claim to this profile is awaiting Family Steward review.",
+        "You own this profile. You can edit your personal details.",
       ),
     ).toBeInTheDocument();
+    expect(
+      within(claimSection).getByRole("button", { name: "Edit My Profile" }),
+    ).toBeInTheDocument();
 
-    // The UNCLAIMED badge and the 'This is Me' claim action are hidden.
+    // The UNCLAIMED badge, the 'This is Me' claim action, and the 'Pending
+    // claim' badge are all hidden.
     expect(
       within(claimSection).queryByText("Unclaimed"),
     ).not.toBeInTheDocument();
     expect(
       within(claimSection).queryByRole("button", { name: "This is Me" }),
     ).not.toBeInTheDocument();
+    expect(
+      within(claimSection).queryByText("Pending claim"),
+    ).not.toBeInTheDocument();
   });
 });
 
-describe("My Profile opens the canonical Person Profile being claimed", () => {
-  it("opens the canonical Lorenzo Smith Jr. profile when the account has a pending claim on it", async () => {
+describe("My Profile opens the canonical Person Profile owned by the caller", () => {
+  it("opens the canonical Lorenzo Smith Jr. profile when the account owns it", async () => {
     setAuthenticated(true);
     setCurrentPrincipal(ACCOUNT);
-    // The canonical Lorenzo Smith Jr. profile exists and the signed-in account
-    // has a pending claim on it, so getMyProfile resolves it as the caller's
-    // own profile.
-    seedLivingUnclaimed("lorenzoSmithJr", "Lorenzo Smith Jr.");
-    seedPendingClaim("lorenzoSmithJr", ACCOUNT);
+    // The canonical Lorenzo Smith Jr. profile exists and is CLAIMED by the
+    // signed-in account, so getMyProfile resolves it as the caller's own
+    // profile.
+    seedClaimedProfile("lorenzoSmithJr", "Lorenzo Smith Jr.");
     const user = userEvent.setup();
     renderApp();
 
     // Open "My Profile" from the navbar.
     await user.click(screen.getByTestId("layout.my_profile_link"));
 
-    // My Profile opens the canonical Person Profile being claimed.
+    // My Profile opens the canonical Person Profile owned by the caller.
     expect(await screen.findByRole("heading", { level: 1 })).toHaveTextContent(
       "Lorenzo Smith Jr.",
     );
     const claimSection = screen.getByTestId("profile.claim_section");
     expect(
-      await within(claimSection).findByText("Pending claim"),
+      await within(claimSection).findByText("Claimed"),
     ).toBeInTheDocument();
     expect(
       within(claimSection).getByText(
-        "Your claim to this profile is awaiting Family Steward review.",
+        "You own this profile. You can edit your personal details.",
       ),
     ).toBeInTheDocument();
+    expect(
+      within(claimSection).queryByText("Pending claim"),
+    ).not.toBeInTheDocument();
   });
 });

@@ -274,12 +274,11 @@ describe("Lorenzo Smith Sr. profile opened fresh shows the Waxx Minty child card
     expect(screen.queryByText("WM")).not.toBeInTheDocument();
   });
 
-  it("shows a loading skeleton (not initials) on the child card while the canonical child's photo is bootstrapped", async () => {
-    // The canonical child profile exists but has no selected profile photo yet.
-    // The first-load fix drives the loading state from the profile-photo lookup
-    // (hasCanonicalProfile && !profilePhotoUrl), so the child card must show a
-    // loading skeleton rather than a premature initials placeholder while the
-    // canonical photo is bootstrapped.
+  it("resolves to initials (not a skeleton) on the child card when the canonical child has no photo", async () => {
+    // The canonical child profile exists but has no selected profile photo. The
+    // first-load fix drives the loading state ONLY from the pending profile-photo
+    // query, so once the photo query resolves (to null) the child card resolves
+    // to the initials placeholder rather than a permanent loading skeleton.
     seedWaxxMintyProfile();
     const user = userEvent.setup();
     renderApp();
@@ -288,11 +287,12 @@ describe("Lorenzo Smith Sr. profile opened fresh shows the Waxx Minty child card
     await navigateToLorenzoSmithSr(user);
     await openLorenzoSmithSrProfile(user);
 
-    // The child card shows the loading skeleton, not the initials placeholder.
+    // The child card resolves to the initials placeholder (WM), not a permanent
+    // loading skeleton, once the photo query resolves with no photo.
+    expect(await screen.findByText("WM")).toBeInTheDocument();
     expect(
-      await screen.findByTestId("profile.family_member.loading_state"),
-    ).toBeInTheDocument();
-    expect(screen.queryByText("WM")).not.toBeInTheDocument();
+      screen.queryByTestId("profile.family_member.loading_state"),
+    ).not.toBeInTheDocument();
     expect(waxxChildCardImg()).toBeNull();
   });
 });

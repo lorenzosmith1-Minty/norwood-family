@@ -117,10 +117,10 @@ intact if the account's email or authentication provider changes later.
   when the caller has no profile. Not gated to admin — any signed-in caller may
   query their own profile. This lets the navbar show the linked or pending
   profile's display name without needing Family Steward privileges. Because a
-  pending claim is re-pointed to the canonical `lorenzoSmithJr` personId (see
-  the canonical-record note below), a caller with a pending claim on Lorenzo
-  Smith Jr. resolves here to that same canonical profile, not to a detached
-  test record.
+  pending claim on a duplicate Lorenzo Smith Jr. profile is dropped (see the
+  canonical-record note below) and the caller's approved claim resolves to the
+  canonical `lorenzoSmithJr` personId, a caller who owns Lorenzo Smith Jr.
+  resolves here to that same canonical profile, not to a detached test record.
 - `getMyRelationshipRequests() : async [RelationshipRequest]` — query. Returns
   the signed-in caller's own pending relationship requests — those involving a
   profile the caller owns or created. Not gated to admin — any signed-in caller
@@ -377,10 +377,24 @@ already reference the caller's stable principal (`requestingUserId`,
   the child relationship, Explore Family, Family Tree, Add Myself duplicate
   matching, This is Me claim requests, My Profile, profile routing, and
   notifications. Any runtime-created duplicate Lorenzo Smith Jr. profile is
-  migrated away: pending claims and relationship requests referencing a
-  duplicate are re-pointed to `\"lorenzoSmithJr\"` (preserving the pending claim
-  and its `requestingUserId`), and the duplicate profile is removed, so exactly
-  one Lorenzo Smith Jr. Person record remains.
+  migrated away: approved and rejected claims referencing a duplicate are
+  re-pointed to `\"lorenzoSmithJr\"` (preserving the approved ownership
+  relationship), pending claims on a duplicate are dropped (manual-test
+  artifacts), relationship requests referencing a duplicate are re-pointed to
+  `\"lorenzoSmithJr\"`, the duplicate's gallery (photos + profile photo) is
+  consolidated into the canonical gallery, and the duplicate profile is removed,
+  so exactly one Lorenzo Smith Jr. Person record remains. A deploy-time
+  seed-safety guard runs on every install/upgrade and preserves any real-runtime
+  `lorenzoSmithJr` record — its claim/ownership link, display name, profile
+  photo, uploaded gallery, profile edits, privacy settings, and timeline/story
+  data — and never overwrites it. Seed/demo initialization runs only where data
+  is genuinely absent (`profiles.get(personId) == null`). If an approved claim
+  on `\"lorenzoSmithJr\"` exists — including an approved claim that was keyed
+  under a duplicate Lorenzo Smith Jr. profile and is re-pointed to the canonical
+  personId — the guard restores `claimStatus = #Claimed` and `claimedByUserId`
+  from that approved claim; it never fabricates an account principal or
+  auto-approves a pending claim. A pending claim created on a duplicate profile
+  during manual testing is dropped so no duplicate pending claim remains.
 - `PhotoId` is a `Nat`, unique only within a person's gallery.
 - `uploadedAt` is an `Int` count of nanoseconds since the Unix epoch
   (`Time.now()`).
@@ -480,10 +494,11 @@ While a pending claim exists for a person, that person's profile page shows
 review\") and hides `UNCLAIMED` and the \"This is Me\" action for the claiming
 user. The pending claim does not change the profile's `claimStatus` field (it
 stays `#Unclaimed` until approval) — the frontend derives the pending state from
-`getMyProfileClaim` / `getMyProfile`, not from `claimStatus`. Because the pending
-claim is re-pointed to the canonical `lorenzoSmithJr` personId, the profile page,
-the father's child card, Explore Family, and My Profile all resolve to that same
-canonical record.
+`getMyProfileClaim` / `getMyProfile`, not from `claimStatus`. Because a pending
+claim on a duplicate Lorenzo Smith Jr. profile is dropped and the caller's
+approved claim resolves to the canonical `lorenzoSmithJr` personId, the profile
+page, the father's child card, Explore Family, and My Profile all resolve to
+that same canonical record.
 
 Relationship requests follow a propose → approve/reject lifecycle.
 `proposeRelationship` creates a `#Pending` request that is never treated as

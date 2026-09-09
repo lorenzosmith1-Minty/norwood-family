@@ -2,6 +2,7 @@ import {
   Archive,
   Bell,
   GitBranch,
+  Landmark,
   LogIn,
   LogOut,
   ShieldCheck,
@@ -70,6 +71,8 @@ interface LayoutProps {
   onExploreClick?: () => void;
   /** Navigates to the Family Steward review area (admin-gated). */
   onStewardClick?: () => void;
+  /** Navigates to the Family Governance & Safety Controls area (admin-gated). */
+  onGovernanceClick?: () => void;
   /** Navigates to the in-app notifications view. */
   onNotificationsClick?: () => void;
   /** Navigates to the "Add Myself to This Family" flow. */
@@ -91,6 +94,7 @@ export function Layout({
   onBranchClick,
   onExploreClick,
   onStewardClick,
+  onGovernanceClick,
   onNotificationsClick,
   onAddMyselfClick,
 }: LayoutProps) {
@@ -104,6 +108,7 @@ export function Layout({
     activeView === "archive-contribute";
   const isAddMyselfActive = activeView === "add-myself";
   const isStewardActive = activeView === "steward-review";
+  const isGovernanceActive = activeView === "governance";
   const isNotificationsActive = activeView === "notifications";
   const isMyProfileActive =
     activeView === "my-profile" || activeView === "profile-edit";
@@ -214,6 +219,22 @@ export function Layout({
                   aria-hidden="true"
                 />
                 Family Steward
+              </button>
+            ) : null}
+            {showAdminControls ? (
+              <button
+                type="button"
+                data-ocid="layout.governance_link"
+                aria-current={isGovernanceActive ? "page" : undefined}
+                onClick={onGovernanceClick}
+                className={navClass(isGovernanceActive)}
+              >
+                <Landmark
+                  className={navIconClass(isGovernanceActive)}
+                  strokeWidth={1.75}
+                  aria-hidden="true"
+                />
+                Family Governance
               </button>
             ) : null}
             <button

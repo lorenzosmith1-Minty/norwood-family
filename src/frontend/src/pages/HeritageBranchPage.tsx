@@ -5,6 +5,7 @@ import {
   HeritageBranchCard,
   type HeritagePerson,
 } from "../components/HeritageBranchCard";
+import { useListArchivedProfileIds } from "../hooks/useGovernance";
 import { useListConfirmedRelationships } from "../hooks/useRelationshipRequests";
 import {
   FAMILY_GRAPH,
@@ -132,6 +133,17 @@ export default function HeritageBranchPage({
     [confirmed],
   );
 
+  // Hide archived profiles from normal family browsing. Archived person ids
+  // come from the backend's non-steward-gated listArchivedProfileIds query.
+  const { data: archivedIds = [] } = useListArchivedProfileIds();
+  const archived = new Set(archivedIds);
+  const visibleUnits = FAMILY_UNITS.filter(
+    (unit) => !unit.personIds.every((id) => archived.has(id)),
+  );
+  const visibleAnchors = BRANCH_ANCHORS.filter(
+    (anchor) => !archived.has(anchor.personId),
+  );
+
   // Running index across the whole map so every card gets a unique data-ocid.
   let cardIndex = 0;
 
@@ -209,7 +221,7 @@ export default function HeritageBranchPage({
         transition={{ duration: 0.6, delay: 0.1, ease: [0.4, 0, 0.2, 1] }}
       >
         {/* Family units: couple plates */}
-        {FAMILY_UNITS.map((unit, ui) => (
+        {visibleUnits.map((unit, ui) => (
           <div key={unit.id}>
             {ui > 0 && <ClusterConnector />}
             <section
@@ -227,7 +239,7 @@ export default function HeritageBranchPage({
         ))}
 
         {/* Branch anchors: line-head plates */}
-        {BRANCH_ANCHORS.map((anchor, bi) => (
+        {visibleAnchors.map((anchor, bi) => (
           <div key={anchor.id}>
             <ClusterConnector />
             <section

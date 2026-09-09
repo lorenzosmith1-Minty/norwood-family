@@ -85,6 +85,8 @@ export default {
         fold: "0 1px 2px -1px rgba(93, 64, 55, 0.08)",
         signin:
           "0 12px 32px -8px rgba(93, 64, 55, 0.16), 0 0 0 3px rgba(176, 133, 92, 0.18)",
+        merge:
+          "0 0 0 2px rgba(176, 133, 92, 0.35), 0 4px 12px -4px rgba(93, 64, 55, 0.14)",
       },
       keyframes: {
         "accordion-down": {
@@ -145,6 +147,10 @@ export default {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0.45" },
         },
+        "tab-in": {
+          from: { opacity: "0", transform: "translateY(6px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -160,6 +166,7 @@ export default {
         "fold-in": "fold-in 0.3s cubic-bezier(0.4, 0, 0.2, 1) both",
         "signin-pop": "signin-pop 0.35s cubic-bezier(0.4, 0, 0.2, 1) both",
         "draft-pulse": "draft-pulse 2s ease-in-out infinite",
+        "tab-in": "tab-in 0.25s cubic-bezier(0.4, 0, 0.2, 1) both",
       },
     },
   },

@@ -2,6 +2,7 @@ import { ArrowLeft, TreePine } from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";
 import { type Person, PersonCard } from "../components/PersonCard";
+import { useListArchivedProfileIds } from "../hooks/useGovernance";
 import { FAMILY_GRAPH } from "../types/family";
 import { profiles } from "./PersonProfilePage";
 
@@ -596,6 +597,35 @@ export function FamilyTreePage({
 }: FamilyTreePageProps) {
   const [selected, setSelected] = useState<number | null>(null);
   const [meIndex, setMeIndex] = useState<number | null>(null);
+
+  // Hide archived profiles from normal family browsing. Archived person ids
+  // come from the backend's non-steward-gated listArchivedProfileIds query.
+  const { data: archivedIds = [] } = useListArchivedProfileIds();
+  const archived = new Set(archivedIds);
+  const isArchived = (id: string) => archived.has(id);
+  const visibleCouple = couple.filter((p) => !isArchived(p.id));
+  const visibleChildren = children.filter((p) => !isArchived(p.id));
+  const visibleClaytonBranch = claytonBranch
+    .map((branch) => ({
+      spouse: branch.spouse,
+      children: branch.children.filter((p) => !isArchived(p.id)),
+    }))
+    .filter((branch) => !isArchived(branch.spouse.id));
+  const visibleLulaVersieChildren = lulaVersieChildren.filter(
+    (p) => !isArchived(p.id),
+  );
+  const visibleSecondMarriageChildren = secondMarriageChildren.filter(
+    (p) => !isArchived(p.id),
+  );
+  const visibleMildredChildren = mildredChildren.filter(
+    (p) => !isArchived(p.id),
+  );
+  const showLulaMae = !isArchived(lulaMaeId);
+  const showVersie = !isArchived(versieId);
+  const showLorenzoJr = !isArchived(lorenzoJrId);
+  const showHarvey = !isArchived(harveyId);
+  const showGertrude = !isArchived(gertrudeId);
+  const showMaryJane = !isArchived(maryJaneId);
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>(() => {
     const initial: Record<string, boolean> = {
       clayton: true,
@@ -612,27 +642,30 @@ export function FamilyTreePage({
   });
 
   const rows: { offset: number; people: Person[] }[] = [];
-  for (let i = 0; i < children.length; i += CHILDREN_PER_ROW) {
+  for (let i = 0; i < visibleChildren.length; i += CHILDREN_PER_ROW) {
     rows.push({
-      offset: couple.length + i,
-      people: children.slice(i, i + CHILDREN_PER_ROW),
+      offset: visibleCouple.length + i,
+      people: visibleChildren.slice(i, i + CHILDREN_PER_ROW),
     });
   }
 
   const allPeople: Person[] = [
-    ...couple,
-    ...children,
-    ...claytonBranch.flatMap((branch) => [branch.spouse, ...branch.children]),
-    personFromId(lulaMaeId),
-    personFromId(versieId),
-    ...lulaVersieChildren,
-    personFromId(lorenzoJrId),
-    personFromId(harveyId),
-    personFromId(gertrudeId),
-    personFromId(versieId),
-    personFromId(maryJaneId),
-    ...secondMarriageChildren,
-    ...mildredChildren,
+    ...visibleCouple,
+    ...visibleChildren,
+    ...visibleClaytonBranch.flatMap((branch) => [
+      branch.spouse,
+      ...branch.children,
+    ]),
+    ...(showLulaMae ? [personFromId(lulaMaeId)] : []),
+    ...(showVersie ? [personFromId(versieId)] : []),
+    ...visibleLulaVersieChildren,
+    ...(showLorenzoJr ? [personFromId(lorenzoJrId)] : []),
+    ...(showHarvey ? [personFromId(harveyId)] : []),
+    ...(showGertrude ? [personFromId(gertrudeId)] : []),
+    ...(showVersie ? [personFromId(versieId)] : []),
+    ...(showMaryJane ? [personFromId(maryJaneId)] : []),
+    ...visibleSecondMarriageChildren,
+    ...visibleMildredChildren,
   ];
 
   /* Selecting a card also expands the branch that contains it, so the selected
@@ -697,14 +730,14 @@ export function FamilyTreePage({
       {/* Couple with horizontal relationship line */}
       <section aria-label="Starting couple" className="relative mt-10">
         <div className="grid grid-cols-2 gap-3 sm:gap-4">
-          {couple.map((person, index) => (
+          {visibleCouple.map((person, index) => (
             <PersonCard
               key={person.name}
               person={person}
               index={index}
               selected={selected === index}
               onSelect={() => handleSelect(index)}
-              onOpen={() => onOpenProfile(couple[index].id)}
+              onOpen={() => onOpenProfile(visibleCouple[index].id)}
               isMe={meIndex === index}
               onMarkMe={() => setMeIndex(index)}
             />
@@ -759,8 +792,8 @@ export function FamilyTreePage({
 
       {/* Clayton's branch below his card */}
       <ClaytonBranch
-        branches={claytonBranch}
-        baseIndex={couple.length + children.length}
+        branches={visibleClaytonBranch}
+        baseIndex={visibleCouple.length + visibleChildren.length}
         selected={selected}
         onSelect={handleSelect}
         meIndex={meIndex}
@@ -806,27 +839,33 @@ export function FamilyTreePage({
             <div className="fu-cluster">
               {/* Couple together at the top of the cluster */}
               <div className="fu-couple">
-                <PersonCard
-                  variant="couple"
-                  person={personFromId("lula-mae")}
-                  index={LULA_MAE_INDEX}
-                  selected={selected === LULA_MAE_INDEX}
-                  onSelect={() => handleSelect(LULA_MAE_INDEX)}
-                  onOpen={() => onOpenProfile("lula-mae")}
-                  isMe={meIndex === LULA_MAE_INDEX}
-                  onMarkMe={() => setMeIndex(LULA_MAE_INDEX)}
-                />
-                <span className="fu-couple-line" aria-hidden="true" />
-                <PersonCard
-                  variant="couple"
-                  person={personFromId("versie-smith")}
-                  index={VERSIE_INDEX}
-                  selected={selected === VERSIE_INDEX}
-                  onSelect={() => handleSelect(VERSIE_INDEX)}
-                  onOpen={() => onOpenProfile("versie-smith")}
-                  isMe={meIndex === VERSIE_INDEX}
-                  onMarkMe={() => setMeIndex(VERSIE_INDEX)}
-                />
+                {showLulaMae && (
+                  <PersonCard
+                    variant="couple"
+                    person={personFromId("lula-mae")}
+                    index={LULA_MAE_INDEX}
+                    selected={selected === LULA_MAE_INDEX}
+                    onSelect={() => handleSelect(LULA_MAE_INDEX)}
+                    onOpen={() => onOpenProfile("lula-mae")}
+                    isMe={meIndex === LULA_MAE_INDEX}
+                    onMarkMe={() => setMeIndex(LULA_MAE_INDEX)}
+                  />
+                )}
+                {showLulaMae && showVersie && (
+                  <span className="fu-couple-line" aria-hidden="true" />
+                )}
+                {showVersie && (
+                  <PersonCard
+                    variant="couple"
+                    person={personFromId("versie-smith")}
+                    index={VERSIE_INDEX}
+                    selected={selected === VERSIE_INDEX}
+                    onSelect={() => handleSelect(VERSIE_INDEX)}
+                    onOpen={() => onOpenProfile("versie-smith")}
+                    isMe={meIndex === VERSIE_INDEX}
+                    onMarkMe={() => setMeIndex(VERSIE_INDEX)}
+                  />
+                )}
               </div>
 
               {/* Short trunk + junction down to the children label */}
@@ -842,7 +881,7 @@ export function FamilyTreePage({
 
               {/* Seven children as compact clickable cards */}
               <div className="fu-children-grid">
-                {lulaVersieChildren.map((child, i) => {
+                {visibleLulaVersieChildren.map((child, i) => {
                   const index = LULA_VERSIE_CHILDREN_INDICES[i];
                   return (
                     <div key={child.id} className="flex flex-col items-center">
@@ -865,36 +904,38 @@ export function FamilyTreePage({
 
               {/* Lorenzo Smith Jr., the son of Lorenzo Smith Sr. (one of the
                   children above). Rendered as a child beneath his father. */}
-              <div className="mt-5 flex flex-col items-center">
-                <div
-                  className={`ft-trunk relative mx-auto h-6 ${
-                    inSet(selected, [LORENZO_JR_INDEX])
-                      ? "ft-connector-selected"
-                      : ""
-                  }`}
-                  aria-hidden="true"
-                >
-                  <span
-                    className={`ft-junction absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ${
+              {showLorenzoJr && (
+                <div className="mt-5 flex flex-col items-center">
+                  <div
+                    className={`ft-trunk relative mx-auto h-6 ${
                       inSet(selected, [LORENZO_JR_INDEX])
                         ? "ft-connector-selected"
                         : ""
                     }`}
                     aria-hidden="true"
+                  >
+                    <span
+                      className={`ft-junction absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ${
+                        inSet(selected, [LORENZO_JR_INDEX])
+                          ? "ft-connector-selected"
+                          : ""
+                      }`}
+                      aria-hidden="true"
+                    />
+                  </div>
+                  <PersonCard
+                    variant="child"
+                    person={personFromId(lorenzoJrId)}
+                    index={LORENZO_JR_INDEX}
+                    selected={selected === LORENZO_JR_INDEX}
+                    onSelect={() => handleSelect(LORENZO_JR_INDEX)}
+                    onOpen={() => onOpenProfile(lorenzoJrId)}
+                    openOnSelect={false}
+                    isMe={meIndex === LORENZO_JR_INDEX}
+                    onMarkMe={() => setMeIndex(LORENZO_JR_INDEX)}
                   />
                 </div>
-                <PersonCard
-                  variant="child"
-                  person={personFromId(lorenzoJrId)}
-                  index={LORENZO_JR_INDEX}
-                  selected={selected === LORENZO_JR_INDEX}
-                  onSelect={() => handleSelect(LORENZO_JR_INDEX)}
-                  onOpen={() => onOpenProfile(lorenzoJrId)}
-                  openOnSelect={false}
-                  isMe={meIndex === LORENZO_JR_INDEX}
-                  onMarkMe={() => setMeIndex(LORENZO_JR_INDEX)}
-                />
-              </div>
+              )}
             </div>
           </div>
         )}
@@ -941,87 +982,97 @@ export function FamilyTreePage({
         {!collapsed.versieMaternal && (
           <div className="ft-branch-expanded">
             {/* Harvey Adams Sr., Versie's maternal grandfather */}
-            <div className="flex justify-center">
-              <div className="w-full max-w-[calc(50%-0.375rem)] sm:max-w-[calc(50%-0.5rem)]">
-                <PersonCard
-                  person={personFromId(harveyId)}
-                  index={HARVEY_INDEX}
-                  selected={selected === HARVEY_INDEX}
-                  onSelect={() => handleSelect(HARVEY_INDEX)}
-                  onOpen={() => onOpenProfile(harveyId)}
-                  isMe={meIndex === HARVEY_INDEX}
-                  onMarkMe={() => setMeIndex(HARVEY_INDEX)}
-                />
+            {showHarvey && (
+              <div className="flex justify-center">
+                <div className="w-full max-w-[calc(50%-0.375rem)] sm:max-w-[calc(50%-0.5rem)]">
+                  <PersonCard
+                    person={personFromId(harveyId)}
+                    index={HARVEY_INDEX}
+                    selected={selected === HARVEY_INDEX}
+                    onSelect={() => handleSelect(HARVEY_INDEX)}
+                    onOpen={() => onOpenProfile(harveyId)}
+                    isMe={meIndex === HARVEY_INDEX}
+                    onMarkMe={() => setMeIndex(HARVEY_INDEX)}
+                  />
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Vertical trunk down to Gertrude */}
-            <div
-              className={`ft-trunk relative mx-auto h-8 ${
-                inSet(selected, [HARVEY_INDEX, GERTRUDE_INDEX])
-                  ? "ft-connector-selected"
-                  : ""
-              }`}
-              aria-hidden="true"
-            >
-              <span
-                className={`ft-junction absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ${
+            {showHarvey && showGertrude && (
+              <div
+                className={`ft-trunk relative mx-auto h-8 ${
                   inSet(selected, [HARVEY_INDEX, GERTRUDE_INDEX])
                     ? "ft-connector-selected"
                     : ""
                 }`}
                 aria-hidden="true"
-              />
-            </div>
-
-            {/* Gertrude Adams-Hill, Versie's mother */}
-            <div className="flex justify-center">
-              <div className="w-full max-w-[calc(50%-0.375rem)] sm:max-w-[calc(50%-0.5rem)]">
-                <PersonCard
-                  person={personFromId(gertrudeId)}
-                  index={GERTRUDE_INDEX}
-                  selected={selected === GERTRUDE_INDEX}
-                  onSelect={() => handleSelect(GERTRUDE_INDEX)}
-                  onOpen={() => onOpenProfile(gertrudeId)}
-                  isMe={meIndex === GERTRUDE_INDEX}
-                  onMarkMe={() => setMeIndex(GERTRUDE_INDEX)}
+              >
+                <span
+                  className={`ft-junction absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ${
+                    inSet(selected, [HARVEY_INDEX, GERTRUDE_INDEX])
+                      ? "ft-connector-selected"
+                      : ""
+                  }`}
+                  aria-hidden="true"
                 />
               </div>
-            </div>
+            )}
+
+            {/* Gertrude Adams-Hill, Versie's mother */}
+            {showGertrude && (
+              <div className="flex justify-center">
+                <div className="w-full max-w-[calc(50%-0.375rem)] sm:max-w-[calc(50%-0.5rem)]">
+                  <PersonCard
+                    person={personFromId(gertrudeId)}
+                    index={GERTRUDE_INDEX}
+                    selected={selected === GERTRUDE_INDEX}
+                    onSelect={() => handleSelect(GERTRUDE_INDEX)}
+                    onOpen={() => onOpenProfile(gertrudeId)}
+                    isMe={meIndex === GERTRUDE_INDEX}
+                    onMarkMe={() => setMeIndex(GERTRUDE_INDEX)}
+                  />
+                </div>
+              </div>
+            )}
 
             {/* Vertical trunk down to Versie Smith */}
-            <div
-              className={`ft-trunk relative mx-auto h-8 ${
-                inSet(selected, [GERTRUDE_INDEX, VERSIE_MATERNAL_INDEX])
-                  ? "ft-connector-selected"
-                  : ""
-              }`}
-              aria-hidden="true"
-            >
-              <span
-                className={`ft-junction absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ${
+            {showGertrude && showVersie && (
+              <div
+                className={`ft-trunk relative mx-auto h-8 ${
                   inSet(selected, [GERTRUDE_INDEX, VERSIE_MATERNAL_INDEX])
                     ? "ft-connector-selected"
                     : ""
                 }`}
                 aria-hidden="true"
-              />
-            </div>
-
-            {/* Versie Smith, the person whose maternal ancestry this is */}
-            <div className="flex justify-center">
-              <div className="w-full max-w-[calc(50%-0.375rem)] sm:max-w-[calc(50%-0.5rem)]">
-                <PersonCard
-                  person={personFromId("versie-smith")}
-                  index={VERSIE_MATERNAL_INDEX}
-                  selected={selected === VERSIE_MATERNAL_INDEX}
-                  onSelect={() => handleSelect(VERSIE_MATERNAL_INDEX)}
-                  onOpen={() => onOpenProfile("versie-smith")}
-                  isMe={meIndex === VERSIE_MATERNAL_INDEX}
-                  onMarkMe={() => setMeIndex(VERSIE_MATERNAL_INDEX)}
+              >
+                <span
+                  className={`ft-junction absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 ${
+                    inSet(selected, [GERTRUDE_INDEX, VERSIE_MATERNAL_INDEX])
+                      ? "ft-connector-selected"
+                      : ""
+                  }`}
+                  aria-hidden="true"
                 />
               </div>
-            </div>
+            )}
+
+            {/* Versie Smith, the person whose maternal ancestry this is */}
+            {showVersie && (
+              <div className="flex justify-center">
+                <div className="w-full max-w-[calc(50%-0.375rem)] sm:max-w-[calc(50%-0.5rem)]">
+                  <PersonCard
+                    person={personFromId("versie-smith")}
+                    index={VERSIE_MATERNAL_INDEX}
+                    selected={selected === VERSIE_MATERNAL_INDEX}
+                    onSelect={() => handleSelect(VERSIE_MATERNAL_INDEX)}
+                    onOpen={() => onOpenProfile("versie-smith")}
+                    isMe={meIndex === VERSIE_MATERNAL_INDEX}
+                    onMarkMe={() => setMeIndex(VERSIE_MATERNAL_INDEX)}
+                  />
+                </div>
+              </div>
+            )}
           </div>
         )}
       </section>
@@ -1069,24 +1120,28 @@ export function FamilyTreePage({
           <div className="ft-branch-expanded">
             {/* Harvey and Mary Jane Johnson as a couple */}
             <div className="grid grid-cols-2 gap-3 sm:gap-4">
-              <PersonCard
-                person={personFromId(harveyId)}
-                index={HARVEY_INDEX}
-                selected={selected === HARVEY_INDEX}
-                onSelect={() => handleSelect(HARVEY_INDEX)}
-                onOpen={() => onOpenProfile(harveyId)}
-                isMe={meIndex === HARVEY_INDEX}
-                onMarkMe={() => setMeIndex(HARVEY_INDEX)}
-              />
-              <PersonCard
-                person={personFromId("mary-jane-johnson")}
-                index={MARY_JANE_INDEX}
-                selected={selected === MARY_JANE_INDEX}
-                onSelect={() => handleSelect(MARY_JANE_INDEX)}
-                onOpen={() => onOpenProfile("mary-jane-johnson")}
-                isMe={meIndex === MARY_JANE_INDEX}
-                onMarkMe={() => setMeIndex(MARY_JANE_INDEX)}
-              />
+              {showHarvey && (
+                <PersonCard
+                  person={personFromId(harveyId)}
+                  index={HARVEY_INDEX}
+                  selected={selected === HARVEY_INDEX}
+                  onSelect={() => handleSelect(HARVEY_INDEX)}
+                  onOpen={() => onOpenProfile(harveyId)}
+                  isMe={meIndex === HARVEY_INDEX}
+                  onMarkMe={() => setMeIndex(HARVEY_INDEX)}
+                />
+              )}
+              {showMaryJane && (
+                <PersonCard
+                  person={personFromId("mary-jane-johnson")}
+                  index={MARY_JANE_INDEX}
+                  selected={selected === MARY_JANE_INDEX}
+                  onSelect={() => handleSelect(MARY_JANE_INDEX)}
+                  onOpen={() => onOpenProfile("mary-jane-johnson")}
+                  isMe={meIndex === MARY_JANE_INDEX}
+                  onMarkMe={() => setMeIndex(MARY_JANE_INDEX)}
+                />
+              )}
             </div>
 
             {/* Horizontal relationship line between the two cards */}
@@ -1131,18 +1186,20 @@ export function FamilyTreePage({
             </div>
 
             {/* Children of Harvey Adams Sr. and Mary Jane Johnson */}
-            <div className="mt-2">
-              <BranchRow
-                rowChildren={secondMarriageChildren}
-                rowOffset={SECOND_MARRIAGE_CHILDREN_INDICES[0]}
-                parentIndices={[HARVEY_INDEX, MARY_JANE_INDEX]}
-                selected={selected}
-                onSelect={handleSelect}
-                meIndex={meIndex}
-                onMarkMe={setMeIndex}
-                onOpenProfile={onOpenProfile}
-              />
-            </div>
+            {visibleSecondMarriageChildren.length > 0 && (
+              <div className="mt-2">
+                <BranchRow
+                  rowChildren={visibleSecondMarriageChildren}
+                  rowOffset={SECOND_MARRIAGE_CHILDREN_INDICES[0]}
+                  parentIndices={[HARVEY_INDEX, MARY_JANE_INDEX]}
+                  selected={selected}
+                  onSelect={handleSelect}
+                  meIndex={meIndex}
+                  onMarkMe={setMeIndex}
+                  onOpenProfile={onOpenProfile}
+                />
+              </div>
+            )}
 
             {/* Vertical trunk dropping from Mildred down to her daughters,
                 ending in a junction where it meets the branch line */}
@@ -1165,18 +1222,20 @@ export function FamilyTreePage({
             </div>
 
             {/* Daughters of Mildred Adams */}
-            <div className="mt-2">
-              <BranchRow
-                rowChildren={mildredChildren}
-                rowOffset={MILDRED_CHILDREN_INDICES[0]}
-                parentIndices={[MILDRED_INDEX]}
-                selected={selected}
-                onSelect={handleSelect}
-                meIndex={meIndex}
-                onMarkMe={setMeIndex}
-                onOpenProfile={onOpenProfile}
-              />
-            </div>
+            {visibleMildredChildren.length > 0 && (
+              <div className="mt-2">
+                <BranchRow
+                  rowChildren={visibleMildredChildren}
+                  rowOffset={MILDRED_CHILDREN_INDICES[0]}
+                  parentIndices={[MILDRED_INDEX]}
+                  selected={selected}
+                  onSelect={handleSelect}
+                  meIndex={meIndex}
+                  onMarkMe={setMeIndex}
+                  onOpenProfile={onOpenProfile}
+                />
+              </div>
+            )}
           </div>
         )}
       </section>

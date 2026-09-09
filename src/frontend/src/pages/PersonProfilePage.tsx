@@ -3,6 +3,8 @@ import { useInternetIdentity } from "@caffeineai/core-infrastructure";
 import { ExternalBlob } from "@caffeineai/object-storage";
 import {
   AlertTriangle,
+  Archive,
+  ArchiveRestore,
   ArrowLeft,
   BookOpen,
   CalendarDays,
@@ -16,16 +18,43 @@ import {
   NotebookPen,
   Pencil,
   ScrollText,
+  ShieldAlert,
   Trash2,
   UserCheck,
+  UserMinus,
   Users,
 } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { ClaimButton } from "../components/ClaimButton";
 import { StatusBadge } from "../components/StatusBadge";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "../components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "../components/ui/dialog";
 import { useIsAdmin } from "../hooks/useArchiveStorage";
 import { useCanonicalPerson } from "../hooks/useCanonicalPerson";
+import {
+  useArchiveProfile,
+  useListArchivedProfiles,
+  usePermanentlyDeleteProfile,
+  useRequestProfileRemoval,
+  useRestoreProfile,
+} from "../hooks/useGovernance";
 import {
   useAddPhoto,
   usePhotos,
@@ -3070,6 +3099,21 @@ export function PersonProfilePage({
   const { data: relationshipRequests = [] } = useMyRelationshipRequests();
   const { data: isSteward = false } = useIsAdmin();
 
+  // Family Governance & Safety controls. The archived list is Family Steward
+  // only on the backend, so its result is only ever consumed when isSteward is
+  // true; for regular users the query errors but is contained by React Query
+  // and never drives any UI.
+  const { data: archivedProfiles = [] } = useListArchivedProfiles();
+  const isArchived = archivedProfiles.some((p) => p.personId === person.id);
+  const requestRemoval = useRequestProfileRemoval();
+  const archiveProfile = useArchiveProfile();
+  const restoreProfile = useRestoreProfile();
+  const permanentlyDelete = usePermanentlyDeleteProfile();
+
+  const [removalOpen, setRemovalOpen] = useState(false);
+  const [removalReason, setRemovalReason] = useState("");
+  const [deleteOpen, setDeleteOpen] = useState(false);
+
   const currentPrincipal = identity?.getPrincipal().toString();
   const isOwner = Boolean(
     backendProfile?.claimedByUserId &&
@@ -3163,6 +3207,16 @@ export function PersonProfilePage({
   const isLivingProfile =
     backendProfile?.livingStatus === LivingStatus.Living ||
     person.livingStatus === "living";
+  // A profile carries linked historical data when it has a timeline, sources,
+  // family relationships, or media. Permanent deletion is only permitted by the
+  // backend when none of these exist, so the steward is warned before deleting
+  // a profile that has any of them.
+  const hasLinkedHistoricalData =
+    person.timeline.length > 0 ||
+    person.sources.length > 0 ||
+    Boolean(person.family.spouseName) ||
+    (person.family.spouses?.length ?? 0) > 0 ||
+    hasProfilePhoto;
   const usesRepresentativeImage =
     Boolean(person.portrait.src) && person.portrait.src !== PLACEHOLDER_SRC;
   const portraitCaption = hasProfilePhoto
@@ -3387,6 +3441,130 @@ export function PersonProfilePage({
             </p>
           )}
         </div>
+
+        {/* Archived-state indicator */}
+        {isArchived && (
+          <div
+            data-ocid="profile.archived_indicator"
+            className="mt-6 w-full max-w-md rounded-2xl border border-border bg-card px-4 py-4 text-left shadow-subtle"
+          >
+            <div className="flex items-center gap-2">
+              <Archive
+                className="h-4 w-4 shrink-0 text-accent-foreground/70"
+                strokeWidth={1.75}
+                aria-hidden="true"
+              />
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                Archived profile
+              </p>
+            </div>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+              This profile has been archived and is no longer shown in normal
+              family browsing. Its relationships, media, timeline, sources, and
+              ownership history are preserved.
+            </p>
+          </div>
+        )}
+
+        {/* Family Governance & Safety controls */}
+        {(isSteward || (isOwner && isLivingProfile && !isArchived)) && (
+          <div
+            data-ocid="profile.governance_section"
+            className="mt-6 w-full max-w-md rounded-2xl border border-border bg-card px-4 py-4 text-left shadow-subtle"
+          >
+            <div className="flex items-center gap-2">
+              <ShieldAlert
+                className="h-4 w-4 shrink-0 text-accent-foreground/70"
+                strokeWidth={1.75}
+                aria-hidden="true"
+              />
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                Family Governance
+              </p>
+            </div>
+
+            {isOwner && isLivingProfile && !isArchived && (
+              <div className="mt-3 flex flex-col items-start gap-2">
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  You can request that this profile be removed from the family
+                  tree. A Family Steward will review your request.
+                </p>
+                <button
+                  type="button"
+                  data-ocid="profile.request_removal_button"
+                  onClick={() => setRemovalOpen(true)}
+                  className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full border border-border bg-card px-5 py-2.5 text-sm font-semibold text-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                >
+                  <UserMinus className="h-4 w-4" aria-hidden="true" />
+                  Request profile removal
+                </button>
+              </div>
+            )}
+
+            {isSteward && (
+              <div className="mt-3 flex flex-col items-start gap-2">
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  {isArchived
+                    ? "This profile is archived. You can restore it to normal browsing or permanently delete it."
+                    : "You can archive this profile to remove it from normal family browsing while preserving its data."}
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {isArchived ? (
+                    <button
+                      type="button"
+                      data-ocid="profile.restore_button"
+                      onClick={() => restoreProfile.mutate(person.id)}
+                      disabled={restoreProfile.isPending}
+                      className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full border border-border bg-card px-5 py-2.5 text-sm font-semibold text-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-60"
+                    >
+                      {restoreProfile.isPending ? (
+                        <Loader2
+                          className="h-4 w-4 animate-spin"
+                          aria-hidden="true"
+                        />
+                      ) : (
+                        <ArchiveRestore
+                          className="h-4 w-4"
+                          aria-hidden="true"
+                        />
+                      )}
+                      Restore profile
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      data-ocid="profile.archive_button"
+                      onClick={() => archiveProfile.mutate(person.id)}
+                      disabled={archiveProfile.isPending}
+                      className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full border border-border bg-card px-5 py-2.5 text-sm font-semibold text-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-60"
+                    >
+                      {archiveProfile.isPending ? (
+                        <Loader2
+                          className="h-4 w-4 animate-spin"
+                          aria-hidden="true"
+                        />
+                      ) : (
+                        <Archive className="h-4 w-4" aria-hidden="true" />
+                      )}
+                      Archive profile
+                    </button>
+                  )}
+                  {isArchived && (
+                    <button
+                      type="button"
+                      data-ocid="profile.permanent_delete_button"
+                      onClick={() => setDeleteOpen(true)}
+                      className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full border border-destructive/40 bg-destructive/10 px-5 py-2.5 text-sm font-semibold text-destructive shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:border-destructive/60 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                    >
+                      <Trash2 className="h-4 w-4" aria-hidden="true" />
+                      Delete permanently
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </motion.header>
 
       {/* Story */}
@@ -3610,6 +3788,154 @@ export function PersonProfilePage({
         person={person}
         onProfilePhotoChange={onProfilePhotoChange}
       />
+
+      {/* Request profile removal dialog (owner of a claimed living profile) */}
+      <Dialog open={removalOpen} onOpenChange={setRemovalOpen}>
+        <DialogContent data-ocid="profile.request_removal_dialog">
+          <DialogHeader>
+            <DialogTitle>Request profile removal</DialogTitle>
+            <DialogDescription>
+              This submits a removal request for Family Steward review. Your
+              profile will not be removed until a steward approves the request.
+            </DialogDescription>
+          </DialogHeader>
+          <label
+            htmlFor="removal-reason"
+            className="text-sm font-medium text-foreground"
+          >
+            Reason for removal
+          </label>
+          <textarea
+            id="removal-reason"
+            data-ocid="profile.request_removal_reason"
+            value={removalReason}
+            onChange={(event) => setRemovalReason(event.target.value)}
+            placeholder="Tell the Family Steward why you would like this profile removed."
+            rows={4}
+            className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-xs outline-none transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] md:text-sm"
+          />
+          {requestRemoval.isError ||
+            (requestRemoval.data?.__kind__ === "err" && (
+              <p
+                data-ocid="profile.request_removal_error"
+                className="text-sm text-destructive"
+              >
+                {requestRemoval.data?.__kind__ === "err" &&
+                requestRemoval.data.err === "AlreadyPending"
+                  ? "A removal request for this profile is already pending review."
+                  : "We couldn't submit your removal request. Please try again."}
+              </p>
+            ))}
+          <DialogFooter>
+            <button
+              type="button"
+              data-ocid="profile.request_removal_cancel"
+              onClick={() => setRemovalOpen(false)}
+              className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full border border-border bg-card px-5 py-2.5 text-sm font-semibold text-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              data-ocid="profile.request_removal_submit"
+              onClick={() => {
+                const reason = removalReason.trim();
+                if (!reason) return;
+                setRemovalReason("");
+                requestRemoval.mutate(
+                  { personId: person.id, reason },
+                  {
+                    onSuccess: () => setRemovalOpen(false),
+                    onError: () =>
+                      setRemovalReason((current) =>
+                        current === "" ? reason : current,
+                      ),
+                  },
+                );
+              }}
+              disabled={requestRemoval.isPending || removalReason.trim() === ""}
+              className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-60"
+            >
+              {requestRemoval.isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+              ) : (
+                <UserMinus className="h-4 w-4" aria-hidden="true" />
+              )}
+              Submit request
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Permanent delete confirmation dialog (Family Steward, archived profile) */}
+      <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+        <AlertDialogContent data-ocid="profile.permanent_delete_dialog">
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Permanently delete this profile?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              This action is irreversible. The profile and all of its data will
+              be permanently removed from the family tree.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          {hasLinkedHistoricalData && (
+            <div
+              data-ocid="profile.permanent_delete_warning"
+              className="rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm font-medium text-destructive"
+            >
+              <span className="flex items-start gap-2">
+                <AlertTriangle
+                  className="mt-0.5 h-4 w-4 shrink-0"
+                  aria-hidden="true"
+                />
+                <span>
+                  This profile has linked historical data (timeline, sources,
+                  family relationships, or media). Permanent deletion is only
+                  allowed when a profile has none of these, so this profile may
+                  not be eligible for permanent deletion.
+                </span>
+              </span>
+            </div>
+          )}
+          {permanentlyDelete.isError ||
+            (permanentlyDelete.data?.__kind__ === "err" && (
+              <p
+                data-ocid="profile.permanent_delete_error"
+                className="text-sm text-destructive"
+              >
+                We couldn't delete this profile. It may still have linked
+                historical data that must be removed first.
+              </p>
+            ))}
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              data-ocid="profile.permanent_delete_cancel"
+              className="min-h-[44px]"
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              data-ocid="profile.permanent_delete_confirm"
+              onClick={() =>
+                permanentlyDelete.mutate({
+                  personId: person.id,
+                  confirmation: true,
+                })
+              }
+              disabled={permanentlyDelete.isPending}
+              className="min-h-[44px] bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {permanentlyDelete.isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+              ) : (
+                <Trash2 className="h-4 w-4" aria-hidden="true" />
+              )}
+              Delete permanently
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

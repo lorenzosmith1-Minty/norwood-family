@@ -4,6 +4,7 @@ import Map "mo:core/Map";
 import Result "mo:core/Result";
 import Runtime "mo:core/Runtime";
 import Types "../types/ownership";
+import GovernanceTypes "../types/governance";
 import OwnershipLib "../lib/ownership";
 
 mixin (
@@ -13,6 +14,7 @@ mixin (
   relationships : List.List<Types.Relationship>,
   relationshipRequests : List.List<Types.RelationshipRequest>,
   notifications : List.List<Types.Notification>,
+  auditLog : List.List<GovernanceTypes.AuditEntry>,
 ) {
   /// Returns the ownership/lifecycle state of a person profile, or `null` when
   /// the person is not tracked.
@@ -63,7 +65,7 @@ mixin (
     if (not AccessControl.isAdmin(accessControlState, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can approve profile claims");
     };
-    OwnershipLib.approveClaim(profiles, claims, notifications, claimId, caller);
+    OwnershipLib.approveClaim(profiles, claims, notifications, auditLog, claimId, caller);
   };
 
   /// Rejects a pending profile claim. Family Steward only.
@@ -71,7 +73,7 @@ mixin (
     if (not AccessControl.isAdmin(accessControlState, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can reject profile claims");
     };
-    OwnershipLib.rejectClaim(claims, notifications, claimId, caller);
+    OwnershipLib.rejectClaim(claims, notifications, auditLog, claimId, caller);
   };
 
   /// Searches the authoritative shared profile data for possible duplicate
@@ -114,7 +116,7 @@ mixin (
     if (not AccessControl.isAdmin(accessControlState, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can approve relationship requests");
     };
-    OwnershipLib.approveRelationship(profiles, relationships, relationshipRequests, notifications, requestId, caller);
+    OwnershipLib.approveRelationship(profiles, relationships, relationshipRequests, notifications, auditLog, requestId, caller);
   };
 
   /// Rejects a relationship request. Family Steward only.
@@ -122,7 +124,7 @@ mixin (
     if (not AccessControl.isAdmin(accessControlState, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can reject relationship requests");
     };
-    OwnershipLib.rejectRelationship(profiles, relationshipRequests, notifications, requestId, caller);
+    OwnershipLib.rejectRelationship(profiles, relationshipRequests, notifications, auditLog, requestId, caller);
   };
 
   /// Returns a relationship request to pending state. Family Steward only.
@@ -130,7 +132,7 @@ mixin (
     if (not AccessControl.isAdmin(accessControlState, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can set relationship requests pending");
     };
-    OwnershipLib.setRelationshipPending(relationshipRequests, requestId, caller);
+    OwnershipLib.setRelationshipPending(relationshipRequests, auditLog, requestId, caller);
   };
 
   /// Updates an approved owner's own living profile fields. Never rewrites

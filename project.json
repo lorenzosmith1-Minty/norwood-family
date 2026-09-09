@@ -1,17 +1,19 @@
 {
-  "overview": "Norwood Family is a family-history app where members explore their family tree, claim their own profiles, and stewards review and approve profile claims.",
+  "overview": "Norwood Family is a private family history app where members explore their family tree, claim their own profiles, contribute photos and archive items, and stewards govern the family record.",
   "features": [
     "Explore the family tree and heritage branches",
-    "Claim your own profile with This is Me",
-    "Family Steward review and approval of profile claims",
-    "Edit and manage your claimed profile",
-    "Browse the family archive"
+    "Claim your own family profile",
+    "Contribute photos and archive items to family history",
+    "Family Stewards review claims, relationships, and archive contributions",
+    "Manage stewards, successors, duplicate profiles, and relationship administration",
+    "Archive and restore profiles safely with a full audit history"
   ],
   "category": "family-history",
   "tags": [
     "family",
     "genealogy",
-    "community"
+    "history",
+    "governance"
   ],
-  "last_updated": "2026-09-08T22:28:44.115Z"
+  "last_updated": "2026-09-09T01:11:22.333Z"
 }

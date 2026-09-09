@@ -622,6 +622,27 @@ video {
     --steward-reject: 0.5 0.2 25;
     --steward-pending: 0.55 0.09 60;
 
+    /* Family Governance & Safety Controls: tabbed steward area, duplicate
+       comparison, merge conflict, archive/restore, and audit log */
+    --gov-tab: 0.92 0.02 70;
+    --gov-tab-foreground: 0.5 0.03 45;
+    --gov-tab-active: 0.42 0.11 35;
+    --gov-tab-active-foreground: 0.96 0.02 70;
+    --gov-surface: 0.95 0.02 72;
+    --gov-merge: 0.6 0.11 55;
+    --gov-merge-foreground: 0.96 0.02 70;
+    --gov-archive: 0.5 0.03 45;
+    --gov-archive-surface: 0.93 0.02 70;
+    --gov-restore: 0.55 0.09 60;
+    --gov-restore-foreground: 0.96 0.02 70;
+    --gov-dup-high: 0.5 0.2 25;
+    --gov-dup-medium: 0.6 0.11 55;
+    --gov-dup-low: 0.5 0.03 45;
+    --audit-rule: 0.42 0.11 35 / 0.35;
+    --audit-surface: 0.95 0.02 72;
+    --audit-actor: 0.42 0.11 35;
+    --audit-time: 0.5 0.03 45;
+
     /* In-app notifications: unread emphasis + unread-count badge */
     --notif-unread: 0.55 0.09 60;
     --notif-read: 0.5 0.03 45;
@@ -779,6 +800,27 @@ video {
     --steward-approve: 0.6 0.15 150;
     --steward-reject: 0.55 0.2 25;
     --steward-pending: 0.72 0.14 60;
+
+    /* Family Governance & Safety Controls: tabbed steward area, duplicate
+       comparison, merge conflict, archive/restore, and audit log */
+    --gov-tab: 0.24 0.02 55;
+    --gov-tab-foreground: 0.7 0.1 55;
+    --gov-tab-active: 0.72 0.14 60;
+    --gov-tab-active-foreground: 0.16 0.02 55;
+    --gov-surface: 0.21 0.02 55;
+    --gov-merge: 0.65 0.13 55;
+    --gov-merge-foreground: 0.16 0.02 55;
+    --gov-archive: 0.7 0.1 55;
+    --gov-archive-surface: 0.22 0.02 55;
+    --gov-restore: 0.72 0.14 60;
+    --gov-restore-foreground: 0.16 0.02 55;
+    --gov-dup-high: 0.55 0.2 25;
+    --gov-dup-medium: 0.65 0.13 55;
+    --gov-dup-low: 0.7 0.1 55;
+    --audit-rule: 0.72 0.14 60 / 0.4;
+    --audit-surface: 0.21 0.02 55;
+    --audit-actor: 0.72 0.14 60;
+    --audit-time: 0.7 0.1 55;
 
     /* In-app notifications: unread emphasis + unread-count badge */
     --notif-unread: 0.72 0.14 60;
@@ -1037,6 +1079,9 @@ video {
 }
 .-mt-4 {
   margin-top: -1rem;
+}
+.mb-1 {
+  margin-bottom: 0.25rem;
 }
 .mb-1\.5 {
   margin-bottom: 0.375rem;
@@ -1669,6 +1714,9 @@ video {
 .items-center {
   align-items: center;
 }
+.items-baseline {
+  align-items: baseline;
+}
 .items-stretch {
   align-items: stretch;
 }
@@ -2118,6 +2166,9 @@ video {
   padding-top: 2rem;
   padding-bottom: 2rem;
 }
+.pb-1 {
+  padding-bottom: 0.25rem;
+}
 .pb-3 {
   padding-bottom: 0.75rem;
 }
@@ -2263,6 +2314,9 @@ video {
 .leading-relaxed {
   line-height: 1.625;
 }
+.leading-snug {
+  line-height: 1.375;
+}
 .leading-tight {
   line-height: 1.25;
 }
@@ -2271,6 +2325,9 @@ video {
 }
 .tracking-\[0\.14em\] {
   letter-spacing: 0.14em;
+}
+.tracking-\[0\.16em\] {
+  letter-spacing: 0.16em;
 }
 .tracking-\[0\.18em\] {
   letter-spacing: 0.18em;
@@ -6259,6 +6316,695 @@ video {
   font-weight: 600;
     color: oklch(var(--signin-card-foreground));
 }
+/* ---- Family Governance & Safety Controls ---- */
+/* Governance tab bar: horizontally scrollable segmented control on mobile.
+     All six steward sub-areas live here so the global navbar stays clean. */
+.gov-tabs {
+  margin-left: -1rem;
+  margin-right: -1rem;
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-bottom: 0.25rem;
+}
+@media (min-width: 640px) {
+
+  .gov-tabs {
+    margin-left: 0px;
+    margin-right: 0px;
+    flex-wrap: wrap;
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+}
+.gov-tabs {
+    scrollbar-width: none;
+  }
+.gov-tabs::-webkit-scrollbar {
+    display: none;
+  }
+.gov-tab {
+  display: inline-flex;
+  min-height: 44px;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: 9999px;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  padding-left: 1rem;
+  padding-right: 1rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+    background-color: oklch(var(--gov-tab));
+    color: oklch(var(--gov-tab-foreground));
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+}
+.gov-tab:hover {
+    color: oklch(var(--foreground));
+    border-color: oklch(var(--photo-ring) / 0.6);
+  }
+.gov-tab:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(var(--ring) / 0.25);
+  }
+.gov-tab-active {
+    background-color: oklch(var(--gov-tab-active));
+    color: oklch(var(--gov-tab-active-foreground));
+    border-color: oklch(var(--gov-tab-active));
+  }
+.gov-tab-active:hover {
+    color: oklch(var(--gov-tab-active-foreground));
+    border-color: oklch(var(--gov-tab-active));
+  }
+.gov-tab-count {
+  display: inline-flex;
+  height: 1.25rem;
+  min-width: 1.25rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+  font-size: 10px;
+  font-weight: 700;
+  --tw-numeric-spacing: tabular-nums;
+  font-variant-numeric: var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction);
+    background-color: oklch(var(--gov-tab-active) / 0.14);
+    color: oklch(var(--gov-tab-active));
+}
+.gov-tab-active .gov-tab-count {
+    background-color: oklch(var(--gov-tab-active-foreground) / 0.18);
+    color: oklch(var(--gov-tab-active-foreground));
+  }
+/* Governance panel: the active tab's content column on warm paper */
+.gov-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+/* Section plate: groups related governance rows under a tracked heading */
+.gov-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  padding: 1rem;
+    background-color: oklch(var(--gov-surface));
+    box-shadow: 0 1px 2px -1px oklch(0.36 0.05 45 / 0.08);
+}
+.gov-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.gov-section-title {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+    color: oklch(var(--muted-foreground));
+}
+/* Steward management: list of stewards with role + promote/remove actions */
+.steward-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.steward-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  background-color: oklch(var(--card));
+  padding: 0.75rem;
+    box-shadow: 0 1px 2px -1px oklch(0.36 0.05 45 / 0.08);
+}
+.steward-row-portrait {
+  display: flex;
+  height: 2.75rem;
+  width: 2.75rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  font-family: var(--font-display), serif;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+    background-color: oklch(var(--muted));
+    color: oklch(var(--muted-foreground));
+    box-shadow: 0 0 0 2px oklch(var(--photo-ring-soft));
+    overflow: hidden;
+}
+.steward-row-portrait img {
+  height: 100%;
+  width: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.steward-row-body {
+  display: flex;
+  min-width: 0px;
+  flex: 1 1 0%;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+.steward-row-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-display), serif;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  line-height: 1.25;
+    color: oklch(var(--foreground));
+}
+.steward-row-role {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  line-height: 1.375;
+    color: oklch(var(--muted-foreground));
+}
+.steward-row-actions {
+  display: flex;
+  flex-shrink: 0;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.375rem;
+}
+.steward-role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: 9999px;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  padding-left: 0.625rem;
+  padding-right: 0.625rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+    background-color: oklch(var(--card));
+    color: oklch(var(--owner-accent));
+}
+.steward-role-badge::before {
+    content: "";
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 9999px;
+    background-color: oklch(var(--owner-accent));
+  }
+.steward-role-badge.is-successor {
+    color: oklch(var(--steward-pending));
+  }
+.steward-role-badge.is-successor::before {
+    background-color: oklch(var(--steward-pending));
+  }
+/* Duplicate comparison: two side-by-side person cards joined by a merge
+     action. Stacks vertically on mobile, side-by-side on wider screens. */
+.dup-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  background-color: oklch(var(--card));
+  padding: 1rem;
+    box-shadow: 0 1px 2px -1px oklch(0.36 0.05 45 / 0.08);
+}
+.dup-compare {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+@media (min-width: 640px) {
+
+  .dup-compare {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.dup-person {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border-radius: var(--radius);
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  background-color: oklch(var(--card));
+  padding: 0.75rem;
+}
+.dup-person-head {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+.dup-person-portrait {
+  display: flex;
+  height: 3rem;
+  width: 3rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  font-family: var(--font-display), serif;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 600;
+    background-color: oklch(var(--muted));
+    color: oklch(var(--muted-foreground));
+    box-shadow: 0 0 0 2px oklch(var(--photo-ring-soft));
+    overflow: hidden;
+}
+.dup-person-portrait img {
+  height: 100%;
+  width: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.dup-person-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-display), serif;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  line-height: 1.25;
+    color: oklch(var(--foreground));
+}
+.dup-person-years {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  --tw-numeric-spacing: tabular-nums;
+  font-variant-numeric: var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction);
+    color: oklch(var(--muted-foreground));
+}
+.dup-person-facts {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  line-height: 1.375;
+    color: oklch(var(--muted-foreground));
+}
+.dup-person-facts .fact-match {
+    color: oklch(var(--foreground));
+  }
+.dup-person-facts .fact-diff {
+    color: oklch(var(--destructive));
+  }
+.dup-confidence {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: 9999px;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  padding-left: 0.625rem;
+  padding-right: 0.625rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+    background-color: oklch(var(--card));
+}
+.dup-confidence::before {
+    content: "";
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 9999px;
+  }
+.dup-confidence-high {
+    color: oklch(var(--gov-dup-high));
+  }
+.dup-confidence-high::before {
+    background-color: oklch(var(--gov-dup-high));
+  }
+.dup-confidence-medium {
+    color: oklch(var(--gov-dup-medium));
+  }
+.dup-confidence-medium::before {
+    background-color: oklch(var(--gov-dup-medium));
+  }
+.dup-confidence-low {
+    color: oklch(var(--gov-dup-low));
+  }
+.dup-confidence-low::before {
+    background-color: oklch(var(--gov-dup-low));
+  }
+.dup-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+/* Merge conflict review: a flagged field where two profiles disagree.
+     The conflicting values sit on a warm ochre plate with a resolve action. */
+.merge-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  background-color: oklch(var(--card));
+  padding: 1rem;
+    box-shadow: 0 1px 2px -1px oklch(0.36 0.05 45 / 0.08);
+}
+.merge-item-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.merge-item-title {
+  font-family: var(--font-display), serif;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  line-height: 1.25;
+    color: oklch(var(--foreground));
+}
+.merge-item-meta {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  line-height: 1.375;
+    color: oklch(var(--muted-foreground));
+}
+.merge-conflict {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border-radius: var(--radius);
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  padding: 0.75rem;
+    background-color: oklch(var(--gov-merge) / 0.1);
+    border-color: oklch(var(--gov-merge) / 0.4);
+}
+.merge-field-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+    color: oklch(var(--gov-merge));
+}
+.merge-values {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+@media (min-width: 640px) {
+
+  .merge-values {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.merge-value {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  border-radius: var(--radius);
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  background-color: oklch(var(--card));
+  padding: 0.625rem;
+}
+.merge-value-owner {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+    color: oklch(var(--muted-foreground));
+}
+.merge-value-text {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  line-height: 1.375;
+    color: oklch(var(--foreground));
+}
+.merge-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+.merge-resolve {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: 9999px;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+    color: oklch(var(--gov-merge-foreground));
+    background-color: oklch(var(--gov-merge));
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.18);
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow
+      0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.merge-resolve:hover {
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.24);
+  }
+/* Archive / restore states: archived profiles read as quiet, desaturated
+     plates with a bronze restore affordance. */
+.archive-state-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: 9999px;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  padding-left: 0.625rem;
+  padding-right: 0.625rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+    background-color: oklch(var(--gov-archive-surface));
+    color: oklch(var(--gov-archive));
+}
+.archive-state-badge::before {
+    content: "";
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 9999px;
+    background-color: oklch(var(--gov-archive));
+  }
+.archive-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  background-color: oklch(var(--card));
+  padding: 0.75rem;
+    box-shadow: 0 1px 2px -1px oklch(0.36 0.05 45 / 0.08);
+}
+.archive-row-archived {
+    background-color: oklch(var(--gov-archive-surface));
+  }
+.archive-row-portrait {
+  display: flex;
+  height: 2.75rem;
+  width: 2.75rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  font-family: var(--font-display), serif;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+    background-color: oklch(var(--muted));
+    color: oklch(var(--muted-foreground));
+    box-shadow: 0 0 0 2px oklch(var(--photo-ring-soft));
+    opacity: 0.7;
+    overflow: hidden;
+}
+.archive-row-portrait img {
+  height: 100%;
+  width: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.archive-row-body {
+  display: flex;
+  min-width: 0px;
+  flex: 1 1 0%;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+.archive-row-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-display), serif;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  line-height: 1.25;
+    color: oklch(var(--foreground));
+}
+.archive-row-archived .archive-row-name {
+    color: oklch(var(--gov-archive));
+  }
+.archive-row-meta {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  line-height: 1.375;
+    color: oklch(var(--muted-foreground));
+}
+.archive-row-actions {
+  display: flex;
+  flex-shrink: 0;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.375rem;
+}
+.archive-restore {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: 9999px;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+    color: oklch(var(--gov-restore-foreground));
+    background-color: oklch(var(--gov-restore));
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.18);
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow
+      0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.archive-restore:hover {
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.24);
+  }
+/* Audit log: a vertical timeline of steward actions. Each entry is a
+     timestamped row on a paper plate with a bronze actor + action. */
+.audit-list {
+  display: flex;
+  flex-direction: column;
+}
+.audit-entry {
+  position: relative;
+  display: flex;
+  gap: 0.75rem;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  background-color: oklch(var(--card));
+  padding: 1rem;
+    box-shadow: 0 1px 2px -1px oklch(0.36 0.05 45 / 0.08);
+}
+.audit-entry + .audit-entry {
+  margin-top: 0.5rem;
+}
+.audit-entry::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background-color: oklch(var(--audit-actor));
+    margin-top: 0.35rem;
+    flex-shrink: 0;
+  }
+.audit-entry-body {
+  display: flex;
+  min-width: 0px;
+  flex: 1 1 0%;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.audit-entry-action {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  line-height: 1.375;
+    color: oklch(var(--foreground));
+}
+.audit-entry-detail {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  line-height: 1.375;
+    color: oklch(var(--muted-foreground));
+}
+.audit-entry-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 11px;
+  font-weight: 500;
+    color: oklch(var(--audit-time));
+}
+.audit-entry-meta .audit-actor {
+    color: oklch(var(--audit-actor));
+    font-weight: 600;
+  }
+/* Governance empty state: quiet dashed plate with a reset/back action */
+.gov-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-style: dashed;
+  border-color: oklch(var(--border) / 0.7);
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  padding-top: 3.5rem;
+  padding-bottom: 3.5rem;
+  text-align: center;
+    background-color: oklch(var(--card) / 0.5);
+}
+.gov-empty-title {
+  font-family: var(--font-display), serif;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+    color: oklch(var(--foreground));
+}
+.gov-empty-hint {
+  max-width: 24rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+    color: oklch(var(--muted-foreground));
+}
 .\[--cell-size\:--spacing\(8\)\] {
   --cell-size: var(--spacing(8));
 }
@@ -6420,6 +7166,10 @@ video {
 
 .hover\:border-accent\/50:hover {
   border-color: oklch(var(--accent) / 0.5);
+}
+
+.hover\:border-destructive\/60:hover {
+  border-color: oklch(var(--destructive) / 0.6);
 }
 
 .hover\:bg-accent:hover {
@@ -7763,6 +8513,10 @@ video {
 
   .sm\:flex-row {
     flex-direction: row;
+  }
+
+  .sm\:flex-wrap {
+    flex-wrap: wrap;
   }
 
   .sm\:items-center {

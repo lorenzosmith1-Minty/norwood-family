@@ -26,6 +26,49 @@ type UserRole =
    guest;
    user;
  };
+type SuccessorStatus = 
+ variant {
+   Activated;
+   Designated;
+   Removed;
+ };
+type SuccessorDesignation = 
+ record {
+   assignedAt: int;
+   assignedBy: principal;
+   personId: PersonId;
+   priority: nat;
+   status: SuccessorStatus;
+ };
+type StewardRoleStatus = 
+ variant {
+   Active;
+   Removed;
+ };
+type StewardRecord = 
+ record {
+   assignedAt: int;
+   assignedBy: principal;
+   roleStatus: StewardRoleStatus;
+   stewardAccountId: principal;
+   successorPriority: opt nat;
+ };
+type StewardIdentity = 
+ record {
+   accountId: principal;
+   canonicalName: text;
+   displayName: text;
+   personId: PersonId;
+ };
+type StewardError = 
+ variant {
+   AlreadySteward;
+   LastSteward;
+   NotApprovedClaimedMember;
+   NotDesignated;
+   NotSignedIn;
+   NotSteward;
+ };
 type SourceStatus = 
  variant {
    Copy;
@@ -38,45 +81,95 @@ type Result__1 =
    hasMore: bool;
    rows: vec vec Cell;
  };
-type Result_8 = 
+type Result_9 = 
  variant {
-   err: Error;
+   err: DeleteError;
    ok;
  };
+type Result_8 = 
+ variant {
+   err: StewardError;
+   ok: StewardRecord;
+ };
 type Result_7 = 
- variant {
-   err: AccountError;
-   ok: Account;
- };
-type Result_6 = 
- variant {
-   err: CreateError;
-   ok: PersonProfile;
- };
-type Result_5 = 
- variant {
-   err: AccountError;
-   ok: AccountId;
- };
-type Result_4 = 
- variant {
-   err: AccountError;
-   ok: AuthMethods;
- };
-type Result_3 = 
  variant {
    err: RelationshipError;
    ok: RelationshipRequest;
  };
-type Result_2 = 
+type Result_6 = 
  variant {
    err: RemoveError;
    ok;
  };
-type Result_1 = 
+type Result_5 = 
+ variant {
+   err: RelationshipAdminError;
+   ok;
+ };
+type Result_4 = 
+ variant {
+   err: StewardError;
+   ok;
+ };
+type Result_3 = 
  variant {
    err: ClaimError;
    ok: ProfileClaim;
+ };
+type Result_2 = 
+ variant {
+   err: RemovalError;
+   ok: ProfileRemovalRequest;
+ };
+type Result_18 = 
+ variant {
+   err: Error;
+   ok;
+ };
+type Result_17 = 
+ variant {
+   err: AccountError;
+   ok: Account;
+ };
+type Result_16 = 
+ variant {
+   err: RelationshipAdminError;
+   ok: Relationship;
+ };
+type Result_15 = 
+ variant {
+   err: CreateError;
+   ok: PersonProfile;
+ };
+type Result_14 = 
+ variant {
+   err: StewardError;
+   ok: SuccessorDesignation;
+ };
+type Result_13 = 
+ variant {
+   err: AccountError;
+   ok: AccountId;
+ };
+type Result_12 = 
+ variant {
+   err: AccountError;
+   ok: AuthMethods;
+ };
+type Result_11 = 
+ variant {
+   err: MergeError;
+   ok: MergeResult;
+ };
+type Result_10 = 
+ variant {
+   err: MergeError;
+   ok;
+ };
+type Result_1 = 
+ variant {
+   err: ArchiveError;
+   ok;
  };
 type Result = 
  variant {
@@ -85,6 +178,14 @@ type Result =
  };
 type RemoveError = 
  variant {
+   NotSignedIn;
+   ProfileNotFound;
+ };
+type RemovalError = 
+ variant {
+   AlreadyPending;
+   DeceasedProfile;
+   NotOwner;
    NotSignedIn;
    ProfileNotFound;
  };
@@ -124,6 +225,13 @@ type RelationshipError =
    NotSignedIn;
    PersonNotFound;
  };
+type RelationshipAdminError = 
+ variant {
+   DuplicateRelationship;
+   NotSignedIn;
+   PersonNotFound;
+   RelationshipNotFound;
+ };
 type Relationship = 
  record {
    fromPersonId: PersonId;
@@ -131,6 +239,23 @@ type Relationship =
    relationshipType: RelationshipType;
    status: RelationshipStatus;
    toPersonId: PersonId;
+ };
+type ProfileRemovalStatus = 
+ variant {
+   Approved;
+   Pending;
+   Rejected;
+ };
+type ProfileRemovalRequest = 
+ record {
+   id: nat;
+   personId: PersonId;
+   reason: text;
+   requestingUserId: principal;
+   reviewedBy: opt principal;
+   reviewedDate: opt int;
+   status: ProfileRemovalStatus;
+   submittedDate: int;
  };
 type ProfileEdits = 
  record {
@@ -232,6 +357,34 @@ type Notification =
    read: bool;
    recipient: principal;
  };
+type MergeResult = 
+ record {
+   archivedPersonId: PersonId;
+   canonicalPersonId: PersonId;
+   conflicts: vec MergeConflict;
+ };
+type MergeError = 
+ variant {
+   NotDuplicate;
+   NotSignedIn;
+   ProfileNotFound;
+   SameProfile;
+ };
+type MergeConflictStatus = 
+ variant {
+   Pending;
+   Resolved;
+ };
+type MergeConflict = 
+ record {
+   alternateValue: text;
+   canonicalValue: text;
+   field: text;
+   id: nat;
+   resolvedAt: opt int;
+   resolvedBy: opt principal;
+   status: MergeConflictStatus;
+ };
 type LivingStatus = 
  variant {
    Deceased;
@@ -267,6 +420,38 @@ type EditError =
    NotSignedIn;
    ProfileNotFound;
  };
+type DuplicatePair = 
+ record {
+   candidateA: DuplicateCandidate;
+   candidateB: DuplicateCandidate;
+ };
+type DuplicateCandidate = 
+ record {
+   archiveLinks: vec text;
+   birthDate: opt text;
+   children: vec text;
+   claimStatus: text;
+   deathDate: opt text;
+   name: text;
+   ownerAccount: opt principal;
+   parents: vec text;
+   personId: PersonId;
+   photoCount: nat;
+   sourceCount: nat;
+   spouses: vec text;
+   timelineCount: nat;
+ };
+type DeleteError = 
+ variant {
+   ConfirmationRequired;
+   HasApprovedRelationships;
+   HasArchiveItems;
+   HasMedia;
+   HasOwnershipHistory;
+   HasTimeline;
+   NotSignedIn;
+   ProfileNotFound;
+ };
 type CreateError = variant {NotSignedIn;};
 type ClaimStatus = 
  variant {
@@ -295,6 +480,36 @@ type AuthMethod =
  variant {
    Apple;
    Google;
+ };
+type AuditEntry = 
+ record {
+   actionType: AuditActionType;
+   actorAccountId: principal;
+   affectedPersonIds: vec PersonId;
+   id: nat;
+   summary: text;
+   timestamp: int;
+ };
+type AuditActionType = 
+ variant {
+   ClaimApproved;
+   ClaimRejected;
+   DuplicateMerged;
+   ProfileArchived;
+   ProfilePermanentlyDeleted;
+   ProfileRemovalRequested;
+   ProfileRemovalReviewed;
+   ProfileRestored;
+   RelationshipAdded;
+   RelationshipRemoved;
+   RelationshipRequestApproved;
+   RelationshipRequestPending;
+   RelationshipRequestRejected;
+   RelationshipTypeCorrected;
+   StewardPromoted;
+   StewardRemoved;
+   SuccessorActivated;
+   SuccessorDesignated;
  };
 type ArchiveItemType = 
  variant {
@@ -332,6 +547,13 @@ type ArchiveItem =
    title: text;
    year: opt nat;
  };
+type ArchiveError = 
+ variant {
+   AlreadyArchived;
+   NotArchived;
+   NotSignedIn;
+   ProfileNotFound;
+ };
 type AccountId = principal;
 type AccountError = 
  variant {
@@ -355,44 +577,76 @@ service : {
    (_ImmutableObjectStorageRefillResult);
   _immutableObjectStorageUpdateGatewayPrincipals: () -> ();
   _initialize_access_control: () -> ();
-  _internet_identity_sign_in_finish: () -> (Result_8);
+  _internet_identity_sign_in_finish: () -> (Result_18);
   _internet_identity_sign_in_start: () -> (blob);
+  activateSuccessor: (personId: PersonId) -> (Result_8);
   addPhoto: (personId: PersonId, filename: text, mimeType: text, "blob":
    ExternalBlob) -> (Photo);
+  addRelationship: (fromPersonId: PersonId, toPersonId: PersonId,
+   relationshipType: RelationshipType) -> (Result_16);
   approveArchiveItem: (id: ArchiveItemId) -> (opt ArchiveItem);
   approveProfileClaim: (claimId: nat) -> (opt ProfileClaim);
+  approveProfileRemoval: (requestId: nat) -> (opt ProfileRemovalRequest);
   approveRelationshipRequest: (requestId: nat) -> (opt RelationshipRequest);
+  archiveProfile: (personId: PersonId) -> (Result_1);
   assignCallerUserRole: (user: principal, role: UserRole) -> ();
-  bindAuthMethod: (method: AuthMethod) -> (Result_7);
-  createMyself: (name: text) -> (Result_6);
+  bindAuthMethod: (method: AuthMethod) -> (Result_17);
+  correctRelationshipType: (relationshipId: nat, relationshipType:
+   RelationshipType) -> (Result_16);
+  createMyself: (name: text) -> (Result_15);
+  designateSuccessor: (personId: PersonId, priority: nat) -> (Result_14);
   execute: (qJson: text) -> (Result__1) query;
   getApiDoc: () -> (text) query;
   getCallerUserRole: () -> (UserRole) query;
-  getMyAccountId: () -> (Result_5) query;
-  getMyAuthMethods: () -> (Result_4) query;
+  getMyAccountId: () -> (Result_13) query;
+  getMyAuthMethods: () -> (Result_12) query;
   getMyProfile: () -> (opt PersonProfile) query;
   getMyProfileClaim: (personId: PersonId) -> (opt ProfileClaim) query;
   getMyRelationshipRequests: () -> (vec RelationshipRequest) query;
   getPersonProfile: (personId: PersonId) -> (opt PersonProfile) query;
   getProfilePhoto: (personId: PersonId) -> (opt Photo) query;
   getRelationshipRequest: (id: nat) -> (opt RelationshipRequest) query;
+  getSingleStewardWarning: () -> (opt text) query;
   isCallerAdmin: () -> (bool) query;
   listApprovedArchiveItems: () -> (vec ArchiveItem) query;
+  listArchivedProfileIds: () -> (vec PersonId) query;
+  listArchivedProfiles: () -> (vec PersonProfile) query;
+  listAuditHistory: () -> (vec AuditEntry) query;
   listConfirmedRelationships: () -> (vec Relationship) query;
+  listDuplicateCandidates: () -> (vec DuplicatePair) query;
+  listEligibleStewardCandidates: () -> (vec StewardIdentity) query;
   listNotifications: () -> (vec Notification) query;
   listPendingArchiveItems: () -> (vec ArchiveItem) query;
+  listPersonRelationships: (personId: PersonId) -> (vec Relationship) query;
   listPhotos: (personId: PersonId) -> (vec Photo) query;
   listProfileClaims: () -> (vec ProfileClaim) query;
+  listProfileRemovalRequests: () -> (vec ProfileRemovalRequest) query;
   listRelationshipRequests: () -> (vec RelationshipRequest) query;
+  listStewardIdentities: () -> (vec StewardIdentity) query;
+  listStewards: () -> (vec StewardRecord) query;
+  listSuccessors: () -> (vec SuccessorDesignation) query;
   markNotificationRead: (id: NotificationId) -> (opt Notification);
+  mergeProfiles: (canonicalPersonId: PersonId, mergedAwayPersonId:
+   PersonId) -> (Result_11);
+  notDuplicate: (personIdA: PersonId, personIdB: PersonId) -> (Result_10);
+  permanentlyDeleteProfile: (personId: PersonId, confirmation: bool) ->
+   (Result_9);
+  promoteToSteward: (personId: PersonId) -> (Result_8);
   proposeRelationship: (fromPersonId: PersonId, toPersonId: PersonId,
-   relationshipType: RelationshipType) -> (Result_3);
+   relationshipType: RelationshipType) -> (Result_7);
   rejectArchiveItem: (id: ArchiveItemId) -> (opt ArchiveItem);
   rejectProfileClaim: (claimId: nat) -> (opt ProfileClaim);
+  rejectProfileRemoval: (requestId: nat) -> (opt ProfileRemovalRequest);
   rejectRelationshipRequest: (requestId: nat) -> (opt RelationshipRequest);
-  removeDuplicateProfile: (personId: PersonId) -> (Result_2);
+  removeDuplicateProfile: (personId: PersonId) -> (Result_6);
   removePhoto: (personId: PersonId, photoId: PhotoId) -> (bool);
-  requestProfileClaim: (personId: PersonId) -> (Result_1);
+  removeRelationship: (relationshipId: nat) -> (Result_5);
+  removeSteward: (stewardAccountId: principal) -> (Result_4);
+  requestProfileClaim: (personId: PersonId) -> (Result_3);
+  requestProfileRemoval: (personId: PersonId, reason: text) -> (Result_2);
+  resolveMergeConflict: (conflictId: nat, canonicalValue: text) ->
+   (opt MergeConflict);
+  restoreProfile: (personId: PersonId) -> (Result_1);
   schema: () -> (text) query;
   searchPossibleMatches: (name: text) -> (vec PersonMatch) query;
   setProfilePhoto: (personId: PersonId, photoId: PhotoId) -> (opt Photo);

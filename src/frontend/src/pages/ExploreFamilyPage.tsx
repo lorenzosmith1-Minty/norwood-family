@@ -4,8 +4,10 @@ import {
   type RelativeRole,
 } from "../components/PersonCard";
 import { useExploreFamily } from "../hooks/useExploreFamily";
+import { useListArchivedProfileIds } from "../hooks/useGovernance";
 import {
   FAMILY_GRAPH,
+  type FamilyRelations,
   type RelativeRef,
   resolveDisplayName,
 } from "../types/family";
@@ -135,6 +137,18 @@ export default function ExploreFamilyPage({
     relatives,
   } = useExploreFamily(focusPersonId, profiles);
 
+  // Hide archived profiles from normal family browsing. Archived person ids
+  // come from the backend's non-steward-gated listArchivedProfileIds query.
+  const { data: archivedIds = [] } = useListArchivedProfileIds();
+  const archived = new Set(archivedIds);
+  const visibleRelatives: FamilyRelations = {
+    father: relatives.father.filter((r) => !archived.has(r.personId)),
+    mother: relatives.mother.filter((r) => !archived.has(r.personId)),
+    spouse: relatives.spouse.filter((r) => !archived.has(r.personId)),
+    siblings: relatives.siblings.filter((r) => !archived.has(r.personId)),
+    children: relatives.children.filter((r) => !archived.has(r.personId)),
+  };
+
   // A graph-only node (e.g. lorenzoSmithJr) has no profile record, so the hook
   // returns no focus. Fall back to a synthesized profile so the view still
   // centers on the person and shows their confirmed relatives from the shared
@@ -173,14 +187,14 @@ export default function ExploreFamilyPage({
       <div className="ex-parent-row">
         <RelativeZone
           label="Father"
-          relatives={relatives.father}
+          relatives={visibleRelatives.father}
           onSelectPerson={onSelectPerson}
           rowClassName="ex-parent-row"
           relationRole="father"
         />
         <RelativeZone
           label="Mother"
-          relatives={relatives.mother}
+          relatives={visibleRelatives.mother}
           onSelectPerson={onSelectPerson}
           rowClassName="ex-parent-row"
           relationRole="mother"
@@ -195,12 +209,12 @@ export default function ExploreFamilyPage({
           spouse card is compact and never clipped, and never pushes the focus
           card off-screen. */}
       <div className="ex-center-band">
-        {relatives.spouse.length > 0 && (
+        {visibleRelatives.spouse.length > 0 && (
           <div
             className="ex-spouse-stack shrink-0"
             data-ocid="explore.zone.spouse"
           >
-            {relatives.spouse.map((ref, index) => (
+            {visibleRelatives.spouse.map((ref, index) => (
               <PersonCard
                 key={ref.personId}
                 person={toPerson(ref)}
@@ -237,7 +251,7 @@ export default function ExploreFamilyPage({
           no horizontal scrolling. */}
       <RelativeZone
         label="Siblings"
-        relatives={relatives.siblings}
+        relatives={visibleRelatives.siblings}
         onSelectPerson={onSelectPerson}
         className="w-full"
         rowClassName="ex-siblings-row"
@@ -247,7 +261,7 @@ export default function ExploreFamilyPage({
       {/* Children directly below the Siblings section */}
       <RelativeZone
         label="Children"
-        relatives={relatives.children}
+        relatives={visibleRelatives.children}
         onSelectPerson={onSelectPerson}
         className="w-full"
         rowClassName="ex-children-row"

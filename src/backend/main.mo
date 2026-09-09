@@ -17,6 +17,7 @@ import Types "types/object-storage";
 import ArchiveTypes "types/archive";
 import OwnershipTypes "types/ownership";
 import AccountIdentityTypes "types/account-identity";
+import GovernanceTypes "types/governance";
 import ObjectStorageLib "lib/object-storage";
 import ArchiveLib "lib/archive";
 import OwnershipLib "lib/ownership";
@@ -27,6 +28,7 @@ import OwnershipApi "mixins/ownership-api";
 import RelationshipsApi "mixins/relationships-api";
 import NotificationsApi "mixins/notifications-api";
 import AccountIdentityApi "mixins/account-identity-api";
+import GovernanceApi "mixins/governance-api";
 import ApiDocMixin "mixins/api-doc";
 
 actor {
@@ -39,6 +41,38 @@ actor {
   let confirmedRelationships : List.List<OwnershipTypes.Relationship>;
   let notifications : List.List<OwnershipTypes.Notification>;
   let accounts : Map.Map<AccountIdentityTypes.AccountId, AccountIdentityTypes.Account>;
+  let stewards : List.List<GovernanceTypes.StewardRecord>;
+  let successors : List.List<GovernanceTypes.SuccessorDesignation>;
+  let removalRequests : List.List<GovernanceTypes.ProfileRemovalRequest>;
+  let auditLog : List.List<GovernanceTypes.AuditEntry>;
+  let mergeConflicts : List.List<GovernanceTypes.MergeConflict>;
+  let archivedProfiles : List.List<GovernanceTypes.PersonId>;
+  let dismissedDuplicates : List.List<GovernanceTypes.DismissedPair>;
+
+  /// Renders an audit action type variant as its tag text for OQL rows.
+  func auditActionText(a : GovernanceTypes.AuditActionType) : Text {
+    switch (a) {
+      case (#ClaimApproved) "ClaimApproved";
+      case (#ClaimRejected) "ClaimRejected";
+      case (#RelationshipRequestApproved) "RelationshipRequestApproved";
+      case (#RelationshipRequestRejected) "RelationshipRequestRejected";
+      case (#RelationshipRequestPending) "RelationshipRequestPending";
+      case (#StewardPromoted) "StewardPromoted";
+      case (#StewardRemoved) "StewardRemoved";
+      case (#SuccessorDesignated) "SuccessorDesignated";
+      case (#SuccessorActivated) "SuccessorActivated";
+      case (#ProfileArchived) "ProfileArchived";
+      case (#ProfileRestored) "ProfileRestored";
+      case (#ProfilePermanentlyDeleted) "ProfilePermanentlyDeleted";
+      case (#ProfileRemovalRequested) "ProfileRemovalRequested";
+      case (#ProfileRemovalReviewed) "ProfileRemovalReviewed";
+      case (#DuplicateMerged) "DuplicateMerged";
+      case (#RelationshipAdded) "RelationshipAdded";
+      case (#RelationshipRemoved) "RelationshipRemoved";
+      case (#RelationshipTypeCorrected) "RelationshipTypeCorrected";
+    };
+  };
+
   include MixinAuthorization(accessControlState, null);
   include Expose({
     entities = [
@@ -201,14 +235,137 @@ actor {
       })
       .controllerOnly()
       .build(),
+      OQL.Entity.manual<GovernanceTypes.StewardRecord>(
+        "steward",
+        func() : Iter.Iter<GovernanceTypes.StewardRecord> = stewards.values(),
+        "StewardRecord",
+        "stewardAccountId",
+      )
+      .sample({
+        stewardAccountId = Principal.fromText("aaaaa-aa");
+        roleStatus = #Active;
+        successorPriority = null;
+        assignedBy = Principal.fromText("aaaaa-aa");
+        assignedAt = 0;
+      })
+      .payload("stewardAccountId", func r = r.stewardAccountId.toText())
+      .payload("roleStatus", func r = switch (r.roleStatus) { case (#Active) "Active"; case (#Removed) "Removed" })
+      .payload("successorPriority", func r = r.successorPriority ?? 0)
+      .payload("assignedBy", func r = r.assignedBy.toText())
+      .payload("assignedAt", func r = r.assignedAt)
+      .controllerOnly()
+      .build(),
+      OQL.Entity.manual<GovernanceTypes.SuccessorDesignation>(
+        "successor",
+        func() : Iter.Iter<GovernanceTypes.SuccessorDesignation> = successors.values(),
+        "SuccessorDesignation",
+        "personId",
+      )
+      .sample({
+        personId = "";
+        priority = 0;
+        assignedBy = Principal.fromText("aaaaa-aa");
+        assignedAt = 0;
+        status = #Designated;
+      })
+      .payload("personId", func r = r.personId)
+      .payload("priority", func r = r.priority)
+      .payload("assignedBy", func r = r.assignedBy.toText())
+      .payload("assignedAt", func r = r.assignedAt)
+      .payload("status", func r = switch (r.status) { case (#Designated) "Designated"; case (#Activated) "Activated"; case (#Removed) "Removed" })
+      .controllerOnly()
+      .build(),
+      OQL.Entity.manual<GovernanceTypes.ProfileRemovalRequest>(
+        "removalRequest",
+        func() : Iter.Iter<GovernanceTypes.ProfileRemovalRequest> = removalRequests.values(),
+        "ProfileRemovalRequest",
+        "id",
+      )
+      .sample({
+        id = 0;
+        personId = "";
+        requestingUserId = Principal.fromText("aaaaa-aa");
+        reason = "";
+        status = #Pending;
+        submittedDate = 0;
+        reviewedBy = null;
+        reviewedDate = null;
+      })
+      .payload("id", func r = r.id)
+      .payload("personId", func r = r.personId)
+      .payload("requestingUserId", func r = r.requestingUserId.toText())
+      .payload("reason", func r = r.reason)
+      .payload("status", func r = switch (r.status) { case (#Pending) "Pending"; case (#Approved) "Approved"; case (#Rejected) "Rejected" })
+      .payload("submittedDate", func r = r.submittedDate)
+      .payload("reviewedBy", func r = switch (r.reviewedBy) { case (?p) p.toText(); case null "" })
+      .payload("reviewedDate", func r = r.reviewedDate ?? 0)
+      .controllerOnly()
+      .build(),
+      OQL.Entity.manual<GovernanceTypes.AuditEntry>(
+        "auditLog",
+        func() : Iter.Iter<GovernanceTypes.AuditEntry> = auditLog.values(),
+        "AuditEntry",
+        "id",
+      )
+      .sample({
+        id = 0;
+        actionType = #ClaimApproved;
+        actorAccountId = Principal.fromText("aaaaa-aa");
+        affectedPersonIds = [];
+        timestamp = 0;
+        summary = "";
+      })
+      .payload("id", func r = r.id)
+      .payload("actionType", func r = auditActionText(r.actionType))
+      .payload("actorAccountId", func r = r.actorAccountId.toText())
+      .payload("affectedPersonCount", func r = r.affectedPersonIds.size())
+      .payload("timestamp", func r = r.timestamp)
+      .payload("summary", func r = r.summary)
+      .controllerOnly()
+      .build(),
+      OQL.Entity.manual<GovernanceTypes.MergeConflict>(
+        "mergeConflict",
+        func() : Iter.Iter<GovernanceTypes.MergeConflict> = mergeConflicts.values(),
+        "MergeConflict",
+        "id",
+      )
+      .sample({
+        id = 0;
+        field = "";
+        canonicalValue = "";
+        alternateValue = "";
+        status = #Pending;
+        resolvedBy = null;
+        resolvedAt = null;
+      })
+      .payload("id", func r = r.id)
+      .payload("field", func r = r.field)
+      .payload("canonicalValue", func r = r.canonicalValue)
+      .payload("alternateValue", func r = r.alternateValue)
+      .payload("status", func r = switch (r.status) { case (#Pending) "Pending"; case (#Resolved) "Resolved" })
+      .payload("resolvedBy", func r = switch (r.resolvedBy) { case (?p) p.toText(); case null "" })
+      .payload("resolvedAt", func r = r.resolvedAt ?? 0)
+      .controllerOnly()
+      .build(),
+      OQL.Entity.manual(
+        "archivedProfile",
+        func() : Iter.Iter<GovernanceTypes.PersonId> = archivedProfiles.values(),
+        "ArchivedProfile",
+        "personId",
+      )
+      .sample("")
+      .payload("personId", func p = p)
+      .controllerOnly()
+      .build(),
     ];
   });
   include MixinObjectStorage();
   include ObjectStorageApi(galleries);
   include ArchiveApi(accessControlState, archiveItems);
-  include OwnershipApi(accessControlState, profiles, claims, confirmedRelationships, relationshipRequests, notifications);
+  include OwnershipApi(accessControlState, profiles, claims, confirmedRelationships, relationshipRequests, notifications, auditLog);
   include RelationshipsApi(relationshipRequests, confirmedRelationships);
   include NotificationsApi(notifications);
   include AccountIdentityApi(accounts);
+  include GovernanceApi(accessControlState, profiles, confirmedRelationships, stewards, successors, removalRequests, auditLog, mergeConflicts, archivedProfiles, galleries, archiveItems, dismissedDuplicates);
   include ApiDocMixin();
 };

@@ -16,6 +16,7 @@ import { ArchiveContributionPage } from "./pages/ArchiveContributionPage";
 import { ArchiveDetailPage } from "./pages/ArchiveDetailPage";
 import { ArchivePage } from "./pages/ArchivePage";
 import ExploreFamilyPage from "./pages/ExploreFamilyPage";
+import { FamilyStewardGovernancePage } from "./pages/FamilyStewardGovernancePage";
 import { FamilyStewardReviewPage } from "./pages/FamilyStewardReviewPage";
 import HeritageBranchPage from "./pages/HeritageBranchPage";
 import { HomePage } from "./pages/HomePage";
@@ -40,6 +41,7 @@ type View =
   | "archive-detail"
   | "add-myself"
   | "steward-review"
+  | "governance"
   | "notifications"
   | "profile-edit"
   | "sign-in";
@@ -56,6 +58,7 @@ const VALID_VIEWS: readonly View[] = [
   "archive-detail",
   "add-myself",
   "steward-review",
+  "governance",
   "notifications",
   "profile-edit",
   "sign-in",
@@ -219,6 +222,7 @@ export default function App() {
       onBranchClick={() => setView("heritage-branch")}
       onExploreClick={() => openExploreFamily(null)}
       onStewardClick={() => setView("steward-review")}
+      onGovernanceClick={() => setView("governance")}
       onNotificationsClick={() => setView("notifications")}
       onAddMyselfClick={() => setView("add-myself")}
     >
@@ -274,6 +278,8 @@ export default function App() {
         <AdminApprovalPage onBack={() => setView("home")} />
       ) : view === "steward-review" ? (
         <FamilyStewardReviewPage onBack={() => setView("home")} />
+      ) : view === "governance" ? (
+        <FamilyStewardGovernancePage onBack={() => setView("home")} />
       ) : view === "add-myself" ? (
         <AddMyselfPage
           onBack={() => setView("home")}

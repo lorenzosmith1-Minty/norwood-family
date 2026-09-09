@@ -142,6 +142,27 @@
     --steward-reject: 0.5 0.2 25;
     --steward-pending: 0.55 0.09 60;
 
+    /* Family Governance & Safety Controls: tabbed steward area, duplicate
+       comparison, merge conflict, archive/restore, and audit log */
+    --gov-tab: 0.92 0.02 70;
+    --gov-tab-foreground: 0.5 0.03 45;
+    --gov-tab-active: 0.42 0.11 35;
+    --gov-tab-active-foreground: 0.96 0.02 70;
+    --gov-surface: 0.95 0.02 72;
+    --gov-merge: 0.6 0.11 55;
+    --gov-merge-foreground: 0.96 0.02 70;
+    --gov-archive: 0.5 0.03 45;
+    --gov-archive-surface: 0.93 0.02 70;
+    --gov-restore: 0.55 0.09 60;
+    --gov-restore-foreground: 0.96 0.02 70;
+    --gov-dup-high: 0.5 0.2 25;
+    --gov-dup-medium: 0.6 0.11 55;
+    --gov-dup-low: 0.5 0.03 45;
+    --audit-rule: 0.42 0.11 35 / 0.35;
+    --audit-surface: 0.95 0.02 72;
+    --audit-actor: 0.42 0.11 35;
+    --audit-time: 0.5 0.03 45;
+
     /* In-app notifications: unread emphasis + unread-count badge */
     --notif-unread: 0.55 0.09 60;
     --notif-read: 0.5 0.03 45;
@@ -299,6 +320,27 @@
     --steward-approve: 0.6 0.15 150;
     --steward-reject: 0.55 0.2 25;
     --steward-pending: 0.72 0.14 60;
+
+    /* Family Governance & Safety Controls: tabbed steward area, duplicate
+       comparison, merge conflict, archive/restore, and audit log */
+    --gov-tab: 0.24 0.02 55;
+    --gov-tab-foreground: 0.7 0.1 55;
+    --gov-tab-active: 0.72 0.14 60;
+    --gov-tab-active-foreground: 0.16 0.02 55;
+    --gov-surface: 0.21 0.02 55;
+    --gov-merge: 0.65 0.13 55;
+    --gov-merge-foreground: 0.16 0.02 55;
+    --gov-archive: 0.7 0.1 55;
+    --gov-archive-surface: 0.22 0.02 55;
+    --gov-restore: 0.72 0.14 60;
+    --gov-restore-foreground: 0.16 0.02 55;
+    --gov-dup-high: 0.55 0.2 25;
+    --gov-dup-medium: 0.65 0.13 55;
+    --gov-dup-low: 0.7 0.1 55;
+    --audit-rule: 0.72 0.14 60 / 0.4;
+    --audit-surface: 0.21 0.02 55;
+    --audit-actor: 0.72 0.14 60;
+    --audit-time: 0.7 0.1 55;
 
     /* In-app notifications: unread emphasis + unread-count badge */
     --notif-unread: 0.72 0.14 60;
@@ -2544,5 +2586,367 @@
   .signin-footnote strong {
     @apply font-semibold;
     color: oklch(var(--signin-card-foreground));
+  }
+
+  /* ---- Family Governance & Safety Controls ---- */
+
+  /* Governance tab bar: horizontally scrollable segmented control on mobile.
+     All six steward sub-areas live here so the global navbar stays clean. */
+  .gov-tabs {
+    @apply -mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0;
+    scrollbar-width: none;
+  }
+  .gov-tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .gov-tab {
+    @apply inline-flex min-h-[44px] shrink-0 items-center gap-1.5 rounded-full border border-border/60 px-4 text-sm font-semibold;
+    background-color: oklch(var(--gov-tab));
+    color: oklch(var(--gov-tab-foreground));
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .gov-tab:hover {
+    color: oklch(var(--foreground));
+    border-color: oklch(var(--photo-ring) / 0.6);
+  }
+  .gov-tab:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(var(--ring) / 0.25);
+  }
+  .gov-tab-active {
+    background-color: oklch(var(--gov-tab-active));
+    color: oklch(var(--gov-tab-active-foreground));
+    border-color: oklch(var(--gov-tab-active));
+  }
+  .gov-tab-active:hover {
+    color: oklch(var(--gov-tab-active-foreground));
+    border-color: oklch(var(--gov-tab-active));
+  }
+  .gov-tab-count {
+    @apply inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[10px] font-bold tabular-nums;
+    background-color: oklch(var(--gov-tab-active) / 0.14);
+    color: oklch(var(--gov-tab-active));
+  }
+  .gov-tab-active .gov-tab-count {
+    background-color: oklch(var(--gov-tab-active-foreground) / 0.18);
+    color: oklch(var(--gov-tab-active-foreground));
+  }
+
+  /* Governance panel: the active tab's content column on warm paper */
+  .gov-panel {
+    @apply flex flex-col gap-4;
+  }
+
+  /* Section plate: groups related governance rows under a tracked heading */
+  .gov-section {
+    @apply flex flex-col gap-3 rounded-xl border border-border/60 p-4;
+    background-color: oklch(var(--gov-surface));
+    box-shadow: 0 1px 2px -1px oklch(0.36 0.05 45 / 0.08);
+  }
+  .gov-section-head {
+    @apply flex items-center justify-between gap-2;
+  }
+  .gov-section-title {
+    @apply text-xs font-semibold uppercase tracking-[0.2em];
+    color: oklch(var(--muted-foreground));
+  }
+
+  /* Steward management: list of stewards with role + promote/remove actions */
+  .steward-list {
+    @apply flex flex-col gap-2;
+  }
+  .steward-row {
+    @apply flex items-center gap-3 rounded-xl border border-border/60 bg-card p-3;
+    box-shadow: 0 1px 2px -1px oklch(0.36 0.05 45 / 0.08);
+  }
+  .steward-row-portrait {
+    @apply flex h-11 w-11 shrink-0 items-center justify-center rounded-full font-display text-sm font-semibold;
+    background-color: oklch(var(--muted));
+    color: oklch(var(--muted-foreground));
+    box-shadow: 0 0 0 2px oklch(var(--photo-ring-soft));
+    overflow: hidden;
+  }
+  .steward-row-portrait img {
+    @apply h-full w-full object-cover;
+  }
+  .steward-row-body {
+    @apply flex min-w-0 flex-1 flex-col gap-0.5;
+  }
+  .steward-row-name {
+    @apply truncate font-display text-sm font-semibold leading-tight;
+    color: oklch(var(--foreground));
+  }
+  .steward-row-role {
+    @apply text-xs leading-snug;
+    color: oklch(var(--muted-foreground));
+  }
+  .steward-row-actions {
+    @apply flex shrink-0 flex-col items-end gap-1.5;
+  }
+  .steward-role-badge {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-border/60 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em];
+    background-color: oklch(var(--card));
+    color: oklch(var(--owner-accent));
+  }
+  .steward-role-badge::before {
+    content: "";
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 9999px;
+    background-color: oklch(var(--owner-accent));
+  }
+  .steward-role-badge.is-successor {
+    color: oklch(var(--steward-pending));
+  }
+  .steward-role-badge.is-successor::before {
+    background-color: oklch(var(--steward-pending));
+  }
+
+  /* Duplicate comparison: two side-by-side person cards joined by a merge
+     action. Stacks vertically on mobile, side-by-side on wider screens. */
+  .dup-card {
+    @apply flex flex-col gap-3 rounded-xl border border-border/60 bg-card p-4;
+    box-shadow: 0 1px 2px -1px oklch(0.36 0.05 45 / 0.08);
+  }
+  .dup-compare {
+    @apply grid grid-cols-1 gap-3 sm:grid-cols-2;
+  }
+  .dup-person {
+    @apply flex flex-col gap-2 rounded-lg border border-border/60 bg-card p-3;
+  }
+  .dup-person-head {
+    @apply flex items-center gap-2.5;
+  }
+  .dup-person-portrait {
+    @apply flex h-12 w-12 shrink-0 items-center justify-center rounded-full font-display text-base font-semibold;
+    background-color: oklch(var(--muted));
+    color: oklch(var(--muted-foreground));
+    box-shadow: 0 0 0 2px oklch(var(--photo-ring-soft));
+    overflow: hidden;
+  }
+  .dup-person-portrait img {
+    @apply h-full w-full object-cover;
+  }
+  .dup-person-name {
+    @apply truncate font-display text-sm font-semibold leading-tight;
+    color: oklch(var(--foreground));
+  }
+  .dup-person-years {
+    @apply text-xs tabular-nums;
+    color: oklch(var(--muted-foreground));
+  }
+  .dup-person-facts {
+    @apply flex flex-col gap-1 text-xs leading-snug;
+    color: oklch(var(--muted-foreground));
+  }
+  .dup-person-facts .fact-match {
+    color: oklch(var(--foreground));
+  }
+  .dup-person-facts .fact-diff {
+    color: oklch(var(--destructive));
+  }
+  .dup-confidence {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-border/60 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em];
+    background-color: oklch(var(--card));
+  }
+  .dup-confidence::before {
+    content: "";
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 9999px;
+  }
+  .dup-confidence-high {
+    color: oklch(var(--gov-dup-high));
+  }
+  .dup-confidence-high::before {
+    background-color: oklch(var(--gov-dup-high));
+  }
+  .dup-confidence-medium {
+    color: oklch(var(--gov-dup-medium));
+  }
+  .dup-confidence-medium::before {
+    background-color: oklch(var(--gov-dup-medium));
+  }
+  .dup-confidence-low {
+    color: oklch(var(--gov-dup-low));
+  }
+  .dup-confidence-low::before {
+    background-color: oklch(var(--gov-dup-low));
+  }
+  .dup-actions {
+    @apply flex flex-wrap items-center gap-2;
+  }
+
+  /* Merge conflict review: a flagged field where two profiles disagree.
+     The conflicting values sit on a warm ochre plate with a resolve action. */
+  .merge-item {
+    @apply flex flex-col gap-3 rounded-xl border border-border/60 bg-card p-4;
+    box-shadow: 0 1px 2px -1px oklch(0.36 0.05 45 / 0.08);
+  }
+  .merge-item-head {
+    @apply flex items-start justify-between gap-2;
+  }
+  .merge-item-title {
+    @apply font-display text-sm font-semibold leading-tight;
+    color: oklch(var(--foreground));
+  }
+  .merge-item-meta {
+    @apply text-xs leading-snug;
+    color: oklch(var(--muted-foreground));
+  }
+  .merge-conflict {
+    @apply flex flex-col gap-2 rounded-lg border border-border/60 p-3;
+    background-color: oklch(var(--gov-merge) / 0.1);
+    border-color: oklch(var(--gov-merge) / 0.4);
+  }
+  .merge-field-label {
+    @apply text-[11px] font-semibold uppercase tracking-[0.16em];
+    color: oklch(var(--gov-merge));
+  }
+  .merge-values {
+    @apply grid grid-cols-1 gap-2 sm:grid-cols-2;
+  }
+  .merge-value {
+    @apply flex flex-col gap-0.5 rounded-lg border border-border/60 bg-card p-2.5;
+  }
+  .merge-value-owner {
+    @apply text-[11px] font-semibold uppercase tracking-[0.12em];
+    color: oklch(var(--muted-foreground));
+  }
+  .merge-value-text {
+    @apply text-sm font-semibold leading-snug;
+    color: oklch(var(--foreground));
+  }
+  .merge-actions {
+    @apply flex flex-wrap items-center gap-2;
+  }
+  .merge-resolve {
+    @apply inline-flex min-h-[44px] items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold;
+    color: oklch(var(--gov-merge-foreground));
+    background-color: oklch(var(--gov-merge));
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.18);
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow
+      0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .merge-resolve:hover {
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.24);
+  }
+
+  /* Archive / restore states: archived profiles read as quiet, desaturated
+     plates with a bronze restore affordance. */
+  .archive-state-badge {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-border/60 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em];
+    background-color: oklch(var(--gov-archive-surface));
+    color: oklch(var(--gov-archive));
+  }
+  .archive-state-badge::before {
+    content: "";
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 9999px;
+    background-color: oklch(var(--gov-archive));
+  }
+  .archive-row {
+    @apply flex items-center gap-3 rounded-xl border border-border/60 bg-card p-3;
+    box-shadow: 0 1px 2px -1px oklch(0.36 0.05 45 / 0.08);
+  }
+  .archive-row-archived {
+    background-color: oklch(var(--gov-archive-surface));
+  }
+  .archive-row-portrait {
+    @apply flex h-11 w-11 shrink-0 items-center justify-center rounded-full font-display text-sm font-semibold;
+    background-color: oklch(var(--muted));
+    color: oklch(var(--muted-foreground));
+    box-shadow: 0 0 0 2px oklch(var(--photo-ring-soft));
+    opacity: 0.7;
+    overflow: hidden;
+  }
+  .archive-row-portrait img {
+    @apply h-full w-full object-cover;
+  }
+  .archive-row-body {
+    @apply flex min-w-0 flex-1 flex-col gap-0.5;
+  }
+  .archive-row-name {
+    @apply truncate font-display text-sm font-semibold leading-tight;
+    color: oklch(var(--foreground));
+  }
+  .archive-row-archived .archive-row-name {
+    color: oklch(var(--gov-archive));
+  }
+  .archive-row-meta {
+    @apply text-xs leading-snug;
+    color: oklch(var(--muted-foreground));
+  }
+  .archive-row-actions {
+    @apply flex shrink-0 flex-col items-end gap-1.5;
+  }
+  .archive-restore {
+    @apply inline-flex min-h-[44px] items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold;
+    color: oklch(var(--gov-restore-foreground));
+    background-color: oklch(var(--gov-restore));
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.18);
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow
+      0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .archive-restore:hover {
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.24);
+  }
+
+  /* Audit log: a vertical timeline of steward actions. Each entry is a
+     timestamped row on a paper plate with a bronze actor + action. */
+  .audit-list {
+    @apply flex flex-col;
+  }
+  .audit-entry {
+    @apply relative flex gap-3 rounded-xl border border-border/60 bg-card p-4;
+    box-shadow: 0 1px 2px -1px oklch(0.36 0.05 45 / 0.08);
+  }
+  .audit-entry + .audit-entry {
+    @apply mt-2;
+  }
+  .audit-entry::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background-color: oklch(var(--audit-actor));
+    margin-top: 0.35rem;
+    flex-shrink: 0;
+  }
+  .audit-entry-body {
+    @apply flex min-w-0 flex-1 flex-col gap-1;
+  }
+  .audit-entry-action {
+    @apply text-sm font-semibold leading-snug;
+    color: oklch(var(--foreground));
+  }
+  .audit-entry-detail {
+    @apply text-xs leading-snug;
+    color: oklch(var(--muted-foreground));
+  }
+  .audit-entry-meta {
+    @apply flex items-center gap-2 text-[11px] font-medium;
+    color: oklch(var(--audit-time));
+  }
+  .audit-entry-meta .audit-actor {
+    color: oklch(var(--audit-actor));
+    font-weight: 600;
+  }
+
+  /* Governance empty state: quiet dashed plate with a reset/back action */
+  .gov-empty {
+    @apply flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-border/70 px-6 py-14 text-center;
+    background-color: oklch(var(--card) / 0.5);
+  }
+  .gov-empty-title {
+    @apply font-display text-xl font-semibold;
+    color: oklch(var(--foreground));
+  }
+  .gov-empty-hint {
+    @apply max-w-sm text-sm;
+    color: oklch(var(--muted-foreground));
   }
 }

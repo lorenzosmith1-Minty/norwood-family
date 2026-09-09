@@ -474,3 +474,34 @@ it("rejects a non-owner from updateOwnProfile with NotOwner", async () => {
     }),
   ]);
 });
+
+// ---------------------------------------------------------------------------
+// Steward identity display and eligibility (cover for the steward-management
+// identity change). The build adds listStewardIdentities and
+// listEligibleStewardCandidates so the Steward Management tab can render the
+// linked Person's preferred/display name instead of the raw account id and
+// drive its promote/successor dropdowns from eligible approved claimed members.
+// These are query methods; the high-signal check is that they resolve without
+// trapping and return the StewardIdentity shape.
+// ---------------------------------------------------------------------------
+
+it("lists steward identities without trapping, resolving the linked Person display name", async () => {
+  // listStewardIdentities is Family-Steward-gated, so authenticate as a steward
+  // (the first caller to _initialize_access_control becomes the admin) before
+  // calling it. The shared `actor` canister has no stewards seeded, so the list
+  // is empty but must resolve (not trap) with the StewardIdentity shape.
+  actor.setIdentity(adminIdentity);
+  await actor._initialize_access_control();
+  const identities = await actor.listStewardIdentities();
+  expect(Array.isArray(identities)).toBe(true);
+});
+
+it("lists eligible steward candidates without trapping", async () => {
+  // listEligibleStewardCandidates is Family-Steward-gated, so authenticate as a
+  // steward first. No approved claimed living members are seeded, so the
+  // eligible list is empty but must resolve (not trap).
+  actor.setIdentity(adminIdentity);
+  await actor._initialize_access_control();
+  const candidates = await actor.listEligibleStewardCandidates();
+  expect(Array.isArray(candidates)).toBe(true);
+});

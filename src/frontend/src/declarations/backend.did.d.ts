@@ -18,6 +18,10 @@ export interface Account {
 export type AccountError = { 'AccountNotFound' : null } |
   { 'NotSignedIn' : null };
 export type AccountId = Principal;
+export type ArchiveError = { 'NotArchived' : null } |
+  { 'ProfileNotFound' : null } |
+  { 'AlreadyArchived' : null } |
+  { 'NotSignedIn' : null };
 export interface ArchiveItem {
   'id' : ArchiveItemId,
   'era' : string,
@@ -47,6 +51,32 @@ export type ArchiveItemType = { 'Research' : null } |
   { 'Audio' : null } |
   { 'Other' : null } |
   { 'Video' : null };
+export type AuditActionType = { 'ProfileRemovalRequested' : null } |
+  { 'ClaimRejected' : null } |
+  { 'RelationshipTypeCorrected' : null } |
+  { 'RelationshipRequestPending' : null } |
+  { 'StewardPromoted' : null } |
+  { 'SuccessorActivated' : null } |
+  { 'StewardRemoved' : null } |
+  { 'RelationshipRequestApproved' : null } |
+  { 'DuplicateMerged' : null } |
+  { 'ProfilePermanentlyDeleted' : null } |
+  { 'RelationshipRequestRejected' : null } |
+  { 'ProfileArchived' : null } |
+  { 'ProfileRestored' : null } |
+  { 'RelationshipAdded' : null } |
+  { 'RelationshipRemoved' : null } |
+  { 'ProfileRemovalReviewed' : null } |
+  { 'ClaimApproved' : null } |
+  { 'SuccessorDesignated' : null };
+export interface AuditEntry {
+  'id' : bigint,
+  'affectedPersonIds' : Array<PersonId>,
+  'actionType' : AuditActionType,
+  'summary' : string,
+  'timestamp' : bigint,
+  'actorAccountId' : Principal,
+}
 export type AuthMethod = { 'Google' : null } |
   { 'Apple' : null };
 export interface AuthMethods { 'apple' : boolean, 'google' : boolean }
@@ -59,6 +89,33 @@ export type ClaimError = { 'AlreadyPending' : null } |
 export type ClaimStatus = { 'Unclaimed' : null } |
   { 'Claimed' : null };
 export type CreateError = { 'NotSignedIn' : null };
+export type DeleteError = { 'HasOwnershipHistory' : null } |
+  { 'ProfileNotFound' : null } |
+  { 'HasMedia' : null } |
+  { 'HasArchiveItems' : null } |
+  { 'NotSignedIn' : null } |
+  { 'ConfirmationRequired' : null } |
+  { 'HasTimeline' : null } |
+  { 'HasApprovedRelationships' : null };
+export interface DuplicateCandidate {
+  'deathDate' : [] | [string],
+  'ownerAccount' : [] | [Principal],
+  'birthDate' : [] | [string],
+  'claimStatus' : string,
+  'name' : string,
+  'archiveLinks' : Array<string>,
+  'children' : Array<string>,
+  'sourceCount' : bigint,
+  'personId' : PersonId,
+  'spouses' : Array<string>,
+  'photoCount' : bigint,
+  'timelineCount' : bigint,
+  'parents' : Array<string>,
+}
+export interface DuplicatePair {
+  'candidateA' : DuplicateCandidate,
+  'candidateB' : DuplicateCandidate,
+}
 export type EditError = { 'ProfileNotFound' : null } |
   { 'NotSignedIn' : null } |
   { 'NotOwner' : null } |
@@ -81,6 +138,26 @@ export type Error = { 'FrontendOriginsNotConfigured' : null } |
 export type ExternalBlob = Uint8Array;
 export type LivingStatus = { 'Living' : null } |
   { 'Deceased' : null };
+export interface MergeConflict {
+  'id' : bigint,
+  'field' : string,
+  'status' : MergeConflictStatus,
+  'alternateValue' : string,
+  'canonicalValue' : string,
+  'resolvedAt' : [] | [bigint],
+  'resolvedBy' : [] | [Principal],
+}
+export type MergeConflictStatus = { 'Resolved' : null } |
+  { 'Pending' : null };
+export type MergeError = { 'NotDuplicate' : null } |
+  { 'ProfileNotFound' : null } |
+  { 'NotSignedIn' : null } |
+  { 'SameProfile' : null };
+export interface MergeResult {
+  'archivedPersonId' : PersonId,
+  'conflicts' : Array<MergeConflict>,
+  'canonicalPersonId' : PersonId,
+}
 export interface Notification {
   'id' : bigint,
   'notificationType' : NotificationType,
@@ -166,6 +243,19 @@ export interface ProfileEdits {
   'timeline' : [] | [Array<string>],
   'firstName' : [] | [string],
 }
+export interface ProfileRemovalRequest {
+  'id' : bigint,
+  'submittedDate' : bigint,
+  'status' : ProfileRemovalStatus,
+  'reviewedDate' : [] | [bigint],
+  'reviewedBy' : [] | [Principal],
+  'personId' : PersonId,
+  'requestingUserId' : Principal,
+  'reason' : string,
+}
+export type ProfileRemovalStatus = { 'Approved' : null } |
+  { 'Rejected' : null } |
+  { 'Pending' : null };
 export interface Relationship {
   'id' : bigint,
   'status' : RelationshipStatus,
@@ -173,6 +263,10 @@ export interface Relationship {
   'toPersonId' : PersonId,
   'relationshipType' : RelationshipType,
 }
+export type RelationshipAdminError = { 'RelationshipNotFound' : null } |
+  { 'NotSignedIn' : null } |
+  { 'DuplicateRelationship' : null } |
+  { 'PersonNotFound' : null };
 export type RelationshipError = { 'DuplicateRequest' : null } |
   { 'NotSignedIn' : null } |
   { 'PersonNotFound' : null };
@@ -196,31 +290,87 @@ export type RelationshipType = { 'Parent' : null } |
   { 'Sibling' : null } |
   { 'SpousePartner' : null } |
   { 'Child' : null };
+export type RemovalError = { 'AlreadyPending' : null } |
+  { 'ProfileNotFound' : null } |
+  { 'NotSignedIn' : null } |
+  { 'NotOwner' : null } |
+  { 'DeceasedProfile' : null };
 export type RemoveError = { 'ProfileNotFound' : null } |
   { 'NotSignedIn' : null };
 export type Result = { 'ok' : PersonProfile } |
   { 'err' : EditError };
-export type Result_1 = { 'ok' : ProfileClaim } |
-  { 'err' : ClaimError };
-export type Result_2 = { 'ok' : null } |
-  { 'err' : RemoveError };
-export type Result_3 = { 'ok' : RelationshipRequest } |
-  { 'err' : RelationshipError };
-export type Result_4 = { 'ok' : AuthMethods } |
+export type Result_1 = { 'ok' : null } |
+  { 'err' : ArchiveError };
+export type Result_10 = { 'ok' : null } |
+  { 'err' : MergeError };
+export type Result_11 = { 'ok' : MergeResult } |
+  { 'err' : MergeError };
+export type Result_12 = { 'ok' : AuthMethods } |
   { 'err' : AccountError };
-export type Result_5 = { 'ok' : AccountId } |
+export type Result_13 = { 'ok' : AccountId } |
   { 'err' : AccountError };
-export type Result_6 = { 'ok' : PersonProfile } |
+export type Result_14 = { 'ok' : SuccessorDesignation } |
+  { 'err' : StewardError };
+export type Result_15 = { 'ok' : PersonProfile } |
   { 'err' : CreateError };
-export type Result_7 = { 'ok' : Account } |
+export type Result_16 = { 'ok' : Relationship } |
+  { 'err' : RelationshipAdminError };
+export type Result_17 = { 'ok' : Account } |
   { 'err' : AccountError };
-export type Result_8 = { 'ok' : null } |
+export type Result_18 = { 'ok' : null } |
   { 'err' : Error };
+export type Result_2 = { 'ok' : ProfileRemovalRequest } |
+  { 'err' : RemovalError };
+export type Result_3 = { 'ok' : ProfileClaim } |
+  { 'err' : ClaimError };
+export type Result_4 = { 'ok' : null } |
+  { 'err' : StewardError };
+export type Result_5 = { 'ok' : null } |
+  { 'err' : RelationshipAdminError };
+export type Result_6 = { 'ok' : null } |
+  { 'err' : RemoveError };
+export type Result_7 = { 'ok' : RelationshipRequest } |
+  { 'err' : RelationshipError };
+export type Result_8 = { 'ok' : StewardRecord } |
+  { 'err' : StewardError };
+export type Result_9 = { 'ok' : null } |
+  { 'err' : DeleteError };
 export interface Result__1 { 'hasMore' : boolean, 'rows' : Array<Array<Cell>> }
 export type SourceStatus = { 'Copy' : null } |
   { 'Unverified' : null } |
   { 'Transcribed' : null } |
   { 'Original' : null };
+export type StewardError = { 'LastSteward' : null } |
+  { 'NotSteward' : null } |
+  { 'AlreadySteward' : null } |
+  { 'NotSignedIn' : null } |
+  { 'NotApprovedClaimedMember' : null } |
+  { 'NotDesignated' : null };
+export interface StewardIdentity {
+  'accountId' : Principal,
+  'displayName' : string,
+  'personId' : PersonId,
+  'canonicalName' : string,
+}
+export interface StewardRecord {
+  'assignedAt' : bigint,
+  'assignedBy' : Principal,
+  'stewardAccountId' : Principal,
+  'successorPriority' : [] | [bigint],
+  'roleStatus' : StewardRoleStatus,
+}
+export type StewardRoleStatus = { 'Active' : null } |
+  { 'Removed' : null };
+export interface SuccessorDesignation {
+  'status' : SuccessorStatus,
+  'assignedAt' : bigint,
+  'assignedBy' : Principal,
+  'personId' : PersonId,
+  'priority' : bigint,
+}
+export type SuccessorStatus = { 'Activated' : null } |
+  { 'Removed' : null } |
+  { 'Designated' : null };
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
   { 'guest' : null };
@@ -261,51 +411,84 @@ export interface _SERVICE {
   >,
   '_immutableObjectStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
   '_initialize_access_control' : ActorMethod<[], undefined>,
-  '_internet_identity_sign_in_finish' : ActorMethod<[], Result_8>,
+  '_internet_identity_sign_in_finish' : ActorMethod<[], Result_18>,
   '_internet_identity_sign_in_start' : ActorMethod<[], Uint8Array>,
+  'activateSuccessor' : ActorMethod<[PersonId], Result_8>,
   'addPhoto' : ActorMethod<[PersonId, string, string, ExternalBlob], Photo>,
+  'addRelationship' : ActorMethod<
+    [PersonId, PersonId, RelationshipType],
+    Result_16
+  >,
   'approveArchiveItem' : ActorMethod<[ArchiveItemId], [] | [ArchiveItem]>,
   'approveProfileClaim' : ActorMethod<[bigint], [] | [ProfileClaim]>,
+  'approveProfileRemoval' : ActorMethod<[bigint], [] | [ProfileRemovalRequest]>,
   'approveRelationshipRequest' : ActorMethod<
     [bigint],
     [] | [RelationshipRequest]
   >,
+  'archiveProfile' : ActorMethod<[PersonId], Result_1>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
-  'bindAuthMethod' : ActorMethod<[AuthMethod], Result_7>,
-  'createMyself' : ActorMethod<[string], Result_6>,
+  'bindAuthMethod' : ActorMethod<[AuthMethod], Result_17>,
+  'correctRelationshipType' : ActorMethod<
+    [bigint, RelationshipType],
+    Result_16
+  >,
+  'createMyself' : ActorMethod<[string], Result_15>,
+  'designateSuccessor' : ActorMethod<[PersonId, bigint], Result_14>,
   'execute' : ActorMethod<[string], Result__1>,
   'getApiDoc' : ActorMethod<[], string>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
-  'getMyAccountId' : ActorMethod<[], Result_5>,
-  'getMyAuthMethods' : ActorMethod<[], Result_4>,
+  'getMyAccountId' : ActorMethod<[], Result_13>,
+  'getMyAuthMethods' : ActorMethod<[], Result_12>,
   'getMyProfile' : ActorMethod<[], [] | [PersonProfile]>,
   'getMyProfileClaim' : ActorMethod<[PersonId], [] | [ProfileClaim]>,
   'getMyRelationshipRequests' : ActorMethod<[], Array<RelationshipRequest>>,
   'getPersonProfile' : ActorMethod<[PersonId], [] | [PersonProfile]>,
   'getProfilePhoto' : ActorMethod<[PersonId], [] | [Photo]>,
   'getRelationshipRequest' : ActorMethod<[bigint], [] | [RelationshipRequest]>,
+  'getSingleStewardWarning' : ActorMethod<[], [] | [string]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
   'listApprovedArchiveItems' : ActorMethod<[], Array<ArchiveItem>>,
+  'listArchivedProfileIds' : ActorMethod<[], Array<PersonId>>,
+  'listArchivedProfiles' : ActorMethod<[], Array<PersonProfile>>,
+  'listAuditHistory' : ActorMethod<[], Array<AuditEntry>>,
   'listConfirmedRelationships' : ActorMethod<[], Array<Relationship>>,
+  'listDuplicateCandidates' : ActorMethod<[], Array<DuplicatePair>>,
+  'listEligibleStewardCandidates' : ActorMethod<[], Array<StewardIdentity>>,
   'listNotifications' : ActorMethod<[], Array<Notification>>,
   'listPendingArchiveItems' : ActorMethod<[], Array<ArchiveItem>>,
+  'listPersonRelationships' : ActorMethod<[PersonId], Array<Relationship>>,
   'listPhotos' : ActorMethod<[PersonId], Array<Photo>>,
   'listProfileClaims' : ActorMethod<[], Array<ProfileClaim>>,
+  'listProfileRemovalRequests' : ActorMethod<[], Array<ProfileRemovalRequest>>,
   'listRelationshipRequests' : ActorMethod<[], Array<RelationshipRequest>>,
+  'listStewardIdentities' : ActorMethod<[], Array<StewardIdentity>>,
+  'listStewards' : ActorMethod<[], Array<StewardRecord>>,
+  'listSuccessors' : ActorMethod<[], Array<SuccessorDesignation>>,
   'markNotificationRead' : ActorMethod<[NotificationId], [] | [Notification]>,
+  'mergeProfiles' : ActorMethod<[PersonId, PersonId], Result_11>,
+  'notDuplicate' : ActorMethod<[PersonId, PersonId], Result_10>,
+  'permanentlyDeleteProfile' : ActorMethod<[PersonId, boolean], Result_9>,
+  'promoteToSteward' : ActorMethod<[PersonId], Result_8>,
   'proposeRelationship' : ActorMethod<
     [PersonId, PersonId, RelationshipType],
-    Result_3
+    Result_7
   >,
   'rejectArchiveItem' : ActorMethod<[ArchiveItemId], [] | [ArchiveItem]>,
   'rejectProfileClaim' : ActorMethod<[bigint], [] | [ProfileClaim]>,
+  'rejectProfileRemoval' : ActorMethod<[bigint], [] | [ProfileRemovalRequest]>,
   'rejectRelationshipRequest' : ActorMethod<
     [bigint],
     [] | [RelationshipRequest]
   >,
-  'removeDuplicateProfile' : ActorMethod<[PersonId], Result_2>,
+  'removeDuplicateProfile' : ActorMethod<[PersonId], Result_6>,
   'removePhoto' : ActorMethod<[PersonId, PhotoId], boolean>,
-  'requestProfileClaim' : ActorMethod<[PersonId], Result_1>,
+  'removeRelationship' : ActorMethod<[bigint], Result_5>,
+  'removeSteward' : ActorMethod<[Principal], Result_4>,
+  'requestProfileClaim' : ActorMethod<[PersonId], Result_3>,
+  'requestProfileRemoval' : ActorMethod<[PersonId, string], Result_2>,
+  'resolveMergeConflict' : ActorMethod<[bigint, string], [] | [MergeConflict]>,
+  'restoreProfile' : ActorMethod<[PersonId], Result_1>,
   'schema' : ActorMethod<[], string>,
   'searchPossibleMatches' : ActorMethod<[string], Array<PersonMatch>>,
   'setProfilePhoto' : ActorMethod<[PersonId, PhotoId], [] | [Photo]>,

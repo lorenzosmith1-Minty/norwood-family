@@ -33,6 +33,16 @@ and Apple are authentication methods bound to that account, never the family
 member's identity inside the family graph. This keeps the same person profile
 intact if the account's email or authentication provider changes later.
 
+The backend also provides Family Governance & Safety Controls for real family
+use. Family Stewards (the `#admin` role) manage steward succession, safe profile
+removal/archive/restore, duplicate-profile review and merge, relationship
+administration, and a steward-only governance audit log. A successor steward is
+a designation only until a current steward explicitly activates them; there is
+no automatic stewardship transfer based on inactivity. Profile removal is never
+a simple destructive delete — it flows through a steward-reviewed request or an
+explicit archive, and permanent deletion is allowed only for empty error-created
+profiles with explicit confirmation.
+
 ## Public methods
 
 ### Photo gallery
@@ -220,6 +230,129 @@ intact if the account's email or authentication provider changes later.
   is the caller's stable principal, so the same person profile stays intact if
   the provider changes. Anonymous callers receive `#err(#NotSignedIn)`.
 
+### Family Governance (Steward Management, Succession, Removal, Merge, Relationships, Audit)
+
+- `listStewards() : async [StewardRecord]` — query. Family Steward only. Lists
+  all steward governance records with role status and account identity.
+- `promoteToSteward(personId : Text) : async Result<StewardRecord, StewardError>` —
+  update. Family Steward only. Promotes an existing approved claimed family
+  member (a profile with `claimStatus == #Claimed` and a claiming owner) to
+  Family Steward. Returns `#err(#NotApprovedClaimedMember)` when the person is
+  not an approved claimed member and `#err(#AlreadySteward)` when the member's
+  account is already an active steward.
+- `removeSteward(stewardAccountId : Principal) : async Result<(), StewardError>` —
+  update. Family Steward only. Removes the steward role from another steward,
+  never allowing the last active steward to be removed (returns
+  `#err(#LastSteward)` when only one active steward remains). Returns
+  `#err(#NotSteward)` when the account is not an active steward.
+- `designateSuccessor(personId : Text, priority : Nat) : async Result<SuccessorDesignation, StewardError>` —
+  update. Family Steward only. Designates an approved claimed family member as a
+  successor steward with a priority/order. A successor is a designation only —
+  not an active steward until explicitly activated. Returns
+  `#err(#NotApprovedClaimedMember)` when the person is not an approved claimed
+  member.
+- `activateSuccessor(personId : Text) : async Result<StewardRecord, StewardError>` —
+  update. Family Steward only. Activates/promotes a designated successor into
+  the active steward role. Returns `#err(#NotDesignated)` when the person has no
+  `#Designated` successor record, `#err(#NotApprovedClaimedMember)` when the
+  person is not an approved claimed member, and `#err(#AlreadySteward)` when the
+  member's account is already an active steward.
+- `listSuccessors() : async [SuccessorDesignation]` — query. Family Steward
+  only. Lists all successor designations.
+- `getSingleStewardWarning() : async ?Text` — query. Family Steward only.
+  Returns a warning encouraging successor designation when only one active
+  steward exists, or `null` when there are multiple stewards.
+- `listStewardIdentities() : async [StewardIdentity]` — query. Family Steward
+  only. Returns each current Steward and designated Successor enriched with the
+  linked approved Person identity, resolved via steward accountId -> approved
+  linked personId (`PersonProfile.claimedByUserId`) -> canonical Person Profile.
+  Each `StewardIdentity` carries `personId`, `displayName` (the family-facing
+  identity: preferred/display name, falling back to the canonical full person
+  name), `canonicalName` (the canonical full person name), and `accountId` (the
+  internal account principal, carried only for authorization/audit and never the
+  primary displayed identity). Current Stewards are those with
+  `roleStatus == #Active`; designated Successors are those with
+  `status == #Designated`. A steward or successor whose account/person cannot be
+  resolved to an approved claimed Person profile is omitted.
+- `listEligibleStewardCandidates() : async [StewardIdentity]` — query. Family
+  Steward only. Returns the eligible promotion/successor candidate list: all
+  people who are living, have an APPROVED/CLAIMED profile
+  (`claimStatus == #Claimed`), are linked to a valid account
+  (`claimedByUserId` is set), are not already an active Steward, and are not
+  archived. This is data-driven — as additional family members claim and receive
+  approval they automatically appear without code changes. Each candidate is a
+  `StewardIdentity` as described above.
+- `requestProfileRemoval(personId : Text, reason : Text) : async Result<ProfileRemovalRequest, RemovalError>` —
+  update. A claimed living profile owner requests removal of their own profile;
+  a Family Steward reviews the request. Returns `#err(#NotSignedIn)` for an
+  anonymous caller, `#err(#ProfileNotFound)` when the person is not tracked,
+  `#err(#DeceasedProfile)` for a deceased profile, `#err(#NotOwner)` when the
+  caller is not the profile's owner, and `#err(#AlreadyPending)` when a pending
+  removal request already exists for that person.
+- `listProfileRemovalRequests() : async [ProfileRemovalRequest]` — query. Family
+  Steward only. Lists all profile removal requests for review.
+- `approveProfileRemoval(requestId : Nat) : async ?ProfileRemovalRequest` —
+  update. Family Steward only. Approves a pending removal request, archiving the
+  profile. Returns the updated request, or `null` when no pending request with
+  that id exists.
+- `rejectProfileRemoval(requestId : Nat) : async ?ProfileRemovalRequest` —
+  update. Family Steward only. Rejects a pending removal request. Returns the
+  updated request, or `null` when no pending request with that id exists.
+- `archiveProfile(personId : Text) : async Result<(), ArchiveError>` — update.
+  Family Steward only. Archives a profile, removing it from normal family
+  browsing while preserving relationships, media, timeline, sources, and
+  ownership history. Returns `#err(#ProfileNotFound)` when the person is not
+  tracked and `#err(#AlreadyArchived)` when already archived.
+- `restoreProfile(personId : Text) : async Result<(), ArchiveError>` — update.
+  Family Steward only. Restores an archived profile to normal family browsing.
+  Returns `#err(#NotArchived)` when the profile is not archived.
+- `listArchivedProfiles() : async [PersonProfile]` — query. Family Steward only.
+  Lists the profiles currently archived.
+- `permanentlyDeleteProfile(personId : Text, confirmation : Bool) : async Result<(), DeleteError>` —
+  update. Family Steward only. Permanently deletes a profile only when it is
+  empty of archive items, media, timeline/history, approved relationships, and
+  ownership history, and explicit confirmation is given. Returns
+  `#err(#ConfirmationRequired)` when `confirmation` is `false`,
+  `#err(#HasTimeline)` when the profile has timeline entries,
+  `#err(#HasApprovedRelationships)` when it has confirmed relationships,
+  `#err(#HasOwnershipHistory)` when it is claimed or has a claiming owner, and
+  `#err(#ProfileNotFound)` when the person is not tracked.
+- `listDuplicateCandidates() : async [DuplicatePair]` — query. Family Steward
+  only. Lists suspected duplicate Person records with comparison data (names,
+  birth/death details, parents, spouses, children, claim status, owner account,
+  and timeline counts).
+- `notDuplicate(personIdA : Text, personIdB : Text) : async Result<(), MergeError>` —
+  update. Family Steward only. Marks two suspected duplicates as not a
+  duplicate. No persistent state changes.
+- `mergeProfiles(canonicalPersonId : Text, mergedAwayPersonId : Text) : async Result<MergeResult, MergeError>` —
+  update. Family Steward only. Merges two duplicate profiles into one canonical
+  record, moving/linking all valid relationships, media, timeline, stories,
+  sources, archive references, and ownership/claim history without duplicating
+  shared items. Conflicting fields are preserved as conflict/review items. The
+  merged-away record is archived rather than hard-deleted. Returns
+  `#err(#SameProfile)` when both ids are equal and `#err(#ProfileNotFound)` when
+  either person is not tracked.
+- `resolveMergeConflict(conflictId : Nat, canonicalValue : Text) : async ?MergeConflict` —
+  update. Family Steward only. Resolves a merge conflict by choosing the
+  canonical display value. Returns the updated conflict, or `null` when no
+  pending conflict with that id exists.
+- `listPersonRelationships(personId : Text) : async [Relationship]` — query.
+  Family Steward only. Returns the current relationships for a person.
+- `addRelationship(fromPersonId : Text, toPersonId : Text, relationshipType : RelationshipType) : async Result<Relationship, RelationshipAdminError>` —
+  update. Family Steward only. Adds a missing relationship to the shared family
+  graph. Returns `#err(#DuplicateRelationship)` when an identical relationship
+  already exists.
+- `removeRelationship(relationshipId : Nat) : async Result<(), RelationshipAdminError>` —
+  update. Family Steward only. Removes an incorrect relationship from the shared
+  family graph. Returns `#err(#RelationshipNotFound)` when no relationship with
+  that id exists.
+- `correctRelationshipType(relationshipId : Nat, relationshipType : RelationshipType) : async Result<Relationship, RelationshipAdminError>` —
+  update. Family Steward only. Corrects the relationship type of an existing
+  relationship. Returns `#err(#RelationshipNotFound)` when no relationship with
+  that id exists.
+- `listAuditHistory() : async [AuditEntry]` — query. Family Steward only.
+  Returns the governance audit log. Audit History is strictly steward-only.
+
 ### Object Query Layer (OQL)
 
 - `schema() : async Text` — query. Returns a JSON catalogue of the exposed
@@ -228,8 +361,10 @@ intact if the account's email or authentication provider changes later.
   and returns matching rows.
 
 The exposed entities are `photo`, `archiveItem`, `profile`, `claim`,
-`relationshipRequest`, `confirmedRelationship`, `notification`, and `account`,
-all declared `.controllerOnly()` (see the authorization section). `photo` rows are flattened
+`relationshipRequest`, `confirmedRelationship`, `notification`, `account`,
+`steward`, `successor`, `removalRequest`, `auditLog`, `mergeConflict`, and
+`archivedProfile`, all declared `.controllerOnly()` (see the authorization
+section). `photo` rows are flattened
 photo metadata: `key` (globally-unique \"<personId>:<id>\", the primary key),
 `personId`, `id`, `filename`, `mimeType`, `uploadedAt` (nanoseconds since epoch,
 `Int`), `uploadedBy` (the uploading principal, rendered as text), and
@@ -266,6 +401,29 @@ epoch, `Int`), `reviewedBy` (principal text, `\"\"` when unreviewed), and
 `account` rows (primary key `id`, the account's stable principal rendered as
 text) carry `google` and `apple` (`Bool`, whether that authentication method is
 bound to the account) and `createdAt` (nanoseconds since epoch, `Int`).
+
+The governance entities are flattened views of the corresponding records.
+`steward` rows (primary key `stewardAccountId`, the steward's account principal
+rendered as text) carry `roleStatus` (`\"Active\"`/`\"Removed\"`),
+`successorPriority` (the steward's own designated successor priority, `0` when
+none), `assignedBy` (the promoting steward's principal rendered as text), and
+`assignedAt` (nanoseconds since epoch, `Int`). `successor` rows (primary key
+`personId`) carry `priority` (`Nat`, the order in which the successor should be
+considered for activation), `assignedBy` (principal text), `assignedAt` (`Int`),
+and `status` (`\"Designated\"`/`\"Activated\"`/`\"Removed\"`). `removalRequest`
+rows (primary key `id`) carry `personId`, `requestingUserId` (principal text),
+`reason`, `status` (`\"Pending\"`/`\"Approved\"`/`\"Rejected\"`),
+`submittedDate` (`Int`), `reviewedBy` (principal text, `\"\"` when unreviewed),
+and `reviewedDate` (`Int`, `0` when unreviewed). `auditLog` rows (primary key
+`id`) carry `actionType` (the audit action tag text, e.g.
+`\"ClaimApproved\"`/`\"StewardPromoted\"`/`\"ProfileArchived\"`/`\"DuplicateMerged\"`),
+`actorAccountId` (principal text), `affectedPersonCount` (`Nat`, the number of
+affected person ids), `timestamp` (nanoseconds since epoch, `Int`), and
+`summary`. `mergeConflict` rows (primary key `id`) carry `field`,
+`canonicalValue`, `alternateValue`, `status` (`\"Pending\"`/`\"Resolved\"`),
+`resolvedBy` (principal text, `\"\"` when unresolved), and `resolvedAt` (`Int`,
+`0` when unresolved). `archivedProfile` rows (primary key `personId`) carry only
+`personId` — the id of each archived profile.
 
 ### Access control and Internet Identity
 
@@ -307,11 +465,12 @@ enforce the admin/user/guest model described in their entries.
 
 The OQL methods (`schema`, `execute`) enforce authorization per entity against
 the live caller. All exposed entities — `photo`, `archiveItem`, `profile`,
-`claim`, `relationshipRequest`, `confirmedRelationship`, `notification`, and
-`account` — are declared `.controllerOnly()`, so only the platform controller can read their
+`claim`, `relationshipRequest`, `confirmedRelationship`, `notification`,
+`account`, `steward`, `successor`, `removalRequest`, `auditLog`,
+`mergeConflict`, and `archivedProfile` — are declared `.controllerOnly()`, so only the platform controller can read their
 rows through `schema()`/`execute()`; end users do not read them directly. This
-keeps the family and archive metadata private to the platform while still
-letting the Data Intelligence agent answer over it.
+keeps the family, archive, and governance metadata private to the platform while
+still letting the Data Intelligence agent answer over it.
 
 The archive methods gate on sign-in and role. `submitArchiveItem` requires a
 signed-in (non-anonymous) caller and traps with `\"Sign-in required to submit an
@@ -336,6 +495,21 @@ the caller's own claim on the requested profile, `getMyProfile` returns only the
 caller's own linked or pending profile, `getMyRelationshipRequests` returns only
 the caller's own pending relationship requests, and `listNotifications` returns
 only the caller's own records).
+
+The Family Governance methods are steward-only. `listStewards`,
+`promoteToSteward`, `removeSteward`, `designateSuccessor`, `activateSuccessor`,
+`listSuccessors`, `getSingleStewardWarning`, `listStewardIdentities`,
+`listEligibleStewardCandidates`, `listProfileRemovalRequests`,
+`approveProfileRemoval`, `rejectProfileRemoval`, `archiveProfile`,
+`restoreProfile`, `listArchivedProfiles`, `permanentlyDeleteProfile`,
+`listDuplicateCandidates`, `notDuplicate`, `mergeProfiles`,
+`resolveMergeConflict`, `listPersonRelationships`, `addRelationship`,
+`removeRelationship`, `correctRelationshipType`, and `listAuditHistory` all trap
+with `\"Unauthorized: Only Family Stewards can ...\"` when the caller is not an
+admin. `requestProfileRemoval` is the one governance method a normal family
+member calls: it requires a signed-in (non-anonymous) caller and returns
+`#err(#NotSignedIn)` for an anonymous caller (it does not trap), and it only
+ever requests removal of the caller's own claimed living profile.
 
 Registration gates role-guarded access. A direct API caller must call
 `_initialize_access_control()` once as a signed-in caller before any
@@ -462,6 +636,63 @@ already reference the caller's stable principal (`requestingUserId`,
 - `AuthMethods` fields: `google` (`Bool`) and `apple` (`Bool`).
 - `AccountError` is a variant: `#NotSignedIn` or `#AccountNotFound`.
 - `RemoveError` is a variant: `#NotSignedIn` or `#ProfileNotFound`.
+- `StewardRecord` fields: `stewardAccountId` (`Principal`, the steward's
+  account), `roleStatus` (`#Active`/`#Removed`), `successorPriority` (`?Nat`,
+  the steward's own designated successor priority, `null` when none),
+  `assignedBy` (`Principal`, the promoting steward), and `assignedAt` (`Int`,
+  nanoseconds since epoch).
+- `SuccessorDesignation` fields: `personId` (`Text`), `priority` (`Nat`, the
+  order in which the successor should be considered for activation),
+  `assignedBy` (`Principal`), `assignedAt` (`Int`), and `status`
+  (`#Designated`/`#Activated`/`#Removed`). A successor is a designation only —
+  not an active steward until a current steward explicitly activates them.
+- `StewardIdentity` fields: `personId` (`Text`), `displayName` (`Text`, the
+  family-facing identity — preferred/display name, falling back to the canonical
+  full person name), `canonicalName` (`Text`, the canonical full person name),
+  and `accountId` (`Principal`, the internal account principal carried only for
+  authorization/audit and never the primary displayed identity).
+- `ProfileRemovalRequest` fields: `id` (`Nat`), `personId` (`Text`),
+  `requestingUserId` (`Principal`), `reason` (`Text`), `status`
+  (`#Pending`/`#Approved`/`#Rejected`), `submittedDate` (`Int`), `reviewedBy`
+  (`?Principal`, `null` when unreviewed), and `reviewedDate` (`?Int`, `null`
+  when unreviewed).
+- `AuditEntry` fields: `id` (`Nat`), `actionType` (`AuditActionType` variant),
+  `actorAccountId` (`Principal`), `affectedPersonIds` (`[Text]`), `timestamp`
+  (`Int`, nanoseconds since epoch), and `summary` (`Text`).
+- `AuditActionType` is a variant: `#ClaimApproved`, `#ClaimRejected`,
+  `#RelationshipRequestApproved`, `#RelationshipRequestRejected`,
+  `#StewardPromoted`, `#StewardRemoved`, `#SuccessorDesignated`,
+  `#SuccessorActivated`, `#ProfileArchived`, `#ProfileRestored`,
+  `#ProfilePermanentlyDeleted`, `#ProfileRemovalRequested`,
+  `#ProfileRemovalReviewed`, `#DuplicateMerged`, `#RelationshipAdded`,
+  `#RelationshipRemoved`, or `#RelationshipTypeCorrected`.
+- `MergeConflict` fields: `id` (`Nat`), `field` (`Text`), `canonicalValue`
+  (`Text`), `alternateValue` (`Text`), `status` (`#Pending`/`#Resolved`),
+  `resolvedBy` (`?Principal`, `null` when unresolved), and `resolvedAt` (`?Int`,
+  `null` when unresolved).
+- `DuplicateCandidate` fields: `personId` (`Text`), `name` (`Text`),
+  `birthDate` (`?Text`), `deathDate` (`?Text`), `parents` (`[Text]`), `spouses`
+  (`[Text]`), `children` (`[Text]`), `claimStatus` (`Text`), `ownerAccount`
+  (`?Principal`), `photoCount` (`Nat`), `timelineCount` (`Nat`), `sourceCount`
+  (`Nat`), and `archiveLinks` (`[Text]`).
+- `DuplicatePair` fields: `candidateA` and `candidateB` (each a
+  `DuplicateCandidate`).
+- `MergeResult` fields: `canonicalPersonId` (`Text`), `archivedPersonId`
+  (`Text`), and `conflicts` (`[MergeConflict]`).
+- `StewardError` is a variant: `#NotSignedIn`, `#NotSteward`,
+  `#NotApprovedClaimedMember`, `#LastSteward`, `#AlreadySteward`, or
+  `#NotDesignated`.
+- `RemovalError` is a variant: `#NotSignedIn`, `#ProfileNotFound`, `#NotOwner`,
+  `#DeceasedProfile`, or `#AlreadyPending`.
+- `ArchiveError` is a variant: `#NotSignedIn`, `#ProfileNotFound`,
+  `#AlreadyArchived`, or `#NotArchived`.
+- `DeleteError` is a variant: `#NotSignedIn`, `#ProfileNotFound`,
+  `#HasArchiveItems`, `#HasMedia`, `#HasTimeline`, `#HasApprovedRelationships`,
+  `#HasOwnershipHistory`, or `#ConfirmationRequired`.
+- `MergeError` is a variant: `#NotSignedIn`, `#ProfileNotFound`, `#SameProfile`,
+  or `#NotDuplicate`.
+- `RelationshipAdminError` is a variant: `#NotSignedIn`, `#PersonNotFound`,
+  `#RelationshipNotFound`, or `#DuplicateRelationship`.
 
 ## Lifecycle and polling
 
@@ -513,6 +744,31 @@ frontend can call `listProfileClaims` / `listRelationshipRequests` (admin) or
 observe their own pending relationship state at any time via
 `getMyRelationshipRequests` (returns only the caller's own pending requests)
 without needing Family Steward privileges.
+
+Governance actions follow steward-driven lifecycles. Steward succession:
+`promoteToSteward` makes an approved claimed member an active steward directly;
+`designateSuccessor` records a successor as a `#Designated` designation only,
+and `activateSuccessor` promotes a designated successor into the active steward
+role (marking the designation `#Activated`). A successor is never an active
+steward until explicitly activated — there is no automatic transfer based on
+inactivity. Safe profile removal: a claimed living profile owner calls
+`requestProfileRemoval` to create a `#Pending` request; a Family Steward then
+calls `approveProfileRemoval` (which archives the profile) or
+`rejectProfileRemoval`. Archive/restore: `archiveProfile` removes a profile from
+normal browsing while preserving its data; `restoreProfile` returns it.
+Permanent deletion (`permanentlyDeleteProfile`) is allowed only when the profile
+is empty of archive items, media, timeline/history, approved relationships, and
+ownership history, and explicit confirmation is given. Duplicate review:
+`listDuplicateCandidates` returns suspected pairs; a steward either calls
+`notDuplicate` or `mergeProfiles` (which archives the merged-away record and
+records any field conflicts as `#Pending` `MergeConflict` items, later resolved
+via `resolveMergeConflict`). Relationship administration: a steward can
+`addRelationship`, `removeRelationship`, or `correctRelationshipType` directly
+on the shared family graph; normal family members continue to use the pending
+`proposeRelationship` flow requiring steward approval. Every governance action
+records an `AuditEntry` in the audit log, readable only by Family Stewards via
+`listAuditHistory`. There is no async job to poll; the frontend can call the
+relevant list methods to observe current state.
 
 ## Mutation retry safety, idempotency, and destructive effects
 
@@ -575,6 +831,49 @@ without needing Family Steward privileges.
   already bound to the account is a no-op that returns the unchanged account.
   It never removes or replaces other bound methods, so a retry that actually
   succeeded does not duplicate a method.
+- `promoteToSteward` is not idempotent in effect but guards against duplicates:
+  it returns `#err(#AlreadySteward)` when the member's account is already an
+  active steward, so a retry that actually succeeded does not create a second
+  steward record.
+- `removeSteward` is idempotent: removing an already-removed (or nonexistent)
+  steward returns `#err(#NotSteward)` and changes nothing. It never allows the
+  last active steward to be removed (`#err(#LastSteward)`).
+- `designateSuccessor` is not idempotent: each call appends a new designation
+  record for the person. `activateSuccessor` is idempotent in effect — it
+  returns `#err(#NotDesignated)` when the person has no `#Designated` record,
+  and `#err(#AlreadySteward)` when the member is already an active steward.
+- `requestProfileRemoval` is not idempotent in effect but guards against
+  duplicates: it returns `#err(#AlreadyPending)` when a pending removal request
+  already exists for the person.
+- `approveProfileRemoval` and `rejectProfileRemoval` are idempotent: approving
+  or rejecting an already-reviewed (or nonexistent) request returns `null` and
+  changes nothing. They only transition requests currently in `#Pending` state.
+  Approving a removal archives the profile; rejecting leaves it unarchived.
+- `archiveProfile` is idempotent: archiving an already-archived profile returns
+  `#err(#AlreadyArchived)` and changes nothing. `restoreProfile` is idempotent:
+  restoring a non-archived profile returns `#err(#NotArchived)` and changes
+  nothing.
+- `permanentlyDeleteProfile` is destructive and irreversible: it removes the
+  profile record entirely. It is allowed only when the profile is empty of
+  archive items, media, timeline/history, approved relationships, and ownership
+  history, and explicit confirmation is given; otherwise it returns the
+  corresponding `#err(...)` without deleting anything. It never automatically
+  deletes relatives when another profile is removed.
+- `notDuplicate` is idempotent and makes no persistent state changes.
+- `mergeProfiles` is not idempotent: merging the same pair twice would re-run
+  the merge. It archives the merged-away record rather than hard-deleting it,
+  re-points relationships to the canonical record without duplicating shared
+  items, and preserves conflicting field values as `#Pending` `MergeConflict`
+  items. It never creates a new Person record.
+- `resolveMergeConflict` is idempotent: resolving an already-resolved (or
+  nonexistent) conflict returns `null` and changes nothing. It only transitions
+  conflicts currently in `#Pending` state.
+- `addRelationship` is not idempotent in effect but guards against duplicates:
+  it returns `#err(#DuplicateRelationship)` when an identical relationship
+  already exists. `removeRelationship` is idempotent: removing a nonexistent
+  relationship returns `#err(#RelationshipNotFound)` and changes nothing.
+  `correctRelationshipType` is idempotent: correcting to the same type is a
+  no-op that returns the updated record.
 
 ## Errors, traps, limits, and gotchas
 
@@ -607,6 +906,28 @@ without needing Family Steward privileges.
   duplicate profiles\"` when the caller is not an admin. It removes the profile
   plus any pending relationship request or pending claim tied only to it; it
   never removes the signed-in account and never alters confirmed relationships.
+- The Family Governance methods trap with `\"Unauthorized: Only Family Stewards
+  can ...\"` when the caller is not an admin. `requestProfileRemoval` is the one
+  governance method a normal family member calls; it returns `#err(#NotSignedIn)`
+  for an anonymous caller rather than trapping, and only ever requests removal
+  of the caller's own claimed living profile.
+- `approveProfileRemoval`, `rejectProfileRemoval`, and `resolveMergeConflict`
+  return `null` (they do not trap) when the target id does not exist or is not
+  in the expected state.
+- `permanentlyDeleteProfile` returns `#err(#ConfirmationRequired)` when
+  `confirmation` is `false`, and `#err(#HasTimeline)`,
+  `#err(#HasApprovedRelationships)`, or `#err(#HasOwnershipHistory)` when the
+  profile still has timeline entries, confirmed relationships, or ownership
+  history respectively. It never automatically deletes relatives.
+- `mergeProfiles` returns `#err(#SameProfile)` when both ids are equal and
+  `#err(#ProfileNotFound)` when either person is not tracked. It never creates a
+  new Person record and archives the merged-away record rather than hard-deleting
+  it.
+- The OQL governance entities (`steward`, `successor`, `removalRequest`,
+  `auditLog`, `mergeConflict`, `archivedProfile`) are flattened views:
+  enumerated variants are rendered as their tag text, optional fields render as
+  empty text or `0`, and the array-valued `affectedPersonIds` is exposed as the
+  `affectedPersonCount` (`Nat`) since OQL has no array value type.
 - `getPersonProfile` returns `null` (it does not trap) when the person is not
   tracked by the backend. The backend seeds a profile for every existing family
   member (all unclaimed, with living/deceased status derived from the profile

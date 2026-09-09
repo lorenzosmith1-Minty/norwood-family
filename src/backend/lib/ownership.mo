@@ -7,6 +7,7 @@ import Result "mo:core/Result";
 import Text "mo:core/Text";
 import Time "mo:core/Time";
 import Types "../types/ownership";
+import GovernanceTypes "../types/governance";
 
 module {
   /// Returns the ownership/lifecycle state of a person profile, or `null` when
@@ -71,6 +72,7 @@ module {
     profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
     claims : List.List<Types.ProfileClaim>,
     notifications : List.List<Types.Notification>,
+    auditLog : List.List<GovernanceTypes.AuditEntry>,
     claimId : Nat,
     reviewer : Principal.Principal,
   ) : ?Types.ProfileClaim {
@@ -103,6 +105,7 @@ module {
           createdAt = Time.now();
           read = false;
         });
+        appendAudit(auditLog, #ClaimApproved, reviewer, [claim.personId], "Approved profile claim for " # claim.personId);
         ?updated;
       };
     };
@@ -112,6 +115,7 @@ module {
   public func rejectClaim(
     claims : List.List<Types.ProfileClaim>,
     notifications : List.List<Types.Notification>,
+    auditLog : List.List<GovernanceTypes.AuditEntry>,
     claimId : Nat,
     reviewer : Principal.Principal,
   ) : ?Types.ProfileClaim {
@@ -133,6 +137,7 @@ module {
           createdAt = Time.now();
           read = false;
         });
+        appendAudit(auditLog, #ClaimRejected, reviewer, [claim.personId], "Rejected profile claim for " # claim.personId);
         ?updated;
       };
     };
@@ -356,6 +361,7 @@ module {
     relationships : List.List<Types.Relationship>,
     requests : List.List<Types.RelationshipRequest>,
     notifications : List.List<Types.Notification>,
+    auditLog : List.List<GovernanceTypes.AuditEntry>,
     requestId : Nat,
     reviewer : Principal.Principal,
   ) : ?Types.RelationshipRequest {
@@ -384,6 +390,7 @@ module {
           createdAt = Time.now();
           read = false;
         });
+        appendAudit(auditLog, #RelationshipRequestApproved, reviewer, [request.requestingPersonId, request.relatedPersonId], "Approved relationship request between " # request.requestingPersonId # " and " # request.relatedPersonId);
         ?updated;
       };
     };
@@ -394,6 +401,7 @@ module {
     profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
     requests : List.List<Types.RelationshipRequest>,
     notifications : List.List<Types.Notification>,
+    auditLog : List.List<GovernanceTypes.AuditEntry>,
     requestId : Nat,
     reviewer : Principal.Principal,
   ) : ?Types.RelationshipRequest {
@@ -415,6 +423,7 @@ module {
           createdAt = Time.now();
           read = false;
         });
+        appendAudit(auditLog, #RelationshipRequestRejected, reviewer, [request.requestingPersonId, request.relatedPersonId], "Rejected relationship request between " # request.requestingPersonId # " and " # request.relatedPersonId);
         ?updated;
       };
     };
@@ -423,6 +432,7 @@ module {
   /// Returns a relationship request to pending state. Family Steward only.
   public func setRelationshipPending(
     requests : List.List<Types.RelationshipRequest>,
+    auditLog : List.List<GovernanceTypes.AuditEntry>,
     requestId : Nat,
     reviewer : Principal.Principal,
   ) : ?Types.RelationshipRequest {
@@ -436,6 +446,7 @@ module {
           reviewedDate = ?Time.now();
         };
         replaceRelationshipRequest(requests, updated);
+        appendAudit(auditLog, #RelationshipRequestPending, reviewer, [request.requestingPersonId, request.relatedPersonId], "Returned relationship request between " # request.requestingPersonId # " and " # request.relatedPersonId # " to pending");
         ?updated;
       };
     };
@@ -683,6 +694,24 @@ module {
       if (id >= maxId) { maxId := id + 1 };
     };
     maxId;
+  };
+
+  /// Appends a governance audit entry.
+  func appendAudit(
+    auditLog : List.List<GovernanceTypes.AuditEntry>,
+    actionType : GovernanceTypes.AuditActionType,
+    actorId : Principal.Principal,
+    affectedPersonIds : [Types.PersonId],
+    summary : Text,
+  ) {
+    auditLog.add({
+      id = nextId(auditLog.toArray().map(func e = e.id));
+      actionType;
+      actorAccountId = actorId;
+      affectedPersonIds;
+      timestamp = Time.now();
+      summary;
+    });
   };
 
   func replaceClaim(claims : List.List<Types.ProfileClaim>, updated : Types.ProfileClaim) {

@@ -18,6 +18,25 @@ var __privateWrapper = (obj, member, setter, getter) => ({
   }
 });
 var _disableTimeVerification, _agent, _dbName, _storeName, _dbPromise, _IndexedDBExpirableStore_instances, getDb_fn, openDb_fn, openRequest_fn, prune_fn, _entries, _InMemoryExpirableStore_instances, prune_fn2, _rawKey, _derKey, _a, _currentInterval, _randomizationFactor, _multiplier, _maxInterval, _startTime, _maxElapsedTime, _maxIterations, _date, _count, _rootKeyPromise, _shouldFetchRootKey, _timeDiffMsecs, _hasSyncedTime, _syncTimePromise, _shouldSyncTime, _identity, _fetch, _fetchOptions, _callOptions, _credentials, _retryTimes, _backoffStrategy, _maxIngressExpiryInMinutes, _subnetNodeKeyExpirableStore, _HttpAgent_instances, maxIngressExpiryInMs_get, _queryPipeline, _updatePipeline, _subnetKeysFetching, _verifyQuerySignatures, handleV4SyncResponse_fn, handleV2Rejection_fn, requestAndRetryQuery_fn, requestAndRetry_fn, _verifyQueryResponse, readStateInner_fn, setTimeDiffMsecs_fn, asyncGuard_fn, rootKeyGuard_fn, syncTimeGuard_fn, doFetchSubnetKeys_fn, _focused, _cleanup, _setup, _b, _provider, _providerCalled, _c, _online, _cleanup2, _setup2, _d, _gcTimeout, _e, _initialState, _revertState, _cache, _client, _retryer, _defaultOptions, _abortSignalConsumed, _Query_instances, isInitialPausedFetch_fn, dispatch_fn, _f, _client2, _currentQuery, _currentQueryInitialState, _currentResult, _currentResultState, _currentResultOptions, _currentThenable, _selectError, _selectFn, _selectResult, _lastQueryWithDefinedData, _staleTimeoutId, _refetchIntervalId, _currentRefetchInterval, _trackedProps, _QueryObserver_instances, executeFetch_fn, updateStaleTimeout_fn, computeRefetchInterval_fn, updateRefetchInterval_fn, updateTimers_fn, clearStaleTimeout_fn, clearRefetchInterval_fn, updateQuery_fn, notify_fn, _g, _client3, _observers, _mutationCache, _retryer2, _Mutation_instances, dispatch_fn2, _h, _mutations, _scopes, _mutationId, _i, _client4, _currentResult2, _currentMutation, _mutateOptions, _MutationObserver_instances, updateResult_fn, notify_fn2, _j, _queries, _k, _queryCache, _mutationCache2, _defaultOptions2, _queryDefaults, _mutationDefaults, _mountCount, _unsubscribeFocus, _unsubscribeOnline, _l, _rawKey2, _derKey2, _publicKey, _privateKey, _inner, _delegation, _inner2, _attributes, _signer, _options, _channel, _establishingChannel, _scheduledChannelClosure, _pendingRequestCount, _Signer_instances, rpc_fn, applyTransforms_fn, _options2, _status, _HeartbeatClient_instances, establish_fn, maintain_fn, receiveStatusResponse_fn, sendStatusRequest_fn, _options3, _closeListeners, _options4, _closed, _pendingQueue, _instance, _callbacks, _idleTimeout, _timeoutID, _resetTimer, _options5, _identity2, _chain, _storage, _signer2, _options6, _initPromise, _AuthClient_instances, resolveNonce_fn, init_fn, hydrate_fn, registerDefaultIdleCallback_fn;
+function _mergeNamespaces(n, m2) {
+  for (var i = 0; i < m2.length; i++) {
+    const e = m2[i];
+    if (typeof e !== "string" && !Array.isArray(e)) {
+      for (const k2 in e) {
+        if (k2 !== "default" && !(k2 in n)) {
+          const d2 = Object.getOwnPropertyDescriptor(e, k2);
+          if (d2) {
+            Object.defineProperty(n, k2, d2.get ? d2 : {
+              enumerable: true,
+              get: () => e[k2]
+            });
+          }
+        }
+      }
+    }
+  }
+  return Object.freeze(Object.defineProperty(n, Symbol.toStringTag, { value: "Module" }));
+}
 (function polyfill() {
   const relList = document.createElement("link").relList;
   if (relList && relList.supports && relList.supports("modulepreload")) {
@@ -4576,11 +4595,11 @@ const C = 2 * 1024, V = 100, tt = new TextEncoder();
 function y(t) {
   return t << 5;
 }
-let a = new Uint8Array(C), g = new DataView(a.buffer), r = 0, O = [];
+let a = new Uint8Array(C), g = new DataView(a.buffer), r$1 = 0, O = [];
 function gt(t, e) {
-  r = 0;
+  r$1 = 0;
   const n = (e == null ? void 0 : e(t)) ?? t;
-  return ft(L, n, e), a.slice(0, r);
+  return ft(L, n, e), a.slice(0, r$1);
 }
 function k(t) {
   let e = a.length * 2;
@@ -4630,39 +4649,39 @@ function nt(t, e) {
   });
 }
 function E(t, e) {
-  if (r > a.length - V && k(r + V), e <= Y) {
+  if (r$1 > a.length - V && k(r$1 + V), e <= Y) {
     g.setUint8(
-      r++,
+      r$1++,
       y(t) | Number(e)
     );
     return;
   }
   if (e <= G) {
     g.setUint8(
-      r++,
+      r$1++,
       y(t) | f.OneByte
-    ), g.setUint8(r, Number(e)), r += 1;
+    ), g.setUint8(r$1, Number(e)), r$1 += 1;
     return;
   }
   if (e <= P) {
     g.setUint8(
-      r++,
+      r$1++,
       y(t) | f.TwoBytes
-    ), g.setUint16(r, Number(e), l), r += 2;
+    ), g.setUint16(r$1, Number(e), l), r$1 += 2;
     return;
   }
   if (e <= H) {
     g.setUint8(
-      r++,
+      r$1++,
       y(t) | f.FourBytes
-    ), g.setUint32(r, Number(e), l), r += 4;
+    ), g.setUint32(r$1, Number(e), l), r$1 += 4;
     return;
   }
   if (e <= W) {
     g.setUint8(
-      r++,
+      r$1++,
       y(t) | f.EightBytes
-    ), g.setBigUint64(r, BigInt(e), l), r += 8;
+    ), g.setBigUint64(r$1, BigInt(e), l), r$1 += 8;
     return;
   }
   throw new x(`Value too large to encode: ${e}`);
@@ -4682,7 +4701,7 @@ function ct(t) {
   throw new x(`Unrecognized simple value: ${t.toString()}`);
 }
 function T(t, e) {
-  E(t, e.length), r > a.length - e.length && k(r + e.length), a.set(e, r), r += e.length;
+  E(t, e.length), r$1 > a.length - e.length && k(r$1 + e.length), a.set(e, r$1), r$1 += e.length;
 }
 function X$1(t, e) {
   E(t, e);
@@ -5674,7 +5693,7 @@ function expand_message_xof(msg, DST, lenInBytes, k2, H2) {
     throw new Error("expand_message_xof: invalid lenInBytes");
   return H2.create({ dkLen: lenInBytes }).update(msg).update(i2osp(lenInBytes, 2)).update(DST).update(i2osp(DST.length, 1)).digest();
 }
-function hash_to_field(msg, count, options) {
+function hash_to_field(msg, count2, options) {
   _validateObject(options, {
     p: "bigint",
     m: "number",
@@ -5685,10 +5704,10 @@ function hash_to_field(msg, count, options) {
   if (!isHash(options.hash))
     throw new Error("expected valid hash");
   abytes(msg);
-  anum(count);
+  anum(count2);
   const log2p = p2.toString(2).length;
   const L2 = Math.ceil((log2p + k2) / 8);
-  const len_in_bytes = count * m2 * L2;
+  const len_in_bytes = count2 * m2 * L2;
   let prb;
   if (expand === "xmd") {
     prb = expand_message_xmd(msg, DST, len_in_bytes, hash);
@@ -5699,8 +5718,8 @@ function hash_to_field(msg, count, options) {
   } else {
     throw new Error('expand must be "xmd" or "xof"');
   }
-  const u2 = new Array(count);
-  for (let i = 0; i < count; i++) {
+  const u2 = new Array(count2);
+  for (let i = 0; i < count2; i++) {
     const e = new Array(m2);
     for (let j2 = 0; j2 < m2; j2++) {
       const elm_offset = L2 * (j2 + i * m2);
@@ -12159,7 +12178,7 @@ function requireMs() {
     options = options || {};
     var type = typeof val;
     if (type === "string" && val.length > 0) {
-      return parse(val);
+      return parse2(val);
     } else if (type === "number" && isFinite(val)) {
       return options.long ? fmtLong(val) : fmtShort(val);
     }
@@ -12167,7 +12186,7 @@ function requireMs() {
       "val is not a non-empty string or a valid number. val=" + JSON.stringify(val)
     );
   };
-  function parse(str) {
+  function parse2(str) {
     str = String(str);
     if (str.length > 100) {
       return;
@@ -18822,9 +18841,9 @@ function mapIntoArray(children, array, escapedPrefix, nameSoFar, callback) {
 }
 function mapChildren(children, func, context) {
   if (null == children) return children;
-  var result = [], count = 0;
+  var result = [], count2 = 0;
   mapIntoArray(children, result, "", "", function(child) {
-    return func.call(context, child, count++);
+    return func.call(context, child, count2++);
   });
   return result;
 }
@@ -19068,6 +19087,11 @@ react_production.version = "19.1.5";
   react.exports = react_production;
 }
 var reactExports = react.exports;
+const index$1 = /* @__PURE__ */ getDefaultExportFromCjs(reactExports);
+const React$2 = /* @__PURE__ */ _mergeNamespaces({
+  __proto__: null,
+  default: index$1
+}, [reactExports]);
 var QueryClientContext = reactExports.createContext(
   void 0
 );
@@ -22090,6 +22114,7 @@ function checkDCE$1() {
   reactDom.exports = reactDom_production;
 }
 var reactDomExports = reactDom.exports;
+const ReactDOM$2 = /* @__PURE__ */ getDefaultExportFromCjs(reactDomExports);
 /**
  * @license React
  * react-dom-client.production.js
@@ -23227,14 +23252,14 @@ function getListener(inst, registrationName) {
 var canUseDOM = !("undefined" === typeof window || "undefined" === typeof window.document || "undefined" === typeof window.document.createElement), passiveBrowserEventsSupported = false;
 if (canUseDOM)
   try {
-    var options = {};
-    Object.defineProperty(options, "passive", {
+    var options$1 = {};
+    Object.defineProperty(options$1, "passive", {
       get: function() {
         passiveBrowserEventsSupported = true;
       }
     });
-    window.addEventListener("test", options, options);
-    window.removeEventListener("test", options, options);
+    window.addEventListener("test", options$1, options$1);
+    window.removeEventListener("test", options$1, options$1);
   } catch (e) {
     passiveBrowserEventsSupported = false;
   }
@@ -23772,9 +23797,9 @@ function markUpdateLaneFromFiberToRoot(sourceFiber, update, lane) {
   sourceFiber.lanes |= lane;
   var alternate = sourceFiber.alternate;
   null !== alternate && (alternate.lanes |= lane);
-  for (var isHidden = false, parent = sourceFiber.return; null !== parent; )
-    parent.childLanes |= lane, alternate = parent.alternate, null !== alternate && (alternate.childLanes |= lane), 22 === parent.tag && (sourceFiber = parent.stateNode, null === sourceFiber || sourceFiber._visibility & 1 || (isHidden = true)), sourceFiber = parent, parent = parent.return;
-  return 3 === sourceFiber.tag ? (parent = sourceFiber.stateNode, isHidden && null !== update && (isHidden = 31 - clz32(lane), sourceFiber = parent.hiddenUpdates, alternate = sourceFiber[isHidden], null === alternate ? sourceFiber[isHidden] = [update] : alternate.push(update), update.lane = lane | 536870912), parent) : null;
+  for (var isHidden2 = false, parent = sourceFiber.return; null !== parent; )
+    parent.childLanes |= lane, alternate = parent.alternate, null !== alternate && (alternate.childLanes |= lane), 22 === parent.tag && (sourceFiber = parent.stateNode, null === sourceFiber || sourceFiber._visibility & 1 || (isHidden2 = true)), sourceFiber = parent, parent = parent.return;
+  return 3 === sourceFiber.tag ? (parent = sourceFiber.stateNode, isHidden2 && null !== update && (isHidden2 = 31 - clz32(lane), sourceFiber = parent.hiddenUpdates, alternate = sourceFiber[isHidden2], null === alternate ? sourceFiber[isHidden2] = [update] : alternate.push(update), update.lane = lane | 536870912), parent) : null;
 }
 function getRootForUpdatedFiber(sourceFiber) {
   if (50 < nestedUpdateCount)
@@ -33269,30 +33294,44 @@ const createLucideIcon = (iconName, iconNode) => {
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$J = [
+const __iconNode$R = [
+  ["rect", { width: "20", height: "5", x: "2", y: "3", rx: "1", key: "1wp1u1" }],
+  ["path", { d: "M4 8v11a2 2 0 0 0 2 2h2", key: "tvwodi" }],
+  ["path", { d: "M20 8v11a2 2 0 0 1-2 2h-2", key: "1gkqxj" }],
+  ["path", { d: "m9 15 3-3 3 3", key: "1pd0qc" }],
+  ["path", { d: "M12 12v9", key: "192myk" }]
+];
+const ArchiveRestore = createLucideIcon("archive-restore", __iconNode$R);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$Q = [
   ["rect", { width: "20", height: "5", x: "2", y: "3", rx: "1", key: "1wp1u1" }],
   ["path", { d: "M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8", key: "1s80jp" }],
   ["path", { d: "M10 12h4", key: "a56b0p" }]
 ];
-const Archive = createLucideIcon("archive", __iconNode$J);
+const Archive = createLucideIcon("archive", __iconNode$Q);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$I = [
+const __iconNode$P = [
   ["path", { d: "m12 19-7-7 7-7", key: "1l729n" }],
   ["path", { d: "M19 12H5", key: "x3x0zl" }]
 ];
-const ArrowLeft = createLucideIcon("arrow-left", __iconNode$I);
+const ArrowLeft = createLucideIcon("arrow-left", __iconNode$P);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$H = [
+const __iconNode$O = [
   ["path", { d: "M2 10v3", key: "1fnikh" }],
   ["path", { d: "M6 6v11", key: "11sgs0" }],
   ["path", { d: "M10 3v18", key: "yhl04a" }],
@@ -33300,14 +33339,14 @@ const __iconNode$H = [
   ["path", { d: "M18 5v13", key: "123xd1" }],
   ["path", { d: "M22 10v3", key: "154ddg" }]
 ];
-const AudioLines = createLucideIcon("audio-lines", __iconNode$H);
+const AudioLines = createLucideIcon("audio-lines", __iconNode$O);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$G = [
+const __iconNode$N = [
   ["path", { d: "M10.268 21a2 2 0 0 0 3.464 0", key: "vwvbt9" }],
   [
     "path",
@@ -33317,14 +33356,14 @@ const __iconNode$G = [
     }
   ]
 ];
-const Bell = createLucideIcon("bell", __iconNode$G);
+const Bell = createLucideIcon("bell", __iconNode$N);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$F = [
+const __iconNode$M = [
   ["path", { d: "M12 7v14", key: "1akyts" }],
   [
     "path",
@@ -33334,25 +33373,25 @@ const __iconNode$F = [
     }
   ]
 ];
-const BookOpen = createLucideIcon("book-open", __iconNode$F);
+const BookOpen = createLucideIcon("book-open", __iconNode$M);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$E = [
+const __iconNode$L = [
   ["path", { d: "M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16", key: "jecpp" }],
   ["rect", { width: "20", height: "14", x: "2", y: "6", rx: "2", key: "i6l2r4" }]
 ];
-const Briefcase = createLucideIcon("briefcase", __iconNode$E);
+const Briefcase = createLucideIcon("briefcase", __iconNode$L);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$D = [
+const __iconNode$K = [
   ["path", { d: "M8 2v4", key: "1cmpym" }],
   ["path", { d: "M16 2v4", key: "4m81vk" }],
   ["rect", { width: "18", height: "18", x: "3", y: "4", rx: "2", key: "1hopcy" }],
@@ -33364,14 +33403,14 @@ const __iconNode$D = [
   ["path", { d: "M12 18h.01", key: "mhygvu" }],
   ["path", { d: "M16 18h.01", key: "kzsmim" }]
 ];
-const CalendarDays = createLucideIcon("calendar-days", __iconNode$D);
+const CalendarDays = createLucideIcon("calendar-days", __iconNode$K);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$C = [
+const __iconNode$J = [
   [
     "path",
     {
@@ -33381,23 +33420,114 @@ const __iconNode$C = [
   ],
   ["circle", { cx: "12", cy: "13", r: "3", key: "1vg3eu" }]
 ];
-const Camera = createLucideIcon("camera", __iconNode$C);
+const Camera = createLucideIcon("camera", __iconNode$J);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$B = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
-const Check = createLucideIcon("check", __iconNode$B);
+const __iconNode$I = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
+const Check = createLucideIcon("check", __iconNode$I);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$A = [["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]];
-const ChevronRight = createLucideIcon("chevron-right", __iconNode$A);
+const __iconNode$H = [["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]];
+const ChevronRight = createLucideIcon("chevron-right", __iconNode$H);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$G = [
+  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
+  ["circle", { cx: "12", cy: "10", r: "3", key: "ilqhr7" }],
+  ["path", { d: "M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662", key: "154egf" }]
+];
+const CircleUser = createLucideIcon("circle-user", __iconNode$G);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$F = [
+  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
+  ["polyline", { points: "12 6 12 12 16.5 12", key: "1aq6pp" }]
+];
+const Clock3 = createLucideIcon("clock-3", __iconNode$F);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$E = [
+  [
+    "path",
+    {
+      d: "M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z",
+      key: "1vdc57"
+    }
+  ],
+  ["path", { d: "M5 21h14", key: "11awu3" }]
+];
+const Crown = createLucideIcon("crown", __iconNode$E);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$D = [
+  ["circle", { cx: "12", cy: "12", r: "1", key: "41hilf" }],
+  ["circle", { cx: "19", cy: "12", r: "1", key: "1wjl8i" }],
+  ["circle", { cx: "5", cy: "12", r: "1", key: "1pcz8c" }]
+];
+const Ellipsis = createLucideIcon("ellipsis", __iconNode$D);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$C = [
+  ["path", { d: "M15 3h6v6", key: "1q9fwt" }],
+  ["path", { d: "M10 14 21 3", key: "gplh6r" }],
+  ["path", { d: "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6", key: "a6xqqp" }]
+];
+const ExternalLink = createLucideIcon("external-link", __iconNode$C);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$B = [
+  ["path", { d: "M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z", key: "1rqfz7" }],
+  ["path", { d: "M14 2v4a2 2 0 0 0 2 2h4", key: "tnqrlb" }],
+  ["path", { d: "M10 9H8", key: "b1mrlr" }],
+  ["path", { d: "M16 13H8", key: "t4e002" }],
+  ["path", { d: "M16 17H8", key: "z1uh3a" }]
+];
+const FileText = createLucideIcon("file-text", __iconNode$B);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$A = [
+  ["line", { x1: "6", x2: "6", y1: "3", y2: "15", key: "17qcm7" }],
+  ["circle", { cx: "18", cy: "6", r: "3", key: "1h7g24" }],
+  ["circle", { cx: "6", cy: "18", r: "3", key: "fqmcym" }],
+  ["path", { d: "M18 9a9 9 0 0 1-9 9", key: "n2h4wq" }]
+];
+const GitBranch = createLucideIcon("git-branch", __iconNode$A);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33405,11 +33535,11 @@ const ChevronRight = createLucideIcon("chevron-right", __iconNode$A);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$z = [
-  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["circle", { cx: "12", cy: "10", r: "3", key: "ilqhr7" }],
-  ["path", { d: "M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662", key: "154egf" }]
+  ["circle", { cx: "18", cy: "18", r: "3", key: "1xkwt0" }],
+  ["circle", { cx: "6", cy: "6", r: "3", key: "1lh9wr" }],
+  ["path", { d: "M6 21V9a9 9 0 0 0 9 9", key: "7kw0sc" }]
 ];
-const CircleUser = createLucideIcon("circle-user", __iconNode$z);
+const GitMerge = createLucideIcon("git-merge", __iconNode$z);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33417,10 +33547,13 @@ const CircleUser = createLucideIcon("circle-user", __iconNode$z);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$y = [
-  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["polyline", { points: "12 6 12 12 16.5 12", key: "1aq6pp" }]
+  ["path", { d: "M16 5h6", key: "1vod17" }],
+  ["path", { d: "M19 2v6", key: "4bpg5p" }],
+  ["path", { d: "M21 11.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7.5", key: "1ue2ih" }],
+  ["path", { d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21", key: "1xmnt7" }],
+  ["circle", { cx: "9", cy: "9", r: "2", key: "af1f0g" }]
 ];
-const Clock3 = createLucideIcon("clock-3", __iconNode$y);
+const ImagePlus = createLucideIcon("image-plus", __iconNode$y);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33428,11 +33561,11 @@ const Clock3 = createLucideIcon("clock-3", __iconNode$y);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$x = [
-  ["circle", { cx: "12", cy: "12", r: "1", key: "41hilf" }],
-  ["circle", { cx: "19", cy: "12", r: "1", key: "1wjl8i" }],
-  ["circle", { cx: "5", cy: "12", r: "1", key: "1pcz8c" }]
+  ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", ry: "2", key: "1m3agn" }],
+  ["circle", { cx: "9", cy: "9", r: "2", key: "af1f0g" }],
+  ["path", { d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21", key: "1xmnt7" }]
 ];
-const Ellipsis = createLucideIcon("ellipsis", __iconNode$x);
+const Image = createLucideIcon("image", __iconNode$x);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33440,71 +33573,6 @@ const Ellipsis = createLucideIcon("ellipsis", __iconNode$x);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$w = [
-  ["path", { d: "M15 3h6v6", key: "1q9fwt" }],
-  ["path", { d: "M10 14 21 3", key: "gplh6r" }],
-  ["path", { d: "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6", key: "a6xqqp" }]
-];
-const ExternalLink = createLucideIcon("external-link", __iconNode$w);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$v = [
-  ["path", { d: "M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z", key: "1rqfz7" }],
-  ["path", { d: "M14 2v4a2 2 0 0 0 2 2h4", key: "tnqrlb" }],
-  ["path", { d: "M10 9H8", key: "b1mrlr" }],
-  ["path", { d: "M16 13H8", key: "t4e002" }],
-  ["path", { d: "M16 17H8", key: "z1uh3a" }]
-];
-const FileText = createLucideIcon("file-text", __iconNode$v);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$u = [
-  ["line", { x1: "6", x2: "6", y1: "3", y2: "15", key: "17qcm7" }],
-  ["circle", { cx: "18", cy: "6", r: "3", key: "1h7g24" }],
-  ["circle", { cx: "6", cy: "18", r: "3", key: "fqmcym" }],
-  ["path", { d: "M18 9a9 9 0 0 1-9 9", key: "n2h4wq" }]
-];
-const GitBranch = createLucideIcon("git-branch", __iconNode$u);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$t = [
-  ["path", { d: "M16 5h6", key: "1vod17" }],
-  ["path", { d: "M19 2v6", key: "4bpg5p" }],
-  ["path", { d: "M21 11.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7.5", key: "1ue2ih" }],
-  ["path", { d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21", key: "1xmnt7" }],
-  ["circle", { cx: "9", cy: "9", r: "2", key: "af1f0g" }]
-];
-const ImagePlus = createLucideIcon("image-plus", __iconNode$t);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$s = [
-  ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", ry: "2", key: "1m3agn" }],
-  ["circle", { cx: "9", cy: "9", r: "2", key: "af1f0g" }],
-  ["path", { d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21", key: "1xmnt7" }]
-];
-const Image = createLucideIcon("image", __iconNode$s);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$r = [
   ["polyline", { points: "22 12 16 12 14 15 10 15 8 12 2 12", key: "o97t9d" }],
   [
     "path",
@@ -33514,14 +33582,14 @@ const __iconNode$r = [
     }
   ]
 ];
-const Inbox = createLucideIcon("inbox", __iconNode$r);
+const Inbox = createLucideIcon("inbox", __iconNode$w);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$q = [
+const __iconNode$v = [
   ["path", { d: "M10 18v-7", key: "wt116b" }],
   [
     "path",
@@ -33535,14 +33603,14 @@ const __iconNode$q = [
   ["path", { d: "M3 22h18", key: "8prr45" }],
   ["path", { d: "M6 18v-7", key: "1ivflk" }]
 ];
-const Landmark = createLucideIcon("landmark", __iconNode$q);
+const Landmark = createLucideIcon("landmark", __iconNode$v);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$p = [
+const __iconNode$u = [
   ["rect", { width: "8", height: "18", x: "3", y: "3", rx: "1", key: "oynpb5" }],
   ["path", { d: "M7 3v18", key: "bbkbws" }],
   [
@@ -33553,58 +33621,58 @@ const __iconNode$p = [
     }
   ]
 ];
-const LibraryBig = createLucideIcon("library-big", __iconNode$p);
+const LibraryBig = createLucideIcon("library-big", __iconNode$u);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$o = [
+const __iconNode$t = [
   ["path", { d: "M9 17H7A5 5 0 0 1 7 7h2", key: "8i5ue5" }],
   ["path", { d: "M15 7h2a5 5 0 1 1 0 10h-2", key: "1b9ql8" }],
   ["line", { x1: "8", x2: "16", y1: "12", y2: "12", key: "1jonct" }]
 ];
-const Link2 = createLucideIcon("link-2", __iconNode$o);
+const Link2 = createLucideIcon("link-2", __iconNode$t);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$n = [["path", { d: "M21 12a9 9 0 1 1-6.219-8.56", key: "13zald" }]];
-const LoaderCircle = createLucideIcon("loader-circle", __iconNode$n);
+const __iconNode$s = [["path", { d: "M21 12a9 9 0 1 1-6.219-8.56", key: "13zald" }]];
+const LoaderCircle = createLucideIcon("loader-circle", __iconNode$s);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$m = [
+const __iconNode$r = [
   ["path", { d: "m10 17 5-5-5-5", key: "1bsop3" }],
   ["path", { d: "M15 12H3", key: "6jk70r" }],
   ["path", { d: "M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4", key: "u53s6r" }]
 ];
-const LogIn = createLucideIcon("log-in", __iconNode$m);
+const LogIn = createLucideIcon("log-in", __iconNode$r);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$l = [
+const __iconNode$q = [
   ["path", { d: "m16 17 5-5-5-5", key: "1bji2h" }],
   ["path", { d: "M21 12H9", key: "dn1m92" }],
   ["path", { d: "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4", key: "1uf3rs" }]
 ];
-const LogOut = createLucideIcon("log-out", __iconNode$l);
+const LogOut = createLucideIcon("log-out", __iconNode$q);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$k = [
+const __iconNode$p = [
   ["path", { d: "M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4", key: "re6nr2" }],
   ["path", { d: "M2 6h4", key: "aawbzj" }],
   ["path", { d: "M2 10h4", key: "l0bgd4" }],
@@ -33618,14 +33686,14 @@ const __iconNode$k = [
     }
   ]
 ];
-const NotebookPen = createLucideIcon("notebook-pen", __iconNode$k);
+const NotebookPen = createLucideIcon("notebook-pen", __iconNode$p);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$j = [
+const __iconNode$o = [
   ["path", { d: "M5.8 11.3 2 22l10.7-3.79", key: "gwxi1d" }],
   ["path", { d: "M4 3h.01", key: "1vcuye" }],
   ["path", { d: "M22 8h.01", key: "1mrtc2" }],
@@ -33651,14 +33719,14 @@ const __iconNode$j = [
     }
   ]
 ];
-const PartyPopper = createLucideIcon("party-popper", __iconNode$j);
+const PartyPopper = createLucideIcon("party-popper", __iconNode$o);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$i = [
+const __iconNode$n = [
   [
     "path",
     {
@@ -33668,25 +33736,36 @@ const __iconNode$i = [
   ],
   ["path", { d: "m15 5 4 4", key: "1mk7zo" }]
 ];
-const Pencil = createLucideIcon("pencil", __iconNode$i);
+const Pencil = createLucideIcon("pencil", __iconNode$n);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$h = [
+const __iconNode$m = [
   ["path", { d: "M5 12h14", key: "1ays0h" }],
   ["path", { d: "M12 5v14", key: "s699le" }]
 ];
-const Plus = createLucideIcon("plus", __iconNode$h);
+const Plus = createLucideIcon("plus", __iconNode$m);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$g = [
+const __iconNode$l = [
+  ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
+  ["path", { d: "M3 3v5h5", key: "1xhq8a" }]
+];
+const RotateCcw = createLucideIcon("rotate-ccw", __iconNode$l);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$k = [
   [
     "path",
     {
@@ -33697,14 +33776,14 @@ const __iconNode$g = [
   ["path", { d: "M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7", key: "1ydtos" }],
   ["path", { d: "M7 3v4a1 1 0 0 0 1 1h7", key: "t51u73" }]
 ];
-const Save = createLucideIcon("save", __iconNode$g);
+const Save = createLucideIcon("save", __iconNode$k);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$f = [
+const __iconNode$j = [
   ["path", { d: "M15 12h-5", key: "r7krc0" }],
   ["path", { d: "M15 8h-5", key: "1khuty" }],
   ["path", { d: "M19 17V5a2 2 0 0 0-2-2H4", key: "zz82l3" }],
@@ -33716,7 +33795,70 @@ const __iconNode$f = [
     }
   ]
 ];
-const ScrollText = createLucideIcon("scroll-text", __iconNode$f);
+const ScrollText = createLucideIcon("scroll-text", __iconNode$j);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$i = [
+  ["path", { d: "m21 21-4.34-4.34", key: "14j7rj" }],
+  ["circle", { cx: "11", cy: "11", r: "8", key: "4ej97u" }]
+];
+const Search = createLucideIcon("search", __iconNode$i);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$h = [
+  [
+    "path",
+    {
+      d: "M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z",
+      key: "oel41y"
+    }
+  ],
+  ["path", { d: "M12 8v4", key: "1got3b" }],
+  ["path", { d: "M12 16h.01", key: "1drbdi" }]
+];
+const ShieldAlert = createLucideIcon("shield-alert", __iconNode$h);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$g = [
+  [
+    "path",
+    {
+      d: "M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z",
+      key: "oel41y"
+    }
+  ],
+  ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
+];
+const ShieldCheck = createLucideIcon("shield-check", __iconNode$g);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$f = [
+  [
+    "path",
+    {
+      d: "M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z",
+      key: "vktsd0"
+    }
+  ],
+  ["circle", { cx: "7.5", cy: "7.5", r: ".5", fill: "currentColor", key: "kqv944" }]
+];
+const Tag = createLucideIcon("tag", __iconNode$f);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33724,10 +33866,13 @@ const ScrollText = createLucideIcon("scroll-text", __iconNode$f);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$e = [
-  ["path", { d: "m21 21-4.34-4.34", key: "14j7rj" }],
-  ["circle", { cx: "11", cy: "11", r: "8", key: "4ej97u" }]
+  ["path", { d: "M3 6h18", key: "d0wm0j" }],
+  ["path", { d: "M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6", key: "4alrt4" }],
+  ["path", { d: "M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2", key: "v07s0e" }],
+  ["line", { x1: "10", x2: "10", y1: "11", y2: "17", key: "1uufr5" }],
+  ["line", { x1: "14", x2: "14", y1: "11", y2: "17", key: "xtxkd" }]
 ];
-const Search = createLucideIcon("search", __iconNode$e);
+const Trash2 = createLucideIcon("trash-2", __iconNode$e);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33738,13 +33883,13 @@ const __iconNode$d = [
   [
     "path",
     {
-      d: "M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z",
-      key: "oel41y"
+      d: "m17 14 3 3.3a1 1 0 0 1-.7 1.7H4.7a1 1 0 0 1-.7-1.7L7 14h-.3a1 1 0 0 1-.7-1.7L9 9h-.2A1 1 0 0 1 8 7.3L12 3l4 4.3a1 1 0 0 1-.8 1.7H15l3 3.3a1 1 0 0 1-.7 1.7H17Z",
+      key: "cpyugq"
     }
   ],
-  ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
+  ["path", { d: "M12 22v-3", key: "kmzjlo" }]
 ];
-const ShieldCheck = createLucideIcon("shield-check", __iconNode$d);
+const TreePine = createLucideIcon("tree-pine", __iconNode$d);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33755,54 +33900,6 @@ const __iconNode$c = [
   [
     "path",
     {
-      d: "M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z",
-      key: "vktsd0"
-    }
-  ],
-  ["circle", { cx: "7.5", cy: "7.5", r: ".5", fill: "currentColor", key: "kqv944" }]
-];
-const Tag = createLucideIcon("tag", __iconNode$c);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$b = [
-  ["path", { d: "M3 6h18", key: "d0wm0j" }],
-  ["path", { d: "M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6", key: "4alrt4" }],
-  ["path", { d: "M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2", key: "v07s0e" }],
-  ["line", { x1: "10", x2: "10", y1: "11", y2: "17", key: "1uufr5" }],
-  ["line", { x1: "14", x2: "14", y1: "11", y2: "17", key: "xtxkd" }]
-];
-const Trash2 = createLucideIcon("trash-2", __iconNode$b);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$a = [
-  [
-    "path",
-    {
-      d: "m17 14 3 3.3a1 1 0 0 1-.7 1.7H4.7a1 1 0 0 1-.7-1.7L7 14h-.3a1 1 0 0 1-.7-1.7L9 9h-.2A1 1 0 0 1 8 7.3L12 3l4 4.3a1 1 0 0 1-.8 1.7H15l3 3.3a1 1 0 0 1-.7 1.7H17Z",
-      key: "cpyugq"
-    }
-  ],
-  ["path", { d: "M12 22v-3", key: "kmzjlo" }]
-];
-const TreePine = createLucideIcon("tree-pine", __iconNode$a);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$9 = [
-  [
-    "path",
-    {
       d: "m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3",
       key: "wmoenq"
     }
@@ -33810,7 +33907,42 @@ const __iconNode$9 = [
   ["path", { d: "M12 9v4", key: "juzpu7" }],
   ["path", { d: "M12 17h.01", key: "p32p05" }]
 ];
-const TriangleAlert = createLucideIcon("triangle-alert", __iconNode$9);
+const TriangleAlert = createLucideIcon("triangle-alert", __iconNode$c);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$b = [
+  ["path", { d: "M9 14 4 9l5-5", key: "102s5s" }],
+  ["path", { d: "M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11", key: "f3b9sd" }]
+];
+const Undo2 = createLucideIcon("undo-2", __iconNode$b);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$a = [
+  ["path", { d: "M12 3v12", key: "1x0j5s" }],
+  ["path", { d: "m17 8-5-5-5 5", key: "7q97r8" }],
+  ["path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4", key: "ih7n3h" }]
+];
+const Upload = createLucideIcon("upload", __iconNode$a);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$9 = [
+  ["path", { d: "m16 11 2 2 4-4", key: "9rsbq5" }],
+  ["path", { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", key: "1yyitq" }],
+  ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }]
+];
+const UserCheck = createLucideIcon("user-check", __iconNode$9);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33818,41 +33950,6 @@ const TriangleAlert = createLucideIcon("triangle-alert", __iconNode$9);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$8 = [
-  ["path", { d: "M9 14 4 9l5-5", key: "102s5s" }],
-  ["path", { d: "M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11", key: "f3b9sd" }]
-];
-const Undo2 = createLucideIcon("undo-2", __iconNode$8);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$7 = [
-  ["path", { d: "M12 3v12", key: "1x0j5s" }],
-  ["path", { d: "m17 8-5-5-5 5", key: "7q97r8" }],
-  ["path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4", key: "ih7n3h" }]
-];
-const Upload = createLucideIcon("upload", __iconNode$7);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$6 = [
-  ["path", { d: "m16 11 2 2 4-4", key: "9rsbq5" }],
-  ["path", { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", key: "1yyitq" }],
-  ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }]
-];
-const UserCheck = createLucideIcon("user-check", __iconNode$6);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$5 = [
   ["path", { d: "M10 15H6a4 4 0 0 0-4 4v2", key: "1nfge6" }],
   ["path", { d: "m14.305 16.53.923-.382", key: "1itpsq" }],
   ["path", { d: "m15.228 13.852-.923-.383", key: "eplpkm" }],
@@ -33865,7 +33962,45 @@ const __iconNode$5 = [
   ["circle", { cx: "18", cy: "15", r: "3", key: "gjjjvw" }],
   ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }]
 ];
-const UserCog = createLucideIcon("user-cog", __iconNode$5);
+const UserCog = createLucideIcon("user-cog", __iconNode$8);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$7 = [
+  ["path", { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", key: "1yyitq" }],
+  ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }],
+  ["line", { x1: "22", x2: "16", y1: "11", y2: "11", key: "1shjgl" }]
+];
+const UserMinus = createLucideIcon("user-minus", __iconNode$7);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$6 = [
+  ["path", { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", key: "1yyitq" }],
+  ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }],
+  ["line", { x1: "19", x2: "19", y1: "8", y2: "14", key: "1bvyxn" }],
+  ["line", { x1: "22", x2: "16", y1: "11", y2: "11", key: "1shjgl" }]
+];
+const UserPlus = createLucideIcon("user-plus", __iconNode$6);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$5 = [
+  ["path", { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", key: "1yyitq" }],
+  ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }],
+  ["line", { x1: "17", x2: "22", y1: "8", y2: "13", key: "3nzzx3" }],
+  ["line", { x1: "22", x2: "17", y1: "8", y2: "13", key: "1swrse" }]
+];
+const UserX = createLucideIcon("user-x", __iconNode$5);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33873,12 +34008,10 @@ const UserCog = createLucideIcon("user-cog", __iconNode$5);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$4 = [
-  ["path", { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", key: "1yyitq" }],
-  ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }],
-  ["line", { x1: "19", x2: "19", y1: "8", y2: "14", key: "1bvyxn" }],
-  ["line", { x1: "22", x2: "16", y1: "11", y2: "11", key: "1shjgl" }]
+  ["path", { d: "M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2", key: "975kel" }],
+  ["circle", { cx: "12", cy: "7", r: "4", key: "17ys0d" }]
 ];
-const UserPlus = createLucideIcon("user-plus", __iconNode$4);
+const User = createLucideIcon("user", __iconNode$4);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33886,10 +34019,12 @@ const UserPlus = createLucideIcon("user-plus", __iconNode$4);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$3 = [
-  ["path", { d: "M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2", key: "975kel" }],
-  ["circle", { cx: "12", cy: "7", r: "4", key: "17ys0d" }]
+  ["path", { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", key: "1yyitq" }],
+  ["path", { d: "M16 3.128a4 4 0 0 1 0 7.744", key: "16gr8j" }],
+  ["path", { d: "M22 21v-2a4 4 0 0 0-3-3.87", key: "kshegd" }],
+  ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }]
 ];
-const User = createLucideIcon("user", __iconNode$3);
+const Users = createLucideIcon("users", __iconNode$3);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33897,19 +34032,6 @@ const User = createLucideIcon("user", __iconNode$3);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$2 = [
-  ["path", { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", key: "1yyitq" }],
-  ["path", { d: "M16 3.128a4 4 0 0 1 0 7.744", key: "16gr8j" }],
-  ["path", { d: "M22 21v-2a4 4 0 0 0-3-3.87", key: "kshegd" }],
-  ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }]
-];
-const Users = createLucideIcon("users", __iconNode$2);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$1 = [
   [
     "path",
     {
@@ -33919,7 +34041,18 @@ const __iconNode$1 = [
   ],
   ["rect", { x: "2", y: "6", width: "14", height: "12", rx: "2", key: "158x01" }]
 ];
-const Video = createLucideIcon("video", __iconNode$1);
+const Video = createLucideIcon("video", __iconNode$2);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$1 = [
+  ["path", { d: "M18 6 6 18", key: "1bl5f8" }],
+  ["path", { d: "m6 6 12 12", key: "d8bk6v" }]
+];
+const X = createLucideIcon("x", __iconNode$1);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33927,10 +34060,15 @@ const Video = createLucideIcon("video", __iconNode$1);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode = [
-  ["path", { d: "M18 6 6 18", key: "1bl5f8" }],
-  ["path", { d: "m6 6 12 12", key: "d8bk6v" }]
+  [
+    "path",
+    {
+      d: "M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z",
+      key: "1xq2db"
+    }
+  ]
 ];
-const X = createLucideIcon("x", __iconNode);
+const Zap = createLucideIcon("zap", __iconNode);
 const _ImmutableObjectStorageCreateCertificateResult = Record({
   "method": Text,
   "blob_hash": Text
@@ -33963,8 +34101,31 @@ const Error$1 = Variant({
     "expected": Vec(Text)
   })
 });
-const Result_8 = Variant({ "ok": Null, "err": Error$1 });
+const Result_18 = Variant({ "ok": Null, "err": Error$1 });
 const PersonId = Text;
+const StewardRoleStatus$1 = Variant({
+  "Active": Null,
+  "Removed": Null
+});
+const StewardRecord = Record({
+  "assignedAt": Int,
+  "assignedBy": Principal2,
+  "stewardAccountId": Principal2,
+  "successorPriority": Opt(Nat),
+  "roleStatus": StewardRoleStatus$1
+});
+const StewardError = Variant({
+  "LastSteward": Null,
+  "NotSteward": Null,
+  "AlreadySteward": Null,
+  "NotSignedIn": Null,
+  "NotApprovedClaimedMember": Null,
+  "NotDesignated": Null
+});
+const Result_8 = Variant({
+  "ok": StewardRecord,
+  "err": StewardError
+});
 const ExternalBlob2 = Vec(Nat8);
 const PhotoId = Nat;
 const Photo = Record({
@@ -33974,6 +34135,34 @@ const Photo = Record({
   "filename": Text,
   "uploadedAt": Int,
   "uploadedBy": Principal2
+});
+const RelationshipType$1 = Variant({
+  "Parent": Null,
+  "Sibling": Null,
+  "SpousePartner": Null,
+  "Child": Null
+});
+const RelationshipStatus$1 = Variant({
+  "Disputed": Null,
+  "Confirmed": Null,
+  "Pending": Null
+});
+const Relationship = Record({
+  "id": Nat,
+  "status": RelationshipStatus$1,
+  "fromPersonId": PersonId,
+  "toPersonId": PersonId,
+  "relationshipType": RelationshipType$1
+});
+const RelationshipAdminError = Variant({
+  "RelationshipNotFound": Null,
+  "NotSignedIn": Null,
+  "DuplicateRelationship": Null,
+  "PersonNotFound": Null
+});
+const Result_16 = Variant({
+  "ok": Relationship,
+  "err": RelationshipAdminError
 });
 const ArchiveItemId = Nat;
 const ArchiveItemStatus$1 = Variant({
@@ -34033,16 +34222,25 @@ const ProfileClaim = Record({
   "personId": PersonId,
   "requestingUserId": Principal2
 });
-const RelationshipRequestStatus = Variant({
+const ProfileRemovalStatus = Variant({
   "Approved": Null,
   "Rejected": Null,
   "Pending": Null
 });
-const RelationshipType$1 = Variant({
-  "Parent": Null,
-  "Sibling": Null,
-  "SpousePartner": Null,
-  "Child": Null
+const ProfileRemovalRequest = Record({
+  "id": Nat,
+  "submittedDate": Int,
+  "status": ProfileRemovalStatus,
+  "reviewedDate": Opt(Int),
+  "reviewedBy": Opt(Principal2),
+  "personId": PersonId,
+  "requestingUserId": Principal2,
+  "reason": Text
+});
+const RelationshipRequestStatus = Variant({
+  "Approved": Null,
+  "Rejected": Null,
+  "Pending": Null
 });
 const RelationshipRequest = Record({
   "id": Nat,
@@ -34054,6 +34252,13 @@ const RelationshipRequest = Record({
   "proposedRelationship": RelationshipType$1,
   "reviewer": Opt(Principal2)
 });
+const ArchiveError = Variant({
+  "NotArchived": Null,
+  "ProfileNotFound": Null,
+  "AlreadyArchived": Null,
+  "NotSignedIn": Null
+});
+const Result_1 = Variant({ "ok": Null, "err": ArchiveError });
 const UserRole = Variant({
   "admin": Null,
   "user": Null,
@@ -34073,7 +34278,7 @@ const AccountError = Variant({
   "AccountNotFound": Null,
   "NotSignedIn": Null
 });
-const Result_7 = Variant({ "ok": Account, "err": AccountError });
+const Result_17 = Variant({ "ok": Account, "err": AccountError });
 const ClaimStatus$1 = Variant({
   "Unclaimed": Null,
   "Claimed": Null
@@ -34106,9 +34311,25 @@ const PersonProfile = Record({
   "firstName": Opt(Text)
 });
 const CreateError = Variant({ "NotSignedIn": Null });
-const Result_6 = Variant({
+const Result_15 = Variant({
   "ok": PersonProfile,
   "err": CreateError
+});
+const SuccessorStatus$1 = Variant({
+  "Activated": Null,
+  "Removed": Null,
+  "Designated": Null
+});
+const SuccessorDesignation = Record({
+  "status": SuccessorStatus$1,
+  "assignedAt": Int,
+  "assignedBy": Principal2,
+  "personId": PersonId,
+  "priority": Nat
+});
+const Result_14 = Variant({
+  "ok": SuccessorDesignation,
+  "err": StewardError
 });
 const Value = Variant({
   "int": Int,
@@ -34123,26 +34344,70 @@ const Result__1 = Record({
   "hasMore": Bool,
   "rows": Vec(Vec(Cell))
 });
-const Result_5 = Variant({ "ok": AccountId, "err": AccountError });
+const Result_13 = Variant({
+  "ok": AccountId,
+  "err": AccountError
+});
 const AuthMethods = Record({
   "apple": Bool,
   "google": Bool
 });
-const Result_4 = Variant({
+const Result_12 = Variant({
   "ok": AuthMethods,
   "err": AccountError
 });
-const RelationshipStatus$1 = Variant({
-  "Disputed": Null,
-  "Confirmed": Null,
-  "Pending": Null
+const AuditActionType$1 = Variant({
+  "ProfileRemovalRequested": Null,
+  "ClaimRejected": Null,
+  "RelationshipTypeCorrected": Null,
+  "RelationshipRequestPending": Null,
+  "StewardPromoted": Null,
+  "SuccessorActivated": Null,
+  "StewardRemoved": Null,
+  "RelationshipRequestApproved": Null,
+  "DuplicateMerged": Null,
+  "ProfilePermanentlyDeleted": Null,
+  "RelationshipRequestRejected": Null,
+  "ProfileArchived": Null,
+  "ProfileRestored": Null,
+  "RelationshipAdded": Null,
+  "RelationshipRemoved": Null,
+  "ProfileRemovalReviewed": Null,
+  "ClaimApproved": Null,
+  "SuccessorDesignated": Null
 });
-const Relationship = Record({
+const AuditEntry = Record({
   "id": Nat,
-  "status": RelationshipStatus$1,
-  "fromPersonId": PersonId,
-  "toPersonId": PersonId,
-  "relationshipType": RelationshipType$1
+  "affectedPersonIds": Vec(PersonId),
+  "actionType": AuditActionType$1,
+  "summary": Text,
+  "timestamp": Int,
+  "actorAccountId": Principal2
+});
+const DuplicateCandidate = Record({
+  "deathDate": Opt(Text),
+  "ownerAccount": Opt(Principal2),
+  "birthDate": Opt(Text),
+  "claimStatus": Text,
+  "name": Text,
+  "archiveLinks": Vec(Text),
+  "children": Vec(Text),
+  "sourceCount": Nat,
+  "personId": PersonId,
+  "spouses": Vec(Text),
+  "photoCount": Nat,
+  "timelineCount": Nat,
+  "parents": Vec(Text)
+});
+const DuplicatePair = Record({
+  "candidateA": DuplicateCandidate,
+  "candidateB": DuplicateCandidate
+});
+const StewardIdentity = Record({
+  "accountId": Principal2,
+  "displayName": Text,
+  "personId": PersonId,
+  "canonicalName": Text
 });
 const NotificationType$1 = Variant({
   "RelationshipRequested": Null,
@@ -34159,12 +34424,52 @@ const Notification = Record({
   "message": Text
 });
 const NotificationId = Nat;
+const MergeConflictStatus$1 = Variant({
+  "Resolved": Null,
+  "Pending": Null
+});
+const MergeConflict = Record({
+  "id": Nat,
+  "field": Text,
+  "status": MergeConflictStatus$1,
+  "alternateValue": Text,
+  "canonicalValue": Text,
+  "resolvedAt": Opt(Int),
+  "resolvedBy": Opt(Principal2)
+});
+const MergeResult = Record({
+  "archivedPersonId": PersonId,
+  "conflicts": Vec(MergeConflict),
+  "canonicalPersonId": PersonId
+});
+const MergeError = Variant({
+  "NotDuplicate": Null,
+  "ProfileNotFound": Null,
+  "NotSignedIn": Null,
+  "SameProfile": Null
+});
+const Result_11 = Variant({
+  "ok": MergeResult,
+  "err": MergeError
+});
+const Result_10 = Variant({ "ok": Null, "err": MergeError });
+const DeleteError = Variant({
+  "HasOwnershipHistory": Null,
+  "ProfileNotFound": Null,
+  "HasMedia": Null,
+  "HasArchiveItems": Null,
+  "NotSignedIn": Null,
+  "ConfirmationRequired": Null,
+  "HasTimeline": Null,
+  "HasApprovedRelationships": Null
+});
+const Result_9 = Variant({ "ok": Null, "err": DeleteError });
 const RelationshipError = Variant({
   "DuplicateRequest": Null,
   "NotSignedIn": Null,
   "PersonNotFound": Null
 });
-const Result_3 = Variant({
+const Result_7 = Variant({
   "ok": RelationshipRequest,
   "err": RelationshipError
 });
@@ -34172,7 +34477,12 @@ const RemoveError = Variant({
   "ProfileNotFound": Null,
   "NotSignedIn": Null
 });
-const Result_2 = Variant({ "ok": Null, "err": RemoveError });
+const Result_6 = Variant({ "ok": Null, "err": RemoveError });
+const Result_5 = Variant({
+  "ok": Null,
+  "err": RelationshipAdminError
+});
+const Result_4 = Variant({ "ok": Null, "err": StewardError });
 const ClaimError$1 = Variant({
   "AlreadyPending": Null,
   "ProfileNotFound": Null,
@@ -34180,9 +34490,20 @@ const ClaimError$1 = Variant({
   "NotSignedIn": Null,
   "DeceasedProfile": Null
 });
-const Result_1 = Variant({
+const Result_3 = Variant({
   "ok": ProfileClaim,
   "err": ClaimError$1
+});
+const RemovalError = Variant({
+  "AlreadyPending": Null,
+  "ProfileNotFound": Null,
+  "NotSignedIn": Null,
+  "NotOwner": Null,
+  "DeceasedProfile": Null
+});
+const Result_2 = Variant({
+  "ok": ProfileRemovalRequest,
+  "err": RemovalError
 });
 const PersonMatch = Record({
   "name": Text,
@@ -34243,28 +34564,46 @@ Service({
   ),
   "_immutableObjectStorageUpdateGatewayPrincipals": Func([], [], []),
   "_initialize_access_control": Func([], [], []),
-  "_internet_identity_sign_in_finish": Func([], [Result_8], []),
+  "_internet_identity_sign_in_finish": Func([], [Result_18], []),
   "_internet_identity_sign_in_start": Func([], [Vec(Nat8)], []),
+  "activateSuccessor": Func([PersonId], [Result_8], []),
   "addPhoto": Func(
     [PersonId, Text, Text, ExternalBlob2],
     [Photo],
     []
   ),
+  "addRelationship": Func(
+    [PersonId, PersonId, RelationshipType$1],
+    [Result_16],
+    []
+  ),
   "approveArchiveItem": Func([ArchiveItemId], [Opt(ArchiveItem)], []),
   "approveProfileClaim": Func([Nat], [Opt(ProfileClaim)], []),
+  "approveProfileRemoval": Func(
+    [Nat],
+    [Opt(ProfileRemovalRequest)],
+    []
+  ),
   "approveRelationshipRequest": Func(
     [Nat],
     [Opt(RelationshipRequest)],
     []
   ),
+  "archiveProfile": Func([PersonId], [Result_1], []),
   "assignCallerUserRole": Func([Principal2, UserRole], [], []),
-  "bindAuthMethod": Func([AuthMethod], [Result_7], []),
-  "createMyself": Func([Text], [Result_6], []),
+  "bindAuthMethod": Func([AuthMethod], [Result_17], []),
+  "correctRelationshipType": Func(
+    [Nat, RelationshipType$1],
+    [Result_16],
+    []
+  ),
+  "createMyself": Func([Text], [Result_15], []),
+  "designateSuccessor": Func([PersonId, Nat], [Result_14], []),
   "execute": Func([Text], [Result__1], ["query"]),
   "getApiDoc": Func([], [Text], ["query"]),
   "getCallerUserRole": Func([], [UserRole], ["query"]),
-  "getMyAccountId": Func([], [Result_5], ["query"]),
-  "getMyAuthMethods": Func([], [Result_4], ["query"]),
+  "getMyAccountId": Func([], [Result_13], ["query"]),
+  "getMyAuthMethods": Func([], [Result_12], ["query"]),
   "getMyProfile": Func([], [Opt(PersonProfile)], ["query"]),
   "getMyProfileClaim": Func(
     [PersonId],
@@ -34287,42 +34626,83 @@ Service({
     [Opt(RelationshipRequest)],
     ["query"]
   ),
+  "getSingleStewardWarning": Func([], [Opt(Text)], ["query"]),
   "isCallerAdmin": Func([], [Bool], ["query"]),
   "listApprovedArchiveItems": Func([], [Vec(ArchiveItem)], ["query"]),
+  "listArchivedProfileIds": Func([], [Vec(PersonId)], ["query"]),
+  "listArchivedProfiles": Func([], [Vec(PersonProfile)], ["query"]),
+  "listAuditHistory": Func([], [Vec(AuditEntry)], ["query"]),
   "listConfirmedRelationships": Func(
     [],
     [Vec(Relationship)],
     ["query"]
   ),
+  "listDuplicateCandidates": Func([], [Vec(DuplicatePair)], ["query"]),
+  "listEligibleStewardCandidates": Func(
+    [],
+    [Vec(StewardIdentity)],
+    ["query"]
+  ),
   "listNotifications": Func([], [Vec(Notification)], ["query"]),
   "listPendingArchiveItems": Func([], [Vec(ArchiveItem)], ["query"]),
+  "listPersonRelationships": Func(
+    [PersonId],
+    [Vec(Relationship)],
+    ["query"]
+  ),
   "listPhotos": Func([PersonId], [Vec(Photo)], ["query"]),
   "listProfileClaims": Func([], [Vec(ProfileClaim)], ["query"]),
+  "listProfileRemovalRequests": Func(
+    [],
+    [Vec(ProfileRemovalRequest)],
+    ["query"]
+  ),
   "listRelationshipRequests": Func(
     [],
     [Vec(RelationshipRequest)],
     ["query"]
   ),
+  "listStewardIdentities": Func([], [Vec(StewardIdentity)], ["query"]),
+  "listStewards": Func([], [Vec(StewardRecord)], ["query"]),
+  "listSuccessors": Func([], [Vec(SuccessorDesignation)], ["query"]),
   "markNotificationRead": Func(
     [NotificationId],
     [Opt(Notification)],
     []
   ),
+  "mergeProfiles": Func([PersonId, PersonId], [Result_11], []),
+  "notDuplicate": Func([PersonId, PersonId], [Result_10], []),
+  "permanentlyDeleteProfile": Func([PersonId, Bool], [Result_9], []),
+  "promoteToSteward": Func([PersonId], [Result_8], []),
   "proposeRelationship": Func(
     [PersonId, PersonId, RelationshipType$1],
-    [Result_3],
+    [Result_7],
     []
   ),
   "rejectArchiveItem": Func([ArchiveItemId], [Opt(ArchiveItem)], []),
   "rejectProfileClaim": Func([Nat], [Opt(ProfileClaim)], []),
+  "rejectProfileRemoval": Func(
+    [Nat],
+    [Opt(ProfileRemovalRequest)],
+    []
+  ),
   "rejectRelationshipRequest": Func(
     [Nat],
     [Opt(RelationshipRequest)],
     []
   ),
-  "removeDuplicateProfile": Func([PersonId], [Result_2], []),
+  "removeDuplicateProfile": Func([PersonId], [Result_6], []),
   "removePhoto": Func([PersonId, PhotoId], [Bool], []),
-  "requestProfileClaim": Func([PersonId], [Result_1], []),
+  "removeRelationship": Func([Nat], [Result_5], []),
+  "removeSteward": Func([Principal2], [Result_4], []),
+  "requestProfileClaim": Func([PersonId], [Result_3], []),
+  "requestProfileRemoval": Func([PersonId, Text], [Result_2], []),
+  "resolveMergeConflict": Func(
+    [Nat, Text],
+    [Opt(MergeConflict)],
+    []
+  ),
+  "restoreProfile": Func([PersonId], [Result_1], []),
   "schema": Func([], [Text], ["query"]),
   "searchPossibleMatches": Func(
     [Text],
@@ -34387,8 +34767,28 @@ const idlFactory = ({ IDL: IDL2 }) => {
       "expected": IDL2.Vec(IDL2.Text)
     })
   });
-  const Result_82 = IDL2.Variant({ "ok": IDL2.Null, "err": Error2 });
+  const Result_182 = IDL2.Variant({ "ok": IDL2.Null, "err": Error2 });
   const PersonId2 = IDL2.Text;
+  const StewardRoleStatus2 = IDL2.Variant({
+    "Active": IDL2.Null,
+    "Removed": IDL2.Null
+  });
+  const StewardRecord2 = IDL2.Record({
+    "assignedAt": IDL2.Int,
+    "assignedBy": IDL2.Principal,
+    "stewardAccountId": IDL2.Principal,
+    "successorPriority": IDL2.Opt(IDL2.Nat),
+    "roleStatus": StewardRoleStatus2
+  });
+  const StewardError2 = IDL2.Variant({
+    "LastSteward": IDL2.Null,
+    "NotSteward": IDL2.Null,
+    "AlreadySteward": IDL2.Null,
+    "NotSignedIn": IDL2.Null,
+    "NotApprovedClaimedMember": IDL2.Null,
+    "NotDesignated": IDL2.Null
+  });
+  const Result_82 = IDL2.Variant({ "ok": StewardRecord2, "err": StewardError2 });
   const ExternalBlob3 = IDL2.Vec(IDL2.Nat8);
   const PhotoId2 = IDL2.Nat;
   const Photo2 = IDL2.Record({
@@ -34398,6 +34798,34 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "filename": IDL2.Text,
     "uploadedAt": IDL2.Int,
     "uploadedBy": IDL2.Principal
+  });
+  const RelationshipType2 = IDL2.Variant({
+    "Parent": IDL2.Null,
+    "Sibling": IDL2.Null,
+    "SpousePartner": IDL2.Null,
+    "Child": IDL2.Null
+  });
+  const RelationshipStatus2 = IDL2.Variant({
+    "Disputed": IDL2.Null,
+    "Confirmed": IDL2.Null,
+    "Pending": IDL2.Null
+  });
+  const Relationship2 = IDL2.Record({
+    "id": IDL2.Nat,
+    "status": RelationshipStatus2,
+    "fromPersonId": PersonId2,
+    "toPersonId": PersonId2,
+    "relationshipType": RelationshipType2
+  });
+  const RelationshipAdminError2 = IDL2.Variant({
+    "RelationshipNotFound": IDL2.Null,
+    "NotSignedIn": IDL2.Null,
+    "DuplicateRelationship": IDL2.Null,
+    "PersonNotFound": IDL2.Null
+  });
+  const Result_162 = IDL2.Variant({
+    "ok": Relationship2,
+    "err": RelationshipAdminError2
   });
   const ArchiveItemId2 = IDL2.Nat;
   const ArchiveItemStatus2 = IDL2.Variant({
@@ -34457,16 +34885,25 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "personId": PersonId2,
     "requestingUserId": IDL2.Principal
   });
-  const RelationshipRequestStatus2 = IDL2.Variant({
+  const ProfileRemovalStatus2 = IDL2.Variant({
     "Approved": IDL2.Null,
     "Rejected": IDL2.Null,
     "Pending": IDL2.Null
   });
-  const RelationshipType2 = IDL2.Variant({
-    "Parent": IDL2.Null,
-    "Sibling": IDL2.Null,
-    "SpousePartner": IDL2.Null,
-    "Child": IDL2.Null
+  const ProfileRemovalRequest2 = IDL2.Record({
+    "id": IDL2.Nat,
+    "submittedDate": IDL2.Int,
+    "status": ProfileRemovalStatus2,
+    "reviewedDate": IDL2.Opt(IDL2.Int),
+    "reviewedBy": IDL2.Opt(IDL2.Principal),
+    "personId": PersonId2,
+    "requestingUserId": IDL2.Principal,
+    "reason": IDL2.Text
+  });
+  const RelationshipRequestStatus2 = IDL2.Variant({
+    "Approved": IDL2.Null,
+    "Rejected": IDL2.Null,
+    "Pending": IDL2.Null
   });
   const RelationshipRequest2 = IDL2.Record({
     "id": IDL2.Nat,
@@ -34478,6 +34915,13 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "proposedRelationship": RelationshipType2,
     "reviewer": IDL2.Opt(IDL2.Principal)
   });
+  const ArchiveError2 = IDL2.Variant({
+    "NotArchived": IDL2.Null,
+    "ProfileNotFound": IDL2.Null,
+    "AlreadyArchived": IDL2.Null,
+    "NotSignedIn": IDL2.Null
+  });
+  const Result_19 = IDL2.Variant({ "ok": IDL2.Null, "err": ArchiveError2 });
   const UserRole2 = IDL2.Variant({
     "admin": IDL2.Null,
     "user": IDL2.Null,
@@ -34494,7 +34938,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "AccountNotFound": IDL2.Null,
     "NotSignedIn": IDL2.Null
   });
-  const Result_72 = IDL2.Variant({ "ok": Account2, "err": AccountError2 });
+  const Result_172 = IDL2.Variant({ "ok": Account2, "err": AccountError2 });
   const ClaimStatus2 = IDL2.Variant({
     "Unclaimed": IDL2.Null,
     "Claimed": IDL2.Null
@@ -34527,7 +34971,23 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "firstName": IDL2.Opt(IDL2.Text)
   });
   const CreateError2 = IDL2.Variant({ "NotSignedIn": IDL2.Null });
-  const Result_62 = IDL2.Variant({ "ok": PersonProfile2, "err": CreateError2 });
+  const Result_152 = IDL2.Variant({ "ok": PersonProfile2, "err": CreateError2 });
+  const SuccessorStatus2 = IDL2.Variant({
+    "Activated": IDL2.Null,
+    "Removed": IDL2.Null,
+    "Designated": IDL2.Null
+  });
+  const SuccessorDesignation2 = IDL2.Record({
+    "status": SuccessorStatus2,
+    "assignedAt": IDL2.Int,
+    "assignedBy": IDL2.Principal,
+    "personId": PersonId2,
+    "priority": IDL2.Nat
+  });
+  const Result_142 = IDL2.Variant({
+    "ok": SuccessorDesignation2,
+    "err": StewardError2
+  });
   const Value2 = IDL2.Variant({
     "int": IDL2.Int,
     "nat": IDL2.Nat,
@@ -34541,20 +35001,61 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "hasMore": IDL2.Bool,
     "rows": IDL2.Vec(IDL2.Vec(Cell2))
   });
-  const Result_52 = IDL2.Variant({ "ok": AccountId2, "err": AccountError2 });
+  const Result_132 = IDL2.Variant({ "ok": AccountId2, "err": AccountError2 });
   const AuthMethods2 = IDL2.Record({ "apple": IDL2.Bool, "google": IDL2.Bool });
-  const Result_42 = IDL2.Variant({ "ok": AuthMethods2, "err": AccountError2 });
-  const RelationshipStatus2 = IDL2.Variant({
-    "Disputed": IDL2.Null,
-    "Confirmed": IDL2.Null,
-    "Pending": IDL2.Null
+  const Result_122 = IDL2.Variant({ "ok": AuthMethods2, "err": AccountError2 });
+  const AuditActionType2 = IDL2.Variant({
+    "ProfileRemovalRequested": IDL2.Null,
+    "ClaimRejected": IDL2.Null,
+    "RelationshipTypeCorrected": IDL2.Null,
+    "RelationshipRequestPending": IDL2.Null,
+    "StewardPromoted": IDL2.Null,
+    "SuccessorActivated": IDL2.Null,
+    "StewardRemoved": IDL2.Null,
+    "RelationshipRequestApproved": IDL2.Null,
+    "DuplicateMerged": IDL2.Null,
+    "ProfilePermanentlyDeleted": IDL2.Null,
+    "RelationshipRequestRejected": IDL2.Null,
+    "ProfileArchived": IDL2.Null,
+    "ProfileRestored": IDL2.Null,
+    "RelationshipAdded": IDL2.Null,
+    "RelationshipRemoved": IDL2.Null,
+    "ProfileRemovalReviewed": IDL2.Null,
+    "ClaimApproved": IDL2.Null,
+    "SuccessorDesignated": IDL2.Null
   });
-  const Relationship2 = IDL2.Record({
+  const AuditEntry2 = IDL2.Record({
     "id": IDL2.Nat,
-    "status": RelationshipStatus2,
-    "fromPersonId": PersonId2,
-    "toPersonId": PersonId2,
-    "relationshipType": RelationshipType2
+    "affectedPersonIds": IDL2.Vec(PersonId2),
+    "actionType": AuditActionType2,
+    "summary": IDL2.Text,
+    "timestamp": IDL2.Int,
+    "actorAccountId": IDL2.Principal
+  });
+  const DuplicateCandidate2 = IDL2.Record({
+    "deathDate": IDL2.Opt(IDL2.Text),
+    "ownerAccount": IDL2.Opt(IDL2.Principal),
+    "birthDate": IDL2.Opt(IDL2.Text),
+    "claimStatus": IDL2.Text,
+    "name": IDL2.Text,
+    "archiveLinks": IDL2.Vec(IDL2.Text),
+    "children": IDL2.Vec(IDL2.Text),
+    "sourceCount": IDL2.Nat,
+    "personId": PersonId2,
+    "spouses": IDL2.Vec(IDL2.Text),
+    "photoCount": IDL2.Nat,
+    "timelineCount": IDL2.Nat,
+    "parents": IDL2.Vec(IDL2.Text)
+  });
+  const DuplicatePair2 = IDL2.Record({
+    "candidateA": DuplicateCandidate2,
+    "candidateB": DuplicateCandidate2
+  });
+  const StewardIdentity2 = IDL2.Record({
+    "accountId": IDL2.Principal,
+    "displayName": IDL2.Text,
+    "personId": PersonId2,
+    "canonicalName": IDL2.Text
   });
   const NotificationType2 = IDL2.Variant({
     "RelationshipRequested": IDL2.Null,
@@ -34571,12 +35072,49 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "message": IDL2.Text
   });
   const NotificationId2 = IDL2.Nat;
+  const MergeConflictStatus2 = IDL2.Variant({
+    "Resolved": IDL2.Null,
+    "Pending": IDL2.Null
+  });
+  const MergeConflict2 = IDL2.Record({
+    "id": IDL2.Nat,
+    "field": IDL2.Text,
+    "status": MergeConflictStatus2,
+    "alternateValue": IDL2.Text,
+    "canonicalValue": IDL2.Text,
+    "resolvedAt": IDL2.Opt(IDL2.Int),
+    "resolvedBy": IDL2.Opt(IDL2.Principal)
+  });
+  const MergeResult2 = IDL2.Record({
+    "archivedPersonId": PersonId2,
+    "conflicts": IDL2.Vec(MergeConflict2),
+    "canonicalPersonId": PersonId2
+  });
+  const MergeError2 = IDL2.Variant({
+    "NotDuplicate": IDL2.Null,
+    "ProfileNotFound": IDL2.Null,
+    "NotSignedIn": IDL2.Null,
+    "SameProfile": IDL2.Null
+  });
+  const Result_112 = IDL2.Variant({ "ok": MergeResult2, "err": MergeError2 });
+  const Result_102 = IDL2.Variant({ "ok": IDL2.Null, "err": MergeError2 });
+  const DeleteError2 = IDL2.Variant({
+    "HasOwnershipHistory": IDL2.Null,
+    "ProfileNotFound": IDL2.Null,
+    "HasMedia": IDL2.Null,
+    "HasArchiveItems": IDL2.Null,
+    "NotSignedIn": IDL2.Null,
+    "ConfirmationRequired": IDL2.Null,
+    "HasTimeline": IDL2.Null,
+    "HasApprovedRelationships": IDL2.Null
+  });
+  const Result_92 = IDL2.Variant({ "ok": IDL2.Null, "err": DeleteError2 });
   const RelationshipError2 = IDL2.Variant({
     "DuplicateRequest": IDL2.Null,
     "NotSignedIn": IDL2.Null,
     "PersonNotFound": IDL2.Null
   });
-  const Result_32 = IDL2.Variant({
+  const Result_72 = IDL2.Variant({
     "ok": RelationshipRequest2,
     "err": RelationshipError2
   });
@@ -34584,7 +35122,12 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "ProfileNotFound": IDL2.Null,
     "NotSignedIn": IDL2.Null
   });
-  const Result_22 = IDL2.Variant({ "ok": IDL2.Null, "err": RemoveError2 });
+  const Result_62 = IDL2.Variant({ "ok": IDL2.Null, "err": RemoveError2 });
+  const Result_52 = IDL2.Variant({
+    "ok": IDL2.Null,
+    "err": RelationshipAdminError2
+  });
+  const Result_42 = IDL2.Variant({ "ok": IDL2.Null, "err": StewardError2 });
   const ClaimError2 = IDL2.Variant({
     "AlreadyPending": IDL2.Null,
     "ProfileNotFound": IDL2.Null,
@@ -34592,7 +35135,18 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "NotSignedIn": IDL2.Null,
     "DeceasedProfile": IDL2.Null
   });
-  const Result_12 = IDL2.Variant({ "ok": ProfileClaim2, "err": ClaimError2 });
+  const Result_32 = IDL2.Variant({ "ok": ProfileClaim2, "err": ClaimError2 });
+  const RemovalError2 = IDL2.Variant({
+    "AlreadyPending": IDL2.Null,
+    "ProfileNotFound": IDL2.Null,
+    "NotSignedIn": IDL2.Null,
+    "NotOwner": IDL2.Null,
+    "DeceasedProfile": IDL2.Null
+  });
+  const Result_22 = IDL2.Variant({
+    "ok": ProfileRemovalRequest2,
+    "err": RemovalError2
+  });
   const PersonMatch2 = IDL2.Record({
     "name": IDL2.Text,
     "personId": PersonId2,
@@ -34652,11 +35206,17 @@ const idlFactory = ({ IDL: IDL2 }) => {
     ),
     "_immutableObjectStorageUpdateGatewayPrincipals": IDL2.Func([], [], []),
     "_initialize_access_control": IDL2.Func([], [], []),
-    "_internet_identity_sign_in_finish": IDL2.Func([], [Result_82], []),
+    "_internet_identity_sign_in_finish": IDL2.Func([], [Result_182], []),
     "_internet_identity_sign_in_start": IDL2.Func([], [IDL2.Vec(IDL2.Nat8)], []),
+    "activateSuccessor": IDL2.Func([PersonId2], [Result_82], []),
     "addPhoto": IDL2.Func(
       [PersonId2, IDL2.Text, IDL2.Text, ExternalBlob3],
       [Photo2],
+      []
+    ),
+    "addRelationship": IDL2.Func(
+      [PersonId2, PersonId2, RelationshipType2],
+      [Result_162],
       []
     ),
     "approveArchiveItem": IDL2.Func(
@@ -34665,19 +35225,31 @@ const idlFactory = ({ IDL: IDL2 }) => {
       []
     ),
     "approveProfileClaim": IDL2.Func([IDL2.Nat], [IDL2.Opt(ProfileClaim2)], []),
+    "approveProfileRemoval": IDL2.Func(
+      [IDL2.Nat],
+      [IDL2.Opt(ProfileRemovalRequest2)],
+      []
+    ),
     "approveRelationshipRequest": IDL2.Func(
       [IDL2.Nat],
       [IDL2.Opt(RelationshipRequest2)],
       []
     ),
+    "archiveProfile": IDL2.Func([PersonId2], [Result_19], []),
     "assignCallerUserRole": IDL2.Func([IDL2.Principal, UserRole2], [], []),
-    "bindAuthMethod": IDL2.Func([AuthMethod2], [Result_72], []),
-    "createMyself": IDL2.Func([IDL2.Text], [Result_62], []),
+    "bindAuthMethod": IDL2.Func([AuthMethod2], [Result_172], []),
+    "correctRelationshipType": IDL2.Func(
+      [IDL2.Nat, RelationshipType2],
+      [Result_162],
+      []
+    ),
+    "createMyself": IDL2.Func([IDL2.Text], [Result_152], []),
+    "designateSuccessor": IDL2.Func([PersonId2, IDL2.Nat], [Result_142], []),
     "execute": IDL2.Func([IDL2.Text], [Result__12], ["query"]),
     "getApiDoc": IDL2.Func([], [IDL2.Text], ["query"]),
     "getCallerUserRole": IDL2.Func([], [UserRole2], ["query"]),
-    "getMyAccountId": IDL2.Func([], [Result_52], ["query"]),
-    "getMyAuthMethods": IDL2.Func([], [Result_42], ["query"]),
+    "getMyAccountId": IDL2.Func([], [Result_132], ["query"]),
+    "getMyAuthMethods": IDL2.Func([], [Result_122], ["query"]),
     "getMyProfile": IDL2.Func([], [IDL2.Opt(PersonProfile2)], ["query"]),
     "getMyProfileClaim": IDL2.Func(
       [PersonId2],
@@ -34700,46 +35272,95 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [IDL2.Opt(RelationshipRequest2)],
       ["query"]
     ),
+    "getSingleStewardWarning": IDL2.Func([], [IDL2.Opt(IDL2.Text)], ["query"]),
     "isCallerAdmin": IDL2.Func([], [IDL2.Bool], ["query"]),
     "listApprovedArchiveItems": IDL2.Func(
       [],
       [IDL2.Vec(ArchiveItem2)],
       ["query"]
     ),
+    "listArchivedProfileIds": IDL2.Func([], [IDL2.Vec(PersonId2)], ["query"]),
+    "listArchivedProfiles": IDL2.Func([], [IDL2.Vec(PersonProfile2)], ["query"]),
+    "listAuditHistory": IDL2.Func([], [IDL2.Vec(AuditEntry2)], ["query"]),
     "listConfirmedRelationships": IDL2.Func(
       [],
       [IDL2.Vec(Relationship2)],
       ["query"]
     ),
+    "listDuplicateCandidates": IDL2.Func(
+      [],
+      [IDL2.Vec(DuplicatePair2)],
+      ["query"]
+    ),
+    "listEligibleStewardCandidates": IDL2.Func(
+      [],
+      [IDL2.Vec(StewardIdentity2)],
+      ["query"]
+    ),
     "listNotifications": IDL2.Func([], [IDL2.Vec(Notification2)], ["query"]),
     "listPendingArchiveItems": IDL2.Func([], [IDL2.Vec(ArchiveItem2)], ["query"]),
+    "listPersonRelationships": IDL2.Func(
+      [PersonId2],
+      [IDL2.Vec(Relationship2)],
+      ["query"]
+    ),
     "listPhotos": IDL2.Func([PersonId2], [IDL2.Vec(Photo2)], ["query"]),
     "listProfileClaims": IDL2.Func([], [IDL2.Vec(ProfileClaim2)], ["query"]),
+    "listProfileRemovalRequests": IDL2.Func(
+      [],
+      [IDL2.Vec(ProfileRemovalRequest2)],
+      ["query"]
+    ),
     "listRelationshipRequests": IDL2.Func(
       [],
       [IDL2.Vec(RelationshipRequest2)],
       ["query"]
     ),
+    "listStewardIdentities": IDL2.Func(
+      [],
+      [IDL2.Vec(StewardIdentity2)],
+      ["query"]
+    ),
+    "listStewards": IDL2.Func([], [IDL2.Vec(StewardRecord2)], ["query"]),
+    "listSuccessors": IDL2.Func([], [IDL2.Vec(SuccessorDesignation2)], ["query"]),
     "markNotificationRead": IDL2.Func(
       [NotificationId2],
       [IDL2.Opt(Notification2)],
       []
     ),
+    "mergeProfiles": IDL2.Func([PersonId2, PersonId2], [Result_112], []),
+    "notDuplicate": IDL2.Func([PersonId2, PersonId2], [Result_102], []),
+    "permanentlyDeleteProfile": IDL2.Func([PersonId2, IDL2.Bool], [Result_92], []),
+    "promoteToSteward": IDL2.Func([PersonId2], [Result_82], []),
     "proposeRelationship": IDL2.Func(
       [PersonId2, PersonId2, RelationshipType2],
-      [Result_32],
+      [Result_72],
       []
     ),
     "rejectArchiveItem": IDL2.Func([ArchiveItemId2], [IDL2.Opt(ArchiveItem2)], []),
     "rejectProfileClaim": IDL2.Func([IDL2.Nat], [IDL2.Opt(ProfileClaim2)], []),
+    "rejectProfileRemoval": IDL2.Func(
+      [IDL2.Nat],
+      [IDL2.Opt(ProfileRemovalRequest2)],
+      []
+    ),
     "rejectRelationshipRequest": IDL2.Func(
       [IDL2.Nat],
       [IDL2.Opt(RelationshipRequest2)],
       []
     ),
-    "removeDuplicateProfile": IDL2.Func([PersonId2], [Result_22], []),
+    "removeDuplicateProfile": IDL2.Func([PersonId2], [Result_62], []),
     "removePhoto": IDL2.Func([PersonId2, PhotoId2], [IDL2.Bool], []),
-    "requestProfileClaim": IDL2.Func([PersonId2], [Result_12], []),
+    "removeRelationship": IDL2.Func([IDL2.Nat], [Result_52], []),
+    "removeSteward": IDL2.Func([IDL2.Principal], [Result_42], []),
+    "requestProfileClaim": IDL2.Func([PersonId2], [Result_32], []),
+    "requestProfileRemoval": IDL2.Func([PersonId2, IDL2.Text], [Result_22], []),
+    "resolveMergeConflict": IDL2.Func(
+      [IDL2.Nat, IDL2.Text],
+      [IDL2.Opt(MergeConflict2)],
+      []
+    ),
+    "restoreProfile": IDL2.Func([PersonId2], [Result_19], []),
     "schema": IDL2.Func([], [IDL2.Text], ["query"]),
     "searchPossibleMatches": IDL2.Func(
       [IDL2.Text],
@@ -34800,6 +35421,27 @@ var ArchiveItemType = /* @__PURE__ */ ((ArchiveItemType2) => {
   ArchiveItemType2["Video"] = "Video";
   return ArchiveItemType2;
 })(ArchiveItemType || {});
+var AuditActionType = /* @__PURE__ */ ((AuditActionType2) => {
+  AuditActionType2["ProfileRemovalRequested"] = "ProfileRemovalRequested";
+  AuditActionType2["ClaimRejected"] = "ClaimRejected";
+  AuditActionType2["RelationshipTypeCorrected"] = "RelationshipTypeCorrected";
+  AuditActionType2["RelationshipRequestPending"] = "RelationshipRequestPending";
+  AuditActionType2["StewardPromoted"] = "StewardPromoted";
+  AuditActionType2["SuccessorActivated"] = "SuccessorActivated";
+  AuditActionType2["StewardRemoved"] = "StewardRemoved";
+  AuditActionType2["RelationshipRequestApproved"] = "RelationshipRequestApproved";
+  AuditActionType2["DuplicateMerged"] = "DuplicateMerged";
+  AuditActionType2["ProfilePermanentlyDeleted"] = "ProfilePermanentlyDeleted";
+  AuditActionType2["RelationshipRequestRejected"] = "RelationshipRequestRejected";
+  AuditActionType2["ProfileArchived"] = "ProfileArchived";
+  AuditActionType2["ProfileRestored"] = "ProfileRestored";
+  AuditActionType2["RelationshipAdded"] = "RelationshipAdded";
+  AuditActionType2["RelationshipRemoved"] = "RelationshipRemoved";
+  AuditActionType2["ProfileRemovalReviewed"] = "ProfileRemovalReviewed";
+  AuditActionType2["ClaimApproved"] = "ClaimApproved";
+  AuditActionType2["SuccessorDesignated"] = "SuccessorDesignated";
+  return AuditActionType2;
+})(AuditActionType || {});
 var ClaimError = /* @__PURE__ */ ((ClaimError2) => {
   ClaimError2["AlreadyPending"] = "AlreadyPending";
   ClaimError2["ProfileNotFound"] = "ProfileNotFound";
@@ -34825,6 +35467,11 @@ var LivingStatus = /* @__PURE__ */ ((LivingStatus2) => {
   LivingStatus2["Deceased"] = "Deceased";
   return LivingStatus2;
 })(LivingStatus || {});
+var MergeConflictStatus = /* @__PURE__ */ ((MergeConflictStatus2) => {
+  MergeConflictStatus2["Resolved"] = "Resolved";
+  MergeConflictStatus2["Pending"] = "Pending";
+  return MergeConflictStatus2;
+})(MergeConflictStatus || {});
 var NotificationType = /* @__PURE__ */ ((NotificationType2) => {
   NotificationType2["RelationshipRequested"] = "RelationshipRequested";
   NotificationType2["RelationshipReviewed"] = "RelationshipReviewed";
@@ -34858,6 +35505,17 @@ var SourceStatus = /* @__PURE__ */ ((SourceStatus2) => {
   SourceStatus2["Original"] = "Original";
   return SourceStatus2;
 })(SourceStatus || {});
+var StewardRoleStatus = /* @__PURE__ */ ((StewardRoleStatus2) => {
+  StewardRoleStatus2["Active"] = "Active";
+  StewardRoleStatus2["Removed"] = "Removed";
+  return StewardRoleStatus2;
+})(StewardRoleStatus || {});
+var SuccessorStatus = /* @__PURE__ */ ((SuccessorStatus2) => {
+  SuccessorStatus2["Activated"] = "Activated";
+  SuccessorStatus2["Removed"] = "Removed";
+  SuccessorStatus2["Designated"] = "Designated";
+  return SuccessorStatus2;
+})(SuccessorStatus || {});
 class Backend {
   constructor(actor, _uploadFile, _downloadFile, processError2) {
     this.actor = actor;
@@ -34967,14 +35625,14 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor._internet_identity_sign_in_finish();
-        return from_candid_Result_8_n8(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_18_n8(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor._internet_identity_sign_in_finish();
-      return from_candid_Result_8_n8(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_18_n8(this._uploadFile, this._downloadFile, result);
     }
   }
   async _internet_identity_sign_in_start() {
@@ -34991,116 +35649,200 @@ class Backend {
       return result;
     }
   }
-  async addPhoto(arg0, arg1, arg2, arg3) {
+  async activateSuccessor(arg0) {
     if (this.processError) {
       try {
-        const result = await this.actor.addPhoto(arg0, arg1, arg2, await to_candid_ExternalBlob_n12(this._uploadFile, this._downloadFile, arg3));
-        return from_candid_Photo_n13(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.activateSuccessor(arg0);
+        return from_candid_Result_8_n12(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.addPhoto(arg0, arg1, arg2, await to_candid_ExternalBlob_n12(this._uploadFile, this._downloadFile, arg3));
-      return from_candid_Photo_n13(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.activateSuccessor(arg0);
+      return from_candid_Result_8_n12(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async addPhoto(arg0, arg1, arg2, arg3) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.addPhoto(arg0, arg1, arg2, await to_candid_ExternalBlob_n20(this._uploadFile, this._downloadFile, arg3));
+        return from_candid_Photo_n21(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.addPhoto(arg0, arg1, arg2, await to_candid_ExternalBlob_n20(this._uploadFile, this._downloadFile, arg3));
+      return from_candid_Photo_n21(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async addRelationship(arg0, arg1, arg2) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.addRelationship(arg0, arg1, to_candid_RelationshipType_n24(this._uploadFile, this._downloadFile, arg2));
+        return from_candid_Result_16_n26(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.addRelationship(arg0, arg1, to_candid_RelationshipType_n24(this._uploadFile, this._downloadFile, arg2));
+      return from_candid_Result_16_n26(this._uploadFile, this._downloadFile, result);
     }
   }
   async approveArchiveItem(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.approveArchiveItem(arg0);
-        return from_candid_opt_n16(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n36(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.approveArchiveItem(arg0);
-      return from_candid_opt_n16(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n36(this._uploadFile, this._downloadFile, result);
     }
   }
   async approveProfileClaim(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.approveProfileClaim(arg0);
-        return from_candid_opt_n28(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n48(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.approveProfileClaim(arg0);
-      return from_candid_opt_n28(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n48(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async approveProfileRemoval(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.approveProfileRemoval(arg0);
+        return from_candid_opt_n54(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.approveProfileRemoval(arg0);
+      return from_candid_opt_n54(this._uploadFile, this._downloadFile, result);
     }
   }
   async approveRelationshipRequest(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.approveRelationshipRequest(arg0);
-        return from_candid_opt_n34(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n58(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.approveRelationshipRequest(arg0);
-      return from_candid_opt_n34(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n58(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async archiveProfile(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.archiveProfile(arg0);
+        return from_candid_Result_1_n62(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.archiveProfile(arg0);
+      return from_candid_Result_1_n62(this._uploadFile, this._downloadFile, result);
     }
   }
   async assignCallerUserRole(arg0, arg1) {
     if (this.processError) {
       try {
-        const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n40(this._uploadFile, this._downloadFile, arg1));
+        const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n66(this._uploadFile, this._downloadFile, arg1));
         return result;
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n40(this._uploadFile, this._downloadFile, arg1));
+      const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n66(this._uploadFile, this._downloadFile, arg1));
       return result;
     }
   }
   async bindAuthMethod(arg0) {
     if (this.processError) {
       try {
-        const result = await this.actor.bindAuthMethod(to_candid_AuthMethod_n42(this._uploadFile, this._downloadFile, arg0));
-        return from_candid_Result_7_n44(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.bindAuthMethod(to_candid_AuthMethod_n68(this._uploadFile, this._downloadFile, arg0));
+        return from_candid_Result_17_n70(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.bindAuthMethod(to_candid_AuthMethod_n42(this._uploadFile, this._downloadFile, arg0));
-      return from_candid_Result_7_n44(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.bindAuthMethod(to_candid_AuthMethod_n68(this._uploadFile, this._downloadFile, arg0));
+      return from_candid_Result_17_n70(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async correctRelationshipType(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.correctRelationshipType(arg0, to_candid_RelationshipType_n24(this._uploadFile, this._downloadFile, arg1));
+        return from_candid_Result_16_n26(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.correctRelationshipType(arg0, to_candid_RelationshipType_n24(this._uploadFile, this._downloadFile, arg1));
+      return from_candid_Result_16_n26(this._uploadFile, this._downloadFile, result);
     }
   }
   async createMyself(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.createMyself(arg0);
-        return from_candid_Result_6_n53(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_15_n79(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.createMyself(arg0);
-      return from_candid_Result_6_n53(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_15_n79(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async designateSuccessor(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.designateSuccessor(arg0, arg1);
+        return from_candid_Result_14_n90(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.designateSuccessor(arg0, arg1);
+      return from_candid_Result_14_n90(this._uploadFile, this._downloadFile, result);
     }
   }
   async execute(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.execute(arg0);
-        return from_candid_Result__1_n64(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result__1_n96(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.execute(arg0);
-      return from_candid_Result__1_n64(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result__1_n96(this._uploadFile, this._downloadFile, result);
     }
   }
   async getApiDoc() {
@@ -35121,126 +35863,140 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.getCallerUserRole();
-        return from_candid_UserRole_n72(this._uploadFile, this._downloadFile, result);
+        return from_candid_UserRole_n104(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getCallerUserRole();
-      return from_candid_UserRole_n72(this._uploadFile, this._downloadFile, result);
+      return from_candid_UserRole_n104(this._uploadFile, this._downloadFile, result);
     }
   }
   async getMyAccountId() {
     if (this.processError) {
       try {
         const result = await this.actor.getMyAccountId();
-        return from_candid_Result_5_n74(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_13_n106(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getMyAccountId();
-      return from_candid_Result_5_n74(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_13_n106(this._uploadFile, this._downloadFile, result);
     }
   }
   async getMyAuthMethods() {
     if (this.processError) {
       try {
         const result = await this.actor.getMyAuthMethods();
-        return from_candid_Result_4_n76(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_12_n108(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getMyAuthMethods();
-      return from_candid_Result_4_n76(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_12_n108(this._uploadFile, this._downloadFile, result);
     }
   }
   async getMyProfile() {
     if (this.processError) {
       try {
         const result = await this.actor.getMyProfile();
-        return from_candid_opt_n78(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n110(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getMyProfile();
-      return from_candid_opt_n78(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n110(this._uploadFile, this._downloadFile, result);
     }
   }
   async getMyProfileClaim(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.getMyProfileClaim(arg0);
-        return from_candid_opt_n28(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n48(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getMyProfileClaim(arg0);
-      return from_candid_opt_n28(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n48(this._uploadFile, this._downloadFile, result);
     }
   }
   async getMyRelationshipRequests() {
     if (this.processError) {
       try {
         const result = await this.actor.getMyRelationshipRequests();
-        return from_candid_vec_n79(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n111(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getMyRelationshipRequests();
-      return from_candid_vec_n79(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n111(this._uploadFile, this._downloadFile, result);
     }
   }
   async getPersonProfile(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.getPersonProfile(arg0);
-        return from_candid_opt_n78(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n110(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getPersonProfile(arg0);
-      return from_candid_opt_n78(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n110(this._uploadFile, this._downloadFile, result);
     }
   }
   async getProfilePhoto(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.getProfilePhoto(arg0);
-        return from_candid_opt_n80(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n112(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getProfilePhoto(arg0);
-      return from_candid_opt_n80(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n112(this._uploadFile, this._downloadFile, result);
     }
   }
   async getRelationshipRequest(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.getRelationshipRequest(arg0);
-        return from_candid_opt_n34(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n58(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getRelationshipRequest(arg0);
-      return from_candid_opt_n34(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n58(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async getSingleStewardWarning() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getSingleStewardWarning();
+        return from_candid_opt_n45(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getSingleStewardWarning();
+      return from_candid_opt_n45(this._uploadFile, this._downloadFile, result);
     }
   }
   async isCallerAdmin() {
@@ -35261,182 +36017,392 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.listApprovedArchiveItems();
-        return from_candid_vec_n81(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n113(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listApprovedArchiveItems();
-      return from_candid_vec_n81(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n113(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listArchivedProfileIds() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listArchivedProfileIds();
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listArchivedProfileIds();
+      return result;
+    }
+  }
+  async listArchivedProfiles() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listArchivedProfiles();
+        return from_candid_vec_n114(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listArchivedProfiles();
+      return from_candid_vec_n114(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listAuditHistory() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listAuditHistory();
+        return from_candid_vec_n115(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listAuditHistory();
+      return from_candid_vec_n115(this._uploadFile, this._downloadFile, result);
     }
   }
   async listConfirmedRelationships() {
     if (this.processError) {
       try {
         const result = await this.actor.listConfirmedRelationships();
-        return from_candid_vec_n82(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n120(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listConfirmedRelationships();
-      return from_candid_vec_n82(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n120(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listDuplicateCandidates() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listDuplicateCandidates();
+        return from_candid_vec_n121(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listDuplicateCandidates();
+      return from_candid_vec_n121(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listEligibleStewardCandidates() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listEligibleStewardCandidates();
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listEligibleStewardCandidates();
+      return result;
     }
   }
   async listNotifications() {
     if (this.processError) {
       try {
         const result = await this.actor.listNotifications();
-        return from_candid_vec_n87(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n126(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listNotifications();
-      return from_candid_vec_n87(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n126(this._uploadFile, this._downloadFile, result);
     }
   }
   async listPendingArchiveItems() {
     if (this.processError) {
       try {
         const result = await this.actor.listPendingArchiveItems();
-        return from_candid_vec_n81(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n113(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listPendingArchiveItems();
-      return from_candid_vec_n81(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n113(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listPersonRelationships(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listPersonRelationships(arg0);
+        return from_candid_vec_n120(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listPersonRelationships(arg0);
+      return from_candid_vec_n120(this._uploadFile, this._downloadFile, result);
     }
   }
   async listPhotos(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.listPhotos(arg0);
-        return from_candid_vec_n92(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n131(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listPhotos(arg0);
-      return from_candid_vec_n92(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n131(this._uploadFile, this._downloadFile, result);
     }
   }
   async listProfileClaims() {
     if (this.processError) {
       try {
         const result = await this.actor.listProfileClaims();
-        return from_candid_vec_n93(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n132(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listProfileClaims();
-      return from_candid_vec_n93(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n132(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listProfileRemovalRequests() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listProfileRemovalRequests();
+        return from_candid_vec_n133(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listProfileRemovalRequests();
+      return from_candid_vec_n133(this._uploadFile, this._downloadFile, result);
     }
   }
   async listRelationshipRequests() {
     if (this.processError) {
       try {
         const result = await this.actor.listRelationshipRequests();
-        return from_candid_vec_n79(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n111(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listRelationshipRequests();
-      return from_candid_vec_n79(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n111(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listStewardIdentities() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listStewardIdentities();
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listStewardIdentities();
+      return result;
+    }
+  }
+  async listStewards() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listStewards();
+        return from_candid_vec_n134(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listStewards();
+      return from_candid_vec_n134(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listSuccessors() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listSuccessors();
+        return from_candid_vec_n135(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listSuccessors();
+      return from_candid_vec_n135(this._uploadFile, this._downloadFile, result);
     }
   }
   async markNotificationRead(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.markNotificationRead(arg0);
-        return from_candid_opt_n94(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n136(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.markNotificationRead(arg0);
-      return from_candid_opt_n94(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n136(this._uploadFile, this._downloadFile, result);
     }
   }
-  async proposeRelationship(arg0, arg1, arg2) {
+  async mergeProfiles(arg0, arg1) {
     if (this.processError) {
       try {
-        const result = await this.actor.proposeRelationship(arg0, arg1, to_candid_RelationshipType_n95(this._uploadFile, this._downloadFile, arg2));
-        return from_candid_Result_3_n97(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.mergeProfiles(arg0, arg1);
+        return from_candid_Result_11_n137(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.proposeRelationship(arg0, arg1, to_candid_RelationshipType_n95(this._uploadFile, this._downloadFile, arg2));
-      return from_candid_Result_3_n97(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.mergeProfiles(arg0, arg1);
+      return from_candid_Result_11_n137(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async notDuplicate(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.notDuplicate(arg0, arg1);
+        return from_candid_Result_10_n148(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.notDuplicate(arg0, arg1);
+      return from_candid_Result_10_n148(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async permanentlyDeleteProfile(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.permanentlyDeleteProfile(arg0, arg1);
+        return from_candid_Result_9_n150(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.permanentlyDeleteProfile(arg0, arg1);
+      return from_candid_Result_9_n150(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async promoteToSteward(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.promoteToSteward(arg0);
+        return from_candid_Result_8_n12(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.promoteToSteward(arg0);
+      return from_candid_Result_8_n12(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async proposeRelationship(arg0, arg1, arg2) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.proposeRelationship(arg0, arg1, to_candid_RelationshipType_n24(this._uploadFile, this._downloadFile, arg2));
+        return from_candid_Result_7_n154(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.proposeRelationship(arg0, arg1, to_candid_RelationshipType_n24(this._uploadFile, this._downloadFile, arg2));
+      return from_candid_Result_7_n154(this._uploadFile, this._downloadFile, result);
     }
   }
   async rejectArchiveItem(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.rejectArchiveItem(arg0);
-        return from_candid_opt_n16(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n36(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.rejectArchiveItem(arg0);
-      return from_candid_opt_n16(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n36(this._uploadFile, this._downloadFile, result);
     }
   }
   async rejectProfileClaim(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.rejectProfileClaim(arg0);
-        return from_candid_opt_n28(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n48(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.rejectProfileClaim(arg0);
-      return from_candid_opt_n28(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n48(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async rejectProfileRemoval(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.rejectProfileRemoval(arg0);
+        return from_candid_opt_n54(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.rejectProfileRemoval(arg0);
+      return from_candid_opt_n54(this._uploadFile, this._downloadFile, result);
     }
   }
   async rejectRelationshipRequest(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.rejectRelationshipRequest(arg0);
-        return from_candid_opt_n34(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n58(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.rejectRelationshipRequest(arg0);
-      return from_candid_opt_n34(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n58(this._uploadFile, this._downloadFile, result);
     }
   }
   async removeDuplicateProfile(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.removeDuplicateProfile(arg0);
-        return from_candid_Result_2_n101(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_6_n158(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.removeDuplicateProfile(arg0);
-      return from_candid_Result_2_n101(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_6_n158(this._uploadFile, this._downloadFile, result);
     }
   }
   async removePhoto(arg0, arg1) {
@@ -35453,18 +36419,88 @@ class Backend {
       return result;
     }
   }
+  async removeRelationship(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.removeRelationship(arg0);
+        return from_candid_Result_5_n162(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.removeRelationship(arg0);
+      return from_candid_Result_5_n162(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async removeSteward(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.removeSteward(arg0);
+        return from_candid_Result_4_n164(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.removeSteward(arg0);
+      return from_candid_Result_4_n164(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async requestProfileClaim(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.requestProfileClaim(arg0);
-        return from_candid_Result_1_n105(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_3_n166(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.requestProfileClaim(arg0);
-      return from_candid_Result_1_n105(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_3_n166(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async requestProfileRemoval(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.requestProfileRemoval(arg0, arg1);
+        return from_candid_Result_2_n170(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.requestProfileRemoval(arg0, arg1);
+      return from_candid_Result_2_n170(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async resolveMergeConflict(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.resolveMergeConflict(arg0, arg1);
+        return from_candid_opt_n174(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.resolveMergeConflict(arg0, arg1);
+      return from_candid_opt_n174(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async restoreProfile(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.restoreProfile(arg0);
+        return from_candid_Result_1_n62(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.restoreProfile(arg0);
+      return from_candid_Result_1_n62(this._uploadFile, this._downloadFile, result);
     }
   }
   async schema() {
@@ -35499,278 +36535,426 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.setProfilePhoto(arg0, arg1);
-        return from_candid_opt_n80(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n112(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.setProfilePhoto(arg0, arg1);
-      return from_candid_opt_n80(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n112(this._uploadFile, this._downloadFile, result);
     }
   }
   async setRelationshipRequestPending(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.setRelationshipRequestPending(arg0);
-        return from_candid_opt_n34(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n58(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.setRelationshipRequestPending(arg0);
-      return from_candid_opt_n34(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n58(this._uploadFile, this._downloadFile, result);
     }
   }
   async submitArchiveItem(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10) {
     if (this.processError) {
       try {
-        const result = await this.actor.submitArchiveItem(arg0, arg1, to_candid_ArchiveItemType_n109(this._uploadFile, this._downloadFile, arg2), await to_candid_ExternalBlob_n12(this._uploadFile, this._downloadFile, arg3), arg4, to_candid_opt_n111(this._uploadFile, this._downloadFile, arg5), arg6, arg7, to_candid_opt_n112(this._uploadFile, this._downloadFile, arg8), to_candid_SourceStatus_n113(this._uploadFile, this._downloadFile, arg9), to_candid_PrivacyLevel_n115(this._uploadFile, this._downloadFile, arg10));
-        return from_candid_ArchiveItem_n17(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.submitArchiveItem(arg0, arg1, to_candid_ArchiveItemType_n175(this._uploadFile, this._downloadFile, arg2), await to_candid_ExternalBlob_n20(this._uploadFile, this._downloadFile, arg3), arg4, to_candid_opt_n177(this._uploadFile, this._downloadFile, arg5), arg6, arg7, to_candid_opt_n178(this._uploadFile, this._downloadFile, arg8), to_candid_SourceStatus_n179(this._uploadFile, this._downloadFile, arg9), to_candid_PrivacyLevel_n181(this._uploadFile, this._downloadFile, arg10));
+        return from_candid_ArchiveItem_n37(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.submitArchiveItem(arg0, arg1, to_candid_ArchiveItemType_n109(this._uploadFile, this._downloadFile, arg2), await to_candid_ExternalBlob_n12(this._uploadFile, this._downloadFile, arg3), arg4, to_candid_opt_n111(this._uploadFile, this._downloadFile, arg5), arg6, arg7, to_candid_opt_n112(this._uploadFile, this._downloadFile, arg8), to_candid_SourceStatus_n113(this._uploadFile, this._downloadFile, arg9), to_candid_PrivacyLevel_n115(this._uploadFile, this._downloadFile, arg10));
-      return from_candid_ArchiveItem_n17(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.submitArchiveItem(arg0, arg1, to_candid_ArchiveItemType_n175(this._uploadFile, this._downloadFile, arg2), await to_candid_ExternalBlob_n20(this._uploadFile, this._downloadFile, arg3), arg4, to_candid_opt_n177(this._uploadFile, this._downloadFile, arg5), arg6, arg7, to_candid_opt_n178(this._uploadFile, this._downloadFile, arg8), to_candid_SourceStatus_n179(this._uploadFile, this._downloadFile, arg9), to_candid_PrivacyLevel_n181(this._uploadFile, this._downloadFile, arg10));
+      return from_candid_ArchiveItem_n37(this._uploadFile, this._downloadFile, result);
     }
   }
   async updateOwnProfile(arg0, arg1) {
     if (this.processError) {
       try {
-        const result = await this.actor.updateOwnProfile(arg0, to_candid_ProfileEdits_n117(this._uploadFile, this._downloadFile, arg1));
-        return from_candid_Result_n121(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.updateOwnProfile(arg0, to_candid_ProfileEdits_n183(this._uploadFile, this._downloadFile, arg1));
+        return from_candid_Result_n187(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.updateOwnProfile(arg0, to_candid_ProfileEdits_n117(this._uploadFile, this._downloadFile, arg1));
-      return from_candid_Result_n121(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.updateOwnProfile(arg0, to_candid_ProfileEdits_n183(this._uploadFile, this._downloadFile, arg1));
+      return from_candid_Result_n187(this._uploadFile, this._downloadFile, result);
     }
   }
 }
-function from_candid_AccountError_n51(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n52(_uploadFile, _downloadFile, value);
+function from_candid_AccountError_n77(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n78(_uploadFile, _downloadFile, value);
 }
-function from_candid_Account_n46(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n47(_uploadFile, _downloadFile, value);
+function from_candid_Account_n72(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n73(_uploadFile, _downloadFile, value);
 }
-function from_candid_ArchiveItemStatus_n19(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n20(_uploadFile, _downloadFile, value);
+function from_candid_ArchiveError_n64(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n65(_uploadFile, _downloadFile, value);
 }
-function from_candid_ArchiveItemType_n23(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n24(_uploadFile, _downloadFile, value);
+function from_candid_ArchiveItemStatus_n39(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n40(_uploadFile, _downloadFile, value);
 }
-async function from_candid_ArchiveItem_n17(_uploadFile, _downloadFile, value) {
-  return await from_candid_record_n18(_uploadFile, _downloadFile, value);
+function from_candid_ArchiveItemType_n43(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n44(_uploadFile, _downloadFile, value);
 }
-function from_candid_AuthMethod_n49(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n50(_uploadFile, _downloadFile, value);
+async function from_candid_ArchiveItem_n37(_uploadFile, _downloadFile, value) {
+  return await from_candid_record_n38(_uploadFile, _downloadFile, value);
 }
-function from_candid_Cell_n68(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n69(_uploadFile, _downloadFile, value);
+function from_candid_AuditActionType_n118(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n119(_uploadFile, _downloadFile, value);
 }
-function from_candid_ClaimError_n107(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n108(_uploadFile, _downloadFile, value);
+function from_candid_AuditEntry_n116(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n117(_uploadFile, _downloadFile, value);
 }
-function from_candid_ClaimStatus_n57(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n58(_uploadFile, _downloadFile, value);
+function from_candid_AuthMethod_n75(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n76(_uploadFile, _downloadFile, value);
 }
-function from_candid_CreateError_n62(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n63(_uploadFile, _downloadFile, value);
+function from_candid_Cell_n100(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n101(_uploadFile, _downloadFile, value);
 }
-function from_candid_EditError_n123(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n124(_uploadFile, _downloadFile, value);
+function from_candid_ClaimError_n168(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n169(_uploadFile, _downloadFile, value);
+}
+function from_candid_ClaimStatus_n83(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n84(_uploadFile, _downloadFile, value);
+}
+function from_candid_CreateError_n88(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n89(_uploadFile, _downloadFile, value);
+}
+function from_candid_DeleteError_n152(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n153(_uploadFile, _downloadFile, value);
+}
+function from_candid_DuplicateCandidate_n124(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n125(_uploadFile, _downloadFile, value);
+}
+function from_candid_DuplicatePair_n122(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n123(_uploadFile, _downloadFile, value);
+}
+function from_candid_EditError_n189(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n190(_uploadFile, _downloadFile, value);
 }
 function from_candid_Error_n10(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n11(_uploadFile, _downloadFile, value);
 }
-async function from_candid_ExternalBlob_n15(_uploadFile, _downloadFile, value) {
+async function from_candid_ExternalBlob_n23(_uploadFile, _downloadFile, value) {
   return await _downloadFile(value);
 }
-function from_candid_LivingStatus_n59(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n60(_uploadFile, _downloadFile, value);
-}
-function from_candid_NotificationType_n90(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n91(_uploadFile, _downloadFile, value);
-}
-function from_candid_Notification_n88(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n89(_uploadFile, _downloadFile, value);
-}
-function from_candid_PersonProfile_n55(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n56(_uploadFile, _downloadFile, value);
-}
-async function from_candid_Photo_n13(_uploadFile, _downloadFile, value) {
-  return await from_candid_record_n14(_uploadFile, _downloadFile, value);
-}
-function from_candid_PrivacyLevel_n21(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n22(_uploadFile, _downloadFile, value);
-}
-function from_candid_ProfileClaimStatus_n31(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n20(_uploadFile, _downloadFile, value);
-}
-function from_candid_ProfileClaim_n29(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n30(_uploadFile, _downloadFile, value);
-}
-function from_candid_RelationshipError_n99(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n100(_uploadFile, _downloadFile, value);
-}
-function from_candid_RelationshipRequestStatus_n37(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n20(_uploadFile, _downloadFile, value);
-}
-function from_candid_RelationshipRequest_n35(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n36(_uploadFile, _downloadFile, value);
-}
-function from_candid_RelationshipStatus_n85(_uploadFile, _downloadFile, value) {
+function from_candid_LivingStatus_n85(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n86(_uploadFile, _downloadFile, value);
 }
-function from_candid_RelationshipType_n38(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n39(_uploadFile, _downloadFile, value);
+function from_candid_MergeConflictStatus_n144(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n145(_uploadFile, _downloadFile, value);
 }
-function from_candid_Relationship_n83(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n84(_uploadFile, _downloadFile, value);
+function from_candid_MergeConflict_n142(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n143(_uploadFile, _downloadFile, value);
 }
-function from_candid_RemoveError_n103(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n104(_uploadFile, _downloadFile, value);
+function from_candid_MergeError_n146(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n147(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_1_n105(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n106(_uploadFile, _downloadFile, value);
+function from_candid_MergeResult_n139(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n140(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_2_n101(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n102(_uploadFile, _downloadFile, value);
+function from_candid_NotificationType_n129(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n130(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_3_n97(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n98(_uploadFile, _downloadFile, value);
+function from_candid_Notification_n127(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n128(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_4_n76(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n77(_uploadFile, _downloadFile, value);
+function from_candid_PersonProfile_n81(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n82(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_5_n74(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n75(_uploadFile, _downloadFile, value);
+async function from_candid_Photo_n21(_uploadFile, _downloadFile, value) {
+  return await from_candid_record_n22(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_6_n53(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n54(_uploadFile, _downloadFile, value);
+function from_candid_PrivacyLevel_n41(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n42(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_7_n44(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n45(_uploadFile, _downloadFile, value);
+function from_candid_ProfileClaimStatus_n51(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n40(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_8_n8(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n9(_uploadFile, _downloadFile, value);
+function from_candid_ProfileClaim_n49(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n50(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result__1_n64(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n65(_uploadFile, _downloadFile, value);
+function from_candid_ProfileRemovalRequest_n55(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n56(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_n121(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n122(_uploadFile, _downloadFile, value);
+function from_candid_ProfileRemovalStatus_n57(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n40(_uploadFile, _downloadFile, value);
 }
-function from_candid_SourceStatus_n26(_uploadFile, _downloadFile, value) {
+function from_candid_RelationshipAdminError_n34(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n35(_uploadFile, _downloadFile, value);
+}
+function from_candid_RelationshipError_n156(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n157(_uploadFile, _downloadFile, value);
+}
+function from_candid_RelationshipRequestStatus_n61(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n40(_uploadFile, _downloadFile, value);
+}
+function from_candid_RelationshipRequest_n59(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n60(_uploadFile, _downloadFile, value);
+}
+function from_candid_RelationshipStatus_n30(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n31(_uploadFile, _downloadFile, value);
+}
+function from_candid_RelationshipType_n32(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n33(_uploadFile, _downloadFile, value);
+}
+function from_candid_Relationship_n28(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n29(_uploadFile, _downloadFile, value);
+}
+function from_candid_RemovalError_n172(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n173(_uploadFile, _downloadFile, value);
+}
+function from_candid_RemoveError_n160(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n161(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_10_n148(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n149(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_11_n137(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n138(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_12_n108(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n109(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_13_n106(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n107(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_14_n90(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n91(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_15_n79(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n80(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_16_n26(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n27(_uploadFile, _downloadFile, value);
 }
-function from_candid_UserRole_n72(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n73(_uploadFile, _downloadFile, value);
-}
-function from_candid_Value_n70(_uploadFile, _downloadFile, value) {
+function from_candid_Result_17_n70(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n71(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_18_n8(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n9(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_1_n62(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n63(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_2_n170(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n171(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_3_n166(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n167(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_4_n164(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n165(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_5_n162(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n163(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_6_n158(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n159(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_7_n154(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n155(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_8_n12(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n13(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_9_n150(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n151(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result__1_n96(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n97(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_n187(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n188(_uploadFile, _downloadFile, value);
+}
+function from_candid_SourceStatus_n46(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n47(_uploadFile, _downloadFile, value);
+}
+function from_candid_StewardError_n18(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n19(_uploadFile, _downloadFile, value);
+}
+function from_candid_StewardRecord_n14(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n15(_uploadFile, _downloadFile, value);
+}
+function from_candid_StewardRoleStatus_n16(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n17(_uploadFile, _downloadFile, value);
+}
+function from_candid_SuccessorDesignation_n92(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n93(_uploadFile, _downloadFile, value);
+}
+function from_candid_SuccessorStatus_n94(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n95(_uploadFile, _downloadFile, value);
+}
+function from_candid_UserRole_n104(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n105(_uploadFile, _downloadFile, value);
+}
+function from_candid_Value_n102(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n103(_uploadFile, _downloadFile, value);
 }
 function from_candid__ImmutableObjectStorageRefillResult_n4(_uploadFile, _downloadFile, value) {
   return from_candid_record_n5(_uploadFile, _downloadFile, value);
 }
-async function from_candid_opt_n16(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : await from_candid_ArchiveItem_n17(_uploadFile, _downloadFile, value[0]);
+function from_candid_opt_n110(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_PersonProfile_n81(_uploadFile, _downloadFile, value[0]);
 }
-function from_candid_opt_n25(_uploadFile, _downloadFile, value) {
+async function from_candid_opt_n112(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : await from_candid_Photo_n21(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n136(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_Notification_n127(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n174(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_MergeConflict_n142(_uploadFile, _downloadFile, value[0]);
+}
+async function from_candid_opt_n36(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : await from_candid_ArchiveItem_n37(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n45(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n28(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_ProfileClaim_n29(_uploadFile, _downloadFile, value[0]);
+function from_candid_opt_n48(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_ProfileClaim_n49(_uploadFile, _downloadFile, value[0]);
 }
-function from_candid_opt_n32(_uploadFile, _downloadFile, value) {
+function from_candid_opt_n52(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n33(_uploadFile, _downloadFile, value) {
+function from_candid_opt_n53(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n34(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_RelationshipRequest_n35(_uploadFile, _downloadFile, value[0]);
+function from_candid_opt_n54(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_ProfileRemovalRequest_n55(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n58(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_RelationshipRequest_n59(_uploadFile, _downloadFile, value[0]);
 }
 function from_candid_opt_n6(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : value[0];
-}
-function from_candid_opt_n61(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : value[0];
 }
 function from_candid_opt_n7(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n78(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_PersonProfile_n55(_uploadFile, _downloadFile, value[0]);
+function from_candid_opt_n87(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : value[0];
 }
-async function from_candid_opt_n80(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : await from_candid_Photo_n13(_uploadFile, _downloadFile, value[0]);
+function from_candid_record_n101(_uploadFile, _downloadFile, value) {
+  return {
+    value: from_candid_Value_n102(_uploadFile, _downloadFile, value.value),
+    name: value.name
+  };
 }
-function from_candid_opt_n94(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_Notification_n88(_uploadFile, _downloadFile, value[0]);
-}
-async function from_candid_record_n14(_uploadFile, _downloadFile, value) {
+function from_candid_record_n117(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
-    blob: await from_candid_ExternalBlob_n15(_uploadFile, _downloadFile, value.blob),
+    affectedPersonIds: value.affectedPersonIds,
+    actionType: from_candid_AuditActionType_n118(_uploadFile, _downloadFile, value.actionType),
+    summary: value.summary,
+    timestamp: value.timestamp,
+    actorAccountId: value.actorAccountId
+  };
+}
+function from_candid_record_n123(_uploadFile, _downloadFile, value) {
+  return {
+    candidateA: from_candid_DuplicateCandidate_n124(_uploadFile, _downloadFile, value.candidateA),
+    candidateB: from_candid_DuplicateCandidate_n124(_uploadFile, _downloadFile, value.candidateB)
+  };
+}
+function from_candid_record_n125(_uploadFile, _downloadFile, value) {
+  return {
+    deathDate: record_opt_to_undefined(from_candid_opt_n45(_uploadFile, _downloadFile, value.deathDate)),
+    ownerAccount: record_opt_to_undefined(from_candid_opt_n53(_uploadFile, _downloadFile, value.ownerAccount)),
+    birthDate: record_opt_to_undefined(from_candid_opt_n45(_uploadFile, _downloadFile, value.birthDate)),
+    claimStatus: value.claimStatus,
+    name: value.name,
+    archiveLinks: value.archiveLinks,
+    children: value.children,
+    sourceCount: value.sourceCount,
+    personId: value.personId,
+    spouses: value.spouses,
+    photoCount: value.photoCount,
+    timelineCount: value.timelineCount,
+    parents: value.parents
+  };
+}
+function from_candid_record_n128(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
+    notificationType: from_candid_NotificationType_n129(_uploadFile, _downloadFile, value.notificationType),
+    createdAt: value.createdAt,
+    read: value.read,
+    recipient: value.recipient,
+    message: value.message
+  };
+}
+function from_candid_record_n140(_uploadFile, _downloadFile, value) {
+  return {
+    archivedPersonId: value.archivedPersonId,
+    conflicts: from_candid_vec_n141(_uploadFile, _downloadFile, value.conflicts),
+    canonicalPersonId: value.canonicalPersonId
+  };
+}
+function from_candid_record_n143(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
+    field: value.field,
+    status: from_candid_MergeConflictStatus_n144(_uploadFile, _downloadFile, value.status),
+    alternateValue: value.alternateValue,
+    canonicalValue: value.canonicalValue,
+    resolvedAt: record_opt_to_undefined(from_candid_opt_n52(_uploadFile, _downloadFile, value.resolvedAt)),
+    resolvedBy: record_opt_to_undefined(from_candid_opt_n53(_uploadFile, _downloadFile, value.resolvedBy))
+  };
+}
+function from_candid_record_n15(_uploadFile, _downloadFile, value) {
+  return {
+    assignedAt: value.assignedAt,
+    assignedBy: value.assignedBy,
+    stewardAccountId: value.stewardAccountId,
+    successorPriority: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.successorPriority)),
+    roleStatus: from_candid_StewardRoleStatus_n16(_uploadFile, _downloadFile, value.roleStatus)
+  };
+}
+async function from_candid_record_n22(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
+    blob: await from_candid_ExternalBlob_n23(_uploadFile, _downloadFile, value.blob),
     mimeType: value.mimeType,
     filename: value.filename,
     uploadedAt: value.uploadedAt,
     uploadedBy: value.uploadedBy
   };
 }
-async function from_candid_record_n18(_uploadFile, _downloadFile, value) {
+function from_candid_record_n29(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
+    status: from_candid_RelationshipStatus_n30(_uploadFile, _downloadFile, value.status),
+    fromPersonId: value.fromPersonId,
+    toPersonId: value.toPersonId,
+    relationshipType: from_candid_RelationshipType_n32(_uploadFile, _downloadFile, value.relationshipType)
+  };
+}
+async function from_candid_record_n38(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
     era: value.era,
-    status: from_candid_ArchiveItemStatus_n19(_uploadFile, _downloadFile, value.status),
+    status: from_candid_ArchiveItemStatus_n39(_uploadFile, _downloadFile, value.status),
     title: value.title,
     relatedMemberIds: value.relatedMemberIds,
-    blob: await from_candid_ExternalBlob_n15(_uploadFile, _downloadFile, value.blob),
+    blob: await from_candid_ExternalBlob_n23(_uploadFile, _downloadFile, value.blob),
     createdAt: value.createdAt,
     tags: value.tags,
     year: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.year)),
     description: value.description,
-    privacyLevel: from_candid_PrivacyLevel_n21(_uploadFile, _downloadFile, value.privacyLevel),
-    itemType: from_candid_ArchiveItemType_n23(_uploadFile, _downloadFile, value.itemType),
-    relatedBranchId: record_opt_to_undefined(from_candid_opt_n25(_uploadFile, _downloadFile, value.relatedBranchId)),
-    sourceStatus: from_candid_SourceStatus_n26(_uploadFile, _downloadFile, value.sourceStatus),
+    privacyLevel: from_candid_PrivacyLevel_n41(_uploadFile, _downloadFile, value.privacyLevel),
+    itemType: from_candid_ArchiveItemType_n43(_uploadFile, _downloadFile, value.itemType),
+    relatedBranchId: record_opt_to_undefined(from_candid_opt_n45(_uploadFile, _downloadFile, value.relatedBranchId)),
+    sourceStatus: from_candid_SourceStatus_n46(_uploadFile, _downloadFile, value.sourceStatus),
     contributor: value.contributor
-  };
-}
-function from_candid_record_n30(_uploadFile, _downloadFile, value) {
-  return {
-    id: value.id,
-    submittedDate: value.submittedDate,
-    status: from_candid_ProfileClaimStatus_n31(_uploadFile, _downloadFile, value.status),
-    reviewedDate: record_opt_to_undefined(from_candid_opt_n32(_uploadFile, _downloadFile, value.reviewedDate)),
-    reviewedBy: record_opt_to_undefined(from_candid_opt_n33(_uploadFile, _downloadFile, value.reviewedBy)),
-    personId: value.personId,
-    requestingUserId: value.requestingUserId
-  };
-}
-function from_candid_record_n36(_uploadFile, _downloadFile, value) {
-  return {
-    id: value.id,
-    submittedDate: value.submittedDate,
-    status: from_candid_RelationshipRequestStatus_n37(_uploadFile, _downloadFile, value.status),
-    reviewedDate: record_opt_to_undefined(from_candid_opt_n32(_uploadFile, _downloadFile, value.reviewedDate)),
-    relatedPersonId: value.relatedPersonId,
-    requestingPersonId: value.requestingPersonId,
-    proposedRelationship: from_candid_RelationshipType_n38(_uploadFile, _downloadFile, value.proposedRelationship),
-    reviewer: record_opt_to_undefined(from_candid_opt_n33(_uploadFile, _downloadFile, value.reviewer))
-  };
-}
-function from_candid_record_n47(_uploadFile, _downloadFile, value) {
-  return {
-    id: value.id,
-    createdAt: value.createdAt,
-    authMethods: from_candid_vec_n48(_uploadFile, _downloadFile, value.authMethods)
   };
 }
 function from_candid_record_n5(_uploadFile, _downloadFile, value) {
@@ -35779,88 +36963,129 @@ function from_candid_record_n5(_uploadFile, _downloadFile, value) {
     topped_up_amount: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.topped_up_amount))
   };
 }
+function from_candid_record_n50(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
+    submittedDate: value.submittedDate,
+    status: from_candid_ProfileClaimStatus_n51(_uploadFile, _downloadFile, value.status),
+    reviewedDate: record_opt_to_undefined(from_candid_opt_n52(_uploadFile, _downloadFile, value.reviewedDate)),
+    reviewedBy: record_opt_to_undefined(from_candid_opt_n53(_uploadFile, _downloadFile, value.reviewedBy)),
+    personId: value.personId,
+    requestingUserId: value.requestingUserId
+  };
+}
 function from_candid_record_n56(_uploadFile, _downloadFile, value) {
   return {
-    occupation: record_opt_to_undefined(from_candid_opt_n25(_uploadFile, _downloadFile, value.occupation)),
-    privacySettings: record_opt_to_undefined(from_candid_opt_n25(_uploadFile, _downloadFile, value.privacySettings)),
-    nickname: record_opt_to_undefined(from_candid_opt_n25(_uploadFile, _downloadFile, value.nickname)),
-    claimedByUserId: record_opt_to_undefined(from_candid_opt_n33(_uploadFile, _downloadFile, value.claimedByUserId)),
-    birthDate: record_opt_to_undefined(from_candid_opt_n25(_uploadFile, _downloadFile, value.birthDate)),
-    birthInfo: record_opt_to_undefined(from_candid_opt_n25(_uploadFile, _downloadFile, value.birthInfo)),
-    claimStatus: from_candid_ClaimStatus_n57(_uploadFile, _downloadFile, value.claimStatus),
-    livingStatus: from_candid_LivingStatus_n59(_uploadFile, _downloadFile, value.livingStatus),
-    name: value.name,
-    longerStory: record_opt_to_undefined(from_candid_opt_n25(_uploadFile, _downloadFile, value.longerStory)),
+    id: value.id,
+    submittedDate: value.submittedDate,
+    status: from_candid_ProfileRemovalStatus_n57(_uploadFile, _downloadFile, value.status),
+    reviewedDate: record_opt_to_undefined(from_candid_opt_n52(_uploadFile, _downloadFile, value.reviewedDate)),
+    reviewedBy: record_opt_to_undefined(from_candid_opt_n53(_uploadFile, _downloadFile, value.reviewedBy)),
     personId: value.personId,
-    story: record_opt_to_undefined(from_candid_opt_n25(_uploadFile, _downloadFile, value.story)),
-    middleName: record_opt_to_undefined(from_candid_opt_n25(_uploadFile, _downloadFile, value.middleName)),
-    suffix: record_opt_to_undefined(from_candid_opt_n25(_uploadFile, _downloadFile, value.suffix)),
-    preferredName: record_opt_to_undefined(from_candid_opt_n25(_uploadFile, _downloadFile, value.preferredName)),
-    currentLocation: record_opt_to_undefined(from_candid_opt_n25(_uploadFile, _downloadFile, value.currentLocation)),
-    birthplace: record_opt_to_undefined(from_candid_opt_n25(_uploadFile, _downloadFile, value.birthplace)),
-    lastName: record_opt_to_undefined(from_candid_opt_n25(_uploadFile, _downloadFile, value.lastName)),
-    shortBio: record_opt_to_undefined(from_candid_opt_n25(_uploadFile, _downloadFile, value.shortBio)),
-    timeline: record_opt_to_undefined(from_candid_opt_n61(_uploadFile, _downloadFile, value.timeline)),
-    firstName: record_opt_to_undefined(from_candid_opt_n25(_uploadFile, _downloadFile, value.firstName))
+    requestingUserId: value.requestingUserId,
+    reason: value.reason
   };
 }
-function from_candid_record_n65(_uploadFile, _downloadFile, value) {
+function from_candid_record_n60(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
+    submittedDate: value.submittedDate,
+    status: from_candid_RelationshipRequestStatus_n61(_uploadFile, _downloadFile, value.status),
+    reviewedDate: record_opt_to_undefined(from_candid_opt_n52(_uploadFile, _downloadFile, value.reviewedDate)),
+    relatedPersonId: value.relatedPersonId,
+    requestingPersonId: value.requestingPersonId,
+    proposedRelationship: from_candid_RelationshipType_n32(_uploadFile, _downloadFile, value.proposedRelationship),
+    reviewer: record_opt_to_undefined(from_candid_opt_n53(_uploadFile, _downloadFile, value.reviewer))
+  };
+}
+function from_candid_record_n73(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
+    createdAt: value.createdAt,
+    authMethods: from_candid_vec_n74(_uploadFile, _downloadFile, value.authMethods)
+  };
+}
+function from_candid_record_n82(_uploadFile, _downloadFile, value) {
+  return {
+    occupation: record_opt_to_undefined(from_candid_opt_n45(_uploadFile, _downloadFile, value.occupation)),
+    privacySettings: record_opt_to_undefined(from_candid_opt_n45(_uploadFile, _downloadFile, value.privacySettings)),
+    nickname: record_opt_to_undefined(from_candid_opt_n45(_uploadFile, _downloadFile, value.nickname)),
+    claimedByUserId: record_opt_to_undefined(from_candid_opt_n53(_uploadFile, _downloadFile, value.claimedByUserId)),
+    birthDate: record_opt_to_undefined(from_candid_opt_n45(_uploadFile, _downloadFile, value.birthDate)),
+    birthInfo: record_opt_to_undefined(from_candid_opt_n45(_uploadFile, _downloadFile, value.birthInfo)),
+    claimStatus: from_candid_ClaimStatus_n83(_uploadFile, _downloadFile, value.claimStatus),
+    livingStatus: from_candid_LivingStatus_n85(_uploadFile, _downloadFile, value.livingStatus),
+    name: value.name,
+    longerStory: record_opt_to_undefined(from_candid_opt_n45(_uploadFile, _downloadFile, value.longerStory)),
+    personId: value.personId,
+    story: record_opt_to_undefined(from_candid_opt_n45(_uploadFile, _downloadFile, value.story)),
+    middleName: record_opt_to_undefined(from_candid_opt_n45(_uploadFile, _downloadFile, value.middleName)),
+    suffix: record_opt_to_undefined(from_candid_opt_n45(_uploadFile, _downloadFile, value.suffix)),
+    preferredName: record_opt_to_undefined(from_candid_opt_n45(_uploadFile, _downloadFile, value.preferredName)),
+    currentLocation: record_opt_to_undefined(from_candid_opt_n45(_uploadFile, _downloadFile, value.currentLocation)),
+    birthplace: record_opt_to_undefined(from_candid_opt_n45(_uploadFile, _downloadFile, value.birthplace)),
+    lastName: record_opt_to_undefined(from_candid_opt_n45(_uploadFile, _downloadFile, value.lastName)),
+    shortBio: record_opt_to_undefined(from_candid_opt_n45(_uploadFile, _downloadFile, value.shortBio)),
+    timeline: record_opt_to_undefined(from_candid_opt_n87(_uploadFile, _downloadFile, value.timeline)),
+    firstName: record_opt_to_undefined(from_candid_opt_n45(_uploadFile, _downloadFile, value.firstName))
+  };
+}
+function from_candid_record_n93(_uploadFile, _downloadFile, value) {
+  return {
+    status: from_candid_SuccessorStatus_n94(_uploadFile, _downloadFile, value.status),
+    assignedAt: value.assignedAt,
+    assignedBy: value.assignedBy,
+    personId: value.personId,
+    priority: value.priority
+  };
+}
+function from_candid_record_n97(_uploadFile, _downloadFile, value) {
   return {
     hasMore: value.hasMore,
-    rows: from_candid_vec_n66(_uploadFile, _downloadFile, value.rows)
+    rows: from_candid_vec_n98(_uploadFile, _downloadFile, value.rows)
   };
 }
-function from_candid_record_n69(_uploadFile, _downloadFile, value) {
-  return {
-    value: from_candid_Value_n70(_uploadFile, _downloadFile, value.value),
-    name: value.name
-  };
+function from_candid_variant_n103(_uploadFile, _downloadFile, value) {
+  return "int" in value ? {
+    __kind__: "int",
+    int: value.int
+  } : "nat" in value ? {
+    __kind__: "nat",
+    nat: value.nat
+  } : "float" in value ? {
+    __kind__: "float",
+    float: value.float
+  } : "bool" in value ? {
+    __kind__: "bool",
+    bool: value.bool
+  } : "null" in value ? {
+    __kind__: "null",
+    null: value.null
+  } : "text" in value ? {
+    __kind__: "text",
+    text: value.text
+  } : value;
 }
-function from_candid_record_n84(_uploadFile, _downloadFile, value) {
-  return {
-    id: value.id,
-    status: from_candid_RelationshipStatus_n85(_uploadFile, _downloadFile, value.status),
-    fromPersonId: value.fromPersonId,
-    toPersonId: value.toPersonId,
-    relationshipType: from_candid_RelationshipType_n38(_uploadFile, _downloadFile, value.relationshipType)
-  };
+function from_candid_variant_n105(_uploadFile, _downloadFile, value) {
+  return "admin" in value ? "admin" : "user" in value ? "user" : "guest" in value ? "guest" : value;
 }
-function from_candid_record_n89(_uploadFile, _downloadFile, value) {
-  return {
-    id: value.id,
-    notificationType: from_candid_NotificationType_n90(_uploadFile, _downloadFile, value.notificationType),
-    createdAt: value.createdAt,
-    read: value.read,
-    recipient: value.recipient,
-    message: value.message
-  };
-}
-function from_candid_variant_n100(_uploadFile, _downloadFile, value) {
-  return "DuplicateRequest" in value ? "DuplicateRequest" : "NotSignedIn" in value ? "NotSignedIn" : "PersonNotFound" in value ? "PersonNotFound" : value;
-}
-function from_candid_variant_n102(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n107(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
     ok: value.ok
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_RemoveError_n103(_uploadFile, _downloadFile, value.err)
+    err: from_candid_AccountError_n77(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n104(_uploadFile, _downloadFile, value) {
-  return "ProfileNotFound" in value ? "ProfileNotFound" : "NotSignedIn" in value ? "NotSignedIn" : value;
-}
-function from_candid_variant_n106(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n109(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
-    ok: from_candid_ProfileClaim_n29(_uploadFile, _downloadFile, value.ok)
+    ok: value.ok
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_ClaimError_n107(_uploadFile, _downloadFile, value.err)
+    err: from_candid_AccountError_n77(_uploadFile, _downloadFile, value.err)
   } : value;
-}
-function from_candid_variant_n108(_uploadFile, _downloadFile, value) {
-  return "AlreadyPending" in value ? "AlreadyPending" : "ProfileNotFound" in value ? "ProfileNotFound" : "AlreadyClaimed" in value ? "AlreadyClaimed" : "NotSignedIn" in value ? "NotSignedIn" : "DeceasedProfile" in value ? "DeceasedProfile" : value;
 }
 function from_candid_variant_n11(_uploadFile, _downloadFile, value) {
   return "FrontendOriginsNotConfigured" in value ? {
@@ -35895,110 +37120,215 @@ function from_candid_variant_n11(_uploadFile, _downloadFile, value) {
     FrontendOriginMismatch: value.FrontendOriginMismatch
   } : value;
 }
-function from_candid_variant_n122(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n119(_uploadFile, _downloadFile, value) {
+  return "ProfileRemovalRequested" in value ? "ProfileRemovalRequested" : "ClaimRejected" in value ? "ClaimRejected" : "RelationshipTypeCorrected" in value ? "RelationshipTypeCorrected" : "RelationshipRequestPending" in value ? "RelationshipRequestPending" : "StewardPromoted" in value ? "StewardPromoted" : "SuccessorActivated" in value ? "SuccessorActivated" : "StewardRemoved" in value ? "StewardRemoved" : "RelationshipRequestApproved" in value ? "RelationshipRequestApproved" : "DuplicateMerged" in value ? "DuplicateMerged" : "ProfilePermanentlyDeleted" in value ? "ProfilePermanentlyDeleted" : "RelationshipRequestRejected" in value ? "RelationshipRequestRejected" : "ProfileArchived" in value ? "ProfileArchived" : "ProfileRestored" in value ? "ProfileRestored" : "RelationshipAdded" in value ? "RelationshipAdded" : "RelationshipRemoved" in value ? "RelationshipRemoved" : "ProfileRemovalReviewed" in value ? "ProfileRemovalReviewed" : "ClaimApproved" in value ? "ClaimApproved" : "SuccessorDesignated" in value ? "SuccessorDesignated" : value;
+}
+function from_candid_variant_n13(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
-    ok: from_candid_PersonProfile_n55(_uploadFile, _downloadFile, value.ok)
+    ok: from_candid_StewardRecord_n14(_uploadFile, _downloadFile, value.ok)
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_EditError_n123(_uploadFile, _downloadFile, value.err)
+    err: from_candid_StewardError_n18(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n124(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n130(_uploadFile, _downloadFile, value) {
+  return "RelationshipRequested" in value ? "RelationshipRequested" : "RelationshipReviewed" in value ? "RelationshipReviewed" : "ProfileClaimReviewed" in value ? "ProfileClaimReviewed" : "ProfileClaimRequested" in value ? "ProfileClaimRequested" : value;
+}
+function from_candid_variant_n138(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: from_candid_MergeResult_n139(_uploadFile, _downloadFile, value.ok)
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_MergeError_n146(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n145(_uploadFile, _downloadFile, value) {
+  return "Resolved" in value ? "Resolved" : "Pending" in value ? "Pending" : value;
+}
+function from_candid_variant_n147(_uploadFile, _downloadFile, value) {
+  return "NotDuplicate" in value ? "NotDuplicate" : "ProfileNotFound" in value ? "ProfileNotFound" : "NotSignedIn" in value ? "NotSignedIn" : "SameProfile" in value ? "SameProfile" : value;
+}
+function from_candid_variant_n149(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: value.ok
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_MergeError_n146(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n151(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: value.ok
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_DeleteError_n152(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n153(_uploadFile, _downloadFile, value) {
+  return "HasOwnershipHistory" in value ? "HasOwnershipHistory" : "ProfileNotFound" in value ? "ProfileNotFound" : "HasMedia" in value ? "HasMedia" : "HasArchiveItems" in value ? "HasArchiveItems" : "NotSignedIn" in value ? "NotSignedIn" : "ConfirmationRequired" in value ? "ConfirmationRequired" : "HasTimeline" in value ? "HasTimeline" : "HasApprovedRelationships" in value ? "HasApprovedRelationships" : value;
+}
+function from_candid_variant_n155(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: from_candid_RelationshipRequest_n59(_uploadFile, _downloadFile, value.ok)
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_RelationshipError_n156(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n157(_uploadFile, _downloadFile, value) {
+  return "DuplicateRequest" in value ? "DuplicateRequest" : "NotSignedIn" in value ? "NotSignedIn" : "PersonNotFound" in value ? "PersonNotFound" : value;
+}
+function from_candid_variant_n159(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: value.ok
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_RemoveError_n160(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n161(_uploadFile, _downloadFile, value) {
+  return "ProfileNotFound" in value ? "ProfileNotFound" : "NotSignedIn" in value ? "NotSignedIn" : value;
+}
+function from_candid_variant_n163(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: value.ok
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_RelationshipAdminError_n34(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n165(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: value.ok
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_StewardError_n18(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n167(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: from_candid_ProfileClaim_n49(_uploadFile, _downloadFile, value.ok)
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_ClaimError_n168(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n169(_uploadFile, _downloadFile, value) {
+  return "AlreadyPending" in value ? "AlreadyPending" : "ProfileNotFound" in value ? "ProfileNotFound" : "AlreadyClaimed" in value ? "AlreadyClaimed" : "NotSignedIn" in value ? "NotSignedIn" : "DeceasedProfile" in value ? "DeceasedProfile" : value;
+}
+function from_candid_variant_n17(_uploadFile, _downloadFile, value) {
+  return "Active" in value ? "Active" : "Removed" in value ? "Removed" : value;
+}
+function from_candid_variant_n171(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: from_candid_ProfileRemovalRequest_n55(_uploadFile, _downloadFile, value.ok)
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_RemovalError_n172(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n173(_uploadFile, _downloadFile, value) {
+  return "AlreadyPending" in value ? "AlreadyPending" : "ProfileNotFound" in value ? "ProfileNotFound" : "NotSignedIn" in value ? "NotSignedIn" : "NotOwner" in value ? "NotOwner" : "DeceasedProfile" in value ? "DeceasedProfile" : value;
+}
+function from_candid_variant_n188(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: from_candid_PersonProfile_n81(_uploadFile, _downloadFile, value.ok)
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_EditError_n189(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n19(_uploadFile, _downloadFile, value) {
+  return "LastSteward" in value ? "LastSteward" : "NotSteward" in value ? "NotSteward" : "AlreadySteward" in value ? "AlreadySteward" : "NotSignedIn" in value ? "NotSignedIn" : "NotApprovedClaimedMember" in value ? "NotApprovedClaimedMember" : "NotDesignated" in value ? "NotDesignated" : value;
+}
+function from_candid_variant_n190(_uploadFile, _downloadFile, value) {
   return "ProfileNotFound" in value ? "ProfileNotFound" : "NotSignedIn" in value ? "NotSignedIn" : "NotOwner" in value ? "NotOwner" : "DeceasedProfile" in value ? "DeceasedProfile" : value;
 }
-function from_candid_variant_n20(_uploadFile, _downloadFile, value) {
-  return "Approved" in value ? "Approved" : "Rejected" in value ? "Rejected" : "Pending" in value ? "Pending" : value;
-}
-function from_candid_variant_n22(_uploadFile, _downloadFile, value) {
-  return "Private" in value ? "Private" : "Public" in value ? "Public" : "FamilyOnly" in value ? "FamilyOnly" : value;
-}
-function from_candid_variant_n24(_uploadFile, _downloadFile, value) {
-  return "Research" in value ? "Research" : "Photo" in value ? "Photo" : "Document" in value ? "Document" : "WorkBusiness" in value ? "WorkBusiness" : "WrittenStoryNote" in value ? "WrittenStoryNote" : "Audio" in value ? "Audio" : "Other" in value ? "Other" : "Video" in value ? "Video" : value;
-}
 function from_candid_variant_n27(_uploadFile, _downloadFile, value) {
-  return "Copy" in value ? "Copy" : "Unverified" in value ? "Unverified" : "Transcribed" in value ? "Transcribed" : "Original" in value ? "Original" : value;
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: from_candid_Relationship_n28(_uploadFile, _downloadFile, value.ok)
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_RelationshipAdminError_n34(_uploadFile, _downloadFile, value.err)
+  } : value;
 }
-function from_candid_variant_n39(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n31(_uploadFile, _downloadFile, value) {
+  return "Disputed" in value ? "Disputed" : "Confirmed" in value ? "Confirmed" : "Pending" in value ? "Pending" : value;
+}
+function from_candid_variant_n33(_uploadFile, _downloadFile, value) {
   return "Parent" in value ? "Parent" : "Sibling" in value ? "Sibling" : "SpousePartner" in value ? "SpousePartner" : "Child" in value ? "Child" : value;
 }
-function from_candid_variant_n45(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: from_candid_Account_n46(_uploadFile, _downloadFile, value.ok)
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_AccountError_n51(_uploadFile, _downloadFile, value.err)
-  } : value;
+function from_candid_variant_n35(_uploadFile, _downloadFile, value) {
+  return "RelationshipNotFound" in value ? "RelationshipNotFound" : "NotSignedIn" in value ? "NotSignedIn" : "DuplicateRelationship" in value ? "DuplicateRelationship" : "PersonNotFound" in value ? "PersonNotFound" : value;
 }
-function from_candid_variant_n50(_uploadFile, _downloadFile, value) {
-  return "Google" in value ? "Google" : "Apple" in value ? "Apple" : value;
+function from_candid_variant_n40(_uploadFile, _downloadFile, value) {
+  return "Approved" in value ? "Approved" : "Rejected" in value ? "Rejected" : "Pending" in value ? "Pending" : value;
 }
-function from_candid_variant_n52(_uploadFile, _downloadFile, value) {
-  return "AccountNotFound" in value ? "AccountNotFound" : "NotSignedIn" in value ? "NotSignedIn" : value;
+function from_candid_variant_n42(_uploadFile, _downloadFile, value) {
+  return "Private" in value ? "Private" : "Public" in value ? "Public" : "FamilyOnly" in value ? "FamilyOnly" : value;
 }
-function from_candid_variant_n54(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: from_candid_PersonProfile_n55(_uploadFile, _downloadFile, value.ok)
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_CreateError_n62(_uploadFile, _downloadFile, value.err)
-  } : value;
+function from_candid_variant_n44(_uploadFile, _downloadFile, value) {
+  return "Research" in value ? "Research" : "Photo" in value ? "Photo" : "Document" in value ? "Document" : "WorkBusiness" in value ? "WorkBusiness" : "WrittenStoryNote" in value ? "WrittenStoryNote" : "Audio" in value ? "Audio" : "Other" in value ? "Other" : "Video" in value ? "Video" : value;
 }
-function from_candid_variant_n58(_uploadFile, _downloadFile, value) {
-  return "Unclaimed" in value ? "Unclaimed" : "Claimed" in value ? "Claimed" : value;
-}
-function from_candid_variant_n60(_uploadFile, _downloadFile, value) {
-  return "Living" in value ? "Living" : "Deceased" in value ? "Deceased" : value;
+function from_candid_variant_n47(_uploadFile, _downloadFile, value) {
+  return "Copy" in value ? "Copy" : "Unverified" in value ? "Unverified" : "Transcribed" in value ? "Transcribed" : "Original" in value ? "Original" : value;
 }
 function from_candid_variant_n63(_uploadFile, _downloadFile, value) {
-  return "NotSignedIn" in value ? "NotSignedIn" : value;
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: value.ok
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_ArchiveError_n64(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n65(_uploadFile, _downloadFile, value) {
+  return "NotArchived" in value ? "NotArchived" : "ProfileNotFound" in value ? "ProfileNotFound" : "AlreadyArchived" in value ? "AlreadyArchived" : "NotSignedIn" in value ? "NotSignedIn" : value;
 }
 function from_candid_variant_n71(_uploadFile, _downloadFile, value) {
-  return "int" in value ? {
-    __kind__: "int",
-    int: value.int
-  } : "nat" in value ? {
-    __kind__: "nat",
-    nat: value.nat
-  } : "float" in value ? {
-    __kind__: "float",
-    float: value.float
-  } : "bool" in value ? {
-    __kind__: "bool",
-    bool: value.bool
-  } : "null" in value ? {
-    __kind__: "null",
-    null: value.null
-  } : "text" in value ? {
-    __kind__: "text",
-    text: value.text
-  } : value;
-}
-function from_candid_variant_n73(_uploadFile, _downloadFile, value) {
-  return "admin" in value ? "admin" : "user" in value ? "user" : "guest" in value ? "guest" : value;
-}
-function from_candid_variant_n75(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
-    ok: value.ok
+    ok: from_candid_Account_n72(_uploadFile, _downloadFile, value.ok)
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_AccountError_n51(_uploadFile, _downloadFile, value.err)
+    err: from_candid_AccountError_n77(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n77(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n76(_uploadFile, _downloadFile, value) {
+  return "Google" in value ? "Google" : "Apple" in value ? "Apple" : value;
+}
+function from_candid_variant_n78(_uploadFile, _downloadFile, value) {
+  return "AccountNotFound" in value ? "AccountNotFound" : "NotSignedIn" in value ? "NotSignedIn" : value;
+}
+function from_candid_variant_n80(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
-    ok: value.ok
+    ok: from_candid_PersonProfile_n81(_uploadFile, _downloadFile, value.ok)
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_AccountError_n51(_uploadFile, _downloadFile, value.err)
+    err: from_candid_CreateError_n88(_uploadFile, _downloadFile, value.err)
   } : value;
+}
+function from_candid_variant_n84(_uploadFile, _downloadFile, value) {
+  return "Unclaimed" in value ? "Unclaimed" : "Claimed" in value ? "Claimed" : value;
 }
 function from_candid_variant_n86(_uploadFile, _downloadFile, value) {
-  return "Disputed" in value ? "Disputed" : "Confirmed" in value ? "Confirmed" : "Pending" in value ? "Pending" : value;
+  return "Living" in value ? "Living" : "Deceased" in value ? "Deceased" : value;
+}
+function from_candid_variant_n89(_uploadFile, _downloadFile, value) {
+  return "NotSignedIn" in value ? "NotSignedIn" : value;
 }
 function from_candid_variant_n9(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
@@ -36010,70 +37340,91 @@ function from_candid_variant_n9(_uploadFile, _downloadFile, value) {
   } : value;
 }
 function from_candid_variant_n91(_uploadFile, _downloadFile, value) {
-  return "RelationshipRequested" in value ? "RelationshipRequested" : "RelationshipReviewed" in value ? "RelationshipReviewed" : "ProfileClaimReviewed" in value ? "ProfileClaimReviewed" : "ProfileClaimRequested" in value ? "ProfileClaimRequested" : value;
-}
-function from_candid_variant_n98(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
-    ok: from_candid_RelationshipRequest_n35(_uploadFile, _downloadFile, value.ok)
+    ok: from_candid_SuccessorDesignation_n92(_uploadFile, _downloadFile, value.ok)
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_RelationshipError_n99(_uploadFile, _downloadFile, value.err)
+    err: from_candid_StewardError_n18(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_vec_n48(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_AuthMethod_n49(_uploadFile, _downloadFile, x2));
+function from_candid_variant_n95(_uploadFile, _downloadFile, value) {
+  return "Activated" in value ? "Activated" : "Removed" in value ? "Removed" : "Designated" in value ? "Designated" : value;
 }
-function from_candid_vec_n66(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_vec_n67(_uploadFile, _downloadFile, x2));
+function from_candid_vec_n111(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_RelationshipRequest_n59(_uploadFile, _downloadFile, x2));
 }
-function from_candid_vec_n67(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_Cell_n68(_uploadFile, _downloadFile, x2));
+async function from_candid_vec_n113(_uploadFile, _downloadFile, value) {
+  return await Promise.all(value.map(async (x2) => await from_candid_ArchiveItem_n37(_uploadFile, _downloadFile, x2)));
 }
-function from_candid_vec_n79(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_RelationshipRequest_n35(_uploadFile, _downloadFile, x2));
+function from_candid_vec_n114(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_PersonProfile_n81(_uploadFile, _downloadFile, x2));
 }
-async function from_candid_vec_n81(_uploadFile, _downloadFile, value) {
-  return await Promise.all(value.map(async (x2) => await from_candid_ArchiveItem_n17(_uploadFile, _downloadFile, x2)));
+function from_candid_vec_n115(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_AuditEntry_n116(_uploadFile, _downloadFile, x2));
 }
-function from_candid_vec_n82(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_Relationship_n83(_uploadFile, _downloadFile, x2));
+function from_candid_vec_n120(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_Relationship_n28(_uploadFile, _downloadFile, x2));
 }
-function from_candid_vec_n87(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_Notification_n88(_uploadFile, _downloadFile, x2));
+function from_candid_vec_n121(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_DuplicatePair_n122(_uploadFile, _downloadFile, x2));
 }
-async function from_candid_vec_n92(_uploadFile, _downloadFile, value) {
-  return await Promise.all(value.map(async (x2) => await from_candid_Photo_n13(_uploadFile, _downloadFile, x2)));
+function from_candid_vec_n126(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_Notification_n127(_uploadFile, _downloadFile, x2));
 }
-function from_candid_vec_n93(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_ProfileClaim_n29(_uploadFile, _downloadFile, x2));
+async function from_candid_vec_n131(_uploadFile, _downloadFile, value) {
+  return await Promise.all(value.map(async (x2) => await from_candid_Photo_n21(_uploadFile, _downloadFile, x2)));
 }
-function to_candid_ArchiveItemType_n109(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n110(_uploadFile, _downloadFile, value);
+function from_candid_vec_n132(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_ProfileClaim_n49(_uploadFile, _downloadFile, x2));
 }
-function to_candid_AuthMethod_n42(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n43(_uploadFile, _downloadFile, value);
+function from_candid_vec_n133(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_ProfileRemovalRequest_n55(_uploadFile, _downloadFile, x2));
 }
-async function to_candid_ExternalBlob_n12(_uploadFile, _downloadFile, value) {
+function from_candid_vec_n134(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_StewardRecord_n14(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n135(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_SuccessorDesignation_n92(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n141(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_MergeConflict_n142(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n74(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_AuthMethod_n75(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n98(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_vec_n99(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n99(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_Cell_n100(_uploadFile, _downloadFile, x2));
+}
+function to_candid_ArchiveItemType_n175(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n176(_uploadFile, _downloadFile, value);
+}
+function to_candid_AuthMethod_n68(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n69(_uploadFile, _downloadFile, value);
+}
+async function to_candid_ExternalBlob_n20(_uploadFile, _downloadFile, value) {
   return await _uploadFile(value);
 }
-function to_candid_LivingStatus_n119(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n120(_uploadFile, _downloadFile, value);
+function to_candid_LivingStatus_n185(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n186(_uploadFile, _downloadFile, value);
 }
-function to_candid_PrivacyLevel_n115(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n116(_uploadFile, _downloadFile, value);
+function to_candid_PrivacyLevel_n181(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n182(_uploadFile, _downloadFile, value);
 }
-function to_candid_ProfileEdits_n117(_uploadFile, _downloadFile, value) {
-  return to_candid_record_n118(_uploadFile, _downloadFile, value);
+function to_candid_ProfileEdits_n183(_uploadFile, _downloadFile, value) {
+  return to_candid_record_n184(_uploadFile, _downloadFile, value);
 }
-function to_candid_RelationshipType_n95(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n96(_uploadFile, _downloadFile, value);
+function to_candid_RelationshipType_n24(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n25(_uploadFile, _downloadFile, value);
 }
-function to_candid_SourceStatus_n113(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n114(_uploadFile, _downloadFile, value);
+function to_candid_SourceStatus_n179(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n180(_uploadFile, _downloadFile, value);
 }
-function to_candid_UserRole_n40(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n41(_uploadFile, _downloadFile, value);
+function to_candid_UserRole_n66(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n67(_uploadFile, _downloadFile, value);
 }
 function to_candid__ImmutableObjectStorageRefillInformation_n2(_uploadFile, _downloadFile, value) {
   return to_candid_record_n3(_uploadFile, _downloadFile, value);
@@ -36081,20 +37432,20 @@ function to_candid__ImmutableObjectStorageRefillInformation_n2(_uploadFile, _dow
 function to_candid_opt_n1(_uploadFile, _downloadFile, value) {
   return value === null ? candid_none() : candid_some(to_candid__ImmutableObjectStorageRefillInformation_n2(_uploadFile, _downloadFile, value));
 }
-function to_candid_opt_n111(_uploadFile, _downloadFile, value) {
+function to_candid_opt_n177(_uploadFile, _downloadFile, value) {
   return value === null ? candid_none() : candid_some(value);
 }
-function to_candid_opt_n112(_uploadFile, _downloadFile, value) {
+function to_candid_opt_n178(_uploadFile, _downloadFile, value) {
   return value === null ? candid_none() : candid_some(value);
 }
-function to_candid_record_n118(_uploadFile, _downloadFile, value) {
+function to_candid_record_n184(_uploadFile, _downloadFile, value) {
   return {
     occupation: value.occupation ? candid_some(value.occupation) : candid_none(),
     privacySettings: value.privacySettings ? candid_some(value.privacySettings) : candid_none(),
     nickname: value.nickname ? candid_some(value.nickname) : candid_none(),
     birthDate: value.birthDate ? candid_some(value.birthDate) : candid_none(),
     birthInfo: value.birthInfo ? candid_some(value.birthInfo) : candid_none(),
-    livingStatus: value.livingStatus ? candid_some(to_candid_LivingStatus_n119(_uploadFile, _downloadFile, value.livingStatus)) : candid_none(),
+    livingStatus: value.livingStatus ? candid_some(to_candid_LivingStatus_n185(_uploadFile, _downloadFile, value.livingStatus)) : candid_none(),
     longerStory: value.longerStory ? candid_some(value.longerStory) : candid_none(),
     story: value.story ? candid_some(value.story) : candid_none(),
     middleName: value.middleName ? candid_some(value.middleName) : candid_none(),
@@ -36113,7 +37464,7 @@ function to_candid_record_n3(_uploadFile, _downloadFile, value) {
     proposed_top_up_amount: value.proposed_top_up_amount ? candid_some(value.proposed_top_up_amount) : candid_none()
   };
 }
-function to_candid_variant_n110(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n176(_uploadFile, _downloadFile, value) {
   return value == "Research" ? {
     Research: null
   } : value == "Photo" ? {
@@ -36132,7 +37483,7 @@ function to_candid_variant_n110(_uploadFile, _downloadFile, value) {
     Video: null
   } : value;
 }
-function to_candid_variant_n114(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n180(_uploadFile, _downloadFile, value) {
   return value == "Copy" ? {
     Copy: null
   } : value == "Unverified" ? {
@@ -36143,7 +37494,7 @@ function to_candid_variant_n114(_uploadFile, _downloadFile, value) {
     Original: null
   } : value;
 }
-function to_candid_variant_n116(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n182(_uploadFile, _downloadFile, value) {
   return value == "Private" ? {
     Private: null
   } : value == "Public" ? {
@@ -36152,30 +37503,14 @@ function to_candid_variant_n116(_uploadFile, _downloadFile, value) {
     FamilyOnly: null
   } : value;
 }
-function to_candid_variant_n120(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n186(_uploadFile, _downloadFile, value) {
   return value == "Living" ? {
     Living: null
   } : value == "Deceased" ? {
     Deceased: null
   } : value;
 }
-function to_candid_variant_n41(_uploadFile, _downloadFile, value) {
-  return value == "admin" ? {
-    admin: null
-  } : value == "user" ? {
-    user: null
-  } : value == "guest" ? {
-    guest: null
-  } : value;
-}
-function to_candid_variant_n43(_uploadFile, _downloadFile, value) {
-  return value == "Google" ? {
-    Google: null
-  } : value == "Apple" ? {
-    Apple: null
-  } : value;
-}
-function to_candid_variant_n96(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n25(_uploadFile, _downloadFile, value) {
   return value == "Parent" ? {
     Parent: null
   } : value == "Sibling" ? {
@@ -36184,6 +37519,22 @@ function to_candid_variant_n96(_uploadFile, _downloadFile, value) {
     SpousePartner: null
   } : value == "Child" ? {
     Child: null
+  } : value;
+}
+function to_candid_variant_n67(_uploadFile, _downloadFile, value) {
+  return value == "admin" ? {
+    admin: null
+  } : value == "user" ? {
+    user: null
+  } : value == "guest" ? {
+    guest: null
+  } : value;
+}
+function to_candid_variant_n69(_uploadFile, _downloadFile, value) {
+  return value == "Google" ? {
+    Google: null
+  } : value == "Apple" ? {
+    Apple: null
   } : value;
 }
 function createActor(canisterId, _uploadFile, _downloadFile, options = {}) {
@@ -36228,9 +37579,9 @@ function useUnreadNotificationCount() {
   const { data: notifications = [] } = useListNotifications();
   return notifications.filter((notification) => !notification.read).length;
 }
-function NotificationBadge({ count }) {
+function NotificationBadge({ count: count2 }) {
   const derived = useUnreadNotificationCount();
-  const unread = count ?? derived;
+  const unread = count2 ?? derived;
   if (unread <= 0) return null;
   return /* @__PURE__ */ jsxRuntimeExports.jsx(
     "span",
@@ -36266,6 +37617,7 @@ function Layout({
   onBranchClick,
   onExploreClick,
   onStewardClick,
+  onGovernanceClick,
   onNotificationsClick,
   onAddMyselfClick
 }) {
@@ -36274,6 +37626,7 @@ function Layout({
   const isArchiveActive = activeView === "archive" || activeView === "archive-detail" || activeView === "archive-contribute";
   const isAddMyselfActive = activeView === "add-myself";
   const isStewardActive = activeView === "steward-review";
+  const isGovernanceActive = activeView === "governance";
   const isNotificationsActive = activeView === "notifications";
   const isMyProfileActive = activeView === "my-profile" || activeView === "profile-edit";
   const isAdminActive = activeView === "admin-approval";
@@ -36412,6 +37765,27 @@ function Layout({
                 }
               ),
               "Family Steward"
+            ]
+          }
+        ) : null,
+        showAdminControls ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "button",
+          {
+            type: "button",
+            "data-ocid": "layout.governance_link",
+            "aria-current": isGovernanceActive ? "page" : void 0,
+            onClick: onGovernanceClick,
+            className: navClass(isGovernanceActive),
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                Landmark,
+                {
+                  className: navIconClass(isGovernanceActive),
+                  strokeWidth: 1.75,
+                  "aria-hidden": "true"
+                }
+              ),
+              "Family Governance"
             ]
           }
         ) : null,
@@ -37866,7 +39240,7 @@ function useConstant(init) {
   return ref.current;
 }
 const isBrowser$1 = typeof window !== "undefined";
-const useIsomorphicLayoutEffect = isBrowser$1 ? reactExports.useLayoutEffect : reactExports.useEffect;
+const useIsomorphicLayoutEffect$1 = isBrowser$1 ? reactExports.useLayoutEffect : reactExports.useEffect;
 const PresenceContext = /* @__PURE__ */ reactExports.createContext(null);
 function addUniqueItem(arr, item) {
   if (arr.indexOf(item) === -1)
@@ -43967,7 +45341,7 @@ const MotionConfigContext = reactExports.createContext({
   isStatic: false,
   reducedMotion: "never"
 });
-function usePresence(subscribe = true) {
+function usePresence$1(subscribe = true) {
   const context = reactExports.useContext(PresenceContext);
   if (context === null)
     return [true, null];
@@ -44372,7 +45746,7 @@ function useVisualElement(Component2, visualState, props, createVisualElement, P
   });
   const optimisedAppearId = props[optimizedAppearDataAttribute];
   const wantsHandoff = reactExports.useRef(Boolean(optimisedAppearId) && typeof window !== "undefined" && !((_a2 = window.MotionHandoffIsComplete) == null ? void 0 : _a2.call(window, optimisedAppearId)) && ((_b2 = window.MotionHasOptimisedAnimation) == null ? void 0 : _b2.call(window, optimisedAppearId)));
-  useIsomorphicLayoutEffect(() => {
+  useIsomorphicLayoutEffect$1(() => {
     hasMountedOnce.current = true;
     if (!visualElement)
       return;
@@ -45480,7 +46854,7 @@ class MeasureLayoutWithContext extends reactExports.Component {
   }
 }
 function MeasureLayout(props) {
-  const [isPresent, safeToRemove] = usePresence();
+  const [isPresent, safeToRemove] = usePresence$1();
   const layoutGroup = reactExports.useContext(LayoutGroupContext);
   return jsxRuntimeExports.jsx(MeasureLayoutWithContext, { ...props, layoutGroup, switchLayoutGroup: reactExports.useContext(SwitchLayoutGroupContext), isPresent, safeToRemove });
 }
@@ -45953,6 +47327,4905 @@ function StatusBadge({ kind, status }) {
     }
   );
 }
+function createContext2(rootComponentName, defaultContext) {
+  const Context = reactExports.createContext(defaultContext);
+  const Provider = (props) => {
+    const { children, ...context } = props;
+    const value = reactExports.useMemo(() => context, Object.values(context));
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(Context.Provider, { value, children });
+  };
+  Provider.displayName = rootComponentName + "Provider";
+  function useContext2(consumerName) {
+    const context = reactExports.useContext(Context);
+    if (context) return context;
+    if (defaultContext !== void 0) return defaultContext;
+    throw new Error(`\`${consumerName}\` must be used within \`${rootComponentName}\``);
+  }
+  return [Provider, useContext2];
+}
+function createContextScope(scopeName, createContextScopeDeps = []) {
+  let defaultContexts = [];
+  function createContext3(rootComponentName, defaultContext) {
+    const BaseContext = reactExports.createContext(defaultContext);
+    const index2 = defaultContexts.length;
+    defaultContexts = [...defaultContexts, defaultContext];
+    const Provider = (props) => {
+      var _a2;
+      const { scope, children, ...context } = props;
+      const Context = ((_a2 = scope == null ? void 0 : scope[scopeName]) == null ? void 0 : _a2[index2]) || BaseContext;
+      const value = reactExports.useMemo(() => context, Object.values(context));
+      return /* @__PURE__ */ jsxRuntimeExports.jsx(Context.Provider, { value, children });
+    };
+    Provider.displayName = rootComponentName + "Provider";
+    function useContext2(consumerName, scope) {
+      var _a2;
+      const Context = ((_a2 = scope == null ? void 0 : scope[scopeName]) == null ? void 0 : _a2[index2]) || BaseContext;
+      const context = reactExports.useContext(Context);
+      if (context) return context;
+      if (defaultContext !== void 0) return defaultContext;
+      throw new Error(`\`${consumerName}\` must be used within \`${rootComponentName}\``);
+    }
+    return [Provider, useContext2];
+  }
+  const createScope = () => {
+    const scopeContexts = defaultContexts.map((defaultContext) => {
+      return reactExports.createContext(defaultContext);
+    });
+    return function useScope(scope) {
+      const contexts = (scope == null ? void 0 : scope[scopeName]) || scopeContexts;
+      return reactExports.useMemo(
+        () => ({ [`__scope${scopeName}`]: { ...scope, [scopeName]: contexts } }),
+        [scope, contexts]
+      );
+    };
+  };
+  createScope.scopeName = scopeName;
+  return [createContext3, composeContextScopes(createScope, ...createContextScopeDeps)];
+}
+function composeContextScopes(...scopes) {
+  const baseScope = scopes[0];
+  if (scopes.length === 1) return baseScope;
+  const createScope = () => {
+    const scopeHooks = scopes.map((createScope2) => ({
+      useScope: createScope2(),
+      scopeName: createScope2.scopeName
+    }));
+    return function useComposedScopes(overrideScopes) {
+      const nextScopes = scopeHooks.reduce((nextScopes2, { useScope, scopeName }) => {
+        const scopeProps = useScope(overrideScopes);
+        const currentScope = scopeProps[`__scope${scopeName}`];
+        return { ...nextScopes2, ...currentScope };
+      }, {});
+      return reactExports.useMemo(() => ({ [`__scope${baseScope.scopeName}`]: nextScopes }), [nextScopes]);
+    };
+  };
+  createScope.scopeName = baseScope.scopeName;
+  return createScope;
+}
+function setRef(ref, value) {
+  if (typeof ref === "function") {
+    return ref(value);
+  } else if (ref !== null && ref !== void 0) {
+    ref.current = value;
+  }
+}
+function composeRefs(...refs) {
+  return (node) => {
+    let hasCleanup = false;
+    const cleanups = refs.map((ref) => {
+      const cleanup = setRef(ref, node);
+      if (!hasCleanup && typeof cleanup == "function") {
+        hasCleanup = true;
+      }
+      return cleanup;
+    });
+    if (hasCleanup) {
+      return () => {
+        for (let i = 0; i < cleanups.length; i++) {
+          const cleanup = cleanups[i];
+          if (typeof cleanup == "function") {
+            cleanup();
+          } else {
+            setRef(refs[i], null);
+          }
+        }
+      };
+    }
+  };
+}
+function useComposedRefs(...refs) {
+  return reactExports.useCallback(composeRefs(...refs), refs);
+}
+function composeEventHandlers(originalEventHandler, ourEventHandler, { checkForDefaultPrevented = true } = {}) {
+  return function handleEvent(event) {
+    originalEventHandler == null ? void 0 : originalEventHandler(event);
+    if (checkForDefaultPrevented === false || !event.defaultPrevented) {
+      return ourEventHandler == null ? void 0 : ourEventHandler(event);
+    }
+  };
+}
+var useLayoutEffect2 = (globalThis == null ? void 0 : globalThis.document) ? reactExports.useLayoutEffect : () => {
+};
+var useReactId = React$2[" useId ".trim().toString()] || (() => void 0);
+var count$1 = 0;
+function useId(deterministicId) {
+  const [id2, setId] = reactExports.useState(useReactId());
+  useLayoutEffect2(() => {
+    setId((reactId) => reactId ?? String(count$1++));
+  }, [deterministicId]);
+  return deterministicId || (id2 ? `radix-${id2}` : "");
+}
+var useInsertionEffect = React$2[" useInsertionEffect ".trim().toString()] || useLayoutEffect2;
+function useControllableState({
+  prop,
+  defaultProp,
+  onChange = () => {
+  },
+  caller
+}) {
+  const [uncontrolledProp, setUncontrolledProp, onChangeRef] = useUncontrolledState({
+    defaultProp,
+    onChange
+  });
+  const isControlled = prop !== void 0;
+  const value = isControlled ? prop : uncontrolledProp;
+  {
+    const isControlledRef = reactExports.useRef(prop !== void 0);
+    reactExports.useEffect(() => {
+      const wasControlled = isControlledRef.current;
+      if (wasControlled !== isControlled) {
+        const from = wasControlled ? "controlled" : "uncontrolled";
+        const to = isControlled ? "controlled" : "uncontrolled";
+        console.warn(
+          `${caller} is changing from ${from} to ${to}. Components should not switch from controlled to uncontrolled (or vice versa). Decide between using a controlled or uncontrolled value for the lifetime of the component.`
+        );
+      }
+      isControlledRef.current = isControlled;
+    }, [isControlled, caller]);
+  }
+  const setValue = reactExports.useCallback(
+    (nextValue) => {
+      var _a2;
+      if (isControlled) {
+        const value2 = isFunction(nextValue) ? nextValue(prop) : nextValue;
+        if (value2 !== prop) {
+          (_a2 = onChangeRef.current) == null ? void 0 : _a2.call(onChangeRef, value2);
+        }
+      } else {
+        setUncontrolledProp(nextValue);
+      }
+    },
+    [isControlled, prop, setUncontrolledProp, onChangeRef]
+  );
+  return [value, setValue];
+}
+function useUncontrolledState({
+  defaultProp,
+  onChange
+}) {
+  const [value, setValue] = reactExports.useState(defaultProp);
+  const prevValueRef = reactExports.useRef(value);
+  const onChangeRef = reactExports.useRef(onChange);
+  useInsertionEffect(() => {
+    onChangeRef.current = onChange;
+  }, [onChange]);
+  reactExports.useEffect(() => {
+    var _a2;
+    if (prevValueRef.current !== value) {
+      (_a2 = onChangeRef.current) == null ? void 0 : _a2.call(onChangeRef, value);
+      prevValueRef.current = value;
+    }
+  }, [value, prevValueRef]);
+  return [value, setValue, onChangeRef];
+}
+function isFunction(value) {
+  return typeof value === "function";
+}
+// @__NO_SIDE_EFFECTS__
+function createSlot(ownerName) {
+  const SlotClone = /* @__PURE__ */ createSlotClone(ownerName);
+  const Slot2 = reactExports.forwardRef((props, forwardedRef) => {
+    const { children, ...slotProps } = props;
+    const childrenArray = reactExports.Children.toArray(children);
+    const slottable = childrenArray.find(isSlottable);
+    if (slottable) {
+      const newElement = slottable.props.children;
+      const newChildren = childrenArray.map((child) => {
+        if (child === slottable) {
+          if (reactExports.Children.count(newElement) > 1) return reactExports.Children.only(null);
+          return reactExports.isValidElement(newElement) ? newElement.props.children : null;
+        } else {
+          return child;
+        }
+      });
+      return /* @__PURE__ */ jsxRuntimeExports.jsx(SlotClone, { ...slotProps, ref: forwardedRef, children: reactExports.isValidElement(newElement) ? reactExports.cloneElement(newElement, void 0, newChildren) : null });
+    }
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(SlotClone, { ...slotProps, ref: forwardedRef, children });
+  });
+  Slot2.displayName = `${ownerName}.Slot`;
+  return Slot2;
+}
+// @__NO_SIDE_EFFECTS__
+function createSlotClone(ownerName) {
+  const SlotClone = reactExports.forwardRef((props, forwardedRef) => {
+    const { children, ...slotProps } = props;
+    if (reactExports.isValidElement(children)) {
+      const childrenRef = getElementRef$1(children);
+      const props2 = mergeProps(slotProps, children.props);
+      if (children.type !== reactExports.Fragment) {
+        props2.ref = forwardedRef ? composeRefs(forwardedRef, childrenRef) : childrenRef;
+      }
+      return reactExports.cloneElement(children, props2);
+    }
+    return reactExports.Children.count(children) > 1 ? reactExports.Children.only(null) : null;
+  });
+  SlotClone.displayName = `${ownerName}.SlotClone`;
+  return SlotClone;
+}
+var SLOTTABLE_IDENTIFIER = Symbol("radix.slottable");
+// @__NO_SIDE_EFFECTS__
+function createSlottable(ownerName) {
+  const Slottable2 = ({ children }) => {
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(jsxRuntimeExports.Fragment, { children });
+  };
+  Slottable2.displayName = `${ownerName}.Slottable`;
+  Slottable2.__radixId = SLOTTABLE_IDENTIFIER;
+  return Slottable2;
+}
+function isSlottable(child) {
+  return reactExports.isValidElement(child) && typeof child.type === "function" && "__radixId" in child.type && child.type.__radixId === SLOTTABLE_IDENTIFIER;
+}
+function mergeProps(slotProps, childProps) {
+  const overrideProps = { ...childProps };
+  for (const propName in childProps) {
+    const slotPropValue = slotProps[propName];
+    const childPropValue = childProps[propName];
+    const isHandler = /^on[A-Z]/.test(propName);
+    if (isHandler) {
+      if (slotPropValue && childPropValue) {
+        overrideProps[propName] = (...args) => {
+          const result = childPropValue(...args);
+          slotPropValue(...args);
+          return result;
+        };
+      } else if (slotPropValue) {
+        overrideProps[propName] = slotPropValue;
+      }
+    } else if (propName === "style") {
+      overrideProps[propName] = { ...slotPropValue, ...childPropValue };
+    } else if (propName === "className") {
+      overrideProps[propName] = [slotPropValue, childPropValue].filter(Boolean).join(" ");
+    }
+  }
+  return { ...slotProps, ...overrideProps };
+}
+function getElementRef$1(element) {
+  var _a2, _b2;
+  let getter = (_a2 = Object.getOwnPropertyDescriptor(element.props, "ref")) == null ? void 0 : _a2.get;
+  let mayWarn = getter && "isReactWarning" in getter && getter.isReactWarning;
+  if (mayWarn) {
+    return element.ref;
+  }
+  getter = (_b2 = Object.getOwnPropertyDescriptor(element, "ref")) == null ? void 0 : _b2.get;
+  mayWarn = getter && "isReactWarning" in getter && getter.isReactWarning;
+  if (mayWarn) {
+    return element.props.ref;
+  }
+  return element.props.ref || element.ref;
+}
+var NODES = [
+  "a",
+  "button",
+  "div",
+  "form",
+  "h2",
+  "h3",
+  "img",
+  "input",
+  "label",
+  "li",
+  "nav",
+  "ol",
+  "p",
+  "select",
+  "span",
+  "svg",
+  "ul"
+];
+var Primitive = NODES.reduce((primitive, node) => {
+  const Slot2 = /* @__PURE__ */ createSlot(`Primitive.${node}`);
+  const Node2 = reactExports.forwardRef((props, forwardedRef) => {
+    const { asChild, ...primitiveProps } = props;
+    const Comp = asChild ? Slot2 : node;
+    if (typeof window !== "undefined") {
+      window[Symbol.for("radix-ui")] = true;
+    }
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(Comp, { ...primitiveProps, ref: forwardedRef });
+  });
+  Node2.displayName = `Primitive.${node}`;
+  return { ...primitive, [node]: Node2 };
+}, {});
+function dispatchDiscreteCustomEvent(target, event) {
+  if (target) reactDomExports.flushSync(() => target.dispatchEvent(event));
+}
+function useCallbackRef$1(callback) {
+  const callbackRef = reactExports.useRef(callback);
+  reactExports.useEffect(() => {
+    callbackRef.current = callback;
+  });
+  return reactExports.useMemo(() => (...args) => {
+    var _a2;
+    return (_a2 = callbackRef.current) == null ? void 0 : _a2.call(callbackRef, ...args);
+  }, []);
+}
+function useEscapeKeydown(onEscapeKeyDownProp, ownerDocument = globalThis == null ? void 0 : globalThis.document) {
+  const onEscapeKeyDown = useCallbackRef$1(onEscapeKeyDownProp);
+  reactExports.useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        onEscapeKeyDown(event);
+      }
+    };
+    ownerDocument.addEventListener("keydown", handleKeyDown, { capture: true });
+    return () => ownerDocument.removeEventListener("keydown", handleKeyDown, { capture: true });
+  }, [onEscapeKeyDown, ownerDocument]);
+}
+var DISMISSABLE_LAYER_NAME = "DismissableLayer";
+var CONTEXT_UPDATE = "dismissableLayer.update";
+var POINTER_DOWN_OUTSIDE = "dismissableLayer.pointerDownOutside";
+var FOCUS_OUTSIDE = "dismissableLayer.focusOutside";
+var originalBodyPointerEvents;
+var DismissableLayerContext = reactExports.createContext({
+  layers: /* @__PURE__ */ new Set(),
+  layersWithOutsidePointerEventsDisabled: /* @__PURE__ */ new Set(),
+  branches: /* @__PURE__ */ new Set()
+});
+var DismissableLayer = reactExports.forwardRef(
+  (props, forwardedRef) => {
+    const {
+      disableOutsidePointerEvents = false,
+      onEscapeKeyDown,
+      onPointerDownOutside,
+      onFocusOutside,
+      onInteractOutside,
+      onDismiss,
+      ...layerProps
+    } = props;
+    const context = reactExports.useContext(DismissableLayerContext);
+    const [node, setNode] = reactExports.useState(null);
+    const ownerDocument = (node == null ? void 0 : node.ownerDocument) ?? (globalThis == null ? void 0 : globalThis.document);
+    const [, force] = reactExports.useState({});
+    const composedRefs = useComposedRefs(forwardedRef, (node2) => setNode(node2));
+    const layers = Array.from(context.layers);
+    const [highestLayerWithOutsidePointerEventsDisabled] = [...context.layersWithOutsidePointerEventsDisabled].slice(-1);
+    const highestLayerWithOutsidePointerEventsDisabledIndex = layers.indexOf(highestLayerWithOutsidePointerEventsDisabled);
+    const index2 = node ? layers.indexOf(node) : -1;
+    const isBodyPointerEventsDisabled = context.layersWithOutsidePointerEventsDisabled.size > 0;
+    const isPointerEventsEnabled = index2 >= highestLayerWithOutsidePointerEventsDisabledIndex;
+    const pointerDownOutside = usePointerDownOutside((event) => {
+      const target = event.target;
+      const isPointerDownOnBranch = [...context.branches].some((branch) => branch.contains(target));
+      if (!isPointerEventsEnabled || isPointerDownOnBranch) return;
+      onPointerDownOutside == null ? void 0 : onPointerDownOutside(event);
+      onInteractOutside == null ? void 0 : onInteractOutside(event);
+      if (!event.defaultPrevented) onDismiss == null ? void 0 : onDismiss();
+    }, ownerDocument);
+    const focusOutside = useFocusOutside((event) => {
+      const target = event.target;
+      const isFocusInBranch = [...context.branches].some((branch) => branch.contains(target));
+      if (isFocusInBranch) return;
+      onFocusOutside == null ? void 0 : onFocusOutside(event);
+      onInteractOutside == null ? void 0 : onInteractOutside(event);
+      if (!event.defaultPrevented) onDismiss == null ? void 0 : onDismiss();
+    }, ownerDocument);
+    useEscapeKeydown((event) => {
+      const isHighestLayer = index2 === context.layers.size - 1;
+      if (!isHighestLayer) return;
+      onEscapeKeyDown == null ? void 0 : onEscapeKeyDown(event);
+      if (!event.defaultPrevented && onDismiss) {
+        event.preventDefault();
+        onDismiss();
+      }
+    }, ownerDocument);
+    reactExports.useEffect(() => {
+      if (!node) return;
+      if (disableOutsidePointerEvents) {
+        if (context.layersWithOutsidePointerEventsDisabled.size === 0) {
+          originalBodyPointerEvents = ownerDocument.body.style.pointerEvents;
+          ownerDocument.body.style.pointerEvents = "none";
+        }
+        context.layersWithOutsidePointerEventsDisabled.add(node);
+      }
+      context.layers.add(node);
+      dispatchUpdate();
+      return () => {
+        if (disableOutsidePointerEvents && context.layersWithOutsidePointerEventsDisabled.size === 1) {
+          ownerDocument.body.style.pointerEvents = originalBodyPointerEvents;
+        }
+      };
+    }, [node, ownerDocument, disableOutsidePointerEvents, context]);
+    reactExports.useEffect(() => {
+      return () => {
+        if (!node) return;
+        context.layers.delete(node);
+        context.layersWithOutsidePointerEventsDisabled.delete(node);
+        dispatchUpdate();
+      };
+    }, [node, context]);
+    reactExports.useEffect(() => {
+      const handleUpdate = () => force({});
+      document.addEventListener(CONTEXT_UPDATE, handleUpdate);
+      return () => document.removeEventListener(CONTEXT_UPDATE, handleUpdate);
+    }, []);
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(
+      Primitive.div,
+      {
+        ...layerProps,
+        ref: composedRefs,
+        style: {
+          pointerEvents: isBodyPointerEventsDisabled ? isPointerEventsEnabled ? "auto" : "none" : void 0,
+          ...props.style
+        },
+        onFocusCapture: composeEventHandlers(props.onFocusCapture, focusOutside.onFocusCapture),
+        onBlurCapture: composeEventHandlers(props.onBlurCapture, focusOutside.onBlurCapture),
+        onPointerDownCapture: composeEventHandlers(
+          props.onPointerDownCapture,
+          pointerDownOutside.onPointerDownCapture
+        )
+      }
+    );
+  }
+);
+DismissableLayer.displayName = DISMISSABLE_LAYER_NAME;
+var BRANCH_NAME = "DismissableLayerBranch";
+var DismissableLayerBranch = reactExports.forwardRef((props, forwardedRef) => {
+  const context = reactExports.useContext(DismissableLayerContext);
+  const ref = reactExports.useRef(null);
+  const composedRefs = useComposedRefs(forwardedRef, ref);
+  reactExports.useEffect(() => {
+    const node = ref.current;
+    if (node) {
+      context.branches.add(node);
+      return () => {
+        context.branches.delete(node);
+      };
+    }
+  }, [context.branches]);
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(Primitive.div, { ...props, ref: composedRefs });
+});
+DismissableLayerBranch.displayName = BRANCH_NAME;
+function usePointerDownOutside(onPointerDownOutside, ownerDocument = globalThis == null ? void 0 : globalThis.document) {
+  const handlePointerDownOutside = useCallbackRef$1(onPointerDownOutside);
+  const isPointerInsideReactTreeRef = reactExports.useRef(false);
+  const handleClickRef = reactExports.useRef(() => {
+  });
+  reactExports.useEffect(() => {
+    const handlePointerDown = (event) => {
+      if (event.target && !isPointerInsideReactTreeRef.current) {
+        let handleAndDispatchPointerDownOutsideEvent2 = function() {
+          handleAndDispatchCustomEvent(
+            POINTER_DOWN_OUTSIDE,
+            handlePointerDownOutside,
+            eventDetail,
+            { discrete: true }
+          );
+        };
+        const eventDetail = { originalEvent: event };
+        if (event.pointerType === "touch") {
+          ownerDocument.removeEventListener("click", handleClickRef.current);
+          handleClickRef.current = handleAndDispatchPointerDownOutsideEvent2;
+          ownerDocument.addEventListener("click", handleClickRef.current, { once: true });
+        } else {
+          handleAndDispatchPointerDownOutsideEvent2();
+        }
+      } else {
+        ownerDocument.removeEventListener("click", handleClickRef.current);
+      }
+      isPointerInsideReactTreeRef.current = false;
+    };
+    const timerId = window.setTimeout(() => {
+      ownerDocument.addEventListener("pointerdown", handlePointerDown);
+    }, 0);
+    return () => {
+      window.clearTimeout(timerId);
+      ownerDocument.removeEventListener("pointerdown", handlePointerDown);
+      ownerDocument.removeEventListener("click", handleClickRef.current);
+    };
+  }, [ownerDocument, handlePointerDownOutside]);
+  return {
+    // ensures we check React component tree (not just DOM tree)
+    onPointerDownCapture: () => isPointerInsideReactTreeRef.current = true
+  };
+}
+function useFocusOutside(onFocusOutside, ownerDocument = globalThis == null ? void 0 : globalThis.document) {
+  const handleFocusOutside = useCallbackRef$1(onFocusOutside);
+  const isFocusInsideReactTreeRef = reactExports.useRef(false);
+  reactExports.useEffect(() => {
+    const handleFocus = (event) => {
+      if (event.target && !isFocusInsideReactTreeRef.current) {
+        const eventDetail = { originalEvent: event };
+        handleAndDispatchCustomEvent(FOCUS_OUTSIDE, handleFocusOutside, eventDetail, {
+          discrete: false
+        });
+      }
+    };
+    ownerDocument.addEventListener("focusin", handleFocus);
+    return () => ownerDocument.removeEventListener("focusin", handleFocus);
+  }, [ownerDocument, handleFocusOutside]);
+  return {
+    onFocusCapture: () => isFocusInsideReactTreeRef.current = true,
+    onBlurCapture: () => isFocusInsideReactTreeRef.current = false
+  };
+}
+function dispatchUpdate() {
+  const event = new CustomEvent(CONTEXT_UPDATE);
+  document.dispatchEvent(event);
+}
+function handleAndDispatchCustomEvent(name, handler, detail, { discrete }) {
+  const target = detail.originalEvent.target;
+  const event = new CustomEvent(name, { bubbles: false, cancelable: true, detail });
+  if (handler) target.addEventListener(name, handler, { once: true });
+  if (discrete) {
+    dispatchDiscreteCustomEvent(target, event);
+  } else {
+    target.dispatchEvent(event);
+  }
+}
+var AUTOFOCUS_ON_MOUNT = "focusScope.autoFocusOnMount";
+var AUTOFOCUS_ON_UNMOUNT = "focusScope.autoFocusOnUnmount";
+var EVENT_OPTIONS = { bubbles: false, cancelable: true };
+var FOCUS_SCOPE_NAME = "FocusScope";
+var FocusScope = reactExports.forwardRef((props, forwardedRef) => {
+  const {
+    loop = false,
+    trapped = false,
+    onMountAutoFocus: onMountAutoFocusProp,
+    onUnmountAutoFocus: onUnmountAutoFocusProp,
+    ...scopeProps
+  } = props;
+  const [container, setContainer] = reactExports.useState(null);
+  const onMountAutoFocus = useCallbackRef$1(onMountAutoFocusProp);
+  const onUnmountAutoFocus = useCallbackRef$1(onUnmountAutoFocusProp);
+  const lastFocusedElementRef = reactExports.useRef(null);
+  const composedRefs = useComposedRefs(forwardedRef, (node) => setContainer(node));
+  const focusScope = reactExports.useRef({
+    paused: false,
+    pause() {
+      this.paused = true;
+    },
+    resume() {
+      this.paused = false;
+    }
+  }).current;
+  reactExports.useEffect(() => {
+    if (trapped) {
+      let handleFocusIn2 = function(event) {
+        if (focusScope.paused || !container) return;
+        const target = event.target;
+        if (container.contains(target)) {
+          lastFocusedElementRef.current = target;
+        } else {
+          focus(lastFocusedElementRef.current, { select: true });
+        }
+      }, handleFocusOut2 = function(event) {
+        if (focusScope.paused || !container) return;
+        const relatedTarget = event.relatedTarget;
+        if (relatedTarget === null) return;
+        if (!container.contains(relatedTarget)) {
+          focus(lastFocusedElementRef.current, { select: true });
+        }
+      }, handleMutations2 = function(mutations) {
+        const focusedElement = document.activeElement;
+        if (focusedElement !== document.body) return;
+        for (const mutation of mutations) {
+          if (mutation.removedNodes.length > 0) focus(container);
+        }
+      };
+      document.addEventListener("focusin", handleFocusIn2);
+      document.addEventListener("focusout", handleFocusOut2);
+      const mutationObserver = new MutationObserver(handleMutations2);
+      if (container) mutationObserver.observe(container, { childList: true, subtree: true });
+      return () => {
+        document.removeEventListener("focusin", handleFocusIn2);
+        document.removeEventListener("focusout", handleFocusOut2);
+        mutationObserver.disconnect();
+      };
+    }
+  }, [trapped, container, focusScope.paused]);
+  reactExports.useEffect(() => {
+    if (container) {
+      focusScopesStack.add(focusScope);
+      const previouslyFocusedElement = document.activeElement;
+      const hasFocusedCandidate = container.contains(previouslyFocusedElement);
+      if (!hasFocusedCandidate) {
+        const mountEvent = new CustomEvent(AUTOFOCUS_ON_MOUNT, EVENT_OPTIONS);
+        container.addEventListener(AUTOFOCUS_ON_MOUNT, onMountAutoFocus);
+        container.dispatchEvent(mountEvent);
+        if (!mountEvent.defaultPrevented) {
+          focusFirst(removeLinks(getTabbableCandidates(container)), { select: true });
+          if (document.activeElement === previouslyFocusedElement) {
+            focus(container);
+          }
+        }
+      }
+      return () => {
+        container.removeEventListener(AUTOFOCUS_ON_MOUNT, onMountAutoFocus);
+        setTimeout(() => {
+          const unmountEvent = new CustomEvent(AUTOFOCUS_ON_UNMOUNT, EVENT_OPTIONS);
+          container.addEventListener(AUTOFOCUS_ON_UNMOUNT, onUnmountAutoFocus);
+          container.dispatchEvent(unmountEvent);
+          if (!unmountEvent.defaultPrevented) {
+            focus(previouslyFocusedElement ?? document.body, { select: true });
+          }
+          container.removeEventListener(AUTOFOCUS_ON_UNMOUNT, onUnmountAutoFocus);
+          focusScopesStack.remove(focusScope);
+        }, 0);
+      };
+    }
+  }, [container, onMountAutoFocus, onUnmountAutoFocus, focusScope]);
+  const handleKeyDown = reactExports.useCallback(
+    (event) => {
+      if (!loop && !trapped) return;
+      if (focusScope.paused) return;
+      const isTabKey = event.key === "Tab" && !event.altKey && !event.ctrlKey && !event.metaKey;
+      const focusedElement = document.activeElement;
+      if (isTabKey && focusedElement) {
+        const container2 = event.currentTarget;
+        const [first, last] = getTabbableEdges(container2);
+        const hasTabbableElementsInside = first && last;
+        if (!hasTabbableElementsInside) {
+          if (focusedElement === container2) event.preventDefault();
+        } else {
+          if (!event.shiftKey && focusedElement === last) {
+            event.preventDefault();
+            if (loop) focus(first, { select: true });
+          } else if (event.shiftKey && focusedElement === first) {
+            event.preventDefault();
+            if (loop) focus(last, { select: true });
+          }
+        }
+      }
+    },
+    [loop, trapped, focusScope.paused]
+  );
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(Primitive.div, { tabIndex: -1, ...scopeProps, ref: composedRefs, onKeyDown: handleKeyDown });
+});
+FocusScope.displayName = FOCUS_SCOPE_NAME;
+function focusFirst(candidates, { select = false } = {}) {
+  const previouslyFocusedElement = document.activeElement;
+  for (const candidate of candidates) {
+    focus(candidate, { select });
+    if (document.activeElement !== previouslyFocusedElement) return;
+  }
+}
+function getTabbableEdges(container) {
+  const candidates = getTabbableCandidates(container);
+  const first = findVisible(candidates, container);
+  const last = findVisible(candidates.reverse(), container);
+  return [first, last];
+}
+function getTabbableCandidates(container) {
+  const nodes = [];
+  const walker = document.createTreeWalker(container, NodeFilter.SHOW_ELEMENT, {
+    acceptNode: (node) => {
+      const isHiddenInput = node.tagName === "INPUT" && node.type === "hidden";
+      if (node.disabled || node.hidden || isHiddenInput) return NodeFilter.FILTER_SKIP;
+      return node.tabIndex >= 0 ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
+    }
+  });
+  while (walker.nextNode()) nodes.push(walker.currentNode);
+  return nodes;
+}
+function findVisible(elements, container) {
+  for (const element of elements) {
+    if (!isHidden(element, { upTo: container })) return element;
+  }
+}
+function isHidden(node, { upTo }) {
+  if (getComputedStyle(node).visibility === "hidden") return true;
+  while (node) {
+    if (upTo !== void 0 && node === upTo) return false;
+    if (getComputedStyle(node).display === "none") return true;
+    node = node.parentElement;
+  }
+  return false;
+}
+function isSelectableInput(element) {
+  return element instanceof HTMLInputElement && "select" in element;
+}
+function focus(element, { select = false } = {}) {
+  if (element && element.focus) {
+    const previouslyFocusedElement = document.activeElement;
+    element.focus({ preventScroll: true });
+    if (element !== previouslyFocusedElement && isSelectableInput(element) && select)
+      element.select();
+  }
+}
+var focusScopesStack = createFocusScopesStack();
+function createFocusScopesStack() {
+  let stack = [];
+  return {
+    add(focusScope) {
+      const activeFocusScope = stack[0];
+      if (focusScope !== activeFocusScope) {
+        activeFocusScope == null ? void 0 : activeFocusScope.pause();
+      }
+      stack = arrayRemove(stack, focusScope);
+      stack.unshift(focusScope);
+    },
+    remove(focusScope) {
+      var _a2;
+      stack = arrayRemove(stack, focusScope);
+      (_a2 = stack[0]) == null ? void 0 : _a2.resume();
+    }
+  };
+}
+function arrayRemove(array, item) {
+  const updatedArray = [...array];
+  const index2 = updatedArray.indexOf(item);
+  if (index2 !== -1) {
+    updatedArray.splice(index2, 1);
+  }
+  return updatedArray;
+}
+function removeLinks(items) {
+  return items.filter((item) => item.tagName !== "A");
+}
+var PORTAL_NAME$2 = "Portal";
+var Portal$1 = reactExports.forwardRef((props, forwardedRef) => {
+  var _a2;
+  const { container: containerProp, ...portalProps } = props;
+  const [mounted, setMounted] = reactExports.useState(false);
+  useLayoutEffect2(() => setMounted(true), []);
+  const container = containerProp || mounted && ((_a2 = globalThis == null ? void 0 : globalThis.document) == null ? void 0 : _a2.body);
+  return container ? ReactDOM$2.createPortal(/* @__PURE__ */ jsxRuntimeExports.jsx(Primitive.div, { ...portalProps, ref: forwardedRef }), container) : null;
+});
+Portal$1.displayName = PORTAL_NAME$2;
+function useStateMachine(initialState, machine) {
+  return reactExports.useReducer((state, event) => {
+    const nextState = machine[state][event];
+    return nextState ?? state;
+  }, initialState);
+}
+var Presence = (props) => {
+  const { present, children } = props;
+  const presence = usePresence(present);
+  const child = typeof children === "function" ? children({ present: presence.isPresent }) : reactExports.Children.only(children);
+  const ref = useComposedRefs(presence.ref, getElementRef(child));
+  const forceMount = typeof children === "function";
+  return forceMount || presence.isPresent ? reactExports.cloneElement(child, { ref }) : null;
+};
+Presence.displayName = "Presence";
+function usePresence(present) {
+  const [node, setNode] = reactExports.useState();
+  const stylesRef = reactExports.useRef(null);
+  const prevPresentRef = reactExports.useRef(present);
+  const prevAnimationNameRef = reactExports.useRef("none");
+  const initialState = present ? "mounted" : "unmounted";
+  const [state, send] = useStateMachine(initialState, {
+    mounted: {
+      UNMOUNT: "unmounted",
+      ANIMATION_OUT: "unmountSuspended"
+    },
+    unmountSuspended: {
+      MOUNT: "mounted",
+      ANIMATION_END: "unmounted"
+    },
+    unmounted: {
+      MOUNT: "mounted"
+    }
+  });
+  reactExports.useEffect(() => {
+    const currentAnimationName = getAnimationName(stylesRef.current);
+    prevAnimationNameRef.current = state === "mounted" ? currentAnimationName : "none";
+  }, [state]);
+  useLayoutEffect2(() => {
+    const styles = stylesRef.current;
+    const wasPresent = prevPresentRef.current;
+    const hasPresentChanged = wasPresent !== present;
+    if (hasPresentChanged) {
+      const prevAnimationName = prevAnimationNameRef.current;
+      const currentAnimationName = getAnimationName(styles);
+      if (present) {
+        send("MOUNT");
+      } else if (currentAnimationName === "none" || (styles == null ? void 0 : styles.display) === "none") {
+        send("UNMOUNT");
+      } else {
+        const isAnimating = prevAnimationName !== currentAnimationName;
+        if (wasPresent && isAnimating) {
+          send("ANIMATION_OUT");
+        } else {
+          send("UNMOUNT");
+        }
+      }
+      prevPresentRef.current = present;
+    }
+  }, [present, send]);
+  useLayoutEffect2(() => {
+    if (node) {
+      let timeoutId;
+      const ownerWindow = node.ownerDocument.defaultView ?? window;
+      const handleAnimationEnd = (event) => {
+        const currentAnimationName = getAnimationName(stylesRef.current);
+        const isCurrentAnimation = currentAnimationName.includes(CSS.escape(event.animationName));
+        if (event.target === node && isCurrentAnimation) {
+          send("ANIMATION_END");
+          if (!prevPresentRef.current) {
+            const currentFillMode = node.style.animationFillMode;
+            node.style.animationFillMode = "forwards";
+            timeoutId = ownerWindow.setTimeout(() => {
+              if (node.style.animationFillMode === "forwards") {
+                node.style.animationFillMode = currentFillMode;
+              }
+            });
+          }
+        }
+      };
+      const handleAnimationStart = (event) => {
+        if (event.target === node) {
+          prevAnimationNameRef.current = getAnimationName(stylesRef.current);
+        }
+      };
+      node.addEventListener("animationstart", handleAnimationStart);
+      node.addEventListener("animationcancel", handleAnimationEnd);
+      node.addEventListener("animationend", handleAnimationEnd);
+      return () => {
+        ownerWindow.clearTimeout(timeoutId);
+        node.removeEventListener("animationstart", handleAnimationStart);
+        node.removeEventListener("animationcancel", handleAnimationEnd);
+        node.removeEventListener("animationend", handleAnimationEnd);
+      };
+    } else {
+      send("ANIMATION_END");
+    }
+  }, [node, send]);
+  return {
+    isPresent: ["mounted", "unmountSuspended"].includes(state),
+    ref: reactExports.useCallback((node2) => {
+      stylesRef.current = node2 ? getComputedStyle(node2) : null;
+      setNode(node2);
+    }, [])
+  };
+}
+function getAnimationName(styles) {
+  return (styles == null ? void 0 : styles.animationName) || "none";
+}
+function getElementRef(element) {
+  var _a2, _b2;
+  let getter = (_a2 = Object.getOwnPropertyDescriptor(element.props, "ref")) == null ? void 0 : _a2.get;
+  let mayWarn = getter && "isReactWarning" in getter && getter.isReactWarning;
+  if (mayWarn) {
+    return element.ref;
+  }
+  getter = (_b2 = Object.getOwnPropertyDescriptor(element, "ref")) == null ? void 0 : _b2.get;
+  mayWarn = getter && "isReactWarning" in getter && getter.isReactWarning;
+  if (mayWarn) {
+    return element.props.ref;
+  }
+  return element.props.ref || element.ref;
+}
+var count = 0;
+function useFocusGuards() {
+  reactExports.useEffect(() => {
+    const edgeGuards = document.querySelectorAll("[data-radix-focus-guard]");
+    document.body.insertAdjacentElement("afterbegin", edgeGuards[0] ?? createFocusGuard());
+    document.body.insertAdjacentElement("beforeend", edgeGuards[1] ?? createFocusGuard());
+    count++;
+    return () => {
+      if (count === 1) {
+        document.querySelectorAll("[data-radix-focus-guard]").forEach((node) => node.remove());
+      }
+      count--;
+    };
+  }, []);
+}
+function createFocusGuard() {
+  const element = document.createElement("span");
+  element.setAttribute("data-radix-focus-guard", "");
+  element.tabIndex = 0;
+  element.style.outline = "none";
+  element.style.opacity = "0";
+  element.style.position = "fixed";
+  element.style.pointerEvents = "none";
+  return element;
+}
+var __assign = function() {
+  __assign = Object.assign || function __assign2(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+      for (var p2 in s) if (Object.prototype.hasOwnProperty.call(s, p2)) t[p2] = s[p2];
+    }
+    return t;
+  };
+  return __assign.apply(this, arguments);
+};
+function __rest(s, e) {
+  var t = {};
+  for (var p2 in s) if (Object.prototype.hasOwnProperty.call(s, p2) && e.indexOf(p2) < 0)
+    t[p2] = s[p2];
+  if (s != null && typeof Object.getOwnPropertySymbols === "function")
+    for (var i = 0, p2 = Object.getOwnPropertySymbols(s); i < p2.length; i++) {
+      if (e.indexOf(p2[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p2[i]))
+        t[p2[i]] = s[p2[i]];
+    }
+  return t;
+}
+function __spreadArray(to, from, pack) {
+  if (pack || arguments.length === 2) for (var i = 0, l2 = from.length, ar; i < l2; i++) {
+    if (ar || !(i in from)) {
+      if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+      ar[i] = from[i];
+    }
+  }
+  return to.concat(ar || Array.prototype.slice.call(from));
+}
+typeof SuppressedError === "function" ? SuppressedError : function(error, suppressed, message) {
+  var e = new Error(message);
+  return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
+};
+var zeroRightClassName = "right-scroll-bar-position";
+var fullWidthClassName = "width-before-scroll-bar";
+var noScrollbarsClassName = "with-scroll-bars-hidden";
+var removedBarSizeVariable = "--removed-body-scroll-bar-size";
+function assignRef(ref, value) {
+  if (typeof ref === "function") {
+    ref(value);
+  } else if (ref) {
+    ref.current = value;
+  }
+  return ref;
+}
+function useCallbackRef(initialValue, callback) {
+  var ref = reactExports.useState(function() {
+    return {
+      // value
+      value: initialValue,
+      // last callback
+      callback,
+      // "memoized" public interface
+      facade: {
+        get current() {
+          return ref.value;
+        },
+        set current(value) {
+          var last = ref.value;
+          if (last !== value) {
+            ref.value = value;
+            ref.callback(value, last);
+          }
+        }
+      }
+    };
+  })[0];
+  ref.callback = callback;
+  return ref.facade;
+}
+var useIsomorphicLayoutEffect = typeof window !== "undefined" ? reactExports.useLayoutEffect : reactExports.useEffect;
+var currentValues = /* @__PURE__ */ new WeakMap();
+function useMergeRefs(refs, defaultValue) {
+  var callbackRef = useCallbackRef(null, function(newValue) {
+    return refs.forEach(function(ref) {
+      return assignRef(ref, newValue);
+    });
+  });
+  useIsomorphicLayoutEffect(function() {
+    var oldValue = currentValues.get(callbackRef);
+    if (oldValue) {
+      var prevRefs_1 = new Set(oldValue);
+      var nextRefs_1 = new Set(refs);
+      var current_1 = callbackRef.current;
+      prevRefs_1.forEach(function(ref) {
+        if (!nextRefs_1.has(ref)) {
+          assignRef(ref, null);
+        }
+      });
+      nextRefs_1.forEach(function(ref) {
+        if (!prevRefs_1.has(ref)) {
+          assignRef(ref, current_1);
+        }
+      });
+    }
+    currentValues.set(callbackRef, refs);
+  }, [refs]);
+  return callbackRef;
+}
+function ItoI(a2) {
+  return a2;
+}
+function innerCreateMedium(defaults, middleware) {
+  if (middleware === void 0) {
+    middleware = ItoI;
+  }
+  var buffer = [];
+  var assigned = false;
+  var medium = {
+    read: function() {
+      if (assigned) {
+        throw new Error("Sidecar: could not `read` from an `assigned` medium. `read` could be used only with `useMedium`.");
+      }
+      if (buffer.length) {
+        return buffer[buffer.length - 1];
+      }
+      return defaults;
+    },
+    useMedium: function(data) {
+      var item = middleware(data, assigned);
+      buffer.push(item);
+      return function() {
+        buffer = buffer.filter(function(x2) {
+          return x2 !== item;
+        });
+      };
+    },
+    assignSyncMedium: function(cb) {
+      assigned = true;
+      while (buffer.length) {
+        var cbs = buffer;
+        buffer = [];
+        cbs.forEach(cb);
+      }
+      buffer = {
+        push: function(x2) {
+          return cb(x2);
+        },
+        filter: function() {
+          return buffer;
+        }
+      };
+    },
+    assignMedium: function(cb) {
+      assigned = true;
+      var pendingQueue = [];
+      if (buffer.length) {
+        var cbs = buffer;
+        buffer = [];
+        cbs.forEach(cb);
+        pendingQueue = buffer;
+      }
+      var executeQueue = function() {
+        var cbs2 = pendingQueue;
+        pendingQueue = [];
+        cbs2.forEach(cb);
+      };
+      var cycle = function() {
+        return Promise.resolve().then(executeQueue);
+      };
+      cycle();
+      buffer = {
+        push: function(x2) {
+          pendingQueue.push(x2);
+          cycle();
+        },
+        filter: function(filter2) {
+          pendingQueue = pendingQueue.filter(filter2);
+          return buffer;
+        }
+      };
+    }
+  };
+  return medium;
+}
+function createSidecarMedium(options) {
+  if (options === void 0) {
+    options = {};
+  }
+  var medium = innerCreateMedium(null);
+  medium.options = __assign({ async: true, ssr: false }, options);
+  return medium;
+}
+var SideCar$1 = function(_a2) {
+  var sideCar = _a2.sideCar, rest = __rest(_a2, ["sideCar"]);
+  if (!sideCar) {
+    throw new Error("Sidecar: please provide `sideCar` property to import the right car");
+  }
+  var Target = sideCar.read();
+  if (!Target) {
+    throw new Error("Sidecar medium not found");
+  }
+  return reactExports.createElement(Target, __assign({}, rest));
+};
+SideCar$1.isSideCarExport = true;
+function exportSidecar(medium, exported) {
+  medium.useMedium(exported);
+  return SideCar$1;
+}
+var effectCar = createSidecarMedium();
+var nothing = function() {
+  return;
+};
+var RemoveScroll = reactExports.forwardRef(function(props, parentRef) {
+  var ref = reactExports.useRef(null);
+  var _a2 = reactExports.useState({
+    onScrollCapture: nothing,
+    onWheelCapture: nothing,
+    onTouchMoveCapture: nothing
+  }), callbacks = _a2[0], setCallbacks = _a2[1];
+  var forwardProps = props.forwardProps, children = props.children, className = props.className, removeScrollBar = props.removeScrollBar, enabled = props.enabled, shards = props.shards, sideCar = props.sideCar, noRelative = props.noRelative, noIsolation = props.noIsolation, inert = props.inert, allowPinchZoom = props.allowPinchZoom, _b2 = props.as, Container = _b2 === void 0 ? "div" : _b2, gapMode = props.gapMode, rest = __rest(props, ["forwardProps", "children", "className", "removeScrollBar", "enabled", "shards", "sideCar", "noRelative", "noIsolation", "inert", "allowPinchZoom", "as", "gapMode"]);
+  var SideCar2 = sideCar;
+  var containerRef = useMergeRefs([ref, parentRef]);
+  var containerProps = __assign(__assign({}, rest), callbacks);
+  return reactExports.createElement(
+    reactExports.Fragment,
+    null,
+    enabled && reactExports.createElement(SideCar2, { sideCar: effectCar, removeScrollBar, shards, noRelative, noIsolation, inert, setCallbacks, allowPinchZoom: !!allowPinchZoom, lockRef: ref, gapMode }),
+    forwardProps ? reactExports.cloneElement(reactExports.Children.only(children), __assign(__assign({}, containerProps), { ref: containerRef })) : reactExports.createElement(Container, __assign({}, containerProps, { className, ref: containerRef }), children)
+  );
+});
+RemoveScroll.defaultProps = {
+  enabled: true,
+  removeScrollBar: true,
+  inert: false
+};
+RemoveScroll.classNames = {
+  fullWidth: fullWidthClassName,
+  zeroRight: zeroRightClassName
+};
+var getNonce = function() {
+  if (typeof __webpack_nonce__ !== "undefined") {
+    return __webpack_nonce__;
+  }
+  return void 0;
+};
+function makeStyleTag() {
+  if (!document)
+    return null;
+  var tag = document.createElement("style");
+  tag.type = "text/css";
+  var nonce = getNonce();
+  if (nonce) {
+    tag.setAttribute("nonce", nonce);
+  }
+  return tag;
+}
+function injectStyles(tag, css) {
+  if (tag.styleSheet) {
+    tag.styleSheet.cssText = css;
+  } else {
+    tag.appendChild(document.createTextNode(css));
+  }
+}
+function insertStyleTag(tag) {
+  var head = document.head || document.getElementsByTagName("head")[0];
+  head.appendChild(tag);
+}
+var stylesheetSingleton = function() {
+  var counter = 0;
+  var stylesheet = null;
+  return {
+    add: function(style2) {
+      if (counter == 0) {
+        if (stylesheet = makeStyleTag()) {
+          injectStyles(stylesheet, style2);
+          insertStyleTag(stylesheet);
+        }
+      }
+      counter++;
+    },
+    remove: function() {
+      counter--;
+      if (!counter && stylesheet) {
+        stylesheet.parentNode && stylesheet.parentNode.removeChild(stylesheet);
+        stylesheet = null;
+      }
+    }
+  };
+};
+var styleHookSingleton = function() {
+  var sheet = stylesheetSingleton();
+  return function(styles, isDynamic) {
+    reactExports.useEffect(function() {
+      sheet.add(styles);
+      return function() {
+        sheet.remove();
+      };
+    }, [styles && isDynamic]);
+  };
+};
+var styleSingleton = function() {
+  var useStyle2 = styleHookSingleton();
+  var Sheet = function(_a2) {
+    var styles = _a2.styles, dynamic = _a2.dynamic;
+    useStyle2(styles, dynamic);
+    return null;
+  };
+  return Sheet;
+};
+var zeroGap = {
+  left: 0,
+  top: 0,
+  right: 0,
+  gap: 0
+};
+var parse = function(x2) {
+  return parseInt(x2 || "", 10) || 0;
+};
+var getOffset = function(gapMode) {
+  var cs = window.getComputedStyle(document.body);
+  var left = cs[gapMode === "padding" ? "paddingLeft" : "marginLeft"];
+  var top = cs[gapMode === "padding" ? "paddingTop" : "marginTop"];
+  var right = cs[gapMode === "padding" ? "paddingRight" : "marginRight"];
+  return [parse(left), parse(top), parse(right)];
+};
+var getGapWidth = function(gapMode) {
+  if (gapMode === void 0) {
+    gapMode = "margin";
+  }
+  if (typeof window === "undefined") {
+    return zeroGap;
+  }
+  var offsets = getOffset(gapMode);
+  var documentWidth = document.documentElement.clientWidth;
+  var windowWidth = window.innerWidth;
+  return {
+    left: offsets[0],
+    top: offsets[1],
+    right: offsets[2],
+    gap: Math.max(0, windowWidth - documentWidth + offsets[2] - offsets[0])
+  };
+};
+var Style = styleSingleton();
+var lockAttribute = "data-scroll-locked";
+var getStyles = function(_a2, allowRelative, gapMode, important) {
+  var left = _a2.left, top = _a2.top, right = _a2.right, gap = _a2.gap;
+  if (gapMode === void 0) {
+    gapMode = "margin";
+  }
+  return "\n  .".concat(noScrollbarsClassName, " {\n   overflow: hidden ").concat(important, ";\n   padding-right: ").concat(gap, "px ").concat(important, ";\n  }\n  body[").concat(lockAttribute, "] {\n    overflow: hidden ").concat(important, ";\n    overscroll-behavior: contain;\n    ").concat([
+    allowRelative && "position: relative ".concat(important, ";"),
+    gapMode === "margin" && "\n    padding-left: ".concat(left, "px;\n    padding-top: ").concat(top, "px;\n    padding-right: ").concat(right, "px;\n    margin-left:0;\n    margin-top:0;\n    margin-right: ").concat(gap, "px ").concat(important, ";\n    "),
+    gapMode === "padding" && "padding-right: ".concat(gap, "px ").concat(important, ";")
+  ].filter(Boolean).join(""), "\n  }\n  \n  .").concat(zeroRightClassName, " {\n    right: ").concat(gap, "px ").concat(important, ";\n  }\n  \n  .").concat(fullWidthClassName, " {\n    margin-right: ").concat(gap, "px ").concat(important, ";\n  }\n  \n  .").concat(zeroRightClassName, " .").concat(zeroRightClassName, " {\n    right: 0 ").concat(important, ";\n  }\n  \n  .").concat(fullWidthClassName, " .").concat(fullWidthClassName, " {\n    margin-right: 0 ").concat(important, ";\n  }\n  \n  body[").concat(lockAttribute, "] {\n    ").concat(removedBarSizeVariable, ": ").concat(gap, "px;\n  }\n");
+};
+var getCurrentUseCounter = function() {
+  var counter = parseInt(document.body.getAttribute(lockAttribute) || "0", 10);
+  return isFinite(counter) ? counter : 0;
+};
+var useLockAttribute = function() {
+  reactExports.useEffect(function() {
+    document.body.setAttribute(lockAttribute, (getCurrentUseCounter() + 1).toString());
+    return function() {
+      var newCounter = getCurrentUseCounter() - 1;
+      if (newCounter <= 0) {
+        document.body.removeAttribute(lockAttribute);
+      } else {
+        document.body.setAttribute(lockAttribute, newCounter.toString());
+      }
+    };
+  }, []);
+};
+var RemoveScrollBar = function(_a2) {
+  var noRelative = _a2.noRelative, noImportant = _a2.noImportant, _b2 = _a2.gapMode, gapMode = _b2 === void 0 ? "margin" : _b2;
+  useLockAttribute();
+  var gap = reactExports.useMemo(function() {
+    return getGapWidth(gapMode);
+  }, [gapMode]);
+  return reactExports.createElement(Style, { styles: getStyles(gap, !noRelative, gapMode, !noImportant ? "!important" : "") });
+};
+var passiveSupported = false;
+if (typeof window !== "undefined") {
+  try {
+    var options = Object.defineProperty({}, "passive", {
+      get: function() {
+        passiveSupported = true;
+        return true;
+      }
+    });
+    window.addEventListener("test", options, options);
+    window.removeEventListener("test", options, options);
+  } catch (err) {
+    passiveSupported = false;
+  }
+}
+var nonPassive = passiveSupported ? { passive: false } : false;
+var alwaysContainsScroll = function(node) {
+  return node.tagName === "TEXTAREA";
+};
+var elementCanBeScrolled = function(node, overflow) {
+  if (!(node instanceof Element)) {
+    return false;
+  }
+  var styles = window.getComputedStyle(node);
+  return (
+    // not-not-scrollable
+    styles[overflow] !== "hidden" && // contains scroll inside self
+    !(styles.overflowY === styles.overflowX && !alwaysContainsScroll(node) && styles[overflow] === "visible")
+  );
+};
+var elementCouldBeVScrolled = function(node) {
+  return elementCanBeScrolled(node, "overflowY");
+};
+var elementCouldBeHScrolled = function(node) {
+  return elementCanBeScrolled(node, "overflowX");
+};
+var locationCouldBeScrolled = function(axis, node) {
+  var ownerDocument = node.ownerDocument;
+  var current = node;
+  do {
+    if (typeof ShadowRoot !== "undefined" && current instanceof ShadowRoot) {
+      current = current.host;
+    }
+    var isScrollable = elementCouldBeScrolled(axis, current);
+    if (isScrollable) {
+      var _a2 = getScrollVariables(axis, current), scrollHeight = _a2[1], clientHeight = _a2[2];
+      if (scrollHeight > clientHeight) {
+        return true;
+      }
+    }
+    current = current.parentNode;
+  } while (current && current !== ownerDocument.body);
+  return false;
+};
+var getVScrollVariables = function(_a2) {
+  var scrollTop = _a2.scrollTop, scrollHeight = _a2.scrollHeight, clientHeight = _a2.clientHeight;
+  return [
+    scrollTop,
+    scrollHeight,
+    clientHeight
+  ];
+};
+var getHScrollVariables = function(_a2) {
+  var scrollLeft = _a2.scrollLeft, scrollWidth = _a2.scrollWidth, clientWidth = _a2.clientWidth;
+  return [
+    scrollLeft,
+    scrollWidth,
+    clientWidth
+  ];
+};
+var elementCouldBeScrolled = function(axis, node) {
+  return axis === "v" ? elementCouldBeVScrolled(node) : elementCouldBeHScrolled(node);
+};
+var getScrollVariables = function(axis, node) {
+  return axis === "v" ? getVScrollVariables(node) : getHScrollVariables(node);
+};
+var getDirectionFactor = function(axis, direction) {
+  return axis === "h" && direction === "rtl" ? -1 : 1;
+};
+var handleScroll = function(axis, endTarget, event, sourceDelta, noOverscroll) {
+  var directionFactor = getDirectionFactor(axis, window.getComputedStyle(endTarget).direction);
+  var delta = directionFactor * sourceDelta;
+  var target = event.target;
+  var targetInLock = endTarget.contains(target);
+  var shouldCancelScroll = false;
+  var isDeltaPositive = delta > 0;
+  var availableScroll = 0;
+  var availableScrollTop = 0;
+  do {
+    if (!target) {
+      break;
+    }
+    var _a2 = getScrollVariables(axis, target), position = _a2[0], scroll_1 = _a2[1], capacity = _a2[2];
+    var elementScroll = scroll_1 - capacity - directionFactor * position;
+    if (position || elementScroll) {
+      if (elementCouldBeScrolled(axis, target)) {
+        availableScroll += elementScroll;
+        availableScrollTop += position;
+      }
+    }
+    var parent_1 = target.parentNode;
+    target = parent_1 && parent_1.nodeType === Node.DOCUMENT_FRAGMENT_NODE ? parent_1.host : parent_1;
+  } while (
+    // portaled content
+    !targetInLock && target !== document.body || // self content
+    targetInLock && (endTarget.contains(target) || endTarget === target)
+  );
+  if (isDeltaPositive && (Math.abs(availableScroll) < 1 || false)) {
+    shouldCancelScroll = true;
+  } else if (!isDeltaPositive && (Math.abs(availableScrollTop) < 1 || false)) {
+    shouldCancelScroll = true;
+  }
+  return shouldCancelScroll;
+};
+var getTouchXY = function(event) {
+  return "changedTouches" in event ? [event.changedTouches[0].clientX, event.changedTouches[0].clientY] : [0, 0];
+};
+var getDeltaXY = function(event) {
+  return [event.deltaX, event.deltaY];
+};
+var extractRef = function(ref) {
+  return ref && "current" in ref ? ref.current : ref;
+};
+var deltaCompare = function(x2, y2) {
+  return x2[0] === y2[0] && x2[1] === y2[1];
+};
+var generateStyle = function(id2) {
+  return "\n  .block-interactivity-".concat(id2, " {pointer-events: none;}\n  .allow-interactivity-").concat(id2, " {pointer-events: all;}\n");
+};
+var idCounter = 0;
+var lockStack = [];
+function RemoveScrollSideCar(props) {
+  var shouldPreventQueue = reactExports.useRef([]);
+  var touchStartRef = reactExports.useRef([0, 0]);
+  var activeAxis = reactExports.useRef();
+  var id2 = reactExports.useState(idCounter++)[0];
+  var Style2 = reactExports.useState(styleSingleton)[0];
+  var lastProps = reactExports.useRef(props);
+  reactExports.useEffect(function() {
+    lastProps.current = props;
+  }, [props]);
+  reactExports.useEffect(function() {
+    if (props.inert) {
+      document.body.classList.add("block-interactivity-".concat(id2));
+      var allow_1 = __spreadArray([props.lockRef.current], (props.shards || []).map(extractRef), true).filter(Boolean);
+      allow_1.forEach(function(el) {
+        return el.classList.add("allow-interactivity-".concat(id2));
+      });
+      return function() {
+        document.body.classList.remove("block-interactivity-".concat(id2));
+        allow_1.forEach(function(el) {
+          return el.classList.remove("allow-interactivity-".concat(id2));
+        });
+      };
+    }
+    return;
+  }, [props.inert, props.lockRef.current, props.shards]);
+  var shouldCancelEvent = reactExports.useCallback(function(event, parent) {
+    if ("touches" in event && event.touches.length === 2 || event.type === "wheel" && event.ctrlKey) {
+      return !lastProps.current.allowPinchZoom;
+    }
+    var touch = getTouchXY(event);
+    var touchStart = touchStartRef.current;
+    var deltaX = "deltaX" in event ? event.deltaX : touchStart[0] - touch[0];
+    var deltaY = "deltaY" in event ? event.deltaY : touchStart[1] - touch[1];
+    var currentAxis;
+    var target = event.target;
+    var moveDirection = Math.abs(deltaX) > Math.abs(deltaY) ? "h" : "v";
+    if ("touches" in event && moveDirection === "h" && target.type === "range") {
+      return false;
+    }
+    var selection = window.getSelection();
+    var anchorNode = selection && selection.anchorNode;
+    var isTouchingSelection = anchorNode ? anchorNode === target || anchorNode.contains(target) : false;
+    if (isTouchingSelection) {
+      return false;
+    }
+    var canBeScrolledInMainDirection = locationCouldBeScrolled(moveDirection, target);
+    if (!canBeScrolledInMainDirection) {
+      return true;
+    }
+    if (canBeScrolledInMainDirection) {
+      currentAxis = moveDirection;
+    } else {
+      currentAxis = moveDirection === "v" ? "h" : "v";
+      canBeScrolledInMainDirection = locationCouldBeScrolled(moveDirection, target);
+    }
+    if (!canBeScrolledInMainDirection) {
+      return false;
+    }
+    if (!activeAxis.current && "changedTouches" in event && (deltaX || deltaY)) {
+      activeAxis.current = currentAxis;
+    }
+    if (!currentAxis) {
+      return true;
+    }
+    var cancelingAxis = activeAxis.current || currentAxis;
+    return handleScroll(cancelingAxis, parent, event, cancelingAxis === "h" ? deltaX : deltaY);
+  }, []);
+  var shouldPrevent = reactExports.useCallback(function(_event) {
+    var event = _event;
+    if (!lockStack.length || lockStack[lockStack.length - 1] !== Style2) {
+      return;
+    }
+    var delta = "deltaY" in event ? getDeltaXY(event) : getTouchXY(event);
+    var sourceEvent = shouldPreventQueue.current.filter(function(e) {
+      return e.name === event.type && (e.target === event.target || event.target === e.shadowParent) && deltaCompare(e.delta, delta);
+    })[0];
+    if (sourceEvent && sourceEvent.should) {
+      if (event.cancelable) {
+        event.preventDefault();
+      }
+      return;
+    }
+    if (!sourceEvent) {
+      var shardNodes = (lastProps.current.shards || []).map(extractRef).filter(Boolean).filter(function(node) {
+        return node.contains(event.target);
+      });
+      var shouldStop = shardNodes.length > 0 ? shouldCancelEvent(event, shardNodes[0]) : !lastProps.current.noIsolation;
+      if (shouldStop) {
+        if (event.cancelable) {
+          event.preventDefault();
+        }
+      }
+    }
+  }, []);
+  var shouldCancel = reactExports.useCallback(function(name, delta, target, should) {
+    var event = { name, delta, target, should, shadowParent: getOutermostShadowParent(target) };
+    shouldPreventQueue.current.push(event);
+    setTimeout(function() {
+      shouldPreventQueue.current = shouldPreventQueue.current.filter(function(e) {
+        return e !== event;
+      });
+    }, 1);
+  }, []);
+  var scrollTouchStart = reactExports.useCallback(function(event) {
+    touchStartRef.current = getTouchXY(event);
+    activeAxis.current = void 0;
+  }, []);
+  var scrollWheel = reactExports.useCallback(function(event) {
+    shouldCancel(event.type, getDeltaXY(event), event.target, shouldCancelEvent(event, props.lockRef.current));
+  }, []);
+  var scrollTouchMove = reactExports.useCallback(function(event) {
+    shouldCancel(event.type, getTouchXY(event), event.target, shouldCancelEvent(event, props.lockRef.current));
+  }, []);
+  reactExports.useEffect(function() {
+    lockStack.push(Style2);
+    props.setCallbacks({
+      onScrollCapture: scrollWheel,
+      onWheelCapture: scrollWheel,
+      onTouchMoveCapture: scrollTouchMove
+    });
+    document.addEventListener("wheel", shouldPrevent, nonPassive);
+    document.addEventListener("touchmove", shouldPrevent, nonPassive);
+    document.addEventListener("touchstart", scrollTouchStart, nonPassive);
+    return function() {
+      lockStack = lockStack.filter(function(inst) {
+        return inst !== Style2;
+      });
+      document.removeEventListener("wheel", shouldPrevent, nonPassive);
+      document.removeEventListener("touchmove", shouldPrevent, nonPassive);
+      document.removeEventListener("touchstart", scrollTouchStart, nonPassive);
+    };
+  }, []);
+  var removeScrollBar = props.removeScrollBar, inert = props.inert;
+  return reactExports.createElement(
+    reactExports.Fragment,
+    null,
+    inert ? reactExports.createElement(Style2, { styles: generateStyle(id2) }) : null,
+    removeScrollBar ? reactExports.createElement(RemoveScrollBar, { noRelative: props.noRelative, gapMode: props.gapMode }) : null
+  );
+}
+function getOutermostShadowParent(node) {
+  var shadowParent = null;
+  while (node !== null) {
+    if (node instanceof ShadowRoot) {
+      shadowParent = node.host;
+      node = node.host;
+    }
+    node = node.parentNode;
+  }
+  return shadowParent;
+}
+const SideCar = exportSidecar(effectCar, RemoveScrollSideCar);
+var ReactRemoveScroll = reactExports.forwardRef(function(props, ref) {
+  return reactExports.createElement(RemoveScroll, __assign({}, props, { ref, sideCar: SideCar }));
+});
+ReactRemoveScroll.classNames = RemoveScroll.classNames;
+var getDefaultParent = function(originalTarget) {
+  if (typeof document === "undefined") {
+    return null;
+  }
+  var sampleTarget = Array.isArray(originalTarget) ? originalTarget[0] : originalTarget;
+  return sampleTarget.ownerDocument.body;
+};
+var counterMap = /* @__PURE__ */ new WeakMap();
+var uncontrolledNodes = /* @__PURE__ */ new WeakMap();
+var markerMap = {};
+var lockCount = 0;
+var unwrapHost = function(node) {
+  return node && (node.host || unwrapHost(node.parentNode));
+};
+var correctTargets = function(parent, targets) {
+  return targets.map(function(target) {
+    if (parent.contains(target)) {
+      return target;
+    }
+    var correctedTarget = unwrapHost(target);
+    if (correctedTarget && parent.contains(correctedTarget)) {
+      return correctedTarget;
+    }
+    console.error("aria-hidden", target, "in not contained inside", parent, ". Doing nothing");
+    return null;
+  }).filter(function(x2) {
+    return Boolean(x2);
+  });
+};
+var applyAttributeToOthers = function(originalTarget, parentNode, markerName, controlAttribute) {
+  var targets = correctTargets(parentNode, Array.isArray(originalTarget) ? originalTarget : [originalTarget]);
+  if (!markerMap[markerName]) {
+    markerMap[markerName] = /* @__PURE__ */ new WeakMap();
+  }
+  var markerCounter = markerMap[markerName];
+  var hiddenNodes = [];
+  var elementsToKeep = /* @__PURE__ */ new Set();
+  var elementsToStop = new Set(targets);
+  var keep = function(el) {
+    if (!el || elementsToKeep.has(el)) {
+      return;
+    }
+    elementsToKeep.add(el);
+    keep(el.parentNode);
+  };
+  targets.forEach(keep);
+  var deep = function(parent) {
+    if (!parent || elementsToStop.has(parent)) {
+      return;
+    }
+    Array.prototype.forEach.call(parent.children, function(node) {
+      if (elementsToKeep.has(node)) {
+        deep(node);
+      } else {
+        try {
+          var attr = node.getAttribute(controlAttribute);
+          var alreadyHidden = attr !== null && attr !== "false";
+          var counterValue = (counterMap.get(node) || 0) + 1;
+          var markerValue = (markerCounter.get(node) || 0) + 1;
+          counterMap.set(node, counterValue);
+          markerCounter.set(node, markerValue);
+          hiddenNodes.push(node);
+          if (counterValue === 1 && alreadyHidden) {
+            uncontrolledNodes.set(node, true);
+          }
+          if (markerValue === 1) {
+            node.setAttribute(markerName, "true");
+          }
+          if (!alreadyHidden) {
+            node.setAttribute(controlAttribute, "true");
+          }
+        } catch (e) {
+          console.error("aria-hidden: cannot operate on ", node, e);
+        }
+      }
+    });
+  };
+  deep(parentNode);
+  elementsToKeep.clear();
+  lockCount++;
+  return function() {
+    hiddenNodes.forEach(function(node) {
+      var counterValue = counterMap.get(node) - 1;
+      var markerValue = markerCounter.get(node) - 1;
+      counterMap.set(node, counterValue);
+      markerCounter.set(node, markerValue);
+      if (!counterValue) {
+        if (!uncontrolledNodes.has(node)) {
+          node.removeAttribute(controlAttribute);
+        }
+        uncontrolledNodes.delete(node);
+      }
+      if (!markerValue) {
+        node.removeAttribute(markerName);
+      }
+    });
+    lockCount--;
+    if (!lockCount) {
+      counterMap = /* @__PURE__ */ new WeakMap();
+      counterMap = /* @__PURE__ */ new WeakMap();
+      uncontrolledNodes = /* @__PURE__ */ new WeakMap();
+      markerMap = {};
+    }
+  };
+};
+var hideOthers = function(originalTarget, parentNode, markerName) {
+  if (markerName === void 0) {
+    markerName = "data-aria-hidden";
+  }
+  var targets = Array.from(Array.isArray(originalTarget) ? originalTarget : [originalTarget]);
+  var activeParentNode = getDefaultParent(originalTarget);
+  if (!activeParentNode) {
+    return function() {
+      return null;
+    };
+  }
+  targets.push.apply(targets, Array.from(activeParentNode.querySelectorAll("[aria-live], script")));
+  return applyAttributeToOthers(targets, activeParentNode, markerName, "aria-hidden");
+};
+var DIALOG_NAME = "Dialog";
+var [createDialogContext, createDialogScope] = createContextScope(DIALOG_NAME);
+var [DialogProvider, useDialogContext] = createDialogContext(DIALOG_NAME);
+var Dialog$1 = (props) => {
+  const {
+    __scopeDialog,
+    children,
+    open: openProp,
+    defaultOpen,
+    onOpenChange,
+    modal = true
+  } = props;
+  const triggerRef = reactExports.useRef(null);
+  const contentRef = reactExports.useRef(null);
+  const [open, setOpen] = useControllableState({
+    prop: openProp,
+    defaultProp: defaultOpen ?? false,
+    onChange: onOpenChange,
+    caller: DIALOG_NAME
+  });
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    DialogProvider,
+    {
+      scope: __scopeDialog,
+      triggerRef,
+      contentRef,
+      contentId: useId(),
+      titleId: useId(),
+      descriptionId: useId(),
+      open,
+      onOpenChange: setOpen,
+      onOpenToggle: reactExports.useCallback(() => setOpen((prevOpen) => !prevOpen), [setOpen]),
+      modal,
+      children
+    }
+  );
+};
+Dialog$1.displayName = DIALOG_NAME;
+var TRIGGER_NAME$1 = "DialogTrigger";
+var DialogTrigger = reactExports.forwardRef(
+  (props, forwardedRef) => {
+    const { __scopeDialog, ...triggerProps } = props;
+    const context = useDialogContext(TRIGGER_NAME$1, __scopeDialog);
+    const composedTriggerRef = useComposedRefs(forwardedRef, context.triggerRef);
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(
+      Primitive.button,
+      {
+        type: "button",
+        "aria-haspopup": "dialog",
+        "aria-expanded": context.open,
+        "aria-controls": context.contentId,
+        "data-state": getState(context.open),
+        ...triggerProps,
+        ref: composedTriggerRef,
+        onClick: composeEventHandlers(props.onClick, context.onOpenToggle)
+      }
+    );
+  }
+);
+DialogTrigger.displayName = TRIGGER_NAME$1;
+var PORTAL_NAME$1 = "DialogPortal";
+var [PortalProvider, usePortalContext] = createDialogContext(PORTAL_NAME$1, {
+  forceMount: void 0
+});
+var DialogPortal$1 = (props) => {
+  const { __scopeDialog, forceMount, children, container } = props;
+  const context = useDialogContext(PORTAL_NAME$1, __scopeDialog);
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(PortalProvider, { scope: __scopeDialog, forceMount, children: reactExports.Children.map(children, (child) => /* @__PURE__ */ jsxRuntimeExports.jsx(Presence, { present: forceMount || context.open, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Portal$1, { asChild: true, container, children: child }) })) });
+};
+DialogPortal$1.displayName = PORTAL_NAME$1;
+var OVERLAY_NAME$1 = "DialogOverlay";
+var DialogOverlay$1 = reactExports.forwardRef(
+  (props, forwardedRef) => {
+    const portalContext = usePortalContext(OVERLAY_NAME$1, props.__scopeDialog);
+    const { forceMount = portalContext.forceMount, ...overlayProps } = props;
+    const context = useDialogContext(OVERLAY_NAME$1, props.__scopeDialog);
+    return context.modal ? /* @__PURE__ */ jsxRuntimeExports.jsx(Presence, { present: forceMount || context.open, children: /* @__PURE__ */ jsxRuntimeExports.jsx(DialogOverlayImpl, { ...overlayProps, ref: forwardedRef }) }) : null;
+  }
+);
+DialogOverlay$1.displayName = OVERLAY_NAME$1;
+var Slot = /* @__PURE__ */ createSlot("DialogOverlay.RemoveScroll");
+var DialogOverlayImpl = reactExports.forwardRef(
+  (props, forwardedRef) => {
+    const { __scopeDialog, ...overlayProps } = props;
+    const context = useDialogContext(OVERLAY_NAME$1, __scopeDialog);
+    return (
+      // Make sure `Content` is scrollable even when it doesn't live inside `RemoveScroll`
+      // ie. when `Overlay` and `Content` are siblings
+      /* @__PURE__ */ jsxRuntimeExports.jsx(ReactRemoveScroll, { as: Slot, allowPinchZoom: true, shards: [context.contentRef], children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+        Primitive.div,
+        {
+          "data-state": getState(context.open),
+          ...overlayProps,
+          ref: forwardedRef,
+          style: { pointerEvents: "auto", ...overlayProps.style }
+        }
+      ) })
+    );
+  }
+);
+var CONTENT_NAME$1 = "DialogContent";
+var DialogContent$1 = reactExports.forwardRef(
+  (props, forwardedRef) => {
+    const portalContext = usePortalContext(CONTENT_NAME$1, props.__scopeDialog);
+    const { forceMount = portalContext.forceMount, ...contentProps } = props;
+    const context = useDialogContext(CONTENT_NAME$1, props.__scopeDialog);
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(Presence, { present: forceMount || context.open, children: context.modal ? /* @__PURE__ */ jsxRuntimeExports.jsx(DialogContentModal, { ...contentProps, ref: forwardedRef }) : /* @__PURE__ */ jsxRuntimeExports.jsx(DialogContentNonModal, { ...contentProps, ref: forwardedRef }) });
+  }
+);
+DialogContent$1.displayName = CONTENT_NAME$1;
+var DialogContentModal = reactExports.forwardRef(
+  (props, forwardedRef) => {
+    const context = useDialogContext(CONTENT_NAME$1, props.__scopeDialog);
+    const contentRef = reactExports.useRef(null);
+    const composedRefs = useComposedRefs(forwardedRef, context.contentRef, contentRef);
+    reactExports.useEffect(() => {
+      const content = contentRef.current;
+      if (content) return hideOthers(content);
+    }, []);
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(
+      DialogContentImpl,
+      {
+        ...props,
+        ref: composedRefs,
+        trapFocus: context.open,
+        disableOutsidePointerEvents: true,
+        onCloseAutoFocus: composeEventHandlers(props.onCloseAutoFocus, (event) => {
+          var _a2;
+          event.preventDefault();
+          (_a2 = context.triggerRef.current) == null ? void 0 : _a2.focus();
+        }),
+        onPointerDownOutside: composeEventHandlers(props.onPointerDownOutside, (event) => {
+          const originalEvent = event.detail.originalEvent;
+          const ctrlLeftClick = originalEvent.button === 0 && originalEvent.ctrlKey === true;
+          const isRightClick = originalEvent.button === 2 || ctrlLeftClick;
+          if (isRightClick) event.preventDefault();
+        }),
+        onFocusOutside: composeEventHandlers(
+          props.onFocusOutside,
+          (event) => event.preventDefault()
+        )
+      }
+    );
+  }
+);
+var DialogContentNonModal = reactExports.forwardRef(
+  (props, forwardedRef) => {
+    const context = useDialogContext(CONTENT_NAME$1, props.__scopeDialog);
+    const hasInteractedOutsideRef = reactExports.useRef(false);
+    const hasPointerDownOutsideRef = reactExports.useRef(false);
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(
+      DialogContentImpl,
+      {
+        ...props,
+        ref: forwardedRef,
+        trapFocus: false,
+        disableOutsidePointerEvents: false,
+        onCloseAutoFocus: (event) => {
+          var _a2, _b2;
+          (_a2 = props.onCloseAutoFocus) == null ? void 0 : _a2.call(props, event);
+          if (!event.defaultPrevented) {
+            if (!hasInteractedOutsideRef.current) (_b2 = context.triggerRef.current) == null ? void 0 : _b2.focus();
+            event.preventDefault();
+          }
+          hasInteractedOutsideRef.current = false;
+          hasPointerDownOutsideRef.current = false;
+        },
+        onInteractOutside: (event) => {
+          var _a2, _b2;
+          (_a2 = props.onInteractOutside) == null ? void 0 : _a2.call(props, event);
+          if (!event.defaultPrevented) {
+            hasInteractedOutsideRef.current = true;
+            if (event.detail.originalEvent.type === "pointerdown") {
+              hasPointerDownOutsideRef.current = true;
+            }
+          }
+          const target = event.target;
+          const targetIsTrigger = (_b2 = context.triggerRef.current) == null ? void 0 : _b2.contains(target);
+          if (targetIsTrigger) event.preventDefault();
+          if (event.detail.originalEvent.type === "focusin" && hasPointerDownOutsideRef.current) {
+            event.preventDefault();
+          }
+        }
+      }
+    );
+  }
+);
+var DialogContentImpl = reactExports.forwardRef(
+  (props, forwardedRef) => {
+    const { __scopeDialog, trapFocus, onOpenAutoFocus, onCloseAutoFocus, ...contentProps } = props;
+    const context = useDialogContext(CONTENT_NAME$1, __scopeDialog);
+    const contentRef = reactExports.useRef(null);
+    const composedRefs = useComposedRefs(forwardedRef, contentRef);
+    useFocusGuards();
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        FocusScope,
+        {
+          asChild: true,
+          loop: true,
+          trapped: trapFocus,
+          onMountAutoFocus: onOpenAutoFocus,
+          onUnmountAutoFocus: onCloseAutoFocus,
+          children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+            DismissableLayer,
+            {
+              role: "dialog",
+              id: context.contentId,
+              "aria-describedby": context.descriptionId,
+              "aria-labelledby": context.titleId,
+              "data-state": getState(context.open),
+              ...contentProps,
+              ref: composedRefs,
+              onDismiss: () => context.onOpenChange(false)
+            }
+          )
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(TitleWarning, { titleId: context.titleId }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(DescriptionWarning$1, { contentRef, descriptionId: context.descriptionId })
+      ] })
+    ] });
+  }
+);
+var TITLE_NAME$1 = "DialogTitle";
+var DialogTitle$1 = reactExports.forwardRef(
+  (props, forwardedRef) => {
+    const { __scopeDialog, ...titleProps } = props;
+    const context = useDialogContext(TITLE_NAME$1, __scopeDialog);
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(Primitive.h2, { id: context.titleId, ...titleProps, ref: forwardedRef });
+  }
+);
+DialogTitle$1.displayName = TITLE_NAME$1;
+var DESCRIPTION_NAME$1 = "DialogDescription";
+var DialogDescription$1 = reactExports.forwardRef(
+  (props, forwardedRef) => {
+    const { __scopeDialog, ...descriptionProps } = props;
+    const context = useDialogContext(DESCRIPTION_NAME$1, __scopeDialog);
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(Primitive.p, { id: context.descriptionId, ...descriptionProps, ref: forwardedRef });
+  }
+);
+DialogDescription$1.displayName = DESCRIPTION_NAME$1;
+var CLOSE_NAME = "DialogClose";
+var DialogClose = reactExports.forwardRef(
+  (props, forwardedRef) => {
+    const { __scopeDialog, ...closeProps } = props;
+    const context = useDialogContext(CLOSE_NAME, __scopeDialog);
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(
+      Primitive.button,
+      {
+        type: "button",
+        ...closeProps,
+        ref: forwardedRef,
+        onClick: composeEventHandlers(props.onClick, () => context.onOpenChange(false))
+      }
+    );
+  }
+);
+DialogClose.displayName = CLOSE_NAME;
+function getState(open) {
+  return open ? "open" : "closed";
+}
+var TITLE_WARNING_NAME = "DialogTitleWarning";
+var [WarningProvider, useWarningContext] = createContext2(TITLE_WARNING_NAME, {
+  contentName: CONTENT_NAME$1,
+  titleName: TITLE_NAME$1,
+  docsSlug: "dialog"
+});
+var TitleWarning = ({ titleId }) => {
+  const titleWarningContext = useWarningContext(TITLE_WARNING_NAME);
+  const MESSAGE = `\`${titleWarningContext.contentName}\` requires a \`${titleWarningContext.titleName}\` for the component to be accessible for screen reader users.
+
+If you want to hide the \`${titleWarningContext.titleName}\`, you can wrap it with our VisuallyHidden component.
+
+For more information, see https://radix-ui.com/primitives/docs/components/${titleWarningContext.docsSlug}`;
+  reactExports.useEffect(() => {
+    if (titleId) {
+      const hasTitle = document.getElementById(titleId);
+      if (!hasTitle) console.error(MESSAGE);
+    }
+  }, [MESSAGE, titleId]);
+  return null;
+};
+var DESCRIPTION_WARNING_NAME = "DialogDescriptionWarning";
+var DescriptionWarning$1 = ({ contentRef, descriptionId }) => {
+  const descriptionWarningContext = useWarningContext(DESCRIPTION_WARNING_NAME);
+  const MESSAGE = `Warning: Missing \`Description\` or \`aria-describedby={undefined}\` for {${descriptionWarningContext.contentName}}.`;
+  reactExports.useEffect(() => {
+    var _a2;
+    const describedById = (_a2 = contentRef.current) == null ? void 0 : _a2.getAttribute("aria-describedby");
+    if (descriptionId && describedById) {
+      const hasDescription = document.getElementById(descriptionId);
+      if (!hasDescription) console.warn(MESSAGE);
+    }
+  }, [MESSAGE, contentRef, descriptionId]);
+  return null;
+};
+var Root = Dialog$1;
+var Trigger = DialogTrigger;
+var Portal = DialogPortal$1;
+var Overlay = DialogOverlay$1;
+var Content = DialogContent$1;
+var Title = DialogTitle$1;
+var Description = DialogDescription$1;
+var Close = DialogClose;
+var ROOT_NAME = "AlertDialog";
+var [createAlertDialogContext] = createContextScope(ROOT_NAME, [
+  createDialogScope
+]);
+var useDialogScope = createDialogScope();
+var AlertDialog$1 = (props) => {
+  const { __scopeAlertDialog, ...alertDialogProps } = props;
+  const dialogScope = useDialogScope(__scopeAlertDialog);
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(Root, { ...dialogScope, ...alertDialogProps, modal: true });
+};
+AlertDialog$1.displayName = ROOT_NAME;
+var TRIGGER_NAME = "AlertDialogTrigger";
+var AlertDialogTrigger = reactExports.forwardRef(
+  (props, forwardedRef) => {
+    const { __scopeAlertDialog, ...triggerProps } = props;
+    const dialogScope = useDialogScope(__scopeAlertDialog);
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(Trigger, { ...dialogScope, ...triggerProps, ref: forwardedRef });
+  }
+);
+AlertDialogTrigger.displayName = TRIGGER_NAME;
+var PORTAL_NAME = "AlertDialogPortal";
+var AlertDialogPortal$1 = (props) => {
+  const { __scopeAlertDialog, ...portalProps } = props;
+  const dialogScope = useDialogScope(__scopeAlertDialog);
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(Portal, { ...dialogScope, ...portalProps });
+};
+AlertDialogPortal$1.displayName = PORTAL_NAME;
+var OVERLAY_NAME = "AlertDialogOverlay";
+var AlertDialogOverlay$1 = reactExports.forwardRef(
+  (props, forwardedRef) => {
+    const { __scopeAlertDialog, ...overlayProps } = props;
+    const dialogScope = useDialogScope(__scopeAlertDialog);
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(Overlay, { ...dialogScope, ...overlayProps, ref: forwardedRef });
+  }
+);
+AlertDialogOverlay$1.displayName = OVERLAY_NAME;
+var CONTENT_NAME = "AlertDialogContent";
+var [AlertDialogContentProvider, useAlertDialogContentContext] = createAlertDialogContext(CONTENT_NAME);
+var Slottable = /* @__PURE__ */ createSlottable("AlertDialogContent");
+var AlertDialogContent$1 = reactExports.forwardRef(
+  (props, forwardedRef) => {
+    const { __scopeAlertDialog, children, ...contentProps } = props;
+    const dialogScope = useDialogScope(__scopeAlertDialog);
+    const contentRef = reactExports.useRef(null);
+    const composedRefs = useComposedRefs(forwardedRef, contentRef);
+    const cancelRef = reactExports.useRef(null);
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(
+      WarningProvider,
+      {
+        contentName: CONTENT_NAME,
+        titleName: TITLE_NAME,
+        docsSlug: "alert-dialog",
+        children: /* @__PURE__ */ jsxRuntimeExports.jsx(AlertDialogContentProvider, { scope: __scopeAlertDialog, cancelRef, children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          Content,
+          {
+            role: "alertdialog",
+            ...dialogScope,
+            ...contentProps,
+            ref: composedRefs,
+            onOpenAutoFocus: composeEventHandlers(contentProps.onOpenAutoFocus, (event) => {
+              var _a2;
+              event.preventDefault();
+              (_a2 = cancelRef.current) == null ? void 0 : _a2.focus({ preventScroll: true });
+            }),
+            onPointerDownOutside: (event) => event.preventDefault(),
+            onInteractOutside: (event) => event.preventDefault(),
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Slottable, { children }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(DescriptionWarning, { contentRef })
+            ]
+          }
+        ) })
+      }
+    );
+  }
+);
+AlertDialogContent$1.displayName = CONTENT_NAME;
+var TITLE_NAME = "AlertDialogTitle";
+var AlertDialogTitle$1 = reactExports.forwardRef(
+  (props, forwardedRef) => {
+    const { __scopeAlertDialog, ...titleProps } = props;
+    const dialogScope = useDialogScope(__scopeAlertDialog);
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(Title, { ...dialogScope, ...titleProps, ref: forwardedRef });
+  }
+);
+AlertDialogTitle$1.displayName = TITLE_NAME;
+var DESCRIPTION_NAME = "AlertDialogDescription";
+var AlertDialogDescription$1 = reactExports.forwardRef((props, forwardedRef) => {
+  const { __scopeAlertDialog, ...descriptionProps } = props;
+  const dialogScope = useDialogScope(__scopeAlertDialog);
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(Description, { ...dialogScope, ...descriptionProps, ref: forwardedRef });
+});
+AlertDialogDescription$1.displayName = DESCRIPTION_NAME;
+var ACTION_NAME = "AlertDialogAction";
+var AlertDialogAction$1 = reactExports.forwardRef(
+  (props, forwardedRef) => {
+    const { __scopeAlertDialog, ...actionProps } = props;
+    const dialogScope = useDialogScope(__scopeAlertDialog);
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(Close, { ...dialogScope, ...actionProps, ref: forwardedRef });
+  }
+);
+AlertDialogAction$1.displayName = ACTION_NAME;
+var CANCEL_NAME = "AlertDialogCancel";
+var AlertDialogCancel$1 = reactExports.forwardRef(
+  (props, forwardedRef) => {
+    const { __scopeAlertDialog, ...cancelProps } = props;
+    const { cancelRef } = useAlertDialogContentContext(CANCEL_NAME, __scopeAlertDialog);
+    const dialogScope = useDialogScope(__scopeAlertDialog);
+    const ref = useComposedRefs(forwardedRef, cancelRef);
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(Close, { ...dialogScope, ...cancelProps, ref });
+  }
+);
+AlertDialogCancel$1.displayName = CANCEL_NAME;
+var DescriptionWarning = ({ contentRef }) => {
+  const MESSAGE = `\`${CONTENT_NAME}\` requires a description for the component to be accessible for screen reader users.
+
+You can add a description to the \`${CONTENT_NAME}\` by passing a \`${DESCRIPTION_NAME}\` component as a child, which also benefits sighted users by adding visible context to the dialog.
+
+Alternatively, you can use your own component as a description by assigning it an \`id\` and passing the same value to the \`aria-describedby\` prop in \`${CONTENT_NAME}\`. If the description is confusing or duplicative for sighted users, you can use the \`@radix-ui/react-visually-hidden\` primitive as a wrapper around your description component.
+
+For more information, see https://radix-ui.com/primitives/docs/components/alert-dialog`;
+  reactExports.useEffect(() => {
+    var _a2;
+    const hasDescription = document.getElementById(
+      (_a2 = contentRef.current) == null ? void 0 : _a2.getAttribute("aria-describedby")
+    );
+    if (!hasDescription) console.warn(MESSAGE);
+  }, [MESSAGE, contentRef]);
+  return null;
+};
+var Root2 = AlertDialog$1;
+var Portal2 = AlertDialogPortal$1;
+var Overlay2 = AlertDialogOverlay$1;
+var Content2 = AlertDialogContent$1;
+var Action = AlertDialogAction$1;
+var Cancel = AlertDialogCancel$1;
+var Title2 = AlertDialogTitle$1;
+var Description2 = AlertDialogDescription$1;
+function r(e) {
+  var t, f2, n = "";
+  if ("string" == typeof e || "number" == typeof e) n += e;
+  else if ("object" == typeof e) if (Array.isArray(e)) {
+    var o = e.length;
+    for (t = 0; t < o; t++) e[t] && (f2 = r(e[t])) && (n && (n += " "), n += f2);
+  } else for (f2 in e) e[f2] && (n && (n += " "), n += f2);
+  return n;
+}
+function clsx() {
+  for (var e, t, f2 = 0, n = "", o = arguments.length; f2 < o; f2++) (e = arguments[f2]) && (t = r(e)) && (n && (n += " "), n += t);
+  return n;
+}
+const falsyToString = (value) => typeof value === "boolean" ? `${value}` : value === 0 ? "0" : value;
+const cx = clsx;
+const cva = (base, config) => (props) => {
+  var _config_compoundVariants;
+  if ((config === null || config === void 0 ? void 0 : config.variants) == null) return cx(base, props === null || props === void 0 ? void 0 : props.class, props === null || props === void 0 ? void 0 : props.className);
+  const { variants, defaultVariants } = config;
+  const getVariantClassNames = Object.keys(variants).map((variant) => {
+    const variantProp = props === null || props === void 0 ? void 0 : props[variant];
+    const defaultVariantProp = defaultVariants === null || defaultVariants === void 0 ? void 0 : defaultVariants[variant];
+    if (variantProp === null) return null;
+    const variantKey = falsyToString(variantProp) || falsyToString(defaultVariantProp);
+    return variants[variant][variantKey];
+  });
+  const propsWithoutUndefined = props && Object.entries(props).reduce((acc, param) => {
+    let [key, value] = param;
+    if (value === void 0) {
+      return acc;
+    }
+    acc[key] = value;
+    return acc;
+  }, {});
+  const getCompoundVariantClassNames = config === null || config === void 0 ? void 0 : (_config_compoundVariants = config.compoundVariants) === null || _config_compoundVariants === void 0 ? void 0 : _config_compoundVariants.reduce((acc, param) => {
+    let { class: cvClass, className: cvClassName, ...compoundVariantOptions } = param;
+    return Object.entries(compoundVariantOptions).every((param2) => {
+      let [key, value] = param2;
+      return Array.isArray(value) ? value.includes({
+        ...defaultVariants,
+        ...propsWithoutUndefined
+      }[key]) : {
+        ...defaultVariants,
+        ...propsWithoutUndefined
+      }[key] === value;
+    }) ? [
+      ...acc,
+      cvClass,
+      cvClassName
+    ] : acc;
+  }, []);
+  return cx(base, getVariantClassNames, getCompoundVariantClassNames, props === null || props === void 0 ? void 0 : props.class, props === null || props === void 0 ? void 0 : props.className);
+};
+const CLASS_PART_SEPARATOR = "-";
+const createClassGroupUtils = (config) => {
+  const classMap = createClassMap(config);
+  const {
+    conflictingClassGroups,
+    conflictingClassGroupModifiers
+  } = config;
+  const getClassGroupId = (className) => {
+    const classParts = className.split(CLASS_PART_SEPARATOR);
+    if (classParts[0] === "" && classParts.length !== 1) {
+      classParts.shift();
+    }
+    return getGroupRecursive(classParts, classMap) || getGroupIdForArbitraryProperty(className);
+  };
+  const getConflictingClassGroupIds = (classGroupId, hasPostfixModifier) => {
+    const conflicts = conflictingClassGroups[classGroupId] || [];
+    if (hasPostfixModifier && conflictingClassGroupModifiers[classGroupId]) {
+      return [...conflicts, ...conflictingClassGroupModifiers[classGroupId]];
+    }
+    return conflicts;
+  };
+  return {
+    getClassGroupId,
+    getConflictingClassGroupIds
+  };
+};
+const getGroupRecursive = (classParts, classPartObject) => {
+  var _a2;
+  if (classParts.length === 0) {
+    return classPartObject.classGroupId;
+  }
+  const currentClassPart = classParts[0];
+  const nextClassPartObject = classPartObject.nextPart.get(currentClassPart);
+  const classGroupFromNextClassPart = nextClassPartObject ? getGroupRecursive(classParts.slice(1), nextClassPartObject) : void 0;
+  if (classGroupFromNextClassPart) {
+    return classGroupFromNextClassPart;
+  }
+  if (classPartObject.validators.length === 0) {
+    return void 0;
+  }
+  const classRest = classParts.join(CLASS_PART_SEPARATOR);
+  return (_a2 = classPartObject.validators.find(({
+    validator
+  }) => validator(classRest))) == null ? void 0 : _a2.classGroupId;
+};
+const arbitraryPropertyRegex = /^\[(.+)\]$/;
+const getGroupIdForArbitraryProperty = (className) => {
+  if (arbitraryPropertyRegex.test(className)) {
+    const arbitraryPropertyClassName = arbitraryPropertyRegex.exec(className)[1];
+    const property = arbitraryPropertyClassName == null ? void 0 : arbitraryPropertyClassName.substring(0, arbitraryPropertyClassName.indexOf(":"));
+    if (property) {
+      return "arbitrary.." + property;
+    }
+  }
+};
+const createClassMap = (config) => {
+  const {
+    theme,
+    prefix: prefix2
+  } = config;
+  const classMap = {
+    nextPart: /* @__PURE__ */ new Map(),
+    validators: []
+  };
+  const prefixedClassGroupEntries = getPrefixedClassGroupEntries(Object.entries(config.classGroups), prefix2);
+  prefixedClassGroupEntries.forEach(([classGroupId, classGroup]) => {
+    processClassesRecursively(classGroup, classMap, classGroupId, theme);
+  });
+  return classMap;
+};
+const processClassesRecursively = (classGroup, classPartObject, classGroupId, theme) => {
+  classGroup.forEach((classDefinition) => {
+    if (typeof classDefinition === "string") {
+      const classPartObjectToEdit = classDefinition === "" ? classPartObject : getPart(classPartObject, classDefinition);
+      classPartObjectToEdit.classGroupId = classGroupId;
+      return;
+    }
+    if (typeof classDefinition === "function") {
+      if (isThemeGetter(classDefinition)) {
+        processClassesRecursively(classDefinition(theme), classPartObject, classGroupId, theme);
+        return;
+      }
+      classPartObject.validators.push({
+        validator: classDefinition,
+        classGroupId
+      });
+      return;
+    }
+    Object.entries(classDefinition).forEach(([key, classGroup2]) => {
+      processClassesRecursively(classGroup2, getPart(classPartObject, key), classGroupId, theme);
+    });
+  });
+};
+const getPart = (classPartObject, path) => {
+  let currentClassPartObject = classPartObject;
+  path.split(CLASS_PART_SEPARATOR).forEach((pathPart) => {
+    if (!currentClassPartObject.nextPart.has(pathPart)) {
+      currentClassPartObject.nextPart.set(pathPart, {
+        nextPart: /* @__PURE__ */ new Map(),
+        validators: []
+      });
+    }
+    currentClassPartObject = currentClassPartObject.nextPart.get(pathPart);
+  });
+  return currentClassPartObject;
+};
+const isThemeGetter = (func) => func.isThemeGetter;
+const getPrefixedClassGroupEntries = (classGroupEntries, prefix2) => {
+  if (!prefix2) {
+    return classGroupEntries;
+  }
+  return classGroupEntries.map(([classGroupId, classGroup]) => {
+    const prefixedClassGroup = classGroup.map((classDefinition) => {
+      if (typeof classDefinition === "string") {
+        return prefix2 + classDefinition;
+      }
+      if (typeof classDefinition === "object") {
+        return Object.fromEntries(Object.entries(classDefinition).map(([key, value]) => [prefix2 + key, value]));
+      }
+      return classDefinition;
+    });
+    return [classGroupId, prefixedClassGroup];
+  });
+};
+const createLruCache = (maxCacheSize) => {
+  if (maxCacheSize < 1) {
+    return {
+      get: () => void 0,
+      set: () => {
+      }
+    };
+  }
+  let cacheSize = 0;
+  let cache = /* @__PURE__ */ new Map();
+  let previousCache = /* @__PURE__ */ new Map();
+  const update = (key, value) => {
+    cache.set(key, value);
+    cacheSize++;
+    if (cacheSize > maxCacheSize) {
+      cacheSize = 0;
+      previousCache = cache;
+      cache = /* @__PURE__ */ new Map();
+    }
+  };
+  return {
+    get(key) {
+      let value = cache.get(key);
+      if (value !== void 0) {
+        return value;
+      }
+      if ((value = previousCache.get(key)) !== void 0) {
+        update(key, value);
+        return value;
+      }
+    },
+    set(key, value) {
+      if (cache.has(key)) {
+        cache.set(key, value);
+      } else {
+        update(key, value);
+      }
+    }
+  };
+};
+const IMPORTANT_MODIFIER = "!";
+const createParseClassName = (config) => {
+  const {
+    separator,
+    experimentalParseClassName
+  } = config;
+  const isSeparatorSingleCharacter = separator.length === 1;
+  const firstSeparatorCharacter = separator[0];
+  const separatorLength = separator.length;
+  const parseClassName = (className) => {
+    const modifiers = [];
+    let bracketDepth = 0;
+    let modifierStart = 0;
+    let postfixModifierPosition;
+    for (let index2 = 0; index2 < className.length; index2++) {
+      let currentCharacter = className[index2];
+      if (bracketDepth === 0) {
+        if (currentCharacter === firstSeparatorCharacter && (isSeparatorSingleCharacter || className.slice(index2, index2 + separatorLength) === separator)) {
+          modifiers.push(className.slice(modifierStart, index2));
+          modifierStart = index2 + separatorLength;
+          continue;
+        }
+        if (currentCharacter === "/") {
+          postfixModifierPosition = index2;
+          continue;
+        }
+      }
+      if (currentCharacter === "[") {
+        bracketDepth++;
+      } else if (currentCharacter === "]") {
+        bracketDepth--;
+      }
+    }
+    const baseClassNameWithImportantModifier = modifiers.length === 0 ? className : className.substring(modifierStart);
+    const hasImportantModifier = baseClassNameWithImportantModifier.startsWith(IMPORTANT_MODIFIER);
+    const baseClassName = hasImportantModifier ? baseClassNameWithImportantModifier.substring(1) : baseClassNameWithImportantModifier;
+    const maybePostfixModifierPosition = postfixModifierPosition && postfixModifierPosition > modifierStart ? postfixModifierPosition - modifierStart : void 0;
+    return {
+      modifiers,
+      hasImportantModifier,
+      baseClassName,
+      maybePostfixModifierPosition
+    };
+  };
+  if (experimentalParseClassName) {
+    return (className) => experimentalParseClassName({
+      className,
+      parseClassName
+    });
+  }
+  return parseClassName;
+};
+const sortModifiers = (modifiers) => {
+  if (modifiers.length <= 1) {
+    return modifiers;
+  }
+  const sortedModifiers = [];
+  let unsortedModifiers = [];
+  modifiers.forEach((modifier) => {
+    const isArbitraryVariant = modifier[0] === "[";
+    if (isArbitraryVariant) {
+      sortedModifiers.push(...unsortedModifiers.sort(), modifier);
+      unsortedModifiers = [];
+    } else {
+      unsortedModifiers.push(modifier);
+    }
+  });
+  sortedModifiers.push(...unsortedModifiers.sort());
+  return sortedModifiers;
+};
+const createConfigUtils = (config) => ({
+  cache: createLruCache(config.cacheSize),
+  parseClassName: createParseClassName(config),
+  ...createClassGroupUtils(config)
+});
+const SPLIT_CLASSES_REGEX = /\s+/;
+const mergeClassList = (classList, configUtils) => {
+  const {
+    parseClassName,
+    getClassGroupId,
+    getConflictingClassGroupIds
+  } = configUtils;
+  const classGroupsInConflict = [];
+  const classNames = classList.trim().split(SPLIT_CLASSES_REGEX);
+  let result = "";
+  for (let index2 = classNames.length - 1; index2 >= 0; index2 -= 1) {
+    const originalClassName = classNames[index2];
+    const {
+      modifiers,
+      hasImportantModifier,
+      baseClassName,
+      maybePostfixModifierPosition
+    } = parseClassName(originalClassName);
+    let hasPostfixModifier = Boolean(maybePostfixModifierPosition);
+    let classGroupId = getClassGroupId(hasPostfixModifier ? baseClassName.substring(0, maybePostfixModifierPosition) : baseClassName);
+    if (!classGroupId) {
+      if (!hasPostfixModifier) {
+        result = originalClassName + (result.length > 0 ? " " + result : result);
+        continue;
+      }
+      classGroupId = getClassGroupId(baseClassName);
+      if (!classGroupId) {
+        result = originalClassName + (result.length > 0 ? " " + result : result);
+        continue;
+      }
+      hasPostfixModifier = false;
+    }
+    const variantModifier = sortModifiers(modifiers).join(":");
+    const modifierId = hasImportantModifier ? variantModifier + IMPORTANT_MODIFIER : variantModifier;
+    const classId = modifierId + classGroupId;
+    if (classGroupsInConflict.includes(classId)) {
+      continue;
+    }
+    classGroupsInConflict.push(classId);
+    const conflictGroups = getConflictingClassGroupIds(classGroupId, hasPostfixModifier);
+    for (let i = 0; i < conflictGroups.length; ++i) {
+      const group = conflictGroups[i];
+      classGroupsInConflict.push(modifierId + group);
+    }
+    result = originalClassName + (result.length > 0 ? " " + result : result);
+  }
+  return result;
+};
+function twJoin() {
+  let index2 = 0;
+  let argument;
+  let resolvedValue;
+  let string = "";
+  while (index2 < arguments.length) {
+    if (argument = arguments[index2++]) {
+      if (resolvedValue = toValue(argument)) {
+        string && (string += " ");
+        string += resolvedValue;
+      }
+    }
+  }
+  return string;
+}
+const toValue = (mix2) => {
+  if (typeof mix2 === "string") {
+    return mix2;
+  }
+  let resolvedValue;
+  let string = "";
+  for (let k2 = 0; k2 < mix2.length; k2++) {
+    if (mix2[k2]) {
+      if (resolvedValue = toValue(mix2[k2])) {
+        string && (string += " ");
+        string += resolvedValue;
+      }
+    }
+  }
+  return string;
+};
+function createTailwindMerge(createConfigFirst, ...createConfigRest) {
+  let configUtils;
+  let cacheGet;
+  let cacheSet;
+  let functionToCall = initTailwindMerge;
+  function initTailwindMerge(classList) {
+    const config = createConfigRest.reduce((previousConfig, createConfigCurrent) => createConfigCurrent(previousConfig), createConfigFirst());
+    configUtils = createConfigUtils(config);
+    cacheGet = configUtils.cache.get;
+    cacheSet = configUtils.cache.set;
+    functionToCall = tailwindMerge;
+    return tailwindMerge(classList);
+  }
+  function tailwindMerge(classList) {
+    const cachedResult = cacheGet(classList);
+    if (cachedResult) {
+      return cachedResult;
+    }
+    const result = mergeClassList(classList, configUtils);
+    cacheSet(classList, result);
+    return result;
+  }
+  return function callTailwindMerge() {
+    return functionToCall(twJoin.apply(null, arguments));
+  };
+}
+const fromTheme = (key) => {
+  const themeGetter = (theme) => theme[key] || [];
+  themeGetter.isThemeGetter = true;
+  return themeGetter;
+};
+const arbitraryValueRegex = /^\[(?:([a-z-]+):)?(.+)\]$/i;
+const fractionRegex = /^\d+\/\d+$/;
+const stringLengths = /* @__PURE__ */ new Set(["px", "full", "screen"]);
+const tshirtUnitRegex = /^(\d+(\.\d+)?)?(xs|sm|md|lg|xl)$/;
+const lengthUnitRegex = /\d+(%|px|r?em|[sdl]?v([hwib]|min|max)|pt|pc|in|cm|mm|cap|ch|ex|r?lh|cq(w|h|i|b|min|max))|\b(calc|min|max|clamp)\(.+\)|^0$/;
+const colorFunctionRegex = /^(rgba?|hsla?|hwb|(ok)?(lab|lch)|color-mix)\(.+\)$/;
+const shadowRegex = /^(inset_)?-?((\d+)?\.?(\d+)[a-z]+|0)_-?((\d+)?\.?(\d+)[a-z]+|0)/;
+const imageRegex = /^(url|image|image-set|cross-fade|element|(repeating-)?(linear|radial|conic)-gradient)\(.+\)$/;
+const isLength = (value) => isNumber(value) || stringLengths.has(value) || fractionRegex.test(value);
+const isArbitraryLength = (value) => getIsArbitraryValue(value, "length", isLengthOnly);
+const isNumber = (value) => Boolean(value) && !Number.isNaN(Number(value));
+const isArbitraryNumber = (value) => getIsArbitraryValue(value, "number", isNumber);
+const isInteger = (value) => Boolean(value) && Number.isInteger(Number(value));
+const isPercent = (value) => value.endsWith("%") && isNumber(value.slice(0, -1));
+const isArbitraryValue = (value) => arbitraryValueRegex.test(value);
+const isTshirtSize = (value) => tshirtUnitRegex.test(value);
+const sizeLabels = /* @__PURE__ */ new Set(["length", "size", "percentage"]);
+const isArbitrarySize = (value) => getIsArbitraryValue(value, sizeLabels, isNever);
+const isArbitraryPosition = (value) => getIsArbitraryValue(value, "position", isNever);
+const imageLabels = /* @__PURE__ */ new Set(["image", "url"]);
+const isArbitraryImage = (value) => getIsArbitraryValue(value, imageLabels, isImage);
+const isArbitraryShadow = (value) => getIsArbitraryValue(value, "", isShadow);
+const isAny = () => true;
+const getIsArbitraryValue = (value, label, testValue) => {
+  const result = arbitraryValueRegex.exec(value);
+  if (result) {
+    if (result[1]) {
+      return typeof label === "string" ? result[1] === label : label.has(result[1]);
+    }
+    return testValue(result[2]);
+  }
+  return false;
+};
+const isLengthOnly = (value) => (
+  // `colorFunctionRegex` check is necessary because color functions can have percentages in them which which would be incorrectly classified as lengths.
+  // For example, `hsl(0 0% 0%)` would be classified as a length without this check.
+  // I could also use lookbehind assertion in `lengthUnitRegex` but that isn't supported widely enough.
+  lengthUnitRegex.test(value) && !colorFunctionRegex.test(value)
+);
+const isNever = () => false;
+const isShadow = (value) => shadowRegex.test(value);
+const isImage = (value) => imageRegex.test(value);
+const getDefaultConfig = () => {
+  const colors = fromTheme("colors");
+  const spacing = fromTheme("spacing");
+  const blur = fromTheme("blur");
+  const brightness = fromTheme("brightness");
+  const borderColor = fromTheme("borderColor");
+  const borderRadius = fromTheme("borderRadius");
+  const borderSpacing = fromTheme("borderSpacing");
+  const borderWidth = fromTheme("borderWidth");
+  const contrast = fromTheme("contrast");
+  const grayscale = fromTheme("grayscale");
+  const hueRotate = fromTheme("hueRotate");
+  const invert2 = fromTheme("invert");
+  const gap = fromTheme("gap");
+  const gradientColorStops = fromTheme("gradientColorStops");
+  const gradientColorStopPositions = fromTheme("gradientColorStopPositions");
+  const inset = fromTheme("inset");
+  const margin = fromTheme("margin");
+  const opacity = fromTheme("opacity");
+  const padding = fromTheme("padding");
+  const saturate = fromTheme("saturate");
+  const scale2 = fromTheme("scale");
+  const sepia = fromTheme("sepia");
+  const skew = fromTheme("skew");
+  const space = fromTheme("space");
+  const translate = fromTheme("translate");
+  const getOverscroll = () => ["auto", "contain", "none"];
+  const getOverflow = () => ["auto", "hidden", "clip", "visible", "scroll"];
+  const getSpacingWithAutoAndArbitrary = () => ["auto", isArbitraryValue, spacing];
+  const getSpacingWithArbitrary = () => [isArbitraryValue, spacing];
+  const getLengthWithEmptyAndArbitrary = () => ["", isLength, isArbitraryLength];
+  const getNumberWithAutoAndArbitrary = () => ["auto", isNumber, isArbitraryValue];
+  const getPositions = () => ["bottom", "center", "left", "left-bottom", "left-top", "right", "right-bottom", "right-top", "top"];
+  const getLineStyles = () => ["solid", "dashed", "dotted", "double", "none"];
+  const getBlendModes = () => ["normal", "multiply", "screen", "overlay", "darken", "lighten", "color-dodge", "color-burn", "hard-light", "soft-light", "difference", "exclusion", "hue", "saturation", "color", "luminosity"];
+  const getAlign = () => ["start", "end", "center", "between", "around", "evenly", "stretch"];
+  const getZeroAndEmpty = () => ["", "0", isArbitraryValue];
+  const getBreaks = () => ["auto", "avoid", "all", "avoid-page", "page", "left", "right", "column"];
+  const getNumberAndArbitrary = () => [isNumber, isArbitraryValue];
+  return {
+    cacheSize: 500,
+    separator: ":",
+    theme: {
+      colors: [isAny],
+      spacing: [isLength, isArbitraryLength],
+      blur: ["none", "", isTshirtSize, isArbitraryValue],
+      brightness: getNumberAndArbitrary(),
+      borderColor: [colors],
+      borderRadius: ["none", "", "full", isTshirtSize, isArbitraryValue],
+      borderSpacing: getSpacingWithArbitrary(),
+      borderWidth: getLengthWithEmptyAndArbitrary(),
+      contrast: getNumberAndArbitrary(),
+      grayscale: getZeroAndEmpty(),
+      hueRotate: getNumberAndArbitrary(),
+      invert: getZeroAndEmpty(),
+      gap: getSpacingWithArbitrary(),
+      gradientColorStops: [colors],
+      gradientColorStopPositions: [isPercent, isArbitraryLength],
+      inset: getSpacingWithAutoAndArbitrary(),
+      margin: getSpacingWithAutoAndArbitrary(),
+      opacity: getNumberAndArbitrary(),
+      padding: getSpacingWithArbitrary(),
+      saturate: getNumberAndArbitrary(),
+      scale: getNumberAndArbitrary(),
+      sepia: getZeroAndEmpty(),
+      skew: getNumberAndArbitrary(),
+      space: getSpacingWithArbitrary(),
+      translate: getSpacingWithArbitrary()
+    },
+    classGroups: {
+      // Layout
+      /**
+       * Aspect Ratio
+       * @see https://tailwindcss.com/docs/aspect-ratio
+       */
+      aspect: [{
+        aspect: ["auto", "square", "video", isArbitraryValue]
+      }],
+      /**
+       * Container
+       * @see https://tailwindcss.com/docs/container
+       */
+      container: ["container"],
+      /**
+       * Columns
+       * @see https://tailwindcss.com/docs/columns
+       */
+      columns: [{
+        columns: [isTshirtSize]
+      }],
+      /**
+       * Break After
+       * @see https://tailwindcss.com/docs/break-after
+       */
+      "break-after": [{
+        "break-after": getBreaks()
+      }],
+      /**
+       * Break Before
+       * @see https://tailwindcss.com/docs/break-before
+       */
+      "break-before": [{
+        "break-before": getBreaks()
+      }],
+      /**
+       * Break Inside
+       * @see https://tailwindcss.com/docs/break-inside
+       */
+      "break-inside": [{
+        "break-inside": ["auto", "avoid", "avoid-page", "avoid-column"]
+      }],
+      /**
+       * Box Decoration Break
+       * @see https://tailwindcss.com/docs/box-decoration-break
+       */
+      "box-decoration": [{
+        "box-decoration": ["slice", "clone"]
+      }],
+      /**
+       * Box Sizing
+       * @see https://tailwindcss.com/docs/box-sizing
+       */
+      box: [{
+        box: ["border", "content"]
+      }],
+      /**
+       * Display
+       * @see https://tailwindcss.com/docs/display
+       */
+      display: ["block", "inline-block", "inline", "flex", "inline-flex", "table", "inline-table", "table-caption", "table-cell", "table-column", "table-column-group", "table-footer-group", "table-header-group", "table-row-group", "table-row", "flow-root", "grid", "inline-grid", "contents", "list-item", "hidden"],
+      /**
+       * Floats
+       * @see https://tailwindcss.com/docs/float
+       */
+      float: [{
+        float: ["right", "left", "none", "start", "end"]
+      }],
+      /**
+       * Clear
+       * @see https://tailwindcss.com/docs/clear
+       */
+      clear: [{
+        clear: ["left", "right", "both", "none", "start", "end"]
+      }],
+      /**
+       * Isolation
+       * @see https://tailwindcss.com/docs/isolation
+       */
+      isolation: ["isolate", "isolation-auto"],
+      /**
+       * Object Fit
+       * @see https://tailwindcss.com/docs/object-fit
+       */
+      "object-fit": [{
+        object: ["contain", "cover", "fill", "none", "scale-down"]
+      }],
+      /**
+       * Object Position
+       * @see https://tailwindcss.com/docs/object-position
+       */
+      "object-position": [{
+        object: [...getPositions(), isArbitraryValue]
+      }],
+      /**
+       * Overflow
+       * @see https://tailwindcss.com/docs/overflow
+       */
+      overflow: [{
+        overflow: getOverflow()
+      }],
+      /**
+       * Overflow X
+       * @see https://tailwindcss.com/docs/overflow
+       */
+      "overflow-x": [{
+        "overflow-x": getOverflow()
+      }],
+      /**
+       * Overflow Y
+       * @see https://tailwindcss.com/docs/overflow
+       */
+      "overflow-y": [{
+        "overflow-y": getOverflow()
+      }],
+      /**
+       * Overscroll Behavior
+       * @see https://tailwindcss.com/docs/overscroll-behavior
+       */
+      overscroll: [{
+        overscroll: getOverscroll()
+      }],
+      /**
+       * Overscroll Behavior X
+       * @see https://tailwindcss.com/docs/overscroll-behavior
+       */
+      "overscroll-x": [{
+        "overscroll-x": getOverscroll()
+      }],
+      /**
+       * Overscroll Behavior Y
+       * @see https://tailwindcss.com/docs/overscroll-behavior
+       */
+      "overscroll-y": [{
+        "overscroll-y": getOverscroll()
+      }],
+      /**
+       * Position
+       * @see https://tailwindcss.com/docs/position
+       */
+      position: ["static", "fixed", "absolute", "relative", "sticky"],
+      /**
+       * Top / Right / Bottom / Left
+       * @see https://tailwindcss.com/docs/top-right-bottom-left
+       */
+      inset: [{
+        inset: [inset]
+      }],
+      /**
+       * Right / Left
+       * @see https://tailwindcss.com/docs/top-right-bottom-left
+       */
+      "inset-x": [{
+        "inset-x": [inset]
+      }],
+      /**
+       * Top / Bottom
+       * @see https://tailwindcss.com/docs/top-right-bottom-left
+       */
+      "inset-y": [{
+        "inset-y": [inset]
+      }],
+      /**
+       * Start
+       * @see https://tailwindcss.com/docs/top-right-bottom-left
+       */
+      start: [{
+        start: [inset]
+      }],
+      /**
+       * End
+       * @see https://tailwindcss.com/docs/top-right-bottom-left
+       */
+      end: [{
+        end: [inset]
+      }],
+      /**
+       * Top
+       * @see https://tailwindcss.com/docs/top-right-bottom-left
+       */
+      top: [{
+        top: [inset]
+      }],
+      /**
+       * Right
+       * @see https://tailwindcss.com/docs/top-right-bottom-left
+       */
+      right: [{
+        right: [inset]
+      }],
+      /**
+       * Bottom
+       * @see https://tailwindcss.com/docs/top-right-bottom-left
+       */
+      bottom: [{
+        bottom: [inset]
+      }],
+      /**
+       * Left
+       * @see https://tailwindcss.com/docs/top-right-bottom-left
+       */
+      left: [{
+        left: [inset]
+      }],
+      /**
+       * Visibility
+       * @see https://tailwindcss.com/docs/visibility
+       */
+      visibility: ["visible", "invisible", "collapse"],
+      /**
+       * Z-Index
+       * @see https://tailwindcss.com/docs/z-index
+       */
+      z: [{
+        z: ["auto", isInteger, isArbitraryValue]
+      }],
+      // Flexbox and Grid
+      /**
+       * Flex Basis
+       * @see https://tailwindcss.com/docs/flex-basis
+       */
+      basis: [{
+        basis: getSpacingWithAutoAndArbitrary()
+      }],
+      /**
+       * Flex Direction
+       * @see https://tailwindcss.com/docs/flex-direction
+       */
+      "flex-direction": [{
+        flex: ["row", "row-reverse", "col", "col-reverse"]
+      }],
+      /**
+       * Flex Wrap
+       * @see https://tailwindcss.com/docs/flex-wrap
+       */
+      "flex-wrap": [{
+        flex: ["wrap", "wrap-reverse", "nowrap"]
+      }],
+      /**
+       * Flex
+       * @see https://tailwindcss.com/docs/flex
+       */
+      flex: [{
+        flex: ["1", "auto", "initial", "none", isArbitraryValue]
+      }],
+      /**
+       * Flex Grow
+       * @see https://tailwindcss.com/docs/flex-grow
+       */
+      grow: [{
+        grow: getZeroAndEmpty()
+      }],
+      /**
+       * Flex Shrink
+       * @see https://tailwindcss.com/docs/flex-shrink
+       */
+      shrink: [{
+        shrink: getZeroAndEmpty()
+      }],
+      /**
+       * Order
+       * @see https://tailwindcss.com/docs/order
+       */
+      order: [{
+        order: ["first", "last", "none", isInteger, isArbitraryValue]
+      }],
+      /**
+       * Grid Template Columns
+       * @see https://tailwindcss.com/docs/grid-template-columns
+       */
+      "grid-cols": [{
+        "grid-cols": [isAny]
+      }],
+      /**
+       * Grid Column Start / End
+       * @see https://tailwindcss.com/docs/grid-column
+       */
+      "col-start-end": [{
+        col: ["auto", {
+          span: ["full", isInteger, isArbitraryValue]
+        }, isArbitraryValue]
+      }],
+      /**
+       * Grid Column Start
+       * @see https://tailwindcss.com/docs/grid-column
+       */
+      "col-start": [{
+        "col-start": getNumberWithAutoAndArbitrary()
+      }],
+      /**
+       * Grid Column End
+       * @see https://tailwindcss.com/docs/grid-column
+       */
+      "col-end": [{
+        "col-end": getNumberWithAutoAndArbitrary()
+      }],
+      /**
+       * Grid Template Rows
+       * @see https://tailwindcss.com/docs/grid-template-rows
+       */
+      "grid-rows": [{
+        "grid-rows": [isAny]
+      }],
+      /**
+       * Grid Row Start / End
+       * @see https://tailwindcss.com/docs/grid-row
+       */
+      "row-start-end": [{
+        row: ["auto", {
+          span: [isInteger, isArbitraryValue]
+        }, isArbitraryValue]
+      }],
+      /**
+       * Grid Row Start
+       * @see https://tailwindcss.com/docs/grid-row
+       */
+      "row-start": [{
+        "row-start": getNumberWithAutoAndArbitrary()
+      }],
+      /**
+       * Grid Row End
+       * @see https://tailwindcss.com/docs/grid-row
+       */
+      "row-end": [{
+        "row-end": getNumberWithAutoAndArbitrary()
+      }],
+      /**
+       * Grid Auto Flow
+       * @see https://tailwindcss.com/docs/grid-auto-flow
+       */
+      "grid-flow": [{
+        "grid-flow": ["row", "col", "dense", "row-dense", "col-dense"]
+      }],
+      /**
+       * Grid Auto Columns
+       * @see https://tailwindcss.com/docs/grid-auto-columns
+       */
+      "auto-cols": [{
+        "auto-cols": ["auto", "min", "max", "fr", isArbitraryValue]
+      }],
+      /**
+       * Grid Auto Rows
+       * @see https://tailwindcss.com/docs/grid-auto-rows
+       */
+      "auto-rows": [{
+        "auto-rows": ["auto", "min", "max", "fr", isArbitraryValue]
+      }],
+      /**
+       * Gap
+       * @see https://tailwindcss.com/docs/gap
+       */
+      gap: [{
+        gap: [gap]
+      }],
+      /**
+       * Gap X
+       * @see https://tailwindcss.com/docs/gap
+       */
+      "gap-x": [{
+        "gap-x": [gap]
+      }],
+      /**
+       * Gap Y
+       * @see https://tailwindcss.com/docs/gap
+       */
+      "gap-y": [{
+        "gap-y": [gap]
+      }],
+      /**
+       * Justify Content
+       * @see https://tailwindcss.com/docs/justify-content
+       */
+      "justify-content": [{
+        justify: ["normal", ...getAlign()]
+      }],
+      /**
+       * Justify Items
+       * @see https://tailwindcss.com/docs/justify-items
+       */
+      "justify-items": [{
+        "justify-items": ["start", "end", "center", "stretch"]
+      }],
+      /**
+       * Justify Self
+       * @see https://tailwindcss.com/docs/justify-self
+       */
+      "justify-self": [{
+        "justify-self": ["auto", "start", "end", "center", "stretch"]
+      }],
+      /**
+       * Align Content
+       * @see https://tailwindcss.com/docs/align-content
+       */
+      "align-content": [{
+        content: ["normal", ...getAlign(), "baseline"]
+      }],
+      /**
+       * Align Items
+       * @see https://tailwindcss.com/docs/align-items
+       */
+      "align-items": [{
+        items: ["start", "end", "center", "baseline", "stretch"]
+      }],
+      /**
+       * Align Self
+       * @see https://tailwindcss.com/docs/align-self
+       */
+      "align-self": [{
+        self: ["auto", "start", "end", "center", "stretch", "baseline"]
+      }],
+      /**
+       * Place Content
+       * @see https://tailwindcss.com/docs/place-content
+       */
+      "place-content": [{
+        "place-content": [...getAlign(), "baseline"]
+      }],
+      /**
+       * Place Items
+       * @see https://tailwindcss.com/docs/place-items
+       */
+      "place-items": [{
+        "place-items": ["start", "end", "center", "baseline", "stretch"]
+      }],
+      /**
+       * Place Self
+       * @see https://tailwindcss.com/docs/place-self
+       */
+      "place-self": [{
+        "place-self": ["auto", "start", "end", "center", "stretch"]
+      }],
+      // Spacing
+      /**
+       * Padding
+       * @see https://tailwindcss.com/docs/padding
+       */
+      p: [{
+        p: [padding]
+      }],
+      /**
+       * Padding X
+       * @see https://tailwindcss.com/docs/padding
+       */
+      px: [{
+        px: [padding]
+      }],
+      /**
+       * Padding Y
+       * @see https://tailwindcss.com/docs/padding
+       */
+      py: [{
+        py: [padding]
+      }],
+      /**
+       * Padding Start
+       * @see https://tailwindcss.com/docs/padding
+       */
+      ps: [{
+        ps: [padding]
+      }],
+      /**
+       * Padding End
+       * @see https://tailwindcss.com/docs/padding
+       */
+      pe: [{
+        pe: [padding]
+      }],
+      /**
+       * Padding Top
+       * @see https://tailwindcss.com/docs/padding
+       */
+      pt: [{
+        pt: [padding]
+      }],
+      /**
+       * Padding Right
+       * @see https://tailwindcss.com/docs/padding
+       */
+      pr: [{
+        pr: [padding]
+      }],
+      /**
+       * Padding Bottom
+       * @see https://tailwindcss.com/docs/padding
+       */
+      pb: [{
+        pb: [padding]
+      }],
+      /**
+       * Padding Left
+       * @see https://tailwindcss.com/docs/padding
+       */
+      pl: [{
+        pl: [padding]
+      }],
+      /**
+       * Margin
+       * @see https://tailwindcss.com/docs/margin
+       */
+      m: [{
+        m: [margin]
+      }],
+      /**
+       * Margin X
+       * @see https://tailwindcss.com/docs/margin
+       */
+      mx: [{
+        mx: [margin]
+      }],
+      /**
+       * Margin Y
+       * @see https://tailwindcss.com/docs/margin
+       */
+      my: [{
+        my: [margin]
+      }],
+      /**
+       * Margin Start
+       * @see https://tailwindcss.com/docs/margin
+       */
+      ms: [{
+        ms: [margin]
+      }],
+      /**
+       * Margin End
+       * @see https://tailwindcss.com/docs/margin
+       */
+      me: [{
+        me: [margin]
+      }],
+      /**
+       * Margin Top
+       * @see https://tailwindcss.com/docs/margin
+       */
+      mt: [{
+        mt: [margin]
+      }],
+      /**
+       * Margin Right
+       * @see https://tailwindcss.com/docs/margin
+       */
+      mr: [{
+        mr: [margin]
+      }],
+      /**
+       * Margin Bottom
+       * @see https://tailwindcss.com/docs/margin
+       */
+      mb: [{
+        mb: [margin]
+      }],
+      /**
+       * Margin Left
+       * @see https://tailwindcss.com/docs/margin
+       */
+      ml: [{
+        ml: [margin]
+      }],
+      /**
+       * Space Between X
+       * @see https://tailwindcss.com/docs/space
+       */
+      "space-x": [{
+        "space-x": [space]
+      }],
+      /**
+       * Space Between X Reverse
+       * @see https://tailwindcss.com/docs/space
+       */
+      "space-x-reverse": ["space-x-reverse"],
+      /**
+       * Space Between Y
+       * @see https://tailwindcss.com/docs/space
+       */
+      "space-y": [{
+        "space-y": [space]
+      }],
+      /**
+       * Space Between Y Reverse
+       * @see https://tailwindcss.com/docs/space
+       */
+      "space-y-reverse": ["space-y-reverse"],
+      // Sizing
+      /**
+       * Width
+       * @see https://tailwindcss.com/docs/width
+       */
+      w: [{
+        w: ["auto", "min", "max", "fit", "svw", "lvw", "dvw", isArbitraryValue, spacing]
+      }],
+      /**
+       * Min-Width
+       * @see https://tailwindcss.com/docs/min-width
+       */
+      "min-w": [{
+        "min-w": [isArbitraryValue, spacing, "min", "max", "fit"]
+      }],
+      /**
+       * Max-Width
+       * @see https://tailwindcss.com/docs/max-width
+       */
+      "max-w": [{
+        "max-w": [isArbitraryValue, spacing, "none", "full", "min", "max", "fit", "prose", {
+          screen: [isTshirtSize]
+        }, isTshirtSize]
+      }],
+      /**
+       * Height
+       * @see https://tailwindcss.com/docs/height
+       */
+      h: [{
+        h: [isArbitraryValue, spacing, "auto", "min", "max", "fit", "svh", "lvh", "dvh"]
+      }],
+      /**
+       * Min-Height
+       * @see https://tailwindcss.com/docs/min-height
+       */
+      "min-h": [{
+        "min-h": [isArbitraryValue, spacing, "min", "max", "fit", "svh", "lvh", "dvh"]
+      }],
+      /**
+       * Max-Height
+       * @see https://tailwindcss.com/docs/max-height
+       */
+      "max-h": [{
+        "max-h": [isArbitraryValue, spacing, "min", "max", "fit", "svh", "lvh", "dvh"]
+      }],
+      /**
+       * Size
+       * @see https://tailwindcss.com/docs/size
+       */
+      size: [{
+        size: [isArbitraryValue, spacing, "auto", "min", "max", "fit"]
+      }],
+      // Typography
+      /**
+       * Font Size
+       * @see https://tailwindcss.com/docs/font-size
+       */
+      "font-size": [{
+        text: ["base", isTshirtSize, isArbitraryLength]
+      }],
+      /**
+       * Font Smoothing
+       * @see https://tailwindcss.com/docs/font-smoothing
+       */
+      "font-smoothing": ["antialiased", "subpixel-antialiased"],
+      /**
+       * Font Style
+       * @see https://tailwindcss.com/docs/font-style
+       */
+      "font-style": ["italic", "not-italic"],
+      /**
+       * Font Weight
+       * @see https://tailwindcss.com/docs/font-weight
+       */
+      "font-weight": [{
+        font: ["thin", "extralight", "light", "normal", "medium", "semibold", "bold", "extrabold", "black", isArbitraryNumber]
+      }],
+      /**
+       * Font Family
+       * @see https://tailwindcss.com/docs/font-family
+       */
+      "font-family": [{
+        font: [isAny]
+      }],
+      /**
+       * Font Variant Numeric
+       * @see https://tailwindcss.com/docs/font-variant-numeric
+       */
+      "fvn-normal": ["normal-nums"],
+      /**
+       * Font Variant Numeric
+       * @see https://tailwindcss.com/docs/font-variant-numeric
+       */
+      "fvn-ordinal": ["ordinal"],
+      /**
+       * Font Variant Numeric
+       * @see https://tailwindcss.com/docs/font-variant-numeric
+       */
+      "fvn-slashed-zero": ["slashed-zero"],
+      /**
+       * Font Variant Numeric
+       * @see https://tailwindcss.com/docs/font-variant-numeric
+       */
+      "fvn-figure": ["lining-nums", "oldstyle-nums"],
+      /**
+       * Font Variant Numeric
+       * @see https://tailwindcss.com/docs/font-variant-numeric
+       */
+      "fvn-spacing": ["proportional-nums", "tabular-nums"],
+      /**
+       * Font Variant Numeric
+       * @see https://tailwindcss.com/docs/font-variant-numeric
+       */
+      "fvn-fraction": ["diagonal-fractions", "stacked-fractions"],
+      /**
+       * Letter Spacing
+       * @see https://tailwindcss.com/docs/letter-spacing
+       */
+      tracking: [{
+        tracking: ["tighter", "tight", "normal", "wide", "wider", "widest", isArbitraryValue]
+      }],
+      /**
+       * Line Clamp
+       * @see https://tailwindcss.com/docs/line-clamp
+       */
+      "line-clamp": [{
+        "line-clamp": ["none", isNumber, isArbitraryNumber]
+      }],
+      /**
+       * Line Height
+       * @see https://tailwindcss.com/docs/line-height
+       */
+      leading: [{
+        leading: ["none", "tight", "snug", "normal", "relaxed", "loose", isLength, isArbitraryValue]
+      }],
+      /**
+       * List Style Image
+       * @see https://tailwindcss.com/docs/list-style-image
+       */
+      "list-image": [{
+        "list-image": ["none", isArbitraryValue]
+      }],
+      /**
+       * List Style Type
+       * @see https://tailwindcss.com/docs/list-style-type
+       */
+      "list-style-type": [{
+        list: ["none", "disc", "decimal", isArbitraryValue]
+      }],
+      /**
+       * List Style Position
+       * @see https://tailwindcss.com/docs/list-style-position
+       */
+      "list-style-position": [{
+        list: ["inside", "outside"]
+      }],
+      /**
+       * Placeholder Color
+       * @deprecated since Tailwind CSS v3.0.0
+       * @see https://tailwindcss.com/docs/placeholder-color
+       */
+      "placeholder-color": [{
+        placeholder: [colors]
+      }],
+      /**
+       * Placeholder Opacity
+       * @see https://tailwindcss.com/docs/placeholder-opacity
+       */
+      "placeholder-opacity": [{
+        "placeholder-opacity": [opacity]
+      }],
+      /**
+       * Text Alignment
+       * @see https://tailwindcss.com/docs/text-align
+       */
+      "text-alignment": [{
+        text: ["left", "center", "right", "justify", "start", "end"]
+      }],
+      /**
+       * Text Color
+       * @see https://tailwindcss.com/docs/text-color
+       */
+      "text-color": [{
+        text: [colors]
+      }],
+      /**
+       * Text Opacity
+       * @see https://tailwindcss.com/docs/text-opacity
+       */
+      "text-opacity": [{
+        "text-opacity": [opacity]
+      }],
+      /**
+       * Text Decoration
+       * @see https://tailwindcss.com/docs/text-decoration
+       */
+      "text-decoration": ["underline", "overline", "line-through", "no-underline"],
+      /**
+       * Text Decoration Style
+       * @see https://tailwindcss.com/docs/text-decoration-style
+       */
+      "text-decoration-style": [{
+        decoration: [...getLineStyles(), "wavy"]
+      }],
+      /**
+       * Text Decoration Thickness
+       * @see https://tailwindcss.com/docs/text-decoration-thickness
+       */
+      "text-decoration-thickness": [{
+        decoration: ["auto", "from-font", isLength, isArbitraryLength]
+      }],
+      /**
+       * Text Underline Offset
+       * @see https://tailwindcss.com/docs/text-underline-offset
+       */
+      "underline-offset": [{
+        "underline-offset": ["auto", isLength, isArbitraryValue]
+      }],
+      /**
+       * Text Decoration Color
+       * @see https://tailwindcss.com/docs/text-decoration-color
+       */
+      "text-decoration-color": [{
+        decoration: [colors]
+      }],
+      /**
+       * Text Transform
+       * @see https://tailwindcss.com/docs/text-transform
+       */
+      "text-transform": ["uppercase", "lowercase", "capitalize", "normal-case"],
+      /**
+       * Text Overflow
+       * @see https://tailwindcss.com/docs/text-overflow
+       */
+      "text-overflow": ["truncate", "text-ellipsis", "text-clip"],
+      /**
+       * Text Wrap
+       * @see https://tailwindcss.com/docs/text-wrap
+       */
+      "text-wrap": [{
+        text: ["wrap", "nowrap", "balance", "pretty"]
+      }],
+      /**
+       * Text Indent
+       * @see https://tailwindcss.com/docs/text-indent
+       */
+      indent: [{
+        indent: getSpacingWithArbitrary()
+      }],
+      /**
+       * Vertical Alignment
+       * @see https://tailwindcss.com/docs/vertical-align
+       */
+      "vertical-align": [{
+        align: ["baseline", "top", "middle", "bottom", "text-top", "text-bottom", "sub", "super", isArbitraryValue]
+      }],
+      /**
+       * Whitespace
+       * @see https://tailwindcss.com/docs/whitespace
+       */
+      whitespace: [{
+        whitespace: ["normal", "nowrap", "pre", "pre-line", "pre-wrap", "break-spaces"]
+      }],
+      /**
+       * Word Break
+       * @see https://tailwindcss.com/docs/word-break
+       */
+      break: [{
+        break: ["normal", "words", "all", "keep"]
+      }],
+      /**
+       * Hyphens
+       * @see https://tailwindcss.com/docs/hyphens
+       */
+      hyphens: [{
+        hyphens: ["none", "manual", "auto"]
+      }],
+      /**
+       * Content
+       * @see https://tailwindcss.com/docs/content
+       */
+      content: [{
+        content: ["none", isArbitraryValue]
+      }],
+      // Backgrounds
+      /**
+       * Background Attachment
+       * @see https://tailwindcss.com/docs/background-attachment
+       */
+      "bg-attachment": [{
+        bg: ["fixed", "local", "scroll"]
+      }],
+      /**
+       * Background Clip
+       * @see https://tailwindcss.com/docs/background-clip
+       */
+      "bg-clip": [{
+        "bg-clip": ["border", "padding", "content", "text"]
+      }],
+      /**
+       * Background Opacity
+       * @deprecated since Tailwind CSS v3.0.0
+       * @see https://tailwindcss.com/docs/background-opacity
+       */
+      "bg-opacity": [{
+        "bg-opacity": [opacity]
+      }],
+      /**
+       * Background Origin
+       * @see https://tailwindcss.com/docs/background-origin
+       */
+      "bg-origin": [{
+        "bg-origin": ["border", "padding", "content"]
+      }],
+      /**
+       * Background Position
+       * @see https://tailwindcss.com/docs/background-position
+       */
+      "bg-position": [{
+        bg: [...getPositions(), isArbitraryPosition]
+      }],
+      /**
+       * Background Repeat
+       * @see https://tailwindcss.com/docs/background-repeat
+       */
+      "bg-repeat": [{
+        bg: ["no-repeat", {
+          repeat: ["", "x", "y", "round", "space"]
+        }]
+      }],
+      /**
+       * Background Size
+       * @see https://tailwindcss.com/docs/background-size
+       */
+      "bg-size": [{
+        bg: ["auto", "cover", "contain", isArbitrarySize]
+      }],
+      /**
+       * Background Image
+       * @see https://tailwindcss.com/docs/background-image
+       */
+      "bg-image": [{
+        bg: ["none", {
+          "gradient-to": ["t", "tr", "r", "br", "b", "bl", "l", "tl"]
+        }, isArbitraryImage]
+      }],
+      /**
+       * Background Color
+       * @see https://tailwindcss.com/docs/background-color
+       */
+      "bg-color": [{
+        bg: [colors]
+      }],
+      /**
+       * Gradient Color Stops From Position
+       * @see https://tailwindcss.com/docs/gradient-color-stops
+       */
+      "gradient-from-pos": [{
+        from: [gradientColorStopPositions]
+      }],
+      /**
+       * Gradient Color Stops Via Position
+       * @see https://tailwindcss.com/docs/gradient-color-stops
+       */
+      "gradient-via-pos": [{
+        via: [gradientColorStopPositions]
+      }],
+      /**
+       * Gradient Color Stops To Position
+       * @see https://tailwindcss.com/docs/gradient-color-stops
+       */
+      "gradient-to-pos": [{
+        to: [gradientColorStopPositions]
+      }],
+      /**
+       * Gradient Color Stops From
+       * @see https://tailwindcss.com/docs/gradient-color-stops
+       */
+      "gradient-from": [{
+        from: [gradientColorStops]
+      }],
+      /**
+       * Gradient Color Stops Via
+       * @see https://tailwindcss.com/docs/gradient-color-stops
+       */
+      "gradient-via": [{
+        via: [gradientColorStops]
+      }],
+      /**
+       * Gradient Color Stops To
+       * @see https://tailwindcss.com/docs/gradient-color-stops
+       */
+      "gradient-to": [{
+        to: [gradientColorStops]
+      }],
+      // Borders
+      /**
+       * Border Radius
+       * @see https://tailwindcss.com/docs/border-radius
+       */
+      rounded: [{
+        rounded: [borderRadius]
+      }],
+      /**
+       * Border Radius Start
+       * @see https://tailwindcss.com/docs/border-radius
+       */
+      "rounded-s": [{
+        "rounded-s": [borderRadius]
+      }],
+      /**
+       * Border Radius End
+       * @see https://tailwindcss.com/docs/border-radius
+       */
+      "rounded-e": [{
+        "rounded-e": [borderRadius]
+      }],
+      /**
+       * Border Radius Top
+       * @see https://tailwindcss.com/docs/border-radius
+       */
+      "rounded-t": [{
+        "rounded-t": [borderRadius]
+      }],
+      /**
+       * Border Radius Right
+       * @see https://tailwindcss.com/docs/border-radius
+       */
+      "rounded-r": [{
+        "rounded-r": [borderRadius]
+      }],
+      /**
+       * Border Radius Bottom
+       * @see https://tailwindcss.com/docs/border-radius
+       */
+      "rounded-b": [{
+        "rounded-b": [borderRadius]
+      }],
+      /**
+       * Border Radius Left
+       * @see https://tailwindcss.com/docs/border-radius
+       */
+      "rounded-l": [{
+        "rounded-l": [borderRadius]
+      }],
+      /**
+       * Border Radius Start Start
+       * @see https://tailwindcss.com/docs/border-radius
+       */
+      "rounded-ss": [{
+        "rounded-ss": [borderRadius]
+      }],
+      /**
+       * Border Radius Start End
+       * @see https://tailwindcss.com/docs/border-radius
+       */
+      "rounded-se": [{
+        "rounded-se": [borderRadius]
+      }],
+      /**
+       * Border Radius End End
+       * @see https://tailwindcss.com/docs/border-radius
+       */
+      "rounded-ee": [{
+        "rounded-ee": [borderRadius]
+      }],
+      /**
+       * Border Radius End Start
+       * @see https://tailwindcss.com/docs/border-radius
+       */
+      "rounded-es": [{
+        "rounded-es": [borderRadius]
+      }],
+      /**
+       * Border Radius Top Left
+       * @see https://tailwindcss.com/docs/border-radius
+       */
+      "rounded-tl": [{
+        "rounded-tl": [borderRadius]
+      }],
+      /**
+       * Border Radius Top Right
+       * @see https://tailwindcss.com/docs/border-radius
+       */
+      "rounded-tr": [{
+        "rounded-tr": [borderRadius]
+      }],
+      /**
+       * Border Radius Bottom Right
+       * @see https://tailwindcss.com/docs/border-radius
+       */
+      "rounded-br": [{
+        "rounded-br": [borderRadius]
+      }],
+      /**
+       * Border Radius Bottom Left
+       * @see https://tailwindcss.com/docs/border-radius
+       */
+      "rounded-bl": [{
+        "rounded-bl": [borderRadius]
+      }],
+      /**
+       * Border Width
+       * @see https://tailwindcss.com/docs/border-width
+       */
+      "border-w": [{
+        border: [borderWidth]
+      }],
+      /**
+       * Border Width X
+       * @see https://tailwindcss.com/docs/border-width
+       */
+      "border-w-x": [{
+        "border-x": [borderWidth]
+      }],
+      /**
+       * Border Width Y
+       * @see https://tailwindcss.com/docs/border-width
+       */
+      "border-w-y": [{
+        "border-y": [borderWidth]
+      }],
+      /**
+       * Border Width Start
+       * @see https://tailwindcss.com/docs/border-width
+       */
+      "border-w-s": [{
+        "border-s": [borderWidth]
+      }],
+      /**
+       * Border Width End
+       * @see https://tailwindcss.com/docs/border-width
+       */
+      "border-w-e": [{
+        "border-e": [borderWidth]
+      }],
+      /**
+       * Border Width Top
+       * @see https://tailwindcss.com/docs/border-width
+       */
+      "border-w-t": [{
+        "border-t": [borderWidth]
+      }],
+      /**
+       * Border Width Right
+       * @see https://tailwindcss.com/docs/border-width
+       */
+      "border-w-r": [{
+        "border-r": [borderWidth]
+      }],
+      /**
+       * Border Width Bottom
+       * @see https://tailwindcss.com/docs/border-width
+       */
+      "border-w-b": [{
+        "border-b": [borderWidth]
+      }],
+      /**
+       * Border Width Left
+       * @see https://tailwindcss.com/docs/border-width
+       */
+      "border-w-l": [{
+        "border-l": [borderWidth]
+      }],
+      /**
+       * Border Opacity
+       * @see https://tailwindcss.com/docs/border-opacity
+       */
+      "border-opacity": [{
+        "border-opacity": [opacity]
+      }],
+      /**
+       * Border Style
+       * @see https://tailwindcss.com/docs/border-style
+       */
+      "border-style": [{
+        border: [...getLineStyles(), "hidden"]
+      }],
+      /**
+       * Divide Width X
+       * @see https://tailwindcss.com/docs/divide-width
+       */
+      "divide-x": [{
+        "divide-x": [borderWidth]
+      }],
+      /**
+       * Divide Width X Reverse
+       * @see https://tailwindcss.com/docs/divide-width
+       */
+      "divide-x-reverse": ["divide-x-reverse"],
+      /**
+       * Divide Width Y
+       * @see https://tailwindcss.com/docs/divide-width
+       */
+      "divide-y": [{
+        "divide-y": [borderWidth]
+      }],
+      /**
+       * Divide Width Y Reverse
+       * @see https://tailwindcss.com/docs/divide-width
+       */
+      "divide-y-reverse": ["divide-y-reverse"],
+      /**
+       * Divide Opacity
+       * @see https://tailwindcss.com/docs/divide-opacity
+       */
+      "divide-opacity": [{
+        "divide-opacity": [opacity]
+      }],
+      /**
+       * Divide Style
+       * @see https://tailwindcss.com/docs/divide-style
+       */
+      "divide-style": [{
+        divide: getLineStyles()
+      }],
+      /**
+       * Border Color
+       * @see https://tailwindcss.com/docs/border-color
+       */
+      "border-color": [{
+        border: [borderColor]
+      }],
+      /**
+       * Border Color X
+       * @see https://tailwindcss.com/docs/border-color
+       */
+      "border-color-x": [{
+        "border-x": [borderColor]
+      }],
+      /**
+       * Border Color Y
+       * @see https://tailwindcss.com/docs/border-color
+       */
+      "border-color-y": [{
+        "border-y": [borderColor]
+      }],
+      /**
+       * Border Color S
+       * @see https://tailwindcss.com/docs/border-color
+       */
+      "border-color-s": [{
+        "border-s": [borderColor]
+      }],
+      /**
+       * Border Color E
+       * @see https://tailwindcss.com/docs/border-color
+       */
+      "border-color-e": [{
+        "border-e": [borderColor]
+      }],
+      /**
+       * Border Color Top
+       * @see https://tailwindcss.com/docs/border-color
+       */
+      "border-color-t": [{
+        "border-t": [borderColor]
+      }],
+      /**
+       * Border Color Right
+       * @see https://tailwindcss.com/docs/border-color
+       */
+      "border-color-r": [{
+        "border-r": [borderColor]
+      }],
+      /**
+       * Border Color Bottom
+       * @see https://tailwindcss.com/docs/border-color
+       */
+      "border-color-b": [{
+        "border-b": [borderColor]
+      }],
+      /**
+       * Border Color Left
+       * @see https://tailwindcss.com/docs/border-color
+       */
+      "border-color-l": [{
+        "border-l": [borderColor]
+      }],
+      /**
+       * Divide Color
+       * @see https://tailwindcss.com/docs/divide-color
+       */
+      "divide-color": [{
+        divide: [borderColor]
+      }],
+      /**
+       * Outline Style
+       * @see https://tailwindcss.com/docs/outline-style
+       */
+      "outline-style": [{
+        outline: ["", ...getLineStyles()]
+      }],
+      /**
+       * Outline Offset
+       * @see https://tailwindcss.com/docs/outline-offset
+       */
+      "outline-offset": [{
+        "outline-offset": [isLength, isArbitraryValue]
+      }],
+      /**
+       * Outline Width
+       * @see https://tailwindcss.com/docs/outline-width
+       */
+      "outline-w": [{
+        outline: [isLength, isArbitraryLength]
+      }],
+      /**
+       * Outline Color
+       * @see https://tailwindcss.com/docs/outline-color
+       */
+      "outline-color": [{
+        outline: [colors]
+      }],
+      /**
+       * Ring Width
+       * @see https://tailwindcss.com/docs/ring-width
+       */
+      "ring-w": [{
+        ring: getLengthWithEmptyAndArbitrary()
+      }],
+      /**
+       * Ring Width Inset
+       * @see https://tailwindcss.com/docs/ring-width
+       */
+      "ring-w-inset": ["ring-inset"],
+      /**
+       * Ring Color
+       * @see https://tailwindcss.com/docs/ring-color
+       */
+      "ring-color": [{
+        ring: [colors]
+      }],
+      /**
+       * Ring Opacity
+       * @see https://tailwindcss.com/docs/ring-opacity
+       */
+      "ring-opacity": [{
+        "ring-opacity": [opacity]
+      }],
+      /**
+       * Ring Offset Width
+       * @see https://tailwindcss.com/docs/ring-offset-width
+       */
+      "ring-offset-w": [{
+        "ring-offset": [isLength, isArbitraryLength]
+      }],
+      /**
+       * Ring Offset Color
+       * @see https://tailwindcss.com/docs/ring-offset-color
+       */
+      "ring-offset-color": [{
+        "ring-offset": [colors]
+      }],
+      // Effects
+      /**
+       * Box Shadow
+       * @see https://tailwindcss.com/docs/box-shadow
+       */
+      shadow: [{
+        shadow: ["", "inner", "none", isTshirtSize, isArbitraryShadow]
+      }],
+      /**
+       * Box Shadow Color
+       * @see https://tailwindcss.com/docs/box-shadow-color
+       */
+      "shadow-color": [{
+        shadow: [isAny]
+      }],
+      /**
+       * Opacity
+       * @see https://tailwindcss.com/docs/opacity
+       */
+      opacity: [{
+        opacity: [opacity]
+      }],
+      /**
+       * Mix Blend Mode
+       * @see https://tailwindcss.com/docs/mix-blend-mode
+       */
+      "mix-blend": [{
+        "mix-blend": [...getBlendModes(), "plus-lighter", "plus-darker"]
+      }],
+      /**
+       * Background Blend Mode
+       * @see https://tailwindcss.com/docs/background-blend-mode
+       */
+      "bg-blend": [{
+        "bg-blend": getBlendModes()
+      }],
+      // Filters
+      /**
+       * Filter
+       * @deprecated since Tailwind CSS v3.0.0
+       * @see https://tailwindcss.com/docs/filter
+       */
+      filter: [{
+        filter: ["", "none"]
+      }],
+      /**
+       * Blur
+       * @see https://tailwindcss.com/docs/blur
+       */
+      blur: [{
+        blur: [blur]
+      }],
+      /**
+       * Brightness
+       * @see https://tailwindcss.com/docs/brightness
+       */
+      brightness: [{
+        brightness: [brightness]
+      }],
+      /**
+       * Contrast
+       * @see https://tailwindcss.com/docs/contrast
+       */
+      contrast: [{
+        contrast: [contrast]
+      }],
+      /**
+       * Drop Shadow
+       * @see https://tailwindcss.com/docs/drop-shadow
+       */
+      "drop-shadow": [{
+        "drop-shadow": ["", "none", isTshirtSize, isArbitraryValue]
+      }],
+      /**
+       * Grayscale
+       * @see https://tailwindcss.com/docs/grayscale
+       */
+      grayscale: [{
+        grayscale: [grayscale]
+      }],
+      /**
+       * Hue Rotate
+       * @see https://tailwindcss.com/docs/hue-rotate
+       */
+      "hue-rotate": [{
+        "hue-rotate": [hueRotate]
+      }],
+      /**
+       * Invert
+       * @see https://tailwindcss.com/docs/invert
+       */
+      invert: [{
+        invert: [invert2]
+      }],
+      /**
+       * Saturate
+       * @see https://tailwindcss.com/docs/saturate
+       */
+      saturate: [{
+        saturate: [saturate]
+      }],
+      /**
+       * Sepia
+       * @see https://tailwindcss.com/docs/sepia
+       */
+      sepia: [{
+        sepia: [sepia]
+      }],
+      /**
+       * Backdrop Filter
+       * @deprecated since Tailwind CSS v3.0.0
+       * @see https://tailwindcss.com/docs/backdrop-filter
+       */
+      "backdrop-filter": [{
+        "backdrop-filter": ["", "none"]
+      }],
+      /**
+       * Backdrop Blur
+       * @see https://tailwindcss.com/docs/backdrop-blur
+       */
+      "backdrop-blur": [{
+        "backdrop-blur": [blur]
+      }],
+      /**
+       * Backdrop Brightness
+       * @see https://tailwindcss.com/docs/backdrop-brightness
+       */
+      "backdrop-brightness": [{
+        "backdrop-brightness": [brightness]
+      }],
+      /**
+       * Backdrop Contrast
+       * @see https://tailwindcss.com/docs/backdrop-contrast
+       */
+      "backdrop-contrast": [{
+        "backdrop-contrast": [contrast]
+      }],
+      /**
+       * Backdrop Grayscale
+       * @see https://tailwindcss.com/docs/backdrop-grayscale
+       */
+      "backdrop-grayscale": [{
+        "backdrop-grayscale": [grayscale]
+      }],
+      /**
+       * Backdrop Hue Rotate
+       * @see https://tailwindcss.com/docs/backdrop-hue-rotate
+       */
+      "backdrop-hue-rotate": [{
+        "backdrop-hue-rotate": [hueRotate]
+      }],
+      /**
+       * Backdrop Invert
+       * @see https://tailwindcss.com/docs/backdrop-invert
+       */
+      "backdrop-invert": [{
+        "backdrop-invert": [invert2]
+      }],
+      /**
+       * Backdrop Opacity
+       * @see https://tailwindcss.com/docs/backdrop-opacity
+       */
+      "backdrop-opacity": [{
+        "backdrop-opacity": [opacity]
+      }],
+      /**
+       * Backdrop Saturate
+       * @see https://tailwindcss.com/docs/backdrop-saturate
+       */
+      "backdrop-saturate": [{
+        "backdrop-saturate": [saturate]
+      }],
+      /**
+       * Backdrop Sepia
+       * @see https://tailwindcss.com/docs/backdrop-sepia
+       */
+      "backdrop-sepia": [{
+        "backdrop-sepia": [sepia]
+      }],
+      // Tables
+      /**
+       * Border Collapse
+       * @see https://tailwindcss.com/docs/border-collapse
+       */
+      "border-collapse": [{
+        border: ["collapse", "separate"]
+      }],
+      /**
+       * Border Spacing
+       * @see https://tailwindcss.com/docs/border-spacing
+       */
+      "border-spacing": [{
+        "border-spacing": [borderSpacing]
+      }],
+      /**
+       * Border Spacing X
+       * @see https://tailwindcss.com/docs/border-spacing
+       */
+      "border-spacing-x": [{
+        "border-spacing-x": [borderSpacing]
+      }],
+      /**
+       * Border Spacing Y
+       * @see https://tailwindcss.com/docs/border-spacing
+       */
+      "border-spacing-y": [{
+        "border-spacing-y": [borderSpacing]
+      }],
+      /**
+       * Table Layout
+       * @see https://tailwindcss.com/docs/table-layout
+       */
+      "table-layout": [{
+        table: ["auto", "fixed"]
+      }],
+      /**
+       * Caption Side
+       * @see https://tailwindcss.com/docs/caption-side
+       */
+      caption: [{
+        caption: ["top", "bottom"]
+      }],
+      // Transitions and Animation
+      /**
+       * Tranisition Property
+       * @see https://tailwindcss.com/docs/transition-property
+       */
+      transition: [{
+        transition: ["none", "all", "", "colors", "opacity", "shadow", "transform", isArbitraryValue]
+      }],
+      /**
+       * Transition Duration
+       * @see https://tailwindcss.com/docs/transition-duration
+       */
+      duration: [{
+        duration: getNumberAndArbitrary()
+      }],
+      /**
+       * Transition Timing Function
+       * @see https://tailwindcss.com/docs/transition-timing-function
+       */
+      ease: [{
+        ease: ["linear", "in", "out", "in-out", isArbitraryValue]
+      }],
+      /**
+       * Transition Delay
+       * @see https://tailwindcss.com/docs/transition-delay
+       */
+      delay: [{
+        delay: getNumberAndArbitrary()
+      }],
+      /**
+       * Animation
+       * @see https://tailwindcss.com/docs/animation
+       */
+      animate: [{
+        animate: ["none", "spin", "ping", "pulse", "bounce", isArbitraryValue]
+      }],
+      // Transforms
+      /**
+       * Transform
+       * @see https://tailwindcss.com/docs/transform
+       */
+      transform: [{
+        transform: ["", "gpu", "none"]
+      }],
+      /**
+       * Scale
+       * @see https://tailwindcss.com/docs/scale
+       */
+      scale: [{
+        scale: [scale2]
+      }],
+      /**
+       * Scale X
+       * @see https://tailwindcss.com/docs/scale
+       */
+      "scale-x": [{
+        "scale-x": [scale2]
+      }],
+      /**
+       * Scale Y
+       * @see https://tailwindcss.com/docs/scale
+       */
+      "scale-y": [{
+        "scale-y": [scale2]
+      }],
+      /**
+       * Rotate
+       * @see https://tailwindcss.com/docs/rotate
+       */
+      rotate: [{
+        rotate: [isInteger, isArbitraryValue]
+      }],
+      /**
+       * Translate X
+       * @see https://tailwindcss.com/docs/translate
+       */
+      "translate-x": [{
+        "translate-x": [translate]
+      }],
+      /**
+       * Translate Y
+       * @see https://tailwindcss.com/docs/translate
+       */
+      "translate-y": [{
+        "translate-y": [translate]
+      }],
+      /**
+       * Skew X
+       * @see https://tailwindcss.com/docs/skew
+       */
+      "skew-x": [{
+        "skew-x": [skew]
+      }],
+      /**
+       * Skew Y
+       * @see https://tailwindcss.com/docs/skew
+       */
+      "skew-y": [{
+        "skew-y": [skew]
+      }],
+      /**
+       * Transform Origin
+       * @see https://tailwindcss.com/docs/transform-origin
+       */
+      "transform-origin": [{
+        origin: ["center", "top", "top-right", "right", "bottom-right", "bottom", "bottom-left", "left", "top-left", isArbitraryValue]
+      }],
+      // Interactivity
+      /**
+       * Accent Color
+       * @see https://tailwindcss.com/docs/accent-color
+       */
+      accent: [{
+        accent: ["auto", colors]
+      }],
+      /**
+       * Appearance
+       * @see https://tailwindcss.com/docs/appearance
+       */
+      appearance: [{
+        appearance: ["none", "auto"]
+      }],
+      /**
+       * Cursor
+       * @see https://tailwindcss.com/docs/cursor
+       */
+      cursor: [{
+        cursor: ["auto", "default", "pointer", "wait", "text", "move", "help", "not-allowed", "none", "context-menu", "progress", "cell", "crosshair", "vertical-text", "alias", "copy", "no-drop", "grab", "grabbing", "all-scroll", "col-resize", "row-resize", "n-resize", "e-resize", "s-resize", "w-resize", "ne-resize", "nw-resize", "se-resize", "sw-resize", "ew-resize", "ns-resize", "nesw-resize", "nwse-resize", "zoom-in", "zoom-out", isArbitraryValue]
+      }],
+      /**
+       * Caret Color
+       * @see https://tailwindcss.com/docs/just-in-time-mode#caret-color-utilities
+       */
+      "caret-color": [{
+        caret: [colors]
+      }],
+      /**
+       * Pointer Events
+       * @see https://tailwindcss.com/docs/pointer-events
+       */
+      "pointer-events": [{
+        "pointer-events": ["none", "auto"]
+      }],
+      /**
+       * Resize
+       * @see https://tailwindcss.com/docs/resize
+       */
+      resize: [{
+        resize: ["none", "y", "x", ""]
+      }],
+      /**
+       * Scroll Behavior
+       * @see https://tailwindcss.com/docs/scroll-behavior
+       */
+      "scroll-behavior": [{
+        scroll: ["auto", "smooth"]
+      }],
+      /**
+       * Scroll Margin
+       * @see https://tailwindcss.com/docs/scroll-margin
+       */
+      "scroll-m": [{
+        "scroll-m": getSpacingWithArbitrary()
+      }],
+      /**
+       * Scroll Margin X
+       * @see https://tailwindcss.com/docs/scroll-margin
+       */
+      "scroll-mx": [{
+        "scroll-mx": getSpacingWithArbitrary()
+      }],
+      /**
+       * Scroll Margin Y
+       * @see https://tailwindcss.com/docs/scroll-margin
+       */
+      "scroll-my": [{
+        "scroll-my": getSpacingWithArbitrary()
+      }],
+      /**
+       * Scroll Margin Start
+       * @see https://tailwindcss.com/docs/scroll-margin
+       */
+      "scroll-ms": [{
+        "scroll-ms": getSpacingWithArbitrary()
+      }],
+      /**
+       * Scroll Margin End
+       * @see https://tailwindcss.com/docs/scroll-margin
+       */
+      "scroll-me": [{
+        "scroll-me": getSpacingWithArbitrary()
+      }],
+      /**
+       * Scroll Margin Top
+       * @see https://tailwindcss.com/docs/scroll-margin
+       */
+      "scroll-mt": [{
+        "scroll-mt": getSpacingWithArbitrary()
+      }],
+      /**
+       * Scroll Margin Right
+       * @see https://tailwindcss.com/docs/scroll-margin
+       */
+      "scroll-mr": [{
+        "scroll-mr": getSpacingWithArbitrary()
+      }],
+      /**
+       * Scroll Margin Bottom
+       * @see https://tailwindcss.com/docs/scroll-margin
+       */
+      "scroll-mb": [{
+        "scroll-mb": getSpacingWithArbitrary()
+      }],
+      /**
+       * Scroll Margin Left
+       * @see https://tailwindcss.com/docs/scroll-margin
+       */
+      "scroll-ml": [{
+        "scroll-ml": getSpacingWithArbitrary()
+      }],
+      /**
+       * Scroll Padding
+       * @see https://tailwindcss.com/docs/scroll-padding
+       */
+      "scroll-p": [{
+        "scroll-p": getSpacingWithArbitrary()
+      }],
+      /**
+       * Scroll Padding X
+       * @see https://tailwindcss.com/docs/scroll-padding
+       */
+      "scroll-px": [{
+        "scroll-px": getSpacingWithArbitrary()
+      }],
+      /**
+       * Scroll Padding Y
+       * @see https://tailwindcss.com/docs/scroll-padding
+       */
+      "scroll-py": [{
+        "scroll-py": getSpacingWithArbitrary()
+      }],
+      /**
+       * Scroll Padding Start
+       * @see https://tailwindcss.com/docs/scroll-padding
+       */
+      "scroll-ps": [{
+        "scroll-ps": getSpacingWithArbitrary()
+      }],
+      /**
+       * Scroll Padding End
+       * @see https://tailwindcss.com/docs/scroll-padding
+       */
+      "scroll-pe": [{
+        "scroll-pe": getSpacingWithArbitrary()
+      }],
+      /**
+       * Scroll Padding Top
+       * @see https://tailwindcss.com/docs/scroll-padding
+       */
+      "scroll-pt": [{
+        "scroll-pt": getSpacingWithArbitrary()
+      }],
+      /**
+       * Scroll Padding Right
+       * @see https://tailwindcss.com/docs/scroll-padding
+       */
+      "scroll-pr": [{
+        "scroll-pr": getSpacingWithArbitrary()
+      }],
+      /**
+       * Scroll Padding Bottom
+       * @see https://tailwindcss.com/docs/scroll-padding
+       */
+      "scroll-pb": [{
+        "scroll-pb": getSpacingWithArbitrary()
+      }],
+      /**
+       * Scroll Padding Left
+       * @see https://tailwindcss.com/docs/scroll-padding
+       */
+      "scroll-pl": [{
+        "scroll-pl": getSpacingWithArbitrary()
+      }],
+      /**
+       * Scroll Snap Align
+       * @see https://tailwindcss.com/docs/scroll-snap-align
+       */
+      "snap-align": [{
+        snap: ["start", "end", "center", "align-none"]
+      }],
+      /**
+       * Scroll Snap Stop
+       * @see https://tailwindcss.com/docs/scroll-snap-stop
+       */
+      "snap-stop": [{
+        snap: ["normal", "always"]
+      }],
+      /**
+       * Scroll Snap Type
+       * @see https://tailwindcss.com/docs/scroll-snap-type
+       */
+      "snap-type": [{
+        snap: ["none", "x", "y", "both"]
+      }],
+      /**
+       * Scroll Snap Type Strictness
+       * @see https://tailwindcss.com/docs/scroll-snap-type
+       */
+      "snap-strictness": [{
+        snap: ["mandatory", "proximity"]
+      }],
+      /**
+       * Touch Action
+       * @see https://tailwindcss.com/docs/touch-action
+       */
+      touch: [{
+        touch: ["auto", "none", "manipulation"]
+      }],
+      /**
+       * Touch Action X
+       * @see https://tailwindcss.com/docs/touch-action
+       */
+      "touch-x": [{
+        "touch-pan": ["x", "left", "right"]
+      }],
+      /**
+       * Touch Action Y
+       * @see https://tailwindcss.com/docs/touch-action
+       */
+      "touch-y": [{
+        "touch-pan": ["y", "up", "down"]
+      }],
+      /**
+       * Touch Action Pinch Zoom
+       * @see https://tailwindcss.com/docs/touch-action
+       */
+      "touch-pz": ["touch-pinch-zoom"],
+      /**
+       * User Select
+       * @see https://tailwindcss.com/docs/user-select
+       */
+      select: [{
+        select: ["none", "text", "all", "auto"]
+      }],
+      /**
+       * Will Change
+       * @see https://tailwindcss.com/docs/will-change
+       */
+      "will-change": [{
+        "will-change": ["auto", "scroll", "contents", "transform", isArbitraryValue]
+      }],
+      // SVG
+      /**
+       * Fill
+       * @see https://tailwindcss.com/docs/fill
+       */
+      fill: [{
+        fill: [colors, "none"]
+      }],
+      /**
+       * Stroke Width
+       * @see https://tailwindcss.com/docs/stroke-width
+       */
+      "stroke-w": [{
+        stroke: [isLength, isArbitraryLength, isArbitraryNumber]
+      }],
+      /**
+       * Stroke
+       * @see https://tailwindcss.com/docs/stroke
+       */
+      stroke: [{
+        stroke: [colors, "none"]
+      }],
+      // Accessibility
+      /**
+       * Screen Readers
+       * @see https://tailwindcss.com/docs/screen-readers
+       */
+      sr: ["sr-only", "not-sr-only"],
+      /**
+       * Forced Color Adjust
+       * @see https://tailwindcss.com/docs/forced-color-adjust
+       */
+      "forced-color-adjust": [{
+        "forced-color-adjust": ["auto", "none"]
+      }]
+    },
+    conflictingClassGroups: {
+      overflow: ["overflow-x", "overflow-y"],
+      overscroll: ["overscroll-x", "overscroll-y"],
+      inset: ["inset-x", "inset-y", "start", "end", "top", "right", "bottom", "left"],
+      "inset-x": ["right", "left"],
+      "inset-y": ["top", "bottom"],
+      flex: ["basis", "grow", "shrink"],
+      gap: ["gap-x", "gap-y"],
+      p: ["px", "py", "ps", "pe", "pt", "pr", "pb", "pl"],
+      px: ["pr", "pl"],
+      py: ["pt", "pb"],
+      m: ["mx", "my", "ms", "me", "mt", "mr", "mb", "ml"],
+      mx: ["mr", "ml"],
+      my: ["mt", "mb"],
+      size: ["w", "h"],
+      "font-size": ["leading"],
+      "fvn-normal": ["fvn-ordinal", "fvn-slashed-zero", "fvn-figure", "fvn-spacing", "fvn-fraction"],
+      "fvn-ordinal": ["fvn-normal"],
+      "fvn-slashed-zero": ["fvn-normal"],
+      "fvn-figure": ["fvn-normal"],
+      "fvn-spacing": ["fvn-normal"],
+      "fvn-fraction": ["fvn-normal"],
+      "line-clamp": ["display", "overflow"],
+      rounded: ["rounded-s", "rounded-e", "rounded-t", "rounded-r", "rounded-b", "rounded-l", "rounded-ss", "rounded-se", "rounded-ee", "rounded-es", "rounded-tl", "rounded-tr", "rounded-br", "rounded-bl"],
+      "rounded-s": ["rounded-ss", "rounded-es"],
+      "rounded-e": ["rounded-se", "rounded-ee"],
+      "rounded-t": ["rounded-tl", "rounded-tr"],
+      "rounded-r": ["rounded-tr", "rounded-br"],
+      "rounded-b": ["rounded-br", "rounded-bl"],
+      "rounded-l": ["rounded-tl", "rounded-bl"],
+      "border-spacing": ["border-spacing-x", "border-spacing-y"],
+      "border-w": ["border-w-s", "border-w-e", "border-w-t", "border-w-r", "border-w-b", "border-w-l"],
+      "border-w-x": ["border-w-r", "border-w-l"],
+      "border-w-y": ["border-w-t", "border-w-b"],
+      "border-color": ["border-color-s", "border-color-e", "border-color-t", "border-color-r", "border-color-b", "border-color-l"],
+      "border-color-x": ["border-color-r", "border-color-l"],
+      "border-color-y": ["border-color-t", "border-color-b"],
+      "scroll-m": ["scroll-mx", "scroll-my", "scroll-ms", "scroll-me", "scroll-mt", "scroll-mr", "scroll-mb", "scroll-ml"],
+      "scroll-mx": ["scroll-mr", "scroll-ml"],
+      "scroll-my": ["scroll-mt", "scroll-mb"],
+      "scroll-p": ["scroll-px", "scroll-py", "scroll-ps", "scroll-pe", "scroll-pt", "scroll-pr", "scroll-pb", "scroll-pl"],
+      "scroll-px": ["scroll-pr", "scroll-pl"],
+      "scroll-py": ["scroll-pt", "scroll-pb"],
+      touch: ["touch-x", "touch-y", "touch-pz"],
+      "touch-x": ["touch"],
+      "touch-y": ["touch"],
+      "touch-pz": ["touch"]
+    },
+    conflictingClassGroupModifiers: {
+      "font-size": ["leading"]
+    }
+  };
+};
+const twMerge = /* @__PURE__ */ createTailwindMerge(getDefaultConfig);
+function cn(...inputs) {
+  return twMerge(clsx(inputs));
+}
+const buttonVariants = cva(
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90",
+        destructive: "bg-destructive text-destructive-foreground shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
+        outline: "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+        secondary: "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
+        ghost: "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
+        link: "text-primary underline-offset-4 hover:underline"
+      },
+      size: {
+        default: "h-9 px-4 py-2 has-[>svg]:px-3",
+        sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
+        lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
+        icon: "size-9"
+      }
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default"
+    }
+  }
+);
+function AlertDialog({
+  ...props
+}) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(Root2, { "data-slot": "alert-dialog", ...props });
+}
+function AlertDialogPortal({
+  ...props
+}) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(Portal2, { "data-slot": "alert-dialog-portal", ...props });
+}
+function AlertDialogOverlay({
+  className,
+  ...props
+}) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    Overlay2,
+    {
+      "data-slot": "alert-dialog-overlay",
+      className: cn(
+        "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50",
+        className
+      ),
+      ...props
+    }
+  );
+}
+function AlertDialogContent({
+  className,
+  ...props
+}) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(AlertDialogPortal, { children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(AlertDialogOverlay, {}),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      Content2,
+      {
+        "data-slot": "alert-dialog-content",
+        className: cn(
+          "bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border p-6 shadow-lg duration-200 sm:max-w-lg",
+          className
+        ),
+        ...props
+      }
+    )
+  ] });
+}
+function AlertDialogHeader({
+  className,
+  ...props
+}) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    "div",
+    {
+      "data-slot": "alert-dialog-header",
+      className: cn("flex flex-col gap-2 text-center sm:text-left", className),
+      ...props
+    }
+  );
+}
+function AlertDialogFooter({
+  className,
+  ...props
+}) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    "div",
+    {
+      "data-slot": "alert-dialog-footer",
+      className: cn(
+        "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end",
+        className
+      ),
+      ...props
+    }
+  );
+}
+function AlertDialogTitle({
+  className,
+  ...props
+}) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    Title2,
+    {
+      "data-slot": "alert-dialog-title",
+      className: cn("text-lg font-semibold", className),
+      ...props
+    }
+  );
+}
+function AlertDialogDescription({
+  className,
+  ...props
+}) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    Description2,
+    {
+      "data-slot": "alert-dialog-description",
+      className: cn("text-muted-foreground text-sm", className),
+      ...props
+    }
+  );
+}
+function AlertDialogAction({
+  className,
+  ...props
+}) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    Action,
+    {
+      className: cn(buttonVariants(), className),
+      ...props
+    }
+  );
+}
+function AlertDialogCancel({
+  className,
+  ...props
+}) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    Cancel,
+    {
+      className: cn(buttonVariants({ variant: "outline" }), className),
+      ...props
+    }
+  );
+}
+function Dialog({
+  ...props
+}) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(Root, { "data-slot": "dialog", ...props });
+}
+function DialogPortal({
+  ...props
+}) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(Portal, { "data-slot": "dialog-portal", ...props });
+}
+function DialogOverlay({
+  className,
+  ...props
+}) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    Overlay,
+    {
+      "data-slot": "dialog-overlay",
+      className: cn(
+        "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50",
+        className
+      ),
+      ...props
+    }
+  );
+}
+function DialogContent({
+  className,
+  children,
+  showCloseButton = true,
+  ...props
+}) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(DialogPortal, { "data-slot": "dialog-portal", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(DialogOverlay, {}),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      Content,
+      {
+        "data-slot": "dialog-content",
+        className: cn(
+          "bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border p-6 shadow-lg duration-200 sm:max-w-lg",
+          className
+        ),
+        ...props,
+        children: [
+          children,
+          showCloseButton && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            Close,
+            {
+              "data-slot": "dialog-close",
+              className: "ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute top-4 right-4 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(X, {}),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "sr-only", children: "Close" })
+              ]
+            }
+          )
+        ]
+      }
+    )
+  ] });
+}
+function DialogHeader({ className, ...props }) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    "div",
+    {
+      "data-slot": "dialog-header",
+      className: cn("flex flex-col gap-2 text-center sm:text-left", className),
+      ...props
+    }
+  );
+}
+function DialogFooter({ className, ...props }) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    "div",
+    {
+      "data-slot": "dialog-footer",
+      className: cn(
+        "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end",
+        className
+      ),
+      ...props
+    }
+  );
+}
+function DialogTitle({
+  className,
+  ...props
+}) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    Title,
+    {
+      "data-slot": "dialog-title",
+      className: cn("text-lg leading-none font-semibold", className),
+      ...props
+    }
+  );
+}
+function DialogDescription({
+  className,
+  ...props
+}) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    Description,
+    {
+      "data-slot": "dialog-description",
+      className: cn("text-muted-foreground text-sm", className),
+      ...props
+    }
+  );
+}
 function useCanonicalPerson(personId, fallbackName) {
   const { data: backendProfile } = usePersonProfile(personId ?? "", {
     enabled: Boolean(personId)
@@ -45970,6 +52243,406 @@ function useCanonicalPerson(personId, fallbackName) {
     hasCanonicalProfile,
     isLoading: Boolean(personId) && photoPending
   };
+}
+function useListStewards() {
+  const providersPresent = useProvidersPresent();
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["governance", "stewards"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.listStewards();
+    },
+    enabled: providersPresent && !!actor && !isFetching
+  });
+}
+function useListStewardIdentities() {
+  const providersPresent = useProvidersPresent();
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["governance", "stewardIdentities"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.listStewardIdentities();
+    },
+    enabled: providersPresent && !!actor && !isFetching
+  });
+}
+function useListEligibleStewardCandidates() {
+  const providersPresent = useProvidersPresent();
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["governance", "eligibleStewardCandidates"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.listEligibleStewardCandidates();
+    },
+    enabled: providersPresent && !!actor && !isFetching
+  });
+}
+function usePromoteToSteward() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (personId) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.promoteToSteward(personId);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["governance", "stewards"]
+      });
+      void queryClient2.invalidateQueries({
+        queryKey: ["governance", "auditHistory"]
+      });
+    }
+  });
+}
+function useRemoveSteward() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (stewardAccountId) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.removeSteward(stewardAccountId);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["governance", "stewards"]
+      });
+      void queryClient2.invalidateQueries({
+        queryKey: ["governance", "auditHistory"]
+      });
+    }
+  });
+}
+function useDesignateSuccessor() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      personId,
+      priority
+    }) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.designateSuccessor(personId, priority);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["governance", "successors"]
+      });
+      void queryClient2.invalidateQueries({
+        queryKey: ["governance", "auditHistory"]
+      });
+    }
+  });
+}
+function useActivateSuccessor() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (personId) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.activateSuccessor(personId);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["governance", "successors"]
+      });
+      void queryClient2.invalidateQueries({
+        queryKey: ["governance", "stewards"]
+      });
+      void queryClient2.invalidateQueries({
+        queryKey: ["governance", "auditHistory"]
+      });
+    }
+  });
+}
+function useListSuccessors() {
+  const providersPresent = useProvidersPresent();
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["governance", "successors"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.listSuccessors();
+    },
+    enabled: providersPresent && !!actor && !isFetching
+  });
+}
+function useSingleStewardWarning() {
+  const providersPresent = useProvidersPresent();
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["governance", "singleStewardWarning"],
+    queryFn: async () => {
+      if (!actor) return null;
+      return actor.getSingleStewardWarning();
+    },
+    enabled: providersPresent && !!actor && !isFetching
+  });
+}
+function useRequestProfileRemoval() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      personId,
+      reason
+    }) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.requestProfileRemoval(personId, reason);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["governance", "profileRemovalRequests"]
+      });
+      void queryClient2.invalidateQueries({
+        queryKey: ["governance", "auditHistory"]
+      });
+    }
+  });
+}
+function useArchiveProfile() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (personId) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.archiveProfile(personId);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["governance", "archivedProfiles"]
+      });
+      void queryClient2.invalidateQueries({
+        queryKey: ["governance", "auditHistory"]
+      });
+    }
+  });
+}
+function useRestoreProfile() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (personId) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.restoreProfile(personId);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["governance", "archivedProfiles"]
+      });
+      void queryClient2.invalidateQueries({
+        queryKey: ["governance", "auditHistory"]
+      });
+    }
+  });
+}
+function useListArchivedProfileIds() {
+  const providersPresent = useProvidersPresent();
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["governance", "archivedProfileIds"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.listArchivedProfileIds();
+    },
+    enabled: providersPresent && !!actor && !isFetching
+  });
+}
+function useListArchivedProfiles() {
+  const providersPresent = useProvidersPresent();
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["governance", "archivedProfiles"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.listArchivedProfiles();
+    },
+    enabled: providersPresent && !!actor && !isFetching
+  });
+}
+function usePermanentlyDeleteProfile() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      personId,
+      confirmation
+    }) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.permanentlyDeleteProfile(personId, confirmation);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["governance", "archivedProfiles"]
+      });
+      void queryClient2.invalidateQueries({
+        queryKey: ["governance", "auditHistory"]
+      });
+    }
+  });
+}
+function useListDuplicateCandidates() {
+  const providersPresent = useProvidersPresent();
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["governance", "duplicateCandidates"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.listDuplicateCandidates();
+    },
+    enabled: providersPresent && !!actor && !isFetching
+  });
+}
+function useNotDuplicate() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      personIdA,
+      personIdB
+    }) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.notDuplicate(personIdA, personIdB);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["governance", "duplicateCandidates"]
+      });
+    }
+  });
+}
+function useMergeProfiles() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      canonicalPersonId,
+      mergedAwayPersonId
+    }) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.mergeProfiles(canonicalPersonId, mergedAwayPersonId);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["governance", "duplicateCandidates"]
+      });
+      void queryClient2.invalidateQueries({
+        queryKey: ["governance", "auditHistory"]
+      });
+    }
+  });
+}
+function useResolveMergeConflict() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      conflictId,
+      canonicalValue
+    }) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.resolveMergeConflict(conflictId, canonicalValue);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["governance", "duplicateCandidates"]
+      });
+      void queryClient2.invalidateQueries({
+        queryKey: ["governance", "auditHistory"]
+      });
+    }
+  });
+}
+function useListPersonRelationships(personId) {
+  const providersPresent = useProvidersPresent();
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["governance", "relationships", personId],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.listPersonRelationships(personId);
+    },
+    enabled: providersPresent && !!actor && !isFetching
+  });
+}
+function useAddRelationship() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      fromPersonId,
+      toPersonId,
+      relationshipType
+    }) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.addRelationship(fromPersonId, toPersonId, relationshipType);
+    },
+    onSuccess: (_data, variables) => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["governance", "relationships", variables.fromPersonId]
+      });
+      void queryClient2.invalidateQueries({
+        queryKey: ["governance", "relationships", variables.toPersonId]
+      });
+      void queryClient2.invalidateQueries({
+        queryKey: ["governance", "auditHistory"]
+      });
+    }
+  });
+}
+function useRemoveRelationship() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (relationshipId) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.removeRelationship(relationshipId);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["governance", "relationships"]
+      });
+      void queryClient2.invalidateQueries({
+        queryKey: ["governance", "auditHistory"]
+      });
+    }
+  });
+}
+function useCorrectRelationshipType() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      relationshipId,
+      relationshipType
+    }) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.correctRelationshipType(relationshipId, relationshipType);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["governance", "relationships"]
+      });
+      void queryClient2.invalidateQueries({
+        queryKey: ["governance", "auditHistory"]
+      });
+    }
+  });
+}
+function useListAuditHistory() {
+  const providersPresent = useProvidersPresent();
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["governance", "auditHistory"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.listAuditHistory();
+    },
+    enabled: providersPresent && !!actor && !isFetching
+  });
 }
 const juliaProfile = {
   id: "julia",
@@ -48565,6 +55238,7 @@ function PersonProfilePage({
   onEditProfile,
   onClaimApproved
 }) {
+  var _a2, _b2, _c2, _d2;
   const storyLabel = person.id === "julia" || person.id === "erma" || person.id === "hudson" || person.id === "gertrude-adams-hill" || person.id === "mary-louise-sims" || person.id === "mary-jane-johnson" || person.id === "mildred-adams" || person.id === "christine-adams" || person.id === "tammy" || person.id === "punchy" || person.id === "patricia-rollins" || person.id === "fannie-adams" || person.id === "christine-adams-tucker" || person.id === "ella-mae-adams" || person.id === "eula-lee-adams" || person.id === "sherriSmith" || person.id === "beatriceSmith" ? "Her Story" : "His Story";
   const { data: backendProfile, isLoading: profileLoading } = usePersonProfile(
     person.id
@@ -48573,6 +55247,15 @@ function PersonProfilePage({
   const { data: myClaim } = useMyProfileClaim(person.id);
   const { data: relationshipRequests = [] } = useMyRelationshipRequests();
   const { data: isSteward = false } = useIsAdmin();
+  const { data: archivedProfiles = [] } = useListArchivedProfiles();
+  const isArchived = archivedProfiles.some((p2) => p2.personId === person.id);
+  const requestRemoval = useRequestProfileRemoval();
+  const archiveProfile = useArchiveProfile();
+  const restoreProfile = useRestoreProfile();
+  const permanentlyDelete = usePermanentlyDeleteProfile();
+  const [removalOpen, setRemovalOpen] = reactExports.useState(false);
+  const [removalReason, setRemovalReason] = reactExports.useState("");
+  const [deleteOpen, setDeleteOpen] = reactExports.useState(false);
   const currentPrincipal = identity == null ? void 0 : identity.getPrincipal().toString();
   const isOwner = Boolean(
     (backendProfile == null ? void 0 : backendProfile.claimedByUserId) && currentPrincipal && backendProfile.claimedByUserId.toString() === currentPrincipal
@@ -48606,6 +55289,7 @@ function PersonProfilePage({
   const portraitSrc = canonical.profilePhotoUrl ?? (!canonical.hasCanonicalProfile ? profilePhoto ?? person.portrait.src : void 0);
   const portraitAlt = hasProfilePhoto ? `${person.name}'s profile photo` : person.portrait.alt;
   const isLivingProfile = (backendProfile == null ? void 0 : backendProfile.livingStatus) === LivingStatus.Living || person.livingStatus === "living";
+  const hasLinkedHistoricalData = person.timeline.length > 0 || person.sources.length > 0 || Boolean(person.family.spouseName) || (((_a2 = person.family.spouses) == null ? void 0 : _a2.length) ?? 0) > 0 || hasProfilePhoto;
   const usesRepresentativeImage = Boolean(person.portrait.src) && person.portrait.src !== PLACEHOLDER_SRC;
   const portraitCaption = hasProfilePhoto ? "Uploaded profile photo." : !isLivingProfile && usesRepresentativeImage ? `Representative historical portrait — not an actual photograph of ${person.name.split(" ")[0]} Norwood.` : "";
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto flex w-full max-w-3xl flex-col px-6 py-8 sm:py-12", children: [
@@ -48804,6 +55488,126 @@ function PersonProfilePage({
                 ] }) : /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-3 text-sm text-muted-foreground", children: (backendProfile == null ? void 0 : backendProfile.livingStatus) === LivingStatus.Deceased ? "This profile is not claimable." : "This profile is owned by a family member." })
               ]
             }
+          ),
+          isArchived && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "div",
+            {
+              "data-ocid": "profile.archived_indicator",
+              className: "mt-6 w-full max-w-md rounded-2xl border border-border bg-card px-4 py-4 text-left shadow-subtle",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    Archive,
+                    {
+                      className: "h-4 w-4 shrink-0 text-accent-foreground/70",
+                      strokeWidth: 1.75,
+                      "aria-hidden": "true"
+                    }
+                  ),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground", children: "Archived profile" })
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-2 text-sm leading-relaxed text-muted-foreground", children: "This profile has been archived and is no longer shown in normal family browsing. Its relationships, media, timeline, sources, and ownership history are preserved." })
+              ]
+            }
+          ),
+          (isSteward || isOwner && isLivingProfile && !isArchived) && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "div",
+            {
+              "data-ocid": "profile.governance_section",
+              className: "mt-6 w-full max-w-md rounded-2xl border border-border bg-card px-4 py-4 text-left shadow-subtle",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    ShieldAlert,
+                    {
+                      className: "h-4 w-4 shrink-0 text-accent-foreground/70",
+                      strokeWidth: 1.75,
+                      "aria-hidden": "true"
+                    }
+                  ),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground", children: "Family Governance" })
+                ] }),
+                isOwner && isLivingProfile && !isArchived && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-3 flex flex-col items-start gap-2", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm leading-relaxed text-muted-foreground", children: "You can request that this profile be removed from the family tree. A Family Steward will review your request." }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                    "button",
+                    {
+                      type: "button",
+                      "data-ocid": "profile.request_removal_button",
+                      onClick: () => setRemovalOpen(true),
+                      className: "inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full border border-border bg-card px-5 py-2.5 text-sm font-semibold text-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                      children: [
+                        /* @__PURE__ */ jsxRuntimeExports.jsx(UserMinus, { className: "h-4 w-4", "aria-hidden": "true" }),
+                        "Request profile removal"
+                      ]
+                    }
+                  )
+                ] }),
+                isSteward && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-3 flex flex-col items-start gap-2", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm leading-relaxed text-muted-foreground", children: isArchived ? "This profile is archived. You can restore it to normal browsing or permanently delete it." : "You can archive this profile to remove it from normal family browsing while preserving its data." }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap gap-2", children: [
+                    isArchived ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                      "button",
+                      {
+                        type: "button",
+                        "data-ocid": "profile.restore_button",
+                        onClick: () => restoreProfile.mutate(person.id),
+                        disabled: restoreProfile.isPending,
+                        className: "inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full border border-border bg-card px-5 py-2.5 text-sm font-semibold text-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-60",
+                        children: [
+                          restoreProfile.isPending ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+                            LoaderCircle,
+                            {
+                              className: "h-4 w-4 animate-spin",
+                              "aria-hidden": "true"
+                            }
+                          ) : /* @__PURE__ */ jsxRuntimeExports.jsx(
+                            ArchiveRestore,
+                            {
+                              className: "h-4 w-4",
+                              "aria-hidden": "true"
+                            }
+                          ),
+                          "Restore profile"
+                        ]
+                      }
+                    ) : /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                      "button",
+                      {
+                        type: "button",
+                        "data-ocid": "profile.archive_button",
+                        onClick: () => archiveProfile.mutate(person.id),
+                        disabled: archiveProfile.isPending,
+                        className: "inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full border border-border bg-card px-5 py-2.5 text-sm font-semibold text-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-60",
+                        children: [
+                          archiveProfile.isPending ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+                            LoaderCircle,
+                            {
+                              className: "h-4 w-4 animate-spin",
+                              "aria-hidden": "true"
+                            }
+                          ) : /* @__PURE__ */ jsxRuntimeExports.jsx(Archive, { className: "h-4 w-4", "aria-hidden": "true" }),
+                          "Archive profile"
+                        ]
+                      }
+                    ),
+                    isArchived && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                      "button",
+                      {
+                        type: "button",
+                        "data-ocid": "profile.permanent_delete_button",
+                        onClick: () => setDeleteOpen(true),
+                        className: "inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full border border-destructive/40 bg-destructive/10 px-5 py-2.5 text-sm font-semibold text-destructive shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:border-destructive/60 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                        children: [
+                          /* @__PURE__ */ jsxRuntimeExports.jsx(Trash2, { className: "h-4 w-4", "aria-hidden": "true" }),
+                          "Delete permanently"
+                        ]
+                      }
+                    )
+                  ] })
+                ] })
+              ]
+            }
           )
         ]
       }
@@ -48834,8 +55638,8 @@ function PersonProfilePage({
           /* @__PURE__ */ jsxRuntimeExports.jsx(SectionHeader, { icon: Users, label: "Family" }),
           person.family.spouseName ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-3 flex flex-col gap-3", children: [
             person.family.spouses ? person.family.spouses.map((spouse, index2) => {
-              var _a2;
-              const spouseId = (_a2 = familyGraphNode == null ? void 0 : familyGraphNode.spouses) == null ? void 0 : _a2[index2];
+              var _a3;
+              const spouseId = (_a3 = familyGraphNode == null ? void 0 : familyGraphNode.spouses) == null ? void 0 : _a3[index2];
               return /* @__PURE__ */ jsxRuntimeExports.jsxs(
                 "div",
                 {
@@ -48975,7 +55779,137 @@ function PersonProfilePage({
         person,
         onProfilePhotoChange
       }
-    )
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(Dialog, { open: removalOpen, onOpenChange: setRemovalOpen, children: /* @__PURE__ */ jsxRuntimeExports.jsxs(DialogContent, { "data-ocid": "profile.request_removal_dialog", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(DialogHeader, { children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(DialogTitle, { children: "Request profile removal" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(DialogDescription, { children: "This submits a removal request for Family Steward review. Your profile will not be removed until a steward approves the request." })
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "label",
+        {
+          htmlFor: "removal-reason",
+          className: "text-sm font-medium text-foreground",
+          children: "Reason for removal"
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "textarea",
+        {
+          id: "removal-reason",
+          "data-ocid": "profile.request_removal_reason",
+          value: removalReason,
+          onChange: (event) => setRemovalReason(event.target.value),
+          placeholder: "Tell the Family Steward why you would like this profile removed.",
+          rows: 4,
+          className: "w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-xs outline-none transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] md:text-sm"
+        }
+      ),
+      requestRemoval.isError || ((_b2 = requestRemoval.data) == null ? void 0 : _b2.__kind__) === "err" && /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "p",
+        {
+          "data-ocid": "profile.request_removal_error",
+          className: "text-sm text-destructive",
+          children: ((_c2 = requestRemoval.data) == null ? void 0 : _c2.__kind__) === "err" && requestRemoval.data.err === "AlreadyPending" ? "A removal request for this profile is already pending review." : "We couldn't submit your removal request. Please try again."
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(DialogFooter, { children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "button",
+          {
+            type: "button",
+            "data-ocid": "profile.request_removal_cancel",
+            onClick: () => setRemovalOpen(false),
+            className: "inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full border border-border bg-card px-5 py-2.5 text-sm font-semibold text-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+            children: "Cancel"
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "button",
+          {
+            type: "button",
+            "data-ocid": "profile.request_removal_submit",
+            onClick: () => {
+              const reason = removalReason.trim();
+              if (!reason) return;
+              setRemovalReason("");
+              requestRemoval.mutate(
+                { personId: person.id, reason },
+                {
+                  onSuccess: () => setRemovalOpen(false),
+                  onError: () => setRemovalReason(
+                    (current) => current === "" ? reason : current
+                  )
+                }
+              );
+            },
+            disabled: requestRemoval.isPending || removalReason.trim() === "",
+            className: "inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-60",
+            children: [
+              requestRemoval.isPending ? /* @__PURE__ */ jsxRuntimeExports.jsx(LoaderCircle, { className: "h-4 w-4 animate-spin", "aria-hidden": "true" }) : /* @__PURE__ */ jsxRuntimeExports.jsx(UserMinus, { className: "h-4 w-4", "aria-hidden": "true" }),
+              "Submit request"
+            ]
+          }
+        )
+      ] })
+    ] }) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(AlertDialog, { open: deleteOpen, onOpenChange: setDeleteOpen, children: /* @__PURE__ */ jsxRuntimeExports.jsxs(AlertDialogContent, { "data-ocid": "profile.permanent_delete_dialog", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(AlertDialogHeader, { children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(AlertDialogTitle, { children: "Permanently delete this profile?" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(AlertDialogDescription, { children: "This action is irreversible. The profile and all of its data will be permanently removed from the family tree." })
+      ] }),
+      hasLinkedHistoricalData && /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "div",
+        {
+          "data-ocid": "profile.permanent_delete_warning",
+          className: "rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm font-medium text-destructive",
+          children: /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "flex items-start gap-2", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              TriangleAlert,
+              {
+                className: "mt-0.5 h-4 w-4 shrink-0",
+                "aria-hidden": "true"
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "This profile has linked historical data (timeline, sources, family relationships, or media). Permanent deletion is only allowed when a profile has none of these, so this profile may not be eligible for permanent deletion." })
+          ] })
+        }
+      ),
+      permanentlyDelete.isError || ((_d2 = permanentlyDelete.data) == null ? void 0 : _d2.__kind__) === "err" && /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "p",
+        {
+          "data-ocid": "profile.permanent_delete_error",
+          className: "text-sm text-destructive",
+          children: "We couldn't delete this profile. It may still have linked historical data that must be removed first."
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(AlertDialogFooter, { children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          AlertDialogCancel,
+          {
+            "data-ocid": "profile.permanent_delete_cancel",
+            className: "min-h-[44px]",
+            children: "Cancel"
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          AlertDialogAction,
+          {
+            "data-ocid": "profile.permanent_delete_confirm",
+            onClick: () => permanentlyDelete.mutate({
+              personId: person.id,
+              confirmation: true
+            }),
+            disabled: permanentlyDelete.isPending,
+            className: "min-h-[44px] bg-destructive text-destructive-foreground hover:bg-destructive/90",
+            children: [
+              permanentlyDelete.isPending ? /* @__PURE__ */ jsxRuntimeExports.jsx(LoaderCircle, { className: "h-4 w-4 animate-spin", "aria-hidden": "true" }) : /* @__PURE__ */ jsxRuntimeExports.jsx(Trash2, { className: "h-4 w-4", "aria-hidden": "true" }),
+              "Delete permanently"
+            ]
+          }
+        )
+      ] })
+    ] }) })
   ] });
 }
 const ADD_MYSELF_STORAGE_KEY = "addMyself.draft.v1";
@@ -48999,7 +55933,7 @@ function loadDraft() {
     return null;
   }
 }
-const RELATIONSHIP_OPTIONS$1 = [
+const RELATIONSHIP_OPTIONS$2 = [
   RelationshipType.Parent,
   RelationshipType.Child,
   RelationshipType.Sibling,
@@ -49641,7 +56575,7 @@ function AddMyselfPage({
             /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground", children: "How are you related?" }),
             /* @__PURE__ */ jsxRuntimeExports.jsxs("fieldset", { className: "relation-picker", children: [
               /* @__PURE__ */ jsxRuntimeExports.jsx("legend", { className: "sr-only", children: "Relationship type" }),
-              RELATIONSHIP_OPTIONS$1.map((type) => {
+              RELATIONSHIP_OPTIONS$2.map((type) => {
                 const isSelected = relationshipType === type;
                 return /* @__PURE__ */ jsxRuntimeExports.jsxs(
                   "label",
@@ -49861,7 +56795,7 @@ function getArchiveItemYear(item) {
   const match = item.era.match(/\b(1[89]\d{2}|20\d{2})\b/);
   return match ? Number(match[1]) : null;
 }
-function formatDate$1(timestamp) {
+function formatDate$2(timestamp) {
   const date = new Date(Number(timestamp / 1000000n));
   if (Number.isNaN(date.getTime())) return "Unknown date";
   return date.toLocaleDateString(void 0, {
@@ -50017,7 +56951,7 @@ function PendingItem({
           ] }),
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx("dt", { className: "text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground", children: "Submitted" }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("dd", { className: "mt-0.5 text-foreground", children: formatDate$1(item.createdAt) })
+            /* @__PURE__ */ jsxRuntimeExports.jsx("dd", { className: "mt-0.5 text-foreground", children: formatDate$2(item.createdAt) })
           ] })
         ] }),
         item.tags.length > 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-4 flex flex-wrap gap-1.5", children: item.tags.map((tag) => /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -50832,7 +57766,7 @@ const TEXT_TYPES = [
   ArchiveItemType.WorkBusiness,
   ArchiveItemType.Other
 ];
-function formatDate(timestamp) {
+function formatDate$1(timestamp) {
   const date = new Date(Number(timestamp / 1000000n));
   if (Number.isNaN(date.getTime())) return "Unknown date";
   return date.toLocaleDateString(void 0, {
@@ -50907,7 +57841,7 @@ function ArchiveDetailPage({
         ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "inline-flex items-center gap-1.5", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx(CalendarDays, { className: "h-4 w-4", "aria-hidden": "true" }),
-          formatDate(item.createdAt)
+          formatDate$1(item.createdAt)
         ] })
       ] })
     ] }),
@@ -51543,13 +58477,13 @@ function useExploreFamily(focusPersonId, profiles2) {
   return reactExports.useMemo(() => {
     const graph = overlayConfirmedRelationships(FAMILY_GRAPH, confirmed);
     const staticProfile = profiles2[resolvedId];
-    const focus = backendProfile ? mergeCanonicalProfile(
+    const focus2 = backendProfile ? mergeCanonicalProfile(
       staticProfile,
       backendProfileToPersonProfile(backendProfile)
     ) : staticProfile;
     return {
       focusPersonId: resolvedId,
-      focus,
+      focus: focus2,
       relatives: getClosestRelatives(resolvedId, graph)
     };
   }, [resolvedId, profiles2, confirmed, backendProfile]);
@@ -51635,10 +58569,19 @@ function ExploreFamilyPage({
 }) {
   const {
     focusPersonId: resolvedId,
-    focus,
+    focus: focus2,
     relatives
   } = useExploreFamily(focusPersonId, profiles);
-  const focusProfile = focus ?? buildGraphFallbackProfile(resolvedId);
+  const { data: archivedIds = [] } = useListArchivedProfileIds();
+  const archived = new Set(archivedIds);
+  const visibleRelatives = {
+    father: relatives.father.filter((r2) => !archived.has(r2.personId)),
+    mother: relatives.mother.filter((r2) => !archived.has(r2.personId)),
+    spouse: relatives.spouse.filter((r2) => !archived.has(r2.personId)),
+    siblings: relatives.siblings.filter((r2) => !archived.has(r2.personId)),
+    children: relatives.children.filter((r2) => !archived.has(r2.personId))
+  };
+  const focusProfile = focus2 ?? buildGraphFallbackProfile(resolvedId);
   if (!focusProfile) {
     return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "ex-stage", "data-ocid": "explore.empty_state", children: /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: "No family member found to explore." }) });
   }
@@ -51655,7 +58598,7 @@ function ExploreFamilyPage({
         RelativeZone,
         {
           label: "Father",
-          relatives: relatives.father,
+          relatives: visibleRelatives.father,
           onSelectPerson,
           rowClassName: "ex-parent-row",
           relationRole: "father"
@@ -51665,7 +58608,7 @@ function ExploreFamilyPage({
         RelativeZone,
         {
           label: "Mother",
-          relatives: relatives.mother,
+          relatives: visibleRelatives.mother,
           onSelectPerson,
           rowClassName: "ex-parent-row",
           relationRole: "mother"
@@ -51674,12 +58617,12 @@ function ExploreFamilyPage({
     ] }),
     /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-connector", "aria-hidden": "true" }),
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "ex-center-band", children: [
-      relatives.spouse.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsx(
+      visibleRelatives.spouse.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsx(
         "div",
         {
           className: "ex-spouse-stack shrink-0",
           "data-ocid": "explore.zone.spouse",
-          children: relatives.spouse.map((ref, index2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+          children: visibleRelatives.spouse.map((ref, index2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
             PersonCard,
             {
               person: toPerson$1(ref),
@@ -51717,7 +58660,7 @@ function ExploreFamilyPage({
       RelativeZone,
       {
         label: "Siblings",
-        relatives: relatives.siblings,
+        relatives: visibleRelatives.siblings,
         onSelectPerson,
         className: "w-full",
         rowClassName: "ex-siblings-row",
@@ -51728,13 +58671,1497 @@ function ExploreFamilyPage({
       RelativeZone,
       {
         label: "Children",
-        relatives: relatives.children,
+        relatives: visibleRelatives.children,
         onSelectPerson,
         className: "w-full",
         rowClassName: "ex-children-row",
         relationRole: "child"
       }
     )
+  ] });
+}
+function profileName(profile) {
+  return resolveBackendDisplayName(profile.personId, profile);
+}
+function ArchivedProfilesTab() {
+  const { data: archived = [], isLoading } = useListArchivedProfiles();
+  const restore = useRestoreProfile();
+  const permanentlyDelete = usePermanentlyDeleteProfile();
+  const [confirmingId, setConfirmingId] = reactExports.useState(null);
+  const [deleteError, setDeleteError] = reactExports.useState(null);
+  const handleDelete = (personId) => {
+    permanentlyDelete.mutate(
+      { personId, confirmation: true },
+      {
+        onSuccess: (result) => {
+          if (result.__kind__ === "err") {
+            setDeleteError(result.err);
+            return;
+          }
+          setConfirmingId(null);
+          setDeleteError(null);
+        }
+      }
+    );
+  };
+  if (isLoading) {
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "div",
+      {
+        "data-ocid": "governance.archived.loading_state",
+        className: "space-y-3",
+        "aria-label": "Loading archived profiles",
+        children: [0, 1].map((i) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "div",
+          {
+            className: "h-16 animate-pulse rounded-xl border border-border bg-card"
+          },
+          i
+        ))
+      }
+    );
+  }
+  if (archived.length === 0) {
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { "data-ocid": "governance.archived.empty_state", className: "gov-empty", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mb-1 flex h-12 w-12 items-center justify-center rounded-full bg-muted", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+        Inbox,
+        {
+          className: "h-6 w-6 text-muted-foreground",
+          strokeWidth: 1.5,
+          "aria-hidden": "true"
+        }
+      ) }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "gov-empty-title", children: "No archived profiles" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "gov-empty-hint", children: "Archived profiles are removed from normal family browsing while their relationships, media, and history are preserved." })
+    ] });
+  }
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { "data-ocid": "governance.archived.panel", className: "flex flex-col gap-4", children: [
+    deleteError ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "div",
+      {
+        "data-ocid": "governance.archived.delete_error",
+        className: "rounded-xl border border-destructive/40 bg-destructive/10 p-4 text-sm text-destructive",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-semibold", children: "Could not permanently delete" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "mt-1", children: [
+            deleteError,
+            ". A profile can only be permanently deleted when it was created in error with no archive items, media, timeline, approved relationships, or ownership history."
+          ] })
+        ]
+      }
+    ) : null,
+    /* @__PURE__ */ jsxRuntimeExports.jsx("ul", { "data-ocid": "governance.archived.list", className: "flex flex-col gap-2", children: archived.map((profile, index2) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "li",
+      {
+        "data-ocid": `governance.archived.item.${index2 + 1}`,
+        className: "archive-row archive-row-archived",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "archive-row-portrait", "aria-hidden": "true", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Archive, { className: "h-5 w-5", strokeWidth: 1.75 }) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "archive-row-body", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "archive-row-name", children: profileName(profile) }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "archive-row-meta", children: [
+              profile.livingStatus,
+              " ·",
+              " ",
+              profile.claimStatus === "Claimed" ? "Claimed" : "Unclaimed"
+            ] })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "archive-row-actions", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "archive-state-badge", children: "Archived" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "button",
+              {
+                type: "button",
+                "data-ocid": `governance.archived.restore_button.${index2 + 1}`,
+                onClick: () => restore.mutate(profile.personId),
+                disabled: restore.isPending,
+                className: "archive-restore disabled:cursor-not-allowed disabled:opacity-60",
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    RotateCcw,
+                    {
+                      className: "h-4 w-4",
+                      strokeWidth: 2.25,
+                      "aria-hidden": "true"
+                    }
+                  ),
+                  restore.isPending ? "Restoring…" : "Restore"
+                ]
+              }
+            )
+          ] })
+        ]
+      },
+      profile.personId
+    )) }),
+    confirmingId ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+      PermanentDeleteConfirm,
+      {
+        profile: archived.find((p2) => p2.personId === confirmingId),
+        deleting: permanentlyDelete.isPending,
+        onCancel: () => {
+          setConfirmingId(null);
+          setDeleteError(null);
+        },
+        onConfirm: () => handleDelete(confirmingId)
+      }
+    ) : null
+  ] });
+}
+function PermanentDeleteConfirm({
+  profile,
+  deleting,
+  onCancel,
+  onConfirm
+}) {
+  if (!profile) return null;
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "div",
+    {
+      "data-ocid": "governance.archived.delete_confirm",
+      className: "rounded-xl border border-destructive/40 bg-destructive/10 p-4",
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("h3", { className: "font-display text-base font-semibold text-foreground", children: [
+          "Permanently delete ",
+          profileName(profile),
+          "?"
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-2 text-sm leading-relaxed text-foreground", children: "This is permanent and cannot be undone. If this profile has linked historical data — archive items, media, timeline, sources, approved relationships, or ownership history — it cannot be permanently deleted. Relatives are never automatically deleted." }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-4 flex flex-wrap items-center gap-2", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "button",
+            {
+              type: "button",
+              "data-ocid": "governance.archived.delete_confirm_button",
+              onClick: onConfirm,
+              disabled: deleting,
+              className: "steward-reject disabled:cursor-not-allowed disabled:opacity-60",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(Trash2, { className: "h-4 w-4", strokeWidth: 2.25, "aria-hidden": "true" }),
+                deleting ? "Deleting…" : "Confirm permanent delete"
+              ]
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "button",
+            {
+              type: "button",
+              "data-ocid": "governance.archived.delete_cancel_button",
+              onClick: onCancel,
+              disabled: deleting,
+              className: "steward-pending-action disabled:cursor-not-allowed disabled:opacity-60",
+              children: "Cancel"
+            }
+          )
+        ] })
+      ]
+    }
+  );
+}
+const STEWARD_ROLE_STATUS_LABELS = {
+  [StewardRoleStatus.Active]: "Active",
+  [StewardRoleStatus.Removed]: "Removed"
+};
+const SUCCESSOR_STATUS_LABELS = {
+  [SuccessorStatus.Designated]: "Designated",
+  [SuccessorStatus.Activated]: "Activated",
+  [SuccessorStatus.Removed]: "Removed"
+};
+const MERGE_CONFLICT_STATUS_LABELS = {
+  [MergeConflictStatus.Pending]: "Pending",
+  [MergeConflictStatus.Resolved]: "Resolved"
+};
+const AUDIT_ACTION_LABELS = {
+  [AuditActionType.StewardPromoted]: "Steward promoted",
+  [AuditActionType.StewardRemoved]: "Steward removed",
+  [AuditActionType.SuccessorDesignated]: "Successor designated",
+  [AuditActionType.SuccessorActivated]: "Successor activated",
+  [AuditActionType.ProfileArchived]: "Profile archived",
+  [AuditActionType.ProfileRestored]: "Profile restored",
+  [AuditActionType.ProfilePermanentlyDeleted]: "Profile permanently deleted",
+  [AuditActionType.ProfileRemovalRequested]: "Profile removal requested",
+  [AuditActionType.ProfileRemovalReviewed]: "Profile removal reviewed",
+  [AuditActionType.ClaimApproved]: "Claim approved",
+  [AuditActionType.ClaimRejected]: "Claim rejected",
+  [AuditActionType.RelationshipAdded]: "Relationship added",
+  [AuditActionType.RelationshipRemoved]: "Relationship removed",
+  [AuditActionType.RelationshipTypeCorrected]: "Relationship type corrected",
+  [AuditActionType.RelationshipRequestApproved]: "Relationship request approved",
+  [AuditActionType.RelationshipRequestRejected]: "Relationship request rejected",
+  [AuditActionType.RelationshipRequestPending]: "Relationship request pending",
+  [AuditActionType.DuplicateMerged]: "Duplicate merged"
+};
+function formatDateTime$2(timestamp) {
+  const date = new Date(Number(timestamp / 1000000n));
+  if (Number.isNaN(date.getTime())) return "Unknown date";
+  return date.toLocaleString(void 0, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit"
+  });
+}
+function formatPrincipal$4(principal) {
+  const text = principal.toText();
+  return text.length > 18 ? `${text.slice(0, 5)}…${text.slice(-4)}` : text;
+}
+function personName$4(personId) {
+  return resolveDisplayName(personId, profiles);
+}
+function AuditHistoryTab() {
+  const { data: entries = [], isLoading } = useListAuditHistory();
+  if (isLoading) {
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "div",
+      {
+        "data-ocid": "governance.audit.loading_state",
+        className: "space-y-3",
+        "aria-label": "Loading audit history",
+        children: [0, 1, 2].map((i) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "div",
+          {
+            className: "h-16 animate-pulse rounded-xl border border-border bg-card"
+          },
+          i
+        ))
+      }
+    );
+  }
+  if (entries.length === 0) {
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { "data-ocid": "governance.audit.empty_state", className: "gov-empty", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mb-1 flex h-12 w-12 items-center justify-center rounded-full bg-muted", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+        Inbox,
+        {
+          className: "h-6 w-6 text-muted-foreground",
+          strokeWidth: 1.5,
+          "aria-hidden": "true"
+        }
+      ) }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "gov-empty-title", children: "No audit entries yet" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "gov-empty-hint", children: "Steward actions — claims, relationship changes, promotions, archives, and merges — are recorded here." })
+    ] });
+  }
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { "data-ocid": "governance.audit.panel", className: "flex flex-col gap-4", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2 text-xs text-muted-foreground", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(ScrollText, { className: "h-4 w-4", "aria-hidden": "true" }),
+      "Visible to Family Stewards only."
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("ul", { "data-ocid": "governance.audit.list", className: "audit-list", children: entries.slice().sort((a2, b2) => Number(b2.timestamp - a2.timestamp)).map((entry, index2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "li",
+      {
+        "data-ocid": `governance.audit.item.${index2 + 1}`,
+        className: "audit-entry",
+        children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "audit-entry-body", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "audit-entry-action", children: AUDIT_ACTION_LABELS[entry.actionType] ?? entry.actionType }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "audit-entry-detail", children: entry.summary }),
+          entry.affectedPersonIds.length > 0 ? /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "audit-entry-detail", children: [
+            "People: ",
+            entry.affectedPersonIds.map(personName$4).join(", ")
+          ] }) : null,
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "audit-entry-meta", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "audit-actor", children: formatPrincipal$4(entry.actorAccountId) }),
+            "· ",
+            formatDateTime$2(entry.timestamp)
+          ] })
+        ] })
+      },
+      entry.id.toString()
+    )) })
+  ] });
+}
+function formatPrincipal$3(principal) {
+  const text = principal.toText();
+  return text.length > 18 ? `${text.slice(0, 5)}…${text.slice(-4)}` : text;
+}
+function yearsRange(candidate) {
+  const birth = candidate.birthDate ?? "?";
+  const death = candidate.deathDate ?? "?";
+  return `${birth} – ${death}`;
+}
+function DuplicateReviewTab() {
+  const { data: pairs = [], isLoading } = useListDuplicateCandidates();
+  const notDuplicate = useNotDuplicate();
+  const merge = useMergeProfiles();
+  const resolveConflict = useResolveMergeConflict();
+  const [mergeResult, setMergeResult] = reactExports.useState(null);
+  const handleMerge = (pair, canonicalPersonId) => {
+    const mergedAwayPersonId = canonicalPersonId === pair.candidateA.personId ? pair.candidateB.personId : pair.candidateA.personId;
+    merge.mutate(
+      { canonicalPersonId, mergedAwayPersonId },
+      {
+        onSuccess: (result) => {
+          if (result.__kind__ === "ok") setMergeResult(result.ok);
+        }
+      }
+    );
+  };
+  if (isLoading) {
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "div",
+      {
+        "data-ocid": "governance.duplicates.loading_state",
+        className: "space-y-4",
+        "aria-label": "Loading duplicate candidates",
+        children: [0, 1].map((i) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "div",
+          {
+            className: "h-40 animate-pulse rounded-2xl border border-border bg-card"
+          },
+          i
+        ))
+      }
+    );
+  }
+  if (pairs.length === 0 && !mergeResult) {
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { "data-ocid": "governance.duplicates.empty_state", className: "gov-empty", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mb-1 flex h-12 w-12 items-center justify-center rounded-full bg-muted", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+        Inbox,
+        {
+          className: "h-6 w-6 text-muted-foreground",
+          strokeWidth: 1.5,
+          "aria-hidden": "true"
+        }
+      ) }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "gov-empty-title", children: "No duplicate candidates" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "gov-empty-hint", children: "Suspected duplicate profiles will appear here for your review." })
+    ] });
+  }
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "div",
+    {
+      "data-ocid": "governance.duplicates.panel",
+      className: "flex flex-col gap-4",
+      children: [
+        mergeResult ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          MergeConflictPanel,
+          {
+            result: mergeResult,
+            resolving: resolveConflict.isPending,
+            onResolve: (conflictId, canonicalValue) => resolveConflict.mutate({ conflictId, canonicalValue }),
+            onDismiss: () => setMergeResult(null)
+          }
+        ) : null,
+        pairs.map((pair, index2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+          DuplicatePairCard,
+          {
+            pair,
+            index: index2,
+            merging: merge.isPending,
+            dismissing: notDuplicate.isPending,
+            onNotDuplicate: () => notDuplicate.mutate({
+              personIdA: pair.candidateA.personId,
+              personIdB: pair.candidateB.personId
+            }),
+            onMerge: (canonicalPersonId) => handleMerge(pair, canonicalPersonId)
+          },
+          `${pair.candidateA.personId}-${pair.candidateB.personId}`
+        ))
+      ]
+    }
+  );
+}
+function DuplicatePairCard({
+  pair,
+  index: index2,
+  merging,
+  dismissing,
+  onNotDuplicate,
+  onMerge
+}) {
+  const position = index2 + 1;
+  const [canonical, setCanonical] = reactExports.useState(pair.candidateA.personId);
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "div",
+    {
+      "data-ocid": `governance.duplicates.pair.${position}`,
+      className: "dup-card",
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "dup-compare", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(CandidateCard, { candidate: pair.candidateA }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(CandidateCard, { candidate: pair.candidateB })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-wrap items-center gap-2", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("label", { className: "flex items-center gap-2 text-xs font-semibold text-muted-foreground", children: [
+          "Keep as canonical",
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "select",
+            {
+              "data-ocid": `governance.duplicates.canonical_select.${position}`,
+              value: canonical,
+              onChange: (e) => setCanonical(e.target.value),
+              className: "form-select w-auto",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: pair.candidateA.personId, children: pair.candidateA.name }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: pair.candidateB.personId, children: pair.candidateB.name })
+              ]
+            }
+          )
+        ] }) }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "dup-actions", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "button",
+            {
+              type: "button",
+              "data-ocid": `governance.duplicates.not_duplicate_button.${position}`,
+              onClick: onNotDuplicate,
+              disabled: dismissing || merging,
+              className: "steward-reject disabled:cursor-not-allowed disabled:opacity-60",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(X, { className: "h-4 w-4", strokeWidth: 2.25, "aria-hidden": "true" }),
+                dismissing ? "Dismissing…" : "Not a duplicate"
+              ]
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "button",
+            {
+              type: "button",
+              "data-ocid": `governance.duplicates.merge_button.${position}`,
+              onClick: () => onMerge(canonical),
+              disabled: merging || dismissing,
+              className: "merge-resolve disabled:cursor-not-allowed disabled:opacity-60",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(GitMerge, { className: "h-4 w-4", strokeWidth: 2.25, "aria-hidden": "true" }),
+                merging ? "Merging…" : "Merge profiles"
+              ]
+            }
+          )
+        ] })
+      ]
+    }
+  );
+}
+function CandidateCard({ candidate }) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { "data-ocid": "governance.duplicates.candidate", className: "dup-person", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "dup-person-head", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "dup-person-portrait", "aria-hidden": "true", children: candidate.name.charAt(0).toUpperCase() }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "dup-person-name", children: candidate.name }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "dup-person-years", children: yearsRange(candidate) })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "dup-person-facts", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(FactRow, { label: "Claim", value: candidate.claimStatus }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        FactRow,
+        {
+          label: "Owner",
+          value: candidate.ownerAccount ? formatPrincipal$3(candidate.ownerAccount) : "Unclaimed"
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(FactRow, { label: "Parents", value: listOrNone(candidate.parents) }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(FactRow, { label: "Spouses", value: listOrNone(candidate.spouses) }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(FactRow, { label: "Children", value: listOrNone(candidate.children) }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(FactRow, { label: "Photos", value: candidate.photoCount.toString() }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(FactRow, { label: "Timeline", value: candidate.timelineCount.toString() }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(FactRow, { label: "Sources", value: candidate.sourceCount.toString() }),
+      candidate.archiveLinks.length > 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+        FactRow,
+        {
+          label: "Archive",
+          value: `${candidate.archiveLinks.length} link(s)`
+        }
+      ) : null
+    ] })
+  ] });
+}
+function FactRow({ label, value }) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-baseline justify-between gap-2", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "shrink-0 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground", children: label }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-right font-medium text-foreground", children: value })
+  ] });
+}
+function listOrNone(items) {
+  return items.length > 0 ? items.join(", ") : "—";
+}
+function MergeConflictPanel({
+  result,
+  resolving,
+  onResolve,
+  onDismiss
+}) {
+  const pending = result.conflicts.filter((c2) => c2.status === "Pending");
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "div",
+    {
+      "data-ocid": "governance.duplicates.conflict_panel",
+      className: "merge-item",
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "merge-item-head", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "merge-item-title", children: "Merge complete — review conflicts" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "merge-item-meta", children: [
+              "Profiles merged into a canonical record. ",
+              pending.length,
+              " field conflict(s) need your decision."
+            ] })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "button",
+            {
+              type: "button",
+              "data-ocid": "governance.duplicates.conflict_dismiss_button",
+              onClick: onDismiss,
+              className: "steward-reject",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(X, { className: "h-4 w-4", strokeWidth: 2.25, "aria-hidden": "true" }),
+                "Dismiss"
+              ]
+            }
+          )
+        ] }),
+        pending.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: "No conflicts to resolve — the merge is complete." }) : /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-col gap-3", children: pending.map((conflict) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+          ConflictRow,
+          {
+            conflict,
+            resolving,
+            onResolve
+          },
+          conflict.id.toString()
+        )) })
+      ]
+    }
+  );
+}
+function ConflictRow({ conflict, resolving, onResolve }) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "div",
+    {
+      "data-ocid": "governance.duplicates.conflict_item",
+      className: "merge-conflict",
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "merge-field-label", children: conflict.field }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "merge-values", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "merge-value", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "merge-value-owner", children: "Canonical" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "merge-value-text", children: conflict.canonicalValue })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "merge-value", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "merge-value-owner", children: "Alternate" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "merge-value-text", children: conflict.alternateValue })
+          ] })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "merge-actions", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "button",
+            {
+              type: "button",
+              "data-ocid": "governance.duplicates.resolve_canonical_button",
+              onClick: () => onResolve(conflict.id, conflict.canonicalValue),
+              disabled: resolving,
+              className: "merge-resolve disabled:cursor-not-allowed disabled:opacity-60",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { className: "h-4 w-4", strokeWidth: 2.25, "aria-hidden": "true" }),
+                "Keep canonical"
+              ]
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "button",
+            {
+              type: "button",
+              "data-ocid": "governance.duplicates.resolve_alternate_button",
+              onClick: () => onResolve(conflict.id, conflict.alternateValue),
+              disabled: resolving,
+              className: "steward-approve disabled:cursor-not-allowed disabled:opacity-60",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { className: "h-4 w-4", strokeWidth: 2.25, "aria-hidden": "true" }),
+                "Use alternate"
+              ]
+            }
+          )
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-[11px] font-medium text-muted-foreground", children: MERGE_CONFLICT_STATUS_LABELS[conflict.status] })
+      ]
+    }
+  );
+}
+function personName$3(personId) {
+  return resolveDisplayName(personId, profiles);
+}
+const RELATIONSHIP_OPTIONS$1 = [
+  RelationshipType.Parent,
+  RelationshipType.Child,
+  RelationshipType.Sibling,
+  RelationshipType.SpousePartner
+];
+function RelationshipAdminTab() {
+  const personIds = Object.keys(profiles);
+  const [selectedPersonId, setSelectedPersonId] = reactExports.useState(
+    personIds[0] ?? ""
+  );
+  const { data: relationships = [], isLoading } = useListPersonRelationships(selectedPersonId);
+  const add2 = useAddRelationship();
+  const remove = useRemoveRelationship();
+  const correct = useCorrectRelationshipType();
+  const [relatedPersonId, setRelatedPersonId] = reactExports.useState("");
+  const [relationshipType, setRelationshipType] = reactExports.useState(
+    RelationshipType.Parent
+  );
+  const handleAdd = () => {
+    if (!selectedPersonId || !relatedPersonId) return;
+    add2.mutate(
+      {
+        fromPersonId: selectedPersonId,
+        toPersonId: relatedPersonId,
+        relationshipType
+      },
+      { onSuccess: () => setRelatedPersonId("") }
+    );
+  };
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "div",
+    {
+      "data-ocid": "governance.relationships.panel",
+      className: "flex flex-col gap-4",
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { className: "gov-section", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "gov-section-head", children: /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "gov-section-title", children: "Review a Person" }) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("label", { className: "flex flex-col gap-1.5", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "field-label", children: "Family member" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "select",
+              {
+                "data-ocid": "governance.relationships.person_select",
+                value: selectedPersonId,
+                onChange: (e) => setSelectedPersonId(e.target.value),
+                className: "form-select",
+                children: personIds.map((personId) => /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: personId, children: personName$3(personId) }, personId))
+              }
+            )
+          ] })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "section",
+          {
+            "data-ocid": "governance.relationships.list_section",
+            className: "gov-section",
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "gov-section-head", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("h2", { className: "gov-section-title", children: [
+                "Relationships (",
+                relationships.length,
+                ")"
+              ] }) }),
+              isLoading ? /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: "Loading relationships…" }) : relationships.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: "No confirmed relationships for this person yet." }) : /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "ul",
+                {
+                  "data-ocid": "governance.relationships.list",
+                  className: "steward-list",
+                  children: relationships.map((relationship, index2) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                    "li",
+                    {
+                      "data-ocid": `governance.relationships.item.${index2 + 1}`,
+                      className: "steward-row",
+                      children: [
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "steward-row-portrait", "aria-hidden": "true", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Link2, { className: "h-5 w-5", strokeWidth: 1.75 }) }),
+                        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "steward-row-body", children: [
+                          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "steward-row-name", children: personName$3(relationship.toPersonId) }),
+                          /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "steward-row-role", children: [
+                            RELATIONSHIP_TYPE_LABELS[relationship.relationshipType],
+                            " ·",
+                            " ",
+                            relationship.status
+                          ] })
+                        ] }),
+                        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "steward-row-actions", children: [
+                          /* @__PURE__ */ jsxRuntimeExports.jsx(
+                            "select",
+                            {
+                              "data-ocid": `governance.relationships.type_select.${index2 + 1}`,
+                              value: relationship.relationshipType,
+                              onChange: (e) => correct.mutate({
+                                relationshipId: relationship.id,
+                                relationshipType: e.target.value
+                              }),
+                              disabled: correct.isPending,
+                              className: "form-select w-auto py-1.5 text-xs",
+                              "aria-label": "Correct relationship type",
+                              children: RELATIONSHIP_OPTIONS$1.map((type) => /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: type, children: RELATIONSHIP_TYPE_LABELS[type] }, type))
+                            }
+                          ),
+                          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                            "button",
+                            {
+                              type: "button",
+                              "data-ocid": `governance.relationships.remove_button.${index2 + 1}`,
+                              onClick: () => remove.mutate(relationship.id),
+                              disabled: remove.isPending,
+                              className: "steward-reject disabled:cursor-not-allowed disabled:opacity-60",
+                              children: [
+                                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                                  Trash2,
+                                  {
+                                    className: "h-4 w-4",
+                                    strokeWidth: 2.25,
+                                    "aria-hidden": "true"
+                                  }
+                                ),
+                                remove.isPending ? "Removing…" : "Remove"
+                              ]
+                            }
+                          )
+                        ] })
+                      ]
+                    },
+                    relationship.id.toString()
+                  ))
+                }
+              )
+            ]
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "section",
+          {
+            "data-ocid": "governance.relationships.add_section",
+            className: "gov-section",
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "gov-section-head", children: /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "gov-section-title", children: "Add a Relationship" }) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-2 sm:flex-row", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                  "select",
+                  {
+                    "data-ocid": "governance.relationships.add_person_select",
+                    value: relatedPersonId,
+                    onChange: (e) => setRelatedPersonId(e.target.value),
+                    className: "form-select flex-1",
+                    children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: "", children: "Select related person…" }),
+                      personIds.filter((personId) => personId !== selectedPersonId).map((personId) => /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: personId, children: personName$3(personId) }, personId))
+                    ]
+                  }
+                ),
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  "select",
+                  {
+                    "data-ocid": "governance.relationships.add_type_select",
+                    value: relationshipType,
+                    onChange: (e) => setRelationshipType(e.target.value),
+                    className: "form-select w-auto",
+                    children: RELATIONSHIP_OPTIONS$1.map((type) => /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: type, children: RELATIONSHIP_TYPE_LABELS[type] }, type))
+                  }
+                ),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                  "button",
+                  {
+                    type: "button",
+                    "data-ocid": "governance.relationships.add_button",
+                    onClick: handleAdd,
+                    disabled: !relatedPersonId || add2.isPending,
+                    className: "steward-approve disabled:cursor-not-allowed disabled:opacity-60",
+                    children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsx(Plus, { className: "h-4 w-4", strokeWidth: 2.25, "aria-hidden": "true" }),
+                      add2.isPending ? "Adding…" : "Add"
+                    ]
+                  }
+                )
+              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "flex items-center gap-1.5 text-xs text-muted-foreground", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(UserCog, { className: "h-3.5 w-3.5", "aria-hidden": "true" }),
+                "Every change is recorded in the audit history with who made it and when."
+              ] })
+            ]
+          }
+        )
+      ]
+    }
+  );
+}
+function formatDateTime$1(timestamp) {
+  const date = new Date(Number(timestamp / 1000000n));
+  if (Number.isNaN(date.getTime())) return "Unknown date";
+  return date.toLocaleString(void 0, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit"
+  });
+}
+function formatPrincipal$2(principal) {
+  const text = principal.toText();
+  return text.length > 18 ? `${text.slice(0, 5)}…${text.slice(-4)}` : text;
+}
+function personName$2(personId) {
+  return resolveDisplayName(personId, profiles);
+}
+function ReviewRequestsTab() {
+  const { data: claims = [], isLoading: claimsLoading } = useListProfileClaims();
+  const { data: requests = [], isLoading: requestsLoading } = useListRelationshipRequests();
+  const approveClaim = useApproveProfileClaim();
+  const rejectClaim = useRejectProfileClaim();
+  const approveRequest = useApproveRelationshipRequest();
+  const rejectRequest = useRejectRelationshipRequest();
+  const setPending = useSetRelationshipRequestPending();
+  const pendingClaims = claims.filter((c2) => c2.status === "Pending");
+  const pendingRequests = requests.filter((r2) => r2.status === "Pending");
+  const isLoading = claimsLoading || requestsLoading;
+  if (isLoading) {
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "div",
+      {
+        "data-ocid": "governance.review.loading_state",
+        className: "space-y-4",
+        "aria-label": "Loading review requests",
+        children: [0, 1, 2].map((i) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "div",
+          {
+            className: "animate-pulse rounded-2xl border border-border bg-card p-5",
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mb-3 h-4 w-1/3 rounded bg-muted" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mb-2 h-5 w-2/3 rounded bg-muted" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-4 w-full rounded bg-muted" })
+            ]
+          },
+          i
+        ))
+      }
+    );
+  }
+  if (pendingClaims.length === 0 && pendingRequests.length === 0) {
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { "data-ocid": "governance.review.empty_state", className: "gov-empty", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mb-1 flex h-12 w-12 items-center justify-center rounded-full bg-muted", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+        Inbox,
+        {
+          className: "h-6 w-6 text-muted-foreground",
+          strokeWidth: 1.5,
+          "aria-hidden": "true"
+        }
+      ) }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "gov-empty-title", children: "Nothing awaiting review" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "gov-empty-hint", children: "New profile claims and relationship requests from family members will appear here for your confirmation." })
+    ] });
+  }
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { "data-ocid": "governance.review.panel", className: "flex flex-col gap-4", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "section",
+      {
+        "data-ocid": "governance.review.claims_section",
+        className: "gov-section",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "gov-section-head", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("h2", { className: "gov-section-title", children: [
+            "Profile Claims (",
+            pendingClaims.length,
+            ")"
+          ] }) }),
+          pendingClaims.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: "No profile claims awaiting review." }) : /* @__PURE__ */ jsxRuntimeExports.jsx("ul", { "data-ocid": "governance.review.claims_list", className: "space-y-3", children: pendingClaims.map((claim, index2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+            ClaimCard$1,
+            {
+              claim,
+              index: index2,
+              approving: approveClaim.isPending,
+              rejecting: rejectClaim.isPending,
+              onApprove: () => approveClaim.mutate(claim.id),
+              onReject: () => rejectClaim.mutate(claim.id)
+            },
+            claim.id.toString()
+          )) })
+        ]
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "section",
+      {
+        "data-ocid": "governance.review.requests_section",
+        className: "gov-section",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "gov-section-head", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("h2", { className: "gov-section-title", children: [
+            "Relationship Requests (",
+            pendingRequests.length,
+            ")"
+          ] }) }),
+          pendingRequests.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: "No relationship requests awaiting review." }) : /* @__PURE__ */ jsxRuntimeExports.jsx("ul", { "data-ocid": "governance.review.requests_list", className: "space-y-3", children: pendingRequests.map((request2, index2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+            RelationshipCard$1,
+            {
+              request: request2,
+              index: index2,
+              approving: approveRequest.isPending,
+              rejecting: rejectRequest.isPending,
+              pending: setPending.isPending,
+              onApprove: () => approveRequest.mutate(request2.id),
+              onReject: () => rejectRequest.mutate(request2.id),
+              onPending: () => setPending.mutate(request2.id)
+            },
+            request2.id.toString()
+          )) })
+        ]
+      }
+    )
+  ] });
+}
+function ClaimCard$1({
+  claim,
+  index: index2,
+  approving,
+  rejecting,
+  onApprove,
+  onReject
+}) {
+  const position = index2 + 1;
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "li",
+    {
+      "data-ocid": `governance.review.claim_item.${position}`,
+      className: "review-card",
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "review-card-head", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "review-card-title", children: personName$2(claim.personId) }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "review-card-meta", children: [
+              "Claimed by ",
+              formatPrincipal$2(claim.requestingUserId),
+              " · submitted",
+              " ",
+              formatDateTime$1(claim.submittedDate)
+            ] })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(StatusBadge, { kind: "claim", status: claim.status })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "review-card-actions", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "button",
+            {
+              type: "button",
+              "data-ocid": `governance.review.claim_approve_button.${position}`,
+              onClick: onApprove,
+              disabled: approving || rejecting,
+              className: "steward-approve disabled:cursor-not-allowed disabled:opacity-60",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { className: "h-4 w-4", strokeWidth: 2.25, "aria-hidden": "true" }),
+                approving ? "Approving…" : "Approve"
+              ]
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "button",
+            {
+              type: "button",
+              "data-ocid": `governance.review.claim_reject_button.${position}`,
+              onClick: onReject,
+              disabled: approving || rejecting,
+              className: "steward-reject disabled:cursor-not-allowed disabled:opacity-60",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(X, { className: "h-4 w-4", strokeWidth: 2.25, "aria-hidden": "true" }),
+                rejecting ? "Rejecting…" : "Reject"
+              ]
+            }
+          )
+        ] })
+      ]
+    }
+  );
+}
+function RelationshipCard$1({
+  request: request2,
+  index: index2,
+  approving,
+  rejecting,
+  pending,
+  onApprove,
+  onReject,
+  onPending
+}) {
+  const position = index2 + 1;
+  const relationLabel = RELATIONSHIP_TYPE_LABELS[request2.proposedRelationship] ?? request2.proposedRelationship;
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "li",
+    {
+      "data-ocid": `governance.review.request_item.${position}`,
+      className: "review-card",
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "review-card-head", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("h3", { className: "review-card-title", children: [
+              personName$2(request2.requestingPersonId),
+              " →",
+              " ",
+              personName$2(request2.relatedPersonId)
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "review-card-meta", children: [
+              "Proposed ",
+              relationLabel,
+              " · submitted",
+              " ",
+              formatDateTime$1(request2.submittedDate)
+            ] })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(StatusBadge, { kind: "relationshipRequest", status: request2.status })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "review-card-actions", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "button",
+            {
+              type: "button",
+              "data-ocid": `governance.review.request_approve_button.${position}`,
+              onClick: onApprove,
+              disabled: approving || rejecting || pending,
+              className: "steward-approve disabled:cursor-not-allowed disabled:opacity-60",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { className: "h-4 w-4", strokeWidth: 2.25, "aria-hidden": "true" }),
+                approving ? "Approving…" : "Approve"
+              ]
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "button",
+            {
+              type: "button",
+              "data-ocid": `governance.review.request_reject_button.${position}`,
+              onClick: onReject,
+              disabled: approving || rejecting || pending,
+              className: "steward-reject disabled:cursor-not-allowed disabled:opacity-60",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(X, { className: "h-4 w-4", strokeWidth: 2.25, "aria-hidden": "true" }),
+                rejecting ? "Rejecting…" : "Reject"
+              ]
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "button",
+            {
+              type: "button",
+              "data-ocid": `governance.review.request_pending_button.${position}`,
+              onClick: onPending,
+              disabled: approving || rejecting || pending,
+              className: "steward-pending-action disabled:cursor-not-allowed disabled:opacity-60",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(Undo2, { className: "h-4 w-4", strokeWidth: 2.25, "aria-hidden": "true" }),
+                pending ? "Setting…" : "Pending"
+              ]
+            }
+          )
+        ] })
+      ]
+    }
+  );
+}
+function formatDate(timestamp) {
+  const date = new Date(Number(timestamp / 1000000n));
+  if (Number.isNaN(date.getTime())) return "Unknown date";
+  return date.toLocaleDateString(void 0, {
+    year: "numeric",
+    month: "short",
+    day: "numeric"
+  });
+}
+function formatPrincipal$1(principal) {
+  const text = principal.toText();
+  return text.length > 18 ? `${text.slice(0, 5)}…${text.slice(-4)}` : text;
+}
+function personName$1(personId) {
+  return resolveDisplayName(personId, profiles);
+}
+function stewardDisplayName(identity) {
+  var _a2, _b2;
+  if ((_a2 = identity.displayName) == null ? void 0 : _a2.trim()) return identity.displayName.trim();
+  if ((_b2 = identity.canonicalName) == null ? void 0 : _b2.trim()) return identity.canonicalName.trim();
+  return formatPrincipal$1(identity.accountId);
+}
+function StewardManagementTab() {
+  const { data: stewards = [], isLoading: stewardsLoading } = useListStewards();
+  const { data: successors = [], isLoading: successorsLoading } = useListSuccessors();
+  const { data: warning } = useSingleStewardWarning();
+  const { data: stewardIdentities = [] } = useListStewardIdentities();
+  const { data: eligibleCandidates = [], isLoading: candidatesLoading } = useListEligibleStewardCandidates();
+  const promote = usePromoteToSteward();
+  const remove = useRemoveSteward();
+  const designate = useDesignateSuccessor();
+  const activate = useActivateSuccessor();
+  const [promotePersonId, setPromotePersonId] = reactExports.useState("");
+  const [successorPersonId, setSuccessorPersonId] = reactExports.useState("");
+  const [priority, setPriority] = reactExports.useState("1");
+  const isLoading = stewardsLoading || successorsLoading;
+  const identityByAccount = new Map(
+    stewardIdentities.map((identity) => [
+      identity.accountId.toText(),
+      identity
+    ])
+  );
+  const identityByPersonId = new Map(
+    stewardIdentities.map((identity) => [identity.personId, identity])
+  );
+  const eligibleMembers = eligibleCandidates;
+  const activeStewards = stewards.filter(
+    (s) => s.roleStatus === StewardRoleStatus.Active
+  );
+  const isLastSteward = activeStewards.length <= 1;
+  const handlePromote = () => {
+    if (!promotePersonId) return;
+    promote.mutate(promotePersonId, {
+      onSuccess: () => setPromotePersonId("")
+    });
+  };
+  const handleDesignate = () => {
+    if (!successorPersonId) return;
+    const parsed = Number(priority);
+    const priorityValue = Number.isFinite(parsed) && parsed > 0 ? parsed : 1;
+    designate.mutate(
+      { personId: successorPersonId, priority: BigInt(priorityValue) },
+      {
+        onSuccess: () => {
+          setSuccessorPersonId("");
+          setPriority("1");
+        }
+      }
+    );
+  };
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { "data-ocid": "governance.stewards.panel", className: "flex flex-col gap-4", children: [
+    warning ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "div",
+      {
+        "data-ocid": "governance.stewards.single_warning",
+        className: "flex items-start gap-3 rounded-xl border border-warning/40 bg-warning/10 p-4",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            ShieldAlert,
+            {
+              className: "mt-0.5 h-5 w-5 shrink-0 text-warning",
+              "aria-hidden": "true"
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "text-sm leading-snug text-foreground", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-semibold", children: "Only one steward remains" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-1 text-muted-foreground", children: warning })
+          ] })
+        ]
+      }
+    ) : null,
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "section",
+      {
+        "data-ocid": "governance.stewards.list_section",
+        className: "gov-section",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "gov-section-head", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("h2", { className: "gov-section-title", children: [
+            "Current Stewards (",
+            activeStewards.length,
+            ")"
+          ] }) }),
+          isLoading ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "space-y-2", "aria-label": "Loading stewards", children: [0, 1].map((i) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "div",
+            {
+              className: "h-16 animate-pulse rounded-xl border border-border bg-card"
+            },
+            i
+          )) }) : activeStewards.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: "No active stewards yet. Promote an approved claimed member below." }) : /* @__PURE__ */ jsxRuntimeExports.jsx("ul", { "data-ocid": "governance.stewards.list", className: "steward-list", children: activeStewards.map((steward, index2) => {
+            const identity = identityByAccount.get(
+              steward.stewardAccountId.toText()
+            );
+            const displayName = identity ? stewardDisplayName(identity) : formatPrincipal$1(steward.stewardAccountId);
+            return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "li",
+              {
+                "data-ocid": `governance.stewards.item.${index2 + 1}`,
+                className: "steward-row",
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "steward-row-portrait", "aria-hidden": "true", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Crown, { className: "h-5 w-5", strokeWidth: 1.75 }) }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "steward-row-body", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "steward-row-name", children: displayName }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "steward-row-role", children: [
+                      STEWARD_ROLE_STATUS_LABELS[steward.roleStatus],
+                      " · steward since ",
+                      formatDate(steward.assignedAt)
+                    ] })
+                  ] }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "steward-row-actions", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "steward-role-badge", children: STEWARD_ROLE_STATUS_LABELS[steward.roleStatus] }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                      "button",
+                      {
+                        type: "button",
+                        "data-ocid": `governance.stewards.remove_button.${index2 + 1}`,
+                        onClick: () => remove.mutate(steward.stewardAccountId),
+                        disabled: isLastSteward || remove.isPending,
+                        title: isLastSteward ? "The last steward cannot be removed" : "Remove steward role",
+                        className: "steward-reject disabled:cursor-not-allowed disabled:opacity-50",
+                        children: [
+                          /* @__PURE__ */ jsxRuntimeExports.jsx(
+                            UserX,
+                            {
+                              className: "h-4 w-4",
+                              strokeWidth: 2.25,
+                              "aria-hidden": "true"
+                            }
+                          ),
+                          remove.isPending ? "Removing…" : "Remove"
+                        ]
+                      }
+                    )
+                  ] })
+                ]
+              },
+              steward.stewardAccountId.toText()
+            );
+          }) })
+        ]
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "section",
+      {
+        "data-ocid": "governance.stewards.promote_section",
+        className: "gov-section",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "gov-section-head", children: /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "gov-section-title", children: "Promote a Family Member" }) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: "Promote an approved, claimed family member to the Family Steward role." }),
+          candidatesLoading ? /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: "Loading eligible members…" }) : eligibleMembers.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: "No eligible family members are available to promote yet." }) : /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-2 sm:flex-row", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "select",
+              {
+                "data-ocid": "governance.stewards.promote_select",
+                value: promotePersonId,
+                onChange: (e) => setPromotePersonId(e.target.value),
+                className: "form-select flex-1",
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: "", children: "Select a family member…" }),
+                  eligibleMembers.map((candidate) => /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: candidate.personId, children: stewardDisplayName(candidate) }, candidate.personId))
+                ]
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "button",
+              {
+                type: "button",
+                "data-ocid": "governance.stewards.promote_button",
+                onClick: handlePromote,
+                disabled: !promotePersonId || promote.isPending,
+                className: "steward-approve disabled:cursor-not-allowed disabled:opacity-60",
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    UserPlus,
+                    {
+                      className: "h-4 w-4",
+                      strokeWidth: 2.25,
+                      "aria-hidden": "true"
+                    }
+                  ),
+                  promote.isPending ? "Promoting…" : "Promote"
+                ]
+              }
+            )
+          ] })
+        ]
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "section",
+      {
+        "data-ocid": "governance.stewards.successor_section",
+        className: "gov-section",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "gov-section-head", children: /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "gov-section-title", children: "Successor Stewards" }) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: "Designate approved claimed members as successors. A successor is a designation only — they become an active steward only when a current steward explicitly activates them." }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-2 sm:flex-row", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "select",
+              {
+                "data-ocid": "governance.stewards.successor_select",
+                value: successorPersonId,
+                onChange: (e) => setSuccessorPersonId(e.target.value),
+                className: "form-select flex-1",
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: "", children: "Select a family member…" }),
+                  eligibleMembers.map((candidate) => /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: candidate.personId, children: stewardDisplayName(candidate) }, candidate.personId))
+                ]
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("label", { className: "flex items-center gap-2 text-xs font-semibold text-muted-foreground", children: [
+              "Priority",
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "input",
+                {
+                  "data-ocid": "governance.stewards.priority_input",
+                  type: "number",
+                  min: 1,
+                  value: priority,
+                  onChange: (e) => setPriority(e.target.value),
+                  className: "form-input w-20"
+                }
+              )
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "button",
+              {
+                type: "button",
+                "data-ocid": "governance.stewards.designate_button",
+                onClick: handleDesignate,
+                disabled: !successorPersonId || designate.isPending,
+                className: "steward-approve disabled:cursor-not-allowed disabled:opacity-60",
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(Crown, { className: "h-4 w-4", strokeWidth: 2.25, "aria-hidden": "true" }),
+                  designate.isPending ? "Designating…" : "Designate"
+                ]
+              }
+            )
+          ] }),
+          successorsLoading ? /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: "Loading successors…" }) : successors.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: "No successors designated yet." }) : /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "ul",
+            {
+              "data-ocid": "governance.stewards.successor_list",
+              className: "steward-list",
+              children: successors.slice().sort((a2, b2) => Number(a2.priority - b2.priority)).map((successor, index2) => {
+                const identity = identityByPersonId.get(successor.personId);
+                const displayName = identity ? stewardDisplayName(identity) : personName$1(successor.personId);
+                return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                  "li",
+                  {
+                    "data-ocid": `governance.stewards.successor_item.${index2 + 1}`,
+                    className: "steward-row",
+                    children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "steward-row-portrait", "aria-hidden": "true", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Zap, { className: "h-5 w-5", strokeWidth: 1.75 }) }),
+                      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "steward-row-body", children: [
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "steward-row-name", children: displayName }),
+                        /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "steward-row-role", children: [
+                          "Priority ",
+                          successor.priority.toString(),
+                          " ·",
+                          " ",
+                          SUCCESSOR_STATUS_LABELS[successor.status],
+                          " · designated",
+                          " ",
+                          formatDate(successor.assignedAt)
+                        ] })
+                      ] }),
+                      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "steward-row-actions", children: [
+                        /* @__PURE__ */ jsxRuntimeExports.jsx(
+                          "span",
+                          {
+                            className: `steward-role-badge ${successor.status === SuccessorStatus.Designated ? "is-successor" : ""}`,
+                            children: SUCCESSOR_STATUS_LABELS[successor.status]
+                          }
+                        ),
+                        successor.status === SuccessorStatus.Designated ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                          "button",
+                          {
+                            type: "button",
+                            "data-ocid": `governance.stewards.activate_button.${index2 + 1}`,
+                            onClick: () => activate.mutate(successor.personId),
+                            disabled: activate.isPending,
+                            className: "steward-approve disabled:cursor-not-allowed disabled:opacity-60",
+                            children: [
+                              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                                ShieldCheck,
+                                {
+                                  className: "h-4 w-4",
+                                  strokeWidth: 2.25,
+                                  "aria-hidden": "true"
+                                }
+                              ),
+                              activate.isPending ? "Activating…" : "Activate"
+                            ]
+                          }
+                        ) : null
+                      ] })
+                    ]
+                  },
+                  successor.personId
+                );
+              })
+            }
+          )
+        ]
+      }
+    )
+  ] });
+}
+const TABS = [
+  { id: "review", label: "Review Requests" },
+  { id: "stewards", label: "Steward Management" },
+  { id: "duplicates", label: "Duplicate Profiles" },
+  { id: "relationships", label: "Relationship Management" },
+  { id: "archived", label: "Archived Profiles" },
+  { id: "audit", label: "Audit History" }
+];
+function FamilyStewardGovernancePage({
+  onBack
+}) {
+  const { data: isAdmin = false, isLoading: adminLoading } = useIsAdmin();
+  const [activeTab, setActiveTab] = reactExports.useState("review");
+  if (!adminLoading && !isAdmin) {
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto w-full max-w-3xl px-6 py-8", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "governance.back_button",
+          onClick: onBack,
+          className: "mb-6 inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3.5 py-1.5 text-xs font-semibold text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { "aria-hidden": "true", children: "←" }),
+            " Back to Home"
+          ]
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "div",
+        {
+          "data-ocid": "governance.unauthorized_state",
+          className: "flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/50 px-6 py-16 text-center",
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-muted", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+              ShieldCheck,
+              {
+                className: "h-7 w-7 text-muted-foreground",
+                strokeWidth: 1.5,
+                "aria-hidden": "true"
+              }
+            ) }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "font-display text-xl font-semibold text-foreground", children: "Family Stewards only" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-2 max-w-sm text-sm text-muted-foreground", children: "This governance area is reserved for authorized Family Stewards who manage stewards, review duplicates, and keep the family tree safe." })
+          ]
+        }
+      )
+    ] });
+  }
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto w-full max-w-3xl px-6 py-8", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "button",
+      {
+        type: "button",
+        "data-ocid": "governance.back_button",
+        onClick: onBack,
+        className: "mb-6 inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3.5 py-1.5 text-xs font-semibold text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { "aria-hidden": "true", children: "←" }),
+          " Back to Home"
+        ]
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("header", { className: "mb-6", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mb-3 inline-flex items-center gap-2 rounded-full border border-border/60 bg-card px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          UserCog,
+          {
+            className: "h-3.5 w-3.5 text-accent-foreground",
+            "aria-hidden": "true"
+          }
+        ),
+        "Family Governance"
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "font-display text-3xl font-semibold text-foreground", children: "Steward Controls" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-2 text-sm text-muted-foreground", children: "Manage stewards and succession, review duplicate profiles, correct relationships, and keep the family tree safe." })
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "nav",
+      {
+        "data-ocid": "governance.tabs",
+        className: "gov-tabs",
+        "aria-label": "Family Steward areas",
+        children: TABS.map((tab) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "button",
+          {
+            type: "button",
+            "data-ocid": `governance.tab.${tab.id}`,
+            onClick: () => setActiveTab(tab.id),
+            "aria-pressed": activeTab === tab.id,
+            className: `gov-tab ${activeTab === tab.id ? "gov-tab-active" : ""}`,
+            children: tab.label
+          },
+          tab.id
+        ))
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { "data-ocid": "governance.panel", className: "gov-panel mt-6", children: activeTab === "review" ? /* @__PURE__ */ jsxRuntimeExports.jsx(ReviewRequestsTab, {}) : activeTab === "stewards" ? /* @__PURE__ */ jsxRuntimeExports.jsx(StewardManagementTab, {}) : activeTab === "duplicates" ? /* @__PURE__ */ jsxRuntimeExports.jsx(DuplicateReviewTab, {}) : activeTab === "relationships" ? /* @__PURE__ */ jsxRuntimeExports.jsx(RelationshipAdminTab, {}) : activeTab === "archived" ? /* @__PURE__ */ jsxRuntimeExports.jsx(ArchivedProfilesTab, {}) : /* @__PURE__ */ jsxRuntimeExports.jsx(AuditHistoryTab, {}) })
   ] });
 }
 function formatDateTime(timestamp) {
@@ -52100,7 +60527,7 @@ function HeritageBranchCard({
   profilePhoto,
   index: index2,
   variant = "branch",
-  count
+  count: count2
 }) {
   const canonical = useCanonicalPerson(person.id, person.name);
   const displayName = canonical.displayName;
@@ -52130,12 +60557,12 @@ function HeritageBranchCard({
         children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: portraitClass, "aria-hidden": "true", children: photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: photoSrc, alt: photoAlt, loading: "lazy" }) : getInitials$1(displayName) }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: nameClass, children: displayName }),
-          count && /* @__PURE__ */ jsxRuntimeExports.jsx(
+          count2 && /* @__PURE__ */ jsxRuntimeExports.jsx(
             "span",
             {
               className: "hb-branch-count",
               "data-ocid": `hb.${isBranch ? "branch" : "unit"}.${index2 + 1}.count`,
-              children: count
+              children: count2
             }
           )
         ]
@@ -52304,6 +60731,14 @@ function HeritageBranchPage({
     () => overlayConfirmedRelationships(FAMILY_GRAPH, confirmed),
     [confirmed]
   );
+  const { data: archivedIds = [] } = useListArchivedProfileIds();
+  const archived = new Set(archivedIds);
+  const visibleUnits = FAMILY_UNITS.filter(
+    (unit) => !unit.personIds.every((id2) => archived.has(id2))
+  );
+  const visibleAnchors = BRANCH_ANCHORS.filter(
+    (anchor) => !archived.has(anchor.personId)
+  );
   let cardIndex = 0;
   const renderUnitCard = (id2) => {
     const person = toPerson(id2, graph);
@@ -52378,7 +60813,7 @@ function HeritageBranchPage({
         animate: { opacity: 1, y: 0 },
         transition: { duration: 0.6, delay: 0.1, ease: [0.4, 0, 0.2, 1] },
         children: [
-          FAMILY_UNITS.map((unit, ui) => /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+          visibleUnits.map((unit, ui) => /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
             ui > 0 && /* @__PURE__ */ jsxRuntimeExports.jsx(ClusterConnector, {}),
             /* @__PURE__ */ jsxRuntimeExports.jsxs(
               "section",
@@ -52392,7 +60827,7 @@ function HeritageBranchPage({
               }
             )
           ] }, unit.id)),
-          BRANCH_ANCHORS.map((anchor, bi) => /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+          visibleAnchors.map((anchor, bi) => /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx(ClusterConnector, {}),
             /* @__PURE__ */ jsxRuntimeExports.jsxs(
               "section",
@@ -53768,6 +62203,7 @@ const VALID_VIEWS = [
   "archive-detail",
   "add-myself",
   "steward-review",
+  "governance",
   "notifications",
   "profile-edit",
   "sign-in"
@@ -53867,6 +62303,7 @@ function App() {
       onBranchClick: () => setView("heritage-branch"),
       onExploreClick: () => openExploreFamily(null),
       onStewardClick: () => setView("steward-review"),
+      onGovernanceClick: () => setView("governance"),
       onNotificationsClick: () => setView("notifications"),
       onAddMyselfClick: () => setView("add-myself"),
       children: view === "home" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -53913,7 +62350,7 @@ function App() {
         // state instead of falling back to another person's profile (e.g.
         // julia) so a valid personId never flashes the wrong profile.
         /* @__PURE__ */ jsxRuntimeExports.jsx(ProfileLoadingState, {})
-      ) : view === "archive-contribute" ? /* @__PURE__ */ jsxRuntimeExports.jsx(ArchiveContributionPage, { onBack: () => setView("home") }) : view === "admin-approval" ? /* @__PURE__ */ jsxRuntimeExports.jsx(AdminApprovalPage, { onBack: () => setView("home") }) : view === "steward-review" ? /* @__PURE__ */ jsxRuntimeExports.jsx(FamilyStewardReviewPage, { onBack: () => setView("home") }) : view === "add-myself" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+      ) : view === "archive-contribute" ? /* @__PURE__ */ jsxRuntimeExports.jsx(ArchiveContributionPage, { onBack: () => setView("home") }) : view === "admin-approval" ? /* @__PURE__ */ jsxRuntimeExports.jsx(AdminApprovalPage, { onBack: () => setView("home") }) : view === "steward-review" ? /* @__PURE__ */ jsxRuntimeExports.jsx(FamilyStewardReviewPage, { onBack: () => setView("home") }) : view === "governance" ? /* @__PURE__ */ jsxRuntimeExports.jsx(FamilyStewardGovernancePage, { onBack: () => setView("home") }) : view === "add-myself" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
         AddMyselfPage,
         {
           onBack: () => setView("home"),

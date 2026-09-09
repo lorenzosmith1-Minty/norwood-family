@@ -1,13 +1,13 @@
 # Design Brief
 
 ## Direction
-Norwood — the warm sepia family archive extended into a mobile-first Edit My Profile form: a sectioned personal record on aged paper (Identity, Basic Information, About, Photo, Timeline, Privacy) with clear section headings, a sticky save/cancel bar, and a local draft-autosave reassurance.
+Norwood — the warm sepia family archive extended into a mobile-first Family Governance & Safety Controls area: a tabbed steward console (Review Requests, Steward Management, Duplicate Profiles, Relationship Management, Archived Profiles, Audit History) on aged paper, keeping the existing paper-grain and brown/sepia accent language intact.
 
 ## Tone
-Refined, emotional, minimal — the same warm paper-and-ink contrast as the rest of the family app; editing a profile feels like carefully filling in a family record, calm and tappable, never a cold enterprise form.
+Refined, emotional, minimal — the same warm paper-and-ink contrast as the rest of the family app; governance feels like carefully tending the family record, calm and tappable, never a cold enterprise admin panel.
 
 ## Differentiation
-A long personal form that reads like a family record — sectioned warm paper plates with bronze section headings, a quiet draft-autosave status chip that reassures work is protected, and a sticky save/cancel bar that stays reachable while scrolling.
+A governance console that reads like a family archive ledger — tabbed warm paper plates with sepia tab emphasis, duplicate/merge conflicts flagged on ochre, archived profiles quietly desaturated, and a bronze-dotted audit timeline — all kept out of the global navbar.
 
 ## Color Palette
 | Token      | OKLCH (light) | OKLCH (dark) | Role                              |
@@ -17,46 +17,49 @@ A long personal form that reads like a family record — sectioned warm paper pl
 | card       | 0.985 0.015 70 | 0.2 0.02 55 | clean paper card                |
 | primary    | 0.42 0.11 35  | 0.72 0.14 60 | sepia/terracotta accent           |
 | accent     | 0.55 0.09 60  | 0.58 0.12 30 | dusty bronze highlight            |
-| muted      | 0.92 0.02 70  | 0.24 0.02 55 | soft paper wash                   |
-| border     | 0.86 0.03 70  | 0.28 0.02 55 | faint aged-paper edge             |
-| photo-ring | 0.55 0.09 60  | 0.72 0.14 60 | warm bronze ring for profile photo |
-| edit-section | 0.42 0.11 35 | 0.72 0.14 60 | section heading accent          |
-| edit-surface | 0.95 0.02 72 | 0.21 0.02 55 | section card plate              |
-| draft-saved | 0.55 0.12 150 | 0.6 0.15 150 | autosave confirmation (warm green) |
-| draft-unsaved | 0.55 0.09 60 | 0.72 0.14 60 | dirty/unsaved indicator (bronze) |
-| owner-accent | 0.42 0.11 35 | 0.72 0.14 60 | save button + owner emphasis   |
-| destructive | 0.5 0.2 25    | 0.55 0.2 25  | remove-photo / remove-timeline   |
+| gov-tab-active | 0.42 0.11 35 | 0.72 0.14 60 | active governance tab (sepia)  |
+| gov-surface | 0.95 0.02 72 | 0.21 0.02 55 | governance section plate        |
+| gov-merge  | 0.6 0.11 55   | 0.65 0.13 55 | merge-conflict flag (ochre)      |
+| gov-archive| 0.5 0.03 45   | 0.7 0.1 55  | archived profile (muted)         |
+| gov-restore| 0.55 0.09 60  | 0.72 0.14 60 | restore action (bronze)          |
+| gov-dup-high | 0.5 0.2 25  | 0.55 0.2 25  | high-confidence duplicate        |
+| gov-dup-medium | 0.6 0.11 55 | 0.65 0.13 55 | medium duplicate               |
+| gov-dup-low | 0.5 0.03 45   | 0.7 0.1 55  | low duplicate                    |
+| audit-actor| 0.42 0.11 35  | 0.72 0.14 60 | audit actor emphasis             |
+| destructive| 0.5 0.2 25    | 0.55 0.2 25  | reject / remove                  |
 ## Typography
-- Display: Fraunces — section titles, timeline entry titles, focus names (warm serif)
-- Body: General Sans — labels, inputs, buttons, hint text (clean modern contrast)
-- Scale: section title `text-xs uppercase tracking-[0.2em]`, field label `text-xs uppercase tracking-[0.2em]`, input `text-sm`, timeline entry title `font-display text-sm`, body `text-base`
+- Display: Fraunces — tab panel titles, person names, section titles (warm serif)
+- Body: General Sans — labels, buttons, audit detail, hint text (clean modern contrast)
+- Scale: tab `text-sm font-semibold`, section title `text-xs uppercase tracking-[0.2em]`, person name `font-display text-sm`, audit action `text-sm font-semibold`, detail `text-xs`
 ## Elevation & Depth
-Layered paper — cream background, warmer `--edit-surface` section plates, warm brown subtle/elevated shadows; section cards sit as flat framed plates, the sticky action bar floats above content on a blurred paper surface, cards lift gently on hover.
+Layered paper — cream background, warmer `--gov-surface` section plates, warm brown subtle/elevated shadows; governance plates sit as flat framed plates, merge conflicts lift with an ochre `shadow-merge` ring, cards lift gently on hover.
 ## Structural Zones
 | Zone    | Background  | Border   | Notes                          |
 | ------- | ----------- | -------- | ------------------------------ |
-| Header  | bg-card     | border-b | title + back + draft status over paper |
-| Content | bg-background | —      | stacked `.edit-section-card` plates, gap-4 |
-| Footer  | bg-muted/40 | border-t | closing line + privacy note    |
-| Action  | bg-background/90 | border-t | sticky save/cancel bar (blur) |
+| Header  | bg-card     | border-b | title + back over paper        |
+| Tabs    | bg-background | —      | `.gov-tabs` horizontally scrollable segmented bar |
+| Content | bg-background | —      | stacked `.gov-section` plates, gap-4 |
+| Footer  | bg-muted/40 | border-t | closing line                   |
 ## Spacing & Rhythm
-Mobile-first single column (`max-w-2xl` centered form), `px-4` gutters; sections stacked `gap-4`, fields `gap-4` in `.edit-field-grid` (single column on mobile, `sm:grid-cols-2` for pairs), section card `p-4 sm:p-5`, sticky bar `py-3`.
+Mobile-first single column (`max-w-2xl` centered console), `px-4` gutters; `.gov-tabs` scroll on mobile and wrap on `sm:`; sections stacked `gap-4`, rows `gap-2` in `.steward-list`/`.archive-row`, duplicate compare `grid-cols-1 sm:grid-cols-2`, audit entries `mt-2`.
 ## Component Patterns
-- Section card: `.edit-section-card` rounded-xl warm plate + `.edit-section-head` bronze dot + `.edit-section-title` tracked caption + `.edit-section-hint`
-- Fields: reuse `.form-input`/`.form-textarea`/`.form-select` + `.field-label`; `.edit-field-grid` for compact pairs
-- Save: `.owner-save` sepia pill (min 44px); Cancel/back: `.edit-cancel` quiet outline pill
-- Timeline: `.timeline-entry-card` framed plate (date, title, detail) + `.timeline-entry-action` edit/remove + `.timeline-add` dashed add plate
-- Draft status: `.draft-status` + `.draft-saved` (pulsing warm-green dot) / `.draft-unsaved` (bronze dot)
-- Photo: reuse `.photo-ring`/`.photo-hover-overlay`/`.dropzone`/`.remove-photo-action`; initials placeholder when no photo
+- Tabs: `.gov-tab` (min 44px) pill + `.gov-tab-active` sepia + `.gov-tab-count` badge; panel content `.gov-panel` with `tab-in` entrance
+- Steward mgmt: `.steward-row` (portrait, name, role) + `.steward-role-badge` (owner-accent / successor-pending) + promote/remove actions
+- Duplicates: `.dup-card` + `.dup-compare` two-person grid + `.dup-person-facts` with `.fact-match`/`.fact-diff` + `.dup-confidence` (high/medium/low) + merge actions
+- Merge conflict: `.merge-item` + `.merge-conflict` ochre plate + `.merge-values` (owner vs value) + `.merge-resolve` ochre pill
+- Archive/restore: `.archive-row` (archived = muted surface) + `.archive-state-badge` + `.archive-restore` bronze pill
+- Audit: `.audit-list` + `.audit-entry` bronze-dot timeline (action, detail, actor + time)
+- Review requests: reuse `.review-card` + `.steward-approve`/`.steward-reject`/`.steward-pending-action`; empty states via `.gov-empty`
 ## Motion
-- Entrance: `fold-in` (0.3s) on section cards; `fade-up` (0.6s) on the form head
-- Hover: card lift + shadow-elevated 0.3s; timeline entry border warms to bronze 0.3s
-- Draft: `draft-pulse` (2s) breathing dot on the saved confirmation
+- Entrance: `tab-in` (0.25s) on active panel; `fold-in` (0.3s) on section plates
+- Hover: card lift + shadow-elevated 0.3s; tab border warms to bronze 0.3s
+- Merge: `shadow-merge` ochre ring draws attention to unresolved conflicts
 ## Constraints
 - Token-only styling — no raw hex/rgb in components; mobile-first; large tappable targets (min 44px) with visible focus rings
-- Extend the existing Norwood identity — do NOT redesign the profile page, Explore Family, Heritage Branch, Family Tree, Archive, or navigation
-- Do NOT build a Public visibility option for editable fields; do NOT build structured timeline media attachments
-- Never expose email/auth/account credentials; never surface internal identifiers (personIds/slugs) in user-facing name displays
-- Living profiles without an uploaded photo use the initials/photo placeholder; do not directly edit relationships
+- Extend the existing Norwood identity — do NOT redesign existing pages or navigation; keep governance sub-areas OUT of the global navbar (tabs only)
+- Steward controls hidden from unauthenticated users and normal family members (admin/steward gating)
+- Successor is a designation only — not an active steward until explicitly promoted; Audit History is steward-only
+- Do NOT build emergency/inactivity stewardship transfer; do NOT build steward notifications for pending governance actions; do NOT expose audit history to profile owners
+- Never surface internal identifiers (personIds/slugs) in user-facing name displays
 ## Signature Detail
-The long personal form is tamed into warm paper section plates with bronze section headings and a quiet breathing draft-autosave dot — so editing a family record feels like carefully tending a page in the family archive, with every change protected as you go.
+The governance console reads like a family archive ledger — tabbed warm paper plates with sepia tab emphasis, ochre-flagged merge conflicts, quietly desaturated archived profiles, and a bronze-dotted audit timeline — so safety controls feel like careful record-keeping rather than enterprise administration.

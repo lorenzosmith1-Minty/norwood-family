@@ -2290,6 +2290,10 @@ video {
 .tracking-widest {
   letter-spacing: 0.1em;
 }
+.text-accent {
+  --tw-text-opacity: 1;
+  color: oklch(var(--accent) / var(--tw-text-opacity, 1));
+}
 .text-accent-foreground {
   color: oklch(var(--accent-foreground));
 }

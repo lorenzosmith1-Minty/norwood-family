@@ -1,11 +1,12 @@
 import { Loader2, UserCheck } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 import {
   useMyProfileClaim,
   useRequestProfileClaim,
 } from "../hooks/useProfileClaims";
 import { saveOriginatingView } from "../lib/originatingView";
+import { ClaimError } from "../types/ownership";
 import type { BackendPersonProfile } from "../types/ownership";
 
 /**
@@ -89,12 +90,19 @@ export interface ClaimButtonProps {
   profile: BackendPersonProfile | null | undefined;
   /** Compact variant for tight layouts (smaller padding). */
   variant?: "default" | "compact";
+  /**
+   * Invoked when the backend reports the profile is already approved for this
+   * account+person (ClaimError.AlreadyClaimed). The parent routes the caller to
+   * My Profile instead of creating another claim.
+   */
+  onClaimApproved?: () => void;
 }
 
 export function ClaimButton({
   personId,
   profile,
   variant = "default",
+  onClaimApproved,
 }: ClaimButtonProps) {
   const {
     isAuthenticated,
@@ -116,6 +124,9 @@ export function ClaimButton({
   // flag is persisted to sessionStorage so it survives the full-page auth
   // redirect and the auto-submit effect fires after remount.
   const [pendingClaim, setPendingClaim] = useState(loadPendingClaim);
+  // Set when a claim write fails so the user stays on the claim screen with a
+  // visible error instead of silently swallowing the backend failure.
+  const [claimError, setClaimError] = useState<string | null>(null);
 
   const currentPrincipal = accountId;
 
@@ -124,6 +135,7 @@ export function ClaimButton({
     return profile.claimedByUserId.toString() === currentPrincipal;
   }, [profile?.claimedByUserId, currentPrincipal]);
 
+  // A pending claim by the user is awaiting steward review.
   const pendingByCurrentUser = useMemo(
     () =>
       myClaim?.personId === personId &&
@@ -131,6 +143,50 @@ export function ClaimButton({
       myClaim.requestingUserId.toString() === currentPrincipal,
     [myClaim, personId, currentPrincipal],
   );
+
+  // A pending OR approved claim by the user means the profile is already
+  // claimed/awaiting review — never offer 'This is Me' again.
+  const hasActiveClaimByCurrentUser = useMemo(
+    () =>
+      myClaim?.personId === personId &&
+      (myClaim.status === "Pending" || myClaim.status === "Approved") &&
+      myClaim.requestingUserId.toString() === currentPrincipal,
+    [myClaim, personId, currentPrincipal],
+  );
+
+  // Submits the claim and only reflects success after the backend confirms the
+  // pending claim was persisted. On a failed write the user stays on the claim
+  // screen with a visible error; an AlreadyClaimed result routes to My Profile
+  // instead of creating another claim.
+  const submitClaim = useCallback(() => {
+    setClaimError(null);
+    claim.mutate(personId, {
+      onSuccess: (result) => {
+        if (result.__kind__ === "ok") {
+          // Pending claim persisted. Stay on the profile; the query
+          // invalidation surfaces the PENDING CLAIM state. Never navigate on a
+          // failed write.
+          return;
+        }
+        if (result.err === ClaimError.AlreadyClaimed) {
+          // Already approved for this account+person: route to My Profile.
+          onClaimApproved?.();
+          return;
+        }
+        // Any other backend error: keep the user on the claim screen and
+        // surface the error rather than swallowing it.
+        setClaimError(
+          "We couldn't submit your profile claim. Please try again.",
+        );
+      },
+      onError: () => {
+        // Network / thrown error: keep the user on the claim screen.
+        setClaimError(
+          "We couldn't submit your profile claim. Please try again.",
+        );
+      },
+    });
+  }, [claim, personId, onClaimApproved]);
 
   // After a successful sign-in, submit the claim for this exact profile.
   useEffect(() => {
@@ -141,9 +197,9 @@ export function ClaimButton({
       } catch {
         // ignore storage failures
       }
-      claim.mutate(personId);
+      submitClaim();
     }
-  }, [isAuthenticated, pendingClaim, claim, personId]);
+  }, [isAuthenticated, pendingClaim, submitClaim]);
 
   // Deceased profiles are never claimable.
   if (profile?.livingStatus === "Deceased") {
@@ -177,23 +233,45 @@ export function ClaimButton({
     );
   }
 
-  // Signed in: submit the claim directly.
+  // Signed in: submit the claim directly. Hidden when a pending or approved
+  // claim already exists for the signed-in user.
   if (isAuthenticated) {
+    if (hasActiveClaimByCurrentUser) {
+      return (
+        <span
+          data-ocid="claim_button.pending"
+          className="claim-badge claim-badge-pending"
+        >
+          Claim pending
+        </span>
+      );
+    }
     return (
-      <button
-        type="button"
-        data-ocid="claim_button.this_is_me"
-        onClick={() => claim.mutate(personId)}
-        disabled={claim.isPending}
-        className={`this-is-me-action ${compact ? "px-4 py-2 text-xs" : ""}`}
-      >
-        {claim.isPending ? (
-          <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-        ) : (
-          <UserCheck className="h-4 w-4" aria-hidden="true" />
-        )}
-        {claim.isPending ? "Submitting…" : "This is Me"}
-      </button>
+      <div className="w-full">
+        <button
+          type="button"
+          data-ocid="claim_button.this_is_me"
+          onClick={submitClaim}
+          disabled={claim.isPending}
+          className={`this-is-me-action ${compact ? "px-4 py-2 text-xs" : ""}`}
+        >
+          {claim.isPending ? (
+            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+          ) : (
+            <UserCheck className="h-4 w-4" aria-hidden="true" />
+          )}
+          {claim.isPending ? "Submitting…" : "This is Me"}
+        </button>
+        {claimError ? (
+          <p
+            className="mt-3 text-sm text-destructive"
+            data-ocid="claim_button.error"
+            role="alert"
+          >
+            {claimError}
+          </p>
+        ) : null}
+      </div>
     );
   }
 

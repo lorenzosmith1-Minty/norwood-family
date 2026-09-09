@@ -21,14 +21,16 @@ interface FamilyStewardReviewPageProps {
   onBack: () => void;
 }
 
-/** Converts a Motoko nanosecond timestamp to a short human date. */
-function formatDate(timestamp: bigint): string {
+/** Converts a Motoko nanosecond timestamp to a short human date and time. */
+function formatDateTime(timestamp: bigint): string {
   const date = new Date(Number(timestamp / 1_000_000n));
   if (Number.isNaN(date.getTime())) return "Unknown date";
-  return date.toLocaleDateString(undefined, {
+  return date.toLocaleString(undefined, {
     year: "numeric",
     month: "short",
     day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
   });
 }
 
@@ -261,7 +263,7 @@ function ClaimCard({
           <h3 className="review-card-title">{personName(claim.personId)}</h3>
           <p className="review-card-meta">
             Claimed by {formatPrincipal(claim.requestingUserId)} · submitted{" "}
-            {formatDate(claim.submittedDate)}
+            {formatDateTime(claim.submittedDate)}
           </p>
         </div>
         <StatusBadge kind="claim" status={claim.status} />
@@ -330,7 +332,7 @@ function RelationshipCard({
           </h3>
           <p className="review-card-meta">
             Proposed {relationLabel} · submitted{" "}
-            {formatDate(request.submittedDate)}
+            {formatDateTime(request.submittedDate)}
           </p>
         </div>
         <StatusBadge kind="relationshipRequest" status={request.status} />

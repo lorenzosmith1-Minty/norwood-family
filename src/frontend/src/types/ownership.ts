@@ -34,6 +34,32 @@ import type { Principal } from "@icp-sdk/core/principal";
 /** Status of a profile claim: pending review, approved, or rejected. */
 export type ProfileClaimStatus = "Pending" | "Approved" | "Rejected";
 
+/**
+ * Where the "My Profile" nav action should route for the signed-in caller,
+ * derived from their own claim state:
+ *   - "owned": an APPROVED claim -> the canonical owned profile.
+ *   - "pending": a PENDING claim -> the same canonical profile (renders the
+ *     PENDING CLAIM state). Never routed back to the "This is Me" flow.
+ *   - "add-myself": no claim -> the Add Myself / matching flow.
+ */
+export type MyProfileRoute = "owned" | "pending" | "add-myself";
+
+/**
+ * Resolves the "My Profile" routing decision from the caller's own claim
+ * status and connected person id. A connected profile (Claimed = approved,
+ * Unclaimed = pending) routes to the canonical profile; no connected profile
+ * routes to the Add Myself flow. A pending claim is never routed back to the
+ * "This is Me" flow.
+ */
+export function resolveMyProfileRoute(
+  claimStatus: ClaimStatus | undefined,
+  personId: string | undefined,
+): MyProfileRoute {
+  if (claimStatus === ClaimStatus.Claimed && personId) return "owned";
+  if (claimStatus === ClaimStatus.Unclaimed && personId) return "pending";
+  return "add-myself";
+}
+
 /** Status of a relationship request: pending review, approved, or rejected. */
 export type RelationshipRequestStatus = "Pending" | "Approved" | "Rejected";
 
@@ -208,7 +234,10 @@ export function resolveStatusBadge(
           tone: "claim-badge-unclaimed",
           label: "Unclaimed",
         };
+      // A profile claim that has been approved renders as CLAIMED (the profile
+      // is now owned), and a pending claim renders as PENDING CLAIM.
       case "Claimed":
+      case "Approved":
         return {
           base: "claim-badge",
           tone: "claim-badge-claimed",
@@ -218,7 +247,13 @@ export function resolveStatusBadge(
         return {
           base: "claim-badge",
           tone: "claim-badge-pending",
-          label: "Pending",
+          label: "Pending claim",
+        };
+      case "Rejected":
+        return {
+          base: "claim-badge",
+          tone: "rel-disputed",
+          label: "Rejected",
         };
       default:
         return null;

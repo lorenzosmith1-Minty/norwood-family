@@ -26,6 +26,7 @@ import {
   profiles,
 } from "./pages/PersonProfilePage";
 import { ProfileEditPage } from "./pages/ProfileEditPage";
+import { resolveMyProfileRoute } from "./types/ownership";
 
 type View =
   | "home"
@@ -120,6 +121,7 @@ export default function App() {
     displayName,
     status: identityStatus,
     personId: myPersonId,
+    claimStatus,
   } = useNavbarIdentity();
 
   const profile = profiles[profileId] ?? profiles.julia;
@@ -183,17 +185,20 @@ export default function App() {
     setView("family-tree");
   }, []);
 
-  // Opens the signed-in caller's own profile ("My Profile"). Resolves to the
-  // linked/pending profile when one is connected; otherwise routes to the Add
-  // Myself flow so the caller can complete their profile.
+  // Opens the signed-in caller's own profile ("My Profile"). Claim-aware
+  // routing: an APPROVED claim routes to the canonical owned profile, a PENDING
+  // claim routes to the same canonical profile (which renders the PENDING CLAIM
+  // state), and only a caller with NO claim routes to the Add Myself / matching
+  // flow. A pending claim is never routed back to the "This is Me" flow.
   const openMyProfile = useCallback(() => {
-    if (myPersonId) {
+    const route = resolveMyProfileRoute(claimStatus, myPersonId);
+    if ((route === "owned" || route === "pending") && myPersonId) {
       setProfileId(myPersonId);
       setView("my-profile");
-    } else {
-      setView("add-myself");
+      return;
     }
-  }, [myPersonId]);
+    setView("add-myself");
+  }, [claimStatus, myPersonId]);
 
   return (
     <Layout
@@ -202,6 +207,7 @@ export default function App() {
       accountId={accountId}
       identityName={displayName}
       identityStatus={identityStatus}
+      activeView={view}
       onMyProfileClick={openMyProfile}
       onSignInClick={() => {
         if (view !== "sign-in") saveOriginatingView({ view });
@@ -242,6 +248,7 @@ export default function App() {
             onBack={() => setView("family-tree")}
             onProfilePhotoChange={() => {}}
             onEditProfile={() => setView("profile-edit")}
+            onClaimApproved={openMyProfile}
           />
         ) : (
           <ProfileLoadingState />
@@ -253,6 +260,7 @@ export default function App() {
             onBack={() => setView("home")}
             onProfilePhotoChange={() => {}}
             onEditProfile={() => setView("profile-edit")}
+            onClaimApproved={openMyProfile}
           />
         ) : (
           // A createMyself / backend profile is still resolving. Show a loading
@@ -273,6 +281,7 @@ export default function App() {
             setProfileId(id);
             setView("profile");
           }}
+          onClaimApproved={openMyProfile}
         />
       ) : view === "profile-edit" ? (
         <ProfileEditPage

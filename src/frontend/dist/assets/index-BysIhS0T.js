@@ -34173,7 +34173,7 @@ const RemoveError = Variant({
   "NotSignedIn": Null
 });
 const Result_2 = Variant({ "ok": Null, "err": RemoveError });
-const ClaimError = Variant({
+const ClaimError$1 = Variant({
   "AlreadyPending": Null,
   "ProfileNotFound": Null,
   "AlreadyClaimed": Null,
@@ -34182,7 +34182,7 @@ const ClaimError = Variant({
 });
 const Result_1 = Variant({
   "ok": ProfileClaim,
-  "err": ClaimError
+  "err": ClaimError$1
 });
 const PersonMatch = Record({
   "name": Text,
@@ -34800,6 +34800,14 @@ var ArchiveItemType = /* @__PURE__ */ ((ArchiveItemType2) => {
   ArchiveItemType2["Video"] = "Video";
   return ArchiveItemType2;
 })(ArchiveItemType || {});
+var ClaimError = /* @__PURE__ */ ((ClaimError2) => {
+  ClaimError2["AlreadyPending"] = "AlreadyPending";
+  ClaimError2["ProfileNotFound"] = "ProfileNotFound";
+  ClaimError2["AlreadyClaimed"] = "AlreadyClaimed";
+  ClaimError2["NotSignedIn"] = "NotSignedIn";
+  ClaimError2["DeceasedProfile"] = "DeceasedProfile";
+  return ClaimError2;
+})(ClaimError || {});
 var ClaimStatus = /* @__PURE__ */ ((ClaimStatus2) => {
   ClaimStatus2["Unclaimed"] = "Unclaimed";
   ClaimStatus2["Claimed"] = "Claimed";
@@ -36234,12 +36242,22 @@ function NotificationBadge({ count }) {
     }
   );
 }
+const NAV_BASE = "inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+const NAV_IDLE = "border-border bg-background text-foreground hover:border-accent/50 hover:bg-muted";
+const NAV_ACTIVE = "border-accent bg-accent/15 text-foreground";
+function navClass(active) {
+  return `${NAV_BASE} ${active ? NAV_ACTIVE : NAV_IDLE}`;
+}
+function navIconClass(active) {
+  return active ? "h-4 w-4 text-accent" : "h-4 w-4 text-accent-foreground";
+}
 function Layout({
   children,
   isAdmin,
   isAuthenticated,
   identityName,
   identityStatus = "none",
+  activeView,
   onMyProfileClick,
   onSignInClick,
   onSignOutClick,
@@ -36251,6 +36269,15 @@ function Layout({
   onNotificationsClick,
   onAddMyselfClick
 }) {
+  const isExploreActive = activeView === "family-tree";
+  const isBranchActive = activeView === "heritage-branch";
+  const isArchiveActive = activeView === "archive" || activeView === "archive-detail" || activeView === "archive-contribute";
+  const isAddMyselfActive = activeView === "add-myself";
+  const isStewardActive = activeView === "steward-review";
+  const isNotificationsActive = activeView === "notifications";
+  const isMyProfileActive = activeView === "my-profile" || activeView === "profile-edit";
+  const isAdminActive = activeView === "admin-approval";
+  const showAdminControls = isAuthenticated && isAdmin;
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative flex min-h-screen flex-col bg-background", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx(
       "div",
@@ -36267,13 +36294,14 @@ function Layout({
           {
             type: "button",
             "data-ocid": "layout.explore_link",
+            "aria-current": isExploreActive ? "page" : void 0,
             onClick: onExploreClick,
-            className: "inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3.5 py-1.5 text-xs font-semibold text-foreground transition-colors hover:border-accent/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+            className: navClass(isExploreActive),
             children: [
               /* @__PURE__ */ jsxRuntimeExports.jsx(
                 TreePine,
                 {
-                  className: "h-4 w-4 text-accent-foreground",
+                  className: navIconClass(isExploreActive),
                   strokeWidth: 1.75,
                   "aria-hidden": "true"
                 }
@@ -36287,13 +36315,14 @@ function Layout({
           {
             type: "button",
             "data-ocid": "layout.branch_link",
+            "aria-current": isBranchActive ? "page" : void 0,
             onClick: onBranchClick,
-            className: "inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3.5 py-1.5 text-xs font-semibold text-foreground transition-colors hover:border-accent/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+            className: navClass(isBranchActive),
             children: [
               /* @__PURE__ */ jsxRuntimeExports.jsx(
                 GitBranch,
                 {
-                  className: "h-4 w-4 text-accent-foreground",
+                  className: navIconClass(isBranchActive),
                   strokeWidth: 1.75,
                   "aria-hidden": "true"
                 }
@@ -36307,13 +36336,14 @@ function Layout({
           {
             type: "button",
             "data-ocid": "layout.archive_link",
+            "aria-current": isArchiveActive ? "page" : void 0,
             onClick: onArchiveClick,
-            className: "inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3.5 py-1.5 text-xs font-semibold text-foreground transition-colors hover:border-accent/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+            className: navClass(isArchiveActive),
             children: [
               /* @__PURE__ */ jsxRuntimeExports.jsx(
                 Archive,
                 {
-                  className: "h-4 w-4 text-accent-foreground",
+                  className: navIconClass(isArchiveActive),
                   strokeWidth: 1.75,
                   "aria-hidden": "true"
                 }
@@ -36327,13 +36357,14 @@ function Layout({
           {
             type: "button",
             "data-ocid": "layout.add_myself_link",
+            "aria-current": isAddMyselfActive ? "page" : void 0,
             onClick: onAddMyselfClick,
-            className: "inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3.5 py-1.5 text-xs font-semibold text-foreground transition-colors hover:border-accent/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+            className: navClass(isAddMyselfActive),
             children: [
               /* @__PURE__ */ jsxRuntimeExports.jsx(
                 UserPlus,
                 {
-                  className: "h-4 w-4 text-accent-foreground",
+                  className: navIconClass(isAddMyselfActive),
                   strokeWidth: 1.75,
                   "aria-hidden": "true"
                 }
@@ -36342,18 +36373,19 @@ function Layout({
             ]
           }
         ),
-        isAdmin ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        showAdminControls ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
           "button",
           {
             type: "button",
             "data-ocid": "layout.admin_link",
+            "aria-current": isAdminActive ? "page" : void 0,
             onClick: onAdminClick,
-            className: "inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3.5 py-1.5 text-xs font-semibold text-foreground transition-colors hover:border-accent/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+            className: navClass(isAdminActive),
             children: [
               /* @__PURE__ */ jsxRuntimeExports.jsx(
                 ShieldCheck,
                 {
-                  className: "h-4 w-4 text-accent-foreground",
+                  className: navIconClass(isAdminActive),
                   strokeWidth: 1.75,
                   "aria-hidden": "true"
                 }
@@ -36362,18 +36394,19 @@ function Layout({
             ]
           }
         ) : null,
-        isAdmin ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        showAdminControls ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
           "button",
           {
             type: "button",
             "data-ocid": "layout.steward_link",
+            "aria-current": isStewardActive ? "page" : void 0,
             onClick: onStewardClick,
-            className: "inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3.5 py-1.5 text-xs font-semibold text-foreground transition-colors hover:border-accent/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+            className: navClass(isStewardActive),
             children: [
               /* @__PURE__ */ jsxRuntimeExports.jsx(
                 UserCog,
                 {
-                  className: "h-4 w-4 text-accent-foreground",
+                  className: navIconClass(isStewardActive),
                   strokeWidth: 1.75,
                   "aria-hidden": "true"
                 }
@@ -36387,13 +36420,14 @@ function Layout({
           {
             type: "button",
             "data-ocid": "layout.notifications_link",
+            "aria-current": isNotificationsActive ? "page" : void 0,
             onClick: onNotificationsClick,
-            className: "relative inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3.5 py-1.5 text-xs font-semibold text-foreground transition-colors hover:border-accent/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+            className: navClass(isNotificationsActive),
             children: [
               /* @__PURE__ */ jsxRuntimeExports.jsx(
                 Bell,
                 {
-                  className: "h-4 w-4 text-accent-foreground",
+                  className: navIconClass(isNotificationsActive),
                   strokeWidth: 1.75,
                   "aria-hidden": "true"
                 }
@@ -36443,13 +36477,14 @@ function Layout({
             {
               type: "button",
               "data-ocid": "layout.my_profile_link",
+              "aria-current": isMyProfileActive ? "page" : void 0,
               onClick: onMyProfileClick,
-              className: "inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3.5 py-1.5 text-xs font-semibold text-foreground transition-colors hover:border-accent/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+              className: navClass(isMyProfileActive),
               children: [
                 /* @__PURE__ */ jsxRuntimeExports.jsx(
                   CircleUser,
                   {
-                    className: "h-4 w-4 text-accent-foreground",
+                    className: navIconClass(isMyProfileActive),
                     strokeWidth: 1.75,
                     "aria-hidden": "true"
                   }
@@ -36464,7 +36499,7 @@ function Layout({
               type: "button",
               "data-ocid": "layout.sign_out_button",
               onClick: onSignOutClick,
-              className: "inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3.5 py-1.5 text-xs font-semibold text-foreground transition-colors hover:border-accent/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+              className: navClass(false),
               children: [
                 /* @__PURE__ */ jsxRuntimeExports.jsx(
                   LogOut,
@@ -36484,7 +36519,7 @@ function Layout({
             type: "button",
             "data-ocid": "layout.sign_in_button",
             onClick: onSignInClick,
-            className: "inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3.5 py-1.5 text-xs font-semibold text-foreground transition-colors hover:border-accent/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+            className: navClass(false),
             children: [
               /* @__PURE__ */ jsxRuntimeExports.jsx(
                 LogIn,
@@ -37587,7 +37622,12 @@ function useNavbarIdentity() {
   }
   const displayName = resolveBackendDisplayName(profile.personId, profile);
   const status = profile.claimStatus === ClaimStatus.Claimed ? "linked" : "pending";
-  return { displayName, status, personId: profile.personId };
+  return {
+    displayName,
+    status,
+    personId: profile.personId,
+    claimStatus: profile.claimStatus
+  };
 }
 const ORIGINATING_VIEW_KEY = "app.originatingView.v1";
 function saveOriginatingView(origin) {
@@ -37738,6 +37778,11 @@ function namesMatch(a2, b2) {
   if (na === nb) return true;
   return na.includes(nb) || nb.includes(na);
 }
+function resolveMyProfileRoute(claimStatus, personId) {
+  if (claimStatus === ClaimStatus.Claimed && personId) return "owned";
+  if (claimStatus === ClaimStatus.Unclaimed && personId) return "pending";
+  return "add-myself";
+}
 const PRIVACY_OPTIONS = [
   { value: PrivacyLevel.FamilyOnly, label: "Family only" },
   { value: PrivacyLevel.Private, label: "Private" }
@@ -37769,6 +37814,7 @@ function resolveStatusBadge(kind, status) {
           label: "Unclaimed"
         };
       case "Claimed":
+      case "Approved":
         return {
           base: "claim-badge",
           tone: "claim-badge-claimed",
@@ -37778,7 +37824,13 @@ function resolveStatusBadge(kind, status) {
         return {
           base: "claim-badge",
           tone: "claim-badge-pending",
-          label: "Pending"
+          label: "Pending claim"
+        };
+      case "Rejected":
+        return {
+          base: "claim-badge",
+          tone: "rel-disputed",
+          label: "Rejected"
         };
       default:
         return null;
@@ -45699,7 +45751,8 @@ function AppleLogo() {
 function ClaimButton({
   personId,
   profile,
-  variant = "default"
+  variant = "default",
+  onClaimApproved
 }) {
   const {
     isAuthenticated,
@@ -45714,6 +45767,7 @@ function ClaimButton({
   const claim = useRequestProfileClaim();
   const [activeProvider, setActiveProvider] = reactExports.useState(null);
   const [pendingClaim, setPendingClaim] = reactExports.useState(loadPendingClaim);
+  const [claimError, setClaimError] = reactExports.useState(null);
   const currentPrincipal = accountId;
   const ownedByCurrentUser = reactExports.useMemo(() => {
     if (!(profile == null ? void 0 : profile.claimedByUserId) || !currentPrincipal) return false;
@@ -45723,6 +45777,32 @@ function ClaimButton({
     () => (myClaim == null ? void 0 : myClaim.personId) === personId && myClaim.status === "Pending" && myClaim.requestingUserId.toString() === currentPrincipal,
     [myClaim, personId, currentPrincipal]
   );
+  const hasActiveClaimByCurrentUser = reactExports.useMemo(
+    () => (myClaim == null ? void 0 : myClaim.personId) === personId && (myClaim.status === "Pending" || myClaim.status === "Approved") && myClaim.requestingUserId.toString() === currentPrincipal,
+    [myClaim, personId, currentPrincipal]
+  );
+  const submitClaim = reactExports.useCallback(() => {
+    setClaimError(null);
+    claim.mutate(personId, {
+      onSuccess: (result) => {
+        if (result.__kind__ === "ok") {
+          return;
+        }
+        if (result.err === ClaimError.AlreadyClaimed) {
+          onClaimApproved == null ? void 0 : onClaimApproved();
+          return;
+        }
+        setClaimError(
+          "We couldn't submit your profile claim. Please try again."
+        );
+      },
+      onError: () => {
+        setClaimError(
+          "We couldn't submit your profile claim. Please try again."
+        );
+      }
+    });
+  }, [claim, personId, onClaimApproved]);
   reactExports.useEffect(() => {
     if (isAuthenticated && pendingClaim) {
       setPendingClaim(false);
@@ -45730,9 +45810,9 @@ function ClaimButton({
         sessionStorage.removeItem(PENDING_CLAIM_STORAGE_KEY);
       } catch {
       }
-      claim.mutate(personId);
+      submitClaim();
     }
-  }, [isAuthenticated, pendingClaim, claim, personId]);
+  }, [isAuthenticated, pendingClaim, submitClaim]);
   if ((profile == null ? void 0 : profile.livingStatus) === "Deceased") {
     return null;
   }
@@ -45761,20 +45841,41 @@ function ClaimButton({
     );
   }
   if (isAuthenticated) {
-    return /* @__PURE__ */ jsxRuntimeExports.jsxs(
-      "button",
-      {
-        type: "button",
-        "data-ocid": "claim_button.this_is_me",
-        onClick: () => claim.mutate(personId),
-        disabled: claim.isPending,
-        className: `this-is-me-action ${compact ? "px-4 py-2 text-xs" : ""}`,
-        children: [
-          claim.isPending ? /* @__PURE__ */ jsxRuntimeExports.jsx(LoaderCircle, { className: "h-4 w-4 animate-spin", "aria-hidden": "true" }) : /* @__PURE__ */ jsxRuntimeExports.jsx(UserCheck, { className: "h-4 w-4", "aria-hidden": "true" }),
-          claim.isPending ? "Submitting…" : "This is Me"
-        ]
-      }
-    );
+    if (hasActiveClaimByCurrentUser) {
+      return /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "span",
+        {
+          "data-ocid": "claim_button.pending",
+          className: "claim-badge claim-badge-pending",
+          children: "Claim pending"
+        }
+      );
+    }
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "w-full", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "claim_button.this_is_me",
+          onClick: submitClaim,
+          disabled: claim.isPending,
+          className: `this-is-me-action ${compact ? "px-4 py-2 text-xs" : ""}`,
+          children: [
+            claim.isPending ? /* @__PURE__ */ jsxRuntimeExports.jsx(LoaderCircle, { className: "h-4 w-4 animate-spin", "aria-hidden": "true" }) : /* @__PURE__ */ jsxRuntimeExports.jsx(UserCheck, { className: "h-4 w-4", "aria-hidden": "true" }),
+            claim.isPending ? "Submitting…" : "This is Me"
+          ]
+        }
+      ),
+      claimError ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "p",
+        {
+          className: "mt-3 text-sm text-destructive",
+          "data-ocid": "claim_button.error",
+          role: "alert",
+          children: claimError
+        }
+      ) : null
+    ] });
   }
   const handleSignIn = (provider) => {
     setActiveProvider(provider);
@@ -48461,7 +48562,8 @@ function PersonProfilePage({
   person,
   profilePhoto,
   onProfilePhotoChange,
-  onEditProfile
+  onEditProfile,
+  onClaimApproved
 }) {
   const storyLabel = person.id === "julia" || person.id === "erma" || person.id === "hudson" || person.id === "gertrude-adams-hill" || person.id === "mary-louise-sims" || person.id === "mary-jane-johnson" || person.id === "mildred-adams" || person.id === "christine-adams" || person.id === "tammy" || person.id === "punchy" || person.id === "patricia-rollins" || person.id === "fannie-adams" || person.id === "christine-adams-tucker" || person.id === "ella-mae-adams" || person.id === "eula-lee-adams" || person.id === "sherriSmith" || person.id === "beatriceSmith" ? "Her Story" : "His Story";
   const { data: backendProfile, isLoading: profileLoading } = usePersonProfile(
@@ -48691,7 +48793,14 @@ function PersonProfilePage({
                   )
                 ] }) : hasPendingClaim ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-3 flex flex-col items-start gap-3", children: /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: "Your claim to this profile is awaiting Family Steward review." }) }) : claimable ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-3 flex flex-col items-start gap-3", children: [
                   /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: "Is this you? Claim this profile to manage your personal details." }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx(ClaimButton, { personId: person.id, profile: backendProfile })
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    ClaimButton,
+                    {
+                      personId: person.id,
+                      profile: backendProfile,
+                      onClaimApproved
+                    }
+                  )
                 ] }) : /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-3 text-sm text-muted-foreground", children: (backendProfile == null ? void 0 : backendProfile.livingStatus) === LivingStatus.Deceased ? "This profile is not claimable." : "This profile is owned by a family member." })
               ]
             }
@@ -48929,7 +49038,63 @@ function mergeMatches(local, backend) {
   }
   return merged;
 }
-function AddMyselfPage({ onBack, onOpenProfile }) {
+function MatchCard({
+  match,
+  index: index2,
+  claimPending,
+  onThisIsMe,
+  onNoMatch
+}) {
+  const { accountId } = useAuth();
+  const { data: myClaim } = useMyProfileClaim(match.personId);
+  const currentPrincipal = accountId;
+  const hasActiveClaimByCurrentUser = (myClaim == null ? void 0 : myClaim.personId) === match.personId && (myClaim.status === "Pending" || myClaim.status === "Approved") && myClaim.requestingUserId.toString() === currentPrincipal;
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { "data-ocid": `add_myself.match.${index2}`, className: "match-card", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "match-card-portrait", "aria-hidden": "true", children: initials(match.name) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "match-card-body", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "match-card-name", children: match.name }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "match-card-parents", children: match.parents.length > 0 ? `Child of ${match.parents.join(" and ")}` : "No parents recorded" })
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "match-card-actions", children: [
+      hasActiveClaimByCurrentUser ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "span",
+        {
+          "data-ocid": `add_myself.this_is_me.pending.${index2}`,
+          className: "claim-badge claim-badge-pending",
+          children: "Claim pending"
+        }
+      ) : /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "button",
+        {
+          type: "button",
+          "data-ocid": `add_myself.this_is_me.${index2}`,
+          onClick: () => onThisIsMe(match.personId),
+          disabled: claimPending,
+          className: "match-this-is-me",
+          children: [
+            claimPending ? /* @__PURE__ */ jsxRuntimeExports.jsx(LoaderCircle, { className: "h-4 w-4 animate-spin", "aria-hidden": "true" }) : /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { className: "h-4 w-4", "aria-hidden": "true" }),
+            claimPending ? "Submitting…" : "This is Me"
+          ]
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "button",
+        {
+          type: "button",
+          "data-ocid": `add_myself.none_of_these.${index2}`,
+          onClick: onNoMatch,
+          className: "match-none",
+          children: "None of these are me"
+        }
+      )
+    ] })
+  ] });
+}
+function AddMyselfPage({
+  onBack,
+  onOpenProfile,
+  onClaimApproved
+}) {
   const {
     isAuthenticated,
     isLoggingIn,
@@ -48974,6 +49139,8 @@ function AddMyselfPage({ onBack, onOpenProfile }) {
     }
   );
   const [activeProvider, setActiveProvider] = reactExports.useState(null);
+  const [pendingClaimPersonId, setPendingClaimPersonId] = reactExports.useState(null);
+  const [claimError, setClaimError] = reactExports.useState(null);
   const createInitiatedRef = reactExports.useRef(false);
   const proposeInitiatedRef = reactExports.useRef(false);
   reactExports.useEffect(() => {
@@ -49008,6 +49175,7 @@ function AddMyselfPage({ onBack, onOpenProfile }) {
   const search = useSearchPossibleMatches();
   const create = useCreateMyself();
   const propose = useProposeRelationship();
+  const claim = useRequestProfileClaim();
   const matches = reactExports.useMemo(
     () => mergeMatches(buildLocalMatches(submittedName), search.data ?? []),
     [submittedName, search.data]
@@ -49028,6 +49196,52 @@ function AddMyselfPage({ onBack, onOpenProfile }) {
   const handleNoMatch = () => {
     setStep("connect");
   };
+  const submitClaim = reactExports.useCallback(
+    (personId) => {
+      setClaimError(null);
+      claim.mutate(personId, {
+        onSuccess: (result) => {
+          if (result.__kind__ === "ok") {
+            onOpenProfile(personId);
+            return;
+          }
+          if (result.err === ClaimError.AlreadyClaimed) {
+            onClaimApproved == null ? void 0 : onClaimApproved();
+            return;
+          }
+          if (result.err === ClaimError.AlreadyPending) {
+            onOpenProfile(personId);
+            return;
+          }
+          setClaimError(
+            "We couldn't submit your profile claim. Please try again."
+          );
+        },
+        onError: () => {
+          setClaimError(
+            "We couldn't submit your profile claim. Please try again."
+          );
+        }
+      });
+    },
+    [claim, onOpenProfile, onClaimApproved]
+  );
+  const handleThisIsMe = (personId) => {
+    if (!isAuthenticated) {
+      setPendingClaimPersonId(personId);
+      setShowSignIn(true);
+      return;
+    }
+    submitClaim(personId);
+  };
+  reactExports.useEffect(() => {
+    if (isAuthenticated && pendingClaimPersonId) {
+      const personId = pendingClaimPersonId;
+      setPendingClaimPersonId(null);
+      setShowSignIn(false);
+      submitClaim(personId);
+    }
+  }, [isAuthenticated, pendingClaimPersonId, submitClaim]);
   const handleFinalSubmit = () => {
     if (!relationshipType || !selectedPersonId) return;
     createInitiatedRef.current = false;
@@ -49223,43 +49437,14 @@ function AddMyselfPage({ onBack, onOpenProfile }) {
             {
               "data-ocid": "add_myself.match_list",
               className: "flex flex-col gap-3",
-              children: matches.map((match, index2) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
-                "div",
+              children: matches.map((match, index2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+                MatchCard,
                 {
-                  "data-ocid": `add_myself.match.${index2}`,
-                  className: "match-card",
-                  children: [
-                    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "match-card-portrait", "aria-hidden": "true", children: initials(match.name) }),
-                    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "match-card-body", children: [
-                      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "match-card-name", children: match.name }),
-                      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "match-card-parents", children: match.parents.length > 0 ? `Child of ${match.parents.join(" and ")}` : "No parents recorded" })
-                    ] }),
-                    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "match-card-actions", children: [
-                      /* @__PURE__ */ jsxRuntimeExports.jsxs(
-                        "button",
-                        {
-                          type: "button",
-                          "data-ocid": `add_myself.this_is_me.${index2}`,
-                          onClick: () => onOpenProfile(match.personId),
-                          className: "match-this-is-me",
-                          children: [
-                            /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { className: "h-4 w-4", "aria-hidden": "true" }),
-                            "This is Me"
-                          ]
-                        }
-                      ),
-                      /* @__PURE__ */ jsxRuntimeExports.jsx(
-                        "button",
-                        {
-                          type: "button",
-                          "data-ocid": `add_myself.none_of_these.${index2}`,
-                          onClick: handleNoMatch,
-                          className: "match-none",
-                          children: "None of these are me"
-                        }
-                      )
-                    ] })
-                  ]
+                  match,
+                  index: index2,
+                  claimPending: claim.isPending,
+                  onThisIsMe: handleThisIsMe,
+                  onNoMatch: handleNoMatch
                 },
                 match.personId
               ))
@@ -49298,7 +49483,93 @@ function AddMyselfPage({ onBack, onOpenProfile }) {
                 )
               ]
             }
-          )
+          ),
+          showSignIn ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "div",
+            {
+              className: "signin-panel",
+              "data-ocid": "add_myself.claim_signin_panel",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "signin-head", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "signin-crest", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    TreePine,
+                    {
+                      className: "h-7 w-7",
+                      strokeWidth: 1.75,
+                      "aria-hidden": "true"
+                    }
+                  ) }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "signin-title", children: "Confirm this is you" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "signin-subtitle", children: "Sign in securely to submit your profile claim. It stays pending until a family steward reviews it." })
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "signin-stack", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                    "button",
+                    {
+                      type: "button",
+                      "data-ocid": "add_myself.claim_signin_google_button",
+                      onClick: handleGoogle,
+                      disabled: isLoggingIn,
+                      className: "signin-btn signin-google",
+                      children: [
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "signin-logo", children: googlePending ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+                          LoaderCircle,
+                          {
+                            className: "h-5 w-5 animate-spin",
+                            "aria-hidden": "true"
+                          }
+                        ) : /* @__PURE__ */ jsxRuntimeExports.jsx(GoogleLogo$1, {}) }),
+                        googlePending ? "Signing in…" : "Continue with Google"
+                      ]
+                    }
+                  ),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "signin-divider", "aria-hidden": "true", children: "or" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                    "button",
+                    {
+                      type: "button",
+                      "data-ocid": "add_myself.claim_signin_apple_button",
+                      onClick: handleApple,
+                      disabled: isLoggingIn,
+                      className: "signin-btn signin-apple",
+                      children: [
+                        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "signin-logo", children: applePending ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+                          LoaderCircle,
+                          {
+                            className: "h-5 w-5 animate-spin",
+                            "aria-hidden": "true"
+                          }
+                        ) : /* @__PURE__ */ jsxRuntimeExports.jsx(AppleLogo$1, {}) }),
+                        applePending ? "Signing in…" : "Continue with Apple"
+                      ]
+                    }
+                  )
+                ] }),
+                isLoginError ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                  "p",
+                  {
+                    className: "signin-footnote",
+                    "data-ocid": "add_myself.claim_signin_error_state",
+                    role: "alert",
+                    children: [
+                      "We couldn’t sign you in",
+                      loginError ? ` (${loginError.message})` : "",
+                      ". Please try again."
+                    ]
+                  }
+                ) : /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "signin-footnote", children: "Your claim is never auto-approved — a family steward reviews it before you gain ownership." })
+              ]
+            }
+          ) : null,
+          claimError ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "p",
+            {
+              "data-ocid": "add_myself.claim_error_state",
+              className: "text-sm text-destructive",
+              role: "alert",
+              children: claimError
+            }
+          ) : null
         ]
       }
     ) : null,
@@ -49590,7 +49861,7 @@ function getArchiveItemYear(item) {
   const match = item.era.match(/\b(1[89]\d{2}|20\d{2})\b/);
   return match ? Number(match[1]) : null;
 }
-function formatDate$2(timestamp) {
+function formatDate$1(timestamp) {
   const date = new Date(Number(timestamp / 1000000n));
   if (Number.isNaN(date.getTime())) return "Unknown date";
   return date.toLocaleDateString(void 0, {
@@ -49746,7 +50017,7 @@ function PendingItem({
           ] }),
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx("dt", { className: "text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground", children: "Submitted" }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("dd", { className: "mt-0.5 text-foreground", children: formatDate$2(item.createdAt) })
+            /* @__PURE__ */ jsxRuntimeExports.jsx("dd", { className: "mt-0.5 text-foreground", children: formatDate$1(item.createdAt) })
           ] })
         ] }),
         item.tags.length > 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-4 flex flex-wrap gap-1.5", children: item.tags.map((tag) => /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -50561,7 +50832,7 @@ const TEXT_TYPES = [
   ArchiveItemType.WorkBusiness,
   ArchiveItemType.Other
 ];
-function formatDate$1(timestamp) {
+function formatDate(timestamp) {
   const date = new Date(Number(timestamp / 1000000n));
   if (Number.isNaN(date.getTime())) return "Unknown date";
   return date.toLocaleDateString(void 0, {
@@ -50636,7 +50907,7 @@ function ArchiveDetailPage({
         ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "inline-flex items-center gap-1.5", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx(CalendarDays, { className: "h-4 w-4", "aria-hidden": "true" }),
-          formatDate$1(item.createdAt)
+          formatDate(item.createdAt)
         ] })
       ] })
     ] }),
@@ -51466,13 +51737,15 @@ function ExploreFamilyPage({
     )
   ] });
 }
-function formatDate(timestamp) {
+function formatDateTime(timestamp) {
   const date = new Date(Number(timestamp / 1000000n));
   if (Number.isNaN(date.getTime())) return "Unknown date";
-  return date.toLocaleDateString(void 0, {
+  return date.toLocaleString(void 0, {
     year: "numeric",
     month: "short",
-    day: "numeric"
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit"
   });
 }
 function formatPrincipal(principal) {
@@ -51685,7 +51958,7 @@ function ClaimCard({
               formatPrincipal(claim.requestingUserId),
               " · submitted",
               " ",
-              formatDate(claim.submittedDate)
+              formatDateTime(claim.submittedDate)
             ] })
           ] }),
           /* @__PURE__ */ jsxRuntimeExports.jsx(StatusBadge, { kind: "claim", status: claim.status })
@@ -51755,7 +52028,7 @@ function RelationshipCard({
               relationLabel,
               " · submitted",
               " ",
-              formatDate(request2.submittedDate)
+              formatDateTime(request2.submittedDate)
             ] })
           ] }),
           /* @__PURE__ */ jsxRuntimeExports.jsx(StatusBadge, { kind: "relationshipRequest", status: request2.status })
@@ -53533,7 +53806,8 @@ function App() {
   const {
     displayName,
     status: identityStatus,
-    personId: myPersonId
+    personId: myPersonId,
+    claimStatus
   } = useNavbarIdentity();
   const profile = profiles[profileId] ?? profiles.julia;
   const isStaticProfile = Boolean(profiles[profileId]);
@@ -53565,13 +53839,14 @@ function App() {
     setView("family-tree");
   }, []);
   const openMyProfile = reactExports.useCallback(() => {
-    if (myPersonId) {
+    const route = resolveMyProfileRoute(claimStatus, myPersonId);
+    if ((route === "owned" || route === "pending") && myPersonId) {
       setProfileId(myPersonId);
       setView("my-profile");
-    } else {
-      setView("add-myself");
+      return;
     }
-  }, [myPersonId]);
+    setView("add-myself");
+  }, [claimStatus, myPersonId]);
   return /* @__PURE__ */ jsxRuntimeExports.jsx(
     Layout,
     {
@@ -53580,6 +53855,7 @@ function App() {
       accountId,
       identityName: displayName,
       identityStatus,
+      activeView: view,
       onMyProfileClick: openMyProfile,
       onSignInClick: () => {
         if (view !== "sign-in") saveOriginatingView({ view });
@@ -53619,7 +53895,8 @@ function App() {
           onBack: () => setView("family-tree"),
           onProfilePhotoChange: () => {
           },
-          onEditProfile: () => setView("profile-edit")
+          onEditProfile: () => setView("profile-edit"),
+          onClaimApproved: openMyProfile
         }
       ) : /* @__PURE__ */ jsxRuntimeExports.jsx(ProfileLoadingState, {}) : view === "my-profile" ? isStaticProfile || resolvedProfile ? /* @__PURE__ */ jsxRuntimeExports.jsx(
         PersonProfilePage,
@@ -53628,7 +53905,8 @@ function App() {
           onBack: () => setView("home"),
           onProfilePhotoChange: () => {
           },
-          onEditProfile: () => setView("profile-edit")
+          onEditProfile: () => setView("profile-edit"),
+          onClaimApproved: openMyProfile
         }
       ) : (
         // A createMyself / backend profile is still resolving. Show a loading
@@ -53642,7 +53920,8 @@ function App() {
           onOpenProfile: (id2) => {
             setProfileId(id2);
             setView("profile");
-          }
+          },
+          onClaimApproved: openMyProfile
         }
       ) : view === "profile-edit" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
         ProfileEditPage,

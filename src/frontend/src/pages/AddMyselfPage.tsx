@@ -10,11 +10,13 @@ import {
   UserPlus,
   Users,
 } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AppleLogo, GoogleLogo } from "../components/LoginSurface";
 import { useAuth } from "../hooks/useAuth";
 import {
   useCreateMyself,
+  useMyProfileClaim,
+  useRequestProfileClaim,
   useSearchPossibleMatches,
 } from "../hooks/useProfileClaims";
 import { useProposeRelationship } from "../hooks/useRelationshipRequests";
@@ -22,7 +24,7 @@ import { namesMatch } from "../lib/nameMatch";
 import { saveOriginatingView } from "../lib/originatingView";
 import { FAMILY_GRAPH, resolveDisplayName } from "../types/family";
 import type { PersonMatch } from "../types/ownership";
-import { RELATIONSHIP_TYPE_LABELS } from "../types/ownership";
+import { ClaimError, RELATIONSHIP_TYPE_LABELS } from "../types/ownership";
 import { profiles } from "./PersonProfilePage";
 
 /**
@@ -52,6 +54,12 @@ export interface AddMyselfPageProps {
   onBack: () => void;
   /** Routes to the existing profile claim flow for a matched person. */
   onOpenProfile: (personId: string) => void;
+  /**
+   * Routes to My Profile when the backend reports the profile is already
+   * approved for this account+person (ClaimError.AlreadyClaimed), instead of
+   * creating another claim.
+   */
+  onClaimApproved?: () => void;
 }
 
 type Step = "name" | "matches" | "connect";
@@ -186,7 +194,94 @@ function mergeMatches(
   return merged;
 }
 
-export function AddMyselfPage({ onBack, onOpenProfile }: AddMyselfPageProps) {
+/**
+ * A single possible-match card in the Add Myself matches step. It queries the
+ * signed-in caller's own claim on this exact person so the "This is Me" action
+ * is hidden when a pending or approved claim already exists for that person
+ * (mirroring ClaimButton's hasActiveClaimByCurrentUser behavior) — the user is
+ * never offered a duplicate claim. Each card queries its own claim because the
+ * matches list is dynamic and hooks cannot be called in a loop.
+ */
+function MatchCard({
+  match,
+  index,
+  claimPending,
+  onThisIsMe,
+  onNoMatch,
+}: {
+  match: PersonMatch;
+  index: number;
+  claimPending: boolean;
+  onThisIsMe: (personId: string) => void;
+  onNoMatch: () => void;
+}) {
+  const { accountId } = useAuth();
+  const { data: myClaim } = useMyProfileClaim(match.personId);
+
+  const currentPrincipal = accountId;
+
+  // A pending OR approved claim by the signed-in user on this person means the
+  // profile is already claimed/awaiting review — never offer 'This is Me' again.
+  const hasActiveClaimByCurrentUser =
+    myClaim?.personId === match.personId &&
+    (myClaim.status === "Pending" || myClaim.status === "Approved") &&
+    myClaim.requestingUserId.toString() === currentPrincipal;
+
+  return (
+    <div data-ocid={`add_myself.match.${index}`} className="match-card">
+      <div className="match-card-portrait" aria-hidden="true">
+        {initials(match.name)}
+      </div>
+      <div className="match-card-body">
+        <p className="match-card-name">{match.name}</p>
+        <p className="match-card-parents">
+          {match.parents.length > 0
+            ? `Child of ${match.parents.join(" and ")}`
+            : "No parents recorded"}
+        </p>
+      </div>
+      <div className="match-card-actions">
+        {hasActiveClaimByCurrentUser ? (
+          <span
+            data-ocid={`add_myself.this_is_me.pending.${index}`}
+            className="claim-badge claim-badge-pending"
+          >
+            Claim pending
+          </span>
+        ) : (
+          <button
+            type="button"
+            data-ocid={`add_myself.this_is_me.${index}`}
+            onClick={() => onThisIsMe(match.personId)}
+            disabled={claimPending}
+            className="match-this-is-me"
+          >
+            {claimPending ? (
+              <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+            ) : (
+              <Check className="h-4 w-4" aria-hidden="true" />
+            )}
+            {claimPending ? "Submitting…" : "This is Me"}
+          </button>
+        )}
+        <button
+          type="button"
+          data-ocid={`add_myself.none_of_these.${index}`}
+          onClick={onNoMatch}
+          className="match-none"
+        >
+          None of these are me
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export function AddMyselfPage({
+  onBack,
+  onOpenProfile,
+  onClaimApproved,
+}: AddMyselfPageProps) {
   const {
     isAuthenticated,
     isLoggingIn,
@@ -216,6 +311,16 @@ export function AddMyselfPage({ onBack, onOpenProfile }: AddMyselfPageProps) {
   const [activeProvider, setActiveProvider] = useState<
     "google" | "apple" | null
   >(null);
+  // Set when the user starts a "This is Me" claim from the matches step while
+  // not signed in, so the claim is submitted automatically for that exact
+  // person once sign-in completes.
+  const [pendingClaimPersonId, setPendingClaimPersonId] = useState<
+    string | null
+  >(null);
+  // Set when a "This is Me" claim write fails so the user stays on the claim
+  // screen with a visible error instead of silently navigating without a
+  // persisted claim.
+  const [claimError, setClaimError] = useState<string | null>(null);
 
   // Ref guards that ensure the auto-submit effect fires each backend call
   // exactly once per submission attempt. The react-query mutation objects
@@ -271,6 +376,7 @@ export function AddMyselfPage({ onBack, onOpenProfile }: AddMyselfPageProps) {
   const search = useSearchPossibleMatches();
   const create = useCreateMyself();
   const propose = useProposeRelationship();
+  const claim = useRequestProfileClaim();
 
   const matches = useMemo(
     () => mergeMatches(buildLocalMatches(submittedName), search.data ?? []),
@@ -301,6 +407,78 @@ export function AddMyselfPage({ onBack, onOpenProfile }: AddMyselfPageProps) {
   const handleNoMatch = () => {
     setStep("connect");
   };
+
+  // Submits a "This is Me" profile claim for a matched person and only
+  // navigates to the profile after the backend confirms the pending claim was
+  // persisted. On a failed write the user stays on the claim screen with a
+  // visible error; an AlreadyClaimed result routes to My Profile instead of
+  // creating another claim.
+  const submitClaim = useCallback(
+    (personId: string) => {
+      setClaimError(null);
+      claim.mutate(personId, {
+        onSuccess: (result) => {
+          if (result.__kind__ === "ok") {
+            // Pending claim persisted. Navigate to the profile only after the
+            // backend confirms the write succeeded.
+            onOpenProfile(personId);
+            return;
+          }
+          if (result.err === ClaimError.AlreadyClaimed) {
+            // Already approved for this account+person: route to My Profile.
+            onClaimApproved?.();
+            return;
+          }
+          if (result.err === ClaimError.AlreadyPending) {
+            // A pending claim already exists for this account+person. The
+            // backend correctly did not create a duplicate, so treat this as a
+            // successful reuse of the existing pending claim and route to the
+            // canonical profile (which renders the PENDING CLAIM state) rather
+            // than surfacing a misleading write-failure error.
+            onOpenProfile(personId);
+            return;
+          }
+          // Any other backend error: keep the user on the claim screen and
+          // surface the error rather than navigating without a persisted claim.
+          setClaimError(
+            "We couldn't submit your profile claim. Please try again.",
+          );
+        },
+        onError: () => {
+          // Network / thrown error: keep the user on the claim screen.
+          setClaimError(
+            "We couldn't submit your profile claim. Please try again.",
+          );
+        },
+      });
+    },
+    [claim, onOpenProfile, onClaimApproved],
+  );
+
+  // "This is Me" for a matched person. A signed-in user submits the claim
+  // immediately; a signed-out user is offered the same Google/Apple sign-in
+  // options and the claim is auto-submitted once sign-in completes. The user
+  // is never navigated to the profile without the backend confirming the
+  // pending claim was persisted.
+  const handleThisIsMe = (personId: string) => {
+    if (!isAuthenticated) {
+      setPendingClaimPersonId(personId);
+      setShowSignIn(true);
+      return;
+    }
+    submitClaim(personId);
+  };
+
+  // After a successful sign-in from the matches step, submit the pending
+  // "This is Me" claim for the exact person the user chose.
+  useEffect(() => {
+    if (isAuthenticated && pendingClaimPersonId) {
+      const personId = pendingClaimPersonId;
+      setPendingClaimPersonId(null);
+      setShowSignIn(false);
+      submitClaim(personId);
+    }
+  }, [isAuthenticated, pendingClaimPersonId, submitClaim]);
 
   // Final submission. If the user is not authenticated, show the sign-in panel
   // (Google / Apple) instead of submitting. All entered state is preserved.
@@ -535,42 +713,14 @@ export function AddMyselfPage({ onBack, onOpenProfile }: AddMyselfPageProps) {
               className="flex flex-col gap-3"
             >
               {matches.map((match, index) => (
-                <div
+                <MatchCard
                   key={match.personId}
-                  data-ocid={`add_myself.match.${index}`}
-                  className="match-card"
-                >
-                  <div className="match-card-portrait" aria-hidden="true">
-                    {initials(match.name)}
-                  </div>
-                  <div className="match-card-body">
-                    <p className="match-card-name">{match.name}</p>
-                    <p className="match-card-parents">
-                      {match.parents.length > 0
-                        ? `Child of ${match.parents.join(" and ")}`
-                        : "No parents recorded"}
-                    </p>
-                  </div>
-                  <div className="match-card-actions">
-                    <button
-                      type="button"
-                      data-ocid={`add_myself.this_is_me.${index}`}
-                      onClick={() => onOpenProfile(match.personId)}
-                      className="match-this-is-me"
-                    >
-                      <Check className="h-4 w-4" aria-hidden="true" />
-                      This is Me
-                    </button>
-                    <button
-                      type="button"
-                      data-ocid={`add_myself.none_of_these.${index}`}
-                      onClick={handleNoMatch}
-                      className="match-none"
-                    >
-                      None of these are me
-                    </button>
-                  </div>
-                </div>
+                  match={match}
+                  index={index}
+                  claimPending={claim.isPending}
+                  onThisIsMe={handleThisIsMe}
+                  onNoMatch={handleNoMatch}
+                />
               ))}
             </div>
           ) : (
@@ -601,6 +751,101 @@ export function AddMyselfPage({ onBack, onOpenProfile }: AddMyselfPageProps) {
               </button>
             </div>
           )}
+
+          {showSignIn ? (
+            <div
+              className="signin-panel"
+              data-ocid="add_myself.claim_signin_panel"
+            >
+              <div className="signin-head">
+                <span className="signin-crest">
+                  <TreePine
+                    className="h-7 w-7"
+                    strokeWidth={1.75}
+                    aria-hidden="true"
+                  />
+                </span>
+                <h2 className="signin-title">Confirm this is you</h2>
+                <p className="signin-subtitle">
+                  Sign in securely to submit your profile claim. It stays
+                  pending until a family steward reviews it.
+                </p>
+              </div>
+
+              <div className="signin-stack">
+                <button
+                  type="button"
+                  data-ocid="add_myself.claim_signin_google_button"
+                  onClick={handleGoogle}
+                  disabled={isLoggingIn}
+                  className="signin-btn signin-google"
+                >
+                  <span className="signin-logo">
+                    {googlePending ? (
+                      <Loader2
+                        className="h-5 w-5 animate-spin"
+                        aria-hidden="true"
+                      />
+                    ) : (
+                      <GoogleLogo />
+                    )}
+                  </span>
+                  {googlePending ? "Signing in…" : "Continue with Google"}
+                </button>
+
+                <div className="signin-divider" aria-hidden="true">
+                  or
+                </div>
+
+                <button
+                  type="button"
+                  data-ocid="add_myself.claim_signin_apple_button"
+                  onClick={handleApple}
+                  disabled={isLoggingIn}
+                  className="signin-btn signin-apple"
+                >
+                  <span className="signin-logo">
+                    {applePending ? (
+                      <Loader2
+                        className="h-5 w-5 animate-spin"
+                        aria-hidden="true"
+                      />
+                    ) : (
+                      <AppleLogo />
+                    )}
+                  </span>
+                  {applePending ? "Signing in…" : "Continue with Apple"}
+                </button>
+              </div>
+
+              {isLoginError ? (
+                <p
+                  className="signin-footnote"
+                  data-ocid="add_myself.claim_signin_error_state"
+                  role="alert"
+                >
+                  We couldn’t sign you in
+                  {loginError ? ` (${loginError.message})` : ""}. Please try
+                  again.
+                </p>
+              ) : (
+                <p className="signin-footnote">
+                  Your claim is never auto-approved — a family steward reviews
+                  it before you gain ownership.
+                </p>
+              )}
+            </div>
+          ) : null}
+
+          {claimError ? (
+            <p
+              data-ocid="add_myself.claim_error_state"
+              className="text-sm text-destructive"
+              role="alert"
+            >
+              {claimError}
+            </p>
+          ) : null}
         </section>
       ) : null}
 

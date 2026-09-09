@@ -2610,6 +2610,12 @@ interface PersonProfilePageProps {
   onProfilePhotoChange: (personId: string, url: string | null) => void;
   /** Navigates to the profile-edit page for the owner of a claimed profile. */
   onEditProfile?: () => void;
+  /**
+   * Routes to My Profile when the backend reports the profile is already
+   * approved for this account+person (ClaimError.AlreadyClaimed), so the
+   * ClaimButton's defensive routing works.
+   */
+  onClaimApproved?: () => void;
 }
 
 function getInitials(name: string): string {
@@ -3028,6 +3034,7 @@ export function PersonProfilePage({
   profilePhoto,
   onProfilePhotoChange,
   onEditProfile,
+  onClaimApproved,
 }: PersonProfilePageProps) {
   const storyLabel =
     person.id === "julia" ||
@@ -3366,7 +3373,11 @@ export function PersonProfilePage({
               <p className="text-sm text-muted-foreground">
                 Is this you? Claim this profile to manage your personal details.
               </p>
-              <ClaimButton personId={person.id} profile={backendProfile} />
+              <ClaimButton
+                personId={person.id}
+                profile={backendProfile}
+                onClaimApproved={onClaimApproved}
+              />
             </div>
           ) : (
             <p className="mt-3 text-sm text-muted-foreground">

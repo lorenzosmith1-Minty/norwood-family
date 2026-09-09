@@ -1,5 +1,6 @@
 import "@testing-library/jest-dom/vitest";
 import {
+  ClaimError,
   ClaimStatus,
   LivingStatus,
   type PersonProfile,
@@ -74,6 +75,21 @@ const {
     async getMyProfileClaim(_personId: string): Promise<ProfileClaim | null> {
       // The restored owner has no pending claim; the profile is already CLAIMED.
       return null;
+    },
+    async requestProfileClaim(
+      personId: string,
+    ): Promise<
+      { __kind__: "ok"; ok: ProfileClaim } | { __kind__: "err"; err: string }
+    > {
+      // The canonical profile is already CLAIMED by the signed-in account, so
+      // the backend correctly refuses to create a duplicate claim and reports
+      // AlreadyClaimed. The frontend routes to My Profile (the owned profile)
+      // instead of creating another claim.
+      const profile = profiles[personId];
+      if (profile?.claimStatus === ClaimStatus.Claimed) {
+        return { __kind__: "err", err: ClaimError.AlreadyClaimed };
+      }
+      return { __kind__: "err", err: "ProfileNotFound" };
     },
     async getMyRelationshipRequests(): Promise<never[]> {
       return [];
@@ -166,8 +182,10 @@ describe("Canonical Lorenzo Smith Jr. profile shows CLAIMED for the restored own
     renderApp();
 
     // Navigate to the canonical Lorenzo Smith Jr. profile via Add Myself's
-    // "This is Me" on the existing match (the graph-only node resolves from the
-    // backend by personId).
+    // "This is Me" on the existing match. The profile is already CLAIMED by the
+    // signed-in account, so the backend reports AlreadyClaimed and the corrected
+    // claim flow routes to My Profile (the owned canonical profile) instead of
+    // creating a duplicate claim.
     await user.click(screen.getByRole("button", { name: "Add Myself" }));
     await user.type(
       screen.getByTestId("add_myself.name_input"),
@@ -178,7 +196,7 @@ describe("Canonical Lorenzo Smith Jr. profile shows CLAIMED for the restored own
       (await screen.findAllByRole("button", { name: "This is Me" }))[0],
     );
 
-    // The canonical profile page renders.
+    // The canonical profile page renders (via My Profile routing).
     expect(await screen.findByRole("heading", { level: 1 })).toHaveTextContent(
       "Lorenzo Smith Jr.",
     );

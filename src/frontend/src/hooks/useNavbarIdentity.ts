@@ -29,6 +29,12 @@ export interface NavbarIdentity {
   status: "linked" | "pending" | "none";
   /** The person id of the linked/pending profile, when one is connected. */
   personId?: string;
+  /**
+   * The backend claim status of the caller's own connected profile, when one
+   * exists. Claimed = approved/owned; Unclaimed = a pending claim awaiting
+   * review. Drives claim-aware "My Profile" routing.
+   */
+  claimStatus?: ClaimStatus;
 }
 
 export function useNavbarIdentity(): NavbarIdentity {
@@ -43,5 +49,10 @@ export function useNavbarIdentity(): NavbarIdentity {
   const status =
     profile.claimStatus === ClaimStatus.Claimed ? "linked" : "pending";
 
-  return { displayName, status, personId: profile.personId };
+  return {
+    displayName,
+    status,
+    personId: profile.personId,
+    claimStatus: profile.claimStatus,
+  };
 }

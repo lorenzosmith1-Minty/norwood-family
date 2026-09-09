@@ -16,6 +16,23 @@ import { NotificationBadge } from "./NotificationBadge";
 /** How the signed-in caller's visible identity was resolved. */
 export type IdentityStatus = "linked" | "pending" | "none";
 
+/** Base classes shared by every pill nav button. */
+const NAV_BASE =
+  "inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+/** Resting nav button: paper surface with a subtle hover accent. */
+const NAV_IDLE =
+  "border-border bg-background text-foreground hover:border-accent/50 hover:bg-muted";
+/** Active nav button: subtle brown fill + stronger brown border (Norwood). */
+const NAV_ACTIVE = "border-accent bg-accent/15 text-foreground";
+
+function navClass(active: boolean): string {
+  return `${NAV_BASE} ${active ? NAV_ACTIVE : NAV_IDLE}`;
+}
+
+function navIconClass(active: boolean): string {
+  return active ? "h-4 w-4 text-accent" : "h-4 w-4 text-accent-foreground";
+}
+
 interface LayoutProps {
   children: ReactNode;
   /** True when the signed-in caller is an admin; gates the admin nav links. */
@@ -32,6 +49,11 @@ interface LayoutProps {
   identityName?: string;
   /** How the caller's identity was resolved (drives the label + badge). */
   identityStatus?: IdentityStatus;
+  /**
+   * The currently active view. Used to highlight the matching nav button with
+   * a subtle Norwood active-state indicator (no layout change).
+   */
+  activeView?: string;
   /** Navigates to the signed-in caller's own profile ("My Profile"). */
   onMyProfileClick?: () => void;
   /** Navigates to the shared sign-in surface. */
@@ -60,6 +82,7 @@ export function Layout({
   isAuthenticated,
   identityName,
   identityStatus = "none",
+  activeView,
   onMyProfileClick,
   onSignInClick,
   onSignOutClick,
@@ -71,6 +94,26 @@ export function Layout({
   onNotificationsClick,
   onAddMyselfClick,
 }: LayoutProps) {
+  // Which nav button is active for the current view. Each nav section maps to
+  // the view(s) it owns so the active state stays obvious on desktop and mobile.
+  const isExploreActive = activeView === "family-tree";
+  const isBranchActive = activeView === "heritage-branch";
+  const isArchiveActive =
+    activeView === "archive" ||
+    activeView === "archive-detail" ||
+    activeView === "archive-contribute";
+  const isAddMyselfActive = activeView === "add-myself";
+  const isStewardActive = activeView === "steward-review";
+  const isNotificationsActive = activeView === "notifications";
+  const isMyProfileActive =
+    activeView === "my-profile" || activeView === "profile-edit";
+  const isAdminActive = activeView === "admin-approval";
+
+  // Steward/admin controls are owner-only. Gate on BOTH authentication and the
+  // admin role so they never leak to a signed-out caller (the admin query can
+  // be cached and survive a sign-out in some environments).
+  const showAdminControls = isAuthenticated && isAdmin;
+
   return (
     <div className="relative flex min-h-screen flex-col bg-background">
       <div
@@ -88,11 +131,12 @@ export function Layout({
             <button
               type="button"
               data-ocid="layout.explore_link"
+              aria-current={isExploreActive ? "page" : undefined}
               onClick={onExploreClick}
-              className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3.5 py-1.5 text-xs font-semibold text-foreground transition-colors hover:border-accent/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className={navClass(isExploreActive)}
             >
               <TreePine
-                className="h-4 w-4 text-accent-foreground"
+                className={navIconClass(isExploreActive)}
                 strokeWidth={1.75}
                 aria-hidden="true"
               />
@@ -101,11 +145,12 @@ export function Layout({
             <button
               type="button"
               data-ocid="layout.branch_link"
+              aria-current={isBranchActive ? "page" : undefined}
               onClick={onBranchClick}
-              className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3.5 py-1.5 text-xs font-semibold text-foreground transition-colors hover:border-accent/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className={navClass(isBranchActive)}
             >
               <GitBranch
-                className="h-4 w-4 text-accent-foreground"
+                className={navIconClass(isBranchActive)}
                 strokeWidth={1.75}
                 aria-hidden="true"
               />
@@ -114,11 +159,12 @@ export function Layout({
             <button
               type="button"
               data-ocid="layout.archive_link"
+              aria-current={isArchiveActive ? "page" : undefined}
               onClick={onArchiveClick}
-              className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3.5 py-1.5 text-xs font-semibold text-foreground transition-colors hover:border-accent/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className={navClass(isArchiveActive)}
             >
               <Archive
-                className="h-4 w-4 text-accent-foreground"
+                className={navIconClass(isArchiveActive)}
                 strokeWidth={1.75}
                 aria-hidden="true"
               />
@@ -127,40 +173,43 @@ export function Layout({
             <button
               type="button"
               data-ocid="layout.add_myself_link"
+              aria-current={isAddMyselfActive ? "page" : undefined}
               onClick={onAddMyselfClick}
-              className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3.5 py-1.5 text-xs font-semibold text-foreground transition-colors hover:border-accent/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className={navClass(isAddMyselfActive)}
             >
               <UserPlus
-                className="h-4 w-4 text-accent-foreground"
+                className={navIconClass(isAddMyselfActive)}
                 strokeWidth={1.75}
                 aria-hidden="true"
               />
               Add Myself
             </button>
-            {isAdmin ? (
+            {showAdminControls ? (
               <button
                 type="button"
                 data-ocid="layout.admin_link"
+                aria-current={isAdminActive ? "page" : undefined}
                 onClick={onAdminClick}
-                className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3.5 py-1.5 text-xs font-semibold text-foreground transition-colors hover:border-accent/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                className={navClass(isAdminActive)}
               >
                 <ShieldCheck
-                  className="h-4 w-4 text-accent-foreground"
+                  className={navIconClass(isAdminActive)}
                   strokeWidth={1.75}
                   aria-hidden="true"
                 />
                 Pending Contributions
               </button>
             ) : null}
-            {isAdmin ? (
+            {showAdminControls ? (
               <button
                 type="button"
                 data-ocid="layout.steward_link"
+                aria-current={isStewardActive ? "page" : undefined}
                 onClick={onStewardClick}
-                className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3.5 py-1.5 text-xs font-semibold text-foreground transition-colors hover:border-accent/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                className={navClass(isStewardActive)}
               >
                 <UserCog
-                  className="h-4 w-4 text-accent-foreground"
+                  className={navIconClass(isStewardActive)}
                   strokeWidth={1.75}
                   aria-hidden="true"
                 />
@@ -170,11 +219,12 @@ export function Layout({
             <button
               type="button"
               data-ocid="layout.notifications_link"
+              aria-current={isNotificationsActive ? "page" : undefined}
               onClick={onNotificationsClick}
-              className="relative inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3.5 py-1.5 text-xs font-semibold text-foreground transition-colors hover:border-accent/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className={navClass(isNotificationsActive)}
             >
               <Bell
-                className="h-4 w-4 text-accent-foreground"
+                className={navIconClass(isNotificationsActive)}
                 strokeWidth={1.75}
                 aria-hidden="true"
               />
@@ -218,11 +268,12 @@ export function Layout({
                 <button
                   type="button"
                   data-ocid="layout.my_profile_link"
+                  aria-current={isMyProfileActive ? "page" : undefined}
                   onClick={onMyProfileClick}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3.5 py-1.5 text-xs font-semibold text-foreground transition-colors hover:border-accent/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                  className={navClass(isMyProfileActive)}
                 >
                   <UserCircle
-                    className="h-4 w-4 text-accent-foreground"
+                    className={navIconClass(isMyProfileActive)}
                     strokeWidth={1.75}
                     aria-hidden="true"
                   />
@@ -232,7 +283,7 @@ export function Layout({
                   type="button"
                   data-ocid="layout.sign_out_button"
                   onClick={onSignOutClick}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3.5 py-1.5 text-xs font-semibold text-foreground transition-colors hover:border-accent/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                  className={navClass(false)}
                 >
                   <LogOut
                     className="h-4 w-4 text-accent-foreground"
@@ -247,7 +298,7 @@ export function Layout({
                 type="button"
                 data-ocid="layout.sign_in_button"
                 onClick={onSignInClick}
-                className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3.5 py-1.5 text-xs font-semibold text-foreground transition-colors hover:border-accent/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                className={navClass(false)}
               >
                 <LogIn
                   className="h-4 w-4 text-accent-foreground"

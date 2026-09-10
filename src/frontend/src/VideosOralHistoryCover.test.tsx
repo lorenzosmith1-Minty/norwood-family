@@ -359,7 +359,22 @@ describe("Add-media flow", () => {
     await user.click(screen.getByTestId("video_contribute.form.submit_button"));
 
     expect(
-      await screen.findByRole("heading", { name: "Media submitted" }),
+      await screen.findByRole("heading", {
+        name: "Media submitted for review",
+      }),
+    ).toBeInTheDocument();
+    // The confirmation body explains the pending-review state.
+    expect(
+      screen.getByText(
+        "Your media has been saved and is awaiting Family Steward approval. It will appear on linked profiles and in the Family Archive after approval.",
+      ),
+    ).toBeInTheDocument();
+    // The confirmation offers the two accepted actions.
+    expect(
+      screen.getByRole("button", { name: "View Pending Contributions" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Back to Videos & Oral History" }),
     ).toBeInTheDocument();
 
     const pending = await mockActor.listPendingArchiveItems();
@@ -472,7 +487,7 @@ describe("Person Profile Videos & Oral History section", () => {
     );
     await user.click(screen.getByRole("button", { name: "View Profile" }));
     // Julia's profile name is "Julia “Julie” Norwood".
-    await screen.findByRole("heading", { name: /Julia.*Norwood/i });
+    await screen.findByRole("heading", { level: 1, name: /Julia.*Norwood/i });
 
     const section = screen.getByLabelText("Videos & Oral History");
     expect(within(section).getByText("Grandma's story")).toBeInTheDocument();

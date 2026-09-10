@@ -7,6 +7,7 @@ import {
   LibraryBig,
   Search,
   TreePine,
+  UtensilsCrossed,
 } from "lucide-react";
 import { motion } from "motion/react";
 
@@ -39,6 +40,10 @@ const navItems = [
     label: "Family Videos & Oral History",
     icon: Clapperboard,
   },
+  {
+    label: "Family Recipes",
+    icon: UtensilsCrossed,
+  },
 ];
 
 interface HomePageProps {
@@ -49,6 +54,7 @@ interface HomePageProps {
   onOpenMysteries: () => void;
   onOpenTimeline: () => void;
   onOpenVideos: () => void;
+  onOpenRecipes: () => void;
 }
 
 export function HomePage({
@@ -59,6 +65,7 @@ export function HomePage({
   onOpenMysteries,
   onOpenTimeline,
   onOpenVideos,
+  onOpenRecipes,
 }: HomePageProps) {
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col items-center px-6 py-12 sm:py-16">
@@ -120,7 +127,9 @@ export function HomePage({
                               ? onAddToHistory
                               : index === 6
                                 ? onOpenVideos
-                                : undefined
+                                : index === 7
+                                  ? onOpenRecipes
+                                  : undefined
                 }
                 className="group flex w-full items-center gap-4 rounded-2xl border border-border bg-card px-5 py-4 text-left shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:translate-y-0"
               >

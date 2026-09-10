@@ -314,6 +314,37 @@ export interface ProfileRemovalRequest {
 export type ProfileRemovalStatus = { 'Approved' : null } |
   { 'Rejected' : null } |
   { 'Pending' : null };
+export interface Recipe {
+  'era' : [] | [string],
+  'status' : RecipeStatus,
+  'title' : string,
+  'recipeId' : RecipeId,
+  'aiDerivedText' : [] | [string],
+  'createdAt' : bigint,
+  'tags' : Array<string>,
+  'year' : [] | [bigint],
+  'contributorAccountId' : Principal,
+  'privacyLevel' : PrivacyLevel,
+  'linkedMediaIds' : Array<bigint>,
+  'instructions' : string,
+  'ocrText' : [] | [string],
+  'familyBranch' : [] | [string],
+  'familyStory' : [] | [string],
+  'updatedAt' : bigint,
+  'evidenceStatus' : EvidenceStatus,
+  'shortDescription' : string,
+  'extractedIngredients' : [] | [Array<string>],
+  'transcript' : [] | [string],
+  'location' : [] | [string],
+  'originatingPersonId' : string,
+  'ingredients' : Array<string>,
+  'relatedPersonIds' : Array<string>,
+}
+export type RecipeId = bigint;
+export type RecipeStatus = { 'Approved' : null } |
+  { 'Rejected' : null } |
+  { 'Archived' : null } |
+  { 'Pending' : null };
 export interface Relationship {
   'id' : bigint,
   'status' : RelationshipStatus,
@@ -543,6 +574,7 @@ export interface _SERVICE {
   'approveArchiveItem' : ActorMethod<[ArchiveItemId], [] | [ArchiveItem]>,
   'approveProfileClaim' : ActorMethod<[bigint], [] | [ProfileClaim]>,
   'approveProfileRemoval' : ActorMethod<[bigint], [] | [ProfileRemovalRequest]>,
+  'approveRecipe' : ActorMethod<[RecipeId], [] | [Recipe]>,
   'approveRelationshipRequest' : ActorMethod<
     [bigint],
     [] | [RelationshipRequest]
@@ -578,16 +610,15 @@ export interface _SERVICE {
   'getMyAuthMethods' : ActorMethod<[], Result_12>,
   'getMyProfile' : ActorMethod<[], [] | [PersonProfile]>,
   'getMyProfileClaim' : ActorMethod<[PersonId], [] | [ProfileClaim]>,
-  /**
-   * / Renders an audit action type variant as its tag text for OQL rows.
-   */
   'getMyRelationshipRequests' : ActorMethod<[], Array<RelationshipRequest>>,
   'getPersonProfile' : ActorMethod<[PersonId], [] | [PersonProfile]>,
   'getProfilePhoto' : ActorMethod<[PersonId], [] | [Photo]>,
+  'getRecipe' : ActorMethod<[RecipeId], [] | [Recipe]>,
   'getRelationshipRequest' : ActorMethod<[bigint], [] | [RelationshipRequest]>,
   'getSingleStewardWarning' : ActorMethod<[], [] | [string]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
   'listApprovedArchiveItems' : ActorMethod<[], Array<ArchiveItem>>,
+  'listApprovedRecipes' : ActorMethod<[], Array<Recipe>>,
   'listApprovedStories' : ActorMethod<[], Array<Story>>,
   'listArchivedProfileIds' : ActorMethod<[], Array<PersonId>>,
   'listArchivedProfiles' : ActorMethod<[], Array<PersonProfile>>,
@@ -602,11 +633,13 @@ export interface _SERVICE {
     [],
     Array<MysteryContribution>
   >,
+  'listPendingRecipes' : ActorMethod<[], Array<Recipe>>,
   'listPendingStories' : ActorMethod<[], Array<Story>>,
   'listPersonRelationships' : ActorMethod<[PersonId], Array<Relationship>>,
   'listPhotos' : ActorMethod<[PersonId], Array<Photo>>,
   'listProfileClaims' : ActorMethod<[], Array<ProfileClaim>>,
   'listProfileRemovalRequests' : ActorMethod<[], Array<ProfileRemovalRequest>>,
+  'listRecipesForPerson' : ActorMethod<[string], Array<Recipe>>,
   'listRelationshipRequests' : ActorMethod<[], Array<RelationshipRequest>>,
   'listStewardIdentities' : ActorMethod<[], Array<StewardIdentity>>,
   'listStewards' : ActorMethod<[], Array<StewardRecord>>,
@@ -625,9 +658,30 @@ export interface _SERVICE {
     [PersonId, PersonId, RelationshipType],
     Result_7
   >,
+  'publishRecipe' : ActorMethod<
+    [
+      string,
+      string,
+      string,
+      Array<string>,
+      [] | [string],
+      [] | [bigint],
+      [] | [string],
+      [] | [string],
+      Array<string>,
+      string,
+      [] | [string],
+      Array<string>,
+      PrivacyLevel,
+      EvidenceStatus,
+      Array<bigint>,
+    ],
+    Recipe
+  >,
   'rejectArchiveItem' : ActorMethod<[ArchiveItemId], [] | [ArchiveItem]>,
   'rejectProfileClaim' : ActorMethod<[bigint], [] | [ProfileClaim]>,
   'rejectProfileRemoval' : ActorMethod<[bigint], [] | [ProfileRemovalRequest]>,
+  'rejectRecipe' : ActorMethod<[RecipeId], [] | [Recipe]>,
   'rejectRelationshipRequest' : ActorMethod<
     [bigint],
     [] | [RelationshipRequest]
@@ -673,6 +727,26 @@ export interface _SERVICE {
   'submitMysteryContribution' : ActorMethod<
     [MysteryId, MysteryContributionType, string],
     MysteryContribution
+  >,
+  'submitRecipe' : ActorMethod<
+    [
+      string,
+      string,
+      string,
+      Array<string>,
+      [] | [string],
+      [] | [bigint],
+      [] | [string],
+      [] | [string],
+      Array<string>,
+      string,
+      [] | [string],
+      Array<string>,
+      PrivacyLevel,
+      EvidenceStatus,
+      Array<bigint>,
+    ],
+    Recipe
   >,
   'submitStory' : ActorMethod<
     [

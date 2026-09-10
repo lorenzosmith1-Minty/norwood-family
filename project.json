@@ -1,18 +1,18 @@
 {
-  "overview": "A family history archive with person profiles, media, and governance, where family members can contribute videos and oral histories.",
+  "overview": "A family recipe archive for the Norwood family that preserves recipes, their origins, family stories, and original handwritten notes and media as preserved family tradition.",
   "features": [
-    "Browse family tree and person profiles",
-    "Add videos, oral histories, and audio to person profiles",
-    "Contribute media through a pending approval workflow",
-    "Family Stewards publish media directly",
-    "View media across profiles and the Family Archive"
+    "Browse and filter family recipes by origin, related members, era, branch, and tag",
+    "Submit recipes for Family Steward approval with the Norwood checkmark selection pattern",
+    "Link recipes to canonical Person profiles and Archive media without duplication",
+    "View recipe detail pages with ingredients, instructions, family story, and media gallery",
+    "Refined Videos & Oral History submission confirmation"
   ],
   "category": "family-archive",
   "tags": [
     "family",
+    "recipes",
     "archive",
-    "media",
     "genealogy"
   ],
-  "last_updated": "2026-09-09T18:58:34.177Z"
+  "last_updated": "2026-09-10T01:06:26.911Z"
 }

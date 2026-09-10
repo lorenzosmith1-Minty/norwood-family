@@ -288,7 +288,7 @@ function seedJuliaProfile() {
 async function openJuliaProfile(user: ReturnType<typeof userEvent.setup>) {
   await user.click(screen.getByRole("button", { name: "Explore the Family" }));
   await user.click(screen.getByRole("button", { name: "View Profile" }));
-  await screen.findByRole("heading", { name: /Julia.*Norwood/i });
+  await screen.findByRole("heading", { level: 1, name: /Julia.*Norwood/i });
 }
 
 describe("Person Profile archived-state seam", () => {

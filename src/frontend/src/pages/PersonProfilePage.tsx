@@ -11,6 +11,7 @@ import {
   CalendarDays,
   Camera,
   Check,
+  ChefHat,
   Clapperboard,
   FileText,
   Film,
@@ -53,7 +54,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../components/ui/dialog";
-import { useApprovedMediaItems, useIsAdmin } from "../hooks/useArchiveStorage";
+import {
+  useApprovedArchiveItems,
+  useApprovedMediaItems,
+  useIsAdmin,
+} from "../hooks/useArchiveStorage";
 import { useCanonicalPerson } from "../hooks/useCanonicalPerson";
 import {
   useArchiveProfile,
@@ -71,6 +76,7 @@ import {
   useSetProfilePhoto,
 } from "../hooks/usePhotoStorage";
 import { useMyProfileClaim, usePersonProfile } from "../hooks/useProfileClaims";
+import { useRecipesForPerson } from "../hooks/useRecipes";
 import { useMyRelationshipRequests } from "../hooks/useRelationshipRequests";
 import type { ArchiveItem } from "../types/archive";
 import { getMediaKind } from "../types/archive";
@@ -81,6 +87,8 @@ import {
   resolveDisplayName,
 } from "../types/family";
 import { ClaimStatus, LivingStatus } from "../types/ownership";
+import { getRecipePrimaryImage, getRecipeYear } from "../types/recipes";
+import type { Recipe } from "../types/recipes";
 
 export interface ProfileFact {
   label: string;
@@ -2661,6 +2669,18 @@ interface PersonProfilePageProps {
    * action selects which media kind the flow starts with.
    */
   onAddMedia?: (action: "video" | "oral-history" | "audio") => void;
+  /** Opens the Family Recipes browsing view. */
+  onOpenRecipes?: () => void;
+  /** Opens a recipe's canonical detail view from the Family Recipes section. */
+  onOpenRecipe?: (id: bigint) => void;
+  /**
+   * Opens the add-recipe flow with this person preselected (as the originating
+   * or related member) and returning to the profile on back.
+   */
+  onOpenRecipeContribute?: (preselect: {
+    personId: string | null;
+    context: "recipes" | "profile";
+  }) => void;
 }
 
 function getInitials(name: string): string {
@@ -3334,6 +3354,212 @@ function VideosSection({
   );
 }
 
+/**
+ * A single recipe card in the profile's Family Recipes section. Resolves the
+ * dish from the canonical Recipe record (never a per-profile copy), showing
+ * the primary image (or a keepsake icon), the title, the era/year when
+ * available, and a short description. Clicking routes to the same canonical
+ * recipe-detail view as every other surface.
+ */
+function ProfileRecipeCard({
+  recipe,
+  media,
+  position,
+  onOpen,
+}: {
+  recipe: Recipe;
+  media: ArchiveItem[];
+  position: number;
+  onOpen: () => void;
+}) {
+  const primaryImage = getRecipePrimaryImage(recipe, media);
+  const year = getRecipeYear(recipe);
+  const eraLabel = recipe.era || (year !== null ? String(year) : null);
+
+  return (
+    <button
+      type="button"
+      data-ocid={`profile.recipes.item.${position}`}
+      onClick={onOpen}
+      className="recipe-card group"
+    >
+      <div className="recipe-card-thumb">
+        {primaryImage ? (
+          <img src={primaryImage} alt={recipe.title} loading="lazy" />
+        ) : (
+          <div className="recipe-card-thumb-icon">
+            <ChefHat
+              className="h-10 w-10"
+              strokeWidth={1.5}
+              aria-hidden="true"
+            />
+          </div>
+        )}
+      </div>
+
+      <div className="recipe-card-body">
+        <h3 className="recipe-card-title line-clamp-2">{recipe.title}</h3>
+        <div className="recipe-card-meta">
+          {eraLabel ? (
+            <span className="recipe-card-era">{eraLabel}</span>
+          ) : null}
+        </div>
+        {recipe.shortDescription ? (
+          <p className="recipe-card-desc line-clamp-2">
+            {recipe.shortDescription}
+          </p>
+        ) : null}
+      </div>
+    </button>
+  );
+}
+
+/**
+ * Family Recipes section on a Person Profile. Lists approved recipes linked to
+ * this person — where the person is the originating member OR a related member
+ * — resolved from the canonical Recipe record with no profile-specific copies.
+ * The heading reads "Recipes from {name}" when the person is the originating
+ * member of any linked recipe, otherwise "Recipes connected to {name}". Each
+ * card opens the canonical recipe detail, and an Add Recipe affordance launches
+ * the contribute flow with this person preselected.
+ */
+function RecipesSection({
+  person,
+  isAuthenticated,
+  onOpenRecipes,
+  onOpenRecipe,
+  onOpenRecipeContribute,
+}: {
+  person: PersonProfile;
+  isAuthenticated: boolean;
+  onOpenRecipes?: () => void;
+  onOpenRecipe?: (id: bigint) => void;
+  onOpenRecipeContribute?: (preselect: {
+    personId: string | null;
+    context: "recipes" | "profile";
+  }) => void;
+}) {
+  const { data: recipes = [], isLoading } = useRecipesForPerson(person.id);
+  const { data: media = [] } = useApprovedArchiveItems();
+  const canonical = useCanonicalPerson(person.id, person.name);
+  const displayName = canonical.displayName || person.name;
+
+  // The heading reflects the person's role in the linked recipes: "Recipes
+  // from {name}" when they are the originating member of any linked recipe,
+  // otherwise "Recipes connected to {name}" (a related member).
+  const isOrigin = recipes.some(
+    (recipe) => recipe.originatingPersonId === person.id,
+  );
+  const heading = isOrigin
+    ? `Recipes from ${displayName}`
+    : `Recipes connected to ${displayName}`;
+
+  return (
+    <motion.section
+      aria-label="Family Recipes"
+      className="mt-10"
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: 0.35, ease: [0.4, 0, 0.2, 1] }}
+    >
+      <SectionHeader icon={BookOpen} label={heading} />
+      {isLoading ? (
+        <div
+          data-ocid="profile.recipes.loading_state"
+          className="mt-3 grid grid-cols-1 gap-5 sm:grid-cols-2"
+          aria-label="Loading recipes"
+        >
+          {Array.from({ length: 2 }, (_, i) => `skeleton-${i}`).map((id) => (
+            <div
+              key={id}
+              className="animate-pulse overflow-hidden rounded-xl border border-border/60 bg-card"
+            >
+              <div className="aspect-[4/3] w-full bg-muted" />
+              <div className="space-y-2 p-4">
+                <div className="h-5 w-2/3 rounded bg-muted" />
+                <div className="h-4 w-1/3 rounded bg-muted" />
+                <div className="h-4 w-1/2 rounded bg-muted" />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : recipes.length === 0 ? (
+        <div
+          data-ocid="profile.recipes.empty_state"
+          className="mt-3 rounded-2xl border border-dashed border-border bg-card/50 px-4 py-6 text-center shadow-subtle"
+        >
+          <div className="recipe-empty-mark">
+            <ChefHat className="h-7 w-7" strokeWidth={1.5} aria-hidden="true" />
+          </div>
+          <p className="recipe-empty-title">No family recipes yet</p>
+          <p className="recipe-empty-hint">
+            When a dish or handwritten recipe is linked to {displayName}, it
+            will appear here.
+          </p>
+        </div>
+      ) : (
+        <ul
+          data-ocid="profile.recipes.list"
+          className="mt-3 grid grid-cols-1 gap-5 sm:grid-cols-2"
+        >
+          {recipes.map((recipe, index) => (
+            <li key={recipe.recipeId.toString()}>
+              <ProfileRecipeCard
+                recipe={recipe}
+                media={media}
+                position={index + 1}
+                onOpen={() => onOpenRecipe?.(recipe.recipeId)}
+              />
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {/* Add-recipe affordance — hidden for guests (no add actions). */}
+      {isAuthenticated && onOpenRecipeContribute ? (
+        <div
+          className="mt-4 flex flex-wrap items-center gap-3"
+          data-ocid="profile.recipes.actions"
+        >
+          <button
+            type="button"
+            data-ocid="profile.recipes.add_recipe_button"
+            onClick={() =>
+              onOpenRecipeContribute({
+                personId: person.id,
+                context: "profile",
+              })
+            }
+            className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            style={{
+              color: "oklch(var(--recipe-accent-foreground))",
+              backgroundColor: "oklch(var(--recipe-accent))",
+            }}
+          >
+            <Plus className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
+            Add Recipe
+          </button>
+          {onOpenRecipes ? (
+            <button
+              type="button"
+              data-ocid="profile.recipes.browse_button"
+              onClick={onOpenRecipes}
+              className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-4 py-2 text-sm font-semibold text-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            >
+              <BookOpen
+                className="h-4 w-4"
+                strokeWidth={1.75}
+                aria-hidden="true"
+              />
+              Browse all recipes
+            </button>
+          ) : null}
+        </div>
+      ) : null}
+    </motion.section>
+  );
+}
+
 export function PersonProfilePage({
   onBack,
   person,
@@ -3343,6 +3569,9 @@ export function PersonProfilePage({
   onClaimApproved,
   onOpenMediaItem,
   onAddMedia,
+  onOpenRecipes,
+  onOpenRecipe,
+  onOpenRecipeContribute,
 }: PersonProfilePageProps) {
   const storyLabel =
     person.id === "julia" ||
@@ -4073,6 +4302,15 @@ export function PersonProfilePage({
         onOpenMediaItem={onOpenMediaItem}
         onAddMedia={onAddMedia}
         isAuthenticated={isAuthenticated}
+      />
+
+      {/* Family Recipes */}
+      <RecipesSection
+        person={person}
+        isAuthenticated={isAuthenticated}
+        onOpenRecipes={onOpenRecipes}
+        onOpenRecipe={onOpenRecipe}
+        onOpenRecipeContribute={onOpenRecipeContribute}
       />
 
       {/* Request profile removal dialog (owner of a claimed living profile) */}

@@ -122,7 +122,13 @@ export function Layout({
     // top-level pill), so the Family Archive pill stays highlighted there.
     activeView === "videos" ||
     activeView === "video-detail" ||
-    activeView === "video-contribute";
+    activeView === "video-contribute" ||
+    // Family Recipes is reached from Home / Family Archive / Person Profiles
+    // (no separate top-level pill), so the Family Archive pill stays
+    // highlighted there too.
+    activeView === "recipes" ||
+    activeView === "recipe-detail" ||
+    activeView === "recipe-contribute";
   const isStoriesActive = activeView === "stories";
   const isMysteriesActive = activeView === "mysteries";
   const isTimelineActive = activeView === "timeline";

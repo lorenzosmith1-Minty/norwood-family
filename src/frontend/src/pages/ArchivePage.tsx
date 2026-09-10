@@ -1,4 +1,10 @@
-import { Archive, Clapperboard, Inbox, Mic } from "lucide-react";
+import {
+  Archive,
+  Clapperboard,
+  Inbox,
+  Mic,
+  UtensilsCrossed,
+} from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { ArchiveCard } from "../components/ArchiveCard";
 import { ArchiveFilterBar } from "../components/ArchiveFilterBar";
@@ -11,6 +17,8 @@ interface ArchivePageProps {
   onOpenArchiveItem: (id: bigint) => void;
   /** Navigates to the dedicated Family Videos & Oral History page. */
   onOpenVideos: () => void;
+  /** Navigates to the dedicated Family Recipes page. */
+  onOpenRecipes: () => void;
 }
 
 interface Filters {
@@ -42,6 +50,7 @@ export function ArchivePage({
   onBack,
   onOpenArchiveItem,
   onOpenVideos,
+  onOpenRecipes,
 }: ArchivePageProps) {
   const { data: items = [], isLoading } = useApprovedArchiveItems();
   const [filters, setFilters] = useState<Filters>(readFilters);
@@ -158,6 +167,50 @@ export function ArchivePage({
           style={{
             backgroundColor: "oklch(var(--oral-history))",
             color: "oklch(var(--oral-history-foreground))",
+          }}
+        >
+          Browse
+          <span aria-hidden="true">→</span>
+        </span>
+      </button>
+
+      {/* Prominent entry point to the dedicated Family Recipes library. Family
+          Archive remains the canonical media repository — handwritten recipe
+          images, photos, and documents stay archived here and are never
+          duplicated. This card is the category entry into the preserved
+          family recipes. */}
+      <button
+        type="button"
+        data-ocid="archive.recipes_entry_button"
+        onClick={onOpenRecipes}
+        className="group mb-6 flex w-full items-center gap-4 rounded-2xl border border-border bg-card p-5 text-left shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:translate-y-0"
+      >
+        <span
+          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl"
+          style={{
+            backgroundColor: "oklch(var(--recipe-accent) / 0.14)",
+            color: "oklch(var(--recipe-accent))",
+          }}
+          aria-hidden="true"
+        >
+          <UtensilsCrossed className="h-6 w-6" strokeWidth={1.75} />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block font-display text-lg font-semibold text-foreground">
+            Family Recipes
+          </span>
+          <span className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
+            <span className="inline-flex items-center gap-1">
+              <UtensilsCrossed className="h-3.5 w-3.5" aria-hidden="true" />
+              Handed-down dishes and family favorites
+            </span>
+          </span>
+        </span>
+        <span
+          className="inline-flex shrink-0 items-center gap-1 rounded-full px-3.5 py-1.5 text-xs font-semibold"
+          style={{
+            backgroundColor: "oklch(var(--recipe-accent))",
+            color: "oklch(var(--recipe-accent-foreground))",
           }}
         >
           Browse

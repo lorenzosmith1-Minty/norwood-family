@@ -1,9 +1,15 @@
-import { Check, Inbox, ShieldCheck, X } from "lucide-react";
+import { BookOpen, Check, Inbox, ShieldCheck, X } from "lucide-react";
 import {
   useApproveArchiveItem,
   usePendingArchiveItems,
   useRejectArchiveItem,
 } from "../hooks/useArchiveStorage";
+import { useCanonicalPerson } from "../hooks/useCanonicalPerson";
+import {
+  useApproveRecipe,
+  usePendingRecipes,
+  useRejectRecipe,
+} from "../hooks/useRecipes";
 import type { ArchiveItem } from "../types/archive";
 import {
   ARCHIVE_ITEM_STATUS_LABELS,
@@ -13,6 +19,9 @@ import {
   PRIVACY_LEVEL_LABELS,
   SOURCE_STATUS_LABELS,
 } from "../types/archive";
+import { RECIPE_STATUS_LABELS, RECIPE_STATUS_PILL } from "../types/recipes";
+import type { Recipe } from "../types/recipes";
+import { profiles } from "./PersonProfilePage";
 
 interface AdminApprovalPageProps {
   onBack: () => void;
@@ -39,6 +48,9 @@ export function AdminApprovalPage({ onBack }: AdminApprovalPageProps) {
   const { data: items = [], isLoading } = usePendingArchiveItems();
   const approve = useApproveArchiveItem();
   const reject = useRejectArchiveItem();
+  const { data: recipes = [], isLoading: recipesLoading } = usePendingRecipes();
+  const approveRecipe = useApproveRecipe();
+  const rejectRecipe = useRejectRecipe();
 
   return (
     <div className="mx-auto w-full max-w-3xl px-6 py-8">
@@ -120,6 +132,87 @@ export function AdminApprovalPage({ onBack }: AdminApprovalPageProps) {
           ))}
         </ul>
       )}
+
+      <section
+        data-ocid="admin_approval.recipes_section"
+        className="mt-12"
+        aria-labelledby="pending-recipes-heading"
+      >
+        <div className="mb-5 flex items-center gap-2.5">
+          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-accent/15 text-accent-foreground">
+            <BookOpen
+              className="h-4 w-4"
+              strokeWidth={1.75}
+              aria-hidden="true"
+            />
+          </span>
+          <div>
+            <h2
+              id="pending-recipes-heading"
+              className="font-display text-2xl font-semibold text-foreground"
+            >
+              Pending Recipes
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              Family recipe submissions awaiting your approval before they join
+              Family Recipes.
+            </p>
+          </div>
+        </div>
+
+        {recipesLoading ? (
+          <div
+            data-ocid="admin_approval.recipes_loading_state"
+            className="space-y-4"
+            aria-label="Loading pending recipes"
+          >
+            {[0, 1, 2].map((i) => (
+              <div
+                key={i}
+                className="animate-pulse rounded-2xl border border-border bg-card p-5"
+              >
+                <div className="mb-3 h-4 w-1/3 rounded bg-muted" />
+                <div className="mb-2 h-5 w-2/3 rounded bg-muted" />
+                <div className="h-4 w-full rounded bg-muted" />
+              </div>
+            ))}
+          </div>
+        ) : recipes.length === 0 ? (
+          <div
+            data-ocid="admin_approval.recipes_empty_state"
+            className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/50 px-6 py-14 text-center"
+          >
+            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-muted">
+              <BookOpen
+                className="h-7 w-7 text-muted-foreground"
+                strokeWidth={1.5}
+                aria-hidden="true"
+              />
+            </div>
+            <h3 className="font-display text-xl font-semibold text-foreground">
+              No recipes awaiting review
+            </h3>
+            <p className="mt-2 max-w-sm text-sm text-muted-foreground">
+              Recipe submissions from family members will appear here for your
+              approval before they are added to Family Recipes.
+            </p>
+          </div>
+        ) : (
+          <ul data-ocid="admin_approval.recipes_list" className="space-y-4">
+            {recipes.map((recipe, index) => (
+              <PendingRecipeItem
+                key={recipe.recipeId.toString()}
+                recipe={recipe}
+                index={index}
+                approving={approveRecipe.isPending}
+                rejecting={rejectRecipe.isPending}
+                onApprove={() => approveRecipe.mutate(recipe.recipeId)}
+                onReject={() => rejectRecipe.mutate(recipe.recipeId)}
+              />
+            ))}
+          </ul>
+        )}
+      </section>
     </div>
   );
 }
@@ -262,6 +355,115 @@ function PendingItem({
         <button
           type="button"
           data-ocid={`admin_approval.reject_button.${position}`}
+          onClick={onReject}
+          disabled={approving || rejecting}
+          className="reject-action disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          <X className="h-4 w-4" strokeWidth={2.25} aria-hidden="true" />
+          {rejecting ? "Rejecting…" : "Reject"}
+        </button>
+      </div>
+    </li>
+  );
+}
+
+/**
+ * Resolves the canonical display name for a recipe's originating family
+ * member. Uses the backend Person Profile record (preferredName-first) so the
+ * card always shows the family-facing name, never an internal id or slug.
+ */
+function RecipeOrigin({ personId }: { personId: string }) {
+  const fallback = profiles[personId]?.name ?? "";
+  const canonical = useCanonicalPerson(personId, fallback);
+  const name = canonical.displayName || fallback;
+  if (!name) return null;
+  return <span className="recipe-card-origin">{name}</span>;
+}
+
+interface PendingRecipeItemProps {
+  recipe: Recipe;
+  index: number;
+  approving: boolean;
+  rejecting: boolean;
+  onApprove: () => void;
+  onReject: () => void;
+}
+
+function PendingRecipeItem({
+  recipe,
+  index,
+  approving,
+  rejecting,
+  onApprove,
+  onReject,
+}: PendingRecipeItemProps) {
+  const position = index + 1;
+  const statusPill = RECIPE_STATUS_PILL[recipe.status];
+
+  return (
+    <li
+      data-ocid={`admin_approval.recipe_item.${position}`}
+      className="rounded-2xl border border-border bg-card p-5 shadow-subtle"
+    >
+      <div className="mb-3 flex flex-wrap items-center gap-2">
+        <span
+          className="archive-type-badge badge-work"
+          data-ocid={`admin_approval.recipe_type_badge.${position}`}
+        >
+          Recipe
+        </span>
+        <span
+          className={`status-pill ${statusPill}`}
+          data-ocid={`admin_approval.recipe_status_pill.${position}`}
+        >
+          {RECIPE_STATUS_LABELS[recipe.status]}
+        </span>
+      </div>
+
+      <h3 className="font-display text-xl font-semibold text-foreground">
+        {recipe.title}
+      </h3>
+
+      <div className="mt-1.5 flex flex-wrap items-center gap-2">
+        <RecipeOrigin personId={recipe.originatingPersonId} />
+        {recipe.era ? (
+          <span className="recipe-card-era">{recipe.era}</span>
+        ) : null}
+      </div>
+
+      {recipe.shortDescription ? (
+        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+          {recipe.shortDescription}
+        </p>
+      ) : null}
+
+      {recipe.tags.length > 0 ? (
+        <div className="mt-4 flex flex-wrap gap-1.5">
+          {recipe.tags.map((tag) => (
+            <span
+              key={tag}
+              className="rounded-full border border-border/60 bg-background px-2.5 py-0.5 text-xs text-muted-foreground"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+      ) : null}
+
+      <div className="mt-5 flex flex-wrap items-center gap-3 border-t border-border/60 pt-4">
+        <button
+          type="button"
+          data-ocid={`admin_approval.recipe_approve_button.${position}`}
+          onClick={onApprove}
+          disabled={approving || rejecting}
+          className="approve-action disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          <Check className="h-4 w-4" strokeWidth={2.25} aria-hidden="true" />
+          {approving ? "Approving…" : "Approve"}
+        </button>
+        <button
+          type="button"
+          data-ocid={`admin_approval.recipe_reject_button.${position}`}
           onClick={onReject}
           disabled={approving || rejecting}
           className="reject-action disabled:cursor-not-allowed disabled:opacity-60"

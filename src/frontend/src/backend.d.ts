@@ -144,6 +144,7 @@ export interface TimelineEvent {
     evidenceStatus: EvidenceStatus;
     eventType: TimelineEventType;
 }
+export type RecipeId = bigint;
 export type AccountId = Principal;
 export interface Cell {
     value: Value;
@@ -258,6 +259,32 @@ export interface Notification {
     message: string;
 }
 export type MysteryId = bigint;
+export interface Recipe {
+    era?: string;
+    status: RecipeStatus;
+    title: string;
+    recipeId: RecipeId;
+    aiDerivedText?: string;
+    createdAt: bigint;
+    tags: Array<string>;
+    year?: bigint;
+    contributorAccountId: Principal;
+    privacyLevel: PrivacyLevel;
+    linkedMediaIds: Array<bigint>;
+    instructions: string;
+    ocrText?: string;
+    familyBranch?: string;
+    familyStory?: string;
+    updatedAt: bigint;
+    evidenceStatus: EvidenceStatus;
+    shortDescription: string;
+    extractedIngredients?: Array<string>;
+    transcript?: string;
+    location?: string;
+    originatingPersonId: string;
+    ingredients: Array<string>;
+    relatedPersonIds: Array<string>;
+}
 export interface MergeConflict {
     id: bigint;
     field: string;
@@ -619,6 +646,12 @@ export enum PrivacyLevel {
     Public = "Public",
     FamilyOnly = "FamilyOnly"
 }
+export enum RecipeStatus {
+    Approved = "Approved",
+    Rejected = "Rejected",
+    Archived = "Archived",
+    Pending = "Pending"
+}
 export enum RelationshipAdminError {
     RelationshipNotFound = "RelationshipNotFound",
     NotSignedIn = "NotSignedIn",
@@ -701,6 +734,7 @@ export interface backendInterface {
     approveArchiveItem(id: ArchiveItemId): Promise<ArchiveItem | null>;
     approveProfileClaim(claimId: bigint): Promise<ProfileClaim | null>;
     approveProfileRemoval(requestId: bigint): Promise<ProfileRemovalRequest | null>;
+    approveRecipe(id: RecipeId): Promise<Recipe | null>;
     approveRelationshipRequest(requestId: bigint): Promise<RelationshipRequest | null>;
     approveStory(id: StoryId): Promise<Story | null>;
     archiveProfile(personId: PersonId): Promise<Result_1>;
@@ -717,16 +751,15 @@ export interface backendInterface {
     getMyAuthMethods(): Promise<Result_12>;
     getMyProfile(): Promise<PersonProfile | null>;
     getMyProfileClaim(personId: PersonId): Promise<ProfileClaim | null>;
-    /**
-     * / Renders an audit action type variant as its tag text for OQL rows.
-     */
     getMyRelationshipRequests(): Promise<Array<RelationshipRequest>>;
     getPersonProfile(personId: PersonId): Promise<PersonProfile | null>;
     getProfilePhoto(personId: PersonId): Promise<Photo | null>;
+    getRecipe(id: RecipeId): Promise<Recipe | null>;
     getRelationshipRequest(id: bigint): Promise<RelationshipRequest | null>;
     getSingleStewardWarning(): Promise<string | null>;
     isCallerAdmin(): Promise<boolean>;
     listApprovedArchiveItems(): Promise<Array<ArchiveItem>>;
+    listApprovedRecipes(): Promise<Array<Recipe>>;
     listApprovedStories(): Promise<Array<Story>>;
     listArchivedProfileIds(): Promise<Array<PersonId>>;
     listArchivedProfiles(): Promise<Array<PersonProfile>>;
@@ -738,11 +771,13 @@ export interface backendInterface {
     listNotifications(): Promise<Array<Notification>>;
     listPendingArchiveItems(): Promise<Array<ArchiveItem>>;
     listPendingMysteryContributions(): Promise<Array<MysteryContribution>>;
+    listPendingRecipes(): Promise<Array<Recipe>>;
     listPendingStories(): Promise<Array<Story>>;
     listPersonRelationships(personId: PersonId): Promise<Array<Relationship>>;
     listPhotos(personId: PersonId): Promise<Array<Photo>>;
     listProfileClaims(): Promise<Array<ProfileClaim>>;
     listProfileRemovalRequests(): Promise<Array<ProfileRemovalRequest>>;
+    listRecipesForPerson(personId: string): Promise<Array<Recipe>>;
     listRelationshipRequests(): Promise<Array<RelationshipRequest>>;
     listStewardIdentities(): Promise<Array<StewardIdentity>>;
     listStewards(): Promise<Array<StewardRecord>>;
@@ -755,9 +790,11 @@ export interface backendInterface {
     permanentlyDeleteProfile(personId: PersonId, confirmation: boolean): Promise<Result_9>;
     promoteToSteward(personId: PersonId): Promise<Result_8>;
     proposeRelationship(fromPersonId: PersonId, toPersonId: PersonId, relationshipType: RelationshipType): Promise<Result_7>;
+    publishRecipe(title: string, shortDescription: string, originatingPersonId: string, relatedPersonIds: Array<string>, era: string | null, year: bigint | null, location: string | null, familyBranch: string | null, ingredients: Array<string>, instructions: string, familyStory: string | null, tags: Array<string>, privacyLevel: PrivacyLevel, evidenceStatus: EvidenceStatus, linkedMediaIds: Array<bigint>): Promise<Recipe>;
     rejectArchiveItem(id: ArchiveItemId): Promise<ArchiveItem | null>;
     rejectProfileClaim(claimId: bigint): Promise<ProfileClaim | null>;
     rejectProfileRemoval(requestId: bigint): Promise<ProfileRemovalRequest | null>;
+    rejectRecipe(id: RecipeId): Promise<Recipe | null>;
     rejectRelationshipRequest(requestId: bigint): Promise<RelationshipRequest | null>;
     rejectStory(id: StoryId): Promise<Story | null>;
     removeDuplicateProfile(personId: PersonId): Promise<Result_6>;
@@ -775,6 +812,7 @@ export interface backendInterface {
     setRelationshipRequestPending(requestId: bigint): Promise<RelationshipRequest | null>;
     submitArchiveItem(title: string, description: string, itemType: ArchiveItemType, blob: ExternalBlob, era: string, year: bigint | null, tags: Array<string>, relatedMemberIds: Array<string>, relatedBranchId: string | null, sourceStatus: SourceStatus, privacyLevel: PrivacyLevel, classification: ArchiveItemClassification, primarySpeaker: OralHistorySpeaker | null): Promise<ArchiveItem>;
     submitMysteryContribution(mysteryId: MysteryId, contributionType: MysteryContributionType, text: string): Promise<MysteryContribution>;
+    submitRecipe(title: string, shortDescription: string, originatingPersonId: string, relatedPersonIds: Array<string>, era: string | null, year: bigint | null, location: string | null, familyBranch: string | null, ingredients: Array<string>, instructions: string, familyStory: string | null, tags: Array<string>, privacyLevel: PrivacyLevel, evidenceStatus: EvidenceStatus, linkedMediaIds: Array<bigint>): Promise<Recipe>;
     submitStory(title: string, storyText: string, relatedMemberIds: Array<string>, era: string | null, year: bigint | null, location: string | null, evidenceStatus: EvidenceStatus, relatedArchiveItemIds: Array<bigint>): Promise<Story>;
     updateCanonicalMystery(id: MysteryId, title: string, description: string, relatedMemberIds: Array<string>, relatedBranchId: string | null, knownFacts: Array<string>, possibilities: Array<string>, relatedSourceIds: Array<bigint>, relatedArchiveItemIds: Array<bigint>, status: MysteryStatus): Promise<Mystery | null>;
     updateCanonicalStory(id: StoryId, title: string, storyText: string, relatedMemberIds: Array<string>, era: string | null, year: bigint | null, location: string | null, evidenceStatus: EvidenceStatus, relatedArchiveItemIds: Array<bigint>): Promise<Story | null>;

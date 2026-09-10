@@ -302,6 +302,41 @@ type Relationship =
    status: RelationshipStatus;
    toPersonId: PersonId;
  };
+type RecipeStatus = 
+ variant {
+   Approved;
+   Archived;
+   Pending;
+   Rejected;
+ };
+type RecipeId = nat;
+type Recipe = 
+ record {
+   aiDerivedText: opt text;
+   contributorAccountId: principal;
+   createdAt: int;
+   era: opt text;
+   evidenceStatus: EvidenceStatus;
+   extractedIngredients: opt vec text;
+   familyBranch: opt text;
+   familyStory: opt text;
+   ingredients: vec text;
+   instructions: text;
+   linkedMediaIds: vec nat;
+   location: opt text;
+   ocrText: opt text;
+   originatingPersonId: text;
+   privacyLevel: PrivacyLevel;
+   recipeId: RecipeId;
+   relatedPersonIds: vec text;
+   shortDescription: text;
+   status: RecipeStatus;
+   tags: vec text;
+   title: text;
+   transcript: opt text;
+   updatedAt: int;
+   year: opt nat;
+ };
 type ProfileRemovalStatus = 
  variant {
    Approved;
@@ -733,6 +768,7 @@ service : {
   approveArchiveItem: (id: ArchiveItemId) -> (opt ArchiveItem);
   approveProfileClaim: (claimId: nat) -> (opt ProfileClaim);
   approveProfileRemoval: (requestId: nat) -> (opt ProfileRemovalRequest);
+  approveRecipe: (id: RecipeId) -> (opt Recipe);
   approveRelationshipRequest: (requestId: nat) -> (opt RelationshipRequest);
   approveStory: (id: StoryId) -> (opt Story);
   archiveProfile: (personId: PersonId) -> (Result_1);
@@ -753,14 +789,15 @@ service : {
   getMyAuthMethods: () -> (Result_12) query;
   getMyProfile: () -> (opt PersonProfile) query;
   getMyProfileClaim: (personId: PersonId) -> (opt ProfileClaim) query;
-  /// Renders an audit action type variant as its tag text for OQL rows.
   getMyRelationshipRequests: () -> (vec RelationshipRequest) query;
   getPersonProfile: (personId: PersonId) -> (opt PersonProfile) query;
   getProfilePhoto: (personId: PersonId) -> (opt Photo) query;
+  getRecipe: (id: RecipeId) -> (opt Recipe) query;
   getRelationshipRequest: (id: nat) -> (opt RelationshipRequest) query;
   getSingleStewardWarning: () -> (opt text) query;
   isCallerAdmin: () -> (bool) query;
   listApprovedArchiveItems: () -> (vec ArchiveItem) query;
+  listApprovedRecipes: () -> (vec Recipe) query;
   listApprovedStories: () -> (vec Story) query;
   listArchivedProfileIds: () -> (vec PersonId) query;
   listArchivedProfiles: () -> (vec PersonProfile) query;
@@ -772,11 +809,13 @@ service : {
   listNotifications: () -> (vec Notification) query;
   listPendingArchiveItems: () -> (vec ArchiveItem) query;
   listPendingMysteryContributions: () -> (vec MysteryContribution) query;
+  listPendingRecipes: () -> (vec Recipe) query;
   listPendingStories: () -> (vec Story) query;
   listPersonRelationships: (personId: PersonId) -> (vec Relationship) query;
   listPhotos: (personId: PersonId) -> (vec Photo) query;
   listProfileClaims: () -> (vec ProfileClaim) query;
   listProfileRemovalRequests: () -> (vec ProfileRemovalRequest) query;
+  listRecipesForPerson: (personId: text) -> (vec Recipe) query;
   listRelationshipRequests: () -> (vec RelationshipRequest) query;
   listStewardIdentities: () -> (vec StewardIdentity) query;
   listStewards: () -> (vec StewardRecord) query;
@@ -793,9 +832,15 @@ service : {
   promoteToSteward: (personId: PersonId) -> (Result_8);
   proposeRelationship: (fromPersonId: PersonId, toPersonId: PersonId,
    relationshipType: RelationshipType) -> (Result_7);
+  publishRecipe: (title: text, shortDescription: text, originatingPersonId:
+   text, relatedPersonIds: vec text, era: opt text, year: opt nat, location:
+   opt text, familyBranch: opt text, ingredients: vec text, instructions:
+   text, familyStory: opt text, tags: vec text, privacyLevel: PrivacyLevel,
+   evidenceStatus: EvidenceStatus, linkedMediaIds: vec nat) -> (Recipe);
   rejectArchiveItem: (id: ArchiveItemId) -> (opt ArchiveItem);
   rejectProfileClaim: (claimId: nat) -> (opt ProfileClaim);
   rejectProfileRemoval: (requestId: nat) -> (opt ProfileRemovalRequest);
+  rejectRecipe: (id: RecipeId) -> (opt Recipe);
   rejectRelationshipRequest: (requestId: nat) -> (opt RelationshipRequest);
   rejectStory: (id: StoryId) -> (opt Story);
   removeDuplicateProfile: (personId: PersonId) -> (Result_6);
@@ -822,6 +867,11 @@ service : {
    (ArchiveItem);
   submitMysteryContribution: (mysteryId: MysteryId, contributionType:
    MysteryContributionType, "text": text) -> (MysteryContribution);
+  submitRecipe: (title: text, shortDescription: text, originatingPersonId:
+   text, relatedPersonIds: vec text, era: opt text, year: opt nat, location:
+   opt text, familyBranch: opt text, ingredients: vec text, instructions:
+   text, familyStory: opt text, tags: vec text, privacyLevel: PrivacyLevel,
+   evidenceStatus: EvidenceStatus, linkedMediaIds: vec nat) -> (Recipe);
   submitStory: (title: text, storyText: text, relatedMemberIds: vec text,
    era: opt text, year: opt nat, location: opt text, evidenceStatus:
    EvidenceStatus, relatedArchiveItemIds: vec nat) -> (Story);

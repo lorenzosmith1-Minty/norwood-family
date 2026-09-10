@@ -33294,44 +33294,44 @@ const createLucideIcon = (iconName, iconNode) => {
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$_ = [
+const __iconNode$11 = [
   ["rect", { width: "20", height: "5", x: "2", y: "3", rx: "1", key: "1wp1u1" }],
   ["path", { d: "M4 8v11a2 2 0 0 0 2 2h2", key: "tvwodi" }],
   ["path", { d: "M20 8v11a2 2 0 0 1-2 2h-2", key: "1gkqxj" }],
   ["path", { d: "m9 15 3-3 3 3", key: "1pd0qc" }],
   ["path", { d: "M12 12v9", key: "192myk" }]
 ];
-const ArchiveRestore = createLucideIcon("archive-restore", __iconNode$_);
+const ArchiveRestore = createLucideIcon("archive-restore", __iconNode$11);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$Z = [
+const __iconNode$10 = [
   ["rect", { width: "20", height: "5", x: "2", y: "3", rx: "1", key: "1wp1u1" }],
   ["path", { d: "M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8", key: "1s80jp" }],
   ["path", { d: "M10 12h4", key: "a56b0p" }]
 ];
-const Archive = createLucideIcon("archive", __iconNode$Z);
+const Archive = createLucideIcon("archive", __iconNode$10);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$Y = [
+const __iconNode$$ = [
   ["path", { d: "m12 19-7-7 7-7", key: "1l729n" }],
   ["path", { d: "M19 12H5", key: "x3x0zl" }]
 ];
-const ArrowLeft = createLucideIcon("arrow-left", __iconNode$Y);
+const ArrowLeft = createLucideIcon("arrow-left", __iconNode$$);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$X = [
+const __iconNode$_ = [
   ["path", { d: "M2 10v3", key: "1fnikh" }],
   ["path", { d: "M6 6v11", key: "11sgs0" }],
   ["path", { d: "M10 3v18", key: "yhl04a" }],
@@ -33339,14 +33339,14 @@ const __iconNode$X = [
   ["path", { d: "M18 5v13", key: "123xd1" }],
   ["path", { d: "M22 10v3", key: "154ddg" }]
 ];
-const AudioLines = createLucideIcon("audio-lines", __iconNode$X);
+const AudioLines = createLucideIcon("audio-lines", __iconNode$_);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$W = [
+const __iconNode$Z = [
   ["path", { d: "M10.268 21a2 2 0 0 0 3.464 0", key: "vwvbt9" }],
   [
     "path",
@@ -33356,14 +33356,14 @@ const __iconNode$W = [
     }
   ]
 ];
-const Bell = createLucideIcon("bell", __iconNode$W);
+const Bell = createLucideIcon("bell", __iconNode$Z);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$V = [
+const __iconNode$Y = [
   ["path", { d: "M12 7v14", key: "1akyts" }],
   [
     "path",
@@ -33373,25 +33373,25 @@ const __iconNode$V = [
     }
   ]
 ];
-const BookOpen = createLucideIcon("book-open", __iconNode$V);
+const BookOpen = createLucideIcon("book-open", __iconNode$Y);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$U = [
+const __iconNode$X = [
   ["path", { d: "M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16", key: "jecpp" }],
   ["rect", { width: "20", height: "14", x: "2", y: "6", rx: "2", key: "i6l2r4" }]
 ];
-const Briefcase = createLucideIcon("briefcase", __iconNode$U);
+const Briefcase = createLucideIcon("briefcase", __iconNode$X);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$T = [
+const __iconNode$W = [
   ["path", { d: "M8 2v4", key: "1cmpym" }],
   ["path", { d: "M16 2v4", key: "4m81vk" }],
   ["rect", { width: "18", height: "18", x: "3", y: "4", rx: "2", key: "1hopcy" }],
@@ -33403,14 +33403,14 @@ const __iconNode$T = [
   ["path", { d: "M12 18h.01", key: "mhygvu" }],
   ["path", { d: "M16 18h.01", key: "kzsmim" }]
 ];
-const CalendarDays = createLucideIcon("calendar-days", __iconNode$T);
+const CalendarDays = createLucideIcon("calendar-days", __iconNode$W);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$S = [
+const __iconNode$V = [
   [
     "path",
     {
@@ -33420,34 +33420,71 @@ const __iconNode$S = [
   ],
   ["circle", { cx: "12", cy: "13", r: "3", key: "1vg3eu" }]
 ];
-const Camera = createLucideIcon("camera", __iconNode$S);
+const Camera = createLucideIcon("camera", __iconNode$V);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$R = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
-const Check = createLucideIcon("check", __iconNode$R);
+const __iconNode$U = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
+const Check = createLucideIcon("check", __iconNode$U);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$Q = [["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]];
-const ChevronRight = createLucideIcon("chevron-right", __iconNode$Q);
+const __iconNode$T = [
+  [
+    "path",
+    {
+      d: "M17 21a1 1 0 0 0 1-1v-5.35c0-.457.316-.844.727-1.041a4 4 0 0 0-2.134-7.589 5 5 0 0 0-9.186 0 4 4 0 0 0-2.134 7.588c.411.198.727.585.727 1.041V20a1 1 0 0 0 1 1Z",
+      key: "1qvrer"
+    }
+  ],
+  ["path", { d: "M6 17h12", key: "1jwigz" }]
+];
+const ChefHat = createLucideIcon("chef-hat", __iconNode$T);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$P = [
+const __iconNode$S = [["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]];
+const ChevronRight = createLucideIcon("chevron-right", __iconNode$S);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$R = [
   ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
   ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
 ];
-const CircleCheck = createLucideIcon("circle-check", __iconNode$P);
+const CircleCheck = createLucideIcon("circle-check", __iconNode$R);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$Q = [
+  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
+  ["circle", { cx: "12", cy: "10", r: "3", key: "ilqhr7" }],
+  ["path", { d: "M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662", key: "154egf" }]
+];
+const CircleUser = createLucideIcon("circle-user", __iconNode$Q);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$P = [["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }]];
+const Circle = createLucideIcon("circle", __iconNode$P);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33455,19 +33492,26 @@ const CircleCheck = createLucideIcon("circle-check", __iconNode$P);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$O = [
-  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["circle", { cx: "12", cy: "10", r: "3", key: "ilqhr7" }],
-  ["path", { d: "M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662", key: "154egf" }]
+  [
+    "path",
+    { d: "M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3Z", key: "1tn4o7" }
+  ],
+  ["path", { d: "m6.2 5.3 3.1 3.9", key: "iuk76l" }],
+  ["path", { d: "m12.4 3.4 3.1 4", key: "6hsd6n" }],
+  ["path", { d: "M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z", key: "ltgou9" }]
 ];
-const CircleUser = createLucideIcon("circle-user", __iconNode$O);
+const Clapperboard = createLucideIcon("clapperboard", __iconNode$O);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$N = [["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }]];
-const Circle = createLucideIcon("circle", __iconNode$N);
+const __iconNode$N = [
+  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
+  ["polyline", { points: "12 6 12 12 16.5 12", key: "1aq6pp" }]
+];
+const Clock3 = createLucideIcon("clock-3", __iconNode$N);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33477,33 +33521,6 @@ const Circle = createLucideIcon("circle", __iconNode$N);
 const __iconNode$M = [
   [
     "path",
-    { d: "M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3Z", key: "1tn4o7" }
-  ],
-  ["path", { d: "m6.2 5.3 3.1 3.9", key: "iuk76l" }],
-  ["path", { d: "m12.4 3.4 3.1 4", key: "6hsd6n" }],
-  ["path", { d: "M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z", key: "ltgou9" }]
-];
-const Clapperboard = createLucideIcon("clapperboard", __iconNode$M);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$L = [
-  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["polyline", { points: "12 6 12 12 16.5 12", key: "1aq6pp" }]
-];
-const Clock3 = createLucideIcon("clock-3", __iconNode$L);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$K = [
-  [
-    "path",
     {
       d: "M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z",
       key: "1vdc57"
@@ -33511,7 +33528,31 @@ const __iconNode$K = [
   ],
   ["path", { d: "M5 21h14", key: "11awu3" }]
 ];
-const Crown = createLucideIcon("crown", __iconNode$K);
+const Crown = createLucideIcon("crown", __iconNode$M);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$L = [
+  ["circle", { cx: "12", cy: "12", r: "1", key: "41hilf" }],
+  ["circle", { cx: "19", cy: "12", r: "1", key: "1wjl8i" }],
+  ["circle", { cx: "5", cy: "12", r: "1", key: "1pcz8c" }]
+];
+const Ellipsis = createLucideIcon("ellipsis", __iconNode$L);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$K = [
+  ["path", { d: "M15 3h6v6", key: "1q9fwt" }],
+  ["path", { d: "M10 14 21 3", key: "gplh6r" }],
+  ["path", { d: "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6", key: "a6xqqp" }]
+];
+const ExternalLink = createLucideIcon("external-link", __iconNode$K);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33519,11 +33560,13 @@ const Crown = createLucideIcon("crown", __iconNode$K);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$J = [
-  ["circle", { cx: "12", cy: "12", r: "1", key: "41hilf" }],
-  ["circle", { cx: "19", cy: "12", r: "1", key: "1wjl8i" }],
-  ["circle", { cx: "5", cy: "12", r: "1", key: "1pcz8c" }]
+  ["path", { d: "M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z", key: "1rqfz7" }],
+  ["path", { d: "M14 2v4a2 2 0 0 0 2 2h4", key: "tnqrlb" }],
+  ["path", { d: "M10 9H8", key: "b1mrlr" }],
+  ["path", { d: "M16 13H8", key: "t4e002" }],
+  ["path", { d: "M16 17H8", key: "z1uh3a" }]
 ];
-const Ellipsis = createLucideIcon("ellipsis", __iconNode$J);
+const FileText = createLucideIcon("file-text", __iconNode$J);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33531,32 +33574,6 @@ const Ellipsis = createLucideIcon("ellipsis", __iconNode$J);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$I = [
-  ["path", { d: "M15 3h6v6", key: "1q9fwt" }],
-  ["path", { d: "M10 14 21 3", key: "gplh6r" }],
-  ["path", { d: "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6", key: "a6xqqp" }]
-];
-const ExternalLink = createLucideIcon("external-link", __iconNode$I);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$H = [
-  ["path", { d: "M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z", key: "1rqfz7" }],
-  ["path", { d: "M14 2v4a2 2 0 0 0 2 2h4", key: "tnqrlb" }],
-  ["path", { d: "M10 9H8", key: "b1mrlr" }],
-  ["path", { d: "M16 13H8", key: "t4e002" }],
-  ["path", { d: "M16 17H8", key: "z1uh3a" }]
-];
-const FileText = createLucideIcon("file-text", __iconNode$H);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$G = [
   ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }],
   ["path", { d: "M7 3v18", key: "bbkbws" }],
   ["path", { d: "M3 7.5h4", key: "zfgn84" }],
@@ -33566,7 +33583,32 @@ const __iconNode$G = [
   ["path", { d: "M17 7.5h4", key: "myr1c1" }],
   ["path", { d: "M17 16.5h4", key: "go4c1d" }]
 ];
-const Film = createLucideIcon("film", __iconNode$G);
+const Film = createLucideIcon("film", __iconNode$I);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$H = [
+  ["line", { x1: "6", x2: "6", y1: "3", y2: "15", key: "17qcm7" }],
+  ["circle", { cx: "18", cy: "6", r: "3", key: "1h7g24" }],
+  ["circle", { cx: "6", cy: "18", r: "3", key: "fqmcym" }],
+  ["path", { d: "M18 9a9 9 0 0 1-9 9", key: "n2h4wq" }]
+];
+const GitBranch = createLucideIcon("git-branch", __iconNode$H);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$G = [
+  ["circle", { cx: "18", cy: "18", r: "3", key: "1xkwt0" }],
+  ["circle", { cx: "6", cy: "6", r: "3", key: "1lh9wr" }],
+  ["path", { d: "M6 21V9a9 9 0 0 0 9 9", key: "7kw0sc" }]
+];
+const GitMerge = createLucideIcon("git-merge", __iconNode$G);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33574,12 +33616,13 @@ const Film = createLucideIcon("film", __iconNode$G);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$F = [
-  ["line", { x1: "6", x2: "6", y1: "3", y2: "15", key: "17qcm7" }],
-  ["circle", { cx: "18", cy: "6", r: "3", key: "1h7g24" }],
-  ["circle", { cx: "6", cy: "18", r: "3", key: "fqmcym" }],
-  ["path", { d: "M18 9a9 9 0 0 1-9 9", key: "n2h4wq" }]
+  ["path", { d: "M16 5h6", key: "1vod17" }],
+  ["path", { d: "M19 2v6", key: "4bpg5p" }],
+  ["path", { d: "M21 11.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7.5", key: "1ue2ih" }],
+  ["path", { d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21", key: "1xmnt7" }],
+  ["circle", { cx: "9", cy: "9", r: "2", key: "af1f0g" }]
 ];
-const GitBranch = createLucideIcon("git-branch", __iconNode$F);
+const ImagePlus = createLucideIcon("image-plus", __iconNode$F);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33587,11 +33630,11 @@ const GitBranch = createLucideIcon("git-branch", __iconNode$F);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$E = [
-  ["circle", { cx: "18", cy: "18", r: "3", key: "1xkwt0" }],
-  ["circle", { cx: "6", cy: "6", r: "3", key: "1lh9wr" }],
-  ["path", { d: "M6 21V9a9 9 0 0 0 9 9", key: "7kw0sc" }]
+  ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", ry: "2", key: "1m3agn" }],
+  ["circle", { cx: "9", cy: "9", r: "2", key: "af1f0g" }],
+  ["path", { d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21", key: "1xmnt7" }]
 ];
-const GitMerge = createLucideIcon("git-merge", __iconNode$E);
+const Image = createLucideIcon("image", __iconNode$E);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33599,32 +33642,6 @@ const GitMerge = createLucideIcon("git-merge", __iconNode$E);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$D = [
-  ["path", { d: "M16 5h6", key: "1vod17" }],
-  ["path", { d: "M19 2v6", key: "4bpg5p" }],
-  ["path", { d: "M21 11.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7.5", key: "1ue2ih" }],
-  ["path", { d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21", key: "1xmnt7" }],
-  ["circle", { cx: "9", cy: "9", r: "2", key: "af1f0g" }]
-];
-const ImagePlus = createLucideIcon("image-plus", __iconNode$D);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$C = [
-  ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", ry: "2", key: "1m3agn" }],
-  ["circle", { cx: "9", cy: "9", r: "2", key: "af1f0g" }],
-  ["path", { d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21", key: "1xmnt7" }]
-];
-const Image = createLucideIcon("image", __iconNode$C);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$B = [
   ["polyline", { points: "22 12 16 12 14 15 10 15 8 12 2 12", key: "o97t9d" }],
   [
     "path",
@@ -33634,14 +33651,14 @@ const __iconNode$B = [
     }
   ]
 ];
-const Inbox = createLucideIcon("inbox", __iconNode$B);
+const Inbox = createLucideIcon("inbox", __iconNode$D);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$A = [
+const __iconNode$C = [
   ["path", { d: "M10 18v-7", key: "wt116b" }],
   [
     "path",
@@ -33655,14 +33672,14 @@ const __iconNode$A = [
   ["path", { d: "M3 22h18", key: "8prr45" }],
   ["path", { d: "M6 18v-7", key: "1ivflk" }]
 ];
-const Landmark = createLucideIcon("landmark", __iconNode$A);
+const Landmark = createLucideIcon("landmark", __iconNode$C);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$z = [
+const __iconNode$B = [
   ["rect", { width: "8", height: "18", x: "3", y: "3", rx: "1", key: "oynpb5" }],
   ["path", { d: "M7 3v18", key: "bbkbws" }],
   [
@@ -33673,14 +33690,14 @@ const __iconNode$z = [
     }
   ]
 ];
-const LibraryBig = createLucideIcon("library-big", __iconNode$z);
+const LibraryBig = createLucideIcon("library-big", __iconNode$B);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$y = [
+const __iconNode$A = [
   [
     "path",
     {
@@ -33691,7 +33708,27 @@ const __iconNode$y = [
   ["path", { d: "M9 18h6", key: "x1upvd" }],
   ["path", { d: "M10 22h4", key: "ceow96" }]
 ];
-const Lightbulb = createLucideIcon("lightbulb", __iconNode$y);
+const Lightbulb = createLucideIcon("lightbulb", __iconNode$A);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$z = [
+  ["path", { d: "M9 17H7A5 5 0 0 1 7 7h2", key: "8i5ue5" }],
+  ["path", { d: "M15 7h2a5 5 0 1 1 0 10h-2", key: "1b9ql8" }],
+  ["line", { x1: "8", x2: "16", y1: "12", y2: "12", key: "1jonct" }]
+];
+const Link2 = createLucideIcon("link-2", __iconNode$z);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$y = [["path", { d: "M21 12a9 9 0 1 1-6.219-8.56", key: "13zald" }]];
+const LoaderCircle = createLucideIcon("loader-circle", __iconNode$y);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33699,19 +33736,23 @@ const Lightbulb = createLucideIcon("lightbulb", __iconNode$y);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$x = [
-  ["path", { d: "M9 17H7A5 5 0 0 1 7 7h2", key: "8i5ue5" }],
-  ["path", { d: "M15 7h2a5 5 0 1 1 0 10h-2", key: "1b9ql8" }],
-  ["line", { x1: "8", x2: "16", y1: "12", y2: "12", key: "1jonct" }]
+  ["path", { d: "m10 17 5-5-5-5", key: "1bsop3" }],
+  ["path", { d: "M15 12H3", key: "6jk70r" }],
+  ["path", { d: "M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4", key: "u53s6r" }]
 ];
-const Link2 = createLucideIcon("link-2", __iconNode$x);
+const LogIn = createLucideIcon("log-in", __iconNode$x);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$w = [["path", { d: "M21 12a9 9 0 1 1-6.219-8.56", key: "13zald" }]];
-const LoaderCircle = createLucideIcon("loader-circle", __iconNode$w);
+const __iconNode$w = [
+  ["path", { d: "m16 17 5-5-5-5", key: "1bji2h" }],
+  ["path", { d: "M21 12H9", key: "dn1m92" }],
+  ["path", { d: "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4", key: "1uf3rs" }]
+];
+const LogOut = createLucideIcon("log-out", __iconNode$w);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33719,11 +33760,16 @@ const LoaderCircle = createLucideIcon("loader-circle", __iconNode$w);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$v = [
-  ["path", { d: "m10 17 5-5-5-5", key: "1bsop3" }],
-  ["path", { d: "M15 12H3", key: "6jk70r" }],
-  ["path", { d: "M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4", key: "u53s6r" }]
+  [
+    "path",
+    {
+      d: "M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0",
+      key: "1r0f0z"
+    }
+  ],
+  ["circle", { cx: "12", cy: "10", r: "3", key: "ilqhr7" }]
 ];
-const LogIn = createLucideIcon("log-in", __iconNode$v);
+const MapPin = createLucideIcon("map-pin", __iconNode$v);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33731,11 +33777,11 @@ const LogIn = createLucideIcon("log-in", __iconNode$v);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$u = [
-  ["path", { d: "m16 17 5-5-5-5", key: "1bji2h" }],
-  ["path", { d: "M21 12H9", key: "dn1m92" }],
-  ["path", { d: "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4", key: "1uf3rs" }]
+  ["path", { d: "M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z", key: "131961" }],
+  ["path", { d: "M19 10v2a7 7 0 0 1-14 0v-2", key: "1vc78b" }],
+  ["line", { x1: "12", x2: "12", y1: "19", y2: "22", key: "x3vr5v" }]
 ];
-const LogOut = createLucideIcon("log-out", __iconNode$u);
+const Mic = createLucideIcon("mic", __iconNode$u);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33743,18 +33789,6 @@ const LogOut = createLucideIcon("log-out", __iconNode$u);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$t = [
-  ["path", { d: "M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z", key: "131961" }],
-  ["path", { d: "M19 10v2a7 7 0 0 1-14 0v-2", key: "1vc78b" }],
-  ["line", { x1: "12", x2: "12", y1: "19", y2: "22", key: "x3vr5v" }]
-];
-const Mic = createLucideIcon("mic", __iconNode$t);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$s = [
   ["path", { d: "M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4", key: "re6nr2" }],
   ["path", { d: "M2 6h4", key: "aawbzj" }],
   ["path", { d: "M2 10h4", key: "l0bgd4" }],
@@ -33768,14 +33802,14 @@ const __iconNode$s = [
     }
   ]
 ];
-const NotebookPen = createLucideIcon("notebook-pen", __iconNode$s);
+const NotebookPen = createLucideIcon("notebook-pen", __iconNode$t);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$r = [
+const __iconNode$s = [
   ["path", { d: "M5.8 11.3 2 22l10.7-3.79", key: "gwxi1d" }],
   ["path", { d: "M4 3h.01", key: "1vcuye" }],
   ["path", { d: "M22 8h.01", key: "1mrtc2" }],
@@ -33801,14 +33835,14 @@ const __iconNode$r = [
     }
   ]
 ];
-const PartyPopper = createLucideIcon("party-popper", __iconNode$r);
+const PartyPopper = createLucideIcon("party-popper", __iconNode$s);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$q = [
+const __iconNode$r = [
   [
     "path",
     {
@@ -33818,15 +33852,26 @@ const __iconNode$q = [
   ],
   ["path", { d: "m15 5 4 4", key: "1mk7zo" }]
 ];
-const Pencil = createLucideIcon("pencil", __iconNode$q);
+const Pencil = createLucideIcon("pencil", __iconNode$r);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$p = [["polygon", { points: "6 3 20 12 6 21 6 3", key: "1oa8hb" }]];
-const Play = createLucideIcon("play", __iconNode$p);
+const __iconNode$q = [["polygon", { points: "6 3 20 12 6 21 6 3", key: "1oa8hb" }]];
+const Play = createLucideIcon("play", __iconNode$q);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$p = [
+  ["path", { d: "M5 12h14", key: "1ays0h" }],
+  ["path", { d: "M12 5v14", key: "s699le" }]
+];
+const Plus = createLucideIcon("plus", __iconNode$p);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33834,10 +33879,10 @@ const Play = createLucideIcon("play", __iconNode$p);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$o = [
-  ["path", { d: "M5 12h14", key: "1ays0h" }],
-  ["path", { d: "M12 5v14", key: "s699le" }]
+  ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
+  ["path", { d: "M3 3v5h5", key: "1xhq8a" }]
 ];
-const Plus = createLucideIcon("plus", __iconNode$o);
+const RotateCcw = createLucideIcon("rotate-ccw", __iconNode$o);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33845,17 +33890,6 @@ const Plus = createLucideIcon("plus", __iconNode$o);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$n = [
-  ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
-  ["path", { d: "M3 3v5h5", key: "1xhq8a" }]
-];
-const RotateCcw = createLucideIcon("rotate-ccw", __iconNode$n);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$m = [
   [
     "path",
     {
@@ -33866,14 +33900,14 @@ const __iconNode$m = [
   ["path", { d: "M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7", key: "1ydtos" }],
   ["path", { d: "M7 3v4a1 1 0 0 0 1 1h7", key: "t51u73" }]
 ];
-const Save = createLucideIcon("save", __iconNode$m);
+const Save = createLucideIcon("save", __iconNode$n);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$l = [
+const __iconNode$m = [
   ["path", { d: "M15 12h-5", key: "r7krc0" }],
   ["path", { d: "M15 8h-5", key: "1khuty" }],
   ["path", { d: "M19 17V5a2 2 0 0 0-2-2H4", key: "zz82l3" }],
@@ -33885,7 +33919,18 @@ const __iconNode$l = [
     }
   ]
 ];
-const ScrollText = createLucideIcon("scroll-text", __iconNode$l);
+const ScrollText = createLucideIcon("scroll-text", __iconNode$m);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$l = [
+  ["path", { d: "m21 21-4.34-4.34", key: "14j7rj" }],
+  ["circle", { cx: "11", cy: "11", r: "8", key: "4ej97u" }]
+];
+const Search = createLucideIcon("search", __iconNode$l);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33893,10 +33938,17 @@ const ScrollText = createLucideIcon("scroll-text", __iconNode$l);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$k = [
-  ["path", { d: "m21 21-4.34-4.34", key: "14j7rj" }],
-  ["circle", { cx: "11", cy: "11", r: "8", key: "4ej97u" }]
+  [
+    "path",
+    {
+      d: "M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z",
+      key: "oel41y"
+    }
+  ],
+  ["path", { d: "M12 8v4", key: "1got3b" }],
+  ["path", { d: "M12 16h.01", key: "1drbdi" }]
 ];
-const Search = createLucideIcon("search", __iconNode$k);
+const ShieldAlert = createLucideIcon("shield-alert", __iconNode$k);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33911,10 +33963,9 @@ const __iconNode$j = [
       key: "oel41y"
     }
   ],
-  ["path", { d: "M12 8v4", key: "1got3b" }],
-  ["path", { d: "M12 16h.01", key: "1drbdi" }]
+  ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
 ];
-const ShieldAlert = createLucideIcon("shield-alert", __iconNode$j);
+const ShieldCheck = createLucideIcon("shield-check", __iconNode$j);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33922,16 +33973,9 @@ const ShieldAlert = createLucideIcon("shield-alert", __iconNode$j);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$i = [
-  [
-    "path",
-    {
-      d: "M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z",
-      key: "oel41y"
-    }
-  ],
-  ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
+  ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }]
 ];
-const ShieldCheck = createLucideIcon("shield-check", __iconNode$i);
+const Square = createLucideIcon("square", __iconNode$i);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33939,16 +33983,6 @@ const ShieldCheck = createLucideIcon("shield-check", __iconNode$i);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$h = [
-  ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }]
-];
-const Square = createLucideIcon("square", __iconNode$h);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$g = [
   [
     "path",
     {
@@ -33958,7 +33992,21 @@ const __iconNode$g = [
   ],
   ["circle", { cx: "7.5", cy: "7.5", r: ".5", fill: "currentColor", key: "kqv944" }]
 ];
-const Tag = createLucideIcon("tag", __iconNode$g);
+const Tag = createLucideIcon("tag", __iconNode$h);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$g = [
+  ["path", { d: "M3 6h18", key: "d0wm0j" }],
+  ["path", { d: "M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6", key: "4alrt4" }],
+  ["path", { d: "M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2", key: "v07s0e" }],
+  ["line", { x1: "10", x2: "10", y1: "11", y2: "17", key: "1uufr5" }],
+  ["line", { x1: "14", x2: "14", y1: "11", y2: "17", key: "xtxkd" }]
+];
+const Trash2 = createLucideIcon("trash-2", __iconNode$g);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33966,13 +34014,16 @@ const Tag = createLucideIcon("tag", __iconNode$g);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$f = [
-  ["path", { d: "M3 6h18", key: "d0wm0j" }],
-  ["path", { d: "M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6", key: "4alrt4" }],
-  ["path", { d: "M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2", key: "v07s0e" }],
-  ["line", { x1: "10", x2: "10", y1: "11", y2: "17", key: "1uufr5" }],
-  ["line", { x1: "14", x2: "14", y1: "11", y2: "17", key: "xtxkd" }]
+  [
+    "path",
+    {
+      d: "m17 14 3 3.3a1 1 0 0 1-.7 1.7H4.7a1 1 0 0 1-.7-1.7L7 14h-.3a1 1 0 0 1-.7-1.7L9 9h-.2A1 1 0 0 1 8 7.3L12 3l4 4.3a1 1 0 0 1-.8 1.7H15l3 3.3a1 1 0 0 1-.7 1.7H17Z",
+      key: "cpyugq"
+    }
+  ],
+  ["path", { d: "M12 22v-3", key: "kmzjlo" }]
 ];
-const Trash2 = createLucideIcon("trash-2", __iconNode$f);
+const TreePine = createLucideIcon("tree-pine", __iconNode$f);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33983,23 +34034,6 @@ const __iconNode$e = [
   [
     "path",
     {
-      d: "m17 14 3 3.3a1 1 0 0 1-.7 1.7H4.7a1 1 0 0 1-.7-1.7L7 14h-.3a1 1 0 0 1-.7-1.7L9 9h-.2A1 1 0 0 1 8 7.3L12 3l4 4.3a1 1 0 0 1-.8 1.7H15l3 3.3a1 1 0 0 1-.7 1.7H17Z",
-      key: "cpyugq"
-    }
-  ],
-  ["path", { d: "M12 22v-3", key: "kmzjlo" }]
-];
-const TreePine = createLucideIcon("tree-pine", __iconNode$e);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$d = [
-  [
-    "path",
-    {
       d: "m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3",
       key: "wmoenq"
     }
@@ -34007,7 +34041,18 @@ const __iconNode$d = [
   ["path", { d: "M12 9v4", key: "juzpu7" }],
   ["path", { d: "M12 17h.01", key: "p32p05" }]
 ];
-const TriangleAlert = createLucideIcon("triangle-alert", __iconNode$d);
+const TriangleAlert = createLucideIcon("triangle-alert", __iconNode$e);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$d = [
+  ["path", { d: "M9 14 4 9l5-5", key: "102s5s" }],
+  ["path", { d: "M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11", key: "f3b9sd" }]
+];
+const Undo2 = createLucideIcon("undo-2", __iconNode$d);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34015,10 +34060,11 @@ const TriangleAlert = createLucideIcon("triangle-alert", __iconNode$d);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$c = [
-  ["path", { d: "M9 14 4 9l5-5", key: "102s5s" }],
-  ["path", { d: "M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11", key: "f3b9sd" }]
+  ["path", { d: "M12 3v12", key: "1x0j5s" }],
+  ["path", { d: "m17 8-5-5-5 5", key: "7q97r8" }],
+  ["path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4", key: "ih7n3h" }]
 ];
-const Undo2 = createLucideIcon("undo-2", __iconNode$c);
+const Upload = createLucideIcon("upload", __iconNode$c);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34026,11 +34072,11 @@ const Undo2 = createLucideIcon("undo-2", __iconNode$c);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$b = [
-  ["path", { d: "M12 3v12", key: "1x0j5s" }],
-  ["path", { d: "m17 8-5-5-5 5", key: "7q97r8" }],
-  ["path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4", key: "ih7n3h" }]
+  ["path", { d: "m16 11 2 2 4-4", key: "9rsbq5" }],
+  ["path", { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", key: "1yyitq" }],
+  ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }]
 ];
-const Upload = createLucideIcon("upload", __iconNode$b);
+const UserCheck = createLucideIcon("user-check", __iconNode$b);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34038,18 +34084,6 @@ const Upload = createLucideIcon("upload", __iconNode$b);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$a = [
-  ["path", { d: "m16 11 2 2 4-4", key: "9rsbq5" }],
-  ["path", { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", key: "1yyitq" }],
-  ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }]
-];
-const UserCheck = createLucideIcon("user-check", __iconNode$a);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$9 = [
   ["path", { d: "M10 15H6a4 4 0 0 0-4 4v2", key: "1nfge6" }],
   ["path", { d: "m14.305 16.53.923-.382", key: "1itpsq" }],
   ["path", { d: "m15.228 13.852-.923-.383", key: "eplpkm" }],
@@ -34062,7 +34096,19 @@ const __iconNode$9 = [
   ["circle", { cx: "18", cy: "15", r: "3", key: "gjjjvw" }],
   ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }]
 ];
-const UserCog = createLucideIcon("user-cog", __iconNode$9);
+const UserCog = createLucideIcon("user-cog", __iconNode$a);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$9 = [
+  ["path", { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", key: "1yyitq" }],
+  ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }],
+  ["line", { x1: "22", x2: "16", y1: "11", y2: "11", key: "1shjgl" }]
+];
+const UserMinus = createLucideIcon("user-minus", __iconNode$9);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34072,9 +34118,10 @@ const UserCog = createLucideIcon("user-cog", __iconNode$9);
 const __iconNode$8 = [
   ["path", { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", key: "1yyitq" }],
   ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }],
+  ["line", { x1: "19", x2: "19", y1: "8", y2: "14", key: "1bvyxn" }],
   ["line", { x1: "22", x2: "16", y1: "11", y2: "11", key: "1shjgl" }]
 ];
-const UserMinus = createLucideIcon("user-minus", __iconNode$8);
+const UserPlus = createLucideIcon("user-plus", __iconNode$8);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34082,12 +34129,10 @@ const UserMinus = createLucideIcon("user-minus", __iconNode$8);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$7 = [
-  ["path", { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", key: "1yyitq" }],
-  ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }],
-  ["line", { x1: "19", x2: "19", y1: "8", y2: "14", key: "1bvyxn" }],
-  ["line", { x1: "22", x2: "16", y1: "11", y2: "11", key: "1shjgl" }]
+  ["circle", { cx: "12", cy: "8", r: "5", key: "1hypcn" }],
+  ["path", { d: "M20 21a8 8 0 0 0-16 0", key: "rfgkzh" }]
 ];
-const UserPlus = createLucideIcon("user-plus", __iconNode$7);
+const UserRound = createLucideIcon("user-round", __iconNode$7);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34095,10 +34140,12 @@ const UserPlus = createLucideIcon("user-plus", __iconNode$7);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$6 = [
-  ["circle", { cx: "12", cy: "8", r: "5", key: "1hypcn" }],
-  ["path", { d: "M20 21a8 8 0 0 0-16 0", key: "rfgkzh" }]
+  ["path", { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", key: "1yyitq" }],
+  ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }],
+  ["line", { x1: "17", x2: "22", y1: "8", y2: "13", key: "3nzzx3" }],
+  ["line", { x1: "22", x2: "17", y1: "8", y2: "13", key: "1swrse" }]
 ];
-const UserRound = createLucideIcon("user-round", __iconNode$6);
+const UserX = createLucideIcon("user-x", __iconNode$6);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34106,12 +34153,10 @@ const UserRound = createLucideIcon("user-round", __iconNode$6);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$5 = [
-  ["path", { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", key: "1yyitq" }],
-  ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }],
-  ["line", { x1: "17", x2: "22", y1: "8", y2: "13", key: "3nzzx3" }],
-  ["line", { x1: "22", x2: "17", y1: "8", y2: "13", key: "1swrse" }]
+  ["path", { d: "M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2", key: "975kel" }],
+  ["circle", { cx: "12", cy: "7", r: "4", key: "17ys0d" }]
 ];
-const UserX = createLucideIcon("user-x", __iconNode$5);
+const User = createLucideIcon("user", __iconNode$5);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34119,10 +34164,12 @@ const UserX = createLucideIcon("user-x", __iconNode$5);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$4 = [
-  ["path", { d: "M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2", key: "975kel" }],
-  ["circle", { cx: "12", cy: "7", r: "4", key: "17ys0d" }]
+  ["path", { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", key: "1yyitq" }],
+  ["path", { d: "M16 3.128a4 4 0 0 1 0 7.744", key: "16gr8j" }],
+  ["path", { d: "M22 21v-2a4 4 0 0 0-3-3.87", key: "kshegd" }],
+  ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }]
 ];
-const User = createLucideIcon("user", __iconNode$4);
+const Users = createLucideIcon("users", __iconNode$4);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34130,12 +34177,15 @@ const User = createLucideIcon("user", __iconNode$4);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$3 = [
-  ["path", { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", key: "1yyitq" }],
-  ["path", { d: "M16 3.128a4 4 0 0 1 0 7.744", key: "16gr8j" }],
-  ["path", { d: "M22 21v-2a4 4 0 0 0-3-3.87", key: "kshegd" }],
-  ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }]
+  ["path", { d: "m16 2-2.3 2.3a3 3 0 0 0 0 4.2l1.8 1.8a3 3 0 0 0 4.2 0L22 8", key: "n7qcjb" }],
+  [
+    "path",
+    { d: "M15 15 3.3 3.3a4.2 4.2 0 0 0 0 6l7.3 7.3c.7.7 2 .7 2.8 0L15 15Zm0 0 7 7", key: "d0u48b" }
+  ],
+  ["path", { d: "m2.1 21.8 6.4-6.3", key: "yn04lh" }],
+  ["path", { d: "m19 5-7 7", key: "194lzd" }]
 ];
-const Users = createLucideIcon("users", __iconNode$3);
+const UtensilsCrossed = createLucideIcon("utensils-crossed", __iconNode$3);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34393,6 +34443,39 @@ const ProfileRemovalRequest = Record({
   "personId": PersonId,
   "requestingUserId": Principal2,
   "reason": Text
+});
+const RecipeId = Nat;
+const RecipeStatus$1 = Variant({
+  "Approved": Null,
+  "Rejected": Null,
+  "Archived": Null,
+  "Pending": Null
+});
+const Recipe = Record({
+  "era": Opt(Text),
+  "status": RecipeStatus$1,
+  "title": Text,
+  "recipeId": RecipeId,
+  "aiDerivedText": Opt(Text),
+  "createdAt": Int,
+  "tags": Vec(Text),
+  "year": Opt(Nat),
+  "contributorAccountId": Principal2,
+  "privacyLevel": PrivacyLevel$1,
+  "linkedMediaIds": Vec(Nat),
+  "instructions": Text,
+  "ocrText": Opt(Text),
+  "familyBranch": Opt(Text),
+  "familyStory": Opt(Text),
+  "updatedAt": Int,
+  "evidenceStatus": EvidenceStatus$1,
+  "shortDescription": Text,
+  "extractedIngredients": Opt(Vec(Text)),
+  "transcript": Opt(Text),
+  "location": Opt(Text),
+  "originatingPersonId": Text,
+  "ingredients": Vec(Text),
+  "relatedPersonIds": Vec(Text)
 });
 const RelationshipRequestStatus = Variant({
   "Approved": Null,
@@ -34836,6 +34919,7 @@ Service({
     [Opt(ProfileRemovalRequest)],
     []
   ),
+  "approveRecipe": Func([RecipeId], [Opt(Recipe)], []),
   "approveRelationshipRequest": Func(
     [Nat],
     [Opt(RelationshipRequest)],
@@ -34889,6 +34973,7 @@ Service({
     ["query"]
   ),
   "getProfilePhoto": Func([PersonId], [Opt(Photo)], ["query"]),
+  "getRecipe": Func([RecipeId], [Opt(Recipe)], ["query"]),
   "getRelationshipRequest": Func(
     [Nat],
     [Opt(RelationshipRequest)],
@@ -34897,6 +34982,7 @@ Service({
   "getSingleStewardWarning": Func([], [Opt(Text)], ["query"]),
   "isCallerAdmin": Func([], [Bool], ["query"]),
   "listApprovedArchiveItems": Func([], [Vec(ArchiveItem)], ["query"]),
+  "listApprovedRecipes": Func([], [Vec(Recipe)], ["query"]),
   "listApprovedStories": Func([], [Vec(Story)], ["query"]),
   "listArchivedProfileIds": Func([], [Vec(PersonId)], ["query"]),
   "listArchivedProfiles": Func([], [Vec(PersonProfile)], ["query"]),
@@ -34920,6 +35006,7 @@ Service({
     [Vec(MysteryContribution)],
     ["query"]
   ),
+  "listPendingRecipes": Func([], [Vec(Recipe)], ["query"]),
   "listPendingStories": Func([], [Vec(Story)], ["query"]),
   "listPersonRelationships": Func(
     [PersonId],
@@ -34933,6 +35020,7 @@ Service({
     [Vec(ProfileRemovalRequest)],
     ["query"]
   ),
+  "listRecipesForPerson": Func([Text], [Vec(Recipe)], ["query"]),
   "listRelationshipRequests": Func(
     [],
     [Vec(RelationshipRequest)],
@@ -34961,6 +35049,27 @@ Service({
     [Result_7],
     []
   ),
+  "publishRecipe": Func(
+    [
+      Text,
+      Text,
+      Text,
+      Vec(Text),
+      Opt(Text),
+      Opt(Nat),
+      Opt(Text),
+      Opt(Text),
+      Vec(Text),
+      Text,
+      Opt(Text),
+      Vec(Text),
+      PrivacyLevel$1,
+      EvidenceStatus$1,
+      Vec(Nat)
+    ],
+    [Recipe],
+    []
+  ),
   "rejectArchiveItem": Func([ArchiveItemId], [Opt(ArchiveItem)], []),
   "rejectProfileClaim": Func([Nat], [Opt(ProfileClaim)], []),
   "rejectProfileRemoval": Func(
@@ -34968,6 +35077,7 @@ Service({
     [Opt(ProfileRemovalRequest)],
     []
   ),
+  "rejectRecipe": Func([RecipeId], [Opt(Recipe)], []),
   "rejectRelationshipRequest": Func(
     [Nat],
     [Opt(RelationshipRequest)],
@@ -35025,6 +35135,27 @@ Service({
   "submitMysteryContribution": Func(
     [MysteryId, MysteryContributionType$1, Text],
     [MysteryContribution],
+    []
+  ),
+  "submitRecipe": Func(
+    [
+      Text,
+      Text,
+      Text,
+      Vec(Text),
+      Opt(Text),
+      Opt(Nat),
+      Opt(Text),
+      Opt(Text),
+      Vec(Text),
+      Text,
+      Opt(Text),
+      Vec(Text),
+      PrivacyLevel$1,
+      EvidenceStatus$1,
+      Vec(Nat)
+    ],
+    [Recipe],
     []
   ),
   "submitStory": Func(
@@ -35285,6 +35416,39 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "personId": PersonId2,
     "requestingUserId": IDL2.Principal,
     "reason": IDL2.Text
+  });
+  const RecipeId2 = IDL2.Nat;
+  const RecipeStatus2 = IDL2.Variant({
+    "Approved": IDL2.Null,
+    "Rejected": IDL2.Null,
+    "Archived": IDL2.Null,
+    "Pending": IDL2.Null
+  });
+  const Recipe2 = IDL2.Record({
+    "era": IDL2.Opt(IDL2.Text),
+    "status": RecipeStatus2,
+    "title": IDL2.Text,
+    "recipeId": RecipeId2,
+    "aiDerivedText": IDL2.Opt(IDL2.Text),
+    "createdAt": IDL2.Int,
+    "tags": IDL2.Vec(IDL2.Text),
+    "year": IDL2.Opt(IDL2.Nat),
+    "contributorAccountId": IDL2.Principal,
+    "privacyLevel": PrivacyLevel2,
+    "linkedMediaIds": IDL2.Vec(IDL2.Nat),
+    "instructions": IDL2.Text,
+    "ocrText": IDL2.Opt(IDL2.Text),
+    "familyBranch": IDL2.Opt(IDL2.Text),
+    "familyStory": IDL2.Opt(IDL2.Text),
+    "updatedAt": IDL2.Int,
+    "evidenceStatus": EvidenceStatus2,
+    "shortDescription": IDL2.Text,
+    "extractedIngredients": IDL2.Opt(IDL2.Vec(IDL2.Text)),
+    "transcript": IDL2.Opt(IDL2.Text),
+    "location": IDL2.Opt(IDL2.Text),
+    "originatingPersonId": IDL2.Text,
+    "ingredients": IDL2.Vec(IDL2.Text),
+    "relatedPersonIds": IDL2.Vec(IDL2.Text)
   });
   const RelationshipRequestStatus2 = IDL2.Variant({
     "Approved": IDL2.Null,
@@ -35711,6 +35875,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [IDL2.Opt(ProfileRemovalRequest2)],
       []
     ),
+    "approveRecipe": IDL2.Func([RecipeId2], [IDL2.Opt(Recipe2)], []),
     "approveRelationshipRequest": IDL2.Func(
       [IDL2.Nat],
       [IDL2.Opt(RelationshipRequest2)],
@@ -35764,6 +35929,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
       ["query"]
     ),
     "getProfilePhoto": IDL2.Func([PersonId2], [IDL2.Opt(Photo2)], ["query"]),
+    "getRecipe": IDL2.Func([RecipeId2], [IDL2.Opt(Recipe2)], ["query"]),
     "getRelationshipRequest": IDL2.Func(
       [IDL2.Nat],
       [IDL2.Opt(RelationshipRequest2)],
@@ -35776,6 +35942,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [IDL2.Vec(ArchiveItem2)],
       ["query"]
     ),
+    "listApprovedRecipes": IDL2.Func([], [IDL2.Vec(Recipe2)], ["query"]),
     "listApprovedStories": IDL2.Func([], [IDL2.Vec(Story2)], ["query"]),
     "listArchivedProfileIds": IDL2.Func([], [IDL2.Vec(PersonId2)], ["query"]),
     "listArchivedProfiles": IDL2.Func([], [IDL2.Vec(PersonProfile2)], ["query"]),
@@ -35803,6 +35970,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [IDL2.Vec(MysteryContribution2)],
       ["query"]
     ),
+    "listPendingRecipes": IDL2.Func([], [IDL2.Vec(Recipe2)], ["query"]),
     "listPendingStories": IDL2.Func([], [IDL2.Vec(Story2)], ["query"]),
     "listPersonRelationships": IDL2.Func(
       [PersonId2],
@@ -35816,6 +35984,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [IDL2.Vec(ProfileRemovalRequest2)],
       ["query"]
     ),
+    "listRecipesForPerson": IDL2.Func([IDL2.Text], [IDL2.Vec(Recipe2)], ["query"]),
     "listRelationshipRequests": IDL2.Func(
       [],
       [IDL2.Vec(RelationshipRequest2)],
@@ -35848,6 +36017,27 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [Result_72],
       []
     ),
+    "publishRecipe": IDL2.Func(
+      [
+        IDL2.Text,
+        IDL2.Text,
+        IDL2.Text,
+        IDL2.Vec(IDL2.Text),
+        IDL2.Opt(IDL2.Text),
+        IDL2.Opt(IDL2.Nat),
+        IDL2.Opt(IDL2.Text),
+        IDL2.Opt(IDL2.Text),
+        IDL2.Vec(IDL2.Text),
+        IDL2.Text,
+        IDL2.Opt(IDL2.Text),
+        IDL2.Vec(IDL2.Text),
+        PrivacyLevel2,
+        EvidenceStatus2,
+        IDL2.Vec(IDL2.Nat)
+      ],
+      [Recipe2],
+      []
+    ),
     "rejectArchiveItem": IDL2.Func([ArchiveItemId2], [IDL2.Opt(ArchiveItem2)], []),
     "rejectProfileClaim": IDL2.Func([IDL2.Nat], [IDL2.Opt(ProfileClaim2)], []),
     "rejectProfileRemoval": IDL2.Func(
@@ -35855,6 +36045,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [IDL2.Opt(ProfileRemovalRequest2)],
       []
     ),
+    "rejectRecipe": IDL2.Func([RecipeId2], [IDL2.Opt(Recipe2)], []),
     "rejectRelationshipRequest": IDL2.Func(
       [IDL2.Nat],
       [IDL2.Opt(RelationshipRequest2)],
@@ -35912,6 +36103,27 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "submitMysteryContribution": IDL2.Func(
       [MysteryId2, MysteryContributionType2, IDL2.Text],
       [MysteryContribution2],
+      []
+    ),
+    "submitRecipe": IDL2.Func(
+      [
+        IDL2.Text,
+        IDL2.Text,
+        IDL2.Text,
+        IDL2.Vec(IDL2.Text),
+        IDL2.Opt(IDL2.Text),
+        IDL2.Opt(IDL2.Nat),
+        IDL2.Opt(IDL2.Text),
+        IDL2.Opt(IDL2.Text),
+        IDL2.Vec(IDL2.Text),
+        IDL2.Text,
+        IDL2.Opt(IDL2.Text),
+        IDL2.Vec(IDL2.Text),
+        PrivacyLevel2,
+        EvidenceStatus2,
+        IDL2.Vec(IDL2.Nat)
+      ],
+      [Recipe2],
       []
     ),
     "submitStory": IDL2.Func(
@@ -36080,6 +36292,13 @@ var PrivacyLevel = /* @__PURE__ */ ((PrivacyLevel2) => {
   PrivacyLevel2["FamilyOnly"] = "FamilyOnly";
   return PrivacyLevel2;
 })(PrivacyLevel || {});
+var RecipeStatus = /* @__PURE__ */ ((RecipeStatus2) => {
+  RecipeStatus2["Approved"] = "Approved";
+  RecipeStatus2["Rejected"] = "Rejected";
+  RecipeStatus2["Archived"] = "Archived";
+  RecipeStatus2["Pending"] = "Pending";
+  return RecipeStatus2;
+})(RecipeStatus || {});
 var RelationshipStatus = /* @__PURE__ */ ((RelationshipStatus2) => {
   RelationshipStatus2["Disputed"] = "Disputed";
   RelationshipStatus2["Confirmed"] = "Confirmed";
@@ -36356,74 +36575,88 @@ class Backend {
       return from_candid_opt_n70(this._uploadFile, this._downloadFile, result);
     }
   }
-  async approveRelationshipRequest(arg0) {
+  async approveRecipe(arg0) {
     if (this.processError) {
       try {
-        const result = await this.actor.approveRelationshipRequest(arg0);
+        const result = await this.actor.approveRecipe(arg0);
         return from_candid_opt_n74(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.approveRelationshipRequest(arg0);
+      const result = await this.actor.approveRecipe(arg0);
       return from_candid_opt_n74(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async approveRelationshipRequest(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.approveRelationshipRequest(arg0);
+        return from_candid_opt_n79(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.approveRelationshipRequest(arg0);
+      return from_candid_opt_n79(this._uploadFile, this._downloadFile, result);
     }
   }
   async approveStory(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.approveStory(arg0);
-        return from_candid_opt_n78(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n83(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.approveStory(arg0);
-      return from_candid_opt_n78(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n83(this._uploadFile, this._downloadFile, result);
     }
   }
   async archiveProfile(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.archiveProfile(arg0);
-        return from_candid_Result_1_n79(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_1_n84(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.archiveProfile(arg0);
-      return from_candid_Result_1_n79(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_1_n84(this._uploadFile, this._downloadFile, result);
     }
   }
   async assignCallerUserRole(arg0, arg1) {
     if (this.processError) {
       try {
-        const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n83(this._uploadFile, this._downloadFile, arg1));
+        const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n88(this._uploadFile, this._downloadFile, arg1));
         return result;
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n83(this._uploadFile, this._downloadFile, arg1));
+      const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n88(this._uploadFile, this._downloadFile, arg1));
       return result;
     }
   }
   async bindAuthMethod(arg0) {
     if (this.processError) {
       try {
-        const result = await this.actor.bindAuthMethod(to_candid_AuthMethod_n85(this._uploadFile, this._downloadFile, arg0));
-        return from_candid_Result_17_n87(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.bindAuthMethod(to_candid_AuthMethod_n90(this._uploadFile, this._downloadFile, arg0));
+        return from_candid_Result_17_n92(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.bindAuthMethod(to_candid_AuthMethod_n85(this._uploadFile, this._downloadFile, arg0));
-      return from_candid_Result_17_n87(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.bindAuthMethod(to_candid_AuthMethod_n90(this._uploadFile, this._downloadFile, arg0));
+      return from_candid_Result_17_n92(this._uploadFile, this._downloadFile, result);
     }
   }
   async correctRelationshipType(arg0, arg1) {
@@ -36443,57 +36676,57 @@ class Backend {
   async createCanonicalMystery(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) {
     if (this.processError) {
       try {
-        const result = await this.actor.createCanonicalMystery(arg0, arg1, arg2, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg3), arg4, arg5, arg6, arg7, to_candid_MysteryStatus_n96(this._uploadFile, this._downloadFile, arg8));
-        return from_candid_Mystery_n98(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.createCanonicalMystery(arg0, arg1, arg2, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg3), arg4, arg5, arg6, arg7, to_candid_MysteryStatus_n101(this._uploadFile, this._downloadFile, arg8));
+        return from_candid_Mystery_n103(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.createCanonicalMystery(arg0, arg1, arg2, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg3), arg4, arg5, arg6, arg7, to_candid_MysteryStatus_n96(this._uploadFile, this._downloadFile, arg8));
-      return from_candid_Mystery_n98(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.createCanonicalMystery(arg0, arg1, arg2, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg3), arg4, arg5, arg6, arg7, to_candid_MysteryStatus_n101(this._uploadFile, this._downloadFile, arg8));
+      return from_candid_Mystery_n103(this._uploadFile, this._downloadFile, result);
     }
   }
   async createMyself(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.createMyself(arg0);
-        return from_candid_Result_15_n103(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_15_n108(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.createMyself(arg0);
-      return from_candid_Result_15_n103(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_15_n108(this._uploadFile, this._downloadFile, result);
     }
   }
   async designateSuccessor(arg0, arg1) {
     if (this.processError) {
       try {
         const result = await this.actor.designateSuccessor(arg0, arg1);
-        return from_candid_Result_14_n113(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_14_n118(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.designateSuccessor(arg0, arg1);
-      return from_candid_Result_14_n113(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_14_n118(this._uploadFile, this._downloadFile, result);
     }
   }
   async execute(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.execute(arg0);
-        return from_candid_Result__1_n119(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result__1_n124(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.execute(arg0);
-      return from_candid_Result__1_n119(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result__1_n124(this._uploadFile, this._downloadFile, result);
     }
   }
   async getApiDoc() {
@@ -36514,56 +36747,56 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.getCallerUserRole();
-        return from_candid_UserRole_n127(this._uploadFile, this._downloadFile, result);
+        return from_candid_UserRole_n132(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getCallerUserRole();
-      return from_candid_UserRole_n127(this._uploadFile, this._downloadFile, result);
+      return from_candid_UserRole_n132(this._uploadFile, this._downloadFile, result);
     }
   }
   async getMyAccountId() {
     if (this.processError) {
       try {
         const result = await this.actor.getMyAccountId();
-        return from_candid_Result_13_n129(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_13_n134(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getMyAccountId();
-      return from_candid_Result_13_n129(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_13_n134(this._uploadFile, this._downloadFile, result);
     }
   }
   async getMyAuthMethods() {
     if (this.processError) {
       try {
         const result = await this.actor.getMyAuthMethods();
-        return from_candid_Result_12_n131(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_12_n136(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getMyAuthMethods();
-      return from_candid_Result_12_n131(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_12_n136(this._uploadFile, this._downloadFile, result);
     }
   }
   async getMyProfile() {
     if (this.processError) {
       try {
         const result = await this.actor.getMyProfile();
-        return from_candid_opt_n133(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n138(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getMyProfile();
-      return from_candid_opt_n133(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n138(this._uploadFile, this._downloadFile, result);
     }
   }
   async getMyProfileClaim(arg0) {
@@ -36584,56 +36817,70 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.getMyRelationshipRequests();
-        return from_candid_vec_n134(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n139(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getMyRelationshipRequests();
-      return from_candid_vec_n134(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n139(this._uploadFile, this._downloadFile, result);
     }
   }
   async getPersonProfile(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.getPersonProfile(arg0);
-        return from_candid_opt_n133(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n138(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getPersonProfile(arg0);
-      return from_candid_opt_n133(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n138(this._uploadFile, this._downloadFile, result);
     }
   }
   async getProfilePhoto(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.getProfilePhoto(arg0);
-        return from_candid_opt_n135(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n140(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getProfilePhoto(arg0);
-      return from_candid_opt_n135(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n140(this._uploadFile, this._downloadFile, result);
     }
   }
-  async getRelationshipRequest(arg0) {
+  async getRecipe(arg0) {
     if (this.processError) {
       try {
-        const result = await this.actor.getRelationshipRequest(arg0);
+        const result = await this.actor.getRecipe(arg0);
         return from_candid_opt_n74(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.getRelationshipRequest(arg0);
+      const result = await this.actor.getRecipe(arg0);
       return from_candid_opt_n74(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async getRelationshipRequest(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getRelationshipRequest(arg0);
+        return from_candid_opt_n79(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getRelationshipRequest(arg0);
+      return from_candid_opt_n79(this._uploadFile, this._downloadFile, result);
     }
   }
   async getSingleStewardWarning() {
@@ -36668,28 +36915,42 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.listApprovedArchiveItems();
-        return from_candid_vec_n136(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n141(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listApprovedArchiveItems();
-      return from_candid_vec_n136(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n141(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listApprovedRecipes() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listApprovedRecipes();
+        return from_candid_vec_n142(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listApprovedRecipes();
+      return from_candid_vec_n142(this._uploadFile, this._downloadFile, result);
     }
   }
   async listApprovedStories() {
     if (this.processError) {
       try {
         const result = await this.actor.listApprovedStories();
-        return from_candid_vec_n137(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n143(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listApprovedStories();
-      return from_candid_vec_n137(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n143(this._uploadFile, this._downloadFile, result);
     }
   }
   async listArchivedProfileIds() {
@@ -36710,56 +36971,56 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.listArchivedProfiles();
-        return from_candid_vec_n138(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listArchivedProfiles();
-      return from_candid_vec_n138(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listAuditHistory() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listAuditHistory();
-        return from_candid_vec_n139(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listAuditHistory();
-      return from_candid_vec_n139(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listConfirmedRelationships() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listConfirmedRelationships();
         return from_candid_vec_n144(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.listConfirmedRelationships();
+      const result = await this.actor.listArchivedProfiles();
       return from_candid_vec_n144(this._uploadFile, this._downloadFile, result);
     }
   }
-  async listDuplicateCandidates() {
+  async listAuditHistory() {
     if (this.processError) {
       try {
-        const result = await this.actor.listDuplicateCandidates();
+        const result = await this.actor.listAuditHistory();
         return from_candid_vec_n145(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.listDuplicateCandidates();
+      const result = await this.actor.listAuditHistory();
       return from_candid_vec_n145(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listConfirmedRelationships() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listConfirmedRelationships();
+        return from_candid_vec_n150(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listConfirmedRelationships();
+      return from_candid_vec_n150(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listDuplicateCandidates() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listDuplicateCandidates();
+        return from_candid_vec_n151(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listDuplicateCandidates();
+      return from_candid_vec_n151(this._uploadFile, this._downloadFile, result);
     }
   }
   async listEligibleStewardCandidates() {
@@ -36780,140 +37041,168 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.listMysteries();
-        return from_candid_vec_n150(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listMysteries();
-      return from_candid_vec_n150(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listNotifications() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listNotifications();
-        return from_candid_vec_n151(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listNotifications();
-      return from_candid_vec_n151(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listPendingArchiveItems() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listPendingArchiveItems();
-        return from_candid_vec_n136(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listPendingArchiveItems();
-      return from_candid_vec_n136(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listPendingMysteryContributions() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listPendingMysteryContributions();
         return from_candid_vec_n156(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.listPendingMysteryContributions();
+      const result = await this.actor.listMysteries();
       return from_candid_vec_n156(this._uploadFile, this._downloadFile, result);
     }
   }
-  async listPendingStories() {
+  async listNotifications() {
     if (this.processError) {
       try {
-        const result = await this.actor.listPendingStories();
-        return from_candid_vec_n137(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.listNotifications();
+        return from_candid_vec_n157(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.listPendingStories();
-      return from_candid_vec_n137(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.listNotifications();
+      return from_candid_vec_n157(this._uploadFile, this._downloadFile, result);
     }
   }
-  async listPersonRelationships(arg0) {
+  async listPendingArchiveItems() {
     if (this.processError) {
       try {
-        const result = await this.actor.listPersonRelationships(arg0);
-        return from_candid_vec_n144(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.listPendingArchiveItems();
+        return from_candid_vec_n141(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.listPersonRelationships(arg0);
-      return from_candid_vec_n144(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.listPendingArchiveItems();
+      return from_candid_vec_n141(this._uploadFile, this._downloadFile, result);
     }
   }
-  async listPhotos(arg0) {
+  async listPendingMysteryContributions() {
     if (this.processError) {
       try {
-        const result = await this.actor.listPhotos(arg0);
+        const result = await this.actor.listPendingMysteryContributions();
         return from_candid_vec_n162(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.listPhotos(arg0);
+      const result = await this.actor.listPendingMysteryContributions();
       return from_candid_vec_n162(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listPendingRecipes() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listPendingRecipes();
+        return from_candid_vec_n142(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listPendingRecipes();
+      return from_candid_vec_n142(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listPendingStories() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listPendingStories();
+        return from_candid_vec_n143(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listPendingStories();
+      return from_candid_vec_n143(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listPersonRelationships(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listPersonRelationships(arg0);
+        return from_candid_vec_n150(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listPersonRelationships(arg0);
+      return from_candid_vec_n150(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listPhotos(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listPhotos(arg0);
+        return from_candid_vec_n168(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listPhotos(arg0);
+      return from_candid_vec_n168(this._uploadFile, this._downloadFile, result);
     }
   }
   async listProfileClaims() {
     if (this.processError) {
       try {
         const result = await this.actor.listProfileClaims();
-        return from_candid_vec_n163(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n169(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listProfileClaims();
-      return from_candid_vec_n163(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n169(this._uploadFile, this._downloadFile, result);
     }
   }
   async listProfileRemovalRequests() {
     if (this.processError) {
       try {
         const result = await this.actor.listProfileRemovalRequests();
-        return from_candid_vec_n164(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n170(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listProfileRemovalRequests();
-      return from_candid_vec_n164(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n170(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listRecipesForPerson(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listRecipesForPerson(arg0);
+        return from_candid_vec_n142(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listRecipesForPerson(arg0);
+      return from_candid_vec_n142(this._uploadFile, this._downloadFile, result);
     }
   }
   async listRelationshipRequests() {
     if (this.processError) {
       try {
         const result = await this.actor.listRelationshipRequests();
-        return from_candid_vec_n134(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n139(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listRelationshipRequests();
-      return from_candid_vec_n134(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n139(this._uploadFile, this._downloadFile, result);
     }
   }
   async listStewardIdentities() {
@@ -36934,112 +37223,112 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.listStewards();
-        return from_candid_vec_n165(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n171(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listStewards();
-      return from_candid_vec_n165(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n171(this._uploadFile, this._downloadFile, result);
     }
   }
   async listSuccessors() {
     if (this.processError) {
       try {
         const result = await this.actor.listSuccessors();
-        return from_candid_vec_n166(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n172(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listSuccessors();
-      return from_candid_vec_n166(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n172(this._uploadFile, this._downloadFile, result);
     }
   }
   async listTimelineEvents() {
     if (this.processError) {
       try {
         const result = await this.actor.listTimelineEvents();
-        return from_candid_vec_n167(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n173(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listTimelineEvents();
-      return from_candid_vec_n167(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n173(this._uploadFile, this._downloadFile, result);
     }
   }
   async markMysteryResolved(arg0, arg1, arg2) {
     if (this.processError) {
       try {
         const result = await this.actor.markMysteryResolved(arg0, arg1, arg2);
-        return from_candid_opt_n174(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n180(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.markMysteryResolved(arg0, arg1, arg2);
-      return from_candid_opt_n174(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n180(this._uploadFile, this._downloadFile, result);
     }
   }
   async markNotificationRead(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.markNotificationRead(arg0);
-        return from_candid_opt_n175(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n181(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.markNotificationRead(arg0);
-      return from_candid_opt_n175(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n181(this._uploadFile, this._downloadFile, result);
     }
   }
   async mergeProfiles(arg0, arg1) {
     if (this.processError) {
       try {
         const result = await this.actor.mergeProfiles(arg0, arg1);
-        return from_candid_Result_11_n176(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_11_n182(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.mergeProfiles(arg0, arg1);
-      return from_candid_Result_11_n176(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_11_n182(this._uploadFile, this._downloadFile, result);
     }
   }
   async notDuplicate(arg0, arg1) {
     if (this.processError) {
       try {
         const result = await this.actor.notDuplicate(arg0, arg1);
-        return from_candid_Result_10_n187(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_10_n193(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.notDuplicate(arg0, arg1);
-      return from_candid_Result_10_n187(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_10_n193(this._uploadFile, this._downloadFile, result);
     }
   }
   async permanentlyDeleteProfile(arg0, arg1) {
     if (this.processError) {
       try {
         const result = await this.actor.permanentlyDeleteProfile(arg0, arg1);
-        return from_candid_Result_9_n189(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_9_n195(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.permanentlyDeleteProfile(arg0, arg1);
-      return from_candid_Result_9_n189(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_9_n195(this._uploadFile, this._downloadFile, result);
     }
   }
   async promoteToSteward(arg0) {
@@ -37060,14 +37349,28 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.proposeRelationship(arg0, arg1, to_candid_RelationshipType_n35(this._uploadFile, this._downloadFile, arg2));
-        return from_candid_Result_7_n193(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_7_n199(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.proposeRelationship(arg0, arg1, to_candid_RelationshipType_n35(this._uploadFile, this._downloadFile, arg2));
-      return from_candid_Result_7_n193(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_7_n199(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async publishRecipe(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.publishRecipe(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg6), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg7), arg8, arg9, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg10), arg11, to_candid_PrivacyLevel_n203(this._uploadFile, this._downloadFile, arg12), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg13), arg14);
+        return from_candid_Recipe_n75(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.publishRecipe(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg6), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg7), arg8, arg9, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg10), arg11, to_candid_PrivacyLevel_n203(this._uploadFile, this._downloadFile, arg12), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg13), arg14);
+      return from_candid_Recipe_n75(this._uploadFile, this._downloadFile, result);
     }
   }
   async rejectArchiveItem(arg0) {
@@ -37112,46 +37415,60 @@ class Backend {
       return from_candid_opt_n70(this._uploadFile, this._downloadFile, result);
     }
   }
-  async rejectRelationshipRequest(arg0) {
+  async rejectRecipe(arg0) {
     if (this.processError) {
       try {
-        const result = await this.actor.rejectRelationshipRequest(arg0);
+        const result = await this.actor.rejectRecipe(arg0);
         return from_candid_opt_n74(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.rejectRelationshipRequest(arg0);
+      const result = await this.actor.rejectRecipe(arg0);
       return from_candid_opt_n74(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async rejectRelationshipRequest(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.rejectRelationshipRequest(arg0);
+        return from_candid_opt_n79(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.rejectRelationshipRequest(arg0);
+      return from_candid_opt_n79(this._uploadFile, this._downloadFile, result);
     }
   }
   async rejectStory(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.rejectStory(arg0);
-        return from_candid_opt_n78(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n83(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.rejectStory(arg0);
-      return from_candid_opt_n78(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n83(this._uploadFile, this._downloadFile, result);
     }
   }
   async removeDuplicateProfile(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.removeDuplicateProfile(arg0);
-        return from_candid_Result_6_n197(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_6_n205(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.removeDuplicateProfile(arg0);
-      return from_candid_Result_6_n197(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_6_n205(this._uploadFile, this._downloadFile, result);
     }
   }
   async removePhoto(arg0, arg1) {
@@ -37172,98 +37489,98 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.removeRelationship(arg0);
-        return from_candid_Result_5_n201(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_5_n209(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.removeRelationship(arg0);
-      return from_candid_Result_5_n201(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_5_n209(this._uploadFile, this._downloadFile, result);
     }
   }
   async removeSteward(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.removeSteward(arg0);
-        return from_candid_Result_4_n203(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_4_n211(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.removeSteward(arg0);
-      return from_candid_Result_4_n203(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_4_n211(this._uploadFile, this._downloadFile, result);
     }
   }
   async requestProfileClaim(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.requestProfileClaim(arg0);
-        return from_candid_Result_3_n205(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_3_n213(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.requestProfileClaim(arg0);
-      return from_candid_Result_3_n205(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_3_n213(this._uploadFile, this._downloadFile, result);
     }
   }
   async requestProfileRemoval(arg0, arg1) {
     if (this.processError) {
       try {
         const result = await this.actor.requestProfileRemoval(arg0, arg1);
-        return from_candid_Result_2_n209(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_2_n217(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.requestProfileRemoval(arg0, arg1);
-      return from_candid_Result_2_n209(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_2_n217(this._uploadFile, this._downloadFile, result);
     }
   }
   async resolveMergeConflict(arg0, arg1) {
     if (this.processError) {
       try {
         const result = await this.actor.resolveMergeConflict(arg0, arg1);
-        return from_candid_opt_n213(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n221(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.resolveMergeConflict(arg0, arg1);
-      return from_candid_opt_n213(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n221(this._uploadFile, this._downloadFile, result);
     }
   }
   async restoreProfile(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.restoreProfile(arg0);
-        return from_candid_Result_1_n79(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_1_n84(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.restoreProfile(arg0);
-      return from_candid_Result_1_n79(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_1_n84(this._uploadFile, this._downloadFile, result);
     }
   }
   async reviewMysteryContribution(arg0, arg1) {
     if (this.processError) {
       try {
         const result = await this.actor.reviewMysteryContribution(arg0, arg1);
-        return from_candid_opt_n214(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n222(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.reviewMysteryContribution(arg0, arg1);
-      return from_candid_opt_n214(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n222(this._uploadFile, this._downloadFile, result);
     }
   }
   async schema() {
@@ -37298,56 +37615,70 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.setProfilePhoto(arg0, arg1);
-        return from_candid_opt_n135(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n140(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.setProfilePhoto(arg0, arg1);
-      return from_candid_opt_n135(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n140(this._uploadFile, this._downloadFile, result);
     }
   }
   async setRelationshipRequestPending(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.setRelationshipRequestPending(arg0);
-        return from_candid_opt_n74(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n79(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.setRelationshipRequestPending(arg0);
-      return from_candid_opt_n74(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n79(this._uploadFile, this._downloadFile, result);
     }
   }
   async submitArchiveItem(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12) {
     if (this.processError) {
       try {
-        const result = await this.actor.submitArchiveItem(arg0, arg1, to_candid_ArchiveItemType_n215(this._uploadFile, this._downloadFile, arg2), await to_candid_ExternalBlob_n31(this._uploadFile, this._downloadFile, arg3), arg4, to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), arg6, arg7, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg8), to_candid_SourceStatus_n217(this._uploadFile, this._downloadFile, arg9), to_candid_PrivacyLevel_n219(this._uploadFile, this._downloadFile, arg10), to_candid_ArchiveItemClassification_n221(this._uploadFile, this._downloadFile, arg11), to_candid_opt_n223(this._uploadFile, this._downloadFile, arg12));
+        const result = await this.actor.submitArchiveItem(arg0, arg1, to_candid_ArchiveItemType_n223(this._uploadFile, this._downloadFile, arg2), await to_candid_ExternalBlob_n31(this._uploadFile, this._downloadFile, arg3), arg4, to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), arg6, arg7, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg8), to_candid_SourceStatus_n225(this._uploadFile, this._downloadFile, arg9), to_candid_PrivacyLevel_n203(this._uploadFile, this._downloadFile, arg10), to_candid_ArchiveItemClassification_n227(this._uploadFile, this._downloadFile, arg11), to_candid_opt_n229(this._uploadFile, this._downloadFile, arg12));
         return from_candid_ArchiveItem_n48(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.submitArchiveItem(arg0, arg1, to_candid_ArchiveItemType_n215(this._uploadFile, this._downloadFile, arg2), await to_candid_ExternalBlob_n31(this._uploadFile, this._downloadFile, arg3), arg4, to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), arg6, arg7, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg8), to_candid_SourceStatus_n217(this._uploadFile, this._downloadFile, arg9), to_candid_PrivacyLevel_n219(this._uploadFile, this._downloadFile, arg10), to_candid_ArchiveItemClassification_n221(this._uploadFile, this._downloadFile, arg11), to_candid_opt_n223(this._uploadFile, this._downloadFile, arg12));
+      const result = await this.actor.submitArchiveItem(arg0, arg1, to_candid_ArchiveItemType_n223(this._uploadFile, this._downloadFile, arg2), await to_candid_ExternalBlob_n31(this._uploadFile, this._downloadFile, arg3), arg4, to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), arg6, arg7, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg8), to_candid_SourceStatus_n225(this._uploadFile, this._downloadFile, arg9), to_candid_PrivacyLevel_n203(this._uploadFile, this._downloadFile, arg10), to_candid_ArchiveItemClassification_n227(this._uploadFile, this._downloadFile, arg11), to_candid_opt_n229(this._uploadFile, this._downloadFile, arg12));
       return from_candid_ArchiveItem_n48(this._uploadFile, this._downloadFile, result);
     }
   }
   async submitMysteryContribution(arg0, arg1, arg2) {
     if (this.processError) {
       try {
-        const result = await this.actor.submitMysteryContribution(arg0, to_candid_MysteryContributionType_n226(this._uploadFile, this._downloadFile, arg1), arg2);
-        return from_candid_MysteryContribution_n157(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.submitMysteryContribution(arg0, to_candid_MysteryContributionType_n232(this._uploadFile, this._downloadFile, arg1), arg2);
+        return from_candid_MysteryContribution_n163(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.submitMysteryContribution(arg0, to_candid_MysteryContributionType_n226(this._uploadFile, this._downloadFile, arg1), arg2);
-      return from_candid_MysteryContribution_n157(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.submitMysteryContribution(arg0, to_candid_MysteryContributionType_n232(this._uploadFile, this._downloadFile, arg1), arg2);
+      return from_candid_MysteryContribution_n163(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async submitRecipe(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.submitRecipe(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg6), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg7), arg8, arg9, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg10), arg11, to_candid_PrivacyLevel_n203(this._uploadFile, this._downloadFile, arg12), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg13), arg14);
+        return from_candid_Recipe_n75(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.submitRecipe(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg6), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg7), arg8, arg9, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg10), arg11, to_candid_PrivacyLevel_n203(this._uploadFile, this._downloadFile, arg12), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg13), arg14);
+      return from_candid_Recipe_n75(this._uploadFile, this._downloadFile, result);
     }
   }
   async submitStory(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
@@ -37367,54 +37698,54 @@ class Backend {
   async updateCanonicalMystery(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9) {
     if (this.processError) {
       try {
-        const result = await this.actor.updateCanonicalMystery(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), arg5, arg6, arg7, arg8, to_candid_MysteryStatus_n96(this._uploadFile, this._downloadFile, arg9));
-        return from_candid_opt_n174(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.updateCanonicalMystery(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), arg5, arg6, arg7, arg8, to_candid_MysteryStatus_n101(this._uploadFile, this._downloadFile, arg9));
+        return from_candid_opt_n180(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.updateCanonicalMystery(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), arg5, arg6, arg7, arg8, to_candid_MysteryStatus_n96(this._uploadFile, this._downloadFile, arg9));
-      return from_candid_opt_n174(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.updateCanonicalMystery(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), arg5, arg6, arg7, arg8, to_candid_MysteryStatus_n101(this._uploadFile, this._downloadFile, arg9));
+      return from_candid_opt_n180(this._uploadFile, this._downloadFile, result);
     }
   }
   async updateCanonicalStory(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) {
     if (this.processError) {
       try {
         const result = await this.actor.updateCanonicalStory(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg6), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg7), arg8);
-        return from_candid_opt_n78(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n83(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.updateCanonicalStory(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg6), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg7), arg8);
-      return from_candid_opt_n78(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n83(this._uploadFile, this._downloadFile, result);
     }
   }
   async updateOwnProfile(arg0, arg1) {
     if (this.processError) {
       try {
-        const result = await this.actor.updateOwnProfile(arg0, to_candid_ProfileEdits_n228(this._uploadFile, this._downloadFile, arg1));
-        return from_candid_Result_n232(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.updateOwnProfile(arg0, to_candid_ProfileEdits_n234(this._uploadFile, this._downloadFile, arg1));
+        return from_candid_Result_n238(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.updateOwnProfile(arg0, to_candid_ProfileEdits_n228(this._uploadFile, this._downloadFile, arg1));
-      return from_candid_Result_n232(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.updateOwnProfile(arg0, to_candid_ProfileEdits_n234(this._uploadFile, this._downloadFile, arg1));
+      return from_candid_Result_n238(this._uploadFile, this._downloadFile, result);
     }
   }
 }
-function from_candid_AccountError_n94(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n95(_uploadFile, _downloadFile, value);
+function from_candid_AccountError_n99(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n100(_uploadFile, _downloadFile, value);
 }
-function from_candid_Account_n89(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n90(_uploadFile, _downloadFile, value);
+function from_candid_Account_n94(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n95(_uploadFile, _downloadFile, value);
 }
-function from_candid_ArchiveError_n81(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n82(_uploadFile, _downloadFile, value);
+function from_candid_ArchiveError_n86(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n87(_uploadFile, _downloadFile, value);
 }
 function from_candid_ArchiveItemClassification_n62(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n63(_uploadFile, _downloadFile, value);
@@ -37428,38 +37759,38 @@ function from_candid_ArchiveItemType_n57(_uploadFile, _downloadFile, value) {
 async function from_candid_ArchiveItem_n48(_uploadFile, _downloadFile, value) {
   return await from_candid_record_n49(_uploadFile, _downloadFile, value);
 }
-function from_candid_AuditActionType_n142(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n143(_uploadFile, _downloadFile, value);
+function from_candid_AuditActionType_n148(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n149(_uploadFile, _downloadFile, value);
 }
-function from_candid_AuditEntry_n140(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n141(_uploadFile, _downloadFile, value);
-}
-function from_candid_AuthMethod_n92(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n93(_uploadFile, _downloadFile, value);
-}
-function from_candid_Cell_n123(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n124(_uploadFile, _downloadFile, value);
-}
-function from_candid_ClaimError_n207(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n208(_uploadFile, _downloadFile, value);
-}
-function from_candid_ClaimStatus_n107(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n108(_uploadFile, _downloadFile, value);
-}
-function from_candid_CreateError_n111(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n112(_uploadFile, _downloadFile, value);
-}
-function from_candid_DeleteError_n191(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n192(_uploadFile, _downloadFile, value);
-}
-function from_candid_DuplicateCandidate_n148(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n149(_uploadFile, _downloadFile, value);
-}
-function from_candid_DuplicatePair_n146(_uploadFile, _downloadFile, value) {
+function from_candid_AuditEntry_n146(_uploadFile, _downloadFile, value) {
   return from_candid_record_n147(_uploadFile, _downloadFile, value);
 }
-function from_candid_EditError_n234(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n235(_uploadFile, _downloadFile, value);
+function from_candid_AuthMethod_n97(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n98(_uploadFile, _downloadFile, value);
+}
+function from_candid_Cell_n128(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n129(_uploadFile, _downloadFile, value);
+}
+function from_candid_ClaimError_n215(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n216(_uploadFile, _downloadFile, value);
+}
+function from_candid_ClaimStatus_n112(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n113(_uploadFile, _downloadFile, value);
+}
+function from_candid_CreateError_n116(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n117(_uploadFile, _downloadFile, value);
+}
+function from_candid_DeleteError_n197(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n198(_uploadFile, _downloadFile, value);
+}
+function from_candid_DuplicateCandidate_n154(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n155(_uploadFile, _downloadFile, value);
+}
+function from_candid_DuplicatePair_n152(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n153(_uploadFile, _downloadFile, value);
+}
+function from_candid_EditError_n240(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n241(_uploadFile, _downloadFile, value);
 }
 function from_candid_Error_n10(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n11(_uploadFile, _downloadFile, value);
@@ -37470,47 +37801,47 @@ function from_candid_EvidenceStatus_n29(_uploadFile, _downloadFile, value) {
 async function from_candid_ExternalBlob_n34(_uploadFile, _downloadFile, value) {
   return await _downloadFile(value);
 }
-function from_candid_LivingStatus_n109(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n110(_uploadFile, _downloadFile, value);
+function from_candid_LivingStatus_n114(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n115(_uploadFile, _downloadFile, value);
 }
-function from_candid_MergeConflictStatus_n183(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n184(_uploadFile, _downloadFile, value);
+function from_candid_MergeConflictStatus_n189(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n190(_uploadFile, _downloadFile, value);
 }
-function from_candid_MergeConflict_n181(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n182(_uploadFile, _downloadFile, value);
+function from_candid_MergeConflict_n187(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n188(_uploadFile, _downloadFile, value);
 }
-function from_candid_MergeError_n185(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n186(_uploadFile, _downloadFile, value);
+function from_candid_MergeError_n191(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n192(_uploadFile, _downloadFile, value);
 }
-function from_candid_MergeResult_n178(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n179(_uploadFile, _downloadFile, value);
+function from_candid_MergeResult_n184(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n185(_uploadFile, _downloadFile, value);
 }
-function from_candid_MysteryContributionStatus_n159(_uploadFile, _downloadFile, value) {
+function from_candid_MysteryContributionStatus_n165(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n28(_uploadFile, _downloadFile, value);
 }
-function from_candid_MysteryContributionType_n160(_uploadFile, _downloadFile, value) {
+function from_candid_MysteryContributionType_n166(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n167(_uploadFile, _downloadFile, value);
+}
+function from_candid_MysteryContribution_n163(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n164(_uploadFile, _downloadFile, value);
+}
+function from_candid_MysteryStatus_n105(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n106(_uploadFile, _downloadFile, value);
+}
+function from_candid_Mystery_n103(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n104(_uploadFile, _downloadFile, value);
+}
+function from_candid_NotificationType_n160(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n161(_uploadFile, _downloadFile, value);
 }
-function from_candid_MysteryContribution_n157(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n158(_uploadFile, _downloadFile, value);
-}
-function from_candid_MysteryStatus_n100(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n101(_uploadFile, _downloadFile, value);
-}
-function from_candid_Mystery_n98(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n99(_uploadFile, _downloadFile, value);
-}
-function from_candid_NotificationType_n154(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n155(_uploadFile, _downloadFile, value);
-}
-function from_candid_Notification_n152(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n153(_uploadFile, _downloadFile, value);
+function from_candid_Notification_n158(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n159(_uploadFile, _downloadFile, value);
 }
 function from_candid_OralHistorySpeaker_n54(_uploadFile, _downloadFile, value) {
   return from_candid_record_n55(_uploadFile, _downloadFile, value);
 }
-function from_candid_PersonProfile_n105(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n106(_uploadFile, _downloadFile, value);
+function from_candid_PersonProfile_n110(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n111(_uploadFile, _downloadFile, value);
 }
 async function from_candid_Photo_n32(_uploadFile, _downloadFile, value) {
   return await from_candid_record_n33(_uploadFile, _downloadFile, value);
@@ -37530,17 +37861,23 @@ function from_candid_ProfileRemovalRequest_n71(_uploadFile, _downloadFile, value
 function from_candid_ProfileRemovalStatus_n73(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n28(_uploadFile, _downloadFile, value);
 }
+function from_candid_RecipeStatus_n77(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n78(_uploadFile, _downloadFile, value);
+}
+function from_candid_Recipe_n75(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n76(_uploadFile, _downloadFile, value);
+}
 function from_candid_RelationshipAdminError_n45(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n46(_uploadFile, _downloadFile, value);
 }
-function from_candid_RelationshipError_n195(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n196(_uploadFile, _downloadFile, value);
+function from_candid_RelationshipError_n201(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n202(_uploadFile, _downloadFile, value);
 }
-function from_candid_RelationshipRequestStatus_n77(_uploadFile, _downloadFile, value) {
+function from_candid_RelationshipRequestStatus_n82(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n28(_uploadFile, _downloadFile, value);
 }
-function from_candid_RelationshipRequest_n75(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n76(_uploadFile, _downloadFile, value);
+function from_candid_RelationshipRequest_n80(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n81(_uploadFile, _downloadFile, value);
 }
 function from_candid_RelationshipStatus_n41(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n42(_uploadFile, _downloadFile, value);
@@ -37551,71 +37888,71 @@ function from_candid_RelationshipType_n43(_uploadFile, _downloadFile, value) {
 function from_candid_Relationship_n39(_uploadFile, _downloadFile, value) {
   return from_candid_record_n40(_uploadFile, _downloadFile, value);
 }
-function from_candid_RemovalError_n211(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n212(_uploadFile, _downloadFile, value);
+function from_candid_RemovalError_n219(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n220(_uploadFile, _downloadFile, value);
 }
-function from_candid_RemoveError_n199(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n200(_uploadFile, _downloadFile, value);
+function from_candid_RemoveError_n207(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n208(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_10_n187(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n188(_uploadFile, _downloadFile, value);
+function from_candid_Result_10_n193(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n194(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_11_n176(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n177(_uploadFile, _downloadFile, value);
+function from_candid_Result_11_n182(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n183(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_12_n131(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n132(_uploadFile, _downloadFile, value);
+function from_candid_Result_12_n136(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n137(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_13_n129(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n130(_uploadFile, _downloadFile, value);
+function from_candid_Result_13_n134(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n135(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_14_n113(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n114(_uploadFile, _downloadFile, value);
+function from_candid_Result_14_n118(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n119(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_15_n103(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n104(_uploadFile, _downloadFile, value);
+function from_candid_Result_15_n108(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n109(_uploadFile, _downloadFile, value);
 }
 function from_candid_Result_16_n37(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n38(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_17_n87(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n88(_uploadFile, _downloadFile, value);
+function from_candid_Result_17_n92(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n93(_uploadFile, _downloadFile, value);
 }
 function from_candid_Result_18_n8(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n9(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_1_n79(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n80(_uploadFile, _downloadFile, value);
+function from_candid_Result_1_n84(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n85(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_2_n209(_uploadFile, _downloadFile, value) {
+function from_candid_Result_2_n217(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n218(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_3_n213(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n214(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_4_n211(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n212(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_5_n209(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n210(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_3_n205(_uploadFile, _downloadFile, value) {
+function from_candid_Result_6_n205(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n206(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_4_n203(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n204(_uploadFile, _downloadFile, value);
-}
-function from_candid_Result_5_n201(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n202(_uploadFile, _downloadFile, value);
-}
-function from_candid_Result_6_n197(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n198(_uploadFile, _downloadFile, value);
-}
-function from_candid_Result_7_n193(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n194(_uploadFile, _downloadFile, value);
+function from_candid_Result_7_n199(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n200(_uploadFile, _downloadFile, value);
 }
 function from_candid_Result_8_n12(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n13(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_9_n189(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n190(_uploadFile, _downloadFile, value);
+function from_candid_Result_9_n195(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n196(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result__1_n119(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n120(_uploadFile, _downloadFile, value);
+function from_candid_Result__1_n124(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n125(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_n232(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n233(_uploadFile, _downloadFile, value);
+function from_candid_Result_n238(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n239(_uploadFile, _downloadFile, value);
 }
 function from_candid_SourceStatus_n60(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n61(_uploadFile, _downloadFile, value);
@@ -37635,50 +37972,50 @@ function from_candid_StoryStatus_n27(_uploadFile, _downloadFile, value) {
 function from_candid_Story_n24(_uploadFile, _downloadFile, value) {
   return from_candid_record_n25(_uploadFile, _downloadFile, value);
 }
-function from_candid_SuccessorDesignation_n115(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n116(_uploadFile, _downloadFile, value);
+function from_candid_SuccessorDesignation_n120(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n121(_uploadFile, _downloadFile, value);
 }
-function from_candid_SuccessorStatus_n117(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n118(_uploadFile, _downloadFile, value);
+function from_candid_SuccessorStatus_n122(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n123(_uploadFile, _downloadFile, value);
 }
-function from_candid_TimelineEventType_n172(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n173(_uploadFile, _downloadFile, value);
+function from_candid_TimelineEventType_n178(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n179(_uploadFile, _downloadFile, value);
 }
-function from_candid_TimelineEvent_n168(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n169(_uploadFile, _downloadFile, value);
+function from_candid_TimelineEvent_n174(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n175(_uploadFile, _downloadFile, value);
 }
-function from_candid_TimelineLinkTarget_n170(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n171(_uploadFile, _downloadFile, value);
+function from_candid_TimelineLinkTarget_n176(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n177(_uploadFile, _downloadFile, value);
 }
-function from_candid_UserRole_n127(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n128(_uploadFile, _downloadFile, value);
+function from_candid_UserRole_n132(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n133(_uploadFile, _downloadFile, value);
 }
-function from_candid_Value_n125(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n126(_uploadFile, _downloadFile, value);
+function from_candid_Value_n130(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n131(_uploadFile, _downloadFile, value);
 }
 function from_candid__ImmutableObjectStorageRefillResult_n4(_uploadFile, _downloadFile, value) {
   return from_candid_record_n5(_uploadFile, _downloadFile, value);
 }
-function from_candid_opt_n102(_uploadFile, _downloadFile, value) {
+function from_candid_opt_n107(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n133(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_PersonProfile_n105(_uploadFile, _downloadFile, value[0]);
+function from_candid_opt_n138(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_PersonProfile_n110(_uploadFile, _downloadFile, value[0]);
 }
-async function from_candid_opt_n135(_uploadFile, _downloadFile, value) {
+async function from_candid_opt_n140(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : await from_candid_Photo_n32(_uploadFile, _downloadFile, value[0]);
 }
-function from_candid_opt_n174(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_Mystery_n98(_uploadFile, _downloadFile, value[0]);
+function from_candid_opt_n180(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_Mystery_n103(_uploadFile, _downloadFile, value[0]);
 }
-function from_candid_opt_n175(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_Notification_n152(_uploadFile, _downloadFile, value[0]);
+function from_candid_opt_n181(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_Notification_n158(_uploadFile, _downloadFile, value[0]);
 }
-function from_candid_opt_n213(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_MergeConflict_n181(_uploadFile, _downloadFile, value[0]);
+function from_candid_opt_n221(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_MergeConflict_n187(_uploadFile, _downloadFile, value[0]);
 }
-function from_candid_opt_n214(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_MysteryContribution_n157(_uploadFile, _downloadFile, value[0]);
+function from_candid_opt_n222(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_MysteryContribution_n163(_uploadFile, _downloadFile, value[0]);
 }
 function from_candid_opt_n26(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : value[0];
@@ -37714,12 +38051,33 @@ function from_candid_opt_n70(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : from_candid_ProfileRemovalRequest_n71(_uploadFile, _downloadFile, value[0]);
 }
 function from_candid_opt_n74(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_RelationshipRequest_n75(_uploadFile, _downloadFile, value[0]);
+  return value.length === 0 ? null : from_candid_Recipe_n75(_uploadFile, _downloadFile, value[0]);
 }
-function from_candid_opt_n78(_uploadFile, _downloadFile, value) {
+function from_candid_opt_n79(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_RelationshipRequest_n80(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n83(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : from_candid_Story_n24(_uploadFile, _downloadFile, value[0]);
 }
-function from_candid_record_n106(_uploadFile, _downloadFile, value) {
+function from_candid_record_n104(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
+    status: from_candid_MysteryStatus_n105(_uploadFile, _downloadFile, value.status),
+    title: value.title,
+    relatedMemberIds: value.relatedMemberIds,
+    createdAt: value.createdAt,
+    relatedArchiveItemIds: value.relatedArchiveItemIds,
+    description: value.description,
+    resolution: record_opt_to_undefined(from_candid_opt_n107(_uploadFile, _downloadFile, value.resolution)),
+    updatedAt: value.updatedAt,
+    knownFacts: value.knownFacts,
+    possibilities: value.possibilities,
+    relatedBranchId: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.relatedBranchId)),
+    relatedSourceIds: value.relatedSourceIds,
+    contributor: value.contributor
+  };
+}
+function from_candid_record_n111(_uploadFile, _downloadFile, value) {
   return {
     occupation: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.occupation)),
     privacySettings: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.privacySettings)),
@@ -37727,8 +38085,8 @@ function from_candid_record_n106(_uploadFile, _downloadFile, value) {
     claimedByUserId: record_opt_to_undefined(from_candid_opt_n69(_uploadFile, _downloadFile, value.claimedByUserId)),
     birthDate: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.birthDate)),
     birthInfo: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.birthInfo)),
-    claimStatus: from_candid_ClaimStatus_n107(_uploadFile, _downloadFile, value.claimStatus),
-    livingStatus: from_candid_LivingStatus_n109(_uploadFile, _downloadFile, value.livingStatus),
+    claimStatus: from_candid_ClaimStatus_n112(_uploadFile, _downloadFile, value.claimStatus),
+    livingStatus: from_candid_LivingStatus_n114(_uploadFile, _downloadFile, value.livingStatus),
     name: value.name,
     longerStory: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.longerStory)),
     personId: value.personId,
@@ -37744,44 +38102,53 @@ function from_candid_record_n106(_uploadFile, _downloadFile, value) {
     firstName: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.firstName))
   };
 }
-function from_candid_record_n116(_uploadFile, _downloadFile, value) {
+function from_candid_record_n121(_uploadFile, _downloadFile, value) {
   return {
-    status: from_candid_SuccessorStatus_n117(_uploadFile, _downloadFile, value.status),
+    status: from_candid_SuccessorStatus_n122(_uploadFile, _downloadFile, value.status),
     assignedAt: value.assignedAt,
     assignedBy: value.assignedBy,
     personId: value.personId,
     priority: value.priority
   };
 }
-function from_candid_record_n120(_uploadFile, _downloadFile, value) {
+function from_candid_record_n125(_uploadFile, _downloadFile, value) {
   return {
     hasMore: value.hasMore,
-    rows: from_candid_vec_n121(_uploadFile, _downloadFile, value.rows)
+    rows: from_candid_vec_n126(_uploadFile, _downloadFile, value.rows)
   };
 }
-function from_candid_record_n124(_uploadFile, _downloadFile, value) {
+function from_candid_record_n129(_uploadFile, _downloadFile, value) {
   return {
-    value: from_candid_Value_n125(_uploadFile, _downloadFile, value.value),
+    value: from_candid_Value_n130(_uploadFile, _downloadFile, value.value),
     name: value.name
   };
 }
-function from_candid_record_n141(_uploadFile, _downloadFile, value) {
+function from_candid_record_n147(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
     affectedPersonIds: value.affectedPersonIds,
-    actionType: from_candid_AuditActionType_n142(_uploadFile, _downloadFile, value.actionType),
+    actionType: from_candid_AuditActionType_n148(_uploadFile, _downloadFile, value.actionType),
     summary: value.summary,
     timestamp: value.timestamp,
     actorAccountId: value.actorAccountId
   };
 }
-function from_candid_record_n147(_uploadFile, _downloadFile, value) {
+function from_candid_record_n15(_uploadFile, _downloadFile, value) {
   return {
-    candidateA: from_candid_DuplicateCandidate_n148(_uploadFile, _downloadFile, value.candidateA),
-    candidateB: from_candid_DuplicateCandidate_n148(_uploadFile, _downloadFile, value.candidateB)
+    assignedAt: value.assignedAt,
+    assignedBy: value.assignedBy,
+    stewardAccountId: value.stewardAccountId,
+    successorPriority: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.successorPriority)),
+    roleStatus: from_candid_StewardRoleStatus_n16(_uploadFile, _downloadFile, value.roleStatus)
   };
 }
-function from_candid_record_n149(_uploadFile, _downloadFile, value) {
+function from_candid_record_n153(_uploadFile, _downloadFile, value) {
+  return {
+    candidateA: from_candid_DuplicateCandidate_n154(_uploadFile, _downloadFile, value.candidateA),
+    candidateB: from_candid_DuplicateCandidate_n154(_uploadFile, _downloadFile, value.candidateB)
+  };
+}
+function from_candid_record_n155(_uploadFile, _downloadFile, value) {
   return {
     deathDate: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.deathDate)),
     ownerAccount: record_opt_to_undefined(from_candid_opt_n69(_uploadFile, _downloadFile, value.ownerAccount)),
@@ -37798,62 +38165,53 @@ function from_candid_record_n149(_uploadFile, _downloadFile, value) {
     parents: value.parents
   };
 }
-function from_candid_record_n15(_uploadFile, _downloadFile, value) {
-  return {
-    assignedAt: value.assignedAt,
-    assignedBy: value.assignedBy,
-    stewardAccountId: value.stewardAccountId,
-    successorPriority: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.successorPriority)),
-    roleStatus: from_candid_StewardRoleStatus_n16(_uploadFile, _downloadFile, value.roleStatus)
-  };
-}
-function from_candid_record_n153(_uploadFile, _downloadFile, value) {
+function from_candid_record_n159(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
-    notificationType: from_candid_NotificationType_n154(_uploadFile, _downloadFile, value.notificationType),
+    notificationType: from_candid_NotificationType_n160(_uploadFile, _downloadFile, value.notificationType),
     createdAt: value.createdAt,
     read: value.read,
     recipient: value.recipient,
     message: value.message
   };
 }
-function from_candid_record_n158(_uploadFile, _downloadFile, value) {
+function from_candid_record_n164(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
-    status: from_candid_MysteryContributionStatus_n159(_uploadFile, _downloadFile, value.status),
+    status: from_candid_MysteryContributionStatus_n165(_uploadFile, _downloadFile, value.status),
     createdAt: value.createdAt,
     text: value.text,
     mysteryId: value.mysteryId,
     reviewedAt: record_opt_to_undefined(from_candid_opt_n68(_uploadFile, _downloadFile, value.reviewedAt)),
     reviewedBy: record_opt_to_undefined(from_candid_opt_n69(_uploadFile, _downloadFile, value.reviewedBy)),
-    contributionType: from_candid_MysteryContributionType_n160(_uploadFile, _downloadFile, value.contributionType),
+    contributionType: from_candid_MysteryContributionType_n166(_uploadFile, _downloadFile, value.contributionType),
     contributor: value.contributor
   };
 }
-function from_candid_record_n169(_uploadFile, _downloadFile, value) {
+function from_candid_record_n175(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
     era: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.era)),
     title: value.title,
     year: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.year)),
-    linkTarget: from_candid_TimelineLinkTarget_n170(_uploadFile, _downloadFile, value.linkTarget),
+    linkTarget: from_candid_TimelineLinkTarget_n176(_uploadFile, _downloadFile, value.linkTarget),
     description: value.description,
     evidenceStatus: from_candid_EvidenceStatus_n29(_uploadFile, _downloadFile, value.evidenceStatus),
-    eventType: from_candid_TimelineEventType_n172(_uploadFile, _downloadFile, value.eventType)
+    eventType: from_candid_TimelineEventType_n178(_uploadFile, _downloadFile, value.eventType)
   };
 }
-function from_candid_record_n179(_uploadFile, _downloadFile, value) {
+function from_candid_record_n185(_uploadFile, _downloadFile, value) {
   return {
     archivedPersonId: value.archivedPersonId,
-    conflicts: from_candid_vec_n180(_uploadFile, _downloadFile, value.conflicts),
+    conflicts: from_candid_vec_n186(_uploadFile, _downloadFile, value.conflicts),
     canonicalPersonId: value.canonicalPersonId
   };
 }
-function from_candid_record_n182(_uploadFile, _downloadFile, value) {
+function from_candid_record_n188(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
     field: value.field,
-    status: from_candid_MergeConflictStatus_n183(_uploadFile, _downloadFile, value.status),
+    status: from_candid_MergeConflictStatus_n189(_uploadFile, _downloadFile, value.status),
     alternateValue: value.alternateValue,
     canonicalValue: value.canonicalValue,
     resolvedAt: record_opt_to_undefined(from_candid_opt_n68(_uploadFile, _downloadFile, value.resolvedAt)),
@@ -37959,9 +38317,37 @@ function from_candid_record_n72(_uploadFile, _downloadFile, value) {
 }
 function from_candid_record_n76(_uploadFile, _downloadFile, value) {
   return {
+    era: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.era)),
+    status: from_candid_RecipeStatus_n77(_uploadFile, _downloadFile, value.status),
+    title: value.title,
+    recipeId: value.recipeId,
+    aiDerivedText: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.aiDerivedText)),
+    createdAt: value.createdAt,
+    tags: value.tags,
+    year: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.year)),
+    contributorAccountId: value.contributorAccountId,
+    privacyLevel: from_candid_PrivacyLevel_n51(_uploadFile, _downloadFile, value.privacyLevel),
+    linkedMediaIds: value.linkedMediaIds,
+    instructions: value.instructions,
+    ocrText: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.ocrText)),
+    familyBranch: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.familyBranch)),
+    familyStory: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.familyStory)),
+    updatedAt: value.updatedAt,
+    evidenceStatus: from_candid_EvidenceStatus_n29(_uploadFile, _downloadFile, value.evidenceStatus),
+    shortDescription: value.shortDescription,
+    extractedIngredients: record_opt_to_undefined(from_candid_opt_n56(_uploadFile, _downloadFile, value.extractedIngredients)),
+    transcript: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.transcript)),
+    location: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.location)),
+    originatingPersonId: value.originatingPersonId,
+    ingredients: value.ingredients,
+    relatedPersonIds: value.relatedPersonIds
+  };
+}
+function from_candid_record_n81(_uploadFile, _downloadFile, value) {
+  return {
     id: value.id,
     submittedDate: value.submittedDate,
-    status: from_candid_RelationshipRequestStatus_n77(_uploadFile, _downloadFile, value.status),
+    status: from_candid_RelationshipRequestStatus_n82(_uploadFile, _downloadFile, value.status),
     reviewedDate: record_opt_to_undefined(from_candid_opt_n68(_uploadFile, _downloadFile, value.reviewedDate)),
     relatedPersonId: value.relatedPersonId,
     requestingPersonId: value.requestingPersonId,
@@ -37969,45 +38355,27 @@ function from_candid_record_n76(_uploadFile, _downloadFile, value) {
     reviewer: record_opt_to_undefined(from_candid_opt_n69(_uploadFile, _downloadFile, value.reviewer))
   };
 }
-function from_candid_record_n90(_uploadFile, _downloadFile, value) {
+function from_candid_record_n95(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
     createdAt: value.createdAt,
-    authMethods: from_candid_vec_n91(_uploadFile, _downloadFile, value.authMethods)
+    authMethods: from_candid_vec_n96(_uploadFile, _downloadFile, value.authMethods)
   };
 }
-function from_candid_record_n99(_uploadFile, _downloadFile, value) {
-  return {
-    id: value.id,
-    status: from_candid_MysteryStatus_n100(_uploadFile, _downloadFile, value.status),
-    title: value.title,
-    relatedMemberIds: value.relatedMemberIds,
-    createdAt: value.createdAt,
-    relatedArchiveItemIds: value.relatedArchiveItemIds,
-    description: value.description,
-    resolution: record_opt_to_undefined(from_candid_opt_n102(_uploadFile, _downloadFile, value.resolution)),
-    updatedAt: value.updatedAt,
-    knownFacts: value.knownFacts,
-    possibilities: value.possibilities,
-    relatedBranchId: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.relatedBranchId)),
-    relatedSourceIds: value.relatedSourceIds,
-    contributor: value.contributor
-  };
+function from_candid_variant_n100(_uploadFile, _downloadFile, value) {
+  return "AccountNotFound" in value ? "AccountNotFound" : "NotSignedIn" in value ? "NotSignedIn" : value;
 }
-function from_candid_variant_n101(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n106(_uploadFile, _downloadFile, value) {
   return "Researching" in value ? "Researching" : "Open" in value ? "Open" : "PartiallyResolved" in value ? "PartiallyResolved" : "Resolved" in value ? "Resolved" : value;
 }
-function from_candid_variant_n104(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n109(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
-    ok: from_candid_PersonProfile_n105(_uploadFile, _downloadFile, value.ok)
+    ok: from_candid_PersonProfile_n110(_uploadFile, _downloadFile, value.ok)
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_CreateError_n111(_uploadFile, _downloadFile, value.err)
+    err: from_candid_CreateError_n116(_uploadFile, _downloadFile, value.err)
   } : value;
-}
-function from_candid_variant_n108(_uploadFile, _downloadFile, value) {
-  return "Unclaimed" in value ? "Unclaimed" : "Claimed" in value ? "Claimed" : value;
 }
 function from_candid_variant_n11(_uploadFile, _downloadFile, value) {
   return "FrontendOriginsNotConfigured" in value ? {
@@ -38042,25 +38410,37 @@ function from_candid_variant_n11(_uploadFile, _downloadFile, value) {
     FrontendOriginMismatch: value.FrontendOriginMismatch
   } : value;
 }
-function from_candid_variant_n110(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n113(_uploadFile, _downloadFile, value) {
+  return "Unclaimed" in value ? "Unclaimed" : "Claimed" in value ? "Claimed" : value;
+}
+function from_candid_variant_n115(_uploadFile, _downloadFile, value) {
   return "Living" in value ? "Living" : "Deceased" in value ? "Deceased" : value;
 }
-function from_candid_variant_n112(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n117(_uploadFile, _downloadFile, value) {
   return "NotSignedIn" in value ? "NotSignedIn" : value;
 }
-function from_candid_variant_n114(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n119(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
-    ok: from_candid_SuccessorDesignation_n115(_uploadFile, _downloadFile, value.ok)
+    ok: from_candid_SuccessorDesignation_n120(_uploadFile, _downloadFile, value.ok)
   } : "err" in value ? {
     __kind__: "err",
     err: from_candid_StewardError_n18(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n118(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n123(_uploadFile, _downloadFile, value) {
   return "Activated" in value ? "Activated" : "Removed" in value ? "Removed" : "Designated" in value ? "Designated" : value;
 }
-function from_candid_variant_n126(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n13(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: from_candid_StewardRecord_n14(_uploadFile, _downloadFile, value.ok)
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_StewardError_n18(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n131(_uploadFile, _downloadFile, value) {
   return "int" in value ? {
     __kind__: "int",
     int: value.int
@@ -38081,49 +38461,40 @@ function from_candid_variant_n126(_uploadFile, _downloadFile, value) {
     text: value.text
   } : value;
 }
-function from_candid_variant_n128(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n133(_uploadFile, _downloadFile, value) {
   return "admin" in value ? "admin" : "user" in value ? "user" : "guest" in value ? "guest" : value;
 }
-function from_candid_variant_n13(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: from_candid_StewardRecord_n14(_uploadFile, _downloadFile, value.ok)
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_StewardError_n18(_uploadFile, _downloadFile, value.err)
-  } : value;
-}
-function from_candid_variant_n130(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n135(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
     ok: value.ok
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_AccountError_n94(_uploadFile, _downloadFile, value.err)
+    err: from_candid_AccountError_n99(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n132(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n137(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
     ok: value.ok
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_AccountError_n94(_uploadFile, _downloadFile, value.err)
+    err: from_candid_AccountError_n99(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n143(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n149(_uploadFile, _downloadFile, value) {
   return "ProfileRemovalRequested" in value ? "ProfileRemovalRequested" : "ClaimRejected" in value ? "ClaimRejected" : "RelationshipTypeCorrected" in value ? "RelationshipTypeCorrected" : "RelationshipRequestPending" in value ? "RelationshipRequestPending" : "StewardPromoted" in value ? "StewardPromoted" : "SuccessorActivated" in value ? "SuccessorActivated" : "StewardRemoved" in value ? "StewardRemoved" : "RelationshipRequestApproved" in value ? "RelationshipRequestApproved" : "DuplicateMerged" in value ? "DuplicateMerged" : "ProfilePermanentlyDeleted" in value ? "ProfilePermanentlyDeleted" : "RelationshipRequestRejected" in value ? "RelationshipRequestRejected" : "ProfileArchived" in value ? "ProfileArchived" : "ProfileRestored" in value ? "ProfileRestored" : "RelationshipAdded" in value ? "RelationshipAdded" : "RelationshipRemoved" in value ? "RelationshipRemoved" : "ProfileRemovalReviewed" in value ? "ProfileRemovalReviewed" : "ClaimApproved" in value ? "ClaimApproved" : "SuccessorDesignated" in value ? "SuccessorDesignated" : value;
 }
-function from_candid_variant_n155(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n161(_uploadFile, _downloadFile, value) {
   return "RelationshipRequested" in value ? "RelationshipRequested" : "RelationshipReviewed" in value ? "RelationshipReviewed" : "ProfileClaimReviewed" in value ? "ProfileClaimReviewed" : "ProfileClaimRequested" in value ? "ProfileClaimRequested" : value;
 }
-function from_candid_variant_n161(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n167(_uploadFile, _downloadFile, value) {
   return "Lead" in value ? "Lead" : "Note" in value ? "Note" : "Memory" in value ? "Memory" : "Source" in value ? "Source" : value;
 }
 function from_candid_variant_n17(_uploadFile, _downloadFile, value) {
   return "Active" in value ? "Active" : "Removed" in value ? "Removed" : value;
 }
-function from_candid_variant_n171(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n177(_uploadFile, _downloadFile, value) {
   return "Story" in value ? {
     __kind__: "Story",
     Story: value.Story
@@ -38138,73 +38509,73 @@ function from_candid_variant_n171(_uploadFile, _downloadFile, value) {
     ArchiveItem: value.ArchiveItem
   } : value;
 }
-function from_candid_variant_n173(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n179(_uploadFile, _downloadFile, value) {
   return "MilitaryService" in value ? "MilitaryService" : "Story" in value ? "Story" : "Birth" in value ? "Birth" : "FamilyEvent" in value ? "FamilyEvent" : "Migration" in value ? "Migration" : "Mystery" in value ? "Mystery" : "Death" in value ? "Death" : "PhotoDocument" in value ? "PhotoDocument" : "Marriage" in value ? "Marriage" : "CensusDocument" in value ? "CensusDocument" : "Location" in value ? "Location" : value;
 }
-function from_candid_variant_n177(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n183(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
-    ok: from_candid_MergeResult_n178(_uploadFile, _downloadFile, value.ok)
+    ok: from_candid_MergeResult_n184(_uploadFile, _downloadFile, value.ok)
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_MergeError_n185(_uploadFile, _downloadFile, value.err)
-  } : value;
-}
-function from_candid_variant_n184(_uploadFile, _downloadFile, value) {
-  return "Resolved" in value ? "Resolved" : "Pending" in value ? "Pending" : value;
-}
-function from_candid_variant_n186(_uploadFile, _downloadFile, value) {
-  return "NotDuplicate" in value ? "NotDuplicate" : "ProfileNotFound" in value ? "ProfileNotFound" : "NotSignedIn" in value ? "NotSignedIn" : "SameProfile" in value ? "SameProfile" : value;
-}
-function from_candid_variant_n188(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: value.ok
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_MergeError_n185(_uploadFile, _downloadFile, value.err)
+    err: from_candid_MergeError_n191(_uploadFile, _downloadFile, value.err)
   } : value;
 }
 function from_candid_variant_n19(_uploadFile, _downloadFile, value) {
   return "LastSteward" in value ? "LastSteward" : "NotSteward" in value ? "NotSteward" : "AlreadySteward" in value ? "AlreadySteward" : "NotSignedIn" in value ? "NotSignedIn" : "NotApprovedClaimedMember" in value ? "NotApprovedClaimedMember" : "NotDesignated" in value ? "NotDesignated" : value;
 }
 function from_candid_variant_n190(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: value.ok
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_DeleteError_n191(_uploadFile, _downloadFile, value.err)
-  } : value;
+  return "Resolved" in value ? "Resolved" : "Pending" in value ? "Pending" : value;
 }
 function from_candid_variant_n192(_uploadFile, _downloadFile, value) {
-  return "HasOwnershipHistory" in value ? "HasOwnershipHistory" : "ProfileNotFound" in value ? "ProfileNotFound" : "HasMedia" in value ? "HasMedia" : "HasArchiveItems" in value ? "HasArchiveItems" : "NotSignedIn" in value ? "NotSignedIn" : "ConfirmationRequired" in value ? "ConfirmationRequired" : "HasTimeline" in value ? "HasTimeline" : "HasApprovedRelationships" in value ? "HasApprovedRelationships" : value;
+  return "NotDuplicate" in value ? "NotDuplicate" : "ProfileNotFound" in value ? "ProfileNotFound" : "NotSignedIn" in value ? "NotSignedIn" : "SameProfile" in value ? "SameProfile" : value;
 }
 function from_candid_variant_n194(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
-    ok: from_candid_RelationshipRequest_n75(_uploadFile, _downloadFile, value.ok)
+    ok: value.ok
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_RelationshipError_n195(_uploadFile, _downloadFile, value.err)
+    err: from_candid_MergeError_n191(_uploadFile, _downloadFile, value.err)
   } : value;
 }
 function from_candid_variant_n196(_uploadFile, _downloadFile, value) {
-  return "DuplicateRequest" in value ? "DuplicateRequest" : "NotSignedIn" in value ? "NotSignedIn" : "PersonNotFound" in value ? "PersonNotFound" : value;
-}
-function from_candid_variant_n198(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
     ok: value.ok
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_RemoveError_n199(_uploadFile, _downloadFile, value.err)
+    err: from_candid_DeleteError_n197(_uploadFile, _downloadFile, value.err)
   } : value;
 }
+function from_candid_variant_n198(_uploadFile, _downloadFile, value) {
+  return "HasOwnershipHistory" in value ? "HasOwnershipHistory" : "ProfileNotFound" in value ? "ProfileNotFound" : "HasMedia" in value ? "HasMedia" : "HasArchiveItems" in value ? "HasArchiveItems" : "NotSignedIn" in value ? "NotSignedIn" : "ConfirmationRequired" in value ? "ConfirmationRequired" : "HasTimeline" in value ? "HasTimeline" : "HasApprovedRelationships" in value ? "HasApprovedRelationships" : value;
+}
 function from_candid_variant_n200(_uploadFile, _downloadFile, value) {
-  return "ProfileNotFound" in value ? "ProfileNotFound" : "NotSignedIn" in value ? "NotSignedIn" : value;
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: from_candid_RelationshipRequest_n80(_uploadFile, _downloadFile, value.ok)
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_RelationshipError_n201(_uploadFile, _downloadFile, value.err)
+  } : value;
 }
 function from_candid_variant_n202(_uploadFile, _downloadFile, value) {
+  return "DuplicateRequest" in value ? "DuplicateRequest" : "NotSignedIn" in value ? "NotSignedIn" : "PersonNotFound" in value ? "PersonNotFound" : value;
+}
+function from_candid_variant_n206(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: value.ok
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_RemoveError_n207(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n208(_uploadFile, _downloadFile, value) {
+  return "ProfileNotFound" in value ? "ProfileNotFound" : "NotSignedIn" in value ? "NotSignedIn" : value;
+}
+function from_candid_variant_n210(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
     ok: value.ok
@@ -38213,7 +38584,7 @@ function from_candid_variant_n202(_uploadFile, _downloadFile, value) {
     err: from_candid_RelationshipAdminError_n45(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n204(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n212(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
     ok: value.ok
@@ -38222,40 +38593,40 @@ function from_candid_variant_n204(_uploadFile, _downloadFile, value) {
     err: from_candid_StewardError_n18(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n206(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n214(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
     ok: from_candid_ProfileClaim_n65(_uploadFile, _downloadFile, value.ok)
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_ClaimError_n207(_uploadFile, _downloadFile, value.err)
+    err: from_candid_ClaimError_n215(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n208(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n216(_uploadFile, _downloadFile, value) {
   return "AlreadyPending" in value ? "AlreadyPending" : "ProfileNotFound" in value ? "ProfileNotFound" : "AlreadyClaimed" in value ? "AlreadyClaimed" : "NotSignedIn" in value ? "NotSignedIn" : "DeceasedProfile" in value ? "DeceasedProfile" : value;
 }
-function from_candid_variant_n210(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n218(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
     ok: from_candid_ProfileRemovalRequest_n71(_uploadFile, _downloadFile, value.ok)
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_RemovalError_n211(_uploadFile, _downloadFile, value.err)
+    err: from_candid_RemovalError_n219(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n212(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n220(_uploadFile, _downloadFile, value) {
   return "AlreadyPending" in value ? "AlreadyPending" : "ProfileNotFound" in value ? "ProfileNotFound" : "NotSignedIn" in value ? "NotSignedIn" : "NotOwner" in value ? "NotOwner" : "DeceasedProfile" in value ? "DeceasedProfile" : value;
 }
-function from_candid_variant_n233(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n239(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
-    ok: from_candid_PersonProfile_n105(_uploadFile, _downloadFile, value.ok)
+    ok: from_candid_PersonProfile_n110(_uploadFile, _downloadFile, value.ok)
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_EditError_n234(_uploadFile, _downloadFile, value.err)
+    err: from_candid_EditError_n240(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n235(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n241(_uploadFile, _downloadFile, value) {
   return "ProfileNotFound" in value ? "ProfileNotFound" : "NotSignedIn" in value ? "NotSignedIn" : "NotOwner" in value ? "NotOwner" : "DeceasedProfile" in value ? "DeceasedProfile" : value;
 }
 function from_candid_variant_n28(_uploadFile, _downloadFile, value) {
@@ -38294,26 +38665,20 @@ function from_candid_variant_n61(_uploadFile, _downloadFile, value) {
 function from_candid_variant_n63(_uploadFile, _downloadFile, value) {
   return "OralHistory" in value ? "OralHistory" : "Standard" in value ? "Standard" : value;
 }
-function from_candid_variant_n80(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n78(_uploadFile, _downloadFile, value) {
+  return "Approved" in value ? "Approved" : "Rejected" in value ? "Rejected" : "Archived" in value ? "Archived" : "Pending" in value ? "Pending" : value;
+}
+function from_candid_variant_n85(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
     ok: value.ok
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_ArchiveError_n81(_uploadFile, _downloadFile, value.err)
+    err: from_candid_ArchiveError_n86(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n82(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n87(_uploadFile, _downloadFile, value) {
   return "NotArchived" in value ? "NotArchived" : "ProfileNotFound" in value ? "ProfileNotFound" : "AlreadyArchived" in value ? "AlreadyArchived" : "NotSignedIn" in value ? "NotSignedIn" : value;
-}
-function from_candid_variant_n88(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: from_candid_Account_n89(_uploadFile, _downloadFile, value.ok)
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_AccountError_n94(_uploadFile, _downloadFile, value.err)
-  } : value;
 }
 function from_candid_variant_n9(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
@@ -38325,79 +38690,88 @@ function from_candid_variant_n9(_uploadFile, _downloadFile, value) {
   } : value;
 }
 function from_candid_variant_n93(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: from_candid_Account_n94(_uploadFile, _downloadFile, value.ok)
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_AccountError_n99(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n98(_uploadFile, _downloadFile, value) {
   return "Google" in value ? "Google" : "Apple" in value ? "Apple" : value;
 }
-function from_candid_variant_n95(_uploadFile, _downloadFile, value) {
-  return "AccountNotFound" in value ? "AccountNotFound" : "NotSignedIn" in value ? "NotSignedIn" : value;
+function from_candid_vec_n126(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_vec_n127(_uploadFile, _downloadFile, x2));
 }
-function from_candid_vec_n121(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_vec_n122(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n122(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_Cell_n123(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n134(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_RelationshipRequest_n75(_uploadFile, _downloadFile, x2));
-}
-async function from_candid_vec_n136(_uploadFile, _downloadFile, value) {
-  return await Promise.all(value.map(async (x2) => await from_candid_ArchiveItem_n48(_uploadFile, _downloadFile, x2)));
-}
-function from_candid_vec_n137(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_Story_n24(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n138(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_PersonProfile_n105(_uploadFile, _downloadFile, x2));
+function from_candid_vec_n127(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_Cell_n128(_uploadFile, _downloadFile, x2));
 }
 function from_candid_vec_n139(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_AuditEntry_n140(_uploadFile, _downloadFile, x2));
+  return value.map((x2) => from_candid_RelationshipRequest_n80(_uploadFile, _downloadFile, x2));
+}
+async function from_candid_vec_n141(_uploadFile, _downloadFile, value) {
+  return await Promise.all(value.map(async (x2) => await from_candid_ArchiveItem_n48(_uploadFile, _downloadFile, x2)));
+}
+function from_candid_vec_n142(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_Recipe_n75(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n143(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_Story_n24(_uploadFile, _downloadFile, x2));
 }
 function from_candid_vec_n144(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_Relationship_n39(_uploadFile, _downloadFile, x2));
+  return value.map((x2) => from_candid_PersonProfile_n110(_uploadFile, _downloadFile, x2));
 }
 function from_candid_vec_n145(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_DuplicatePair_n146(_uploadFile, _downloadFile, x2));
+  return value.map((x2) => from_candid_AuditEntry_n146(_uploadFile, _downloadFile, x2));
 }
 function from_candid_vec_n150(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_Mystery_n98(_uploadFile, _downloadFile, x2));
+  return value.map((x2) => from_candid_Relationship_n39(_uploadFile, _downloadFile, x2));
 }
 function from_candid_vec_n151(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_Notification_n152(_uploadFile, _downloadFile, x2));
+  return value.map((x2) => from_candid_DuplicatePair_n152(_uploadFile, _downloadFile, x2));
 }
 function from_candid_vec_n156(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_MysteryContribution_n157(_uploadFile, _downloadFile, x2));
+  return value.map((x2) => from_candid_Mystery_n103(_uploadFile, _downloadFile, x2));
 }
-async function from_candid_vec_n162(_uploadFile, _downloadFile, value) {
+function from_candid_vec_n157(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_Notification_n158(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n162(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_MysteryContribution_n163(_uploadFile, _downloadFile, x2));
+}
+async function from_candid_vec_n168(_uploadFile, _downloadFile, value) {
   return await Promise.all(value.map(async (x2) => await from_candid_Photo_n32(_uploadFile, _downloadFile, x2)));
 }
-function from_candid_vec_n163(_uploadFile, _downloadFile, value) {
+function from_candid_vec_n169(_uploadFile, _downloadFile, value) {
   return value.map((x2) => from_candid_ProfileClaim_n65(_uploadFile, _downloadFile, x2));
 }
-function from_candid_vec_n164(_uploadFile, _downloadFile, value) {
+function from_candid_vec_n170(_uploadFile, _downloadFile, value) {
   return value.map((x2) => from_candid_ProfileRemovalRequest_n71(_uploadFile, _downloadFile, x2));
 }
-function from_candid_vec_n165(_uploadFile, _downloadFile, value) {
+function from_candid_vec_n171(_uploadFile, _downloadFile, value) {
   return value.map((x2) => from_candid_StewardRecord_n14(_uploadFile, _downloadFile, x2));
 }
-function from_candid_vec_n166(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_SuccessorDesignation_n115(_uploadFile, _downloadFile, x2));
+function from_candid_vec_n172(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_SuccessorDesignation_n120(_uploadFile, _downloadFile, x2));
 }
-function from_candid_vec_n167(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_TimelineEvent_n168(_uploadFile, _downloadFile, x2));
+function from_candid_vec_n173(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_TimelineEvent_n174(_uploadFile, _downloadFile, x2));
 }
-function from_candid_vec_n180(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_MergeConflict_n181(_uploadFile, _downloadFile, x2));
+function from_candid_vec_n186(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_MergeConflict_n187(_uploadFile, _downloadFile, x2));
 }
-function from_candid_vec_n91(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_AuthMethod_n92(_uploadFile, _downloadFile, x2));
+function from_candid_vec_n96(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_AuthMethod_n97(_uploadFile, _downloadFile, x2));
 }
-function to_candid_ArchiveItemClassification_n221(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n222(_uploadFile, _downloadFile, value);
+function to_candid_ArchiveItemClassification_n227(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n228(_uploadFile, _downloadFile, value);
 }
-function to_candid_ArchiveItemType_n215(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n216(_uploadFile, _downloadFile, value);
+function to_candid_ArchiveItemType_n223(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n224(_uploadFile, _downloadFile, value);
 }
-function to_candid_AuthMethod_n85(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n86(_uploadFile, _downloadFile, value);
+function to_candid_AuthMethod_n90(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n91(_uploadFile, _downloadFile, value);
 }
 function to_candid_EvidenceStatus_n22(_uploadFile, _downloadFile, value) {
   return to_candid_variant_n23(_uploadFile, _downloadFile, value);
@@ -38405,32 +38779,32 @@ function to_candid_EvidenceStatus_n22(_uploadFile, _downloadFile, value) {
 async function to_candid_ExternalBlob_n31(_uploadFile, _downloadFile, value) {
   return await _uploadFile(value);
 }
-function to_candid_LivingStatus_n230(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n231(_uploadFile, _downloadFile, value);
+function to_candid_LivingStatus_n236(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n237(_uploadFile, _downloadFile, value);
 }
-function to_candid_MysteryContributionType_n226(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n227(_uploadFile, _downloadFile, value);
+function to_candid_MysteryContributionType_n232(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n233(_uploadFile, _downloadFile, value);
 }
-function to_candid_MysteryStatus_n96(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n97(_uploadFile, _downloadFile, value);
+function to_candid_MysteryStatus_n101(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n102(_uploadFile, _downloadFile, value);
 }
-function to_candid_OralHistorySpeaker_n224(_uploadFile, _downloadFile, value) {
-  return to_candid_record_n225(_uploadFile, _downloadFile, value);
+function to_candid_OralHistorySpeaker_n230(_uploadFile, _downloadFile, value) {
+  return to_candid_record_n231(_uploadFile, _downloadFile, value);
 }
-function to_candid_PrivacyLevel_n219(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n220(_uploadFile, _downloadFile, value);
+function to_candid_PrivacyLevel_n203(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n204(_uploadFile, _downloadFile, value);
 }
-function to_candid_ProfileEdits_n228(_uploadFile, _downloadFile, value) {
-  return to_candid_record_n229(_uploadFile, _downloadFile, value);
+function to_candid_ProfileEdits_n234(_uploadFile, _downloadFile, value) {
+  return to_candid_record_n235(_uploadFile, _downloadFile, value);
 }
 function to_candid_RelationshipType_n35(_uploadFile, _downloadFile, value) {
   return to_candid_variant_n36(_uploadFile, _downloadFile, value);
 }
-function to_candid_SourceStatus_n217(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n218(_uploadFile, _downloadFile, value);
+function to_candid_SourceStatus_n225(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n226(_uploadFile, _downloadFile, value);
 }
-function to_candid_UserRole_n83(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n84(_uploadFile, _downloadFile, value);
+function to_candid_UserRole_n88(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n89(_uploadFile, _downloadFile, value);
 }
 function to_candid__ImmutableObjectStorageRefillInformation_n2(_uploadFile, _downloadFile, value) {
   return to_candid_record_n3(_uploadFile, _downloadFile, value);
@@ -38444,23 +38818,23 @@ function to_candid_opt_n20(_uploadFile, _downloadFile, value) {
 function to_candid_opt_n21(_uploadFile, _downloadFile, value) {
   return value === null ? candid_none() : candid_some(value);
 }
-function to_candid_opt_n223(_uploadFile, _downloadFile, value) {
-  return value === null ? candid_none() : candid_some(to_candid_OralHistorySpeaker_n224(_uploadFile, _downloadFile, value));
+function to_candid_opt_n229(_uploadFile, _downloadFile, value) {
+  return value === null ? candid_none() : candid_some(to_candid_OralHistorySpeaker_n230(_uploadFile, _downloadFile, value));
 }
-function to_candid_record_n225(_uploadFile, _downloadFile, value) {
+function to_candid_record_n231(_uploadFile, _downloadFile, value) {
   return {
     name: value.name,
     personId: value.personId ? candid_some(value.personId) : candid_none()
   };
 }
-function to_candid_record_n229(_uploadFile, _downloadFile, value) {
+function to_candid_record_n235(_uploadFile, _downloadFile, value) {
   return {
     occupation: value.occupation ? candid_some(value.occupation) : candid_none(),
     privacySettings: value.privacySettings ? candid_some(value.privacySettings) : candid_none(),
     nickname: value.nickname ? candid_some(value.nickname) : candid_none(),
     birthDate: value.birthDate ? candid_some(value.birthDate) : candid_none(),
     birthInfo: value.birthInfo ? candid_some(value.birthInfo) : candid_none(),
-    livingStatus: value.livingStatus ? candid_some(to_candid_LivingStatus_n230(_uploadFile, _downloadFile, value.livingStatus)) : candid_none(),
+    livingStatus: value.livingStatus ? candid_some(to_candid_LivingStatus_n236(_uploadFile, _downloadFile, value.livingStatus)) : candid_none(),
     longerStory: value.longerStory ? candid_some(value.longerStory) : candid_none(),
     story: value.story ? candid_some(value.story) : candid_none(),
     middleName: value.middleName ? candid_some(value.middleName) : candid_none(),
@@ -38479,7 +38853,27 @@ function to_candid_record_n3(_uploadFile, _downloadFile, value) {
     proposed_top_up_amount: value.proposed_top_up_amount ? candid_some(value.proposed_top_up_amount) : candid_none()
   };
 }
-function to_candid_variant_n216(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n102(_uploadFile, _downloadFile, value) {
+  return value == "Researching" ? {
+    Researching: null
+  } : value == "Open" ? {
+    Open: null
+  } : value == "PartiallyResolved" ? {
+    PartiallyResolved: null
+  } : value == "Resolved" ? {
+    Resolved: null
+  } : value;
+}
+function to_candid_variant_n204(_uploadFile, _downloadFile, value) {
+  return value == "Private" ? {
+    Private: null
+  } : value == "Public" ? {
+    Public: null
+  } : value == "FamilyOnly" ? {
+    FamilyOnly: null
+  } : value;
+}
+function to_candid_variant_n224(_uploadFile, _downloadFile, value) {
   return value == "Research" ? {
     Research: null
   } : value == "Photo" ? {
@@ -38498,7 +38892,7 @@ function to_candid_variant_n216(_uploadFile, _downloadFile, value) {
     Video: null
   } : value;
 }
-function to_candid_variant_n218(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n226(_uploadFile, _downloadFile, value) {
   return value == "Copy" ? {
     Copy: null
   } : value == "Unverified" ? {
@@ -38509,31 +38903,11 @@ function to_candid_variant_n218(_uploadFile, _downloadFile, value) {
     Original: null
   } : value;
 }
-function to_candid_variant_n220(_uploadFile, _downloadFile, value) {
-  return value == "Private" ? {
-    Private: null
-  } : value == "Public" ? {
-    Public: null
-  } : value == "FamilyOnly" ? {
-    FamilyOnly: null
-  } : value;
-}
-function to_candid_variant_n222(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n228(_uploadFile, _downloadFile, value) {
   return value == "OralHistory" ? {
     OralHistory: null
   } : value == "Standard" ? {
     Standard: null
-  } : value;
-}
-function to_candid_variant_n227(_uploadFile, _downloadFile, value) {
-  return value == "Lead" ? {
-    Lead: null
-  } : value == "Note" ? {
-    Note: null
-  } : value == "Memory" ? {
-    Memory: null
-  } : value == "Source" ? {
-    Source: null
   } : value;
 }
 function to_candid_variant_n23(_uploadFile, _downloadFile, value) {
@@ -38547,7 +38921,18 @@ function to_candid_variant_n23(_uploadFile, _downloadFile, value) {
     PersonalMemory: null
   } : value;
 }
-function to_candid_variant_n231(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n233(_uploadFile, _downloadFile, value) {
+  return value == "Lead" ? {
+    Lead: null
+  } : value == "Note" ? {
+    Note: null
+  } : value == "Memory" ? {
+    Memory: null
+  } : value == "Source" ? {
+    Source: null
+  } : value;
+}
+function to_candid_variant_n237(_uploadFile, _downloadFile, value) {
   return value == "Living" ? {
     Living: null
   } : value == "Deceased" ? {
@@ -38565,7 +38950,7 @@ function to_candid_variant_n36(_uploadFile, _downloadFile, value) {
     Child: null
   } : value;
 }
-function to_candid_variant_n84(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n89(_uploadFile, _downloadFile, value) {
   return value == "admin" ? {
     admin: null
   } : value == "user" ? {
@@ -38574,22 +38959,11 @@ function to_candid_variant_n84(_uploadFile, _downloadFile, value) {
     guest: null
   } : value;
 }
-function to_candid_variant_n86(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n91(_uploadFile, _downloadFile, value) {
   return value == "Google" ? {
     Google: null
   } : value == "Apple" ? {
     Apple: null
-  } : value;
-}
-function to_candid_variant_n97(_uploadFile, _downloadFile, value) {
-  return value == "Researching" ? {
-    Researching: null
-  } : value == "Open" ? {
-    Open: null
-  } : value == "PartiallyResolved" ? {
-    PartiallyResolved: null
-  } : value == "Resolved" ? {
-    Resolved: null
   } : value;
 }
 function createActor(canisterId, _uploadFile, _downloadFile, options = {}) {
@@ -38683,7 +39057,10 @@ function Layout({
   const isBranchActive = activeView === "heritage-branch";
   const isArchiveActive = activeView === "archive" || activeView === "archive-detail" || activeView === "archive-contribute" || // Family Videos & Oral History is reached from Family Archive (no separate
   // top-level pill), so the Family Archive pill stays highlighted there.
-  activeView === "videos" || activeView === "video-detail" || activeView === "video-contribute";
+  activeView === "videos" || activeView === "video-detail" || activeView === "video-contribute" || // Family Recipes is reached from Home / Family Archive / Person Profiles
+  // (no separate top-level pill), so the Family Archive pill stays
+  // highlighted there too.
+  activeView === "recipes" || activeView === "recipe-detail" || activeView === "recipe-contribute";
   const isStoriesActive = activeView === "stories";
   const isMysteriesActive = activeView === "mysteries";
   const isTimelineActive = activeView === "timeline";
@@ -53882,6 +54259,156 @@ function useListAuditHistory() {
     enabled: providersPresent && !!actor && !isFetching
   });
 }
+function useApprovedRecipes() {
+  const providersPresent = useProvidersPresent();
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["recipes", "approved"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.listApprovedRecipes();
+    },
+    enabled: providersPresent && !!actor && !isFetching
+  });
+}
+function usePendingRecipes() {
+  const providersPresent = useProvidersPresent();
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["recipes", "pending"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.listPendingRecipes();
+    },
+    enabled: providersPresent && !!actor && !isFetching
+  });
+}
+function useRecipe(id2) {
+  const providersPresent = useProvidersPresent();
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["recipes", "detail", id2.toString()],
+    queryFn: async () => {
+      if (!actor) return null;
+      return actor.getRecipe(id2);
+    },
+    enabled: providersPresent && !!actor && !isFetching
+  });
+}
+function useRecipesForPerson(personId) {
+  const providersPresent = useProvidersPresent();
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["recipes", "person", personId],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.listRecipesForPerson(personId);
+    },
+    enabled: providersPresent && !!actor && !isFetching
+  });
+}
+function useSubmitRecipe() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (input) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.submitRecipe(
+        input.title,
+        input.shortDescription,
+        input.originatingPersonId,
+        input.relatedPersonIds,
+        input.era,
+        input.year,
+        input.location,
+        input.familyBranch,
+        input.ingredients,
+        input.instructions,
+        input.familyStory,
+        input.tags,
+        input.privacyLevel,
+        input.evidenceStatus,
+        input.linkedMediaIds
+      );
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({ queryKey: ["recipes", "pending"] });
+    }
+  });
+}
+function useApproveRecipe() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (id2) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.approveRecipe(id2);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({ queryKey: ["recipes", "pending"] });
+      void queryClient2.invalidateQueries({ queryKey: ["recipes", "approved"] });
+    }
+  });
+}
+function useRejectRecipe() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (id2) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.rejectRecipe(id2);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({ queryKey: ["recipes", "pending"] });
+    }
+  });
+}
+const RECIPE_STATUS_LABELS = {
+  [RecipeStatus.Pending]: "Pending",
+  [RecipeStatus.Approved]: "Approved",
+  [RecipeStatus.Rejected]: "Rejected",
+  [RecipeStatus.Archived]: "Archived"
+};
+const RECIPE_STATUS_PILL = {
+  [RecipeStatus.Pending]: "status-pending",
+  [RecipeStatus.Approved]: "status-approved",
+  [RecipeStatus.Rejected]: "status-rejected",
+  [RecipeStatus.Archived]: "status-rejected"
+};
+const RECIPE_PRIVACY_LABELS = {
+  [PrivacyLevel.Public]: "Public",
+  [PrivacyLevel.FamilyOnly]: "Family Only",
+  [PrivacyLevel.Private]: "Private"
+};
+const RECIPE_EVIDENCE_LABELS = {
+  [EvidenceStatus.Documented]: "Documented",
+  [EvidenceStatus.FamilyHistory]: "Family History",
+  [EvidenceStatus.PersonalMemory]: "Personal Memory",
+  [EvidenceStatus.Unresolved]: "Unresolved"
+};
+const RECIPE_EVIDENCE_BADGE = {
+  [EvidenceStatus.Documented]: "evidence-documented",
+  [EvidenceStatus.FamilyHistory]: "evidence-history",
+  [EvidenceStatus.PersonalMemory]: "evidence-memory",
+  [EvidenceStatus.Unresolved]: "evidence-unresolved"
+};
+function getRecipeYear(recipe) {
+  if (recipe.year !== void 0 && recipe.year !== null) {
+    return Number(recipe.year);
+  }
+  if (!recipe.era) return null;
+  const match = recipe.era.match(/\b(1[89]\d{2}|20\d{2})\b/);
+  return match ? Number(match[1]) : null;
+}
+function getRecipePrimaryImage(recipe, media) {
+  for (const id2 of recipe.linkedMediaIds) {
+    const item = media.find((m2) => m2.id === id2);
+    if (item && item.itemType === ArchiveItemType.Photo) {
+      return item.blob.getDirectURL();
+    }
+  }
+  return null;
+}
 const juliaProfile = {
   id: "julia",
   name: "Julia “Julie” Norwood",
@@ -56714,6 +57241,171 @@ function VideosSection({
     }
   );
 }
+function ProfileRecipeCard({
+  recipe,
+  media,
+  position,
+  onOpen
+}) {
+  const primaryImage = getRecipePrimaryImage(recipe, media);
+  const year = getRecipeYear(recipe);
+  const eraLabel2 = recipe.era || (year !== null ? String(year) : null);
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "button",
+    {
+      type: "button",
+      "data-ocid": `profile.recipes.item.${position}`,
+      onClick: onOpen,
+      className: "recipe-card group",
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "recipe-card-thumb", children: primaryImage ? /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: primaryImage, alt: recipe.title, loading: "lazy" }) : /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "recipe-card-thumb-icon", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+          ChefHat,
+          {
+            className: "h-10 w-10",
+            strokeWidth: 1.5,
+            "aria-hidden": "true"
+          }
+        ) }) }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "recipe-card-body", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "recipe-card-title line-clamp-2", children: recipe.title }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "recipe-card-meta", children: eraLabel2 ? /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "recipe-card-era", children: eraLabel2 }) : null }),
+          recipe.shortDescription ? /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "recipe-card-desc line-clamp-2", children: recipe.shortDescription }) : null
+        ] })
+      ]
+    }
+  );
+}
+function RecipesSection({
+  person,
+  isAuthenticated,
+  onOpenRecipes,
+  onOpenRecipe,
+  onOpenRecipeContribute
+}) {
+  const { data: recipes = [], isLoading } = useRecipesForPerson(person.id);
+  const { data: media = [] } = useApprovedArchiveItems();
+  const canonical = useCanonicalPerson(person.id, person.name);
+  const displayName = canonical.displayName || person.name;
+  const isOrigin = recipes.some(
+    (recipe) => recipe.originatingPersonId === person.id
+  );
+  const heading = isOrigin ? `Recipes from ${displayName}` : `Recipes connected to ${displayName}`;
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    motion.section,
+    {
+      "aria-label": "Family Recipes",
+      className: "mt-10",
+      initial: { opacity: 0, y: 16 },
+      animate: { opacity: 1, y: 0 },
+      transition: { duration: 0.6, delay: 0.35, ease: [0.4, 0, 0.2, 1] },
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(SectionHeader, { icon: BookOpen, label: heading }),
+        isLoading ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "div",
+          {
+            "data-ocid": "profile.recipes.loading_state",
+            className: "mt-3 grid grid-cols-1 gap-5 sm:grid-cols-2",
+            "aria-label": "Loading recipes",
+            children: Array.from({ length: 2 }, (_2, i) => `skeleton-${i}`).map((id2) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "div",
+              {
+                className: "animate-pulse overflow-hidden rounded-xl border border-border/60 bg-card",
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "aspect-[4/3] w-full bg-muted" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-2 p-4", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-5 w-2/3 rounded bg-muted" }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-4 w-1/3 rounded bg-muted" }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-4 w-1/2 rounded bg-muted" })
+                  ] })
+                ]
+              },
+              id2
+            ))
+          }
+        ) : recipes.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "div",
+          {
+            "data-ocid": "profile.recipes.empty_state",
+            className: "mt-3 rounded-2xl border border-dashed border-border bg-card/50 px-4 py-6 text-center shadow-subtle",
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "recipe-empty-mark", children: /* @__PURE__ */ jsxRuntimeExports.jsx(ChefHat, { className: "h-7 w-7", strokeWidth: 1.5, "aria-hidden": "true" }) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "recipe-empty-title", children: "No family recipes yet" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "recipe-empty-hint", children: [
+                "When a dish or handwritten recipe is linked to ",
+                displayName,
+                ", it will appear here."
+              ] })
+            ]
+          }
+        ) : /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "ul",
+          {
+            "data-ocid": "profile.recipes.list",
+            className: "mt-3 grid grid-cols-1 gap-5 sm:grid-cols-2",
+            children: recipes.map((recipe, index2) => /* @__PURE__ */ jsxRuntimeExports.jsx("li", { children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+              ProfileRecipeCard,
+              {
+                recipe,
+                media,
+                position: index2 + 1,
+                onOpen: () => onOpenRecipe == null ? void 0 : onOpenRecipe(recipe.recipeId)
+              }
+            ) }, recipe.recipeId.toString()))
+          }
+        ),
+        isAuthenticated && onOpenRecipeContribute ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "div",
+          {
+            className: "mt-4 flex flex-wrap items-center gap-3",
+            "data-ocid": "profile.recipes.actions",
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                "button",
+                {
+                  type: "button",
+                  "data-ocid": "profile.recipes.add_recipe_button",
+                  onClick: () => onOpenRecipeContribute({
+                    personId: person.id,
+                    context: "profile"
+                  }),
+                  className: "inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                  style: {
+                    color: "oklch(var(--recipe-accent-foreground))",
+                    backgroundColor: "oklch(var(--recipe-accent))"
+                  },
+                  children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(Plus, { className: "h-4 w-4", strokeWidth: 2, "aria-hidden": "true" }),
+                    "Add Recipe"
+                  ]
+                }
+              ),
+              onOpenRecipes ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                "button",
+                {
+                  type: "button",
+                  "data-ocid": "profile.recipes.browse_button",
+                  onClick: onOpenRecipes,
+                  className: "inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-4 py-2 text-sm font-semibold text-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                  children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      BookOpen,
+                      {
+                        className: "h-4 w-4",
+                        strokeWidth: 1.75,
+                        "aria-hidden": "true"
+                      }
+                    ),
+                    "Browse all recipes"
+                  ]
+                }
+              ) : null
+            ]
+          }
+        ) : null
+      ]
+    }
+  );
+}
 function PersonProfilePage({
   onBack,
   person,
@@ -56722,7 +57414,10 @@ function PersonProfilePage({
   onEditProfile,
   onClaimApproved,
   onOpenMediaItem,
-  onAddMedia
+  onAddMedia,
+  onOpenRecipes,
+  onOpenRecipe,
+  onOpenRecipeContribute
 }) {
   var _a2, _b2, _c2, _d2;
   const storyLabel = person.id === "julia" || person.id === "erma" || person.id === "hudson" || person.id === "gertrude-adams-hill" || person.id === "mary-louise-sims" || person.id === "mary-jane-johnson" || person.id === "mildred-adams" || person.id === "christine-adams" || person.id === "tammy" || person.id === "punchy" || person.id === "patricia-rollins" || person.id === "fannie-adams" || person.id === "christine-adams-tucker" || person.id === "ella-mae-adams" || person.id === "eula-lee-adams" || person.id === "sherriSmith" || person.id === "beatriceSmith" ? "Her Story" : "His Story";
@@ -57273,6 +57968,16 @@ function PersonProfilePage({
         onOpenMediaItem,
         onAddMedia,
         isAuthenticated
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      RecipesSection,
+      {
+        person,
+        isAuthenticated,
+        onOpenRecipes,
+        onOpenRecipe,
+        onOpenRecipeContribute
       }
     ),
     /* @__PURE__ */ jsxRuntimeExports.jsx(Dialog, { open: removalOpen, onOpenChange: setRemovalOpen, children: /* @__PURE__ */ jsxRuntimeExports.jsxs(DialogContent, { "data-ocid": "profile.request_removal_dialog", children: [
@@ -58233,7 +58938,7 @@ function formatDate$4(timestamp) {
     day: "numeric"
   });
 }
-function formatContributor$5(contributor) {
+function formatContributor$6(contributor) {
   const text = contributor.toText();
   return text.length > 18 ? `${text.slice(0, 5)}…${text.slice(-4)}` : text;
 }
@@ -58241,6 +58946,9 @@ function AdminApprovalPage({ onBack }) {
   const { data: items = [], isLoading } = usePendingArchiveItems();
   const approve = useApproveArchiveItem();
   const reject = useRejectArchiveItem();
+  const { data: recipes = [], isLoading: recipesLoading } = usePendingRecipes();
+  const approveRecipe = useApproveRecipe();
+  const rejectRecipe = useRejectRecipe();
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto w-full max-w-3xl px-6 py-8", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsxs(
       "button",
@@ -58317,7 +59025,87 @@ function AdminApprovalPage({ onBack }) {
         onReject: () => reject.mutate(item.id)
       },
       item.id.toString()
-    )) })
+    )) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "section",
+      {
+        "data-ocid": "admin_approval.recipes_section",
+        className: "mt-12",
+        "aria-labelledby": "pending-recipes-heading",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mb-5 flex items-center gap-2.5", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "flex h-9 w-9 items-center justify-center rounded-full bg-accent/15 text-accent-foreground", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+              BookOpen,
+              {
+                className: "h-4 w-4",
+                strokeWidth: 1.75,
+                "aria-hidden": "true"
+              }
+            ) }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "h2",
+                {
+                  id: "pending-recipes-heading",
+                  className: "font-display text-2xl font-semibold text-foreground",
+                  children: "Pending Recipes"
+                }
+              ),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: "Family recipe submissions awaiting your approval before they join Family Recipes." })
+            ] })
+          ] }),
+          recipesLoading ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "div",
+            {
+              "data-ocid": "admin_approval.recipes_loading_state",
+              className: "space-y-4",
+              "aria-label": "Loading pending recipes",
+              children: [0, 1, 2].map((i) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                "div",
+                {
+                  className: "animate-pulse rounded-2xl border border-border bg-card p-5",
+                  children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mb-3 h-4 w-1/3 rounded bg-muted" }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mb-2 h-5 w-2/3 rounded bg-muted" }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-4 w-full rounded bg-muted" })
+                  ]
+                },
+                i
+              ))
+            }
+          ) : recipes.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "div",
+            {
+              "data-ocid": "admin_approval.recipes_empty_state",
+              className: "flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/50 px-6 py-14 text-center",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-muted", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  BookOpen,
+                  {
+                    className: "h-7 w-7 text-muted-foreground",
+                    strokeWidth: 1.5,
+                    "aria-hidden": "true"
+                  }
+                ) }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "font-display text-xl font-semibold text-foreground", children: "No recipes awaiting review" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-2 max-w-sm text-sm text-muted-foreground", children: "Recipe submissions from family members will appear here for your approval before they are added to Family Recipes." })
+              ]
+            }
+          ) : /* @__PURE__ */ jsxRuntimeExports.jsx("ul", { "data-ocid": "admin_approval.recipes_list", className: "space-y-4", children: recipes.map((recipe, index2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+            PendingRecipeItem,
+            {
+              recipe,
+              index: index2,
+              approving: approveRecipe.isPending,
+              rejecting: rejectRecipe.isPending,
+              onApprove: () => approveRecipe.mutate(recipe.recipeId),
+              onReject: () => rejectRecipe.mutate(recipe.recipeId)
+            },
+            recipe.recipeId.toString()
+          )) })
+        ]
+      }
+    )
   ] });
 }
 function PendingItem({
@@ -58360,7 +59148,7 @@ function PendingItem({
         /* @__PURE__ */ jsxRuntimeExports.jsxs("dl", { className: "mt-4 grid grid-cols-2 gap-x-4 gap-y-3 text-sm sm:grid-cols-3", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx("dt", { className: "text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground", children: "Contributor" }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("dd", { className: "mt-0.5 font-mono text-xs text-foreground", children: formatContributor$5(item.contributor) })
+            /* @__PURE__ */ jsxRuntimeExports.jsx("dd", { className: "mt-0.5 font-mono text-xs text-foreground", children: formatContributor$6(item.contributor) })
           ] }),
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx("dt", { className: "text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground", children: "Era" }),
@@ -58429,6 +59217,96 @@ function PendingItem({
     }
   );
 }
+function RecipeOrigin$1({ personId }) {
+  var _a2;
+  const fallback = ((_a2 = profiles[personId]) == null ? void 0 : _a2.name) ?? "";
+  const canonical = useCanonicalPerson(personId, fallback);
+  const name = canonical.displayName || fallback;
+  if (!name) return null;
+  return /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "recipe-card-origin", children: name });
+}
+function PendingRecipeItem({
+  recipe,
+  index: index2,
+  approving,
+  rejecting,
+  onApprove,
+  onReject
+}) {
+  const position = index2 + 1;
+  const statusPill = RECIPE_STATUS_PILL[recipe.status];
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "li",
+    {
+      "data-ocid": `admin_approval.recipe_item.${position}`,
+      className: "rounded-2xl border border-border bg-card p-5 shadow-subtle",
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mb-3 flex flex-wrap items-center gap-2", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "span",
+            {
+              className: "archive-type-badge badge-work",
+              "data-ocid": `admin_approval.recipe_type_badge.${position}`,
+              children: "Recipe"
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "span",
+            {
+              className: `status-pill ${statusPill}`,
+              "data-ocid": `admin_approval.recipe_status_pill.${position}`,
+              children: RECIPE_STATUS_LABELS[recipe.status]
+            }
+          )
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "font-display text-xl font-semibold text-foreground", children: recipe.title }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-1.5 flex flex-wrap items-center gap-2", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(RecipeOrigin$1, { personId: recipe.originatingPersonId }),
+          recipe.era ? /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "recipe-card-era", children: recipe.era }) : null
+        ] }),
+        recipe.shortDescription ? /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-2 text-sm leading-relaxed text-muted-foreground", children: recipe.shortDescription }) : null,
+        recipe.tags.length > 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-4 flex flex-wrap gap-1.5", children: recipe.tags.map((tag) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "span",
+          {
+            className: "rounded-full border border-border/60 bg-background px-2.5 py-0.5 text-xs text-muted-foreground",
+            children: tag
+          },
+          tag
+        )) }) : null,
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-5 flex flex-wrap items-center gap-3 border-t border-border/60 pt-4", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "button",
+            {
+              type: "button",
+              "data-ocid": `admin_approval.recipe_approve_button.${position}`,
+              onClick: onApprove,
+              disabled: approving || rejecting,
+              className: "approve-action disabled:cursor-not-allowed disabled:opacity-60",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { className: "h-4 w-4", strokeWidth: 2.25, "aria-hidden": "true" }),
+                approving ? "Approving…" : "Approve"
+              ]
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "button",
+            {
+              type: "button",
+              "data-ocid": `admin_approval.recipe_reject_button.${position}`,
+              onClick: onReject,
+              disabled: approving || rejecting,
+              className: "reject-action disabled:cursor-not-allowed disabled:opacity-60",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(X, { className: "h-4 w-4", strokeWidth: 2.25, "aria-hidden": "true" }),
+                rejecting ? "Rejecting…" : "Reject"
+              ]
+            }
+          )
+        ] })
+      ]
+    }
+  );
+}
 const TYPE_META = {
   [ArchiveItemType.Photo]: {
     icon: Camera,
@@ -58482,7 +59360,7 @@ const TYPE_ORDER = [
   ArchiveItemType.WorkBusiness,
   ArchiveItemType.Other
 ];
-function parseYear$1(value) {
+function parseYear$2(value) {
   const trimmed = value.trim();
   if (!trimmed) return null;
   if (!/^\d{1,4}$/.test(trimmed)) return null;
@@ -58585,7 +59463,7 @@ function ArchiveContributionPage({
         itemType: selectedType,
         blob,
         era: era.trim(),
-        year: parseYear$1(year),
+        year: parseYear$2(year),
         tags: tags.split(",").map((tag) => tag.trim()).filter(Boolean),
         relatedMemberIds,
         relatedBranchId: relatedBranch.trim() || null,
@@ -59208,7 +60086,7 @@ function formatDate$3(timestamp) {
     day: "numeric"
   });
 }
-function formatContributor$4(contributor) {
+function formatContributor$5(contributor) {
   const text = contributor.toText();
   return text.length > 18 ? `${text.slice(0, 5)}…${text.slice(-4)}` : text;
 }
@@ -59270,7 +60148,7 @@ function ArchiveDetailPage({
         /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "inline-flex items-center gap-1.5", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx(User, { className: "h-4 w-4", "aria-hidden": "true" }),
           "Contributed by ",
-          formatContributor$4(item.contributor)
+          formatContributor$5(item.contributor)
         ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "inline-flex items-center gap-1.5", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx(CalendarDays, { className: "h-4 w-4", "aria-hidden": "true" }),
@@ -59410,7 +60288,7 @@ const TYPE_ICONS = {
   [ArchiveItemType.WorkBusiness]: Landmark,
   [ArchiveItemType.Other]: FileText
 };
-function formatContributor$3(contributor) {
+function formatContributor$4(contributor) {
   const text = contributor.toText();
   return text.length > 18 ? `${text.slice(0, 5)}…${text.slice(-4)}` : text;
 }
@@ -59450,7 +60328,7 @@ function ArchiveCard({ item, index: index2, onOpen }) {
           ] }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "archive-card-title line-clamp-2", children: item.title }),
           /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "archive-card-meta", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "contributor", children: formatContributor$3(item.contributor) }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "contributor", children: formatContributor$4(item.contributor) }),
             /* @__PURE__ */ jsxRuntimeExports.jsx("span", { "aria-hidden": "true", children: "·" }),
             /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "contributed" })
           ] }),
@@ -59533,8 +60411,8 @@ function ArchiveFilterBar({
     ] })
   ] });
 }
-const DEFAULT_FILTERS = { type: "all", member: "all", era: "all" };
-function readFilters() {
+const DEFAULT_FILTERS$1 = { type: "all", member: "all", era: "all" };
+function readFilters$1() {
   const params = new URLSearchParams(window.location.search);
   const type = params.get("type");
   const member = params.get("member");
@@ -59548,10 +60426,11 @@ function readFilters() {
 function ArchivePage({
   onBack,
   onOpenArchiveItem,
-  onOpenVideos
+  onOpenVideos,
+  onOpenRecipes
 }) {
   const { data: items = [], isLoading } = useApprovedArchiveItems();
-  const [filters, setFilters] = reactExports.useState(readFilters);
+  const [filters, setFilters] = reactExports.useState(readFilters$1);
   reactExports.useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (filters.type !== "all") params.set("type", filters.type);
@@ -59584,7 +60463,7 @@ function ArchivePage({
     });
   }, [items, filters]);
   const hasActiveFilters = filters.type !== "all" || filters.member !== "all" || filters.era !== "all";
-  const resetFilters = () => setFilters(DEFAULT_FILTERS);
+  const resetFilters = () => setFilters(DEFAULT_FILTERS$1);
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto w-full max-w-6xl px-6 py-8", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsxs(
       "button",
@@ -59647,6 +60526,50 @@ function ArchivePage({
               style: {
                 backgroundColor: "oklch(var(--oral-history))",
                 color: "oklch(var(--oral-history-foreground))"
+              },
+              children: [
+                "Browse",
+                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { "aria-hidden": "true", children: "→" })
+              ]
+            }
+          )
+        ]
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "button",
+      {
+        type: "button",
+        "data-ocid": "archive.recipes_entry_button",
+        onClick: onOpenRecipes,
+        className: "group mb-6 flex w-full items-center gap-4 rounded-2xl border border-border bg-card p-5 text-left shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:translate-y-0",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "span",
+            {
+              className: "flex h-12 w-12 shrink-0 items-center justify-center rounded-xl",
+              style: {
+                backgroundColor: "oklch(var(--recipe-accent) / 0.14)",
+                color: "oklch(var(--recipe-accent))"
+              },
+              "aria-hidden": "true",
+              children: /* @__PURE__ */ jsxRuntimeExports.jsx(UtensilsCrossed, { className: "h-6 w-6", strokeWidth: 1.75 })
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "min-w-0 flex-1", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "block font-display text-lg font-semibold text-foreground", children: "Family Recipes" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "inline-flex items-center gap-1", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(UtensilsCrossed, { className: "h-3.5 w-3.5", "aria-hidden": "true" }),
+              "Handed-down dishes and family favorites"
+            ] }) })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "span",
+            {
+              className: "inline-flex shrink-0 items-center gap-1 rounded-full px-3.5 py-1.5 text-xs font-semibold",
+              style: {
+                backgroundColor: "oklch(var(--recipe-accent))",
+                color: "oklch(var(--recipe-accent-foreground))"
               },
               children: [
                 "Browse",
@@ -62368,6 +63291,10 @@ const navItems = [
   {
     label: "Family Videos & Oral History",
     icon: Clapperboard
+  },
+  {
+    label: "Family Recipes",
+    icon: UtensilsCrossed
   }
 ];
 function HomePage({
@@ -62377,7 +63304,8 @@ function HomePage({
   onOpenStories,
   onOpenMysteries,
   onOpenTimeline,
-  onOpenVideos
+  onOpenVideos,
+  onOpenRecipes
 }) {
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto flex w-full max-w-3xl flex-col items-center px-6 py-12 sm:py-16", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -62430,7 +63358,7 @@ function HomePage({
                 {
                   type: "button",
                   "data-ocid": `home.nav_button.${index2 + 1}`,
-                  onClick: index2 === 0 ? onExplore : index2 === 1 ? onOpenBranch : index2 === 2 ? onOpenTimeline : index2 === 3 ? onOpenStories : index2 === 4 ? onOpenMysteries : index2 === 5 ? onAddToHistory : index2 === 6 ? onOpenVideos : void 0,
+                  onClick: index2 === 0 ? onExplore : index2 === 1 ? onOpenBranch : index2 === 2 ? onOpenTimeline : index2 === 3 ? onOpenStories : index2 === 4 ? onOpenMysteries : index2 === 5 ? onAddToHistory : index2 === 6 ? onOpenVideos : index2 === 7 ? onOpenRecipes : void 0,
                   className: "group flex w-full items-center gap-4 rounded-2xl border border-border bg-card px-5 py-4 text-left shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:translate-y-0",
                   children: [
                     /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-secondary text-accent-foreground transition-colors duration-300 group-hover:bg-accent group-hover:text-accent-foreground", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -63002,7 +63930,7 @@ function formatDate$1(timestamp) {
     day: "numeric"
   });
 }
-function formatContributor$2(contributor) {
+function formatContributor$3(contributor) {
   const text = contributor.toText();
   return text.length > 18 ? `${text.slice(0, 5)}…${text.slice(-4)}` : text;
 }
@@ -63107,7 +64035,7 @@ function MysteryDetail({
       ] }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { children: [
         "Contributed by ",
-        formatContributor$2(mystery.contributor)
+        formatContributor$3(mystery.contributor)
       ] }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { children: [
         "Created ",
@@ -63297,7 +64225,7 @@ const STATUS_FILTERS = [
   MysteryStatus.PartiallyResolved,
   MysteryStatus.Resolved
 ];
-function formatContributor$1(contributor) {
+function formatContributor$2(contributor) {
   const text = contributor.toText();
   return text.length > 18 ? `${text.slice(0, 5)}…${text.slice(-4)}` : text;
 }
@@ -63605,7 +64533,7 @@ function ReviewContributions() {
                 ] }),
                 /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { children: [
                   "by ",
-                  formatContributor$1(contribution.contributor)
+                  formatContributor$2(contribution.contributor)
                 ] })
               ] }),
               /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm leading-relaxed text-foreground", children: contribution.text }),
@@ -64859,6 +65787,1398 @@ function ProfileEditPage({
     ] })
   ] });
 }
+function parseYear$1(value) {
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  if (!/^\d{1,4}$/.test(trimmed)) return null;
+  return BigInt(trimmed);
+}
+function ResolvedProfileChip$1({
+  personId,
+  selected,
+  onToggle,
+  kind
+}) {
+  const { displayName } = useCanonicalPerson(personId, personId);
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "button",
+    {
+      type: "button",
+      "data-ocid": `recipe.form.${kind}.${personId}`,
+      onClick: onToggle,
+      "aria-pressed": selected,
+      className: `inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${selected ? "border-accent bg-accent text-accent-foreground" : "border-border bg-card text-foreground hover:bg-muted"}`,
+      children: [
+        selected ? /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { className: "h-3.5 w-3.5", "aria-hidden": "true" }) : null,
+        displayName
+      ]
+    }
+  );
+}
+function RecipeContributePage({
+  onBack,
+  onOpenRecipes,
+  preselect
+}) {
+  var _a2;
+  const { isAuthenticated, login, isInitializing, isLoggingIn } = useInternetIdentity();
+  const submitRecipe = useSubmitRecipe();
+  const submitMedia = useSubmitArchiveItem();
+  const { data: approvedMedia = [] } = useApprovedArchiveItems();
+  const [title, setTitle] = reactExports.useState("");
+  const [shortDescription, setShortDescription] = reactExports.useState("");
+  const [ingredients, setIngredients] = reactExports.useState("");
+  const [instructions, setInstructions] = reactExports.useState("");
+  const [familyStory, setFamilyStory] = reactExports.useState("");
+  const [era, setEra] = reactExports.useState("");
+  const [year, setYear] = reactExports.useState("");
+  const [location2, setLocation] = reactExports.useState("");
+  const [familyBranch, setFamilyBranch] = reactExports.useState("");
+  const [tags, setTags] = reactExports.useState("");
+  const [originatingId, setOriginatingId] = reactExports.useState(
+    (preselect == null ? void 0 : preselect.role) === "originating" ? preselect.personId : null
+  );
+  const [relatedMemberIds, setRelatedMemberIds] = reactExports.useState(
+    (preselect == null ? void 0 : preselect.role) === "related" ? [preselect.personId] : []
+  );
+  const [privacyLevel, setPrivacyLevel] = reactExports.useState(
+    PrivacyLevel.FamilyOnly
+  );
+  const [evidenceStatus, setEvidenceStatus] = reactExports.useState(
+    EvidenceStatus.PersonalMemory
+  );
+  const [attachedMediaIds, setAttachedMediaIds] = reactExports.useState([]);
+  const [fileBytes, setFileBytes] = reactExports.useState(
+    null
+  );
+  const [fileName, setFileName] = reactExports.useState("");
+  const [fileMime, setFileMime] = reactExports.useState("");
+  const [progress2, setProgress] = reactExports.useState(null);
+  const [dragover, setDragover] = reactExports.useState(false);
+  const fileInputRef = reactExports.useRef(null);
+  const [submitted, setSubmitted] = reactExports.useState(false);
+  const [error, setError] = reactExports.useState(null);
+  const knownResolvedPeople = reactExports.useMemo(() => {
+    const initial = /* @__PURE__ */ new Set();
+    if ((preselect == null ? void 0 : preselect.personId) && !profiles[preselect.personId]) {
+      initial.add(preselect.personId);
+    }
+    for (const id2 of relatedMemberIds) {
+      if (!profiles[id2]) initial.add(id2);
+    }
+    return [...initial];
+  }, [preselect == null ? void 0 : preselect.personId, relatedMemberIds]);
+  const originatingCanonical = useCanonicalPerson(
+    originatingId ?? void 0,
+    originatingId ? ((_a2 = profiles[originatingId]) == null ? void 0 : _a2.name) ?? "" : ""
+  );
+  const handleFile = async (file) => {
+    if (!file) return;
+    setFileBytes(new Uint8Array(await file.arrayBuffer()));
+    setFileName(file.name);
+    setFileMime(file.type);
+    setProgress(null);
+  };
+  const toggleOriginating = (id2) => {
+    setOriginatingId((current) => current === id2 ? null : id2);
+  };
+  const toggleMember = (id2) => {
+    setRelatedMemberIds(
+      (current) => current.includes(id2) ? current.filter((memberId) => memberId !== id2) : [...current, id2]
+    );
+  };
+  const toggleAttachedMedia = (id2) => {
+    setAttachedMediaIds(
+      (current) => current.includes(id2) ? current.filter((mediaId) => mediaId !== id2) : [...current, id2]
+    );
+  };
+  const resetForm = () => {
+    setTitle("");
+    setShortDescription("");
+    setIngredients("");
+    setInstructions("");
+    setFamilyStory("");
+    setEra("");
+    setYear("");
+    setLocation("");
+    setFamilyBranch("");
+    setTags("");
+    setOriginatingId(null);
+    setRelatedMemberIds([]);
+    setPrivacyLevel(PrivacyLevel.FamilyOnly);
+    setEvidenceStatus(EvidenceStatus.PersonalMemory);
+    setAttachedMediaIds([]);
+    setFileBytes(null);
+    setFileName("");
+    setFileMime("");
+    setProgress(null);
+    setError(null);
+  };
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    setError(null);
+    if (!title.trim()) {
+      setError("Please give the recipe a title before submitting.");
+      return;
+    }
+    if (!originatingId) {
+      setError("Please choose whose recipe this is before submitting.");
+      return;
+    }
+    const linkedMediaIds = [...attachedMediaIds];
+    const finishSubmit = () => {
+      submitRecipe.mutate(
+        {
+          title: title.trim(),
+          shortDescription: shortDescription.trim(),
+          originatingPersonId: originatingId,
+          relatedPersonIds: relatedMemberIds,
+          era: era.trim() || null,
+          year: parseYear$1(year),
+          location: location2.trim() || null,
+          familyBranch: familyBranch.trim() || null,
+          ingredients: ingredients.split("\n").map((line) => line.trim()).filter(Boolean),
+          instructions: instructions.trim(),
+          familyStory: familyStory.trim() || null,
+          tags: tags.split(",").map((tag) => tag.trim()).filter(Boolean),
+          privacyLevel,
+          evidenceStatus,
+          linkedMediaIds
+        },
+        {
+          onSuccess: () => setSubmitted(true),
+          onError: () => setError(
+            "Something went wrong while submitting. Please try again."
+          )
+        }
+      );
+    };
+    if (fileBytes) {
+      const blob = ExternalBlob$1.fromBytes(
+        fileBytes,
+        fileMime,
+        fileName
+      ).withUploadProgress(setProgress);
+      submitMedia.mutate(
+        {
+          title: fileName,
+          description: `Recipe media for "${title.trim()}"`,
+          itemType: ArchiveItemType.Photo,
+          blob,
+          era: era.trim(),
+          year: parseYear$1(year),
+          tags: [],
+          relatedMemberIds: [originatingId, ...relatedMemberIds],
+          relatedBranchId: familyBranch.trim() || null,
+          sourceStatus: SourceStatus.Original,
+          privacyLevel,
+          classification: ArchiveItemClassification.Standard,
+          primarySpeaker: null
+        },
+        {
+          onSuccess: (created) => {
+            linkedMediaIds.push(created.id);
+            finishSubmit();
+          },
+          onError: () => setError(
+            "Something went wrong uploading your media. Please try again."
+          )
+        }
+      );
+      return;
+    }
+    finishSubmit();
+  };
+  if (submitted) {
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mx-auto flex w-full max-w-3xl flex-col px-6 py-8 sm:py-12", children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      motion.div,
+      {
+        initial: { opacity: 0, y: 16 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] },
+        className: "rounded-3xl border border-border bg-card px-6 py-10 text-center shadow-elevated",
+        "data-ocid": "recipe.submit.success_state",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-success/15", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+            Check,
+            {
+              className: "h-7 w-7 text-success",
+              strokeWidth: 2,
+              "aria-hidden": "true"
+            }
+          ) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "mt-4 font-display text-2xl font-semibold text-foreground sm:text-3xl", children: "Recipe submitted for review" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "mx-auto mt-3 max-w-md text-base leading-relaxed text-muted-foreground", children: [
+            "Thank you for preserving this family recipe. It is now",
+            " ",
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-semibold text-foreground", children: "Pending" }),
+            " and awaiting Family Steward approval. Once approved it will appear in Family Recipes."
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-6 flex flex-col justify-center gap-3 sm:flex-row", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "button",
+              {
+                type: "button",
+                "data-ocid": "recipe.submit.add_another_button",
+                onClick: () => {
+                  resetForm();
+                  setSubmitted(false);
+                },
+                className: "inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                children: "Add another recipe"
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "button",
+              {
+                type: "button",
+                "data-ocid": "recipe.submit.back_recipes_button",
+                onClick: onOpenRecipes,
+                className: "inline-flex items-center justify-center gap-2 rounded-full border border-border bg-background px-5 py-2.5 text-sm font-semibold text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                children: "Back to Family Recipes"
+              }
+            )
+          ] })
+        ]
+      }
+    ) });
+  }
+  if (!isAuthenticated) {
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto flex w-full max-w-3xl flex-col px-6 py-8 sm:py-12", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        motion.div,
+        {
+          initial: { opacity: 0, y: 16 },
+          animate: { opacity: 1, y: 0 },
+          transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] },
+          children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "button",
+            {
+              type: "button",
+              "data-ocid": "recipe.signin.back_button",
+              onClick: onBack,
+              className: "mb-6 inline-flex items-center gap-2 self-start rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(ArrowLeft, { className: "h-4 w-4", strokeWidth: 2, "aria-hidden": "true" }),
+                "Back to Family Recipes"
+              ]
+            }
+          )
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        motion.div,
+        {
+          initial: { opacity: 0, y: 16 },
+          animate: { opacity: 1, y: 0 },
+          transition: { duration: 0.6, delay: 0.05, ease: [0.4, 0, 0.2, 1] },
+          className: "rounded-3xl border border-border bg-card px-6 py-10 text-center shadow-elevated",
+          "data-ocid": "recipe.signin.prompt",
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-accent/15", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+              BookOpen,
+              {
+                className: "h-7 w-7 text-accent-foreground",
+                strokeWidth: 1.75,
+                "aria-hidden": "true"
+              }
+            ) }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "mt-4 font-display text-2xl font-semibold text-foreground sm:text-3xl", children: "Sign in to add a recipe" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mx-auto mt-3 max-w-md text-base leading-relaxed text-muted-foreground", children: "Family recipes are recorded with your name so the family knows who shared each dish. Sign in to begin preserving a recipe for the Norwood family." }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "button",
+              {
+                type: "button",
+                "data-ocid": "recipe.signin.primary_button",
+                onClick: () => login(),
+                disabled: isInitializing || isLoggingIn,
+                className: "mt-6 inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-60",
+                children: [
+                  isLoggingIn ? /* @__PURE__ */ jsxRuntimeExports.jsx(LoaderCircle, { className: "h-4 w-4 animate-spin", "aria-hidden": "true" }) : null,
+                  isLoggingIn ? "Signing in…" : "Sign in"
+                ]
+              }
+            )
+          ]
+        }
+      )
+    ] });
+  }
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto flex w-full max-w-3xl flex-col px-6 py-8 sm:py-12", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      motion.div,
+      {
+        initial: { opacity: 0, y: 16 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] },
+        children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "button",
+          {
+            type: "button",
+            "data-ocid": "recipe.form.back_button",
+            onClick: onBack,
+            className: "mb-6 inline-flex items-center gap-2 self-start rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(ArrowLeft, { className: "h-4 w-4", strokeWidth: 2, "aria-hidden": "true" }),
+              "Back to Family Recipes"
+            ]
+          }
+        )
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      motion.header,
+      {
+        initial: { opacity: 0, y: 16 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] },
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-accent-foreground/70", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(BookOpen, { className: "h-4 w-4", strokeWidth: 1.75, "aria-hidden": "true" }),
+            "Family Recipes"
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "mt-2 font-display text-3xl font-semibold leading-tight text-foreground sm:text-4xl", children: "Add a family recipe" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-2 text-base leading-relaxed text-muted-foreground", children: "Preserve a dish the way it was passed down — who made it, how it was made, and the memory behind it." })
+        ]
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      motion.form,
+      {
+        onSubmit: handleSubmit,
+        className: "mt-6 flex flex-col gap-5",
+        initial: { opacity: 0, y: 16 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.6, delay: 0.05, ease: [0.4, 0, 0.2, 1] },
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "field-label", htmlFor: "recipe-title", children: "Recipe title" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "input",
+              {
+                id: "recipe-title",
+                "data-ocid": "recipe.form.title_input",
+                type: "text",
+                value: title,
+                onChange: (event) => setTitle(event.target.value),
+                placeholder: "e.g. Grandma Julia's Sweet Potato Pie",
+                className: "form-input",
+                required: true
+              }
+            )
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "field-label", htmlFor: "recipe-description", children: "Short description" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "textarea",
+              {
+                id: "recipe-description",
+                "data-ocid": "recipe.form.description_textarea",
+                value: shortDescription,
+                onChange: (event) => setShortDescription(event.target.value),
+                placeholder: "A sentence or two about this dish and why it matters to the family",
+                className: "form-textarea"
+              }
+            )
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "field-label", children: "Whose recipe is this?" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mb-2 text-xs leading-relaxed text-muted-foreground", children: "Choose the single family member this recipe belongs to." }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap gap-2", children: [
+              Object.values(profiles).map((profile) => {
+                const selected = originatingId === profile.id;
+                return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                  "button",
+                  {
+                    type: "button",
+                    "data-ocid": `recipe.form.originating.${profile.id}`,
+                    onClick: () => toggleOriginating(profile.id),
+                    "aria-pressed": selected,
+                    className: `inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${selected ? "border-accent bg-accent text-accent-foreground" : "border-border bg-card text-foreground hover:bg-muted"}`,
+                    children: [
+                      selected ? /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { className: "h-3.5 w-3.5", "aria-hidden": "true" }) : null,
+                      profile.name
+                    ]
+                  },
+                  profile.id
+                );
+              }),
+              knownResolvedPeople.map((id2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+                ResolvedProfileChip$1,
+                {
+                  personId: id2,
+                  selected: originatingId === id2,
+                  onToggle: () => toggleOriginating(id2),
+                  kind: "originating"
+                },
+                id2
+              ))
+            ] }),
+            originatingId ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "p",
+              {
+                className: "mt-2 text-xs font-medium text-accent-foreground",
+                "data-ocid": "recipe.form.originating_selected",
+                children: [
+                  "This recipe is from ",
+                  originatingCanonical.displayName,
+                  "."
+                ]
+              }
+            ) : null
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "field-label", children: "Related family members" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mb-2 text-xs leading-relaxed text-muted-foreground", children: "Select other family members connected to this recipe." }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap gap-2", children: [
+              Object.values(profiles).map((profile) => {
+                const selected = relatedMemberIds.includes(profile.id);
+                return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                  "button",
+                  {
+                    type: "button",
+                    "data-ocid": `recipe.form.member.${profile.id}`,
+                    onClick: () => toggleMember(profile.id),
+                    "aria-pressed": selected,
+                    className: `inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${selected ? "border-accent bg-accent text-accent-foreground" : "border-border bg-card text-foreground hover:bg-muted"}`,
+                    children: [
+                      selected ? /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { className: "h-3.5 w-3.5", "aria-hidden": "true" }) : null,
+                      profile.name
+                    ]
+                  },
+                  profile.id
+                );
+              }),
+              relatedMemberIds.filter((id2) => !profiles[id2]).map((id2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+                ResolvedProfileChip$1,
+                {
+                  personId: id2,
+                  selected: true,
+                  onToggle: () => toggleMember(id2),
+                  kind: "member"
+                },
+                id2
+              ))
+            ] })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "field-label", htmlFor: "recipe-ingredients", children: "Ingredients" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "textarea",
+              {
+                id: "recipe-ingredients",
+                "data-ocid": "recipe.form.ingredients_textarea",
+                value: ingredients,
+                onChange: (event) => setIngredients(event.target.value),
+                placeholder: "One ingredient per line, e.g.\n3 cups flour\n1 tsp cinnamon",
+                className: "form-textarea"
+              }
+            )
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "field-label", htmlFor: "recipe-instructions", children: "Instructions" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "textarea",
+              {
+                id: "recipe-instructions",
+                "data-ocid": "recipe.form.instructions_textarea",
+                value: instructions,
+                onChange: (event) => setInstructions(event.target.value),
+                placeholder: "Write the steps the way they were handed down…",
+                className: "form-textarea"
+              }
+            )
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "field-label", htmlFor: "recipe-story", children: "Family story / memory" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "textarea",
+              {
+                id: "recipe-story",
+                "data-ocid": "recipe.form.story_textarea",
+                value: familyStory,
+                onChange: (event) => setFamilyStory(event.target.value),
+                placeholder: "The memory behind this dish — who made it, when, and why it matters",
+                className: "form-textarea"
+              }
+            )
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-1 gap-5 sm:grid-cols-2", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "field-label", htmlFor: "recipe-era", children: "Era / year" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "input",
+                {
+                  id: "recipe-era",
+                  "data-ocid": "recipe.form.era_input",
+                  type: "text",
+                  value: era,
+                  onChange: (event) => setEra(event.target.value),
+                  placeholder: "e.g. circa 1940s",
+                  className: "form-input"
+                }
+              )
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "field-label", htmlFor: "recipe-year", children: "Year (optional)" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "input",
+                {
+                  id: "recipe-year",
+                  "data-ocid": "recipe.form.year_input",
+                  type: "text",
+                  inputMode: "numeric",
+                  value: year,
+                  onChange: (event) => setYear(event.target.value),
+                  placeholder: "e.g. 1942",
+                  className: "form-input"
+                }
+              )
+            ] })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-1 gap-5 sm:grid-cols-2", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "field-label", htmlFor: "recipe-location", children: "Location" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "input",
+                {
+                  id: "recipe-location",
+                  "data-ocid": "recipe.form.location_input",
+                  type: "text",
+                  value: location2,
+                  onChange: (event) => setLocation(event.target.value),
+                  placeholder: "e.g. Clayton, Mississippi",
+                  className: "form-input"
+                }
+              )
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "field-label", htmlFor: "recipe-branch", children: "Family branch" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "input",
+                {
+                  id: "recipe-branch",
+                  "data-ocid": "recipe.form.branch_input",
+                  type: "text",
+                  value: familyBranch,
+                  onChange: (event) => setFamilyBranch(event.target.value),
+                  placeholder: "e.g. the Clayton Norwood branch",
+                  className: "form-input"
+                }
+              )
+            ] })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "field-label", htmlFor: "recipe-tags", children: "Tags" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "input",
+              {
+                id: "recipe-tags",
+                "data-ocid": "recipe.form.tags_input",
+                type: "text",
+                value: tags,
+                onChange: (event) => setTags(event.target.value),
+                placeholder: "Separate tags with commas, e.g. dessert, holiday, Mississippi",
+                className: "form-input"
+              }
+            )
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-1 gap-5 sm:grid-cols-2", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "field-label", htmlFor: "recipe-privacy", children: "Privacy level" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "select",
+                {
+                  id: "recipe-privacy",
+                  "data-ocid": "recipe.form.privacy_select",
+                  value: privacyLevel,
+                  onChange: (event) => setPrivacyLevel(event.target.value),
+                  className: "form-select",
+                  children: Object.values(PrivacyLevel).map((level) => /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: level, children: PRIVACY_LEVEL_LABELS[level] }, level))
+                }
+              )
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "field-label", htmlFor: "recipe-evidence", children: "Evidence / source status" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "select",
+                {
+                  id: "recipe-evidence",
+                  "data-ocid": "recipe.form.evidence_select",
+                  value: evidenceStatus,
+                  onChange: (event) => setEvidenceStatus(event.target.value),
+                  className: "form-select",
+                  children: Object.values(EvidenceStatus).map((status) => /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: status, children: RECIPE_EVIDENCE_LABELS[status] }, status))
+                }
+              )
+            ] })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "field-label", children: "Attach existing media" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mb-2 text-xs leading-relaxed text-muted-foreground", children: "Link photos already in the family archive. Existing media is linked, never duplicated." }),
+            approvedMedia.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "p",
+              {
+                className: "rounded-xl border border-dashed border-border/70 bg-card/50 px-4 py-3 text-sm text-muted-foreground",
+                "data-ocid": "recipe.form.media_empty",
+                children: "No approved media in the archive yet. You can upload new media below."
+              }
+            ) : /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-wrap gap-2", children: approvedMedia.map((item) => {
+              const selected = attachedMediaIds.includes(item.id);
+              return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                "button",
+                {
+                  type: "button",
+                  "data-ocid": `recipe.form.media.${item.id.toString()}`,
+                  onClick: () => toggleAttachedMedia(item.id),
+                  "aria-pressed": selected,
+                  className: `inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${selected ? "border-accent bg-accent text-accent-foreground" : "border-border bg-card text-foreground hover:bg-muted"}`,
+                  children: [
+                    selected ? /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { className: "h-3.5 w-3.5", "aria-hidden": "true" }) : /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      Image,
+                      {
+                        className: "h-3.5 w-3.5 text-muted-foreground",
+                        "aria-hidden": "true"
+                      }
+                    ),
+                    item.title
+                  ]
+                },
+                item.id.toString()
+              );
+            }) })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "field-label", htmlFor: "recipe-file", children: "Upload new media" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "input",
+              {
+                ref: fileInputRef,
+                id: "recipe-file",
+                type: "file",
+                className: "sr-only",
+                "data-ocid": "recipe.form.file_input",
+                onChange: (event) => {
+                  var _a3;
+                  const file = (_a3 = event.target.files) == null ? void 0 : _a3[0];
+                  if (file) void handleFile(file);
+                  event.target.value = "";
+                }
+              }
+            ),
+            fileName ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "div",
+              {
+                className: "flex items-center justify-between gap-3 rounded-xl border border-border bg-card px-4 py-3 shadow-subtle",
+                "data-ocid": "recipe.form.file_selected",
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex min-w-0 items-center gap-3", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-secondary", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      FileText,
+                      {
+                        className: "h-4 w-4 text-accent-foreground",
+                        strokeWidth: 1.75,
+                        "aria-hidden": "true"
+                      }
+                    ) }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "truncate text-sm font-semibold text-foreground", children: fileName }),
+                      /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-xs text-muted-foreground", children: [
+                        fileMime || "File",
+                        " · saved as one archive record"
+                      ] })
+                    ] })
+                  ] }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "button",
+                    {
+                      type: "button",
+                      "data-ocid": "recipe.form.change_file_button",
+                      onClick: () => {
+                        var _a3;
+                        return (_a3 = fileInputRef.current) == null ? void 0 : _a3.click();
+                      },
+                      className: "shrink-0 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-semibold text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                      children: "Change"
+                    }
+                  )
+                ]
+              }
+            ) : /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "button",
+              {
+                type: "button",
+                "data-ocid": "recipe.form.dropzone",
+                onClick: () => {
+                  var _a3;
+                  return (_a3 = fileInputRef.current) == null ? void 0 : _a3.click();
+                },
+                onDragOver: (event) => {
+                  event.preventDefault();
+                  setDragover(true);
+                },
+                onDragLeave: () => setDragover(false),
+                onDrop: (event) => {
+                  var _a3;
+                  event.preventDefault();
+                  setDragover(false);
+                  const file = (_a3 = event.dataTransfer.files) == null ? void 0 : _a3[0];
+                  if (file) void handleFile(file);
+                },
+                className: `dropzone focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${dragover ? "dragover" : ""}`,
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    Upload,
+                    {
+                      className: "h-6 w-6 text-muted-foreground",
+                      strokeWidth: 1.5,
+                      "aria-hidden": "true"
+                    }
+                  ),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "dropzone-title", children: "Choose a photo to upload" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "dropzone-hint", children: "Drag and drop, or tap to browse. The photo is preserved as one archive record." })
+                ]
+              }
+            ),
+            progress2 !== null && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "div",
+              {
+                className: "upload-progress",
+                "data-ocid": "recipe.form.upload_progress",
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "upload-progress-label", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "Uploading…" }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "upload-percent", children: [
+                      progress2,
+                      "%"
+                    ] })
+                  ] }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "div",
+                    {
+                      className: "progress-track",
+                      role: "progressbar",
+                      tabIndex: 0,
+                      "aria-valuenow": progress2,
+                      "aria-valuemin": 0,
+                      "aria-valuemax": 100,
+                      children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                        "div",
+                        {
+                          className: "progress-fill",
+                          style: { width: `${progress2}%` }
+                        }
+                      )
+                    }
+                  )
+                ]
+              }
+            )
+          ] }),
+          error && /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "p",
+            {
+              "data-ocid": "recipe.form.error_state",
+              className: "rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm font-medium text-destructive",
+              children: error
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs leading-relaxed text-muted-foreground", children: "Your recipe will be reviewed by a Family Steward before it appears in Family Recipes." }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "button",
+              {
+                type: "submit",
+                "data-ocid": "recipe.form.submit_button",
+                disabled: submitRecipe.isPending || submitMedia.isPending,
+                className: "inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-60",
+                children: [
+                  submitRecipe.isPending || submitMedia.isPending ? /* @__PURE__ */ jsxRuntimeExports.jsx(LoaderCircle, { className: "h-4 w-4 animate-spin", "aria-hidden": "true" }) : null,
+                  submitRecipe.isPending || submitMedia.isPending ? "Submitting…" : "Submit for approval"
+                ]
+              }
+            )
+          ] })
+        ]
+      }
+    )
+  ] });
+}
+function formatContributor$1(contributor) {
+  const text = contributor.toText();
+  return text.length > 18 ? `${text.slice(0, 5)}…${text.slice(-4)}` : text;
+}
+function isHandwrittenSource(item) {
+  return item.itemType === ArchiveItemType.Document || item.itemType === ArchiveItemType.Photo;
+}
+function RecipeDetailPage({
+  recipeId,
+  onBack,
+  onOpenProfile,
+  onOpenRecipes
+}) {
+  const { data: recipe } = useRecipe(recipeId);
+  const { data: media = [] } = useApprovedArchiveItems();
+  const back = onOpenRecipes ?? onBack;
+  if (!recipe) {
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto w-full max-w-5xl px-6 py-8", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "recipe_detail.back_button",
+          onClick: back,
+          className: "mb-6 inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3.5 py-1.5 text-xs font-semibold text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(ArrowLeft, { className: "h-4 w-4", "aria-hidden": "true" }),
+            " Back to Recipes"
+          ]
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "div",
+        {
+          "data-ocid": "recipe_detail.empty_state",
+          className: "recipe-empty-state",
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "recipe-empty-mark", children: /* @__PURE__ */ jsxRuntimeExports.jsx(ChefHat, { className: "h-6 w-6", "aria-hidden": "true" }) }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "recipe-empty-title", children: "Recipe not found" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "recipe-empty-hint", children: "This family recipe is no longer available." })
+          ]
+        }
+      )
+    ] });
+  }
+  const linkedMedia = recipe.linkedMediaIds.map((id2) => media.find((m2) => m2.id === id2)).filter((item) => Boolean(item));
+  const primaryImage = getRecipePrimaryImage(recipe, media);
+  const year = getRecipeYear(recipe);
+  const statusPill = RECIPE_STATUS_PILL[recipe.status];
+  const evidenceBadge = RECIPE_EVIDENCE_BADGE[recipe.evidenceStatus];
+  const hasSourceMaterial = linkedMedia.some(isHandwrittenSource);
+  const ingredientItems = recipe.ingredients.map((text, index2) => ({
+    id: `ingredient-${index2}`,
+    text
+  }));
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto w-full max-w-5xl px-6 py-8", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "button",
+      {
+        type: "button",
+        "data-ocid": "recipe_detail.back_button",
+        onClick: back,
+        className: "mb-6 inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3.5 py-1.5 text-xs font-semibold text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(ArrowLeft, { className: "h-4 w-4", "aria-hidden": "true" }),
+          " Back to Recipes"
+        ]
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("header", { className: "mb-6", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap items-center gap-2", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "span",
+          {
+            "data-ocid": "recipe_detail.evidence_badge",
+            className: `evidence-badge ${evidenceBadge}`,
+            children: RECIPE_EVIDENCE_LABELS[recipe.evidenceStatus]
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: `status-pill ${statusPill}`, children: RECIPE_STATUS_LABELS[recipe.status] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-xs font-medium text-muted-foreground", children: RECIPE_PRIVACY_LABELS[recipe.privacyLevel] })
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "mt-3 font-display text-3xl font-semibold text-foreground", children: recipe.title }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "inline-flex items-center gap-1.5", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(User, { className: "h-4 w-4", "aria-hidden": "true" }),
+          "From",
+          " ",
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            PersonLink,
+            {
+              personId: recipe.originatingPersonId,
+              onOpenProfile
+            }
+          )
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "inline-flex items-center gap-1.5", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(CalendarDays, { className: "h-4 w-4", "aria-hidden": "true" }),
+          year !== null ? String(year) : "Year unknown"
+        ] }),
+        recipe.location ? /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "inline-flex items-center gap-1.5", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(MapPin, { className: "h-4 w-4", "aria-hidden": "true" }),
+          recipe.location
+        ] }) : null,
+        recipe.familyBranch ? /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "inline-flex items-center gap-1.5", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(Users, { className: "h-4 w-4", "aria-hidden": "true" }),
+          recipe.familyBranch
+        ] }) : null
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "recipe-detail", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { "data-ocid": "recipe_detail.hero", className: "recipe-detail-hero", children: primaryImage ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "img",
+          {
+            src: primaryImage,
+            alt: `${recipe.title} — a family recipe`
+          }
+        ) : /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "recipe-detail-hero-frame", children: /* @__PURE__ */ jsxRuntimeExports.jsx(ChefHat, { className: "h-10 w-10", "aria-hidden": "true" }) }) }),
+        recipe.shortDescription ? /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { className: "recipe-detail-section mt-6", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "recipe-detail-section-title", children: "About this recipe" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "recipe-detail-text whitespace-pre-line", children: recipe.shortDescription })
+        ] }) : null,
+        recipe.ingredients.length > 0 ? /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { className: "recipe-section mt-6", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "recipe-section-head", children: /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "recipe-section-title", children: "Ingredients" }) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("ul", { className: "recipe-section-list", children: ingredientItems.map((ingredient) => /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { className: "flex items-start gap-2", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "span",
+              {
+                className: "mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-muted",
+                "aria-hidden": "true"
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: ingredient.text })
+          ] }, ingredient.id)) })
+        ] }) : null,
+        recipe.instructions ? /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { className: "recipe-section mt-6", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "recipe-section-head", children: /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "recipe-section-title", children: "Instructions" }) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "recipe-section-body whitespace-pre-line", children: recipe.instructions })
+        ] }) : null,
+        recipe.familyStory ? /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { className: "recipe-section mt-6", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "recipe-section-head", children: /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "recipe-section-title", children: "Family story" }) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "recipe-section-body whitespace-pre-line", children: recipe.familyStory })
+        ] }) : null
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex min-w-0 flex-col gap-6", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { className: "recipe-detail-section", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "recipe-detail-section-title", children: "Originating family member" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            PersonLink,
+            {
+              personId: recipe.originatingPersonId,
+              onOpenProfile
+            }
+          )
+        ] }),
+        recipe.relatedPersonIds.length > 0 ? /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { className: "recipe-detail-section", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "recipe-detail-section-title", children: "Related family members" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-wrap gap-2", children: recipe.relatedPersonIds.map((personId) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+            PersonLink,
+            {
+              personId,
+              onOpenProfile
+            },
+            personId
+          )) })
+        ] }) : null,
+        linkedMedia.length > 0 ? /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { className: "recipe-detail-section", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "recipe-detail-section-title", children: "Recipe media" }),
+          hasSourceMaterial ? /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mb-3 text-xs leading-relaxed text-muted-foreground", children: "Handwritten recipe cards are preserved as original family source material." }) : null,
+          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "recipe-gallery", children: linkedMedia.map((item) => {
+            const isSource = isHandwrittenSource(item);
+            const url = item.blob.getDirectURL();
+            return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "figure",
+              {
+                "data-ocid": `recipe_detail.media.${item.id.toString()}`,
+                className: "recipe-gallery-item",
+                children: [
+                  item.itemType === ArchiveItemType.Photo || item.itemType === ArchiveItemType.Document ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "img",
+                    {
+                      src: url,
+                      alt: item.title,
+                      className: "h-full w-full object-cover"
+                    }
+                  ) : /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "recipe-gallery-item-icon", children: /* @__PURE__ */ jsxRuntimeExports.jsx(FileText, { className: "h-6 w-6", "aria-hidden": "true" }) }),
+                  isSource ? /* @__PURE__ */ jsxRuntimeExports.jsx("figcaption", { className: "source-material absolute bottom-2 left-2", children: "Original family source" }) : null
+                ]
+              },
+              item.id.toString()
+            );
+          }) })
+        ] }) : null,
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { className: "recipe-detail-section", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "recipe-detail-section-title", children: "Details" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "recipe-detail-meta-row", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "meta-label", children: "Contributor" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "meta-value", children: formatContributor$1(recipe.contributorAccountId) })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "recipe-detail-meta-row", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "meta-label", children: "Era" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "meta-value", children: recipe.era || (year !== null ? String(year) : "Unknown") })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "recipe-detail-meta-row", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "meta-label", children: "Year" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "meta-value", children: year !== null ? String(year) : "Unknown" })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "recipe-detail-meta-row", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "meta-label", children: "Location" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "meta-value", children: recipe.location || "Unknown" })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "recipe-detail-meta-row", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "meta-label", children: "Branch" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "meta-value", children: recipe.familyBranch || "Unknown" })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "recipe-detail-meta-row", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "meta-label", children: "Privacy" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "meta-value", children: RECIPE_PRIVACY_LABELS[recipe.privacyLevel] })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "recipe-detail-meta-row", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "meta-label", children: "Evidence" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "meta-value", children: RECIPE_EVIDENCE_LABELS[recipe.evidenceStatus] })
+          ] })
+        ] }),
+        recipe.tags.length > 0 ? /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { className: "recipe-detail-section", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "recipe-detail-section-title", children: "Tags" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-wrap gap-2", children: recipe.tags.map((tag) => /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "tag-chip", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Tag, { className: "h-3 w-3", "aria-hidden": "true" }),
+            tag
+          ] }, tag)) })
+        ] }) : null
+      ] })
+    ] })
+  ] });
+}
+const DEFAULT_FILTERS = {
+  origin: "all",
+  related: "all",
+  era: "all",
+  branch: "all",
+  tag: "all"
+};
+function readFilters() {
+  const params = new URLSearchParams(window.location.search);
+  return {
+    origin: params.get("origin") ?? "all",
+    related: params.get("related") ?? "all",
+    era: params.get("era") ?? "all",
+    branch: params.get("branch") ?? "all",
+    tag: params.get("tag") ?? "all"
+  };
+}
+function RecipeOrigin({ personId }) {
+  var _a2;
+  const fallback = ((_a2 = profiles[personId]) == null ? void 0 : _a2.name) ?? "";
+  const canonical = useCanonicalPerson(personId, fallback);
+  const name = canonical.displayName || fallback;
+  if (!name) return null;
+  return /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "recipe-card-origin", children: name });
+}
+function RecipeCard({ recipe, media, position, onOpen }) {
+  const primaryImage = getRecipePrimaryImage(recipe, media);
+  const year = getRecipeYear(recipe);
+  const eraLabel2 = recipe.era || (year !== null ? String(year) : null);
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "button",
+    {
+      type: "button",
+      "data-ocid": `recipes.card.${position}`,
+      onClick: onOpen,
+      className: "recipe-card group",
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "recipe-card-thumb", children: primaryImage ? /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: primaryImage, alt: recipe.title, loading: "lazy" }) : /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "recipe-card-thumb-icon", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+          ChefHat,
+          {
+            className: "h-10 w-10",
+            strokeWidth: 1.5,
+            "aria-hidden": "true"
+          }
+        ) }) }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "recipe-card-body", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "recipe-card-title line-clamp-2", children: recipe.title }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "recipe-card-meta", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(RecipeOrigin, { personId: recipe.originatingPersonId }),
+            eraLabel2 ? /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "recipe-card-era", children: eraLabel2 }) : null
+          ] }),
+          recipe.shortDescription ? /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "recipe-card-desc line-clamp-2", children: recipe.shortDescription }) : null
+        ] })
+      ]
+    }
+  );
+}
+function RecipesPage({
+  onBack,
+  onOpenRecipe,
+  onAddRecipe
+}) {
+  const { data: recipes = [], isLoading } = useApprovedRecipes();
+  const { data: media = [] } = useApprovedArchiveItems();
+  const [filters, setFilters] = reactExports.useState(readFilters);
+  reactExports.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    for (const key of Object.keys(filters)) {
+      if (filters[key] !== "all") params.set(key, filters[key]);
+      else params.delete(key);
+    }
+    const qs = params.toString();
+    const url = qs ? `${window.location.pathname}?${qs}` : window.location.pathname;
+    window.history.replaceState(null, "", url);
+  }, [filters]);
+  const branchOptions = reactExports.useMemo(() => {
+    const values = /* @__PURE__ */ new Set();
+    for (const recipe of recipes) {
+      if (recipe.familyBranch) values.add(recipe.familyBranch);
+    }
+    return Array.from(values).sort();
+  }, [recipes]);
+  const tagOptions = reactExports.useMemo(() => {
+    const values = /* @__PURE__ */ new Set();
+    for (const recipe of recipes) {
+      for (const tag of recipe.tags) values.add(tag);
+    }
+    return Array.from(values).sort();
+  }, [recipes]);
+  const filtered = reactExports.useMemo(() => {
+    const sorted = [...recipes].sort(
+      (a2, b2) => a2.createdAt < b2.createdAt ? 1 : a2.createdAt > b2.createdAt ? -1 : 0
+    );
+    return sorted.filter(
+      (recipe) => filters.origin === "all" || recipe.originatingPersonId === filters.origin
+    ).filter(
+      (recipe) => filters.related === "all" || recipe.relatedPersonIds.includes(filters.related)
+    ).filter((recipe) => {
+      if (filters.era === "all") return true;
+      const era = ARCHIVE_ERAS.find((e) => e.value === filters.era);
+      if (!era) return true;
+      const year = getRecipeYear(recipe);
+      if (year === null) return false;
+      if (era.min !== null && year < era.min) return false;
+      if (era.max !== null && year > era.max) return false;
+      return true;
+    }).filter(
+      (recipe) => filters.branch === "all" || recipe.familyBranch === filters.branch
+    ).filter(
+      (recipe) => filters.tag === "all" || recipe.tags.includes(filters.tag)
+    );
+  }, [recipes, filters]);
+  const hasActiveFilters = filters.origin !== "all" || filters.related !== "all" || filters.era !== "all" || filters.branch !== "all" || filters.tag !== "all";
+  const resetFilters = () => setFilters(DEFAULT_FILTERS);
+  const memberOptions = Object.values(profiles).map((profile) => ({
+    id: profile.id,
+    name: profile.name
+  }));
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto w-full max-w-6xl px-6 py-8", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "button",
+      {
+        type: "button",
+        "data-ocid": "recipes.back_button",
+        onClick: onBack,
+        className: "mb-6 inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3.5 py-1.5 text-xs font-semibold text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { "aria-hidden": "true", children: "←" }),
+          " Back to Home"
+        ]
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("header", { className: "mb-6 flex flex-wrap items-end justify-between gap-4", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mb-3 inline-flex items-center gap-2 rounded-full border border-border/60 bg-card px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            BookOpen,
+            {
+              className: "h-3.5 w-3.5",
+              style: { color: "oklch(var(--recipe-accent))" },
+              "aria-hidden": "true"
+            }
+          ),
+          "Family Recipes"
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "font-display text-3xl font-semibold text-foreground", children: "Family Recipes" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-2 text-sm text-muted-foreground", children: "The dishes, handwritten notes, and kitchen stories your family passes down." })
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "recipes.add_button",
+          onClick: onAddRecipe,
+          className: "inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+          style: {
+            color: "oklch(var(--recipe-accent-foreground))",
+            backgroundColor: "oklch(var(--recipe-accent))"
+          },
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Plus, { className: "h-4 w-4", strokeWidth: 2, "aria-hidden": "true" }),
+            "Add Recipe"
+          ]
+        }
+      )
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-4", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { role: "tablist", "aria-label": "Filter recipes", className: "filter-bar", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "button",
+        {
+          type: "button",
+          role: "tab",
+          "aria-selected": !hasActiveFilters,
+          "data-ocid": "recipes.filter.all",
+          onClick: resetFilters,
+          className: `filter-tab focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${!hasActiveFilters ? "filter-tab-active-recipe" : ""}`,
+          children: "All Recipes"
+        }
+      ) }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap items-center gap-3", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("label", { className: "flex items-center gap-2 text-sm text-muted-foreground", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "sr-only", children: "Originating family member" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "select",
+            {
+              "data-ocid": "recipes.filter.origin",
+              value: filters.origin,
+              onChange: (event) => setFilters((f2) => ({ ...f2, origin: event.target.value })),
+              className: "filter-select",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: "all", children: "All originating members" }),
+                memberOptions.map((member) => /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: member.id, children: member.name }, member.id))
+              ]
+            }
+          )
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("label", { className: "flex items-center gap-2 text-sm text-muted-foreground", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "sr-only", children: "Related family member" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "select",
+            {
+              "data-ocid": "recipes.filter.related",
+              value: filters.related,
+              onChange: (event) => setFilters((f2) => ({ ...f2, related: event.target.value })),
+              className: "filter-select",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: "all", children: "All related members" }),
+                memberOptions.map((member) => /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: member.id, children: member.name }, member.id))
+              ]
+            }
+          )
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("label", { className: "flex items-center gap-2 text-sm text-muted-foreground", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "sr-only", children: "Era" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "select",
+            {
+              "data-ocid": "recipes.filter.era",
+              value: filters.era,
+              onChange: (event) => setFilters((f2) => ({ ...f2, era: event.target.value })),
+              className: "filter-select",
+              children: ARCHIVE_ERAS.map((era) => /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: era.value, children: era.label }, era.value))
+            }
+          )
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("label", { className: "flex items-center gap-2 text-sm text-muted-foreground", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "sr-only", children: "Family branch" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "select",
+            {
+              "data-ocid": "recipes.filter.branch",
+              value: filters.branch,
+              onChange: (event) => setFilters((f2) => ({ ...f2, branch: event.target.value })),
+              className: "filter-select",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: "all", children: "All branches" }),
+                branchOptions.map((branch) => /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: branch, children: branch }, branch))
+              ]
+            }
+          )
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("label", { className: "flex items-center gap-2 text-sm text-muted-foreground", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "sr-only", children: "Tag" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "select",
+            {
+              "data-ocid": "recipes.filter.tag",
+              value: filters.tag,
+              onChange: (event) => setFilters((f2) => ({ ...f2, tag: event.target.value })),
+              className: "filter-select",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: "all", children: "All tags" }),
+                tagOptions.map((tag) => /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: tag, children: tag }, tag))
+              ]
+            }
+          )
+        ] }),
+        hasActiveFilters ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "button",
+          {
+            type: "button",
+            "data-ocid": "recipes.filter.clear",
+            onClick: resetFilters,
+            className: "filter-clear",
+            children: "Clear filters"
+          }
+        ) : null
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-6", children: isLoading ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "div",
+      {
+        "data-ocid": "recipes.loading_state",
+        className: "grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3",
+        "aria-label": "Loading recipes",
+        children: [0, 1, 2, 3, 4, 5].map((i) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "div",
+          {
+            className: "animate-pulse overflow-hidden rounded-xl border border-border/60 bg-card",
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "aspect-[4/3] w-full bg-muted" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-2 p-4", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-5 w-2/3 rounded bg-muted" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-4 w-1/3 rounded bg-muted" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-4 w-1/2 rounded bg-muted" })
+              ] })
+            ]
+          },
+          i
+        ))
+      }
+    ) : filtered.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { "data-ocid": "recipes.empty_state", className: "recipe-empty-state", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "recipe-empty-mark", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+        ChefHat,
+        {
+          className: "h-7 w-7",
+          strokeWidth: 1.5,
+          "aria-hidden": "true"
+        }
+      ) }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "recipe-empty-title", children: hasActiveFilters ? "No recipes match these filters" : "No family recipes yet" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "recipe-empty-hint", children: hasActiveFilters ? "Try adjusting or clearing the filters to see more of the family recipes." : "Preserve the dishes, handwritten notes, and kitchen stories your family passes down." }),
+      hasActiveFilters ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "recipes.filter.clear_button",
+          onClick: resetFilters,
+          className: "recipe-empty-action",
+          children: "Clear filters"
+        }
+      ) : /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "recipes.empty_add_button",
+          onClick: onAddRecipe,
+          className: "recipe-empty-action",
+          children: "Add a Recipe"
+        }
+      )
+    ] }) : /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "ul",
+      {
+        "data-ocid": "recipes.list",
+        className: "grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3",
+        children: filtered.map((recipe, index2) => /* @__PURE__ */ jsxRuntimeExports.jsx("li", { children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+          RecipeCard,
+          {
+            recipe,
+            media,
+            position: index2 + 1,
+            onOpen: () => onOpenRecipe(recipe.recipeId)
+          }
+        ) }, recipe.recipeId.toString()))
+      }
+    ) })
+  ] });
+}
 function EvidenceBadge({ status, label }) {
   return /* @__PURE__ */ jsxRuntimeExports.jsx(
     "span",
@@ -66096,6 +68416,7 @@ function ResolvedProfileChip({
 }
 function VideoContributePage({
   onBack,
+  onViewPendingContributions,
   initialKind,
   initialRelatedMemberIds,
   initialSpeakerId
@@ -66169,24 +68490,6 @@ function VideoContributePage({
       (current) => current.includes(id2) ? current.filter((memberId) => memberId !== id2) : [...current, id2]
     );
   };
-  const resetForm = () => {
-    setSelectedKind(null);
-    setTitle("");
-    setDescription("");
-    setEra("");
-    setYear("");
-    setTags("");
-    setRelatedMemberIds([]);
-    setRelatedBranch("");
-    setSourceStatus(SourceStatus.Unverified);
-    setPrivacyLevel(PrivacyLevel.FamilyOnly);
-    setSpeakerId(null);
-    setFileBytes(null);
-    setFileName("");
-    setFileMime("");
-    setProgress(null);
-    setError(null);
-  };
   const handleSubmit = (event) => {
     event.preventDefault();
     if (!selectedKind) return;
@@ -66247,25 +68550,17 @@ function VideoContributePage({
               "aria-hidden": "true"
             }
           ) }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "mt-4 font-display text-2xl font-semibold text-foreground sm:text-3xl", children: "Media submitted" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "mx-auto mt-3 max-w-md text-base leading-relaxed text-muted-foreground", children: [
-            "Thank you for adding to the Norwood family history. Your",
-            " ",
-            MEDIA_KIND_LABELS[selectedKind].toLowerCase(),
-            " is now awaiting admin approval and will appear in Family Videos & Oral History once it is reviewed."
-          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "mt-4 font-display text-2xl font-semibold text-foreground sm:text-3xl", children: "Media submitted for review" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mx-auto mt-3 max-w-md text-base leading-relaxed text-muted-foreground", children: "Your media has been saved and is awaiting Family Steward approval. It will appear on linked profiles and in the Family Archive after approval." }),
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-6 flex flex-col justify-center gap-3 sm:flex-row", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx(
               "button",
               {
                 type: "button",
                 "data-ocid": "video_contribute.submit.add_another_button",
-                onClick: () => {
-                  resetForm();
-                  setSubmitted(false);
-                },
+                onClick: onViewPendingContributions,
                 className: "inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-                children: "Add another media item"
+                children: "View Pending Contributions"
               }
             ),
             /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -66275,7 +68570,7 @@ function VideoContributePage({
                 "data-ocid": "video_contribute.submit.back_videos_button",
                 onClick: onBack,
                 className: "inline-flex items-center justify-center gap-2 rounded-full border border-border bg-background px-5 py-2.5 text-sm font-semibold text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-                children: "Back to Videos"
+                children: "Back to Videos & Oral History"
               }
             )
           ] })
@@ -67372,7 +69667,10 @@ const VALID_VIEWS = [
   "sign-in",
   "stories",
   "mysteries",
-  "timeline"
+  "timeline",
+  "recipes",
+  "recipe-detail",
+  "recipe-contribute"
 ];
 function isView(value) {
   return VALID_VIEWS.includes(value);
@@ -67409,6 +69707,8 @@ function App() {
   const [, setExploredPersonId] = reactExports.useState(null);
   const [exploreFocusId, setExploreFocusId] = reactExports.useState(null);
   const [mediaContributePreselect, setMediaContributePreselect] = reactExports.useState(null);
+  const [selectedRecipeId, setSelectedRecipeId] = reactExports.useState(null);
+  const [recipeContributePreselect, setRecipeContributePreselect] = reactExports.useState(null);
   const { data: isAdmin = false } = useIsAdmin();
   const { isAuthenticated, accountId, signOut } = useAuth();
   const {
@@ -67450,6 +69750,20 @@ function App() {
     (preselect) => {
       setMediaContributePreselect(preselect);
       setView("video-contribute");
+    },
+    []
+  );
+  const openRecipes = reactExports.useCallback(() => {
+    setView("recipes");
+  }, []);
+  const openRecipe = reactExports.useCallback((id2) => {
+    setSelectedRecipeId(id2);
+    setView("recipe-detail");
+  }, []);
+  const openRecipeContribute = reactExports.useCallback(
+    (preselect) => {
+      setRecipeContributePreselect(preselect);
+      setView("recipe-contribute");
     },
     []
   );
@@ -67525,7 +69839,8 @@ function App() {
             setView("mysteries");
           },
           onOpenTimeline: () => setView("timeline"),
-          onOpenVideos: () => setView("videos")
+          onOpenVideos: () => setView("videos"),
+          onOpenRecipes: openRecipes
         }
       ) : view === "family-tree" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
         ExploreFamilyPage,
@@ -67548,6 +69863,13 @@ function App() {
           onEditProfile: () => setView("profile-edit"),
           onClaimApproved: openMyProfile,
           onOpenMediaItem: openMediaItem,
+          onOpenRecipes: openRecipes,
+          onOpenRecipe: openRecipe,
+          onOpenRecipeContribute: (preselect) => openRecipeContribute({
+            personId: preselect.personId,
+            role: "originating",
+            context: "profile"
+          }),
           onAddMedia: (action) => openMediaContribute({
             personId: (resolvedProfile ?? profile).id,
             kind: action === "video" ? "uploaded-video" : action === "oral-history" ? "oral-history-video" : "audio-only-oral-history",
@@ -67565,6 +69887,13 @@ function App() {
           onEditProfile: () => setView("profile-edit"),
           onClaimApproved: openMyProfile,
           onOpenMediaItem: openMediaItem,
+          onOpenRecipes: openRecipes,
+          onOpenRecipe: openRecipe,
+          onOpenRecipeContribute: (preselect) => openRecipeContribute({
+            personId: preselect.personId,
+            role: "originating",
+            context: "profile"
+          }),
           onAddMedia: (action) => openMediaContribute({
             personId: (resolvedProfile ?? profile).id,
             kind: action === "video" ? "uploaded-video" : action === "oral-history" ? "oral-history-video" : "audio-only-oral-history",
@@ -67621,7 +69950,8 @@ function App() {
         {
           onBack: () => setView("home"),
           onOpenArchiveItem: openArchiveItem,
-          onOpenVideos: () => setView("videos")
+          onOpenVideos: () => setView("videos"),
+          onOpenRecipes: openRecipes
         }
       ) : view === "videos" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
         VideosPage,
@@ -67649,9 +69979,41 @@ function App() {
         VideoContributePage,
         {
           onBack: () => (mediaContributePreselect == null ? void 0 : mediaContributePreselect.returnView) === "profile" ? setView("profile") : setView("videos"),
+          onViewPendingContributions: () => setView("admin-approval"),
           initialKind: (mediaContributePreselect == null ? void 0 : mediaContributePreselect.kind) ?? void 0,
           initialRelatedMemberIds: (mediaContributePreselect == null ? void 0 : mediaContributePreselect.personId) ? [mediaContributePreselect.personId] : void 0,
           initialSpeakerId: (mediaContributePreselect == null ? void 0 : mediaContributePreselect.speaker) ?? void 0
+        }
+      ) : view === "recipes" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+        RecipesPage,
+        {
+          onBack: () => setView("home"),
+          onOpenRecipe: openRecipe,
+          onAddRecipe: () => openRecipeContribute({
+            personId: null,
+            role: null,
+            context: "recipes"
+          })
+        }
+      ) : view === "recipe-detail" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+        RecipeDetailPage,
+        {
+          recipeId: selectedRecipeId ?? 0n,
+          onBack: () => setView("recipes"),
+          onOpenProfile: (id2) => {
+            setProfileId(id2);
+            setView("profile");
+          }
+        }
+      ) : view === "recipe-contribute" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+        RecipeContributePage,
+        {
+          onBack: () => (recipeContributePreselect == null ? void 0 : recipeContributePreselect.context) === "profile" ? setView("profile") : setView("recipes"),
+          onOpenRecipes: openRecipes,
+          preselect: (recipeContributePreselect == null ? void 0 : recipeContributePreselect.personId) && recipeContributePreselect.role ? {
+            personId: recipeContributePreselect.personId,
+            role: recipeContributePreselect.role
+          } : void 0
         }
       ) : /* @__PURE__ */ jsxRuntimeExports.jsx(
         ArchiveDetailPage,

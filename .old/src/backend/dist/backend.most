@@ -20,6 +20,8 @@ type Account__635607977 =
   {authMethods : [AuthMethod__588908254]; createdAt : Int; id : Principal};
 type Account__697872933 =
   {authMethods : [AuthMethod__837407418]; createdAt : Int; id : Principal};
+type Account__741001596 =
+  {authMethods : [AuthMethod__257578776]; createdAt : Int; id : Principal};
 type Account__75151146 =
   {authMethods : [AuthMethod__80173730]; createdAt : Int; id : Principal};
 type Account__837980215 =
@@ -30,7 +32,9 @@ type Account__997440835 =
   {authMethods : [AuthMethod__133306138]; createdAt : Int; id : Principal};
 type ArchiveItemClassification__180581124 = {#OralHistory; #Standard};
 type ArchiveItemClassification__383954107 = {#OralHistory; #Standard};
+type ArchiveItemClassification__794406287 = {#OralHistory; #Standard};
 type ArchiveItemId__806701466 = Nat;
+type ArchiveItemStatus__153733651 = {#Approved; #Pending; #Rejected};
 type ArchiveItemStatus__209982260 = {#Approved; #Pending; #Rejected};
 type ArchiveItemStatus__249205974 = {#Approved; #Pending; #Rejected};
 type ArchiveItemStatus__279370547 = {#Approved; #Pending; #Rejected};
@@ -155,6 +159,17 @@ type ArchiveItemType__726256840 =
     #WorkBusiness;
     #WrittenStoryNote
   };
+type ArchiveItemType__731953351 =
+  {
+    #Audio;
+    #Document;
+    #Other;
+    #Photo;
+    #Research;
+    #Video;
+    #WorkBusiness;
+    #WrittenStoryNote
+  };
 type ArchiveItemType__77290011 =
   {
     #Audio;
@@ -255,6 +270,31 @@ type ArchiveItem__425253936 =
     searchableTranscript : ?Text;
     sourceStatus : SourceStatus__200219094;
     status : ArchiveItemStatus__828623496;
+    tags : [Text];
+    title : Text;
+    transcript : ?Text;
+    year : ?Nat
+  };
+type ArchiveItem__46712318 =
+  {
+    aiSummary : ?Text;
+    blob : Blob;
+    chapterMarkers : ?[ChapterMarker__455437366];
+    classification : ArchiveItemClassification__794406287;
+    contributor : Principal;
+    createdAt : Int;
+    description : Text;
+    era : Text;
+    extractedNames : ?[Text];
+    id : Nat;
+    itemType : ArchiveItemType__731953351;
+    primarySpeaker : ?OralHistorySpeaker__926562536;
+    privacyLevel : PrivacyLevel__125856772;
+    relatedBranchId : ?Text;
+    relatedMemberIds : [Text];
+    searchableTranscript : ?Text;
+    sourceStatus : SourceStatus__590974976;
+    status : ArchiveItemStatus__153733651;
     tags : [Text];
     title : Text;
     transcript : ?Text;
@@ -461,6 +501,27 @@ type AuditActionType__418976251 =
     #SuccessorActivated;
     #SuccessorDesignated
   };
+type AuditActionType__50136001 =
+  {
+    #ClaimApproved;
+    #ClaimRejected;
+    #DuplicateMerged;
+    #ProfileArchived;
+    #ProfilePermanentlyDeleted;
+    #ProfileRemovalRequested;
+    #ProfileRemovalReviewed;
+    #ProfileRestored;
+    #RelationshipAdded;
+    #RelationshipRemoved;
+    #RelationshipRequestApproved;
+    #RelationshipRequestPending;
+    #RelationshipRequestRejected;
+    #RelationshipTypeCorrected;
+    #StewardPromoted;
+    #StewardRemoved;
+    #SuccessorActivated;
+    #SuccessorDesignated
+  };
 type AuditActionType__625679516 =
   {
     #ClaimApproved;
@@ -551,6 +612,15 @@ type AuditEntry__305911205 =
     summary : Text;
     timestamp : Int
   };
+type AuditEntry__532714133 =
+  {
+    actionType : AuditActionType__50136001;
+    actorAccountId : Principal;
+    affectedPersonIds : [Text];
+    id : Nat;
+    summary : Text;
+    timestamp : Int
+  };
 type AuditEntry__694442311 =
   {
     actionType : AuditActionType__833800745;
@@ -563,6 +633,7 @@ type AuditEntry__694442311 =
 type AuthMethod__1031314229 = {#Apple; #Google};
 type AuthMethod__133306138 = {#Apple; #Google};
 type AuthMethod__171658986 = {#Apple; #Google};
+type AuthMethod__257578776 = {#Apple; #Google};
 type AuthMethod__336418182 = {#Apple; #Google};
 type AuthMethod__48663622 = {#Apple; #Google};
 type AuthMethod__588908254 = {#Apple; #Google};
@@ -573,6 +644,7 @@ type AuthMethod__837407418 = {#Apple; #Google};
 type AuthMethod__952531476 = {#Apple; #Google};
 type AuthMethod__957166044 = {#Apple; #Google};
 type ChapterMarker__361153121 = {timestamp : Nat; title : Text};
+type ChapterMarker__455437366 = {timestamp : Nat; title : Text};
 type ChapterMarker__918316993 = {timestamp : Nat; title : Text};
 type ClaimStatus__1034565311 = {#Claimed; #Unclaimed};
 type ClaimStatus__1063893046 = {#Claimed; #Unclaimed};
@@ -581,6 +653,7 @@ type ClaimStatus__164948649 = {#Claimed; #Unclaimed};
 type ClaimStatus__308716288 = {#Claimed; #Unclaimed};
 type ClaimStatus__311900082 = {#Claimed; #Unclaimed};
 type ClaimStatus__319335300 = {#Claimed; #Unclaimed};
+type ClaimStatus__33170575 = {#Claimed; #Unclaimed};
 type ClaimStatus__336739886 = {#Claimed; #Unclaimed};
 type ClaimStatus__411252182 = {#Claimed; #Unclaimed};
 type ClaimStatus__49545093 = {#Claimed; #Unclaimed};
@@ -593,10 +666,14 @@ type DismissedPair__595483233 = {personIdA : Text; personIdB : Text};
 type DismissedPair__599264591 = {personIdA : Text; personIdB : Text};
 type DismissedPair__70445725 =
   {personIdA : PersonId__1048869529; personIdB : PersonId__1048869529};
+type DismissedPair__735285339 = {personIdA : Text; personIdB : Text};
 type EvidenceStatus__141200965 =
+  {#Documented; #FamilyHistory; #PersonalMemory; #Unresolved};
+type EvidenceStatus__274099163 =
   {#Documented; #FamilyHistory; #PersonalMemory; #Unresolved};
 type EvidenceStatus__563034664 =
   {#Documented; #FamilyHistory; #PersonalMemory; #Unresolved};
+type EvidenceStatus__824382737 = EvidenceStatus__563034664;
 type EvidenceStatus__952143850 =
   {#Documented; #FamilyHistory; #PersonalMemory; #Unresolved};
 type ExternalBlob__220559234 = Blob;
@@ -614,6 +691,7 @@ type LivingStatus__1010586431 = {#Deceased; #Living};
 type LivingStatus__152326800 = {#Deceased; #Living};
 type LivingStatus__174770406 = {#Deceased; #Living};
 type LivingStatus__174878751 = {#Deceased; #Living};
+type LivingStatus__181669254 = {#Deceased; #Living};
 type LivingStatus__266794041 = {#Deceased; #Living};
 type LivingStatus__327220605 = {#Deceased; #Living};
 type LivingStatus__456136129 = {#Deceased; #Living};
@@ -631,6 +709,7 @@ type MergeConflictStatus__241303888 = {#Pending; #Resolved};
 type MergeConflictStatus__333105710 = {#Pending; #Resolved};
 type MergeConflictStatus__641594810 = {#Pending; #Resolved};
 type MergeConflictStatus__667006950 = {#Pending; #Resolved};
+type MergeConflictStatus__956347765 = {#Pending; #Resolved};
 type MergeConflict__125824605 =
   {
     alternateValue : Text;
@@ -661,6 +740,16 @@ type MergeConflict__270208054 =
     resolvedBy : ?Principal;
     status : MergeConflictStatus__333105710
   };
+type MergeConflict__426329089 =
+  {
+    alternateValue : Text;
+    canonicalValue : Text;
+    field : Text;
+    id : Nat;
+    resolvedAt : ?Int;
+    resolvedBy : ?Principal;
+    status : MergeConflictStatus__956347765
+  };
 type MergeConflict__803170297 =
   {
     alternateValue : Text;
@@ -673,8 +762,10 @@ type MergeConflict__803170297 =
   };
 type MysteryContributionId__727222479 = Nat;
 type MysteryContributionStatus__197567704 = {#Approved; #Pending; #Rejected};
+type MysteryContributionStatus__493799858 = {#Approved; #Pending; #Rejected};
 type MysteryContributionStatus__808325537 = {#Approved; #Pending; #Rejected};
 type MysteryContributionStatus__927158210 = {#Approved; #Pending; #Rejected};
+type MysteryContributionType__247525839 = {#Lead; #Memory; #Note; #Source};
 type MysteryContributionType__613581465 = {#Lead; #Memory; #Note; #Source};
 type MysteryContributionType__664156237 = {#Lead; #Memory; #Note; #Source};
 type MysteryContributionType__912720454 = {#Lead; #Memory; #Note; #Source};
@@ -714,7 +805,21 @@ type MysteryContribution__615943367 =
     status : MysteryContributionStatus__927158210;
     text : Text
   };
+type MysteryContribution__748342134 =
+  {
+    contributionType : MysteryContributionType__247525839;
+    contributor : Principal;
+    createdAt : Int;
+    id : Nat;
+    mysteryId : Nat;
+    reviewedAt : ?Int;
+    reviewedBy : ?Principal;
+    status : MysteryContributionStatus__493799858;
+    text : Text
+  };
 type MysteryId__216886028 = Nat;
+type MysteryStatus__100533050 =
+  {#Open; #PartiallyResolved; #Researching; #Resolved};
 type MysteryStatus__1070731615 =
   {#Open; #PartiallyResolved; #Researching; #Resolved};
 type MysteryStatus__194181224 =
@@ -769,6 +874,23 @@ type Mystery__85829504 =
     relatedSourceIds : [Nat];
     resolution : ?Resolution__85140939;
     status : MysteryStatus__1070731615;
+    title : Text;
+    updatedAt : Int
+  };
+type Mystery__893497268 =
+  {
+    contributor : Principal;
+    createdAt : Int;
+    description : Text;
+    id : Nat;
+    knownFacts : [Text];
+    possibilities : [Text];
+    relatedArchiveItemIds : [Nat];
+    relatedBranchId : ?Text;
+    relatedMemberIds : [Text];
+    relatedSourceIds : [Nat];
+    resolution : ?Resolution__642179148;
+    status : MysteryStatus__100533050;
     title : Text;
     updatedAt : Int
   };
@@ -920,6 +1042,33 @@ type NewActor__540605288 =
     notifications : List__89170296<Notification__892275252>;
     profiles : Map__386906547<Text, PersonProfile__770856528>;
     relationshipRequests : List__89170296<RelationshipRequest__771673919>
+  };
+type NewActor__556041151 =
+  {
+    accessControlState :
+      {
+        var adminAssigned : Bool;
+        userRoles : Map__386906547<Principal, UserRole__778770049>
+      };
+    accounts : Map__386906547<Principal, Account__741001596>;
+    archiveItems : List__89170296<ArchiveItem__46712318>;
+    archivedProfiles : List__89170296<Text>;
+    auditLog : List__89170296<AuditEntry__532714133>;
+    claims : List__89170296<ProfileClaim__882969147>;
+    confirmedRelationships : List__89170296<Relationship__468582772>;
+    dismissedDuplicates : List__89170296<DismissedPair__735285339>;
+    galleries : Map__386906547<Text, PhotoGallery__673204854>;
+    mergeConflicts : List__89170296<MergeConflict__426329089>;
+    mysteries : List__89170296<Mystery__893497268>;
+    mysteryContributions : List__89170296<MysteryContribution__748342134>;
+    notifications : List__89170296<Notification__867178958>;
+    profiles : Map__386906547<Text, PersonProfile__116240516>;
+    recipes : List__89170296<Recipe__693560536>;
+    relationshipRequests : List__89170296<RelationshipRequest__1021380286>;
+    removalRequests : List__89170296<ProfileRemovalRequest__448690368>;
+    stewards : List__89170296<StewardRecord__28167549>;
+    stories : List__89170296<Story__138540882>;
+    successors : List__89170296<SuccessorDesignation__152383176>
   };
 type NewActor__681552274 =
   {
@@ -1105,6 +1254,13 @@ type NotificationType__265978555 =
     #RelationshipRequested;
     #RelationshipReviewed
   };
+type NotificationType__325051012 =
+  {
+    #ProfileClaimRequested;
+    #ProfileClaimReviewed;
+    #RelationshipRequested;
+    #RelationshipReviewed
+  };
 type NotificationType__431156388 =
   {
     #ProfileClaimRequested;
@@ -1251,6 +1407,15 @@ type Notification__776517790 =
     read : Bool;
     recipient : Principal
   };
+type Notification__867178958 =
+  {
+    createdAt : Int;
+    id : Nat;
+    message : Text;
+    notificationType : NotificationType__325051012;
+    read : Bool;
+    recipient : Principal
+  };
 type Notification__873598435 =
   {
     createdAt : Int;
@@ -1309,6 +1474,32 @@ type OldActor__1060490054 =
         userRoles : Map__386906547<Principal, UserRole__462637140>
       };
     galleries : Map__386906547<Text, PhotoGallery__360467265>
+  };
+type OldActor__190834961 =
+  {
+    accessControlState :
+      {
+        var adminAssigned : Bool;
+        userRoles : Map__386906547<Principal, UserRole__778770049>
+      };
+    accounts : Map__386906547<Principal, Account__741001596>;
+    archiveItems : List__89170296<ArchiveItem__46712318>;
+    archivedProfiles : List__89170296<Text>;
+    auditLog : List__89170296<AuditEntry__532714133>;
+    claims : List__89170296<ProfileClaim__882969147>;
+    confirmedRelationships : List__89170296<Relationship__468582772>;
+    dismissedDuplicates : List__89170296<DismissedPair__735285339>;
+    galleries : Map__386906547<Text, PhotoGallery__673204854>;
+    mergeConflicts : List__89170296<MergeConflict__426329089>;
+    mysteries : List__89170296<Mystery__893497268>;
+    mysteryContributions : List__89170296<MysteryContribution__748342134>;
+    notifications : List__89170296<Notification__867178958>;
+    profiles : Map__386906547<Text, PersonProfile__116240516>;
+    relationshipRequests : List__89170296<RelationshipRequest__1021380286>;
+    removalRequests : List__89170296<ProfileRemovalRequest__448690368>;
+    stewards : List__89170296<StewardRecord__28167549>;
+    stories : List__89170296<Story__138540882>;
+    successors : List__89170296<SuccessorDesignation__152383176>
   };
 type OldActor__363696330 =
   {
@@ -1532,9 +1723,34 @@ type OldPersonProfile__17836083 =
   };
 type OralHistorySpeaker__297850193 = {name : Text; personId : ?Text};
 type OralHistorySpeaker__575347483 = {name : Text; personId : ?Text};
+type OralHistorySpeaker__926562536 = {name : Text; personId : ?Text};
 type PersonId__1048869529 = PersonId__610106223;
 type PersonId__610106223 = Text;
 type PersonId__675039419 = Text;
+type PersonProfile__116240516 =
+  {
+    birthDate : ?Text;
+    birthInfo : ?Text;
+    birthplace : ?Text;
+    claimStatus : ClaimStatus__33170575;
+    claimedByUserId : ?Principal;
+    currentLocation : ?Text;
+    firstName : ?Text;
+    lastName : ?Text;
+    livingStatus : LivingStatus__181669254;
+    longerStory : ?Text;
+    middleName : ?Text;
+    name : Text;
+    nickname : ?Text;
+    occupation : ?Text;
+    personId : Text;
+    preferredName : ?Text;
+    privacySettings : ?Text;
+    shortBio : ?Text;
+    story : ?Text;
+    suffix : ?Text;
+    timeline : ?[Text]
+  };
 type PersonProfile__128671462 =
   {
     birthDate : ?Text;
@@ -1791,6 +2007,8 @@ type PhotoGallery__540222988 =
   {photos : List__89170296<Photo__488815060>; var profilePhotoId : ?Nat};
 type PhotoGallery__646543908 =
   {photos : List__89170296<Photo__1061138944>; var profilePhotoId : ?Nat};
+type PhotoGallery__673204854 =
+  {photos : List__89170296<Photo__148677724>; var profilePhotoId : ?Nat};
 type PhotoGallery__749612372 =
   {
     photos : List__89170296<Photo__93630719>;
@@ -1817,6 +2035,15 @@ type Photo__1042129836 =
     uploadedBy : Principal
   };
 type Photo__1061138944 =
+  {
+    blob : Blob;
+    filename : Text;
+    id : Nat;
+    mimeType : Text;
+    uploadedAt : Int;
+    uploadedBy : Principal
+  };
+type Photo__148677724 =
   {
     blob : Blob;
     filename : Text;
@@ -1943,8 +2170,10 @@ type Photo__93630719 =
     uploadedBy : Principal
   };
 type PrivacyLevel__110832090 = {#FamilyOnly; #Private; #Public};
+type PrivacyLevel__125856772 = {#FamilyOnly; #Private; #Public};
 type PrivacyLevel__149145419 = {#FamilyOnly; #Private; #Public};
 type PrivacyLevel__16641696 = {#FamilyOnly; #Private; #Public};
+type PrivacyLevel__191022914 = PrivacyLevel__764828888;
 type PrivacyLevel__245870796 = {#FamilyOnly; #Private; #Public};
 type PrivacyLevel__296521163 = {#FamilyOnly; #Private; #Public};
 type PrivacyLevel__306518349 = {#FamilyOnly; #Private; #Public};
@@ -1969,6 +2198,7 @@ type ProfileClaimStatus__563498551 = {#Approved; #Pending; #Rejected};
 type ProfileClaimStatus__597904421 = {#Approved; #Pending; #Rejected};
 type ProfileClaimStatus__661098194 = {#Approved; #Pending; #Rejected};
 type ProfileClaimStatus__679543545 = {#Approved; #Pending; #Rejected};
+type ProfileClaimStatus__774306457 = {#Approved; #Pending; #Rejected};
 type ProfileClaim__1046262541 =
   {
     id : Nat;
@@ -2089,6 +2319,16 @@ type ProfileClaim__848158174 =
     status : ProfileClaimStatus__1042784098;
     submittedDate : Int
   };
+type ProfileClaim__882969147 =
+  {
+    id : Nat;
+    personId : Text;
+    requestingUserId : Principal;
+    reviewedBy : ?Principal;
+    reviewedDate : ?Int;
+    status : ProfileClaimStatus__774306457;
+    submittedDate : Int
+  };
 type ProfileClaim__901563455 =
   {
     id : Nat;
@@ -2143,15 +2383,85 @@ type ProfileRemovalRequest__391435529 =
     status : ProfileRemovalStatus__134826244;
     submittedDate : Int
   };
+type ProfileRemovalRequest__448690368 =
+  {
+    id : Nat;
+    personId : Text;
+    reason : Text;
+    requestingUserId : Principal;
+    reviewedBy : ?Principal;
+    reviewedDate : ?Int;
+    status : ProfileRemovalStatus__656799952;
+    submittedDate : Int
+  };
 type ProfileRemovalStatus__134826244 = {#Approved; #Pending; #Rejected};
 type ProfileRemovalStatus__2967961 = {#Approved; #Pending; #Rejected};
 type ProfileRemovalStatus__496123199 = {#Approved; #Pending; #Rejected};
+type ProfileRemovalStatus__656799952 = {#Approved; #Pending; #Rejected};
 type ProfileRemovalStatus__95272879 = {#Approved; #Pending; #Rejected};
+type RecipeId__673747895 = Nat;
+type RecipeStatus__403055630 = {#Approved; #Archived; #Pending; #Rejected};
+type RecipeStatus__95897639 = {#Approved; #Archived; #Pending; #Rejected};
+type Recipe__693560536 =
+  {
+    aiDerivedText : ?Text;
+    contributorAccountId : Principal;
+    createdAt : Int;
+    era : ?Text;
+    evidenceStatus : EvidenceStatus__274099163;
+    extractedIngredients : ?[Text];
+    familyBranch : ?Text;
+    familyStory : ?Text;
+    ingredients : [Text];
+    instructions : Text;
+    linkedMediaIds : [Nat];
+    location : ?Text;
+    ocrText : ?Text;
+    originatingPersonId : Text;
+    privacyLevel : PrivacyLevel__125856772;
+    recipeId : Nat;
+    relatedPersonIds : [Text];
+    shortDescription : Text;
+    status : RecipeStatus__403055630;
+    tags : [Text];
+    title : Text;
+    transcript : ?Text;
+    updatedAt : Int;
+    year : ?Nat
+  };
+type Recipe__767283240 =
+  {
+    aiDerivedText : ?Text;
+    contributorAccountId : Principal;
+    createdAt : Int;
+    era : ?Text;
+    evidenceStatus : EvidenceStatus__824382737;
+    extractedIngredients : ?[Text];
+    familyBranch : ?Text;
+    familyStory : ?Text;
+    ingredients : [Text];
+    instructions : Text;
+    linkedMediaIds : [Nat];
+    location : ?Text;
+    ocrText : ?Text;
+    originatingPersonId : Text;
+    privacyLevel : PrivacyLevel__191022914;
+    recipeId : RecipeId__673747895;
+    relatedPersonIds : [Text];
+    shortDescription : Text;
+    status : RecipeStatus__95897639;
+    tags : [Text];
+    title : Text;
+    transcript : ?Text;
+    updatedAt : Int;
+    year : ?Nat
+  };
 type RelationshipRequestStatus__251580484 = {#Approved; #Pending; #Rejected};
 type RelationshipRequestStatus__259416325 = {#Approved; #Pending; #Rejected};
 type RelationshipRequestStatus__27789626 = {#Approved; #Pending; #Rejected};
 type RelationshipRequestStatus__332866237 = {#Approved; #Pending; #Rejected};
 type RelationshipRequestStatus__359569903 = {#Approved; #Pending; #Rejected};
+type RelationshipRequestStatus__449938857 = {#Approved; #Pending; #Rejected};
 type RelationshipRequestStatus__571926483 = {#Approved; #Pending; #Rejected};
 type RelationshipRequestStatus__578169903 = {#Approved; #Pending; #Rejected};
 type RelationshipRequestStatus__660221945 = {#Approved; #Pending; #Rejected};
@@ -2160,6 +2470,17 @@ type RelationshipRequestStatus__69961503 = {#Approved; #Pending; #Rejected};
 type RelationshipRequestStatus__755712280 = {#Approved; #Pending; #Rejected};
 type RelationshipRequestStatus__787023576 = {#Approved; #Pending; #Rejected};
 type RelationshipRequestStatus__822142144 = {#Approved; #Pending; #Rejected};
+type RelationshipRequest__1021380286 =
+  {
+    id : Nat;
+    proposedRelationship : RelationshipType__732891372;
+    relatedPersonId : Text;
+    requestingPersonId : Text;
+    reviewedDate : ?Int;
+    reviewer : ?Principal;
+    status : RelationshipRequestStatus__449938857;
+    submittedDate : Int
+  };
 type RelationshipRequest__174897287 =
   {
     id : Nat;
@@ -2304,6 +2625,7 @@ type RelationshipRequest__903331830 =
     submittedDate : Int
   };
 type RelationshipStatus__1001718617 = {#Confirmed; #Disputed; #Pending};
+type RelationshipStatus__123564878 = {#Confirmed; #Disputed; #Pending};
 type RelationshipStatus__167901476 = {#Confirmed; #Disputed; #Pending};
 type RelationshipStatus__214108216 = {#Confirmed; #Disputed; #Pending};
 type RelationshipStatus__226878282 = {#Confirmed; #Disputed; #Pending};
@@ -2335,6 +2657,8 @@ type RelationshipType__585834936 =
 type RelationshipType__699837449 =
   {#Child; #Parent; #Sibling; #SpousePartner};
 type RelationshipType__731263837 =
+  {#Child; #Parent; #Sibling; #SpousePartner};
+type RelationshipType__732891372 =
   {#Child; #Parent; #Sibling; #SpousePartner};
 type RelationshipType__802220732 =
   {#Child; #Parent; #Sibling; #SpousePartner};
@@ -2406,6 +2730,14 @@ type Relationship__465527836 =
     status : RelationshipStatus__982389562;
     toPersonId : Text
   };
+type Relationship__468582772 =
+  {
+    fromPersonId : Text;
+    id : Nat;
+    relationshipType : RelationshipType__732891372;
+    status : RelationshipStatus__123564878;
+    toPersonId : Text
+  };
 type Relationship__698638601 =
   {
     fromPersonId : Text;
@@ -2460,6 +2792,13 @@ type Resolution__441241244 =
     summary : Text;
     supportingEvidence : [Text]
   };
+type Resolution__642179148 =
+  {
+    resolvedAt : Int;
+    resolvedBy : Principal;
+    summary : Text;
+    supportingEvidence : [Text]
+  };
 type Resolution__85140939 =
   {
     resolvedAt : Int;
@@ -2476,6 +2815,7 @@ type SourceStatus__200219094 = {#Copy; #Original; #Transcribed; #Unverified};
 type SourceStatus__384966011 = {#Copy; #Original; #Transcribed; #Unverified};
 type SourceStatus__519851534 = {#Copy; #Original; #Transcribed; #Unverified};
 type SourceStatus__532170132 = {#Copy; #Original; #Transcribed; #Unverified};
+type SourceStatus__590974976 = {#Copy; #Original; #Transcribed; #Unverified};
 type SourceStatus__645004629 = {#Copy; #Original; #Transcribed; #Unverified};
 type SourceStatus__704380169 = {#Copy; #Original; #Transcribed; #Unverified};
 type SourceStatus__723774542 = {#Copy; #Original; #Transcribed; #Unverified};
@@ -2486,6 +2826,14 @@ type StewardRecord__223571186 =
     assignedAt : Int;
     assignedBy : Principal;
     roleStatus : StewardRoleStatus__901640023;
+    stewardAccountId : Principal;
+    successorPriority : ?Nat
+  };
+type StewardRecord__28167549 =
+  {
+    assignedAt : Int;
+    assignedBy : Principal;
+    roleStatus : StewardRoleStatus__985243361;
     stewardAccountId : Principal;
     successorPriority : ?Nat
   };
@@ -2517,10 +2865,28 @@ type StewardRoleStatus__380941303 = {#Active; #Removed};
 type StewardRoleStatus__463352653 = {#Active; #Removed};
 type StewardRoleStatus__843369164 = {#Active; #Removed};
 type StewardRoleStatus__901640023 = {#Active; #Removed};
+type StewardRoleStatus__985243361 = {#Active; #Removed};
 type StoryId__303413454 = Nat;
 type StoryStatus__275230185 = {#Approved; #Pending; #Rejected};
 type StoryStatus__40697421 = {#Approved; #Pending; #Rejected};
 type StoryStatus__89821010 = {#Approved; #Pending; #Rejected};
+type StoryStatus__980341352 = {#Approved; #Pending; #Rejected};
+type Story__138540882 =
+  {
+    contributor : Principal;
+    createdAt : Int;
+    era : ?Text;
+    evidenceStatus : EvidenceStatus__274099163;
+    id : Nat;
+    location : ?Text;
+    relatedArchiveItemIds : [Nat];
+    relatedMemberIds : [Text];
+    status : StoryStatus__980341352;
+    storyText : Text;
+    title : Text;
+    updatedAt : Int;
+    year : ?Nat
+  };
 type Story__203980376 =
   {
     contributor : Principal;
@@ -2585,6 +2951,14 @@ type SuccessorDesignation__1054746855 =
     priority : Nat;
     status : SuccessorStatus__127756819
   };
+type SuccessorDesignation__152383176 =
+  {
+    assignedAt : Int;
+    assignedBy : Principal;
+    personId : Text;
+    priority : Nat;
+    status : SuccessorStatus__182559795
+  };
 type SuccessorDesignation__221162854 =
   {
     assignedAt : Int;
@@ -2603,6 +2977,7 @@ type SuccessorDesignation__303563642 =
   };
 type SuccessorStatus__10753292 = {#Activated; #Designated; #Removed};
 type SuccessorStatus__127756819 = {#Activated; #Designated; #Removed};
+type SuccessorStatus__182559795 = {#Activated; #Designated; #Removed};
 type SuccessorStatus__296054318 = {#Activated; #Designated; #Removed};
 type SuccessorStatus__613210870 = {#Activated; #Designated; #Removed};
 type UserRole__1012859405 = {#admin; #guest; #user};
@@ -2618,6 +2993,7 @@ type UserRole__563258213 = {#admin; #guest; #user};
 type UserRole__642900284 = {#admin; #guest; #user};
 type UserRole__730546933 = {#admin; #guest; #user};
 type UserRole__764336728 = {#admin; #guest; #user};
+type UserRole__778770049 = {#admin; #guest; #user};
 type UserRole__785948418 = {#admin; #guest; #user};
 type UserRole__91647283 = {#admin; #guest; #user};
 type UserRole__968740559 = {#admin; #guest; #user};
@@ -2636,7 +3012,8 @@ type UserRole__968740559 = {#admin; #guest; #user};
   "20260908_120000" : (old : OldActor__833656957) -> NewActor__848664417;
   "20260909_000000" : (old : OldActor__931712378) -> NewActor__50454331;
   "20260909_010000" : (old : OldActor__1038583075) -> NewActor__760037069;
-  "20260909_020000" : (old : OldActor__534714275) -> NewActor__251972276
+  "20260909_020000" : (old : OldActor__534714275) -> NewActor__251972276;
+  "20260910_000000" : (old : OldActor__190834961) -> NewActor__556041151
 }
 actor  {
   stable accessControlState :
@@ -2719,6 +3096,12 @@ actor  {
       var root :
         Node__430031793<PersonId__610106223, PersonProfile__847074086>;
       var size : Nat__58649523
+    };
+  stable recipes :
+    {
+      var blockIndex : Nat__58649523;
+      var blocks : [var [var ?Recipe__767283240]];
+      var elementIndex : Nat__58649523
     };
   stable relationshipRequests :
     {

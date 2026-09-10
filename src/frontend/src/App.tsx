@@ -28,6 +28,9 @@ import {
   profiles,
 } from "./pages/PersonProfilePage";
 import { ProfileEditPage } from "./pages/ProfileEditPage";
+import { RecipeContributePage } from "./pages/RecipeContributePage";
+import { RecipeDetailPage } from "./pages/RecipeDetailPage";
+import { RecipesPage } from "./pages/RecipesPage";
 import { StoriesPage } from "./pages/StoriesPage";
 import { TimelinePage } from "./pages/TimelinePage";
 import { VideoContributePage } from "./pages/VideoContributePage";
@@ -57,7 +60,10 @@ type View =
   | "sign-in"
   | "stories"
   | "mysteries"
-  | "timeline";
+  | "timeline"
+  | "recipes"
+  | "recipe-detail"
+  | "recipe-contribute";
 
 const VALID_VIEWS: readonly View[] = [
   "home",
@@ -81,6 +87,9 @@ const VALID_VIEWS: readonly View[] = [
   "stories",
   "mysteries",
   "timeline",
+  "recipes",
+  "recipe-detail",
+  "recipe-contribute",
 ];
 
 function isView(value: string): value is View {
@@ -155,6 +164,18 @@ export default function App() {
     kind: MediaKind | null;
     speaker: string | null;
     returnView: "videos" | "profile";
+  } | null>(null);
+  // The recipe currently open in the Family Recipes detail view. Cleared when
+  // navigating away from the detail view.
+  const [selectedRecipeId, setSelectedRecipeId] = useState<bigint | null>(null);
+  // Preselection carried into the add-recipe flow when launched from a Person
+  // Profile: the profile person (as the originating or related member) and
+  // where to return on back. When launched from the Family Recipes page this
+  // stays null (no preselection).
+  const [recipeContributePreselect, setRecipeContributePreselect] = useState<{
+    personId: string | null;
+    role: "originating" | "related" | null;
+    context: "recipes" | "profile";
   } | null>(null);
   const { data: isAdmin = false } = useIsAdmin();
   const { isAuthenticated, accountId, signOut } = useAuth();
@@ -238,6 +259,33 @@ export default function App() {
     }) => {
       setMediaContributePreselect(preselect);
       setView("video-contribute");
+    },
+    [],
+  );
+
+  // Opens the Family Recipes browsing view.
+  const openRecipes = useCallback(() => {
+    setView("recipes");
+  }, []);
+
+  // Opens a recipe's detail view from the Family Recipes page or a Person
+  // Profile's Family Recipes section.
+  const openRecipe = useCallback((id: bigint) => {
+    setSelectedRecipeId(id);
+    setView("recipe-detail");
+  }, []);
+
+  // Opens the add-recipe flow, optionally carrying a preselected person (as
+  // the originating or related member) and where to return on back. When
+  // launched from the Family Recipes page this stays null (no preselection).
+  const openRecipeContribute = useCallback(
+    (preselect: {
+      personId: string | null;
+      role: "originating" | "related" | null;
+      context: "recipes" | "profile";
+    }) => {
+      setRecipeContributePreselect(preselect);
+      setView("recipe-contribute");
     },
     [],
   );
@@ -333,6 +381,7 @@ export default function App() {
           }}
           onOpenTimeline={() => setView("timeline")}
           onOpenVideos={() => setView("videos")}
+          onOpenRecipes={openRecipes}
         />
       ) : view === "family-tree" ? (
         <ExploreFamilyPage
@@ -355,6 +404,15 @@ export default function App() {
             onEditProfile={() => setView("profile-edit")}
             onClaimApproved={openMyProfile}
             onOpenMediaItem={openMediaItem}
+            onOpenRecipes={openRecipes}
+            onOpenRecipe={openRecipe}
+            onOpenRecipeContribute={(preselect) =>
+              openRecipeContribute({
+                personId: preselect.personId,
+                role: "originating",
+                context: "profile",
+              })
+            }
             onAddMedia={(action) =>
               openMediaContribute({
                 personId: (resolvedProfile ?? profile).id,
@@ -384,6 +442,15 @@ export default function App() {
             onEditProfile={() => setView("profile-edit")}
             onClaimApproved={openMyProfile}
             onOpenMediaItem={openMediaItem}
+            onOpenRecipes={openRecipes}
+            onOpenRecipe={openRecipe}
+            onOpenRecipeContribute={(preselect) =>
+              openRecipeContribute({
+                personId: preselect.personId,
+                role: "originating",
+                context: "profile",
+              })
+            }
             onAddMedia={(action) =>
               openMediaContribute({
                 personId: (resolvedProfile ?? profile).id,
@@ -460,6 +527,7 @@ export default function App() {
           onBack={() => setView("home")}
           onOpenArchiveItem={openArchiveItem}
           onOpenVideos={() => setView("videos")}
+          onOpenRecipes={openRecipes}
         />
       ) : view === "videos" ? (
         <VideosPage
@@ -490,6 +558,7 @@ export default function App() {
               ? setView("profile")
               : setView("videos")
           }
+          onViewPendingContributions={() => setView("admin-approval")}
           initialKind={mediaContributePreselect?.kind ?? undefined}
           initialRelatedMemberIds={
             mediaContributePreselect?.personId
@@ -497,6 +566,45 @@ export default function App() {
               : undefined
           }
           initialSpeakerId={mediaContributePreselect?.speaker ?? undefined}
+        />
+      ) : view === "recipes" ? (
+        <RecipesPage
+          onBack={() => setView("home")}
+          onOpenRecipe={openRecipe}
+          onAddRecipe={() =>
+            openRecipeContribute({
+              personId: null,
+              role: null,
+              context: "recipes",
+            })
+          }
+        />
+      ) : view === "recipe-detail" ? (
+        <RecipeDetailPage
+          recipeId={selectedRecipeId ?? 0n}
+          onBack={() => setView("recipes")}
+          onOpenProfile={(id) => {
+            setProfileId(id);
+            setView("profile");
+          }}
+        />
+      ) : view === "recipe-contribute" ? (
+        <RecipeContributePage
+          onBack={() =>
+            recipeContributePreselect?.context === "profile"
+              ? setView("profile")
+              : setView("recipes")
+          }
+          onOpenRecipes={openRecipes}
+          preselect={
+            recipeContributePreselect?.personId &&
+            recipeContributePreselect.role
+              ? {
+                  personId: recipeContributePreselect.personId,
+                  role: recipeContributePreselect.role,
+                }
+              : undefined
+          }
         />
       ) : (
         <ArchiveDetailPage

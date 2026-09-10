@@ -729,6 +729,14 @@ video {
     --player-track: 0.4 0.03 45;
     --player-fill: 0.6 0.11 55;
     --media-overlay: 0.16 0.02 55 / 0.6;
+
+    /* Family Recipes: spiced-rust kitchen accent (distinct from the sepia
+       primary and dusty bronze), a handwritten-ink tone for original source
+       material, and a warm plate surface for recipe cards/sections. */
+    --recipe-accent: 0.5 0.14 30;
+    --recipe-accent-foreground: 0.96 0.02 70;
+    --recipe-hand: 0.32 0.06 40;
+    --recipe-surface: 0.94 0.025 65;
   }
 
   .dark {
@@ -948,6 +956,12 @@ video {
     --player-track: 0.3 0.02 55;
     --player-fill: 0.68 0.12 55;
     --media-overlay: 0.1 0.01 50 / 0.65;
+
+    /* Family Recipes (dark): spiced-rust accent, handwritten ink, warm plate */
+    --recipe-accent: 0.72 0.13 30;
+    --recipe-accent-foreground: 0.16 0.02 55;
+    --recipe-hand: 0.82 0.05 55;
+    --recipe-surface: 0.22 0.025 55;
   }
 
   * {
@@ -1043,6 +1057,9 @@ video {
 }
 .bottom-1\/2 {
   bottom: 50%;
+}
+.bottom-2 {
+  bottom: 0.5rem;
 }
 .left-0 {
   left: 0px;
@@ -1192,6 +1209,9 @@ video {
 .mb-4 {
   margin-bottom: 1rem;
 }
+.mb-5 {
+  margin-bottom: 1.25rem;
+}
 .mb-6 {
   margin-bottom: 1.5rem;
 }
@@ -1215,6 +1235,9 @@ video {
 }
 .mt-10 {
   margin-top: 2.5rem;
+}
+.mt-12 {
+  margin-top: 3rem;
 }
 .mt-2 {
   margin-top: 0.5rem;
@@ -8053,6 +8076,376 @@ video {
      indicator so the "someone is speaking" state reads without noise. */
 .voice-pulse {
     animation: voice-pulse 2.4s ease-in-out infinite;
+  }
+/* ---- Family Recipes: preserved family tradition ---- */
+/* Recipe filter bar: reuses .filter-tab/.filter-select with a recipe-aware
+     active state using the spiced-rust accent for the All Recipes tab. */
+.filter-tab-active-recipe {
+    background-color: oklch(var(--recipe-accent));
+    color: oklch(var(--recipe-accent-foreground));
+    border-color: oklch(var(--recipe-accent));
+  }
+.filter-tab-active-recipe:hover {
+    color: oklch(var(--recipe-accent-foreground));
+    border-color: oklch(var(--recipe-accent));
+  }
+/* Recipe card: a warm-paper plate with a primary image stage, title,
+     originating family member, short description, and era. Reuses the
+     archive-card language but framed as a keepsake — the image sits on a
+     warm plate and the title reads like a handwritten dish name. */
+.recipe-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  background-color: oklch(var(--card));
+  text-align: left;
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.12);
+    transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+}
+.recipe-card:hover,
+  .recipe-card:focus-within {
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.2);
+    transform: translateY(-2px);
+    border-color: oklch(var(--recipe-accent) / 0.5);
+  }
+.recipe-card-thumb {
+  position: relative;
+  aspect-ratio: 4/3;
+  width: 100%;
+  overflow: hidden;
+    background-color: oklch(var(--recipe-surface));
+}
+.recipe-card-thumb img {
+  height: 100%;
+  width: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.recipe-card-thumb-icon {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+    color: oklch(var(--muted-foreground));
+}
+.recipe-card-body {
+  display: flex;
+  flex: 1 1 0%;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+}
+.recipe-card-title {
+  font-family: var(--font-display), serif;
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+  line-height: 1.375;
+    color: oklch(var(--foreground));
+}
+.recipe-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.375rem;
+}
+.recipe-card-origin {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 600;
+    color: oklch(var(--recipe-accent));
+}
+.recipe-card-desc {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  line-height: 1.625;
+    color: oklch(var(--muted-foreground));
+}
+.recipe-card-era {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  --tw-numeric-spacing: tabular-nums;
+  font-variant-numeric: var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction);
+  letter-spacing: 0.14em;
+    color: oklch(var(--muted-foreground));
+}
+/* Recipe detail: a keepsake layout with a primary image stage and a side
+     info column. The whole detail reads like opening a family recipe box. */
+.recipe-detail {
+  display: grid;
+  gap: 2rem;
+}
+@media (min-width: 1024px) {
+
+  .recipe-detail {
+    grid-template-columns: 1.4fr 1fr;
+  }
+}
+.recipe-detail-hero {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+    background-color: oklch(var(--recipe-surface));
+}
+.recipe-detail-hero img {
+  display: block;
+  height: auto;
+  width: 100%;
+}
+.recipe-detail-hero-frame {
+  display: flex;
+  aspect-ratio: 4/3;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+    background-color: oklch(var(--recipe-surface));
+    color: oklch(var(--muted-foreground));
+}
+.recipe-detail-section {
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  background-color: oklch(var(--card));
+  padding: 1.25rem;
+    box-shadow: 0 1px 2px -1px oklch(0.36 0.05 45 / 0.08);
+}
+.recipe-detail-section-title {
+  margin-bottom: 0.75rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+    color: oklch(var(--recipe-accent));
+}
+.recipe-detail-text {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  line-height: 1.625;
+    color: oklch(var(--foreground));
+}
+.recipe-detail-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border-bottom-width: 1px;
+  border-color: oklch(var(--border) / 0.5);
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+.recipe-detail-meta-row:last-child {
+  border-width: 0px;
+}
+.recipe-detail-meta-row .meta-label {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+    color: oklch(var(--muted-foreground));
+}
+.recipe-detail-meta-row .meta-value {
+  text-align: right;
+  font-weight: 600;
+    color: oklch(var(--foreground));
+}
+/* Recipe gallery: a responsive grid of recipe media on warm plates. */
+.recipe-gallery {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+@media (min-width: 640px) {
+
+  .recipe-gallery {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+.recipe-gallery-item {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius);
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+    background-color: oklch(var(--recipe-surface));
+    aspect-ratio: 4 / 3;
+    transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.recipe-gallery-item:hover,
+  .recipe-gallery-item:focus-within {
+    border-color: oklch(var(--recipe-accent) / 0.5);
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.2);
+    transform: translateY(-2px);
+  }
+.recipe-gallery-item img {
+  height: 100%;
+  width: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.recipe-gallery-item-icon {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+    color: oklch(var(--muted-foreground));
+}
+/* Recipe section: a framed plate grouping a part of the detail (Ingredients,
+     Instructions, Family Story). Warm plate surface with a spiced-rust head. */
+.recipe-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  padding: 1rem;
+    background-color: oklch(var(--recipe-surface));
+    box-shadow: 0 1px 2px -1px oklch(0.36 0.05 45 / 0.08);
+}
+.recipe-section-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.recipe-section-head::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background-color: oklch(var(--recipe-accent));
+    flex-shrink: 0;
+  }
+.recipe-section-title {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+    color: oklch(var(--recipe-accent));
+}
+.recipe-section-body {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  line-height: 1.625;
+    color: oklch(var(--foreground));
+}
+.recipe-section-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  line-height: 1.625;
+    color: oklch(var(--foreground));
+}
+/* Source material: a clear label marking handwritten recipe media as an
+     original family source. Reads as an ink-stamped keepsake label — a warm
+     handwritten-ink tone with a dashed edge so it is never mistaken for a
+     modern typed note. */
+.source-material {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: 9999px;
+  border-width: 1px;
+  border-style: dashed;
+  padding-left: 0.625rem;
+  padding-right: 0.625rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+    border-color: oklch(var(--recipe-hand) / 0.45);
+    background-color: oklch(var(--recipe-hand) / 0.08);
+    color: oklch(var(--recipe-hand));
+}
+.source-material::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background-color: oklch(var(--recipe-hand));
+  }
+/* Recipe empty state: quiet dashed plate with a keepsake crest. Reads
+     'No family recipes yet' with an invitation to preserve family dishes. */
+.recipe-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-style: dashed;
+  border-color: oklch(var(--border) / 0.7);
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+  text-align: center;
+    background-color: oklch(var(--card) / 0.5);
+}
+.recipe-empty-mark {
+  display: flex;
+  height: 3.5rem;
+  width: 3.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+    background-color: oklch(var(--recipe-accent) / 0.14);
+    box-shadow: 0 0 0 2px oklch(var(--recipe-accent) / 0.4);
+    color: oklch(var(--recipe-accent));
+}
+.recipe-empty-title {
+  font-family: var(--font-display), serif;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+    color: oklch(var(--foreground));
+}
+.recipe-empty-hint {
+  max-width: 24rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+    color: oklch(var(--muted-foreground));
+}
+.recipe-empty-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: 9999px;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+    color: oklch(var(--recipe-accent-foreground));
+    background-color: oklch(var(--recipe-accent));
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow
+      0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.recipe-empty-action:hover {
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.24);
   }
 .\[--cell-size\:--spacing\(8\)\] {
   --cell-size: var(--spacing(8));

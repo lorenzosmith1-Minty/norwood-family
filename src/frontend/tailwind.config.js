@@ -93,6 +93,8 @@ export default {
           "0 4px 12px -4px rgba(93, 64, 55, 0.2), 0 0 0 1px rgba(93, 64, 55, 0.06)",
         player:
           "0 0 0 1px rgba(93, 64, 55, 0.08), 0 16px 40px -12px rgba(93, 64, 55, 0.28)",
+        recipe:
+          "0 2px 8px -2px rgba(93, 64, 55, 0.12), 0 0 0 1px rgba(93, 64, 55, 0.05)",
       },
       keyframes: {
         "accordion-down": {
@@ -169,6 +171,10 @@ export default {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0.55" },
         },
+        "recipe-in": {
+          from: { opacity: "0", transform: "translateY(10px) scale(0.985)" },
+          to: { opacity: "1", transform: "translateY(0) scale(1)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -188,6 +194,7 @@ export default {
         "timeline-in": "timeline-in 0.4s cubic-bezier(0.4, 0, 0.2, 1) both",
         "section-in": "section-in 0.35s cubic-bezier(0.4, 0, 0.2, 1) both",
         "voice-pulse": "voice-pulse 2.4s ease-in-out infinite",
+        "recipe-in": "recipe-in 0.4s cubic-bezier(0.4, 0, 0.2, 1) both",
       },
     },
   },

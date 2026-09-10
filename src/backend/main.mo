@@ -19,10 +19,12 @@ import OwnershipTypes "types/ownership";
 import AccountIdentityTypes "types/account-identity";
 import GovernanceTypes "types/governance";
 import FamilyHistoryTypes "types/family-history";
+import RecipeTypes "types/recipes";
 import ObjectStorageLib "lib/object-storage";
 import ArchiveLib "lib/archive";
 import OwnershipLib "lib/ownership";
 import AccountIdentityLib "lib/account-identity";
+import RecipesLib "lib/recipes";
 import ObjectStorageApi "mixins/object-storage-api";
 import ArchiveApi "mixins/archive-api";
 import OwnershipApi "mixins/ownership-api";
@@ -31,6 +33,7 @@ import NotificationsApi "mixins/notifications-api";
 import AccountIdentityApi "mixins/account-identity-api";
 import GovernanceApi "mixins/governance-api";
 import FamilyHistoryApi "mixins/family-history-api";
+import RecipesApi "mixins/recipes-api";
 import ApiDocMixin "mixins/api-doc";
 
 actor {
@@ -53,6 +56,7 @@ actor {
   let stories : List.List<FamilyHistoryTypes.Story>;
   let mysteries : List.List<FamilyHistoryTypes.Mystery>;
   let mysteryContributions : List.List<FamilyHistoryTypes.MysteryContribution>;
+  let recipes : List.List<RecipeTypes.Recipe>;
 
   /// Renders an audit action type variant as its tag text for OQL rows.
   func auditActionText(a : GovernanceTypes.AuditActionType) : Text {
@@ -468,6 +472,52 @@ actor {
       .payload("reviewedAt", func r = r.reviewedAt ?? 0)
       .controllerOnly()
       .build(),
+      OQL.Entity.manual<RecipeTypes.RecipeRow>(
+        "recipe",
+        func() : Iter.Iter<RecipeTypes.RecipeRow> = RecipesLib.recipeRows(recipes),
+        "Recipe",
+        "recipeId",
+      )
+      .sample({
+        recipeId = 0;
+        title = "";
+        shortDescription = "";
+        originatingPersonId = "";
+        relatedPersonCount = 0;
+        contributorAccountId = "";
+        era = "";
+        year = null;
+        location = "";
+        familyBranch = "";
+        ingredientCount = 0;
+        tagCount = 0;
+        privacyLevel = "";
+        evidenceStatus = "";
+        linkedMediaCount = 0;
+        status = "";
+        createdAt = 0;
+        updatedAt = 0;
+      })
+      .payload("recipeId", func r = r.recipeId)
+      .payload("title", func r = r.title)
+      .payload("shortDescription", func r = r.shortDescription)
+      .payload("originatingPersonId", func r = r.originatingPersonId)
+      .payload("relatedPersonCount", func r = r.relatedPersonCount)
+      .payload("contributorAccountId", func r = r.contributorAccountId)
+      .payload("era", func r = r.era)
+      .payload("year", func r = r.year ?? 0)
+      .payload("location", func r = r.location)
+      .payload("familyBranch", func r = r.familyBranch)
+      .payload("ingredientCount", func r = r.ingredientCount)
+      .payload("tagCount", func r = r.tagCount)
+      .payload("privacyLevel", func r = r.privacyLevel)
+      .payload("evidenceStatus", func r = r.evidenceStatus)
+      .payload("linkedMediaCount", func r = r.linkedMediaCount)
+      .payload("status", func r = r.status)
+      .payload("createdAt", func r = r.createdAt)
+      .payload("updatedAt", func r = r.updatedAt)
+      .controllerOnly()
+      .build(),
     ];
   });
   include MixinObjectStorage();
@@ -479,5 +529,6 @@ actor {
   include AccountIdentityApi(accounts);
   include GovernanceApi(accessControlState, profiles, confirmedRelationships, stewards, successors, removalRequests, auditLog, mergeConflicts, archivedProfiles, galleries, archiveItems, dismissedDuplicates);
   include FamilyHistoryApi(accessControlState, stories, mysteries, mysteryContributions, profiles, archiveItems);
+  include RecipesApi(accessControlState, recipes, profiles);
   include ApiDocMixin();
 };

@@ -429,6 +429,45 @@ profiles with explicit confirmation.
   are never fabricated. Each event carries an evidence badge and a link target
   (Person Profile, Story, Archive Item, or Mystery).
 
+### Family Recipes
+
+- `submitRecipe(title : Text, shortDescription : Text, originatingPersonId : Text, relatedPersonIds : [Text], era : ?Text, year : ?Nat, location : ?Text, familyBranch : ?Text, ingredients : [Text], instructions : Text, familyStory : ?Text, tags : [Text], privacyLevel : PrivacyLevel, evidenceStatus : EvidenceStatus, linkedMediaIds : [Nat]) : async Recipe` —
+  update. Submits a new family recipe. Requires a signed-in (non-anonymous)
+  caller; the caller is recorded as the `contributorAccountId`. The recipe is
+  stored in `#Pending` state and waits for a Family Steward to approve it before
+  appearing in Family Recipes. `originatingPersonId` must reference a canonical
+  Person record — the call traps with `\"Originating family member not found\"`
+  when that person is not tracked. `relatedPersonIds` may include multiple
+  people, each a canonical Person id. `linkedMediaIds` reference canonical
+  Archive/media records by id only — no media file is duplicated, and one
+  uploaded media file remains one canonical archive record even when linked to
+  multiple recipes or profiles. The reserved future-ready fields (`ocrText`,
+  `transcript`, `extractedIngredients`, `aiDerivedText`) are initialized to
+  `null` and are not populated by any logic yet; original source material is
+  always preserved separately from any future AI-derived text.
+- `listPendingRecipes() : async [Recipe]` — query. Family Steward only. Returns
+  all recipes currently in `#Pending` state.
+- `approveRecipe(id : Nat) : async ?Recipe` — update. Family Steward only. Moves
+  a pending recipe to `#Approved` state and returns the updated recipe, or `null`
+  when no pending recipe with that id exists. Approval does not create a second
+  Recipe — the same canonical record transitions to `#Approved`.
+- `rejectRecipe(id : Nat) : async ?Recipe` — update. Family Steward only. Moves
+  a pending recipe to `#Rejected` state and returns the updated recipe, or `null`
+  when no pending recipe with that id exists.
+- `listApprovedRecipes() : async [Recipe]` — query. Returns all recipes in
+  `#Approved` state (the recipes visible in Family Recipes).
+- `getRecipe(id : Nat) : async ?Recipe` — query. Returns a single recipe by id,
+  or `null` when it does not exist.
+- `listRecipesForPerson(personId : Text) : async [Recipe]` — query. Returns the
+  approved recipes linked to a person, whether as the originating member or a
+  related member. Returns only `#Approved` recipes for public views.
+- `publishRecipe(title : Text, shortDescription : Text, originatingPersonId : Text, relatedPersonIds : [Text], era : ?Text, year : ?Nat, location : ?Text, familyBranch : ?Text, ingredients : [Text], instructions : Text, familyStory : ?Text, tags : [Text], privacyLevel : PrivacyLevel, evidenceStatus : EvidenceStatus, linkedMediaIds : [Nat]) : async Recipe` —
+  update. Family Steward only. Publishes a canonical recipe directly, already in
+  `#Approved` state. This is the steward-only add flow; it does not create a
+  second Recipe on approval. `originatingPersonId` must reference a canonical
+  Person record — the call traps with `\"Originating family member not found\"`
+  when that person is not tracked.
+
 ### Object Query Layer (OQL)
 
 - `schema() : async Text` — query. Returns a JSON catalogue of the exposed
@@ -439,8 +478,8 @@ profiles with explicit confirmation.
 The exposed entities are `photo`, `archiveItem`, `profile`, `claim`,
 `relationshipRequest`, `confirmedRelationship`, `notification`, `account`,
 `steward`, `successor`, `removalRequest`, `auditLog`, `mergeConflict`,
-`archivedProfile`, `story`, `mystery`, and `mysteryContribution`, all declared
-`.controllerOnly()` (see the authorization section). `photo` rows are flattened
+`archivedProfile`, `story`, `mystery`, `mysteryContribution`, and `recipe`, all
+declared `.controllerOnly()` (see the authorization section). `photo` rows are flattened
 photo metadata: `key` (globally-unique \"<personId>:<id>\", the primary key),
 `personId`, `id`, `filename`, `mimeType`, `uploadedAt` (nanoseconds since epoch,
 `Int`), `uploadedBy` (the uploading principal, rendered as text), and
@@ -526,6 +565,24 @@ text), `status` (`\"Pending\"`/`\"Approved\"`/`\"Rejected\"`), `createdAt` (`Int
 `knownFacts`, `possibilities`, `relatedSourceIds`, `relatedArchiveItemIds`)
 are exposed as counts since OQL has no array value type.
 
+The recipe entity is a flattened view of the corresponding records. `recipe`
+rows (primary key `recipeId`, a `Nat`) carry `title`, `shortDescription`,
+`originatingPersonId` (the canonical Person id of the primary originating
+family member), `relatedPersonCount` (`Nat`, the number of related member ids),
+`contributorAccountId` (the contributing account principal rendered as text),
+`era` (free text, `\"\"` when absent), `year` (`Nat`, `0` when absent),
+`location` (`\"\"` when absent), `familyBranch` (`\"\"` when absent),
+`ingredientCount` (`Nat`), `tagCount` (`Nat`), `privacyLevel`
+(`\"Public\"`/`\"FamilyOnly\"`/`\"Private\"`), `evidenceStatus`
+(`\"Documented\"`/`\"FamilyHistory\"`/`\"PersonalMemory\"`/`\"Unresolved\"`),
+`linkedMediaCount` (`Nat`, the number of linked canonical Archive/media ids),
+`status` (`\"Pending\"`/`\"Approved\"`/`\"Rejected\"`/`\"Archived\"`), `createdAt`
+(`Int`, nanoseconds since epoch), and `updatedAt` (`Int`). The array-valued
+fields (`relatedPersonIds`, `ingredients`, `tags`, `linkedMediaIds`) are exposed
+as counts since OQL has no array value type. The reserved future-ready fields
+(`ocrText`, `transcript`, `extractedIngredients`, `aiDerivedText`) are not
+exposed.
+
 ### Access control and Internet Identity
 
 - `_initialize_access_control() : async ()` — update. Registers the signed-in
@@ -568,8 +625,8 @@ The OQL methods (`schema`, `execute`) enforce authorization per entity against
 the live caller. All exposed entities — `photo`, `archiveItem`, `profile`,
 `claim`, `relationshipRequest`, `confirmedRelationship`, `notification`,
 `account`, `steward`, `successor`, `removalRequest`, `auditLog`,
-`mergeConflict`, `archivedProfile`, `story`, `mystery`, and
-`mysteryContribution` — are declared `.controllerOnly()`, so only the platform controller can read their
+`mergeConflict`, `archivedProfile`, `story`, `mystery`,
+`mysteryContribution`, and `recipe` — are declared `.controllerOnly()`, so only the platform controller can read their
 rows through `schema()`/`execute()`; end users do not read them directly. This
 keeps the family, archive, and governance metadata private to the platform while
 still letting the Data Intelligence agent answer over it.
@@ -629,6 +686,15 @@ Steward methods — `listPendingStories`, `approveStory`, `rejectStory`,
 with `\"Unauthorized: Only Family Stewards can ...\"` when the caller is not an
 admin. `listApprovedStories`, `listMysteries`, and `listTimelineEvents` are
 readable by any caller (respecting the existing privacy conventions).
+
+The Family Recipes methods gate on sign-in and role. `submitRecipe` requires a
+signed-in (non-anonymous) caller and traps with `\"Sign-in required to submit a
+recipe\"` for an anonymous caller. The Family Steward methods —
+`listPendingRecipes`, `approveRecipe`, `rejectRecipe`, and `publishRecipe` — are
+admin-only and trap with `\"Unauthorized: Only Family Stewards can ...\"` when
+the caller is not an admin. `listApprovedRecipes`, `getRecipe`, and
+`listRecipesForPerson` are readable by any caller (respecting the existing
+privacy conventions).
 
 Registration gates role-guarded access. A direct API caller must call
 `_initialize_access_control()` once as a signed-in caller before any
@@ -852,6 +918,25 @@ already reference the caller's stable principal (`requestingUserId`,
   `contributionType`, `text` (`Text`), `contributor` (`Principal`), `status`,
   `createdAt` (`Int`), `reviewedBy` (`?Principal`, `null` when unreviewed), and
   `reviewedAt` (`?Int`, `null` when unreviewed).
+- `RecipeId` is a `Nat`, unique across the whole recipe collection.
+- `RecipeStatus` is a variant: `#Pending`, `#Approved`, `#Rejected`, or
+  `#Archived`.
+- `Recipe` fields: `recipeId` (`Nat`), `title` (`Text`), `shortDescription`
+  (`Text`), `originatingPersonId` (`Text`, the single primary originating family
+  member linked to a canonical Person record — no Person data is duplicated
+  inside the Recipe), `relatedPersonIds` (`[Text]`, related family members, each
+  a canonical Person id), `contributorAccountId` (`Principal`, the signed-in
+  account that contributed the recipe), `era` (`?Text`, approximate era as free
+  text), `year` (`?Nat`), `location` (`?Text`), `familyBranch` (`?Text`),
+  `ingredients` (`[Text]`), `instructions` (`Text`), `familyStory` (`?Text`),
+  `tags` (`[Text]`), `privacyLevel` (`#Public`/`#FamilyOnly`/`#Private`),
+  `evidenceStatus` (`#Documented`/`#FamilyHistory`/`#PersonalMemory`/`#Unresolved`),
+  `linkedMediaIds` (`[Nat]`, references to canonical Archive/media records — no
+  media is duplicated), `status` (`RecipeStatus`), `createdAt` (`Int`,
+  nanoseconds since epoch), `updatedAt` (`Int`), and the reserved future-ready
+  fields `ocrText` (`?Text`), `transcript` (`?Text`), `extractedIngredients`
+  (`?[Text]`), and `aiDerivedText` (`?Text`) — all `null` and not populated by
+  any logic yet, kept separate from the original source material.
 - `TimelineEventType` is a variant: `#Birth`, `#Death`, `#Marriage`,
   `#FamilyEvent`, `#Migration`, `#MilitaryService`, `#CensusDocument`, `#Story`,
   `#PhotoDocument`, `#Location`, or `#Mystery`.
@@ -963,6 +1048,17 @@ evidence while preserving the prior theories/history — the research trail is
 never deleted. There is no async job to poll; the frontend can call
 `listMysteries` (viewers) or `listPendingMysteryContributions` (steward) to
 observe the current state.
+
+Family Recipes follow a submit → approve/reject lifecycle. `submitRecipe` stores
+the recipe in `#Pending` state. A Family Steward then calls `approveRecipe` or
+`rejectRecipe` to move it to `#Approved` or `#Rejected`. Only `#Approved`
+recipes are returned by `listApprovedRecipes` (the Family Recipes view) and by
+`listRecipesForPerson` (the per-person view). Stewards publish canonical recipes
+directly via `publishRecipe` (already `#Approved`). Approval transitions the
+same canonical Recipe record — it never creates a second Recipe. There is no
+async job to poll; the frontend can call `listPendingRecipes` (steward),
+`listApprovedRecipes`, `getRecipe`, or `listRecipesForPerson` to observe the
+current state.
 
 Travel Through Time is a read-only chronological view. `listTimelineEvents`
 aggregates events from existing canonical data only — PersonProfile timeline
@@ -1101,6 +1197,17 @@ Profile, Story, Archive Item, or Mystery.
 - `markMysteryResolved` is idempotent: marking an already-resolved (or
   nonexistent) mystery resolved returns `null` and changes nothing. It preserves
   the prior theories/history and never deletes the research trail.
+- `submitRecipe` is not idempotent: each call stores a new recipe with a fresh
+  id. Retrying a submission that actually succeeded creates a duplicate recipe.
+  It validates `originatingPersonId` at submission: it traps with `\"Originating
+  family member not found\"` when that person is not tracked, and stores nothing.
+- `approveRecipe` and `rejectRecipe` are idempotent: approving or rejecting an
+  already-approved or already-rejected (or nonexistent) recipe returns `null`
+  and changes nothing. They only transition recipes currently in `#Pending`
+  state. Neither is destructive — the recipe and its linked media references are
+  preserved in either terminal state, and approval never creates a second Recipe.
+- `publishRecipe` is not idempotent: each call stores a new canonical recipe with
+  a fresh id, already in `#Approved` state.
 
 ## Errors, traps, limits, and gotchas
 
@@ -1195,6 +1302,28 @@ Profile, Story, Archive Item, or Mystery.
   not exist or is not in the expected state.
 - Stories and Mysteries reference existing person ids and archive item ids; they
   never create duplicate Person records or duplicate source files.
+- `submitRecipe` traps with `\"Sign-in required to submit a recipe\"` for an
+  anonymous caller, and with `\"Originating family member not found\"` when
+  `originatingPersonId` does not reference a tracked canonical Person record.
+  `publishRecipe` traps with `\"Unauthorized: Only Family Stewards can publish
+  recipes\"` when the caller is not an admin, and with `\"Originating family
+  member not found\"` when the originating person is not tracked. The Family
+  Steward recipe methods (`listPendingRecipes`, `approveRecipe`, `rejectRecipe`,
+  `publishRecipe`) trap with `\"Unauthorized: Only Family Stewards can ...\"`
+  when the caller is not an admin.
+- `approveRecipe`, `rejectRecipe`, and `getRecipe` return `null` (they do not
+  trap) when the target id does not exist or is not in the expected state.
+- Recipes reference canonical Person records by `personId` only and canonical
+  Archive/media records by id only; they never create duplicate Person records
+  or duplicate media files. One uploaded media file remains one canonical
+  archive record even when linked to multiple recipes or profiles. The reserved
+  future-ready fields (`ocrText`, `transcript`, `extractedIngredients`,
+  `aiDerivedText`) are not populated by any logic yet; original source material
+  is always preserved separately from any future AI-derived text.
+- The OQL `recipe` entity is a flattened view: enumerated variants render as
+  their tag text, optional fields render as empty text or `0`, and the
+  array-valued fields (`relatedPersonIds`, `ingredients`, `tags`,
+  `linkedMediaIds`) are exposed as counts since OQL has no array value type.
 "
   };
 };

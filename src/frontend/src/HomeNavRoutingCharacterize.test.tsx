@@ -70,7 +70,7 @@ afterEach(cleanup);
 // (today it opens the archive), "Family Mysteries" (dead), or "Travel Through
 // Time" (dead) — those destinations are exactly what the request changes.
 describe("Home navigation routing characterization", () => {
-  it("loads the Home screen as the default route with all seven nav cards", () => {
+  it("loads the Home screen as the default route with all eight nav cards", () => {
     renderApp();
 
     // The default route is Home, not a blank screen: the brand and the nav
@@ -79,11 +79,14 @@ describe("Home navigation routing characterization", () => {
     const nav = screen.getByRole("navigation", {
       name: "Family history sections",
     });
-    // The Home screen now carries a seventh nav card, "Family Videos & Oral
-    // History", the new entry point to the dedicated media library.
-    expect(within(nav).getAllByRole("button")).toHaveLength(7);
+    // The Home screen now carries an eighth nav card, "Family Recipes", the
+    // dedicated entry point to the family recipe library.
+    expect(within(nav).getAllByRole("button")).toHaveLength(8);
     expect(
       within(nav).getByRole("button", { name: "Family Videos & Oral History" }),
+    ).toBeInTheDocument();
+    expect(
+      within(nav).getByRole("button", { name: "Family Recipes" }),
     ).toBeInTheDocument();
   });
 

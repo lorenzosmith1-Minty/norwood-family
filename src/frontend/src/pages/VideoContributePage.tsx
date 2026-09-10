@@ -35,6 +35,8 @@ import { profiles } from "./PersonProfilePage";
 interface VideoContributePageProps {
   /** Navigates back to the Family Videos & Oral History page. */
   onBack: () => void;
+  /** Navigates to the pending-contributions review view. */
+  onViewPendingContributions?: () => void;
   /** Preselect a media kind, skipping the kind chooser. */
   initialKind?: MediaKind;
   /** Person ids to preselect as related family members. */
@@ -319,6 +321,7 @@ function ResolvedProfileChip({
 
 export function VideoContributePage({
   onBack,
+  onViewPendingContributions,
   initialKind,
   initialRelatedMemberIds,
   initialSpeakerId,
@@ -417,25 +420,6 @@ export function VideoContributePage({
     );
   };
 
-  const resetForm = () => {
-    setSelectedKind(null);
-    setTitle("");
-    setDescription("");
-    setEra("");
-    setYear("");
-    setTags("");
-    setRelatedMemberIds([]);
-    setRelatedBranch("");
-    setSourceStatus(SourceStatus.Unverified);
-    setPrivacyLevel(PrivacyLevel.FamilyOnly);
-    setSpeakerId(null);
-    setFileBytes(null);
-    setFileName("");
-    setFileMime("");
-    setProgress(null);
-    setError(null);
-  };
-
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     if (!selectedKind) return;
@@ -511,25 +495,21 @@ export function VideoContributePage({
             />
           </span>
           <h1 className="mt-4 font-display text-2xl font-semibold text-foreground sm:text-3xl">
-            Media submitted
+            Media submitted for review
           </h1>
           <p className="mx-auto mt-3 max-w-md text-base leading-relaxed text-muted-foreground">
-            Thank you for adding to the Norwood family history. Your{" "}
-            {MEDIA_KIND_LABELS[selectedKind!].toLowerCase()} is now awaiting
-            admin approval and will appear in Family Videos &amp; Oral History
-            once it is reviewed.
+            Your media has been saved and is awaiting Family Steward approval.
+            It will appear on linked profiles and in the Family Archive after
+            approval.
           </p>
           <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
             <button
               type="button"
               data-ocid="video_contribute.submit.add_another_button"
-              onClick={() => {
-                resetForm();
-                setSubmitted(false);
-              }}
+              onClick={onViewPendingContributions}
               className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
-              Add another media item
+              View Pending Contributions
             </button>
             <button
               type="button"
@@ -537,7 +517,7 @@ export function VideoContributePage({
               onClick={onBack}
               className="inline-flex items-center justify-center gap-2 rounded-full border border-border bg-background px-5 py-2.5 text-sm font-semibold text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
-              Back to Videos
+              Back to Videos &amp; Oral History
             </button>
           </div>
         </motion.div>

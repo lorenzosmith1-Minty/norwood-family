@@ -6,26 +6,33 @@ import {
   Archive,
   ArchiveRestore,
   ArrowLeft,
+  AudioLines,
   BookOpen,
   CalendarDays,
   Camera,
   Check,
+  Clapperboard,
   FileText,
+  Film,
   ImagePlus,
   Landmark,
   Loader2,
   type LucideIcon,
+  Mic,
   NotebookPen,
   Pencil,
+  Play,
+  Plus,
   ScrollText,
   ShieldAlert,
   Trash2,
   UserCheck,
   UserMinus,
+  UserRound,
   Users,
 } from "lucide-react";
 import { motion } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ClaimButton } from "../components/ClaimButton";
 import { StatusBadge } from "../components/StatusBadge";
 import {
@@ -46,11 +53,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../components/ui/dialog";
-import { useIsAdmin } from "../hooks/useArchiveStorage";
+import { useApprovedMediaItems, useIsAdmin } from "../hooks/useArchiveStorage";
 import { useCanonicalPerson } from "../hooks/useCanonicalPerson";
 import {
   useArchiveProfile,
-  useListArchivedProfiles,
+  useListArchivedProfileIds,
   usePermanentlyDeleteProfile,
   useRequestProfileRemoval,
   useRestoreProfile,
@@ -65,6 +72,8 @@ import {
 } from "../hooks/usePhotoStorage";
 import { useMyProfileClaim, usePersonProfile } from "../hooks/useProfileClaims";
 import { useMyRelationshipRequests } from "../hooks/useRelationshipRequests";
+import type { ArchiveItem } from "../types/archive";
+import { getMediaKind } from "../types/archive";
 import {
   FAMILY_GRAPH,
   type FamilyGraphNode,
@@ -2645,6 +2654,13 @@ interface PersonProfilePageProps {
    * ClaimButton's defensive routing works.
    */
   onClaimApproved?: () => void;
+  /** Opens a media item's canonical video-detail view. */
+  onOpenMediaItem?: (id: bigint) => void;
+  /**
+   * Opens the add-media flow from the Videos & Oral History section. The
+   * action selects which media kind the flow starts with.
+   */
+  onAddMedia?: (action: "video" | "oral-history" | "audio") => void;
 }
 
 function getInitials(name: string): string {
@@ -3057,6 +3073,267 @@ function PhotosSection({
   );
 }
 
+/**
+ * A compact media row in the profile's Videos & Oral History section: a dark
+ * media stage thumbnail with a play overlay, the category badge, the serif
+ * title, the primary speaker (for oral history) or contributor, and the era.
+ * Routes to the same canonical video-detail view as every other surface —
+ * never a per-profile duplicate.
+ */
+function ProfileMediaRow({
+  item,
+  position,
+  onOpen,
+}: {
+  item: ArchiveItem;
+  position: number;
+  onOpen: () => void;
+}) {
+  const kind = getMediaKind(item);
+  const isAudio = kind === "audio-only-oral-history";
+  const speaker = item.primarySpeaker;
+  const categoryLabel = isAudio
+    ? "Audio"
+    : kind === "oral-history-video"
+      ? "Oral History"
+      : "Video";
+  const eraLabel =
+    item.era || (item.year !== undefined ? item.year.toString() : "Undated");
+
+  return (
+    <button
+      type="button"
+      data-ocid={`profile.videos.item.${position}`}
+      onClick={onOpen}
+      className="archive-card group text-left"
+    >
+      <div className="flex items-stretch gap-4 p-3">
+        {/* Media stage thumbnail */}
+        <div
+          className="relative flex h-20 w-28 shrink-0 items-center justify-center overflow-hidden rounded-lg"
+          style={{
+            backgroundColor: "oklch(var(--media-stage))",
+            color: "oklch(var(--media-stage-muted))",
+          }}
+        >
+          {isAudio ? (
+            <AudioLines
+              className="h-7 w-7"
+              strokeWidth={1.25}
+              aria-hidden="true"
+            />
+          ) : (
+            <Film className="h-7 w-7" strokeWidth={1.25} aria-hidden="true" />
+          )}
+          <span
+            className="absolute inset-0 flex items-center justify-center"
+            style={{ backgroundColor: "oklch(var(--media-overlay))" }}
+          >
+            <span
+              className="flex h-8 w-8 items-center justify-center rounded-full"
+              style={{
+                backgroundColor: "oklch(var(--oral-history-foreground) / 0.9)",
+                color: "oklch(var(--oral-history))",
+                boxShadow: "0 0 0 2px oklch(var(--oral-history) / 0.5)",
+              }}
+            >
+              <Play
+                className="h-3.5 w-3.5"
+                fill="currentColor"
+                aria-hidden="true"
+              />
+            </span>
+          </span>
+        </div>
+
+        {/* Body */}
+        <div className="flex min-w-0 flex-1 flex-col justify-center gap-1.5">
+          <span
+            className={`archive-type-badge self-start ${
+              isAudio
+                ? "badge-audio"
+                : kind === "oral-history-video"
+                  ? "badge-oral-history"
+                  : "badge-video"
+            }`}
+            data-ocid={`profile.videos.item.${position}.category_badge`}
+          >
+            {categoryLabel}
+          </span>
+          <h3 className="archive-card-title line-clamp-2">{item.title}</h3>
+          <div className="archive-card-meta">
+            {speaker ? (
+              <span className="inline-flex items-center gap-1.5">
+                <span
+                  className="flex h-5 w-5 items-center justify-center rounded-full text-[9px] font-bold"
+                  style={{
+                    backgroundColor: "oklch(var(--speaker-accent))",
+                    color: "oklch(var(--speaker-accent-foreground))",
+                  }}
+                  aria-hidden="true"
+                >
+                  {getInitials(speaker.name)}
+                </span>
+                <span className="contributor">{speaker.name}</span>
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5">
+                <UserRound className="h-3.5 w-3.5" aria-hidden="true" />
+                <span className="contributor">Family video</span>
+              </span>
+            )}
+            <span aria-hidden="true">·</span>
+            <span>{eraLabel}</span>
+          </div>
+        </div>
+      </div>
+    </button>
+  );
+}
+
+/**
+ * Videos & Oral History section on a Person Profile. Lists approved media
+ * linked to this person — items whose related members include this person, or
+ * where this person is the primary speaker. Each item routes to the same
+ * canonical video-detail view (no per-profile duplicates). Shows a polished
+ * empty state when no media is linked yet.
+ */
+function VideosSection({
+  person,
+  onOpenMediaItem,
+  onAddMedia,
+  isAuthenticated,
+}: {
+  person: PersonProfile;
+  onOpenMediaItem?: (id: bigint) => void;
+  onAddMedia?: (action: "video" | "oral-history" | "audio") => void;
+  isAuthenticated: boolean;
+}) {
+  const { data: items = [], isLoading } = useApprovedMediaItems();
+
+  const linked = useMemo(
+    () =>
+      items.filter(
+        (item) =>
+          item.relatedMemberIds.includes(person.id) ||
+          item.primarySpeaker?.personId === person.id,
+      ),
+    [items, person.id],
+  );
+
+  return (
+    <motion.section
+      aria-label="Videos & Oral History"
+      className="mt-10"
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: 0.3, ease: [0.4, 0, 0.2, 1] }}
+    >
+      <SectionHeader icon={Clapperboard} label="Videos & Oral History" />
+      {isLoading ? (
+        <div
+          data-ocid="profile.videos.loading_state"
+          className="mt-3 flex flex-col gap-3"
+          aria-label="Loading media"
+        >
+          {Array.from({ length: 2 }, (_, i) => `skeleton-${i}`).map((id) => (
+            <div
+              key={id}
+              className="animate-pulse overflow-hidden rounded-xl border border-border/60 bg-card"
+            >
+              <div className="flex items-stretch gap-4 p-3">
+                <div className="h-20 w-28 rounded-lg bg-muted" />
+                <div className="flex flex-1 flex-col justify-center gap-2">
+                  <div className="h-4 w-1/3 rounded bg-muted" />
+                  <div className="h-5 w-2/3 rounded bg-muted" />
+                  <div className="h-4 w-1/2 rounded bg-muted" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : linked.length === 0 ? (
+        <div
+          data-ocid="profile.videos.empty_state"
+          className="mt-3 rounded-2xl border border-dashed border-border bg-card/50 px-4 py-6 text-center shadow-subtle"
+        >
+          <div
+            className="mx-auto flex h-12 w-12 items-center justify-center rounded-full"
+            style={{
+              backgroundColor: "oklch(var(--oral-history) / 0.14)",
+              color: "oklch(var(--oral-history))",
+              boxShadow: "0 0 0 2px oklch(var(--oral-history) / 0.4)",
+            }}
+          >
+            <Clapperboard className="h-5 w-5" aria-hidden="true" />
+          </div>
+          <p className="mt-3 font-display text-base font-semibold text-foreground">
+            No videos or oral histories yet
+          </p>
+          <p className="mx-auto mt-1 max-w-sm text-sm text-muted-foreground">
+            When a home video or spoken story is linked to{" "}
+            {person.name.split(" ")[0]}, it will appear here.
+          </p>
+        </div>
+      ) : (
+        <ul
+          data-ocid="profile.videos.list"
+          className="mt-3 flex flex-col gap-3"
+        >
+          {linked.map((item, index) => (
+            <li key={item.id.toString()}>
+              <ProfileMediaRow
+                item={item}
+                position={index + 1}
+                onOpen={() => onOpenMediaItem?.(item.id)}
+              />
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {/* Add-media actions — hidden for guests (no add/record actions). */}
+      {isAuthenticated && onAddMedia ? (
+        <div
+          className="mt-4 flex flex-wrap items-center gap-3"
+          data-ocid="profile.videos.actions"
+        >
+          <button
+            type="button"
+            data-ocid="profile.videos.add_video_button"
+            onClick={() => onAddMedia("video")}
+            className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold text-primary-foreground transition-shadow hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            style={{ backgroundColor: "oklch(var(--primary))" }}
+          >
+            <Plus className="h-4 w-4" aria-hidden="true" />
+            Add Video
+          </button>
+          <button
+            type="button"
+            data-ocid="profile.videos.record_oral_history_button"
+            onClick={() => onAddMedia("oral-history")}
+            className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold text-primary-foreground transition-shadow hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            style={{ backgroundColor: "oklch(var(--primary))" }}
+          >
+            <Mic className="h-4 w-4" aria-hidden="true" />
+            Record Oral History
+          </button>
+          <button
+            type="button"
+            data-ocid="profile.videos.add_audio_button"
+            onClick={() => onAddMedia("audio")}
+            className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold text-primary-foreground transition-shadow hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            style={{ backgroundColor: "oklch(var(--primary))" }}
+          >
+            <AudioLines className="h-4 w-4" aria-hidden="true" />
+            Add Audio
+          </button>
+        </div>
+      ) : null}
+    </motion.section>
+  );
+}
+
 export function PersonProfilePage({
   onBack,
   person,
@@ -3064,6 +3341,8 @@ export function PersonProfilePage({
   onProfilePhotoChange,
   onEditProfile,
   onClaimApproved,
+  onOpenMediaItem,
+  onAddMedia,
 }: PersonProfilePageProps) {
   const storyLabel =
     person.id === "julia" ||
@@ -3094,17 +3373,16 @@ export function PersonProfilePage({
     person.id,
   );
 
-  const { identity } = useInternetIdentity();
+  const { identity, isAuthenticated } = useInternetIdentity();
   const { data: myClaim } = useMyProfileClaim(person.id);
   const { data: relationshipRequests = [] } = useMyRelationshipRequests();
   const { data: isSteward = false } = useIsAdmin();
 
-  // Family Governance & Safety controls. The archived list is Family Steward
-  // only on the backend, so its result is only ever consumed when isSteward is
-  // true; for regular users the query errors but is contained by React Query
-  // and never drives any UI.
-  const { data: archivedProfiles = [] } = useListArchivedProfiles();
-  const isArchived = archivedProfiles.some((p) => p.personId === person.id);
+  // Family Governance & Safety controls. The archived ids list is guest-safe
+  // (non-gated on the backend), so it can be queried by any caller to drive the
+  // archived-profile indicator without triggering a steward-only trap.
+  const { data: archivedIds = [] } = useListArchivedProfileIds();
+  const isArchived = archivedIds.includes(person.id);
   const requestRemoval = useRequestProfileRemoval();
   const archiveProfile = useArchiveProfile();
   const restoreProfile = useRestoreProfile();
@@ -3787,6 +4065,14 @@ export function PersonProfilePage({
       <PhotosSection
         person={person}
         onProfilePhotoChange={onProfilePhotoChange}
+      />
+
+      {/* Videos & Oral History */}
+      <VideosSection
+        person={person}
+        onOpenMediaItem={onOpenMediaItem}
+        onAddMedia={onAddMedia}
+        isAuthenticated={isAuthenticated}
       />
 
       {/* Request profile removal dialog (owner of a claimed living profile) */}

@@ -18,6 +18,14 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: "Geist Mono";
+  src: url("/assets/fonts/GeistMono.woff2") format("woff2");
+  font-display: swap;
+  font-weight: 100 900;
+  font-style: normal;
+}
+
 @layer base {
   :root {
     --font-display: "Fraunces", serif;
@@ -193,6 +201,40 @@
     --signin-apple-fg: 0.96 0.01 60;
     --signin-apple-hover: 0.28 0.01 30;
 
+    /* Family Stories: evidence/status hierarchy. Documented reads as a solid
+       warm-green confirmed fact; Family History / Oral History is a dusty
+       bronze, Personal Memory an ochre, and Unresolved / Needs Research a
+       quiet grey — the latter three are always rendered with a dashed edge so
+       a theory or memory can never be mistaken for documented fact. */
+    --evidence-documented: 0.55 0.12 150;
+    --evidence-history: 0.55 0.09 60;
+    --evidence-memory: 0.6 0.11 55;
+    --evidence-unresolved: 0.5 0.03 45;
+    --evidence-approximate: 0.48 0.05 200;
+
+    /* Family Mysteries: status progression from open to resolved */
+    --mystery-open: 0.5 0.2 25;
+    --mystery-researching: 0.6 0.11 55;
+    --mystery-partial: 0.55 0.09 60;
+    --mystery-resolved: 0.55 0.12 150;
+
+    /* Family Mysteries: three visually distinct sections per mystery.
+       KNOWN is a solid sepia plate (evidence-supported facts); POSSIBILITIES
+       is a dashed ochre plate (theories / oral history / hypotheses — never
+       fact); SOURCES is a document plate listing archive items. */
+    --mystery-known: 0.42 0.11 35;
+    --mystery-known-foreground: 0.96 0.02 70;
+    --mystery-possibility: 0.7 0.13 80;
+    --mystery-possibility-surface: 0.93 0.03 75;
+    --mystery-source: 0.55 0.09 60;
+    --mystery-source-surface: 0.95 0.02 72;
+
+    /* Travel Through Time: era rail + timeline connector + era plate */
+    --timeline-rail: 0.42 0.11 35 / 0.35;
+    --timeline-dot: 0.55 0.09 60;
+    --era-surface: 0.93 0.025 70;
+    --era-surface-foreground: 0.3 0.04 45;
+
     --sidebar: 0.985 0.015 70;
     --sidebar-foreground: 0.22 0.04 45;
     --sidebar-primary: 0.42 0.11 35;
@@ -201,6 +243,20 @@
     --sidebar-accent-foreground: 0.3 0.04 45;
     --sidebar-border: 0.86 0.03 70;
     --sidebar-ring: 0.42 0.11 35;
+
+    /* Family Videos & Oral History: the spoken-word voice accent (a warm
+       bronze-amber distinct from the sepia primary), the dark media stage
+       behind embedded players, and the speaker presentation tokens. */
+    --oral-history: 0.6 0.11 55;
+    --oral-history-foreground: 0.96 0.02 70;
+    --speaker-accent: 0.55 0.09 60;
+    --speaker-accent-foreground: 0.96 0.02 70;
+    --media-stage: 0.24 0.03 40;
+    --media-stage-foreground: 0.95 0.02 60;
+    --media-stage-muted: 0.7 0.02 55;
+    --player-track: 0.4 0.03 45;
+    --player-fill: 0.6 0.11 55;
+    --media-overlay: 0.16 0.02 55 / 0.6;
   }
 
   .dark {
@@ -372,6 +428,33 @@
     --signin-apple-fg: 0.96 0.01 60;
     --signin-apple-hover: 0.28 0.01 30;
 
+    /* Family Stories: evidence/status hierarchy (dark) */
+    --evidence-documented: 0.6 0.15 150;
+    --evidence-history: 0.72 0.14 60;
+    --evidence-memory: 0.65 0.13 55;
+    --evidence-unresolved: 0.7 0.1 55;
+    --evidence-approximate: 0.62 0.07 220;
+
+    /* Family Mysteries: status progression (dark) */
+    --mystery-open: 0.55 0.2 25;
+    --mystery-researching: 0.65 0.13 55;
+    --mystery-partial: 0.72 0.14 60;
+    --mystery-resolved: 0.6 0.15 150;
+
+    /* Family Mysteries: KNOWN / POSSIBILITIES / SOURCES sections (dark) */
+    --mystery-known: 0.72 0.14 60;
+    --mystery-known-foreground: 0.16 0.02 55;
+    --mystery-possibility: 0.72 0.13 80;
+    --mystery-possibility-surface: 0.24 0.03 60;
+    --mystery-source: 0.58 0.12 30;
+    --mystery-source-surface: 0.21 0.02 55;
+
+    /* Travel Through Time: era rail + timeline connector + era plate (dark) */
+    --timeline-rail: 0.72 0.14 60 / 0.4;
+    --timeline-dot: 0.58 0.12 30;
+    --era-surface: 0.22 0.02 55;
+    --era-surface-foreground: 0.85 0.02 60;
+
     --sidebar: 0.2 0.02 55;
     --sidebar-foreground: 0.93 0.02 60;
     --sidebar-primary: 0.72 0.14 60;
@@ -380,6 +463,19 @@
     --sidebar-accent-foreground: 0.85 0.02 60;
     --sidebar-border: 0.28 0.02 55;
     --sidebar-ring: 0.72 0.14 60;
+
+    /* Family Videos & Oral History: spoken-word voice accent, dark media
+       stage, speaker presentation tokens (dark). */
+    --oral-history: 0.68 0.12 55;
+    --oral-history-foreground: 0.16 0.02 55;
+    --speaker-accent: 0.58 0.12 30;
+    --speaker-accent-foreground: 0.95 0.01 60;
+    --media-stage: 0.12 0.02 50;
+    --media-stage-foreground: 0.93 0.02 60;
+    --media-stage-muted: 0.6 0.02 55;
+    --player-track: 0.3 0.02 55;
+    --player-fill: 0.68 0.12 55;
+    --media-overlay: 0.1 0.01 50 / 0.65;
   }
 
   * {
@@ -2948,5 +3044,588 @@
   .gov-empty-hint {
     @apply max-w-sm text-sm;
     color: oklch(var(--muted-foreground));
+  }
+
+  /* ---- Family Stories ---- */
+
+  /* Story card: an editorial warm-paper plate with a display title, preview,
+     related people, era, and an evidence badge. Reuses the archive card
+     language but with a taller leading so narrative text breathes. */
+  .story-card {
+    @apply relative flex flex-col gap-2.5 rounded-xl border border-border/60 bg-card p-5 text-left;
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.12);
+    transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .story-card:hover,
+  .story-card:focus-within {
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.2);
+    transform: translateY(-2px);
+    border-color: oklch(var(--evidence-documented) / 0.4);
+  }
+  .story-card-title {
+    @apply font-display text-lg font-semibold leading-snug;
+    color: oklch(var(--foreground));
+  }
+  .story-card-preview {
+    @apply text-sm leading-relaxed;
+    color: oklch(var(--muted-foreground));
+  }
+  .story-card-meta {
+    @apply mt-auto flex flex-wrap items-center gap-1.5;
+  }
+  .story-card-era {
+    @apply text-[11px] font-semibold uppercase tracking-[0.14em] tabular-nums;
+    color: oklch(var(--muted-foreground));
+  }
+
+  /* Evidence badge: dot-pill where the fill + edge style encode confidence.
+     Documented = solid green. Family History / Personal Memory / Unresolved
+     use a dashed border so they can never be read as confirmed fact. */
+  .evidence-badge {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-card px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em];
+    color: oklch(var(--muted-foreground));
+  }
+  .evidence-badge::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background-color: oklch(var(--evidence-unresolved));
+  }
+  .evidence-documented {
+    color: oklch(var(--evidence-documented));
+    border-color: oklch(var(--evidence-documented) / 0.45);
+  }
+  .evidence-documented::before {
+    background-color: oklch(var(--evidence-documented));
+  }
+  .evidence-history {
+    color: oklch(var(--evidence-history));
+    border-style: dashed;
+    border-color: oklch(var(--evidence-history) / 0.5);
+  }
+  .evidence-history::before {
+    background-color: oklch(var(--evidence-history));
+  }
+  .evidence-memory {
+    color: oklch(var(--evidence-memory));
+    border-style: dashed;
+    border-color: oklch(var(--evidence-memory) / 0.5);
+  }
+  .evidence-memory::before {
+    background-color: oklch(var(--evidence-memory));
+  }
+  .evidence-unresolved {
+    color: oklch(var(--evidence-unresolved));
+    border-style: dashed;
+    border-color: oklch(var(--evidence-unresolved) / 0.5);
+  }
+  .evidence-unresolved::before {
+    background-color: oklch(var(--evidence-unresolved));
+  }
+  .evidence-approximate {
+    color: oklch(var(--evidence-approximate));
+    border-style: dashed;
+    border-color: oklch(var(--evidence-approximate) / 0.5);
+  }
+  .evidence-approximate::before {
+    background-color: oklch(var(--evidence-approximate));
+  }
+
+  /* Story detail: an editorial reading column with a separated evidence
+     legend so the reader always knows what is fact vs. family memory. */
+  .story-detail {
+    @apply flex flex-col gap-5;
+  }
+  .story-detail-body {
+    @apply text-[15px] leading-relaxed;
+    color: oklch(var(--foreground));
+  }
+  .story-evidence-legend {
+    @apply flex flex-wrap items-center gap-2 rounded-xl border border-border/60 bg-card p-3;
+  }
+  .story-evidence-legend-label {
+    @apply text-[11px] font-semibold uppercase tracking-[0.18em];
+    color: oklch(var(--muted-foreground));
+  }
+
+  /* ---- Family Mysteries ---- */
+
+  /* Mystery card: warm-paper plate with a status badge and a short question */
+  .mystery-card {
+    @apply relative flex flex-col gap-2.5 rounded-xl border border-border/60 bg-card p-5 text-left;
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.12);
+    transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .mystery-card:hover,
+  .mystery-card:focus-within {
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.2);
+    transform: translateY(-2px);
+    border-color: oklch(var(--mystery-researching) / 0.4);
+  }
+  .mystery-card-title {
+    @apply font-display text-lg font-semibold leading-snug;
+    color: oklch(var(--foreground));
+  }
+  .mystery-card-preview {
+    @apply text-sm leading-relaxed;
+    color: oklch(var(--muted-foreground));
+  }
+
+  /* Mystery status badge: dot-pill for Open / Researching / Partially
+     Resolved / Resolved. */
+  .mystery-status {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-card px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em];
+    color: oklch(var(--muted-foreground));
+  }
+  .mystery-status::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background-color: oklch(var(--mystery-open));
+  }
+  .mystery-open {
+    color: oklch(var(--mystery-open));
+    border-color: oklch(var(--mystery-open) / 0.45);
+  }
+  .mystery-open::before {
+    background-color: oklch(var(--mystery-open));
+  }
+  .mystery-researching {
+    color: oklch(var(--mystery-researching));
+    border-color: oklch(var(--mystery-researching) / 0.45);
+  }
+  .mystery-researching::before {
+    background-color: oklch(var(--mystery-researching));
+  }
+  .mystery-partial {
+    color: oklch(var(--mystery-partial));
+    border-color: oklch(var(--mystery-partial) / 0.45);
+  }
+  .mystery-partial::before {
+    background-color: oklch(var(--mystery-partial));
+  }
+  .mystery-resolved {
+    color: oklch(var(--mystery-resolved));
+    border-color: oklch(var(--mystery-resolved) / 0.45);
+  }
+  .mystery-resolved::before {
+    background-color: oklch(var(--mystery-resolved));
+  }
+
+  /* Mystery detail: KNOWN / POSSIBILITIES / SOURCES sections. KNOWN is a
+     solid sepia plate; POSSIBILITIES is a dashed ochre plate so a theory can
+     never be mistaken for a confirmed fact; SOURCES is a document plate. */
+  .mystery-sections {
+    @apply flex flex-col gap-4;
+  }
+  .mystery-section {
+    @apply flex flex-col gap-2.5 rounded-xl border border-border/60 p-4;
+  }
+  .mystery-section-head {
+    @apply flex items-center gap-2;
+  }
+  .mystery-section-head::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    flex-shrink: 0;
+  }
+  .mystery-section-title {
+    @apply text-xs font-semibold uppercase tracking-[0.2em];
+  }
+  .mystery-section-hint {
+    @apply text-xs leading-relaxed;
+    color: oklch(var(--muted-foreground));
+  }
+  .mystery-known {
+    background-color: oklch(var(--mystery-known));
+    border-color: oklch(var(--mystery-known));
+    color: oklch(var(--mystery-known-foreground));
+  }
+  .mystery-known .mystery-section-title {
+    color: oklch(var(--mystery-known-foreground));
+  }
+  .mystery-known .mystery-section-hint {
+    color: oklch(var(--mystery-known-foreground) / 0.85);
+  }
+  .mystery-known .mystery-section-head::before {
+    background-color: oklch(var(--mystery-known-foreground));
+  }
+  .mystery-possibility {
+    background-color: oklch(var(--mystery-possibility-surface));
+    border-style: dashed;
+    border-color: oklch(var(--mystery-possibility) / 0.6);
+  }
+  .mystery-possibility .mystery-section-head::before {
+    background-color: oklch(var(--mystery-possibility));
+  }
+  .mystery-possibility .mystery-section-title {
+    color: oklch(var(--mystery-possibility));
+  }
+  .mystery-source {
+    background-color: oklch(var(--mystery-source-surface));
+    border-color: oklch(var(--mystery-source) / 0.5);
+  }
+  .mystery-source .mystery-section-head::before {
+    background-color: oklch(var(--mystery-source));
+  }
+  .mystery-source .mystery-section-title {
+    color: oklch(var(--mystery-source));
+  }
+  .mystery-section-item {
+    @apply rounded-lg border border-border/60 bg-card px-3.5 py-2.5 text-sm leading-relaxed;
+    color: oklch(var(--foreground));
+  }
+  .mystery-possibility .mystery-section-item {
+    border-style: dashed;
+    border-color: oklch(var(--mystery-possibility) / 0.4);
+  }
+  .mystery-section-item .item-tag {
+    @apply text-[10px] font-semibold uppercase tracking-[0.16em];
+    color: oklch(var(--muted-foreground));
+  }
+
+  /* ---- Travel Through Time ---- */
+
+  /* Era section: a framed plate with a tracked era heading and a vertical
+     timeline rail of event cards. This is a chronological browsing view, not
+     a family tree. */
+  .era-section {
+    @apply flex flex-col gap-3 rounded-xl border border-border/60 p-4;
+    background-color: oklch(var(--era-surface));
+    box-shadow: 0 1px 2px -1px oklch(0.36 0.05 45 / 0.08);
+  }
+  .era-head {
+    @apply flex items-center gap-2.5;
+  }
+  .era-head::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background-color: oklch(var(--timeline-dot));
+    flex-shrink: 0;
+  }
+  .era-title {
+    @apply font-display text-base font-semibold leading-tight;
+    color: oklch(var(--era-surface-foreground));
+  }
+  .era-years {
+    @apply text-[11px] font-semibold uppercase tracking-[0.14em] tabular-nums;
+    color: oklch(var(--muted-foreground));
+  }
+
+  /* Vertical timeline rail: left-aligned dots joined by a sepia line */
+  .timeline-rail {
+    @apply relative flex flex-col gap-3 pl-6;
+  }
+  .timeline-rail::before {
+    content: "";
+    position: absolute;
+    left: 0.375rem;
+    top: 0.5rem;
+    bottom: 0.5rem;
+    width: 2px;
+    border-radius: 9999px;
+    background-color: oklch(var(--timeline-rail));
+  }
+  .timeline-item {
+    @apply relative flex flex-col gap-1.5 rounded-xl border border-border/60 bg-card p-4;
+    box-shadow: 0 1px 2px -1px oklch(0.36 0.05 45 / 0.08);
+    transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .timeline-item::before {
+    content: "";
+    position: absolute;
+    left: -1.625rem;
+    top: 1.15rem;
+    width: 0.625rem;
+    height: 0.625rem;
+    border-radius: 9999px;
+    background-color: oklch(var(--timeline-dot));
+    box-shadow: 0 0 0 2px oklch(var(--era-surface));
+  }
+  .timeline-item:hover,
+  .timeline-item:focus-within {
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.2);
+    transform: translateY(-2px);
+    border-color: oklch(var(--timeline-dot) / 0.6);
+  }
+  .timeline-item-date {
+    @apply text-[11px] font-semibold uppercase tracking-[0.14em] tabular-nums;
+    color: oklch(var(--muted-foreground));
+  }
+  .timeline-item-title {
+    @apply font-display text-base font-semibold leading-snug;
+    color: oklch(var(--foreground));
+  }
+  .timeline-item-detail {
+    @apply text-sm leading-relaxed;
+    color: oklch(var(--muted-foreground));
+  }
+  .timeline-item-links {
+    @apply flex flex-wrap items-center gap-1.5;
+  }
+  .timeline-link {
+    @apply inline-flex items-center gap-1 rounded-full border border-border/60 px-2.5 py-1 text-[11px] font-semibold;
+    background-color: oklch(var(--card));
+    color: oklch(var(--foreground));
+    transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .timeline-link:hover,
+  .timeline-link:focus-visible {
+    border-color: oklch(var(--timeline-dot) / 0.6);
+    color: oklch(var(--timeline-dot));
+  }
+
+  /* Shared polished empty state for the three new pages */
+  .domain-empty {
+    @apply flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-border/70 px-6 py-16 text-center;
+    background-color: oklch(var(--card) / 0.5);
+  }
+  .domain-empty-mark {
+    @apply flex h-14 w-14 items-center justify-center rounded-full;
+    background-color: oklch(var(--timeline-dot) / 0.14);
+    box-shadow: 0 0 0 2px oklch(var(--timeline-dot) / 0.4);
+    color: oklch(var(--timeline-dot));
+  }
+  .domain-empty-title {
+    @apply font-display text-xl font-semibold;
+    color: oklch(var(--foreground));
+  }
+  .domain-empty-hint {
+    @apply max-w-sm text-sm;
+    color: oklch(var(--muted-foreground));
+  }
+
+  /* ---- Family Videos & Oral History: media presentation layer ---- */
+
+  /* Media card: a warm-paper plate with a 16:9 thumb stage, a play overlay,
+     and a body with title, speaker/member chips, era, and duration. Reuses
+     the archive-card language but with a media stage instead of a photo. */
+  .media-card {
+    @apply relative flex flex-col overflow-hidden rounded-xl border border-border/60 bg-card text-left;
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.12);
+    transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .media-card:hover,
+  .media-card:focus-within {
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.2);
+    transform: translateY(-2px);
+    border-color: oklch(var(--photo-ring) / 0.6);
+  }
+  .media-card-thumb {
+    @apply relative aspect-video w-full overflow-hidden;
+    background-color: oklch(var(--media-stage));
+    color: oklch(var(--media-stage-muted));
+  }
+  .media-card-thumb img {
+    @apply h-full w-full object-cover;
+  }
+  .media-card-thumb-icon {
+    @apply flex h-full w-full items-center justify-center;
+    color: oklch(var(--media-stage-muted));
+  }
+  .media-card-body {
+    @apply flex flex-1 flex-col gap-2 p-4;
+  }
+  .media-card-title {
+    @apply font-display text-lg font-semibold leading-snug;
+    color: oklch(var(--foreground));
+  }
+  .media-card-meta {
+    @apply flex flex-wrap items-center gap-1.5;
+  }
+  .media-card-duration {
+    @apply text-[11px] font-semibold uppercase tracking-[0.14em] tabular-nums;
+    color: oklch(var(--muted-foreground));
+  }
+
+  /* Play overlay: a centered circular play affordance over the thumb stage,
+     revealed on hover / focus and always visible on touch screens. */
+  .media-play-overlay {
+    @apply absolute inset-0 flex items-center justify-center;
+    background-color: oklch(var(--media-overlay));
+    opacity: 0;
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .media-card:hover .media-play-overlay,
+  .media-card:focus-within .media-play-overlay {
+    opacity: 1;
+  }
+  .media-play-button {
+    @apply flex h-12 w-12 items-center justify-center rounded-full;
+    background-color: oklch(var(--oral-history-foreground) / 0.9);
+    color: oklch(var(--oral-history));
+    box-shadow: 0 0 0 3px oklch(var(--oral-history-foreground) / 0.35);
+  }
+  @media (hover: none), (max-width: 640px) {
+    .media-play-overlay {
+      opacity: 1;
+      background-color: oklch(var(--media-overlay));
+    }
+  }
+
+  /* Oral History badge: bronze-amber dot-pill marking the spoken word */
+  .oral-history-badge {
+    @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em];
+    background-color: oklch(var(--oral-history) / 0.12);
+    color: oklch(var(--oral-history));
+    border: 1px solid oklch(var(--oral-history) / 0.4);
+  }
+  .oral-history-badge::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background-color: oklch(var(--oral-history));
+  }
+
+  /* Speaker chip: the single primary speaker of an oral-history item, with a
+     bronze portrait ring. Hidden for non-oral-history media. */
+  .speaker-chip {
+    @apply inline-flex items-center gap-2 rounded-full border border-border/60 bg-card py-0.5 pl-0.5 pr-2.5 text-xs font-semibold;
+    color: oklch(var(--foreground));
+  }
+  .speaker-chip .speaker-avatar {
+    @apply flex h-6 w-6 items-center justify-center rounded-full text-[9px] font-bold;
+    background-color: oklch(var(--speaker-accent));
+    color: oklch(var(--speaker-accent-foreground));
+    box-shadow: 0 0 0 2px oklch(var(--speaker-accent) / 0.5);
+    overflow: hidden;
+  }
+  .speaker-chip .speaker-avatar img {
+    @apply h-full w-full object-cover;
+  }
+  .speaker-chip .speaker-label {
+    @apply text-[10px] font-semibold uppercase tracking-[0.14em];
+    color: oklch(var(--muted-foreground));
+  }
+
+  /* Media detail: embedded player stage + side info column */
+  .media-detail {
+    @apply grid gap-8 lg:grid-cols-[1.6fr_1fr];
+  }
+  .media-player {
+    @apply relative overflow-hidden rounded-xl border border-border/60;
+    background-color: oklch(var(--media-stage));
+  }
+  .media-player video,
+  .media-player audio {
+    @apply block w-full;
+  }
+  .media-player video {
+    @apply aspect-video object-contain;
+  }
+  .media-player audio {
+    @apply px-4 py-6;
+    color: oklch(var(--media-stage-foreground));
+  }
+  .media-player-frame {
+    @apply flex aspect-video w-full flex-col items-center justify-center gap-3;
+    background-color: oklch(var(--media-stage));
+    color: oklch(var(--media-stage-muted));
+  }
+  .media-player-frame .frame-mark {
+    @apply flex h-14 w-14 items-center justify-center rounded-full;
+    background-color: oklch(var(--oral-history-foreground) / 0.14);
+    color: oklch(var(--oral-history));
+    box-shadow: 0 0 0 2px oklch(var(--oral-history) / 0.4);
+  }
+  .media-player-frame .frame-title {
+    @apply font-display text-base font-semibold;
+    color: oklch(var(--media-stage-foreground));
+  }
+  .media-player-frame .frame-hint {
+    @apply text-sm;
+    color: oklch(var(--media-stage-muted));
+  }
+
+  /* Speaker presentation card: the person speaking, shown on the detail page
+     and in the profile section. Portrait + name + role on a warm plate. */
+  .speaker-card {
+    @apply flex items-center gap-3 rounded-xl border border-border/60 bg-card p-4;
+    box-shadow: 0 1px 2px -1px oklch(0.36 0.05 45 / 0.08);
+  }
+  .speaker-card-portrait {
+    @apply flex h-12 w-12 shrink-0 items-center justify-center rounded-full font-display text-base font-semibold;
+    background-color: oklch(var(--speaker-accent));
+    color: oklch(var(--speaker-accent-foreground));
+    box-shadow: 0 0 0 2px oklch(var(--speaker-accent) / 0.5);
+    overflow: hidden;
+  }
+  .speaker-card-portrait img {
+    @apply h-full w-full object-cover;
+  }
+  .speaker-card-body {
+    @apply flex min-w-0 flex-1 flex-col gap-0.5;
+  }
+  .speaker-card-name {
+    @apply truncate font-display text-sm font-semibold leading-tight;
+    color: oklch(var(--foreground));
+  }
+  .speaker-card-role {
+    @apply text-xs leading-snug;
+    color: oklch(var(--muted-foreground));
+  }
+
+  /* Media filter bar: reuses .filter-tab/.filter-select with a media-aware
+     active state that uses the oral-history accent for the Oral History tab. */
+  .filter-tab-active-media {
+    background-color: oklch(var(--oral-history));
+    color: oklch(var(--oral-history-foreground));
+    border-color: oklch(var(--oral-history));
+  }
+  .filter-tab-active-media:hover {
+    color: oklch(var(--oral-history-foreground));
+    border-color: oklch(var(--oral-history));
+  }
+
+  /* Media empty state: polished dashed plate with a play-mark crest */
+  .media-empty {
+    @apply flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-border/70 px-6 py-16 text-center;
+    background-color: oklch(var(--card) / 0.5);
+  }
+  .media-empty-mark {
+    @apply flex h-14 w-14 items-center justify-center rounded-full;
+    background-color: oklch(var(--oral-history) / 0.14);
+    box-shadow: 0 0 0 2px oklch(var(--oral-history) / 0.4);
+    color: oklch(var(--oral-history));
+  }
+  .media-empty-title {
+    @apply font-display text-xl font-semibold;
+    color: oklch(var(--foreground));
+  }
+  .media-empty-hint {
+    @apply max-w-sm text-sm;
+    color: oklch(var(--muted-foreground));
+  }
+  .media-empty-action {
+    @apply inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold;
+    color: oklch(var(--primary-foreground));
+    background-color: oklch(var(--primary));
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow
+      0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .media-empty-action:hover {
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.24);
+  }
+
+  /* Voice pulse: a gentle bronze breathing used on a live/playing oral-history
+     indicator so the "someone is speaking" state reads without noise. */
+  .voice-pulse {
+    animation: voice-pulse 2.4s ease-in-out infinite;
   }
 }

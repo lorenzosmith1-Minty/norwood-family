@@ -1,19 +1,18 @@
 {
-  "overview": "Norwood Family is a private family history app where members explore their family tree, claim their own profiles, contribute photos and archive items, and stewards govern the family record.",
+  "overview": "A family history archive with person profiles, media, and governance, where family members can contribute videos and oral histories.",
   "features": [
-    "Explore the family tree and heritage branches",
-    "Claim your own family profile",
-    "Contribute photos and archive items to family history",
-    "Family Stewards review claims, relationships, and archive contributions",
-    "Manage stewards, successors, duplicate profiles, and relationship administration",
-    "Archive and restore profiles safely with a full audit history"
+    "Browse family tree and person profiles",
+    "Add videos, oral histories, and audio to person profiles",
+    "Contribute media through a pending approval workflow",
+    "Family Stewards publish media directly",
+    "View media across profiles and the Family Archive"
   ],
-  "category": "family-history",
+  "category": "family-archive",
   "tags": [
     "family",
-    "genealogy",
-    "history",
-    "governance"
+    "archive",
+    "media",
+    "genealogy"
   ],
-  "last_updated": "2026-09-09T01:11:22.333Z"
+  "last_updated": "2026-09-09T18:58:34.177Z"
 }

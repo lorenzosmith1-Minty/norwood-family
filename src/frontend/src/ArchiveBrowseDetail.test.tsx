@@ -1,6 +1,7 @@
 import "@testing-library/jest-dom/vitest";
 import {
   type ArchiveItem,
+  ArchiveItemClassification,
   ArchiveItemStatus,
   ArchiveItemType,
   PrivacyLevel,
@@ -51,6 +52,7 @@ const { mockActor, resetArchive, seedApproved, seedPending, seedRejected } =
       relatedBranchId: "branch-1",
       sourceStatus: SourceStatus.Original,
       privacyLevel: PrivacyLevel.FamilyOnly,
+      classification: ArchiveItemClassification.Standard,
       status,
       createdAt: 1_700_000_000_000_000_000n,
       contributor: Principal.fromText("aaaaa-aa"),
@@ -127,7 +129,7 @@ function renderApp() {
 
 /** Opens the Family Archive browsing screen from the home page. */
 async function openArchive(user: ReturnType<typeof userEvent.setup>) {
-  await user.click(screen.getByRole("button", { name: "Family Stories" }));
+  await user.click(screen.getByRole("button", { name: "Family Archive" }));
   await screen.findByRole("heading", { name: "Our Family Archive" });
 }
 

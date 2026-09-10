@@ -1,5 +1,6 @@
 import {
   ChevronRight,
+  Clapperboard,
   Clock3,
   GitBranch,
   Landmark,
@@ -34,20 +35,30 @@ const navItems = [
     label: "Add to Our History",
     icon: Landmark,
   },
+  {
+    label: "Family Videos & Oral History",
+    icon: Clapperboard,
+  },
 ];
 
 interface HomePageProps {
   onExplore: () => void;
   onAddToHistory: () => void;
-  onOpenArchive: () => void;
   onOpenBranch: () => void;
+  onOpenStories: () => void;
+  onOpenMysteries: () => void;
+  onOpenTimeline: () => void;
+  onOpenVideos: () => void;
 }
 
 export function HomePage({
   onExplore,
   onAddToHistory,
-  onOpenArchive,
   onOpenBranch,
+  onOpenStories,
+  onOpenMysteries,
+  onOpenTimeline,
+  onOpenVideos,
 }: HomePageProps) {
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col items-center px-6 py-12 sm:py-16">
@@ -99,11 +110,17 @@ export function HomePage({
                     ? onExplore
                     : index === 1
                       ? onOpenBranch
-                      : index === 3
-                        ? onOpenArchive
-                        : index === 5
-                          ? onAddToHistory
-                          : undefined
+                      : index === 2
+                        ? onOpenTimeline
+                        : index === 3
+                          ? onOpenStories
+                          : index === 4
+                            ? onOpenMysteries
+                            : index === 5
+                              ? onAddToHistory
+                              : index === 6
+                                ? onOpenVideos
+                                : undefined
                 }
                 className="group flex w-full items-center gap-4 rounded-2xl border border-border bg-card px-5 py-4 text-left shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:translate-y-0"
               >

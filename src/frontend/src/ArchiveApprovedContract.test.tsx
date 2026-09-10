@@ -1,6 +1,7 @@
 import "@testing-library/jest-dom/vitest";
 import {
   type ArchiveItem,
+  ArchiveItemClassification,
   ArchiveItemStatus,
   ArchiveItemType,
   PrivacyLevel,
@@ -60,6 +61,7 @@ const { mockActor, resetArchive, seedApproved, seedPending, seedRejected } =
       relatedBranchId: "branch-1",
       sourceStatus: SourceStatus.Original,
       privacyLevel: PrivacyLevel.FamilyOnly,
+      classification: ArchiveItemClassification.Standard,
       status,
       createdAt: 1_700_000_000_000_000_000n,
       contributor: Principal.fromText("aaaaa-aa"),

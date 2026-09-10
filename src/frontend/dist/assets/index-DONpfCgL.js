@@ -33294,44 +33294,44 @@ const createLucideIcon = (iconName, iconNode) => {
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$R = [
+const __iconNode$_ = [
   ["rect", { width: "20", height: "5", x: "2", y: "3", rx: "1", key: "1wp1u1" }],
   ["path", { d: "M4 8v11a2 2 0 0 0 2 2h2", key: "tvwodi" }],
   ["path", { d: "M20 8v11a2 2 0 0 1-2 2h-2", key: "1gkqxj" }],
   ["path", { d: "m9 15 3-3 3 3", key: "1pd0qc" }],
   ["path", { d: "M12 12v9", key: "192myk" }]
 ];
-const ArchiveRestore = createLucideIcon("archive-restore", __iconNode$R);
+const ArchiveRestore = createLucideIcon("archive-restore", __iconNode$_);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$Q = [
+const __iconNode$Z = [
   ["rect", { width: "20", height: "5", x: "2", y: "3", rx: "1", key: "1wp1u1" }],
   ["path", { d: "M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8", key: "1s80jp" }],
   ["path", { d: "M10 12h4", key: "a56b0p" }]
 ];
-const Archive = createLucideIcon("archive", __iconNode$Q);
+const Archive = createLucideIcon("archive", __iconNode$Z);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$P = [
+const __iconNode$Y = [
   ["path", { d: "m12 19-7-7 7-7", key: "1l729n" }],
   ["path", { d: "M19 12H5", key: "x3x0zl" }]
 ];
-const ArrowLeft = createLucideIcon("arrow-left", __iconNode$P);
+const ArrowLeft = createLucideIcon("arrow-left", __iconNode$Y);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$O = [
+const __iconNode$X = [
   ["path", { d: "M2 10v3", key: "1fnikh" }],
   ["path", { d: "M6 6v11", key: "11sgs0" }],
   ["path", { d: "M10 3v18", key: "yhl04a" }],
@@ -33339,14 +33339,14 @@ const __iconNode$O = [
   ["path", { d: "M18 5v13", key: "123xd1" }],
   ["path", { d: "M22 10v3", key: "154ddg" }]
 ];
-const AudioLines = createLucideIcon("audio-lines", __iconNode$O);
+const AudioLines = createLucideIcon("audio-lines", __iconNode$X);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$N = [
+const __iconNode$W = [
   ["path", { d: "M10.268 21a2 2 0 0 0 3.464 0", key: "vwvbt9" }],
   [
     "path",
@@ -33356,14 +33356,14 @@ const __iconNode$N = [
     }
   ]
 ];
-const Bell = createLucideIcon("bell", __iconNode$N);
+const Bell = createLucideIcon("bell", __iconNode$W);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$M = [
+const __iconNode$V = [
   ["path", { d: "M12 7v14", key: "1akyts" }],
   [
     "path",
@@ -33373,25 +33373,25 @@ const __iconNode$M = [
     }
   ]
 ];
-const BookOpen = createLucideIcon("book-open", __iconNode$M);
+const BookOpen = createLucideIcon("book-open", __iconNode$V);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$L = [
+const __iconNode$U = [
   ["path", { d: "M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16", key: "jecpp" }],
   ["rect", { width: "20", height: "14", x: "2", y: "6", rx: "2", key: "i6l2r4" }]
 ];
-const Briefcase = createLucideIcon("briefcase", __iconNode$L);
+const Briefcase = createLucideIcon("briefcase", __iconNode$U);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$K = [
+const __iconNode$T = [
   ["path", { d: "M8 2v4", key: "1cmpym" }],
   ["path", { d: "M16 2v4", key: "4m81vk" }],
   ["rect", { width: "18", height: "18", x: "3", y: "4", rx: "2", key: "1hopcy" }],
@@ -33403,14 +33403,14 @@ const __iconNode$K = [
   ["path", { d: "M12 18h.01", key: "mhygvu" }],
   ["path", { d: "M16 18h.01", key: "kzsmim" }]
 ];
-const CalendarDays = createLucideIcon("calendar-days", __iconNode$K);
+const CalendarDays = createLucideIcon("calendar-days", __iconNode$T);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$J = [
+const __iconNode$S = [
   [
     "path",
     {
@@ -33420,53 +33420,88 @@ const __iconNode$J = [
   ],
   ["circle", { cx: "12", cy: "13", r: "3", key: "1vg3eu" }]
 ];
-const Camera = createLucideIcon("camera", __iconNode$J);
+const Camera = createLucideIcon("camera", __iconNode$S);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$I = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
-const Check = createLucideIcon("check", __iconNode$I);
+const __iconNode$R = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
+const Check = createLucideIcon("check", __iconNode$R);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$H = [["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]];
-const ChevronRight = createLucideIcon("chevron-right", __iconNode$H);
+const __iconNode$Q = [["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]];
+const ChevronRight = createLucideIcon("chevron-right", __iconNode$Q);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$G = [
+const __iconNode$P = [
+  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
+  ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
+];
+const CircleCheck = createLucideIcon("circle-check", __iconNode$P);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$O = [
   ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
   ["circle", { cx: "12", cy: "10", r: "3", key: "ilqhr7" }],
   ["path", { d: "M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662", key: "154egf" }]
 ];
-const CircleUser = createLucideIcon("circle-user", __iconNode$G);
+const CircleUser = createLucideIcon("circle-user", __iconNode$O);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$F = [
+const __iconNode$N = [["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }]];
+const Circle = createLucideIcon("circle", __iconNode$N);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$M = [
+  [
+    "path",
+    { d: "M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3Z", key: "1tn4o7" }
+  ],
+  ["path", { d: "m6.2 5.3 3.1 3.9", key: "iuk76l" }],
+  ["path", { d: "m12.4 3.4 3.1 4", key: "6hsd6n" }],
+  ["path", { d: "M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z", key: "ltgou9" }]
+];
+const Clapperboard = createLucideIcon("clapperboard", __iconNode$M);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$L = [
   ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
   ["polyline", { points: "12 6 12 12 16.5 12", key: "1aq6pp" }]
 ];
-const Clock3 = createLucideIcon("clock-3", __iconNode$F);
+const Clock3 = createLucideIcon("clock-3", __iconNode$L);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$E = [
+const __iconNode$K = [
   [
     "path",
     {
@@ -33476,7 +33511,87 @@ const __iconNode$E = [
   ],
   ["path", { d: "M5 21h14", key: "11awu3" }]
 ];
-const Crown = createLucideIcon("crown", __iconNode$E);
+const Crown = createLucideIcon("crown", __iconNode$K);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$J = [
+  ["circle", { cx: "12", cy: "12", r: "1", key: "41hilf" }],
+  ["circle", { cx: "19", cy: "12", r: "1", key: "1wjl8i" }],
+  ["circle", { cx: "5", cy: "12", r: "1", key: "1pcz8c" }]
+];
+const Ellipsis = createLucideIcon("ellipsis", __iconNode$J);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$I = [
+  ["path", { d: "M15 3h6v6", key: "1q9fwt" }],
+  ["path", { d: "M10 14 21 3", key: "gplh6r" }],
+  ["path", { d: "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6", key: "a6xqqp" }]
+];
+const ExternalLink = createLucideIcon("external-link", __iconNode$I);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$H = [
+  ["path", { d: "M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z", key: "1rqfz7" }],
+  ["path", { d: "M14 2v4a2 2 0 0 0 2 2h4", key: "tnqrlb" }],
+  ["path", { d: "M10 9H8", key: "b1mrlr" }],
+  ["path", { d: "M16 13H8", key: "t4e002" }],
+  ["path", { d: "M16 17H8", key: "z1uh3a" }]
+];
+const FileText = createLucideIcon("file-text", __iconNode$H);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$G = [
+  ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }],
+  ["path", { d: "M7 3v18", key: "bbkbws" }],
+  ["path", { d: "M3 7.5h4", key: "zfgn84" }],
+  ["path", { d: "M3 12h18", key: "1i2n21" }],
+  ["path", { d: "M3 16.5h4", key: "1230mu" }],
+  ["path", { d: "M17 3v18", key: "in4fa5" }],
+  ["path", { d: "M17 7.5h4", key: "myr1c1" }],
+  ["path", { d: "M17 16.5h4", key: "go4c1d" }]
+];
+const Film = createLucideIcon("film", __iconNode$G);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$F = [
+  ["line", { x1: "6", x2: "6", y1: "3", y2: "15", key: "17qcm7" }],
+  ["circle", { cx: "18", cy: "6", r: "3", key: "1h7g24" }],
+  ["circle", { cx: "6", cy: "18", r: "3", key: "fqmcym" }],
+  ["path", { d: "M18 9a9 9 0 0 1-9 9", key: "n2h4wq" }]
+];
+const GitBranch = createLucideIcon("git-branch", __iconNode$F);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$E = [
+  ["circle", { cx: "18", cy: "18", r: "3", key: "1xkwt0" }],
+  ["circle", { cx: "6", cy: "6", r: "3", key: "1lh9wr" }],
+  ["path", { d: "M6 21V9a9 9 0 0 0 9 9", key: "7kw0sc" }]
+];
+const GitMerge = createLucideIcon("git-merge", __iconNode$E);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33484,11 +33599,13 @@ const Crown = createLucideIcon("crown", __iconNode$E);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$D = [
-  ["circle", { cx: "12", cy: "12", r: "1", key: "41hilf" }],
-  ["circle", { cx: "19", cy: "12", r: "1", key: "1wjl8i" }],
-  ["circle", { cx: "5", cy: "12", r: "1", key: "1pcz8c" }]
+  ["path", { d: "M16 5h6", key: "1vod17" }],
+  ["path", { d: "M19 2v6", key: "4bpg5p" }],
+  ["path", { d: "M21 11.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7.5", key: "1ue2ih" }],
+  ["path", { d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21", key: "1xmnt7" }],
+  ["circle", { cx: "9", cy: "9", r: "2", key: "af1f0g" }]
 ];
-const Ellipsis = createLucideIcon("ellipsis", __iconNode$D);
+const ImagePlus = createLucideIcon("image-plus", __iconNode$D);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33496,11 +33613,11 @@ const Ellipsis = createLucideIcon("ellipsis", __iconNode$D);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$C = [
-  ["path", { d: "M15 3h6v6", key: "1q9fwt" }],
-  ["path", { d: "M10 14 21 3", key: "gplh6r" }],
-  ["path", { d: "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6", key: "a6xqqp" }]
+  ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", ry: "2", key: "1m3agn" }],
+  ["circle", { cx: "9", cy: "9", r: "2", key: "af1f0g" }],
+  ["path", { d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21", key: "1xmnt7" }]
 ];
-const ExternalLink = createLucideIcon("external-link", __iconNode$C);
+const Image = createLucideIcon("image", __iconNode$C);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33508,71 +33625,6 @@ const ExternalLink = createLucideIcon("external-link", __iconNode$C);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$B = [
-  ["path", { d: "M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z", key: "1rqfz7" }],
-  ["path", { d: "M14 2v4a2 2 0 0 0 2 2h4", key: "tnqrlb" }],
-  ["path", { d: "M10 9H8", key: "b1mrlr" }],
-  ["path", { d: "M16 13H8", key: "t4e002" }],
-  ["path", { d: "M16 17H8", key: "z1uh3a" }]
-];
-const FileText = createLucideIcon("file-text", __iconNode$B);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$A = [
-  ["line", { x1: "6", x2: "6", y1: "3", y2: "15", key: "17qcm7" }],
-  ["circle", { cx: "18", cy: "6", r: "3", key: "1h7g24" }],
-  ["circle", { cx: "6", cy: "18", r: "3", key: "fqmcym" }],
-  ["path", { d: "M18 9a9 9 0 0 1-9 9", key: "n2h4wq" }]
-];
-const GitBranch = createLucideIcon("git-branch", __iconNode$A);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$z = [
-  ["circle", { cx: "18", cy: "18", r: "3", key: "1xkwt0" }],
-  ["circle", { cx: "6", cy: "6", r: "3", key: "1lh9wr" }],
-  ["path", { d: "M6 21V9a9 9 0 0 0 9 9", key: "7kw0sc" }]
-];
-const GitMerge = createLucideIcon("git-merge", __iconNode$z);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$y = [
-  ["path", { d: "M16 5h6", key: "1vod17" }],
-  ["path", { d: "M19 2v6", key: "4bpg5p" }],
-  ["path", { d: "M21 11.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7.5", key: "1ue2ih" }],
-  ["path", { d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21", key: "1xmnt7" }],
-  ["circle", { cx: "9", cy: "9", r: "2", key: "af1f0g" }]
-];
-const ImagePlus = createLucideIcon("image-plus", __iconNode$y);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$x = [
-  ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", ry: "2", key: "1m3agn" }],
-  ["circle", { cx: "9", cy: "9", r: "2", key: "af1f0g" }],
-  ["path", { d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21", key: "1xmnt7" }]
-];
-const Image = createLucideIcon("image", __iconNode$x);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$w = [
   ["polyline", { points: "22 12 16 12 14 15 10 15 8 12 2 12", key: "o97t9d" }],
   [
     "path",
@@ -33582,14 +33634,14 @@ const __iconNode$w = [
     }
   ]
 ];
-const Inbox = createLucideIcon("inbox", __iconNode$w);
+const Inbox = createLucideIcon("inbox", __iconNode$B);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$v = [
+const __iconNode$A = [
   ["path", { d: "M10 18v-7", key: "wt116b" }],
   [
     "path",
@@ -33603,14 +33655,14 @@ const __iconNode$v = [
   ["path", { d: "M3 22h18", key: "8prr45" }],
   ["path", { d: "M6 18v-7", key: "1ivflk" }]
 ];
-const Landmark = createLucideIcon("landmark", __iconNode$v);
+const Landmark = createLucideIcon("landmark", __iconNode$A);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$u = [
+const __iconNode$z = [
   ["rect", { width: "8", height: "18", x: "3", y: "3", rx: "1", key: "oynpb5" }],
   ["path", { d: "M7 3v18", key: "bbkbws" }],
   [
@@ -33621,7 +33673,69 @@ const __iconNode$u = [
     }
   ]
 ];
-const LibraryBig = createLucideIcon("library-big", __iconNode$u);
+const LibraryBig = createLucideIcon("library-big", __iconNode$z);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$y = [
+  [
+    "path",
+    {
+      d: "M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5",
+      key: "1gvzjb"
+    }
+  ],
+  ["path", { d: "M9 18h6", key: "x1upvd" }],
+  ["path", { d: "M10 22h4", key: "ceow96" }]
+];
+const Lightbulb = createLucideIcon("lightbulb", __iconNode$y);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$x = [
+  ["path", { d: "M9 17H7A5 5 0 0 1 7 7h2", key: "8i5ue5" }],
+  ["path", { d: "M15 7h2a5 5 0 1 1 0 10h-2", key: "1b9ql8" }],
+  ["line", { x1: "8", x2: "16", y1: "12", y2: "12", key: "1jonct" }]
+];
+const Link2 = createLucideIcon("link-2", __iconNode$x);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$w = [["path", { d: "M21 12a9 9 0 1 1-6.219-8.56", key: "13zald" }]];
+const LoaderCircle = createLucideIcon("loader-circle", __iconNode$w);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$v = [
+  ["path", { d: "m10 17 5-5-5-5", key: "1bsop3" }],
+  ["path", { d: "M15 12H3", key: "6jk70r" }],
+  ["path", { d: "M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4", key: "u53s6r" }]
+];
+const LogIn = createLucideIcon("log-in", __iconNode$v);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$u = [
+  ["path", { d: "m16 17 5-5-5-5", key: "1bji2h" }],
+  ["path", { d: "M21 12H9", key: "dn1m92" }],
+  ["path", { d: "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4", key: "1uf3rs" }]
+];
+const LogOut = createLucideIcon("log-out", __iconNode$u);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33629,50 +33743,18 @@ const LibraryBig = createLucideIcon("library-big", __iconNode$u);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$t = [
-  ["path", { d: "M9 17H7A5 5 0 0 1 7 7h2", key: "8i5ue5" }],
-  ["path", { d: "M15 7h2a5 5 0 1 1 0 10h-2", key: "1b9ql8" }],
-  ["line", { x1: "8", x2: "16", y1: "12", y2: "12", key: "1jonct" }]
+  ["path", { d: "M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z", key: "131961" }],
+  ["path", { d: "M19 10v2a7 7 0 0 1-14 0v-2", key: "1vc78b" }],
+  ["line", { x1: "12", x2: "12", y1: "19", y2: "22", key: "x3vr5v" }]
 ];
-const Link2 = createLucideIcon("link-2", __iconNode$t);
+const Mic = createLucideIcon("mic", __iconNode$t);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$s = [["path", { d: "M21 12a9 9 0 1 1-6.219-8.56", key: "13zald" }]];
-const LoaderCircle = createLucideIcon("loader-circle", __iconNode$s);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$r = [
-  ["path", { d: "m10 17 5-5-5-5", key: "1bsop3" }],
-  ["path", { d: "M15 12H3", key: "6jk70r" }],
-  ["path", { d: "M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4", key: "u53s6r" }]
-];
-const LogIn = createLucideIcon("log-in", __iconNode$r);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$q = [
-  ["path", { d: "m16 17 5-5-5-5", key: "1bji2h" }],
-  ["path", { d: "M21 12H9", key: "dn1m92" }],
-  ["path", { d: "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4", key: "1uf3rs" }]
-];
-const LogOut = createLucideIcon("log-out", __iconNode$q);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$p = [
+const __iconNode$s = [
   ["path", { d: "M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4", key: "re6nr2" }],
   ["path", { d: "M2 6h4", key: "aawbzj" }],
   ["path", { d: "M2 10h4", key: "l0bgd4" }],
@@ -33686,14 +33768,14 @@ const __iconNode$p = [
     }
   ]
 ];
-const NotebookPen = createLucideIcon("notebook-pen", __iconNode$p);
+const NotebookPen = createLucideIcon("notebook-pen", __iconNode$s);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$o = [
+const __iconNode$r = [
   ["path", { d: "M5.8 11.3 2 22l10.7-3.79", key: "gwxi1d" }],
   ["path", { d: "M4 3h.01", key: "1vcuye" }],
   ["path", { d: "M22 8h.01", key: "1mrtc2" }],
@@ -33719,14 +33801,14 @@ const __iconNode$o = [
     }
   ]
 ];
-const PartyPopper = createLucideIcon("party-popper", __iconNode$o);
+const PartyPopper = createLucideIcon("party-popper", __iconNode$r);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$n = [
+const __iconNode$q = [
   [
     "path",
     {
@@ -33736,7 +33818,37 @@ const __iconNode$n = [
   ],
   ["path", { d: "m15 5 4 4", key: "1mk7zo" }]
 ];
-const Pencil = createLucideIcon("pencil", __iconNode$n);
+const Pencil = createLucideIcon("pencil", __iconNode$q);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$p = [["polygon", { points: "6 3 20 12 6 21 6 3", key: "1oa8hb" }]];
+const Play = createLucideIcon("play", __iconNode$p);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$o = [
+  ["path", { d: "M5 12h14", key: "1ays0h" }],
+  ["path", { d: "M12 5v14", key: "s699le" }]
+];
+const Plus = createLucideIcon("plus", __iconNode$o);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$n = [
+  ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
+  ["path", { d: "M3 3v5h5", key: "1xhq8a" }]
+];
+const RotateCcw = createLucideIcon("rotate-ccw", __iconNode$n);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33744,28 +33856,6 @@ const Pencil = createLucideIcon("pencil", __iconNode$n);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$m = [
-  ["path", { d: "M5 12h14", key: "1ays0h" }],
-  ["path", { d: "M12 5v14", key: "s699le" }]
-];
-const Plus = createLucideIcon("plus", __iconNode$m);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$l = [
-  ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
-  ["path", { d: "M3 3v5h5", key: "1xhq8a" }]
-];
-const RotateCcw = createLucideIcon("rotate-ccw", __iconNode$l);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$k = [
   [
     "path",
     {
@@ -33776,14 +33866,14 @@ const __iconNode$k = [
   ["path", { d: "M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7", key: "1ydtos" }],
   ["path", { d: "M7 3v4a1 1 0 0 0 1 1h7", key: "t51u73" }]
 ];
-const Save = createLucideIcon("save", __iconNode$k);
+const Save = createLucideIcon("save", __iconNode$m);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$j = [
+const __iconNode$l = [
   ["path", { d: "M15 12h-5", key: "r7krc0" }],
   ["path", { d: "M15 8h-5", key: "1khuty" }],
   ["path", { d: "M19 17V5a2 2 0 0 0-2-2H4", key: "zz82l3" }],
@@ -33795,25 +33885,25 @@ const __iconNode$j = [
     }
   ]
 ];
-const ScrollText = createLucideIcon("scroll-text", __iconNode$j);
+const ScrollText = createLucideIcon("scroll-text", __iconNode$l);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$i = [
+const __iconNode$k = [
   ["path", { d: "m21 21-4.34-4.34", key: "14j7rj" }],
   ["circle", { cx: "11", cy: "11", r: "8", key: "4ej97u" }]
 ];
-const Search = createLucideIcon("search", __iconNode$i);
+const Search = createLucideIcon("search", __iconNode$k);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$h = [
+const __iconNode$j = [
   [
     "path",
     {
@@ -33824,7 +33914,34 @@ const __iconNode$h = [
   ["path", { d: "M12 8v4", key: "1got3b" }],
   ["path", { d: "M12 16h.01", key: "1drbdi" }]
 ];
-const ShieldAlert = createLucideIcon("shield-alert", __iconNode$h);
+const ShieldAlert = createLucideIcon("shield-alert", __iconNode$j);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$i = [
+  [
+    "path",
+    {
+      d: "M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z",
+      key: "oel41y"
+    }
+  ],
+  ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
+];
+const ShieldCheck = createLucideIcon("shield-check", __iconNode$i);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$h = [
+  ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }]
+];
+const Square = createLucideIcon("square", __iconNode$h);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33835,13 +33952,13 @@ const __iconNode$g = [
   [
     "path",
     {
-      d: "M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z",
-      key: "oel41y"
+      d: "M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z",
+      key: "vktsd0"
     }
   ],
-  ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
+  ["circle", { cx: "7.5", cy: "7.5", r: ".5", fill: "currentColor", key: "kqv944" }]
 ];
-const ShieldCheck = createLucideIcon("shield-check", __iconNode$g);
+const Tag = createLucideIcon("tag", __iconNode$g);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33849,16 +33966,13 @@ const ShieldCheck = createLucideIcon("shield-check", __iconNode$g);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$f = [
-  [
-    "path",
-    {
-      d: "M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z",
-      key: "vktsd0"
-    }
-  ],
-  ["circle", { cx: "7.5", cy: "7.5", r: ".5", fill: "currentColor", key: "kqv944" }]
+  ["path", { d: "M3 6h18", key: "d0wm0j" }],
+  ["path", { d: "M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6", key: "4alrt4" }],
+  ["path", { d: "M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2", key: "v07s0e" }],
+  ["line", { x1: "10", x2: "10", y1: "11", y2: "17", key: "1uufr5" }],
+  ["line", { x1: "14", x2: "14", y1: "11", y2: "17", key: "xtxkd" }]
 ];
-const Tag = createLucideIcon("tag", __iconNode$f);
+const Trash2 = createLucideIcon("trash-2", __iconNode$f);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33866,13 +33980,16 @@ const Tag = createLucideIcon("tag", __iconNode$f);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$e = [
-  ["path", { d: "M3 6h18", key: "d0wm0j" }],
-  ["path", { d: "M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6", key: "4alrt4" }],
-  ["path", { d: "M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2", key: "v07s0e" }],
-  ["line", { x1: "10", x2: "10", y1: "11", y2: "17", key: "1uufr5" }],
-  ["line", { x1: "14", x2: "14", y1: "11", y2: "17", key: "xtxkd" }]
+  [
+    "path",
+    {
+      d: "m17 14 3 3.3a1 1 0 0 1-.7 1.7H4.7a1 1 0 0 1-.7-1.7L7 14h-.3a1 1 0 0 1-.7-1.7L9 9h-.2A1 1 0 0 1 8 7.3L12 3l4 4.3a1 1 0 0 1-.8 1.7H15l3 3.3a1 1 0 0 1-.7 1.7H17Z",
+      key: "cpyugq"
+    }
+  ],
+  ["path", { d: "M12 22v-3", key: "kmzjlo" }]
 ];
-const Trash2 = createLucideIcon("trash-2", __iconNode$e);
+const TreePine = createLucideIcon("tree-pine", __iconNode$e);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33883,23 +34000,6 @@ const __iconNode$d = [
   [
     "path",
     {
-      d: "m17 14 3 3.3a1 1 0 0 1-.7 1.7H4.7a1 1 0 0 1-.7-1.7L7 14h-.3a1 1 0 0 1-.7-1.7L9 9h-.2A1 1 0 0 1 8 7.3L12 3l4 4.3a1 1 0 0 1-.8 1.7H15l3 3.3a1 1 0 0 1-.7 1.7H17Z",
-      key: "cpyugq"
-    }
-  ],
-  ["path", { d: "M12 22v-3", key: "kmzjlo" }]
-];
-const TreePine = createLucideIcon("tree-pine", __iconNode$d);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$c = [
-  [
-    "path",
-    {
       d: "m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3",
       key: "wmoenq"
     }
@@ -33907,7 +34007,18 @@ const __iconNode$c = [
   ["path", { d: "M12 9v4", key: "juzpu7" }],
   ["path", { d: "M12 17h.01", key: "p32p05" }]
 ];
-const TriangleAlert = createLucideIcon("triangle-alert", __iconNode$c);
+const TriangleAlert = createLucideIcon("triangle-alert", __iconNode$d);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$c = [
+  ["path", { d: "M9 14 4 9l5-5", key: "102s5s" }],
+  ["path", { d: "M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11", key: "f3b9sd" }]
+];
+const Undo2 = createLucideIcon("undo-2", __iconNode$c);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33915,10 +34026,11 @@ const TriangleAlert = createLucideIcon("triangle-alert", __iconNode$c);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$b = [
-  ["path", { d: "M9 14 4 9l5-5", key: "102s5s" }],
-  ["path", { d: "M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11", key: "f3b9sd" }]
+  ["path", { d: "M12 3v12", key: "1x0j5s" }],
+  ["path", { d: "m17 8-5-5-5 5", key: "7q97r8" }],
+  ["path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4", key: "ih7n3h" }]
 ];
-const Undo2 = createLucideIcon("undo-2", __iconNode$b);
+const Upload = createLucideIcon("upload", __iconNode$b);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33926,11 +34038,11 @@ const Undo2 = createLucideIcon("undo-2", __iconNode$b);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$a = [
-  ["path", { d: "M12 3v12", key: "1x0j5s" }],
-  ["path", { d: "m17 8-5-5-5 5", key: "7q97r8" }],
-  ["path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4", key: "ih7n3h" }]
+  ["path", { d: "m16 11 2 2 4-4", key: "9rsbq5" }],
+  ["path", { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", key: "1yyitq" }],
+  ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }]
 ];
-const Upload = createLucideIcon("upload", __iconNode$a);
+const UserCheck = createLucideIcon("user-check", __iconNode$a);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33938,18 +34050,6 @@ const Upload = createLucideIcon("upload", __iconNode$a);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$9 = [
-  ["path", { d: "m16 11 2 2 4-4", key: "9rsbq5" }],
-  ["path", { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", key: "1yyitq" }],
-  ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }]
-];
-const UserCheck = createLucideIcon("user-check", __iconNode$9);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$8 = [
   ["path", { d: "M10 15H6a4 4 0 0 0-4 4v2", key: "1nfge6" }],
   ["path", { d: "m14.305 16.53.923-.382", key: "1itpsq" }],
   ["path", { d: "m15.228 13.852-.923-.383", key: "eplpkm" }],
@@ -33962,7 +34062,19 @@ const __iconNode$8 = [
   ["circle", { cx: "18", cy: "15", r: "3", key: "gjjjvw" }],
   ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }]
 ];
-const UserCog = createLucideIcon("user-cog", __iconNode$8);
+const UserCog = createLucideIcon("user-cog", __iconNode$9);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$8 = [
+  ["path", { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", key: "1yyitq" }],
+  ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }],
+  ["line", { x1: "22", x2: "16", y1: "11", y2: "11", key: "1shjgl" }]
+];
+const UserMinus = createLucideIcon("user-minus", __iconNode$8);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33972,9 +34084,10 @@ const UserCog = createLucideIcon("user-cog", __iconNode$8);
 const __iconNode$7 = [
   ["path", { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", key: "1yyitq" }],
   ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }],
+  ["line", { x1: "19", x2: "19", y1: "8", y2: "14", key: "1bvyxn" }],
   ["line", { x1: "22", x2: "16", y1: "11", y2: "11", key: "1shjgl" }]
 ];
-const UserMinus = createLucideIcon("user-minus", __iconNode$7);
+const UserPlus = createLucideIcon("user-plus", __iconNode$7);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33982,12 +34095,10 @@ const UserMinus = createLucideIcon("user-minus", __iconNode$7);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$6 = [
-  ["path", { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", key: "1yyitq" }],
-  ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }],
-  ["line", { x1: "19", x2: "19", y1: "8", y2: "14", key: "1bvyxn" }],
-  ["line", { x1: "22", x2: "16", y1: "11", y2: "11", key: "1shjgl" }]
+  ["circle", { cx: "12", cy: "8", r: "5", key: "1hypcn" }],
+  ["path", { d: "M20 21a8 8 0 0 0-16 0", key: "rfgkzh" }]
 ];
-const UserPlus = createLucideIcon("user-plus", __iconNode$6);
+const UserRound = createLucideIcon("user-round", __iconNode$6);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34126,6 +34237,33 @@ const Result_8 = Variant({
   "ok": StewardRecord,
   "err": StewardError
 });
+const EvidenceStatus$1 = Variant({
+  "Unresolved": Null,
+  "Documented": Null,
+  "FamilyHistory": Null,
+  "PersonalMemory": Null
+});
+const StoryId = Nat;
+const StoryStatus = Variant({
+  "Approved": Null,
+  "Rejected": Null,
+  "Pending": Null
+});
+const Story = Record({
+  "id": StoryId,
+  "era": Opt(Text),
+  "status": StoryStatus,
+  "title": Text,
+  "relatedMemberIds": Vec(Text),
+  "storyText": Text,
+  "createdAt": Int,
+  "year": Opt(Nat),
+  "relatedArchiveItemIds": Vec(Nat),
+  "updatedAt": Int,
+  "evidenceStatus": EvidenceStatus$1,
+  "location": Opt(Text),
+  "contributor": Principal2
+});
 const ExternalBlob2 = Vec(Nat8);
 const PhotoId = Nat;
 const Photo = Record({
@@ -34175,6 +34313,10 @@ const PrivacyLevel$1 = Variant({
   "Public": Null,
   "FamilyOnly": Null
 });
+const OralHistorySpeaker = Record({
+  "name": Text,
+  "personId": Opt(Text)
+});
 const ArchiveItemType$1 = Variant({
   "Research": Null,
   "Photo": Null,
@@ -34185,11 +34327,19 @@ const ArchiveItemType$1 = Variant({
   "Other": Null,
   "Video": Null
 });
+const ChapterMarker = Record({
+  "title": Text,
+  "timestamp": Nat
+});
 const SourceStatus$1 = Variant({
   "Copy": Null,
   "Unverified": Null,
   "Transcribed": Null,
   "Original": Null
+});
+const ArchiveItemClassification$1 = Variant({
+  "OralHistory": Null,
+  "Standard": Null
 });
 const ArchiveItem = Record({
   "id": ArchiveItemId,
@@ -34203,9 +34353,16 @@ const ArchiveItem = Record({
   "year": Opt(Nat),
   "description": Text,
   "privacyLevel": PrivacyLevel$1,
+  "primarySpeaker": Opt(OralHistorySpeaker),
+  "extractedNames": Opt(Vec(Text)),
   "itemType": ArchiveItemType$1,
+  "aiSummary": Opt(Text),
+  "searchableTranscript": Opt(Text),
   "relatedBranchId": Opt(Text),
+  "transcript": Opt(Text),
+  "chapterMarkers": Opt(Vec(ChapterMarker)),
   "sourceStatus": SourceStatus$1,
+  "classification": ArchiveItemClassification$1,
   "contributor": Principal2
 });
 const ProfileClaimStatus = Variant({
@@ -34279,6 +34436,35 @@ const AccountError = Variant({
   "NotSignedIn": Null
 });
 const Result_17 = Variant({ "ok": Account, "err": AccountError });
+const MysteryStatus$1 = Variant({
+  "Researching": Null,
+  "Open": Null,
+  "PartiallyResolved": Null,
+  "Resolved": Null
+});
+const MysteryId = Nat;
+const Resolution = Record({
+  "supportingEvidence": Vec(Text),
+  "summary": Text,
+  "resolvedAt": Int,
+  "resolvedBy": Principal2
+});
+const Mystery = Record({
+  "id": MysteryId,
+  "status": MysteryStatus$1,
+  "title": Text,
+  "relatedMemberIds": Vec(Text),
+  "createdAt": Int,
+  "relatedArchiveItemIds": Vec(Nat),
+  "description": Text,
+  "resolution": Opt(Resolution),
+  "updatedAt": Int,
+  "knownFacts": Vec(Text),
+  "possibilities": Vec(Text),
+  "relatedBranchId": Opt(Text),
+  "relatedSourceIds": Vec(Nat),
+  "contributor": Principal2
+});
 const ClaimStatus$1 = Variant({
   "Unclaimed": Null,
   "Claimed": Null
@@ -34422,6 +34608,58 @@ const Notification = Record({
   "read": Bool,
   "recipient": Principal2,
   "message": Text
+});
+const MysteryContributionId = Nat;
+const MysteryContributionStatus = Variant({
+  "Approved": Null,
+  "Rejected": Null,
+  "Pending": Null
+});
+const MysteryContributionType$1 = Variant({
+  "Lead": Null,
+  "Note": Null,
+  "Memory": Null,
+  "Source": Null
+});
+const MysteryContribution = Record({
+  "id": MysteryContributionId,
+  "status": MysteryContributionStatus,
+  "createdAt": Int,
+  "text": Text,
+  "mysteryId": MysteryId,
+  "reviewedAt": Opt(Int),
+  "reviewedBy": Opt(Principal2),
+  "contributionType": MysteryContributionType$1,
+  "contributor": Principal2
+});
+const TimelineLinkTarget = Variant({
+  "Story": StoryId,
+  "Mystery": MysteryId,
+  "Person": Text,
+  "ArchiveItem": Nat
+});
+const TimelineEventType$1 = Variant({
+  "MilitaryService": Null,
+  "Story": Null,
+  "Birth": Null,
+  "FamilyEvent": Null,
+  "Migration": Null,
+  "Mystery": Null,
+  "Death": Null,
+  "PhotoDocument": Null,
+  "Marriage": Null,
+  "CensusDocument": Null,
+  "Location": Null
+});
+const TimelineEvent = Record({
+  "id": Text,
+  "era": Opt(Text),
+  "title": Text,
+  "year": Opt(Nat),
+  "linkTarget": TimelineLinkTarget,
+  "description": Text,
+  "evidenceStatus": EvidenceStatus$1,
+  "eventType": TimelineEventType$1
 });
 const NotificationId = Nat;
 const MergeConflictStatus$1 = Variant({
@@ -34567,6 +34805,20 @@ Service({
   "_internet_identity_sign_in_finish": Func([], [Result_18], []),
   "_internet_identity_sign_in_start": Func([], [Vec(Nat8)], []),
   "activateSuccessor": Func([PersonId], [Result_8], []),
+  "addCanonicalStory": Func(
+    [
+      Text,
+      Text,
+      Vec(Text),
+      Opt(Text),
+      Opt(Nat),
+      Opt(Text),
+      EvidenceStatus$1,
+      Vec(Nat)
+    ],
+    [Story],
+    []
+  ),
   "addPhoto": Func(
     [PersonId, Text, Text, ExternalBlob2],
     [Photo],
@@ -34589,12 +34841,28 @@ Service({
     [Opt(RelationshipRequest)],
     []
   ),
+  "approveStory": Func([StoryId], [Opt(Story)], []),
   "archiveProfile": Func([PersonId], [Result_1], []),
   "assignCallerUserRole": Func([Principal2, UserRole], [], []),
   "bindAuthMethod": Func([AuthMethod], [Result_17], []),
   "correctRelationshipType": Func(
     [Nat, RelationshipType$1],
     [Result_16],
+    []
+  ),
+  "createCanonicalMystery": Func(
+    [
+      Text,
+      Text,
+      Vec(Text),
+      Opt(Text),
+      Vec(Text),
+      Vec(Text),
+      Vec(Nat),
+      Vec(Nat),
+      MysteryStatus$1
+    ],
+    [Mystery],
     []
   ),
   "createMyself": Func([Text], [Result_15], []),
@@ -34629,6 +34897,7 @@ Service({
   "getSingleStewardWarning": Func([], [Opt(Text)], ["query"]),
   "isCallerAdmin": Func([], [Bool], ["query"]),
   "listApprovedArchiveItems": Func([], [Vec(ArchiveItem)], ["query"]),
+  "listApprovedStories": Func([], [Vec(Story)], ["query"]),
   "listArchivedProfileIds": Func([], [Vec(PersonId)], ["query"]),
   "listArchivedProfiles": Func([], [Vec(PersonProfile)], ["query"]),
   "listAuditHistory": Func([], [Vec(AuditEntry)], ["query"]),
@@ -34643,8 +34912,15 @@ Service({
     [Vec(StewardIdentity)],
     ["query"]
   ),
+  "listMysteries": Func([], [Vec(Mystery)], ["query"]),
   "listNotifications": Func([], [Vec(Notification)], ["query"]),
   "listPendingArchiveItems": Func([], [Vec(ArchiveItem)], ["query"]),
+  "listPendingMysteryContributions": Func(
+    [],
+    [Vec(MysteryContribution)],
+    ["query"]
+  ),
+  "listPendingStories": Func([], [Vec(Story)], ["query"]),
   "listPersonRelationships": Func(
     [PersonId],
     [Vec(Relationship)],
@@ -34665,6 +34941,12 @@ Service({
   "listStewardIdentities": Func([], [Vec(StewardIdentity)], ["query"]),
   "listStewards": Func([], [Vec(StewardRecord)], ["query"]),
   "listSuccessors": Func([], [Vec(SuccessorDesignation)], ["query"]),
+  "listTimelineEvents": Func([], [Vec(TimelineEvent)], ["query"]),
+  "markMysteryResolved": Func(
+    [MysteryId, Text, Vec(Text)],
+    [Opt(Mystery)],
+    []
+  ),
   "markNotificationRead": Func(
     [NotificationId],
     [Opt(Notification)],
@@ -34691,6 +34973,7 @@ Service({
     [Opt(RelationshipRequest)],
     []
   ),
+  "rejectStory": Func([StoryId], [Opt(Story)], []),
   "removeDuplicateProfile": Func([PersonId], [Result_6], []),
   "removePhoto": Func([PersonId, PhotoId], [Bool], []),
   "removeRelationship": Func([Nat], [Result_5], []),
@@ -34703,6 +34986,11 @@ Service({
     []
   ),
   "restoreProfile": Func([PersonId], [Result_1], []),
+  "reviewMysteryContribution": Func(
+    [MysteryContributionId, Bool],
+    [Opt(MysteryContribution)],
+    []
+  ),
   "schema": Func([], [Text], ["query"]),
   "searchPossibleMatches": Func(
     [Text],
@@ -34727,9 +35015,61 @@ Service({
       Vec(Text),
       Opt(Text),
       SourceStatus$1,
-      PrivacyLevel$1
+      PrivacyLevel$1,
+      ArchiveItemClassification$1,
+      Opt(OralHistorySpeaker)
     ],
     [ArchiveItem],
+    []
+  ),
+  "submitMysteryContribution": Func(
+    [MysteryId, MysteryContributionType$1, Text],
+    [MysteryContribution],
+    []
+  ),
+  "submitStory": Func(
+    [
+      Text,
+      Text,
+      Vec(Text),
+      Opt(Text),
+      Opt(Nat),
+      Opt(Text),
+      EvidenceStatus$1,
+      Vec(Nat)
+    ],
+    [Story],
+    []
+  ),
+  "updateCanonicalMystery": Func(
+    [
+      MysteryId,
+      Text,
+      Text,
+      Vec(Text),
+      Opt(Text),
+      Vec(Text),
+      Vec(Text),
+      Vec(Nat),
+      Vec(Nat),
+      MysteryStatus$1
+    ],
+    [Opt(Mystery)],
+    []
+  ),
+  "updateCanonicalStory": Func(
+    [
+      StoryId,
+      Text,
+      Text,
+      Vec(Text),
+      Opt(Text),
+      Opt(Nat),
+      Opt(Text),
+      EvidenceStatus$1,
+      Vec(Nat)
+    ],
+    [Opt(Story)],
     []
   ),
   "updateOwnProfile": Func([PersonId, ProfileEdits], [Result], [])
@@ -34789,6 +35129,33 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "NotDesignated": IDL2.Null
   });
   const Result_82 = IDL2.Variant({ "ok": StewardRecord2, "err": StewardError2 });
+  const EvidenceStatus2 = IDL2.Variant({
+    "Unresolved": IDL2.Null,
+    "Documented": IDL2.Null,
+    "FamilyHistory": IDL2.Null,
+    "PersonalMemory": IDL2.Null
+  });
+  const StoryId2 = IDL2.Nat;
+  const StoryStatus2 = IDL2.Variant({
+    "Approved": IDL2.Null,
+    "Rejected": IDL2.Null,
+    "Pending": IDL2.Null
+  });
+  const Story2 = IDL2.Record({
+    "id": StoryId2,
+    "era": IDL2.Opt(IDL2.Text),
+    "status": StoryStatus2,
+    "title": IDL2.Text,
+    "relatedMemberIds": IDL2.Vec(IDL2.Text),
+    "storyText": IDL2.Text,
+    "createdAt": IDL2.Int,
+    "year": IDL2.Opt(IDL2.Nat),
+    "relatedArchiveItemIds": IDL2.Vec(IDL2.Nat),
+    "updatedAt": IDL2.Int,
+    "evidenceStatus": EvidenceStatus2,
+    "location": IDL2.Opt(IDL2.Text),
+    "contributor": IDL2.Principal
+  });
   const ExternalBlob3 = IDL2.Vec(IDL2.Nat8);
   const PhotoId2 = IDL2.Nat;
   const Photo2 = IDL2.Record({
@@ -34838,6 +35205,10 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "Public": IDL2.Null,
     "FamilyOnly": IDL2.Null
   });
+  const OralHistorySpeaker2 = IDL2.Record({
+    "name": IDL2.Text,
+    "personId": IDL2.Opt(IDL2.Text)
+  });
   const ArchiveItemType2 = IDL2.Variant({
     "Research": IDL2.Null,
     "Photo": IDL2.Null,
@@ -34848,11 +35219,19 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "Other": IDL2.Null,
     "Video": IDL2.Null
   });
+  const ChapterMarker2 = IDL2.Record({
+    "title": IDL2.Text,
+    "timestamp": IDL2.Nat
+  });
   const SourceStatus2 = IDL2.Variant({
     "Copy": IDL2.Null,
     "Unverified": IDL2.Null,
     "Transcribed": IDL2.Null,
     "Original": IDL2.Null
+  });
+  const ArchiveItemClassification2 = IDL2.Variant({
+    "OralHistory": IDL2.Null,
+    "Standard": IDL2.Null
   });
   const ArchiveItem2 = IDL2.Record({
     "id": ArchiveItemId2,
@@ -34866,9 +35245,16 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "year": IDL2.Opt(IDL2.Nat),
     "description": IDL2.Text,
     "privacyLevel": PrivacyLevel2,
+    "primarySpeaker": IDL2.Opt(OralHistorySpeaker2),
+    "extractedNames": IDL2.Opt(IDL2.Vec(IDL2.Text)),
     "itemType": ArchiveItemType2,
+    "aiSummary": IDL2.Opt(IDL2.Text),
+    "searchableTranscript": IDL2.Opt(IDL2.Text),
     "relatedBranchId": IDL2.Opt(IDL2.Text),
+    "transcript": IDL2.Opt(IDL2.Text),
+    "chapterMarkers": IDL2.Opt(IDL2.Vec(ChapterMarker2)),
     "sourceStatus": SourceStatus2,
+    "classification": ArchiveItemClassification2,
     "contributor": IDL2.Principal
   });
   const ProfileClaimStatus2 = IDL2.Variant({
@@ -34939,6 +35325,35 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "NotSignedIn": IDL2.Null
   });
   const Result_172 = IDL2.Variant({ "ok": Account2, "err": AccountError2 });
+  const MysteryStatus2 = IDL2.Variant({
+    "Researching": IDL2.Null,
+    "Open": IDL2.Null,
+    "PartiallyResolved": IDL2.Null,
+    "Resolved": IDL2.Null
+  });
+  const MysteryId2 = IDL2.Nat;
+  const Resolution2 = IDL2.Record({
+    "supportingEvidence": IDL2.Vec(IDL2.Text),
+    "summary": IDL2.Text,
+    "resolvedAt": IDL2.Int,
+    "resolvedBy": IDL2.Principal
+  });
+  const Mystery2 = IDL2.Record({
+    "id": MysteryId2,
+    "status": MysteryStatus2,
+    "title": IDL2.Text,
+    "relatedMemberIds": IDL2.Vec(IDL2.Text),
+    "createdAt": IDL2.Int,
+    "relatedArchiveItemIds": IDL2.Vec(IDL2.Nat),
+    "description": IDL2.Text,
+    "resolution": IDL2.Opt(Resolution2),
+    "updatedAt": IDL2.Int,
+    "knownFacts": IDL2.Vec(IDL2.Text),
+    "possibilities": IDL2.Vec(IDL2.Text),
+    "relatedBranchId": IDL2.Opt(IDL2.Text),
+    "relatedSourceIds": IDL2.Vec(IDL2.Nat),
+    "contributor": IDL2.Principal
+  });
   const ClaimStatus2 = IDL2.Variant({
     "Unclaimed": IDL2.Null,
     "Claimed": IDL2.Null
@@ -35070,6 +35485,58 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "read": IDL2.Bool,
     "recipient": IDL2.Principal,
     "message": IDL2.Text
+  });
+  const MysteryContributionId2 = IDL2.Nat;
+  const MysteryContributionStatus2 = IDL2.Variant({
+    "Approved": IDL2.Null,
+    "Rejected": IDL2.Null,
+    "Pending": IDL2.Null
+  });
+  const MysteryContributionType2 = IDL2.Variant({
+    "Lead": IDL2.Null,
+    "Note": IDL2.Null,
+    "Memory": IDL2.Null,
+    "Source": IDL2.Null
+  });
+  const MysteryContribution2 = IDL2.Record({
+    "id": MysteryContributionId2,
+    "status": MysteryContributionStatus2,
+    "createdAt": IDL2.Int,
+    "text": IDL2.Text,
+    "mysteryId": MysteryId2,
+    "reviewedAt": IDL2.Opt(IDL2.Int),
+    "reviewedBy": IDL2.Opt(IDL2.Principal),
+    "contributionType": MysteryContributionType2,
+    "contributor": IDL2.Principal
+  });
+  const TimelineLinkTarget2 = IDL2.Variant({
+    "Story": StoryId2,
+    "Mystery": MysteryId2,
+    "Person": IDL2.Text,
+    "ArchiveItem": IDL2.Nat
+  });
+  const TimelineEventType2 = IDL2.Variant({
+    "MilitaryService": IDL2.Null,
+    "Story": IDL2.Null,
+    "Birth": IDL2.Null,
+    "FamilyEvent": IDL2.Null,
+    "Migration": IDL2.Null,
+    "Mystery": IDL2.Null,
+    "Death": IDL2.Null,
+    "PhotoDocument": IDL2.Null,
+    "Marriage": IDL2.Null,
+    "CensusDocument": IDL2.Null,
+    "Location": IDL2.Null
+  });
+  const TimelineEvent2 = IDL2.Record({
+    "id": IDL2.Text,
+    "era": IDL2.Opt(IDL2.Text),
+    "title": IDL2.Text,
+    "year": IDL2.Opt(IDL2.Nat),
+    "linkTarget": TimelineLinkTarget2,
+    "description": IDL2.Text,
+    "evidenceStatus": EvidenceStatus2,
+    "eventType": TimelineEventType2
   });
   const NotificationId2 = IDL2.Nat;
   const MergeConflictStatus2 = IDL2.Variant({
@@ -35209,6 +35676,20 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "_internet_identity_sign_in_finish": IDL2.Func([], [Result_182], []),
     "_internet_identity_sign_in_start": IDL2.Func([], [IDL2.Vec(IDL2.Nat8)], []),
     "activateSuccessor": IDL2.Func([PersonId2], [Result_82], []),
+    "addCanonicalStory": IDL2.Func(
+      [
+        IDL2.Text,
+        IDL2.Text,
+        IDL2.Vec(IDL2.Text),
+        IDL2.Opt(IDL2.Text),
+        IDL2.Opt(IDL2.Nat),
+        IDL2.Opt(IDL2.Text),
+        EvidenceStatus2,
+        IDL2.Vec(IDL2.Nat)
+      ],
+      [Story2],
+      []
+    ),
     "addPhoto": IDL2.Func(
       [PersonId2, IDL2.Text, IDL2.Text, ExternalBlob3],
       [Photo2],
@@ -35235,12 +35716,28 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [IDL2.Opt(RelationshipRequest2)],
       []
     ),
+    "approveStory": IDL2.Func([StoryId2], [IDL2.Opt(Story2)], []),
     "archiveProfile": IDL2.Func([PersonId2], [Result_19], []),
     "assignCallerUserRole": IDL2.Func([IDL2.Principal, UserRole2], [], []),
     "bindAuthMethod": IDL2.Func([AuthMethod2], [Result_172], []),
     "correctRelationshipType": IDL2.Func(
       [IDL2.Nat, RelationshipType2],
       [Result_162],
+      []
+    ),
+    "createCanonicalMystery": IDL2.Func(
+      [
+        IDL2.Text,
+        IDL2.Text,
+        IDL2.Vec(IDL2.Text),
+        IDL2.Opt(IDL2.Text),
+        IDL2.Vec(IDL2.Text),
+        IDL2.Vec(IDL2.Text),
+        IDL2.Vec(IDL2.Nat),
+        IDL2.Vec(IDL2.Nat),
+        MysteryStatus2
+      ],
+      [Mystery2],
       []
     ),
     "createMyself": IDL2.Func([IDL2.Text], [Result_152], []),
@@ -35279,6 +35776,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [IDL2.Vec(ArchiveItem2)],
       ["query"]
     ),
+    "listApprovedStories": IDL2.Func([], [IDL2.Vec(Story2)], ["query"]),
     "listArchivedProfileIds": IDL2.Func([], [IDL2.Vec(PersonId2)], ["query"]),
     "listArchivedProfiles": IDL2.Func([], [IDL2.Vec(PersonProfile2)], ["query"]),
     "listAuditHistory": IDL2.Func([], [IDL2.Vec(AuditEntry2)], ["query"]),
@@ -35297,8 +35795,15 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [IDL2.Vec(StewardIdentity2)],
       ["query"]
     ),
+    "listMysteries": IDL2.Func([], [IDL2.Vec(Mystery2)], ["query"]),
     "listNotifications": IDL2.Func([], [IDL2.Vec(Notification2)], ["query"]),
     "listPendingArchiveItems": IDL2.Func([], [IDL2.Vec(ArchiveItem2)], ["query"]),
+    "listPendingMysteryContributions": IDL2.Func(
+      [],
+      [IDL2.Vec(MysteryContribution2)],
+      ["query"]
+    ),
+    "listPendingStories": IDL2.Func([], [IDL2.Vec(Story2)], ["query"]),
     "listPersonRelationships": IDL2.Func(
       [PersonId2],
       [IDL2.Vec(Relationship2)],
@@ -35323,6 +35828,12 @@ const idlFactory = ({ IDL: IDL2 }) => {
     ),
     "listStewards": IDL2.Func([], [IDL2.Vec(StewardRecord2)], ["query"]),
     "listSuccessors": IDL2.Func([], [IDL2.Vec(SuccessorDesignation2)], ["query"]),
+    "listTimelineEvents": IDL2.Func([], [IDL2.Vec(TimelineEvent2)], ["query"]),
+    "markMysteryResolved": IDL2.Func(
+      [MysteryId2, IDL2.Text, IDL2.Vec(IDL2.Text)],
+      [IDL2.Opt(Mystery2)],
+      []
+    ),
     "markNotificationRead": IDL2.Func(
       [NotificationId2],
       [IDL2.Opt(Notification2)],
@@ -35349,6 +35860,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [IDL2.Opt(RelationshipRequest2)],
       []
     ),
+    "rejectStory": IDL2.Func([StoryId2], [IDL2.Opt(Story2)], []),
     "removeDuplicateProfile": IDL2.Func([PersonId2], [Result_62], []),
     "removePhoto": IDL2.Func([PersonId2, PhotoId2], [IDL2.Bool], []),
     "removeRelationship": IDL2.Func([IDL2.Nat], [Result_52], []),
@@ -35361,6 +35873,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
       []
     ),
     "restoreProfile": IDL2.Func([PersonId2], [Result_19], []),
+    "reviewMysteryContribution": IDL2.Func(
+      [MysteryContributionId2, IDL2.Bool],
+      [IDL2.Opt(MysteryContribution2)],
+      []
+    ),
     "schema": IDL2.Func([], [IDL2.Text], ["query"]),
     "searchPossibleMatches": IDL2.Func(
       [IDL2.Text],
@@ -35385,9 +35902,61 @@ const idlFactory = ({ IDL: IDL2 }) => {
         IDL2.Vec(IDL2.Text),
         IDL2.Opt(IDL2.Text),
         SourceStatus2,
-        PrivacyLevel2
+        PrivacyLevel2,
+        ArchiveItemClassification2,
+        IDL2.Opt(OralHistorySpeaker2)
       ],
       [ArchiveItem2],
+      []
+    ),
+    "submitMysteryContribution": IDL2.Func(
+      [MysteryId2, MysteryContributionType2, IDL2.Text],
+      [MysteryContribution2],
+      []
+    ),
+    "submitStory": IDL2.Func(
+      [
+        IDL2.Text,
+        IDL2.Text,
+        IDL2.Vec(IDL2.Text),
+        IDL2.Opt(IDL2.Text),
+        IDL2.Opt(IDL2.Nat),
+        IDL2.Opt(IDL2.Text),
+        EvidenceStatus2,
+        IDL2.Vec(IDL2.Nat)
+      ],
+      [Story2],
+      []
+    ),
+    "updateCanonicalMystery": IDL2.Func(
+      [
+        MysteryId2,
+        IDL2.Text,
+        IDL2.Text,
+        IDL2.Vec(IDL2.Text),
+        IDL2.Opt(IDL2.Text),
+        IDL2.Vec(IDL2.Text),
+        IDL2.Vec(IDL2.Text),
+        IDL2.Vec(IDL2.Nat),
+        IDL2.Vec(IDL2.Nat),
+        MysteryStatus2
+      ],
+      [IDL2.Opt(Mystery2)],
+      []
+    ),
+    "updateCanonicalStory": IDL2.Func(
+      [
+        StoryId2,
+        IDL2.Text,
+        IDL2.Text,
+        IDL2.Vec(IDL2.Text),
+        IDL2.Opt(IDL2.Text),
+        IDL2.Opt(IDL2.Nat),
+        IDL2.Opt(IDL2.Text),
+        EvidenceStatus2,
+        IDL2.Vec(IDL2.Nat)
+      ],
+      [IDL2.Opt(Story2)],
       []
     ),
     "updateOwnProfile": IDL2.Func([PersonId2, ProfileEdits2], [Result2], [])
@@ -35404,6 +35973,11 @@ function candid_none() {
 function record_opt_to_undefined(arg) {
   return arg == null ? void 0 : arg;
 }
+var ArchiveItemClassification = /* @__PURE__ */ ((ArchiveItemClassification2) => {
+  ArchiveItemClassification2["OralHistory"] = "OralHistory";
+  ArchiveItemClassification2["Standard"] = "Standard";
+  return ArchiveItemClassification2;
+})(ArchiveItemClassification || {});
 var ArchiveItemStatus = /* @__PURE__ */ ((ArchiveItemStatus2) => {
   ArchiveItemStatus2["Approved"] = "Approved";
   ArchiveItemStatus2["Rejected"] = "Rejected";
@@ -35462,6 +36036,13 @@ var EditError = /* @__PURE__ */ ((EditError2) => {
   EditError2["DeceasedProfile"] = "DeceasedProfile";
   return EditError2;
 })(EditError || {});
+var EvidenceStatus = /* @__PURE__ */ ((EvidenceStatus2) => {
+  EvidenceStatus2["Unresolved"] = "Unresolved";
+  EvidenceStatus2["Documented"] = "Documented";
+  EvidenceStatus2["FamilyHistory"] = "FamilyHistory";
+  EvidenceStatus2["PersonalMemory"] = "PersonalMemory";
+  return EvidenceStatus2;
+})(EvidenceStatus || {});
 var LivingStatus = /* @__PURE__ */ ((LivingStatus2) => {
   LivingStatus2["Living"] = "Living";
   LivingStatus2["Deceased"] = "Deceased";
@@ -35472,6 +36053,20 @@ var MergeConflictStatus = /* @__PURE__ */ ((MergeConflictStatus2) => {
   MergeConflictStatus2["Pending"] = "Pending";
   return MergeConflictStatus2;
 })(MergeConflictStatus || {});
+var MysteryContributionType = /* @__PURE__ */ ((MysteryContributionType2) => {
+  MysteryContributionType2["Lead"] = "Lead";
+  MysteryContributionType2["Note"] = "Note";
+  MysteryContributionType2["Memory"] = "Memory";
+  MysteryContributionType2["Source"] = "Source";
+  return MysteryContributionType2;
+})(MysteryContributionType || {});
+var MysteryStatus = /* @__PURE__ */ ((MysteryStatus2) => {
+  MysteryStatus2["Researching"] = "Researching";
+  MysteryStatus2["Open"] = "Open";
+  MysteryStatus2["PartiallyResolved"] = "PartiallyResolved";
+  MysteryStatus2["Resolved"] = "Resolved";
+  return MysteryStatus2;
+})(MysteryStatus || {});
 var NotificationType = /* @__PURE__ */ ((NotificationType2) => {
   NotificationType2["RelationshipRequested"] = "RelationshipRequested";
   NotificationType2["RelationshipReviewed"] = "RelationshipReviewed";
@@ -35516,6 +36111,20 @@ var SuccessorStatus = /* @__PURE__ */ ((SuccessorStatus2) => {
   SuccessorStatus2["Designated"] = "Designated";
   return SuccessorStatus2;
 })(SuccessorStatus || {});
+var TimelineEventType = /* @__PURE__ */ ((TimelineEventType2) => {
+  TimelineEventType2["MilitaryService"] = "MilitaryService";
+  TimelineEventType2["Story"] = "Story";
+  TimelineEventType2["Birth"] = "Birth";
+  TimelineEventType2["FamilyEvent"] = "FamilyEvent";
+  TimelineEventType2["Migration"] = "Migration";
+  TimelineEventType2["Mystery"] = "Mystery";
+  TimelineEventType2["Death"] = "Death";
+  TimelineEventType2["PhotoDocument"] = "PhotoDocument";
+  TimelineEventType2["Marriage"] = "Marriage";
+  TimelineEventType2["CensusDocument"] = "CensusDocument";
+  TimelineEventType2["Location"] = "Location";
+  return TimelineEventType2;
+})(TimelineEventType || {});
 class Backend {
   constructor(actor, _uploadFile, _downloadFile, processError2) {
     this.actor = actor;
@@ -35663,186 +36272,228 @@ class Backend {
       return from_candid_Result_8_n12(this._uploadFile, this._downloadFile, result);
     }
   }
-  async addPhoto(arg0, arg1, arg2, arg3) {
+  async addCanonicalStory(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
     if (this.processError) {
       try {
-        const result = await this.actor.addPhoto(arg0, arg1, arg2, await to_candid_ExternalBlob_n20(this._uploadFile, this._downloadFile, arg3));
-        return from_candid_Photo_n21(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.addCanonicalStory(arg0, arg1, arg2, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg3), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg5), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg6), arg7);
+        return from_candid_Story_n24(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.addPhoto(arg0, arg1, arg2, await to_candid_ExternalBlob_n20(this._uploadFile, this._downloadFile, arg3));
-      return from_candid_Photo_n21(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.addCanonicalStory(arg0, arg1, arg2, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg3), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg5), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg6), arg7);
+      return from_candid_Story_n24(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async addPhoto(arg0, arg1, arg2, arg3) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.addPhoto(arg0, arg1, arg2, await to_candid_ExternalBlob_n31(this._uploadFile, this._downloadFile, arg3));
+        return from_candid_Photo_n32(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.addPhoto(arg0, arg1, arg2, await to_candid_ExternalBlob_n31(this._uploadFile, this._downloadFile, arg3));
+      return from_candid_Photo_n32(this._uploadFile, this._downloadFile, result);
     }
   }
   async addRelationship(arg0, arg1, arg2) {
     if (this.processError) {
       try {
-        const result = await this.actor.addRelationship(arg0, arg1, to_candid_RelationshipType_n24(this._uploadFile, this._downloadFile, arg2));
-        return from_candid_Result_16_n26(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.addRelationship(arg0, arg1, to_candid_RelationshipType_n35(this._uploadFile, this._downloadFile, arg2));
+        return from_candid_Result_16_n37(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.addRelationship(arg0, arg1, to_candid_RelationshipType_n24(this._uploadFile, this._downloadFile, arg2));
-      return from_candid_Result_16_n26(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.addRelationship(arg0, arg1, to_candid_RelationshipType_n35(this._uploadFile, this._downloadFile, arg2));
+      return from_candid_Result_16_n37(this._uploadFile, this._downloadFile, result);
     }
   }
   async approveArchiveItem(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.approveArchiveItem(arg0);
-        return from_candid_opt_n36(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n47(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.approveArchiveItem(arg0);
-      return from_candid_opt_n36(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n47(this._uploadFile, this._downloadFile, result);
     }
   }
   async approveProfileClaim(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.approveProfileClaim(arg0);
-        return from_candid_opt_n48(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.approveProfileClaim(arg0);
-      return from_candid_opt_n48(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
     }
   }
   async approveProfileRemoval(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.approveProfileRemoval(arg0);
-        return from_candid_opt_n54(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n70(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.approveProfileRemoval(arg0);
-      return from_candid_opt_n54(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n70(this._uploadFile, this._downloadFile, result);
     }
   }
   async approveRelationshipRequest(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.approveRelationshipRequest(arg0);
-        return from_candid_opt_n58(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n74(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.approveRelationshipRequest(arg0);
-      return from_candid_opt_n58(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n74(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async approveStory(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.approveStory(arg0);
+        return from_candid_opt_n78(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.approveStory(arg0);
+      return from_candid_opt_n78(this._uploadFile, this._downloadFile, result);
     }
   }
   async archiveProfile(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.archiveProfile(arg0);
-        return from_candid_Result_1_n62(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_1_n79(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.archiveProfile(arg0);
-      return from_candid_Result_1_n62(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_1_n79(this._uploadFile, this._downloadFile, result);
     }
   }
   async assignCallerUserRole(arg0, arg1) {
     if (this.processError) {
       try {
-        const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n66(this._uploadFile, this._downloadFile, arg1));
+        const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n83(this._uploadFile, this._downloadFile, arg1));
         return result;
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n66(this._uploadFile, this._downloadFile, arg1));
+      const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n83(this._uploadFile, this._downloadFile, arg1));
       return result;
     }
   }
   async bindAuthMethod(arg0) {
     if (this.processError) {
       try {
-        const result = await this.actor.bindAuthMethod(to_candid_AuthMethod_n68(this._uploadFile, this._downloadFile, arg0));
-        return from_candid_Result_17_n70(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.bindAuthMethod(to_candid_AuthMethod_n85(this._uploadFile, this._downloadFile, arg0));
+        return from_candid_Result_17_n87(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.bindAuthMethod(to_candid_AuthMethod_n68(this._uploadFile, this._downloadFile, arg0));
-      return from_candid_Result_17_n70(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.bindAuthMethod(to_candid_AuthMethod_n85(this._uploadFile, this._downloadFile, arg0));
+      return from_candid_Result_17_n87(this._uploadFile, this._downloadFile, result);
     }
   }
   async correctRelationshipType(arg0, arg1) {
     if (this.processError) {
       try {
-        const result = await this.actor.correctRelationshipType(arg0, to_candid_RelationshipType_n24(this._uploadFile, this._downloadFile, arg1));
-        return from_candid_Result_16_n26(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.correctRelationshipType(arg0, to_candid_RelationshipType_n35(this._uploadFile, this._downloadFile, arg1));
+        return from_candid_Result_16_n37(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.correctRelationshipType(arg0, to_candid_RelationshipType_n24(this._uploadFile, this._downloadFile, arg1));
-      return from_candid_Result_16_n26(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.correctRelationshipType(arg0, to_candid_RelationshipType_n35(this._uploadFile, this._downloadFile, arg1));
+      return from_candid_Result_16_n37(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async createCanonicalMystery(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.createCanonicalMystery(arg0, arg1, arg2, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg3), arg4, arg5, arg6, arg7, to_candid_MysteryStatus_n96(this._uploadFile, this._downloadFile, arg8));
+        return from_candid_Mystery_n98(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.createCanonicalMystery(arg0, arg1, arg2, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg3), arg4, arg5, arg6, arg7, to_candid_MysteryStatus_n96(this._uploadFile, this._downloadFile, arg8));
+      return from_candid_Mystery_n98(this._uploadFile, this._downloadFile, result);
     }
   }
   async createMyself(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.createMyself(arg0);
-        return from_candid_Result_15_n79(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_15_n103(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.createMyself(arg0);
-      return from_candid_Result_15_n79(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_15_n103(this._uploadFile, this._downloadFile, result);
     }
   }
   async designateSuccessor(arg0, arg1) {
     if (this.processError) {
       try {
         const result = await this.actor.designateSuccessor(arg0, arg1);
-        return from_candid_Result_14_n90(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_14_n113(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.designateSuccessor(arg0, arg1);
-      return from_candid_Result_14_n90(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_14_n113(this._uploadFile, this._downloadFile, result);
     }
   }
   async execute(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.execute(arg0);
-        return from_candid_Result__1_n96(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result__1_n119(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.execute(arg0);
-      return from_candid_Result__1_n96(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result__1_n119(this._uploadFile, this._downloadFile, result);
     }
   }
   async getApiDoc() {
@@ -35863,140 +36514,140 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.getCallerUserRole();
-        return from_candid_UserRole_n104(this._uploadFile, this._downloadFile, result);
+        return from_candid_UserRole_n127(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getCallerUserRole();
-      return from_candid_UserRole_n104(this._uploadFile, this._downloadFile, result);
+      return from_candid_UserRole_n127(this._uploadFile, this._downloadFile, result);
     }
   }
   async getMyAccountId() {
     if (this.processError) {
       try {
         const result = await this.actor.getMyAccountId();
-        return from_candid_Result_13_n106(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_13_n129(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getMyAccountId();
-      return from_candid_Result_13_n106(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_13_n129(this._uploadFile, this._downloadFile, result);
     }
   }
   async getMyAuthMethods() {
     if (this.processError) {
       try {
         const result = await this.actor.getMyAuthMethods();
-        return from_candid_Result_12_n108(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_12_n131(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getMyAuthMethods();
-      return from_candid_Result_12_n108(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_12_n131(this._uploadFile, this._downloadFile, result);
     }
   }
   async getMyProfile() {
     if (this.processError) {
       try {
         const result = await this.actor.getMyProfile();
-        return from_candid_opt_n110(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n133(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getMyProfile();
-      return from_candid_opt_n110(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n133(this._uploadFile, this._downloadFile, result);
     }
   }
   async getMyProfileClaim(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.getMyProfileClaim(arg0);
-        return from_candid_opt_n48(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getMyProfileClaim(arg0);
-      return from_candid_opt_n48(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
     }
   }
   async getMyRelationshipRequests() {
     if (this.processError) {
       try {
         const result = await this.actor.getMyRelationshipRequests();
-        return from_candid_vec_n111(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n134(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getMyRelationshipRequests();
-      return from_candid_vec_n111(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n134(this._uploadFile, this._downloadFile, result);
     }
   }
   async getPersonProfile(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.getPersonProfile(arg0);
-        return from_candid_opt_n110(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n133(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getPersonProfile(arg0);
-      return from_candid_opt_n110(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n133(this._uploadFile, this._downloadFile, result);
     }
   }
   async getProfilePhoto(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.getProfilePhoto(arg0);
-        return from_candid_opt_n112(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n135(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getProfilePhoto(arg0);
-      return from_candid_opt_n112(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n135(this._uploadFile, this._downloadFile, result);
     }
   }
   async getRelationshipRequest(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.getRelationshipRequest(arg0);
-        return from_candid_opt_n58(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n74(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getRelationshipRequest(arg0);
-      return from_candid_opt_n58(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n74(this._uploadFile, this._downloadFile, result);
     }
   }
   async getSingleStewardWarning() {
     if (this.processError) {
       try {
         const result = await this.actor.getSingleStewardWarning();
-        return from_candid_opt_n45(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n26(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getSingleStewardWarning();
-      return from_candid_opt_n45(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n26(this._uploadFile, this._downloadFile, result);
     }
   }
   async isCallerAdmin() {
@@ -36017,14 +36668,28 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.listApprovedArchiveItems();
-        return from_candid_vec_n113(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n136(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listApprovedArchiveItems();
-      return from_candid_vec_n113(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n136(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listApprovedStories() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listApprovedStories();
+        return from_candid_vec_n137(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listApprovedStories();
+      return from_candid_vec_n137(this._uploadFile, this._downloadFile, result);
     }
   }
   async listArchivedProfileIds() {
@@ -36045,56 +36710,56 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.listArchivedProfiles();
-        return from_candid_vec_n114(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n138(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listArchivedProfiles();
-      return from_candid_vec_n114(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n138(this._uploadFile, this._downloadFile, result);
     }
   }
   async listAuditHistory() {
     if (this.processError) {
       try {
         const result = await this.actor.listAuditHistory();
-        return from_candid_vec_n115(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n139(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listAuditHistory();
-      return from_candid_vec_n115(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n139(this._uploadFile, this._downloadFile, result);
     }
   }
   async listConfirmedRelationships() {
     if (this.processError) {
       try {
         const result = await this.actor.listConfirmedRelationships();
-        return from_candid_vec_n120(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n144(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listConfirmedRelationships();
-      return from_candid_vec_n120(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n144(this._uploadFile, this._downloadFile, result);
     }
   }
   async listDuplicateCandidates() {
     if (this.processError) {
       try {
         const result = await this.actor.listDuplicateCandidates();
-        return from_candid_vec_n121(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n145(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listDuplicateCandidates();
-      return from_candid_vec_n121(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n145(this._uploadFile, this._downloadFile, result);
     }
   }
   async listEligibleStewardCandidates() {
@@ -36111,102 +36776,144 @@ class Backend {
       return result;
     }
   }
+  async listMysteries() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listMysteries();
+        return from_candid_vec_n150(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listMysteries();
+      return from_candid_vec_n150(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async listNotifications() {
     if (this.processError) {
       try {
         const result = await this.actor.listNotifications();
-        return from_candid_vec_n126(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n151(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listNotifications();
-      return from_candid_vec_n126(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n151(this._uploadFile, this._downloadFile, result);
     }
   }
   async listPendingArchiveItems() {
     if (this.processError) {
       try {
         const result = await this.actor.listPendingArchiveItems();
-        return from_candid_vec_n113(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n136(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listPendingArchiveItems();
-      return from_candid_vec_n113(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n136(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listPendingMysteryContributions() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listPendingMysteryContributions();
+        return from_candid_vec_n156(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listPendingMysteryContributions();
+      return from_candid_vec_n156(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listPendingStories() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listPendingStories();
+        return from_candid_vec_n137(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listPendingStories();
+      return from_candid_vec_n137(this._uploadFile, this._downloadFile, result);
     }
   }
   async listPersonRelationships(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.listPersonRelationships(arg0);
-        return from_candid_vec_n120(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n144(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listPersonRelationships(arg0);
-      return from_candid_vec_n120(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n144(this._uploadFile, this._downloadFile, result);
     }
   }
   async listPhotos(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.listPhotos(arg0);
-        return from_candid_vec_n131(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n162(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listPhotos(arg0);
-      return from_candid_vec_n131(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n162(this._uploadFile, this._downloadFile, result);
     }
   }
   async listProfileClaims() {
     if (this.processError) {
       try {
         const result = await this.actor.listProfileClaims();
-        return from_candid_vec_n132(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n163(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listProfileClaims();
-      return from_candid_vec_n132(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n163(this._uploadFile, this._downloadFile, result);
     }
   }
   async listProfileRemovalRequests() {
     if (this.processError) {
       try {
         const result = await this.actor.listProfileRemovalRequests();
-        return from_candid_vec_n133(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n164(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listProfileRemovalRequests();
-      return from_candid_vec_n133(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n164(this._uploadFile, this._downloadFile, result);
     }
   }
   async listRelationshipRequests() {
     if (this.processError) {
       try {
         const result = await this.actor.listRelationshipRequests();
-        return from_candid_vec_n111(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n134(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listRelationshipRequests();
-      return from_candid_vec_n111(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n134(this._uploadFile, this._downloadFile, result);
     }
   }
   async listStewardIdentities() {
@@ -36227,84 +36934,112 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.listStewards();
-        return from_candid_vec_n134(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n165(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listStewards();
-      return from_candid_vec_n134(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n165(this._uploadFile, this._downloadFile, result);
     }
   }
   async listSuccessors() {
     if (this.processError) {
       try {
         const result = await this.actor.listSuccessors();
-        return from_candid_vec_n135(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n166(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listSuccessors();
-      return from_candid_vec_n135(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n166(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listTimelineEvents() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listTimelineEvents();
+        return from_candid_vec_n167(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listTimelineEvents();
+      return from_candid_vec_n167(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async markMysteryResolved(arg0, arg1, arg2) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.markMysteryResolved(arg0, arg1, arg2);
+        return from_candid_opt_n174(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.markMysteryResolved(arg0, arg1, arg2);
+      return from_candid_opt_n174(this._uploadFile, this._downloadFile, result);
     }
   }
   async markNotificationRead(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.markNotificationRead(arg0);
-        return from_candid_opt_n136(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n175(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.markNotificationRead(arg0);
-      return from_candid_opt_n136(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n175(this._uploadFile, this._downloadFile, result);
     }
   }
   async mergeProfiles(arg0, arg1) {
     if (this.processError) {
       try {
         const result = await this.actor.mergeProfiles(arg0, arg1);
-        return from_candid_Result_11_n137(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_11_n176(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.mergeProfiles(arg0, arg1);
-      return from_candid_Result_11_n137(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_11_n176(this._uploadFile, this._downloadFile, result);
     }
   }
   async notDuplicate(arg0, arg1) {
     if (this.processError) {
       try {
         const result = await this.actor.notDuplicate(arg0, arg1);
-        return from_candid_Result_10_n148(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_10_n187(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.notDuplicate(arg0, arg1);
-      return from_candid_Result_10_n148(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_10_n187(this._uploadFile, this._downloadFile, result);
     }
   }
   async permanentlyDeleteProfile(arg0, arg1) {
     if (this.processError) {
       try {
         const result = await this.actor.permanentlyDeleteProfile(arg0, arg1);
-        return from_candid_Result_9_n150(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_9_n189(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.permanentlyDeleteProfile(arg0, arg1);
-      return from_candid_Result_9_n150(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_9_n189(this._uploadFile, this._downloadFile, result);
     }
   }
   async promoteToSteward(arg0) {
@@ -36324,85 +37059,99 @@ class Backend {
   async proposeRelationship(arg0, arg1, arg2) {
     if (this.processError) {
       try {
-        const result = await this.actor.proposeRelationship(arg0, arg1, to_candid_RelationshipType_n24(this._uploadFile, this._downloadFile, arg2));
-        return from_candid_Result_7_n154(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.proposeRelationship(arg0, arg1, to_candid_RelationshipType_n35(this._uploadFile, this._downloadFile, arg2));
+        return from_candid_Result_7_n193(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.proposeRelationship(arg0, arg1, to_candid_RelationshipType_n24(this._uploadFile, this._downloadFile, arg2));
-      return from_candid_Result_7_n154(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.proposeRelationship(arg0, arg1, to_candid_RelationshipType_n35(this._uploadFile, this._downloadFile, arg2));
+      return from_candid_Result_7_n193(this._uploadFile, this._downloadFile, result);
     }
   }
   async rejectArchiveItem(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.rejectArchiveItem(arg0);
-        return from_candid_opt_n36(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n47(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.rejectArchiveItem(arg0);
-      return from_candid_opt_n36(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n47(this._uploadFile, this._downloadFile, result);
     }
   }
   async rejectProfileClaim(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.rejectProfileClaim(arg0);
-        return from_candid_opt_n48(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.rejectProfileClaim(arg0);
-      return from_candid_opt_n48(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
     }
   }
   async rejectProfileRemoval(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.rejectProfileRemoval(arg0);
-        return from_candid_opt_n54(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n70(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.rejectProfileRemoval(arg0);
-      return from_candid_opt_n54(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n70(this._uploadFile, this._downloadFile, result);
     }
   }
   async rejectRelationshipRequest(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.rejectRelationshipRequest(arg0);
-        return from_candid_opt_n58(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n74(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.rejectRelationshipRequest(arg0);
-      return from_candid_opt_n58(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n74(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async rejectStory(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.rejectStory(arg0);
+        return from_candid_opt_n78(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.rejectStory(arg0);
+      return from_candid_opt_n78(this._uploadFile, this._downloadFile, result);
     }
   }
   async removeDuplicateProfile(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.removeDuplicateProfile(arg0);
-        return from_candid_Result_6_n158(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_6_n197(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.removeDuplicateProfile(arg0);
-      return from_candid_Result_6_n158(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_6_n197(this._uploadFile, this._downloadFile, result);
     }
   }
   async removePhoto(arg0, arg1) {
@@ -36423,84 +37172,98 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.removeRelationship(arg0);
-        return from_candid_Result_5_n162(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_5_n201(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.removeRelationship(arg0);
-      return from_candid_Result_5_n162(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_5_n201(this._uploadFile, this._downloadFile, result);
     }
   }
   async removeSteward(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.removeSteward(arg0);
-        return from_candid_Result_4_n164(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_4_n203(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.removeSteward(arg0);
-      return from_candid_Result_4_n164(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_4_n203(this._uploadFile, this._downloadFile, result);
     }
   }
   async requestProfileClaim(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.requestProfileClaim(arg0);
-        return from_candid_Result_3_n166(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_3_n205(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.requestProfileClaim(arg0);
-      return from_candid_Result_3_n166(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_3_n205(this._uploadFile, this._downloadFile, result);
     }
   }
   async requestProfileRemoval(arg0, arg1) {
     if (this.processError) {
       try {
         const result = await this.actor.requestProfileRemoval(arg0, arg1);
-        return from_candid_Result_2_n170(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_2_n209(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.requestProfileRemoval(arg0, arg1);
-      return from_candid_Result_2_n170(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_2_n209(this._uploadFile, this._downloadFile, result);
     }
   }
   async resolveMergeConflict(arg0, arg1) {
     if (this.processError) {
       try {
         const result = await this.actor.resolveMergeConflict(arg0, arg1);
-        return from_candid_opt_n174(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n213(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.resolveMergeConflict(arg0, arg1);
-      return from_candid_opt_n174(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n213(this._uploadFile, this._downloadFile, result);
     }
   }
   async restoreProfile(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.restoreProfile(arg0);
-        return from_candid_Result_1_n62(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_1_n79(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.restoreProfile(arg0);
-      return from_candid_Result_1_n62(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_1_n79(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async reviewMysteryContribution(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.reviewMysteryContribution(arg0, arg1);
+        return from_candid_opt_n214(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.reviewMysteryContribution(arg0, arg1);
+      return from_candid_opt_n214(this._uploadFile, this._downloadFile, result);
     }
   }
   async schema() {
@@ -36535,247 +37298,327 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.setProfilePhoto(arg0, arg1);
-        return from_candid_opt_n112(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n135(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.setProfilePhoto(arg0, arg1);
-      return from_candid_opt_n112(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n135(this._uploadFile, this._downloadFile, result);
     }
   }
   async setRelationshipRequestPending(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.setRelationshipRequestPending(arg0);
-        return from_candid_opt_n58(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n74(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.setRelationshipRequestPending(arg0);
-      return from_candid_opt_n58(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n74(this._uploadFile, this._downloadFile, result);
     }
   }
-  async submitArchiveItem(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10) {
+  async submitArchiveItem(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12) {
     if (this.processError) {
       try {
-        const result = await this.actor.submitArchiveItem(arg0, arg1, to_candid_ArchiveItemType_n175(this._uploadFile, this._downloadFile, arg2), await to_candid_ExternalBlob_n20(this._uploadFile, this._downloadFile, arg3), arg4, to_candid_opt_n177(this._uploadFile, this._downloadFile, arg5), arg6, arg7, to_candid_opt_n178(this._uploadFile, this._downloadFile, arg8), to_candid_SourceStatus_n179(this._uploadFile, this._downloadFile, arg9), to_candid_PrivacyLevel_n181(this._uploadFile, this._downloadFile, arg10));
-        return from_candid_ArchiveItem_n37(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.submitArchiveItem(arg0, arg1, to_candid_ArchiveItemType_n215(this._uploadFile, this._downloadFile, arg2), await to_candid_ExternalBlob_n31(this._uploadFile, this._downloadFile, arg3), arg4, to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), arg6, arg7, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg8), to_candid_SourceStatus_n217(this._uploadFile, this._downloadFile, arg9), to_candid_PrivacyLevel_n219(this._uploadFile, this._downloadFile, arg10), to_candid_ArchiveItemClassification_n221(this._uploadFile, this._downloadFile, arg11), to_candid_opt_n223(this._uploadFile, this._downloadFile, arg12));
+        return from_candid_ArchiveItem_n48(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.submitArchiveItem(arg0, arg1, to_candid_ArchiveItemType_n175(this._uploadFile, this._downloadFile, arg2), await to_candid_ExternalBlob_n20(this._uploadFile, this._downloadFile, arg3), arg4, to_candid_opt_n177(this._uploadFile, this._downloadFile, arg5), arg6, arg7, to_candid_opt_n178(this._uploadFile, this._downloadFile, arg8), to_candid_SourceStatus_n179(this._uploadFile, this._downloadFile, arg9), to_candid_PrivacyLevel_n181(this._uploadFile, this._downloadFile, arg10));
-      return from_candid_ArchiveItem_n37(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.submitArchiveItem(arg0, arg1, to_candid_ArchiveItemType_n215(this._uploadFile, this._downloadFile, arg2), await to_candid_ExternalBlob_n31(this._uploadFile, this._downloadFile, arg3), arg4, to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), arg6, arg7, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg8), to_candid_SourceStatus_n217(this._uploadFile, this._downloadFile, arg9), to_candid_PrivacyLevel_n219(this._uploadFile, this._downloadFile, arg10), to_candid_ArchiveItemClassification_n221(this._uploadFile, this._downloadFile, arg11), to_candid_opt_n223(this._uploadFile, this._downloadFile, arg12));
+      return from_candid_ArchiveItem_n48(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async submitMysteryContribution(arg0, arg1, arg2) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.submitMysteryContribution(arg0, to_candid_MysteryContributionType_n226(this._uploadFile, this._downloadFile, arg1), arg2);
+        return from_candid_MysteryContribution_n157(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.submitMysteryContribution(arg0, to_candid_MysteryContributionType_n226(this._uploadFile, this._downloadFile, arg1), arg2);
+      return from_candid_MysteryContribution_n157(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async submitStory(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.submitStory(arg0, arg1, arg2, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg3), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg5), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg6), arg7);
+        return from_candid_Story_n24(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.submitStory(arg0, arg1, arg2, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg3), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg5), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg6), arg7);
+      return from_candid_Story_n24(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async updateCanonicalMystery(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.updateCanonicalMystery(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), arg5, arg6, arg7, arg8, to_candid_MysteryStatus_n96(this._uploadFile, this._downloadFile, arg9));
+        return from_candid_opt_n174(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.updateCanonicalMystery(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), arg5, arg6, arg7, arg8, to_candid_MysteryStatus_n96(this._uploadFile, this._downloadFile, arg9));
+      return from_candid_opt_n174(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async updateCanonicalStory(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.updateCanonicalStory(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg6), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg7), arg8);
+        return from_candid_opt_n78(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.updateCanonicalStory(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg6), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg7), arg8);
+      return from_candid_opt_n78(this._uploadFile, this._downloadFile, result);
     }
   }
   async updateOwnProfile(arg0, arg1) {
     if (this.processError) {
       try {
-        const result = await this.actor.updateOwnProfile(arg0, to_candid_ProfileEdits_n183(this._uploadFile, this._downloadFile, arg1));
-        return from_candid_Result_n187(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.updateOwnProfile(arg0, to_candid_ProfileEdits_n228(this._uploadFile, this._downloadFile, arg1));
+        return from_candid_Result_n232(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.updateOwnProfile(arg0, to_candid_ProfileEdits_n183(this._uploadFile, this._downloadFile, arg1));
-      return from_candid_Result_n187(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.updateOwnProfile(arg0, to_candid_ProfileEdits_n228(this._uploadFile, this._downloadFile, arg1));
+      return from_candid_Result_n232(this._uploadFile, this._downloadFile, result);
     }
   }
 }
-function from_candid_AccountError_n77(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n78(_uploadFile, _downloadFile, value);
+function from_candid_AccountError_n94(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n95(_uploadFile, _downloadFile, value);
 }
-function from_candid_Account_n72(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n73(_uploadFile, _downloadFile, value);
+function from_candid_Account_n89(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n90(_uploadFile, _downloadFile, value);
 }
-function from_candid_ArchiveError_n64(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n65(_uploadFile, _downloadFile, value);
+function from_candid_ArchiveError_n81(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n82(_uploadFile, _downloadFile, value);
 }
-function from_candid_ArchiveItemStatus_n39(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n40(_uploadFile, _downloadFile, value);
+function from_candid_ArchiveItemClassification_n62(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n63(_uploadFile, _downloadFile, value);
 }
-function from_candid_ArchiveItemType_n43(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n44(_uploadFile, _downloadFile, value);
+function from_candid_ArchiveItemStatus_n50(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n28(_uploadFile, _downloadFile, value);
 }
-async function from_candid_ArchiveItem_n37(_uploadFile, _downloadFile, value) {
-  return await from_candid_record_n38(_uploadFile, _downloadFile, value);
+function from_candid_ArchiveItemType_n57(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n58(_uploadFile, _downloadFile, value);
 }
-function from_candid_AuditActionType_n118(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n119(_uploadFile, _downloadFile, value);
+async function from_candid_ArchiveItem_n48(_uploadFile, _downloadFile, value) {
+  return await from_candid_record_n49(_uploadFile, _downloadFile, value);
 }
-function from_candid_AuditEntry_n116(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n117(_uploadFile, _downloadFile, value);
+function from_candid_AuditActionType_n142(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n143(_uploadFile, _downloadFile, value);
 }
-function from_candid_AuthMethod_n75(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n76(_uploadFile, _downloadFile, value);
+function from_candid_AuditEntry_n140(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n141(_uploadFile, _downloadFile, value);
 }
-function from_candid_Cell_n100(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n101(_uploadFile, _downloadFile, value);
+function from_candid_AuthMethod_n92(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n93(_uploadFile, _downloadFile, value);
 }
-function from_candid_ClaimError_n168(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n169(_uploadFile, _downloadFile, value);
+function from_candid_Cell_n123(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n124(_uploadFile, _downloadFile, value);
 }
-function from_candid_ClaimStatus_n83(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n84(_uploadFile, _downloadFile, value);
+function from_candid_ClaimError_n207(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n208(_uploadFile, _downloadFile, value);
 }
-function from_candid_CreateError_n88(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n89(_uploadFile, _downloadFile, value);
+function from_candid_ClaimStatus_n107(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n108(_uploadFile, _downloadFile, value);
 }
-function from_candid_DeleteError_n152(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n153(_uploadFile, _downloadFile, value);
+function from_candid_CreateError_n111(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n112(_uploadFile, _downloadFile, value);
 }
-function from_candid_DuplicateCandidate_n124(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n125(_uploadFile, _downloadFile, value);
+function from_candid_DeleteError_n191(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n192(_uploadFile, _downloadFile, value);
 }
-function from_candid_DuplicatePair_n122(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n123(_uploadFile, _downloadFile, value);
+function from_candid_DuplicateCandidate_n148(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n149(_uploadFile, _downloadFile, value);
 }
-function from_candid_EditError_n189(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n190(_uploadFile, _downloadFile, value);
+function from_candid_DuplicatePair_n146(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n147(_uploadFile, _downloadFile, value);
+}
+function from_candid_EditError_n234(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n235(_uploadFile, _downloadFile, value);
 }
 function from_candid_Error_n10(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n11(_uploadFile, _downloadFile, value);
 }
-async function from_candid_ExternalBlob_n23(_uploadFile, _downloadFile, value) {
+function from_candid_EvidenceStatus_n29(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n30(_uploadFile, _downloadFile, value);
+}
+async function from_candid_ExternalBlob_n34(_uploadFile, _downloadFile, value) {
   return await _downloadFile(value);
 }
-function from_candid_LivingStatus_n85(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n86(_uploadFile, _downloadFile, value);
+function from_candid_LivingStatus_n109(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n110(_uploadFile, _downloadFile, value);
 }
-function from_candid_MergeConflictStatus_n144(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n145(_uploadFile, _downloadFile, value);
+function from_candid_MergeConflictStatus_n183(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n184(_uploadFile, _downloadFile, value);
 }
-function from_candid_MergeConflict_n142(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n143(_uploadFile, _downloadFile, value);
+function from_candid_MergeConflict_n181(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n182(_uploadFile, _downloadFile, value);
 }
-function from_candid_MergeError_n146(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n147(_uploadFile, _downloadFile, value);
+function from_candid_MergeError_n185(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n186(_uploadFile, _downloadFile, value);
 }
-function from_candid_MergeResult_n139(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n140(_uploadFile, _downloadFile, value);
+function from_candid_MergeResult_n178(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n179(_uploadFile, _downloadFile, value);
 }
-function from_candid_NotificationType_n129(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n130(_uploadFile, _downloadFile, value);
+function from_candid_MysteryContributionStatus_n159(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n28(_uploadFile, _downloadFile, value);
 }
-function from_candid_Notification_n127(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n128(_uploadFile, _downloadFile, value);
-}
-function from_candid_PersonProfile_n81(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n82(_uploadFile, _downloadFile, value);
-}
-async function from_candid_Photo_n21(_uploadFile, _downloadFile, value) {
-  return await from_candid_record_n22(_uploadFile, _downloadFile, value);
-}
-function from_candid_PrivacyLevel_n41(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n42(_uploadFile, _downloadFile, value);
-}
-function from_candid_ProfileClaimStatus_n51(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n40(_uploadFile, _downloadFile, value);
-}
-function from_candid_ProfileClaim_n49(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n50(_uploadFile, _downloadFile, value);
-}
-function from_candid_ProfileRemovalRequest_n55(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n56(_uploadFile, _downloadFile, value);
-}
-function from_candid_ProfileRemovalStatus_n57(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n40(_uploadFile, _downloadFile, value);
-}
-function from_candid_RelationshipAdminError_n34(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n35(_uploadFile, _downloadFile, value);
-}
-function from_candid_RelationshipError_n156(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n157(_uploadFile, _downloadFile, value);
-}
-function from_candid_RelationshipRequestStatus_n61(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n40(_uploadFile, _downloadFile, value);
-}
-function from_candid_RelationshipRequest_n59(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n60(_uploadFile, _downloadFile, value);
-}
-function from_candid_RelationshipStatus_n30(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n31(_uploadFile, _downloadFile, value);
-}
-function from_candid_RelationshipType_n32(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n33(_uploadFile, _downloadFile, value);
-}
-function from_candid_Relationship_n28(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n29(_uploadFile, _downloadFile, value);
-}
-function from_candid_RemovalError_n172(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n173(_uploadFile, _downloadFile, value);
-}
-function from_candid_RemoveError_n160(_uploadFile, _downloadFile, value) {
+function from_candid_MysteryContributionType_n160(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n161(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_10_n148(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n149(_uploadFile, _downloadFile, value);
+function from_candid_MysteryContribution_n157(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n158(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_11_n137(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n138(_uploadFile, _downloadFile, value);
+function from_candid_MysteryStatus_n100(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n101(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_12_n108(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n109(_uploadFile, _downloadFile, value);
+function from_candid_Mystery_n98(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n99(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_13_n106(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n107(_uploadFile, _downloadFile, value);
+function from_candid_NotificationType_n154(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n155(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_14_n90(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n91(_uploadFile, _downloadFile, value);
+function from_candid_Notification_n152(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n153(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_15_n79(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n80(_uploadFile, _downloadFile, value);
+function from_candid_OralHistorySpeaker_n54(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n55(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_16_n26(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n27(_uploadFile, _downloadFile, value);
+function from_candid_PersonProfile_n105(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n106(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_17_n70(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n71(_uploadFile, _downloadFile, value);
+async function from_candid_Photo_n32(_uploadFile, _downloadFile, value) {
+  return await from_candid_record_n33(_uploadFile, _downloadFile, value);
+}
+function from_candid_PrivacyLevel_n51(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n52(_uploadFile, _downloadFile, value);
+}
+function from_candid_ProfileClaimStatus_n67(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n28(_uploadFile, _downloadFile, value);
+}
+function from_candid_ProfileClaim_n65(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n66(_uploadFile, _downloadFile, value);
+}
+function from_candid_ProfileRemovalRequest_n71(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n72(_uploadFile, _downloadFile, value);
+}
+function from_candid_ProfileRemovalStatus_n73(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n28(_uploadFile, _downloadFile, value);
+}
+function from_candid_RelationshipAdminError_n45(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n46(_uploadFile, _downloadFile, value);
+}
+function from_candid_RelationshipError_n195(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n196(_uploadFile, _downloadFile, value);
+}
+function from_candid_RelationshipRequestStatus_n77(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n28(_uploadFile, _downloadFile, value);
+}
+function from_candid_RelationshipRequest_n75(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n76(_uploadFile, _downloadFile, value);
+}
+function from_candid_RelationshipStatus_n41(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n42(_uploadFile, _downloadFile, value);
+}
+function from_candid_RelationshipType_n43(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n44(_uploadFile, _downloadFile, value);
+}
+function from_candid_Relationship_n39(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n40(_uploadFile, _downloadFile, value);
+}
+function from_candid_RemovalError_n211(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n212(_uploadFile, _downloadFile, value);
+}
+function from_candid_RemoveError_n199(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n200(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_10_n187(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n188(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_11_n176(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n177(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_12_n131(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n132(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_13_n129(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n130(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_14_n113(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n114(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_15_n103(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n104(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_16_n37(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n38(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_17_n87(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n88(_uploadFile, _downloadFile, value);
 }
 function from_candid_Result_18_n8(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n9(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_1_n62(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n63(_uploadFile, _downloadFile, value);
+function from_candid_Result_1_n79(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n80(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_2_n170(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n171(_uploadFile, _downloadFile, value);
+function from_candid_Result_2_n209(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n210(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_3_n166(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n167(_uploadFile, _downloadFile, value);
+function from_candid_Result_3_n205(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n206(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_4_n164(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n165(_uploadFile, _downloadFile, value);
+function from_candid_Result_4_n203(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n204(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_5_n162(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n163(_uploadFile, _downloadFile, value);
+function from_candid_Result_5_n201(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n202(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_6_n158(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n159(_uploadFile, _downloadFile, value);
+function from_candid_Result_6_n197(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n198(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_7_n154(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n155(_uploadFile, _downloadFile, value);
+function from_candid_Result_7_n193(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n194(_uploadFile, _downloadFile, value);
 }
 function from_candid_Result_8_n12(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n13(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_9_n150(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n151(_uploadFile, _downloadFile, value);
+function from_candid_Result_9_n189(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n190(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result__1_n96(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n97(_uploadFile, _downloadFile, value);
+function from_candid_Result__1_n119(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n120(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_n187(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n188(_uploadFile, _downloadFile, value);
+function from_candid_Result_n232(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n233(_uploadFile, _downloadFile, value);
 }
-function from_candid_SourceStatus_n46(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n47(_uploadFile, _downloadFile, value);
+function from_candid_SourceStatus_n60(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n61(_uploadFile, _downloadFile, value);
 }
 function from_candid_StewardError_n18(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n19(_uploadFile, _downloadFile, value);
@@ -36786,90 +37629,163 @@ function from_candid_StewardRecord_n14(_uploadFile, _downloadFile, value) {
 function from_candid_StewardRoleStatus_n16(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n17(_uploadFile, _downloadFile, value);
 }
-function from_candid_SuccessorDesignation_n92(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n93(_uploadFile, _downloadFile, value);
+function from_candid_StoryStatus_n27(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n28(_uploadFile, _downloadFile, value);
 }
-function from_candid_SuccessorStatus_n94(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n95(_uploadFile, _downloadFile, value);
+function from_candid_Story_n24(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n25(_uploadFile, _downloadFile, value);
 }
-function from_candid_UserRole_n104(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n105(_uploadFile, _downloadFile, value);
+function from_candid_SuccessorDesignation_n115(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n116(_uploadFile, _downloadFile, value);
 }
-function from_candid_Value_n102(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n103(_uploadFile, _downloadFile, value);
+function from_candid_SuccessorStatus_n117(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n118(_uploadFile, _downloadFile, value);
+}
+function from_candid_TimelineEventType_n172(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n173(_uploadFile, _downloadFile, value);
+}
+function from_candid_TimelineEvent_n168(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n169(_uploadFile, _downloadFile, value);
+}
+function from_candid_TimelineLinkTarget_n170(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n171(_uploadFile, _downloadFile, value);
+}
+function from_candid_UserRole_n127(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n128(_uploadFile, _downloadFile, value);
+}
+function from_candid_Value_n125(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n126(_uploadFile, _downloadFile, value);
 }
 function from_candid__ImmutableObjectStorageRefillResult_n4(_uploadFile, _downloadFile, value) {
   return from_candid_record_n5(_uploadFile, _downloadFile, value);
 }
-function from_candid_opt_n110(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_PersonProfile_n81(_uploadFile, _downloadFile, value[0]);
+function from_candid_opt_n102(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : value[0];
 }
-async function from_candid_opt_n112(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : await from_candid_Photo_n21(_uploadFile, _downloadFile, value[0]);
+function from_candid_opt_n133(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_PersonProfile_n105(_uploadFile, _downloadFile, value[0]);
 }
-function from_candid_opt_n136(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_Notification_n127(_uploadFile, _downloadFile, value[0]);
+async function from_candid_opt_n135(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : await from_candid_Photo_n32(_uploadFile, _downloadFile, value[0]);
 }
 function from_candid_opt_n174(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_MergeConflict_n142(_uploadFile, _downloadFile, value[0]);
+  return value.length === 0 ? null : from_candid_Mystery_n98(_uploadFile, _downloadFile, value[0]);
 }
-async function from_candid_opt_n36(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : await from_candid_ArchiveItem_n37(_uploadFile, _downloadFile, value[0]);
+function from_candid_opt_n175(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_Notification_n152(_uploadFile, _downloadFile, value[0]);
 }
-function from_candid_opt_n45(_uploadFile, _downloadFile, value) {
+function from_candid_opt_n213(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_MergeConflict_n181(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n214(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_MysteryContribution_n157(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n26(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n48(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_ProfileClaim_n49(_uploadFile, _downloadFile, value[0]);
-}
-function from_candid_opt_n52(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : value[0];
+async function from_candid_opt_n47(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : await from_candid_ArchiveItem_n48(_uploadFile, _downloadFile, value[0]);
 }
 function from_candid_opt_n53(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_OralHistorySpeaker_n54(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n56(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n54(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_ProfileRemovalRequest_n55(_uploadFile, _downloadFile, value[0]);
-}
-function from_candid_opt_n58(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_RelationshipRequest_n59(_uploadFile, _downloadFile, value[0]);
+function from_candid_opt_n59(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : value[0];
 }
 function from_candid_opt_n6(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n64(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_ProfileClaim_n65(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n68(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n69(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : value[0];
 }
 function from_candid_opt_n7(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n87(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : value[0];
+function from_candid_opt_n70(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_ProfileRemovalRequest_n71(_uploadFile, _downloadFile, value[0]);
 }
-function from_candid_record_n101(_uploadFile, _downloadFile, value) {
+function from_candid_opt_n74(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_RelationshipRequest_n75(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n78(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_Story_n24(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_record_n106(_uploadFile, _downloadFile, value) {
   return {
-    value: from_candid_Value_n102(_uploadFile, _downloadFile, value.value),
+    occupation: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.occupation)),
+    privacySettings: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.privacySettings)),
+    nickname: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.nickname)),
+    claimedByUserId: record_opt_to_undefined(from_candid_opt_n69(_uploadFile, _downloadFile, value.claimedByUserId)),
+    birthDate: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.birthDate)),
+    birthInfo: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.birthInfo)),
+    claimStatus: from_candid_ClaimStatus_n107(_uploadFile, _downloadFile, value.claimStatus),
+    livingStatus: from_candid_LivingStatus_n109(_uploadFile, _downloadFile, value.livingStatus),
+    name: value.name,
+    longerStory: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.longerStory)),
+    personId: value.personId,
+    story: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.story)),
+    middleName: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.middleName)),
+    suffix: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.suffix)),
+    preferredName: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.preferredName)),
+    currentLocation: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.currentLocation)),
+    birthplace: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.birthplace)),
+    lastName: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.lastName)),
+    shortBio: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.shortBio)),
+    timeline: record_opt_to_undefined(from_candid_opt_n56(_uploadFile, _downloadFile, value.timeline)),
+    firstName: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.firstName))
+  };
+}
+function from_candid_record_n116(_uploadFile, _downloadFile, value) {
+  return {
+    status: from_candid_SuccessorStatus_n117(_uploadFile, _downloadFile, value.status),
+    assignedAt: value.assignedAt,
+    assignedBy: value.assignedBy,
+    personId: value.personId,
+    priority: value.priority
+  };
+}
+function from_candid_record_n120(_uploadFile, _downloadFile, value) {
+  return {
+    hasMore: value.hasMore,
+    rows: from_candid_vec_n121(_uploadFile, _downloadFile, value.rows)
+  };
+}
+function from_candid_record_n124(_uploadFile, _downloadFile, value) {
+  return {
+    value: from_candid_Value_n125(_uploadFile, _downloadFile, value.value),
     name: value.name
   };
 }
-function from_candid_record_n117(_uploadFile, _downloadFile, value) {
+function from_candid_record_n141(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
     affectedPersonIds: value.affectedPersonIds,
-    actionType: from_candid_AuditActionType_n118(_uploadFile, _downloadFile, value.actionType),
+    actionType: from_candid_AuditActionType_n142(_uploadFile, _downloadFile, value.actionType),
     summary: value.summary,
     timestamp: value.timestamp,
     actorAccountId: value.actorAccountId
   };
 }
-function from_candid_record_n123(_uploadFile, _downloadFile, value) {
+function from_candid_record_n147(_uploadFile, _downloadFile, value) {
   return {
-    candidateA: from_candid_DuplicateCandidate_n124(_uploadFile, _downloadFile, value.candidateA),
-    candidateB: from_candid_DuplicateCandidate_n124(_uploadFile, _downloadFile, value.candidateB)
+    candidateA: from_candid_DuplicateCandidate_n148(_uploadFile, _downloadFile, value.candidateA),
+    candidateB: from_candid_DuplicateCandidate_n148(_uploadFile, _downloadFile, value.candidateB)
   };
 }
-function from_candid_record_n125(_uploadFile, _downloadFile, value) {
+function from_candid_record_n149(_uploadFile, _downloadFile, value) {
   return {
-    deathDate: record_opt_to_undefined(from_candid_opt_n45(_uploadFile, _downloadFile, value.deathDate)),
-    ownerAccount: record_opt_to_undefined(from_candid_opt_n53(_uploadFile, _downloadFile, value.ownerAccount)),
-    birthDate: record_opt_to_undefined(from_candid_opt_n45(_uploadFile, _downloadFile, value.birthDate)),
+    deathDate: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.deathDate)),
+    ownerAccount: record_opt_to_undefined(from_candid_opt_n69(_uploadFile, _downloadFile, value.ownerAccount)),
+    birthDate: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.birthDate)),
     claimStatus: value.claimStatus,
     name: value.name,
     archiveLinks: value.archiveLinks,
@@ -36882,34 +37798,6 @@ function from_candid_record_n125(_uploadFile, _downloadFile, value) {
     parents: value.parents
   };
 }
-function from_candid_record_n128(_uploadFile, _downloadFile, value) {
-  return {
-    id: value.id,
-    notificationType: from_candid_NotificationType_n129(_uploadFile, _downloadFile, value.notificationType),
-    createdAt: value.createdAt,
-    read: value.read,
-    recipient: value.recipient,
-    message: value.message
-  };
-}
-function from_candid_record_n140(_uploadFile, _downloadFile, value) {
-  return {
-    archivedPersonId: value.archivedPersonId,
-    conflicts: from_candid_vec_n141(_uploadFile, _downloadFile, value.conflicts),
-    canonicalPersonId: value.canonicalPersonId
-  };
-}
-function from_candid_record_n143(_uploadFile, _downloadFile, value) {
-  return {
-    id: value.id,
-    field: value.field,
-    status: from_candid_MergeConflictStatus_n144(_uploadFile, _downloadFile, value.status),
-    alternateValue: value.alternateValue,
-    canonicalValue: value.canonicalValue,
-    resolvedAt: record_opt_to_undefined(from_candid_opt_n52(_uploadFile, _downloadFile, value.resolvedAt)),
-    resolvedBy: record_opt_to_undefined(from_candid_opt_n53(_uploadFile, _downloadFile, value.resolvedBy))
-  };
-}
 function from_candid_record_n15(_uploadFile, _downloadFile, value) {
   return {
     assignedAt: value.assignedAt,
@@ -36919,41 +37807,118 @@ function from_candid_record_n15(_uploadFile, _downloadFile, value) {
     roleStatus: from_candid_StewardRoleStatus_n16(_uploadFile, _downloadFile, value.roleStatus)
   };
 }
-async function from_candid_record_n22(_uploadFile, _downloadFile, value) {
+function from_candid_record_n153(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
-    blob: await from_candid_ExternalBlob_n23(_uploadFile, _downloadFile, value.blob),
+    notificationType: from_candid_NotificationType_n154(_uploadFile, _downloadFile, value.notificationType),
+    createdAt: value.createdAt,
+    read: value.read,
+    recipient: value.recipient,
+    message: value.message
+  };
+}
+function from_candid_record_n158(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
+    status: from_candid_MysteryContributionStatus_n159(_uploadFile, _downloadFile, value.status),
+    createdAt: value.createdAt,
+    text: value.text,
+    mysteryId: value.mysteryId,
+    reviewedAt: record_opt_to_undefined(from_candid_opt_n68(_uploadFile, _downloadFile, value.reviewedAt)),
+    reviewedBy: record_opt_to_undefined(from_candid_opt_n69(_uploadFile, _downloadFile, value.reviewedBy)),
+    contributionType: from_candid_MysteryContributionType_n160(_uploadFile, _downloadFile, value.contributionType),
+    contributor: value.contributor
+  };
+}
+function from_candid_record_n169(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
+    era: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.era)),
+    title: value.title,
+    year: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.year)),
+    linkTarget: from_candid_TimelineLinkTarget_n170(_uploadFile, _downloadFile, value.linkTarget),
+    description: value.description,
+    evidenceStatus: from_candid_EvidenceStatus_n29(_uploadFile, _downloadFile, value.evidenceStatus),
+    eventType: from_candid_TimelineEventType_n172(_uploadFile, _downloadFile, value.eventType)
+  };
+}
+function from_candid_record_n179(_uploadFile, _downloadFile, value) {
+  return {
+    archivedPersonId: value.archivedPersonId,
+    conflicts: from_candid_vec_n180(_uploadFile, _downloadFile, value.conflicts),
+    canonicalPersonId: value.canonicalPersonId
+  };
+}
+function from_candid_record_n182(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
+    field: value.field,
+    status: from_candid_MergeConflictStatus_n183(_uploadFile, _downloadFile, value.status),
+    alternateValue: value.alternateValue,
+    canonicalValue: value.canonicalValue,
+    resolvedAt: record_opt_to_undefined(from_candid_opt_n68(_uploadFile, _downloadFile, value.resolvedAt)),
+    resolvedBy: record_opt_to_undefined(from_candid_opt_n69(_uploadFile, _downloadFile, value.resolvedBy))
+  };
+}
+function from_candid_record_n25(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
+    era: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.era)),
+    status: from_candid_StoryStatus_n27(_uploadFile, _downloadFile, value.status),
+    title: value.title,
+    relatedMemberIds: value.relatedMemberIds,
+    storyText: value.storyText,
+    createdAt: value.createdAt,
+    year: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.year)),
+    relatedArchiveItemIds: value.relatedArchiveItemIds,
+    updatedAt: value.updatedAt,
+    evidenceStatus: from_candid_EvidenceStatus_n29(_uploadFile, _downloadFile, value.evidenceStatus),
+    location: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.location)),
+    contributor: value.contributor
+  };
+}
+async function from_candid_record_n33(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
+    blob: await from_candid_ExternalBlob_n34(_uploadFile, _downloadFile, value.blob),
     mimeType: value.mimeType,
     filename: value.filename,
     uploadedAt: value.uploadedAt,
     uploadedBy: value.uploadedBy
   };
 }
-function from_candid_record_n29(_uploadFile, _downloadFile, value) {
+function from_candid_record_n40(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
-    status: from_candid_RelationshipStatus_n30(_uploadFile, _downloadFile, value.status),
+    status: from_candid_RelationshipStatus_n41(_uploadFile, _downloadFile, value.status),
     fromPersonId: value.fromPersonId,
     toPersonId: value.toPersonId,
-    relationshipType: from_candid_RelationshipType_n32(_uploadFile, _downloadFile, value.relationshipType)
+    relationshipType: from_candid_RelationshipType_n43(_uploadFile, _downloadFile, value.relationshipType)
   };
 }
-async function from_candid_record_n38(_uploadFile, _downloadFile, value) {
+async function from_candid_record_n49(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
     era: value.era,
-    status: from_candid_ArchiveItemStatus_n39(_uploadFile, _downloadFile, value.status),
+    status: from_candid_ArchiveItemStatus_n50(_uploadFile, _downloadFile, value.status),
     title: value.title,
     relatedMemberIds: value.relatedMemberIds,
-    blob: await from_candid_ExternalBlob_n23(_uploadFile, _downloadFile, value.blob),
+    blob: await from_candid_ExternalBlob_n34(_uploadFile, _downloadFile, value.blob),
     createdAt: value.createdAt,
     tags: value.tags,
     year: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.year)),
     description: value.description,
-    privacyLevel: from_candid_PrivacyLevel_n41(_uploadFile, _downloadFile, value.privacyLevel),
-    itemType: from_candid_ArchiveItemType_n43(_uploadFile, _downloadFile, value.itemType),
-    relatedBranchId: record_opt_to_undefined(from_candid_opt_n45(_uploadFile, _downloadFile, value.relatedBranchId)),
-    sourceStatus: from_candid_SourceStatus_n46(_uploadFile, _downloadFile, value.sourceStatus),
+    privacyLevel: from_candid_PrivacyLevel_n51(_uploadFile, _downloadFile, value.privacyLevel),
+    primarySpeaker: record_opt_to_undefined(from_candid_opt_n53(_uploadFile, _downloadFile, value.primarySpeaker)),
+    extractedNames: record_opt_to_undefined(from_candid_opt_n56(_uploadFile, _downloadFile, value.extractedNames)),
+    itemType: from_candid_ArchiveItemType_n57(_uploadFile, _downloadFile, value.itemType),
+    aiSummary: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.aiSummary)),
+    searchableTranscript: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.searchableTranscript)),
+    relatedBranchId: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.relatedBranchId)),
+    transcript: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.transcript)),
+    chapterMarkers: record_opt_to_undefined(from_candid_opt_n59(_uploadFile, _downloadFile, value.chapterMarkers)),
+    sourceStatus: from_candid_SourceStatus_n60(_uploadFile, _downloadFile, value.sourceStatus),
+    classification: from_candid_ArchiveItemClassification_n62(_uploadFile, _downloadFile, value.classification),
     contributor: value.contributor
   };
 }
@@ -36963,129 +37928,86 @@ function from_candid_record_n5(_uploadFile, _downloadFile, value) {
     topped_up_amount: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.topped_up_amount))
   };
 }
-function from_candid_record_n50(_uploadFile, _downloadFile, value) {
+function from_candid_record_n55(_uploadFile, _downloadFile, value) {
+  return {
+    name: value.name,
+    personId: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.personId))
+  };
+}
+function from_candid_record_n66(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
     submittedDate: value.submittedDate,
-    status: from_candid_ProfileClaimStatus_n51(_uploadFile, _downloadFile, value.status),
-    reviewedDate: record_opt_to_undefined(from_candid_opt_n52(_uploadFile, _downloadFile, value.reviewedDate)),
-    reviewedBy: record_opt_to_undefined(from_candid_opt_n53(_uploadFile, _downloadFile, value.reviewedBy)),
+    status: from_candid_ProfileClaimStatus_n67(_uploadFile, _downloadFile, value.status),
+    reviewedDate: record_opt_to_undefined(from_candid_opt_n68(_uploadFile, _downloadFile, value.reviewedDate)),
+    reviewedBy: record_opt_to_undefined(from_candid_opt_n69(_uploadFile, _downloadFile, value.reviewedBy)),
     personId: value.personId,
     requestingUserId: value.requestingUserId
   };
 }
-function from_candid_record_n56(_uploadFile, _downloadFile, value) {
+function from_candid_record_n72(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
     submittedDate: value.submittedDate,
-    status: from_candid_ProfileRemovalStatus_n57(_uploadFile, _downloadFile, value.status),
-    reviewedDate: record_opt_to_undefined(from_candid_opt_n52(_uploadFile, _downloadFile, value.reviewedDate)),
-    reviewedBy: record_opt_to_undefined(from_candid_opt_n53(_uploadFile, _downloadFile, value.reviewedBy)),
+    status: from_candid_ProfileRemovalStatus_n73(_uploadFile, _downloadFile, value.status),
+    reviewedDate: record_opt_to_undefined(from_candid_opt_n68(_uploadFile, _downloadFile, value.reviewedDate)),
+    reviewedBy: record_opt_to_undefined(from_candid_opt_n69(_uploadFile, _downloadFile, value.reviewedBy)),
     personId: value.personId,
     requestingUserId: value.requestingUserId,
     reason: value.reason
   };
 }
-function from_candid_record_n60(_uploadFile, _downloadFile, value) {
+function from_candid_record_n76(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
     submittedDate: value.submittedDate,
-    status: from_candid_RelationshipRequestStatus_n61(_uploadFile, _downloadFile, value.status),
-    reviewedDate: record_opt_to_undefined(from_candid_opt_n52(_uploadFile, _downloadFile, value.reviewedDate)),
+    status: from_candid_RelationshipRequestStatus_n77(_uploadFile, _downloadFile, value.status),
+    reviewedDate: record_opt_to_undefined(from_candid_opt_n68(_uploadFile, _downloadFile, value.reviewedDate)),
     relatedPersonId: value.relatedPersonId,
     requestingPersonId: value.requestingPersonId,
-    proposedRelationship: from_candid_RelationshipType_n32(_uploadFile, _downloadFile, value.proposedRelationship),
-    reviewer: record_opt_to_undefined(from_candid_opt_n53(_uploadFile, _downloadFile, value.reviewer))
+    proposedRelationship: from_candid_RelationshipType_n43(_uploadFile, _downloadFile, value.proposedRelationship),
+    reviewer: record_opt_to_undefined(from_candid_opt_n69(_uploadFile, _downloadFile, value.reviewer))
   };
 }
-function from_candid_record_n73(_uploadFile, _downloadFile, value) {
+function from_candid_record_n90(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
     createdAt: value.createdAt,
-    authMethods: from_candid_vec_n74(_uploadFile, _downloadFile, value.authMethods)
+    authMethods: from_candid_vec_n91(_uploadFile, _downloadFile, value.authMethods)
   };
 }
-function from_candid_record_n82(_uploadFile, _downloadFile, value) {
+function from_candid_record_n99(_uploadFile, _downloadFile, value) {
   return {
-    occupation: record_opt_to_undefined(from_candid_opt_n45(_uploadFile, _downloadFile, value.occupation)),
-    privacySettings: record_opt_to_undefined(from_candid_opt_n45(_uploadFile, _downloadFile, value.privacySettings)),
-    nickname: record_opt_to_undefined(from_candid_opt_n45(_uploadFile, _downloadFile, value.nickname)),
-    claimedByUserId: record_opt_to_undefined(from_candid_opt_n53(_uploadFile, _downloadFile, value.claimedByUserId)),
-    birthDate: record_opt_to_undefined(from_candid_opt_n45(_uploadFile, _downloadFile, value.birthDate)),
-    birthInfo: record_opt_to_undefined(from_candid_opt_n45(_uploadFile, _downloadFile, value.birthInfo)),
-    claimStatus: from_candid_ClaimStatus_n83(_uploadFile, _downloadFile, value.claimStatus),
-    livingStatus: from_candid_LivingStatus_n85(_uploadFile, _downloadFile, value.livingStatus),
-    name: value.name,
-    longerStory: record_opt_to_undefined(from_candid_opt_n45(_uploadFile, _downloadFile, value.longerStory)),
-    personId: value.personId,
-    story: record_opt_to_undefined(from_candid_opt_n45(_uploadFile, _downloadFile, value.story)),
-    middleName: record_opt_to_undefined(from_candid_opt_n45(_uploadFile, _downloadFile, value.middleName)),
-    suffix: record_opt_to_undefined(from_candid_opt_n45(_uploadFile, _downloadFile, value.suffix)),
-    preferredName: record_opt_to_undefined(from_candid_opt_n45(_uploadFile, _downloadFile, value.preferredName)),
-    currentLocation: record_opt_to_undefined(from_candid_opt_n45(_uploadFile, _downloadFile, value.currentLocation)),
-    birthplace: record_opt_to_undefined(from_candid_opt_n45(_uploadFile, _downloadFile, value.birthplace)),
-    lastName: record_opt_to_undefined(from_candid_opt_n45(_uploadFile, _downloadFile, value.lastName)),
-    shortBio: record_opt_to_undefined(from_candid_opt_n45(_uploadFile, _downloadFile, value.shortBio)),
-    timeline: record_opt_to_undefined(from_candid_opt_n87(_uploadFile, _downloadFile, value.timeline)),
-    firstName: record_opt_to_undefined(from_candid_opt_n45(_uploadFile, _downloadFile, value.firstName))
+    id: value.id,
+    status: from_candid_MysteryStatus_n100(_uploadFile, _downloadFile, value.status),
+    title: value.title,
+    relatedMemberIds: value.relatedMemberIds,
+    createdAt: value.createdAt,
+    relatedArchiveItemIds: value.relatedArchiveItemIds,
+    description: value.description,
+    resolution: record_opt_to_undefined(from_candid_opt_n102(_uploadFile, _downloadFile, value.resolution)),
+    updatedAt: value.updatedAt,
+    knownFacts: value.knownFacts,
+    possibilities: value.possibilities,
+    relatedBranchId: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.relatedBranchId)),
+    relatedSourceIds: value.relatedSourceIds,
+    contributor: value.contributor
   };
 }
-function from_candid_record_n93(_uploadFile, _downloadFile, value) {
-  return {
-    status: from_candid_SuccessorStatus_n94(_uploadFile, _downloadFile, value.status),
-    assignedAt: value.assignedAt,
-    assignedBy: value.assignedBy,
-    personId: value.personId,
-    priority: value.priority
-  };
+function from_candid_variant_n101(_uploadFile, _downloadFile, value) {
+  return "Researching" in value ? "Researching" : "Open" in value ? "Open" : "PartiallyResolved" in value ? "PartiallyResolved" : "Resolved" in value ? "Resolved" : value;
 }
-function from_candid_record_n97(_uploadFile, _downloadFile, value) {
-  return {
-    hasMore: value.hasMore,
-    rows: from_candid_vec_n98(_uploadFile, _downloadFile, value.rows)
-  };
-}
-function from_candid_variant_n103(_uploadFile, _downloadFile, value) {
-  return "int" in value ? {
-    __kind__: "int",
-    int: value.int
-  } : "nat" in value ? {
-    __kind__: "nat",
-    nat: value.nat
-  } : "float" in value ? {
-    __kind__: "float",
-    float: value.float
-  } : "bool" in value ? {
-    __kind__: "bool",
-    bool: value.bool
-  } : "null" in value ? {
-    __kind__: "null",
-    null: value.null
-  } : "text" in value ? {
-    __kind__: "text",
-    text: value.text
-  } : value;
-}
-function from_candid_variant_n105(_uploadFile, _downloadFile, value) {
-  return "admin" in value ? "admin" : "user" in value ? "user" : "guest" in value ? "guest" : value;
-}
-function from_candid_variant_n107(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n104(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
-    ok: value.ok
+    ok: from_candid_PersonProfile_n105(_uploadFile, _downloadFile, value.ok)
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_AccountError_n77(_uploadFile, _downloadFile, value.err)
+    err: from_candid_CreateError_n111(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n109(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: value.ok
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_AccountError_n77(_uploadFile, _downloadFile, value.err)
-  } : value;
+function from_candid_variant_n108(_uploadFile, _downloadFile, value) {
+  return "Unclaimed" in value ? "Unclaimed" : "Claimed" in value ? "Claimed" : value;
 }
 function from_candid_variant_n11(_uploadFile, _downloadFile, value) {
   return "FrontendOriginsNotConfigured" in value ? {
@@ -37120,8 +38042,47 @@ function from_candid_variant_n11(_uploadFile, _downloadFile, value) {
     FrontendOriginMismatch: value.FrontendOriginMismatch
   } : value;
 }
-function from_candid_variant_n119(_uploadFile, _downloadFile, value) {
-  return "ProfileRemovalRequested" in value ? "ProfileRemovalRequested" : "ClaimRejected" in value ? "ClaimRejected" : "RelationshipTypeCorrected" in value ? "RelationshipTypeCorrected" : "RelationshipRequestPending" in value ? "RelationshipRequestPending" : "StewardPromoted" in value ? "StewardPromoted" : "SuccessorActivated" in value ? "SuccessorActivated" : "StewardRemoved" in value ? "StewardRemoved" : "RelationshipRequestApproved" in value ? "RelationshipRequestApproved" : "DuplicateMerged" in value ? "DuplicateMerged" : "ProfilePermanentlyDeleted" in value ? "ProfilePermanentlyDeleted" : "RelationshipRequestRejected" in value ? "RelationshipRequestRejected" : "ProfileArchived" in value ? "ProfileArchived" : "ProfileRestored" in value ? "ProfileRestored" : "RelationshipAdded" in value ? "RelationshipAdded" : "RelationshipRemoved" in value ? "RelationshipRemoved" : "ProfileRemovalReviewed" in value ? "ProfileRemovalReviewed" : "ClaimApproved" in value ? "ClaimApproved" : "SuccessorDesignated" in value ? "SuccessorDesignated" : value;
+function from_candid_variant_n110(_uploadFile, _downloadFile, value) {
+  return "Living" in value ? "Living" : "Deceased" in value ? "Deceased" : value;
+}
+function from_candid_variant_n112(_uploadFile, _downloadFile, value) {
+  return "NotSignedIn" in value ? "NotSignedIn" : value;
+}
+function from_candid_variant_n114(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: from_candid_SuccessorDesignation_n115(_uploadFile, _downloadFile, value.ok)
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_StewardError_n18(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n118(_uploadFile, _downloadFile, value) {
+  return "Activated" in value ? "Activated" : "Removed" in value ? "Removed" : "Designated" in value ? "Designated" : value;
+}
+function from_candid_variant_n126(_uploadFile, _downloadFile, value) {
+  return "int" in value ? {
+    __kind__: "int",
+    int: value.int
+  } : "nat" in value ? {
+    __kind__: "nat",
+    nat: value.nat
+  } : "float" in value ? {
+    __kind__: "float",
+    float: value.float
+  } : "bool" in value ? {
+    __kind__: "bool",
+    bool: value.bool
+  } : "null" in value ? {
+    __kind__: "null",
+    null: value.null
+  } : "text" in value ? {
+    __kind__: "text",
+    text: value.text
+  } : value;
+}
+function from_candid_variant_n128(_uploadFile, _downloadFile, value) {
+  return "admin" in value ? "admin" : "user" in value ? "user" : "guest" in value ? "guest" : value;
 }
 function from_candid_variant_n13(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
@@ -37133,78 +38094,126 @@ function from_candid_variant_n13(_uploadFile, _downloadFile, value) {
   } : value;
 }
 function from_candid_variant_n130(_uploadFile, _downloadFile, value) {
-  return "RelationshipRequested" in value ? "RelationshipRequested" : "RelationshipReviewed" in value ? "RelationshipReviewed" : "ProfileClaimReviewed" in value ? "ProfileClaimReviewed" : "ProfileClaimRequested" in value ? "ProfileClaimRequested" : value;
-}
-function from_candid_variant_n138(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: from_candid_MergeResult_n139(_uploadFile, _downloadFile, value.ok)
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_MergeError_n146(_uploadFile, _downloadFile, value.err)
-  } : value;
-}
-function from_candid_variant_n145(_uploadFile, _downloadFile, value) {
-  return "Resolved" in value ? "Resolved" : "Pending" in value ? "Pending" : value;
-}
-function from_candid_variant_n147(_uploadFile, _downloadFile, value) {
-  return "NotDuplicate" in value ? "NotDuplicate" : "ProfileNotFound" in value ? "ProfileNotFound" : "NotSignedIn" in value ? "NotSignedIn" : "SameProfile" in value ? "SameProfile" : value;
-}
-function from_candid_variant_n149(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
     ok: value.ok
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_MergeError_n146(_uploadFile, _downloadFile, value.err)
+    err: from_candid_AccountError_n94(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n151(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n132(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
     ok: value.ok
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_DeleteError_n152(_uploadFile, _downloadFile, value.err)
+    err: from_candid_AccountError_n94(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n153(_uploadFile, _downloadFile, value) {
-  return "HasOwnershipHistory" in value ? "HasOwnershipHistory" : "ProfileNotFound" in value ? "ProfileNotFound" : "HasMedia" in value ? "HasMedia" : "HasArchiveItems" in value ? "HasArchiveItems" : "NotSignedIn" in value ? "NotSignedIn" : "ConfirmationRequired" in value ? "ConfirmationRequired" : "HasTimeline" in value ? "HasTimeline" : "HasApprovedRelationships" in value ? "HasApprovedRelationships" : value;
+function from_candid_variant_n143(_uploadFile, _downloadFile, value) {
+  return "ProfileRemovalRequested" in value ? "ProfileRemovalRequested" : "ClaimRejected" in value ? "ClaimRejected" : "RelationshipTypeCorrected" in value ? "RelationshipTypeCorrected" : "RelationshipRequestPending" in value ? "RelationshipRequestPending" : "StewardPromoted" in value ? "StewardPromoted" : "SuccessorActivated" in value ? "SuccessorActivated" : "StewardRemoved" in value ? "StewardRemoved" : "RelationshipRequestApproved" in value ? "RelationshipRequestApproved" : "DuplicateMerged" in value ? "DuplicateMerged" : "ProfilePermanentlyDeleted" in value ? "ProfilePermanentlyDeleted" : "RelationshipRequestRejected" in value ? "RelationshipRequestRejected" : "ProfileArchived" in value ? "ProfileArchived" : "ProfileRestored" in value ? "ProfileRestored" : "RelationshipAdded" in value ? "RelationshipAdded" : "RelationshipRemoved" in value ? "RelationshipRemoved" : "ProfileRemovalReviewed" in value ? "ProfileRemovalReviewed" : "ClaimApproved" in value ? "ClaimApproved" : "SuccessorDesignated" in value ? "SuccessorDesignated" : value;
 }
 function from_candid_variant_n155(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: from_candid_RelationshipRequest_n59(_uploadFile, _downloadFile, value.ok)
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_RelationshipError_n156(_uploadFile, _downloadFile, value.err)
-  } : value;
-}
-function from_candid_variant_n157(_uploadFile, _downloadFile, value) {
-  return "DuplicateRequest" in value ? "DuplicateRequest" : "NotSignedIn" in value ? "NotSignedIn" : "PersonNotFound" in value ? "PersonNotFound" : value;
-}
-function from_candid_variant_n159(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: value.ok
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_RemoveError_n160(_uploadFile, _downloadFile, value.err)
-  } : value;
+  return "RelationshipRequested" in value ? "RelationshipRequested" : "RelationshipReviewed" in value ? "RelationshipReviewed" : "ProfileClaimReviewed" in value ? "ProfileClaimReviewed" : "ProfileClaimRequested" in value ? "ProfileClaimRequested" : value;
 }
 function from_candid_variant_n161(_uploadFile, _downloadFile, value) {
-  return "ProfileNotFound" in value ? "ProfileNotFound" : "NotSignedIn" in value ? "NotSignedIn" : value;
+  return "Lead" in value ? "Lead" : "Note" in value ? "Note" : "Memory" in value ? "Memory" : "Source" in value ? "Source" : value;
 }
-function from_candid_variant_n163(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n17(_uploadFile, _downloadFile, value) {
+  return "Active" in value ? "Active" : "Removed" in value ? "Removed" : value;
+}
+function from_candid_variant_n171(_uploadFile, _downloadFile, value) {
+  return "Story" in value ? {
+    __kind__: "Story",
+    Story: value.Story
+  } : "Mystery" in value ? {
+    __kind__: "Mystery",
+    Mystery: value.Mystery
+  } : "Person" in value ? {
+    __kind__: "Person",
+    Person: value.Person
+  } : "ArchiveItem" in value ? {
+    __kind__: "ArchiveItem",
+    ArchiveItem: value.ArchiveItem
+  } : value;
+}
+function from_candid_variant_n173(_uploadFile, _downloadFile, value) {
+  return "MilitaryService" in value ? "MilitaryService" : "Story" in value ? "Story" : "Birth" in value ? "Birth" : "FamilyEvent" in value ? "FamilyEvent" : "Migration" in value ? "Migration" : "Mystery" in value ? "Mystery" : "Death" in value ? "Death" : "PhotoDocument" in value ? "PhotoDocument" : "Marriage" in value ? "Marriage" : "CensusDocument" in value ? "CensusDocument" : "Location" in value ? "Location" : value;
+}
+function from_candid_variant_n177(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: from_candid_MergeResult_n178(_uploadFile, _downloadFile, value.ok)
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_MergeError_n185(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n184(_uploadFile, _downloadFile, value) {
+  return "Resolved" in value ? "Resolved" : "Pending" in value ? "Pending" : value;
+}
+function from_candid_variant_n186(_uploadFile, _downloadFile, value) {
+  return "NotDuplicate" in value ? "NotDuplicate" : "ProfileNotFound" in value ? "ProfileNotFound" : "NotSignedIn" in value ? "NotSignedIn" : "SameProfile" in value ? "SameProfile" : value;
+}
+function from_candid_variant_n188(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
     ok: value.ok
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_RelationshipAdminError_n34(_uploadFile, _downloadFile, value.err)
+    err: from_candid_MergeError_n185(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n165(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n19(_uploadFile, _downloadFile, value) {
+  return "LastSteward" in value ? "LastSteward" : "NotSteward" in value ? "NotSteward" : "AlreadySteward" in value ? "AlreadySteward" : "NotSignedIn" in value ? "NotSignedIn" : "NotApprovedClaimedMember" in value ? "NotApprovedClaimedMember" : "NotDesignated" in value ? "NotDesignated" : value;
+}
+function from_candid_variant_n190(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: value.ok
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_DeleteError_n191(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n192(_uploadFile, _downloadFile, value) {
+  return "HasOwnershipHistory" in value ? "HasOwnershipHistory" : "ProfileNotFound" in value ? "ProfileNotFound" : "HasMedia" in value ? "HasMedia" : "HasArchiveItems" in value ? "HasArchiveItems" : "NotSignedIn" in value ? "NotSignedIn" : "ConfirmationRequired" in value ? "ConfirmationRequired" : "HasTimeline" in value ? "HasTimeline" : "HasApprovedRelationships" in value ? "HasApprovedRelationships" : value;
+}
+function from_candid_variant_n194(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: from_candid_RelationshipRequest_n75(_uploadFile, _downloadFile, value.ok)
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_RelationshipError_n195(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n196(_uploadFile, _downloadFile, value) {
+  return "DuplicateRequest" in value ? "DuplicateRequest" : "NotSignedIn" in value ? "NotSignedIn" : "PersonNotFound" in value ? "PersonNotFound" : value;
+}
+function from_candid_variant_n198(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: value.ok
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_RemoveError_n199(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n200(_uploadFile, _downloadFile, value) {
+  return "ProfileNotFound" in value ? "ProfileNotFound" : "NotSignedIn" in value ? "NotSignedIn" : value;
+}
+function from_candid_variant_n202(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: value.ok
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_RelationshipAdminError_n45(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n204(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
     ok: value.ok
@@ -37213,122 +38222,98 @@ function from_candid_variant_n165(_uploadFile, _downloadFile, value) {
     err: from_candid_StewardError_n18(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n167(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n206(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
-    ok: from_candid_ProfileClaim_n49(_uploadFile, _downloadFile, value.ok)
+    ok: from_candid_ProfileClaim_n65(_uploadFile, _downloadFile, value.ok)
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_ClaimError_n168(_uploadFile, _downloadFile, value.err)
+    err: from_candid_ClaimError_n207(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n169(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n208(_uploadFile, _downloadFile, value) {
   return "AlreadyPending" in value ? "AlreadyPending" : "ProfileNotFound" in value ? "ProfileNotFound" : "AlreadyClaimed" in value ? "AlreadyClaimed" : "NotSignedIn" in value ? "NotSignedIn" : "DeceasedProfile" in value ? "DeceasedProfile" : value;
 }
-function from_candid_variant_n17(_uploadFile, _downloadFile, value) {
-  return "Active" in value ? "Active" : "Removed" in value ? "Removed" : value;
-}
-function from_candid_variant_n171(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n210(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
-    ok: from_candid_ProfileRemovalRequest_n55(_uploadFile, _downloadFile, value.ok)
+    ok: from_candid_ProfileRemovalRequest_n71(_uploadFile, _downloadFile, value.ok)
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_RemovalError_n172(_uploadFile, _downloadFile, value.err)
+    err: from_candid_RemovalError_n211(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n173(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n212(_uploadFile, _downloadFile, value) {
   return "AlreadyPending" in value ? "AlreadyPending" : "ProfileNotFound" in value ? "ProfileNotFound" : "NotSignedIn" in value ? "NotSignedIn" : "NotOwner" in value ? "NotOwner" : "DeceasedProfile" in value ? "DeceasedProfile" : value;
 }
-function from_candid_variant_n188(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n233(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
-    ok: from_candid_PersonProfile_n81(_uploadFile, _downloadFile, value.ok)
+    ok: from_candid_PersonProfile_n105(_uploadFile, _downloadFile, value.ok)
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_EditError_n189(_uploadFile, _downloadFile, value.err)
+    err: from_candid_EditError_n234(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n19(_uploadFile, _downloadFile, value) {
-  return "LastSteward" in value ? "LastSteward" : "NotSteward" in value ? "NotSteward" : "AlreadySteward" in value ? "AlreadySteward" : "NotSignedIn" in value ? "NotSignedIn" : "NotApprovedClaimedMember" in value ? "NotApprovedClaimedMember" : "NotDesignated" in value ? "NotDesignated" : value;
-}
-function from_candid_variant_n190(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n235(_uploadFile, _downloadFile, value) {
   return "ProfileNotFound" in value ? "ProfileNotFound" : "NotSignedIn" in value ? "NotSignedIn" : "NotOwner" in value ? "NotOwner" : "DeceasedProfile" in value ? "DeceasedProfile" : value;
 }
-function from_candid_variant_n27(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: from_candid_Relationship_n28(_uploadFile, _downloadFile, value.ok)
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_RelationshipAdminError_n34(_uploadFile, _downloadFile, value.err)
-  } : value;
-}
-function from_candid_variant_n31(_uploadFile, _downloadFile, value) {
-  return "Disputed" in value ? "Disputed" : "Confirmed" in value ? "Confirmed" : "Pending" in value ? "Pending" : value;
-}
-function from_candid_variant_n33(_uploadFile, _downloadFile, value) {
-  return "Parent" in value ? "Parent" : "Sibling" in value ? "Sibling" : "SpousePartner" in value ? "SpousePartner" : "Child" in value ? "Child" : value;
-}
-function from_candid_variant_n35(_uploadFile, _downloadFile, value) {
-  return "RelationshipNotFound" in value ? "RelationshipNotFound" : "NotSignedIn" in value ? "NotSignedIn" : "DuplicateRelationship" in value ? "DuplicateRelationship" : "PersonNotFound" in value ? "PersonNotFound" : value;
-}
-function from_candid_variant_n40(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n28(_uploadFile, _downloadFile, value) {
   return "Approved" in value ? "Approved" : "Rejected" in value ? "Rejected" : "Pending" in value ? "Pending" : value;
 }
+function from_candid_variant_n30(_uploadFile, _downloadFile, value) {
+  return "Unresolved" in value ? "Unresolved" : "Documented" in value ? "Documented" : "FamilyHistory" in value ? "FamilyHistory" : "PersonalMemory" in value ? "PersonalMemory" : value;
+}
+function from_candid_variant_n38(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: from_candid_Relationship_n39(_uploadFile, _downloadFile, value.ok)
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_RelationshipAdminError_n45(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
 function from_candid_variant_n42(_uploadFile, _downloadFile, value) {
-  return "Private" in value ? "Private" : "Public" in value ? "Public" : "FamilyOnly" in value ? "FamilyOnly" : value;
+  return "Disputed" in value ? "Disputed" : "Confirmed" in value ? "Confirmed" : "Pending" in value ? "Pending" : value;
 }
 function from_candid_variant_n44(_uploadFile, _downloadFile, value) {
+  return "Parent" in value ? "Parent" : "Sibling" in value ? "Sibling" : "SpousePartner" in value ? "SpousePartner" : "Child" in value ? "Child" : value;
+}
+function from_candid_variant_n46(_uploadFile, _downloadFile, value) {
+  return "RelationshipNotFound" in value ? "RelationshipNotFound" : "NotSignedIn" in value ? "NotSignedIn" : "DuplicateRelationship" in value ? "DuplicateRelationship" : "PersonNotFound" in value ? "PersonNotFound" : value;
+}
+function from_candid_variant_n52(_uploadFile, _downloadFile, value) {
+  return "Private" in value ? "Private" : "Public" in value ? "Public" : "FamilyOnly" in value ? "FamilyOnly" : value;
+}
+function from_candid_variant_n58(_uploadFile, _downloadFile, value) {
   return "Research" in value ? "Research" : "Photo" in value ? "Photo" : "Document" in value ? "Document" : "WorkBusiness" in value ? "WorkBusiness" : "WrittenStoryNote" in value ? "WrittenStoryNote" : "Audio" in value ? "Audio" : "Other" in value ? "Other" : "Video" in value ? "Video" : value;
 }
-function from_candid_variant_n47(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n61(_uploadFile, _downloadFile, value) {
   return "Copy" in value ? "Copy" : "Unverified" in value ? "Unverified" : "Transcribed" in value ? "Transcribed" : "Original" in value ? "Original" : value;
 }
 function from_candid_variant_n63(_uploadFile, _downloadFile, value) {
+  return "OralHistory" in value ? "OralHistory" : "Standard" in value ? "Standard" : value;
+}
+function from_candid_variant_n80(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
     ok: value.ok
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_ArchiveError_n64(_uploadFile, _downloadFile, value.err)
+    err: from_candid_ArchiveError_n81(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n65(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n82(_uploadFile, _downloadFile, value) {
   return "NotArchived" in value ? "NotArchived" : "ProfileNotFound" in value ? "ProfileNotFound" : "AlreadyArchived" in value ? "AlreadyArchived" : "NotSignedIn" in value ? "NotSignedIn" : value;
 }
-function from_candid_variant_n71(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n88(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
-    ok: from_candid_Account_n72(_uploadFile, _downloadFile, value.ok)
+    ok: from_candid_Account_n89(_uploadFile, _downloadFile, value.ok)
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_AccountError_n77(_uploadFile, _downloadFile, value.err)
+    err: from_candid_AccountError_n94(_uploadFile, _downloadFile, value.err)
   } : value;
-}
-function from_candid_variant_n76(_uploadFile, _downloadFile, value) {
-  return "Google" in value ? "Google" : "Apple" in value ? "Apple" : value;
-}
-function from_candid_variant_n78(_uploadFile, _downloadFile, value) {
-  return "AccountNotFound" in value ? "AccountNotFound" : "NotSignedIn" in value ? "NotSignedIn" : value;
-}
-function from_candid_variant_n80(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: from_candid_PersonProfile_n81(_uploadFile, _downloadFile, value.ok)
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_CreateError_n88(_uploadFile, _downloadFile, value.err)
-  } : value;
-}
-function from_candid_variant_n84(_uploadFile, _downloadFile, value) {
-  return "Unclaimed" in value ? "Unclaimed" : "Claimed" in value ? "Claimed" : value;
-}
-function from_candid_variant_n86(_uploadFile, _downloadFile, value) {
-  return "Living" in value ? "Living" : "Deceased" in value ? "Deceased" : value;
-}
-function from_candid_variant_n89(_uploadFile, _downloadFile, value) {
-  return "NotSignedIn" in value ? "NotSignedIn" : value;
 }
 function from_candid_variant_n9(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
@@ -37339,92 +38324,113 @@ function from_candid_variant_n9(_uploadFile, _downloadFile, value) {
     err: from_candid_Error_n10(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n91(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: from_candid_SuccessorDesignation_n92(_uploadFile, _downloadFile, value.ok)
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_StewardError_n18(_uploadFile, _downloadFile, value.err)
-  } : value;
+function from_candid_variant_n93(_uploadFile, _downloadFile, value) {
+  return "Google" in value ? "Google" : "Apple" in value ? "Apple" : value;
 }
 function from_candid_variant_n95(_uploadFile, _downloadFile, value) {
-  return "Activated" in value ? "Activated" : "Removed" in value ? "Removed" : "Designated" in value ? "Designated" : value;
-}
-function from_candid_vec_n111(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_RelationshipRequest_n59(_uploadFile, _downloadFile, x2));
-}
-async function from_candid_vec_n113(_uploadFile, _downloadFile, value) {
-  return await Promise.all(value.map(async (x2) => await from_candid_ArchiveItem_n37(_uploadFile, _downloadFile, x2)));
-}
-function from_candid_vec_n114(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_PersonProfile_n81(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n115(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_AuditEntry_n116(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n120(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_Relationship_n28(_uploadFile, _downloadFile, x2));
+  return "AccountNotFound" in value ? "AccountNotFound" : "NotSignedIn" in value ? "NotSignedIn" : value;
 }
 function from_candid_vec_n121(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_DuplicatePair_n122(_uploadFile, _downloadFile, x2));
+  return value.map((x2) => from_candid_vec_n122(_uploadFile, _downloadFile, x2));
 }
-function from_candid_vec_n126(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_Notification_n127(_uploadFile, _downloadFile, x2));
-}
-async function from_candid_vec_n131(_uploadFile, _downloadFile, value) {
-  return await Promise.all(value.map(async (x2) => await from_candid_Photo_n21(_uploadFile, _downloadFile, x2)));
-}
-function from_candid_vec_n132(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_ProfileClaim_n49(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n133(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_ProfileRemovalRequest_n55(_uploadFile, _downloadFile, x2));
+function from_candid_vec_n122(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_Cell_n123(_uploadFile, _downloadFile, x2));
 }
 function from_candid_vec_n134(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_RelationshipRequest_n75(_uploadFile, _downloadFile, x2));
+}
+async function from_candid_vec_n136(_uploadFile, _downloadFile, value) {
+  return await Promise.all(value.map(async (x2) => await from_candid_ArchiveItem_n48(_uploadFile, _downloadFile, x2)));
+}
+function from_candid_vec_n137(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_Story_n24(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n138(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_PersonProfile_n105(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n139(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_AuditEntry_n140(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n144(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_Relationship_n39(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n145(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_DuplicatePair_n146(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n150(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_Mystery_n98(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n151(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_Notification_n152(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n156(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_MysteryContribution_n157(_uploadFile, _downloadFile, x2));
+}
+async function from_candid_vec_n162(_uploadFile, _downloadFile, value) {
+  return await Promise.all(value.map(async (x2) => await from_candid_Photo_n32(_uploadFile, _downloadFile, x2)));
+}
+function from_candid_vec_n163(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_ProfileClaim_n65(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n164(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_ProfileRemovalRequest_n71(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n165(_uploadFile, _downloadFile, value) {
   return value.map((x2) => from_candid_StewardRecord_n14(_uploadFile, _downloadFile, x2));
 }
-function from_candid_vec_n135(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_SuccessorDesignation_n92(_uploadFile, _downloadFile, x2));
+function from_candid_vec_n166(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_SuccessorDesignation_n115(_uploadFile, _downloadFile, x2));
 }
-function from_candid_vec_n141(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_MergeConflict_n142(_uploadFile, _downloadFile, x2));
+function from_candid_vec_n167(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_TimelineEvent_n168(_uploadFile, _downloadFile, x2));
 }
-function from_candid_vec_n74(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_AuthMethod_n75(_uploadFile, _downloadFile, x2));
+function from_candid_vec_n180(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_MergeConflict_n181(_uploadFile, _downloadFile, x2));
 }
-function from_candid_vec_n98(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_vec_n99(_uploadFile, _downloadFile, x2));
+function from_candid_vec_n91(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_AuthMethod_n92(_uploadFile, _downloadFile, x2));
 }
-function from_candid_vec_n99(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_Cell_n100(_uploadFile, _downloadFile, x2));
+function to_candid_ArchiveItemClassification_n221(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n222(_uploadFile, _downloadFile, value);
 }
-function to_candid_ArchiveItemType_n175(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n176(_uploadFile, _downloadFile, value);
+function to_candid_ArchiveItemType_n215(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n216(_uploadFile, _downloadFile, value);
 }
-function to_candid_AuthMethod_n68(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n69(_uploadFile, _downloadFile, value);
+function to_candid_AuthMethod_n85(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n86(_uploadFile, _downloadFile, value);
 }
-async function to_candid_ExternalBlob_n20(_uploadFile, _downloadFile, value) {
+function to_candid_EvidenceStatus_n22(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n23(_uploadFile, _downloadFile, value);
+}
+async function to_candid_ExternalBlob_n31(_uploadFile, _downloadFile, value) {
   return await _uploadFile(value);
 }
-function to_candid_LivingStatus_n185(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n186(_uploadFile, _downloadFile, value);
+function to_candid_LivingStatus_n230(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n231(_uploadFile, _downloadFile, value);
 }
-function to_candid_PrivacyLevel_n181(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n182(_uploadFile, _downloadFile, value);
+function to_candid_MysteryContributionType_n226(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n227(_uploadFile, _downloadFile, value);
 }
-function to_candid_ProfileEdits_n183(_uploadFile, _downloadFile, value) {
-  return to_candid_record_n184(_uploadFile, _downloadFile, value);
+function to_candid_MysteryStatus_n96(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n97(_uploadFile, _downloadFile, value);
 }
-function to_candid_RelationshipType_n24(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n25(_uploadFile, _downloadFile, value);
+function to_candid_OralHistorySpeaker_n224(_uploadFile, _downloadFile, value) {
+  return to_candid_record_n225(_uploadFile, _downloadFile, value);
 }
-function to_candid_SourceStatus_n179(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n180(_uploadFile, _downloadFile, value);
+function to_candid_PrivacyLevel_n219(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n220(_uploadFile, _downloadFile, value);
 }
-function to_candid_UserRole_n66(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n67(_uploadFile, _downloadFile, value);
+function to_candid_ProfileEdits_n228(_uploadFile, _downloadFile, value) {
+  return to_candid_record_n229(_uploadFile, _downloadFile, value);
+}
+function to_candid_RelationshipType_n35(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n36(_uploadFile, _downloadFile, value);
+}
+function to_candid_SourceStatus_n217(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n218(_uploadFile, _downloadFile, value);
+}
+function to_candid_UserRole_n83(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n84(_uploadFile, _downloadFile, value);
 }
 function to_candid__ImmutableObjectStorageRefillInformation_n2(_uploadFile, _downloadFile, value) {
   return to_candid_record_n3(_uploadFile, _downloadFile, value);
@@ -37432,20 +38438,29 @@ function to_candid__ImmutableObjectStorageRefillInformation_n2(_uploadFile, _dow
 function to_candid_opt_n1(_uploadFile, _downloadFile, value) {
   return value === null ? candid_none() : candid_some(to_candid__ImmutableObjectStorageRefillInformation_n2(_uploadFile, _downloadFile, value));
 }
-function to_candid_opt_n177(_uploadFile, _downloadFile, value) {
+function to_candid_opt_n20(_uploadFile, _downloadFile, value) {
   return value === null ? candid_none() : candid_some(value);
 }
-function to_candid_opt_n178(_uploadFile, _downloadFile, value) {
+function to_candid_opt_n21(_uploadFile, _downloadFile, value) {
   return value === null ? candid_none() : candid_some(value);
 }
-function to_candid_record_n184(_uploadFile, _downloadFile, value) {
+function to_candid_opt_n223(_uploadFile, _downloadFile, value) {
+  return value === null ? candid_none() : candid_some(to_candid_OralHistorySpeaker_n224(_uploadFile, _downloadFile, value));
+}
+function to_candid_record_n225(_uploadFile, _downloadFile, value) {
+  return {
+    name: value.name,
+    personId: value.personId ? candid_some(value.personId) : candid_none()
+  };
+}
+function to_candid_record_n229(_uploadFile, _downloadFile, value) {
   return {
     occupation: value.occupation ? candid_some(value.occupation) : candid_none(),
     privacySettings: value.privacySettings ? candid_some(value.privacySettings) : candid_none(),
     nickname: value.nickname ? candid_some(value.nickname) : candid_none(),
     birthDate: value.birthDate ? candid_some(value.birthDate) : candid_none(),
     birthInfo: value.birthInfo ? candid_some(value.birthInfo) : candid_none(),
-    livingStatus: value.livingStatus ? candid_some(to_candid_LivingStatus_n185(_uploadFile, _downloadFile, value.livingStatus)) : candid_none(),
+    livingStatus: value.livingStatus ? candid_some(to_candid_LivingStatus_n230(_uploadFile, _downloadFile, value.livingStatus)) : candid_none(),
     longerStory: value.longerStory ? candid_some(value.longerStory) : candid_none(),
     story: value.story ? candid_some(value.story) : candid_none(),
     middleName: value.middleName ? candid_some(value.middleName) : candid_none(),
@@ -37464,7 +38479,7 @@ function to_candid_record_n3(_uploadFile, _downloadFile, value) {
     proposed_top_up_amount: value.proposed_top_up_amount ? candid_some(value.proposed_top_up_amount) : candid_none()
   };
 }
-function to_candid_variant_n176(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n216(_uploadFile, _downloadFile, value) {
   return value == "Research" ? {
     Research: null
   } : value == "Photo" ? {
@@ -37483,7 +38498,7 @@ function to_candid_variant_n176(_uploadFile, _downloadFile, value) {
     Video: null
   } : value;
 }
-function to_candid_variant_n180(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n218(_uploadFile, _downloadFile, value) {
   return value == "Copy" ? {
     Copy: null
   } : value == "Unverified" ? {
@@ -37494,7 +38509,7 @@ function to_candid_variant_n180(_uploadFile, _downloadFile, value) {
     Original: null
   } : value;
 }
-function to_candid_variant_n182(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n220(_uploadFile, _downloadFile, value) {
   return value == "Private" ? {
     Private: null
   } : value == "Public" ? {
@@ -37503,14 +38518,43 @@ function to_candid_variant_n182(_uploadFile, _downloadFile, value) {
     FamilyOnly: null
   } : value;
 }
-function to_candid_variant_n186(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n222(_uploadFile, _downloadFile, value) {
+  return value == "OralHistory" ? {
+    OralHistory: null
+  } : value == "Standard" ? {
+    Standard: null
+  } : value;
+}
+function to_candid_variant_n227(_uploadFile, _downloadFile, value) {
+  return value == "Lead" ? {
+    Lead: null
+  } : value == "Note" ? {
+    Note: null
+  } : value == "Memory" ? {
+    Memory: null
+  } : value == "Source" ? {
+    Source: null
+  } : value;
+}
+function to_candid_variant_n23(_uploadFile, _downloadFile, value) {
+  return value == "Unresolved" ? {
+    Unresolved: null
+  } : value == "Documented" ? {
+    Documented: null
+  } : value == "FamilyHistory" ? {
+    FamilyHistory: null
+  } : value == "PersonalMemory" ? {
+    PersonalMemory: null
+  } : value;
+}
+function to_candid_variant_n231(_uploadFile, _downloadFile, value) {
   return value == "Living" ? {
     Living: null
   } : value == "Deceased" ? {
     Deceased: null
   } : value;
 }
-function to_candid_variant_n25(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n36(_uploadFile, _downloadFile, value) {
   return value == "Parent" ? {
     Parent: null
   } : value == "Sibling" ? {
@@ -37521,7 +38565,7 @@ function to_candid_variant_n25(_uploadFile, _downloadFile, value) {
     Child: null
   } : value;
 }
-function to_candid_variant_n67(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n84(_uploadFile, _downloadFile, value) {
   return value == "admin" ? {
     admin: null
   } : value == "user" ? {
@@ -37530,11 +38574,22 @@ function to_candid_variant_n67(_uploadFile, _downloadFile, value) {
     guest: null
   } : value;
 }
-function to_candid_variant_n69(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n86(_uploadFile, _downloadFile, value) {
   return value == "Google" ? {
     Google: null
   } : value == "Apple" ? {
     Apple: null
+  } : value;
+}
+function to_candid_variant_n97(_uploadFile, _downloadFile, value) {
+  return value == "Researching" ? {
+    Researching: null
+  } : value == "Open" ? {
+    Open: null
+  } : value == "PartiallyResolved" ? {
+    PartiallyResolved: null
+  } : value == "Resolved" ? {
+    Resolved: null
   } : value;
 }
 function createActor(canisterId, _uploadFile, _downloadFile, options = {}) {
@@ -37614,6 +38669,9 @@ function Layout({
   onSignOutClick,
   onAdminClick,
   onArchiveClick,
+  onStoriesClick,
+  onMysteriesClick,
+  onTimelineClick,
   onBranchClick,
   onExploreClick,
   onStewardClick,
@@ -37623,7 +38681,12 @@ function Layout({
 }) {
   const isExploreActive = activeView === "family-tree";
   const isBranchActive = activeView === "heritage-branch";
-  const isArchiveActive = activeView === "archive" || activeView === "archive-detail" || activeView === "archive-contribute";
+  const isArchiveActive = activeView === "archive" || activeView === "archive-detail" || activeView === "archive-contribute" || // Family Videos & Oral History is reached from Family Archive (no separate
+  // top-level pill), so the Family Archive pill stays highlighted there.
+  activeView === "videos" || activeView === "video-detail" || activeView === "video-contribute";
+  const isStoriesActive = activeView === "stories";
+  const isMysteriesActive = activeView === "mysteries";
+  const isTimelineActive = activeView === "timeline";
   const isAddMyselfActive = activeView === "add-myself";
   const isStewardActive = activeView === "steward-review";
   const isGovernanceActive = activeView === "governance";
@@ -37702,6 +38765,69 @@ function Layout({
                 }
               ),
               "Family Archive"
+            ]
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "button",
+          {
+            type: "button",
+            "data-ocid": "layout.stories_link",
+            "aria-current": isStoriesActive ? "page" : void 0,
+            onClick: onStoriesClick,
+            className: navClass(isStoriesActive),
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                LibraryBig,
+                {
+                  className: navIconClass(isStoriesActive),
+                  strokeWidth: 1.75,
+                  "aria-hidden": "true"
+                }
+              ),
+              "Family Stories"
+            ]
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "button",
+          {
+            type: "button",
+            "data-ocid": "layout.mysteries_link",
+            "aria-current": isMysteriesActive ? "page" : void 0,
+            onClick: onMysteriesClick,
+            className: navClass(isMysteriesActive),
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                Search,
+                {
+                  className: navIconClass(isMysteriesActive),
+                  strokeWidth: 1.75,
+                  "aria-hidden": "true"
+                }
+              ),
+              "Family Mysteries"
+            ]
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "button",
+          {
+            type: "button",
+            "data-ocid": "layout.timeline_link",
+            "aria-current": isTimelineActive ? "page" : void 0,
+            onClick: onTimelineClick,
+            className: navClass(isTimelineActive),
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                Clock3,
+                {
+                  className: navIconClass(isTimelineActive),
+                  strokeWidth: 1.75,
+                  "aria-hidden": "true"
+                }
+              ),
+              "Travel Through Time"
             ]
           }
         ),
@@ -38072,6 +39198,100 @@ function LoginSurface() {
     ) : /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "signin-footnote", children: "Your account is private and secure. We never post to your Google or Apple account, and your identity stays yours." })
   ] });
 }
+const ARCHIVE_ITEM_TYPE_LABELS = {
+  [ArchiveItemType.Photo]: "Photo",
+  [ArchiveItemType.Document]: "Document",
+  [ArchiveItemType.Audio]: "Audio",
+  [ArchiveItemType.Video]: "Video",
+  [ArchiveItemType.WrittenStoryNote]: "Written Story or Note",
+  [ArchiveItemType.Research]: "Research",
+  [ArchiveItemType.WorkBusiness]: "Work or Business Material",
+  [ArchiveItemType.Other]: "Other"
+};
+const ARCHIVE_ITEM_TYPE_BADGE = {
+  [ArchiveItemType.Photo]: "badge-photo",
+  [ArchiveItemType.Document]: "badge-document",
+  [ArchiveItemType.Audio]: "badge-audio",
+  [ArchiveItemType.Video]: "badge-video",
+  [ArchiveItemType.WrittenStoryNote]: "badge-story",
+  [ArchiveItemType.Research]: "badge-research",
+  [ArchiveItemType.WorkBusiness]: "badge-work",
+  [ArchiveItemType.Other]: "badge-other"
+};
+const SOURCE_STATUS_LABELS = {
+  [SourceStatus.Original]: "Original",
+  [SourceStatus.Copy]: "Copy",
+  [SourceStatus.Transcribed]: "Transcribed",
+  [SourceStatus.Unverified]: "Unverified"
+};
+const PRIVACY_LEVEL_LABELS = {
+  [PrivacyLevel.Public]: "Public",
+  [PrivacyLevel.FamilyOnly]: "Family Only",
+  [PrivacyLevel.Private]: "Private"
+};
+const ARCHIVE_ITEM_STATUS_LABELS = {
+  [ArchiveItemStatus.Pending]: "Pending",
+  [ArchiveItemStatus.Approved]: "Approved",
+  [ArchiveItemStatus.Rejected]: "Rejected"
+};
+const ARCHIVE_ITEM_STATUS_PILL = {
+  [ArchiveItemStatus.Pending]: "status-pending",
+  [ArchiveItemStatus.Approved]: "status-approved",
+  [ArchiveItemStatus.Rejected]: "status-rejected"
+};
+const ARCHIVE_TYPE_FILTERS = [
+  { value: "all", label: "All" },
+  { value: ArchiveItemType.Photo, label: "Photos" },
+  { value: ArchiveItemType.Document, label: "Documents" },
+  { value: ArchiveItemType.Audio, label: "Audio" },
+  { value: ArchiveItemType.Video, label: "Video" },
+  { value: ArchiveItemType.WrittenStoryNote, label: "Stories/Notes" },
+  { value: ArchiveItemType.Research, label: "Research" },
+  { value: ArchiveItemType.WorkBusiness, label: "Work/Business" },
+  { value: ArchiveItemType.Other, label: "Other" }
+];
+const ARCHIVE_ERAS = [
+  { value: "all", label: "All eras", min: null, max: null },
+  { value: "pre-1900", label: "Before 1900", min: null, max: 1899 },
+  { value: "1900s", label: "1900–1949", min: 1900, max: 1949 },
+  { value: "1950s", label: "1950–1999", min: 1950, max: 1999 },
+  { value: "2000s", label: "2000–present", min: 2e3, max: null }
+];
+function getArchiveItemYear(item) {
+  if (item.year !== void 0 && item.year !== null) {
+    return Number(item.year);
+  }
+  const match = item.era.match(/\b(1[89]\d{2}|20\d{2})\b/);
+  return match ? Number(match[1]) : null;
+}
+const ARCHIVE_ITEM_CLASSIFICATION_LABELS = {
+  [ArchiveItemClassification.Standard]: "Standard",
+  [ArchiveItemClassification.OralHistory]: "Oral History"
+};
+({
+  [ArchiveItemClassification.Standard]: "badge-standard",
+  [ArchiveItemClassification.OralHistory]: "badge-oral-history"
+});
+const MEDIA_KIND_LABELS = {
+  "uploaded-video": "Video",
+  "oral-history-video": "Oral History",
+  "audio-only-oral-history": "Audio"
+};
+function getMediaKind(item) {
+  if (item.itemType === ArchiveItemType.Video) {
+    return item.classification === ArchiveItemClassification.OralHistory ? "oral-history-video" : "uploaded-video";
+  }
+  if (item.itemType === ArchiveItemType.Audio) {
+    return item.classification === ArchiveItemClassification.OralHistory ? "audio-only-oral-history" : null;
+  }
+  return null;
+}
+const MEDIA_KIND_FILTERS = [
+  { value: "all", label: "All" },
+  { value: "uploaded-video", label: "Video" },
+  { value: "oral-history-video", label: "Oral History" },
+  { value: "audio-only-oral-history", label: "Audio" }
+];
 function useProvidersPresent() {
   return reactExports.useContext(QueryClientContext) !== void 0;
 }
@@ -38198,6 +39418,19 @@ function useApprovedArchiveItems() {
     enabled: providersPresent && !!actor && !isFetching
   });
 }
+function useApprovedMediaItems() {
+  const providersPresent = useProvidersPresent();
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["archive", "approved", "media"],
+    queryFn: async () => {
+      if (!actor) return [];
+      const items = await actor.listApprovedArchiveItems();
+      return items.filter((item) => getMediaKind(item) !== null);
+    },
+    enabled: providersPresent && !!actor && !isFetching
+  });
+}
 function useSubmitArchiveItem() {
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
@@ -38215,12 +39448,17 @@ function useSubmitArchiveItem() {
         input.relatedMemberIds,
         input.relatedBranchId,
         input.sourceStatus,
-        input.privacyLevel
+        input.privacyLevel,
+        input.classification,
+        input.primarySpeaker
       );
     },
     onSuccess: () => {
       void queryClient2.invalidateQueries({ queryKey: ["archive", "pending"] });
       void queryClient2.invalidateQueries({ queryKey: ["archive", "approved"] });
+      void queryClient2.invalidateQueries({
+        queryKey: ["archive", "approved", "media"]
+      });
     }
   });
 }
@@ -54886,7 +56124,7 @@ function backendProfileToPersonProfile(backend) {
     sources: []
   };
 }
-function getInitials$4(name) {
+function getInitials$5(name) {
   var _a2;
   const parts = name.split(/\s+/).filter((part) => part.length > 0 && /[A-Za-z]/.test(part.charAt(0)));
   const first = ((_a2 = parts[0]) == null ? void 0 : _a2.charAt(0)) ?? "";
@@ -54982,7 +56220,7 @@ function FamilyMember({
         className: "h-full w-full object-cover",
         loading: "lazy"
       }
-    ) : getInitials$4(canonical.displayName) }),
+    ) : getInitials$5(canonical.displayName) }),
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-display text-base font-semibold text-foreground", children: canonical.displayName }),
       role ? /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs uppercase tracking-[0.18em] text-muted-foreground", children: role }) : null
@@ -55230,25 +56468,273 @@ function PhotosSection({
     }
   );
 }
+function ProfileMediaRow({
+  item,
+  position,
+  onOpen
+}) {
+  const kind = getMediaKind(item);
+  const isAudio = kind === "audio-only-oral-history";
+  const speaker = item.primarySpeaker;
+  const categoryLabel = isAudio ? "Audio" : kind === "oral-history-video" ? "Oral History" : "Video";
+  const eraLabel2 = item.era || (item.year !== void 0 ? item.year.toString() : "Undated");
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    "button",
+    {
+      type: "button",
+      "data-ocid": `profile.videos.item.${position}`,
+      onClick: onOpen,
+      className: "archive-card group text-left",
+      children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-stretch gap-4 p-3", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "div",
+          {
+            className: "relative flex h-20 w-28 shrink-0 items-center justify-center overflow-hidden rounded-lg",
+            style: {
+              backgroundColor: "oklch(var(--media-stage))",
+              color: "oklch(var(--media-stage-muted))"
+            },
+            children: [
+              isAudio ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+                AudioLines,
+                {
+                  className: "h-7 w-7",
+                  strokeWidth: 1.25,
+                  "aria-hidden": "true"
+                }
+              ) : /* @__PURE__ */ jsxRuntimeExports.jsx(Film, { className: "h-7 w-7", strokeWidth: 1.25, "aria-hidden": "true" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "span",
+                {
+                  className: "absolute inset-0 flex items-center justify-center",
+                  style: { backgroundColor: "oklch(var(--media-overlay))" },
+                  children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "span",
+                    {
+                      className: "flex h-8 w-8 items-center justify-center rounded-full",
+                      style: {
+                        backgroundColor: "oklch(var(--oral-history-foreground) / 0.9)",
+                        color: "oklch(var(--oral-history))",
+                        boxShadow: "0 0 0 2px oklch(var(--oral-history) / 0.5)"
+                      },
+                      children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                        Play,
+                        {
+                          className: "h-3.5 w-3.5",
+                          fill: "currentColor",
+                          "aria-hidden": "true"
+                        }
+                      )
+                    }
+                  )
+                }
+              )
+            ]
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex min-w-0 flex-1 flex-col justify-center gap-1.5", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "span",
+            {
+              className: `archive-type-badge self-start ${isAudio ? "badge-audio" : kind === "oral-history-video" ? "badge-oral-history" : "badge-video"}`,
+              "data-ocid": `profile.videos.item.${position}.category_badge`,
+              children: categoryLabel
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "archive-card-title line-clamp-2", children: item.title }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "archive-card-meta", children: [
+            speaker ? /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "inline-flex items-center gap-1.5", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "span",
+                {
+                  className: "flex h-5 w-5 items-center justify-center rounded-full text-[9px] font-bold",
+                  style: {
+                    backgroundColor: "oklch(var(--speaker-accent))",
+                    color: "oklch(var(--speaker-accent-foreground))"
+                  },
+                  "aria-hidden": "true",
+                  children: getInitials$5(speaker.name)
+                }
+              ),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "contributor", children: speaker.name })
+            ] }) : /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "inline-flex items-center gap-1.5", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(UserRound, { className: "h-3.5 w-3.5", "aria-hidden": "true" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "contributor", children: "Family video" })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { "aria-hidden": "true", children: "·" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: eraLabel2 })
+          ] })
+        ] })
+      ] })
+    }
+  );
+}
+function VideosSection({
+  person,
+  onOpenMediaItem,
+  onAddMedia,
+  isAuthenticated
+}) {
+  const { data: items = [], isLoading } = useApprovedMediaItems();
+  const linked = reactExports.useMemo(
+    () => items.filter(
+      (item) => {
+        var _a2;
+        return item.relatedMemberIds.includes(person.id) || ((_a2 = item.primarySpeaker) == null ? void 0 : _a2.personId) === person.id;
+      }
+    ),
+    [items, person.id]
+  );
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    motion.section,
+    {
+      "aria-label": "Videos & Oral History",
+      className: "mt-10",
+      initial: { opacity: 0, y: 16 },
+      animate: { opacity: 1, y: 0 },
+      transition: { duration: 0.6, delay: 0.3, ease: [0.4, 0, 0.2, 1] },
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(SectionHeader, { icon: Clapperboard, label: "Videos & Oral History" }),
+        isLoading ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "div",
+          {
+            "data-ocid": "profile.videos.loading_state",
+            className: "mt-3 flex flex-col gap-3",
+            "aria-label": "Loading media",
+            children: Array.from({ length: 2 }, (_2, i) => `skeleton-${i}`).map((id2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "div",
+              {
+                className: "animate-pulse overflow-hidden rounded-xl border border-border/60 bg-card",
+                children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-stretch gap-4 p-3", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-20 w-28 rounded-lg bg-muted" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-1 flex-col justify-center gap-2", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-4 w-1/3 rounded bg-muted" }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-5 w-2/3 rounded bg-muted" }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-4 w-1/2 rounded bg-muted" })
+                  ] })
+                ] })
+              },
+              id2
+            ))
+          }
+        ) : linked.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "div",
+          {
+            "data-ocid": "profile.videos.empty_state",
+            className: "mt-3 rounded-2xl border border-dashed border-border bg-card/50 px-4 py-6 text-center shadow-subtle",
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "div",
+                {
+                  className: "mx-auto flex h-12 w-12 items-center justify-center rounded-full",
+                  style: {
+                    backgroundColor: "oklch(var(--oral-history) / 0.14)",
+                    color: "oklch(var(--oral-history))",
+                    boxShadow: "0 0 0 2px oklch(var(--oral-history) / 0.4)"
+                  },
+                  children: /* @__PURE__ */ jsxRuntimeExports.jsx(Clapperboard, { className: "h-5 w-5", "aria-hidden": "true" })
+                }
+              ),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-3 font-display text-base font-semibold text-foreground", children: "No videos or oral histories yet" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "mx-auto mt-1 max-w-sm text-sm text-muted-foreground", children: [
+                "When a home video or spoken story is linked to",
+                " ",
+                person.name.split(" ")[0],
+                ", it will appear here."
+              ] })
+            ]
+          }
+        ) : /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "ul",
+          {
+            "data-ocid": "profile.videos.list",
+            className: "mt-3 flex flex-col gap-3",
+            children: linked.map((item, index2) => /* @__PURE__ */ jsxRuntimeExports.jsx("li", { children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+              ProfileMediaRow,
+              {
+                item,
+                position: index2 + 1,
+                onOpen: () => onOpenMediaItem == null ? void 0 : onOpenMediaItem(item.id)
+              }
+            ) }, item.id.toString()))
+          }
+        ),
+        isAuthenticated && onAddMedia ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "div",
+          {
+            className: "mt-4 flex flex-wrap items-center gap-3",
+            "data-ocid": "profile.videos.actions",
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                "button",
+                {
+                  type: "button",
+                  "data-ocid": "profile.videos.add_video_button",
+                  onClick: () => onAddMedia("video"),
+                  className: "inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold text-primary-foreground transition-shadow hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                  style: { backgroundColor: "oklch(var(--primary))" },
+                  children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(Plus, { className: "h-4 w-4", "aria-hidden": "true" }),
+                    "Add Video"
+                  ]
+                }
+              ),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                "button",
+                {
+                  type: "button",
+                  "data-ocid": "profile.videos.record_oral_history_button",
+                  onClick: () => onAddMedia("oral-history"),
+                  className: "inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold text-primary-foreground transition-shadow hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                  style: { backgroundColor: "oklch(var(--primary))" },
+                  children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(Mic, { className: "h-4 w-4", "aria-hidden": "true" }),
+                    "Record Oral History"
+                  ]
+                }
+              ),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                "button",
+                {
+                  type: "button",
+                  "data-ocid": "profile.videos.add_audio_button",
+                  onClick: () => onAddMedia("audio"),
+                  className: "inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold text-primary-foreground transition-shadow hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                  style: { backgroundColor: "oklch(var(--primary))" },
+                  children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(AudioLines, { className: "h-4 w-4", "aria-hidden": "true" }),
+                    "Add Audio"
+                  ]
+                }
+              )
+            ]
+          }
+        ) : null
+      ]
+    }
+  );
+}
 function PersonProfilePage({
   onBack,
   person,
   profilePhoto,
   onProfilePhotoChange,
   onEditProfile,
-  onClaimApproved
+  onClaimApproved,
+  onOpenMediaItem,
+  onAddMedia
 }) {
   var _a2, _b2, _c2, _d2;
   const storyLabel = person.id === "julia" || person.id === "erma" || person.id === "hudson" || person.id === "gertrude-adams-hill" || person.id === "mary-louise-sims" || person.id === "mary-jane-johnson" || person.id === "mildred-adams" || person.id === "christine-adams" || person.id === "tammy" || person.id === "punchy" || person.id === "patricia-rollins" || person.id === "fannie-adams" || person.id === "christine-adams-tucker" || person.id === "ella-mae-adams" || person.id === "eula-lee-adams" || person.id === "sherriSmith" || person.id === "beatriceSmith" ? "Her Story" : "His Story";
   const { data: backendProfile, isLoading: profileLoading } = usePersonProfile(
     person.id
   );
-  const { identity } = useInternetIdentity();
+  const { identity, isAuthenticated } = useInternetIdentity();
   const { data: myClaim } = useMyProfileClaim(person.id);
   const { data: relationshipRequests = [] } = useMyRelationshipRequests();
   const { data: isSteward = false } = useIsAdmin();
-  const { data: archivedProfiles = [] } = useListArchivedProfiles();
-  const isArchived = archivedProfiles.some((p2) => p2.personId === person.id);
+  const { data: archivedIds = [] } = useListArchivedProfileIds();
+  const isArchived = archivedIds.includes(person.id);
   const requestRemoval = useRequestProfileRemoval();
   const archiveProfile = useArchiveProfile();
   const restoreProfile = useRestoreProfile();
@@ -55342,7 +56828,7 @@ function PersonProfilePage({
               {
                 "data-ocid": "profile.header.initials",
                 className: "flex aspect-[4/5] w-full items-center justify-center rounded-xl bg-secondary",
-                children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-display text-6xl font-semibold text-accent-foreground", children: getInitials$4(person.name) })
+                children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-display text-6xl font-semibold text-accent-foreground", children: getInitials$5(person.name) })
               }
             ) }),
             portraitCaption ? /* @__PURE__ */ jsxRuntimeExports.jsx("figcaption", { className: "mt-2 text-center text-xs italic leading-relaxed text-muted-foreground", children: portraitCaption }) : null
@@ -55778,6 +57264,15 @@ function PersonProfilePage({
       {
         person,
         onProfilePhotoChange
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      VideosSection,
+      {
+        person,
+        onOpenMediaItem,
+        onAddMedia,
+        isAuthenticated
       }
     ),
     /* @__PURE__ */ jsxRuntimeExports.jsx(Dialog, { open: removalOpen, onOpenChange: setRemovalOpen, children: /* @__PURE__ */ jsxRuntimeExports.jsxs(DialogContent, { "data-ocid": "profile.request_removal_dialog", children: [
@@ -56729,73 +58224,7 @@ function AddMyselfPage({
     ) : null
   ] });
 }
-const ARCHIVE_ITEM_TYPE_LABELS = {
-  [ArchiveItemType.Photo]: "Photo",
-  [ArchiveItemType.Document]: "Document",
-  [ArchiveItemType.Audio]: "Audio",
-  [ArchiveItemType.Video]: "Video",
-  [ArchiveItemType.WrittenStoryNote]: "Written Story or Note",
-  [ArchiveItemType.Research]: "Research",
-  [ArchiveItemType.WorkBusiness]: "Work or Business Material",
-  [ArchiveItemType.Other]: "Other"
-};
-const ARCHIVE_ITEM_TYPE_BADGE = {
-  [ArchiveItemType.Photo]: "badge-photo",
-  [ArchiveItemType.Document]: "badge-document",
-  [ArchiveItemType.Audio]: "badge-audio",
-  [ArchiveItemType.Video]: "badge-video",
-  [ArchiveItemType.WrittenStoryNote]: "badge-story",
-  [ArchiveItemType.Research]: "badge-research",
-  [ArchiveItemType.WorkBusiness]: "badge-work",
-  [ArchiveItemType.Other]: "badge-other"
-};
-const SOURCE_STATUS_LABELS = {
-  [SourceStatus.Original]: "Original",
-  [SourceStatus.Copy]: "Copy",
-  [SourceStatus.Transcribed]: "Transcribed",
-  [SourceStatus.Unverified]: "Unverified"
-};
-const PRIVACY_LEVEL_LABELS = {
-  [PrivacyLevel.Public]: "Public",
-  [PrivacyLevel.FamilyOnly]: "Family Only",
-  [PrivacyLevel.Private]: "Private"
-};
-const ARCHIVE_ITEM_STATUS_LABELS = {
-  [ArchiveItemStatus.Pending]: "Pending",
-  [ArchiveItemStatus.Approved]: "Approved",
-  [ArchiveItemStatus.Rejected]: "Rejected"
-};
-const ARCHIVE_ITEM_STATUS_PILL = {
-  [ArchiveItemStatus.Pending]: "status-pending",
-  [ArchiveItemStatus.Approved]: "status-approved",
-  [ArchiveItemStatus.Rejected]: "status-rejected"
-};
-const ARCHIVE_TYPE_FILTERS = [
-  { value: "all", label: "All" },
-  { value: ArchiveItemType.Photo, label: "Photos" },
-  { value: ArchiveItemType.Document, label: "Documents" },
-  { value: ArchiveItemType.Audio, label: "Audio" },
-  { value: ArchiveItemType.Video, label: "Video" },
-  { value: ArchiveItemType.WrittenStoryNote, label: "Stories/Notes" },
-  { value: ArchiveItemType.Research, label: "Research" },
-  { value: ArchiveItemType.WorkBusiness, label: "Work/Business" },
-  { value: ArchiveItemType.Other, label: "Other" }
-];
-const ARCHIVE_ERAS = [
-  { value: "all", label: "All eras", min: null, max: null },
-  { value: "pre-1900", label: "Before 1900", min: null, max: 1899 },
-  { value: "1900s", label: "1900–1949", min: 1900, max: 1949 },
-  { value: "1950s", label: "1950–1999", min: 1950, max: 1999 },
-  { value: "2000s", label: "2000–present", min: 2e3, max: null }
-];
-function getArchiveItemYear(item) {
-  if (item.year !== void 0 && item.year !== null) {
-    return Number(item.year);
-  }
-  const match = item.era.match(/\b(1[89]\d{2}|20\d{2})\b/);
-  return match ? Number(match[1]) : null;
-}
-function formatDate$2(timestamp) {
+function formatDate$4(timestamp) {
   const date = new Date(Number(timestamp / 1000000n));
   if (Number.isNaN(date.getTime())) return "Unknown date";
   return date.toLocaleDateString(void 0, {
@@ -56804,7 +58233,7 @@ function formatDate$2(timestamp) {
     day: "numeric"
   });
 }
-function formatContributor$2(contributor) {
+function formatContributor$5(contributor) {
   const text = contributor.toText();
   return text.length > 18 ? `${text.slice(0, 5)}…${text.slice(-4)}` : text;
 }
@@ -56931,7 +58360,7 @@ function PendingItem({
         /* @__PURE__ */ jsxRuntimeExports.jsxs("dl", { className: "mt-4 grid grid-cols-2 gap-x-4 gap-y-3 text-sm sm:grid-cols-3", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx("dt", { className: "text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground", children: "Contributor" }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("dd", { className: "mt-0.5 font-mono text-xs text-foreground", children: formatContributor$2(item.contributor) })
+            /* @__PURE__ */ jsxRuntimeExports.jsx("dd", { className: "mt-0.5 font-mono text-xs text-foreground", children: formatContributor$5(item.contributor) })
           ] }),
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx("dt", { className: "text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground", children: "Era" }),
@@ -56951,7 +58380,7 @@ function PendingItem({
           ] }),
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx("dt", { className: "text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground", children: "Submitted" }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("dd", { className: "mt-0.5 text-foreground", children: formatDate$2(item.createdAt) })
+            /* @__PURE__ */ jsxRuntimeExports.jsx("dd", { className: "mt-0.5 text-foreground", children: formatDate$4(item.createdAt) })
           ] })
         ] }),
         item.tags.length > 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-4 flex flex-wrap gap-1.5", children: item.tags.map((tag) => /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -57053,7 +58482,7 @@ const TYPE_ORDER = [
   ArchiveItemType.WorkBusiness,
   ArchiveItemType.Other
 ];
-function parseYear(value) {
+function parseYear$1(value) {
   const trimmed = value.trim();
   if (!trimmed) return null;
   if (!/^\d{1,4}$/.test(trimmed)) return null;
@@ -57156,12 +58585,16 @@ function ArchiveContributionPage({
         itemType: selectedType,
         blob,
         era: era.trim(),
-        year: parseYear(year),
+        year: parseYear$1(year),
         tags: tags.split(",").map((tag) => tag.trim()).filter(Boolean),
         relatedMemberIds,
         relatedBranchId: relatedBranch.trim() || null,
         sourceStatus,
-        privacyLevel
+        privacyLevel,
+        // The standard archive contribution flow is not oral history, so it
+        // carries no classification and no primary speaker.
+        classification: ArchiveItemClassification.Standard,
+        primarySpeaker: null
       },
       {
         onSuccess: () => setSubmitted(true),
@@ -57766,7 +59199,7 @@ const TEXT_TYPES = [
   ArchiveItemType.WorkBusiness,
   ArchiveItemType.Other
 ];
-function formatDate$1(timestamp) {
+function formatDate$3(timestamp) {
   const date = new Date(Number(timestamp / 1000000n));
   if (Number.isNaN(date.getTime())) return "Unknown date";
   return date.toLocaleDateString(void 0, {
@@ -57775,7 +59208,7 @@ function formatDate$1(timestamp) {
     day: "numeric"
   });
 }
-function formatContributor$1(contributor) {
+function formatContributor$4(contributor) {
   const text = contributor.toText();
   return text.length > 18 ? `${text.slice(0, 5)}…${text.slice(-4)}` : text;
 }
@@ -57837,11 +59270,11 @@ function ArchiveDetailPage({
         /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "inline-flex items-center gap-1.5", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx(User, { className: "h-4 w-4", "aria-hidden": "true" }),
           "Contributed by ",
-          formatContributor$1(item.contributor)
+          formatContributor$4(item.contributor)
         ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "inline-flex items-center gap-1.5", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx(CalendarDays, { className: "h-4 w-4", "aria-hidden": "true" }),
-          formatDate$1(item.createdAt)
+          formatDate$3(item.createdAt)
         ] })
       ] })
     ] }),
@@ -57977,11 +59410,11 @@ const TYPE_ICONS = {
   [ArchiveItemType.WorkBusiness]: Landmark,
   [ArchiveItemType.Other]: FileText
 };
-function formatContributor(contributor) {
+function formatContributor$3(contributor) {
   const text = contributor.toText();
   return text.length > 18 ? `${text.slice(0, 5)}…${text.slice(-4)}` : text;
 }
-function getInitials$3(name) {
+function getInitials$4(name) {
   var _a2;
   const parts = name.split(/\s+/).filter((part) => part.length > 0 && /[A-Za-z]/.test(part.charAt(0)));
   const first = ((_a2 = parts[0]) == null ? void 0 : _a2.charAt(0)) ?? "";
@@ -58017,12 +59450,12 @@ function ArchiveCard({ item, index: index2, onOpen }) {
           ] }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "archive-card-title line-clamp-2", children: item.title }),
           /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "archive-card-meta", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "contributor", children: formatContributor(item.contributor) }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "contributor", children: formatContributor$3(item.contributor) }),
             /* @__PURE__ */ jsxRuntimeExports.jsx("span", { "aria-hidden": "true", children: "·" }),
             /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "contributed" })
           ] }),
           relatedMembers.length > 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-auto flex flex-wrap items-center gap-1.5 pt-1", children: relatedMembers.map((profile) => /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "member-chip", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "member-avatar", "aria-hidden": "true", children: getInitials$3(profile.name) }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "member-avatar", "aria-hidden": "true", children: getInitials$4(profile.name) }),
             profile.name
           ] }, profile.id)) }) : null
         ] })
@@ -58112,7 +59545,11 @@ function readFilters() {
     era: era ?? "all"
   };
 }
-function ArchivePage({ onBack, onOpenArchiveItem }) {
+function ArchivePage({
+  onBack,
+  onOpenArchiveItem,
+  onOpenVideos
+}) {
   const { data: items = [], isLoading } = useApprovedArchiveItems();
   const [filters, setFilters] = reactExports.useState(readFilters);
   reactExports.useEffect(() => {
@@ -58176,6 +59613,50 @@ function ArchivePage({ onBack, onOpenArchiveItem }) {
       /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "font-display text-3xl font-semibold text-foreground", children: "Our Family Archive" }),
       /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-2 text-sm text-muted-foreground", children: "Approved photos, documents, stories, and more — preserved as they were contributed." })
     ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "button",
+      {
+        type: "button",
+        "data-ocid": "archive.videos_entry_button",
+        onClick: onOpenVideos,
+        className: "group mb-6 flex w-full items-center gap-4 rounded-2xl border border-border bg-card p-5 text-left shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:translate-y-0",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "span",
+            {
+              className: "flex h-12 w-12 shrink-0 items-center justify-center rounded-xl",
+              style: {
+                backgroundColor: "oklch(var(--oral-history) / 0.14)",
+                color: "oklch(var(--oral-history))"
+              },
+              "aria-hidden": "true",
+              children: /* @__PURE__ */ jsxRuntimeExports.jsx(Clapperboard, { className: "h-6 w-6", strokeWidth: 1.75 })
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "min-w-0 flex-1", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "block font-display text-lg font-semibold text-foreground", children: "Family Videos & Oral History" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "inline-flex items-center gap-1", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Mic, { className: "h-3.5 w-3.5", "aria-hidden": "true" }),
+              "Home videos and spoken stories"
+            ] }) })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "span",
+            {
+              className: "inline-flex shrink-0 items-center gap-1 rounded-full px-3.5 py-1.5 text-xs font-semibold",
+              style: {
+                backgroundColor: "oklch(var(--oral-history))",
+                color: "oklch(var(--oral-history-foreground))"
+              },
+              children: [
+                "Browse",
+                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { "aria-hidden": "true", children: "→" })
+              ]
+            }
+          )
+        ]
+      }
+    ),
     /* @__PURE__ */ jsxRuntimeExports.jsx(
       ArchiveFilterBar,
       {
@@ -58240,7 +59721,7 @@ function ArchivePage({ onBack, onOpenArchiveItem }) {
     ) }, item.id.toString())) }) })
   ] });
 }
-function getInitials$2(name) {
+function getInitials$3(name) {
   var _a2;
   const parts = name.split(/\s+/).filter((part) => part.length > 0 && /[A-Za-z]/.test(part.charAt(0)));
   const first = ((_a2 = parts[0]) == null ? void 0 : _a2.charAt(0)) ?? "";
@@ -58303,7 +59784,7 @@ function PersonCard({
               className: "h-full w-full object-cover",
               loading: "lazy"
             }
-          ) : getInitials$2(displayName) }),
+          ) : getInitials$3(displayName) }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: nameClass2, children: displayName }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: relationClass, children: relationLabel ?? person.role })
         ]
@@ -58331,7 +59812,7 @@ function PersonCard({
               className: "h-full w-full object-cover",
               loading: "lazy"
             }
-          ) : getInitials$2(displayName) }),
+          ) : getInitials$3(displayName) }),
           /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "ex-focus-body", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-focus-name", children: displayName }),
             person.years && /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-focus-years", children: person.years }),
@@ -58377,7 +59858,7 @@ function PersonCard({
               className: "h-full w-full object-cover",
               loading: "lazy"
             }
-          ) : getInitials$2(displayName) }),
+          ) : getInitials$3(displayName) }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-spouse-half-name", children: displayName }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-spouse-half-relation", children: relationLabel ?? person.role })
         ]
@@ -58413,7 +59894,7 @@ function PersonCard({
               className: "h-full w-full object-cover",
               loading: "lazy"
             }
-          ) }) : /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: portraitClass, "aria-hidden": "true", children: getInitials$2(displayName) }),
+          ) }) : /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: portraitClass, "aria-hidden": "true", children: getInitials$3(displayName) }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: nameClass, children: displayName }),
           person.years && /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ft-card-years", children: person.years }),
           selected && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "ft-card-detail", children: [
@@ -59735,7 +61216,7 @@ function RelationshipCard$1({
     }
   );
 }
-function formatDate(timestamp) {
+function formatDate$2(timestamp) {
   const date = new Date(Number(timestamp / 1000000n));
   if (Number.isNaN(date.getTime())) return "Unknown date";
   return date.toLocaleDateString(void 0, {
@@ -59860,7 +61341,7 @@ function StewardManagementTab() {
                     /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "steward-row-role", children: [
                       STEWARD_ROLE_STATUS_LABELS[steward.roleStatus],
                       " · steward since ",
-                      formatDate(steward.assignedAt)
+                      formatDate$2(steward.assignedAt)
                     ] })
                   ] }),
                   /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "steward-row-actions", children: [
@@ -60019,7 +61500,7 @@ function StewardManagementTab() {
                           SUCCESSOR_STATUS_LABELS[successor.status],
                           " · designated",
                           " ",
-                          formatDate(successor.assignedAt)
+                          formatDate$2(successor.assignedAt)
                         ] })
                       ] }),
                       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "steward-row-actions", children: [
@@ -60508,7 +61989,7 @@ function RelationshipCard({
     }
   );
 }
-function getInitials$1(name) {
+function getInitials$2(name) {
   var _a2;
   const parts = name.split(/\s+/).filter((part) => part.length > 0 && /[A-Za-z]/.test(part.charAt(0)));
   const first = ((_a2 = parts[0]) == null ? void 0 : _a2.charAt(0)) ?? "";
@@ -60555,7 +62036,7 @@ function HeritageBranchCard({
         },
         className: `${cardClass2} focus-visible:outline-none`,
         children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: portraitClass, "aria-hidden": "true", children: photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: photoSrc, alt: photoAlt, loading: "lazy" }) : getInitials$1(displayName) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: portraitClass, "aria-hidden": "true", children: photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: photoSrc, alt: photoAlt, loading: "lazy" }) : getInitials$2(displayName) }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: nameClass, children: displayName }),
           count2 && /* @__PURE__ */ jsxRuntimeExports.jsx(
             "span",
@@ -60593,7 +62074,7 @@ function HeritageBranchCard({
             {
               className: isCouple ? "hb-couple-portrait" : "hb-node-portrait",
               "aria-hidden": "true",
-              children: photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: photoSrc, alt: photoAlt, loading: "lazy" }) : getInitials$1(displayName)
+              children: photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: photoSrc, alt: photoAlt, loading: "lazy" }) : getInitials$2(displayName)
             }
           ),
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: isCouple ? "hb-couple-name" : "hb-node-name", children: displayName })
@@ -60629,7 +62110,7 @@ function HeritageBranchCard({
           {
             className: `branch-portrait ${large ? "h-16 w-16 text-xl" : ""}`,
             "aria-hidden": "true",
-            children: photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: photoSrc, alt: photoAlt, loading: "lazy" }) : getInitials$1(displayName)
+            children: photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: photoSrc, alt: photoAlt, loading: "lazy" }) : getInitials$2(displayName)
           }
         ),
         /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: `branch-card-name ${large ? "text-sm" : ""}`, children: displayName }),
@@ -60883,13 +62364,20 @@ const navItems = [
   {
     label: "Add to Our History",
     icon: Landmark
+  },
+  {
+    label: "Family Videos & Oral History",
+    icon: Clapperboard
   }
 ];
 function HomePage({
   onExplore,
   onAddToHistory,
-  onOpenArchive,
-  onOpenBranch
+  onOpenBranch,
+  onOpenStories,
+  onOpenMysteries,
+  onOpenTimeline,
+  onOpenVideos
 }) {
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto flex w-full max-w-3xl flex-col items-center px-6 py-12 sm:py-16", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -60942,7 +62430,7 @@ function HomePage({
                 {
                   type: "button",
                   "data-ocid": `home.nav_button.${index2 + 1}`,
-                  onClick: index2 === 0 ? onExplore : index2 === 1 ? onOpenBranch : index2 === 3 ? onOpenArchive : index2 === 5 ? onAddToHistory : void 0,
+                  onClick: index2 === 0 ? onExplore : index2 === 1 ? onOpenBranch : index2 === 2 ? onOpenTimeline : index2 === 3 ? onOpenStories : index2 === 4 ? onOpenMysteries : index2 === 5 ? onAddToHistory : index2 === 6 ? onOpenVideos : void 0,
                   className: "group flex w-full items-center gap-4 rounded-2xl border border-border bg-card px-5 py-4 text-left shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:translate-y-0",
                   children: [
                     /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-secondary text-accent-foreground transition-colors duration-300 group-hover:bg-accent group-hover:text-accent-foreground", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -60973,6 +62461,1186 @@ function HomePage({
     ),
     /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-10 max-w-sm text-center text-sm text-muted-foreground", children: "A living record of the people, places, and moments that make us who we are." })
   ] });
+}
+const EVIDENCE_STATUS_LABELS = {
+  [EvidenceStatus.Documented]: "Documented",
+  [EvidenceStatus.FamilyHistory]: "Family History",
+  [EvidenceStatus.PersonalMemory]: "Personal Memory",
+  [EvidenceStatus.Unresolved]: "Unresolved"
+};
+const EVIDENCE_STATUS_BADGE = {
+  [EvidenceStatus.Documented]: "evidence-documented",
+  [EvidenceStatus.FamilyHistory]: "evidence-history",
+  [EvidenceStatus.PersonalMemory]: "evidence-memory",
+  [EvidenceStatus.Unresolved]: "evidence-unresolved"
+};
+const MYSTERY_STATUS_LABELS = {
+  [MysteryStatus.Open]: "Open",
+  [MysteryStatus.Researching]: "Researching",
+  [MysteryStatus.PartiallyResolved]: "Partially Resolved",
+  [MysteryStatus.Resolved]: "Resolved"
+};
+const MYSTERY_STATUS_BADGE = {
+  [MysteryStatus.Open]: "mystery-open",
+  [MysteryStatus.Researching]: "mystery-researching",
+  [MysteryStatus.PartiallyResolved]: "mystery-partial",
+  [MysteryStatus.Resolved]: "mystery-resolved"
+};
+const MYSTERY_CONTRIBUTION_TYPE_LABELS = {
+  [MysteryContributionType.Lead]: "Lead",
+  [MysteryContributionType.Note]: "Note",
+  [MysteryContributionType.Memory]: "Memory",
+  [MysteryContributionType.Source]: "Source"
+};
+const TIMELINE_EVENT_TYPE_LABELS = {
+  [TimelineEventType.Birth]: "Birth",
+  [TimelineEventType.Death]: "Death",
+  [TimelineEventType.Marriage]: "Marriage",
+  [TimelineEventType.FamilyEvent]: "Family Event",
+  [TimelineEventType.Migration]: "Migration",
+  [TimelineEventType.MilitaryService]: "Military Service",
+  [TimelineEventType.CensusDocument]: "Census Document",
+  [TimelineEventType.Story]: "Story",
+  [TimelineEventType.PhotoDocument]: "Photo or Document",
+  [TimelineEventType.Location]: "Location",
+  [TimelineEventType.Mystery]: "Mystery"
+};
+function getTimelineLinkKind(target) {
+  return target.__kind__;
+}
+function getTimelineLinkId(target) {
+  switch (target.__kind__) {
+    case "Story":
+      return target.Story;
+    case "Mystery":
+      return target.Mystery;
+    case "Person":
+      return target.Person;
+    case "ArchiveItem":
+      return target.ArchiveItem;
+  }
+}
+function DomainEmptyState({
+  icon: Icon2,
+  title,
+  hint,
+  action
+}) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { "data-ocid": "domain.empty_state", className: "domain-empty", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "domain-empty-mark", "aria-hidden": "true", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Icon2, { className: "h-6 w-6", strokeWidth: 1.75 }) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "domain-empty-title", children: title }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "domain-empty-hint", children: hint }),
+    action
+  ] });
+}
+function PersonLink({ personId, onOpenProfile, name }) {
+  const canonical = useCanonicalPerson(personId, name ?? "");
+  const displayName = canonical.displayName || name || personId;
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    "button",
+    {
+      type: "button",
+      "data-ocid": "person_link",
+      onClick: () => onOpenProfile(personId),
+      className: "timeline-link",
+      children: displayName
+    }
+  );
+}
+function MysteryCard({
+  mystery,
+  onOpen,
+  onOpenProfile
+}) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { "data-ocid": "mystery.card", className: "mystery-card", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-start justify-between gap-3", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "mystery.open_button",
+          onClick: onOpen,
+          className: "mystery-card-title min-h-[44px] flex-1 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+          children: mystery.title
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "span",
+        {
+          "data-ocid": "mystery.status_badge",
+          className: `mystery-status shrink-0 ${MYSTERY_STATUS_BADGE[mystery.status]}`,
+          children: MYSTERY_STATUS_LABELS[mystery.status]
+        }
+      )
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mystery-card-preview line-clamp-3", children: mystery.description }),
+    mystery.relatedMemberIds.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap items-center gap-1.5", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        Users,
+        {
+          className: "h-3.5 w-3.5 shrink-0 text-muted-foreground",
+          "aria-hidden": "true"
+        }
+      ),
+      mystery.relatedMemberIds.map(
+        (id2) => onOpenProfile ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          PersonLink,
+          {
+            personId: id2,
+            onOpenProfile
+          },
+          id2
+        ) : /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "member-chip", children: id2 }, id2)
+      )
+    ] })
+  ] });
+}
+function useApprovedStories() {
+  const providersPresent = useProvidersPresent();
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["familyHistory", "stories", "approved"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.listApprovedStories();
+    },
+    enabled: providersPresent && !!actor && !isFetching
+  });
+}
+function usePendingStories() {
+  const providersPresent = useProvidersPresent();
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["familyHistory", "stories", "pending"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.listPendingStories();
+    },
+    enabled: providersPresent && !!actor && !isFetching
+  });
+}
+function useSubmitStory() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (input) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.submitStory(
+        input.title,
+        input.storyText,
+        input.relatedMemberIds,
+        input.era,
+        input.year,
+        input.location,
+        input.evidenceStatus,
+        input.relatedArchiveItemIds
+      );
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["familyHistory", "stories", "pending"]
+      });
+    }
+  });
+}
+function useApproveStory() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (id2) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.approveStory(id2);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["familyHistory", "stories", "pending"]
+      });
+      void queryClient2.invalidateQueries({
+        queryKey: ["familyHistory", "stories", "approved"]
+      });
+    }
+  });
+}
+function useRejectStory() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (id2) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.rejectStory(id2);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["familyHistory", "stories", "pending"]
+      });
+    }
+  });
+}
+function useAddCanonicalStory() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (input) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.addCanonicalStory(
+        input.title,
+        input.storyText,
+        input.relatedMemberIds,
+        input.era,
+        input.year,
+        input.location,
+        input.evidenceStatus,
+        input.relatedArchiveItemIds
+      );
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["familyHistory", "stories", "approved"]
+      });
+    }
+  });
+}
+function useUpdateCanonicalStory() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (input) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.updateCanonicalStory(
+        input.id,
+        input.title,
+        input.storyText,
+        input.relatedMemberIds,
+        input.era,
+        input.year,
+        input.location,
+        input.evidenceStatus,
+        input.relatedArchiveItemIds
+      );
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["familyHistory", "stories", "approved"]
+      });
+    }
+  });
+}
+function useMysteries() {
+  const providersPresent = useProvidersPresent();
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["familyHistory", "mysteries"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.listMysteries();
+    },
+    enabled: providersPresent && !!actor && !isFetching
+  });
+}
+function useSubmitMysteryContribution() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (input) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.submitMysteryContribution(
+        input.mysteryId,
+        input.contributionType,
+        input.text
+      );
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["familyHistory", "mysteries", "contributions", "pending"]
+      });
+    }
+  });
+}
+function usePendingMysteryContributions() {
+  const providersPresent = useProvidersPresent();
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["familyHistory", "mysteries", "contributions", "pending"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.listPendingMysteryContributions();
+    },
+    enabled: providersPresent && !!actor && !isFetching
+  });
+}
+function useReviewMysteryContribution() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (input) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.reviewMysteryContribution(input.id, input.approve);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["familyHistory", "mysteries", "contributions", "pending"]
+      });
+      void queryClient2.invalidateQueries({
+        queryKey: ["familyHistory", "mysteries"]
+      });
+    }
+  });
+}
+function useCreateCanonicalMystery() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (input) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.createCanonicalMystery(
+        input.title,
+        input.description,
+        input.relatedMemberIds,
+        input.relatedBranchId,
+        input.knownFacts,
+        input.possibilities,
+        input.relatedSourceIds,
+        input.relatedArchiveItemIds,
+        input.status
+      );
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["familyHistory", "mysteries"]
+      });
+    }
+  });
+}
+function useUpdateCanonicalMystery() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (input) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.updateCanonicalMystery(
+        input.id,
+        input.title,
+        input.description,
+        input.relatedMemberIds,
+        input.relatedBranchId,
+        input.knownFacts,
+        input.possibilities,
+        input.relatedSourceIds,
+        input.relatedArchiveItemIds,
+        input.status
+      );
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["familyHistory", "mysteries"]
+      });
+    }
+  });
+}
+function useMarkMysteryResolved() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (input) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.markMysteryResolved(
+        input.id,
+        input.summary,
+        input.supportingEvidence
+      );
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["familyHistory", "mysteries"]
+      });
+    }
+  });
+}
+function useTimelineEvents() {
+  const providersPresent = useProvidersPresent();
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["familyHistory", "timeline"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.listTimelineEvents();
+    },
+    enabled: providersPresent && !!actor && !isFetching
+  });
+}
+const CONTRIBUTION_TYPES = Object.values(MysteryContributionType);
+function MysteryContributionForm({
+  mysteryId,
+  onClose,
+  onSubmitted
+}) {
+  const [contributionType, setContributionType] = reactExports.useState(MysteryContributionType.Note);
+  const [text, setText] = reactExports.useState("");
+  const submit = useSubmitMysteryContribution();
+  const handleSubmit = () => {
+    const captured = text.trim();
+    if (!captured) return;
+    setText("");
+    submit.mutate(
+      { mysteryId, contributionType, text: captured },
+      {
+        onError: () => setText((current) => current === "" ? captured : current)
+      }
+    );
+  };
+  if (submit.isSuccess) {
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "div",
+      {
+        "data-ocid": "mystery.contribution_success",
+        className: "flex flex-col items-center gap-3 rounded-xl border border-border/60 bg-card p-6 text-center",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "flex h-12 w-12 items-center justify-center rounded-full bg-success/12 text-success", children: /* @__PURE__ */ jsxRuntimeExports.jsx(CircleCheck, { className: "h-6 w-6", "aria-hidden": "true" }) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "font-display text-lg font-semibold text-foreground", children: "Contribution submitted" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "max-w-sm text-sm text-muted-foreground", children: "Thank you. Your contribution is now pending review by a Family Steward before it can be added to this mystery." }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "button",
+            {
+              type: "button",
+              "data-ocid": "mystery.contribution_done_button",
+              onClick: onSubmitted,
+              className: "inline-flex min-h-[44px] items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+              style: { backgroundColor: "oklch(var(--primary))" },
+              children: "Done"
+            }
+          )
+        ]
+      }
+    );
+  }
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "div",
+    {
+      "data-ocid": "mystery.contribution_form",
+      className: "flex flex-col gap-4 rounded-xl border border-border/60 bg-card p-5",
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-start justify-between gap-3", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "font-display text-lg font-semibold text-foreground", children: "Contribute to this mystery" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-1 text-sm text-muted-foreground", children: "Share a note, memory, possible lead, or source reference. It will be reviewed by a Family Steward before it is added." })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "button",
+            {
+              type: "button",
+              "data-ocid": "mystery.contribution_close_button",
+              onClick: onClose,
+              "aria-label": "Close contribution form",
+              className: "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-border/60 text-muted-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+              children: /* @__PURE__ */ jsxRuntimeExports.jsx(X, { className: "h-5 w-5", "aria-hidden": "true" })
+            }
+          )
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-2", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("label", { htmlFor: "contribution-type", className: "field-label", children: "Type" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "select",
+            {
+              id: "contribution-type",
+              "data-ocid": "mystery.contribution_type_select",
+              value: contributionType,
+              onChange: (e) => setContributionType(e.target.value),
+              className: "form-select",
+              children: CONTRIBUTION_TYPES.map((type) => /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: type, children: MYSTERY_CONTRIBUTION_TYPE_LABELS[type] }, type))
+            }
+          )
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-2", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("label", { htmlFor: "contribution-text", className: "field-label", children: "Your contribution" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "textarea",
+            {
+              id: "contribution-text",
+              "data-ocid": "mystery.contribution_text_input",
+              value: text,
+              onChange: (e) => setText(e.target.value),
+              placeholder: "What do you remember, know, or suspect?…",
+              className: "form-textarea"
+            }
+          )
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap gap-2", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "button",
+            {
+              type: "button",
+              "data-ocid": "mystery.contribution_submit_button",
+              onClick: handleSubmit,
+              disabled: !text.trim() || submit.isPending,
+              className: "inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50",
+              style: { backgroundColor: "oklch(var(--primary))" },
+              children: submit.isPending ? "Submitting…" : "Submit for review"
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "button",
+            {
+              type: "button",
+              "data-ocid": "mystery.contribution_cancel_button",
+              onClick: onClose,
+              className: "inline-flex min-h-[44px] items-center justify-center rounded-full border border-border/60 px-5 py-2.5 text-sm font-semibold text-muted-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+              children: "Cancel"
+            }
+          )
+        ] }),
+        submit.isError && /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-destructive", children: "Could not submit your contribution. Please try again." })
+      ]
+    }
+  );
+}
+function formatDate$1(timestamp) {
+  const date = new Date(Number(timestamp / 1000000n));
+  if (Number.isNaN(date.getTime())) return "Unknown date";
+  return date.toLocaleDateString(void 0, {
+    year: "numeric",
+    month: "short",
+    day: "numeric"
+  });
+}
+function formatContributor$2(contributor) {
+  const text = contributor.toText();
+  return text.length > 18 ? `${text.slice(0, 5)}…${text.slice(-4)}` : text;
+}
+const STATUS_ORDER = [
+  MysteryStatus.Open,
+  MysteryStatus.Researching,
+  MysteryStatus.PartiallyResolved,
+  MysteryStatus.Resolved
+];
+function MysteryDetail({
+  mystery,
+  onBack,
+  onOpenProfile,
+  onContribute,
+  isAdmin,
+  isAuthenticated
+}) {
+  const [status, setStatus] = reactExports.useState(mystery.status);
+  const [showResolve, setShowResolve] = reactExports.useState(false);
+  const [summary, setSummary] = reactExports.useState("");
+  const [evidence, setEvidence] = reactExports.useState("");
+  const updateMystery = useUpdateCanonicalMystery();
+  const markResolved = useMarkMysteryResolved();
+  const changeStatus = (next) => {
+    setStatus(next);
+    updateMystery.mutate({
+      id: mystery.id,
+      title: mystery.title,
+      description: mystery.description,
+      relatedMemberIds: mystery.relatedMemberIds,
+      relatedBranchId: mystery.relatedBranchId ?? null,
+      knownFacts: mystery.knownFacts,
+      possibilities: mystery.possibilities,
+      relatedSourceIds: mystery.relatedSourceIds,
+      relatedArchiveItemIds: mystery.relatedArchiveItemIds,
+      status: next
+    });
+  };
+  const submitResolution = () => {
+    if (!summary.trim()) return;
+    const evidenceList = evidence.split("\n").map((line) => line.trim()).filter(Boolean);
+    markResolved.mutate(
+      {
+        id: mystery.id,
+        summary: summary.trim(),
+        supportingEvidence: evidenceList
+      },
+      {
+        onSuccess: () => {
+          setShowResolve(false);
+          setSummary("");
+          setEvidence("");
+        }
+      }
+    );
+  };
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-5", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between gap-3", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "mystery.back_button",
+          onClick: onBack,
+          className: "inline-flex min-h-[44px] items-center gap-1.5 rounded-full border border-border/60 px-4 text-sm font-semibold text-foreground transition-colors hover:border-accent/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(ArrowLeft, { className: "h-4 w-4", "aria-hidden": "true" }),
+            "All mysteries"
+          ]
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "span",
+        {
+          "data-ocid": "mystery.status_badge",
+          className: `mystery-status ${MYSTERY_STATUS_BADGE[mystery.status]}`,
+          children: MYSTERY_STATUS_LABELS[mystery.status]
+        }
+      )
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-2", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "font-display text-2xl font-semibold tracking-tight text-foreground", children: mystery.title }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm leading-relaxed text-muted-foreground", children: mystery.description })
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted-foreground", children: [
+      mystery.relatedMemberIds.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "inline-flex items-center gap-1.5", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(Users, { className: "h-3.5 w-3.5", "aria-hidden": "true" }),
+        mystery.relatedMemberIds.map(
+          (id2) => onOpenProfile ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+            PersonLink,
+            {
+              personId: id2,
+              onOpenProfile
+            },
+            id2
+          ) : /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "member-chip", children: id2 }, id2)
+        )
+      ] }),
+      mystery.relatedBranchId && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "inline-flex items-center gap-1.5", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(BookOpen, { className: "h-3.5 w-3.5", "aria-hidden": "true" }),
+        mystery.relatedBranchId
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { children: [
+        "Contributed by ",
+        formatContributor$2(mystery.contributor)
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { children: [
+        "Created ",
+        formatDate$1(mystery.createdAt)
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { children: [
+        "Updated ",
+        formatDate$1(mystery.updatedAt)
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mystery-sections", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "section",
+        {
+          "data-ocid": "mystery.known_section",
+          className: "mystery-section mystery-known",
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mystery-section-head", children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "mystery-section-title", children: "Known" }) }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mystery-section-hint", children: "What existing evidence supports." }),
+            mystery.knownFacts.length > 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("ul", { className: "flex flex-col gap-2", children: mystery.knownFacts.map((fact) => /* @__PURE__ */ jsxRuntimeExports.jsx("li", { className: "mystery-section-item", children: fact }, `known-${fact}`)) }) : /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mystery-section-hint", children: "No confirmed facts recorded yet." })
+          ]
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "section",
+        {
+          "data-ocid": "mystery.possibilities_section",
+          className: "mystery-section mystery-possibility",
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mystery-section-head", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Lightbulb, { className: "h-4 w-4", "aria-hidden": "true" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "mystery-section-title", children: "Possibilities" })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mystery-section-hint", children: "Family theories, oral history, and research hypotheses — not confirmed fact." }),
+            mystery.possibilities.length > 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("ul", { className: "flex flex-col gap-2", children: mystery.possibilities.map((possibility) => /* @__PURE__ */ jsxRuntimeExports.jsx("li", { className: "mystery-section-item", children: possibility }, possibility)) }) : /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mystery-section-hint", children: "No theories recorded yet." })
+          ]
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "section",
+        {
+          "data-ocid": "mystery.sources_section",
+          className: "mystery-section mystery-source",
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mystery-section-head", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(FileText, { className: "h-4 w-4", "aria-hidden": "true" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "mystery-section-title", children: "Sources" })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mystery-section-hint", children: "Documents and Archive items supporting the research." }),
+            mystery.relatedSourceIds.length === 0 && mystery.relatedArchiveItemIds.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mystery-section-hint", children: "No sources recorded yet." }) : /* @__PURE__ */ jsxRuntimeExports.jsxs("ul", { className: "flex flex-col gap-2", children: [
+              mystery.relatedSourceIds.map((id2) => /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { className: "mystery-section-item", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "item-tag", children: "Source" }),
+                " #",
+                id2.toString()
+              ] }, id2.toString())),
+              mystery.relatedArchiveItemIds.map((id2) => /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { className: "mystery-section-item", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "item-tag", children: "Archive" }),
+                " #",
+                id2.toString()
+              ] }, id2.toString()))
+            ] })
+          ]
+        }
+      )
+    ] }),
+    mystery.resolution && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "section",
+      {
+        "data-ocid": "mystery.resolution_section",
+        className: "flex flex-col gap-2.5 rounded-xl border border-border/60 bg-card p-4",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(CircleCheck, { className: "h-4 w-4 text-success", "aria-hidden": "true" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "text-xs font-semibold uppercase tracking-[0.2em] text-success", children: "Resolution" })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm leading-relaxed text-foreground", children: mystery.resolution.summary }),
+          mystery.resolution.supportingEvidence.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsx("ul", { className: "flex flex-col gap-2", children: mystery.resolution.supportingEvidence.map((item) => /* @__PURE__ */ jsxRuntimeExports.jsx("li", { className: "mystery-section-item", children: item }, item)) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-xs text-muted-foreground", children: [
+            "Resolved ",
+            formatDate$1(mystery.resolution.resolvedAt),
+            " — the prior theories and research trail above are preserved."
+          ] })
+        ]
+      }
+    ),
+    isAuthenticated && /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "button",
+      {
+        type: "button",
+        "data-ocid": "mystery.contribute_button",
+        onClick: onContribute,
+        className: "inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+        style: { backgroundColor: "oklch(var(--primary))" },
+        children: "Contribute a note, memory, lead, or source"
+      }
+    ),
+    isAdmin && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "section",
+      {
+        "data-ocid": "mystery.steward_controls",
+        className: "flex flex-col gap-4 rounded-xl border border-border/60 bg-card p-4",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground", children: "Steward controls" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-2", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("label", { htmlFor: "mystery-status", className: "field-label", children: "Status" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "select",
+              {
+                id: "mystery-status",
+                "data-ocid": "mystery.status_select",
+                value: status,
+                onChange: (e) => changeStatus(e.target.value),
+                className: "form-select",
+                children: STATUS_ORDER.map((s) => /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: s, children: MYSTERY_STATUS_LABELS[s] }, s))
+              }
+            ),
+            updateMystery.isError && /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-destructive", children: "Could not update status. Please try again." })
+          ] }),
+          mystery.status !== MysteryStatus.Resolved && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-col gap-2", children: !showResolve ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "button",
+            {
+              type: "button",
+              "data-ocid": "mystery.resolve_button",
+              onClick: () => setShowResolve(true),
+              className: "inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full border border-success/40 px-4 py-2 text-sm font-semibold text-success transition-colors hover:bg-success/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+              children: "Mark resolved"
+            }
+          ) : /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-3 rounded-lg border border-border/60 p-3", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("label", { htmlFor: "resolution-summary", className: "field-label", children: "Resolution summary" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "textarea",
+              {
+                id: "resolution-summary",
+                "data-ocid": "mystery.resolution_summary_input",
+                value: summary,
+                onChange: (e) => setSummary(e.target.value),
+                placeholder: "What the evidence now supports…",
+                className: "form-textarea"
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("label", { htmlFor: "resolution-evidence", className: "field-label", children: "Supporting evidence (one per line)" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "textarea",
+              {
+                id: "resolution-evidence",
+                "data-ocid": "mystery.resolution_evidence_input",
+                value: evidence,
+                onChange: (e) => setEvidence(e.target.value),
+                placeholder: "Document or Archive reference…",
+                className: "form-textarea"
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap gap-2", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "button",
+                {
+                  type: "button",
+                  "data-ocid": "mystery.confirm_resolve_button",
+                  onClick: submitResolution,
+                  disabled: !summary.trim() || markResolved.isPending,
+                  className: "inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-success transition-colors hover:bg-success/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50",
+                  children: markResolved.isPending ? "Resolving…" : "Confirm resolution"
+                }
+              ),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "button",
+                {
+                  type: "button",
+                  "data-ocid": "mystery.cancel_resolve_button",
+                  onClick: () => setShowResolve(false),
+                  className: "inline-flex min-h-[44px] items-center justify-center rounded-full border border-border/60 px-4 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                  children: "Cancel"
+                }
+              )
+            ] }),
+            markResolved.isError && /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-destructive", children: "Could not mark resolved. Please try again." })
+          ] }) })
+        ]
+      }
+    )
+  ] });
+}
+const STATUS_FILTERS = [
+  "All",
+  MysteryStatus.Open,
+  MysteryStatus.Researching,
+  MysteryStatus.PartiallyResolved,
+  MysteryStatus.Resolved
+];
+function formatContributor$1(contributor) {
+  const text = contributor.toText();
+  return text.length > 18 ? `${text.slice(0, 5)}…${text.slice(-4)}` : text;
+}
+function MysteriesPage({
+  onBack,
+  onOpenProfile,
+  initialMysteryId
+}) {
+  const { data: mysteries = [], isLoading } = useMysteries();
+  const { isAuthenticated } = useAuth();
+  const { data: isAdmin = false } = useIsAdmin();
+  const [filter2, setFilter] = reactExports.useState("All");
+  const [selectedId, setSelectedId] = reactExports.useState(
+    initialMysteryId ?? null
+  );
+  const [showContribute, setShowContribute] = reactExports.useState(false);
+  const [showCreate, setShowCreate] = reactExports.useState(false);
+  const [showReview, setShowReview] = reactExports.useState(false);
+  const selected = reactExports.useMemo(
+    () => mysteries.find((m2) => m2.id === selectedId) ?? null,
+    [mysteries, selectedId]
+  );
+  const filtered = reactExports.useMemo(
+    () => filter2 === "All" ? mysteries : mysteries.filter((m2) => m2.status === filter2),
+    [mysteries, filter2]
+  );
+  if (selected) {
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto flex w-full max-w-3xl flex-1 flex-col px-6 py-10", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        MysteryDetail,
+        {
+          mystery: selected,
+          onBack: () => {
+            setSelectedId(null);
+            setShowContribute(false);
+          },
+          onOpenProfile,
+          onContribute: () => setShowContribute(true),
+          isAdmin,
+          isAuthenticated
+        }
+      ),
+      showContribute && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-5", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+        MysteryContributionForm,
+        {
+          mysteryId: selected.id,
+          onClose: () => setShowContribute(false),
+          onSubmitted: () => setShowContribute(false)
+        }
+      ) })
+    ] });
+  }
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto flex w-full max-w-3xl flex-1 flex-col px-6 py-10", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mb-6 flex items-center justify-between gap-3", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "font-display text-2xl font-semibold tracking-tight text-foreground", children: "Family Mysteries" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-1 text-sm text-muted-foreground", children: "The questions we are still working to answer." })
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "mysteries.back_button",
+          onClick: onBack,
+          className: "inline-flex min-h-[44px] items-center gap-1.5 rounded-full border border-border/60 px-4 text-sm font-semibold text-foreground transition-colors hover:border-accent/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+          children: "Back"
+        }
+      )
+    ] }),
+    isAdmin && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "div",
+      {
+        "data-ocid": "mysteries.steward_panel",
+        className: "mb-6 flex flex-col gap-3 rounded-xl border border-border/60 bg-card p-4",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground", children: "Steward controls" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap gap-2", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "button",
+              {
+                type: "button",
+                "data-ocid": "mysteries.create_button",
+                onClick: () => setShowCreate((v2) => !v2),
+                className: "inline-flex min-h-[44px] items-center gap-1.5 rounded-full border border-border/60 px-4 text-sm font-semibold text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(Plus, { className: "h-4 w-4", "aria-hidden": "true" }),
+                  showCreate ? "Close create" : "Create mystery"
+                ]
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "button",
+              {
+                type: "button",
+                "data-ocid": "mysteries.review_button",
+                onClick: () => setShowReview((v2) => !v2),
+                className: "inline-flex min-h-[44px] items-center gap-1.5 rounded-full border border-border/60 px-4 text-sm font-semibold text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { className: "h-4 w-4", "aria-hidden": "true" }),
+                  showReview ? "Close review" : "Review contributions"
+                ]
+              }
+            )
+          ] }),
+          showCreate && /* @__PURE__ */ jsxRuntimeExports.jsx(CreateMysteryForm, { onDone: () => setShowCreate(false) }),
+          showReview && /* @__PURE__ */ jsxRuntimeExports.jsx(ReviewContributions, {})
+        ]
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "filter-bar mb-6", children: STATUS_FILTERS.map((status) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "button",
+      {
+        type: "button",
+        "data-ocid": "mysteries.filter_tab",
+        onClick: () => setFilter(status),
+        className: `filter-tab min-h-[44px] ${filter2 === status ? "filter-tab-active" : ""}`,
+        children: status === "All" ? "All" : MYSTERY_STATUS_LABELS[status]
+      },
+      status
+    )) }),
+    isLoading ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "div",
+      {
+        "data-ocid": "mysteries.loading_state",
+        className: "flex flex-col gap-4",
+        children: Array.from({ length: 3 }, (_2, i) => `skeleton-${i}`).map((id2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "div",
+          {
+            className: "h-32 animate-pulse rounded-xl border border-border/60 bg-muted"
+          },
+          id2
+        ))
+      }
+    ) : filtered.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+      DomainEmptyState,
+      {
+        icon: Search,
+        title: filter2 === "All" ? "No mysteries yet" : `No ${MYSTERY_STATUS_LABELS[filter2].toLowerCase()} mysteries`,
+        hint: "Unanswered questions and ongoing family research will appear here."
+      }
+    ) : /* @__PURE__ */ jsxRuntimeExports.jsx("div", { "data-ocid": "mysteries.list", className: "flex flex-col gap-4", children: filtered.map((mystery) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+      MysteryCard,
+      {
+        mystery,
+        onOpen: () => setSelectedId(mystery.id),
+        onOpenProfile
+      },
+      mystery.id.toString()
+    )) })
+  ] });
+}
+function CreateMysteryForm({ onDone }) {
+  const create = useCreateCanonicalMystery();
+  const [title, setTitle] = reactExports.useState("");
+  const [description, setDescription] = reactExports.useState("");
+  const [status, setStatus] = reactExports.useState(MysteryStatus.Open);
+  const [knownFacts, setKnownFacts] = reactExports.useState("");
+  const [possibilities, setPossibilities] = reactExports.useState("");
+  const splitLines = (value) => value.split("\n").map((line) => line.trim()).filter(Boolean);
+  const handleSubmit = () => {
+    if (!title.trim()) return;
+    create.mutate(
+      {
+        title: title.trim(),
+        description: description.trim(),
+        relatedMemberIds: [],
+        relatedBranchId: null,
+        knownFacts: splitLines(knownFacts),
+        possibilities: splitLines(possibilities),
+        relatedSourceIds: [],
+        relatedArchiveItemIds: [],
+        status
+      },
+      {
+        onSuccess: () => {
+          setTitle("");
+          setDescription("");
+          setKnownFacts("");
+          setPossibilities("");
+          onDone();
+        }
+      }
+    );
+  };
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "div",
+    {
+      "data-ocid": "mysteries.create_form",
+      className: "flex flex-col gap-3 rounded-lg border border-border/60 p-3",
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("label", { htmlFor: "create-title", className: "field-label", children: "Question" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "input",
+          {
+            id: "create-title",
+            "data-ocid": "mysteries.create_title_input",
+            value: title,
+            onChange: (e) => setTitle(e.target.value),
+            placeholder: "What are we trying to find out?…",
+            className: "form-input"
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("label", { htmlFor: "create-description", className: "field-label", children: "Description" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "textarea",
+          {
+            id: "create-description",
+            "data-ocid": "mysteries.create_description_input",
+            value: description,
+            onChange: (e) => setDescription(e.target.value),
+            placeholder: "Background and context…",
+            className: "form-textarea"
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("label", { htmlFor: "create-status", className: "field-label", children: "Status" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "select",
+          {
+            id: "create-status",
+            "data-ocid": "mysteries.create_status_select",
+            value: status,
+            onChange: (e) => setStatus(e.target.value),
+            className: "form-select",
+            children: [
+              MysteryStatus.Open,
+              MysteryStatus.Researching,
+              MysteryStatus.PartiallyResolved
+            ].map((s) => /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: s, children: MYSTERY_STATUS_LABELS[s] }, s))
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("label", { htmlFor: "create-known", className: "field-label", children: "Known facts (one per line)" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "textarea",
+          {
+            id: "create-known",
+            "data-ocid": "mysteries.create_known_input",
+            value: knownFacts,
+            onChange: (e) => setKnownFacts(e.target.value),
+            placeholder: "What existing evidence supports…",
+            className: "form-textarea"
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("label", { htmlFor: "create-possibilities", className: "field-label", children: "Possibilities (one per line)" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "textarea",
+          {
+            id: "create-possibilities",
+            "data-ocid": "mysteries.create_possibilities_input",
+            value: possibilities,
+            onChange: (e) => setPossibilities(e.target.value),
+            placeholder: "Family theories and research hypotheses…",
+            className: "form-textarea"
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap gap-2", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "button",
+            {
+              type: "button",
+              "data-ocid": "mysteries.create_submit_button",
+              onClick: handleSubmit,
+              disabled: !title.trim() || create.isPending,
+              className: "inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50",
+              style: { backgroundColor: "oklch(var(--primary))" },
+              children: create.isPending ? "Creating…" : "Create mystery"
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "button",
+            {
+              type: "button",
+              "data-ocid": "mysteries.create_cancel_button",
+              onClick: onDone,
+              className: "inline-flex min-h-[44px] items-center justify-center rounded-full border border-border/60 px-4 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+              children: "Cancel"
+            }
+          )
+        ] }),
+        create.isError && /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-destructive", children: "Could not create the mystery. Please try again." })
+      ]
+    }
+  );
+}
+function ReviewContributions() {
+  const { data: pending = [], isLoading } = usePendingMysteryContributions();
+  const review = useReviewMysteryContribution();
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "div",
+    {
+      "data-ocid": "mysteries.review_panel",
+      className: "flex flex-col gap-3 rounded-lg border border-border/60 p-3",
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "text-sm font-semibold text-foreground", children: "Pending contributions" }),
+        isLoading ? /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: "Loading…" }) : pending.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: "No contributions awaiting review." }) : /* @__PURE__ */ jsxRuntimeExports.jsx("ul", { className: "flex flex-col gap-3", children: pending.map((contribution) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "li",
+          {
+            "data-ocid": "mysteries.review_item",
+            className: "flex flex-col gap-2 rounded-lg border border-border/60 p-3",
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap items-center gap-2 text-xs text-muted-foreground", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "tag-chip", children: MYSTERY_CONTRIBUTION_TYPE_LABELS[contribution.contributionType] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { children: [
+                  "Mystery #",
+                  contribution.mysteryId.toString()
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { children: [
+                  "by ",
+                  formatContributor$1(contribution.contributor)
+                ] })
+              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm leading-relaxed text-foreground", children: contribution.text }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap gap-2", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  "button",
+                  {
+                    type: "button",
+                    "data-ocid": "mysteries.approve_button",
+                    onClick: () => review.mutate({ id: contribution.id, approve: true }),
+                    disabled: review.isPending,
+                    className: "approve-action min-h-[44px]",
+                    children: "Approve"
+                  }
+                ),
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  "button",
+                  {
+                    type: "button",
+                    "data-ocid": "mysteries.reject_button",
+                    onClick: () => review.mutate({ id: contribution.id, approve: false }),
+                    disabled: review.isPending,
+                    className: "reject-action min-h-[44px]",
+                    children: "Reject"
+                  }
+                )
+              ] })
+            ]
+          },
+          contribution.id.toString()
+        )) }),
+        review.isError && /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-destructive", children: "Could not review the contribution. Please try again." })
+      ]
+    }
+  );
 }
 function formatNotificationTime(timestamp) {
   const date = new Date(Number(timestamp / 1000000n));
@@ -61255,7 +63923,7 @@ function validate(draft) {
   }
   return errors;
 }
-function getInitials(name) {
+function getInitials$1(name) {
   var _a2;
   const parts = name.split(/\s+/).filter((part) => part.length > 0 && /[A-Za-z]/.test(part.charAt(0)));
   const first = ((_a2 = parts[0]) == null ? void 0 : _a2.charAt(0)) ?? "";
@@ -61306,7 +63974,7 @@ function EditPhotoSection({
             backgroundColor: "oklch(var(--muted))",
             color: "oklch(var(--muted-foreground))"
           },
-          children: getInitials(displayName) || "?"
+          children: getInitials$1(displayName) || "?"
         }
       ),
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-1.5", children: [
@@ -62191,6 +64859,2498 @@ function ProfileEditPage({
     ] })
   ] });
 }
+function EvidenceBadge({ status, label }) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    "span",
+    {
+      "data-ocid": "evidence_badge",
+      className: `evidence-badge ${EVIDENCE_STATUS_BADGE[status]}`,
+      children: label ?? EVIDENCE_STATUS_LABELS[status]
+    }
+  );
+}
+function StoryCard({ story, onOpen, onOpenProfile }) {
+  const eraLabel2 = story.era ?? (story.year !== void 0 ? String(story.year) : null);
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("article", { "data-ocid": `stories.card.${story.id}`, className: "story-card", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-start justify-between gap-3", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "button",
+        {
+          type: "button",
+          "data-ocid": `stories.card.open.${story.id}`,
+          onClick: () => onOpen(story.id),
+          className: "story-card-title text-left hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+          children: story.title
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(EvidenceBadge, { status: story.evidenceStatus })
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "story-card-preview line-clamp-3", children: story.storyText }),
+    story.relatedMemberIds.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "story-card-meta", children: story.relatedMemberIds.map(
+      (personId) => onOpenProfile ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+        PersonLink,
+        {
+          personId,
+          onOpenProfile
+        },
+        personId
+      ) : /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "member-chip", children: personId }, personId)
+    ) }),
+    eraLabel2 && /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "story-card-era", children: eraLabel2 })
+  ] });
+}
+function StoryContributionForm({
+  onClose,
+  isSteward,
+  initialStory
+}) {
+  const { data: archiveItems = [] } = useApprovedArchiveItems();
+  const submitStory = useSubmitStory();
+  const addCanonicalStory = useAddCanonicalStory();
+  const updateCanonicalStory = useUpdateCanonicalStory();
+  const [title, setTitle] = reactExports.useState((initialStory == null ? void 0 : initialStory.title) ?? "");
+  const [storyText, setStoryText] = reactExports.useState((initialStory == null ? void 0 : initialStory.storyText) ?? "");
+  const [relatedMemberIds, setRelatedMemberIds] = reactExports.useState(
+    (initialStory == null ? void 0 : initialStory.relatedMemberIds) ?? []
+  );
+  const [era, setEra] = reactExports.useState((initialStory == null ? void 0 : initialStory.era) ?? "");
+  const [year, setYear] = reactExports.useState(
+    (initialStory == null ? void 0 : initialStory.year) !== void 0 ? String(initialStory.year) : ""
+  );
+  const [location2, setLocation] = reactExports.useState((initialStory == null ? void 0 : initialStory.location) ?? "");
+  const [evidenceStatus, setEvidenceStatus] = reactExports.useState(
+    (initialStory == null ? void 0 : initialStory.evidenceStatus) ?? EvidenceStatus.FamilyHistory
+  );
+  const [relatedArchiveItemIds, setRelatedArchiveItemIds] = reactExports.useState(
+    (initialStory == null ? void 0 : initialStory.relatedArchiveItemIds) ?? []
+  );
+  const [submitted, setSubmitted] = reactExports.useState(false);
+  const isEditing = Boolean(initialStory);
+  const toggleMember = (personId) => {
+    setRelatedMemberIds(
+      (current) => current.includes(personId) ? current.filter((id2) => id2 !== personId) : [...current, personId]
+    );
+  };
+  const toggleArchiveItem = (itemId) => {
+    setRelatedArchiveItemIds(
+      (current) => current.includes(itemId) ? current.filter((id2) => id2 !== itemId) : [...current, itemId]
+    );
+  };
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const input = {
+      title: title.trim(),
+      storyText: storyText.trim(),
+      relatedMemberIds,
+      era: era.trim() || null,
+      year: year.trim() === "" ? null : BigInt(year.trim()),
+      location: location2.trim() || null,
+      evidenceStatus,
+      relatedArchiveItemIds
+    };
+    if (isEditing && initialStory) {
+      updateCanonicalStory.mutate({ ...input, id: initialStory.id });
+    } else if (isSteward) {
+      addCanonicalStory.mutate(input);
+    } else {
+      submitStory.mutate(input);
+    }
+    setSubmitted(true);
+  };
+  const isPending = submitStory.isPending || addCanonicalStory.isPending || updateCanonicalStory.isPending;
+  const hasError = submitStory.isError || addCanonicalStory.isError || updateCanonicalStory.isError;
+  if (submitted && !hasError) {
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { "data-ocid": "stories.form.success_state", className: "domain-empty", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "domain-empty-mark", "aria-hidden": "true", children: /* @__PURE__ */ jsxRuntimeExports.jsx(CircleCheck, { className: "h-6 w-6", strokeWidth: 1.75 }) }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "domain-empty-title", children: isEditing ? "Story updated" : isSteward ? "Story added" : "Story submitted" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "domain-empty-hint", children: isEditing ? "The canonical story has been updated and is now visible." : isSteward ? "The canonical story is now visible to the family." : "Your story has been submitted and is pending steward review. It will appear here once a Family Steward approves it." }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "stories.form.close_button",
+          onClick: onClose,
+          className: "archive-empty-reset",
+          children: "Done"
+        }
+      )
+    ] });
+  }
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "rounded-xl border border-border/60 bg-card p-5", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mb-4 flex items-start justify-between gap-3", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display text-xl font-semibold tracking-tight text-foreground", children: isEditing ? "Edit Story" : isSteward ? "Add a Story" : "Propose a Story" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-1 text-sm text-muted-foreground", children: isSteward ? "Add a canonical story that is visible to the family immediately." : "Your story enters pending review and appears once a Family Steward approves it." })
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "stories.form.cancel_button",
+          onClick: onClose,
+          "aria-label": "Close form",
+          className: "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-border/60 text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+          children: /* @__PURE__ */ jsxRuntimeExports.jsx(X, { className: "h-5 w-5", "aria-hidden": "true" })
+        }
+      )
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("form", { onSubmit: handleSubmit, className: "flex flex-col gap-4", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("label", { htmlFor: "story-title", className: "field-label", children: "Title" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "input",
+          {
+            id: "story-title",
+            "data-ocid": "stories.form.title_input",
+            type: "text",
+            value: title,
+            onChange: (event) => setTitle(event.target.value),
+            required: true,
+            placeholder: "A short, memorable title",
+            className: "form-input"
+          }
+        )
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("label", { htmlFor: "story-text", className: "field-label", children: "Story" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "textarea",
+          {
+            id: "story-text",
+            "data-ocid": "stories.form.textarea",
+            value: storyText,
+            onChange: (event) => setStoryText(event.target.value),
+            required: true,
+            placeholder: "Share the moment, memory, or account…",
+            className: "form-textarea"
+          }
+        )
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "field-label", children: "Related family members" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-wrap gap-2", children: Object.entries(profiles).map(([personId, profile]) => {
+          const checked = relatedMemberIds.includes(personId);
+          return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "button",
+            {
+              type: "button",
+              "data-ocid": `stories.form.member.${personId}`,
+              onClick: () => toggleMember(personId),
+              "aria-pressed": checked,
+              className: `member-chip transition-colors ${checked ? "border-accent bg-accent text-accent-foreground" : "hover:border-accent/50 hover:bg-muted"}`,
+              children: [
+                checked ? /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { className: "h-3.5 w-3.5", "aria-hidden": "true" }) : null,
+                profile.name
+              ]
+            },
+            personId
+          );
+        }) })
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid gap-4 sm:grid-cols-2", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("label", { htmlFor: "story-era", className: "field-label", children: "Era" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "input",
+            {
+              id: "story-era",
+              "data-ocid": "stories.form.era_input",
+              type: "text",
+              value: era,
+              onChange: (event) => setEra(event.target.value),
+              placeholder: "e.g. Reconstruction era",
+              className: "form-input"
+            }
+          )
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("label", { htmlFor: "story-year", className: "field-label", children: "Year (approx.)" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "input",
+            {
+              id: "story-year",
+              "data-ocid": "stories.form.year_input",
+              type: "number",
+              value: year,
+              onChange: (event) => setYear(event.target.value),
+              placeholder: "e.g. 1885",
+              className: "form-input"
+            }
+          )
+        ] })
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("label", { htmlFor: "story-location", className: "field-label", children: "Location" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "input",
+          {
+            id: "story-location",
+            "data-ocid": "stories.form.location_input",
+            type: "text",
+            value: location2,
+            onChange: (event) => setLocation(event.target.value),
+            placeholder: "Where did this take place?",
+            className: "form-input"
+          }
+        )
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("label", { htmlFor: "story-evidence", className: "field-label", children: "Evidence status" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "select",
+          {
+            id: "story-evidence",
+            "data-ocid": "stories.form.evidence_select",
+            value: evidenceStatus,
+            onChange: (event) => setEvidenceStatus(event.target.value),
+            className: "form-select",
+            children: Object.values(EvidenceStatus).map((status) => /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: status, children: EVIDENCE_STATUS_LABELS[status] }, status))
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-1.5 text-xs text-muted-foreground", children: "Family History and Personal Memory are never presented as documented fact." })
+      ] }),
+      archiveItems.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "field-label", children: "Related Archive items" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-wrap gap-2", children: archiveItems.map((item) => {
+          const checked = relatedArchiveItemIds.includes(item.id);
+          return /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "button",
+            {
+              type: "button",
+              "data-ocid": `stories.form.archive.${item.id}`,
+              onClick: () => toggleArchiveItem(item.id),
+              "aria-pressed": checked,
+              className: `member-chip transition-colors ${checked ? "border-accent bg-accent/10 text-foreground" : "hover:border-accent/50 hover:bg-muted"}`,
+              children: item.title
+            },
+            item.id
+          );
+        }) })
+      ] }),
+      hasError && /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "p",
+        {
+          "data-ocid": "stories.form.error_state",
+          className: "text-sm font-semibold text-destructive",
+          children: "Something went wrong. Please try again."
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap items-center justify-end gap-3", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "button",
+          {
+            type: "button",
+            "data-ocid": "stories.form.cancel_button",
+            onClick: onClose,
+            className: "inline-flex min-h-[44px] items-center rounded-full border border-border/60 px-4 text-sm font-semibold text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+            children: "Cancel"
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "button",
+          {
+            type: "submit",
+            "data-ocid": "stories.form.submit_button",
+            disabled: isPending || !title.trim() || !storyText.trim(),
+            className: "inline-flex min-h-[44px] items-center gap-1.5 rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-60",
+            children: isPending ? "Saving…" : isEditing ? "Save Changes" : isSteward ? "Add Story" : "Submit for Review"
+          }
+        )
+      ] })
+    ] })
+  ] });
+}
+function formatDate(timestamp) {
+  const date = new Date(Number(timestamp / 1000000n));
+  if (Number.isNaN(date.getTime())) return "Unknown date";
+  return date.toLocaleDateString(void 0, {
+    year: "numeric",
+    month: "short",
+    day: "numeric"
+  });
+}
+function formatContributor(contributor) {
+  const text = contributor.toText();
+  return text.length > 18 ? `${text.slice(0, 5)}…${text.slice(-4)}` : text;
+}
+function StoryDetail({
+  story,
+  onBack,
+  onOpenProfile,
+  isSteward,
+  onEdit
+}) {
+  const { accountId } = useAuth();
+  const { displayName } = useNavbarIdentity();
+  const contributorText = accountId && story.contributor.toText() === accountId ? displayName || "You" : formatContributor(story.contributor);
+  const eraLabel2 = story.era ?? (story.year !== void 0 ? String(story.year) : null);
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto w-full max-w-3xl px-6 py-10", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mb-6 flex items-center justify-between gap-3", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "stories.detail.back_button",
+          onClick: onBack,
+          className: "inline-flex min-h-[44px] items-center gap-1.5 rounded-full border border-border/60 px-4 text-sm font-semibold text-foreground transition-colors hover:border-accent/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(ArrowLeft, { className: "h-4 w-4", "aria-hidden": "true" }),
+            "Back to Stories"
+          ]
+        }
+      ),
+      isSteward && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "stories.detail.edit_button",
+          onClick: () => onEdit(story),
+          className: "inline-flex min-h-[44px] items-center gap-1.5 rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Pencil, { className: "h-4 w-4", "aria-hidden": "true" }),
+            "Edit Story"
+          ]
+        }
+      )
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "story-detail", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap items-start justify-between gap-3", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "font-display text-2xl font-semibold tracking-tight text-foreground", children: story.title }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(EvidenceBadge, { status: story.evidenceStatus })
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "story-evidence-legend", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "story-evidence-legend-label", children: "Evidence" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(EvidenceBadge, { status: story.evidenceStatus }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-xs text-muted-foreground", children: story.evidenceStatus === "Documented" ? "Supported by records." : "Family history or memory — not documented fact." })
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "story-detail-body", children: story.storyText }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "rounded-xl border border-border/60 bg-card p-5", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "archive-detail-meta-row", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "meta-label", children: "Related family members" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-wrap justify-end gap-1.5", children: story.relatedMemberIds.length > 0 ? story.relatedMemberIds.map(
+            (personId) => onOpenProfile ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+              PersonLink,
+              {
+                personId,
+                onOpenProfile
+              },
+              personId
+            ) : /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "member-chip", children: personId }, personId)
+          ) : /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "meta-value text-muted-foreground", children: "None" }) })
+        ] }),
+        eraLabel2 && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "archive-detail-meta-row", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "meta-label", children: "Era / date" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "meta-value", children: eraLabel2 })
+        ] }),
+        story.location && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "archive-detail-meta-row", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "meta-label", children: "Location" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "meta-value", children: story.location })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "archive-detail-meta-row", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "meta-label", children: "Contributor" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "meta-value", children: contributorText })
+        ] }),
+        story.relatedArchiveItemIds.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "archive-detail-meta-row", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "meta-label", children: "Related Archive items" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "meta-value", children: [
+            story.relatedArchiveItemIds.length,
+            " item",
+            story.relatedArchiveItemIds.length === 1 ? "" : "s"
+          ] })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "archive-detail-meta-row", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "meta-label", children: "Added" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "meta-value", children: formatDate(story.createdAt) })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "archive-detail-meta-row", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "meta-label", children: "Updated" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "meta-value", children: formatDate(story.updatedAt) })
+        ] })
+      ] })
+    ] })
+  ] });
+}
+const BRANCH_MEMBERS = {
+  "Clayton Branch": [
+    "clayton",
+    "hudson",
+    "erma",
+    "elbert",
+    "wellman",
+    "wetherby",
+    "clayton-son-died",
+    "columbus",
+    "thomas-clayton",
+    "alton",
+    "robert-davis",
+    "ardeanus",
+    "willie-b",
+    "james",
+    "freddie",
+    "zelia-mae",
+    "lula-mae"
+  ],
+  "Smith Branch": [
+    "lorenzoSmithSr",
+    "versieSmithJr",
+    "herbertSmith",
+    "alonzoSmith",
+    "sherriSmith",
+    "beatriceSmith",
+    "edSmith"
+  ],
+  "Adams Line": [
+    "harvey-adams-sr",
+    "mary-louise-sims",
+    "mary-jane-johnson",
+    "gertrude-adams-hill",
+    "john-adams",
+    "louis-adams-sr",
+    "albert-adams",
+    "charles-adams",
+    "homer-adams",
+    "versie-adams-sr",
+    "judge-granberry-adams",
+    "fannie-adams"
+  ]
+};
+function matchesStoryFilter(story, filter2) {
+  var _a2;
+  if (filter2.person && !story.relatedMemberIds.includes(filter2.person)) {
+    return false;
+  }
+  if (filter2.branch && !((_a2 = BRANCH_MEMBERS[filter2.branch]) == null ? void 0 : _a2.some(
+    (member) => story.relatedMemberIds.includes(member)
+  ))) {
+    return false;
+  }
+  if (filter2.era && story.era !== filter2.era) {
+    return false;
+  }
+  if (filter2.evidence && story.evidenceStatus !== filter2.evidence) {
+    return false;
+  }
+  return true;
+}
+function personLabel(personId) {
+  var _a2;
+  return ((_a2 = profiles[personId]) == null ? void 0 : _a2.name) ?? personId;
+}
+function StoryFilterBar({
+  stories,
+  filter: filter2,
+  onChange
+}) {
+  const people = Array.from(
+    new Set(stories.flatMap((story) => story.relatedMemberIds))
+  );
+  const eras = Array.from(
+    new Set(
+      stories.map((story) => story.era).filter((era) => Boolean(era))
+    )
+  );
+  const branches = Object.keys(BRANCH_MEMBERS);
+  const hasFilter = Boolean(
+    filter2.person || filter2.branch || filter2.era || filter2.evidence
+  );
+  const clear = () => onChange({});
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { "data-ocid": "stories.filter_bar", className: "filter-bar", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "button",
+      {
+        type: "button",
+        "data-ocid": "stories.filter.all",
+        onClick: clear,
+        className: `filter-tab ${!hasFilter ? "filter-tab-active" : ""}`,
+        children: "All Stories"
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "select",
+      {
+        "data-ocid": "stories.filter.person",
+        "aria-label": "Filter by person",
+        value: filter2.person ?? "",
+        onChange: (event) => onChange({ ...filter2, person: event.target.value || void 0 }),
+        className: "filter-select",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: "", children: "All people" }),
+          people.map((personId) => /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: personId, children: personLabel(personId) }, personId))
+        ]
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "select",
+      {
+        "data-ocid": "stories.filter.branch",
+        "aria-label": "Filter by branch",
+        value: filter2.branch ?? "",
+        onChange: (event) => onChange({ ...filter2, branch: event.target.value || void 0 }),
+        className: "filter-select",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: "", children: "All branches" }),
+          branches.map((branch) => /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: branch, children: branch }, branch))
+        ]
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "select",
+      {
+        "data-ocid": "stories.filter.era",
+        "aria-label": "Filter by era",
+        value: filter2.era ?? "",
+        onChange: (event) => onChange({ ...filter2, era: event.target.value || void 0 }),
+        className: "filter-select",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: "", children: "All eras" }),
+          eras.map((era) => /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: era, children: era }, era))
+        ]
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "select",
+      {
+        "data-ocid": "stories.filter.evidence",
+        "aria-label": "Filter by evidence status",
+        value: filter2.evidence ?? "",
+        onChange: (event) => onChange({
+          ...filter2,
+          evidence: event.target.value || void 0
+        }),
+        className: "filter-select",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: "", children: "All evidence" }),
+          Object.values(EvidenceStatus).map((status) => /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: status, children: EVIDENCE_STATUS_LABELS[status] }, status))
+        ]
+      }
+    ),
+    hasFilter && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "button",
+      {
+        type: "button",
+        "data-ocid": "stories.filter.clear",
+        onClick: clear,
+        className: "filter-clear",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(X, { className: "h-3.5 w-3.5", "aria-hidden": "true" }),
+          "Clear"
+        ]
+      }
+    )
+  ] });
+}
+function StoriesPage({
+  onBack,
+  onOpenProfile,
+  initialStoryId
+}) {
+  const { data: stories = [], isLoading } = useApprovedStories();
+  const { data: isAdmin = false } = useIsAdmin();
+  const { isAuthenticated } = useAuth();
+  const { data: pendingStories = [] } = usePendingStories();
+  const approveStory = useApproveStory();
+  const rejectStory = useRejectStory();
+  const [view, setView] = reactExports.useState(
+    initialStoryId != null ? "detail" : "browse"
+  );
+  const [filter2, setFilter] = reactExports.useState({});
+  const [selectedStoryId, setSelectedStoryId] = reactExports.useState(
+    initialStoryId ?? null
+  );
+  const [editingStory, setEditingStory] = reactExports.useState(null);
+  const filteredStories = reactExports.useMemo(
+    () => stories.filter((story) => matchesStoryFilter(story, filter2)),
+    [stories, filter2]
+  );
+  const selectedStory = stories.find((story) => story.id === selectedStoryId) ?? null;
+  const openDetail = (id2) => {
+    setSelectedStoryId(id2);
+    setView("detail");
+  };
+  const openForm = (story) => {
+    setEditingStory(story ?? null);
+    setView("form");
+  };
+  if (view === "detail" && selectedStory) {
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(
+      StoryDetail,
+      {
+        story: selectedStory,
+        onBack: () => setView("browse"),
+        onOpenProfile,
+        isSteward: isAdmin,
+        onEdit: openForm
+      }
+    );
+  }
+  if (view === "form") {
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mx-auto w-full max-w-3xl px-6 py-10", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+      StoryContributionForm,
+      {
+        onClose: () => setView("browse"),
+        isSteward: isAdmin,
+        initialStory: editingStory ?? void 0
+      }
+    ) });
+  }
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto flex w-full max-w-3xl flex-1 flex-col px-6 py-10", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mb-6 flex flex-wrap items-center justify-between gap-3", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "font-display text-2xl font-semibold tracking-tight text-foreground", children: "Family Stories" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-1 text-sm text-muted-foreground", children: "The moments and memories that shaped our family." })
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+        isAuthenticated && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "button",
+          {
+            type: "button",
+            "data-ocid": "stories.propose_button",
+            onClick: () => openForm(),
+            className: "inline-flex min-h-[44px] items-center gap-1.5 rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Plus, { className: "h-4 w-4", "aria-hidden": "true" }),
+              "Propose a Story"
+            ]
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "button",
+          {
+            type: "button",
+            "data-ocid": "stories.back_button",
+            onClick: onBack,
+            className: "inline-flex min-h-[44px] items-center gap-1.5 rounded-full border border-border/60 px-4 text-sm font-semibold text-foreground transition-colors hover:border-accent/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+            children: "Back"
+          }
+        )
+      ] })
+    ] }),
+    isAdmin && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mb-6 rounded-xl border border-border/60 bg-card p-4", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mb-3 flex items-center justify-between gap-3", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground", children: "Steward controls" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "button",
+          {
+            type: "button",
+            "data-ocid": "stories.add_canonical_button",
+            onClick: () => openForm(),
+            className: "inline-flex min-h-[44px] items-center gap-1.5 rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Plus, { className: "h-4 w-4", "aria-hidden": "true" }),
+              "Add Story"
+            ]
+          }
+        )
+      ] }),
+      pendingStories.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-2", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("h3", { className: "text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground", children: [
+          "Pending review (",
+          pendingStories.length,
+          ")"
+        ] }),
+        pendingStories.map((story) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "div",
+          {
+            "data-ocid": `stories.pending.${story.id}`,
+            className: "flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border/60 bg-background p-3",
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "truncate text-sm font-semibold text-foreground", children: story.title }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "truncate text-xs text-muted-foreground", children: story.storyText })
+              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex shrink-0 items-center gap-2", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                  "button",
+                  {
+                    type: "button",
+                    "data-ocid": `stories.pending.approve.${story.id}`,
+                    onClick: () => approveStory.mutate(story.id),
+                    disabled: approveStory.isPending,
+                    className: "approve-action",
+                    children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { className: "h-3.5 w-3.5", "aria-hidden": "true" }),
+                      "Approve"
+                    ]
+                  }
+                ),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                  "button",
+                  {
+                    type: "button",
+                    "data-ocid": `stories.pending.reject.${story.id}`,
+                    onClick: () => rejectStory.mutate(story.id),
+                    disabled: rejectStory.isPending,
+                    className: "reject-action",
+                    children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsx(X, { className: "h-3.5 w-3.5", "aria-hidden": "true" }),
+                      "Reject"
+                    ]
+                  }
+                )
+              ] })
+            ]
+          },
+          story.id
+        ))
+      ] })
+    ] }),
+    stories.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mb-6", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+      StoryFilterBar,
+      {
+        stories,
+        filter: filter2,
+        onChange: setFilter
+      }
+    ) }),
+    isLoading ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { "data-ocid": "stories.loading_state", className: "flex flex-col gap-4", children: Array.from({ length: 3 }, (_2, i) => `skeleton-${i}`).map((id2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "div",
+      {
+        className: "h-40 animate-pulse rounded-xl border border-border/60 bg-card"
+      },
+      id2
+    )) }) : filteredStories.length > 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { "data-ocid": "stories.list", className: "flex flex-col gap-4", children: filteredStories.map((story) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+      StoryCard,
+      {
+        story,
+        onOpen: openDetail,
+        onOpenProfile
+      },
+      story.id
+    )) }) : /* @__PURE__ */ jsxRuntimeExports.jsx(
+      DomainEmptyState,
+      {
+        icon: LibraryBig,
+        title: stories.length > 0 ? "No matching stories" : "No stories yet",
+        hint: stories.length > 0 ? "Try clearing or changing your filters." : "Your family's stories will live here.",
+        action: isAuthenticated ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "button",
+          {
+            type: "button",
+            "data-ocid": "stories.empty_propose_button",
+            onClick: () => openForm(),
+            className: "archive-empty-reset",
+            children: "Propose a Story"
+          }
+        ) : void 0
+      }
+    )
+  ] });
+}
+function EraSection({ title, years, children }) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { "data-ocid": "era_section", className: "era-section", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "era-head", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "era-title", children: title }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "era-years", children: years })
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "timeline-rail", children })
+  ] });
+}
+function TimelineEventCard({
+  event,
+  onOpenProfile,
+  onOpenStory,
+  onOpenArchiveItem,
+  onOpenMystery
+}) {
+  const kind = getTimelineLinkKind(event.linkTarget);
+  const id2 = getTimelineLinkId(event.linkTarget);
+  const year = event.year == null ? null : Number(event.year);
+  let link = null;
+  if (kind === "Person" && typeof id2 === "string" && onOpenProfile) {
+    link = /* @__PURE__ */ jsxRuntimeExports.jsx(PersonLink, { personId: id2, onOpenProfile });
+  } else if (kind === "Story" && typeof id2 === "bigint" && onOpenStory) {
+    link = /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "button",
+      {
+        type: "button",
+        "data-ocid": "timeline.story_link",
+        className: "timeline-link",
+        onClick: () => onOpenStory(id2),
+        children: "View Story"
+      }
+    );
+  } else if (kind === "ArchiveItem" && typeof id2 === "bigint" && onOpenArchiveItem) {
+    link = /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "button",
+      {
+        type: "button",
+        "data-ocid": "timeline.archive_link",
+        className: "timeline-link",
+        onClick: () => onOpenArchiveItem(id2),
+        children: "View Record"
+      }
+    );
+  } else if (kind === "Mystery" && typeof id2 === "bigint" && onOpenMystery) {
+    link = /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "button",
+      {
+        type: "button",
+        "data-ocid": "timeline.mystery_link",
+        className: "timeline-link",
+        onClick: () => onOpenMystery(id2),
+        children: "View Mystery"
+      }
+    );
+  }
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("article", { "data-ocid": "timeline_item", className: "timeline-item", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between gap-2", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "timeline-item-date", children: year == null ? "Date unknown" : year }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(EvidenceBadge, { status: event.evidenceStatus })
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "timeline-item-title", children: event.title }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "timeline-item-detail", children: event.description }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "timeline-item-links", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "timeline-link", children: TIMELINE_EVENT_TYPE_LABELS[event.eventType] }),
+      link
+    ] })
+  ] });
+}
+const ERA_RANGES = [
+  {
+    key: "1800s",
+    label: "The 1800s",
+    years: "1800–1899",
+    min: 1800,
+    max: 1899
+  },
+  {
+    key: "early-1900s",
+    label: "Early 1900s",
+    years: "1900–1929",
+    min: 1900,
+    max: 1929
+  },
+  {
+    key: "mid-century",
+    label: "Mid-Century",
+    years: "1930–1959",
+    min: 1930,
+    max: 1959
+  },
+  {
+    key: "late-1900s",
+    label: "Late 1900s",
+    years: "1960–1989",
+    min: 1960,
+    max: 1989
+  },
+  {
+    key: "modern",
+    label: "Modern Era",
+    years: "1990–Present",
+    min: 1990,
+    max: null
+  },
+  {
+    key: "undated",
+    label: "Undated",
+    years: "Dates unknown",
+    min: null,
+    max: null
+  }
+];
+function eventYear(event) {
+  return event.year == null ? null : Number(event.year);
+}
+function eraForEvent(event) {
+  const year = eventYear(event);
+  if (year == null) return ERA_RANGES[ERA_RANGES.length - 1];
+  return ERA_RANGES.find(
+    (era) => era.min != null && year >= era.min && (era.max == null || year <= era.max)
+  ) ?? ERA_RANGES[ERA_RANGES.length - 1];
+}
+function groupByEra(events2) {
+  const groups = /* @__PURE__ */ new Map();
+  for (const event of events2) {
+    const era = eraForEvent(event);
+    const list = groups.get(era.key) ?? [];
+    list.push(event);
+    groups.set(era.key, list);
+  }
+  return ERA_RANGES.filter((era) => groups.has(era.key)).map((era) => ({
+    era,
+    events: (groups.get(era.key) ?? []).sort((a2, b2) => {
+      const ay = eventYear(a2) ?? Number.MAX_SAFE_INTEGER;
+      const by = eventYear(b2) ?? Number.MAX_SAFE_INTEGER;
+      return ay - by;
+    })
+  }));
+}
+function TimelineLoadingState() {
+  return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { "data-ocid": "timeline.loading_state", className: "flex flex-col gap-4", children: Array.from({ length: 3 }, (_2, i) => `era-skeleton-${i}`).map((id2) => /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "era-section", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2.5", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-2.5 w-2.5 animate-pulse rounded-full bg-muted" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-5 w-40 animate-pulse rounded-full bg-muted" })
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "timeline-rail", children: Array.from({ length: 2 }, (_2, j2) => `item-skeleton-${j2}`).map(
+      (itemId) => /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "timeline-item", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-3 w-24 animate-pulse rounded-full bg-muted" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-5 w-3/4 animate-pulse rounded-full bg-muted" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-4 w-full animate-pulse rounded-full bg-muted" })
+      ] }, itemId)
+    ) })
+  ] }, id2)) });
+}
+function TimelinePage({
+  onBack,
+  onOpenProfile,
+  onOpenStory,
+  onOpenArchiveItem,
+  onOpenMystery
+}) {
+  const {
+    data: events2 = [],
+    isLoading,
+    isError,
+    refetch
+  } = useTimelineEvents();
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto flex w-full max-w-3xl flex-1 flex-col px-6 py-10", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mb-6 flex items-center justify-between gap-3", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "font-display text-2xl font-semibold tracking-tight text-foreground", children: "Travel Through Time" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-1 text-sm text-muted-foreground", children: "Our family's journey across the years." })
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "timeline.back_button",
+          onClick: onBack,
+          className: "inline-flex min-h-[44px] items-center gap-1.5 rounded-full border border-border/60 px-4 text-sm font-semibold text-foreground transition-colors hover:border-accent/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+          children: "Back"
+        }
+      )
+    ] }),
+    isLoading ? /* @__PURE__ */ jsxRuntimeExports.jsx(TimelineLoadingState, {}) : isError ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "div",
+      {
+        "data-ocid": "timeline.error_state",
+        className: "flex flex-col items-center justify-center gap-4 rounded-xl border border-dashed border-border/70 px-6 py-16 text-center",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: "We couldn't load the family timeline right now." }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "button",
+            {
+              type: "button",
+              "data-ocid": "timeline.retry_button",
+              onClick: () => void refetch(),
+              className: "inline-flex min-h-[44px] items-center gap-1.5 rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+              children: "Try again"
+            }
+          )
+        ]
+      }
+    ) : events2.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+      DomainEmptyState,
+      {
+        icon: Clock3,
+        title: "Your timeline is just beginning",
+        hint: "As family dates, stories, and records are added, your timeline will grow."
+      }
+    ) : /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-col gap-5", children: groupByEra(events2).map(({ era, events: eraEvents }) => /* @__PURE__ */ jsxRuntimeExports.jsx(EraSection, { title: era.label, years: era.years, children: eraEvents.map((event) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+      TimelineEventCard,
+      {
+        event,
+        onOpenProfile,
+        onOpenStory,
+        onOpenArchiveItem,
+        onOpenMystery
+      },
+      event.id
+    )) }, era.key)) })
+  ] });
+}
+const KIND_META = {
+  "uploaded-video": {
+    icon: Video,
+    description: "Share a video of a family moment."
+  },
+  "oral-history-video": {
+    icon: Clapperboard,
+    description: "Record a family member telling their story on video."
+  },
+  "audio-only-oral-history": {
+    icon: Mic,
+    description: "Preserve a voice and memory as an audio-only recording."
+  }
+};
+const KIND_ORDER = [
+  "uploaded-video",
+  "oral-history-video",
+  "audio-only-oral-history"
+];
+function kindToItemType(kind) {
+  return kind === "audio-only-oral-history" ? ArchiveItemType.Audio : ArchiveItemType.Video;
+}
+function isOralHistoryKind(kind) {
+  return kind === "oral-history-video" || kind === "audio-only-oral-history";
+}
+function parseYear(value) {
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  if (!/^\d{1,4}$/.test(trimmed)) return null;
+  return BigInt(trimmed);
+}
+function RecordingCapture({
+  kind,
+  onRecorded
+}) {
+  const isVideo = kind === "oral-history-video";
+  const [supported, setSupported] = reactExports.useState(null);
+  const [isRecording, setIsRecording] = reactExports.useState(false);
+  const [error, setError] = reactExports.useState(null);
+  const [seconds, setSeconds] = reactExports.useState(0);
+  const mediaRecorderRef = reactExports.useRef(null);
+  const streamRef = reactExports.useRef(null);
+  const chunksRef = reactExports.useRef([]);
+  const timerRef = reactExports.useRef(null);
+  const videoRef = reactExports.useRef(null);
+  reactExports.useEffect(() => {
+    var _a2;
+    setSupported(
+      typeof MediaRecorder !== "undefined" && typeof navigator !== "undefined" && Boolean((_a2 = navigator.mediaDevices) == null ? void 0 : _a2.getUserMedia)
+    );
+  }, []);
+  reactExports.useEffect(() => {
+    return () => {
+      var _a2;
+      for (const track2 of ((_a2 = streamRef.current) == null ? void 0 : _a2.getTracks()) ?? []) {
+        track2.stop();
+      }
+      if (timerRef.current !== null) window.clearInterval(timerRef.current);
+    };
+  }, []);
+  const start = async () => {
+    setError(null);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia(
+        isVideo ? { video: true, audio: true } : { audio: true }
+      );
+      streamRef.current = stream;
+      if (videoRef.current && isVideo) {
+        videoRef.current.srcObject = stream;
+      }
+      const recorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = recorder;
+      chunksRef.current = [];
+      recorder.ondataavailable = (event) => {
+        if (event.data.size > 0) chunksRef.current.push(event.data);
+      };
+      recorder.onstop = () => {
+        var _a2;
+        const fullBlob = new Blob(chunksRef.current, {
+          type: isVideo ? "video/webm" : "audio/webm"
+        });
+        for (const track2 of ((_a2 = streamRef.current) == null ? void 0 : _a2.getTracks()) ?? []) {
+          track2.stop();
+        }
+        streamRef.current = null;
+        if (timerRef.current !== null) window.clearInterval(timerRef.current);
+        setIsRecording(false);
+        onRecorded(fullBlob);
+      };
+      recorder.start();
+      setIsRecording(true);
+      setSeconds(0);
+      timerRef.current = window.setInterval(
+        () => setSeconds((current) => current + 1),
+        1e3
+      );
+    } catch {
+      setError("Unable to access your camera or microphone.");
+    }
+  };
+  const stop = () => {
+    var _a2;
+    (_a2 = mediaRecorderRef.current) == null ? void 0 : _a2.stop();
+  };
+  if (supported === null) return null;
+  if (!supported) return null;
+  const formatTime = (total) => {
+    const minutes = Math.floor(total / 60);
+    const secs = total % 60;
+    return `${minutes}:${secs.toString().padStart(2, "0")}`;
+  };
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "div",
+    {
+      className: "rounded-2xl border border-border bg-card p-4 shadow-subtle",
+      "data-ocid": "video_contribute.form.recording_panel",
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between gap-3", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+            isVideo ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+              Video,
+              {
+                className: "h-4 w-4 text-accent-foreground",
+                strokeWidth: 1.75,
+                "aria-hidden": "true"
+              }
+            ) : /* @__PURE__ */ jsxRuntimeExports.jsx(
+              Mic,
+              {
+                className: "h-4 w-4 text-accent-foreground",
+                strokeWidth: 1.75,
+                "aria-hidden": "true"
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-sm font-semibold text-foreground", children: isVideo ? "Record with camera & microphone" : "Record with microphone" })
+          ] }),
+          isRecording ? /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "inline-flex items-center gap-1.5 text-xs font-semibold text-destructive", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "span",
+              {
+                className: "h-2 w-2 animate-pulse rounded-full bg-destructive",
+                "aria-hidden": "true"
+              }
+            ),
+            "REC ",
+            formatTime(seconds)
+          ] }) : null
+        ] }),
+        isVideo && isRecording ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "video",
+          {
+            ref: videoRef,
+            autoPlay: true,
+            muted: true,
+            playsInline: true,
+            className: "mt-3 aspect-video w-full rounded-lg bg-black object-cover"
+          }
+        ) : null,
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-3 flex flex-wrap items-center gap-3", children: [
+          isRecording ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "button",
+            {
+              type: "button",
+              "data-ocid": "video_contribute.form.stop_recording_button",
+              onClick: stop,
+              className: "inline-flex items-center gap-2 rounded-full bg-destructive px-4 py-2 text-sm font-semibold text-destructive-foreground transition-colors hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  Square,
+                  {
+                    className: "h-4 w-4",
+                    fill: "currentColor",
+                    "aria-hidden": "true"
+                  }
+                ),
+                "Stop recording"
+              ]
+            }
+          ) : /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "button",
+            {
+              type: "button",
+              "data-ocid": "video_contribute.form.start_recording_button",
+              onClick: () => void start(),
+              className: "inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  Circle,
+                  {
+                    className: "h-4 w-4",
+                    fill: "currentColor",
+                    "aria-hidden": "true"
+                  }
+                ),
+                "Start recording"
+              ]
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-xs text-muted-foreground", children: isRecording ? "Recording in progress — press stop when finished." : "Or upload a file below." })
+        ] }),
+        error ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "p",
+          {
+            "data-ocid": "video_contribute.form.recording_error",
+            className: "mt-3 rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm font-medium text-destructive",
+            children: error
+          }
+        ) : null
+      ]
+    }
+  );
+}
+function ResolvedProfileChip({
+  personId,
+  selected,
+  onToggle,
+  kind
+}) {
+  const { displayName } = useCanonicalPerson(personId, personId);
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "button",
+    {
+      type: "button",
+      "data-ocid": `video_contribute.form.${kind}.${personId}`,
+      onClick: onToggle,
+      "aria-pressed": selected,
+      className: `inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${selected ? "border-accent bg-accent text-accent-foreground" : "border-border bg-card text-foreground hover:bg-muted"}`,
+      children: [
+        selected ? /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { className: "h-3.5 w-3.5", "aria-hidden": "true" }) : null,
+        displayName
+      ]
+    }
+  );
+}
+function VideoContributePage({
+  onBack,
+  initialKind,
+  initialRelatedMemberIds,
+  initialSpeakerId
+}) {
+  var _a2;
+  const { isAuthenticated, login, isInitializing, isLoggingIn } = useInternetIdentity();
+  const submit = useSubmitArchiveItem();
+  const [selectedKind, setSelectedKind] = reactExports.useState(
+    initialKind ?? null
+  );
+  const [title, setTitle] = reactExports.useState("");
+  const [description, setDescription] = reactExports.useState("");
+  const [era, setEra] = reactExports.useState("");
+  const [year, setYear] = reactExports.useState("");
+  const [tags, setTags] = reactExports.useState("");
+  const [relatedMemberIds, setRelatedMemberIds] = reactExports.useState(
+    initialRelatedMemberIds ?? []
+  );
+  const [relatedBranch, setRelatedBranch] = reactExports.useState("");
+  const [sourceStatus, setSourceStatus] = reactExports.useState(
+    SourceStatus.Unverified
+  );
+  const [privacyLevel, setPrivacyLevel] = reactExports.useState(
+    PrivacyLevel.FamilyOnly
+  );
+  const [speakerId, setSpeakerId] = reactExports.useState(
+    initialSpeakerId ?? null
+  );
+  const knownResolvedPeople = reactExports.useMemo(() => {
+    const initial = /* @__PURE__ */ new Set();
+    if (initialSpeakerId && !profiles[initialSpeakerId]) {
+      initial.add(initialSpeakerId);
+    }
+    for (const id2 of initialRelatedMemberIds ?? []) {
+      if (!profiles[id2]) initial.add(id2);
+    }
+    return [...initial];
+  }, [initialSpeakerId, initialRelatedMemberIds]);
+  const speakerCanonical = useCanonicalPerson(
+    speakerId ?? void 0,
+    speakerId ? ((_a2 = profiles[speakerId]) == null ? void 0 : _a2.name) ?? "" : ""
+  );
+  const [fileBytes, setFileBytes] = reactExports.useState(
+    null
+  );
+  const [fileName, setFileName] = reactExports.useState("");
+  const [fileMime, setFileMime] = reactExports.useState("");
+  const [progress2, setProgress] = reactExports.useState(null);
+  const [dragover, setDragover] = reactExports.useState(false);
+  const fileInputRef = reactExports.useRef(null);
+  const [submitted, setSubmitted] = reactExports.useState(false);
+  const [error, setError] = reactExports.useState(null);
+  const isOralHistory = selectedKind !== null && isOralHistoryKind(selectedKind);
+  const handleFile = async (file) => {
+    if (!file) return;
+    setFileBytes(new Uint8Array(await file.arrayBuffer()));
+    setFileName(file.name);
+    setFileMime(file.type);
+    setProgress(null);
+  };
+  const handleRecorded = async (blob) => {
+    setFileBytes(new Uint8Array(await blob.arrayBuffer()));
+    setFileName(
+      selectedKind === "audio-only-oral-history" ? "audio-recording.webm" : "video-recording.webm"
+    );
+    setFileMime(blob.type);
+    setProgress(null);
+  };
+  const toggleMember = (id2) => {
+    setRelatedMemberIds(
+      (current) => current.includes(id2) ? current.filter((memberId) => memberId !== id2) : [...current, id2]
+    );
+  };
+  const resetForm = () => {
+    setSelectedKind(null);
+    setTitle("");
+    setDescription("");
+    setEra("");
+    setYear("");
+    setTags("");
+    setRelatedMemberIds([]);
+    setRelatedBranch("");
+    setSourceStatus(SourceStatus.Unverified);
+    setPrivacyLevel(PrivacyLevel.FamilyOnly);
+    setSpeakerId(null);
+    setFileBytes(null);
+    setFileName("");
+    setFileMime("");
+    setProgress(null);
+    setError(null);
+  };
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    if (!selectedKind) return;
+    setError(null);
+    if (!fileBytes) {
+      setError("Please choose a file to upload before submitting.");
+      return;
+    }
+    if (isOralHistory && !speakerId) {
+      setError("Please choose who is speaking before submitting.");
+      return;
+    }
+    const blob = ExternalBlob$1.fromBytes(
+      fileBytes,
+      fileMime,
+      fileName
+    ).withUploadProgress(setProgress);
+    submit.mutate(
+      {
+        title: title.trim(),
+        description: description.trim(),
+        itemType: kindToItemType(selectedKind),
+        blob,
+        era: era.trim(),
+        year: parseYear(year),
+        tags: tags.split(",").map((tag) => tag.trim()).filter(Boolean),
+        relatedMemberIds,
+        relatedBranchId: relatedBranch.trim() || null,
+        sourceStatus,
+        privacyLevel,
+        classification: isOralHistory ? ArchiveItemClassification.OralHistory : ArchiveItemClassification.Standard,
+        primarySpeaker: isOralHistory ? {
+          name: speakerCanonical.displayName,
+          personId: speakerId ?? void 0
+        } : null
+      },
+      {
+        onSuccess: () => setSubmitted(true),
+        onError: () => setError("Something went wrong while submitting. Please try again.")
+      }
+    );
+  };
+  if (submitted) {
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mx-auto flex w-full max-w-3xl flex-col px-6 py-8 sm:py-12", children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      motion.div,
+      {
+        initial: { opacity: 0, y: 16 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] },
+        className: "rounded-3xl border border-border bg-card px-6 py-10 text-center shadow-elevated",
+        "data-ocid": "video_contribute.submit.success_state",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-success/15", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+            Check,
+            {
+              className: "h-7 w-7 text-success",
+              strokeWidth: 2,
+              "aria-hidden": "true"
+            }
+          ) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "mt-4 font-display text-2xl font-semibold text-foreground sm:text-3xl", children: "Media submitted" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "mx-auto mt-3 max-w-md text-base leading-relaxed text-muted-foreground", children: [
+            "Thank you for adding to the Norwood family history. Your",
+            " ",
+            MEDIA_KIND_LABELS[selectedKind].toLowerCase(),
+            " is now awaiting admin approval and will appear in Family Videos & Oral History once it is reviewed."
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-6 flex flex-col justify-center gap-3 sm:flex-row", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "button",
+              {
+                type: "button",
+                "data-ocid": "video_contribute.submit.add_another_button",
+                onClick: () => {
+                  resetForm();
+                  setSubmitted(false);
+                },
+                className: "inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                children: "Add another media item"
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "button",
+              {
+                type: "button",
+                "data-ocid": "video_contribute.submit.back_videos_button",
+                onClick: onBack,
+                className: "inline-flex items-center justify-center gap-2 rounded-full border border-border bg-background px-5 py-2.5 text-sm font-semibold text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                children: "Back to Videos"
+              }
+            )
+          ] })
+        ]
+      }
+    ) });
+  }
+  if (!isAuthenticated) {
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto flex w-full max-w-3xl flex-col px-6 py-8 sm:py-12", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        motion.div,
+        {
+          initial: { opacity: 0, y: 16 },
+          animate: { opacity: 1, y: 0 },
+          transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] },
+          children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "button",
+            {
+              type: "button",
+              "data-ocid": "video_contribute.signin.back_button",
+              onClick: onBack,
+              className: "mb-6 inline-flex items-center gap-2 self-start rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(ArrowLeft, { className: "h-4 w-4", strokeWidth: 2, "aria-hidden": "true" }),
+                "Back to Videos"
+              ]
+            }
+          )
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        motion.div,
+        {
+          initial: { opacity: 0, y: 16 },
+          animate: { opacity: 1, y: 0 },
+          transition: { duration: 0.6, delay: 0.05, ease: [0.4, 0, 0.2, 1] },
+          className: "rounded-3xl border border-border bg-card px-6 py-10 text-center shadow-elevated",
+          "data-ocid": "video_contribute.signin.prompt",
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-accent/15", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+              BookOpen,
+              {
+                className: "h-7 w-7 text-accent-foreground",
+                strokeWidth: 1.75,
+                "aria-hidden": "true"
+              }
+            ) }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "mt-4 font-display text-2xl font-semibold text-foreground sm:text-3xl", children: "Sign in to add media" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mx-auto mt-3 max-w-md text-base leading-relaxed text-muted-foreground", children: "Contributions are recorded with your name so the family knows who shared each piece. Sign in to begin adding videos and oral histories to the Norwood family archive." }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "button",
+              {
+                type: "button",
+                "data-ocid": "video_contribute.signin.primary_button",
+                onClick: () => login(),
+                disabled: isInitializing || isLoggingIn,
+                className: "mt-6 inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-60",
+                children: [
+                  isLoggingIn ? /* @__PURE__ */ jsxRuntimeExports.jsx(LoaderCircle, { className: "h-4 w-4 animate-spin", "aria-hidden": "true" }) : null,
+                  isLoggingIn ? "Signing in…" : "Sign in"
+                ]
+              }
+            )
+          ]
+        }
+      )
+    ] });
+  }
+  if (selectedKind === null) {
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto flex w-full max-w-3xl flex-col px-6 py-8 sm:py-12", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        motion.div,
+        {
+          initial: { opacity: 0, y: 16 },
+          animate: { opacity: 1, y: 0 },
+          transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] },
+          children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "button",
+            {
+              type: "button",
+              "data-ocid": "video_contribute.kind.back_button",
+              onClick: onBack,
+              className: "mb-6 inline-flex items-center gap-2 self-start rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(ArrowLeft, { className: "h-4 w-4", strokeWidth: 2, "aria-hidden": "true" }),
+                "Back to Videos"
+              ]
+            }
+          )
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        motion.header,
+        {
+          initial: { opacity: 0, y: 16 },
+          animate: { opacity: 1, y: 0 },
+          transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] },
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-accent-foreground/70", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                AudioLines,
+                {
+                  className: "h-4 w-4",
+                  strokeWidth: 1.75,
+                  "aria-hidden": "true"
+                }
+              ),
+              "Family Videos & Oral History"
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "mt-2 font-display text-3xl font-semibold leading-tight text-foreground sm:text-4xl", children: "What would you like to add?" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-2 text-base leading-relaxed text-muted-foreground", children: "Choose the kind of media you'd like to preserve for the Norwood family." })
+          ]
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3", children: KIND_ORDER.map((kind, index2) => {
+        const meta2 = KIND_META[kind];
+        const Icon2 = meta2.icon;
+        const oral = isOralHistoryKind(kind);
+        return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          motion.button,
+          {
+            type: "button",
+            "data-ocid": `video_contribute.kind.card.${index2 + 1}`,
+            onClick: () => setSelectedKind(kind),
+            initial: { opacity: 0, y: 16 },
+            animate: { opacity: 1, y: 0 },
+            transition: {
+              duration: 0.5,
+              delay: 0.05 + index2 * 0.04,
+              ease: [0.4, 0, 0.2, 1]
+            },
+            className: "group flex flex-col items-start gap-3 rounded-2xl border border-border bg-card p-5 text-left shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "span",
+                {
+                  className: "flex h-11 w-11 items-center justify-center rounded-xl",
+                  style: oral ? {
+                    backgroundColor: "oklch(var(--oral-history) / 0.14)",
+                    color: "oklch(var(--oral-history))"
+                  } : void 0,
+                  children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    Icon2,
+                    {
+                      className: "h-5 w-5 text-accent-foreground",
+                      strokeWidth: 1.75,
+                      "aria-hidden": "true"
+                    }
+                  )
+                }
+              ),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "flex flex-col items-start gap-1.5", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  "span",
+                  {
+                    className: `archive-type-badge ${oral ? "badge-oral-history" : "badge-video"}`,
+                    children: MEDIA_KIND_LABELS[kind]
+                  }
+                ),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-sm leading-relaxed text-muted-foreground", children: meta2.description })
+              ] })
+            ]
+          },
+          kind
+        );
+      }) })
+    ] });
+  }
+  const meta = KIND_META[selectedKind];
+  const KindIcon = meta.icon;
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto flex w-full max-w-3xl flex-col px-6 py-8 sm:py-12", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      motion.div,
+      {
+        initial: { opacity: 0, y: 16 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] },
+        children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "button",
+          {
+            type: "button",
+            "data-ocid": "video_contribute.form.back_button",
+            onClick: () => setSelectedKind(null),
+            className: "mb-6 inline-flex items-center gap-2 self-start rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(ArrowLeft, { className: "h-4 w-4", strokeWidth: 2, "aria-hidden": "true" }),
+              "Choose a different kind"
+            ]
+          }
+        )
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      motion.header,
+      {
+        initial: { opacity: 0, y: 16 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] },
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "span",
+            {
+              className: `archive-type-badge ${isOralHistory ? "badge-oral-history" : "badge-video"}`,
+              children: MEDIA_KIND_LABELS[selectedKind]
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("h1", { className: "mt-3 font-display text-3xl font-semibold leading-tight text-foreground sm:text-4xl", children: [
+            "Add ",
+            MEDIA_KIND_LABELS[selectedKind].toLowerCase()
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "mt-2 flex items-center gap-2 text-sm text-muted-foreground", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(KindIcon, { className: "h-4 w-4", strokeWidth: 1.75, "aria-hidden": "true" }),
+            meta.description
+          ] })
+        ]
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      motion.form,
+      {
+        onSubmit: handleSubmit,
+        className: "mt-6 flex flex-col gap-5",
+        initial: { opacity: 0, y: 16 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.6, delay: 0.05, ease: [0.4, 0, 0.2, 1] },
+        children: [
+          isOralHistory ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+            RecordingCapture,
+            {
+              kind: selectedKind,
+              onRecorded: (blob) => void handleRecorded(blob)
+            }
+          ) : null,
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "field-label", htmlFor: "video-file", children: "Upload file" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "input",
+              {
+                ref: fileInputRef,
+                id: "video-file",
+                type: "file",
+                className: "sr-only",
+                "data-ocid": "video_contribute.form.file_input",
+                onChange: (event) => {
+                  var _a3;
+                  const file = (_a3 = event.target.files) == null ? void 0 : _a3[0];
+                  if (file) void handleFile(file);
+                  event.target.value = "";
+                }
+              }
+            ),
+            fileName ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "div",
+              {
+                className: "flex items-center justify-between gap-3 rounded-xl border border-border bg-card px-4 py-3 shadow-subtle",
+                "data-ocid": "video_contribute.form.file_selected",
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex min-w-0 items-center gap-3", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-secondary", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      FileText,
+                      {
+                        className: "h-4 w-4 text-accent-foreground",
+                        strokeWidth: 1.75,
+                        "aria-hidden": "true"
+                      }
+                    ) }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "truncate text-sm font-semibold text-foreground", children: fileName }),
+                      /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-xs text-muted-foreground", children: [
+                        fileMime || "File",
+                        " · ready to submit"
+                      ] })
+                    ] })
+                  ] }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "button",
+                    {
+                      type: "button",
+                      "data-ocid": "video_contribute.form.change_file_button",
+                      onClick: () => {
+                        var _a3;
+                        return (_a3 = fileInputRef.current) == null ? void 0 : _a3.click();
+                      },
+                      className: "shrink-0 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-semibold text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                      children: "Change"
+                    }
+                  )
+                ]
+              }
+            ) : /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "button",
+              {
+                type: "button",
+                "data-ocid": "video_contribute.form.dropzone",
+                onClick: () => {
+                  var _a3;
+                  return (_a3 = fileInputRef.current) == null ? void 0 : _a3.click();
+                },
+                onDragOver: (event) => {
+                  event.preventDefault();
+                  setDragover(true);
+                },
+                onDragLeave: () => setDragover(false),
+                onDrop: (event) => {
+                  var _a3;
+                  event.preventDefault();
+                  setDragover(false);
+                  const file = (_a3 = event.dataTransfer.files) == null ? void 0 : _a3[0];
+                  if (file) void handleFile(file);
+                },
+                className: `dropzone focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${dragover ? "dragover" : ""}`,
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    Upload,
+                    {
+                      className: "h-6 w-6 text-muted-foreground",
+                      strokeWidth: 1.5,
+                      "aria-hidden": "true"
+                    }
+                  ),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "dropzone-title", children: "Choose a file to upload" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "dropzone-hint", children: "Drag and drop, or tap to browse. The original file is preserved as-is." })
+                ]
+              }
+            ),
+            progress2 !== null && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "div",
+              {
+                className: "upload-progress",
+                "data-ocid": "video_contribute.form.upload_progress",
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "upload-progress-label", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "Uploading…" }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "upload-percent", children: [
+                      progress2,
+                      "%"
+                    ] })
+                  ] }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "div",
+                    {
+                      className: "progress-track",
+                      role: "progressbar",
+                      tabIndex: 0,
+                      "aria-valuenow": progress2,
+                      "aria-valuemin": 0,
+                      "aria-valuemax": 100,
+                      children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                        "div",
+                        {
+                          className: "progress-fill",
+                          style: { width: `${progress2}%` }
+                        }
+                      )
+                    }
+                  )
+                ]
+              }
+            )
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "field-label", htmlFor: "video-title", children: "Title" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "input",
+              {
+                id: "video-title",
+                "data-ocid": "video_contribute.form.title_input",
+                type: "text",
+                value: title,
+                onChange: (event) => setTitle(event.target.value),
+                placeholder: "Give this media a short title",
+                className: "form-input",
+                required: true
+              }
+            )
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "field-label", htmlFor: "video-description", children: "Description" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "textarea",
+              {
+                id: "video-description",
+                "data-ocid": "video_contribute.form.description_textarea",
+                value: description,
+                onChange: (event) => setDescription(event.target.value),
+                placeholder: "Tell us what this is and why it matters to the family",
+                className: "form-textarea"
+              }
+            )
+          ] }),
+          isOralHistory ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "field-label", children: "Who is speaking?" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mb-2 text-xs leading-relaxed text-muted-foreground", children: "Choose the single primary speaker for this oral history. Select a family member from the tree when they exist." }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap gap-2", children: [
+              Object.values(profiles).map((profile) => {
+                const selected = speakerId === profile.id;
+                return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                  "button",
+                  {
+                    type: "button",
+                    "data-ocid": `video_contribute.form.speaker.${profile.id}`,
+                    onClick: () => setSpeakerId(selected ? null : profile.id),
+                    "aria-pressed": selected,
+                    className: `inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${selected ? "border-accent bg-accent text-accent-foreground" : "border-border bg-card text-foreground hover:bg-muted"}`,
+                    children: [
+                      selected ? /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { className: "h-3.5 w-3.5", "aria-hidden": "true" }) : null,
+                      profile.name
+                    ]
+                  },
+                  profile.id
+                );
+              }),
+              knownResolvedPeople.map((id2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+                ResolvedProfileChip,
+                {
+                  personId: id2,
+                  selected: speakerId === id2,
+                  onToggle: () => setSpeakerId(speakerId === id2 ? null : id2),
+                  kind: "speaker"
+                },
+                id2
+              ))
+            ] })
+          ] }) : null,
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-1 gap-5 sm:grid-cols-2", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "field-label", htmlFor: "video-era", children: "Date or approximate era" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "input",
+                {
+                  id: "video-era",
+                  "data-ocid": "video_contribute.form.era_input",
+                  type: "text",
+                  value: era,
+                  onChange: (event) => setEra(event.target.value),
+                  placeholder: "e.g. circa 1920s, or a specific date",
+                  className: "form-input"
+                }
+              )
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "field-label", htmlFor: "video-year", children: "Year (optional)" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "input",
+                {
+                  id: "video-year",
+                  "data-ocid": "video_contribute.form.year_input",
+                  type: "text",
+                  inputMode: "numeric",
+                  value: year,
+                  onChange: (event) => setYear(event.target.value),
+                  placeholder: "e.g. 1924",
+                  className: "form-input"
+                }
+              )
+            ] })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "field-label", htmlFor: "video-tags", children: "Tags" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "input",
+              {
+                id: "video-tags",
+                "data-ocid": "video_contribute.form.tags_input",
+                type: "text",
+                value: tags,
+                onChange: (event) => setTags(event.target.value),
+                placeholder: "Separate tags with commas, e.g. wedding, Mississippi, 1920s",
+                className: "form-input"
+              }
+            )
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "field-label", children: "Related family members" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap gap-2", children: [
+              Object.values(profiles).map((profile) => {
+                const selected = relatedMemberIds.includes(profile.id);
+                return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                  "button",
+                  {
+                    type: "button",
+                    "data-ocid": `video_contribute.form.member.${profile.id}`,
+                    onClick: () => toggleMember(profile.id),
+                    "aria-pressed": selected,
+                    className: `inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${selected ? "border-accent bg-accent text-accent-foreground" : "border-border bg-card text-foreground hover:bg-muted"}`,
+                    children: [
+                      selected ? /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { className: "h-3.5 w-3.5", "aria-hidden": "true" }) : null,
+                      profile.name
+                    ]
+                  },
+                  profile.id
+                );
+              }),
+              relatedMemberIds.filter((id2) => !profiles[id2]).map((id2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+                ResolvedProfileChip,
+                {
+                  personId: id2,
+                  selected: true,
+                  onToggle: () => toggleMember(id2),
+                  kind: "member"
+                },
+                id2
+              ))
+            ] })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "field-label", htmlFor: "video-branch", children: "Related branch (optional)" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "input",
+              {
+                id: "video-branch",
+                "data-ocid": "video_contribute.form.branch_input",
+                type: "text",
+                value: relatedBranch,
+                onChange: (event) => setRelatedBranch(event.target.value),
+                placeholder: "e.g. the Clayton Norwood branch",
+                className: "form-input"
+              }
+            )
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-1 gap-5 sm:grid-cols-2", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "field-label", htmlFor: "video-source", children: "Source / evidence status" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "select",
+                {
+                  id: "video-source",
+                  "data-ocid": "video_contribute.form.source_select",
+                  value: sourceStatus,
+                  onChange: (event) => setSourceStatus(event.target.value),
+                  className: "form-select",
+                  children: Object.values(SourceStatus).map((status) => /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: status, children: SOURCE_STATUS_LABELS[status] }, status))
+                }
+              )
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("label", { className: "field-label", htmlFor: "video-privacy", children: "Privacy level" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "select",
+                {
+                  id: "video-privacy",
+                  "data-ocid": "video_contribute.form.privacy_select",
+                  value: privacyLevel,
+                  onChange: (event) => setPrivacyLevel(event.target.value),
+                  className: "form-select",
+                  children: Object.values(PrivacyLevel).map((level) => /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: level, children: PRIVACY_LEVEL_LABELS[level] }, level))
+                }
+              )
+            ] })
+          ] }),
+          error && /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "p",
+            {
+              "data-ocid": "video_contribute.form.error_state",
+              className: "rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm font-medium text-destructive",
+              children: error
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs leading-relaxed text-muted-foreground", children: "Your media will be reviewed by an admin before it appears in Family Videos & Oral History." }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "button",
+              {
+                type: "submit",
+                "data-ocid": "video_contribute.form.submit_button",
+                disabled: submit.isPending,
+                className: "inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-60",
+                children: [
+                  submit.isPending ? /* @__PURE__ */ jsxRuntimeExports.jsx(LoaderCircle, { className: "h-4 w-4 animate-spin", "aria-hidden": "true" }) : null,
+                  submit.isPending ? "Submitting…" : "Submit for approval"
+                ]
+              }
+            )
+          ] })
+        ]
+      }
+    )
+  ] });
+}
+function MediaPlayer({ item }) {
+  const kind = getMediaKind(item);
+  const url = item.blob.getDirectURL();
+  if (kind === "audio-only-oral-history") {
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "media-player-frame", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "frame-mark", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Mic, { className: "h-6 w-6", "aria-hidden": "true" }) }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "frame-title", children: "Audio-only Oral History" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("audio", { controls: true, src: url, className: "w-full max-w-md", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("track", { kind: "captions" }),
+        "Your browser does not support the audio tag."
+      ] })
+    ] });
+  }
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("video", { controls: true, src: url, className: "w-full", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx("track", { kind: "captions" }),
+    "Your browser does not support the video tag."
+  ] });
+}
+function VideoDetailPage({
+  itemId,
+  onBack,
+  onOpenProfile
+}) {
+  const { data: items = [] } = useApprovedMediaItems();
+  const item = items.find((i) => i.id === itemId);
+  if (!item) {
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto w-full max-w-5xl px-6 py-8", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "video_detail.back_button",
+          onClick: onBack,
+          className: "mb-6 inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3.5 py-1.5 text-xs font-semibold text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(ArrowLeft, { className: "h-4 w-4", "aria-hidden": "true" }),
+            " Back to Videos"
+          ]
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { "data-ocid": "video_detail.empty_state", className: "media-empty", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "media-empty-mark", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Clapperboard, { className: "h-6 w-6", "aria-hidden": "true" }) }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "media-empty-title", children: "Media not found" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "media-empty-hint", children: "This video or oral history is no longer available." })
+      ] })
+    ] });
+  }
+  const kind = getMediaKind(item);
+  const isOralHistory = item.classification === ArchiveItemClassification.OralHistory;
+  const speaker = item.primarySpeaker;
+  const speakerProfile = (speaker == null ? void 0 : speaker.personId) ? profiles[speaker.personId] : void 0;
+  const relatedMembers = item.relatedMemberIds.map((id2) => profiles[id2]).filter((profile) => Boolean(profile));
+  const year = getArchiveItemYear(item);
+  const statusPill = ARCHIVE_ITEM_STATUS_PILL[item.status];
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto w-full max-w-5xl px-6 py-8", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "button",
+      {
+        type: "button",
+        "data-ocid": "video_detail.back_button",
+        onClick: onBack,
+        className: "mb-6 inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3.5 py-1.5 text-xs font-semibold text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(ArrowLeft, { className: "h-4 w-4", "aria-hidden": "true" }),
+          " Back to Videos"
+        ]
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("header", { className: "mb-6", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap items-center gap-2", children: [
+        isOralHistory ? /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "oral-history-badge", children: ARCHIVE_ITEM_CLASSIFICATION_LABELS[item.classification] }) : /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "archive-type-badge badge-video", children: MEDIA_KIND_LABELS[kind ?? "uploaded-video"] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: `status-pill ${statusPill}`, children: ARCHIVE_ITEM_STATUS_LABELS[item.status] }),
+        item.era ? /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-xs font-medium text-muted-foreground", children: item.era }) : null
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "mt-3 font-display text-3xl font-semibold text-foreground", children: item.title }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "inline-flex items-center gap-1.5", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(CalendarDays, { className: "h-4 w-4", "aria-hidden": "true" }),
+          year !== null ? String(year) : "Year unknown"
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "inline-flex items-center gap-1.5", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(ShieldCheck, { className: "h-4 w-4", "aria-hidden": "true" }),
+          PRIVACY_LEVEL_LABELS[item.privacyLevel]
+        ] })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "media-detail", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { "data-ocid": "video_detail.player", className: "media-player", children: /* @__PURE__ */ jsxRuntimeExports.jsx(MediaPlayer, { item }) }),
+        item.description ? /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { className: "archive-detail-section mt-6", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "archive-detail-section-title", children: "Description" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "archive-detail-description whitespace-pre-line", children: item.description })
+        ] }) : null
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex min-w-0 flex-col gap-6", children: [
+        isOralHistory && speaker ? /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { className: "archive-detail-section", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "archive-detail-section-title", children: "Speaker" }),
+          speakerProfile ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "button",
+            {
+              type: "button",
+              "data-ocid": `video_detail.speaker.${speakerProfile.id}`,
+              onClick: () => onOpenProfile(speakerProfile.id),
+              className: "speaker-card w-full text-left transition-colors hover:border-accent/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "speaker-card-portrait", "aria-hidden": "true", children: speakerProfile.name.charAt(0) }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "speaker-card-body", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "speaker-card-name", children: speakerProfile.name }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "speaker-card-role", children: speakerProfile.role })
+                ] })
+              ]
+            }
+          ) : /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "speaker-card", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "speaker-card-portrait", "aria-hidden": "true", children: speaker.name.charAt(0) }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "speaker-card-body", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "speaker-card-name", children: speaker.name }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "speaker-card-role", children: "Primary speaker" })
+            ] })
+          ] })
+        ] }) : null,
+        relatedMembers.length > 0 ? /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { className: "archive-detail-section", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "archive-detail-section-title", children: "Related family members" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-wrap gap-2", children: relatedMembers.map((profile) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "button",
+            {
+              type: "button",
+              "data-ocid": `video_detail.member.${profile.id}`,
+              onClick: () => onOpenProfile(profile.id),
+              className: "member-chip transition-colors hover:border-accent/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "member-avatar", "aria-hidden": "true", children: profile.name.charAt(0) }),
+                profile.name
+              ]
+            },
+            profile.id
+          )) })
+        ] }) : null,
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { className: "archive-detail-section", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "archive-detail-section-title", children: "Details" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "archive-detail-meta-row", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "meta-label", children: "Type" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "meta-value", children: MEDIA_KIND_LABELS[kind ?? "uploaded-video"] })
+          ] }),
+          isOralHistory && speaker ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "archive-detail-meta-row", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "meta-label", children: "Speaker" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "meta-value", children: speaker.name })
+          ] }) : null,
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "archive-detail-meta-row", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "meta-label", children: "Era" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "meta-value", children: item.era || (year !== null ? String(year) : "Unknown") })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "archive-detail-meta-row", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "meta-label", children: "Privacy" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "meta-value", children: PRIVACY_LEVEL_LABELS[item.privacyLevel] })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "archive-detail-meta-row", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "meta-label", children: "Status" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "meta-value", children: ARCHIVE_ITEM_STATUS_LABELS[item.status] })
+          ] })
+        ] })
+      ] })
+    ] })
+  ] });
+}
+function getInitials(name) {
+  var _a2;
+  const parts = name.split(/\s+/).filter((part) => part.length > 0 && /[A-Za-z]/.test(part.charAt(0)));
+  const first = ((_a2 = parts[0]) == null ? void 0 : _a2.charAt(0)) ?? "";
+  const last = parts.length > 1 ? parts[parts.length - 1].charAt(0) : "";
+  return (first + last).toUpperCase();
+}
+function memberName(id2) {
+  var _a2;
+  return ((_a2 = profiles[id2]) == null ? void 0 : _a2.name) ?? id2;
+}
+function categoryFor(item) {
+  const kind = getMediaKind(item);
+  if (kind === "audio-only-oral-history") {
+    return { label: "Audio", badgeClass: "badge-audio" };
+  }
+  if (kind === "oral-history-video") {
+    return { label: "Oral History", badgeClass: "badge-oral-history" };
+  }
+  return { label: "Video", badgeClass: "badge-video" };
+}
+function eraLabel(item) {
+  if (item.era) return item.era;
+  if (item.year !== void 0) return item.year.toString();
+  return "Undated";
+}
+function MediaCard({ item, position, featured, onOpen }) {
+  const kind = getMediaKind(item);
+  const category = categoryFor(item);
+  const isAudio = kind === "audio-only-oral-history";
+  const speaker = item.primarySpeaker;
+  const relatedMembers = item.relatedMemberIds.slice(0, featured ? 3 : 2).map(memberName);
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "button",
+    {
+      type: "button",
+      "data-ocid": `videos.card.${position}`,
+      onClick: onOpen,
+      className: "archive-card group text-left",
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "div",
+          {
+            className: `relative w-full overflow-hidden ${featured ? "aspect-video" : "aspect-[4/3]"}`,
+            style: {
+              backgroundColor: "oklch(var(--media-stage))",
+              color: "oklch(var(--media-stage-muted))"
+            },
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "absolute inset-0 flex items-center justify-center", children: isAudio ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+                AudioLines,
+                {
+                  className: featured ? "h-16 w-16" : "h-10 w-10",
+                  strokeWidth: 1.25,
+                  "aria-hidden": "true"
+                }
+              ) : /* @__PURE__ */ jsxRuntimeExports.jsx(
+                Film,
+                {
+                  className: featured ? "h-16 w-16" : "h-10 w-10",
+                  strokeWidth: 1.25,
+                  "aria-hidden": "true"
+                }
+              ) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "div",
+                {
+                  className: "absolute inset-0 flex items-center justify-center transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100",
+                  style: {
+                    backgroundColor: "oklch(var(--media-overlay))",
+                    opacity: 0.9
+                  },
+                  children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "span",
+                    {
+                      className: "flex items-center justify-center rounded-full",
+                      style: {
+                        backgroundColor: "oklch(var(--oral-history-foreground) / 0.9)",
+                        color: "oklch(var(--oral-history))",
+                        boxShadow: "0 0 0 2px oklch(var(--oral-history) / 0.5)",
+                        width: featured ? "4rem" : "3rem",
+                        height: featured ? "4rem" : "3rem"
+                      },
+                      children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                        Play,
+                        {
+                          className: featured ? "h-6 w-6" : "h-5 w-5",
+                          fill: "currentColor",
+                          "aria-hidden": "true"
+                        }
+                      )
+                    }
+                  )
+                }
+              ),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "span",
+                {
+                  className: `archive-type-badge absolute left-3 top-3 ${category.badgeClass}`,
+                  "data-ocid": `videos.card.${position}.category_badge`,
+                  children: category.label
+                }
+              )
+            ]
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "archive-card-body", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "h3",
+            {
+              className: `archive-card-title line-clamp-2 ${featured ? "text-xl" : ""}`,
+              children: item.title
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "archive-card-meta", children: [
+            speaker ? /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "inline-flex items-center gap-1.5", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "span",
+                {
+                  className: "flex h-5 w-5 items-center justify-center rounded-full text-[9px] font-bold",
+                  style: {
+                    backgroundColor: "oklch(var(--speaker-accent))",
+                    color: "oklch(var(--speaker-accent-foreground))"
+                  },
+                  "aria-hidden": "true",
+                  children: getInitials(speaker.name)
+                }
+              ),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "contributor", children: speaker.name })
+            ] }) : /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "inline-flex items-center gap-1.5", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(UserRound, { className: "h-3.5 w-3.5", "aria-hidden": "true" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "contributor", children: "Family video" })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { "aria-hidden": "true", children: "·" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: eraLabel(item) })
+          ] }),
+          relatedMembers.length > 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-auto flex flex-wrap items-center gap-1.5 pt-1", children: relatedMembers.map((name) => /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "member-chip", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "member-avatar", "aria-hidden": "true", children: getInitials(name) }),
+            name
+          ] }, name)) }) : null
+        ] })
+      ]
+    }
+  );
+}
+function VideosPage({
+  onBack,
+  onAddMedia,
+  onOpenMediaItem
+}) {
+  const { data: items = [], isLoading } = useApprovedMediaItems();
+  const [kindFilter, setKindFilter] = reactExports.useState("all");
+  const [speakerOnly, setSpeakerOnly] = reactExports.useState(false);
+  const filtered = reactExports.useMemo(() => {
+    const sorted = [...items].sort(
+      (a2, b2) => a2.createdAt < b2.createdAt ? 1 : a2.createdAt > b2.createdAt ? -1 : 0
+    );
+    return sorted.filter(
+      (item) => kindFilter === "all" || getMediaKind(item) === kindFilter
+    ).filter((item) => !speakerOnly || Boolean(item.primarySpeaker));
+  }, [items, kindFilter, speakerOnly]);
+  const hasActiveFilters = kindFilter !== "all" || speakerOnly;
+  const resetFilters = () => {
+    setKindFilter("all");
+    setSpeakerOnly(false);
+  };
+  const featured = filtered[0];
+  const rest = filtered.slice(1);
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto w-full max-w-6xl px-6 py-8", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mb-6 flex flex-wrap items-center justify-between gap-3", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "videos.back_button",
+          onClick: onBack,
+          className: "inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3.5 py-1.5 text-xs font-semibold text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { "aria-hidden": "true", children: "←" }),
+            " Back to Archive"
+          ]
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "videos.add_button",
+          onClick: onAddMedia,
+          className: "inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold text-primary-foreground transition-shadow hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+          style: { backgroundColor: "oklch(var(--primary))" },
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Plus, { className: "h-4 w-4", "aria-hidden": "true" }),
+            "Add Video"
+          ]
+        }
+      )
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("header", { className: "mb-6", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "div",
+        {
+          className: "mb-3 inline-flex items-center gap-2 rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em]",
+          style: {
+            backgroundColor: "oklch(var(--oral-history) / 0.14)",
+            color: "oklch(var(--oral-history))"
+          },
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Clapperboard, { className: "h-3.5 w-3.5", "aria-hidden": "true" }),
+            "Family Archive"
+          ]
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "font-display text-3xl font-semibold text-foreground", children: "Family Videos & Oral History" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-2 text-sm text-muted-foreground", children: "Preserve the family's moving memories — home videos and the spoken stories of the people who lived them." })
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("fieldset", { className: "filter-bar", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("legend", { className: "sr-only", children: "Filter media" }),
+      MEDIA_KIND_FILTERS.map((filter2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "button",
+        {
+          type: "button",
+          "data-ocid": `videos.filter.${filter2.value}`,
+          "aria-pressed": kindFilter === filter2.value,
+          onClick: () => setKindFilter(filter2.value),
+          className: `filter-tab ${kindFilter === filter2.value ? "filter-tab-active" : ""}`,
+          children: filter2.label
+        },
+        filter2.value
+      )),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "videos.filter.speaker",
+          "aria-pressed": speakerOnly,
+          onClick: () => setSpeakerOnly((v2) => !v2),
+          className: `filter-tab ${speakerOnly ? "filter-tab-active" : ""}`,
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Mic, { className: "h-3.5 w-3.5", "aria-hidden": "true" }),
+            "Speaker"
+          ]
+        }
+      )
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-6", children: isLoading ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "div",
+      {
+        "data-ocid": "videos.loading_state",
+        className: "grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3",
+        "aria-label": "Loading media",
+        children: Array.from({ length: 6 }, (_2, i) => `skeleton-${i}`).map((id2) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "div",
+          {
+            className: "animate-pulse overflow-hidden rounded-xl border border-border/60 bg-card",
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "aspect-[4/3] w-full bg-muted" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-2 p-4", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-4 w-1/3 rounded bg-muted" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-5 w-2/3 rounded bg-muted" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-4 w-1/2 rounded bg-muted" })
+              ] })
+            ]
+          },
+          id2
+        ))
+      }
+    ) : filtered.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { "data-ocid": "videos.empty_state", className: "archive-empty", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "div",
+        {
+          className: "flex h-14 w-14 items-center justify-center rounded-full",
+          style: {
+            backgroundColor: "oklch(var(--oral-history) / 0.14)",
+            color: "oklch(var(--oral-history))",
+            boxShadow: "0 0 0 2px oklch(var(--oral-history) / 0.4)"
+          },
+          children: hasActiveFilters ? /* @__PURE__ */ jsxRuntimeExports.jsx(Mic, { className: "h-6 w-6", "aria-hidden": "true" }) : /* @__PURE__ */ jsxRuntimeExports.jsx(Clapperboard, { className: "h-6 w-6", "aria-hidden": "true" })
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "archive-empty-title", children: hasActiveFilters ? "No media match these filters" : "No videos or oral histories yet" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "archive-empty-hint", children: hasActiveFilters ? "Try adjusting or clearing the filters to see more of the family's media." : "Add a home video or record a family member's story to begin preserving the family's moving memories." }),
+      hasActiveFilters ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "videos.reset_filters_button",
+          onClick: resetFilters,
+          className: "archive-empty-reset",
+          children: "Clear filters"
+        }
+      ) : /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "videos.empty_add_button",
+          onClick: onAddMedia,
+          className: "archive-empty-reset",
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Plus, { className: "h-4 w-4", "aria-hidden": "true" }),
+            "Add Video"
+          ]
+        }
+      )
+    ] }) : /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-6", children: [
+      featured ? /* @__PURE__ */ jsxRuntimeExports.jsx("section", { "aria-label": "Featured media", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+        MediaCard,
+        {
+          item: featured,
+          position: 1,
+          featured: true,
+          onOpen: () => onOpenMediaItem(featured.id)
+        }
+      ) }) : null,
+      rest.length > 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "ul",
+        {
+          "data-ocid": "videos.list",
+          className: "grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3",
+          children: rest.map((item, index2) => /* @__PURE__ */ jsxRuntimeExports.jsx("li", { children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+            MediaCard,
+            {
+              item,
+              position: index2 + 2,
+              onOpen: () => onOpenMediaItem(item.id)
+            }
+          ) }, item.id.toString()))
+        }
+      ) : null
+    ] }) })
+  ] });
+}
 const VALID_VIEWS = [
   "home",
   "family-tree",
@@ -62201,12 +67361,18 @@ const VALID_VIEWS = [
   "admin-approval",
   "archive",
   "archive-detail",
+  "videos",
+  "video-detail",
+  "video-contribute",
   "add-myself",
   "steward-review",
   "governance",
   "notifications",
   "profile-edit",
-  "sign-in"
+  "sign-in",
+  "stories",
+  "mysteries",
+  "timeline"
 ];
 function isView(value) {
   return VALID_VIEWS.includes(value);
@@ -62235,8 +67401,14 @@ function App() {
     () => (origin == null ? void 0 : origin.profileId) ? origin.profileId : "julia"
   );
   const [selectedArchiveItemId, setSelectedArchiveItemId] = reactExports.useState(null);
+  const [selectedMediaItemId, setSelectedMediaItemId] = reactExports.useState(
+    null
+  );
+  const [pendingStoryId, setPendingStoryId] = reactExports.useState(null);
+  const [pendingMysteryId, setPendingMysteryId] = reactExports.useState(null);
   const [, setExploredPersonId] = reactExports.useState(null);
   const [exploreFocusId, setExploreFocusId] = reactExports.useState(null);
+  const [mediaContributePreselect, setMediaContributePreselect] = reactExports.useState(null);
   const { data: isAdmin = false } = useIsAdmin();
   const { isAuthenticated, accountId, signOut } = useAuth();
   const {
@@ -62270,6 +67442,29 @@ function App() {
     setSelectedArchiveItemId(id2);
     setView("archive-detail");
   }, []);
+  const openMediaItem = reactExports.useCallback((id2) => {
+    setSelectedMediaItemId(id2);
+    setView("video-detail");
+  }, []);
+  const openMediaContribute = reactExports.useCallback(
+    (preselect) => {
+      setMediaContributePreselect(preselect);
+      setView("video-contribute");
+    },
+    []
+  );
+  const openProfile = reactExports.useCallback((id2) => {
+    setProfileId(id2);
+    setView("profile");
+  }, []);
+  const openStory = reactExports.useCallback((id2) => {
+    setPendingStoryId(id2);
+    setView("stories");
+  }, []);
+  const openMystery = reactExports.useCallback((id2) => {
+    setPendingMysteryId(id2);
+    setView("mysteries");
+  }, []);
   const openExploreFamily = reactExports.useCallback((personId) => {
     setExploreFocusId(personId);
     setView("family-tree");
@@ -62300,6 +67495,15 @@ function App() {
       onSignOutClick: signOut,
       onAdminClick: () => setView("admin-approval"),
       onArchiveClick: () => setView("archive"),
+      onStoriesClick: () => {
+        setPendingStoryId(null);
+        setView("stories");
+      },
+      onMysteriesClick: () => {
+        setPendingMysteryId(null);
+        setView("mysteries");
+      },
+      onTimelineClick: () => setView("timeline"),
       onBranchClick: () => setView("heritage-branch"),
       onExploreClick: () => openExploreFamily(null),
       onStewardClick: () => setView("steward-review"),
@@ -62311,8 +67515,17 @@ function App() {
         {
           onExplore: () => openExploreFamily(null),
           onAddToHistory: () => setView("archive-contribute"),
-          onOpenArchive: () => setView("archive"),
-          onOpenBranch: () => setView("heritage-branch")
+          onOpenBranch: () => setView("heritage-branch"),
+          onOpenStories: () => {
+            setPendingStoryId(null);
+            setView("stories");
+          },
+          onOpenMysteries: () => {
+            setPendingMysteryId(null);
+            setView("mysteries");
+          },
+          onOpenTimeline: () => setView("timeline"),
+          onOpenVideos: () => setView("videos")
         }
       ) : view === "family-tree" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
         ExploreFamilyPage,
@@ -62333,7 +67546,14 @@ function App() {
           onProfilePhotoChange: () => {
           },
           onEditProfile: () => setView("profile-edit"),
-          onClaimApproved: openMyProfile
+          onClaimApproved: openMyProfile,
+          onOpenMediaItem: openMediaItem,
+          onAddMedia: (action) => openMediaContribute({
+            personId: (resolvedProfile ?? profile).id,
+            kind: action === "video" ? "uploaded-video" : action === "oral-history" ? "oral-history-video" : "audio-only-oral-history",
+            speaker: action === "oral-history" ? (resolvedProfile ?? profile).id : null,
+            returnView: "profile"
+          })
         }
       ) : /* @__PURE__ */ jsxRuntimeExports.jsx(ProfileLoadingState, {}) : view === "my-profile" ? isStaticProfile || resolvedProfile ? /* @__PURE__ */ jsxRuntimeExports.jsx(
         PersonProfilePage,
@@ -62343,7 +67563,14 @@ function App() {
           onProfilePhotoChange: () => {
           },
           onEditProfile: () => setView("profile-edit"),
-          onClaimApproved: openMyProfile
+          onClaimApproved: openMyProfile,
+          onOpenMediaItem: openMediaItem,
+          onAddMedia: (action) => openMediaContribute({
+            personId: (resolvedProfile ?? profile).id,
+            kind: action === "video" ? "uploaded-video" : action === "oral-history" ? "oral-history-video" : "audio-only-oral-history",
+            speaker: action === "oral-history" ? (resolvedProfile ?? profile).id : null,
+            returnView: "profile"
+          })
         }
       ) : (
         // A createMyself / backend profile is still resolving. Show a loading
@@ -62366,11 +67593,65 @@ function App() {
           personId: profileId,
           onBack: () => setView("profile")
         }
-      ) : view === "notifications" ? /* @__PURE__ */ jsxRuntimeExports.jsx(NotificationsPage, {}) : view === "sign-in" ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center px-6 py-12", children: /* @__PURE__ */ jsxRuntimeExports.jsx(LoginSurface, {}) }) : view === "archive" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+      ) : view === "notifications" ? /* @__PURE__ */ jsxRuntimeExports.jsx(NotificationsPage, {}) : view === "sign-in" ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center px-6 py-12", children: /* @__PURE__ */ jsxRuntimeExports.jsx(LoginSurface, {}) }) : view === "stories" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+        StoriesPage,
+        {
+          onBack: () => setView("home"),
+          onOpenProfile: openProfile,
+          initialStoryId: pendingStoryId
+        }
+      ) : view === "mysteries" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+        MysteriesPage,
+        {
+          onBack: () => setView("home"),
+          onOpenProfile: openProfile,
+          initialMysteryId: pendingMysteryId
+        }
+      ) : view === "timeline" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+        TimelinePage,
+        {
+          onBack: () => setView("home"),
+          onOpenProfile: openProfile,
+          onOpenStory: openStory,
+          onOpenArchiveItem: openArchiveItem,
+          onOpenMystery: openMystery
+        }
+      ) : view === "archive" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
         ArchivePage,
         {
           onBack: () => setView("home"),
-          onOpenArchiveItem: openArchiveItem
+          onOpenArchiveItem: openArchiveItem,
+          onOpenVideos: () => setView("videos")
+        }
+      ) : view === "videos" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+        VideosPage,
+        {
+          onBack: () => setView("archive"),
+          onOpenMediaItem: openMediaItem,
+          onAddMedia: () => openMediaContribute({
+            personId: null,
+            kind: null,
+            speaker: null,
+            returnView: "videos"
+          })
+        }
+      ) : view === "video-detail" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+        VideoDetailPage,
+        {
+          itemId: selectedMediaItemId ?? 0n,
+          onBack: () => setView("videos"),
+          onOpenProfile: (id2) => {
+            setProfileId(id2);
+            setView("profile");
+          }
+        }
+      ) : view === "video-contribute" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+        VideoContributePage,
+        {
+          onBack: () => (mediaContributePreselect == null ? void 0 : mediaContributePreselect.returnView) === "profile" ? setView("profile") : setView("videos"),
+          initialKind: (mediaContributePreselect == null ? void 0 : mediaContributePreselect.kind) ?? void 0,
+          initialRelatedMemberIds: (mediaContributePreselect == null ? void 0 : mediaContributePreselect.personId) ? [mediaContributePreselect.personId] : void 0,
+          initialSpeakerId: (mediaContributePreselect == null ? void 0 : mediaContributePreselect.speaker) ?? void 0
         }
       ) : /* @__PURE__ */ jsxRuntimeExports.jsx(
         ArchiveDetailPage,

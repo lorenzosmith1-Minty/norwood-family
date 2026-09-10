@@ -65,6 +65,33 @@ export const Result_8 = IDL.Variant({
   'ok' : StewardRecord,
   'err' : StewardError,
 });
+export const EvidenceStatus = IDL.Variant({
+  'Unresolved' : IDL.Null,
+  'Documented' : IDL.Null,
+  'FamilyHistory' : IDL.Null,
+  'PersonalMemory' : IDL.Null,
+});
+export const StoryId = IDL.Nat;
+export const StoryStatus = IDL.Variant({
+  'Approved' : IDL.Null,
+  'Rejected' : IDL.Null,
+  'Pending' : IDL.Null,
+});
+export const Story = IDL.Record({
+  'id' : StoryId,
+  'era' : IDL.Opt(IDL.Text),
+  'status' : StoryStatus,
+  'title' : IDL.Text,
+  'relatedMemberIds' : IDL.Vec(IDL.Text),
+  'storyText' : IDL.Text,
+  'createdAt' : IDL.Int,
+  'year' : IDL.Opt(IDL.Nat),
+  'relatedArchiveItemIds' : IDL.Vec(IDL.Nat),
+  'updatedAt' : IDL.Int,
+  'evidenceStatus' : EvidenceStatus,
+  'location' : IDL.Opt(IDL.Text),
+  'contributor' : IDL.Principal,
+});
 export const ExternalBlob = IDL.Vec(IDL.Nat8);
 export const PhotoId = IDL.Nat;
 export const Photo = IDL.Record({
@@ -114,6 +141,10 @@ export const PrivacyLevel = IDL.Variant({
   'Public' : IDL.Null,
   'FamilyOnly' : IDL.Null,
 });
+export const OralHistorySpeaker = IDL.Record({
+  'name' : IDL.Text,
+  'personId' : IDL.Opt(IDL.Text),
+});
 export const ArchiveItemType = IDL.Variant({
   'Research' : IDL.Null,
   'Photo' : IDL.Null,
@@ -124,11 +155,19 @@ export const ArchiveItemType = IDL.Variant({
   'Other' : IDL.Null,
   'Video' : IDL.Null,
 });
+export const ChapterMarker = IDL.Record({
+  'title' : IDL.Text,
+  'timestamp' : IDL.Nat,
+});
 export const SourceStatus = IDL.Variant({
   'Copy' : IDL.Null,
   'Unverified' : IDL.Null,
   'Transcribed' : IDL.Null,
   'Original' : IDL.Null,
+});
+export const ArchiveItemClassification = IDL.Variant({
+  'OralHistory' : IDL.Null,
+  'Standard' : IDL.Null,
 });
 export const ArchiveItem = IDL.Record({
   'id' : ArchiveItemId,
@@ -142,9 +181,16 @@ export const ArchiveItem = IDL.Record({
   'year' : IDL.Opt(IDL.Nat),
   'description' : IDL.Text,
   'privacyLevel' : PrivacyLevel,
+  'primarySpeaker' : IDL.Opt(OralHistorySpeaker),
+  'extractedNames' : IDL.Opt(IDL.Vec(IDL.Text)),
   'itemType' : ArchiveItemType,
+  'aiSummary' : IDL.Opt(IDL.Text),
+  'searchableTranscript' : IDL.Opt(IDL.Text),
   'relatedBranchId' : IDL.Opt(IDL.Text),
+  'transcript' : IDL.Opt(IDL.Text),
+  'chapterMarkers' : IDL.Opt(IDL.Vec(ChapterMarker)),
   'sourceStatus' : SourceStatus,
+  'classification' : ArchiveItemClassification,
   'contributor' : IDL.Principal,
 });
 export const ProfileClaimStatus = IDL.Variant({
@@ -218,6 +264,35 @@ export const AccountError = IDL.Variant({
   'NotSignedIn' : IDL.Null,
 });
 export const Result_17 = IDL.Variant({ 'ok' : Account, 'err' : AccountError });
+export const MysteryStatus = IDL.Variant({
+  'Researching' : IDL.Null,
+  'Open' : IDL.Null,
+  'PartiallyResolved' : IDL.Null,
+  'Resolved' : IDL.Null,
+});
+export const MysteryId = IDL.Nat;
+export const Resolution = IDL.Record({
+  'supportingEvidence' : IDL.Vec(IDL.Text),
+  'summary' : IDL.Text,
+  'resolvedAt' : IDL.Int,
+  'resolvedBy' : IDL.Principal,
+});
+export const Mystery = IDL.Record({
+  'id' : MysteryId,
+  'status' : MysteryStatus,
+  'title' : IDL.Text,
+  'relatedMemberIds' : IDL.Vec(IDL.Text),
+  'createdAt' : IDL.Int,
+  'relatedArchiveItemIds' : IDL.Vec(IDL.Nat),
+  'description' : IDL.Text,
+  'resolution' : IDL.Opt(Resolution),
+  'updatedAt' : IDL.Int,
+  'knownFacts' : IDL.Vec(IDL.Text),
+  'possibilities' : IDL.Vec(IDL.Text),
+  'relatedBranchId' : IDL.Opt(IDL.Text),
+  'relatedSourceIds' : IDL.Vec(IDL.Nat),
+  'contributor' : IDL.Principal,
+});
 export const ClaimStatus = IDL.Variant({
   'Unclaimed' : IDL.Null,
   'Claimed' : IDL.Null,
@@ -361,6 +436,58 @@ export const Notification = IDL.Record({
   'read' : IDL.Bool,
   'recipient' : IDL.Principal,
   'message' : IDL.Text,
+});
+export const MysteryContributionId = IDL.Nat;
+export const MysteryContributionStatus = IDL.Variant({
+  'Approved' : IDL.Null,
+  'Rejected' : IDL.Null,
+  'Pending' : IDL.Null,
+});
+export const MysteryContributionType = IDL.Variant({
+  'Lead' : IDL.Null,
+  'Note' : IDL.Null,
+  'Memory' : IDL.Null,
+  'Source' : IDL.Null,
+});
+export const MysteryContribution = IDL.Record({
+  'id' : MysteryContributionId,
+  'status' : MysteryContributionStatus,
+  'createdAt' : IDL.Int,
+  'text' : IDL.Text,
+  'mysteryId' : MysteryId,
+  'reviewedAt' : IDL.Opt(IDL.Int),
+  'reviewedBy' : IDL.Opt(IDL.Principal),
+  'contributionType' : MysteryContributionType,
+  'contributor' : IDL.Principal,
+});
+export const TimelineLinkTarget = IDL.Variant({
+  'Story' : StoryId,
+  'Mystery' : MysteryId,
+  'Person' : IDL.Text,
+  'ArchiveItem' : IDL.Nat,
+});
+export const TimelineEventType = IDL.Variant({
+  'MilitaryService' : IDL.Null,
+  'Story' : IDL.Null,
+  'Birth' : IDL.Null,
+  'FamilyEvent' : IDL.Null,
+  'Migration' : IDL.Null,
+  'Mystery' : IDL.Null,
+  'Death' : IDL.Null,
+  'PhotoDocument' : IDL.Null,
+  'Marriage' : IDL.Null,
+  'CensusDocument' : IDL.Null,
+  'Location' : IDL.Null,
+});
+export const TimelineEvent = IDL.Record({
+  'id' : IDL.Text,
+  'era' : IDL.Opt(IDL.Text),
+  'title' : IDL.Text,
+  'year' : IDL.Opt(IDL.Nat),
+  'linkTarget' : TimelineLinkTarget,
+  'description' : IDL.Text,
+  'evidenceStatus' : EvidenceStatus,
+  'eventType' : TimelineEventType,
 });
 export const NotificationId = IDL.Nat;
 export const MergeConflictStatus = IDL.Variant({
@@ -507,6 +634,20 @@ export const idlService = IDL.Service({
   '_internet_identity_sign_in_finish' : IDL.Func([], [Result_18], []),
   '_internet_identity_sign_in_start' : IDL.Func([], [IDL.Vec(IDL.Nat8)], []),
   'activateSuccessor' : IDL.Func([PersonId], [Result_8], []),
+  'addCanonicalStory' : IDL.Func(
+      [
+        IDL.Text,
+        IDL.Text,
+        IDL.Vec(IDL.Text),
+        IDL.Opt(IDL.Text),
+        IDL.Opt(IDL.Nat),
+        IDL.Opt(IDL.Text),
+        EvidenceStatus,
+        IDL.Vec(IDL.Nat),
+      ],
+      [Story],
+      [],
+    ),
   'addPhoto' : IDL.Func(
       [PersonId, IDL.Text, IDL.Text, ExternalBlob],
       [Photo],
@@ -529,12 +670,28 @@ export const idlService = IDL.Service({
       [IDL.Opt(RelationshipRequest)],
       [],
     ),
+  'approveStory' : IDL.Func([StoryId], [IDL.Opt(Story)], []),
   'archiveProfile' : IDL.Func([PersonId], [Result_1], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
   'bindAuthMethod' : IDL.Func([AuthMethod], [Result_17], []),
   'correctRelationshipType' : IDL.Func(
       [IDL.Nat, RelationshipType],
       [Result_16],
+      [],
+    ),
+  'createCanonicalMystery' : IDL.Func(
+      [
+        IDL.Text,
+        IDL.Text,
+        IDL.Vec(IDL.Text),
+        IDL.Opt(IDL.Text),
+        IDL.Vec(IDL.Text),
+        IDL.Vec(IDL.Text),
+        IDL.Vec(IDL.Nat),
+        IDL.Vec(IDL.Nat),
+        MysteryStatus,
+      ],
+      [Mystery],
       [],
     ),
   'createMyself' : IDL.Func([IDL.Text], [Result_15], []),
@@ -569,6 +726,7 @@ export const idlService = IDL.Service({
   'getSingleStewardWarning' : IDL.Func([], [IDL.Opt(IDL.Text)], ['query']),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
   'listApprovedArchiveItems' : IDL.Func([], [IDL.Vec(ArchiveItem)], ['query']),
+  'listApprovedStories' : IDL.Func([], [IDL.Vec(Story)], ['query']),
   'listArchivedProfileIds' : IDL.Func([], [IDL.Vec(PersonId)], ['query']),
   'listArchivedProfiles' : IDL.Func([], [IDL.Vec(PersonProfile)], ['query']),
   'listAuditHistory' : IDL.Func([], [IDL.Vec(AuditEntry)], ['query']),
@@ -583,8 +741,15 @@ export const idlService = IDL.Service({
       [IDL.Vec(StewardIdentity)],
       ['query'],
     ),
+  'listMysteries' : IDL.Func([], [IDL.Vec(Mystery)], ['query']),
   'listNotifications' : IDL.Func([], [IDL.Vec(Notification)], ['query']),
   'listPendingArchiveItems' : IDL.Func([], [IDL.Vec(ArchiveItem)], ['query']),
+  'listPendingMysteryContributions' : IDL.Func(
+      [],
+      [IDL.Vec(MysteryContribution)],
+      ['query'],
+    ),
+  'listPendingStories' : IDL.Func([], [IDL.Vec(Story)], ['query']),
   'listPersonRelationships' : IDL.Func(
       [PersonId],
       [IDL.Vec(Relationship)],
@@ -605,6 +770,12 @@ export const idlService = IDL.Service({
   'listStewardIdentities' : IDL.Func([], [IDL.Vec(StewardIdentity)], ['query']),
   'listStewards' : IDL.Func([], [IDL.Vec(StewardRecord)], ['query']),
   'listSuccessors' : IDL.Func([], [IDL.Vec(SuccessorDesignation)], ['query']),
+  'listTimelineEvents' : IDL.Func([], [IDL.Vec(TimelineEvent)], ['query']),
+  'markMysteryResolved' : IDL.Func(
+      [MysteryId, IDL.Text, IDL.Vec(IDL.Text)],
+      [IDL.Opt(Mystery)],
+      [],
+    ),
   'markNotificationRead' : IDL.Func(
       [NotificationId],
       [IDL.Opt(Notification)],
@@ -631,6 +802,7 @@ export const idlService = IDL.Service({
       [IDL.Opt(RelationshipRequest)],
       [],
     ),
+  'rejectStory' : IDL.Func([StoryId], [IDL.Opt(Story)], []),
   'removeDuplicateProfile' : IDL.Func([PersonId], [Result_6], []),
   'removePhoto' : IDL.Func([PersonId, PhotoId], [IDL.Bool], []),
   'removeRelationship' : IDL.Func([IDL.Nat], [Result_5], []),
@@ -643,6 +815,11 @@ export const idlService = IDL.Service({
       [],
     ),
   'restoreProfile' : IDL.Func([PersonId], [Result_1], []),
+  'reviewMysteryContribution' : IDL.Func(
+      [MysteryContributionId, IDL.Bool],
+      [IDL.Opt(MysteryContribution)],
+      [],
+    ),
   'schema' : IDL.Func([], [IDL.Text], ['query']),
   'searchPossibleMatches' : IDL.Func(
       [IDL.Text],
@@ -668,8 +845,60 @@ export const idlService = IDL.Service({
         IDL.Opt(IDL.Text),
         SourceStatus,
         PrivacyLevel,
+        ArchiveItemClassification,
+        IDL.Opt(OralHistorySpeaker),
       ],
       [ArchiveItem],
+      [],
+    ),
+  'submitMysteryContribution' : IDL.Func(
+      [MysteryId, MysteryContributionType, IDL.Text],
+      [MysteryContribution],
+      [],
+    ),
+  'submitStory' : IDL.Func(
+      [
+        IDL.Text,
+        IDL.Text,
+        IDL.Vec(IDL.Text),
+        IDL.Opt(IDL.Text),
+        IDL.Opt(IDL.Nat),
+        IDL.Opt(IDL.Text),
+        EvidenceStatus,
+        IDL.Vec(IDL.Nat),
+      ],
+      [Story],
+      [],
+    ),
+  'updateCanonicalMystery' : IDL.Func(
+      [
+        MysteryId,
+        IDL.Text,
+        IDL.Text,
+        IDL.Vec(IDL.Text),
+        IDL.Opt(IDL.Text),
+        IDL.Vec(IDL.Text),
+        IDL.Vec(IDL.Text),
+        IDL.Vec(IDL.Nat),
+        IDL.Vec(IDL.Nat),
+        MysteryStatus,
+      ],
+      [IDL.Opt(Mystery)],
+      [],
+    ),
+  'updateCanonicalStory' : IDL.Func(
+      [
+        StoryId,
+        IDL.Text,
+        IDL.Text,
+        IDL.Vec(IDL.Text),
+        IDL.Opt(IDL.Text),
+        IDL.Opt(IDL.Nat),
+        IDL.Opt(IDL.Text),
+        EvidenceStatus,
+        IDL.Vec(IDL.Nat),
+      ],
+      [IDL.Opt(Story)],
       [],
     ),
   'updateOwnProfile' : IDL.Func([PersonId, ProfileEdits], [Result], []),
@@ -732,6 +961,33 @@ export const idlFactory = ({ IDL }) => {
     'NotDesignated' : IDL.Null,
   });
   const Result_8 = IDL.Variant({ 'ok' : StewardRecord, 'err' : StewardError });
+  const EvidenceStatus = IDL.Variant({
+    'Unresolved' : IDL.Null,
+    'Documented' : IDL.Null,
+    'FamilyHistory' : IDL.Null,
+    'PersonalMemory' : IDL.Null,
+  });
+  const StoryId = IDL.Nat;
+  const StoryStatus = IDL.Variant({
+    'Approved' : IDL.Null,
+    'Rejected' : IDL.Null,
+    'Pending' : IDL.Null,
+  });
+  const Story = IDL.Record({
+    'id' : StoryId,
+    'era' : IDL.Opt(IDL.Text),
+    'status' : StoryStatus,
+    'title' : IDL.Text,
+    'relatedMemberIds' : IDL.Vec(IDL.Text),
+    'storyText' : IDL.Text,
+    'createdAt' : IDL.Int,
+    'year' : IDL.Opt(IDL.Nat),
+    'relatedArchiveItemIds' : IDL.Vec(IDL.Nat),
+    'updatedAt' : IDL.Int,
+    'evidenceStatus' : EvidenceStatus,
+    'location' : IDL.Opt(IDL.Text),
+    'contributor' : IDL.Principal,
+  });
   const ExternalBlob = IDL.Vec(IDL.Nat8);
   const PhotoId = IDL.Nat;
   const Photo = IDL.Record({
@@ -781,6 +1037,10 @@ export const idlFactory = ({ IDL }) => {
     'Public' : IDL.Null,
     'FamilyOnly' : IDL.Null,
   });
+  const OralHistorySpeaker = IDL.Record({
+    'name' : IDL.Text,
+    'personId' : IDL.Opt(IDL.Text),
+  });
   const ArchiveItemType = IDL.Variant({
     'Research' : IDL.Null,
     'Photo' : IDL.Null,
@@ -791,11 +1051,19 @@ export const idlFactory = ({ IDL }) => {
     'Other' : IDL.Null,
     'Video' : IDL.Null,
   });
+  const ChapterMarker = IDL.Record({
+    'title' : IDL.Text,
+    'timestamp' : IDL.Nat,
+  });
   const SourceStatus = IDL.Variant({
     'Copy' : IDL.Null,
     'Unverified' : IDL.Null,
     'Transcribed' : IDL.Null,
     'Original' : IDL.Null,
+  });
+  const ArchiveItemClassification = IDL.Variant({
+    'OralHistory' : IDL.Null,
+    'Standard' : IDL.Null,
   });
   const ArchiveItem = IDL.Record({
     'id' : ArchiveItemId,
@@ -809,9 +1077,16 @@ export const idlFactory = ({ IDL }) => {
     'year' : IDL.Opt(IDL.Nat),
     'description' : IDL.Text,
     'privacyLevel' : PrivacyLevel,
+    'primarySpeaker' : IDL.Opt(OralHistorySpeaker),
+    'extractedNames' : IDL.Opt(IDL.Vec(IDL.Text)),
     'itemType' : ArchiveItemType,
+    'aiSummary' : IDL.Opt(IDL.Text),
+    'searchableTranscript' : IDL.Opt(IDL.Text),
     'relatedBranchId' : IDL.Opt(IDL.Text),
+    'transcript' : IDL.Opt(IDL.Text),
+    'chapterMarkers' : IDL.Opt(IDL.Vec(ChapterMarker)),
     'sourceStatus' : SourceStatus,
+    'classification' : ArchiveItemClassification,
     'contributor' : IDL.Principal,
   });
   const ProfileClaimStatus = IDL.Variant({
@@ -882,6 +1157,35 @@ export const idlFactory = ({ IDL }) => {
     'NotSignedIn' : IDL.Null,
   });
   const Result_17 = IDL.Variant({ 'ok' : Account, 'err' : AccountError });
+  const MysteryStatus = IDL.Variant({
+    'Researching' : IDL.Null,
+    'Open' : IDL.Null,
+    'PartiallyResolved' : IDL.Null,
+    'Resolved' : IDL.Null,
+  });
+  const MysteryId = IDL.Nat;
+  const Resolution = IDL.Record({
+    'supportingEvidence' : IDL.Vec(IDL.Text),
+    'summary' : IDL.Text,
+    'resolvedAt' : IDL.Int,
+    'resolvedBy' : IDL.Principal,
+  });
+  const Mystery = IDL.Record({
+    'id' : MysteryId,
+    'status' : MysteryStatus,
+    'title' : IDL.Text,
+    'relatedMemberIds' : IDL.Vec(IDL.Text),
+    'createdAt' : IDL.Int,
+    'relatedArchiveItemIds' : IDL.Vec(IDL.Nat),
+    'description' : IDL.Text,
+    'resolution' : IDL.Opt(Resolution),
+    'updatedAt' : IDL.Int,
+    'knownFacts' : IDL.Vec(IDL.Text),
+    'possibilities' : IDL.Vec(IDL.Text),
+    'relatedBranchId' : IDL.Opt(IDL.Text),
+    'relatedSourceIds' : IDL.Vec(IDL.Nat),
+    'contributor' : IDL.Principal,
+  });
   const ClaimStatus = IDL.Variant({
     'Unclaimed' : IDL.Null,
     'Claimed' : IDL.Null,
@@ -1013,6 +1317,58 @@ export const idlFactory = ({ IDL }) => {
     'read' : IDL.Bool,
     'recipient' : IDL.Principal,
     'message' : IDL.Text,
+  });
+  const MysteryContributionId = IDL.Nat;
+  const MysteryContributionStatus = IDL.Variant({
+    'Approved' : IDL.Null,
+    'Rejected' : IDL.Null,
+    'Pending' : IDL.Null,
+  });
+  const MysteryContributionType = IDL.Variant({
+    'Lead' : IDL.Null,
+    'Note' : IDL.Null,
+    'Memory' : IDL.Null,
+    'Source' : IDL.Null,
+  });
+  const MysteryContribution = IDL.Record({
+    'id' : MysteryContributionId,
+    'status' : MysteryContributionStatus,
+    'createdAt' : IDL.Int,
+    'text' : IDL.Text,
+    'mysteryId' : MysteryId,
+    'reviewedAt' : IDL.Opt(IDL.Int),
+    'reviewedBy' : IDL.Opt(IDL.Principal),
+    'contributionType' : MysteryContributionType,
+    'contributor' : IDL.Principal,
+  });
+  const TimelineLinkTarget = IDL.Variant({
+    'Story' : StoryId,
+    'Mystery' : MysteryId,
+    'Person' : IDL.Text,
+    'ArchiveItem' : IDL.Nat,
+  });
+  const TimelineEventType = IDL.Variant({
+    'MilitaryService' : IDL.Null,
+    'Story' : IDL.Null,
+    'Birth' : IDL.Null,
+    'FamilyEvent' : IDL.Null,
+    'Migration' : IDL.Null,
+    'Mystery' : IDL.Null,
+    'Death' : IDL.Null,
+    'PhotoDocument' : IDL.Null,
+    'Marriage' : IDL.Null,
+    'CensusDocument' : IDL.Null,
+    'Location' : IDL.Null,
+  });
+  const TimelineEvent = IDL.Record({
+    'id' : IDL.Text,
+    'era' : IDL.Opt(IDL.Text),
+    'title' : IDL.Text,
+    'year' : IDL.Opt(IDL.Nat),
+    'linkTarget' : TimelineLinkTarget,
+    'description' : IDL.Text,
+    'evidenceStatus' : EvidenceStatus,
+    'eventType' : TimelineEventType,
   });
   const NotificationId = IDL.Nat;
   const MergeConflictStatus = IDL.Variant({
@@ -1153,6 +1509,20 @@ export const idlFactory = ({ IDL }) => {
     '_internet_identity_sign_in_finish' : IDL.Func([], [Result_18], []),
     '_internet_identity_sign_in_start' : IDL.Func([], [IDL.Vec(IDL.Nat8)], []),
     'activateSuccessor' : IDL.Func([PersonId], [Result_8], []),
+    'addCanonicalStory' : IDL.Func(
+        [
+          IDL.Text,
+          IDL.Text,
+          IDL.Vec(IDL.Text),
+          IDL.Opt(IDL.Text),
+          IDL.Opt(IDL.Nat),
+          IDL.Opt(IDL.Text),
+          EvidenceStatus,
+          IDL.Vec(IDL.Nat),
+        ],
+        [Story],
+        [],
+      ),
     'addPhoto' : IDL.Func(
         [PersonId, IDL.Text, IDL.Text, ExternalBlob],
         [Photo],
@@ -1179,12 +1549,28 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Opt(RelationshipRequest)],
         [],
       ),
+    'approveStory' : IDL.Func([StoryId], [IDL.Opt(Story)], []),
     'archiveProfile' : IDL.Func([PersonId], [Result_1], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
     'bindAuthMethod' : IDL.Func([AuthMethod], [Result_17], []),
     'correctRelationshipType' : IDL.Func(
         [IDL.Nat, RelationshipType],
         [Result_16],
+        [],
+      ),
+    'createCanonicalMystery' : IDL.Func(
+        [
+          IDL.Text,
+          IDL.Text,
+          IDL.Vec(IDL.Text),
+          IDL.Opt(IDL.Text),
+          IDL.Vec(IDL.Text),
+          IDL.Vec(IDL.Text),
+          IDL.Vec(IDL.Nat),
+          IDL.Vec(IDL.Nat),
+          MysteryStatus,
+        ],
+        [Mystery],
         [],
       ),
     'createMyself' : IDL.Func([IDL.Text], [Result_15], []),
@@ -1223,6 +1609,7 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(ArchiveItem)],
         ['query'],
       ),
+    'listApprovedStories' : IDL.Func([], [IDL.Vec(Story)], ['query']),
     'listArchivedProfileIds' : IDL.Func([], [IDL.Vec(PersonId)], ['query']),
     'listArchivedProfiles' : IDL.Func([], [IDL.Vec(PersonProfile)], ['query']),
     'listAuditHistory' : IDL.Func([], [IDL.Vec(AuditEntry)], ['query']),
@@ -1241,8 +1628,15 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(StewardIdentity)],
         ['query'],
       ),
+    'listMysteries' : IDL.Func([], [IDL.Vec(Mystery)], ['query']),
     'listNotifications' : IDL.Func([], [IDL.Vec(Notification)], ['query']),
     'listPendingArchiveItems' : IDL.Func([], [IDL.Vec(ArchiveItem)], ['query']),
+    'listPendingMysteryContributions' : IDL.Func(
+        [],
+        [IDL.Vec(MysteryContribution)],
+        ['query'],
+      ),
+    'listPendingStories' : IDL.Func([], [IDL.Vec(Story)], ['query']),
     'listPersonRelationships' : IDL.Func(
         [PersonId],
         [IDL.Vec(Relationship)],
@@ -1267,6 +1661,12 @@ export const idlFactory = ({ IDL }) => {
       ),
     'listStewards' : IDL.Func([], [IDL.Vec(StewardRecord)], ['query']),
     'listSuccessors' : IDL.Func([], [IDL.Vec(SuccessorDesignation)], ['query']),
+    'listTimelineEvents' : IDL.Func([], [IDL.Vec(TimelineEvent)], ['query']),
+    'markMysteryResolved' : IDL.Func(
+        [MysteryId, IDL.Text, IDL.Vec(IDL.Text)],
+        [IDL.Opt(Mystery)],
+        [],
+      ),
     'markNotificationRead' : IDL.Func(
         [NotificationId],
         [IDL.Opt(Notification)],
@@ -1293,6 +1693,7 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Opt(RelationshipRequest)],
         [],
       ),
+    'rejectStory' : IDL.Func([StoryId], [IDL.Opt(Story)], []),
     'removeDuplicateProfile' : IDL.Func([PersonId], [Result_6], []),
     'removePhoto' : IDL.Func([PersonId, PhotoId], [IDL.Bool], []),
     'removeRelationship' : IDL.Func([IDL.Nat], [Result_5], []),
@@ -1305,6 +1706,11 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'restoreProfile' : IDL.Func([PersonId], [Result_1], []),
+    'reviewMysteryContribution' : IDL.Func(
+        [MysteryContributionId, IDL.Bool],
+        [IDL.Opt(MysteryContribution)],
+        [],
+      ),
     'schema' : IDL.Func([], [IDL.Text], ['query']),
     'searchPossibleMatches' : IDL.Func(
         [IDL.Text],
@@ -1330,8 +1736,60 @@ export const idlFactory = ({ IDL }) => {
           IDL.Opt(IDL.Text),
           SourceStatus,
           PrivacyLevel,
+          ArchiveItemClassification,
+          IDL.Opt(OralHistorySpeaker),
         ],
         [ArchiveItem],
+        [],
+      ),
+    'submitMysteryContribution' : IDL.Func(
+        [MysteryId, MysteryContributionType, IDL.Text],
+        [MysteryContribution],
+        [],
+      ),
+    'submitStory' : IDL.Func(
+        [
+          IDL.Text,
+          IDL.Text,
+          IDL.Vec(IDL.Text),
+          IDL.Opt(IDL.Text),
+          IDL.Opt(IDL.Nat),
+          IDL.Opt(IDL.Text),
+          EvidenceStatus,
+          IDL.Vec(IDL.Nat),
+        ],
+        [Story],
+        [],
+      ),
+    'updateCanonicalMystery' : IDL.Func(
+        [
+          MysteryId,
+          IDL.Text,
+          IDL.Text,
+          IDL.Vec(IDL.Text),
+          IDL.Opt(IDL.Text),
+          IDL.Vec(IDL.Text),
+          IDL.Vec(IDL.Text),
+          IDL.Vec(IDL.Nat),
+          IDL.Vec(IDL.Nat),
+          MysteryStatus,
+        ],
+        [IDL.Opt(Mystery)],
+        [],
+      ),
+    'updateCanonicalStory' : IDL.Func(
+        [
+          StoryId,
+          IDL.Text,
+          IDL.Text,
+          IDL.Vec(IDL.Text),
+          IDL.Opt(IDL.Text),
+          IDL.Opt(IDL.Nat),
+          IDL.Opt(IDL.Text),
+          EvidenceStatus,
+          IDL.Vec(IDL.Nat),
+        ],
+        [IDL.Opt(Story)],
         [],
       ),
     'updateOwnProfile' : IDL.Func([PersonId, ProfileEdits], [Result], []),

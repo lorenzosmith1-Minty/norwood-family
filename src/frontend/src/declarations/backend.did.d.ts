@@ -34,11 +34,20 @@ export interface ArchiveItem {
   'year' : [] | [bigint],
   'description' : string,
   'privacyLevel' : PrivacyLevel,
+  'primarySpeaker' : [] | [OralHistorySpeaker],
+  'extractedNames' : [] | [Array<string>],
   'itemType' : ArchiveItemType,
+  'aiSummary' : [] | [string],
+  'searchableTranscript' : [] | [string],
   'relatedBranchId' : [] | [string],
+  'transcript' : [] | [string],
+  'chapterMarkers' : [] | [Array<ChapterMarker>],
   'sourceStatus' : SourceStatus,
+  'classification' : ArchiveItemClassification,
   'contributor' : Principal,
 }
+export type ArchiveItemClassification = { 'OralHistory' : null } |
+  { 'Standard' : null };
 export type ArchiveItemId = bigint;
 export type ArchiveItemStatus = { 'Approved' : null } |
   { 'Rejected' : null } |
@@ -81,6 +90,7 @@ export type AuthMethod = { 'Google' : null } |
   { 'Apple' : null };
 export interface AuthMethods { 'apple' : boolean, 'google' : boolean }
 export interface Cell { 'value' : Value, 'name' : string }
+export interface ChapterMarker { 'title' : string, 'timestamp' : bigint }
 export type ClaimError = { 'AlreadyPending' : null } |
   { 'ProfileNotFound' : null } |
   { 'AlreadyClaimed' : null } |
@@ -135,6 +145,10 @@ export type Error = { 'FrontendOriginsNotConfigured' : null } |
   { 'UntrustedSsoSource' : { 'domain' : string } } |
   { 'MissingField' : string } |
   { 'FrontendOriginMismatch' : { 'got' : string, 'expected' : Array<string> } };
+export type EvidenceStatus = { 'Unresolved' : null } |
+  { 'Documented' : null } |
+  { 'FamilyHistory' : null } |
+  { 'PersonalMemory' : null };
 export type ExternalBlob = Uint8Array;
 export type LivingStatus = { 'Living' : null } |
   { 'Deceased' : null };
@@ -158,6 +172,46 @@ export interface MergeResult {
   'conflicts' : Array<MergeConflict>,
   'canonicalPersonId' : PersonId,
 }
+export interface Mystery {
+  'id' : MysteryId,
+  'status' : MysteryStatus,
+  'title' : string,
+  'relatedMemberIds' : Array<string>,
+  'createdAt' : bigint,
+  'relatedArchiveItemIds' : Array<bigint>,
+  'description' : string,
+  'resolution' : [] | [Resolution],
+  'updatedAt' : bigint,
+  'knownFacts' : Array<string>,
+  'possibilities' : Array<string>,
+  'relatedBranchId' : [] | [string],
+  'relatedSourceIds' : Array<bigint>,
+  'contributor' : Principal,
+}
+export interface MysteryContribution {
+  'id' : MysteryContributionId,
+  'status' : MysteryContributionStatus,
+  'createdAt' : bigint,
+  'text' : string,
+  'mysteryId' : MysteryId,
+  'reviewedAt' : [] | [bigint],
+  'reviewedBy' : [] | [Principal],
+  'contributionType' : MysteryContributionType,
+  'contributor' : Principal,
+}
+export type MysteryContributionId = bigint;
+export type MysteryContributionStatus = { 'Approved' : null } |
+  { 'Rejected' : null } |
+  { 'Pending' : null };
+export type MysteryContributionType = { 'Lead' : null } |
+  { 'Note' : null } |
+  { 'Memory' : null } |
+  { 'Source' : null };
+export type MysteryId = bigint;
+export type MysteryStatus = { 'Researching' : null } |
+  { 'Open' : null } |
+  { 'PartiallyResolved' : null } |
+  { 'Resolved' : null };
 export interface Notification {
   'id' : bigint,
   'notificationType' : NotificationType,
@@ -171,6 +225,10 @@ export type NotificationType = { 'RelationshipRequested' : null } |
   { 'RelationshipReviewed' : null } |
   { 'ProfileClaimReviewed' : null } |
   { 'ProfileClaimRequested' : null };
+export interface OralHistorySpeaker {
+  'name' : string,
+  'personId' : [] | [string],
+}
 export type PersonId = string;
 export interface PersonMatch {
   'name' : string,
@@ -297,6 +355,12 @@ export type RemovalError = { 'AlreadyPending' : null } |
   { 'DeceasedProfile' : null };
 export type RemoveError = { 'ProfileNotFound' : null } |
   { 'NotSignedIn' : null };
+export interface Resolution {
+  'supportingEvidence' : Array<string>,
+  'summary' : string,
+  'resolvedAt' : bigint,
+  'resolvedBy' : Principal,
+}
 export type Result = { 'ok' : PersonProfile } |
   { 'err' : EditError };
 export type Result_1 = { 'ok' : null } |
@@ -361,6 +425,25 @@ export interface StewardRecord {
 }
 export type StewardRoleStatus = { 'Active' : null } |
   { 'Removed' : null };
+export interface Story {
+  'id' : StoryId,
+  'era' : [] | [string],
+  'status' : StoryStatus,
+  'title' : string,
+  'relatedMemberIds' : Array<string>,
+  'storyText' : string,
+  'createdAt' : bigint,
+  'year' : [] | [bigint],
+  'relatedArchiveItemIds' : Array<bigint>,
+  'updatedAt' : bigint,
+  'evidenceStatus' : EvidenceStatus,
+  'location' : [] | [string],
+  'contributor' : Principal,
+}
+export type StoryId = bigint;
+export type StoryStatus = { 'Approved' : null } |
+  { 'Rejected' : null } |
+  { 'Pending' : null };
 export interface SuccessorDesignation {
   'status' : SuccessorStatus,
   'assignedAt' : bigint,
@@ -371,6 +454,31 @@ export interface SuccessorDesignation {
 export type SuccessorStatus = { 'Activated' : null } |
   { 'Removed' : null } |
   { 'Designated' : null };
+export interface TimelineEvent {
+  'id' : string,
+  'era' : [] | [string],
+  'title' : string,
+  'year' : [] | [bigint],
+  'linkTarget' : TimelineLinkTarget,
+  'description' : string,
+  'evidenceStatus' : EvidenceStatus,
+  'eventType' : TimelineEventType,
+}
+export type TimelineEventType = { 'MilitaryService' : null } |
+  { 'Story' : null } |
+  { 'Birth' : null } |
+  { 'FamilyEvent' : null } |
+  { 'Migration' : null } |
+  { 'Mystery' : null } |
+  { 'Death' : null } |
+  { 'PhotoDocument' : null } |
+  { 'Marriage' : null } |
+  { 'CensusDocument' : null } |
+  { 'Location' : null };
+export type TimelineLinkTarget = { 'Story' : StoryId } |
+  { 'Mystery' : MysteryId } |
+  { 'Person' : string } |
+  { 'ArchiveItem' : bigint };
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
   { 'guest' : null };
@@ -414,6 +522,19 @@ export interface _SERVICE {
   '_internet_identity_sign_in_finish' : ActorMethod<[], Result_18>,
   '_internet_identity_sign_in_start' : ActorMethod<[], Uint8Array>,
   'activateSuccessor' : ActorMethod<[PersonId], Result_8>,
+  'addCanonicalStory' : ActorMethod<
+    [
+      string,
+      string,
+      Array<string>,
+      [] | [string],
+      [] | [bigint],
+      [] | [string],
+      EvidenceStatus,
+      Array<bigint>,
+    ],
+    Story
+  >,
   'addPhoto' : ActorMethod<[PersonId, string, string, ExternalBlob], Photo>,
   'addRelationship' : ActorMethod<
     [PersonId, PersonId, RelationshipType],
@@ -426,12 +547,27 @@ export interface _SERVICE {
     [bigint],
     [] | [RelationshipRequest]
   >,
+  'approveStory' : ActorMethod<[StoryId], [] | [Story]>,
   'archiveProfile' : ActorMethod<[PersonId], Result_1>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
   'bindAuthMethod' : ActorMethod<[AuthMethod], Result_17>,
   'correctRelationshipType' : ActorMethod<
     [bigint, RelationshipType],
     Result_16
+  >,
+  'createCanonicalMystery' : ActorMethod<
+    [
+      string,
+      string,
+      Array<string>,
+      [] | [string],
+      Array<string>,
+      Array<string>,
+      Array<bigint>,
+      Array<bigint>,
+      MysteryStatus,
+    ],
+    Mystery
   >,
   'createMyself' : ActorMethod<[string], Result_15>,
   'designateSuccessor' : ActorMethod<[PersonId, bigint], Result_14>,
@@ -442,6 +578,9 @@ export interface _SERVICE {
   'getMyAuthMethods' : ActorMethod<[], Result_12>,
   'getMyProfile' : ActorMethod<[], [] | [PersonProfile]>,
   'getMyProfileClaim' : ActorMethod<[PersonId], [] | [ProfileClaim]>,
+  /**
+   * / Renders an audit action type variant as its tag text for OQL rows.
+   */
   'getMyRelationshipRequests' : ActorMethod<[], Array<RelationshipRequest>>,
   'getPersonProfile' : ActorMethod<[PersonId], [] | [PersonProfile]>,
   'getProfilePhoto' : ActorMethod<[PersonId], [] | [Photo]>,
@@ -449,14 +588,21 @@ export interface _SERVICE {
   'getSingleStewardWarning' : ActorMethod<[], [] | [string]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
   'listApprovedArchiveItems' : ActorMethod<[], Array<ArchiveItem>>,
+  'listApprovedStories' : ActorMethod<[], Array<Story>>,
   'listArchivedProfileIds' : ActorMethod<[], Array<PersonId>>,
   'listArchivedProfiles' : ActorMethod<[], Array<PersonProfile>>,
   'listAuditHistory' : ActorMethod<[], Array<AuditEntry>>,
   'listConfirmedRelationships' : ActorMethod<[], Array<Relationship>>,
   'listDuplicateCandidates' : ActorMethod<[], Array<DuplicatePair>>,
   'listEligibleStewardCandidates' : ActorMethod<[], Array<StewardIdentity>>,
+  'listMysteries' : ActorMethod<[], Array<Mystery>>,
   'listNotifications' : ActorMethod<[], Array<Notification>>,
   'listPendingArchiveItems' : ActorMethod<[], Array<ArchiveItem>>,
+  'listPendingMysteryContributions' : ActorMethod<
+    [],
+    Array<MysteryContribution>
+  >,
+  'listPendingStories' : ActorMethod<[], Array<Story>>,
   'listPersonRelationships' : ActorMethod<[PersonId], Array<Relationship>>,
   'listPhotos' : ActorMethod<[PersonId], Array<Photo>>,
   'listProfileClaims' : ActorMethod<[], Array<ProfileClaim>>,
@@ -465,6 +611,11 @@ export interface _SERVICE {
   'listStewardIdentities' : ActorMethod<[], Array<StewardIdentity>>,
   'listStewards' : ActorMethod<[], Array<StewardRecord>>,
   'listSuccessors' : ActorMethod<[], Array<SuccessorDesignation>>,
+  'listTimelineEvents' : ActorMethod<[], Array<TimelineEvent>>,
+  'markMysteryResolved' : ActorMethod<
+    [MysteryId, string, Array<string>],
+    [] | [Mystery]
+  >,
   'markNotificationRead' : ActorMethod<[NotificationId], [] | [Notification]>,
   'mergeProfiles' : ActorMethod<[PersonId, PersonId], Result_11>,
   'notDuplicate' : ActorMethod<[PersonId, PersonId], Result_10>,
@@ -481,6 +632,7 @@ export interface _SERVICE {
     [bigint],
     [] | [RelationshipRequest]
   >,
+  'rejectStory' : ActorMethod<[StoryId], [] | [Story]>,
   'removeDuplicateProfile' : ActorMethod<[PersonId], Result_6>,
   'removePhoto' : ActorMethod<[PersonId, PhotoId], boolean>,
   'removeRelationship' : ActorMethod<[bigint], Result_5>,
@@ -489,6 +641,10 @@ export interface _SERVICE {
   'requestProfileRemoval' : ActorMethod<[PersonId, string], Result_2>,
   'resolveMergeConflict' : ActorMethod<[bigint, string], [] | [MergeConflict]>,
   'restoreProfile' : ActorMethod<[PersonId], Result_1>,
+  'reviewMysteryContribution' : ActorMethod<
+    [MysteryContributionId, boolean],
+    [] | [MysteryContribution]
+  >,
   'schema' : ActorMethod<[], string>,
   'searchPossibleMatches' : ActorMethod<[string], Array<PersonMatch>>,
   'setProfilePhoto' : ActorMethod<[PersonId, PhotoId], [] | [Photo]>,
@@ -509,8 +665,56 @@ export interface _SERVICE {
       [] | [string],
       SourceStatus,
       PrivacyLevel,
+      ArchiveItemClassification,
+      [] | [OralHistorySpeaker],
     ],
     ArchiveItem
+  >,
+  'submitMysteryContribution' : ActorMethod<
+    [MysteryId, MysteryContributionType, string],
+    MysteryContribution
+  >,
+  'submitStory' : ActorMethod<
+    [
+      string,
+      string,
+      Array<string>,
+      [] | [string],
+      [] | [bigint],
+      [] | [string],
+      EvidenceStatus,
+      Array<bigint>,
+    ],
+    Story
+  >,
+  'updateCanonicalMystery' : ActorMethod<
+    [
+      MysteryId,
+      string,
+      string,
+      Array<string>,
+      [] | [string],
+      Array<string>,
+      Array<string>,
+      Array<bigint>,
+      Array<bigint>,
+      MysteryStatus,
+    ],
+    [] | [Mystery]
+  >,
+  'updateCanonicalStory' : ActorMethod<
+    [
+      StoryId,
+      string,
+      string,
+      Array<string>,
+      [] | [string],
+      [] | [bigint],
+      [] | [string],
+      EvidenceStatus,
+      Array<bigint>,
+    ],
+    [] | [Story]
   >,
   'updateOwnProfile' : ActorMethod<[PersonId, ProfileEdits], Result>,
 }

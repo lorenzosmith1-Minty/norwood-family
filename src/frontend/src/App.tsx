@@ -20,6 +20,7 @@ import { FamilyStewardGovernancePage } from "./pages/FamilyStewardGovernancePage
 import { FamilyStewardReviewPage } from "./pages/FamilyStewardReviewPage";
 import HeritageBranchPage from "./pages/HeritageBranchPage";
 import { HomePage } from "./pages/HomePage";
+import { MysteriesPage } from "./pages/MysteriesPage";
 import { NotificationsPage } from "./pages/NotificationsPage";
 import {
   PersonProfilePage,
@@ -27,6 +28,12 @@ import {
   profiles,
 } from "./pages/PersonProfilePage";
 import { ProfileEditPage } from "./pages/ProfileEditPage";
+import { StoriesPage } from "./pages/StoriesPage";
+import { TimelinePage } from "./pages/TimelinePage";
+import { VideoContributePage } from "./pages/VideoContributePage";
+import { VideoDetailPage } from "./pages/VideoDetailPage";
+import { VideosPage } from "./pages/VideosPage";
+import type { MediaKind } from "./types/archive";
 import { resolveMyProfileRoute } from "./types/ownership";
 
 type View =
@@ -39,12 +46,18 @@ type View =
   | "admin-approval"
   | "archive"
   | "archive-detail"
+  | "videos"
+  | "video-detail"
+  | "video-contribute"
   | "add-myself"
   | "steward-review"
   | "governance"
   | "notifications"
   | "profile-edit"
-  | "sign-in";
+  | "sign-in"
+  | "stories"
+  | "mysteries"
+  | "timeline";
 
 const VALID_VIEWS: readonly View[] = [
   "home",
@@ -56,12 +69,18 @@ const VALID_VIEWS: readonly View[] = [
   "admin-approval",
   "archive",
   "archive-detail",
+  "videos",
+  "video-detail",
+  "video-contribute",
   "add-myself",
   "steward-review",
   "governance",
   "notifications",
   "profile-edit",
   "sign-in",
+  "stories",
+  "mysteries",
+  "timeline",
 ];
 
 function isView(value: string): value is View {
@@ -111,6 +130,15 @@ export default function App() {
   const [selectedArchiveItemId, setSelectedArchiveItemId] = useState<
     bigint | null
   >(null);
+  // The media item currently open in the Family Videos & Oral History detail
+  // view. Cleared when navigating away from the detail view.
+  const [selectedMediaItemId, setSelectedMediaItemId] = useState<bigint | null>(
+    null,
+  );
+  // Story / mystery id to open directly when navigating to those views (e.g.
+  // from a timeline event link). Cleared after the page consumes it.
+  const [pendingStoryId, setPendingStoryId] = useState<bigint | null>(null);
+  const [pendingMysteryId, setPendingMysteryId] = useState<bigint | null>(null);
   // Last tree person the user explored (opened a profile for). Passed to the
   // Family Tree so the branch containing that person starts expanded when the
   // user returns from the profile view. In-session navigation state only.
@@ -118,6 +146,16 @@ export default function App() {
   // The person currently focused in the Explore Family view. When null, the
   // view falls back to its default anchor (the person marked "Me" if present).
   const [exploreFocusId, setExploreFocusId] = useState<string | null>(null);
+  // Preselection carried into the add-media flow when launched from a Person
+  // Profile: the profile person (as a related member and, for oral history,
+  // the speaker), the media kind to start with, and where to return on back.
+  // When launched from the Family Videos page this stays null (no preselection).
+  const [mediaContributePreselect, setMediaContributePreselect] = useState<{
+    personId: string | null;
+    kind: MediaKind | null;
+    speaker: string | null;
+    returnView: "videos" | "profile";
+  } | null>(null);
   const { data: isAdmin = false } = useIsAdmin();
   const { isAuthenticated, accountId, signOut } = useAuth();
   const {
@@ -180,6 +218,51 @@ export default function App() {
     setView("archive-detail");
   }, []);
 
+  // Opens a media item's detail view from the Family Videos & Oral History
+  // page or a Person Profile's Videos / Oral History section.
+  const openMediaItem = useCallback((id: bigint) => {
+    setSelectedMediaItemId(id);
+    setView("video-detail");
+  }, []);
+
+  // Opens the add-media flow, optionally carrying a preselected person (as a
+  // related member and, for oral history, the speaker) and media kind. When
+  // launched from a Person Profile, back returns to that profile; from the
+  // Family Videos page it returns to Videos with no preselection.
+  const openMediaContribute = useCallback(
+    (preselect: {
+      personId: string | null;
+      kind: MediaKind | null;
+      speaker: string | null;
+      returnView: "videos" | "profile";
+    }) => {
+      setMediaContributePreselect(preselect);
+      setView("video-contribute");
+    },
+    [],
+  );
+
+  // Opens a person's profile view (used by stories, mysteries, and timeline
+  // person links).
+  const openProfile = useCallback((id: string) => {
+    setProfileId(id);
+    setView("profile");
+  }, []);
+
+  // Opens the stories view focused on a specific story (used by timeline
+  // story links).
+  const openStory = useCallback((id: bigint) => {
+    setPendingStoryId(id);
+    setView("stories");
+  }, []);
+
+  // Opens the mysteries view focused on a specific mystery (used by timeline
+  // mystery links).
+  const openMystery = useCallback((id: bigint) => {
+    setPendingMysteryId(id);
+    setView("mysteries");
+  }, []);
+
   // Opens the Explore Family view centered on a given person. Used by the
   // header "Explore Family" nav button (no focus change) and by the Heritage
   // Branch View when a person is tapped to explore.
@@ -219,6 +302,15 @@ export default function App() {
       onSignOutClick={signOut}
       onAdminClick={() => setView("admin-approval")}
       onArchiveClick={() => setView("archive")}
+      onStoriesClick={() => {
+        setPendingStoryId(null);
+        setView("stories");
+      }}
+      onMysteriesClick={() => {
+        setPendingMysteryId(null);
+        setView("mysteries");
+      }}
+      onTimelineClick={() => setView("timeline")}
       onBranchClick={() => setView("heritage-branch")}
       onExploreClick={() => openExploreFamily(null)}
       onStewardClick={() => setView("steward-review")}
@@ -230,8 +322,17 @@ export default function App() {
         <HomePage
           onExplore={() => openExploreFamily(null)}
           onAddToHistory={() => setView("archive-contribute")}
-          onOpenArchive={() => setView("archive")}
           onOpenBranch={() => setView("heritage-branch")}
+          onOpenStories={() => {
+            setPendingStoryId(null);
+            setView("stories");
+          }}
+          onOpenMysteries={() => {
+            setPendingMysteryId(null);
+            setView("mysteries");
+          }}
+          onOpenTimeline={() => setView("timeline")}
+          onOpenVideos={() => setView("videos")}
         />
       ) : view === "family-tree" ? (
         <ExploreFamilyPage
@@ -253,6 +354,23 @@ export default function App() {
             onProfilePhotoChange={() => {}}
             onEditProfile={() => setView("profile-edit")}
             onClaimApproved={openMyProfile}
+            onOpenMediaItem={openMediaItem}
+            onAddMedia={(action) =>
+              openMediaContribute({
+                personId: (resolvedProfile ?? profile).id,
+                kind:
+                  action === "video"
+                    ? "uploaded-video"
+                    : action === "oral-history"
+                      ? "oral-history-video"
+                      : "audio-only-oral-history",
+                speaker:
+                  action === "oral-history"
+                    ? (resolvedProfile ?? profile).id
+                    : null,
+                returnView: "profile",
+              })
+            }
           />
         ) : (
           <ProfileLoadingState />
@@ -265,6 +383,23 @@ export default function App() {
             onProfilePhotoChange={() => {}}
             onEditProfile={() => setView("profile-edit")}
             onClaimApproved={openMyProfile}
+            onOpenMediaItem={openMediaItem}
+            onAddMedia={(action) =>
+              openMediaContribute({
+                personId: (resolvedProfile ?? profile).id,
+                kind:
+                  action === "video"
+                    ? "uploaded-video"
+                    : action === "oral-history"
+                      ? "oral-history-video"
+                      : "audio-only-oral-history",
+                speaker:
+                  action === "oral-history"
+                    ? (resolvedProfile ?? profile).id
+                    : null,
+                returnView: "profile",
+              })
+            }
           />
         ) : (
           // A createMyself / backend profile is still resolving. Show a loading
@@ -300,10 +435,68 @@ export default function App() {
         <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center px-6 py-12">
           <LoginSurface />
         </div>
+      ) : view === "stories" ? (
+        <StoriesPage
+          onBack={() => setView("home")}
+          onOpenProfile={openProfile}
+          initialStoryId={pendingStoryId}
+        />
+      ) : view === "mysteries" ? (
+        <MysteriesPage
+          onBack={() => setView("home")}
+          onOpenProfile={openProfile}
+          initialMysteryId={pendingMysteryId}
+        />
+      ) : view === "timeline" ? (
+        <TimelinePage
+          onBack={() => setView("home")}
+          onOpenProfile={openProfile}
+          onOpenStory={openStory}
+          onOpenArchiveItem={openArchiveItem}
+          onOpenMystery={openMystery}
+        />
       ) : view === "archive" ? (
         <ArchivePage
           onBack={() => setView("home")}
           onOpenArchiveItem={openArchiveItem}
+          onOpenVideos={() => setView("videos")}
+        />
+      ) : view === "videos" ? (
+        <VideosPage
+          onBack={() => setView("archive")}
+          onOpenMediaItem={openMediaItem}
+          onAddMedia={() =>
+            openMediaContribute({
+              personId: null,
+              kind: null,
+              speaker: null,
+              returnView: "videos",
+            })
+          }
+        />
+      ) : view === "video-detail" ? (
+        <VideoDetailPage
+          itemId={selectedMediaItemId ?? 0n}
+          onBack={() => setView("videos")}
+          onOpenProfile={(id) => {
+            setProfileId(id);
+            setView("profile");
+          }}
+        />
+      ) : view === "video-contribute" ? (
+        <VideoContributePage
+          onBack={() =>
+            mediaContributePreselect?.returnView === "profile"
+              ? setView("profile")
+              : setView("videos")
+          }
+          initialKind={mediaContributePreselect?.kind ?? undefined}
+          initialRelatedMemberIds={
+            mediaContributePreselect?.personId
+              ? [mediaContributePreselect.personId]
+              : undefined
+          }
+          initialSpeakerId={mediaContributePreselect?.speaker ?? undefined}
         />
       ) : (
         <ArchiveDetailPage

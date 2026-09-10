@@ -26,6 +26,38 @@ type UserRole =
    guest;
    user;
  };
+type TimelineLinkTarget = 
+ variant {
+   ArchiveItem: nat;
+   Mystery: MysteryId;
+   Person: text;
+   Story: StoryId;
+ };
+type TimelineEventType = 
+ variant {
+   Birth;
+   CensusDocument;
+   Death;
+   FamilyEvent;
+   Location;
+   Marriage;
+   Migration;
+   MilitaryService;
+   Mystery;
+   PhotoDocument;
+   Story;
+ };
+type TimelineEvent = 
+ record {
+   description: text;
+   era: opt text;
+   eventType: TimelineEventType;
+   evidenceStatus: EvidenceStatus;
+   id: text;
+   linkTarget: TimelineLinkTarget;
+   title: text;
+   year: opt nat;
+ };
 type SuccessorStatus = 
  variant {
    Activated;
@@ -39,6 +71,29 @@ type SuccessorDesignation =
    personId: PersonId;
    priority: nat;
    status: SuccessorStatus;
+ };
+type StoryStatus = 
+ variant {
+   Approved;
+   Pending;
+   Rejected;
+ };
+type StoryId = nat;
+type Story = 
+ record {
+   contributor: principal;
+   createdAt: int;
+   era: opt text;
+   evidenceStatus: EvidenceStatus;
+   id: StoryId;
+   location: opt text;
+   relatedArchiveItemIds: vec nat;
+   relatedMemberIds: vec text;
+   status: StoryStatus;
+   storyText: text;
+   title: text;
+   updatedAt: int;
+   year: opt nat;
  };
 type StewardRoleStatus = 
  variant {
@@ -175,6 +230,13 @@ type Result =
  variant {
    err: EditError;
    ok: PersonProfile;
+ };
+type Resolution = 
+ record {
+   resolvedAt: int;
+   resolvedBy: principal;
+   summary: text;
+   supportingEvidence: vec text;
  };
 type RemoveError = 
  variant {
@@ -340,6 +402,11 @@ type PersonMatch =
    personId: PersonId;
  };
 type PersonId = text;
+type OralHistorySpeaker = 
+ record {
+   name: text;
+   personId: opt text;
+ };
 type NotificationType = 
  variant {
    ProfileClaimRequested;
@@ -356,6 +423,57 @@ type Notification =
    notificationType: NotificationType;
    read: bool;
    recipient: principal;
+ };
+type MysteryStatus = 
+ variant {
+   Open;
+   PartiallyResolved;
+   Researching;
+   Resolved;
+ };
+type MysteryId = nat;
+type MysteryContributionType = 
+ variant {
+   Lead;
+   Memory;
+   Note;
+   Source;
+ };
+type MysteryContributionStatus = 
+ variant {
+   Approved;
+   Pending;
+   Rejected;
+ };
+type MysteryContributionId = nat;
+type MysteryContribution = 
+ record {
+   contributionType: MysteryContributionType;
+   contributor: principal;
+   createdAt: int;
+   id: MysteryContributionId;
+   mysteryId: MysteryId;
+   reviewedAt: opt int;
+   reviewedBy: opt principal;
+   status: MysteryContributionStatus;
+   "text": text;
+ };
+type Mystery = 
+ record {
+   contributor: principal;
+   createdAt: int;
+   description: text;
+   id: MysteryId;
+   knownFacts: vec text;
+   possibilities: vec text;
+   relatedArchiveItemIds: vec nat;
+   relatedBranchId: opt text;
+   relatedMemberIds: vec text;
+   relatedSourceIds: vec nat;
+   resolution: opt Resolution;
+   status: MysteryStatus;
+   title: text;
+   updatedAt: int;
  };
 type MergeResult = 
  record {
@@ -391,6 +509,13 @@ type LivingStatus =
    Living;
  };
 type ExternalBlob = blob;
+type EvidenceStatus = 
+ variant {
+   Documented;
+   FamilyHistory;
+   PersonalMemory;
+   Unresolved;
+ };
 type Error = 
  variant {
    AmbiguousAttribute: record {
@@ -466,6 +591,11 @@ type ClaimError =
    NotSignedIn;
    ProfileNotFound;
  };
+type ChapterMarker = 
+ record {
+   timestamp: nat;
+   title: text;
+ };
 type Cell = 
  record {
    name: text;
@@ -529,22 +659,34 @@ type ArchiveItemStatus =
    Rejected;
  };
 type ArchiveItemId = nat;
+type ArchiveItemClassification = 
+ variant {
+   OralHistory;
+   Standard;
+ };
 type ArchiveItem = 
  record {
+   aiSummary: opt text;
    "blob": ExternalBlob;
+   chapterMarkers: opt vec ChapterMarker;
+   classification: ArchiveItemClassification;
    contributor: principal;
    createdAt: int;
    description: text;
    era: text;
+   extractedNames: opt vec text;
    id: ArchiveItemId;
    itemType: ArchiveItemType;
+   primarySpeaker: opt OralHistorySpeaker;
    privacyLevel: PrivacyLevel;
    relatedBranchId: opt text;
    relatedMemberIds: vec text;
+   searchableTranscript: opt text;
    sourceStatus: SourceStatus;
    status: ArchiveItemStatus;
    tags: vec text;
    title: text;
+   transcript: opt text;
    year: opt nat;
  };
 type ArchiveError = 
@@ -580,6 +722,10 @@ service : {
   _internet_identity_sign_in_finish: () -> (Result_18);
   _internet_identity_sign_in_start: () -> (blob);
   activateSuccessor: (personId: PersonId) -> (Result_8);
+  addCanonicalStory: (title: text, storyText: text, relatedMemberIds:
+   vec text, era: opt text, year: opt nat, location: opt text,
+   evidenceStatus: EvidenceStatus, relatedArchiveItemIds: vec nat) -> (
+   Story);
   addPhoto: (personId: PersonId, filename: text, mimeType: text, "blob":
    ExternalBlob) -> (Photo);
   addRelationship: (fromPersonId: PersonId, toPersonId: PersonId,
@@ -588,11 +734,16 @@ service : {
   approveProfileClaim: (claimId: nat) -> (opt ProfileClaim);
   approveProfileRemoval: (requestId: nat) -> (opt ProfileRemovalRequest);
   approveRelationshipRequest: (requestId: nat) -> (opt RelationshipRequest);
+  approveStory: (id: StoryId) -> (opt Story);
   archiveProfile: (personId: PersonId) -> (Result_1);
   assignCallerUserRole: (user: principal, role: UserRole) -> ();
   bindAuthMethod: (method: AuthMethod) -> (Result_17);
   correctRelationshipType: (relationshipId: nat, relationshipType:
    RelationshipType) -> (Result_16);
+  createCanonicalMystery: (title: text, description: text, relatedMemberIds:
+   vec text, relatedBranchId: opt text, knownFacts: vec text, possibilities:
+   vec text, relatedSourceIds: vec nat, relatedArchiveItemIds: vec nat,
+   status: MysteryStatus) -> (Mystery);
   createMyself: (name: text) -> (Result_15);
   designateSuccessor: (personId: PersonId, priority: nat) -> (Result_14);
   execute: (qJson: text) -> (Result__1) query;
@@ -602,6 +753,7 @@ service : {
   getMyAuthMethods: () -> (Result_12) query;
   getMyProfile: () -> (opt PersonProfile) query;
   getMyProfileClaim: (personId: PersonId) -> (opt ProfileClaim) query;
+  /// Renders an audit action type variant as its tag text for OQL rows.
   getMyRelationshipRequests: () -> (vec RelationshipRequest) query;
   getPersonProfile: (personId: PersonId) -> (opt PersonProfile) query;
   getProfilePhoto: (personId: PersonId) -> (opt Photo) query;
@@ -609,14 +761,18 @@ service : {
   getSingleStewardWarning: () -> (opt text) query;
   isCallerAdmin: () -> (bool) query;
   listApprovedArchiveItems: () -> (vec ArchiveItem) query;
+  listApprovedStories: () -> (vec Story) query;
   listArchivedProfileIds: () -> (vec PersonId) query;
   listArchivedProfiles: () -> (vec PersonProfile) query;
   listAuditHistory: () -> (vec AuditEntry) query;
   listConfirmedRelationships: () -> (vec Relationship) query;
   listDuplicateCandidates: () -> (vec DuplicatePair) query;
   listEligibleStewardCandidates: () -> (vec StewardIdentity) query;
+  listMysteries: () -> (vec Mystery) query;
   listNotifications: () -> (vec Notification) query;
   listPendingArchiveItems: () -> (vec ArchiveItem) query;
+  listPendingMysteryContributions: () -> (vec MysteryContribution) query;
+  listPendingStories: () -> (vec Story) query;
   listPersonRelationships: (personId: PersonId) -> (vec Relationship) query;
   listPhotos: (personId: PersonId) -> (vec Photo) query;
   listProfileClaims: () -> (vec ProfileClaim) query;
@@ -625,6 +781,9 @@ service : {
   listStewardIdentities: () -> (vec StewardIdentity) query;
   listStewards: () -> (vec StewardRecord) query;
   listSuccessors: () -> (vec SuccessorDesignation) query;
+  listTimelineEvents: () -> (vec TimelineEvent) query;
+  markMysteryResolved: (id: MysteryId, summary: text, supportingEvidence:
+   vec text) -> (opt Mystery);
   markNotificationRead: (id: NotificationId) -> (opt Notification);
   mergeProfiles: (canonicalPersonId: PersonId, mergedAwayPersonId:
    PersonId) -> (Result_11);
@@ -638,6 +797,7 @@ service : {
   rejectProfileClaim: (claimId: nat) -> (opt ProfileClaim);
   rejectProfileRemoval: (requestId: nat) -> (opt ProfileRemovalRequest);
   rejectRelationshipRequest: (requestId: nat) -> (opt RelationshipRequest);
+  rejectStory: (id: StoryId) -> (opt Story);
   removeDuplicateProfile: (personId: PersonId) -> (Result_6);
   removePhoto: (personId: PersonId, photoId: PhotoId) -> (bool);
   removeRelationship: (relationshipId: nat) -> (Result_5);
@@ -647,6 +807,8 @@ service : {
   resolveMergeConflict: (conflictId: nat, canonicalValue: text) ->
    (opt MergeConflict);
   restoreProfile: (personId: PersonId) -> (Result_1);
+  reviewMysteryContribution: (id: MysteryContributionId, approve: bool) ->
+   (opt MysteryContribution);
   schema: () -> (text) query;
   searchPossibleMatches: (name: text) -> (vec PersonMatch) query;
   setProfilePhoto: (personId: PersonId, photoId: PhotoId) -> (opt Photo);
@@ -655,6 +817,21 @@ service : {
   submitArchiveItem: (title: text, description: text, itemType:
    ArchiveItemType, "blob": ExternalBlob, era: text, year: opt nat, tags:
    vec text, relatedMemberIds: vec text, relatedBranchId: opt text,
-   sourceStatus: SourceStatus, privacyLevel: PrivacyLevel) -> (ArchiveItem);
+   sourceStatus: SourceStatus, privacyLevel: PrivacyLevel, classification:
+   ArchiveItemClassification, primarySpeaker: opt OralHistorySpeaker) ->
+   (ArchiveItem);
+  submitMysteryContribution: (mysteryId: MysteryId, contributionType:
+   MysteryContributionType, "text": text) -> (MysteryContribution);
+  submitStory: (title: text, storyText: text, relatedMemberIds: vec text,
+   era: opt text, year: opt nat, location: opt text, evidenceStatus:
+   EvidenceStatus, relatedArchiveItemIds: vec nat) -> (Story);
+  updateCanonicalMystery: (id: MysteryId, title: text, description: text,
+   relatedMemberIds: vec text, relatedBranchId: opt text, knownFacts:
+   vec text, possibilities: vec text, relatedSourceIds: vec nat,
+   relatedArchiveItemIds: vec nat, status: MysteryStatus) -> (opt Mystery);
+  updateCanonicalStory: (id: StoryId, title: text, storyText: text,
+   relatedMemberIds: vec text, era: opt text, year: opt nat, location:
+   opt text, evidenceStatus: EvidenceStatus, relatedArchiveItemIds:
+   vec nat) -> (opt Story);
   updateOwnProfile: (personId: PersonId, edits: ProfileEdits) -> (Result);
 }

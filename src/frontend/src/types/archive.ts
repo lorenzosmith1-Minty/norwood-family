@@ -1,19 +1,31 @@
 import {
+  ArchiveItemClassification,
   ArchiveItemStatus,
   ArchiveItemType,
   PrivacyLevel,
   SourceStatus,
 } from "@/backend";
-import type { ArchiveItem as BackendArchiveItem } from "@/backend";
+import type {
+  ArchiveItem as BackendArchiveItem,
+  OralHistorySpeaker,
+} from "@/backend";
 
 /**
  * Shared archive types mirroring the generated backend.d.ts contract, plus
  * friendly human labels and badge classes for the eight item types, source
- * statuses, privacy levels, and item statuses. Page tasks import these rather
- * than reaching into the generated bindings directly.
+ * statuses, privacy levels, item statuses, and the oral-history classification.
+ * Page tasks import these rather than reaching into the generated bindings
+ * directly.
  */
 export type ArchiveItem = BackendArchiveItem;
-export { ArchiveItemType, ArchiveItemStatus, SourceStatus, PrivacyLevel };
+export {
+  ArchiveItemClassification,
+  ArchiveItemType,
+  ArchiveItemStatus,
+  SourceStatus,
+  PrivacyLevel,
+};
+export type { OralHistorySpeaker };
 
 /** Friendly labels for the eight archive item types. */
 export const ARCHIVE_ITEM_TYPE_LABELS: Record<ArchiveItemType, string> = {
@@ -139,3 +151,83 @@ export function getArchiveItemEra(item: ArchiveItem): string {
   if (year < 2000) return "1950s";
   return "2000s";
 }
+
+/** Friendly labels for the archive item classification. */
+export const ARCHIVE_ITEM_CLASSIFICATION_LABELS: Record<
+  ArchiveItemClassification,
+  string
+> = {
+  [ArchiveItemClassification.Standard]: "Standard",
+  [ArchiveItemClassification.OralHistory]: "Oral History",
+};
+
+/**
+ * Badge modifier class (from index.css) for each classification, used to tint
+ * the oral-history badge with the bronze-amber voice accent.
+ */
+export const ARCHIVE_ITEM_CLASSIFICATION_BADGE: Record<
+  ArchiveItemClassification,
+  string
+> = {
+  [ArchiveItemClassification.Standard]: "badge-standard",
+  [ArchiveItemClassification.OralHistory]: "badge-oral-history",
+};
+
+/**
+ * The three media kinds the Family Videos & Oral History experience supports:
+ * an uploaded video, an oral-history video, and an audio-only oral history.
+ * Plain audio (Audio + Standard) is not one of these kinds and is excluded
+ * from the media library.
+ */
+export type MediaKind =
+  | "uploaded-video"
+  | "oral-history-video"
+  | "audio-only-oral-history";
+
+/** Friendly labels for each media kind. */
+export const MEDIA_KIND_LABELS: Record<MediaKind, string> = {
+  "uploaded-video": "Video",
+  "oral-history-video": "Oral History",
+  "audio-only-oral-history": "Audio",
+};
+
+/**
+ * Resolves an archive item's media kind, or null when the item is not one of
+ * the three supported media kinds (e.g. a photo, document, or plain audio).
+ */
+export function getMediaKind(item: ArchiveItem): MediaKind | null {
+  if (item.itemType === ArchiveItemType.Video) {
+    return item.classification === ArchiveItemClassification.OralHistory
+      ? "oral-history-video"
+      : "uploaded-video";
+  }
+  if (item.itemType === ArchiveItemType.Audio) {
+    return item.classification === ArchiveItemClassification.OralHistory
+      ? "audio-only-oral-history"
+      : null;
+  }
+  return null;
+}
+
+/** True when an archive item is one of the three supported media kinds. */
+export function isMediaItem(item: ArchiveItem): boolean {
+  return getMediaKind(item) !== null;
+}
+
+/** A single media-kind filter option for the Family Videos & Oral History page. */
+export interface MediaKindFilter {
+  value: MediaKind | "all";
+  label: string;
+}
+
+/**
+ * Media-kind filter tabs for the Family Videos & Oral History page: "All" plus
+ * the three supported media kinds. The page renders these as tabs and filters
+ * items by value.
+ */
+export const MEDIA_KIND_FILTERS: MediaKindFilter[] = [
+  { value: "all", label: "All" },
+  { value: "uploaded-video", label: "Video" },
+  { value: "oral-history-video", label: "Oral History" },
+  { value: "audio-only-oral-history", label: "Audio" },
+];

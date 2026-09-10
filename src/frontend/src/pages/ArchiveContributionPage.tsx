@@ -23,6 +23,7 @@ import { useSubmitArchiveItem } from "../hooks/useArchiveStorage";
 import {
   ARCHIVE_ITEM_TYPE_BADGE,
   ARCHIVE_ITEM_TYPE_LABELS,
+  ArchiveItemClassification,
   ArchiveItemType,
   PRIVACY_LEVEL_LABELS,
   PrivacyLevel,
@@ -225,6 +226,10 @@ export function ArchiveContributionPage({
         relatedBranchId: relatedBranch.trim() || null,
         sourceStatus,
         privacyLevel,
+        // The standard archive contribution flow is not oral history, so it
+        // carries no classification and no primary speaker.
+        classification: ArchiveItemClassification.Standard,
+        primarySpeaker: null,
       },
       {
         onSuccess: () => setSubmitted(true),

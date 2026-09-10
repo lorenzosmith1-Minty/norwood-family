@@ -87,6 +87,12 @@ export default {
           "0 12px 32px -8px rgba(93, 64, 55, 0.16), 0 0 0 3px rgba(176, 133, 92, 0.18)",
         merge:
           "0 0 0 2px rgba(176, 133, 92, 0.35), 0 4px 12px -4px rgba(93, 64, 55, 0.14)",
+        story:
+          "0 2px 8px -2px rgba(93, 64, 55, 0.12), 0 0 0 1px rgba(93, 64, 55, 0.04)",
+        known:
+          "0 4px 12px -4px rgba(93, 64, 55, 0.2), 0 0 0 1px rgba(93, 64, 55, 0.06)",
+        player:
+          "0 0 0 1px rgba(93, 64, 55, 0.08), 0 16px 40px -12px rgba(93, 64, 55, 0.28)",
       },
       keyframes: {
         "accordion-down": {
@@ -151,6 +157,18 @@ export default {
           from: { opacity: "0", transform: "translateY(6px)" },
           to: { opacity: "1", transform: "translateY(0)" },
         },
+        "timeline-in": {
+          from: { opacity: "0", transform: "translateX(10px)" },
+          to: { opacity: "1", transform: "translateX(0)" },
+        },
+        "section-in": {
+          from: { opacity: "0", transform: "translateY(8px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
+        "voice-pulse": {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.55" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -167,6 +185,9 @@ export default {
         "signin-pop": "signin-pop 0.35s cubic-bezier(0.4, 0, 0.2, 1) both",
         "draft-pulse": "draft-pulse 2s ease-in-out infinite",
         "tab-in": "tab-in 0.25s cubic-bezier(0.4, 0, 0.2, 1) both",
+        "timeline-in": "timeline-in 0.4s cubic-bezier(0.4, 0, 0.2, 1) both",
+        "section-in": "section-in 0.35s cubic-bezier(0.4, 0, 0.2, 1) both",
+        "voice-pulse": "voice-pulse 2.4s ease-in-out infinite",
       },
     },
   },

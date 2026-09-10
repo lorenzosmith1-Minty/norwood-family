@@ -1,8 +1,10 @@
 import "@testing-library/jest-dom/vitest";
 import {
   type ArchiveItem,
+  ArchiveItemClassification,
   ArchiveItemStatus,
   ArchiveItemType,
+  type OralHistorySpeaker,
   PrivacyLevel,
   SourceStatus,
 } from "@/backend";
@@ -62,6 +64,8 @@ const {
       relatedBranchId: string | null,
       sourceStatus: SourceStatus,
       privacyLevel: PrivacyLevel,
+      classification: ArchiveItemClassification,
+      primarySpeaker: OralHistorySpeaker | null,
     ): Promise<ArchiveItem> {
       const item: ArchiveItem = {
         id: nextId++,
@@ -76,6 +80,8 @@ const {
         relatedBranchId: relatedBranchId ?? undefined,
         sourceStatus,
         privacyLevel,
+        classification,
+        primarySpeaker: primarySpeaker ?? undefined,
         status: ArchiveItemStatus.Pending,
         createdAt: 1_700_000_000_000_000_000n,
         contributor: Principal.fromText("aaaaa-aa"),
@@ -354,6 +360,8 @@ describe("Admin approval flow", () => {
       null,
       SourceStatus.Original,
       PrivacyLevel.FamilyOnly,
+      ArchiveItemClassification.Standard,
+      null,
     );
 
     await user.click(
@@ -390,6 +398,8 @@ describe("Admin approval flow", () => {
       null,
       SourceStatus.Original,
       PrivacyLevel.FamilyOnly,
+      ArchiveItemClassification.Standard,
+      null,
     );
 
     await user.click(
@@ -425,6 +435,8 @@ describe("Admin approval flow", () => {
       null,
       SourceStatus.Copy,
       PrivacyLevel.Public,
+      ArchiveItemClassification.Standard,
+      null,
     );
 
     await user.click(

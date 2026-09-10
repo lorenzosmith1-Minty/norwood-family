@@ -130,6 +130,8 @@ async function submitAsContributor(): Promise<bigint> {
     ["branch-1"],
     { Original: null },
     { FamilyOnly: null },
+    { Standard: null },
+    [],
   );
   return item.id;
 }
@@ -150,6 +152,8 @@ it("rejects an anonymous submitArchiveItem call instead of trapping silently", a
       [],
       { Original: null },
       { Public: null },
+      { Standard: null },
+      [],
     ),
   ).rejects.toThrow();
 });

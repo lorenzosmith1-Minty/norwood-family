@@ -1,4 +1,4 @@
-import { Archive, Inbox } from "lucide-react";
+import { Archive, Clapperboard, Inbox, Mic } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { ArchiveCard } from "../components/ArchiveCard";
 import { ArchiveFilterBar } from "../components/ArchiveFilterBar";
@@ -9,6 +9,8 @@ import { ARCHIVE_ERAS, getArchiveItemYear } from "../types/archive";
 interface ArchivePageProps {
   onBack: () => void;
   onOpenArchiveItem: (id: bigint) => void;
+  /** Navigates to the dedicated Family Videos & Oral History page. */
+  onOpenVideos: () => void;
 }
 
 interface Filters {
@@ -36,7 +38,11 @@ function readFilters(): Filters {
  * Family Archive browsing screen: lists all approved archive items newest
  * first, with type / family-member / era filters that persist in the URL.
  */
-export function ArchivePage({ onBack, onOpenArchiveItem }: ArchivePageProps) {
+export function ArchivePage({
+  onBack,
+  onOpenArchiveItem,
+  onOpenVideos,
+}: ArchivePageProps) {
   const { data: items = [], isLoading } = useApprovedArchiveItems();
   const [filters, setFilters] = useState<Filters>(readFilters);
 
@@ -115,6 +121,49 @@ export function ArchivePage({ onBack, onOpenArchiveItem }: ArchivePageProps) {
           contributed.
         </p>
       </header>
+
+      {/* Prominent entry point to the dedicated Family Videos & Oral History
+          library. Family Archive remains the primary navigation parent for
+          preserved media; this card is the category entry into the moving
+          memories and spoken stories. */}
+      <button
+        type="button"
+        data-ocid="archive.videos_entry_button"
+        onClick={onOpenVideos}
+        className="group mb-6 flex w-full items-center gap-4 rounded-2xl border border-border bg-card p-5 text-left shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:translate-y-0"
+      >
+        <span
+          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl"
+          style={{
+            backgroundColor: "oklch(var(--oral-history) / 0.14)",
+            color: "oklch(var(--oral-history))",
+          }}
+          aria-hidden="true"
+        >
+          <Clapperboard className="h-6 w-6" strokeWidth={1.75} />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block font-display text-lg font-semibold text-foreground">
+            Family Videos &amp; Oral History
+          </span>
+          <span className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
+            <span className="inline-flex items-center gap-1">
+              <Mic className="h-3.5 w-3.5" aria-hidden="true" />
+              Home videos and spoken stories
+            </span>
+          </span>
+        </span>
+        <span
+          className="inline-flex shrink-0 items-center gap-1 rounded-full px-3.5 py-1.5 text-xs font-semibold"
+          style={{
+            backgroundColor: "oklch(var(--oral-history))",
+            color: "oklch(var(--oral-history-foreground))",
+          }}
+        >
+          Browse
+          <span aria-hidden="true">→</span>
+        </span>
+      </button>
 
       <ArchiveFilterBar
         typeFilter={filters.type}

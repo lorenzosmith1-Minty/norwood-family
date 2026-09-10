@@ -108,6 +108,14 @@ module {
           case (#Rejected) "Rejected";
         };
         createdAt = item.createdAt;
+        classification = switch (item.classification) {
+          case (#Standard) "Standard";
+          case (#OralHistory) "OralHistory";
+        };
+        primarySpeakerName = switch (item.primarySpeaker) {
+          case (?s) s.name;
+          case null "";
+        };
       });
     };
     rows.toArray().values();

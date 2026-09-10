@@ -18,6 +18,7 @@ import ArchiveTypes "types/archive";
 import OwnershipTypes "types/ownership";
 import AccountIdentityTypes "types/account-identity";
 import GovernanceTypes "types/governance";
+import FamilyHistoryTypes "types/family-history";
 import ObjectStorageLib "lib/object-storage";
 import ArchiveLib "lib/archive";
 import OwnershipLib "lib/ownership";
@@ -29,6 +30,7 @@ import RelationshipsApi "mixins/relationships-api";
 import NotificationsApi "mixins/notifications-api";
 import AccountIdentityApi "mixins/account-identity-api";
 import GovernanceApi "mixins/governance-api";
+import FamilyHistoryApi "mixins/family-history-api";
 import ApiDocMixin "mixins/api-doc";
 
 actor {
@@ -48,6 +50,9 @@ actor {
   let mergeConflicts : List.List<GovernanceTypes.MergeConflict>;
   let archivedProfiles : List.List<GovernanceTypes.PersonId>;
   let dismissedDuplicates : List.List<GovernanceTypes.DismissedPair>;
+  let stories : List.List<FamilyHistoryTypes.Story>;
+  let mysteries : List.List<FamilyHistoryTypes.Mystery>;
+  let mysteryContributions : List.List<FamilyHistoryTypes.MysteryContribution>;
 
   /// Renders an audit action type variant as its tag text for OQL rows.
   func auditActionText(a : GovernanceTypes.AuditActionType) : Text {
@@ -112,6 +117,8 @@ actor {
         privacyLevel = "";
         status = "";
         createdAt = 0;
+        classification = "";
+        primarySpeakerName = "";
       })
       .payload("id", func r = r.id)
       .payload("title", func r = r.title)
@@ -123,6 +130,8 @@ actor {
       .payload("privacyLevel", func r = r.privacyLevel)
       .payload("status", func r = r.status)
       .payload("createdAt", func r = r.createdAt)
+      .payload("classification", func r = r.classification)
+      .payload("primarySpeakerName", func r = r.primarySpeakerName)
       .controllerOnly()
       .build(),
       OQL.Entity.new<OwnershipTypes.ProfileRow>(
@@ -357,6 +366,108 @@ actor {
       .payload("personId", func p = p)
       .controllerOnly()
       .build(),
+      OQL.Entity.manual<FamilyHistoryTypes.Story>(
+        "story",
+        func() : Iter.Iter<FamilyHistoryTypes.Story> = stories.values(),
+        "Story",
+        "id",
+      )
+      .sample({
+        id = 0;
+        title = "";
+        storyText = "";
+        relatedMemberIds = [];
+        era = null;
+        year = null;
+        location = null;
+        contributor = Principal.fromText("aaaaa-aa");
+        evidenceStatus = #Documented;
+        relatedArchiveItemIds = [];
+        createdAt = 0;
+        updatedAt = 0;
+        status = #Approved;
+      })
+      .payload("id", func r = r.id)
+      .payload("title", func r = r.title)
+      .payload("storyText", func r = r.storyText)
+      .payload("relatedMemberCount", func r = r.relatedMemberIds.size())
+      .payload("era", func r = r.era ?? "")
+      .payload("year", func r = r.year ?? 0)
+      .payload("location", func r = r.location ?? "")
+      .payload("contributor", func r = r.contributor.toText())
+      .payload("evidenceStatus", func r = switch (r.evidenceStatus) { case (#Documented) "Documented"; case (#FamilyHistory) "FamilyHistory"; case (#PersonalMemory) "PersonalMemory"; case (#Unresolved) "Unresolved" })
+      .payload("relatedArchiveItemCount", func r = r.relatedArchiveItemIds.size())
+      .payload("createdAt", func r = r.createdAt)
+      .payload("updatedAt", func r = r.updatedAt)
+      .payload("status", func r = switch (r.status) { case (#Pending) "Pending"; case (#Approved) "Approved"; case (#Rejected) "Rejected" })
+      .controllerOnly()
+      .build(),
+      OQL.Entity.manual<FamilyHistoryTypes.Mystery>(
+        "mystery",
+        func() : Iter.Iter<FamilyHistoryTypes.Mystery> = mysteries.values(),
+        "Mystery",
+        "id",
+      )
+      .sample({
+        id = 0;
+        title = "";
+        description = "";
+        relatedMemberIds = [];
+        relatedBranchId = null;
+        knownFacts = [];
+        possibilities = [];
+        relatedSourceIds = [];
+        relatedArchiveItemIds = [];
+        status = #Open;
+        contributor = Principal.fromText("aaaaa-aa");
+        createdAt = 0;
+        updatedAt = 0;
+        resolution = null;
+      })
+      .payload("id", func r = r.id)
+      .payload("title", func r = r.title)
+      .payload("description", func r = r.description)
+      .payload("relatedMemberCount", func r = r.relatedMemberIds.size())
+      .payload("relatedBranchId", func r = r.relatedBranchId ?? "")
+      .payload("knownFactCount", func r = r.knownFacts.size())
+      .payload("possibilityCount", func r = r.possibilities.size())
+      .payload("relatedSourceCount", func r = r.relatedSourceIds.size())
+      .payload("relatedArchiveItemCount", func r = r.relatedArchiveItemIds.size())
+      .payload("status", func r = switch (r.status) { case (#Open) "Open"; case (#Researching) "Researching"; case (#PartiallyResolved) "PartiallyResolved"; case (#Resolved) "Resolved" })
+      .payload("contributor", func r = r.contributor.toText())
+      .payload("createdAt", func r = r.createdAt)
+      .payload("updatedAt", func r = r.updatedAt)
+      .payload("resolved", func r = r.resolution != null)
+      .controllerOnly()
+      .build(),
+      OQL.Entity.manual<FamilyHistoryTypes.MysteryContribution>(
+        "mysteryContribution",
+        func() : Iter.Iter<FamilyHistoryTypes.MysteryContribution> = mysteryContributions.values(),
+        "MysteryContribution",
+        "id",
+      )
+      .sample({
+        id = 0;
+        mysteryId = 0;
+        contributionType = #Note;
+        text = "";
+        contributor = Principal.fromText("aaaaa-aa");
+        status = #Pending;
+        createdAt = 0;
+        reviewedBy = null;
+        reviewedAt = null;
+      })
+      .payload("id", func r = r.id)
+      .payload("mysteryId", func r = r.mysteryId)
+      .payload("contributionType", func r = switch (r.contributionType) { case (#Note) "Note"; case (#Memory) "Memory"; case (#Lead) "Lead"; case (#Source) "Source" })
+      .payload("text", func r = r.text)
+      .payload("contributor", func r = r.contributor.toText())
+      .payload("status", func r = switch (r.status) { case (#Pending) "Pending"; case (#Approved) "Approved"; case (#Rejected) "Rejected" })
+      .payload("createdAt", func r = r.createdAt)
+      .payload("reviewedBy", func r = switch (r.reviewedBy) { case (?p) p.toText(); case null "" })
+      .payload("reviewedAt", func r = r.reviewedAt ?? 0)
+      .controllerOnly()
+      .build(),
     ];
   });
   include MixinObjectStorage();
@@ -367,5 +478,6 @@ actor {
   include NotificationsApi(notifications);
   include AccountIdentityApi(accounts);
   include GovernanceApi(accessControlState, profiles, confirmedRelationships, stewards, successors, removalRequests, auditLog, mergeConflicts, archivedProfiles, galleries, archiveItems, dismissedDuplicates);
+  include FamilyHistoryApi(accessControlState, stories, mysteries, mysteryContributions, profiles, archiveItems);
   include ApiDocMixin();
 };

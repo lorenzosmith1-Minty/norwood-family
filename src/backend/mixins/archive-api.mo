@@ -24,6 +24,13 @@ mixin (
   /// Submits a new archive item. Requires sign-in; the signed-in caller is
   /// recorded as the contributor. The item is stored in pending state and waits
   /// for admin approval before appearing in the archive.
+  ///
+  /// `classification` marks the item as Oral History (distinct from `itemType`).
+  /// When `#OralHistory`, `primarySpeaker` is required (exactly one primary
+  /// speaker); when `#Standard`, `primarySpeaker` must be `null`. The reserved
+  /// future-ready fields (transcript, searchable transcript, chapter markers,
+  /// AI summary, extracted names) are initialized to `null` and are not
+  /// populated by any logic yet.
   public shared ({ caller }) func submitArchiveItem(
     title : Text,
     description : Text,
@@ -36,9 +43,17 @@ mixin (
     relatedBranchId : ?Text,
     sourceStatus : Types.SourceStatus,
     privacyLevel : Types.PrivacyLevel,
+    classification : Types.ArchiveItemClassification,
+    primarySpeaker : ?Types.OralHistorySpeaker,
   ) : async Types.ArchiveItem {
     if (caller.isAnonymous()) {
       Runtime.trap("Sign-in required to submit an archive item");
+    };
+    if (classification == #OralHistory and primarySpeaker == null) {
+      Runtime.trap("A primary speaker is required for Oral History items");
+    };
+    if (classification == #Standard and primarySpeaker != null) {
+      Runtime.trap("A primary speaker is only allowed on Oral History items");
     };
     let item : Types.ArchiveItem = {
       id = nextArchiveItemId();
@@ -56,6 +71,13 @@ mixin (
       privacyLevel;
       status = #Pending;
       createdAt = Time.now();
+      classification;
+      primarySpeaker;
+      transcript = null;
+      searchableTranscript = null;
+      chapterMarkers = null;
+      aiSummary = null;
+      extractedNames = null;
     };
     ArchiveLib.submit(items, item);
   };

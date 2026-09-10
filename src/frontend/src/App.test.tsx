@@ -50,6 +50,7 @@ const NAV_LABELS = [
   "Family Stories",
   "Family Mysteries",
   "Add to Our History",
+  "Family Videos & Oral History",
 ];
 
 describe("Home screen", () => {
@@ -64,14 +65,14 @@ describe("Home screen", () => {
     expect(hero.getAttribute("alt")).toContain("Our story across generations.");
   });
 
-  it("shows all six navigation buttons with exact labels", () => {
+  it("shows all seven navigation buttons with exact labels", () => {
     renderApp();
 
     const nav = screen.getByRole("navigation", {
       name: "Family history sections",
     });
     const buttons = within(nav).getAllByRole("button");
-    expect(buttons).toHaveLength(6);
+    expect(buttons).toHaveLength(7);
     for (const label of NAV_LABELS) {
       expect(
         within(nav).getByRole("button", { name: label }),
@@ -79,7 +80,7 @@ describe("Home screen", () => {
     }
   });
 
-  it("renders the six buttons as non-navigating buttons", () => {
+  it("renders the seven buttons as non-navigating buttons", () => {
     renderApp();
 
     const nav = screen.getByRole("navigation", {

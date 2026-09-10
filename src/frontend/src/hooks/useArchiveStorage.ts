@@ -1,9 +1,12 @@
 import { createActor } from "@/backend";
 import type {
+  ArchiveItemClassification,
   ArchiveItemType,
+  OralHistorySpeaker,
   PrivacyLevel,
   SourceStatus,
 } from "@/types/archive";
+import { getMediaKind } from "@/types/archive";
 import { useActor } from "@caffeineai/core-infrastructure";
 import type { ExternalBlob } from "@caffeineai/object-storage";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -53,6 +56,25 @@ export function useApprovedArchiveItems() {
   });
 }
 
+/**
+ * Lists approved media items (uploaded video, oral-history video, and
+ * audio-only oral history) for the Family Videos & Oral History page. Plain
+ * audio and non-media archive items are excluded.
+ */
+export function useApprovedMediaItems() {
+  const providersPresent = useProvidersPresent();
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["archive", "approved", "media"],
+    queryFn: async () => {
+      if (!actor) return [];
+      const items = await actor.listApprovedArchiveItems();
+      return items.filter((item) => getMediaKind(item) !== null);
+    },
+    enabled: providersPresent && !!actor && !isFetching,
+  });
+}
+
 export interface SubmitArchiveItemInput {
   title: string;
   description: string;
@@ -65,6 +87,10 @@ export interface SubmitArchiveItemInput {
   relatedBranchId: string | null;
   sourceStatus: SourceStatus;
   privacyLevel: PrivacyLevel;
+  /** Whether the item is classified as oral history (or a standard item). */
+  classification: ArchiveItemClassification;
+  /** The single primary speaker, required for oral-history items. */
+  primarySpeaker: OralHistorySpeaker | null;
 }
 
 /** Submits a new contribution in a pending state awaiting admin approval. */
@@ -86,11 +112,16 @@ export function useSubmitArchiveItem() {
         input.relatedBranchId,
         input.sourceStatus,
         input.privacyLevel,
+        input.classification,
+        input.primarySpeaker,
       );
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["archive", "pending"] });
       void queryClient.invalidateQueries({ queryKey: ["archive", "approved"] });
+      void queryClient.invalidateQueries({
+        queryKey: ["archive", "approved", "media"],
+      });
     },
   });
 }

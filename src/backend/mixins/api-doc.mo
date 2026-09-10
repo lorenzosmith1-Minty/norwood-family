@@ -72,13 +72,27 @@ profiles with explicit confirmation.
 
 ### Family Archive
 
-- `submitArchiveItem(title : Text, description : Text, itemType : ArchiveItemType, blob : Blob, era : Text, year : ?Nat, tags : [Text], relatedMemberIds : [Text], relatedBranchId : ?Text, sourceStatus : SourceStatus, privacyLevel : PrivacyLevel) : async ArchiveItem` —
+- `submitArchiveItem(title : Text, description : Text, itemType : ArchiveItemType, blob : Blob, era : Text, year : ?Nat, tags : [Text], relatedMemberIds : [Text], relatedBranchId : ?Text, sourceStatus : SourceStatus, privacyLevel : PrivacyLevel, classification : ArchiveItemClassification, primarySpeaker : ?OralHistorySpeaker) : async ArchiveItem` —
   update. Submits a new archive item. Requires a signed-in (non-anonymous)
   caller; the caller is recorded as the `contributor`. The item is stored in
   `#Pending` state, assigned a fresh id, and `createdAt` is set to the current
   time. It does not appear in the archive until an admin approves it. The
   `blob` is the external storage reference (a `Blob`); the original file bytes
   live off-chain and are preserved as-is.
+  `classification` marks the item as Oral History (distinct from `itemType`):
+  `#Standard` for ordinary media, `#OralHistory` for oral-history video and
+  audio-only oral history. When `classification == #OralHistory`, `primarySpeaker`
+  is REQUIRED — exactly one primary speaker — and the call traps with
+  `\"A primary speaker is required for Oral History items\"` when it is `null`.
+  When `classification == #Standard`, `primarySpeaker` must be `null` and the
+  call traps with `\"A primary speaker is only allowed on Oral History items\"`
+  when it is not. `primarySpeaker` links to a canonical Person record via its
+  optional `personId` when that person exists, and always carries a display
+  `name`. Related Family Members (`relatedMemberIds`) may still contain multiple
+  people; only the single primary speaker is constrained. The reserved
+  future-ready fields (transcript, searchable transcript, chapter markers, AI
+  summary, extracted names) are initialized to `null` and are not populated by
+  any logic yet.
 - `listPendingArchiveItems() : async [ArchiveItem]` — query. Admin only. Returns
   all archive items currently in `#Pending` state.
 - `approveArchiveItem(id : Nat) : async ?ArchiveItem` — update. Admin only.
@@ -353,6 +367,68 @@ profiles with explicit confirmation.
 - `listAuditHistory() : async [AuditEntry]` — query. Family Steward only.
   Returns the governance audit log. Audit History is strictly steward-only.
 
+### Family Stories, Family Mysteries, and Travel Through Time
+
+- `listApprovedStories() : async [Story]` — query. Returns all stories in
+  `#Approved` state (the stories visible to viewers). Stories reference existing
+  person ids and archive item ids; they never create duplicate Person records.
+- `listPendingStories() : async [Story]` — query. Family Steward only. Returns
+  all stories currently in `#Pending` state.
+- `submitStory(title : Text, storyText : Text, relatedMemberIds : [Text], era : ?Text, year : ?Nat, location : ?Text, evidenceStatus : EvidenceStatus, relatedArchiveItemIds : [Nat]) : async Story` —
+  update. Submits a new story. Requires a signed-in (non-anonymous) caller; the
+  caller is recorded as the `contributor`. The story is stored in `#Pending`
+  state and waits for a Family Steward to approve it before becoming visible.
+  `evidenceStatus` carries the evidence distinction (`#Documented`,
+  `#FamilyHistory`, `#PersonalMemory`, `#Unresolved`) — Family History and
+  Personal Memory are never presented as documented fact. Submitting a story
+  never overwrites a person's profile story text.
+- `approveStory(id : Nat) : async ?Story` — update. Family Steward only. Moves a
+  pending story to `#Approved` state and returns the updated story, or `null`
+  when no pending story with that id exists.
+- `rejectStory(id : Nat) : async ?Story` — update. Family Steward only. Moves a
+  pending story to `#Rejected` state and returns the updated story, or `null`
+  when no pending story with that id exists.
+- `addCanonicalStory(title : Text, storyText : Text, relatedMemberIds : [Text], era : ?Text, year : ?Nat, location : ?Text, evidenceStatus : EvidenceStatus, relatedArchiveItemIds : [Nat]) : async Story` —
+  update. Family Steward only. Adds a canonical story directly, already in
+  `#Approved` state.
+- `updateCanonicalStory(id : Nat, title : Text, storyText : Text, relatedMemberIds : [Text], era : ?Text, year : ?Nat, location : ?Text, evidenceStatus : EvidenceStatus, relatedArchiveItemIds : [Nat]) : async ?Story` —
+  update. Family Steward only. Edits a canonical story, preserving its original
+  `contributor` and `createdAt`. Returns the updated story, or `null` when no
+  story with that id exists.
+- `listMysteries() : async [Mystery]` — query. Returns all mysteries (visible to
+  viewers). Each mystery keeps `knownFacts`, `possibilities`, and
+  `relatedSourceIds`/`relatedArchiveItemIds` separate so a theory never silently
+  becomes a confirmed fact.
+- `submitMysteryContribution(mysteryId : Nat, contributionType : MysteryContributionType, text : Text) : async MysteryContribution` —
+  update. Submits a mystery contribution (a note, memory, possible lead, or
+  source/document reference). Requires a signed-in (non-anonymous) caller; the
+  caller is recorded as the `contributor`. The contribution is stored in
+  `#Pending` state and waits for a Family Steward to review it before altering
+  the canonical mystery record.
+- `listPendingMysteryContributions() : async [MysteryContribution]` — query.
+  Family Steward only. Returns all mystery contributions currently in `#Pending`
+  state.
+- `reviewMysteryContribution(id : Nat, approve : Bool) : async ?MysteryContribution` —
+  update. Family Steward only. Approves or rejects a pending mystery
+  contribution, recording the reviewer and review time. Returns the updated
+  contribution, or `null` when no pending contribution with that id exists.
+- `createCanonicalMystery(title : Text, description : Text, relatedMemberIds : [Text], relatedBranchId : ?Text, knownFacts : [Text], possibilities : [Text], relatedSourceIds : [Nat], relatedArchiveItemIds : [Nat], status : MysteryStatus) : async Mystery` —
+  update. Family Steward only. Creates a canonical mystery directly.
+- `updateCanonicalMystery(id : Nat, title : Text, description : Text, relatedMemberIds : [Text], relatedBranchId : ?Text, knownFacts : [Text], possibilities : [Text], relatedSourceIds : [Nat], relatedArchiveItemIds : [Nat], status : MysteryStatus) : async ?Mystery` —
+  update. Family Steward only. Edits a canonical mystery, preserving its
+  original `contributor`, `createdAt`, and any existing `resolution`. Returns the
+  updated mystery, or `null` when no mystery with that id exists.
+- `markMysteryResolved(id : Nat, summary : Text, supportingEvidence : [Text]) : async ?Mystery` —
+  update. Family Steward only. Marks a mystery `#Resolved`, recording a
+  resolution summary and supporting evidence while preserving the prior
+  theories/history (the research trail is never deleted). Returns the updated
+  mystery, or `null` when no mystery with that id exists.
+- `listTimelineEvents() : async [TimelineEvent]` — query. Returns timeline
+  events aggregated from existing canonical data only: PersonProfile timeline
+  entries, ArchiveItem year/era, Story era/date, and Mystery records. Empty eras
+  are never fabricated. Each event carries an evidence badge and a link target
+  (Person Profile, Story, Archive Item, or Mystery).
+
 ### Object Query Layer (OQL)
 
 - `schema() : async Text` — query. Returns a JSON catalogue of the exposed
@@ -362,17 +438,19 @@ profiles with explicit confirmation.
 
 The exposed entities are `photo`, `archiveItem`, `profile`, `claim`,
 `relationshipRequest`, `confirmedRelationship`, `notification`, `account`,
-`steward`, `successor`, `removalRequest`, `auditLog`, `mergeConflict`, and
-`archivedProfile`, all declared `.controllerOnly()` (see the authorization
-section). `photo` rows are flattened
+`steward`, `successor`, `removalRequest`, `auditLog`, `mergeConflict`,
+`archivedProfile`, `story`, `mystery`, and `mysteryContribution`, all declared
+`.controllerOnly()` (see the authorization section). `photo` rows are flattened
 photo metadata: `key` (globally-unique \"<personId>:<id>\", the primary key),
 `personId`, `id`, `filename`, `mimeType`, `uploadedAt` (nanoseconds since epoch,
 `Int`), `uploadedBy` (the uploading principal, rendered as text), and
 `isProfilePhoto` (`Bool`). `archiveItem` rows are flattened archive metadata:
 `id` (the primary key), `title`, `itemType`, `era`, `year` (optional year, `0`
 when absent), `contributor` (the submitting principal, rendered as text),
-`sourceStatus`, `privacyLevel`, `status`, and `createdAt` (nanoseconds since
-epoch, `Int`). The raw blob bytes are not exposed.
+`sourceStatus`, `privacyLevel`, `status`, `createdAt` (nanoseconds since
+epoch, `Int`), `classification` (`\"Standard\"`/`\"OralHistory\"`), and
+`primarySpeakerName` (the primary speaker's display name, `\"\"` when the item is
+not Oral History). The raw blob bytes are not exposed.
 
 The ownership entities are flattened views of the corresponding records.
 `profile` rows (primary key `personId`) carry `name`, `livingStatus`
@@ -425,6 +503,29 @@ affected person ids), `timestamp` (nanoseconds since epoch, `Int`), and
 `0` when unresolved). `archivedProfile` rows (primary key `personId`) carry only
 `personId` — the id of each archived profile.
 
+The family-history entities are flattened views of the corresponding records.
+`story` rows (primary key `id`) carry `title`, `storyText`,
+`relatedMemberCount` (`Nat`, the number of related member ids),
+`era` (free text, `\"\"` when absent), `year` (`Nat`, `0` when absent),
+`location` (`\"\"` when absent), `contributor` (principal text),
+`evidenceStatus` (`\"Documented\"`/`\"FamilyHistory\"`/`\"PersonalMemory\"`/`\"Unresolved\"`),
+`relatedArchiveItemCount` (`Nat`), `createdAt` (`Int`, nanoseconds since epoch),
+`updatedAt` (`Int`), and `status` (`\"Pending\"`/`\"Approved\"`/`\"Rejected\"`).
+`mystery` rows (primary key `id`) carry `title`, `description`,
+`relatedMemberCount` (`Nat`), `relatedBranchId` (`\"\"` when absent),
+`knownFactCount` (`Nat`), `possibilityCount` (`Nat`), `relatedSourceCount`
+(`Nat`), `relatedArchiveItemCount` (`Nat`), `status`
+(`\"Open\"`/`\"Researching\"`/`\"PartiallyResolved\"`/`\"Resolved\"`), `contributor`
+(principal text), `createdAt` (`Int`), `updatedAt` (`Int`), and `resolved`
+(`Bool`, whether the mystery has a resolution). `mysteryContribution` rows
+(primary key `id`) carry `mysteryId` (`Nat`), `contributionType`
+(`\"Note\"`/`\"Memory\"`/`\"Lead\"`/`\"Source\"`), `text`, `contributor` (principal
+text), `status` (`\"Pending\"`/`\"Approved\"`/`\"Rejected\"`), `createdAt` (`Int`),
+`reviewedBy` (principal text, `\"\"` when unreviewed), and `reviewedAt` (`Int`,
+`0` when unreviewed). The array-valued fields (`relatedMemberIds`,
+`knownFacts`, `possibilities`, `relatedSourceIds`, `relatedArchiveItemIds`)
+are exposed as counts since OQL has no array value type.
+
 ### Access control and Internet Identity
 
 - `_initialize_access_control() : async ()` — update. Registers the signed-in
@@ -467,14 +568,20 @@ The OQL methods (`schema`, `execute`) enforce authorization per entity against
 the live caller. All exposed entities — `photo`, `archiveItem`, `profile`,
 `claim`, `relationshipRequest`, `confirmedRelationship`, `notification`,
 `account`, `steward`, `successor`, `removalRequest`, `auditLog`,
-`mergeConflict`, and `archivedProfile` — are declared `.controllerOnly()`, so only the platform controller can read their
+`mergeConflict`, `archivedProfile`, `story`, `mystery`, and
+`mysteryContribution` — are declared `.controllerOnly()`, so only the platform controller can read their
 rows through `schema()`/`execute()`; end users do not read them directly. This
 keeps the family, archive, and governance metadata private to the platform while
 still letting the Data Intelligence agent answer over it.
 
 The archive methods gate on sign-in and role. `submitArchiveItem` requires a
 signed-in (non-anonymous) caller and traps with `\"Sign-in required to submit an
-archive item\"` for an anonymous caller. `listPendingArchiveItems`,
+archive item\"` for an anonymous caller. It also validates the Oral History
+speaker: it traps with `\"A primary speaker is required for Oral History
+items\"` when `classification == #OralHistory` and `primarySpeaker` is `null`,
+and with `\"A primary speaker is only allowed on Oral History items\"` when
+`classification == #Standard` and `primarySpeaker` is not `null`.
+`listPendingArchiveItems`,
 `approveArchiveItem`, and `rejectArchiveItem` are admin-only and trap with
 `\"Unauthorized: Only admins can ...\"` when the caller is not an admin.
 `listApprovedArchiveItems` is readable by any caller.
@@ -510,6 +617,18 @@ admin. `requestProfileRemoval` is the one governance method a normal family
 member calls: it requires a signed-in (non-anonymous) caller and returns
 `#err(#NotSignedIn)` for an anonymous caller (it does not trap), and it only
 ever requests removal of the caller's own claimed living profile.
+
+The Family Stories and Family Mysteries methods gate on sign-in and role.
+`submitStory` and `submitMysteryContribution` require a signed-in (non-anonymous)
+caller and trap with `\"Sign-in required to submit a story\"` / `\"Sign-in
+required to contribute to a mystery\"` for an anonymous caller. The Family
+Steward methods — `listPendingStories`, `approveStory`, `rejectStory`,
+`addCanonicalStory`, `updateCanonicalStory`, `listPendingMysteryContributions`,
+`reviewMysteryContribution`, `createCanonicalMystery`,
+`updateCanonicalMystery`, and `markMysteryResolved` — are admin-only and trap
+with `\"Unauthorized: Only Family Stewards can ...\"` when the caller is not an
+admin. `listApprovedStories`, `listMysteries`, and `listTimelineEvents` are
+readable by any caller (respecting the existing privacy conventions).
 
 Registration gates role-guarded access. A direct API caller must call
 `_initialize_access_control()` once as a signed-in caller before any
@@ -583,6 +702,14 @@ already reference the caller's stable principal (`requestingUserId`,
   `#Unverified`.
 - `PrivacyLevel` is a variant: `#Public`, `#FamilyOnly`, or `#Private`.
 - `ArchiveItemStatus` is a variant: `#Pending`, `#Approved`, or `#Rejected`.
+- `ArchiveItemClassification` is a variant: `#Standard` or `#OralHistory`. It is
+  distinct from `itemType` because Oral History applies to both oral-history
+  video and audio-only oral history.
+- `OralHistorySpeaker` fields: `personId` (`?Text`, a link to the canonical
+  Person record when that person exists, `null` otherwise) and `name` (`Text`,
+  the display name of the speaker). Exactly one primary speaker is allowed for
+  MVP; it is required when `classification == #OralHistory` and forbidden when
+  `classification == #Standard`.
 - `era` is free text (e.g. `\"early 1900s\"`); `year` is an optional `Nat`.
 - `tags` is a list of `Text`; `relatedMemberIds` is a list of member ids (one
   item can link to many members without duplicating the file);
@@ -693,6 +820,47 @@ already reference the caller's stable principal (`requestingUserId`,
   or `#NotDuplicate`.
 - `RelationshipAdminError` is a variant: `#NotSignedIn`, `#PersonNotFound`,
   `#RelationshipNotFound`, or `#DuplicateRelationship`.
+- `StoryId`, `MysteryId`, and `MysteryContributionId` are `Nat`, unique across
+  their respective collections.
+- `EvidenceStatus` is a variant: `#Documented`, `#FamilyHistory`,
+  `#PersonalMemory`, or `#Unresolved`. Family History and Personal Memory are
+  never presented as documented fact — the `evidenceStatus` field carries this
+  distinction.
+- `StoryStatus` is a variant: `#Pending`, `#Approved`, or `#Rejected`.
+- `Story` fields: `id` (`Nat`), `title` (`Text`), `storyText` (`Text`),
+  `relatedMemberIds` (`[Text]`, existing person ids — never creates duplicate
+  Person records), `era` (`?Text`, approximate date/era as free text), `year`
+  (`?Nat`), `location` (`?Text`), `contributor` (`Principal`), `evidenceStatus`,
+  `relatedArchiveItemIds` (`[Nat]`), `createdAt` (`Int`, nanoseconds since
+  epoch), `updatedAt` (`Int`), and `status`.
+- `MysteryStatus` is a variant: `#Open`, `#Researching`, `#PartiallyResolved`,
+  or `#Resolved`.
+- `MysteryContributionType` is a variant: `#Note`, `#Memory`, `#Lead`, or
+  `#Source`.
+- `MysteryContributionStatus` is a variant: `#Pending`, `#Approved`, or
+  `#Rejected`.
+- `Resolution` fields: `summary` (`Text`), `supportingEvidence` (`[Text]`),
+  `resolvedAt` (`Int`, nanoseconds since epoch), and `resolvedBy` (`Principal`).
+- `Mystery` fields: `id` (`Nat`), `title` (`Text`), `description` (`Text`),
+  `relatedMemberIds` (`[Text]`), `relatedBranchId` (`?Text`), `knownFacts`
+  (`[Text]`), `possibilities` (`[Text]`, competing theories/possibilities kept
+  separate from known facts), `relatedSourceIds` (`[Nat]`),
+  `relatedArchiveItemIds` (`[Nat]`), `status`, `contributor` (`Principal`),
+  `createdAt` (`Int`), `updatedAt` (`Int`), and `resolution` (`?Resolution`,
+  `null` until resolved).
+- `MysteryContribution` fields: `id` (`Nat`), `mysteryId` (`Nat`),
+  `contributionType`, `text` (`Text`), `contributor` (`Principal`), `status`,
+  `createdAt` (`Int`), `reviewedBy` (`?Principal`, `null` when unreviewed), and
+  `reviewedAt` (`?Int`, `null` when unreviewed).
+- `TimelineEventType` is a variant: `#Birth`, `#Death`, `#Marriage`,
+  `#FamilyEvent`, `#Migration`, `#MilitaryService`, `#CensusDocument`, `#Story`,
+  `#PhotoDocument`, `#Location`, or `#Mystery`.
+- `TimelineLinkTarget` is a variant: `#Person : Text`, `#Story : Nat`,
+  `#ArchiveItem : Nat`, or `#Mystery : Nat`.
+- `TimelineEvent` fields: `id` (`Text`, a stable per-source id such as
+  `\"person-<personId>-<index>\"`, `\"archive-<id>\"`, `\"story-<id>\"`, or
+  `\"mystery-<id>\"`), `eventType`, `title` (`Text`), `description` (`Text`),
+  `era` (`?Text`), `year` (`?Nat`), `evidenceStatus`, and `linkTarget`.
 
 ## Lifecycle and polling
 
@@ -708,7 +876,10 @@ stores the item in `#Pending` state. An admin then calls `approveArchiveItem` or
 `rejectArchiveItem` to move it to `#Approved` or `#Rejected`. Only `#Approved`
 items are returned by `listApprovedArchiveItems` (the archive view). There is no
 async job to poll; the frontend can call `listPendingArchiveItems` (admin) or
-`listApprovedArchiveItems` to observe the current state.
+`listApprovedArchiveItems` to observe the current state. An Oral History item
+(`classification == #OralHistory`) must carry exactly one primary speaker at
+submission time; the speaker is fixed at submission and does not change through
+the approval lifecycle.
 
 Profile claims follow a request → approve/reject lifecycle. `requestProfileClaim`
 creates a `#Pending` claim without granting ownership. A Family Steward then
@@ -770,6 +941,36 @@ records an `AuditEntry` in the audit log, readable only by Family Stewards via
 `listAuditHistory`. There is no async job to poll; the frontend can call the
 relevant list methods to observe current state.
 
+Family Stories follow a submit → approve/reject lifecycle. `submitStory` stores
+the story in `#Pending` state. A Family Steward then calls `approveStory` or
+`rejectStory` to move it to `#Approved` or `#Rejected`. Only `#Approved` stories
+are returned by `listApprovedStories` (the Family Stories view). Stewards add
+canonical stories directly via `addCanonicalStory` (already `#Approved`) and edit
+them via `updateCanonicalStory`. There is no async job to poll; the frontend can
+call `listPendingStories` (steward) or `listApprovedStories` to observe the
+current state.
+
+Family Mysteries follow a steward-driven lifecycle. Stewards create canonical
+mysteries via `createCanonicalMystery` and edit them via
+`updateCanonicalMystery`. Family members contribute a note, memory, possible
+lead, or source reference via `submitMysteryContribution`, which stores the
+contribution in `#Pending` state; a Family Steward then calls
+`reviewMysteryContribution` to approve or reject it before it alters the
+canonical mystery record. A mystery's `status` moves through `#Open`,
+`#Researching`, `#PartiallyResolved`, and `#Resolved`. Marking a mystery
+`#Resolved` via `markMysteryResolved` records a resolution summary and supporting
+evidence while preserving the prior theories/history — the research trail is
+never deleted. There is no async job to poll; the frontend can call
+`listMysteries` (viewers) or `listPendingMysteryContributions` (steward) to
+observe the current state.
+
+Travel Through Time is a read-only chronological view. `listTimelineEvents`
+aggregates events from existing canonical data only — PersonProfile timeline
+entries, ArchiveItem year/era, Story era/date, and Mystery records. Empty eras
+are never fabricated; only actual stored data is surfaced. Each event carries an
+evidence badge and a link target so clicking it opens the relevant Person
+Profile, Story, Archive Item, or Mystery.
+
 ## Mutation retry safety, idempotency, and destructive effects
 
 - `addPhoto` is not idempotent: each call appends a new photo with a fresh id.
@@ -785,7 +986,10 @@ relevant list methods to observe current state.
   removed from the gallery. The off-chain blob is not deleted by this call.
 - `submitArchiveItem` is not idempotent: each call stores a new item with a
   fresh id. Retrying a submission that actually succeeded creates a duplicate
-  item.
+  item. For an Oral History item the `primarySpeaker` is validated at
+  submission: it must be present (exactly one) when `classification ==
+  #OralHistory` and must be `null` when `classification == #Standard`; a
+  violation traps and stores nothing.
 - `approveArchiveItem` and `rejectArchiveItem` are idempotent: approving or
   rejecting an already-approved or already-rejected (or nonexistent) item
   returns `null` and changes nothing. They only transition items currently in
@@ -874,6 +1078,29 @@ relevant list methods to observe current state.
   relationship returns `#err(#RelationshipNotFound)` and changes nothing.
   `correctRelationshipType` is idempotent: correcting to the same type is a
   no-op that returns the updated record.
+- `submitStory` is not idempotent: each call stores a new story with a fresh id.
+  Retrying a submission that actually succeeded creates a duplicate story.
+- `approveStory` and `rejectStory` are idempotent: approving or rejecting an
+  already-approved or already-rejected (or nonexistent) story returns `null` and
+  changes nothing. They only transition stories currently in `#Pending` state.
+  Neither is destructive — the story is preserved in either terminal state.
+- `addCanonicalStory` is not idempotent: each call stores a new canonical story
+  with a fresh id. `updateCanonicalStory` is idempotent: applying the same edit
+  again yields the same story, preserving the original `contributor` and
+  `createdAt`.
+- `submitMysteryContribution` is not idempotent: each call stores a new
+  contribution with a fresh id. Retrying a submission that actually succeeded
+  creates a duplicate contribution.
+- `reviewMysteryContribution` is idempotent: reviewing an already-reviewed (or
+  nonexistent) contribution returns `null` and changes nothing. It only
+  transitions contributions currently in `#Pending` state.
+- `createCanonicalMystery` is not idempotent: each call stores a new mystery
+  with a fresh id. `updateCanonicalMystery` is idempotent: applying the same edit
+  again yields the same mystery, preserving the original `contributor`,
+  `createdAt`, and any existing `resolution`.
+- `markMysteryResolved` is idempotent: marking an already-resolved (or
+  nonexistent) mystery resolved returns `null` and changes nothing. It preserves
+  the prior theories/history and never deletes the research trail.
 
 ## Errors, traps, limits, and gotchas
 
@@ -883,6 +1110,13 @@ relevant list methods to observe current state.
   user roles\"` when the caller is not an admin.
 - `setProfilePhoto` returns `null` (it does not trap) when the photo id does
   not exist in the person's gallery.
+- `submitArchiveItem` traps with `\"A primary speaker is required for Oral
+  History items\"` when `classification == #OralHistory` and `primarySpeaker` is
+  `null`, and with `\"A primary speaker is only allowed on Oral History items\"`
+  when `classification == #Standard` and `primarySpeaker` is not `null`. These
+  traps store nothing, so a rejected submission leaves no partial item. The
+  speaker field is hidden in the UI for media not classified as Oral History,
+  but the backend still enforces the invariant regardless of the client.
 - Photo ids are per-person; the same numeric id can refer to different photos
   for different people.
 - The OQL `photo` entity's primary key is the composite `key` field, not `id`,
@@ -949,7 +1183,18 @@ relevant list methods to observe current state.
   than trapping. `getMyAuthMethods` returns `#err(#AccountNotFound)` for a
   signed-in caller whose account has not been created yet (no `bindAuthMethod`
   call has been made); `getMyAccountId` and `bindAuthMethod` do not require an
-  existing account — `bindAuthMethod` creates it on first use.
+  existing account —   `bindAuthMethod` creates it on first use.
+- `submitStory` traps with `\"Sign-in required to submit a story\"` for an
+  anonymous caller, and `submitMysteryContribution` traps with `\"Sign-in
+  required to contribute to a mystery\"` for an anonymous caller. The Family
+  Steward family-history methods trap with `\"Unauthorized: Only Family Stewards
+  can ...\"` when the caller is not an admin.
+- `approveStory`, `rejectStory`, `updateCanonicalStory`,
+  `reviewMysteryContribution`, `updateCanonicalMystery`, and
+  `markMysteryResolved` return `null` (they do not trap) when the target id does
+  not exist or is not in the expected state.
+- Stories and Mysteries reference existing person ids and archive item ids; they
+  never create duplicate Person records or duplicate source files.
 "
   };
 };

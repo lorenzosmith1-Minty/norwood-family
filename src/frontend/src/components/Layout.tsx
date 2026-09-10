@@ -1,10 +1,13 @@
 import {
   Archive,
   Bell,
+  Clock3,
   GitBranch,
   Landmark,
+  LibraryBig,
   LogIn,
   LogOut,
+  Search,
   ShieldCheck,
   TreePine,
   UserCircle,
@@ -65,6 +68,12 @@ interface LayoutProps {
   onAdminClick?: () => void;
   /** Navigates to the Family Archive browsing view. */
   onArchiveClick?: () => void;
+  /** Navigates to the Family Stories view. */
+  onStoriesClick?: () => void;
+  /** Navigates to the Family Mysteries view. */
+  onMysteriesClick?: () => void;
+  /** Navigates to the Travel Through Time view. */
+  onTimelineClick?: () => void;
   /** Navigates to the Heritage Branch View. */
   onBranchClick?: () => void;
   /** Navigates to the Explore Family view. */
@@ -91,6 +100,9 @@ export function Layout({
   onSignOutClick,
   onAdminClick,
   onArchiveClick,
+  onStoriesClick,
+  onMysteriesClick,
+  onTimelineClick,
   onBranchClick,
   onExploreClick,
   onStewardClick,
@@ -105,7 +117,15 @@ export function Layout({
   const isArchiveActive =
     activeView === "archive" ||
     activeView === "archive-detail" ||
-    activeView === "archive-contribute";
+    activeView === "archive-contribute" ||
+    // Family Videos & Oral History is reached from Family Archive (no separate
+    // top-level pill), so the Family Archive pill stays highlighted there.
+    activeView === "videos" ||
+    activeView === "video-detail" ||
+    activeView === "video-contribute";
+  const isStoriesActive = activeView === "stories";
+  const isMysteriesActive = activeView === "mysteries";
+  const isTimelineActive = activeView === "timeline";
   const isAddMyselfActive = activeView === "add-myself";
   const isStewardActive = activeView === "steward-review";
   const isGovernanceActive = activeView === "governance";
@@ -174,6 +194,48 @@ export function Layout({
                 aria-hidden="true"
               />
               Family Archive
+            </button>
+            <button
+              type="button"
+              data-ocid="layout.stories_link"
+              aria-current={isStoriesActive ? "page" : undefined}
+              onClick={onStoriesClick}
+              className={navClass(isStoriesActive)}
+            >
+              <LibraryBig
+                className={navIconClass(isStoriesActive)}
+                strokeWidth={1.75}
+                aria-hidden="true"
+              />
+              Family Stories
+            </button>
+            <button
+              type="button"
+              data-ocid="layout.mysteries_link"
+              aria-current={isMysteriesActive ? "page" : undefined}
+              onClick={onMysteriesClick}
+              className={navClass(isMysteriesActive)}
+            >
+              <Search
+                className={navIconClass(isMysteriesActive)}
+                strokeWidth={1.75}
+                aria-hidden="true"
+              />
+              Family Mysteries
+            </button>
+            <button
+              type="button"
+              data-ocid="layout.timeline_link"
+              aria-current={isTimelineActive ? "page" : undefined}
+              onClick={onTimelineClick}
+              className={navClass(isTimelineActive)}
+            >
+              <Clock3
+                className={navIconClass(isTimelineActive)}
+                strokeWidth={1.75}
+                aria-hidden="true"
+              />
+              Travel Through Time
             </button>
             <button
               type="button"

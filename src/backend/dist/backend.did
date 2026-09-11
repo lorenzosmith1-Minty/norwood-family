@@ -125,12 +125,48 @@ type StewardError =
    NotSignedIn;
    NotSteward;
  };
+type SourceType = 
+ variant {
+   CensusCitation;
+   CertificateHeadstoneReference;
+   DeedPropertyReference;
+   EmailThread;
+   ResearchNotes;
+   UploadedDocumentImage;
+ };
 type SourceStatus = 
  variant {
    Copy;
    Original;
    Transcribed;
    Unverified;
+ };
+type SourceRecord = 
+ record {
+   archiveItemId: opt nat;
+   contributor: principal;
+   createdAt: int;
+   description: text;
+   id: SourceId;
+   sourceType: SourceType;
+   status: ReviewStatus;
+   title: text;
+   updatedAt: int;
+ };
+type SourceId = nat;
+type ReviewStatus = 
+ variant {
+   Approved;
+   Conflicting;
+   Pending;
+   Rejected;
+ };
+type ReviewQueue = 
+ record {
+   approved: nat;
+   conflicting: nat;
+   pending: nat;
+   rejected: nat;
  };
 type Result__1 = 
  record {
@@ -172,6 +208,26 @@ type Result_3 =
    err: RemovalError;
    ok: ProfileRemovalRequest;
  };
+type Result_23 = 
+ variant {
+   err: Error;
+   ok;
+ };
+type Result_22 = 
+ variant {
+   err: AccountError;
+   ok: Account;
+ };
+type Result_21 = 
+ variant {
+   err: RelationshipAdminError;
+   ok: Relationship;
+ };
+type Result_20 = 
+ variant {
+   err: ResearchError;
+   ok: ProposedFinding;
+ };
 type Result_2 = 
  variant {
    err: ArchiveError;
@@ -179,23 +235,23 @@ type Result_2 =
  };
 type Result_19 = 
  variant {
-   err: Error;
-   ok;
+   err: CreateError;
+   ok: PersonProfile;
  };
 type Result_18 = 
  variant {
-   err: AccountError;
-   ok: Account;
+   err: ResearchError;
+   ok: NewPersonCandidate;
  };
 type Result_17 = 
  variant {
-   err: RelationshipAdminError;
-   ok: Relationship;
+   err: ResearchError;
+   ok: RelationshipProposal;
  };
 type Result_16 = 
  variant {
-   err: CreateError;
-   ok: PersonProfile;
+   err: ResearchError;
+   ok: SourceRecord;
  };
 type Result_15 = 
  variant {
@@ -243,6 +299,22 @@ type Resolution =
    resolvedBy: principal;
    summary: text;
    supportingEvidence: vec text;
+ };
+type ResearchError = 
+ variant {
+   invalidState: text;
+   notAuthorized;
+   notFound: nat;
+ };
+type ResearchAuditEntry = 
+ record {
+   action: text;
+   actorId: principal;
+   findingId: opt FindingId;
+   id: nat;
+   sourceId: opt SourceId;
+   summary: text;
+   timestamp: int;
  };
 type ReportedMessageView = 
  record {
@@ -318,6 +390,19 @@ type RelationshipRequest =
    status: RelationshipRequestStatus;
    submittedDate: int;
  };
+type RelationshipProposal = 
+ record {
+   fromPersonId: text;
+   id: nat;
+   relationshipType: text;
+   reviewedAt: opt int;
+   reviewedBy: opt principal;
+   sourceId: SourceId;
+   status: ReviewStatus;
+   submittedAt: int;
+   submittedBy: principal;
+   toPersonId: text;
+ };
 type RelationshipError = 
  variant {
    DuplicateRequest;
@@ -373,6 +458,24 @@ type Recipe =
    transcript: opt text;
    updatedAt: int;
    year: opt nat;
+ };
+type ProposedFinding = 
+ record {
+   conflictReviewId: opt nat;
+   content: FindingContent;
+   evidenceLabel: EvidenceLabel;
+   findingType: FindingType;
+   id: FindingId;
+   newPersonCandidateId: opt nat;
+   personId: opt text;
+   reviewedAt: opt int;
+   reviewedBy: opt principal;
+   sourceId: SourceId;
+   status: ReviewStatus;
+   submittedAt: int;
+   submittedBy: principal;
+   title: text;
+   updatedAt: int;
  };
 type ProfileRemovalStatus = 
  variant {
@@ -533,6 +636,18 @@ type Notification =
    read: bool;
    recipient: principal;
  };
+type NewPersonCandidate = 
+ record {
+   details: text;
+   id: nat;
+   name: text;
+   reviewedAt: opt int;
+   reviewedBy: opt principal;
+   sourceId: SourceId;
+   status: ReviewStatus;
+   submittedAt: int;
+   submittedBy: principal;
+ };
 type MysteryStatus = 
  variant {
    Open;
@@ -646,6 +761,55 @@ type LivingStatus =
    Deceased;
    Living;
  };
+type FindingType = 
+ variant {
+   Mystery;
+   PersonFact;
+   Relationship;
+   Source;
+   Story;
+   TimelineEvent;
+ };
+type FindingId = nat;
+type FindingContent = 
+ variant {
+   Mystery:
+    record {
+      description: text;
+      relatedPersonIds: vec text;
+      title: text;
+    };
+   PersonFact: record {
+                 field: text;
+                 personId: text;
+                 value: text;
+               };
+   Relationship:
+    record {
+      fromPersonId: text;
+      relationshipType: text;
+      toPersonId: text;
+    };
+   Source:
+    record {
+      archiveItemId: opt nat;
+      description: text;
+      sourceType: SourceType;
+      title: text;
+    };
+   Story: record {
+            relatedPersonIds: vec text;
+            storyText: text;
+            title: text;
+          };
+   TimelineEvent:
+    record {
+      date: opt text;
+      description: text;
+      personId: text;
+      title: text;
+    };
+ };
 type ExternalBlob = blob;
 type EvidenceStatus = 
  variant {
@@ -653,6 +817,15 @@ type EvidenceStatus =
    FamilyHistory;
    PersonalMemory;
    Unresolved;
+ };
+type EvidenceLabel = 
+ variant {
+   Conflicting;
+   Documented;
+   FamilyHistoryOralHistory;
+   Hypothesis;
+   NeedsResearch;
+   PersonalMemory;
  };
 type Error = 
  variant {
@@ -733,6 +906,17 @@ type ConversationSummary =
    unreadCount: nat;
  };
 type ConversationId = nat;
+type ConflictReviewItem = 
+ record {
+   canonicalValue: text;
+   field: text;
+   findingId: FindingId;
+   id: nat;
+   proposedValue: text;
+   resolvedAt: opt int;
+   resolvedBy: opt principal;
+   status: ReviewStatus;
+ };
 type ClaimStatus = 
  variant {
    Claimed;
@@ -877,7 +1061,7 @@ service : {
    (_ImmutableObjectStorageRefillResult);
   _immutableObjectStorageUpdateGatewayPrincipals: () -> ();
   _initialize_access_control: () -> ();
-  _internet_identity_sign_in_finish: () -> (Result_19);
+  _internet_identity_sign_in_finish: () -> (Result_23);
   _internet_identity_sign_in_start: () -> (blob);
   /// Activates/promotes a designated successor into the active steward role.
   /// Family Steward only.
@@ -899,10 +1083,16 @@ service : {
   /// Adds a missing relationship to the shared family graph. Family Steward
   /// only.
   addRelationship: (fromPersonId: PersonId, toPersonId: PersonId,
-   relationshipType: RelationshipType) -> (Result_17);
+   relationshipType: RelationshipType) -> (Result_21);
   /// Approves a pending archive item (admin only). Returns the updated item, or
   /// `null` when the item does not exist or is not pending.
   approveArchiveItem: (id: ArchiveItemId) -> (opt ArchiveItem);
+  /// Approves a pending finding (steward only), routing it to its target
+  /// surface. A finding labelled `#Conflicting` is never approved directly —
+  /// it is routed to a Conflict Review item instead of silently overwriting
+  /// canonical data. Returns the updated finding, or `null` when it does not
+  /// exist or is not pending.
+  approveFinding: (id: FindingId) -> (opt ProposedFinding);
   /// Approves a pending profile claim, marking the profile claimed and
   /// associating it with the requesting user. Family Steward only.
   approveProfileClaim: (claimId: nat) -> (opt ProfileClaim);
@@ -929,7 +1119,7 @@ service : {
   /// Binds an authentication method (Google or Apple) to the signed-in caller's
   /// account. The account id is the caller's stable principal, so the same
   /// person profile stays intact if the provider changes.
-  bindAuthMethod: (method: AuthMethod) -> (Result_18);
+  bindAuthMethod: (method: AuthMethod) -> (Result_22);
   /// Blocks another member, preventing them from sending new messages to the
   /// caller. Approved family members only.
   blockUser: (blockedAccountId: principal) -> ();
@@ -942,7 +1132,7 @@ service : {
   /// Corrects the relationship type of an existing relationship. Family Steward
   /// only.
   correctRelationshipType: (relationshipId: nat, relationshipType:
-   RelationshipType) -> (Result_17);
+   RelationshipType) -> (Result_21);
   /// Creates a board post with a type, optional title, body, related family
   /// members, and optional linked existing Archive/media ids. Approved family
   /// members only. Creates a mention notification for related members where
@@ -954,10 +1144,27 @@ service : {
    vec text, relatedBranchId: opt text, knownFacts: vec text, possibilities:
    vec text, relatedSourceIds: vec nat, relatedArchiveItemIds: vec nat,
    status: MysteryStatus) -> (Mystery);
+  /// Creates a new proposed finding. Requires sign-in; the signed-in caller is
+  /// recorded as the submitter. The finding enters as `#Pending`.
+  createFinding: (title: text, evidenceLabel: EvidenceLabel, findingType:
+   FindingType, content: FindingContent, sourceId: SourceId, personId:
+   opt text, newPersonCandidateId: opt nat) -> (Result_20);
   /// "Add Myself to This Family": creates a minimal person profile for a user
   /// who does not already exist. The user must then connect to an existing
   /// family member via a relationship request.
-  createMyself: (name: text) -> (Result_16);
+  createMyself: (name: text) -> (Result_19);
+  /// Creates a new Person candidate. Requires sign-in; the signed-in caller is
+  /// recorded as the submitter. The candidate enters as `#Pending`.
+  createNewPersonCandidate: (name: text, details: text, sourceId:
+   SourceId) -> (Result_18);
+  /// Creates a new relationship proposal. Requires sign-in; the signed-in
+  /// caller is recorded as the submitter. The proposal enters as `#Pending`.
+  createRelationshipProposal: (fromPersonId: text, toPersonId: text,
+   relationshipType: text, sourceId: SourceId) -> (Result_17);
+  /// Creates a new source record. Requires sign-in; the signed-in caller is
+  /// recorded as the contributor. The source enters as `#Pending`.
+  createSource: (title: text, sourceType: SourceType, description: text,
+   archiveItemId: opt nat) -> (Result_16);
   /// Designates an approved claimed family member as a successor steward with a
   /// priority/order. A successor is a designation only until activated.
   /// Family Steward only.
@@ -971,6 +1178,8 @@ service : {
   /// read a conversation.
   getConversation: (conversationId: ConversationId) ->
    (opt ConversationView) query;
+  /// Returns a single proposed finding by id.
+  getFinding: (id: FindingId) -> (opt ProposedFinding) query;
   /// Returns the stable account id of the signed-in caller. Anonymous callers
   /// receive #NotSignedIn.
   getMyAccountId: () -> (Result_14) query;
@@ -1012,9 +1221,16 @@ service : {
   /// reported message content is visible only when a report is filed. Stewards
   /// cannot browse arbitrary private conversations.
   getReportedMessage: (reportId: ReportId) -> (opt ReportedMessageView) query;
+  /// Returns the full research intake audit history.
+  getResearchAuditLog: () -> (vec ResearchAuditEntry) query;
+  /// Returns the review queue badge counts (pending, approved, rejected,
+  /// conflicting) across all reviewable research intake items.
+  getReviewQueue: () -> (ReviewQueue) query;
   /// Returns a warning encouraging successor designation when only one steward
   /// exists, or `null` when there are multiple stewards. Family Steward only.
   getSingleStewardWarning: () -> (opt text) query;
+  /// Returns a single source record by id.
+  getSource: (id: SourceId) -> (opt SourceRecord) query;
   isCallerAdmin: () -> (bool) query;
   /// Lists all archive items in approved state (visible in the archive).
   listApprovedArchiveItems: () -> (vec ArchiveItem) query;
@@ -1041,6 +1257,8 @@ service : {
   /// Lists all confirmed relationships for the frontend to merge into the
   /// shared family graph.
   listConfirmedRelationships: () -> (vec Relationship) query;
+  /// Lists all conflict review items (steward only).
+  listConflictReviewItems: () -> (vec ConflictReviewItem) query;
   /// Returns the signed-in caller's inbox: one summary per conversation they
   /// participate in, newest activity first. Approved family members only.
   listConversations: () -> (vec ConversationSummary) query;
@@ -1053,6 +1271,8 @@ service : {
   /// data-driven — as additional family members claim and receive approval they
   /// automatically appear without code changes. Family Steward only.
   listEligibleStewardCandidates: () -> (vec StewardIdentity) query;
+  /// Lists all proposed findings (steward only).
+  listFindings: () -> (vec ProposedFinding) query;
   /// Returns the person ids of every other member the signed-in caller may
   /// message: living, claimed, linked to an active account, not archived, and
   /// not the caller. Not gated to stewards — any approved member may read it, so
@@ -1062,6 +1282,8 @@ service : {
   listMessageableMembers: () -> (vec text) query;
   /// Lists all mysteries (visible to viewers).
   listMysteries: () -> (vec Mystery) query;
+  /// Lists all New Person candidates (steward only).
+  listNewPersonCandidates: () -> (vec NewPersonCandidate) query;
   /// Lists in-app notification records for the signed-in caller.
   listNotifications: () -> (vec Notification) query;
   /// Lists all archive items in pending state (admin only).
@@ -1084,10 +1306,14 @@ service : {
   /// related member. Returns only approved recipes visible to the caller;
   /// private recipes are only visible to their contributor or a Family Steward.
   listRecipesForPerson: (personId: text) -> (vec Recipe) query;
+  /// Lists all relationship proposals (steward only).
+  listRelationshipProposals: () -> (vec RelationshipProposal) query;
   /// Lists all relationship requests for the Family Steward review area.
   listRelationshipRequests: () -> (vec RelationshipRequest) query;
   /// Lists all reports. Family Steward only.
   listReports: () -> (vec Report) query;
+  /// Lists all source records (steward only).
+  listSources: () -> (vec SourceRecord) query;
   /// Returns each current Steward and designated Successor enriched with the
   /// linked approved Person identity (personId, preferred/display name, and
   /// canonical full person name), resolved via steward accountId -> approved
@@ -1147,6 +1373,9 @@ service : {
   /// Rejects a pending archive item (admin only). Returns the updated item, or
   /// `null` when the item does not exist or is not pending.
   rejectArchiveItem: (id: ArchiveItemId) -> (opt ArchiveItem);
+  /// Rejects a pending finding (steward only). Returns the updated finding, or
+  /// `null` when it does not exist or is not pending.
+  rejectFinding: (id: FindingId) -> (opt ProposedFinding);
   /// Rejects a pending profile claim. Family Steward only.
   rejectProfileClaim: (claimId: nat) -> (opt ProfileClaim);
   /// Rejects a profile removal request. Family Steward only.
@@ -1184,6 +1413,9 @@ service : {
   /// A claimed living profile owner requests removal of their own profile.
   /// A Family Steward reviews the request.
   requestProfileRemoval: (personId: PersonId, reason: text) -> (Result_3);
+  /// Resolves a conflict review item (steward only). Returns the updated item,
+  /// or `null` when it does not exist.
+  resolveConflict: (id: nat) -> (opt ConflictReviewItem);
   /// Resolves a merge conflict by choosing the canonical display value. Family
   /// Steward only.
   resolveMergeConflict: (conflictId: nat, canonicalValue: text) ->

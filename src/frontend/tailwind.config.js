@@ -99,6 +99,8 @@ export default {
           "0 2px 8px -2px rgba(93, 64, 55, 0.12), 0 0 0 1px rgba(93, 64, 55, 0.04)",
         hub:
           "0 2px 8px -2px rgba(93, 64, 55, 0.12), 0 0 0 1px rgba(93, 64, 55, 0.04)",
+        research:
+          "0 2px 8px -2px rgba(93, 64, 55, 0.12), 0 0 0 1px rgba(74, 128, 156, 0.12)",
       },
       keyframes: {
         "accordion-down": {

@@ -22,6 +22,7 @@ import FamilyHistoryTypes "types/family-history";
 import RecipeTypes "types/recipes";
 import BoardTypes "types/board";
 import MessagingTypes "types/messaging";
+import ResearchIntakeTypes "types/research-intake";
 import ObjectStorageLib "lib/object-storage";
 import ArchiveLib "lib/archive";
 import OwnershipLib "lib/ownership";
@@ -39,6 +40,7 @@ import RecipesApi "mixins/recipes-api";
 import BoardApi "mixins/board-api";
 import MessagingApi "mixins/messaging-api";
 import PendingCountApi "mixins/pending-count-api";
+import ResearchIntakeApi "mixins/research-intake-api";
 import ApiDocMixin "mixins/api-doc";
 
 actor {
@@ -68,6 +70,21 @@ actor {
   let messages : List.List<MessagingTypes.Message>;
   let blocks : List.List<MessagingTypes.Block>;
   let reports : List.List<MessagingTypes.Report>;
+
+  let researchSources : List.List<ResearchIntakeTypes.SourceRecord>;
+  let proposedFindings : List.List<ResearchIntakeTypes.ProposedFinding>;
+  let newPersonCandidates : List.List<ResearchIntakeTypes.NewPersonCandidate>;
+  let relationshipProposals : List.List<ResearchIntakeTypes.RelationshipProposal>;
+  let conflictReviewItems : List.List<ResearchIntakeTypes.ConflictReviewItem>;
+  let researchAuditLog : List.List<ResearchIntakeTypes.ResearchAuditEntry>;
+  let researchState : {
+    var nextSourceId : Nat;
+    var nextFindingId : Nat;
+    var nextCandidateId : Nat;
+    var nextProposalId : Nat;
+    var nextConflictId : Nat;
+    var nextAuditId : Nat;
+  };
 
   /// Renders an audit action type variant as its tag text for OQL rows.
   func auditActionText(a : GovernanceTypes.AuditActionType) : Text {
@@ -133,6 +150,52 @@ actor {
       case (#Pending) "Pending";
       case (#Reviewed) "Reviewed";
       case (#Dismissed) "Dismissed";
+    };
+  };
+
+  /// Renders a research source type variant as its tag text for OQL rows.
+  func sourceTypeText(t : ResearchIntakeTypes.SourceType) : Text {
+    switch (t) {
+      case (#CensusCitation) "CensusCitation";
+      case (#DeedPropertyReference) "DeedPropertyReference";
+      case (#EmailThread) "EmailThread";
+      case (#ResearchNotes) "ResearchNotes";
+      case (#CertificateHeadstoneReference) "CertificateHeadstoneReference";
+      case (#UploadedDocumentImage) "UploadedDocumentImage";
+    };
+  };
+
+  /// Renders a research review status variant as its tag text for OQL rows.
+  func reviewStatusText(s : ResearchIntakeTypes.ReviewStatus) : Text {
+    switch (s) {
+      case (#Pending) "Pending";
+      case (#Approved) "Approved";
+      case (#Rejected) "Rejected";
+      case (#Conflicting) "Conflicting";
+    };
+  };
+
+  /// Renders a research evidence label variant as its tag text for OQL rows.
+  func evidenceLabelText(l : ResearchIntakeTypes.EvidenceLabel) : Text {
+    switch (l) {
+      case (#Documented) "Documented";
+      case (#FamilyHistoryOralHistory) "FamilyHistoryOralHistory";
+      case (#PersonalMemory) "PersonalMemory";
+      case (#Hypothesis) "Hypothesis";
+      case (#Conflicting) "Conflicting";
+      case (#NeedsResearch) "NeedsResearch";
+    };
+  };
+
+  /// Renders a research finding type variant as its tag text for OQL rows.
+  func findingTypeText(t : ResearchIntakeTypes.FindingType) : Text {
+    switch (t) {
+      case (#PersonFact) "PersonFact";
+      case (#Relationship) "Relationship";
+      case (#TimelineEvent) "TimelineEvent";
+      case (#Story) "Story";
+      case (#Mystery) "Mystery";
+      case (#Source) "Source";
     };
   };
 
@@ -755,6 +818,181 @@ actor {
       .payload("status", func r = reportStatusText(r.status))
       .controllerOnly()
       .build(),
+      OQL.Entity.manual<ResearchIntakeTypes.SourceRecord>(
+        "researchSource",
+        func() : Iter.Iter<ResearchIntakeTypes.SourceRecord> = researchSources.values(),
+        "SourceRecord",
+        "id",
+      )
+      .sample({
+        id = 0;
+        title = "";
+        sourceType = #CensusCitation;
+        description = "";
+        archiveItemId = null;
+        contributor = Principal.fromText("aaaaa-aa");
+        status = #Pending;
+        createdAt = 0;
+        updatedAt = 0;
+      })
+      .payload("id", func r = r.id)
+      .payload("title", func r = r.title)
+      .payload("sourceType", func r = sourceTypeText(r.sourceType))
+      .payload("description", func r = r.description)
+      .payload("archiveItemId", func r = r.archiveItemId ?? 0)
+      .payload("contributor", func r = r.contributor.toText())
+      .payload("status", func r = reviewStatusText(r.status))
+      .payload("createdAt", func r = r.createdAt)
+      .payload("updatedAt", func r = r.updatedAt)
+      .controllerOnly()
+      .build(),
+      OQL.Entity.manual<ResearchIntakeTypes.ProposedFinding>(
+        "proposedFinding",
+        func() : Iter.Iter<ResearchIntakeTypes.ProposedFinding> = proposedFindings.values(),
+        "ProposedFinding",
+        "id",
+      )
+      .sample({
+        id = 0;
+        title = "";
+        evidenceLabel = #Documented;
+        findingType = #PersonFact;
+        content = #PersonFact({ personId = ""; field = ""; value = "" });
+        sourceId = 0;
+        personId = null;
+        newPersonCandidateId = null;
+        status = #Pending;
+        conflictReviewId = null;
+        submittedBy = Principal.fromText("aaaaa-aa");
+        submittedAt = 0;
+        reviewedBy = null;
+        reviewedAt = null;
+        updatedAt = 0;
+      })
+      .payload("id", func r = r.id)
+      .payload("title", func r = r.title)
+      .payload("evidenceLabel", func r = evidenceLabelText(r.evidenceLabel))
+      .payload("findingType", func r = findingTypeText(r.findingType))
+      .payload("sourceId", func r = r.sourceId)
+      .payload("personId", func r = r.personId ?? "")
+      .payload("newPersonCandidateId", func r = r.newPersonCandidateId ?? 0)
+      .payload("status", func r = reviewStatusText(r.status))
+      .payload("conflictReviewId", func r = r.conflictReviewId ?? 0)
+      .payload("submittedBy", func r = r.submittedBy.toText())
+      .payload("submittedAt", func r = r.submittedAt)
+      .payload("reviewedBy", func r = switch (r.reviewedBy) { case (?p) p.toText(); case null "" })
+      .payload("reviewedAt", func r = r.reviewedAt ?? 0)
+      .payload("updatedAt", func r = r.updatedAt)
+      .controllerOnly()
+      .build(),
+      OQL.Entity.manual<ResearchIntakeTypes.NewPersonCandidate>(
+        "newPersonCandidate",
+        func() : Iter.Iter<ResearchIntakeTypes.NewPersonCandidate> = newPersonCandidates.values(),
+        "NewPersonCandidate",
+        "id",
+      )
+      .sample({
+        id = 0;
+        name = "";
+        details = "";
+        sourceId = 0;
+        status = #Pending;
+        submittedBy = Principal.fromText("aaaaa-aa");
+        submittedAt = 0;
+        reviewedBy = null;
+        reviewedAt = null;
+      })
+      .payload("id", func r = r.id)
+      .payload("name", func r = r.name)
+      .payload("details", func r = r.details)
+      .payload("sourceId", func r = r.sourceId)
+      .payload("status", func r = reviewStatusText(r.status))
+      .payload("submittedBy", func r = r.submittedBy.toText())
+      .payload("submittedAt", func r = r.submittedAt)
+      .payload("reviewedBy", func r = switch (r.reviewedBy) { case (?p) p.toText(); case null "" })
+      .payload("reviewedAt", func r = r.reviewedAt ?? 0)
+      .controllerOnly()
+      .build(),
+      OQL.Entity.manual<ResearchIntakeTypes.RelationshipProposal>(
+        "relationshipProposal",
+        func() : Iter.Iter<ResearchIntakeTypes.RelationshipProposal> = relationshipProposals.values(),
+        "RelationshipProposal",
+        "id",
+      )
+      .sample({
+        id = 0;
+        fromPersonId = "";
+        toPersonId = "";
+        relationshipType = "";
+        sourceId = 0;
+        status = #Pending;
+        submittedBy = Principal.fromText("aaaaa-aa");
+        submittedAt = 0;
+        reviewedBy = null;
+        reviewedAt = null;
+      })
+      .payload("id", func r = r.id)
+      .payload("fromPersonId", func r = r.fromPersonId)
+      .payload("toPersonId", func r = r.toPersonId)
+      .payload("relationshipType", func r = r.relationshipType)
+      .payload("sourceId", func r = r.sourceId)
+      .payload("status", func r = reviewStatusText(r.status))
+      .payload("submittedBy", func r = r.submittedBy.toText())
+      .payload("submittedAt", func r = r.submittedAt)
+      .payload("reviewedBy", func r = switch (r.reviewedBy) { case (?p) p.toText(); case null "" })
+      .payload("reviewedAt", func r = r.reviewedAt ?? 0)
+      .controllerOnly()
+      .build(),
+      OQL.Entity.manual<ResearchIntakeTypes.ConflictReviewItem>(
+        "conflictReviewItem",
+        func() : Iter.Iter<ResearchIntakeTypes.ConflictReviewItem> = conflictReviewItems.values(),
+        "ConflictReviewItem",
+        "id",
+      )
+      .sample({
+        id = 0;
+        findingId = 0;
+        field = "";
+        canonicalValue = "";
+        proposedValue = "";
+        status = #Pending;
+        resolvedBy = null;
+        resolvedAt = null;
+      })
+      .payload("id", func r = r.id)
+      .payload("findingId", func r = r.findingId)
+      .payload("field", func r = r.field)
+      .payload("canonicalValue", func r = r.canonicalValue)
+      .payload("proposedValue", func r = r.proposedValue)
+      .payload("status", func r = reviewStatusText(r.status))
+      .payload("resolvedBy", func r = switch (r.resolvedBy) { case (?p) p.toText(); case null "" })
+      .payload("resolvedAt", func r = r.resolvedAt ?? 0)
+      .controllerOnly()
+      .build(),
+      OQL.Entity.manual<ResearchIntakeTypes.ResearchAuditEntry>(
+        "researchAuditLog",
+        func() : Iter.Iter<ResearchIntakeTypes.ResearchAuditEntry> = researchAuditLog.values(),
+        "ResearchAuditEntry",
+        "id",
+      )
+      .sample({
+        id = 0;
+        action = "";
+        findingId = null;
+        sourceId = null;
+        actorId = Principal.fromText("aaaaa-aa");
+        timestamp = 0;
+        summary = "";
+      })
+      .payload("id", func r = r.id)
+      .payload("action", func r = r.action)
+      .payload("findingId", func r = r.findingId ?? 0)
+      .payload("sourceId", func r = r.sourceId ?? 0)
+      .payload("actorId", func r = r.actorId.toText())
+      .payload("timestamp", func r = r.timestamp)
+      .payload("summary", func r = r.summary)
+      .controllerOnly()
+      .build(),
     ];
   });
   include MixinObjectStorage();
@@ -770,5 +1008,6 @@ actor {
   include BoardApi(accessControlState, posts, replies, profiles, notifications, auditLog);
   include MessagingApi(accessControlState, conversations, messages, blocks, reports, profiles, archivedProfiles, notifications, accounts);
   include PendingCountApi(accessControlState, archiveItems, recipes, stories, mysteryContributions);
+  include ResearchIntakeApi(accessControlState, researchSources, proposedFindings, newPersonCandidates, relationshipProposals, conflictReviewItems, researchAuditLog, researchState, profiles, confirmedRelationships, stories, mysteries, archiveItems);
   include ApiDocMixin();
 };

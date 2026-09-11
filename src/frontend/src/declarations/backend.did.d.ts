@@ -101,6 +101,16 @@ export type ClaimError = { 'AlreadyPending' : null } |
   { 'DeceasedProfile' : null };
 export type ClaimStatus = { 'Unclaimed' : null } |
   { 'Claimed' : null };
+export interface ConflictReviewItem {
+  'id' : bigint,
+  'field' : string,
+  'status' : ReviewStatus,
+  'findingId' : FindingId,
+  'proposedValue' : string,
+  'canonicalValue' : string,
+  'resolvedAt' : [] | [bigint],
+  'resolvedBy' : [] | [Principal],
+}
 export type ConversationId = bigint;
 export interface ConversationSummary {
   'otherPersonId' : PersonId,
@@ -163,11 +173,64 @@ export type Error = { 'FrontendOriginsNotConfigured' : null } |
   { 'UntrustedSsoSource' : { 'domain' : string } } |
   { 'MissingField' : string } |
   { 'FrontendOriginMismatch' : { 'got' : string, 'expected' : Array<string> } };
+export type EvidenceLabel = { 'NeedsResearch' : null } |
+  { 'Conflicting' : null } |
+  { 'Hypothesis' : null } |
+  { 'Documented' : null } |
+  { 'FamilyHistoryOralHistory' : null } |
+  { 'PersonalMemory' : null };
 export type EvidenceStatus = { 'Unresolved' : null } |
   { 'Documented' : null } |
   { 'FamilyHistory' : null } |
   { 'PersonalMemory' : null };
 export type ExternalBlob = Uint8Array;
+export type FindingContent = {
+    'Story' : {
+      'title' : string,
+      'storyText' : string,
+      'relatedPersonIds' : Array<string>,
+    }
+  } |
+  {
+    'TimelineEvent' : {
+      'title' : string,
+      'date' : [] | [string],
+      'description' : string,
+      'personId' : string,
+    }
+  } |
+  {
+    'PersonFact' : { 'field' : string, 'value' : string, 'personId' : string }
+  } |
+  {
+    'Source' : {
+      'title' : string,
+      'archiveItemId' : [] | [bigint],
+      'description' : string,
+      'sourceType' : SourceType,
+    }
+  } |
+  {
+    'Mystery' : {
+      'title' : string,
+      'description' : string,
+      'relatedPersonIds' : Array<string>,
+    }
+  } |
+  {
+    'Relationship' : {
+      'fromPersonId' : string,
+      'toPersonId' : string,
+      'relationshipType' : string,
+    }
+  };
+export type FindingId = bigint;
+export type FindingType = { 'Story' : null } |
+  { 'TimelineEvent' : null } |
+  { 'PersonFact' : null } |
+  { 'Source' : null } |
+  { 'Mystery' : null } |
+  { 'Relationship' : null };
 export type LivingStatus = { 'Living' : null } |
   { 'Deceased' : null };
 export interface MergeConflict {
@@ -252,6 +315,17 @@ export type MysteryStatus = { 'Researching' : null } |
   { 'Open' : null } |
   { 'PartiallyResolved' : null } |
   { 'Resolved' : null };
+export interface NewPersonCandidate {
+  'id' : bigint,
+  'status' : ReviewStatus,
+  'name' : string,
+  'submittedAt' : bigint,
+  'submittedBy' : Principal,
+  'sourceId' : SourceId,
+  'reviewedAt' : [] | [bigint],
+  'reviewedBy' : [] | [Principal],
+  'details' : string,
+}
 export interface Notification {
   'id' : bigint,
   'notificationType' : NotificationType,
@@ -384,6 +458,23 @@ export interface ProfileRemovalRequest {
 export type ProfileRemovalStatus = { 'Approved' : null } |
   { 'Rejected' : null } |
   { 'Pending' : null };
+export interface ProposedFinding {
+  'id' : FindingId,
+  'status' : ReviewStatus,
+  'title' : string,
+  'evidenceLabel' : EvidenceLabel,
+  'newPersonCandidateId' : [] | [bigint],
+  'content' : FindingContent,
+  'conflictReviewId' : [] | [bigint],
+  'submittedAt' : bigint,
+  'submittedBy' : Principal,
+  'sourceId' : SourceId,
+  'reviewedAt' : [] | [bigint],
+  'reviewedBy' : [] | [Principal],
+  'updatedAt' : bigint,
+  'personId' : [] | [string],
+  'findingType' : FindingType,
+}
 export interface Recipe {
   'era' : [] | [string],
   'status' : RecipeStatus,
@@ -429,6 +520,18 @@ export type RelationshipAdminError = { 'RelationshipNotFound' : null } |
 export type RelationshipError = { 'DuplicateRequest' : null } |
   { 'NotSignedIn' : null } |
   { 'PersonNotFound' : null };
+export interface RelationshipProposal {
+  'id' : bigint,
+  'status' : ReviewStatus,
+  'fromPersonId' : string,
+  'submittedAt' : bigint,
+  'submittedBy' : Principal,
+  'sourceId' : SourceId,
+  'reviewedAt' : [] | [bigint],
+  'reviewedBy' : [] | [Principal],
+  'toPersonId' : string,
+  'relationshipType' : string,
+}
 export interface RelationshipRequest {
   'id' : bigint,
   'submittedDate' : bigint,
@@ -478,6 +581,18 @@ export type ReportStatus = { 'Dismissed' : null } |
   { 'Reviewed' : null } |
   { 'Pending' : null };
 export interface ReportedMessageView { 'report' : Report, 'message' : Message }
+export interface ResearchAuditEntry {
+  'id' : bigint,
+  'action' : string,
+  'findingId' : [] | [FindingId],
+  'sourceId' : [] | [SourceId],
+  'actorId' : Principal,
+  'summary' : string,
+  'timestamp' : bigint,
+}
+export type ResearchError = { 'invalidState' : string } |
+  { 'notAuthorized' : null } |
+  { 'notFound' : bigint };
 export interface Resolution {
   'supportingEvidence' : Array<string>,
   'summary' : string,
@@ -500,16 +615,24 @@ export type Result_14 = { 'ok' : AccountId } |
   { 'err' : AccountError };
 export type Result_15 = { 'ok' : SuccessorDesignation } |
   { 'err' : StewardError };
-export type Result_16 = { 'ok' : PersonProfile } |
+export type Result_16 = { 'ok' : SourceRecord } |
+  { 'err' : ResearchError };
+export type Result_17 = { 'ok' : RelationshipProposal } |
+  { 'err' : ResearchError };
+export type Result_18 = { 'ok' : NewPersonCandidate } |
+  { 'err' : ResearchError };
+export type Result_19 = { 'ok' : PersonProfile } |
   { 'err' : CreateError };
-export type Result_17 = { 'ok' : Relationship } |
-  { 'err' : RelationshipAdminError };
-export type Result_18 = { 'ok' : Account } |
-  { 'err' : AccountError };
-export type Result_19 = { 'ok' : null } |
-  { 'err' : Error };
 export type Result_2 = { 'ok' : null } |
   { 'err' : ArchiveError };
+export type Result_20 = { 'ok' : ProposedFinding } |
+  { 'err' : ResearchError };
+export type Result_21 = { 'ok' : Relationship } |
+  { 'err' : RelationshipAdminError };
+export type Result_22 = { 'ok' : Account } |
+  { 'err' : AccountError };
+export type Result_23 = { 'ok' : null } |
+  { 'err' : Error };
 export type Result_3 = { 'ok' : ProfileRemovalRequest } |
   { 'err' : RemovalError };
 export type Result_4 = { 'ok' : ProfileClaim } |
@@ -525,10 +648,38 @@ export type Result_8 = { 'ok' : RelationshipRequest } |
 export type Result_9 = { 'ok' : StewardRecord } |
   { 'err' : StewardError };
 export interface Result__1 { 'hasMore' : boolean, 'rows' : Array<Array<Cell>> }
+export interface ReviewQueue {
+  'pending' : bigint,
+  'conflicting' : bigint,
+  'approved' : bigint,
+  'rejected' : bigint,
+}
+export type ReviewStatus = { 'Conflicting' : null } |
+  { 'Approved' : null } |
+  { 'Rejected' : null } |
+  { 'Pending' : null };
+export type SourceId = bigint;
+export interface SourceRecord {
+  'id' : SourceId,
+  'status' : ReviewStatus,
+  'title' : string,
+  'archiveItemId' : [] | [bigint],
+  'createdAt' : bigint,
+  'description' : string,
+  'sourceType' : SourceType,
+  'updatedAt' : bigint,
+  'contributor' : Principal,
+}
 export type SourceStatus = { 'Copy' : null } |
   { 'Unverified' : null } |
   { 'Transcribed' : null } |
   { 'Original' : null };
+export type SourceType = { 'CertificateHeadstoneReference' : null } |
+  { 'DeedPropertyReference' : null } |
+  { 'ResearchNotes' : null } |
+  { 'EmailThread' : null } |
+  { 'UploadedDocumentImage' : null } |
+  { 'CensusCitation' : null };
 export type StewardError = { 'LastSteward' : null } |
   { 'NotSteward' : null } |
   { 'AlreadySteward' : null } |
@@ -645,7 +796,7 @@ export interface _SERVICE {
   >,
   '_immutableObjectStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
   '_initialize_access_control' : ActorMethod<[], undefined>,
-  '_internet_identity_sign_in_finish' : ActorMethod<[], Result_19>,
+  '_internet_identity_sign_in_finish' : ActorMethod<[], Result_23>,
   '_internet_identity_sign_in_start' : ActorMethod<[], Uint8Array>,
   /**
    * / Activates/promotes a designated successor into the active steward role.
@@ -686,13 +837,21 @@ export interface _SERVICE {
    */
   'addRelationship' : ActorMethod<
     [PersonId, PersonId, RelationshipType],
-    Result_17
+    Result_21
   >,
   /**
    * / Approves a pending archive item (admin only). Returns the updated item, or
    * / `null` when the item does not exist or is not pending.
    */
   'approveArchiveItem' : ActorMethod<[ArchiveItemId], [] | [ArchiveItem]>,
+  /**
+   * / Approves a pending finding (steward only), routing it to its target
+   * / surface. A finding labelled `#Conflicting` is never approved directly —
+   * / it is routed to a Conflict Review item instead of silently overwriting
+   * / canonical data. Returns the updated finding, or `null` when it does not
+   * / exist or is not pending.
+   */
+  'approveFinding' : ActorMethod<[FindingId], [] | [ProposedFinding]>,
   /**
    * / Approves a pending profile claim, marking the profile claimed and
    * / associating it with the requesting user. Family Steward only.
@@ -738,7 +897,7 @@ export interface _SERVICE {
    * / account. The account id is the caller's stable principal, so the same
    * / person profile stays intact if the provider changes.
    */
-  'bindAuthMethod' : ActorMethod<[AuthMethod], Result_18>,
+  'bindAuthMethod' : ActorMethod<[AuthMethod], Result_22>,
   /**
    * / Blocks another member, preventing them from sending new messages to the
    * / caller. Approved family members only.
@@ -758,7 +917,7 @@ export interface _SERVICE {
    */
   'correctRelationshipType' : ActorMethod<
     [bigint, RelationshipType],
-    Result_17
+    Result_21
   >,
   /**
    * / Creates a board post with a type, optional title, body, related family
@@ -788,11 +947,51 @@ export interface _SERVICE {
     Mystery
   >,
   /**
+   * / Creates a new proposed finding. Requires sign-in; the signed-in caller is
+   * / recorded as the submitter. The finding enters as `#Pending`.
+   */
+  'createFinding' : ActorMethod<
+    [
+      string,
+      EvidenceLabel,
+      FindingType,
+      FindingContent,
+      SourceId,
+      [] | [string],
+      [] | [bigint],
+    ],
+    Result_20
+  >,
+  /**
    * / "Add Myself to This Family": creates a minimal person profile for a user
    * / who does not already exist. The user must then connect to an existing
    * / family member via a relationship request.
    */
-  'createMyself' : ActorMethod<[string], Result_16>,
+  'createMyself' : ActorMethod<[string], Result_19>,
+  /**
+   * / Creates a new Person candidate. Requires sign-in; the signed-in caller is
+   * / recorded as the submitter. The candidate enters as `#Pending`.
+   */
+  'createNewPersonCandidate' : ActorMethod<
+    [string, string, SourceId],
+    Result_18
+  >,
+  /**
+   * / Creates a new relationship proposal. Requires sign-in; the signed-in
+   * / caller is recorded as the submitter. The proposal enters as `#Pending`.
+   */
+  'createRelationshipProposal' : ActorMethod<
+    [string, string, string, SourceId],
+    Result_17
+  >,
+  /**
+   * / Creates a new source record. Requires sign-in; the signed-in caller is
+   * / recorded as the contributor. The source enters as `#Pending`.
+   */
+  'createSource' : ActorMethod<
+    [string, SourceType, string, [] | [bigint]],
+    Result_16
+  >,
   /**
    * / Designates an approved claimed family member as a successor steward with a
    * / priority/order. A successor is a designation only until activated.
@@ -811,6 +1010,10 @@ export interface _SERVICE {
    * / read a conversation.
    */
   'getConversation' : ActorMethod<[ConversationId], [] | [ConversationView]>,
+  /**
+   * / Returns a single proposed finding by id.
+   */
+  'getFinding' : ActorMethod<[FindingId], [] | [ProposedFinding]>,
   /**
    * / Returns the stable account id of the signed-in caller. Anonymous callers
    * / receive #NotSignedIn.
@@ -875,10 +1078,23 @@ export interface _SERVICE {
    */
   'getReportedMessage' : ActorMethod<[ReportId], [] | [ReportedMessageView]>,
   /**
+   * / Returns the full research intake audit history.
+   */
+  'getResearchAuditLog' : ActorMethod<[], Array<ResearchAuditEntry>>,
+  /**
+   * / Returns the review queue badge counts (pending, approved, rejected,
+   * / conflicting) across all reviewable research intake items.
+   */
+  'getReviewQueue' : ActorMethod<[], ReviewQueue>,
+  /**
    * / Returns a warning encouraging successor designation when only one steward
    * / exists, or `null` when there are multiple stewards. Family Steward only.
    */
   'getSingleStewardWarning' : ActorMethod<[], [] | [string]>,
+  /**
+   * / Returns a single source record by id.
+   */
+  'getSource' : ActorMethod<[SourceId], [] | [SourceRecord]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
   /**
    * / Lists all archive items in approved state (visible in the archive).
@@ -926,6 +1142,10 @@ export interface _SERVICE {
    */
   'listConfirmedRelationships' : ActorMethod<[], Array<Relationship>>,
   /**
+   * / Lists all conflict review items (steward only).
+   */
+  'listConflictReviewItems' : ActorMethod<[], Array<ConflictReviewItem>>,
+  /**
    * / Returns the signed-in caller's inbox: one summary per conversation they
    * / participate in, newest activity first. Approved family members only.
    */
@@ -944,6 +1164,10 @@ export interface _SERVICE {
    */
   'listEligibleStewardCandidates' : ActorMethod<[], Array<StewardIdentity>>,
   /**
+   * / Lists all proposed findings (steward only).
+   */
+  'listFindings' : ActorMethod<[], Array<ProposedFinding>>,
+  /**
    * / Returns the person ids of every other member the signed-in caller may
    * / message: living, claimed, linked to an active account, not archived, and
    * / not the caller. Not gated to stewards — any approved member may read it, so
@@ -956,6 +1180,10 @@ export interface _SERVICE {
    * / Lists all mysteries (visible to viewers).
    */
   'listMysteries' : ActorMethod<[], Array<Mystery>>,
+  /**
+   * / Lists all New Person candidates (steward only).
+   */
+  'listNewPersonCandidates' : ActorMethod<[], Array<NewPersonCandidate>>,
   /**
    * / Lists in-app notification records for the signed-in caller.
    */
@@ -1002,6 +1230,10 @@ export interface _SERVICE {
    */
   'listRecipesForPerson' : ActorMethod<[string], Array<Recipe>>,
   /**
+   * / Lists all relationship proposals (steward only).
+   */
+  'listRelationshipProposals' : ActorMethod<[], Array<RelationshipProposal>>,
+  /**
    * / Lists all relationship requests for the Family Steward review area.
    */
   'listRelationshipRequests' : ActorMethod<[], Array<RelationshipRequest>>,
@@ -1009,6 +1241,10 @@ export interface _SERVICE {
    * / Lists all reports. Family Steward only.
    */
   'listReports' : ActorMethod<[], Array<Report>>,
+  /**
+   * / Lists all source records (steward only).
+   */
+  'listSources' : ActorMethod<[], Array<SourceRecord>>,
   /**
    * / Returns each current Steward and designated Successor enriched with the
    * / linked approved Person identity (personId, preferred/display name, and
@@ -1114,6 +1350,11 @@ export interface _SERVICE {
    */
   'rejectArchiveItem' : ActorMethod<[ArchiveItemId], [] | [ArchiveItem]>,
   /**
+   * / Rejects a pending finding (steward only). Returns the updated finding, or
+   * / `null` when it does not exist or is not pending.
+   */
+  'rejectFinding' : ActorMethod<[FindingId], [] | [ProposedFinding]>,
+  /**
    * / Rejects a pending profile claim. Family Steward only.
    */
   'rejectProfileClaim' : ActorMethod<[bigint], [] | [ProfileClaim]>,
@@ -1179,6 +1420,11 @@ export interface _SERVICE {
    * / A Family Steward reviews the request.
    */
   'requestProfileRemoval' : ActorMethod<[PersonId, string], Result_3>,
+  /**
+   * / Resolves a conflict review item (steward only). Returns the updated item,
+   * / or `null` when it does not exist.
+   */
+  'resolveConflict' : ActorMethod<[bigint], [] | [ConflictReviewItem]>,
   /**
    * / Resolves a merge conflict by choosing the canonical display value. Family
    * / Steward only.

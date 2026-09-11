@@ -589,6 +589,78 @@ Contributions badge.
   pending data, so it increments on new pending items and decrements on
   Approve/Reject automatically.
 
+### Historical Research Intake
+
+- `createSource(title : Text, sourceType : SourceType, description : Text, archiveItemId : ?Nat) : async Result<SourceRecord, ResearchError>` —
+  update. Creates a lightweight source record so every fact retains provenance.
+  Requires a signed-in (non-anonymous) caller; returns `#err(#notAuthorized)` for
+  an anonymous caller. The signed-in caller is recorded as the `contributor`. The
+  source enters as `#Pending` and is never auto-approved. `archiveItemId` is
+  optional — a source may link to an Archive item without requiring one.
+- `listSources() : async [SourceRecord]` — query. Family Steward only. Lists all
+  source records.
+- `getSource(id : SourceId) : async ?SourceRecord` — query. Returns a single
+  source record by id, or `null` when it does not exist. Not gated to admin — any
+  caller may query a source by id.
+- `createFinding(title : Text, evidenceLabel : EvidenceLabel, findingType : FindingType, content : FindingContent, sourceId : SourceId, personId : ?Text, newPersonCandidateId : ?Nat) : async Result<ProposedFinding, ResearchError>` —
+  update. Creates a proposed finding carrying exactly one evidence label and a
+  required source link. Requires a signed-in (non-anonymous) caller; returns
+  `#err(#notAuthorized)` for an anonymous caller and `#err(#notFound(sourceId))`
+  when the referenced source does not exist. The finding may match an existing
+  canonical Person (`personId`) or reference a New Person Candidate
+  (`newPersonCandidateId`). The finding enters as `#Pending` and is never
+  auto-approved.
+- `listFindings() : async [ProposedFinding]` — query. Family Steward only. Lists
+  all proposed findings.
+- `getFinding(id : FindingId) : async ?ProposedFinding` — query. Returns a single
+  proposed finding by id, or `null` when it does not exist. Not gated to admin —
+  any caller may query a finding by id.
+- `approveFinding(id : FindingId) : async ?ProposedFinding` — update. Family
+  Steward only. Approves a pending finding, routing it to its target surface
+  (Profile, family graph, Timeline / Travel Through Time, Family Stories, Family
+  Mysteries, or Profile Sources / Archive). A finding labelled `#Conflicting` is
+  never approved directly — it is routed to a Conflict Review item instead of
+  silently overwriting canonical data, and the finding is marked `#Conflicting`
+  with a `conflictReviewId` link. Returns the updated finding, or `null` when it
+  does not exist or is not pending.
+- `rejectFinding(id : FindingId) : async ?ProposedFinding` — update. Family
+  Steward only. Rejects a pending finding. Returns the updated finding, or `null`
+  when it does not exist or is not pending.
+- `createNewPersonCandidate(name : Text, details : Text, sourceId : SourceId) : async Result<NewPersonCandidate, ResearchError>` —
+  update. Creates a candidate for a Person not yet in the canonical set. Requires
+  a signed-in (non-anonymous) caller; returns `#err(#notAuthorized)` for an
+  anonymous caller and `#err(#notFound(sourceId))` when the referenced source
+  does not exist. The candidate enters as `#Pending`; approved candidates become
+  canonical Person records.
+- `listNewPersonCandidates() : async [NewPersonCandidate]` — query. Family
+  Steward only. Lists all New Person candidates.
+- `createRelationshipProposal(fromPersonId : Text, toPersonId : Text, relationshipType : Text, sourceId : SourceId) : async Result<RelationshipProposal, ResearchError>` —
+  update. Proposes a relationship between two Persons. Requires a signed-in
+  (non-anonymous) caller; returns `#err(#notAuthorized)` for an anonymous caller
+  and `#err(#notFound(sourceId))` when the referenced source does not exist. The
+  proposal enters as `#Pending`; approved proposals route to the family graph.
+- `listRelationshipProposals() : async [RelationshipProposal]` — query. Family
+  Steward only. Lists all relationship proposals.
+- `listConflictReviewItems() : async [ConflictReviewItem]` — query. Family
+  Steward only. Lists all conflict review items (findings that contradict
+  existing canonical data and were routed to review instead of silently
+  overwriting it).
+- `resolveConflict(id : Nat) : async ?ConflictReviewItem` — update. Family
+  Steward only. Resolves a conflict review item, writing the proposed value of
+  the underlying finding into its canonical area (Profile, family graph,
+  Timeline, Family Stories, Family Mysteries, or Archive), then marking the item
+  `#Approved` and recording the reviewer and review time. Returns the updated
+  item, or `null` when it does not exist.
+- `getReviewQueue() : async ReviewQueue` — query. Returns the review queue badge
+  counts (`pending`, `approved`, `rejected`, `conflicting`) aggregated across all
+  reviewable research intake items (findings, New Person candidates, relationship
+  proposals, and conflict review items). Not gated to admin — any caller may read
+  the queue counts.
+- `getResearchAuditLog() : async [ResearchAuditEntry]` — query. Returns the full
+  research intake audit history recording provenance and approval actions for
+  every finding and its review lifecycle. Not gated to admin — any caller may
+  read the research audit log.
+
 ### Object Query Layer (OQL)
 
 - `schema() : async Text` — query. Returns a JSON catalogue of the exposed
@@ -600,8 +672,9 @@ The exposed entities are `photo`, `archiveItem`, `profile`, `claim`,
 `relationshipRequest`, `confirmedRelationship`, `notification`, `account`,
 `steward`, `successor`, `removalRequest`, `auditLog`, `mergeConflict`,
 `archivedProfile`, `dismissedPair`, `story`, `mystery`, `mysteryContribution`,
-`recipe`, `boardPost`, `boardReply`, `conversation`, `message`, `block`, and
-`report`.
+`recipe`, `boardPost`, `boardReply`, `conversation`, `message`, `block`,
+`report`, `researchSource`, `proposedFinding`, `newPersonCandidate`,
+`relationshipProposal`, `conflictReviewItem`, and `researchAuditLog`.
 Most are declared `.controllerOnly()` (see the authorization section); the
 `conversation` entity is `.controllerOrScoped()` and the `message` entity is
 `.scopedPerUser()`, both with a participant-only visibility rule. `photo` rows are flattened
@@ -739,6 +812,39 @@ text), `blockedAccountId` (principal text), and `createdAt` (`Int`). `report`
 rows (primary key `reportId`, a `Nat`) carry `reportingAccountId` (principal
 text), `reportedMessageId` (`Nat`), `reason`, `createdAt` (`Int`), and `status`
 (`\"Pending\"`/`\"Reviewed\"`/`\"Dismissed\"`).
+
+The research-intake entities are flattened views of the corresponding records.
+`researchSource` rows (primary key `id`, a `Nat`) carry `title`, `sourceType`
+(`\"CensusCitation\"`/`\"DeedPropertyReference\"`/`\"EmailThread\"`/`\"ResearchNotes\"`/`\"CertificateHeadstoneReference\"`/`\"UploadedDocumentImage\"`),
+`description`, `archiveItemId` (`Nat`, `0` when the source links to no Archive
+item), `contributor` (principal text), `status`
+(`\"Pending\"`/`\"Approved\"`/`\"Rejected\"`/`\"Conflicting\"`), `createdAt`
+(`Int`, nanoseconds since epoch), and `updatedAt` (`Int`). `proposedFinding`
+rows (primary key `id`, a `Nat`) carry `title`, `evidenceLabel`
+(`\"Documented\"`/`\"FamilyHistoryOralHistory\"`/`\"PersonalMemory\"`/`\"Hypothesis\"`/`\"Conflicting\"`/`\"NeedsResearch\"`),
+`findingType` (`\"PersonFact\"`/`\"Relationship\"`/`\"TimelineEvent\"`/`\"Story\"`/`\"Mystery\"`/`\"Source\"`),
+`sourceId` (`Nat`), `personId` (`\"\"` when the finding matches no canonical
+Person), `newPersonCandidateId` (`Nat`, `0` when none), `status`, `conflictReviewId`
+(`Nat`, `0` when the finding is not linked to a Conflict Review item),
+`submittedBy` (principal text), `submittedAt` (`Int`), `reviewedBy` (principal
+text, `\"\"` when unreviewed), `reviewedAt` (`Int`, `0` when unreviewed), and
+`updatedAt` (`Int`). The nested `content` variant is not exposed (OQL has no
+variant value type); the `findingType` column carries the routing target.
+`newPersonCandidate` rows (primary key `id`, a `Nat`) carry `name`, `details`,
+`sourceId`, `status`, `submittedBy` (principal text), `submittedAt` (`Int`),
+`reviewedBy` (principal text, `\"\"` when unreviewed), and `reviewedAt` (`Int`,
+`0` when unreviewed). `relationshipProposal` rows (primary key `id`, a `Nat`)
+carry `fromPersonId`, `toPersonId`, `relationshipType`, `sourceId`, `status`,
+`submittedBy` (principal text), `submittedAt` (`Int`), `reviewedBy` (principal
+text, `\"\"` when unreviewed), and `reviewedAt` (`Int`, `0` when unreviewed).
+`conflictReviewItem` rows (primary key `id`, a `Nat`) carry `findingId` (`Nat`),
+`field`, `canonicalValue`, `proposedValue`, `status`, `resolvedBy` (principal
+text, `\"\"` when unresolved), and `resolvedAt` (`Int`, `0` when unresolved).
+`researchAuditLog` rows (primary key `id`, a `Nat`) carry `action` (the audit
+action tag text, e.g. `\"SourceCreated\"`/`\"FindingSubmitted\"`/`\"FindingApproved\"`/`\"FindingRoutedToConflict\"`/`\"ConflictResolved\"`),
+`findingId` (`Nat`, `0` when the entry is not tied to a finding), `sourceId`
+(`Nat`, `0` when the entry is not tied to a source), `actorId` (principal text),
+`timestamp` (`Int`, nanoseconds since epoch), and `summary`.
 
 ### Access control and Internet Identity
 
@@ -900,6 +1006,25 @@ The Pending Contributions method `getPendingContributionsCount` is Family
 Steward only: it traps with `\"Unauthorized: You must be signed in\"` for an
 anonymous caller and `\"Unauthorized: Only Family Stewards can view the pending
 contributions count\"` when the caller is not an admin.
+
+The Historical Research Intake methods gate on sign-in and role. The creation
+methods — `createSource`, `createFinding`, `createNewPersonCandidate`, and
+`createRelationshipProposal` — require a signed-in (non-anonymous) caller and
+return `#err(#notAuthorized)` for an anonymous caller (they do not trap). The
+Family Steward review methods — `listSources`, `listFindings`,
+`listNewPersonCandidates`, `listRelationshipProposals`,
+`listConflictReviewItems`, `approveFinding`, `rejectFinding`, and
+`resolveConflict` — are admin-only and trap with `\"Unauthorized: You must be
+signed in\"` for an anonymous caller and `\"Unauthorized: Only Family Stewards
+can perform this action\"` when the caller is not an admin. The read methods
+`getSource`, `getFinding`, `getReviewQueue`, and `getResearchAuditLog` are
+readable by any caller (they are not gated to admin). The research-intake OQL
+entities (`researchSource`, `proposedFinding`, `newPersonCandidate`,
+`relationshipProposal`, `conflictReviewItem`, `researchAuditLog`) are all
+declared `.controllerOnly()`, so only the platform controller can read their
+rows through `schema()`/`execute()`; end users do not read them directly. This
+keeps the research intake data private to the platform while still letting the
+Data Intelligence agent answer over it.
 
 Registration gates role-guarded access. A direct API caller must call
 `_initialize_access_control()` once as a signed-in caller before any
@@ -1197,6 +1322,63 @@ already reference the caller's stable principal (`requestingUserId`,
   `\"person-<personId>-<index>\"`, `\"archive-<id>\"`, `\"story-<id>\"`, or
   `\"mystery-<id>\"`), `eventType`, `title` (`Text`), `description` (`Text`),
   `era` (`?Text`), `year` (`?Nat`), `evidenceStatus`, and `linkTarget`.
+- `SourceId` and `FindingId` are `Nat`, unique across their respective
+  collections.
+- `SourceType` is a variant: `#CensusCitation`, `#DeedPropertyReference`,
+  `#EmailThread`, `#ResearchNotes`, `#CertificateHeadstoneReference`, or
+  `#UploadedDocumentImage`.
+- `EvidenceLabel` is a variant: `#Documented`, `#FamilyHistoryOralHistory`,
+  `#PersonalMemory`, `#Hypothesis`, `#Conflicting`, or `#NeedsResearch`. Exactly
+  one label is assigned per finding.
+- `ReviewStatus` is a variant: `#Pending`, `#Approved`, `#Rejected`, or
+  `#Conflicting`. Everything enters as `#Pending` and is only ever promoted by an
+  explicit steward action.
+- `FindingType` is a variant: `#PersonFact`, `#Relationship`, `#TimelineEvent`,
+  `#Story`, `#Mystery`, or `#Source`. It determines where an approved finding
+  routes.
+- `SourceRecord` fields: `id` (`SourceId`), `title` (`Text`), `sourceType`,
+  `description` (`Text`), `archiveItemId` (`?Nat`, `null` when the source links
+  to no Archive item — a source may optionally link to an Archive item without
+  requiring one), `contributor` (`Principal`), `status` (`ReviewStatus`),
+  `createdAt` (`Int`, nanoseconds since epoch), and `updatedAt` (`Int`).
+- `FindingContent` is a variant carrying the content of a proposed finding keyed
+  by where it routes on approval: `#PersonFact` (`personId`, `field`, `value`),
+  `#Relationship` (`fromPersonId`, `toPersonId`, `relationshipType`),
+  `#TimelineEvent` (`personId`, `title`, `date` (`?Text`), `description`),
+  `#Story` (`title`, `storyText`, `relatedPersonIds`), `#Mystery` (`title`,
+  `description`, `relatedPersonIds`), or `#Source` (`title`, `sourceType`,
+  `description`, `archiveItemId`).
+- `ProposedFinding` fields: `id` (`FindingId`), `title` (`Text`),
+  `evidenceLabel`, `findingType`, `content` (`FindingContent`), `sourceId`
+  (`SourceId`, the required source link), `personId` (`?Text`, the matched
+  canonical Person, `null` when none), `newPersonCandidateId` (`?Nat`, the New
+  Person Candidate, `null` when none), `status` (`ReviewStatus`),
+  `conflictReviewId` (`?Nat`, `null` until the finding is routed to a Conflict
+  Review item), `submittedBy` (`Principal`), `submittedAt` (`Int`), `reviewedBy`
+  (`?Principal`, `null` when unreviewed), `reviewedAt` (`?Int`, `null` when
+  unreviewed), and `updatedAt` (`Int`).
+- `NewPersonCandidate` fields: `id` (`Nat`), `name` (`Text`), `details` (`Text`),
+  `sourceId` (`SourceId`), `status` (`ReviewStatus`), `submittedBy`
+  (`Principal`), `submittedAt` (`Int`), `reviewedBy` (`?Principal`), and
+  `reviewedAt` (`?Int`). Approved candidates become canonical Person records.
+- `RelationshipProposal` fields: `id` (`Nat`), `fromPersonId` (`Text`),
+  `toPersonId` (`Text`), `relationshipType` (`Text`), `sourceId` (`SourceId`),
+  `status` (`ReviewStatus`), `submittedBy` (`Principal`), `submittedAt` (`Int`),
+  `reviewedBy` (`?Principal`), and `reviewedAt` (`?Int`). Approved proposals route
+  to the family graph.
+- `ConflictReviewItem` fields: `id` (`Nat`), `findingId` (`FindingId`), `field`
+  (`Text`), `canonicalValue` (`Text`), `proposedValue` (`Text`), `status`
+  (`ReviewStatus`), `resolvedBy` (`?Principal`), and `resolvedAt` (`?Int`). A
+  conflict item is created instead of silently overwriting conflicting data.
+- `ResearchAuditEntry` fields: `id` (`Nat`), `action` (`Text`, the audit action
+  tag, e.g. `\"SourceCreated\"`/`\"FindingSubmitted\"`/`\"FindingApproved\"`/`\"FindingRoutedToConflict\"`/`\"ConflictResolved\"`),
+  `findingId` (`?FindingId`, `null` when not tied to a finding), `sourceId`
+  (`?SourceId`, `null` when not tied to a source), `actorId` (`Principal`),
+  `timestamp` (`Int`, nanoseconds since epoch), and `summary` (`Text`).
+- `ReviewQueue` fields: `pending` (`Nat`), `approved` (`Nat`), `rejected`
+  (`Nat`), and `conflicting` (`Nat`) — the aggregated review queue badge counts.
+- `ResearchError` is a variant: `#notAuthorized`, `#notFound : Nat`, or
+  `#invalidState : Text`.
 
 ## Lifecycle and polling
 
@@ -1348,6 +1530,26 @@ It increments when a new pending item is submitted and decrements when an item i
 approved or rejected, automatically — there is no separate counter to maintain.
 The frontend calls it to render the Steward-facing Pending Contributions badge
 and hides the badge when the count is `0`.
+
+Historical Research Intake follows a submit → review lifecycle. A signed-in
+caller creates a source (`createSource`) and then proposed findings
+(`createFinding`), New Person candidates (`createNewPersonCandidate`), and
+relationship proposals (`createRelationshipProposal`), each referencing a source
+for provenance. Everything enters as `#Pending` and is never auto-approved. A
+Family Steward then reviews each item: `approveFinding` routes an approved
+finding to its target surface (Profile, family graph, Timeline / Travel Through
+Time, Family Stories, Family Mysteries, or Profile Sources / Archive),
+`rejectFinding` rejects it, and `resolveConflict` writes the proposed value of a
+conflict review item's underlying finding into its canonical area and marks the
+item resolved. A finding labelled `#Conflicting` is never approved directly — `approveFinding`
+routes it to a Conflict Review item (marking the finding `#Conflicting` with a
+`conflictReviewId`) instead of silently overwriting canonical data. Every
+creation and review action records a `ResearchAuditEntry` in the research audit
+log, readable via `getResearchAuditLog`. The review queue badge counts are
+derived on demand via `getReviewQueue`, aggregating pending/approved/rejected/
+conflicting across findings, candidates, proposals, and conflict items. There is
+no async job to poll; the frontend can call the list methods (steward) or
+`getReviewQueue`/`getResearchAuditLog` to observe the current state.
 
 ## Mutation retry safety, idempotency, and destructive effects
 
@@ -1519,6 +1721,24 @@ and hides the badge when the count is `0`.
   report returns `null` and changes nothing.
 - `getPendingContributionsCount` is a read-only query with no side effects; it is
   always idempotent.
+- `createSource`, `createFinding`, `createNewPersonCandidate`, and
+  `createRelationshipProposal` are not idempotent: each call stores a new record
+  with a fresh id. Retrying a submission that actually succeeded creates a
+  duplicate record. `createFinding`, `createNewPersonCandidate`, and
+  `createRelationshipProposal` validate the referenced source and return
+  `#err(#notFound(sourceId))` (storing nothing) when it does not exist.
+- `approveFinding` and `rejectFinding` are idempotent: approving or rejecting an
+  already-reviewed (or nonexistent) finding returns `null` and changes nothing.
+  They only transition findings currently in `#Pending` state. Approving a
+  `#Conflicting`-labelled finding does not approve it — it routes the finding to
+  a Conflict Review item and marks the finding `#Conflicting` instead of silently
+  overwriting canonical data.
+- `resolveConflict` is idempotent: resolving an already-resolved (or nonexistent)
+  conflict item returns `null` and changes nothing. On the first resolution it
+  writes the proposed value of the underlying finding into its canonical area,
+  marks the item `#Approved`, and records the reviewer and review time.
+- `getSource`, `getFinding`, `getReviewQueue`, and `getResearchAuditLog` are
+  read-only queries with no side effects; they are always idempotent.
 
 ## Errors, traps, limits, and gotchas
 
@@ -1684,6 +1904,27 @@ and hides the badge when the count is `0`.
   to message content; the `block` entity's
   primary key is the composite `key` (`\"<blocker>:<blocked>\"`) because a block
   is a pair with no single unique id.
+- The Historical Research Intake creation methods (`createSource`,
+  `createFinding`, `createNewPersonCandidate`, `createRelationshipProposal`)
+  return `#err(#notAuthorized)` for an anonymous caller rather than trapping.
+  `createFinding`, `createNewPersonCandidate`, and
+  `createRelationshipProposal` return `#err(#notFound(sourceId))` when the
+  referenced source does not exist.
+- The Family Steward research-intake review methods (`listSources`,
+  `listFindings`, `listNewPersonCandidates`, `listRelationshipProposals`,
+  `listConflictReviewItems`, `approveFinding`, `rejectFinding`,
+  `resolveConflict`) trap with `\"Unauthorized: You must be signed in\"` for an
+  anonymous caller and `\"Unauthorized: Only Family Stewards can perform this
+  action\"` when the caller is not an admin.
+- `approveFinding`, `rejectFinding`, and `resolveConflict` return `null` (they do
+  not trap) when the target id does not exist or is not in the expected state.
+  `getSource` and `getFinding` return `null` when the target id does not exist.
+- The research-intake OQL entities (`researchSource`, `proposedFinding`,
+  `newPersonCandidate`, `relationshipProposal`, `conflictReviewItem`,
+  `researchAuditLog`) are flattened views: enumerated variants render as their
+  tag text, optional fields render as empty text or `0`, and the nested
+  `content` variant on a proposed finding is not exposed (OQL has no variant
+  value type) — the `findingType` column carries the routing target.
 "
   };
 };

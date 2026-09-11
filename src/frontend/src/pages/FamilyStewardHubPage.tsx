@@ -7,6 +7,7 @@ import {
   Inbox,
   Landmark,
   Network,
+  ScrollText,
   ShieldCheck,
   UserCog,
 } from "lucide-react";
@@ -15,12 +16,14 @@ import { useIsAdmin, usePendingArchiveItems } from "../hooks/useArchiveStorage";
 import { useListReports } from "../hooks/useMessaging";
 import { useListProfileClaims } from "../hooks/useProfileClaims";
 import { useListRelationshipRequests } from "../hooks/useRelationshipRequests";
+import { useGetReviewQueue } from "../hooks/useResearchIntake";
 
 interface FamilyStewardHubPageProps {
   onBack: () => void;
   onOpenReview: () => void;
   onOpenPendingContributions: () => void;
   onOpenGovernance: () => void;
+  onOpenResearchIntake: () => void;
 }
 
 /**
@@ -56,17 +59,24 @@ export function FamilyStewardHubPage({
   onOpenReview,
   onOpenPendingContributions,
   onOpenGovernance,
+  onOpenResearchIntake,
 }: FamilyStewardHubPageProps) {
   const { data: isAdmin = false } = useIsAdmin();
   const { data: claims = [] } = useListProfileClaims();
   const { data: requests = [] } = useListRelationshipRequests();
   const { data: reports = [] } = useListReports();
   const { data: pendingArchiveItems = [] } = usePendingArchiveItems();
+  const { data: reviewQueue } = useGetReviewQueue();
 
   const pendingClaims = claims.filter((c) => c.status === "Pending").length;
   const pendingRequests = requests.filter((r) => r.status === "Pending").length;
   const pendingReports = reports.filter((r) => r.status === "Pending").length;
   const pendingArchiveCount = pendingArchiveItems.length;
+  // Research intake items awaiting steward review: pending findings plus
+  // conflicting items that need resolution.
+  const pendingResearchCount = reviewQueue
+    ? Number(reviewQueue.pending) + Number(reviewQueue.conflicting)
+    : 0;
 
   // Normal family members must never see Steward controls. The nav link is
   // already gated to Stewards; this guard is defense-in-depth so a direct
@@ -128,6 +138,31 @@ export function FamilyStewardHubPage({
       </header>
 
       <div data-ocid="steward_hub.grid" className="hub-grid">
+        <button
+          type="button"
+          data-ocid="steward_hub.research_intake_option"
+          onClick={onOpenResearchIntake}
+          className="hub-option hub-accent-steward"
+        >
+          <span className="hub-option-head">
+            <span className="hub-option-icon">
+              <ScrollText
+                className="h-5 w-5"
+                strokeWidth={1.75}
+                aria-hidden="true"
+              />
+            </span>
+            <span className="hub-option-title">Research Intake</span>
+            <StewardCountBadge count={pendingResearchCount} />
+            <span className="hub-option-arrow" aria-hidden="true">
+              →
+            </span>
+          </span>
+          <span className="hub-option-desc">
+            Record sources, proposed findings, and new person candidates.
+          </span>
+        </button>
+
         <button
           type="button"
           data-ocid="steward_hub.review_option"

@@ -75,6 +75,15 @@ export type Result_6 = {
     __kind__: "err";
     err: RelationshipAdminError;
 };
+export interface MergeConflict {
+    id: bigint;
+    field: string;
+    status: MergeConflictStatus;
+    alternateValue: string;
+    canonicalValue: string;
+    resolvedAt?: bigint;
+    resolvedBy?: Principal;
+}
 export interface Story {
     id: StoryId;
     era?: string;
@@ -90,16 +99,19 @@ export interface Story {
     location?: string;
     contributor: Principal;
 }
-export interface OralHistorySpeaker {
-    name: string;
-    personId?: string;
-}
+export type FindingId = bigint;
 export interface SuccessorDesignation {
     status: SuccessorStatus;
     assignedAt: bigint;
     assignedBy: Principal;
     personId: PersonId;
     priority: bigint;
+}
+export interface ReviewQueue {
+    pending: bigint;
+    conflicting: bigint;
+    approved: bigint;
+    rejected: bigint;
 }
 export type Result_12 = {
     __kind__: "ok";
@@ -117,19 +129,46 @@ export interface ProfileClaim {
     personId: PersonId;
     requestingUserId: Principal;
 }
-export interface MergeConflict {
-    id: bigint;
-    field: string;
-    status: MergeConflictStatus;
-    alternateValue: string;
-    canonicalValue: string;
-    resolvedAt?: bigint;
-    resolvedBy?: Principal;
+export interface OralHistorySpeaker {
+    name: string;
+    personId?: string;
 }
+export type MysteryId = bigint;
 export interface MergeResult {
     archivedPersonId: PersonId;
     conflicts: Array<MergeConflict>;
     canonicalPersonId: PersonId;
+}
+export type Result = {
+    __kind__: "ok";
+    ok: PersonProfile;
+} | {
+    __kind__: "err";
+    err: EditError;
+};
+export type Result_10 = {
+    __kind__: "ok";
+    ok: null;
+} | {
+    __kind__: "err";
+    err: DeleteError;
+};
+export type MessageId = bigint;
+export type NotificationId = bigint;
+export type Result_8 = {
+    __kind__: "ok";
+    ok: RelationshipRequest;
+} | {
+    __kind__: "err";
+    err: RelationshipError;
+};
+export interface Notification {
+    id: bigint;
+    notificationType: NotificationType;
+    createdAt: bigint;
+    read: boolean;
+    recipient: Principal;
+    message: string;
 }
 export type Error_ = {
     __kind__: "FrontendOriginsNotConfigured";
@@ -175,38 +214,6 @@ export type Error_ = {
         expected: Array<string>;
     };
 };
-export type MysteryId = bigint;
-export type Result = {
-    __kind__: "ok";
-    ok: PersonProfile;
-} | {
-    __kind__: "err";
-    err: EditError;
-};
-export type Result_10 = {
-    __kind__: "ok";
-    ok: null;
-} | {
-    __kind__: "err";
-    err: DeleteError;
-};
-export type MessageId = bigint;
-export type NotificationId = bigint;
-export type Result_8 = {
-    __kind__: "ok";
-    ok: RelationshipRequest;
-} | {
-    __kind__: "err";
-    err: RelationshipError;
-};
-export interface Notification {
-    id: bigint;
-    notificationType: NotificationType;
-    createdAt: bigint;
-    read: boolean;
-    recipient: Principal;
-    message: string;
-}
 export interface Recipe {
     era?: string;
     status: RecipeStatus;
@@ -309,6 +316,15 @@ export interface ConversationSummary {
     latestMessagePreview: string;
     latestMessageAt: Timestamp;
 }
+export interface ResearchAuditEntry {
+    id: bigint;
+    action: string;
+    findingId?: FindingId;
+    sourceId?: SourceId;
+    actorId: Principal;
+    summary: string;
+    timestamp: bigint;
+}
 export type TimelineLinkTarget = {
     __kind__: "Story";
     Story: StoryId;
@@ -323,12 +339,19 @@ export type TimelineLinkTarget = {
     ArchiveItem: bigint;
 };
 export type StoryId = bigint;
-export type Result_18 = {
+export type Result_21 = {
     __kind__: "ok";
-    ok: Account;
+    ok: Relationship;
 } | {
     __kind__: "err";
-    err: AccountError;
+    err: RelationshipAdminError;
+};
+export type Result_18 = {
+    __kind__: "ok";
+    ok: NewPersonCandidate;
+} | {
+    __kind__: "err";
+    err: ResearchError;
 };
 export type Result_3 = {
     __kind__: "ok";
@@ -336,6 +359,13 @@ export type Result_3 = {
 } | {
     __kind__: "err";
     err: RemovalError;
+};
+export type Result_23 = {
+    __kind__: "ok";
+    ok: null;
+} | {
+    __kind__: "err";
+    err: Error_;
 };
 export type Result_15 = {
     __kind__: "ok";
@@ -411,6 +441,27 @@ export interface RelationshipRequest {
     proposedRelationship: RelationshipType;
     reviewer?: Principal;
 }
+export type ResearchError = {
+    __kind__: "invalidState";
+    invalidState: string;
+} | {
+    __kind__: "notAuthorized";
+    notAuthorized: null;
+} | {
+    __kind__: "notFound";
+    notFound: bigint;
+};
+export interface NewPersonCandidate {
+    id: bigint;
+    status: ReviewStatus;
+    name: string;
+    submittedAt: bigint;
+    submittedBy: Principal;
+    sourceId: SourceId;
+    reviewedAt?: bigint;
+    reviewedBy?: Principal;
+    details: string;
+}
 export interface AuditEntry {
     id: bigint;
     affectedPersonIds: Array<PersonId>;
@@ -455,6 +506,17 @@ export type Result_9 = {
     __kind__: "err";
     err: StewardError;
 };
+export interface ConflictReviewItem {
+    id: bigint;
+    field: string;
+    status: ReviewStatus;
+    findingId: FindingId;
+    proposedValue: string;
+    canonicalValue: string;
+    resolvedAt?: bigint;
+    resolvedBy?: Principal;
+}
+export type SourceId = bigint;
 export type Timestamp = bigint;
 export interface Reply {
     authorAccountId: AccountId;
@@ -466,10 +528,10 @@ export interface Reply {
 }
 export type Result_17 = {
     __kind__: "ok";
-    ok: Relationship;
+    ok: RelationshipProposal;
 } | {
     __kind__: "err";
-    err: RelationshipAdminError;
+    err: ResearchError;
 };
 export interface StewardIdentity {
     accountId: Principal;
@@ -479,10 +541,10 @@ export interface StewardIdentity {
 }
 export type Result_16 = {
     __kind__: "ok";
-    ok: PersonProfile;
+    ok: SourceRecord;
 } | {
     __kind__: "err";
-    err: CreateError;
+    err: ResearchError;
 };
 export type Result_1 = {
     __kind__: "ok";
@@ -491,6 +553,13 @@ export type Result_1 = {
     __kind__: "err";
     err: MessageError;
 };
+export type Result_22 = {
+    __kind__: "ok";
+    ok: Account;
+} | {
+    __kind__: "err";
+    err: AccountError;
+};
 export interface Resolution {
     supportingEvidence: Array<string>;
     summary: string;
@@ -498,14 +567,24 @@ export interface Resolution {
     resolvedBy: Principal;
 }
 export type ReportId = bigint;
-export type ConversationId = bigint;
-export type ArchiveItemId = bigint;
+export interface RelationshipProposal {
+    id: bigint;
+    status: ReviewStatus;
+    fromPersonId: string;
+    submittedAt: bigint;
+    submittedBy: Principal;
+    sourceId: SourceId;
+    reviewedAt?: bigint;
+    reviewedBy?: Principal;
+    toPersonId: string;
+    relationshipType: string;
+}
 export type Result_19 = {
     __kind__: "ok";
-    ok: null;
+    ok: PersonProfile;
 } | {
     __kind__: "err";
-    err: Error_;
+    err: CreateError;
 };
 export interface Mystery {
     id: MysteryId;
@@ -523,6 +602,8 @@ export interface Mystery {
     relatedSourceIds: Array<bigint>;
     contributor: Principal;
 }
+export type ConversationId = bigint;
+export type ArchiveItemId = bigint;
 export type Result_14 = {
     __kind__: "ok";
     ok: AccountId;
@@ -559,6 +640,68 @@ export interface ConversationView {
     conversationId: ConversationId;
     participantDisplayNames: Array<string>;
 }
+export type FindingContent = {
+    __kind__: "Story";
+    Story: {
+        title: string;
+        storyText: string;
+        relatedPersonIds: Array<string>;
+    };
+} | {
+    __kind__: "TimelineEvent";
+    TimelineEvent: {
+        title: string;
+        date?: string;
+        description: string;
+        personId: string;
+    };
+} | {
+    __kind__: "PersonFact";
+    PersonFact: {
+        field: string;
+        value: string;
+        personId: string;
+    };
+} | {
+    __kind__: "Source";
+    Source: {
+        title: string;
+        archiveItemId?: bigint;
+        description: string;
+        sourceType: SourceType;
+    };
+} | {
+    __kind__: "Mystery";
+    Mystery: {
+        title: string;
+        description: string;
+        relatedPersonIds: Array<string>;
+    };
+} | {
+    __kind__: "Relationship";
+    Relationship: {
+        fromPersonId: string;
+        toPersonId: string;
+        relationshipType: string;
+    };
+};
+export interface ProposedFinding {
+    id: FindingId;
+    status: ReviewStatus;
+    title: string;
+    evidenceLabel: EvidenceLabel;
+    newPersonCandidateId?: bigint;
+    content: FindingContent;
+    conflictReviewId?: bigint;
+    submittedAt: bigint;
+    submittedBy: Principal;
+    sourceId: SourceId;
+    reviewedAt?: bigint;
+    reviewedBy?: Principal;
+    updatedAt: bigint;
+    personId?: string;
+    findingType: FindingType;
+}
 export interface ProfileRemovalRequest {
     id: bigint;
     submittedDate: bigint;
@@ -570,6 +713,17 @@ export interface ProfileRemovalRequest {
     reason: string;
 }
 export type MysteryContributionId = bigint;
+export interface SourceRecord {
+    id: SourceId;
+    status: ReviewStatus;
+    title: string;
+    archiveItemId?: bigint;
+    createdAt: bigint;
+    description: string;
+    sourceType: SourceType;
+    updatedAt: bigint;
+    contributor: Principal;
+}
 export interface Message {
     status: MessageStatus;
     messageId: MessageId;
@@ -584,6 +738,13 @@ export interface ReportedMessageView {
     report: Report;
     message: Message;
 }
+export type Result_20 = {
+    __kind__: "ok";
+    ok: ProposedFinding;
+} | {
+    __kind__: "err";
+    err: ResearchError;
+};
 export interface Relationship {
     id: bigint;
     status: RelationshipStatus;
@@ -677,11 +838,27 @@ export enum EditError {
     NotOwner = "NotOwner",
     DeceasedProfile = "DeceasedProfile"
 }
+export enum EvidenceLabel {
+    NeedsResearch = "NeedsResearch",
+    Conflicting = "Conflicting",
+    Hypothesis = "Hypothesis",
+    Documented = "Documented",
+    FamilyHistoryOralHistory = "FamilyHistoryOralHistory",
+    PersonalMemory = "PersonalMemory"
+}
 export enum EvidenceStatus {
     Unresolved = "Unresolved",
     Documented = "Documented",
     FamilyHistory = "FamilyHistory",
     PersonalMemory = "PersonalMemory"
+}
+export enum FindingType {
+    Story = "Story",
+    TimelineEvent = "TimelineEvent",
+    PersonFact = "PersonFact",
+    Source = "Source",
+    Mystery = "Mystery",
+    Relationship = "Relationship"
 }
 export enum LivingStatus {
     Living = "Living",
@@ -800,11 +977,25 @@ export enum ReportStatus {
     Reviewed = "Reviewed",
     Pending = "Pending"
 }
+export enum ReviewStatus {
+    Conflicting = "Conflicting",
+    Approved = "Approved",
+    Rejected = "Rejected",
+    Pending = "Pending"
+}
 export enum SourceStatus {
     Copy = "Copy",
     Unverified = "Unverified",
     Transcribed = "Transcribed",
     Original = "Original"
+}
+export enum SourceType {
+    CertificateHeadstoneReference = "CertificateHeadstoneReference",
+    DeedPropertyReference = "DeedPropertyReference",
+    ResearchNotes = "ResearchNotes",
+    EmailThread = "EmailThread",
+    UploadedDocumentImage = "UploadedDocumentImage",
+    CensusCitation = "CensusCitation"
 }
 export enum StewardError {
     LastSteward = "LastSteward",
@@ -867,12 +1058,20 @@ export interface backendInterface {
      * / Adds a missing relationship to the shared family graph. Family Steward
      * / only.
      */
-    addRelationship(fromPersonId: PersonId, toPersonId: PersonId, relationshipType: RelationshipType): Promise<Result_17>;
+    addRelationship(fromPersonId: PersonId, toPersonId: PersonId, relationshipType: RelationshipType): Promise<Result_21>;
     /**
      * / Approves a pending archive item (admin only). Returns the updated item, or
      * / `null` when the item does not exist or is not pending.
      */
     approveArchiveItem(id: ArchiveItemId): Promise<ArchiveItem | null>;
+    /**
+     * / Approves a pending finding (steward only), routing it to its target
+     * / surface. A finding labelled `#Conflicting` is never approved directly —
+     * / it is routed to a Conflict Review item instead of silently overwriting
+     * / canonical data. Returns the updated finding, or `null` when it does not
+     * / exist or is not pending.
+     */
+    approveFinding(id: FindingId): Promise<ProposedFinding | null>;
     /**
      * / Approves a pending profile claim, marking the profile claimed and
      * / associating it with the requesting user. Family Steward only.
@@ -915,7 +1114,7 @@ export interface backendInterface {
      * / account. The account id is the caller's stable principal, so the same
      * / person profile stays intact if the provider changes.
      */
-    bindAuthMethod(method: AuthMethod): Promise<Result_18>;
+    bindAuthMethod(method: AuthMethod): Promise<Result_22>;
     /**
      * / Blocks another member, preventing them from sending new messages to the
      * / caller. Approved family members only.
@@ -933,7 +1132,7 @@ export interface backendInterface {
      * / Corrects the relationship type of an existing relationship. Family Steward
      * / only.
      */
-    correctRelationshipType(relationshipId: bigint, relationshipType: RelationshipType): Promise<Result_17>;
+    correctRelationshipType(relationshipId: bigint, relationshipType: RelationshipType): Promise<Result_21>;
     /**
      * / Creates a board post with a type, optional title, body, related family
      * / members, and optional linked existing Archive/media ids. Approved family
@@ -946,11 +1145,31 @@ export interface backendInterface {
      */
     createCanonicalMystery(title: string, description: string, relatedMemberIds: Array<string>, relatedBranchId: string | null, knownFacts: Array<string>, possibilities: Array<string>, relatedSourceIds: Array<bigint>, relatedArchiveItemIds: Array<bigint>, status: MysteryStatus): Promise<Mystery>;
     /**
+     * / Creates a new proposed finding. Requires sign-in; the signed-in caller is
+     * / recorded as the submitter. The finding enters as `#Pending`.
+     */
+    createFinding(title: string, evidenceLabel: EvidenceLabel, findingType: FindingType, content: FindingContent, sourceId: SourceId, personId: string | null, newPersonCandidateId: bigint | null): Promise<Result_20>;
+    /**
      * / "Add Myself to This Family": creates a minimal person profile for a user
      * / who does not already exist. The user must then connect to an existing
      * / family member via a relationship request.
      */
-    createMyself(name: string): Promise<Result_16>;
+    createMyself(name: string): Promise<Result_19>;
+    /**
+     * / Creates a new Person candidate. Requires sign-in; the signed-in caller is
+     * / recorded as the submitter. The candidate enters as `#Pending`.
+     */
+    createNewPersonCandidate(name: string, details: string, sourceId: SourceId): Promise<Result_18>;
+    /**
+     * / Creates a new relationship proposal. Requires sign-in; the signed-in
+     * / caller is recorded as the submitter. The proposal enters as `#Pending`.
+     */
+    createRelationshipProposal(fromPersonId: string, toPersonId: string, relationshipType: string, sourceId: SourceId): Promise<Result_17>;
+    /**
+     * / Creates a new source record. Requires sign-in; the signed-in caller is
+     * / recorded as the contributor. The source enters as `#Pending`.
+     */
+    createSource(title: string, sourceType: SourceType, description: string, archiveItemId: bigint | null): Promise<Result_16>;
     /**
      * / Designates an approved claimed family member as a successor steward with a
      * / priority/order. A successor is a designation only until activated.
@@ -969,6 +1188,10 @@ export interface backendInterface {
      * / read a conversation.
      */
     getConversation(conversationId: ConversationId): Promise<ConversationView | null>;
+    /**
+     * / Returns a single proposed finding by id.
+     */
+    getFinding(id: FindingId): Promise<ProposedFinding | null>;
     /**
      * / Returns the stable account id of the signed-in caller. Anonymous callers
      * / receive #NotSignedIn.
@@ -1033,10 +1256,23 @@ export interface backendInterface {
      */
     getReportedMessage(reportId: ReportId): Promise<ReportedMessageView | null>;
     /**
+     * / Returns the full research intake audit history.
+     */
+    getResearchAuditLog(): Promise<Array<ResearchAuditEntry>>;
+    /**
+     * / Returns the review queue badge counts (pending, approved, rejected,
+     * / conflicting) across all reviewable research intake items.
+     */
+    getReviewQueue(): Promise<ReviewQueue>;
+    /**
      * / Returns a warning encouraging successor designation when only one steward
      * / exists, or `null` when there are multiple stewards. Family Steward only.
      */
     getSingleStewardWarning(): Promise<string | null>;
+    /**
+     * / Returns a single source record by id.
+     */
+    getSource(id: SourceId): Promise<SourceRecord | null>;
     isCallerAdmin(): Promise<boolean>;
     /**
      * / Lists all archive items in approved state (visible in the archive).
@@ -1084,6 +1320,10 @@ export interface backendInterface {
      */
     listConfirmedRelationships(): Promise<Array<Relationship>>;
     /**
+     * / Lists all conflict review items (steward only).
+     */
+    listConflictReviewItems(): Promise<Array<ConflictReviewItem>>;
+    /**
      * / Returns the signed-in caller's inbox: one summary per conversation they
      * / participate in, newest activity first. Approved family members only.
      */
@@ -1102,6 +1342,10 @@ export interface backendInterface {
      */
     listEligibleStewardCandidates(): Promise<Array<StewardIdentity>>;
     /**
+     * / Lists all proposed findings (steward only).
+     */
+    listFindings(): Promise<Array<ProposedFinding>>;
+    /**
      * / Returns the person ids of every other member the signed-in caller may
      * / message: living, claimed, linked to an active account, not archived, and
      * / not the caller. Not gated to stewards — any approved member may read it, so
@@ -1114,6 +1358,10 @@ export interface backendInterface {
      * / Lists all mysteries (visible to viewers).
      */
     listMysteries(): Promise<Array<Mystery>>;
+    /**
+     * / Lists all New Person candidates (steward only).
+     */
+    listNewPersonCandidates(): Promise<Array<NewPersonCandidate>>;
     /**
      * / Lists in-app notification records for the signed-in caller.
      */
@@ -1157,6 +1405,10 @@ export interface backendInterface {
      */
     listRecipesForPerson(personId: string): Promise<Array<Recipe>>;
     /**
+     * / Lists all relationship proposals (steward only).
+     */
+    listRelationshipProposals(): Promise<Array<RelationshipProposal>>;
+    /**
      * / Lists all relationship requests for the Family Steward review area.
      */
     listRelationshipRequests(): Promise<Array<RelationshipRequest>>;
@@ -1164,6 +1416,10 @@ export interface backendInterface {
      * / Lists all reports. Family Steward only.
      */
     listReports(): Promise<Array<Report>>;
+    /**
+     * / Lists all source records (steward only).
+     */
+    listSources(): Promise<Array<SourceRecord>>;
     /**
      * / Returns each current Steward and designated Successor enriched with the
      * / linked approved Person identity (personId, preferred/display name, and
@@ -1244,6 +1500,11 @@ export interface backendInterface {
      */
     rejectArchiveItem(id: ArchiveItemId): Promise<ArchiveItem | null>;
     /**
+     * / Rejects a pending finding (steward only). Returns the updated finding, or
+     * / `null` when it does not exist or is not pending.
+     */
+    rejectFinding(id: FindingId): Promise<ProposedFinding | null>;
+    /**
      * / Rejects a pending profile claim. Family Steward only.
      */
     rejectProfileClaim(claimId: bigint): Promise<ProfileClaim | null>;
@@ -1306,6 +1567,11 @@ export interface backendInterface {
      * / A Family Steward reviews the request.
      */
     requestProfileRemoval(personId: PersonId, reason: string): Promise<Result_3>;
+    /**
+     * / Resolves a conflict review item (steward only). Returns the updated item,
+     * / or `null` when it does not exist.
+     */
+    resolveConflict(id: bigint): Promise<ConflictReviewItem | null>;
     /**
      * / Resolves a merge conflict by choosing the canonical display value. Family
      * / Steward only.

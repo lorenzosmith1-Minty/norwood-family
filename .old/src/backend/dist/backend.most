@@ -832,6 +832,28 @@ type ClaimStatus__615129352 = {#Claimed; #Unclaimed};
 type ClaimStatus__686684228 = {#Claimed; #Unclaimed};
 type ClaimStatus__732050185 = {#Claimed; #Unclaimed};
 type ClaimStatus__986343746 = {#Claimed; #Unclaimed};
+type ConflictReviewItem__205302016 =
+  {
+    canonicalValue : Text;
+    field : Text;
+    findingId : FindingId__838572545;
+    id : Nat;
+    proposedValue : Text;
+    resolvedAt : ?Int;
+    resolvedBy : ?Principal;
+    status : ReviewStatus__96206077
+  };
+type ConflictReviewItem__670731780 =
+  {
+    canonicalValue : Text;
+    field : Text;
+    findingId : Nat;
+    id : Nat;
+    proposedValue : Text;
+    resolvedAt : ?Int;
+    resolvedBy : ?Principal;
+    status : ReviewStatus__654012580
+  };
 type ConversationId__199309249 = Nat;
 type Conversation__78217734 =
   {
@@ -857,6 +879,24 @@ type DismissedPair__70445725 =
   {personIdA : PersonId__1048869529; personIdB : PersonId__1048869529};
 type DismissedPair__735285339 = {personIdA : Text; personIdB : Text};
 type DismissedPair__75263914 = {personIdA : Text; personIdB : Text};
+type EvidenceLabel__606174571 =
+  {
+    #Conflicting;
+    #Documented;
+    #FamilyHistoryOralHistory;
+    #Hypothesis;
+    #NeedsResearch;
+    #PersonalMemory
+  };
+type EvidenceLabel__863785610 =
+  {
+    #Conflicting;
+    #Documented;
+    #FamilyHistoryOralHistory;
+    #Hypothesis;
+    #NeedsResearch;
+    #PersonalMemory
+  };
 type EvidenceStatus__141200965 =
   {#Documented; #FamilyHistory; #PersonalMemory; #Unresolved};
 type EvidenceStatus__209628867 =
@@ -869,6 +909,45 @@ type EvidenceStatus__824382737 = EvidenceStatus__563034664;
 type EvidenceStatus__952143850 =
   {#Documented; #FamilyHistory; #PersonalMemory; #Unresolved};
 type ExternalBlob__220559234 = Blob;
+type FindingContent__413798270 =
+  {
+    #Mystery : {description : Text; relatedPersonIds : [Text]; title : Text};
+    #PersonFact : {field : Text; personId : Text; value : Text};
+    #Relationship :
+      {fromPersonId : Text; relationshipType : Text; toPersonId : Text};
+    #Source :
+      {
+        archiveItemId : ?Nat;
+        description : Text;
+        sourceType : SourceType__27579838;
+        title : Text
+      };
+    #Story : {relatedPersonIds : [Text]; storyText : Text; title : Text};
+    #TimelineEvent :
+      {date : ?Text; description : Text; personId : Text; title : Text}
+  };
+type FindingContent__873708705 =
+  {
+    #Mystery : {description : Text; relatedPersonIds : [Text]; title : Text};
+    #PersonFact : {field : Text; personId : Text; value : Text};
+    #Relationship :
+      {fromPersonId : Text; relationshipType : Text; toPersonId : Text};
+    #Source :
+      {
+        archiveItemId : ?Nat;
+        description : Text;
+        sourceType : SourceType__755340115;
+        title : Text
+      };
+    #Story : {relatedPersonIds : [Text]; storyText : Text; title : Text};
+    #TimelineEvent :
+      {date : ?Text; description : Text; personId : Text; title : Text}
+  };
+type FindingId__838572545 = Nat;
+type FindingType__224929741 =
+  {#Mystery; #PersonFact; #Relationship; #Source; #Story; #TimelineEvent};
+type FindingType__738643381 =
+  {#Mystery; #PersonFact; #Relationship; #Source; #Story; #TimelineEvent};
 type Internal__161573640<K, V> =
   {children : [var ?Node__430031793<K, V>]; data : Data__265875254<K, V>};
 type Leaf__1045638083<K, V> = {data : Data__265875254<K, V>};
@@ -1397,6 +1476,24 @@ type NewActor__681552274 =
     profiles : Map__386906547<Text, PersonProfile__630094272>;
     relationshipRequests : List__89170296<RelationshipRequest__174897287>
   };
+type NewActor__756013677 =
+  {
+    conflictReviewItems : List__89170296<ConflictReviewItem__670731780>;
+    newPersonCandidates : List__89170296<NewPersonCandidate__87623447>;
+    proposedFindings : List__89170296<ProposedFinding__745550254>;
+    relationshipProposals : List__89170296<RelationshipProposal__180360831>;
+    researchAuditLog : List__89170296<ResearchAuditEntry__715477564>;
+    researchSources : List__89170296<SourceRecord__702886435>;
+    researchState :
+      {
+        var nextAuditId : Nat;
+        var nextCandidateId : Nat;
+        var nextConflictId : Nat;
+        var nextFindingId : Nat;
+        var nextProposalId : Nat;
+        var nextSourceId : Nat
+      }
+  };
 type NewActor__760037069 =
   {
     accessControlState :
@@ -1517,6 +1614,30 @@ type NewArchiveItem__406273885 =
     title : Text;
     transcript : ?Text;
     year : ?Nat
+  };
+type NewPersonCandidate__867230435 =
+  {
+    details : Text;
+    id : Nat;
+    name : Text;
+    reviewedAt : ?Int;
+    reviewedBy : ?Principal;
+    sourceId : SourceId__430694605;
+    status : ReviewStatus__96206077;
+    submittedAt : Int;
+    submittedBy : Principal
+  };
+type NewPersonCandidate__87623447 =
+  {
+    details : Text;
+    id : Nat;
+    name : Text;
+    reviewedAt : ?Int;
+    reviewedBy : ?Principal;
+    sourceId : Nat;
+    status : ReviewStatus__654012580;
+    submittedAt : Int;
+    submittedBy : Principal
   };
 type NewPersonProfile__428104626 =
   {
@@ -1790,6 +1911,7 @@ type Notification__993071774 =
     read : Bool;
     recipient : Principal
   };
+type OldActor__1007934830 = {};
 type OldActor__1038583075 =
   {
     accessControlState :
@@ -3063,6 +3185,42 @@ type ProfileRemovalStatus__2967961 = {#Approved; #Pending; #Rejected};
 type ProfileRemovalStatus__496123199 = {#Approved; #Pending; #Rejected};
 type ProfileRemovalStatus__656799952 = {#Approved; #Pending; #Rejected};
 type ProfileRemovalStatus__95272879 = {#Approved; #Pending; #Rejected};
+type ProposedFinding__51718788 =
+  {
+    conflictReviewId : ?Nat;
+    content : FindingContent__873708705;
+    evidenceLabel : EvidenceLabel__606174571;
+    findingType : FindingType__224929741;
+    id : FindingId__838572545;
+    newPersonCandidateId : ?Nat;
+    personId : ?Text;
+    reviewedAt : ?Int;
+    reviewedBy : ?Principal;
+    sourceId : SourceId__430694605;
+    status : ReviewStatus__96206077;
+    submittedAt : Int;
+    submittedBy : Principal;
+    title : Text;
+    updatedAt : Int
+  };
+type ProposedFinding__745550254 =
+  {
+    conflictReviewId : ?Nat;
+    content : FindingContent__413798270;
+    evidenceLabel : EvidenceLabel__863785610;
+    findingType : FindingType__738643381;
+    id : Nat;
+    newPersonCandidateId : ?Nat;
+    personId : ?Text;
+    reviewedAt : ?Int;
+    reviewedBy : ?Principal;
+    sourceId : Nat;
+    status : ReviewStatus__654012580;
+    submittedAt : Int;
+    submittedBy : Principal;
+    title : Text;
+    updatedAt : Int
+  };
 type RecipeId__673747895 = Nat;
 type RecipeStatus__315230508 = {#Approved; #Archived; #Pending; #Rejected};
 type RecipeStatus__403055630 = {#Approved; #Archived; #Pending; #Rejected};
@@ -3147,6 +3305,32 @@ type Recipe__831238705 =
     transcript : ?Text;
     updatedAt : Int;
     year : ?Nat
+  };
+type RelationshipProposal__180360831 =
+  {
+    fromPersonId : Text;
+    id : Nat;
+    relationshipType : Text;
+    reviewedAt : ?Int;
+    reviewedBy : ?Principal;
+    sourceId : Nat;
+    status : ReviewStatus__654012580;
+    submittedAt : Int;
+    submittedBy : Principal;
+    toPersonId : Text
+  };
+type RelationshipProposal__486620264 =
+  {
+    fromPersonId : Text;
+    id : Nat;
+    relationshipType : Text;
+    reviewedAt : ?Int;
+    reviewedBy : ?Principal;
+    sourceId : SourceId__430694605;
+    status : ReviewStatus__96206077;
+    submittedAt : Int;
+    submittedBy : Principal;
+    toPersonId : Text
   };
 type RelationshipRequestStatus__251580484 = {#Approved; #Pending; #Rejected};
 type RelationshipRequestStatus__259416325 = {#Approved; #Pending; #Rejected};
@@ -3561,6 +3745,26 @@ type Report__919657592 =
     reportingAccountId : Principal;
     status : ReportStatus__568596574
   };
+type ResearchAuditEntry__715477564 =
+  {
+    action : Text;
+    actorId : Principal;
+    findingId : ?Nat;
+    id : Nat;
+    sourceId : ?Nat;
+    summary : Text;
+    timestamp : Int
+  };
+type ResearchAuditEntry__807224576 =
+  {
+    action : Text;
+    actorId : Principal;
+    findingId : ?FindingId__838572545;
+    id : Nat;
+    sourceId : ?SourceId__430694605;
+    summary : Text;
+    timestamp : Int
+  };
 type Resolution__262572298 =
   {
     resolvedAt : Int;
@@ -3596,6 +3800,33 @@ type Resolution__85140939 =
     summary : Text;
     supportingEvidence : [Text]
   };
+type ReviewStatus__654012580 = {#Approved; #Conflicting; #Pending; #Rejected};
+type ReviewStatus__96206077 = {#Approved; #Conflicting; #Pending; #Rejected};
+type SourceId__430694605 = Nat;
+type SourceRecord__6933722 =
+  {
+    archiveItemId : ?Nat;
+    contributor : Principal;
+    createdAt : Int;
+    description : Text;
+    id : SourceId__430694605;
+    sourceType : SourceType__755340115;
+    status : ReviewStatus__96206077;
+    title : Text;
+    updatedAt : Int
+  };
+type SourceRecord__702886435 =
+  {
+    archiveItemId : ?Nat;
+    contributor : Principal;
+    createdAt : Int;
+    description : Text;
+    id : Nat;
+    sourceType : SourceType__27579838;
+    status : ReviewStatus__654012580;
+    title : Text;
+    updatedAt : Int
+  };
 type SourceStatus__1002712082 = {#Copy; #Original; #Transcribed; #Unverified};
 type SourceStatus__1032055384 = {#Copy; #Original; #Transcribed; #Unverified};
 type SourceStatus__103998251 = {#Copy; #Original; #Transcribed; #Unverified};
@@ -3614,6 +3845,24 @@ type SourceStatus__732068429 = {#Copy; #Original; #Transcribed; #Unverified};
 type SourceStatus__749020176 = {#Copy; #Original; #Transcribed; #Unverified};
 type SourceStatus__930855418 = {#Copy; #Original; #Transcribed; #Unverified};
 type SourceStatus__983723365 = {#Copy; #Original; #Transcribed; #Unverified};
+type SourceType__27579838 =
+  {
+    #CensusCitation;
+    #CertificateHeadstoneReference;
+    #DeedPropertyReference;
+    #EmailThread;
+    #ResearchNotes;
+    #UploadedDocumentImage
+  };
+type SourceType__755340115 =
+  {
+    #CensusCitation;
+    #CertificateHeadstoneReference;
+    #DeedPropertyReference;
+    #EmailThread;
+    #ResearchNotes;
+    #UploadedDocumentImage
+  };
 type StewardRecord__113048388 =
   {
     assignedAt : Int;
@@ -3866,7 +4115,8 @@ type UserRole__968740559 = {#admin; #guest; #user};
   "20260910_000000" : (old : OldActor__190834961) -> NewActor__556041151;
   "20260910_010000" : (old : OldActor__764284879) -> NewActor__386112082;
   "20260911_000000" : (old : OldActor__232881591) -> NewActor__679825786;
-  "20260912_000000" : (old : OldActor__487684809) -> NewActor__772849243
+  "20260912_000000" : (old : OldActor__487684809) -> NewActor__772849243;
+  "20260913_000000" : (_old : OldActor__1007934830) -> NewActor__756013677
 }
 actor  {
   stable accessControlState :
@@ -3915,6 +4165,12 @@ actor  {
       var blocks : [var [var ?Relationship__853950314]];
       var elementIndex : Nat__58649523
     };
+  stable conflictReviewItems :
+    {
+      var blockIndex : Nat__58649523;
+      var blocks : [var [var ?ConflictReviewItem__205302016]];
+      var elementIndex : Nat__58649523
+    };
   stable conversations :
     {
       var blockIndex : Nat__58649523;
@@ -3956,6 +4212,12 @@ actor  {
       var blocks : [var [var ?MysteryContribution__1055347275]];
       var elementIndex : Nat__58649523
     };
+  stable newPersonCandidates :
+    {
+      var blockIndex : Nat__58649523;
+      var blocks : [var [var ?NewPersonCandidate__867230435]];
+      var elementIndex : Nat__58649523
+    };
   stable notifications :
     {
       var blockIndex : Nat__58649523;
@@ -3974,10 +4236,22 @@ actor  {
         Node__430031793<PersonId__610106223, PersonProfile__847074086>;
       var size : Nat__58649523
     };
+  stable proposedFindings :
+    {
+      var blockIndex : Nat__58649523;
+      var blocks : [var [var ?ProposedFinding__51718788]];
+      var elementIndex : Nat__58649523
+    };
   stable recipes :
     {
       var blockIndex : Nat__58649523;
       var blocks : [var [var ?Recipe__767283240]];
+      var elementIndex : Nat__58649523
+    };
+  stable relationshipProposals :
+    {
+      var blockIndex : Nat__58649523;
+      var blocks : [var [var ?RelationshipProposal__486620264]];
       var elementIndex : Nat__58649523
     };
   stable relationshipRequests :
@@ -4003,6 +4277,27 @@ actor  {
       var blockIndex : Nat__58649523;
       var blocks : [var [var ?Report__79617168]];
       var elementIndex : Nat__58649523
+    };
+  stable researchAuditLog :
+    {
+      var blockIndex : Nat__58649523;
+      var blocks : [var [var ?ResearchAuditEntry__807224576]];
+      var elementIndex : Nat__58649523
+    };
+  stable researchSources :
+    {
+      var blockIndex : Nat__58649523;
+      var blocks : [var [var ?SourceRecord__6933722]];
+      var elementIndex : Nat__58649523
+    };
+  stable researchState :
+    {
+      var nextAuditId : Nat;
+      var nextCandidateId : Nat;
+      var nextConflictId : Nat;
+      var nextFindingId : Nat;
+      var nextProposalId : Nat;
+      var nextSourceId : Nat
     };
   stable stewards :
     {

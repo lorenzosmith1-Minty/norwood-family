@@ -797,6 +797,24 @@ video {
     --comm-accent-foreground: 0.96 0.02 70;
     --steward-accent: 0.5 0.14 30;
     --steward-accent-foreground: 0.96 0.02 70;
+
+    /* Historical Research Intake (Family Steward): a scholarly workspace on
+       warm paper. A dusty research-cyan ink — like an archivist's marginal
+       annotation — marks research-only states (sources, proposed findings,
+       person-match candidates, relationship proposals, conflict review, and
+       the review queue) so they read as part of the same archive but stay
+       visually distinct from the warm sepia governance surfaces. */
+    --research-accent: 0.52 0.09 205;
+    --research-accent-foreground: 0.97 0.02 70;
+    --research-surface: 0.94 0.03 210;
+    --research-surface-foreground: 0.22 0.04 45;
+    --research-source: 0.5 0.09 205;
+    --research-finding: 0.55 0.12 150;
+    --research-candidate: 0.6 0.11 55;
+    --research-relationship: 0.55 0.09 60;
+    --research-conflict: 0.5 0.2 25;
+    --research-rule: 0.5 0.09 205 / 0.35;
+    --research-queue: 0.5 0.2 25;
   }
 
   .dark {
@@ -1073,6 +1091,20 @@ video {
     --comm-accent-foreground: 0.16 0.02 55;
     --steward-accent: 0.72 0.13 30;
     --steward-accent-foreground: 0.16 0.02 55;
+
+    /* Historical Research Intake (dark): research-cyan ink brightens on the
+       dark paper while the warm sepia surfaces stay as the family archive. */
+    --research-accent: 0.72 0.12 205;
+    --research-accent-foreground: 0.16 0.02 55;
+    --research-surface: 0.21 0.03 210;
+    --research-surface-foreground: 0.93 0.02 60;
+    --research-source: 0.68 0.11 205;
+    --research-finding: 0.6 0.15 150;
+    --research-candidate: 0.65 0.13 55;
+    --research-relationship: 0.58 0.12 30;
+    --research-conflict: 0.55 0.2 25;
+    --research-rule: 0.72 0.12 205 / 0.4;
+    --research-queue: 0.55 0.2 25;
   }
 
   * {
@@ -2594,6 +2626,9 @@ video {
 }
 .uppercase {
   text-transform: uppercase;
+}
+.normal-case {
+  text-transform: none;
 }
 .italic {
   font-style: italic;
@@ -9425,6 +9460,629 @@ video {
     background-color: oklch(var(--pending-badge));
     box-shadow: 0 0 0 2px oklch(var(--card));
 }
+/* ---- Historical Research Intake workspace ---- */
+/* Research workspace shell: a cool paper plate distinct from the warm
+     sepia steward surfaces. The research-cyan ink marks this as the
+     scholarly intake area inside Family Steward. */
+.research-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.research-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  padding: 1rem;
+}
+@media (min-width: 640px) {
+
+  .research-section {
+    padding: 1.25rem;
+  }
+}
+.research-section {
+    background-color: oklch(var(--research-surface));
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.1);
+  }
+.research-section-head {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+.research-section-head::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background-color: oklch(var(--research-accent));
+    flex-shrink: 0;
+  }
+.research-section-title {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+    color: oklch(var(--research-accent));
+}
+.research-section-hint {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  line-height: 1.625;
+    color: oklch(var(--muted-foreground));
+}
+/* Research tab bar: mirrors .gov-tabs but tints active to research cyan */
+.research-tabs {
+  margin-left: -1rem;
+  margin-right: -1rem;
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-bottom: 0.25rem;
+}
+@media (min-width: 640px) {
+
+  .research-tabs {
+    margin-left: 0px;
+    margin-right: 0px;
+    flex-wrap: wrap;
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+}
+.research-tabs {
+    scrollbar-width: none;
+  }
+.research-tabs::-webkit-scrollbar {
+    display: none;
+  }
+.research-tab {
+  display: inline-flex;
+  min-height: 44px;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: 9999px;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  padding-left: 1rem;
+  padding-right: 1rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+    background-color: oklch(var(--gov-tab));
+    color: oklch(var(--gov-tab-foreground));
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+}
+.research-tab:hover {
+    color: oklch(var(--foreground));
+    border-color: oklch(var(--research-accent) / 0.6);
+  }
+.research-tab:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(var(--ring) / 0.25);
+  }
+.research-tab-active {
+    background-color: oklch(var(--research-accent));
+    color: oklch(var(--research-accent-foreground));
+    border-color: oklch(var(--research-accent));
+  }
+.research-tab-active:hover {
+    color: oklch(var(--research-accent-foreground));
+    border-color: oklch(var(--research-accent));
+  }
+.research-tab-count {
+  display: inline-flex;
+  height: 1.25rem;
+  min-width: 1.25rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+  font-size: 10px;
+  font-weight: 700;
+  --tw-numeric-spacing: tabular-nums;
+  font-variant-numeric: var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction);
+    background-color: oklch(var(--research-accent) / 0.14);
+    color: oklch(var(--research-accent));
+}
+.research-tab-active .research-tab-count {
+    background-color: oklch(var(--research-accent-foreground) / 0.18);
+    color: oklch(var(--research-accent-foreground));
+  }
+/* Research source card: an archival document plate with a source-type
+     badge and a verification status dot-pill. */
+.research-source-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  background-color: oklch(var(--card));
+  padding: 1rem;
+    box-shadow: 0 1px 2px -1px oklch(0.36 0.05 45 / 0.08);
+    transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+}
+.research-source-card:hover,
+  .research-source-card:focus-within {
+    border-color: oklch(var(--research-accent) / 0.6);
+  }
+.research-source-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.research-source-title {
+  font-family: var(--font-display), serif;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  line-height: 1.25;
+    color: oklch(var(--foreground));
+}
+.research-source-meta {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  line-height: 1.375;
+    color: oklch(var(--muted-foreground));
+}
+/* Research evidence label: a dot-pill encoding the proposed finding's
+     evidence type. Reuses the evidence-badge language but on the research
+     cyan so it reads as a research intake item, not a published story. */
+.research-evidence {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: 9999px;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  background-color: oklch(var(--card));
+  padding-left: 0.625rem;
+  padding-right: 0.625rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+    color: oklch(var(--muted-foreground));
+}
+.research-evidence::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background-color: oklch(var(--research-source));
+  }
+.research-evidence-finding {
+    color: oklch(var(--research-finding));
+    border-color: oklch(var(--research-finding) / 0.45);
+  }
+.research-evidence-finding::before {
+    background-color: oklch(var(--research-finding));
+  }
+.research-evidence-candidate {
+    color: oklch(var(--research-candidate));
+    border-style: dashed;
+    border-color: oklch(var(--research-candidate) / 0.5);
+  }
+.research-evidence-candidate::before {
+    background-color: oklch(var(--research-candidate));
+  }
+.research-evidence-relationship {
+    color: oklch(var(--research-relationship));
+    border-style: dashed;
+    border-color: oklch(var(--research-relationship) / 0.5);
+  }
+.research-evidence-relationship::before {
+    background-color: oklch(var(--research-relationship));
+  }
+.research-evidence-conflict {
+    color: oklch(var(--research-conflict));
+    border-style: dashed;
+    border-color: oklch(var(--research-conflict) / 0.5);
+  }
+.research-evidence-conflict::before {
+    background-color: oklch(var(--research-conflict));
+  }
+/* Proposed finding card: a warm plate carrying one evidence label plus a
+     provenance line (source + submitter + date). */
+.research-finding-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  background-color: oklch(var(--card));
+  padding: 1rem;
+    box-shadow: 0 1px 2px -1px oklch(0.36 0.05 45 / 0.08);
+}
+.research-finding-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.research-finding-title {
+  font-family: var(--font-display), serif;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  line-height: 1.25;
+    color: oklch(var(--foreground));
+}
+.research-finding-detail {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  line-height: 1.625;
+    color: oklch(var(--muted-foreground));
+}
+.research-finding-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 11px;
+  font-weight: 500;
+    color: oklch(var(--muted-foreground));
+}
+.research-finding-meta .research-actor {
+    color: oklch(var(--research-accent));
+    font-weight: 600;
+  }
+/* Review queue: a compact list of items awaiting steward review. The
+     queue badge reuses the red alert language of the Pending badge. */
+.research-queue {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.research-queue-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  background-color: oklch(var(--card));
+  padding: 0.75rem;
+    box-shadow: 0 1px 2px -1px oklch(0.36 0.05 45 / 0.08);
+    transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.research-queue-item:hover,
+  .research-queue-item:focus-within {
+    border-color: oklch(var(--research-accent) / 0.6);
+  }
+.research-queue-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background-color: oklch(var(--research-queue));
+    flex-shrink: 0;
+  }
+.research-queue-body {
+  display: flex;
+  min-width: 0px;
+  flex: 1 1 0%;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+.research-queue-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  line-height: 1.375;
+    color: oklch(var(--foreground));
+}
+.research-queue-meta {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  line-height: 1.375;
+    color: oklch(var(--muted-foreground));
+}
+.research-queue-badge {
+  display: inline-flex;
+  height: 1.25rem;
+  min-width: 1.25rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+  font-size: 10px;
+  font-weight: 700;
+  --tw-numeric-spacing: tabular-nums;
+  font-variant-numeric: var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction);
+    color: oklch(var(--research-accent-foreground));
+    background-color: oklch(var(--research-queue));
+    box-shadow: 0 0 0 2px oklch(var(--card));
+}
+/* Person-match candidate row: a proposed match to an existing Person or a
+     New Person Candidate, with a bronze candidate chip. */
+.research-match-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  background-color: oklch(var(--card));
+  padding: 0.75rem;
+    box-shadow: 0 1px 2px -1px oklch(0.36 0.05 45 / 0.08);
+}
+.research-match-portrait {
+  display: flex;
+  height: 2.75rem;
+  width: 2.75rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  font-family: var(--font-display), serif;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+    background-color: oklch(var(--muted));
+    color: oklch(var(--muted-foreground));
+    box-shadow: 0 0 0 2px oklch(var(--research-candidate) / 0.5);
+    overflow: hidden;
+}
+.research-match-portrait img {
+  height: 100%;
+  width: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.research-match-body {
+  display: flex;
+  min-width: 0px;
+  flex: 1 1 0%;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+.research-match-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-display), serif;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  line-height: 1.25;
+    color: oklch(var(--foreground));
+}
+.research-match-meta {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  line-height: 1.375;
+    color: oklch(var(--muted-foreground));
+}
+.research-match-actions {
+  display: flex;
+  flex-shrink: 0;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.375rem;
+}
+/* Conflict review: a flagged finding where two sources or two proposals
+     disagree. The conflicting values sit on a cool cyan plate with a resolve
+     action, mirroring the merge-conflict language but in research ink. */
+.research-conflict-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  background-color: oklch(var(--card));
+  padding: 1rem;
+    box-shadow: 0 1px 2px -1px oklch(0.36 0.05 45 / 0.08);
+}
+.research-conflict-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.research-conflict-title {
+  font-family: var(--font-display), serif;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  line-height: 1.25;
+    color: oklch(var(--foreground));
+}
+.research-conflict-meta {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  line-height: 1.375;
+    color: oklch(var(--muted-foreground));
+}
+.research-conflict-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border-radius: var(--radius);
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  padding: 0.75rem;
+    background-color: oklch(var(--research-accent) / 0.08);
+    border-color: oklch(var(--research-accent) / 0.35);
+}
+.research-conflict-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+    color: oklch(var(--research-accent));
+}
+.research-conflict-values {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+@media (min-width: 640px) {
+
+  .research-conflict-values {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.research-conflict-value {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  border-radius: var(--radius);
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  background-color: oklch(var(--card));
+  padding: 0.625rem;
+}
+.research-conflict-owner {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+    color: oklch(var(--muted-foreground));
+}
+.research-conflict-text {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  line-height: 1.375;
+    color: oklch(var(--foreground));
+}
+.research-conflict-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+.research-resolve {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: 9999px;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+    color: oklch(var(--research-accent-foreground));
+    background-color: oklch(var(--research-accent));
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.18);
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow
+      0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.research-resolve:hover {
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.24);
+  }
+/* Provenance / audit line inside the research workspace: a timestamped
+     record of who proposed, matched, or resolved each item. */
+.research-audit {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.research-audit-entry {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  background-color: oklch(var(--card));
+  padding: 0.875rem;
+    box-shadow: 0 1px 2px -1px oklch(0.36 0.05 45 / 0.08);
+}
+.research-audit-entry::before {
+    content: "";
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 9999px;
+    background-color: oklch(var(--research-accent));
+    margin-top: 0.3rem;
+    flex-shrink: 0;
+  }
+.research-audit-body {
+  display: flex;
+  min-width: 0px;
+  flex: 1 1 0%;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+.research-audit-action {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  line-height: 1.375;
+    color: oklch(var(--foreground));
+}
+.research-audit-detail {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  line-height: 1.375;
+    color: oklch(var(--muted-foreground));
+}
+.research-audit-meta {
+  font-size: 11px;
+  font-weight: 500;
+    color: oklch(var(--muted-foreground));
+}
+.research-audit-meta .research-actor {
+    color: oklch(var(--research-accent));
+    font-weight: 600;
+  }
+/* Research empty state: quiet dashed plate with a reset action */
+.research-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-style: dashed;
+  border-color: oklch(var(--border) / 0.7);
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  padding-top: 3.5rem;
+  padding-bottom: 3.5rem;
+  text-align: center;
+    background-color: oklch(var(--card) / 0.5);
+}
+.research-empty-title {
+  font-family: var(--font-display), serif;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+    color: oklch(var(--foreground));
+}
+.research-empty-hint {
+  max-width: 24rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+    color: oklch(var(--muted-foreground));
+}
 .\[--cell-size\:--spacing\(8\)\] {
   --cell-size: var(--spacing(8));
 }
@@ -11005,6 +11663,11 @@ video {
   .sm\:px-5 {
     padding-left: 1.25rem;
     padding-right: 1.25rem;
+  }
+
+  .sm\:px-6 {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
   }
 
   .sm\:py-10 {

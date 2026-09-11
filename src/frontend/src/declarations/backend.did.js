@@ -40,7 +40,7 @@ export const Error = IDL.Variant({
     'expected' : IDL.Vec(IDL.Text),
   }),
 });
-export const Result_19 = IDL.Variant({ 'ok' : IDL.Null, 'err' : Error });
+export const Result_23 = IDL.Variant({ 'ok' : IDL.Null, 'err' : Error });
 export const PersonId = IDL.Text;
 export const StewardRoleStatus = IDL.Variant({
   'Active' : IDL.Null,
@@ -138,7 +138,7 @@ export const RelationshipAdminError = IDL.Variant({
   'DuplicateRelationship' : IDL.Null,
   'PersonNotFound' : IDL.Null,
 });
-export const Result_17 = IDL.Variant({
+export const Result_21 = IDL.Variant({
   'ok' : Relationship,
   'err' : RelationshipAdminError,
 });
@@ -204,6 +204,89 @@ export const ArchiveItem = IDL.Record({
   'sourceStatus' : SourceStatus,
   'classification' : ArchiveItemClassification,
   'contributor' : IDL.Principal,
+});
+export const FindingId = IDL.Nat;
+export const ReviewStatus = IDL.Variant({
+  'Conflicting' : IDL.Null,
+  'Approved' : IDL.Null,
+  'Rejected' : IDL.Null,
+  'Pending' : IDL.Null,
+});
+export const EvidenceLabel = IDL.Variant({
+  'NeedsResearch' : IDL.Null,
+  'Conflicting' : IDL.Null,
+  'Hypothesis' : IDL.Null,
+  'Documented' : IDL.Null,
+  'FamilyHistoryOralHistory' : IDL.Null,
+  'PersonalMemory' : IDL.Null,
+});
+export const SourceType = IDL.Variant({
+  'CertificateHeadstoneReference' : IDL.Null,
+  'DeedPropertyReference' : IDL.Null,
+  'ResearchNotes' : IDL.Null,
+  'EmailThread' : IDL.Null,
+  'UploadedDocumentImage' : IDL.Null,
+  'CensusCitation' : IDL.Null,
+});
+export const FindingContent = IDL.Variant({
+  'Story' : IDL.Record({
+    'title' : IDL.Text,
+    'storyText' : IDL.Text,
+    'relatedPersonIds' : IDL.Vec(IDL.Text),
+  }),
+  'TimelineEvent' : IDL.Record({
+    'title' : IDL.Text,
+    'date' : IDL.Opt(IDL.Text),
+    'description' : IDL.Text,
+    'personId' : IDL.Text,
+  }),
+  'PersonFact' : IDL.Record({
+    'field' : IDL.Text,
+    'value' : IDL.Text,
+    'personId' : IDL.Text,
+  }),
+  'Source' : IDL.Record({
+    'title' : IDL.Text,
+    'archiveItemId' : IDL.Opt(IDL.Nat),
+    'description' : IDL.Text,
+    'sourceType' : SourceType,
+  }),
+  'Mystery' : IDL.Record({
+    'title' : IDL.Text,
+    'description' : IDL.Text,
+    'relatedPersonIds' : IDL.Vec(IDL.Text),
+  }),
+  'Relationship' : IDL.Record({
+    'fromPersonId' : IDL.Text,
+    'toPersonId' : IDL.Text,
+    'relationshipType' : IDL.Text,
+  }),
+});
+export const SourceId = IDL.Nat;
+export const FindingType = IDL.Variant({
+  'Story' : IDL.Null,
+  'TimelineEvent' : IDL.Null,
+  'PersonFact' : IDL.Null,
+  'Source' : IDL.Null,
+  'Mystery' : IDL.Null,
+  'Relationship' : IDL.Null,
+});
+export const ProposedFinding = IDL.Record({
+  'id' : FindingId,
+  'status' : ReviewStatus,
+  'title' : IDL.Text,
+  'evidenceLabel' : EvidenceLabel,
+  'newPersonCandidateId' : IDL.Opt(IDL.Nat),
+  'content' : FindingContent,
+  'conflictReviewId' : IDL.Opt(IDL.Nat),
+  'submittedAt' : IDL.Int,
+  'submittedBy' : IDL.Principal,
+  'sourceId' : SourceId,
+  'reviewedAt' : IDL.Opt(IDL.Int),
+  'reviewedBy' : IDL.Opt(IDL.Principal),
+  'updatedAt' : IDL.Int,
+  'personId' : IDL.Opt(IDL.Text),
+  'findingType' : FindingType,
 });
 export const ProfileClaimStatus = IDL.Variant({
   'Approved' : IDL.Null,
@@ -337,7 +420,7 @@ export const AccountError = IDL.Variant({
   'AccountNotFound' : IDL.Null,
   'NotSignedIn' : IDL.Null,
 });
-export const Result_18 = IDL.Variant({ 'ok' : Account, 'err' : AccountError });
+export const Result_22 = IDL.Variant({ 'ok' : Account, 'err' : AccountError });
 export const MysteryStatus = IDL.Variant({
   'Researching' : IDL.Null,
   'Open' : IDL.Null,
@@ -366,6 +449,15 @@ export const Mystery = IDL.Record({
   'relatedBranchId' : IDL.Opt(IDL.Text),
   'relatedSourceIds' : IDL.Vec(IDL.Nat),
   'contributor' : IDL.Principal,
+});
+export const ResearchError = IDL.Variant({
+  'invalidState' : IDL.Text,
+  'notAuthorized' : IDL.Null,
+  'notFound' : IDL.Nat,
+});
+export const Result_20 = IDL.Variant({
+  'ok' : ProposedFinding,
+  'err' : ResearchError,
 });
 export const ClaimStatus = IDL.Variant({
   'Unclaimed' : IDL.Null,
@@ -399,9 +491,55 @@ export const PersonProfile = IDL.Record({
   'firstName' : IDL.Opt(IDL.Text),
 });
 export const CreateError = IDL.Variant({ 'NotSignedIn' : IDL.Null });
-export const Result_16 = IDL.Variant({
+export const Result_19 = IDL.Variant({
   'ok' : PersonProfile,
   'err' : CreateError,
+});
+export const NewPersonCandidate = IDL.Record({
+  'id' : IDL.Nat,
+  'status' : ReviewStatus,
+  'name' : IDL.Text,
+  'submittedAt' : IDL.Int,
+  'submittedBy' : IDL.Principal,
+  'sourceId' : SourceId,
+  'reviewedAt' : IDL.Opt(IDL.Int),
+  'reviewedBy' : IDL.Opt(IDL.Principal),
+  'details' : IDL.Text,
+});
+export const Result_18 = IDL.Variant({
+  'ok' : NewPersonCandidate,
+  'err' : ResearchError,
+});
+export const RelationshipProposal = IDL.Record({
+  'id' : IDL.Nat,
+  'status' : ReviewStatus,
+  'fromPersonId' : IDL.Text,
+  'submittedAt' : IDL.Int,
+  'submittedBy' : IDL.Principal,
+  'sourceId' : SourceId,
+  'reviewedAt' : IDL.Opt(IDL.Int),
+  'reviewedBy' : IDL.Opt(IDL.Principal),
+  'toPersonId' : IDL.Text,
+  'relationshipType' : IDL.Text,
+});
+export const Result_17 = IDL.Variant({
+  'ok' : RelationshipProposal,
+  'err' : ResearchError,
+});
+export const SourceRecord = IDL.Record({
+  'id' : SourceId,
+  'status' : ReviewStatus,
+  'title' : IDL.Text,
+  'archiveItemId' : IDL.Opt(IDL.Nat),
+  'createdAt' : IDL.Int,
+  'description' : IDL.Text,
+  'sourceType' : SourceType,
+  'updatedAt' : IDL.Int,
+  'contributor' : IDL.Principal,
+});
+export const Result_16 = IDL.Variant({
+  'ok' : SourceRecord,
+  'err' : ResearchError,
 });
 export const SuccessorStatus = IDL.Variant({
   'Activated' : IDL.Null,
@@ -484,6 +622,21 @@ export const ReportedMessageView = IDL.Record({
   'report' : Report,
   'message' : Message,
 });
+export const ResearchAuditEntry = IDL.Record({
+  'id' : IDL.Nat,
+  'action' : IDL.Text,
+  'findingId' : IDL.Opt(FindingId),
+  'sourceId' : IDL.Opt(SourceId),
+  'actorId' : IDL.Principal,
+  'summary' : IDL.Text,
+  'timestamp' : IDL.Int,
+});
+export const ReviewQueue = IDL.Record({
+  'pending' : IDL.Nat,
+  'conflicting' : IDL.Nat,
+  'approved' : IDL.Nat,
+  'rejected' : IDL.Nat,
+});
 export const AuditActionType = IDL.Variant({
   'ProfileRemovalRequested' : IDL.Null,
   'ClaimRejected' : IDL.Null,
@@ -514,6 +667,16 @@ export const AuditEntry = IDL.Record({
   'summary' : IDL.Text,
   'timestamp' : IDL.Int,
   'actorAccountId' : IDL.Principal,
+});
+export const ConflictReviewItem = IDL.Record({
+  'id' : IDL.Nat,
+  'field' : IDL.Text,
+  'status' : ReviewStatus,
+  'findingId' : FindingId,
+  'proposedValue' : IDL.Text,
+  'canonicalValue' : IDL.Text,
+  'resolvedAt' : IDL.Opt(IDL.Int),
+  'resolvedBy' : IDL.Opt(IDL.Principal),
 });
 export const ConversationSummary = IDL.Record({
   'otherPersonId' : PersonId,
@@ -771,7 +934,7 @@ export const idlService = IDL.Service({
     ),
   '_immutableObjectStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
   '_initialize_access_control' : IDL.Func([], [], []),
-  '_internet_identity_sign_in_finish' : IDL.Func([], [Result_19], []),
+  '_internet_identity_sign_in_finish' : IDL.Func([], [Result_23], []),
   '_internet_identity_sign_in_start' : IDL.Func([], [IDL.Vec(IDL.Nat8)], []),
   'activateSuccessor' : IDL.Func([PersonId], [Result_9], []),
   'addBoardReply' : IDL.Func([PostId, IDL.Text], [Reply], []),
@@ -796,10 +959,11 @@ export const idlService = IDL.Service({
     ),
   'addRelationship' : IDL.Func(
       [PersonId, PersonId, RelationshipType],
-      [Result_17],
+      [Result_21],
       [],
     ),
   'approveArchiveItem' : IDL.Func([ArchiveItemId], [IDL.Opt(ArchiveItem)], []),
+  'approveFinding' : IDL.Func([FindingId], [IDL.Opt(ProposedFinding)], []),
   'approveProfileClaim' : IDL.Func([IDL.Nat], [IDL.Opt(ProfileClaim)], []),
   'approveProfileRemoval' : IDL.Func(
       [IDL.Nat],
@@ -816,12 +980,12 @@ export const idlService = IDL.Service({
   'archiveBoardPost' : IDL.Func([PostId], [IDL.Opt(Post)], []),
   'archiveProfile' : IDL.Func([PersonId], [Result_2], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-  'bindAuthMethod' : IDL.Func([AuthMethod], [Result_18], []),
+  'bindAuthMethod' : IDL.Func([AuthMethod], [Result_22], []),
   'blockUser' : IDL.Func([IDL.Principal], [], []),
   'canMessagePerson' : IDL.Func([IDL.Text], [IDL.Bool], ['query']),
   'correctRelationshipType' : IDL.Func(
       [IDL.Nat, RelationshipType],
-      [Result_17],
+      [Result_21],
       [],
     ),
   'createBoardPost' : IDL.Func(
@@ -850,7 +1014,35 @@ export const idlService = IDL.Service({
       [Mystery],
       [],
     ),
-  'createMyself' : IDL.Func([IDL.Text], [Result_16], []),
+  'createFinding' : IDL.Func(
+      [
+        IDL.Text,
+        EvidenceLabel,
+        FindingType,
+        FindingContent,
+        SourceId,
+        IDL.Opt(IDL.Text),
+        IDL.Opt(IDL.Nat),
+      ],
+      [Result_20],
+      [],
+    ),
+  'createMyself' : IDL.Func([IDL.Text], [Result_19], []),
+  'createNewPersonCandidate' : IDL.Func(
+      [IDL.Text, IDL.Text, SourceId],
+      [Result_18],
+      [],
+    ),
+  'createRelationshipProposal' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, SourceId],
+      [Result_17],
+      [],
+    ),
+  'createSource' : IDL.Func(
+      [IDL.Text, SourceType, IDL.Text, IDL.Opt(IDL.Nat)],
+      [Result_16],
+      [],
+    ),
   'designateSuccessor' : IDL.Func([PersonId, IDL.Nat], [Result_15], []),
   'execute' : IDL.Func([IDL.Text], [Result__1], ['query']),
   'getApiDoc' : IDL.Func([], [IDL.Text], ['query']),
@@ -861,6 +1053,7 @@ export const idlService = IDL.Service({
       [IDL.Opt(ConversationView)],
       ['query'],
     ),
+  'getFinding' : IDL.Func([FindingId], [IDL.Opt(ProposedFinding)], ['query']),
   'getMyAccountId' : IDL.Func([], [Result_14], ['query']),
   'getMyAuthMethods' : IDL.Func([], [Result_13], ['query']),
   'getMyProfile' : IDL.Func([], [IDL.Opt(PersonProfile)], ['query']),
@@ -892,7 +1085,14 @@ export const idlService = IDL.Service({
       [IDL.Opt(ReportedMessageView)],
       ['query'],
     ),
+  'getResearchAuditLog' : IDL.Func(
+      [],
+      [IDL.Vec(ResearchAuditEntry)],
+      ['query'],
+    ),
+  'getReviewQueue' : IDL.Func([], [ReviewQueue], ['query']),
   'getSingleStewardWarning' : IDL.Func([], [IDL.Opt(IDL.Text)], ['query']),
+  'getSource' : IDL.Func([SourceId], [IDL.Opt(SourceRecord)], ['query']),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
   'listApprovedArchiveItems' : IDL.Func([], [IDL.Vec(ArchiveItem)], ['query']),
   'listApprovedRecipes' : IDL.Func([], [IDL.Vec(Recipe)], ['query']),
@@ -908,6 +1108,11 @@ export const idlService = IDL.Service({
       [IDL.Vec(Relationship)],
       ['query'],
     ),
+  'listConflictReviewItems' : IDL.Func(
+      [],
+      [IDL.Vec(ConflictReviewItem)],
+      ['query'],
+    ),
   'listConversations' : IDL.Func([], [IDL.Vec(ConversationSummary)], ['query']),
   'listDuplicateCandidates' : IDL.Func([], [IDL.Vec(DuplicatePair)], ['query']),
   'listEligibleStewardCandidates' : IDL.Func(
@@ -915,8 +1120,14 @@ export const idlService = IDL.Service({
       [IDL.Vec(StewardIdentity)],
       ['query'],
     ),
+  'listFindings' : IDL.Func([], [IDL.Vec(ProposedFinding)], ['query']),
   'listMessageableMembers' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
   'listMysteries' : IDL.Func([], [IDL.Vec(Mystery)], ['query']),
+  'listNewPersonCandidates' : IDL.Func(
+      [],
+      [IDL.Vec(NewPersonCandidate)],
+      ['query'],
+    ),
   'listNotifications' : IDL.Func([], [IDL.Vec(Notification)], ['query']),
   'listPendingArchiveItems' : IDL.Func([], [IDL.Vec(ArchiveItem)], ['query']),
   'listPendingMysteryContributions' : IDL.Func(
@@ -939,12 +1150,18 @@ export const idlService = IDL.Service({
       ['query'],
     ),
   'listRecipesForPerson' : IDL.Func([IDL.Text], [IDL.Vec(Recipe)], ['query']),
+  'listRelationshipProposals' : IDL.Func(
+      [],
+      [IDL.Vec(RelationshipProposal)],
+      ['query'],
+    ),
   'listRelationshipRequests' : IDL.Func(
       [],
       [IDL.Vec(RelationshipRequest)],
       ['query'],
     ),
   'listReports' : IDL.Func([], [IDL.Vec(Report)], ['query']),
+  'listSources' : IDL.Func([], [IDL.Vec(SourceRecord)], ['query']),
   'listStewardIdentities' : IDL.Func([], [IDL.Vec(StewardIdentity)], ['query']),
   'listStewards' : IDL.Func([], [IDL.Vec(StewardRecord)], ['query']),
   'listSuccessors' : IDL.Func([], [IDL.Vec(SuccessorDesignation)], ['query']),
@@ -991,6 +1208,7 @@ export const idlService = IDL.Service({
       [],
     ),
   'rejectArchiveItem' : IDL.Func([ArchiveItemId], [IDL.Opt(ArchiveItem)], []),
+  'rejectFinding' : IDL.Func([FindingId], [IDL.Opt(ProposedFinding)], []),
   'rejectProfileClaim' : IDL.Func([IDL.Nat], [IDL.Opt(ProfileClaim)], []),
   'rejectProfileRemoval' : IDL.Func(
       [IDL.Nat],
@@ -1012,6 +1230,7 @@ export const idlService = IDL.Service({
   'reportMessage' : IDL.Func([MessageId, IDL.Text], [Report], []),
   'requestProfileClaim' : IDL.Func([PersonId], [Result_4], []),
   'requestProfileRemoval' : IDL.Func([PersonId, IDL.Text], [Result_3], []),
+  'resolveConflict' : IDL.Func([IDL.Nat], [IDL.Opt(ConflictReviewItem)], []),
   'resolveMergeConflict' : IDL.Func(
       [IDL.Nat, IDL.Text],
       [IDL.Opt(MergeConflict)],
@@ -1179,7 +1398,7 @@ export const idlFactory = ({ IDL }) => {
       'expected' : IDL.Vec(IDL.Text),
     }),
   });
-  const Result_19 = IDL.Variant({ 'ok' : IDL.Null, 'err' : Error });
+  const Result_23 = IDL.Variant({ 'ok' : IDL.Null, 'err' : Error });
   const PersonId = IDL.Text;
   const StewardRoleStatus = IDL.Variant({
     'Active' : IDL.Null,
@@ -1274,7 +1493,7 @@ export const idlFactory = ({ IDL }) => {
     'DuplicateRelationship' : IDL.Null,
     'PersonNotFound' : IDL.Null,
   });
-  const Result_17 = IDL.Variant({
+  const Result_21 = IDL.Variant({
     'ok' : Relationship,
     'err' : RelationshipAdminError,
   });
@@ -1340,6 +1559,89 @@ export const idlFactory = ({ IDL }) => {
     'sourceStatus' : SourceStatus,
     'classification' : ArchiveItemClassification,
     'contributor' : IDL.Principal,
+  });
+  const FindingId = IDL.Nat;
+  const ReviewStatus = IDL.Variant({
+    'Conflicting' : IDL.Null,
+    'Approved' : IDL.Null,
+    'Rejected' : IDL.Null,
+    'Pending' : IDL.Null,
+  });
+  const EvidenceLabel = IDL.Variant({
+    'NeedsResearch' : IDL.Null,
+    'Conflicting' : IDL.Null,
+    'Hypothesis' : IDL.Null,
+    'Documented' : IDL.Null,
+    'FamilyHistoryOralHistory' : IDL.Null,
+    'PersonalMemory' : IDL.Null,
+  });
+  const SourceType = IDL.Variant({
+    'CertificateHeadstoneReference' : IDL.Null,
+    'DeedPropertyReference' : IDL.Null,
+    'ResearchNotes' : IDL.Null,
+    'EmailThread' : IDL.Null,
+    'UploadedDocumentImage' : IDL.Null,
+    'CensusCitation' : IDL.Null,
+  });
+  const FindingContent = IDL.Variant({
+    'Story' : IDL.Record({
+      'title' : IDL.Text,
+      'storyText' : IDL.Text,
+      'relatedPersonIds' : IDL.Vec(IDL.Text),
+    }),
+    'TimelineEvent' : IDL.Record({
+      'title' : IDL.Text,
+      'date' : IDL.Opt(IDL.Text),
+      'description' : IDL.Text,
+      'personId' : IDL.Text,
+    }),
+    'PersonFact' : IDL.Record({
+      'field' : IDL.Text,
+      'value' : IDL.Text,
+      'personId' : IDL.Text,
+    }),
+    'Source' : IDL.Record({
+      'title' : IDL.Text,
+      'archiveItemId' : IDL.Opt(IDL.Nat),
+      'description' : IDL.Text,
+      'sourceType' : SourceType,
+    }),
+    'Mystery' : IDL.Record({
+      'title' : IDL.Text,
+      'description' : IDL.Text,
+      'relatedPersonIds' : IDL.Vec(IDL.Text),
+    }),
+    'Relationship' : IDL.Record({
+      'fromPersonId' : IDL.Text,
+      'toPersonId' : IDL.Text,
+      'relationshipType' : IDL.Text,
+    }),
+  });
+  const SourceId = IDL.Nat;
+  const FindingType = IDL.Variant({
+    'Story' : IDL.Null,
+    'TimelineEvent' : IDL.Null,
+    'PersonFact' : IDL.Null,
+    'Source' : IDL.Null,
+    'Mystery' : IDL.Null,
+    'Relationship' : IDL.Null,
+  });
+  const ProposedFinding = IDL.Record({
+    'id' : FindingId,
+    'status' : ReviewStatus,
+    'title' : IDL.Text,
+    'evidenceLabel' : EvidenceLabel,
+    'newPersonCandidateId' : IDL.Opt(IDL.Nat),
+    'content' : FindingContent,
+    'conflictReviewId' : IDL.Opt(IDL.Nat),
+    'submittedAt' : IDL.Int,
+    'submittedBy' : IDL.Principal,
+    'sourceId' : SourceId,
+    'reviewedAt' : IDL.Opt(IDL.Int),
+    'reviewedBy' : IDL.Opt(IDL.Principal),
+    'updatedAt' : IDL.Int,
+    'personId' : IDL.Opt(IDL.Text),
+    'findingType' : FindingType,
   });
   const ProfileClaimStatus = IDL.Variant({
     'Approved' : IDL.Null,
@@ -1470,7 +1772,7 @@ export const idlFactory = ({ IDL }) => {
     'AccountNotFound' : IDL.Null,
     'NotSignedIn' : IDL.Null,
   });
-  const Result_18 = IDL.Variant({ 'ok' : Account, 'err' : AccountError });
+  const Result_22 = IDL.Variant({ 'ok' : Account, 'err' : AccountError });
   const MysteryStatus = IDL.Variant({
     'Researching' : IDL.Null,
     'Open' : IDL.Null,
@@ -1499,6 +1801,15 @@ export const idlFactory = ({ IDL }) => {
     'relatedBranchId' : IDL.Opt(IDL.Text),
     'relatedSourceIds' : IDL.Vec(IDL.Nat),
     'contributor' : IDL.Principal,
+  });
+  const ResearchError = IDL.Variant({
+    'invalidState' : IDL.Text,
+    'notAuthorized' : IDL.Null,
+    'notFound' : IDL.Nat,
+  });
+  const Result_20 = IDL.Variant({
+    'ok' : ProposedFinding,
+    'err' : ResearchError,
   });
   const ClaimStatus = IDL.Variant({
     'Unclaimed' : IDL.Null,
@@ -1532,7 +1843,50 @@ export const idlFactory = ({ IDL }) => {
     'firstName' : IDL.Opt(IDL.Text),
   });
   const CreateError = IDL.Variant({ 'NotSignedIn' : IDL.Null });
-  const Result_16 = IDL.Variant({ 'ok' : PersonProfile, 'err' : CreateError });
+  const Result_19 = IDL.Variant({ 'ok' : PersonProfile, 'err' : CreateError });
+  const NewPersonCandidate = IDL.Record({
+    'id' : IDL.Nat,
+    'status' : ReviewStatus,
+    'name' : IDL.Text,
+    'submittedAt' : IDL.Int,
+    'submittedBy' : IDL.Principal,
+    'sourceId' : SourceId,
+    'reviewedAt' : IDL.Opt(IDL.Int),
+    'reviewedBy' : IDL.Opt(IDL.Principal),
+    'details' : IDL.Text,
+  });
+  const Result_18 = IDL.Variant({
+    'ok' : NewPersonCandidate,
+    'err' : ResearchError,
+  });
+  const RelationshipProposal = IDL.Record({
+    'id' : IDL.Nat,
+    'status' : ReviewStatus,
+    'fromPersonId' : IDL.Text,
+    'submittedAt' : IDL.Int,
+    'submittedBy' : IDL.Principal,
+    'sourceId' : SourceId,
+    'reviewedAt' : IDL.Opt(IDL.Int),
+    'reviewedBy' : IDL.Opt(IDL.Principal),
+    'toPersonId' : IDL.Text,
+    'relationshipType' : IDL.Text,
+  });
+  const Result_17 = IDL.Variant({
+    'ok' : RelationshipProposal,
+    'err' : ResearchError,
+  });
+  const SourceRecord = IDL.Record({
+    'id' : SourceId,
+    'status' : ReviewStatus,
+    'title' : IDL.Text,
+    'archiveItemId' : IDL.Opt(IDL.Nat),
+    'createdAt' : IDL.Int,
+    'description' : IDL.Text,
+    'sourceType' : SourceType,
+    'updatedAt' : IDL.Int,
+    'contributor' : IDL.Principal,
+  });
+  const Result_16 = IDL.Variant({ 'ok' : SourceRecord, 'err' : ResearchError });
   const SuccessorStatus = IDL.Variant({
     'Activated' : IDL.Null,
     'Removed' : IDL.Null,
@@ -1605,6 +1959,21 @@ export const idlFactory = ({ IDL }) => {
     'report' : Report,
     'message' : Message,
   });
+  const ResearchAuditEntry = IDL.Record({
+    'id' : IDL.Nat,
+    'action' : IDL.Text,
+    'findingId' : IDL.Opt(FindingId),
+    'sourceId' : IDL.Opt(SourceId),
+    'actorId' : IDL.Principal,
+    'summary' : IDL.Text,
+    'timestamp' : IDL.Int,
+  });
+  const ReviewQueue = IDL.Record({
+    'pending' : IDL.Nat,
+    'conflicting' : IDL.Nat,
+    'approved' : IDL.Nat,
+    'rejected' : IDL.Nat,
+  });
   const AuditActionType = IDL.Variant({
     'ProfileRemovalRequested' : IDL.Null,
     'ClaimRejected' : IDL.Null,
@@ -1635,6 +2004,16 @@ export const idlFactory = ({ IDL }) => {
     'summary' : IDL.Text,
     'timestamp' : IDL.Int,
     'actorAccountId' : IDL.Principal,
+  });
+  const ConflictReviewItem = IDL.Record({
+    'id' : IDL.Nat,
+    'field' : IDL.Text,
+    'status' : ReviewStatus,
+    'findingId' : FindingId,
+    'proposedValue' : IDL.Text,
+    'canonicalValue' : IDL.Text,
+    'resolvedAt' : IDL.Opt(IDL.Int),
+    'resolvedBy' : IDL.Opt(IDL.Principal),
   });
   const ConversationSummary = IDL.Record({
     'otherPersonId' : PersonId,
@@ -1886,7 +2265,7 @@ export const idlFactory = ({ IDL }) => {
       ),
     '_immutableObjectStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
     '_initialize_access_control' : IDL.Func([], [], []),
-    '_internet_identity_sign_in_finish' : IDL.Func([], [Result_19], []),
+    '_internet_identity_sign_in_finish' : IDL.Func([], [Result_23], []),
     '_internet_identity_sign_in_start' : IDL.Func([], [IDL.Vec(IDL.Nat8)], []),
     'activateSuccessor' : IDL.Func([PersonId], [Result_9], []),
     'addBoardReply' : IDL.Func([PostId, IDL.Text], [Reply], []),
@@ -1911,7 +2290,7 @@ export const idlFactory = ({ IDL }) => {
       ),
     'addRelationship' : IDL.Func(
         [PersonId, PersonId, RelationshipType],
-        [Result_17],
+        [Result_21],
         [],
       ),
     'approveArchiveItem' : IDL.Func(
@@ -1919,6 +2298,7 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Opt(ArchiveItem)],
         [],
       ),
+    'approveFinding' : IDL.Func([FindingId], [IDL.Opt(ProposedFinding)], []),
     'approveProfileClaim' : IDL.Func([IDL.Nat], [IDL.Opt(ProfileClaim)], []),
     'approveProfileRemoval' : IDL.Func(
         [IDL.Nat],
@@ -1935,12 +2315,12 @@ export const idlFactory = ({ IDL }) => {
     'archiveBoardPost' : IDL.Func([PostId], [IDL.Opt(Post)], []),
     'archiveProfile' : IDL.Func([PersonId], [Result_2], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-    'bindAuthMethod' : IDL.Func([AuthMethod], [Result_18], []),
+    'bindAuthMethod' : IDL.Func([AuthMethod], [Result_22], []),
     'blockUser' : IDL.Func([IDL.Principal], [], []),
     'canMessagePerson' : IDL.Func([IDL.Text], [IDL.Bool], ['query']),
     'correctRelationshipType' : IDL.Func(
         [IDL.Nat, RelationshipType],
-        [Result_17],
+        [Result_21],
         [],
       ),
     'createBoardPost' : IDL.Func(
@@ -1969,7 +2349,35 @@ export const idlFactory = ({ IDL }) => {
         [Mystery],
         [],
       ),
-    'createMyself' : IDL.Func([IDL.Text], [Result_16], []),
+    'createFinding' : IDL.Func(
+        [
+          IDL.Text,
+          EvidenceLabel,
+          FindingType,
+          FindingContent,
+          SourceId,
+          IDL.Opt(IDL.Text),
+          IDL.Opt(IDL.Nat),
+        ],
+        [Result_20],
+        [],
+      ),
+    'createMyself' : IDL.Func([IDL.Text], [Result_19], []),
+    'createNewPersonCandidate' : IDL.Func(
+        [IDL.Text, IDL.Text, SourceId],
+        [Result_18],
+        [],
+      ),
+    'createRelationshipProposal' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, SourceId],
+        [Result_17],
+        [],
+      ),
+    'createSource' : IDL.Func(
+        [IDL.Text, SourceType, IDL.Text, IDL.Opt(IDL.Nat)],
+        [Result_16],
+        [],
+      ),
     'designateSuccessor' : IDL.Func([PersonId, IDL.Nat], [Result_15], []),
     'execute' : IDL.Func([IDL.Text], [Result__1], ['query']),
     'getApiDoc' : IDL.Func([], [IDL.Text], ['query']),
@@ -1980,6 +2388,7 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Opt(ConversationView)],
         ['query'],
       ),
+    'getFinding' : IDL.Func([FindingId], [IDL.Opt(ProposedFinding)], ['query']),
     'getMyAccountId' : IDL.Func([], [Result_14], ['query']),
     'getMyAuthMethods' : IDL.Func([], [Result_13], ['query']),
     'getMyProfile' : IDL.Func([], [IDL.Opt(PersonProfile)], ['query']),
@@ -2011,7 +2420,14 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Opt(ReportedMessageView)],
         ['query'],
       ),
+    'getResearchAuditLog' : IDL.Func(
+        [],
+        [IDL.Vec(ResearchAuditEntry)],
+        ['query'],
+      ),
+    'getReviewQueue' : IDL.Func([], [ReviewQueue], ['query']),
     'getSingleStewardWarning' : IDL.Func([], [IDL.Opt(IDL.Text)], ['query']),
+    'getSource' : IDL.Func([SourceId], [IDL.Opt(SourceRecord)], ['query']),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
     'listApprovedArchiveItems' : IDL.Func(
         [],
@@ -2035,6 +2451,11 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(Relationship)],
         ['query'],
       ),
+    'listConflictReviewItems' : IDL.Func(
+        [],
+        [IDL.Vec(ConflictReviewItem)],
+        ['query'],
+      ),
     'listConversations' : IDL.Func(
         [],
         [IDL.Vec(ConversationSummary)],
@@ -2050,8 +2471,14 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(StewardIdentity)],
         ['query'],
       ),
+    'listFindings' : IDL.Func([], [IDL.Vec(ProposedFinding)], ['query']),
     'listMessageableMembers' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
     'listMysteries' : IDL.Func([], [IDL.Vec(Mystery)], ['query']),
+    'listNewPersonCandidates' : IDL.Func(
+        [],
+        [IDL.Vec(NewPersonCandidate)],
+        ['query'],
+      ),
     'listNotifications' : IDL.Func([], [IDL.Vec(Notification)], ['query']),
     'listPendingArchiveItems' : IDL.Func([], [IDL.Vec(ArchiveItem)], ['query']),
     'listPendingMysteryContributions' : IDL.Func(
@@ -2074,12 +2501,18 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'listRecipesForPerson' : IDL.Func([IDL.Text], [IDL.Vec(Recipe)], ['query']),
+    'listRelationshipProposals' : IDL.Func(
+        [],
+        [IDL.Vec(RelationshipProposal)],
+        ['query'],
+      ),
     'listRelationshipRequests' : IDL.Func(
         [],
         [IDL.Vec(RelationshipRequest)],
         ['query'],
       ),
     'listReports' : IDL.Func([], [IDL.Vec(Report)], ['query']),
+    'listSources' : IDL.Func([], [IDL.Vec(SourceRecord)], ['query']),
     'listStewardIdentities' : IDL.Func(
         [],
         [IDL.Vec(StewardIdentity)],
@@ -2134,6 +2567,7 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'rejectArchiveItem' : IDL.Func([ArchiveItemId], [IDL.Opt(ArchiveItem)], []),
+    'rejectFinding' : IDL.Func([FindingId], [IDL.Opt(ProposedFinding)], []),
     'rejectProfileClaim' : IDL.Func([IDL.Nat], [IDL.Opt(ProfileClaim)], []),
     'rejectProfileRemoval' : IDL.Func(
         [IDL.Nat],
@@ -2155,6 +2589,7 @@ export const idlFactory = ({ IDL }) => {
     'reportMessage' : IDL.Func([MessageId, IDL.Text], [Report], []),
     'requestProfileClaim' : IDL.Func([PersonId], [Result_4], []),
     'requestProfileRemoval' : IDL.Func([PersonId, IDL.Text], [Result_3], []),
+    'resolveConflict' : IDL.Func([IDL.Nat], [IDL.Opt(ConflictReviewItem)], []),
     'resolveMergeConflict' : IDL.Func(
         [IDL.Nat, IDL.Text],
         [IDL.Opt(MergeConflict)],

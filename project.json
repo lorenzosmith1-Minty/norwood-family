@@ -1,18 +1,20 @@
 {
-  "overview": "Norwood Family is a private family history app where members explore their family tree, share stories and memories, contribute media, and communicate through a message board and private messages.",
+  "overview": "A family history app for the Norwood family with profile claiming, family tree exploration, archives, stories, recipes, messaging, governance, and a new Historical Research Intake workspace for documenting proposed findings with sources and evidence.",
   "features": [
+    "Claim and manage family member profiles",
     "Explore the family tree and heritage branches",
-    "Share family stories, mysteries, and timeline memories",
-    "Contribute and approve family media and archive items",
-    "Communicate via message board and private messages",
-    "Steward-managed governance, reviews, and profile claims"
+    "Browse family archive, stories, mysteries, and timeline",
+    "Share family recipes and videos",
+    "Message board and private messaging",
+    "Family Steward governance and pending contributions",
+    "Historical Research Intake with sources, proposed findings, and conflict review"
   ],
   "category": "family-history",
   "tags": [
     "family",
     "genealogy",
-    "community",
-    "private"
+    "history",
+    "community"
   ],
-  "last_updated": "2026-09-11T02:40:50.359Z"
+  "last_updated": "2026-09-11T20:59:40.781Z"
 }

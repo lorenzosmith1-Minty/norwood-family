@@ -40,6 +40,9 @@ import { ProfileEditPage } from "./pages/ProfileEditPage";
 import { RecipeContributePage } from "./pages/RecipeContributePage";
 import { RecipeDetailPage } from "./pages/RecipeDetailPage";
 import { RecipesPage } from "./pages/RecipesPage";
+import { ResearchConflictReviewPage } from "./pages/ResearchConflictReviewPage";
+import { ResearchIntakePage } from "./pages/ResearchIntakePage";
+import { ResearchReviewQueuePage } from "./pages/ResearchReviewQueuePage";
 import { StoriesPage } from "./pages/StoriesPage";
 import { TimelinePage } from "./pages/TimelinePage";
 import { VideoContributePage } from "./pages/VideoContributePage";
@@ -80,7 +83,10 @@ type View =
   | "conversation"
   | "family-history"
   | "message-board-hub"
-  | "steward-hub";
+  | "steward-hub"
+  | "research-intake"
+  | "research-queue"
+  | "research-conflict";
 
 const VALID_VIEWS: readonly View[] = [
   "home",
@@ -115,6 +121,9 @@ const VALID_VIEWS: readonly View[] = [
   "family-history",
   "message-board-hub",
   "steward-hub",
+  "research-intake",
+  "research-queue",
+  "research-conflict",
 ];
 
 function isView(value: string): value is View {
@@ -742,7 +751,18 @@ export default function App() {
           onOpenReview={() => setView("steward-review")}
           onOpenPendingContributions={() => setView("admin-approval")}
           onOpenGovernance={() => setView("governance")}
+          onOpenResearchIntake={() => setView("research-intake")}
         />
+      ) : view === "research-intake" ? (
+        <ResearchIntakePage
+          onBack={() => setView("steward-hub")}
+          onOpenReviewQueue={() => setView("research-queue")}
+          onOpenConflictReview={() => setView("research-conflict")}
+        />
+      ) : view === "research-queue" ? (
+        <ResearchReviewQueuePage onBack={() => setView("research-intake")} />
+      ) : view === "research-conflict" ? (
+        <ResearchConflictReviewPage onBack={() => setView("research-intake")} />
       ) : (
         <ArchiveDetailPage
           itemId={selectedArchiveItemId ?? 0n}

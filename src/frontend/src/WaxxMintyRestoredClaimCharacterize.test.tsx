@@ -229,9 +229,10 @@ describe("Restored Waxx Minty claimed profile with real photo", () => {
     setCurrentPrincipal(OWNER);
     renderApp();
 
-    // Open the owner's own profile via the navbar "My Profile" entry.
+    // Open the owner's own profile via the navbar profile button (labeled with
+    // the canonical display name, Waxx Minty, once hydration resolves).
     const user = userEvent.setup();
-    await user.click(screen.getByRole("button", { name: /My Profile/ }));
+    await user.click(await screen.findByRole("button", { name: "Waxx Minty" }));
 
     // The hero resolves the selected profile photo on first load.
     const heroImg = await screen.findByRole("img", {

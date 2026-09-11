@@ -378,7 +378,7 @@ describe("A valid personId resolves to its profile, never an empty page", () => 
     renderApp();
 
     // Navigate to Add Myself and search for Lorenzo Smith Jr.
-    await user.click(screen.getByRole("button", { name: "Add Myself" }));
+    await user.click(await screen.findByRole("button", { name: "Add Myself" }));
     await user.type(
       screen.getByTestId("add_myself.name_input"),
       "Lorenzo Smith Jr",

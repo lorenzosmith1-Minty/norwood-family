@@ -290,9 +290,11 @@ function seedWaxxMintyProfile() {
   return profile;
 }
 
-/** Opens Waxx Minty's profile via the navbar "My Profile" entry. */
+/** Opens Waxx Minty's profile via the navbar profile button. */
 async function openWaxxProfile(user: ReturnType<typeof userEvent.setup>) {
-  await user.click(screen.getByRole("button", { name: /My Profile/ }));
+  // The single profile button is labeled with the canonical display name
+  // (Waxx Minty) and appears once hydration resolves.
+  await user.click(await screen.findByRole("button", { name: "Waxx Minty" }));
   expect(await screen.findByRole("heading", { level: 1 })).toHaveTextContent(
     "Waxx Minty",
   );

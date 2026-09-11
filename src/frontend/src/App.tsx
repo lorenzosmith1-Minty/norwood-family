@@ -227,13 +227,14 @@ export default function App() {
     role: "originating" | "related" | null;
     context: "recipes" | "profile";
   } | null>(null);
-  const { data: isAdmin = false } = useIsAdmin();
+  const { data: isAdmin = false, isLoading: isAdminLoading } = useIsAdmin();
   const { isAuthenticated, accountId, signOut } = useAuth();
   const {
     displayName,
     status: identityStatus,
     personId: myPersonId,
     claimStatus,
+    isLoading: identityLoading,
   } = useNavbarIdentity();
   // Approved family members (a linked, claimed Person Profile) may use the
   // Message Board and Private Messaging. Guests and members with no approved
@@ -243,6 +244,15 @@ export default function App() {
   // approved claim it reads "Add Myself"; after an approved/claimed profile it
   // reads "Add Family" (which begins the family-member addition workflow).
   const hasClaimedProfile = claimStatus === ClaimStatus.Claimed;
+
+  // Hydration gate: while the signed-in caller's account/profile/claim/steward
+  // state is still resolving from the backend, we cannot yet decide
+  // permission-dependent navigation. The navbar must NOT render "Add Myself"
+  // for an account that owns an approved claim, nor hide authorized features
+  // (Message Board, Family Steward) from incomplete state. So while any of
+  // this state is still loading, the Layout shows a neutral skeleton in place
+  // of the authenticated controls and only renders them once fully resolved.
+  const isHydrating = isAuthenticated && (identityLoading || isAdminLoading);
 
   const profile = profiles[profileId] ?? profiles.julia;
 
@@ -397,6 +407,7 @@ export default function App() {
       isAdmin={isAdmin}
       isAuthenticated={isAuthenticated}
       isApprovedMember={isApprovedMember}
+      isHydrating={isHydrating}
       hasClaimedProfile={hasClaimedProfile}
       accountId={accountId}
       identityName={displayName}

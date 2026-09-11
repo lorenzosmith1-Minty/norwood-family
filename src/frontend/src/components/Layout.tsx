@@ -1,3 +1,4 @@
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Archive,
   Bell,
@@ -46,6 +47,15 @@ interface LayoutProps {
    * Person Profile). Gates the Message Board nav link.
    */
   isApprovedMember?: boolean;
+  /**
+   * True while the signed-in caller's account/profile/claim/steward state is
+   * still resolving from the backend. While true, the permission-dependent
+   * navigation (Add Myself / Add Family, Message Board, Family Steward, the
+   * profile control, and Sign out) is replaced by a neutral skeleton so the
+   * navbar never renders permission-dependent navigation from incomplete auth
+   * state. The public nav links stay visible.
+   */
+  isHydrating?: boolean;
   /** The stable internal account ID (ICP Principal) of the signed-in caller. */
   accountId?: string;
   /**
@@ -96,6 +106,7 @@ export function Layout({
   isAdmin,
   isAuthenticated,
   isApprovedMember,
+  isHydrating = false,
   identityName,
   hasClaimedProfile = false,
   activeView,
@@ -246,53 +257,69 @@ export function Layout({
               />
               Family History
             </button>
-            <button
-              type="button"
-              data-ocid="layout.add_myself_link"
-              aria-current={isAddMyselfActive ? "page" : undefined}
-              onClick={onAddMyselfClick}
-              className={navClass(isAddMyselfActive)}
-            >
-              <UserPlus
-                className={navIconClass(isAddMyselfActive)}
-                strokeWidth={1.75}
-                aria-hidden="true"
-              />
-              {addLabel}
-            </button>
-            {showApprovedMemberControls ? (
-              <button
-                type="button"
-                data-ocid="layout.message_board_link"
-                aria-current={isMessageBoardActive ? "page" : undefined}
-                onClick={onMessageBoardClick}
-                className={navClass(isMessageBoardActive)}
+            {isHydrating ? (
+              <div
+                data-ocid="layout.hydration_skeleton"
+                aria-label="Loading your account"
+                className="flex items-center gap-2"
               >
-                <MessageSquareText
-                  className={navIconClass(isMessageBoardActive)}
-                  strokeWidth={1.75}
-                  aria-hidden="true"
-                />
-                Message Board
-              </button>
-            ) : null}
-            {showAdminControls ? (
-              <button
-                type="button"
-                data-ocid="layout.steward_link"
-                aria-current={isStewardActive ? "page" : undefined}
-                onClick={onStewardClick}
-                className={navClass(isStewardActive)}
-              >
-                <UserCog
-                  className={navIconClass(isStewardActive)}
-                  strokeWidth={1.75}
-                  aria-hidden="true"
-                />
-                Family Steward
-                <StewardActionBadge />
-              </button>
-            ) : null}
+                <Skeleton className="h-8 w-28 rounded-full" />
+                <Skeleton className="h-8 w-28 rounded-full" />
+                <Skeleton className="h-8 w-28 rounded-full" />
+                <Skeleton className="h-8 w-28 rounded-full" />
+                <Skeleton className="h-8 w-28 rounded-full" />
+              </div>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  data-ocid="layout.add_myself_link"
+                  aria-current={isAddMyselfActive ? "page" : undefined}
+                  onClick={onAddMyselfClick}
+                  className={navClass(isAddMyselfActive)}
+                >
+                  <UserPlus
+                    className={navIconClass(isAddMyselfActive)}
+                    strokeWidth={1.75}
+                    aria-hidden="true"
+                  />
+                  {addLabel}
+                </button>
+                {showApprovedMemberControls ? (
+                  <button
+                    type="button"
+                    data-ocid="layout.message_board_link"
+                    aria-current={isMessageBoardActive ? "page" : undefined}
+                    onClick={onMessageBoardClick}
+                    className={navClass(isMessageBoardActive)}
+                  >
+                    <MessageSquareText
+                      className={navIconClass(isMessageBoardActive)}
+                      strokeWidth={1.75}
+                      aria-hidden="true"
+                    />
+                    Message Board
+                  </button>
+                ) : null}
+                {showAdminControls ? (
+                  <button
+                    type="button"
+                    data-ocid="layout.steward_link"
+                    aria-current={isStewardActive ? "page" : undefined}
+                    onClick={onStewardClick}
+                    className={navClass(isStewardActive)}
+                  >
+                    <UserCog
+                      className={navIconClass(isStewardActive)}
+                      strokeWidth={1.75}
+                      aria-hidden="true"
+                    />
+                    Family Steward
+                    <StewardActionBadge />
+                  </button>
+                ) : null}
+              </>
+            )}
             <button
               type="button"
               data-ocid="layout.notifications_link"
@@ -308,54 +335,60 @@ export function Layout({
               Notifications
               <NotificationBadge />
             </button>
-            <span
-              className="hidden h-5 w-px bg-border sm:block"
-              aria-hidden="true"
-            />
-            {isAuthenticated ? (
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  data-ocid="layout.my_profile_link"
-                  aria-current={isMyProfileActive ? "page" : undefined}
-                  onClick={onMyProfileClick}
-                  className={navClass(isMyProfileActive)}
-                >
-                  <UserCircle
-                    className={navIconClass(isMyProfileActive)}
-                    strokeWidth={1.75}
-                    aria-hidden="true"
-                  />
-                  <span className="max-w-[10rem] truncate">{profileLabel}</span>
-                </button>
-                <button
-                  type="button"
-                  data-ocid="layout.sign_out_button"
-                  onClick={onSignOutClick}
-                  className={navClass(false)}
-                >
-                  <LogOut
-                    className="h-4 w-4 text-accent-foreground"
-                    strokeWidth={1.75}
-                    aria-hidden="true"
-                  />
-                  Sign out
-                </button>
-              </div>
-            ) : (
-              <button
-                type="button"
-                data-ocid="layout.sign_in_button"
-                onClick={onSignInClick}
-                className={navClass(false)}
-              >
-                <LogIn
-                  className="h-4 w-4 text-accent-foreground"
-                  strokeWidth={1.75}
+            {isHydrating ? null : (
+              <>
+                <span
+                  className="hidden h-5 w-px bg-border sm:block"
                   aria-hidden="true"
                 />
-                Sign in
-              </button>
+                {isAuthenticated ? (
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      data-ocid="layout.my_profile_link"
+                      aria-current={isMyProfileActive ? "page" : undefined}
+                      onClick={onMyProfileClick}
+                      className={navClass(isMyProfileActive)}
+                    >
+                      <UserCircle
+                        className={navIconClass(isMyProfileActive)}
+                        strokeWidth={1.75}
+                        aria-hidden="true"
+                      />
+                      <span className="max-w-[10rem] truncate">
+                        {profileLabel}
+                      </span>
+                    </button>
+                    <button
+                      type="button"
+                      data-ocid="layout.sign_out_button"
+                      onClick={onSignOutClick}
+                      className={navClass(false)}
+                    >
+                      <LogOut
+                        className="h-4 w-4 text-accent-foreground"
+                        strokeWidth={1.75}
+                        aria-hidden="true"
+                      />
+                      Sign out
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    data-ocid="layout.sign_in_button"
+                    onClick={onSignInClick}
+                    className={navClass(false)}
+                  >
+                    <LogIn
+                      className="h-4 w-4 text-accent-foreground"
+                      strokeWidth={1.75}
+                      aria-hidden="true"
+                    />
+                    Sign in
+                  </button>
+                )}
+              </>
             )}
           </div>
         </div>

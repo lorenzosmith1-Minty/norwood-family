@@ -35,14 +35,37 @@ export interface NavbarIdentity {
    * review. Drives claim-aware "My Profile" routing.
    */
   claimStatus?: ClaimStatus;
+  /**
+   * True while the signed-in caller's own profile/claim state is still
+   * resolving from the backend. While this is true the navbar must NOT render
+   * permission-dependent navigation (Add Myself / Add Family, Message Board,
+   * Family Steward) from incomplete state — the caller may own an approved
+   * claim that has not resolved yet, so showing "Add Myself" or hiding
+   * authorized features would be wrong. The Layout shows a neutral skeleton
+   * until this clears.
+   */
+  isLoading: boolean;
 }
 
 export function useNavbarIdentity(): NavbarIdentity {
   const { isAuthenticated } = useAuth();
-  const { data: profile } = useMyProfile();
+  const { data: profile, isLoading } = useMyProfile();
 
-  if (!isAuthenticated || !profile) {
-    return { displayName: "", status: "none" };
+  // A signed-out caller needs no hydration — the public navbar is authoritative.
+  if (!isAuthenticated) {
+    return { displayName: "", status: "none", isLoading: false };
+  }
+
+  // While the signed-in caller's own profile is still resolving we cannot yet
+  // decide claim-aware navigation. Report loading so the navbar shows a neutral
+  // skeleton instead of rendering permission-dependent nav from incomplete
+  // state (e.g. "Add Myself" for an account that owns an approved claim).
+  if (isLoading) {
+    return { displayName: "", status: "none", isLoading: true };
+  }
+
+  if (!profile) {
+    return { displayName: "", status: "none", isLoading: false };
   }
 
   const displayName = resolveBackendDisplayName(profile.personId, profile);
@@ -54,5 +77,6 @@ export function useNavbarIdentity(): NavbarIdentity {
     status,
     personId: profile.personId,
     claimStatus: profile.claimStatus,
+    isLoading: false,
   };
 }

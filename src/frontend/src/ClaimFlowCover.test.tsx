@@ -267,7 +267,12 @@ async function searchAddMyself(
   user: ReturnType<typeof userEvent.setup>,
   name: string,
 ) {
-  await user.click(screen.getByRole("button", { name: "Add Myself" }));
+  // The Add Myself / Add Family nav position toggles on claim state: a caller
+  // with an approved claim sees "Add Family", otherwise "Add Myself". Both
+  // navigate to the same add-myself flow.
+  await user.click(
+    await screen.findByRole("button", { name: /Add (Myself|Family)/ }),
+  );
   await user.type(screen.getByTestId("add_myself.name_input"), name);
   await user.click(screen.getByTestId("add_myself.search_button"));
 }
@@ -431,7 +436,7 @@ describe("The canonical profile shows PENDING CLAIM and hides This is Me / UNCLA
     // Open the canonical profile via My Profile routing: the account has a
     // pending claim, so My Profile routes to the same canonical profile in its
     // pending state.
-    await user.click(screen.getByTestId("layout.my_profile_link"));
+    await user.click(await screen.findByTestId("layout.my_profile_link"));
 
     expect(await screen.findByRole("heading", { level: 1 })).toHaveTextContent(
       "Lorenzo Smith Jr.",

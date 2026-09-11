@@ -186,7 +186,9 @@ describe("Canonical Lorenzo Smith Jr. profile shows CLAIMED for the restored own
     // signed-in account, so the backend reports AlreadyClaimed and the corrected
     // claim flow routes to My Profile (the owned canonical profile) instead of
     // creating a duplicate claim.
-    await user.click(screen.getByRole("button", { name: "Add Myself" }));
+    await user.click(
+      await screen.findByRole("button", { name: /Add (Myself|Family)/ }),
+    );
     await user.type(
       screen.getByTestId("add_myself.name_input"),
       "Lorenzo Smith Jr",
@@ -242,7 +244,7 @@ describe("My Profile opens the canonical Person Profile owned by the caller", ()
     renderApp();
 
     // Open "My Profile" from the navbar.
-    await user.click(screen.getByTestId("layout.my_profile_link"));
+    await user.click(await screen.findByTestId("layout.my_profile_link"));
 
     // My Profile opens the canonical Person Profile owned by the caller.
     expect(await screen.findByRole("heading", { level: 1 })).toHaveTextContent(

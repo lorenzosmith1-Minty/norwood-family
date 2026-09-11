@@ -108,24 +108,29 @@ describe("Navbar structure characterization", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("shows a Sign out button and no Sign in when authenticated", () => {
+  it("shows a Sign out button and no Sign in when authenticated", async () => {
     setAuthenticated(true);
     setCurrentPrincipal(ACCOUNT);
     renderApp();
 
+    // The authenticated controls appear once the caller's identity/admin state
+    // has hydrated (the navbar shows a neutral skeleton while loading).
     expect(
-      screen.getByRole("button", { name: "Sign out" }),
+      await screen.findByRole("button", { name: "Sign out" }),
     ).toBeInTheDocument();
     expect(
       screen.queryByRole("button", { name: "Sign in" }),
     ).not.toBeInTheDocument();
   });
 
-  it("keeps the nav links visible alongside the authenticated sign-out control", () => {
+  it("keeps the nav links visible alongside the authenticated sign-out control", async () => {
     setAuthenticated(true);
     setCurrentPrincipal(ACCOUNT);
     renderApp();
 
+    // Wait for hydration to resolve so the authenticated controls (including
+    // the Add Myself position) are rendered alongside the public nav links.
+    await screen.findByRole("button", { name: "Sign out" });
     for (const label of NAV_LINKS) {
       expect(screen.getByRole("button", { name: label })).toBeInTheDocument();
     }

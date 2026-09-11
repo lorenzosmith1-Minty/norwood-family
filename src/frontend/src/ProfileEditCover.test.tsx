@@ -402,8 +402,11 @@ describe("Profile Completeness data updates after editing", () => {
     const user = userEvent.setup();
     renderApp();
 
-    // Open the owner's own profile via the navbar "My Profile" entry.
-    await user.click(screen.getByRole("button", { name: /My Profile/ }));
+    // Open the owner's own profile via the navbar profile button (labeled with
+    // the canonical display name, Clayton Norwood, once hydration resolves).
+    await user.click(
+      await screen.findByRole("button", { name: "Clayton Norwood" }),
+    );
     expect(await screen.findByRole("heading", { level: 1 })).toHaveTextContent(
       "Clayton Norwood",
     );

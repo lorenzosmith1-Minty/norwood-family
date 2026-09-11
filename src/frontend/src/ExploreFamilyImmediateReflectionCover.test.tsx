@@ -306,9 +306,12 @@ describe("Immediate reflection of saved profile edits in Explore Family", () => 
     const user = userEvent.setup();
     renderApp();
 
-    // Open the owner's own profile via the navbar "My Profile" entry, then the
-    // editor.
-    await user.click(screen.getByRole("button", { name: /My Profile/ }));
+    // Open the owner's own profile via the navbar profile button (labeled with
+    // the canonical display name, Lorenzo Smith Jr., once hydration resolves),
+    // then the editor.
+    await user.click(
+      await screen.findByRole("button", { name: "Lorenzo Smith Jr." }),
+    );
     expect(await screen.findByRole("heading", { level: 1 })).toHaveTextContent(
       "Lorenzo Smith Jr.",
     );

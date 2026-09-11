@@ -267,7 +267,7 @@ describe("My Profile routes by claim state", () => {
     const user = userEvent.setup();
     renderApp();
 
-    await user.click(screen.getByTestId("layout.my_profile_link"));
+    await user.click(await screen.findByTestId("layout.my_profile_link"));
 
     // My Profile opens the owned canonical profile in its Claimed state.
     expect(await screen.findByRole("heading", { level: 1 })).toHaveTextContent(
@@ -325,7 +325,7 @@ describe("My Profile routes by claim state", () => {
     const user = userEvent.setup();
     renderApp();
 
-    await user.click(screen.getByTestId("layout.my_profile_link"));
+    await user.click(await screen.findByTestId("layout.my_profile_link"));
 
     // My Profile opens the same canonical profile showing the pending claim.
     expect(await screen.findByRole("heading", { level: 1 })).toHaveTextContent(
@@ -350,7 +350,7 @@ describe("My Profile routes by claim state", () => {
     const user = userEvent.setup();
     renderApp();
 
-    await user.click(screen.getByTestId("layout.my_profile_link"));
+    await user.click(await screen.findByTestId("layout.my_profile_link"));
 
     // With no claim/profile, My Profile routes to the Add Myself flow.
     expect(

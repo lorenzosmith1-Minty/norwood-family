@@ -219,6 +219,59 @@ it("does not let a non-admin list or approve pending contributions", async () =>
 });
 
 // ---------------------------------------------------------------------------
+// Pending Contributions count derives from canonical pending records (cover for
+// the pending-badge repair). The Steward-facing badge must reflect the same
+// canonical backend pending data that listPendingArchiveItems returns, so a
+// submitted contribution increments the count and an Approve/Reject decrements
+// it. A dedicated canister keeps the shared `actor` canister's state from
+// leaking into this assertion.
+// ---------------------------------------------------------------------------
+
+it("derives the pending contributions count from canonical pending archive records", async () => {
+  const countSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
+  const countActor = countSetup.actor;
+
+  // ADMIN becomes the Family Steward; CONTRIBUTOR registers as a #user.
+  countActor.setIdentity(adminIdentity);
+  await countActor._initialize_access_control();
+  countActor.setIdentity(contributorIdentity);
+  await countActor._initialize_access_control();
+
+  // Empty-state: no pending items, so the count is zero.
+  countActor.setIdentity(adminIdentity);
+  expect(await countActor.getPendingContributionsCount()).toBe(0n);
+
+  // A contributor submits a pending archive item; the count increments to one.
+  countActor.setIdentity(contributorIdentity);
+  const item = await countActor.submitArchiveItem(
+    "A family letter",
+    "A letter from 1924.",
+    { Document: null },
+    blob,
+    "1924",
+    [1924n],
+    ["letters"],
+    ["julia"],
+    ["branch-1"],
+    { Original: null },
+    { FamilyOnly: null },
+    { Standard: null },
+    [],
+  );
+
+  // The count reflects the same canonical pending record listPendingArchiveItems
+  // returns: exactly one pending item.
+  countActor.setIdentity(adminIdentity);
+  expect(await countActor.getPendingContributionsCount()).toBe(1n);
+  expect(await countActor.listPendingArchiveItems()).toHaveLength(1);
+
+  // Approving the item removes it from the pending set, decrementing the count.
+  await countActor.approveArchiveItem(item.id);
+  expect(await countActor.getPendingContributionsCount()).toBe(0n);
+  expect(await countActor.listPendingArchiveItems()).toEqual([]);
+});
+
+// ---------------------------------------------------------------------------
 // Account identity (cover for the Google/Apple sign-in change). The account id
 // is the caller's stable ICP Principal — never an email or a Google/Apple
 // provider identifier — and Google/Apple are authentication methods bound to
@@ -508,4 +561,262 @@ it("lists eligible steward candidates without trapping", async () => {
   await actor._initialize_access_control();
   const candidates = await actor.listEligibleStewardCandidates();
   expect(Array.isArray(candidates)).toBe(true);
+});
+
+// ---------------------------------------------------------------------------
+// Message Board, Private Messaging, blocking, reporting, and the Pending
+// Contributions count (cover for the board/messaging/pending-count phase).
+// These methods are approved-member / Family-Steward gated and are exercised
+// against the real canister so a stubbed backend cannot pass the cover. A
+// dedicated canister keeps the claim/approve state from leaking into the shared
+// `actor` canister the other tests use.
+// ---------------------------------------------------------------------------
+
+const memberAIdentity = createIdentity("board-member-a-seed");
+const memberBIdentity = createIdentity("board-member-b-seed");
+const MEMBER_A = memberAIdentity.getPrincipal();
+const MEMBER_B = memberBIdentity.getPrincipal();
+
+it("round-trips board posts, replies, archive/restore, messaging, block, report, and pending count", async () => {
+  const boardSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
+  const boardActor = boardSetup.actor;
+
+  // ADMIN becomes the Family Steward (first caller to _initialize_access_control).
+  boardActor.setIdentity(adminIdentity);
+  await boardActor._initialize_access_control();
+  // MEMBER_A and MEMBER_B register as approved #user members and bind an auth
+  // method so their accounts are active (linked to the accounts map), which the
+  // messaging eligibility requires.
+  boardActor.setIdentity(memberAIdentity);
+  await boardActor._initialize_access_control();
+  await boardActor.bindAuthMethod({ Google: null });
+  boardActor.setIdentity(memberBIdentity);
+  await boardActor._initialize_access_control();
+  await boardActor.bindAuthMethod({ Google: null });
+
+  // Two approved members: MEMBER_A claims the living 'clayton' profile and
+  // MEMBER_B claims the living 'hudson' profile; the steward approves both.
+  boardActor.setIdentity(memberAIdentity);
+  const claimA = (await boardActor.requestProfileClaim("clayton")) as {
+    ok: { id: bigint };
+  };
+  boardActor.setIdentity(memberBIdentity);
+  const claimB = (await boardActor.requestProfileClaim("hudson")) as {
+    ok: { id: bigint };
+  };
+  boardActor.setIdentity(adminIdentity);
+  await boardActor.approveProfileClaim(claimA.ok.id);
+  await boardActor.approveProfileClaim(claimB.ok.id);
+
+  // Pending Contributions count is steward-gated and resolves (0 with no
+  // pending items) instead of trapping.
+  const pendingCount = await boardActor.getPendingContributionsCount();
+  expect(typeof pendingCount).toBe("bigint");
+
+  // MEMBER_A creates a board post with a type, title, body, and a related
+  // member; it is FamilyOnly and Active.
+  boardActor.setIdentity(memberAIdentity);
+  const post = await boardActor.createBoardPost(
+    { Announcement: null },
+    ["Family reunion"],
+    "Save the date for the annual reunion.",
+    ["hudson"],
+    [],
+  );
+  expect(post).toMatchObject({
+    postType: { Announcement: null },
+    title: ["Family reunion"],
+    body: "Save the date for the annual reunion.",
+    relatedPersonIds: ["hudson"],
+    status: { Active: null },
+    privacyScope: { FamilyOnly: null },
+    authorPersonId: "clayton",
+  });
+
+  // The post is listed for an approved member, newest first.
+  const listed = await boardActor.listBoardPosts([]);
+  expect(listed).toHaveLength(1);
+  expect(listed[0].postId).toBe(post.postId);
+
+  // MEMBER_B adds a reply that appears chronologically.
+  boardActor.setIdentity(memberBIdentity);
+  const reply = await boardActor.addBoardReply(post.postId, "I will be there.");
+  expect(reply).toMatchObject({ postId: post.postId, body: "I will be there." });
+  const replies = await boardActor.listBoardReplies(post.postId);
+  expect(replies).toHaveLength(1);
+  expect(replies[0].body).toBe("I will be there.");
+
+  // A steward archives the post (hides it) and restores it.
+  boardActor.setIdentity(adminIdentity);
+  const archived = await boardActor.archiveBoardPost(post.postId);
+  expect(archived).toEqual([expect.objectContaining({ status: { Archived: null } })]);
+  const restored = await boardActor.restoreBoardPost(post.postId);
+  expect(restored).toEqual([expect.objectContaining({ status: { Active: null } })]);
+
+  // MEMBER_A sends a private message to MEMBER_B (person 'hudson'), reusing the
+  // canonical 1:1 conversation.
+  boardActor.setIdentity(memberAIdentity);
+  const sent = await boardActor.sendMessage("hudson", "Hello Versie");
+  expect(sent).toMatchObject({ ok: expect.objectContaining({ body: "Hello Versie" }) });
+
+  // The conversation appears in MEMBER_A's inbox and is readable by a participant.
+  const conversations = await boardActor.listConversations();
+  expect(conversations).toHaveLength(1);
+  expect(conversations[0]).toMatchObject({ otherPersonId: "hudson" });
+  const view = await boardActor.getConversation(conversations[0].conversationId);
+  expect(view).toEqual([
+    expect.objectContaining({
+      messages: [expect.objectContaining({ body: "Hello Versie" })],
+    }),
+  ]);
+
+  // MEMBER_A blocks MEMBER_B, sees them in the blocked list, then unblocks.
+  await boardActor.blockUser(MEMBER_B);
+  const blocked = await boardActor.listBlockedUsers();
+  expect(blocked.map((p) => p.toText())).toContain(MEMBER_B.toText());
+  await boardActor.unblockUser(MEMBER_B);
+  expect((await boardActor.listBlockedUsers()).map((p) => p.toText())).not.toContain(
+    MEMBER_B.toText(),
+  );
+
+  // MEMBER_A reports the received message with a reason; the steward reviews
+  // only that report and its message content.
+  const messageId = (sent as { ok: { messageId: bigint } }).ok.messageId;
+  const report = await boardActor.reportMessage(messageId, "Harassment");
+  expect(report).toMatchObject({
+    reportedMessageId: messageId,
+    reason: "Harassment",
+    status: { Pending: null },
+  });
+  boardActor.setIdentity(adminIdentity);
+  const reports = await boardActor.listReports();
+  expect(reports).toHaveLength(1);
+  const reportedView = await boardActor.getReportedMessage(report.reportId);
+  expect(reportedView).toEqual([
+    expect.objectContaining({
+      message: expect.objectContaining({ messageId, body: "Hello Versie" }),
+    }),
+  ]);
+  const reviewed = await boardActor.reviewReport(report.reportId, { Reviewed: null });
+  expect(reviewed).toEqual([expect.objectContaining({ status: { Reviewed: null } })]);
+});
+
+// ---------------------------------------------------------------------------
+// Structural verification for Private Messaging (cover for the messaging
+// phase). These tests assert the invariants the acceptance criteria require:
+// conversations need two different eligible accountIds, self-messaging is
+// impossible, Block is conversation-specific, Report is message-specific, and
+// unreported private content is not steward-readable. They run against a fresh
+// canister with two approved claimed members and a steward, without fake users.
+// ---------------------------------------------------------------------------
+
+it("rejects self-messaging and lists only other eligible members", async () => {
+  const structSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
+  const structActor = structSetup.actor;
+
+  // ADMIN becomes the Family Steward; MEMBER_A and MEMBER_B register as users
+  // and bind an auth method so their accounts are active (linked to the
+  // accounts map), which messaging eligibility requires.
+  structActor.setIdentity(adminIdentity);
+  await structActor._initialize_access_control();
+  structActor.setIdentity(memberAIdentity);
+  await structActor._initialize_access_control();
+  await structActor.bindAuthMethod({ Google: null });
+  structActor.setIdentity(memberBIdentity);
+  await structActor._initialize_access_control();
+  await structActor.bindAuthMethod({ Google: null });
+
+  // MEMBER_A claims 'clayton' and MEMBER_B claims 'hudson'; the steward approves.
+  structActor.setIdentity(memberAIdentity);
+  const claimA = (await structActor.requestProfileClaim("clayton")) as {
+    ok: { id: bigint };
+  };
+  structActor.setIdentity(memberBIdentity);
+  const claimB = (await structActor.requestProfileClaim("hudson")) as {
+    ok: { id: bigint };
+  };
+  structActor.setIdentity(adminIdentity);
+  await structActor.approveProfileClaim(claimA.ok.id);
+  await structActor.approveProfileClaim(claimB.ok.id);
+
+  // listMessageableMembers is data-driven and non-admin-gated: MEMBER_A sees
+  // MEMBER_B's claimed person but never their own (self is excluded).
+  structActor.setIdentity(memberAIdentity);
+  const messageable = await structActor.listMessageableMembers();
+  expect(messageable).toContain("hudson");
+  expect(messageable).not.toContain("clayton");
+
+  // Self-messaging is impossible: MEMBER_A sending to their own claimed person
+  // ('clayton') is rejected with CannotMessageSelf.
+  const selfSend = await structActor.sendMessage("clayton", "to myself");
+  expect(selfSend).toEqual({ err: { CannotMessageSelf: null } });
+
+  // A real 1:1 conversation between two different eligible members works.
+  const sent = await structActor.sendMessage("hudson", "Hello");
+  expect(sent).toMatchObject({ ok: expect.objectContaining({ body: "Hello" }) });
+});
+
+it("does not expose unreported private conversation content to a steward", async () => {
+  const structSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
+  const structActor = structSetup.actor;
+
+  // ADMIN becomes the Family Steward; MEMBER_A and MEMBER_B register as users
+  // and bind an auth method so their accounts are active (linked to the
+  // accounts map), which messaging eligibility requires.
+  structActor.setIdentity(adminIdentity);
+  await structActor._initialize_access_control();
+  structActor.setIdentity(memberAIdentity);
+  await structActor._initialize_access_control();
+  await structActor.bindAuthMethod({ Google: null });
+  structActor.setIdentity(memberBIdentity);
+  await structActor._initialize_access_control();
+  await structActor.bindAuthMethod({ Google: null });
+
+  // MEMBER_A claims 'clayton' and MEMBER_B claims 'hudson'; the steward approves.
+  structActor.setIdentity(memberAIdentity);
+  const claimA = (await structActor.requestProfileClaim("clayton")) as {
+    ok: { id: bigint };
+  };
+  structActor.setIdentity(memberBIdentity);
+  const claimB = (await structActor.requestProfileClaim("hudson")) as {
+    ok: { id: bigint };
+  };
+  structActor.setIdentity(adminIdentity);
+  await structActor.approveProfileClaim(claimA.ok.id);
+  await structActor.approveProfileClaim(claimB.ok.id);
+
+  // MEMBER_A sends a private message to MEMBER_B.
+  structActor.setIdentity(memberAIdentity);
+  const sent = (await structActor.sendMessage("hudson", "private note")) as {
+    ok: { messageId: bigint };
+  };
+
+  // The steward is NOT a participant, so they cannot read the conversation
+  // (getConversation returns null) — unreported private content is not
+  // steward-readable.
+  structActor.setIdentity(adminIdentity);
+  const conversations = await structActor.listConversations();
+  expect(conversations).toEqual([]);
+  const stewardView = await structActor.getConversation(1n);
+  expect(stewardView).toEqual([]);
+
+  // Before any report is filed, getReportedMessage for the message returns
+  // nothing — the steward only ever sees reported message content.
+  const unreported = await structActor.getReportedMessage(0n);
+  expect(unreported).toEqual([]);
+
+  // Once MEMBER_A reports the specific message, the steward sees only that
+  // reported message's content.
+  structActor.setIdentity(memberAIdentity);
+  const report = await structActor.reportMessage(sent.ok.messageId, "Spam");
+  structActor.setIdentity(adminIdentity);
+  const reportedView = await structActor.getReportedMessage(report.reportId);
+  expect(reportedView).toEqual([
+    expect.objectContaining({
+      message: expect.objectContaining({
+        messageId: sent.ok.messageId,
+        body: "private note",
+      }),
+    }),
+  ]);
 });

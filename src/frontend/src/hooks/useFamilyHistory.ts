@@ -71,6 +71,9 @@ export function useSubmitStory() {
       void queryClient.invalidateQueries({
         queryKey: ["familyHistory", "stories", "pending"],
       });
+      void queryClient.invalidateQueries({
+        queryKey: ["pendingContributionsCount"],
+      });
     },
   });
 }
@@ -91,6 +94,11 @@ export function useApproveStory() {
       void queryClient.invalidateQueries({
         queryKey: ["familyHistory", "stories", "approved"],
       });
+      void queryClient.invalidateQueries({
+        queryKey: ["pendingContributionsCount"],
+      });
+      // Approval notifies the contributor, so the unread badge must refresh.
+      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
   });
 }
@@ -108,6 +116,11 @@ export function useRejectStory() {
       void queryClient.invalidateQueries({
         queryKey: ["familyHistory", "stories", "pending"],
       });
+      void queryClient.invalidateQueries({
+        queryKey: ["pendingContributionsCount"],
+      });
+      // Rejection notifies the contributor, so the unread badge must refresh.
+      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
   });
 }
@@ -206,6 +219,9 @@ export function useSubmitMysteryContribution() {
       void queryClient.invalidateQueries({
         queryKey: ["familyHistory", "mysteries", "contributions", "pending"],
       });
+      void queryClient.invalidateQueries({
+        queryKey: ["pendingContributionsCount"],
+      });
     },
   });
 }
@@ -240,6 +256,12 @@ export function useReviewMysteryContribution() {
       void queryClient.invalidateQueries({
         queryKey: ["familyHistory", "mysteries"],
       });
+      void queryClient.invalidateQueries({
+        queryKey: ["pendingContributionsCount"],
+      });
+      // Reviewing a contribution notifies the contributor, so the unread badge
+      // must refresh.
+      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
   });
 }

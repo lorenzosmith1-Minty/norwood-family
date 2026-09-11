@@ -1,14 +1,11 @@
 import {
   Archive,
   Bell,
-  Clock3,
   GitBranch,
-  Landmark,
   LibraryBig,
   LogIn,
   LogOut,
-  Search,
-  ShieldCheck,
+  MessageSquareText,
   TreePine,
   UserCircle,
   UserCog,
@@ -16,6 +13,7 @@ import {
 } from "lucide-react";
 import type { ReactNode } from "react";
 import { NotificationBadge } from "./NotificationBadge";
+import { StewardActionBadge } from "./StewardActionBadge";
 
 /** How the signed-in caller's visible identity was resolved. */
 export type IdentityStatus = "linked" | "pending" | "none";
@@ -39,10 +37,15 @@ function navIconClass(active: boolean): string {
 
 interface LayoutProps {
   children: ReactNode;
-  /** True when the signed-in caller is an admin; gates the admin nav links. */
+  /** True when the signed-in caller is an admin; gates the steward nav link. */
   isAdmin?: boolean;
   /** True when the caller holds a valid, non-anonymous identity. */
   isAuthenticated?: boolean;
+  /**
+   * True when the caller is an approved family member (a linked, claimed
+   * Person Profile). Gates the Message Board nav link.
+   */
+  isApprovedMember?: boolean;
   /** The stable internal account ID (ICP Principal) of the signed-in caller. */
   accountId?: string;
   /**
@@ -51,8 +54,14 @@ interface LayoutProps {
    * empty when no profile is connected.
    */
   identityName?: string;
-  /** How the caller's identity was resolved (drives the label + badge). */
+  /** How the caller's identity was resolved (drives the profile label). */
   identityStatus?: IdentityStatus;
+  /**
+   * True when the caller owns an approved/claimed Person Profile. Drives the
+   * Add Myself / Add Family nav label toggle: before a claim the position
+   * reads "Add Myself"; after an approved claim it reads "Add Family".
+   */
+  hasClaimedProfile?: boolean;
   /**
    * The currently active view. Used to highlight the matching nav button with
    * a subtle Norwood active-state indicator (no layout change).
@@ -64,51 +73,43 @@ interface LayoutProps {
   onSignInClick?: () => void;
   /** Signs the current caller out. */
   onSignOutClick?: () => void;
-  /** Navigates to the admin pending-contributions view. */
-  onAdminClick?: () => void;
   /** Navigates to the Family Archive browsing view. */
   onArchiveClick?: () => void;
-  /** Navigates to the Family Stories view. */
-  onStoriesClick?: () => void;
-  /** Navigates to the Family Mysteries view. */
-  onMysteriesClick?: () => void;
-  /** Navigates to the Travel Through Time view. */
-  onTimelineClick?: () => void;
   /** Navigates to the Heritage Branch View. */
   onBranchClick?: () => void;
   /** Navigates to the Explore Family view. */
   onExploreClick?: () => void;
-  /** Navigates to the Family Steward review area (admin-gated). */
+  /** Navigates to the Family History hub. */
+  onHistoryClick?: () => void;
+  /** Navigates to the Add Myself / Add Family flow. */
+  onAddMyselfClick?: () => void;
+  /** Navigates to the Message Board hub (approved members only). */
+  onMessageBoardClick?: () => void;
+  /** Navigates to the Family Steward hub (admin-gated). */
   onStewardClick?: () => void;
-  /** Navigates to the Family Governance & Safety Controls area (admin-gated). */
-  onGovernanceClick?: () => void;
   /** Navigates to the in-app notifications view. */
   onNotificationsClick?: () => void;
-  /** Navigates to the "Add Myself to This Family" flow. */
-  onAddMyselfClick?: () => void;
 }
 
 export function Layout({
   children,
   isAdmin,
   isAuthenticated,
+  isApprovedMember,
   identityName,
-  identityStatus = "none",
+  hasClaimedProfile = false,
   activeView,
   onMyProfileClick,
   onSignInClick,
   onSignOutClick,
-  onAdminClick,
   onArchiveClick,
-  onStoriesClick,
-  onMysteriesClick,
-  onTimelineClick,
   onBranchClick,
   onExploreClick,
-  onStewardClick,
-  onGovernanceClick,
-  onNotificationsClick,
+  onHistoryClick,
   onAddMyselfClick,
+  onMessageBoardClick,
+  onStewardClick,
+  onNotificationsClick,
 }: LayoutProps) {
   // Which nav button is active for the current view. Each nav section maps to
   // the view(s) it owns so the active state stays obvious on desktop and mobile.
@@ -129,21 +130,51 @@ export function Layout({
     activeView === "recipes" ||
     activeView === "recipe-detail" ||
     activeView === "recipe-contribute";
-  const isStoriesActive = activeView === "stories";
-  const isMysteriesActive = activeView === "mysteries";
-  const isTimelineActive = activeView === "timeline";
+  // Family History hub groups Family Stories, Family Mysteries, and Travel
+  // Through Time, so the pill stays highlighted across all of them.
+  const isHistoryActive =
+    activeView === "family-history" ||
+    activeView === "stories" ||
+    activeView === "mysteries" ||
+    activeView === "timeline";
   const isAddMyselfActive = activeView === "add-myself";
-  const isStewardActive = activeView === "steward-review";
-  const isGovernanceActive = activeView === "governance";
+  // Message Board hub groups the Family Message Board and Private Messages.
+  const isMessageBoardActive =
+    activeView === "message-board-hub" ||
+    activeView === "board" ||
+    activeView === "board-post" ||
+    activeView === "board-compose" ||
+    activeView === "inbox" ||
+    activeView === "conversation";
+  // Family Steward hub groups every administrative function.
+  const isStewardActive =
+    activeView === "steward-hub" ||
+    activeView === "steward-review" ||
+    activeView === "governance" ||
+    activeView === "admin-approval";
   const isNotificationsActive = activeView === "notifications";
   const isMyProfileActive =
     activeView === "my-profile" || activeView === "profile-edit";
-  const isAdminActive = activeView === "admin-approval";
 
-  // Steward/admin controls are owner-only. Gate on BOTH authentication and the
+  // Steward controls are owner-only. Gate on BOTH authentication and the
   // admin role so they never leak to a signed-out caller (the admin query can
   // be cached and survive a sign-out in some environments).
   const showAdminControls = isAuthenticated && isAdmin;
+
+  // The Message Board hub (Family Message Board + Private Messages) is for
+  // approved family members only. Guests and members without an approved
+  // claim never see this nav link.
+  const showApprovedMemberControls = isAuthenticated && isApprovedMember;
+
+  // The Add Myself / Add Family position toggles on claim state: before an
+  // approved claim it reads "Add Myself"; after an approved/claimed profile it
+  // reads "Add Family" (which begins the family-member addition workflow).
+  const addLabel = hasClaimedProfile ? "Add Family" : "Add Myself";
+
+  // The profile control is a single button labeled with the caller's canonical
+  // preferred/display name, falling back to "My Profile" before a linked
+  // profile exists. A raw account id is never surfaced.
+  const profileLabel = identityName || "My Profile";
 
   return (
     <div className="relative flex min-h-screen flex-col bg-background">
@@ -203,45 +234,17 @@ export function Layout({
             </button>
             <button
               type="button"
-              data-ocid="layout.stories_link"
-              aria-current={isStoriesActive ? "page" : undefined}
-              onClick={onStoriesClick}
-              className={navClass(isStoriesActive)}
+              data-ocid="layout.history_link"
+              aria-current={isHistoryActive ? "page" : undefined}
+              onClick={onHistoryClick}
+              className={navClass(isHistoryActive)}
             >
               <LibraryBig
-                className={navIconClass(isStoriesActive)}
+                className={navIconClass(isHistoryActive)}
                 strokeWidth={1.75}
                 aria-hidden="true"
               />
-              Family Stories
-            </button>
-            <button
-              type="button"
-              data-ocid="layout.mysteries_link"
-              aria-current={isMysteriesActive ? "page" : undefined}
-              onClick={onMysteriesClick}
-              className={navClass(isMysteriesActive)}
-            >
-              <Search
-                className={navIconClass(isMysteriesActive)}
-                strokeWidth={1.75}
-                aria-hidden="true"
-              />
-              Family Mysteries
-            </button>
-            <button
-              type="button"
-              data-ocid="layout.timeline_link"
-              aria-current={isTimelineActive ? "page" : undefined}
-              onClick={onTimelineClick}
-              className={navClass(isTimelineActive)}
-            >
-              <Clock3
-                className={navIconClass(isTimelineActive)}
-                strokeWidth={1.75}
-                aria-hidden="true"
-              />
-              Travel Through Time
+              Family History
             </button>
             <button
               type="button"
@@ -255,22 +258,22 @@ export function Layout({
                 strokeWidth={1.75}
                 aria-hidden="true"
               />
-              Add Myself
+              {addLabel}
             </button>
-            {showAdminControls ? (
+            {showApprovedMemberControls ? (
               <button
                 type="button"
-                data-ocid="layout.admin_link"
-                aria-current={isAdminActive ? "page" : undefined}
-                onClick={onAdminClick}
-                className={navClass(isAdminActive)}
+                data-ocid="layout.message_board_link"
+                aria-current={isMessageBoardActive ? "page" : undefined}
+                onClick={onMessageBoardClick}
+                className={navClass(isMessageBoardActive)}
               >
-                <ShieldCheck
-                  className={navIconClass(isAdminActive)}
+                <MessageSquareText
+                  className={navIconClass(isMessageBoardActive)}
                   strokeWidth={1.75}
                   aria-hidden="true"
                 />
-                Pending Contributions
+                Message Board
               </button>
             ) : null}
             {showAdminControls ? (
@@ -287,22 +290,7 @@ export function Layout({
                   aria-hidden="true"
                 />
                 Family Steward
-              </button>
-            ) : null}
-            {showAdminControls ? (
-              <button
-                type="button"
-                data-ocid="layout.governance_link"
-                aria-current={isGovernanceActive ? "page" : undefined}
-                onClick={onGovernanceClick}
-                className={navClass(isGovernanceActive)}
-              >
-                <Landmark
-                  className={navIconClass(isGovernanceActive)}
-                  strokeWidth={1.75}
-                  aria-hidden="true"
-                />
-                Family Governance
+                <StewardActionBadge />
               </button>
             ) : null}
             <button
@@ -326,34 +314,6 @@ export function Layout({
             />
             {isAuthenticated ? (
               <div className="flex items-center gap-2">
-                <span
-                  data-ocid="layout.account_identity"
-                  title={
-                    identityStatus === "none"
-                      ? "Complete your profile"
-                      : "My Profile"
-                  }
-                  className="inline-flex max-w-[12rem] items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-semibold text-foreground"
-                >
-                  <UserCircle
-                    className="h-4 w-4 shrink-0 text-accent-foreground"
-                    strokeWidth={1.75}
-                    aria-hidden="true"
-                  />
-                  <span className="truncate">
-                    {identityName ||
-                      (identityStatus === "pending"
-                        ? "Complete Profile"
-                        : "My Account")}
-                  </span>
-                  {identityStatus === "pending" ? (
-                    <span
-                      data-ocid="layout.identity_pending"
-                      className="inline-flex h-1.5 w-1.5 shrink-0 rounded-full bg-accent"
-                      aria-label="Profile pending"
-                    />
-                  ) : null}
-                </span>
                 <button
                   type="button"
                   data-ocid="layout.my_profile_link"
@@ -366,7 +326,7 @@ export function Layout({
                     strokeWidth={1.75}
                     aria-hidden="true"
                   />
-                  My Profile
+                  <span className="max-w-[10rem] truncate">{profileLabel}</span>
                 </button>
                 <button
                   type="button"

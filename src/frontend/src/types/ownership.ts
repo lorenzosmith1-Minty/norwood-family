@@ -214,6 +214,9 @@ export const NOTIFICATION_TYPE_LABELS: Record<NotificationType, string> = {
   [NotificationType.ProfileClaimReviewed]: "Profile claim reviewed",
   [NotificationType.RelationshipRequested]: "Relationship requested",
   [NotificationType.RelationshipReviewed]: "Relationship reviewed",
+  [NotificationType.BoardMention]: "Board mention",
+  [NotificationType.BoardReply]: "Board reply",
+  [NotificationType.NewMessage]: "New message",
 };
 
 /**

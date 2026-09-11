@@ -98,6 +98,9 @@ module {
     #RelationshipAdded;
     #RelationshipRemoved;
     #RelationshipTypeCorrected;
+    #BoardPostArchived;
+    #BoardPostRestored;
+    #BoardReplyRemoved;
   };
 
   /// A single governance audit log entry. Audit History is strictly

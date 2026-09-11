@@ -319,8 +319,9 @@ describe("Navbar never renders the raw account ID as the visible name", () => {
     renderApp();
 
     // Wait for the query to resolve and the display name to render (the
-    // identity element exists immediately, but the profile loads async).
-    const identity = await screen.findByTestId("layout.account_identity");
+    // profile button exists immediately, but the profile loads async). The
+    // single profile button is labeled with the canonical display name.
+    const identity = await screen.findByTestId("layout.my_profile_link");
     expect(
       await within(identity).findByText("Lorenzo Smith Jr."),
     ).toBeInTheDocument();
@@ -347,22 +348,22 @@ describe("Navbar never renders the raw account ID as the visible name", () => {
     });
     renderApp();
 
-    const identity = await screen.findByTestId("layout.account_identity");
+    const identity = await screen.findByTestId("layout.my_profile_link");
     expect(
       await within(identity).findByText("Lorenzo Smith Jr."),
     ).toBeInTheDocument();
     expect(within(identity).queryByText(ACCOUNT)).not.toBeInTheDocument();
   });
 
-  it("shows 'My Account' when no Person Profile is connected, never the raw account ID", async () => {
+  it("shows 'My Profile' when no Person Profile is connected, never the raw account ID", async () => {
     setAuthenticated(true);
     setCurrentPrincipal(ACCOUNT);
     // No profile is connected yet.
     setMyProfile(null);
     renderApp();
 
-    const identity = await screen.findByTestId("layout.account_identity");
-    expect(within(identity).getByText("My Account")).toBeInTheDocument();
+    const identity = await screen.findByTestId("layout.my_profile_link");
+    expect(within(identity).getByText("My Profile")).toBeInTheDocument();
     expect(within(identity).queryByText(ACCOUNT)).not.toBeInTheDocument();
   });
 });

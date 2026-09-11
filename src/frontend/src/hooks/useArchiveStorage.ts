@@ -122,6 +122,9 @@ export function useSubmitArchiveItem() {
       void queryClient.invalidateQueries({
         queryKey: ["archive", "approved", "media"],
       });
+      void queryClient.invalidateQueries({
+        queryKey: ["pendingContributionsCount"],
+      });
     },
   });
 }
@@ -138,6 +141,21 @@ export function useApproveArchiveItem() {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["archive", "pending"] });
       void queryClient.invalidateQueries({ queryKey: ["archive", "approved"] });
+      // Approving media makes it visible in the Family Videos & Oral History
+      // view, so the approved-media list must refresh immediately.
+      void queryClient.invalidateQueries({
+        queryKey: ["archive", "approved", "media"],
+      });
+      // Approved media may link to a member's profile/photo state, so refresh
+      // the linked profile-photo keys (the mutation only carries the item id,
+      // so the photo prefixes are invalidated to cover every linked member).
+      void queryClient.invalidateQueries({ queryKey: ["photos"] });
+      void queryClient.invalidateQueries({ queryKey: ["profilePhoto"] });
+      void queryClient.invalidateQueries({
+        queryKey: ["pendingContributionsCount"],
+      });
+      // Approval notifies the contributor, so the unread badge must refresh.
+      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
   });
 }
@@ -153,6 +171,11 @@ export function useRejectArchiveItem() {
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["archive", "pending"] });
+      void queryClient.invalidateQueries({
+        queryKey: ["pendingContributionsCount"],
+      });
+      // Rejection notifies the contributor, so the unread badge must refresh.
+      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
   });
 }

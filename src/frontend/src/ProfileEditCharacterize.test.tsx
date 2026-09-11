@@ -237,8 +237,12 @@ describe("Canonical record preservation on profile edit", () => {
     const user = userEvent.setup();
     renderApp();
 
-    // Open the owner's own profile via the navbar "My Profile" entry.
-    await user.click(screen.getByRole("button", { name: /My Profile/ }));
+    // Open the owner's own profile via the navbar profile button, which is
+    // labeled with the canonical display name. The label resolves from the
+    // async myProfile query, so wait for it to appear before clicking.
+    await user.click(
+      await screen.findByRole("button", { name: /Lorenzo Smith Jr\./ }),
+    );
     expect(await screen.findByRole("heading", { level: 1 })).toHaveTextContent(
       "Lorenzo Smith Jr.",
     );
@@ -269,7 +273,7 @@ describe("Canonical record preservation on profile edit", () => {
     expect(canonical?.preferredName).toBe("Lorenzo Smith Jr.");
 
     // The navigation display name reflects the updated preferred name.
-    expect(screen.getByTestId("layout.account_identity")).toHaveTextContent(
+    expect(screen.getByTestId("layout.my_profile_link")).toHaveTextContent(
       "Lorenzo Smith Jr.",
     );
   });

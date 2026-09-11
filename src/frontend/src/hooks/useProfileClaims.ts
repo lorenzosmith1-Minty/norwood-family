@@ -108,6 +108,11 @@ export function useRequestProfileClaim() {
       void queryClient.invalidateQueries({ queryKey: ["myProfileClaim"] });
       void queryClient.invalidateQueries({ queryKey: ["myProfile"] });
       void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      // A pending claim is a steward-review action, so the Pending
+      // Contributions badge and the steward aggregate badge must refresh.
+      void queryClient.invalidateQueries({
+        queryKey: ["pendingContributionsCount"],
+      });
     },
   });
 }
@@ -127,6 +132,11 @@ export function useApproveProfileClaim() {
       void queryClient.invalidateQueries({ queryKey: ["myProfileClaim"] });
       void queryClient.invalidateQueries({ queryKey: ["myProfile"] });
       void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      // Approving/rejecting a claim removes it from the steward-review queue,
+      // so the Pending Contributions badge and steward aggregate badge refresh.
+      void queryClient.invalidateQueries({
+        queryKey: ["pendingContributionsCount"],
+      });
     },
   });
 }
@@ -146,6 +156,11 @@ export function useRejectProfileClaim() {
       void queryClient.invalidateQueries({ queryKey: ["myProfileClaim"] });
       void queryClient.invalidateQueries({ queryKey: ["myProfile"] });
       void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      // Approving/rejecting a claim removes it from the steward-review queue,
+      // so the Pending Contributions badge and steward aggregate badge refresh.
+      void queryClient.invalidateQueries({
+        queryKey: ["pendingContributionsCount"],
+      });
     },
   });
 }

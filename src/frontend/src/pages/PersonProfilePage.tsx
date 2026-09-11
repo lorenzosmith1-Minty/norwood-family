@@ -19,6 +19,7 @@ import {
   Landmark,
   Loader2,
   type LucideIcon,
+  MessageSquareText,
   Mic,
   NotebookPen,
   Pencil,
@@ -67,6 +68,7 @@ import {
   useRequestProfileRemoval,
   useRestoreProfile,
 } from "../hooks/useGovernance";
+import { useCanMessagePerson } from "../hooks/useMessaging";
 import {
   useAddPhoto,
   usePhotos,
@@ -2681,6 +2683,12 @@ interface PersonProfilePageProps {
     personId: string | null;
     context: "recipes" | "profile";
   }) => void;
+  /**
+   * Opens the Private Messages conversation with this person. Shown as a
+   * "Message" button on a living claimed profile the signed-in viewer may
+   * message (see useCanMessagePerson).
+   */
+  onOpenConversation?: (personId: string) => void;
 }
 
 function getInitials(name: string): string {
@@ -3572,6 +3580,7 @@ export function PersonProfilePage({
   onOpenRecipes,
   onOpenRecipe,
   onOpenRecipeContribute,
+  onOpenConversation,
 }: PersonProfilePageProps) {
   const storyLabel =
     person.id === "julia" ||
@@ -3690,6 +3699,11 @@ export function PersonProfilePage({
   // to the static portrait URL snapshot. We never rely on the profilePhoto prop
   // (App never passes it) as the source of truth.
   const canonical = useCanonicalPerson(person.id, person.name);
+  // Whether the signed-in viewer may message this person. The backend method
+  // encapsulates every gate: viewer signed in, target has an active linked
+  // account, target is not the viewer, and target is not archived. Returns
+  // false for unclaimed/deceased profiles and for guests.
+  const { data: canMessage = false } = useCanMessagePerson(person.id);
   const hasProfilePhoto = Boolean(canonical.profilePhotoUrl);
   const completeness = computeCompleteness(
     person,
@@ -3946,6 +3960,33 @@ export function PersonProfilePage({
                 ? "This profile is not claimable."
                 : "This profile is owned by a family member."}
             </p>
+          )}
+
+          {/* Private Messaging: the Message button appears only when the
+              backend confirms the viewer may message this person — signed in,
+              target has an active linked account, target is not the viewer,
+              and target is not archived. It is never shown on unclaimed or
+              deceased profiles or to guests. */}
+          {canMessage && (
+            <div className="mt-4 flex flex-col items-start gap-3 border-t border-border/60 pt-4">
+              <p className="flex items-center gap-2 text-sm text-muted-foreground">
+                <MessageSquareText
+                  className="h-4 w-4 shrink-0 text-accent-foreground/70"
+                  strokeWidth={2}
+                  aria-hidden="true"
+                />
+                Send a private message to {person.name.split(" ")[0]}.
+              </p>
+              <button
+                type="button"
+                data-ocid="profile.message_button"
+                onClick={() => onOpenConversation?.(person.id)}
+                className="this-is-me-action focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              >
+                <MessageSquareText className="h-4 w-4" aria-hidden="true" />
+                Message
+              </button>
+            </div>
           )}
         </div>
 

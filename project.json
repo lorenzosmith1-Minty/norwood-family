@@ -1,18 +1,18 @@
 {
-  "overview": "A family recipe archive for the Norwood family that preserves recipes, their origins, family stories, and original handwritten notes and media as preserved family tradition.",
+  "overview": "Norwood Family is a private family history app where members explore their family tree, share stories and memories, contribute media, and communicate through a message board and private messages.",
   "features": [
-    "Browse and filter family recipes by origin, related members, era, branch, and tag",
-    "Submit recipes for Family Steward approval with the Norwood checkmark selection pattern",
-    "Link recipes to canonical Person profiles and Archive media without duplication",
-    "View recipe detail pages with ingredients, instructions, family story, and media gallery",
-    "Refined Videos & Oral History submission confirmation"
+    "Explore the family tree and heritage branches",
+    "Share family stories, mysteries, and timeline memories",
+    "Contribute and approve family media and archive items",
+    "Communicate via message board and private messages",
+    "Steward-managed governance, reviews, and profile claims"
   ],
-  "category": "family-archive",
+  "category": "family-history",
   "tags": [
     "family",
-    "recipes",
-    "archive",
-    "genealogy"
+    "genealogy",
+    "community",
+    "private"
   ],
-  "last_updated": "2026-09-10T01:06:26.911Z"
+  "last_updated": "2026-09-11T02:40:50.359Z"
 }

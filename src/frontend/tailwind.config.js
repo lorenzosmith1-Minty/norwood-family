@@ -95,6 +95,10 @@ export default {
           "0 0 0 1px rgba(93, 64, 55, 0.08), 0 16px 40px -12px rgba(93, 64, 55, 0.28)",
         recipe:
           "0 2px 8px -2px rgba(93, 64, 55, 0.12), 0 0 0 1px rgba(93, 64, 55, 0.05)",
+        board:
+          "0 2px 8px -2px rgba(93, 64, 55, 0.12), 0 0 0 1px rgba(93, 64, 55, 0.04)",
+        hub:
+          "0 2px 8px -2px rgba(93, 64, 55, 0.12), 0 0 0 1px rgba(93, 64, 55, 0.04)",
       },
       keyframes: {
         "accordion-down": {
@@ -175,6 +179,14 @@ export default {
           from: { opacity: "0", transform: "translateY(10px) scale(0.985)" },
           to: { opacity: "1", transform: "translateY(0) scale(1)" },
         },
+        "msg-in": {
+          from: { opacity: "0", transform: "translateY(6px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
+        "hub-in": {
+          from: { opacity: "0", transform: "translateY(10px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -195,6 +207,8 @@ export default {
         "section-in": "section-in 0.35s cubic-bezier(0.4, 0, 0.2, 1) both",
         "voice-pulse": "voice-pulse 2.4s ease-in-out infinite",
         "recipe-in": "recipe-in 0.4s cubic-bezier(0.4, 0, 0.2, 1) both",
+        "msg-in": "msg-in 0.25s cubic-bezier(0.4, 0, 0.2, 1) both",
+        "hub-in": "hub-in 0.35s cubic-bezier(0.4, 0, 0.2, 1) both",
       },
     },
   },

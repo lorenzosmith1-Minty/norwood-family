@@ -265,6 +265,66 @@
     --recipe-accent-foreground: 0.96 0.02 70;
     --recipe-hand: 0.32 0.06 40;
     --recipe-surface: 0.94 0.025 65;
+
+    /* Family Message Board: communal bulletin on aged paper. Post cards wear
+       a warm plate surface; the board accent is the sepia primary so the
+       board reads as part of the same family archive. */
+    --board-surface: 0.95 0.02 72;
+    --board-accent: 0.42 0.11 35;
+    --board-accent-foreground: 0.96 0.02 70;
+    --post-general: 0.5 0.03 45;
+    --post-announcement: 0.42 0.11 35;
+    --post-question: 0.55 0.09 60;
+    --post-research: 0.48 0.05 200;
+    --post-photo: 0.55 0.12 150;
+    --post-recipe: 0.5 0.14 30;
+    --post-reunion: 0.6 0.11 55;
+    --post-memorial: 0.5 0.2 25;
+    --reply-rule: 0.42 0.11 35 / 0.25;
+
+    /* Private Messaging: warm ink-and-paper conversation. Sent bubbles are
+       the sepia primary (the writer's ink); received bubbles sit on a paper
+       card. Unread reads as bronze; block/report use terracotta/ochre. */
+    --msg-sent: 0.42 0.11 35;
+    --msg-sent-foreground: 0.96 0.02 70;
+    --msg-received: 0.985 0.015 70;
+    --msg-received-foreground: 0.22 0.04 45;
+    --msg-unread: 0.55 0.09 60;
+    --msg-unread-foreground: 0.96 0.02 70;
+    --msg-muted: 0.5 0.03 45;
+    --msg-block: 0.5 0.2 25;
+    --msg-report: 0.7 0.13 80;
+
+    /* Pending Contributions badge: Family Stewards count of pending review
+       items. Same red style as the Notifications badge (--notif-badge). */
+    --pending-badge: 0.5 0.2 25;
+    --pending-badge-foreground: 0.96 0.02 70;
+
+    /* Consolidated navigation hubs (Family History / Message Board / Family
+       Steward): grouping pages that mirror the Home navigation cards. Hub
+       option cards wear the same warm plate + sepia accent language as the
+       Home cards so every hub reads as part of one Norwood archive. */
+    --hub-surface: 0.95 0.02 72;
+    --hub-surface-foreground: 0.3 0.04 45;
+    --hub-accent: 0.42 0.11 35;
+    --hub-accent-foreground: 0.96 0.02 70;
+    --hub-rule: 0.42 0.11 35 / 0.18;
+    --hub-muted: 0.5 0.03 45;
+    --hub-primary: 0.42 0.11 35;
+    --hub-primary-foreground: 0.96 0.02 70;
+    --hub-secondary: 0.55 0.09 60;
+    --hub-secondary-foreground: 0.96 0.02 70;
+
+    /* Per-hub accent: Family History is the dusty bronze of memory, the
+       Message Board is the sepia ink of conversation, and Family Steward is
+       the spiced rust of governance — each a distinct but on-palette hue so
+       the three hubs stay visually consistent yet individually recognizable. */
+    --history-accent: 0.55 0.09 60;
+    --history-accent-foreground: 0.96 0.02 70;
+    --comm-accent: 0.42 0.11 35;
+    --comm-accent-foreground: 0.96 0.02 70;
+    --steward-accent: 0.5 0.14 30;
+    --steward-accent-foreground: 0.96 0.02 70;
   }
 
   .dark {
@@ -490,6 +550,57 @@
     --recipe-accent-foreground: 0.16 0.02 55;
     --recipe-hand: 0.82 0.05 55;
     --recipe-surface: 0.22 0.025 55;
+
+    /* Family Message Board (dark): communal bulletin on aged paper */
+    --board-surface: 0.21 0.02 55;
+    --board-accent: 0.72 0.14 60;
+    --board-accent-foreground: 0.16 0.02 55;
+    --post-general: 0.7 0.1 55;
+    --post-announcement: 0.72 0.14 60;
+    --post-question: 0.58 0.12 30;
+    --post-research: 0.62 0.07 220;
+    --post-photo: 0.6 0.15 150;
+    --post-recipe: 0.72 0.13 30;
+    --post-reunion: 0.65 0.13 55;
+    --post-memorial: 0.55 0.2 25;
+    --reply-rule: 0.72 0.14 60 / 0.3;
+
+    /* Private Messaging (dark): warm ink-and-paper conversation */
+    --msg-sent: 0.72 0.14 60;
+    --msg-sent-foreground: 0.16 0.02 55;
+    --msg-received: 0.2 0.02 55;
+    --msg-received-foreground: 0.93 0.02 60;
+    --msg-unread: 0.58 0.12 30;
+    --msg-unread-foreground: 0.95 0.01 60;
+    --msg-muted: 0.7 0.1 55;
+    --msg-block: 0.55 0.2 25;
+    --msg-report: 0.72 0.13 80;
+
+    /* Pending Contributions badge (dark): same red style as Notifications */
+    --pending-badge: 0.55 0.2 25;
+    --pending-badge-foreground: 0.93 0.02 60;
+
+    /* Consolidated navigation hubs (dark): warm plate surfaces and sepia
+       accents mirror the Home cards on the dark paper. */
+    --hub-surface: 0.21 0.02 55;
+    --hub-surface-foreground: 0.85 0.02 60;
+    --hub-accent: 0.72 0.14 60;
+    --hub-accent-foreground: 0.16 0.02 55;
+    --hub-rule: 0.72 0.14 60 / 0.22;
+    --hub-muted: 0.7 0.1 55;
+    --hub-primary: 0.72 0.14 60;
+    --hub-primary-foreground: 0.16 0.02 55;
+    --hub-secondary: 0.58 0.12 30;
+    --hub-secondary-foreground: 0.95 0.01 60;
+
+    /* Per-hub accent (dark): Family History bronze, Message Board sepia,
+       Family Steward rust. */
+    --history-accent: 0.58 0.12 30;
+    --history-accent-foreground: 0.95 0.01 60;
+    --comm-accent: 0.72 0.14 60;
+    --comm-accent-foreground: 0.16 0.02 55;
+    --steward-accent: 0.72 0.13 30;
+    --steward-accent-foreground: 0.16 0.02 55;
   }
 
   * {
@@ -3852,5 +3963,499 @@
   }
   .recipe-empty-action:hover {
     box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.24);
+  }
+
+  /* ---- Family Message Board: communal family bulletin ---- */
+
+  /* Board filter pills: reuse .filter-tab with a board-aware active state
+     using the sepia primary (same language as Archive/Media/Recipe filters). */
+  .filter-tab-active-board {
+    background-color: oklch(var(--board-accent));
+    color: oklch(var(--board-accent-foreground));
+    border-color: oklch(var(--board-accent));
+  }
+  .filter-tab-active-board:hover {
+    color: oklch(var(--board-accent-foreground));
+    border-color: oklch(var(--board-accent));
+  }
+
+  /* Post card: a framed warm plate for one board post. Header carries the
+     author (canonical Person Profile) + post-type badge; body holds title +
+     message; footer holds replies + related-member chips. */
+  .post-card {
+    @apply flex flex-col gap-3 rounded-xl border border-border/60 bg-card p-4 sm:p-5;
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.1);
+    transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .post-card:hover,
+  .post-card:focus-within {
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.2);
+    transform: translateY(-2px);
+    border-color: oklch(var(--board-accent) / 0.5);
+  }
+  .post-card-head {
+    @apply flex items-start justify-between gap-3;
+  }
+  .post-card-author {
+    @apply flex min-w-0 items-center gap-2.5;
+  }
+  .post-card-author .author-avatar {
+    @apply flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-display text-xs font-semibold;
+    background-color: oklch(var(--muted));
+    color: oklch(var(--muted-foreground));
+    box-shadow: 0 0 0 2px oklch(var(--photo-ring-soft));
+    overflow: hidden;
+  }
+  .post-card-author .author-avatar img {
+    @apply h-full w-full object-cover;
+  }
+  .post-card-author .author-name {
+    @apply truncate text-sm font-semibold leading-tight;
+    color: oklch(var(--foreground));
+  }
+  .post-card-author .author-meta {
+    @apply text-[11px] font-medium;
+    color: oklch(var(--muted-foreground));
+  }
+  .post-card-title {
+    @apply font-display text-lg font-semibold leading-snug;
+    color: oklch(var(--foreground));
+  }
+  .post-card-body {
+    @apply text-sm leading-relaxed;
+    color: oklch(var(--foreground));
+  }
+  .post-card-footer {
+    @apply mt-auto flex flex-wrap items-center gap-2 border-t border-border/50 pt-3;
+  }
+
+  /* Post type badge: dot-pill where the dot color encodes the post type */
+  .post-type-badge {
+    @apply inline-flex shrink-0 items-center gap-1.5 rounded-full border border-border/60 bg-card px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em];
+    color: oklch(var(--muted-foreground));
+  }
+  .post-type-badge::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background-color: oklch(var(--post-general));
+  }
+  .post-type-announcement::before {
+    background-color: oklch(var(--post-announcement));
+  }
+  .post-type-question::before {
+    background-color: oklch(var(--post-question));
+  }
+  .post-type-research::before {
+    background-color: oklch(var(--post-research));
+  }
+  .post-type-photo::before {
+    background-color: oklch(var(--post-photo));
+  }
+  .post-type-recipe::before {
+    background-color: oklch(var(--post-recipe));
+  }
+  .post-type-reunion::before {
+    background-color: oklch(var(--post-reunion));
+  }
+  .post-type-memorial::before {
+    background-color: oklch(var(--post-memorial));
+  }
+
+  /* Reply thread: one-level replies stacked chronologically under a post.
+     Each reply is a compact plate with a short bronze rule above it. */
+  .reply-thread {
+    @apply flex flex-col gap-2.5 border-t border-border/50 pt-3;
+  }
+  .reply-item {
+    @apply flex items-start gap-2.5 rounded-lg border border-border/60 bg-card p-3;
+  }
+  .reply-item .reply-avatar {
+    @apply flex h-7 w-7 shrink-0 items-center justify-center rounded-full font-display text-[9px] font-semibold;
+    background-color: oklch(var(--muted));
+    color: oklch(var(--muted-foreground));
+    box-shadow: 0 0 0 2px oklch(var(--photo-ring-soft));
+    overflow: hidden;
+  }
+  .reply-item .reply-avatar img {
+    @apply h-full w-full object-cover;
+  }
+  .reply-item .reply-body {
+    @apply flex min-w-0 flex-1 flex-col gap-0.5;
+  }
+  .reply-item .reply-name {
+    @apply text-xs font-semibold leading-tight;
+    color: oklch(var(--foreground));
+  }
+  .reply-item .reply-text {
+    @apply text-sm leading-relaxed;
+    color: oklch(var(--foreground));
+  }
+  .reply-item .reply-meta {
+    @apply text-[11px] font-medium;
+    color: oklch(var(--muted-foreground));
+  }
+
+  /* ---- Private Messaging: warm ink-and-paper conversation ---- */
+
+  /* Inbox card: one 1:1 conversation row with the other person's portrait,
+     name, latest message preview, timestamp, and an unread count pill. */
+  .inbox-card {
+    @apply flex items-center gap-3 rounded-xl border border-border/60 bg-card p-3.5;
+    box-shadow: 0 1px 2px -1px oklch(0.36 0.05 45 / 0.08);
+    transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .inbox-card:hover,
+  .inbox-card:focus-within {
+    border-color: oklch(var(--msg-unread) / 0.6);
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.2);
+  }
+  .inbox-card-unread {
+    background-color: oklch(var(--msg-unread) / 0.06);
+    border-color: oklch(var(--msg-unread) / 0.35);
+  }
+  .inbox-portrait {
+    @apply flex h-11 w-11 shrink-0 items-center justify-center rounded-full font-display text-sm font-semibold;
+    background-color: oklch(var(--muted));
+    color: oklch(var(--muted-foreground));
+    box-shadow: 0 0 0 2px oklch(var(--photo-ring-soft));
+    overflow: hidden;
+  }
+  .inbox-portrait img {
+    @apply h-full w-full object-cover;
+  }
+  .inbox-body {
+    @apply flex min-w-0 flex-1 flex-col gap-0.5;
+  }
+  .inbox-row {
+    @apply flex items-center justify-between gap-2;
+  }
+  .inbox-name {
+    @apply truncate font-display text-sm font-semibold leading-tight;
+    color: oklch(var(--foreground));
+  }
+  .inbox-time {
+    @apply shrink-0 text-[11px] font-medium tabular-nums;
+    color: oklch(var(--muted-foreground));
+  }
+  .inbox-preview {
+    @apply truncate text-xs leading-snug;
+    color: oklch(var(--muted-foreground));
+  }
+  .inbox-card-unread .inbox-preview {
+    color: oklch(var(--foreground));
+  }
+
+  /* Unread count pill: bronze dot-pill marking how many unread messages */
+  .unread-pill {
+    @apply inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[10px] font-bold tabular-nums;
+    color: oklch(var(--msg-unread-foreground));
+    background-color: oklch(var(--msg-unread));
+  }
+
+  /* Conversation view: participant header + threaded bubbles + composer.
+     Mobile-first; bubbles align to their side and never overflow. */
+  .conversation {
+    @apply flex flex-col gap-4;
+  }
+  .conversation-header {
+    @apply flex items-center gap-3 border-b border-border/60 pb-3;
+  }
+  .conversation-header .conversation-portrait {
+    @apply flex h-10 w-10 shrink-0 items-center justify-center rounded-full font-display text-sm font-semibold;
+    background-color: oklch(var(--muted));
+    color: oklch(var(--muted-foreground));
+    box-shadow: 0 0 0 2px oklch(var(--photo-ring-soft));
+    overflow: hidden;
+  }
+  .conversation-header .conversation-portrait img {
+    @apply h-full w-full object-cover;
+  }
+  .conversation-header .conversation-name {
+    @apply truncate font-display text-base font-semibold leading-tight;
+    color: oklch(var(--foreground));
+  }
+  .conversation-header .conversation-meta {
+    @apply text-[11px] font-medium;
+    color: oklch(var(--muted-foreground));
+  }
+  .conversation-thread {
+    @apply flex flex-col gap-2.5;
+  }
+  .conversation-date {
+    @apply self-center text-[11px] font-semibold uppercase tracking-[0.14em] tabular-nums;
+    color: oklch(var(--muted-foreground));
+  }
+
+  /* Message bubble: sent bubbles are the sepia ink (right), received sit on
+     paper (left). Max-width keeps bubbles readable and never full-bleed. */
+  .msg-row {
+    @apply flex w-full;
+  }
+  .msg-row-sent {
+    @apply justify-end;
+  }
+  .msg-row-received {
+    @apply justify-start;
+  }
+  .msg-bubble {
+    @apply max-w-[80%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed;
+  }
+  .msg-bubble-sent {
+    background-color: oklch(var(--msg-sent));
+    color: oklch(var(--msg-sent-foreground));
+    border-bottom-right-radius: 0.375rem;
+  }
+  .msg-bubble-received {
+    background-color: oklch(var(--msg-received));
+    color: oklch(var(--msg-received-foreground));
+    border: 1px solid oklch(var(--border));
+    border-bottom-left-radius: 0.375rem;
+  }
+  .msg-bubble-time {
+    @apply mt-1 block text-right text-[10px] font-medium tabular-nums;
+    color: oklch(var(--msg-sent-foreground) / 0.7);
+  }
+  .msg-bubble-received .msg-bubble-time {
+    color: oklch(var(--msg-muted));
+  }
+
+  /* Message composer: a paper input row pinned below the thread */
+  .composer {
+    @apply flex items-end gap-2 rounded-xl border border-border/60 bg-card p-2;
+    box-shadow: 0 1px 2px -1px oklch(0.36 0.05 45 / 0.08);
+  }
+  .composer-textarea {
+    @apply min-h-[44px] flex-1 resize-none rounded-lg bg-transparent px-2 py-2 text-sm leading-relaxed;
+    color: oklch(var(--foreground));
+  }
+  .composer-textarea:focus {
+    outline: none;
+  }
+  .composer-textarea::placeholder {
+    color: oklch(var(--muted-foreground) / 0.7);
+  }
+  .composer-send {
+    @apply inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full;
+    color: oklch(var(--msg-sent-foreground));
+    background-color: oklch(var(--msg-sent));
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.18);
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow
+      0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .composer-send:hover {
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.24);
+  }
+  .composer-send:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(var(--ring) / 0.35);
+  }
+  .composer-send:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  /* Block / report affordances: quiet outline actions with safety colors */
+  .msg-safety-actions {
+    @apply flex flex-wrap items-center gap-2;
+  }
+  .msg-block-action {
+    @apply inline-flex min-h-[36px] items-center gap-1.5 rounded-full border border-border/60 px-3 py-1.5 text-xs font-semibold;
+    background-color: oklch(var(--card));
+    color: oklch(var(--msg-block));
+    transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color
+      0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .msg-block-action:hover {
+    border-color: oklch(var(--msg-block) / 0.5);
+    background-color: oklch(var(--msg-block) / 0.08);
+  }
+  .msg-report-action {
+    @apply inline-flex min-h-[36px] items-center gap-1.5 rounded-full border border-border/60 px-3 py-1.5 text-xs font-semibold;
+    background-color: oklch(var(--card));
+    color: oklch(var(--msg-report));
+    transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color
+      0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .msg-report-action:hover {
+    border-color: oklch(var(--msg-report) / 0.5);
+    background-color: oklch(var(--msg-report) / 0.08);
+  }
+  .msg-blocked-note {
+    @apply flex items-center gap-2 rounded-lg border border-border/60 bg-card px-3.5 py-2.5 text-xs leading-relaxed;
+    color: oklch(var(--msg-muted));
+  }
+
+  /* ---- Pending Contributions badge (Family Stewards) ---- */
+
+  /* Numeric badge on the Pending Contributions link. Same red style as the
+     Notifications badge (.notif-badge) so both read as the same alert. */
+  .pending-badge {
+    @apply inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[10px] font-bold tabular-nums;
+    color: oklch(var(--pending-badge-foreground));
+    background-color: oklch(var(--pending-badge));
+    box-shadow: 0 0 0 2px oklch(var(--card));
+  }
+
+  /* ---- Consolidated navigation hubs ---- */
+
+  /* Hub page header: a back affordance + hub title on the paper, mirroring
+     the Home header. The hub title uses the display serif for a keepsake feel. */
+  .hub-header {
+    @apply flex items-center gap-3;
+  }
+  .hub-back {
+    @apply inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border/60 bg-card;
+    color: oklch(var(--foreground));
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.1);
+    transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .hub-back:hover,
+  .hub-back:focus-visible {
+    border-color: oklch(var(--hub-accent) / 0.6);
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.2);
+  }
+  .hub-back:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(var(--ring) / 0.25);
+  }
+  .hub-title {
+    @apply font-display text-xl font-semibold leading-tight;
+    color: oklch(var(--foreground));
+  }
+  .hub-subtitle {
+    @apply text-sm;
+    color: oklch(var(--hub-muted));
+  }
+
+  /* Hub option card: a large tappable card that mirrors the Home navigation
+     cards — warm plate surface, rounded-xl, sepia/bronze accent border on
+     hover, gentle lift. Each option carries a title + descriptive subtitle. */
+  .hub-option {
+    @apply relative flex w-full flex-col items-start gap-2 rounded-xl border border-border/60 bg-card p-4 text-left;
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.12);
+    transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    animation: hub-in 0.35s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+  .hub-option:hover,
+  .hub-option:focus-within {
+    transform: translateY(-2px);
+    border-color: oklch(var(--hub-accent) / 0.6);
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.2);
+  }
+  .hub-option:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(var(--ring) / 0.25);
+  }
+  .hub-option-head {
+    @apply flex w-full items-center gap-3;
+  }
+  .hub-option-icon {
+    @apply flex h-11 w-11 shrink-0 items-center justify-center rounded-full;
+    color: oklch(var(--hub-accent-foreground));
+    background-color: oklch(var(--hub-accent));
+    box-shadow: 0 0 0 3px oklch(var(--hub-accent) / 0.25);
+  }
+  .hub-option-title {
+    @apply font-display text-lg font-semibold leading-snug;
+    color: oklch(var(--foreground));
+  }
+  .hub-option-desc {
+    @apply text-sm leading-relaxed;
+    color: oklch(var(--hub-muted));
+  }
+  .hub-option-arrow {
+    @apply ml-auto text-sm font-semibold;
+    color: oklch(var(--hub-accent));
+  }
+
+  /* Primary vs secondary hub access (Message Board hub): the default Family
+     Message Board reads as the sepia primary; Private Messages as the bronze
+     secondary. */
+  .hub-option-primary {
+    border-color: oklch(var(--hub-primary) / 0.45);
+  }
+  .hub-option-primary .hub-option-icon {
+    color: oklch(var(--hub-primary-foreground));
+    background-color: oklch(var(--hub-primary));
+    box-shadow: 0 0 0 3px oklch(var(--hub-primary) / 0.25);
+  }
+  .hub-option-primary .hub-option-arrow {
+    color: oklch(var(--hub-primary));
+  }
+  .hub-option-secondary .hub-option-icon {
+    color: oklch(var(--hub-secondary-foreground));
+    background-color: oklch(var(--hub-secondary));
+    box-shadow: 0 0 0 3px oklch(var(--hub-secondary) / 0.25);
+  }
+  .hub-option-secondary .hub-option-arrow {
+    color: oklch(var(--hub-secondary));
+  }
+
+  /* Per-hub accent tint on the option icon so each hub stays recognizable:
+     Family History bronze, Message Board sepia, Family Steward rust. */
+  .hub-accent-history .hub-option-icon {
+    color: oklch(var(--history-accent-foreground));
+    background-color: oklch(var(--history-accent));
+    box-shadow: 0 0 0 3px oklch(var(--history-accent) / 0.25);
+  }
+  .hub-accent-history .hub-option-arrow {
+    color: oklch(var(--history-accent));
+  }
+  .hub-accent-comm .hub-option-icon {
+    color: oklch(var(--comm-accent-foreground));
+    background-color: oklch(var(--comm-accent));
+    box-shadow: 0 0 0 3px oklch(var(--comm-accent) / 0.25);
+  }
+  .hub-accent-comm .hub-option-arrow {
+    color: oklch(var(--comm-accent));
+  }
+  .hub-accent-steward .hub-option-icon {
+    color: oklch(var(--steward-accent-foreground));
+    background-color: oklch(var(--steward-accent));
+    box-shadow: 0 0 0 3px oklch(var(--steward-accent) / 0.25);
+  }
+  .hub-accent-steward .hub-option-arrow {
+    color: oklch(var(--steward-accent));
+  }
+
+  /* Hub group label: a tracked caption flanked by short rules, matching the
+     fu-children-label language for section headers inside a hub. */
+  .hub-group-label {
+    @apply inline-flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.22em];
+    color: oklch(var(--hub-muted));
+  }
+  .hub-group-label::before,
+  .hub-group-label::after {
+    content: "";
+    width: 1.5rem;
+    height: 1px;
+    background-color: oklch(var(--hub-rule));
+  }
+
+  /* Hub option grid: single column on mobile, two columns on wider screens,
+     so the large cards stay tappable and never crowd a narrow viewport. */
+  .hub-grid {
+    @apply grid grid-cols-1 gap-4 sm:grid-cols-2;
+  }
+
+  /* Steward hub category count: a compact pill on a steward option card that
+     shows how many pending items await review in that area. It reuses the
+     pending-badge alert language (red pill) so it reads as the same "action
+     needed" signal as the Pending Contributions badge. */
+  .steward-count-badge {
+    @apply inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[10px] font-bold tabular-nums;
+    color: oklch(var(--pending-badge-foreground));
+    background-color: oklch(var(--pending-badge));
+    box-shadow: 0 0 0 2px oklch(var(--card));
   }
 }

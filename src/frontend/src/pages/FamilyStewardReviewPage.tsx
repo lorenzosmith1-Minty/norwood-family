@@ -1,5 +1,14 @@
-import { Check, Inbox, ShieldCheck, Undo2, UserCog, X } from "lucide-react";
+import {
+  Check,
+  Flag,
+  Inbox,
+  ShieldCheck,
+  Undo2,
+  UserCog,
+  X,
+} from "lucide-react";
 import { StatusBadge } from "../components/StatusBadge";
+import { ReportedMessagesTab } from "../components/governance/ReportedMessagesTab";
 import { useIsAdmin } from "../hooks/useArchiveStorage";
 import {
   useApproveProfileClaim,
@@ -147,87 +156,109 @@ export function FamilyStewardReviewPage({
             </div>
           ))}
         </div>
-      ) : pendingClaims.length === 0 && pendingRequests.length === 0 ? (
-        <div
-          data-ocid="steward_review.empty_state"
-          className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/50 px-6 py-16 text-center"
-        >
-          <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-muted">
-            <Inbox
-              className="h-7 w-7 text-muted-foreground"
-              strokeWidth={1.5}
-              aria-hidden="true"
-            />
-          </div>
-          <h2 className="font-display text-xl font-semibold text-foreground">
-            Nothing awaiting review
-          </h2>
-          <p className="mt-2 max-w-sm text-sm text-muted-foreground">
-            New profile claims and relationship requests from family members
-            will appear here for your confirmation.
-          </p>
-        </div>
       ) : (
         <div data-ocid="steward_review.panel" className="steward-panel">
-          <section
-            data-ocid="steward_review.claims_section"
-            className="steward-section"
-          >
-            <h2 className="steward-section-title">
-              Profile Claims ({pendingClaims.length})
-            </h2>
-            {pendingClaims.length === 0 ? (
-              <p className="text-sm text-muted-foreground">
-                No profile claims awaiting review.
+          {pendingClaims.length === 0 && pendingRequests.length === 0 ? (
+            <div
+              data-ocid="steward_review.empty_state"
+              className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/50 px-6 py-16 text-center"
+            >
+              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-muted">
+                <Inbox
+                  className="h-7 w-7 text-muted-foreground"
+                  strokeWidth={1.5}
+                  aria-hidden="true"
+                />
+              </div>
+              <h2 className="font-display text-xl font-semibold text-foreground">
+                Nothing awaiting review
+              </h2>
+              <p className="mt-2 max-w-sm text-sm text-muted-foreground">
+                New profile claims and relationship requests from family members
+                will appear here for your confirmation.
               </p>
-            ) : (
-              <ul data-ocid="steward_review.claims_list" className="space-y-3">
-                {pendingClaims.map((claim, index) => (
-                  <ClaimCard
-                    key={claim.id.toString()}
-                    claim={claim}
-                    index={index}
-                    approving={approveClaim.isPending}
-                    rejecting={rejectClaim.isPending}
-                    onApprove={() => approveClaim.mutate(claim.id)}
-                    onReject={() => rejectClaim.mutate(claim.id)}
-                  />
-                ))}
-              </ul>
-            )}
-          </section>
+            </div>
+          ) : (
+            <>
+              <section
+                data-ocid="steward_review.claims_section"
+                className="steward-section"
+              >
+                <h2 className="steward-section-title">
+                  Profile Claims ({pendingClaims.length})
+                </h2>
+                {pendingClaims.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">
+                    No profile claims awaiting review.
+                  </p>
+                ) : (
+                  <ul
+                    data-ocid="steward_review.claims_list"
+                    className="space-y-3"
+                  >
+                    {pendingClaims.map((claim, index) => (
+                      <ClaimCard
+                        key={claim.id.toString()}
+                        claim={claim}
+                        index={index}
+                        approving={approveClaim.isPending}
+                        rejecting={rejectClaim.isPending}
+                        onApprove={() => approveClaim.mutate(claim.id)}
+                        onReject={() => rejectClaim.mutate(claim.id)}
+                      />
+                    ))}
+                  </ul>
+                )}
+              </section>
+
+              <section
+                data-ocid="steward_review.requests_section"
+                className="steward-section"
+              >
+                <h2 className="steward-section-title">
+                  Relationship Requests ({pendingRequests.length})
+                </h2>
+                {pendingRequests.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">
+                    No relationship requests awaiting review.
+                  </p>
+                ) : (
+                  <ul
+                    data-ocid="steward_review.requests_list"
+                    className="space-y-3"
+                  >
+                    {pendingRequests.map((request, index) => (
+                      <RelationshipCard
+                        key={request.id.toString()}
+                        request={request}
+                        index={index}
+                        approving={approveRequest.isPending}
+                        rejecting={rejectRequest.isPending}
+                        pending={setPending.isPending}
+                        onApprove={() => approveRequest.mutate(request.id)}
+                        onReject={() => rejectRequest.mutate(request.id)}
+                        onPending={() => setPending.mutate(request.id)}
+                      />
+                    ))}
+                  </ul>
+                )}
+              </section>
+            </>
+          )}
 
           <section
-            data-ocid="steward_review.requests_section"
+            data-ocid="steward_review.reported_messages_section"
             className="steward-section"
           >
-            <h2 className="steward-section-title">
-              Relationship Requests ({pendingRequests.length})
-            </h2>
-            {pendingRequests.length === 0 ? (
-              <p className="text-sm text-muted-foreground">
-                No relationship requests awaiting review.
-              </p>
-            ) : (
-              <ul
-                data-ocid="steward_review.requests_list"
-                className="space-y-3"
-              >
-                {pendingRequests.map((request, index) => (
-                  <RelationshipCard
-                    key={request.id.toString()}
-                    request={request}
-                    index={index}
-                    approving={approveRequest.isPending}
-                    rejecting={rejectRequest.isPending}
-                    pending={setPending.isPending}
-                    onApprove={() => approveRequest.mutate(request.id)}
-                    onReject={() => rejectRequest.mutate(request.id)}
-                    onPending={() => setPending.mutate(request.id)}
-                  />
-                ))}
-              </ul>
-            )}
+            <div className="flex items-center gap-2">
+              <Flag
+                className="h-3.5 w-3.5 text-muted-foreground"
+                strokeWidth={1.75}
+                aria-hidden="true"
+              />
+              <h2 className="steward-section-title">Reported Messages</h2>
+            </div>
+            <ReportedMessagesTab />
           </section>
         </div>
       )}

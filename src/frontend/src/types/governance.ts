@@ -134,4 +134,7 @@ export const AUDIT_ACTION_LABELS: Record<AuditActionType, string> = {
     "Relationship request rejected",
   [AuditActionType.RelationshipRequestPending]: "Relationship request pending",
   [AuditActionType.DuplicateMerged]: "Duplicate merged",
+  [AuditActionType.BoardReplyRemoved]: "Board reply removed",
+  [AuditActionType.BoardPostArchived]: "Board post archived",
+  [AuditActionType.BoardPostRestored]: "Board post restored",
 };

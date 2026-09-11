@@ -190,12 +190,9 @@ const PUBLIC_NAV = [
 
 // The account/private controls that must hide on sign-out. The admin/steward
 // controls are gated by the async useIsAdmin query (cached in the QueryClient),
-// so their sign-out reset is not asserted here.
-const PRIVATE_CONTROLS = [
-  "layout.account_identity",
-  "layout.my_profile_link",
-  "layout.sign_out_button",
-];
+// so their sign-out reset is not asserted here. The single profile button
+// (layout.my_profile_link) replaces the old separate account-identity element.
+const PRIVATE_CONTROLS = ["layout.my_profile_link", "layout.sign_out_button"];
 
 describe("Sign-out hides account/steward/private controls while keeping public family content", () => {
   it("hides account and private controls on sign-out but keeps the public nav", async () => {

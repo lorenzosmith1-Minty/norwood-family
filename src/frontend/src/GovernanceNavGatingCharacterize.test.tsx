@@ -1,6 +1,7 @@
 import "@testing-library/jest-dom/vitest";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { cleanup, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
 
@@ -121,14 +122,22 @@ describe("Steward/admin navigation gating characterization", () => {
     setAuthenticated(true);
     setAdmin(true);
     setCurrentPrincipal(ACCOUNT);
+    const user = userEvent.setup();
     renderApp();
 
-    // The admin query is async, so wait for the gated buttons to appear.
+    // The admin query is async, so wait for the gated steward nav button to
+    // appear. Pending Contributions is no longer a top-level pill — it lives
+    // inside the Family Steward hub.
+    const steward = await screen.findByRole("button", { name: STEWARD_LABEL });
+    expect(steward).toBeInTheDocument();
     expect(
-      await screen.findByRole("button", { name: STEWARD_LABEL }),
-    ).toBeInTheDocument();
+      screen.queryByRole("button", { name: ADMIN_LABEL }),
+    ).not.toBeInTheDocument();
+
+    // Opening the Family Steward hub surfaces Pending Contributions.
+    await user.click(steward);
     expect(
-      screen.getByRole("button", { name: ADMIN_LABEL }),
+      await screen.findByRole("button", { name: /Pending Contributions/ }),
     ).toBeInTheDocument();
   });
 

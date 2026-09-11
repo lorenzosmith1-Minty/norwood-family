@@ -820,6 +820,9 @@ module {
       case (#ProfileClaimReviewed) "ProfileClaimReviewed";
       case (#RelationshipRequested) "RelationshipRequested";
       case (#RelationshipReviewed) "RelationshipReviewed";
+      case (#BoardReply) "BoardReply";
+      case (#BoardMention) "BoardMention";
+      case (#NewMessage) "NewMessage";
     };
   };
 };

@@ -499,12 +499,13 @@ describe("Recipe approval flow", () => {
       screen.queryByText("Grandma's Sweet Potato Pie"),
     ).not.toBeInTheDocument();
 
-    // The steward opens Pending Contributions via the admin nav link and
-    // approves the recipe.
+    // The steward opens Pending Contributions through the Family Steward hub
+    // and approves the recipe.
     await user.click(screen.getByTestId("recipes.back_button"));
-    await screen.findByRole("button", { name: "Pending Contributions" });
+    await screen.findByRole("button", { name: "Family Steward" });
+    await user.click(screen.getByRole("button", { name: "Family Steward" }));
     await user.click(
-      screen.getByRole("button", { name: "Pending Contributions" }),
+      await screen.findByRole("button", { name: /Pending Contributions/ }),
     );
     await screen.findByRole("heading", { name: "Pending Contributions" });
 

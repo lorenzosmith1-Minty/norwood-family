@@ -258,23 +258,34 @@ describe("Top navigation bar has no permanent Family Recipes pill", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("keeps the existing primary nav pills unchanged", async () => {
+  it("keeps the consolidated primary nav pills unchanged", async () => {
     renderApp();
 
     const header = document.querySelectorAll("header")[0] as HTMLElement;
+    // The nav was consolidated: Family Stories, Family Mysteries, and Travel
+    // Through Time are no longer separate top-level pills — they live behind
+    // the single Family History hub pill.
     for (const label of [
       "Explore Family",
       "Heritage Branch",
       "Family Archive",
-      "Family Stories",
-      "Family Mysteries",
-      "Travel Through Time",
+      "Family History",
       "Add Myself",
       "Notifications",
     ]) {
       expect(
         within(header).getByRole("button", { name: label }),
       ).toBeInTheDocument();
+    }
+    // The removed permanent pills are no longer in the top bar.
+    for (const label of [
+      "Family Stories",
+      "Family Mysteries",
+      "Travel Through Time",
+    ]) {
+      expect(
+        within(header).queryByRole("button", { name: label }),
+      ).not.toBeInTheDocument();
     }
   });
 });

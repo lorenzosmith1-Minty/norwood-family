@@ -20,6 +20,8 @@ import AccountIdentityTypes "types/account-identity";
 import GovernanceTypes "types/governance";
 import FamilyHistoryTypes "types/family-history";
 import RecipeTypes "types/recipes";
+import BoardTypes "types/board";
+import MessagingTypes "types/messaging";
 import ObjectStorageLib "lib/object-storage";
 import ArchiveLib "lib/archive";
 import OwnershipLib "lib/ownership";
@@ -34,6 +36,9 @@ import AccountIdentityApi "mixins/account-identity-api";
 import GovernanceApi "mixins/governance-api";
 import FamilyHistoryApi "mixins/family-history-api";
 import RecipesApi "mixins/recipes-api";
+import BoardApi "mixins/board-api";
+import MessagingApi "mixins/messaging-api";
+import PendingCountApi "mixins/pending-count-api";
 import ApiDocMixin "mixins/api-doc";
 
 actor {
@@ -57,6 +62,12 @@ actor {
   let mysteries : List.List<FamilyHistoryTypes.Mystery>;
   let mysteryContributions : List.List<FamilyHistoryTypes.MysteryContribution>;
   let recipes : List.List<RecipeTypes.Recipe>;
+  let posts : List.List<BoardTypes.Post>;
+  let replies : List.List<BoardTypes.Reply>;
+  let conversations : List.List<MessagingTypes.Conversation>;
+  let messages : List.List<MessagingTypes.Message>;
+  let blocks : List.List<MessagingTypes.Block>;
+  let reports : List.List<MessagingTypes.Report>;
 
   /// Renders an audit action type variant as its tag text for OQL rows.
   func auditActionText(a : GovernanceTypes.AuditActionType) : Text {
@@ -79,6 +90,75 @@ actor {
       case (#RelationshipAdded) "RelationshipAdded";
       case (#RelationshipRemoved) "RelationshipRemoved";
       case (#RelationshipTypeCorrected) "RelationshipTypeCorrected";
+      case (#BoardPostArchived) "BoardPostArchived";
+      case (#BoardPostRestored) "BoardPostRestored";
+      case (#BoardReplyRemoved) "BoardReplyRemoved";
+    };
+  };
+
+  /// Renders a board post type variant as its tag text for OQL rows.
+  func postTypeText(t : BoardTypes.PostType) : Text {
+    switch (t) {
+      case (#General) "General";
+      case (#Announcement) "Announcement";
+      case (#FamilyQuestion) "FamilyQuestion";
+      case (#ResearchHistory) "ResearchHistory";
+      case (#PhotoIdentification) "PhotoIdentification";
+      case (#Recipe) "Recipe";
+      case (#ReunionEvent) "ReunionEvent";
+      case (#Memorial) "Memorial";
+      case (#Other) "Other";
+    };
+  };
+
+  /// Renders a board post status variant as its tag text for OQL rows.
+  func boardPostStatusText(s : BoardTypes.PostStatus) : Text {
+    switch (s) {
+      case (#Active) "Active";
+      case (#Archived) "Archived";
+    };
+  };
+
+  /// Renders a message status variant as its tag text for OQL rows.
+  func messageStatusText(s : MessagingTypes.MessageStatus) : Text {
+    switch (s) {
+      case (#Sent) "Sent";
+      case (#Blocked) "Blocked";
+    };
+  };
+
+  /// Renders a report status variant as its tag text for OQL rows.
+  func reportStatusText(s : MessagingTypes.ReportStatus) : Text {
+    switch (s) {
+      case (#Pending) "Pending";
+      case (#Reviewed) "Reviewed";
+      case (#Dismissed) "Dismissed";
+    };
+  };
+
+  /// Whether the caller is a participant of the conversation with the given id.
+  func isConversationParticipant(caller : Principal, conversationId : Nat) : Bool {
+    switch (conversations.find(func c = c.conversationId == conversationId)) {
+      case (?c) c.participantAccountIds.any(func a = a == caller);
+      case null false;
+    };
+  };
+
+  /// OQL row-visibility rule for conversations: a scoped caller sees only the
+  /// conversations they participate in.
+  func canSeeConversation(caller : Principal, owner : OQL.Value) : Bool {
+    switch (owner) {
+      case (#nat id) isConversationParticipant(caller, id);
+      case _ false;
+    };
+  };
+
+  /// OQL row-visibility rule for messages: a scoped caller sees only messages in
+  /// conversations they participate in.
+  func canSeeMessage(caller : Principal, owner : OQL.Value) : Bool {
+    switch (owner) {
+      case (#nat conversationId) isConversationParticipant(caller, conversationId);
+      case _ false;
     };
   };
 
@@ -370,6 +450,21 @@ actor {
       .payload("personId", func p = p)
       .controllerOnly()
       .build(),
+      OQL.Entity.manual<GovernanceTypes.DismissedPair>(
+        "dismissedPair",
+        func() : Iter.Iter<GovernanceTypes.DismissedPair> = dismissedDuplicates.values(),
+        "DismissedPair",
+        "key",
+      )
+      .sample({
+        personIdA = "";
+        personIdB = "";
+      })
+      .payload("key", func r = r.personIdA # ":" # r.personIdB)
+      .payload("personIdA", func r = r.personIdA)
+      .payload("personIdB", func r = r.personIdB)
+      .controllerOnly()
+      .build(),
       OQL.Entity.manual<FamilyHistoryTypes.Story>(
         "story",
         func() : Iter.Iter<FamilyHistoryTypes.Story> = stories.values(),
@@ -518,6 +613,148 @@ actor {
       .payload("updatedAt", func r = r.updatedAt)
       .controllerOnly()
       .build(),
+      OQL.Entity.manual<BoardTypes.Post>(
+        "boardPost",
+        func() : Iter.Iter<BoardTypes.Post> = posts.values(),
+        "BoardPost",
+        "postId",
+      )
+      .sample({
+        postId = 0;
+        authorAccountId = Principal.fromText("aaaaa-aa");
+        authorPersonId = "";
+        title = null;
+        body = "";
+        postType = #General;
+        relatedPersonIds = [];
+        linkedMediaIds = [];
+        createdAt = 0;
+        updatedAt = 0;
+        status = #Active;
+        privacyScope = #FamilyOnly;
+      })
+      .payload("postId", func r = r.postId)
+      .payload("authorAccountId", func r = r.authorAccountId.toText())
+      .payload("authorPersonId", func r = r.authorPersonId)
+      .payload("title", func r = r.title ?? "")
+      .payload("body", func r = r.body)
+      .payload("postType", func r = postTypeText(r.postType))
+      .payload("relatedPersonCount", func r = r.relatedPersonIds.size())
+      .payload("linkedMediaCount", func r = r.linkedMediaIds.size())
+      .payload("createdAt", func r = r.createdAt)
+      .payload("updatedAt", func r = r.updatedAt)
+      .payload("status", func r = boardPostStatusText(r.status))
+      .payload("privacyScope", func r = switch (r.privacyScope) { case (#FamilyOnly) "FamilyOnly" })
+      .controllerOnly()
+      .build(),
+      OQL.Entity.manual<BoardTypes.Reply>(
+        "boardReply",
+        func() : Iter.Iter<BoardTypes.Reply> = replies.values(),
+        "BoardReply",
+        "replyId",
+      )
+      .sample({
+        replyId = 0;
+        postId = 0;
+        authorAccountId = Principal.fromText("aaaaa-aa");
+        authorPersonId = "";
+        body = "";
+        createdAt = 0;
+      })
+      .payload("replyId", func r = r.replyId)
+      .payload("postId", func r = r.postId)
+      .payload("authorAccountId", func r = r.authorAccountId.toText())
+      .payload("authorPersonId", func r = r.authorPersonId)
+      .payload("body", func r = r.body)
+      .payload("createdAt", func r = r.createdAt)
+      .controllerOnly()
+      .build(),
+      OQL.Entity.manual<MessagingTypes.Conversation>(
+        "conversation",
+        func() : Iter.Iter<MessagingTypes.Conversation> = conversations.values(),
+        "Conversation",
+        "conversationId",
+      )
+      .sample({
+        conversationId = 0;
+        participantAccountIds = [];
+        participantPersonIds = [];
+        createdAt = 0;
+        updatedAt = 0;
+      })
+      .payload("conversationId", func r = r.conversationId)
+      .payload("participantCount", func r = r.participantAccountIds.size())
+      .payload("createdAt", func r = r.createdAt)
+      .payload("updatedAt", func r = r.updatedAt)
+      .ownedByWith("conversationId", canSeeConversation)
+      .controllerOrScoped()
+      .build(),
+      OQL.Entity.manual<MessagingTypes.Message>(
+        "message",
+        func() : Iter.Iter<MessagingTypes.Message> = messages.values(),
+        "Message",
+        "messageId",
+      )
+      .sample({
+        messageId = 0;
+        conversationId = 0;
+        senderAccountId = Principal.fromText("aaaaa-aa");
+        senderPersonId = "";
+        body = "";
+        createdAt = 0;
+        readAt = null;
+        status = #Sent;
+      })
+      .payload("messageId", func r = r.messageId)
+      .payload("conversationId", func r = r.conversationId)
+      .payload("senderAccountId", func r = r.senderAccountId.toText())
+      .payload("senderPersonId", func r = r.senderPersonId)
+      .payload("body", func r = r.body)
+      .payload("createdAt", func r = r.createdAt)
+      .payload("readAt", func r = r.readAt ?? 0)
+      .payload("status", func r = messageStatusText(r.status))
+      .ownedByWith("conversationId", canSeeMessage)
+      .scopedPerUser()
+      .build(),
+      OQL.Entity.manual<MessagingTypes.Block>(
+        "block",
+        func() : Iter.Iter<MessagingTypes.Block> = blocks.values(),
+        "Block",
+        "key",
+      )
+      .sample({
+        blockerAccountId = Principal.fromText("aaaaa-aa");
+        blockedAccountId = Principal.fromText("aaaaa-aa");
+        createdAt = 0;
+      })
+      .payload("key", func r = r.blockerAccountId.toText() # ":" # r.blockedAccountId.toText())
+      .payload("blockerAccountId", func r = r.blockerAccountId.toText())
+      .payload("blockedAccountId", func r = r.blockedAccountId.toText())
+      .payload("createdAt", func r = r.createdAt)
+      .controllerOnly()
+      .build(),
+      OQL.Entity.manual<MessagingTypes.Report>(
+        "report",
+        func() : Iter.Iter<MessagingTypes.Report> = reports.values(),
+        "Report",
+        "reportId",
+      )
+      .sample({
+        reportId = 0;
+        reportingAccountId = Principal.fromText("aaaaa-aa");
+        reportedMessageId = 0;
+        reason = "";
+        createdAt = 0;
+        status = #Pending;
+      })
+      .payload("reportId", func r = r.reportId)
+      .payload("reportingAccountId", func r = r.reportingAccountId.toText())
+      .payload("reportedMessageId", func r = r.reportedMessageId)
+      .payload("reason", func r = r.reason)
+      .payload("createdAt", func r = r.createdAt)
+      .payload("status", func r = reportStatusText(r.status))
+      .controllerOnly()
+      .build(),
     ];
   });
   include MixinObjectStorage();
@@ -530,5 +767,8 @@ actor {
   include GovernanceApi(accessControlState, profiles, confirmedRelationships, stewards, successors, removalRequests, auditLog, mergeConflicts, archivedProfiles, galleries, archiveItems, dismissedDuplicates);
   include FamilyHistoryApi(accessControlState, stories, mysteries, mysteryContributions, profiles, archiveItems);
   include RecipesApi(accessControlState, recipes, profiles);
+  include BoardApi(accessControlState, posts, replies, profiles, notifications, auditLog);
+  include MessagingApi(accessControlState, conversations, messages, blocks, reports, profiles, archivedProfiles, notifications, accounts);
+  include PendingCountApi(accessControlState, archiveItems, recipes, stories, mysteryContributions);
   include ApiDocMixin();
 };

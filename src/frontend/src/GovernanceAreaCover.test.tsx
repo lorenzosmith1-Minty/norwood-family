@@ -438,10 +438,14 @@ function renderApp() {
 }
 
 async function openGovernance(user: ReturnType<typeof userEvent.setup>) {
-  const button = await screen.findByRole("button", {
-    name: "Family Governance",
-  });
-  await user.click(button);
+  // Family Governance is no longer a top-level pill — it is reached through
+  // the Family Steward hub.
+  await user.click(
+    await screen.findByRole("button", { name: "Family Steward" }),
+  );
+  await user.click(
+    await screen.findByRole("button", { name: /Family Governance/ }),
+  );
 }
 
 function stewardRecord(account: string): StewardRecord {
@@ -525,9 +529,21 @@ describe("Family Governance area: steward gating", () => {
   it("shows the governance entry point only to an authenticated steward", async () => {
     setAuthenticated(true);
     setAdmin(true);
+    const user = userEvent.setup();
     renderApp();
+    // The Family Steward nav button is the single steward entry point.
+    const steward = await screen.findByRole("button", {
+      name: "Family Steward",
+    });
+    expect(steward).toBeInTheDocument();
+    // Family Governance is reached through the Family Steward hub, not a
+    // top-level pill.
     expect(
-      await screen.findByRole("button", { name: "Family Governance" }),
+      screen.queryByRole("button", { name: "Family Governance" }),
+    ).not.toBeInTheDocument();
+    await user.click(steward);
+    expect(
+      await screen.findByRole("button", { name: /Family Governance/ }),
     ).toBeInTheDocument();
   });
 

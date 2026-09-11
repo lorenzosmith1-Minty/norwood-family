@@ -4,6 +4,7 @@ import {
   LivingStatus,
   type Notification,
   type PersonProfile,
+  PrivacyLevel,
   type ProfileClaim,
   type ProfileEdits,
   type Relationship,
@@ -587,5 +588,56 @@ describe("Autosave draft to localStorage", () => {
       const parsed = JSON.parse(raw as string) as { preferredName: string };
       expect(parsed.preferredName).toBe("Clayton Norwood");
     });
+  });
+
+  it("restores a saved draft from localStorage on reload so a refresh does not lose work", async () => {
+    // Seed a previously autosaved draft for this person, as if the user had
+    // typed it and then navigated away or refreshed before saving.
+    localStorage.setItem(
+      "norwood.profile-edit.draft.clayton",
+      JSON.stringify({
+        preferredName: "Clayton Norwood",
+        firstName: "Clayton",
+        middleName: "",
+        lastName: "Norwood",
+        suffix: "",
+        nickname: "",
+        birthDate: "1990",
+        birthYearOnly: false,
+        birthplace: "Chicago, IL",
+        currentLocation: "",
+        occupation: "",
+        livingStatus: LivingStatus.Living,
+        shortBio: "",
+        longerStory: "",
+        timeline: [],
+        privacySettings: PrivacyLevel.FamilyOnly,
+      }),
+    );
+
+    seedClaimedLivingProfile("clayton", "Clayton Norwood", OWNER);
+    setAuthenticated(true);
+    setCurrentPrincipal(OWNER);
+    renderPage(<ProfileEditPage personId="clayton" onBack={() => {}} />);
+
+    expect(await screen.findByText("You own this profile")).toBeInTheDocument();
+
+    // The persisted draft is restored into the form on mount, so the user's
+    // unsaved work is not lost by a refresh.
+    expect(
+      (
+        screen.getByTestId(
+          "profile_edit.preferred_name_input",
+        ) as HTMLInputElement
+      ).value,
+    ).toBe("Clayton Norwood");
+    expect(
+      (screen.getByTestId("profile_edit.birth_date_input") as HTMLInputElement)
+        .value,
+    ).toBe("1990");
+    expect(
+      (screen.getByTestId("profile_edit.birthplace_input") as HTMLInputElement)
+        .value,
+    ).toBe("Chicago, IL");
   });
 });

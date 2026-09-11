@@ -33294,44 +33294,55 @@ const createLucideIcon = (iconName, iconNode) => {
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$11 = [
+const __iconNode$1c = [
   ["rect", { width: "20", height: "5", x: "2", y: "3", rx: "1", key: "1wp1u1" }],
   ["path", { d: "M4 8v11a2 2 0 0 0 2 2h2", key: "tvwodi" }],
   ["path", { d: "M20 8v11a2 2 0 0 1-2 2h-2", key: "1gkqxj" }],
   ["path", { d: "m9 15 3-3 3 3", key: "1pd0qc" }],
   ["path", { d: "M12 12v9", key: "192myk" }]
 ];
-const ArchiveRestore = createLucideIcon("archive-restore", __iconNode$11);
+const ArchiveRestore = createLucideIcon("archive-restore", __iconNode$1c);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$10 = [
+const __iconNode$1b = [
   ["rect", { width: "20", height: "5", x: "2", y: "3", rx: "1", key: "1wp1u1" }],
   ["path", { d: "M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8", key: "1s80jp" }],
   ["path", { d: "M10 12h4", key: "a56b0p" }]
 ];
-const Archive = createLucideIcon("archive", __iconNode$10);
+const Archive = createLucideIcon("archive", __iconNode$1b);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$$ = [
+const __iconNode$1a = [
   ["path", { d: "m12 19-7-7 7-7", key: "1l729n" }],
   ["path", { d: "M19 12H5", key: "x3x0zl" }]
 ];
-const ArrowLeft = createLucideIcon("arrow-left", __iconNode$$);
+const ArrowLeft = createLucideIcon("arrow-left", __iconNode$1a);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$_ = [
+const __iconNode$19 = [
+  ["path", { d: "M5 12h14", key: "1ays0h" }],
+  ["path", { d: "m12 5 7 7-7 7", key: "xquz4c" }]
+];
+const ArrowRight = createLucideIcon("arrow-right", __iconNode$19);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$18 = [
   ["path", { d: "M2 10v3", key: "1fnikh" }],
   ["path", { d: "M6 6v11", key: "11sgs0" }],
   ["path", { d: "M10 3v18", key: "yhl04a" }],
@@ -33339,14 +33350,25 @@ const __iconNode$_ = [
   ["path", { d: "M18 5v13", key: "123xd1" }],
   ["path", { d: "M22 10v3", key: "154ddg" }]
 ];
-const AudioLines = createLucideIcon("audio-lines", __iconNode$_);
+const AudioLines = createLucideIcon("audio-lines", __iconNode$18);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$Z = [
+const __iconNode$17 = [
+  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
+  ["path", { d: "m4.9 4.9 14.2 14.2", key: "1m5liu" }]
+];
+const Ban = createLucideIcon("ban", __iconNode$17);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$16 = [
   ["path", { d: "M10.268 21a2 2 0 0 0 3.464 0", key: "vwvbt9" }],
   [
     "path",
@@ -33356,14 +33378,14 @@ const __iconNode$Z = [
     }
   ]
 ];
-const Bell = createLucideIcon("bell", __iconNode$Z);
+const Bell = createLucideIcon("bell", __iconNode$16);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$Y = [
+const __iconNode$15 = [
   ["path", { d: "M12 7v14", key: "1akyts" }],
   [
     "path",
@@ -33373,25 +33395,25 @@ const __iconNode$Y = [
     }
   ]
 ];
-const BookOpen = createLucideIcon("book-open", __iconNode$Y);
+const BookOpen = createLucideIcon("book-open", __iconNode$15);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$X = [
+const __iconNode$14 = [
   ["path", { d: "M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16", key: "jecpp" }],
   ["rect", { width: "20", height: "14", x: "2", y: "6", rx: "2", key: "i6l2r4" }]
 ];
-const Briefcase = createLucideIcon("briefcase", __iconNode$X);
+const Briefcase = createLucideIcon("briefcase", __iconNode$14);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$W = [
+const __iconNode$13 = [
   ["path", { d: "M8 2v4", key: "1cmpym" }],
   ["path", { d: "M16 2v4", key: "4m81vk" }],
   ["rect", { width: "18", height: "18", x: "3", y: "4", rx: "2", key: "1hopcy" }],
@@ -33403,14 +33425,14 @@ const __iconNode$W = [
   ["path", { d: "M12 18h.01", key: "mhygvu" }],
   ["path", { d: "M16 18h.01", key: "kzsmim" }]
 ];
-const CalendarDays = createLucideIcon("calendar-days", __iconNode$W);
+const CalendarDays = createLucideIcon("calendar-days", __iconNode$13);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$V = [
+const __iconNode$12 = [
   [
     "path",
     {
@@ -33420,22 +33442,22 @@ const __iconNode$V = [
   ],
   ["circle", { cx: "12", cy: "13", r: "3", key: "1vg3eu" }]
 ];
-const Camera = createLucideIcon("camera", __iconNode$V);
+const Camera = createLucideIcon("camera", __iconNode$12);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$U = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
-const Check = createLucideIcon("check", __iconNode$U);
+const __iconNode$11 = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
+const Check = createLucideIcon("check", __iconNode$11);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$T = [
+const __iconNode$10 = [
   [
     "path",
     {
@@ -33445,53 +33467,53 @@ const __iconNode$T = [
   ],
   ["path", { d: "M6 17h12", key: "1jwigz" }]
 ];
-const ChefHat = createLucideIcon("chef-hat", __iconNode$T);
+const ChefHat = createLucideIcon("chef-hat", __iconNode$10);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$S = [["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]];
-const ChevronRight = createLucideIcon("chevron-right", __iconNode$S);
+const __iconNode$$ = [["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]];
+const ChevronRight = createLucideIcon("chevron-right", __iconNode$$);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$R = [
+const __iconNode$_ = [
   ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
   ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
 ];
-const CircleCheck = createLucideIcon("circle-check", __iconNode$R);
+const CircleCheck = createLucideIcon("circle-check", __iconNode$_);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$Q = [
+const __iconNode$Z = [
   ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
   ["circle", { cx: "12", cy: "10", r: "3", key: "ilqhr7" }],
   ["path", { d: "M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662", key: "154egf" }]
 ];
-const CircleUser = createLucideIcon("circle-user", __iconNode$Q);
+const CircleUser = createLucideIcon("circle-user", __iconNode$Z);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$P = [["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }]];
-const Circle = createLucideIcon("circle", __iconNode$P);
+const __iconNode$Y = [["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }]];
+const Circle = createLucideIcon("circle", __iconNode$Y);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$O = [
+const __iconNode$X = [
   [
     "path",
     { d: "M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3Z", key: "1tn4o7" }
@@ -33500,25 +33522,43 @@ const __iconNode$O = [
   ["path", { d: "m12.4 3.4 3.1 4", key: "6hsd6n" }],
   ["path", { d: "M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z", key: "ltgou9" }]
 ];
-const Clapperboard = createLucideIcon("clapperboard", __iconNode$O);
+const Clapperboard = createLucideIcon("clapperboard", __iconNode$X);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$N = [
+const __iconNode$W = [
+  ["rect", { width: "8", height: "4", x: "8", y: "2", rx: "1", ry: "1", key: "tgr4d6" }],
+  [
+    "path",
+    {
+      d: "M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2",
+      key: "116196"
+    }
+  ],
+  ["path", { d: "m9 14 2 2 4-4", key: "df797q" }]
+];
+const ClipboardCheck = createLucideIcon("clipboard-check", __iconNode$W);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$V = [
   ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
   ["polyline", { points: "12 6 12 12 16.5 12", key: "1aq6pp" }]
 ];
-const Clock3 = createLucideIcon("clock-3", __iconNode$N);
+const Clock3 = createLucideIcon("clock-3", __iconNode$V);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$M = [
+const __iconNode$U = [
   [
     "path",
     {
@@ -33528,52 +33568,52 @@ const __iconNode$M = [
   ],
   ["path", { d: "M5 21h14", key: "11awu3" }]
 ];
-const Crown = createLucideIcon("crown", __iconNode$M);
+const Crown = createLucideIcon("crown", __iconNode$U);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$L = [
+const __iconNode$T = [
   ["circle", { cx: "12", cy: "12", r: "1", key: "41hilf" }],
   ["circle", { cx: "19", cy: "12", r: "1", key: "1wjl8i" }],
   ["circle", { cx: "5", cy: "12", r: "1", key: "1pcz8c" }]
 ];
-const Ellipsis = createLucideIcon("ellipsis", __iconNode$L);
+const Ellipsis = createLucideIcon("ellipsis", __iconNode$T);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$K = [
+const __iconNode$S = [
   ["path", { d: "M15 3h6v6", key: "1q9fwt" }],
   ["path", { d: "M10 14 21 3", key: "gplh6r" }],
   ["path", { d: "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6", key: "a6xqqp" }]
 ];
-const ExternalLink = createLucideIcon("external-link", __iconNode$K);
+const ExternalLink = createLucideIcon("external-link", __iconNode$S);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$J = [
+const __iconNode$R = [
   ["path", { d: "M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z", key: "1rqfz7" }],
   ["path", { d: "M14 2v4a2 2 0 0 0 2 2h4", key: "tnqrlb" }],
   ["path", { d: "M10 9H8", key: "b1mrlr" }],
   ["path", { d: "M16 13H8", key: "t4e002" }],
   ["path", { d: "M16 17H8", key: "z1uh3a" }]
 ];
-const FileText = createLucideIcon("file-text", __iconNode$J);
+const FileText = createLucideIcon("file-text", __iconNode$R);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$I = [
+const __iconNode$Q = [
   ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }],
   ["path", { d: "M7 3v18", key: "bbkbws" }],
   ["path", { d: "M3 7.5h4", key: "zfgn84" }],
@@ -33583,65 +33623,95 @@ const __iconNode$I = [
   ["path", { d: "M17 7.5h4", key: "myr1c1" }],
   ["path", { d: "M17 16.5h4", key: "go4c1d" }]
 ];
-const Film = createLucideIcon("film", __iconNode$I);
+const Film = createLucideIcon("film", __iconNode$Q);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$H = [
+const __iconNode$P = [
+  ["path", { d: "M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z", key: "i9b6wo" }],
+  ["line", { x1: "4", x2: "4", y1: "22", y2: "15", key: "1cm3nv" }]
+];
+const Flag = createLucideIcon("flag", __iconNode$P);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$O = [
+  ["circle", { cx: "15", cy: "19", r: "2", key: "u2pros" }],
+  [
+    "path",
+    {
+      d: "M20.9 19.8A2 2 0 0 0 22 18V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h5.1",
+      key: "1jj40k"
+    }
+  ],
+  ["path", { d: "M15 11v-1", key: "cntcp" }],
+  ["path", { d: "M15 17v-2", key: "1279jj" }]
+];
+const FolderArchive = createLucideIcon("folder-archive", __iconNode$O);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$N = [
   ["line", { x1: "6", x2: "6", y1: "3", y2: "15", key: "17qcm7" }],
   ["circle", { cx: "18", cy: "6", r: "3", key: "1h7g24" }],
   ["circle", { cx: "6", cy: "18", r: "3", key: "fqmcym" }],
   ["path", { d: "M18 9a9 9 0 0 1-9 9", key: "n2h4wq" }]
 ];
-const GitBranch = createLucideIcon("git-branch", __iconNode$H);
+const GitBranch = createLucideIcon("git-branch", __iconNode$N);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$G = [
+const __iconNode$M = [
   ["circle", { cx: "18", cy: "18", r: "3", key: "1xkwt0" }],
   ["circle", { cx: "6", cy: "6", r: "3", key: "1lh9wr" }],
   ["path", { d: "M6 21V9a9 9 0 0 0 9 9", key: "7kw0sc" }]
 ];
-const GitMerge = createLucideIcon("git-merge", __iconNode$G);
+const GitMerge = createLucideIcon("git-merge", __iconNode$M);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$F = [
+const __iconNode$L = [
   ["path", { d: "M16 5h6", key: "1vod17" }],
   ["path", { d: "M19 2v6", key: "4bpg5p" }],
   ["path", { d: "M21 11.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7.5", key: "1ue2ih" }],
   ["path", { d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21", key: "1xmnt7" }],
   ["circle", { cx: "9", cy: "9", r: "2", key: "af1f0g" }]
 ];
-const ImagePlus = createLucideIcon("image-plus", __iconNode$F);
+const ImagePlus = createLucideIcon("image-plus", __iconNode$L);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$E = [
+const __iconNode$K = [
   ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", ry: "2", key: "1m3agn" }],
   ["circle", { cx: "9", cy: "9", r: "2", key: "af1f0g" }],
   ["path", { d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21", key: "1xmnt7" }]
 ];
-const Image = createLucideIcon("image", __iconNode$E);
+const Image = createLucideIcon("image", __iconNode$K);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$D = [
+const __iconNode$J = [
   ["polyline", { points: "22 12 16 12 14 15 10 15 8 12 2 12", key: "o97t9d" }],
   [
     "path",
@@ -33651,14 +33721,14 @@ const __iconNode$D = [
     }
   ]
 ];
-const Inbox = createLucideIcon("inbox", __iconNode$D);
+const Inbox = createLucideIcon("inbox", __iconNode$J);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$C = [
+const __iconNode$I = [
   ["path", { d: "M10 18v-7", key: "wt116b" }],
   [
     "path",
@@ -33672,14 +33742,14 @@ const __iconNode$C = [
   ["path", { d: "M3 22h18", key: "8prr45" }],
   ["path", { d: "M6 18v-7", key: "1ivflk" }]
 ];
-const Landmark = createLucideIcon("landmark", __iconNode$C);
+const Landmark = createLucideIcon("landmark", __iconNode$I);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$B = [
+const __iconNode$H = [
   ["rect", { width: "8", height: "18", x: "3", y: "3", rx: "1", key: "oynpb5" }],
   ["path", { d: "M7 3v18", key: "bbkbws" }],
   [
@@ -33690,14 +33760,14 @@ const __iconNode$B = [
     }
   ]
 ];
-const LibraryBig = createLucideIcon("library-big", __iconNode$B);
+const LibraryBig = createLucideIcon("library-big", __iconNode$H);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$A = [
+const __iconNode$G = [
   [
     "path",
     {
@@ -33708,58 +33778,69 @@ const __iconNode$A = [
   ["path", { d: "M9 18h6", key: "x1upvd" }],
   ["path", { d: "M10 22h4", key: "ceow96" }]
 ];
-const Lightbulb = createLucideIcon("lightbulb", __iconNode$A);
+const Lightbulb = createLucideIcon("lightbulb", __iconNode$G);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$z = [
+const __iconNode$F = [
   ["path", { d: "M9 17H7A5 5 0 0 1 7 7h2", key: "8i5ue5" }],
   ["path", { d: "M15 7h2a5 5 0 1 1 0 10h-2", key: "1b9ql8" }],
   ["line", { x1: "8", x2: "16", y1: "12", y2: "12", key: "1jonct" }]
 ];
-const Link2 = createLucideIcon("link-2", __iconNode$z);
+const Link2 = createLucideIcon("link-2", __iconNode$F);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$y = [["path", { d: "M21 12a9 9 0 1 1-6.219-8.56", key: "13zald" }]];
-const LoaderCircle = createLucideIcon("loader-circle", __iconNode$y);
+const __iconNode$E = [["path", { d: "M21 12a9 9 0 1 1-6.219-8.56", key: "13zald" }]];
+const LoaderCircle = createLucideIcon("loader-circle", __iconNode$E);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$x = [
+const __iconNode$D = [
   ["path", { d: "m10 17 5-5-5-5", key: "1bsop3" }],
   ["path", { d: "M15 12H3", key: "6jk70r" }],
   ["path", { d: "M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4", key: "u53s6r" }]
 ];
-const LogIn = createLucideIcon("log-in", __iconNode$x);
+const LogIn = createLucideIcon("log-in", __iconNode$D);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$w = [
+const __iconNode$C = [
   ["path", { d: "m16 17 5-5-5-5", key: "1bji2h" }],
   ["path", { d: "M21 12H9", key: "dn1m92" }],
   ["path", { d: "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4", key: "1uf3rs" }]
 ];
-const LogOut = createLucideIcon("log-out", __iconNode$w);
+const LogOut = createLucideIcon("log-out", __iconNode$C);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$v = [
+const __iconNode$B = [
+  ["path", { d: "m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7", key: "132q7q" }],
+  ["rect", { x: "2", y: "4", width: "20", height: "16", rx: "2", key: "izxlao" }]
+];
+const Mail = createLucideIcon("mail", __iconNode$B);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$A = [
   [
     "path",
     {
@@ -33769,7 +33850,67 @@ const __iconNode$v = [
   ],
   ["circle", { cx: "12", cy: "10", r: "3", key: "ilqhr7" }]
 ];
-const MapPin = createLucideIcon("map-pin", __iconNode$v);
+const MapPin = createLucideIcon("map-pin", __iconNode$A);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$z = [
+  ["path", { d: "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z", key: "1lielz" }],
+  ["path", { d: "M12 7v6", key: "lw1j43" }],
+  ["path", { d: "M9 10h6", key: "9gxzsh" }]
+];
+const MessageSquarePlus = createLucideIcon("message-square-plus", __iconNode$z);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$y = [
+  ["path", { d: "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z", key: "1lielz" }],
+  ["path", { d: "M13 8H7", key: "14i4kc" }],
+  ["path", { d: "M17 12H7", key: "16if0g" }]
+];
+const MessageSquareText = createLucideIcon("message-square-text", __iconNode$y);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$x = [
+  ["path", { d: "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z", key: "1lielz" }]
+];
+const MessageSquare = createLucideIcon("message-square", __iconNode$x);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$w = [
+  ["path", { d: "M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z", key: "131961" }],
+  ["path", { d: "M19 10v2a7 7 0 0 1-14 0v-2", key: "1vc78b" }],
+  ["line", { x1: "12", x2: "12", y1: "19", y2: "22", key: "x3vr5v" }]
+];
+const Mic = createLucideIcon("mic", __iconNode$w);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$v = [
+  ["rect", { x: "16", y: "16", width: "6", height: "6", rx: "1", key: "4q2zg0" }],
+  ["rect", { x: "2", y: "16", width: "6", height: "6", rx: "1", key: "8cvhb9" }],
+  ["rect", { x: "9", y: "2", width: "6", height: "6", rx: "1", key: "1egb70" }],
+  ["path", { d: "M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3", key: "1jsf9p" }],
+  ["path", { d: "M12 12V8", key: "2874zd" }]
+];
+const Network = createLucideIcon("network", __iconNode$v);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33777,18 +33918,6 @@ const MapPin = createLucideIcon("map-pin", __iconNode$v);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$u = [
-  ["path", { d: "M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z", key: "131961" }],
-  ["path", { d: "M19 10v2a7 7 0 0 1-14 0v-2", key: "1vc78b" }],
-  ["line", { x1: "12", x2: "12", y1: "19", y2: "22", key: "x3vr5v" }]
-];
-const Mic = createLucideIcon("mic", __iconNode$u);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$t = [
   ["path", { d: "M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4", key: "re6nr2" }],
   ["path", { d: "M2 6h4", key: "aawbzj" }],
   ["path", { d: "M2 10h4", key: "l0bgd4" }],
@@ -33802,14 +33931,14 @@ const __iconNode$t = [
     }
   ]
 ];
-const NotebookPen = createLucideIcon("notebook-pen", __iconNode$t);
+const NotebookPen = createLucideIcon("notebook-pen", __iconNode$u);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$s = [
+const __iconNode$t = [
   ["path", { d: "M5.8 11.3 2 22l10.7-3.79", key: "gwxi1d" }],
   ["path", { d: "M4 3h.01", key: "1vcuye" }],
   ["path", { d: "M22 8h.01", key: "1mrtc2" }],
@@ -33835,14 +33964,14 @@ const __iconNode$s = [
     }
   ]
 ];
-const PartyPopper = createLucideIcon("party-popper", __iconNode$s);
+const PartyPopper = createLucideIcon("party-popper", __iconNode$t);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$r = [
+const __iconNode$s = [
   [
     "path",
     {
@@ -33852,15 +33981,26 @@ const __iconNode$r = [
   ],
   ["path", { d: "m15 5 4 4", key: "1mk7zo" }]
 ];
-const Pencil = createLucideIcon("pencil", __iconNode$r);
+const Pencil = createLucideIcon("pencil", __iconNode$s);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$q = [["polygon", { points: "6 3 20 12 6 21 6 3", key: "1oa8hb" }]];
-const Play = createLucideIcon("play", __iconNode$q);
+const __iconNode$r = [["polygon", { points: "6 3 20 12 6 21 6 3", key: "1oa8hb" }]];
+const Play = createLucideIcon("play", __iconNode$r);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$q = [
+  ["path", { d: "M5 12h14", key: "1ays0h" }],
+  ["path", { d: "M12 5v14", key: "s699le" }]
+];
+const Plus = createLucideIcon("plus", __iconNode$q);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33868,10 +34008,10 @@ const Play = createLucideIcon("play", __iconNode$q);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$p = [
-  ["path", { d: "M5 12h14", key: "1ays0h" }],
-  ["path", { d: "M12 5v14", key: "s699le" }]
+  ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
+  ["path", { d: "M3 3v5h5", key: "1xhq8a" }]
 ];
-const Plus = createLucideIcon("plus", __iconNode$p);
+const RotateCcw = createLucideIcon("rotate-ccw", __iconNode$p);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33879,17 +34019,6 @@ const Plus = createLucideIcon("plus", __iconNode$p);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$o = [
-  ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
-  ["path", { d: "M3 3v5h5", key: "1xhq8a" }]
-];
-const RotateCcw = createLucideIcon("rotate-ccw", __iconNode$o);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$n = [
   [
     "path",
     {
@@ -33900,14 +34029,14 @@ const __iconNode$n = [
   ["path", { d: "M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7", key: "1ydtos" }],
   ["path", { d: "M7 3v4a1 1 0 0 0 1 1h7", key: "t51u73" }]
 ];
-const Save = createLucideIcon("save", __iconNode$n);
+const Save = createLucideIcon("save", __iconNode$o);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$m = [
+const __iconNode$n = [
   ["path", { d: "M15 12h-5", key: "r7krc0" }],
   ["path", { d: "M15 8h-5", key: "1khuty" }],
   ["path", { d: "M19 17V5a2 2 0 0 0-2-2H4", key: "zz82l3" }],
@@ -33919,7 +34048,18 @@ const __iconNode$m = [
     }
   ]
 ];
-const ScrollText = createLucideIcon("scroll-text", __iconNode$m);
+const ScrollText = createLucideIcon("scroll-text", __iconNode$n);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$m = [
+  ["path", { d: "m21 21-4.34-4.34", key: "14j7rj" }],
+  ["circle", { cx: "11", cy: "11", r: "8", key: "4ej97u" }]
+];
+const Search = createLucideIcon("search", __iconNode$m);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33927,10 +34067,16 @@ const ScrollText = createLucideIcon("scroll-text", __iconNode$m);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$l = [
-  ["path", { d: "m21 21-4.34-4.34", key: "14j7rj" }],
-  ["circle", { cx: "11", cy: "11", r: "8", key: "4ej97u" }]
+  [
+    "path",
+    {
+      d: "M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z",
+      key: "1ffxy3"
+    }
+  ],
+  ["path", { d: "m21.854 2.147-10.94 10.939", key: "12cjpa" }]
 ];
-const Search = createLucideIcon("search", __iconNode$l);
+const Send = createLucideIcon("send", __iconNode$l);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34262,7 +34408,7 @@ const Error$1 = Variant({
     "expected": Vec(Text)
   })
 });
-const Result_18 = Variant({ "ok": Null, "err": Error$1 });
+const Result_19 = Variant({ "ok": Null, "err": Error$1 });
 const PersonId = Text;
 const StewardRoleStatus$1 = Variant({
   "Active": Null,
@@ -34283,9 +34429,21 @@ const StewardError = Variant({
   "NotApprovedClaimedMember": Null,
   "NotDesignated": Null
 });
-const Result_8 = Variant({
+const Result_9 = Variant({
   "ok": StewardRecord,
   "err": StewardError
+});
+const PostId = Nat;
+const AccountId = Principal2;
+const Timestamp = Int;
+const ReplyId = Nat;
+const Reply = Record({
+  "authorAccountId": AccountId,
+  "body": Text,
+  "createdAt": Timestamp,
+  "authorPersonId": PersonId,
+  "replyId": ReplyId,
+  "postId": PostId
 });
 const EvidenceStatus$1 = Variant({
   "Unresolved": Null,
@@ -34348,7 +34506,7 @@ const RelationshipAdminError = Variant({
   "DuplicateRelationship": Null,
   "PersonNotFound": Null
 });
-const Result_16 = Variant({
+const Result_17 = Variant({
   "ok": Relationship,
   "err": RelationshipAdminError
 });
@@ -34492,13 +34650,43 @@ const RelationshipRequest = Record({
   "proposedRelationship": RelationshipType$1,
   "reviewer": Opt(Principal2)
 });
+const PostStatus$1 = Variant({
+  "Active": Null,
+  "Archived": Null
+});
+const PostType$1 = Variant({
+  "Announcement": Null,
+  "Recipe": Null,
+  "ResearchHistory": Null,
+  "FamilyQuestion": Null,
+  "Memorial": Null,
+  "General": Null,
+  "Other": Null,
+  "ReunionEvent": Null,
+  "PhotoIdentification": Null
+});
+const PrivacyScope = Variant({ "FamilyOnly": Null });
+const Post = Record({
+  "status": PostStatus$1,
+  "authorAccountId": AccountId,
+  "postType": PostType$1,
+  "title": Opt(Text),
+  "body": Text,
+  "createdAt": Timestamp,
+  "linkedMediaIds": Vec(Nat),
+  "privacyScope": PrivacyScope,
+  "authorPersonId": PersonId,
+  "updatedAt": Timestamp,
+  "relatedPersonIds": Vec(PersonId),
+  "postId": PostId
+});
 const ArchiveError = Variant({
   "NotArchived": Null,
   "ProfileNotFound": Null,
   "AlreadyArchived": Null,
   "NotSignedIn": Null
 });
-const Result_1 = Variant({ "ok": Null, "err": ArchiveError });
+const Result_2 = Variant({ "ok": Null, "err": ArchiveError });
 const UserRole = Variant({
   "admin": Null,
   "user": Null,
@@ -34508,7 +34696,6 @@ const AuthMethod = Variant({
   "Google": Null,
   "Apple": Null
 });
-const AccountId = Principal2;
 const Account = Record({
   "id": AccountId,
   "createdAt": Int,
@@ -34518,7 +34705,7 @@ const AccountError = Variant({
   "AccountNotFound": Null,
   "NotSignedIn": Null
 });
-const Result_17 = Variant({ "ok": Account, "err": AccountError });
+const Result_18 = Variant({ "ok": Account, "err": AccountError });
 const MysteryStatus$1 = Variant({
   "Researching": Null,
   "Open": Null,
@@ -34580,7 +34767,7 @@ const PersonProfile = Record({
   "firstName": Opt(Text)
 });
 const CreateError = Variant({ "NotSignedIn": Null });
-const Result_15 = Variant({
+const Result_16 = Variant({
   "ok": PersonProfile,
   "err": CreateError
 });
@@ -34596,7 +34783,7 @@ const SuccessorDesignation = Record({
   "personId": PersonId,
   "priority": Nat
 });
-const Result_14 = Variant({
+const Result_15 = Variant({
   "ok": SuccessorDesignation,
   "err": StewardError
 });
@@ -34613,7 +34800,29 @@ const Result__1 = Record({
   "hasMore": Bool,
   "rows": Vec(Vec(Cell))
 });
-const Result_13 = Variant({
+const ConversationId = Nat;
+const MessageStatus$1 = Variant({
+  "Blocked": Null,
+  "Sent": Null
+});
+const MessageId = Nat;
+const Message = Record({
+  "status": MessageStatus$1,
+  "messageId": MessageId,
+  "body": Text,
+  "createdAt": Timestamp,
+  "conversationId": ConversationId,
+  "senderAccountId": AccountId,
+  "senderPersonId": PersonId,
+  "readAt": Opt(Timestamp)
+});
+const ConversationView = Record({
+  "messages": Vec(Message),
+  "participantPersonIds": Vec(PersonId),
+  "conversationId": ConversationId,
+  "participantDisplayNames": Vec(Text)
+});
+const Result_14 = Variant({
   "ok": AccountId,
   "err": AccountError
 });
@@ -34621,9 +34830,27 @@ const AuthMethods = Record({
   "apple": Bool,
   "google": Bool
 });
-const Result_12 = Variant({
+const Result_13 = Variant({
   "ok": AuthMethods,
   "err": AccountError
+});
+const ReportId = Nat;
+const ReportStatus$1 = Variant({
+  "Dismissed": Null,
+  "Reviewed": Null,
+  "Pending": Null
+});
+const Report = Record({
+  "status": ReportStatus$1,
+  "reportedMessageId": MessageId,
+  "createdAt": Timestamp,
+  "reportingAccountId": AccountId,
+  "reportId": ReportId,
+  "reason": Text
+});
+const ReportedMessageView = Record({
+  "report": Report,
+  "message": Message
 });
 const AuditActionType$1 = Variant({
   "ProfileRemovalRequested": Null,
@@ -34631,6 +34858,7 @@ const AuditActionType$1 = Variant({
   "RelationshipTypeCorrected": Null,
   "RelationshipRequestPending": Null,
   "StewardPromoted": Null,
+  "BoardReplyRemoved": Null,
   "SuccessorActivated": Null,
   "StewardRemoved": Null,
   "RelationshipRequestApproved": Null,
@@ -34639,6 +34867,8 @@ const AuditActionType$1 = Variant({
   "RelationshipRequestRejected": Null,
   "ProfileArchived": Null,
   "ProfileRestored": Null,
+  "BoardPostArchived": Null,
+  "BoardPostRestored": Null,
   "RelationshipAdded": Null,
   "RelationshipRemoved": Null,
   "ProfileRemovalReviewed": Null,
@@ -34652,6 +34882,14 @@ const AuditEntry = Record({
   "summary": Text,
   "timestamp": Int,
   "actorAccountId": Principal2
+});
+const ConversationSummary = Record({
+  "otherPersonId": PersonId,
+  "conversationId": ConversationId,
+  "unreadCount": Nat,
+  "otherDisplayName": Text,
+  "latestMessagePreview": Text,
+  "latestMessageAt": Timestamp
 });
 const DuplicateCandidate = Record({
   "deathDate": Opt(Text),
@@ -34680,7 +34918,10 @@ const StewardIdentity = Record({
 });
 const NotificationType$1 = Variant({
   "RelationshipRequested": Null,
+  "BoardMention": Null,
   "RelationshipReviewed": Null,
+  "BoardReply": Null,
+  "NewMessage": Null,
   "ProfileClaimReviewed": Null,
   "ProfileClaimRequested": Null
 });
@@ -34769,11 +35010,11 @@ const MergeError = Variant({
   "NotSignedIn": Null,
   "SameProfile": Null
 });
-const Result_11 = Variant({
+const Result_12 = Variant({
   "ok": MergeResult,
   "err": MergeError
 });
-const Result_10 = Variant({ "ok": Null, "err": MergeError });
+const Result_11 = Variant({ "ok": Null, "err": MergeError });
 const DeleteError = Variant({
   "HasOwnershipHistory": Null,
   "ProfileNotFound": Null,
@@ -34784,13 +35025,13 @@ const DeleteError = Variant({
   "HasTimeline": Null,
   "HasApprovedRelationships": Null
 });
-const Result_9 = Variant({ "ok": Null, "err": DeleteError });
+const Result_10 = Variant({ "ok": Null, "err": DeleteError });
 const RelationshipError = Variant({
   "DuplicateRequest": Null,
   "NotSignedIn": Null,
   "PersonNotFound": Null
 });
-const Result_7 = Variant({
+const Result_8 = Variant({
   "ok": RelationshipRequest,
   "err": RelationshipError
 });
@@ -34798,12 +35039,12 @@ const RemoveError = Variant({
   "ProfileNotFound": Null,
   "NotSignedIn": Null
 });
-const Result_6 = Variant({ "ok": Null, "err": RemoveError });
-const Result_5 = Variant({
+const Result_7 = Variant({ "ok": Null, "err": RemoveError });
+const Result_6 = Variant({
   "ok": Null,
   "err": RelationshipAdminError
 });
-const Result_4 = Variant({ "ok": Null, "err": StewardError });
+const Result_5 = Variant({ "ok": Null, "err": StewardError });
 const ClaimError$1 = Variant({
   "AlreadyPending": Null,
   "ProfileNotFound": Null,
@@ -34811,7 +35052,7 @@ const ClaimError$1 = Variant({
   "NotSignedIn": Null,
   "DeceasedProfile": Null
 });
-const Result_3 = Variant({
+const Result_4 = Variant({
   "ok": ProfileClaim,
   "err": ClaimError$1
 });
@@ -34822,7 +35063,7 @@ const RemovalError = Variant({
   "NotOwner": Null,
   "DeceasedProfile": Null
 });
-const Result_2 = Variant({
+const Result_3 = Variant({
   "ok": ProfileRemovalRequest,
   "err": RemovalError
 });
@@ -34831,6 +35072,18 @@ const PersonMatch = Record({
   "personId": PersonId,
   "parents": Vec(Text)
 });
+const MessageError$1 = Variant({
+  "ConversationNotFound": Null,
+  "RecipientArchived": Null,
+  "NotApprovedMember": Null,
+  "RecipientNotClaimed": Null,
+  "NotSignedIn": Null,
+  "BlockedByRecipient": Null,
+  "NotParticipant": Null,
+  "CannotMessageSelf": Null,
+  "RecipientNotFound": Null
+});
+const Result_1 = Variant({ "ok": Message, "err": MessageError$1 });
 const ProfileEdits = Record({
   "occupation": Opt(Text),
   "privacySettings": Opt(Text),
@@ -34885,9 +35138,10 @@ Service({
   ),
   "_immutableObjectStorageUpdateGatewayPrincipals": Func([], [], []),
   "_initialize_access_control": Func([], [], []),
-  "_internet_identity_sign_in_finish": Func([], [Result_18], []),
+  "_internet_identity_sign_in_finish": Func([], [Result_19], []),
   "_internet_identity_sign_in_start": Func([], [Vec(Nat8)], []),
-  "activateSuccessor": Func([PersonId], [Result_8], []),
+  "activateSuccessor": Func([PersonId], [Result_9], []),
+  "addBoardReply": Func([PostId, Text], [Reply], []),
   "addCanonicalStory": Func(
     [
       Text,
@@ -34909,7 +35163,7 @@ Service({
   ),
   "addRelationship": Func(
     [PersonId, PersonId, RelationshipType$1],
-    [Result_16],
+    [Result_17],
     []
   ),
   "approveArchiveItem": Func([ArchiveItemId], [Opt(ArchiveItem)], []),
@@ -34926,12 +35180,26 @@ Service({
     []
   ),
   "approveStory": Func([StoryId], [Opt(Story)], []),
-  "archiveProfile": Func([PersonId], [Result_1], []),
+  "archiveBoardPost": Func([PostId], [Opt(Post)], []),
+  "archiveProfile": Func([PersonId], [Result_2], []),
   "assignCallerUserRole": Func([Principal2, UserRole], [], []),
-  "bindAuthMethod": Func([AuthMethod], [Result_17], []),
+  "bindAuthMethod": Func([AuthMethod], [Result_18], []),
+  "blockUser": Func([Principal2], [], []),
+  "canMessagePerson": Func([Text], [Bool], ["query"]),
   "correctRelationshipType": Func(
     [Nat, RelationshipType$1],
-    [Result_16],
+    [Result_17],
+    []
+  ),
+  "createBoardPost": Func(
+    [
+      PostType$1,
+      Opt(Text),
+      Text,
+      Vec(Text),
+      Vec(Nat)
+    ],
+    [Post],
     []
   ),
   "createCanonicalMystery": Func(
@@ -34949,13 +35217,19 @@ Service({
     [Mystery],
     []
   ),
-  "createMyself": Func([Text], [Result_15], []),
-  "designateSuccessor": Func([PersonId, Nat], [Result_14], []),
+  "createMyself": Func([Text], [Result_16], []),
+  "designateSuccessor": Func([PersonId, Nat], [Result_15], []),
   "execute": Func([Text], [Result__1], ["query"]),
   "getApiDoc": Func([], [Text], ["query"]),
+  "getBoardPost": Func([PostId], [Opt(Post)], ["query"]),
   "getCallerUserRole": Func([], [UserRole], ["query"]),
-  "getMyAccountId": Func([], [Result_13], ["query"]),
-  "getMyAuthMethods": Func([], [Result_12], ["query"]),
+  "getConversation": Func(
+    [ConversationId],
+    [Opt(ConversationView)],
+    ["query"]
+  ),
+  "getMyAccountId": Func([], [Result_14], ["query"]),
+  "getMyAuthMethods": Func([], [Result_13], ["query"]),
   "getMyProfile": Func([], [Opt(PersonProfile)], ["query"]),
   "getMyProfileClaim": Func(
     [PersonId],
@@ -34967,6 +35241,7 @@ Service({
     [Vec(RelationshipRequest)],
     ["query"]
   ),
+  "getPendingContributionsCount": Func([], [Nat], ["query"]),
   "getPersonProfile": Func(
     [PersonId],
     [Opt(PersonProfile)],
@@ -34979,6 +35254,11 @@ Service({
     [Opt(RelationshipRequest)],
     ["query"]
   ),
+  "getReportedMessage": Func(
+    [ReportId],
+    [Opt(ReportedMessageView)],
+    ["query"]
+  ),
   "getSingleStewardWarning": Func([], [Opt(Text)], ["query"]),
   "isCallerAdmin": Func([], [Bool], ["query"]),
   "listApprovedArchiveItems": Func([], [Vec(ArchiveItem)], ["query"]),
@@ -34987,17 +35267,22 @@ Service({
   "listArchivedProfileIds": Func([], [Vec(PersonId)], ["query"]),
   "listArchivedProfiles": Func([], [Vec(PersonProfile)], ["query"]),
   "listAuditHistory": Func([], [Vec(AuditEntry)], ["query"]),
+  "listBlockedUsers": Func([], [Vec(Principal2)], ["query"]),
+  "listBoardPosts": Func([Opt(PostType$1)], [Vec(Post)], ["query"]),
+  "listBoardReplies": Func([PostId], [Vec(Reply)], ["query"]),
   "listConfirmedRelationships": Func(
     [],
     [Vec(Relationship)],
     ["query"]
   ),
+  "listConversations": Func([], [Vec(ConversationSummary)], ["query"]),
   "listDuplicateCandidates": Func([], [Vec(DuplicatePair)], ["query"]),
   "listEligibleStewardCandidates": Func(
     [],
     [Vec(StewardIdentity)],
     ["query"]
   ),
+  "listMessageableMembers": Func([], [Vec(Text)], ["query"]),
   "listMysteries": Func([], [Vec(Mystery)], ["query"]),
   "listNotifications": Func([], [Vec(Notification)], ["query"]),
   "listPendingArchiveItems": Func([], [Vec(ArchiveItem)], ["query"]),
@@ -35026,10 +35311,12 @@ Service({
     [Vec(RelationshipRequest)],
     ["query"]
   ),
+  "listReports": Func([], [Vec(Report)], ["query"]),
   "listStewardIdentities": Func([], [Vec(StewardIdentity)], ["query"]),
   "listStewards": Func([], [Vec(StewardRecord)], ["query"]),
   "listSuccessors": Func([], [Vec(SuccessorDesignation)], ["query"]),
   "listTimelineEvents": Func([], [Vec(TimelineEvent)], ["query"]),
+  "markConversationRead": Func([ConversationId], [], []),
   "markMysteryResolved": Func(
     [MysteryId, Text, Vec(Text)],
     [Opt(Mystery)],
@@ -35040,13 +35327,13 @@ Service({
     [Opt(Notification)],
     []
   ),
-  "mergeProfiles": Func([PersonId, PersonId], [Result_11], []),
-  "notDuplicate": Func([PersonId, PersonId], [Result_10], []),
-  "permanentlyDeleteProfile": Func([PersonId, Bool], [Result_9], []),
-  "promoteToSteward": Func([PersonId], [Result_8], []),
+  "mergeProfiles": Func([PersonId, PersonId], [Result_12], []),
+  "notDuplicate": Func([PersonId, PersonId], [Result_11], []),
+  "permanentlyDeleteProfile": Func([PersonId, Bool], [Result_10], []),
+  "promoteToSteward": Func([PersonId], [Result_9], []),
   "proposeRelationship": Func(
     [PersonId, PersonId, RelationshipType$1],
-    [Result_7],
+    [Result_8],
     []
   ),
   "publishRecipe": Func(
@@ -35084,29 +35371,34 @@ Service({
     []
   ),
   "rejectStory": Func([StoryId], [Opt(Story)], []),
-  "removeDuplicateProfile": Func([PersonId], [Result_6], []),
+  "removeBoardReply": Func([ReplyId], [Opt(Reply)], []),
+  "removeDuplicateProfile": Func([PersonId], [Result_7], []),
   "removePhoto": Func([PersonId, PhotoId], [Bool], []),
-  "removeRelationship": Func([Nat], [Result_5], []),
-  "removeSteward": Func([Principal2], [Result_4], []),
-  "requestProfileClaim": Func([PersonId], [Result_3], []),
-  "requestProfileRemoval": Func([PersonId, Text], [Result_2], []),
+  "removeRelationship": Func([Nat], [Result_6], []),
+  "removeSteward": Func([Principal2], [Result_5], []),
+  "reportMessage": Func([MessageId, Text], [Report], []),
+  "requestProfileClaim": Func([PersonId], [Result_4], []),
+  "requestProfileRemoval": Func([PersonId, Text], [Result_3], []),
   "resolveMergeConflict": Func(
     [Nat, Text],
     [Opt(MergeConflict)],
     []
   ),
-  "restoreProfile": Func([PersonId], [Result_1], []),
+  "restoreBoardPost": Func([PostId], [Opt(Post)], []),
+  "restoreProfile": Func([PersonId], [Result_2], []),
   "reviewMysteryContribution": Func(
     [MysteryContributionId, Bool],
     [Opt(MysteryContribution)],
     []
   ),
+  "reviewReport": Func([ReportId, ReportStatus$1], [Opt(Report)], []),
   "schema": Func([], [Text], ["query"]),
   "searchPossibleMatches": Func(
     [Text],
     [Vec(PersonMatch)],
     ["query"]
   ),
+  "sendMessage": Func([Text, Text], [Result_1], []),
   "setProfilePhoto": Func([PersonId, PhotoId], [Opt(Photo)], []),
   "setRelationshipRequestPending": Func(
     [Nat],
@@ -35170,6 +35462,19 @@ Service({
       Vec(Nat)
     ],
     [Story],
+    []
+  ),
+  "unblockUser": Func([Principal2], [], []),
+  "updateBoardPost": Func(
+    [
+      PostId,
+      PostType$1,
+      Opt(Text),
+      Text,
+      Vec(Text),
+      Vec(Nat)
+    ],
+    [Opt(Post)],
     []
   ),
   "updateCanonicalMystery": Func(
@@ -35238,7 +35543,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
       "expected": IDL2.Vec(IDL2.Text)
     })
   });
-  const Result_182 = IDL2.Variant({ "ok": IDL2.Null, "err": Error2 });
+  const Result_192 = IDL2.Variant({ "ok": IDL2.Null, "err": Error2 });
   const PersonId2 = IDL2.Text;
   const StewardRoleStatus2 = IDL2.Variant({
     "Active": IDL2.Null,
@@ -35259,7 +35564,19 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "NotApprovedClaimedMember": IDL2.Null,
     "NotDesignated": IDL2.Null
   });
-  const Result_82 = IDL2.Variant({ "ok": StewardRecord2, "err": StewardError2 });
+  const Result_92 = IDL2.Variant({ "ok": StewardRecord2, "err": StewardError2 });
+  const PostId2 = IDL2.Nat;
+  const AccountId2 = IDL2.Principal;
+  const Timestamp2 = IDL2.Int;
+  const ReplyId2 = IDL2.Nat;
+  const Reply2 = IDL2.Record({
+    "authorAccountId": AccountId2,
+    "body": IDL2.Text,
+    "createdAt": Timestamp2,
+    "authorPersonId": PersonId2,
+    "replyId": ReplyId2,
+    "postId": PostId2
+  });
   const EvidenceStatus2 = IDL2.Variant({
     "Unresolved": IDL2.Null,
     "Documented": IDL2.Null,
@@ -35321,7 +35638,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "DuplicateRelationship": IDL2.Null,
     "PersonNotFound": IDL2.Null
   });
-  const Result_162 = IDL2.Variant({
+  const Result_172 = IDL2.Variant({
     "ok": Relationship2,
     "err": RelationshipAdminError2
   });
@@ -35465,20 +35782,49 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "proposedRelationship": RelationshipType2,
     "reviewer": IDL2.Opt(IDL2.Principal)
   });
+  const PostStatus2 = IDL2.Variant({
+    "Active": IDL2.Null,
+    "Archived": IDL2.Null
+  });
+  const PostType2 = IDL2.Variant({
+    "Announcement": IDL2.Null,
+    "Recipe": IDL2.Null,
+    "ResearchHistory": IDL2.Null,
+    "FamilyQuestion": IDL2.Null,
+    "Memorial": IDL2.Null,
+    "General": IDL2.Null,
+    "Other": IDL2.Null,
+    "ReunionEvent": IDL2.Null,
+    "PhotoIdentification": IDL2.Null
+  });
+  const PrivacyScope2 = IDL2.Variant({ "FamilyOnly": IDL2.Null });
+  const Post2 = IDL2.Record({
+    "status": PostStatus2,
+    "authorAccountId": AccountId2,
+    "postType": PostType2,
+    "title": IDL2.Opt(IDL2.Text),
+    "body": IDL2.Text,
+    "createdAt": Timestamp2,
+    "linkedMediaIds": IDL2.Vec(IDL2.Nat),
+    "privacyScope": PrivacyScope2,
+    "authorPersonId": PersonId2,
+    "updatedAt": Timestamp2,
+    "relatedPersonIds": IDL2.Vec(PersonId2),
+    "postId": PostId2
+  });
   const ArchiveError2 = IDL2.Variant({
     "NotArchived": IDL2.Null,
     "ProfileNotFound": IDL2.Null,
     "AlreadyArchived": IDL2.Null,
     "NotSignedIn": IDL2.Null
   });
-  const Result_19 = IDL2.Variant({ "ok": IDL2.Null, "err": ArchiveError2 });
+  const Result_22 = IDL2.Variant({ "ok": IDL2.Null, "err": ArchiveError2 });
   const UserRole2 = IDL2.Variant({
     "admin": IDL2.Null,
     "user": IDL2.Null,
     "guest": IDL2.Null
   });
   const AuthMethod2 = IDL2.Variant({ "Google": IDL2.Null, "Apple": IDL2.Null });
-  const AccountId2 = IDL2.Principal;
   const Account2 = IDL2.Record({
     "id": AccountId2,
     "createdAt": IDL2.Int,
@@ -35488,7 +35834,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "AccountNotFound": IDL2.Null,
     "NotSignedIn": IDL2.Null
   });
-  const Result_172 = IDL2.Variant({ "ok": Account2, "err": AccountError2 });
+  const Result_182 = IDL2.Variant({ "ok": Account2, "err": AccountError2 });
   const MysteryStatus2 = IDL2.Variant({
     "Researching": IDL2.Null,
     "Open": IDL2.Null,
@@ -35550,7 +35896,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "firstName": IDL2.Opt(IDL2.Text)
   });
   const CreateError2 = IDL2.Variant({ "NotSignedIn": IDL2.Null });
-  const Result_152 = IDL2.Variant({ "ok": PersonProfile2, "err": CreateError2 });
+  const Result_162 = IDL2.Variant({ "ok": PersonProfile2, "err": CreateError2 });
   const SuccessorStatus2 = IDL2.Variant({
     "Activated": IDL2.Null,
     "Removed": IDL2.Null,
@@ -35563,7 +35909,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "personId": PersonId2,
     "priority": IDL2.Nat
   });
-  const Result_142 = IDL2.Variant({
+  const Result_152 = IDL2.Variant({
     "ok": SuccessorDesignation2,
     "err": StewardError2
   });
@@ -35580,15 +35926,56 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "hasMore": IDL2.Bool,
     "rows": IDL2.Vec(IDL2.Vec(Cell2))
   });
-  const Result_132 = IDL2.Variant({ "ok": AccountId2, "err": AccountError2 });
+  const ConversationId2 = IDL2.Nat;
+  const MessageStatus2 = IDL2.Variant({
+    "Blocked": IDL2.Null,
+    "Sent": IDL2.Null
+  });
+  const MessageId2 = IDL2.Nat;
+  const Message2 = IDL2.Record({
+    "status": MessageStatus2,
+    "messageId": MessageId2,
+    "body": IDL2.Text,
+    "createdAt": Timestamp2,
+    "conversationId": ConversationId2,
+    "senderAccountId": AccountId2,
+    "senderPersonId": PersonId2,
+    "readAt": IDL2.Opt(Timestamp2)
+  });
+  const ConversationView2 = IDL2.Record({
+    "messages": IDL2.Vec(Message2),
+    "participantPersonIds": IDL2.Vec(PersonId2),
+    "conversationId": ConversationId2,
+    "participantDisplayNames": IDL2.Vec(IDL2.Text)
+  });
+  const Result_142 = IDL2.Variant({ "ok": AccountId2, "err": AccountError2 });
   const AuthMethods2 = IDL2.Record({ "apple": IDL2.Bool, "google": IDL2.Bool });
-  const Result_122 = IDL2.Variant({ "ok": AuthMethods2, "err": AccountError2 });
+  const Result_132 = IDL2.Variant({ "ok": AuthMethods2, "err": AccountError2 });
+  const ReportId2 = IDL2.Nat;
+  const ReportStatus2 = IDL2.Variant({
+    "Dismissed": IDL2.Null,
+    "Reviewed": IDL2.Null,
+    "Pending": IDL2.Null
+  });
+  const Report2 = IDL2.Record({
+    "status": ReportStatus2,
+    "reportedMessageId": MessageId2,
+    "createdAt": Timestamp2,
+    "reportingAccountId": AccountId2,
+    "reportId": ReportId2,
+    "reason": IDL2.Text
+  });
+  const ReportedMessageView2 = IDL2.Record({
+    "report": Report2,
+    "message": Message2
+  });
   const AuditActionType2 = IDL2.Variant({
     "ProfileRemovalRequested": IDL2.Null,
     "ClaimRejected": IDL2.Null,
     "RelationshipTypeCorrected": IDL2.Null,
     "RelationshipRequestPending": IDL2.Null,
     "StewardPromoted": IDL2.Null,
+    "BoardReplyRemoved": IDL2.Null,
     "SuccessorActivated": IDL2.Null,
     "StewardRemoved": IDL2.Null,
     "RelationshipRequestApproved": IDL2.Null,
@@ -35597,6 +35984,8 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "RelationshipRequestRejected": IDL2.Null,
     "ProfileArchived": IDL2.Null,
     "ProfileRestored": IDL2.Null,
+    "BoardPostArchived": IDL2.Null,
+    "BoardPostRestored": IDL2.Null,
     "RelationshipAdded": IDL2.Null,
     "RelationshipRemoved": IDL2.Null,
     "ProfileRemovalReviewed": IDL2.Null,
@@ -35610,6 +35999,14 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "summary": IDL2.Text,
     "timestamp": IDL2.Int,
     "actorAccountId": IDL2.Principal
+  });
+  const ConversationSummary2 = IDL2.Record({
+    "otherPersonId": PersonId2,
+    "conversationId": ConversationId2,
+    "unreadCount": IDL2.Nat,
+    "otherDisplayName": IDL2.Text,
+    "latestMessagePreview": IDL2.Text,
+    "latestMessageAt": Timestamp2
   });
   const DuplicateCandidate2 = IDL2.Record({
     "deathDate": IDL2.Opt(IDL2.Text),
@@ -35638,7 +36035,10 @@ const idlFactory = ({ IDL: IDL2 }) => {
   });
   const NotificationType2 = IDL2.Variant({
     "RelationshipRequested": IDL2.Null,
+    "BoardMention": IDL2.Null,
     "RelationshipReviewed": IDL2.Null,
+    "BoardReply": IDL2.Null,
+    "NewMessage": IDL2.Null,
     "ProfileClaimReviewed": IDL2.Null,
     "ProfileClaimRequested": IDL2.Null
   });
@@ -35727,8 +36127,8 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "NotSignedIn": IDL2.Null,
     "SameProfile": IDL2.Null
   });
-  const Result_112 = IDL2.Variant({ "ok": MergeResult2, "err": MergeError2 });
-  const Result_102 = IDL2.Variant({ "ok": IDL2.Null, "err": MergeError2 });
+  const Result_122 = IDL2.Variant({ "ok": MergeResult2, "err": MergeError2 });
+  const Result_112 = IDL2.Variant({ "ok": IDL2.Null, "err": MergeError2 });
   const DeleteError2 = IDL2.Variant({
     "HasOwnershipHistory": IDL2.Null,
     "ProfileNotFound": IDL2.Null,
@@ -35739,13 +36139,13 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "HasTimeline": IDL2.Null,
     "HasApprovedRelationships": IDL2.Null
   });
-  const Result_92 = IDL2.Variant({ "ok": IDL2.Null, "err": DeleteError2 });
+  const Result_102 = IDL2.Variant({ "ok": IDL2.Null, "err": DeleteError2 });
   const RelationshipError2 = IDL2.Variant({
     "DuplicateRequest": IDL2.Null,
     "NotSignedIn": IDL2.Null,
     "PersonNotFound": IDL2.Null
   });
-  const Result_72 = IDL2.Variant({
+  const Result_82 = IDL2.Variant({
     "ok": RelationshipRequest2,
     "err": RelationshipError2
   });
@@ -35753,12 +36153,12 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "ProfileNotFound": IDL2.Null,
     "NotSignedIn": IDL2.Null
   });
-  const Result_62 = IDL2.Variant({ "ok": IDL2.Null, "err": RemoveError2 });
-  const Result_52 = IDL2.Variant({
+  const Result_72 = IDL2.Variant({ "ok": IDL2.Null, "err": RemoveError2 });
+  const Result_62 = IDL2.Variant({
     "ok": IDL2.Null,
     "err": RelationshipAdminError2
   });
-  const Result_42 = IDL2.Variant({ "ok": IDL2.Null, "err": StewardError2 });
+  const Result_52 = IDL2.Variant({ "ok": IDL2.Null, "err": StewardError2 });
   const ClaimError2 = IDL2.Variant({
     "AlreadyPending": IDL2.Null,
     "ProfileNotFound": IDL2.Null,
@@ -35766,7 +36166,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "NotSignedIn": IDL2.Null,
     "DeceasedProfile": IDL2.Null
   });
-  const Result_32 = IDL2.Variant({ "ok": ProfileClaim2, "err": ClaimError2 });
+  const Result_42 = IDL2.Variant({ "ok": ProfileClaim2, "err": ClaimError2 });
   const RemovalError2 = IDL2.Variant({
     "AlreadyPending": IDL2.Null,
     "ProfileNotFound": IDL2.Null,
@@ -35774,7 +36174,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "NotOwner": IDL2.Null,
     "DeceasedProfile": IDL2.Null
   });
-  const Result_22 = IDL2.Variant({
+  const Result_32 = IDL2.Variant({
     "ok": ProfileRemovalRequest2,
     "err": RemovalError2
   });
@@ -35783,6 +36183,18 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "personId": PersonId2,
     "parents": IDL2.Vec(IDL2.Text)
   });
+  const MessageError2 = IDL2.Variant({
+    "ConversationNotFound": IDL2.Null,
+    "RecipientArchived": IDL2.Null,
+    "NotApprovedMember": IDL2.Null,
+    "RecipientNotClaimed": IDL2.Null,
+    "NotSignedIn": IDL2.Null,
+    "BlockedByRecipient": IDL2.Null,
+    "NotParticipant": IDL2.Null,
+    "CannotMessageSelf": IDL2.Null,
+    "RecipientNotFound": IDL2.Null
+  });
+  const Result_110 = IDL2.Variant({ "ok": Message2, "err": MessageError2 });
   const ProfileEdits2 = IDL2.Record({
     "occupation": IDL2.Opt(IDL2.Text),
     "privacySettings": IDL2.Opt(IDL2.Text),
@@ -35837,9 +36249,10 @@ const idlFactory = ({ IDL: IDL2 }) => {
     ),
     "_immutableObjectStorageUpdateGatewayPrincipals": IDL2.Func([], [], []),
     "_initialize_access_control": IDL2.Func([], [], []),
-    "_internet_identity_sign_in_finish": IDL2.Func([], [Result_182], []),
+    "_internet_identity_sign_in_finish": IDL2.Func([], [Result_192], []),
     "_internet_identity_sign_in_start": IDL2.Func([], [IDL2.Vec(IDL2.Nat8)], []),
-    "activateSuccessor": IDL2.Func([PersonId2], [Result_82], []),
+    "activateSuccessor": IDL2.Func([PersonId2], [Result_92], []),
+    "addBoardReply": IDL2.Func([PostId2, IDL2.Text], [Reply2], []),
     "addCanonicalStory": IDL2.Func(
       [
         IDL2.Text,
@@ -35861,7 +36274,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
     ),
     "addRelationship": IDL2.Func(
       [PersonId2, PersonId2, RelationshipType2],
-      [Result_162],
+      [Result_172],
       []
     ),
     "approveArchiveItem": IDL2.Func(
@@ -35882,12 +36295,26 @@ const idlFactory = ({ IDL: IDL2 }) => {
       []
     ),
     "approveStory": IDL2.Func([StoryId2], [IDL2.Opt(Story2)], []),
-    "archiveProfile": IDL2.Func([PersonId2], [Result_19], []),
+    "archiveBoardPost": IDL2.Func([PostId2], [IDL2.Opt(Post2)], []),
+    "archiveProfile": IDL2.Func([PersonId2], [Result_22], []),
     "assignCallerUserRole": IDL2.Func([IDL2.Principal, UserRole2], [], []),
-    "bindAuthMethod": IDL2.Func([AuthMethod2], [Result_172], []),
+    "bindAuthMethod": IDL2.Func([AuthMethod2], [Result_182], []),
+    "blockUser": IDL2.Func([IDL2.Principal], [], []),
+    "canMessagePerson": IDL2.Func([IDL2.Text], [IDL2.Bool], ["query"]),
     "correctRelationshipType": IDL2.Func(
       [IDL2.Nat, RelationshipType2],
-      [Result_162],
+      [Result_172],
+      []
+    ),
+    "createBoardPost": IDL2.Func(
+      [
+        PostType2,
+        IDL2.Opt(IDL2.Text),
+        IDL2.Text,
+        IDL2.Vec(IDL2.Text),
+        IDL2.Vec(IDL2.Nat)
+      ],
+      [Post2],
       []
     ),
     "createCanonicalMystery": IDL2.Func(
@@ -35905,13 +36332,19 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [Mystery2],
       []
     ),
-    "createMyself": IDL2.Func([IDL2.Text], [Result_152], []),
-    "designateSuccessor": IDL2.Func([PersonId2, IDL2.Nat], [Result_142], []),
+    "createMyself": IDL2.Func([IDL2.Text], [Result_162], []),
+    "designateSuccessor": IDL2.Func([PersonId2, IDL2.Nat], [Result_152], []),
     "execute": IDL2.Func([IDL2.Text], [Result__12], ["query"]),
     "getApiDoc": IDL2.Func([], [IDL2.Text], ["query"]),
+    "getBoardPost": IDL2.Func([PostId2], [IDL2.Opt(Post2)], ["query"]),
     "getCallerUserRole": IDL2.Func([], [UserRole2], ["query"]),
-    "getMyAccountId": IDL2.Func([], [Result_132], ["query"]),
-    "getMyAuthMethods": IDL2.Func([], [Result_122], ["query"]),
+    "getConversation": IDL2.Func(
+      [ConversationId2],
+      [IDL2.Opt(ConversationView2)],
+      ["query"]
+    ),
+    "getMyAccountId": IDL2.Func([], [Result_142], ["query"]),
+    "getMyAuthMethods": IDL2.Func([], [Result_132], ["query"]),
     "getMyProfile": IDL2.Func([], [IDL2.Opt(PersonProfile2)], ["query"]),
     "getMyProfileClaim": IDL2.Func(
       [PersonId2],
@@ -35923,6 +36356,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [IDL2.Vec(RelationshipRequest2)],
       ["query"]
     ),
+    "getPendingContributionsCount": IDL2.Func([], [IDL2.Nat], ["query"]),
     "getPersonProfile": IDL2.Func(
       [PersonId2],
       [IDL2.Opt(PersonProfile2)],
@@ -35933,6 +36367,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "getRelationshipRequest": IDL2.Func(
       [IDL2.Nat],
       [IDL2.Opt(RelationshipRequest2)],
+      ["query"]
+    ),
+    "getReportedMessage": IDL2.Func(
+      [ReportId2],
+      [IDL2.Opt(ReportedMessageView2)],
       ["query"]
     ),
     "getSingleStewardWarning": IDL2.Func([], [IDL2.Opt(IDL2.Text)], ["query"]),
@@ -35947,9 +36386,21 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "listArchivedProfileIds": IDL2.Func([], [IDL2.Vec(PersonId2)], ["query"]),
     "listArchivedProfiles": IDL2.Func([], [IDL2.Vec(PersonProfile2)], ["query"]),
     "listAuditHistory": IDL2.Func([], [IDL2.Vec(AuditEntry2)], ["query"]),
+    "listBlockedUsers": IDL2.Func([], [IDL2.Vec(IDL2.Principal)], ["query"]),
+    "listBoardPosts": IDL2.Func(
+      [IDL2.Opt(PostType2)],
+      [IDL2.Vec(Post2)],
+      ["query"]
+    ),
+    "listBoardReplies": IDL2.Func([PostId2], [IDL2.Vec(Reply2)], ["query"]),
     "listConfirmedRelationships": IDL2.Func(
       [],
       [IDL2.Vec(Relationship2)],
+      ["query"]
+    ),
+    "listConversations": IDL2.Func(
+      [],
+      [IDL2.Vec(ConversationSummary2)],
       ["query"]
     ),
     "listDuplicateCandidates": IDL2.Func(
@@ -35962,6 +36413,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [IDL2.Vec(StewardIdentity2)],
       ["query"]
     ),
+    "listMessageableMembers": IDL2.Func([], [IDL2.Vec(IDL2.Text)], ["query"]),
     "listMysteries": IDL2.Func([], [IDL2.Vec(Mystery2)], ["query"]),
     "listNotifications": IDL2.Func([], [IDL2.Vec(Notification2)], ["query"]),
     "listPendingArchiveItems": IDL2.Func([], [IDL2.Vec(ArchiveItem2)], ["query"]),
@@ -35990,6 +36442,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [IDL2.Vec(RelationshipRequest2)],
       ["query"]
     ),
+    "listReports": IDL2.Func([], [IDL2.Vec(Report2)], ["query"]),
     "listStewardIdentities": IDL2.Func(
       [],
       [IDL2.Vec(StewardIdentity2)],
@@ -35998,6 +36451,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "listStewards": IDL2.Func([], [IDL2.Vec(StewardRecord2)], ["query"]),
     "listSuccessors": IDL2.Func([], [IDL2.Vec(SuccessorDesignation2)], ["query"]),
     "listTimelineEvents": IDL2.Func([], [IDL2.Vec(TimelineEvent2)], ["query"]),
+    "markConversationRead": IDL2.Func([ConversationId2], [], []),
     "markMysteryResolved": IDL2.Func(
       [MysteryId2, IDL2.Text, IDL2.Vec(IDL2.Text)],
       [IDL2.Opt(Mystery2)],
@@ -36008,13 +36462,17 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [IDL2.Opt(Notification2)],
       []
     ),
-    "mergeProfiles": IDL2.Func([PersonId2, PersonId2], [Result_112], []),
-    "notDuplicate": IDL2.Func([PersonId2, PersonId2], [Result_102], []),
-    "permanentlyDeleteProfile": IDL2.Func([PersonId2, IDL2.Bool], [Result_92], []),
-    "promoteToSteward": IDL2.Func([PersonId2], [Result_82], []),
+    "mergeProfiles": IDL2.Func([PersonId2, PersonId2], [Result_122], []),
+    "notDuplicate": IDL2.Func([PersonId2, PersonId2], [Result_112], []),
+    "permanentlyDeleteProfile": IDL2.Func(
+      [PersonId2, IDL2.Bool],
+      [Result_102],
+      []
+    ),
+    "promoteToSteward": IDL2.Func([PersonId2], [Result_92], []),
     "proposeRelationship": IDL2.Func(
       [PersonId2, PersonId2, RelationshipType2],
-      [Result_72],
+      [Result_82],
       []
     ),
     "publishRecipe": IDL2.Func(
@@ -36052,29 +36510,34 @@ const idlFactory = ({ IDL: IDL2 }) => {
       []
     ),
     "rejectStory": IDL2.Func([StoryId2], [IDL2.Opt(Story2)], []),
-    "removeDuplicateProfile": IDL2.Func([PersonId2], [Result_62], []),
+    "removeBoardReply": IDL2.Func([ReplyId2], [IDL2.Opt(Reply2)], []),
+    "removeDuplicateProfile": IDL2.Func([PersonId2], [Result_72], []),
     "removePhoto": IDL2.Func([PersonId2, PhotoId2], [IDL2.Bool], []),
-    "removeRelationship": IDL2.Func([IDL2.Nat], [Result_52], []),
-    "removeSteward": IDL2.Func([IDL2.Principal], [Result_42], []),
-    "requestProfileClaim": IDL2.Func([PersonId2], [Result_32], []),
-    "requestProfileRemoval": IDL2.Func([PersonId2, IDL2.Text], [Result_22], []),
+    "removeRelationship": IDL2.Func([IDL2.Nat], [Result_62], []),
+    "removeSteward": IDL2.Func([IDL2.Principal], [Result_52], []),
+    "reportMessage": IDL2.Func([MessageId2, IDL2.Text], [Report2], []),
+    "requestProfileClaim": IDL2.Func([PersonId2], [Result_42], []),
+    "requestProfileRemoval": IDL2.Func([PersonId2, IDL2.Text], [Result_32], []),
     "resolveMergeConflict": IDL2.Func(
       [IDL2.Nat, IDL2.Text],
       [IDL2.Opt(MergeConflict2)],
       []
     ),
-    "restoreProfile": IDL2.Func([PersonId2], [Result_19], []),
+    "restoreBoardPost": IDL2.Func([PostId2], [IDL2.Opt(Post2)], []),
+    "restoreProfile": IDL2.Func([PersonId2], [Result_22], []),
     "reviewMysteryContribution": IDL2.Func(
       [MysteryContributionId2, IDL2.Bool],
       [IDL2.Opt(MysteryContribution2)],
       []
     ),
+    "reviewReport": IDL2.Func([ReportId2, ReportStatus2], [IDL2.Opt(Report2)], []),
     "schema": IDL2.Func([], [IDL2.Text], ["query"]),
     "searchPossibleMatches": IDL2.Func(
       [IDL2.Text],
       [IDL2.Vec(PersonMatch2)],
       ["query"]
     ),
+    "sendMessage": IDL2.Func([IDL2.Text, IDL2.Text], [Result_110], []),
     "setProfilePhoto": IDL2.Func([PersonId2, PhotoId2], [IDL2.Opt(Photo2)], []),
     "setRelationshipRequestPending": IDL2.Func(
       [IDL2.Nat],
@@ -36138,6 +36601,19 @@ const idlFactory = ({ IDL: IDL2 }) => {
         IDL2.Vec(IDL2.Nat)
       ],
       [Story2],
+      []
+    ),
+    "unblockUser": IDL2.Func([IDL2.Principal], [], []),
+    "updateBoardPost": IDL2.Func(
+      [
+        PostId2,
+        PostType2,
+        IDL2.Opt(IDL2.Text),
+        IDL2.Text,
+        IDL2.Vec(IDL2.Text),
+        IDL2.Vec(IDL2.Nat)
+      ],
+      [IDL2.Opt(Post2)],
       []
     ),
     "updateCanonicalMystery": IDL2.Func(
@@ -36213,6 +36689,7 @@ var AuditActionType = /* @__PURE__ */ ((AuditActionType2) => {
   AuditActionType2["RelationshipTypeCorrected"] = "RelationshipTypeCorrected";
   AuditActionType2["RelationshipRequestPending"] = "RelationshipRequestPending";
   AuditActionType2["StewardPromoted"] = "StewardPromoted";
+  AuditActionType2["BoardReplyRemoved"] = "BoardReplyRemoved";
   AuditActionType2["SuccessorActivated"] = "SuccessorActivated";
   AuditActionType2["StewardRemoved"] = "StewardRemoved";
   AuditActionType2["RelationshipRequestApproved"] = "RelationshipRequestApproved";
@@ -36221,6 +36698,8 @@ var AuditActionType = /* @__PURE__ */ ((AuditActionType2) => {
   AuditActionType2["RelationshipRequestRejected"] = "RelationshipRequestRejected";
   AuditActionType2["ProfileArchived"] = "ProfileArchived";
   AuditActionType2["ProfileRestored"] = "ProfileRestored";
+  AuditActionType2["BoardPostArchived"] = "BoardPostArchived";
+  AuditActionType2["BoardPostRestored"] = "BoardPostRestored";
   AuditActionType2["RelationshipAdded"] = "RelationshipAdded";
   AuditActionType2["RelationshipRemoved"] = "RelationshipRemoved";
   AuditActionType2["ProfileRemovalReviewed"] = "ProfileRemovalReviewed";
@@ -36265,6 +36744,23 @@ var MergeConflictStatus = /* @__PURE__ */ ((MergeConflictStatus2) => {
   MergeConflictStatus2["Pending"] = "Pending";
   return MergeConflictStatus2;
 })(MergeConflictStatus || {});
+var MessageError = /* @__PURE__ */ ((MessageError2) => {
+  MessageError2["ConversationNotFound"] = "ConversationNotFound";
+  MessageError2["RecipientArchived"] = "RecipientArchived";
+  MessageError2["NotApprovedMember"] = "NotApprovedMember";
+  MessageError2["RecipientNotClaimed"] = "RecipientNotClaimed";
+  MessageError2["NotSignedIn"] = "NotSignedIn";
+  MessageError2["BlockedByRecipient"] = "BlockedByRecipient";
+  MessageError2["NotParticipant"] = "NotParticipant";
+  MessageError2["CannotMessageSelf"] = "CannotMessageSelf";
+  MessageError2["RecipientNotFound"] = "RecipientNotFound";
+  return MessageError2;
+})(MessageError || {});
+var MessageStatus = /* @__PURE__ */ ((MessageStatus2) => {
+  MessageStatus2["Blocked"] = "Blocked";
+  MessageStatus2["Sent"] = "Sent";
+  return MessageStatus2;
+})(MessageStatus || {});
 var MysteryContributionType = /* @__PURE__ */ ((MysteryContributionType2) => {
   MysteryContributionType2["Lead"] = "Lead";
   MysteryContributionType2["Note"] = "Note";
@@ -36281,11 +36777,31 @@ var MysteryStatus = /* @__PURE__ */ ((MysteryStatus2) => {
 })(MysteryStatus || {});
 var NotificationType = /* @__PURE__ */ ((NotificationType2) => {
   NotificationType2["RelationshipRequested"] = "RelationshipRequested";
+  NotificationType2["BoardMention"] = "BoardMention";
   NotificationType2["RelationshipReviewed"] = "RelationshipReviewed";
+  NotificationType2["BoardReply"] = "BoardReply";
+  NotificationType2["NewMessage"] = "NewMessage";
   NotificationType2["ProfileClaimReviewed"] = "ProfileClaimReviewed";
   NotificationType2["ProfileClaimRequested"] = "ProfileClaimRequested";
   return NotificationType2;
 })(NotificationType || {});
+var PostStatus = /* @__PURE__ */ ((PostStatus2) => {
+  PostStatus2["Active"] = "Active";
+  PostStatus2["Archived"] = "Archived";
+  return PostStatus2;
+})(PostStatus || {});
+var PostType = /* @__PURE__ */ ((PostType2) => {
+  PostType2["Announcement"] = "Announcement";
+  PostType2["Recipe"] = "Recipe";
+  PostType2["ResearchHistory"] = "ResearchHistory";
+  PostType2["FamilyQuestion"] = "FamilyQuestion";
+  PostType2["Memorial"] = "Memorial";
+  PostType2["General"] = "General";
+  PostType2["Other"] = "Other";
+  PostType2["ReunionEvent"] = "ReunionEvent";
+  PostType2["PhotoIdentification"] = "PhotoIdentification";
+  return PostType2;
+})(PostType || {});
 var PrivacyLevel = /* @__PURE__ */ ((PrivacyLevel2) => {
   PrivacyLevel2["Private"] = "Private";
   PrivacyLevel2["Public"] = "Public";
@@ -36312,6 +36828,12 @@ var RelationshipType = /* @__PURE__ */ ((RelationshipType2) => {
   RelationshipType2["Child"] = "Child";
   return RelationshipType2;
 })(RelationshipType || {});
+var ReportStatus = /* @__PURE__ */ ((ReportStatus2) => {
+  ReportStatus2["Dismissed"] = "Dismissed";
+  ReportStatus2["Reviewed"] = "Reviewed";
+  ReportStatus2["Pending"] = "Pending";
+  return ReportStatus2;
+})(ReportStatus || {});
 var SourceStatus = /* @__PURE__ */ ((SourceStatus2) => {
   SourceStatus2["Copy"] = "Copy";
   SourceStatus2["Unverified"] = "Unverified";
@@ -36453,14 +36975,14 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor._internet_identity_sign_in_finish();
-        return from_candid_Result_18_n8(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_19_n8(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor._internet_identity_sign_in_finish();
-      return from_candid_Result_18_n8(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_19_n8(this._uploadFile, this._downloadFile, result);
     }
   }
   async _internet_identity_sign_in_start() {
@@ -36481,14 +37003,28 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.activateSuccessor(arg0);
-        return from_candid_Result_8_n12(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_9_n12(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.activateSuccessor(arg0);
-      return from_candid_Result_8_n12(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_9_n12(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async addBoardReply(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.addBoardReply(arg0, arg1);
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.addBoardReply(arg0, arg1);
+      return result;
     }
   }
   async addCanonicalStory(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
@@ -36523,14 +37059,14 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.addRelationship(arg0, arg1, to_candid_RelationshipType_n35(this._uploadFile, this._downloadFile, arg2));
-        return from_candid_Result_16_n37(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_17_n37(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.addRelationship(arg0, arg1, to_candid_RelationshipType_n35(this._uploadFile, this._downloadFile, arg2));
-      return from_candid_Result_16_n37(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_17_n37(this._uploadFile, this._downloadFile, result);
     }
   }
   async approveArchiveItem(arg0) {
@@ -36617,116 +37153,172 @@ class Backend {
       return from_candid_opt_n83(this._uploadFile, this._downloadFile, result);
     }
   }
+  async archiveBoardPost(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.archiveBoardPost(arg0);
+        return from_candid_opt_n84(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.archiveBoardPost(arg0);
+      return from_candid_opt_n84(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async archiveProfile(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.archiveProfile(arg0);
-        return from_candid_Result_1_n84(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_2_n93(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.archiveProfile(arg0);
-      return from_candid_Result_1_n84(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_2_n93(this._uploadFile, this._downloadFile, result);
     }
   }
   async assignCallerUserRole(arg0, arg1) {
     if (this.processError) {
       try {
-        const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n88(this._uploadFile, this._downloadFile, arg1));
+        const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n97(this._uploadFile, this._downloadFile, arg1));
         return result;
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n88(this._uploadFile, this._downloadFile, arg1));
+      const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n97(this._uploadFile, this._downloadFile, arg1));
       return result;
     }
   }
   async bindAuthMethod(arg0) {
     if (this.processError) {
       try {
-        const result = await this.actor.bindAuthMethod(to_candid_AuthMethod_n90(this._uploadFile, this._downloadFile, arg0));
-        return from_candid_Result_17_n92(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.bindAuthMethod(to_candid_AuthMethod_n99(this._uploadFile, this._downloadFile, arg0));
+        return from_candid_Result_18_n101(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.bindAuthMethod(to_candid_AuthMethod_n90(this._uploadFile, this._downloadFile, arg0));
-      return from_candid_Result_17_n92(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.bindAuthMethod(to_candid_AuthMethod_n99(this._uploadFile, this._downloadFile, arg0));
+      return from_candid_Result_18_n101(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async blockUser(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.blockUser(arg0);
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.blockUser(arg0);
+      return result;
+    }
+  }
+  async canMessagePerson(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.canMessagePerson(arg0);
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.canMessagePerson(arg0);
+      return result;
     }
   }
   async correctRelationshipType(arg0, arg1) {
     if (this.processError) {
       try {
         const result = await this.actor.correctRelationshipType(arg0, to_candid_RelationshipType_n35(this._uploadFile, this._downloadFile, arg1));
-        return from_candid_Result_16_n37(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_17_n37(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.correctRelationshipType(arg0, to_candid_RelationshipType_n35(this._uploadFile, this._downloadFile, arg1));
-      return from_candid_Result_16_n37(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_17_n37(this._uploadFile, this._downloadFile, result);
     }
   }
-  async createCanonicalMystery(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) {
+  async createBoardPost(arg0, arg1, arg2, arg3, arg4) {
     if (this.processError) {
       try {
-        const result = await this.actor.createCanonicalMystery(arg0, arg1, arg2, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg3), arg4, arg5, arg6, arg7, to_candid_MysteryStatus_n101(this._uploadFile, this._downloadFile, arg8));
-        return from_candid_Mystery_n103(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.createBoardPost(to_candid_PostType_n110(this._uploadFile, this._downloadFile, arg0), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg1), arg2, arg3, arg4);
+        return from_candid_Post_n85(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.createCanonicalMystery(arg0, arg1, arg2, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg3), arg4, arg5, arg6, arg7, to_candid_MysteryStatus_n101(this._uploadFile, this._downloadFile, arg8));
-      return from_candid_Mystery_n103(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.createBoardPost(to_candid_PostType_n110(this._uploadFile, this._downloadFile, arg0), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg1), arg2, arg3, arg4);
+      return from_candid_Post_n85(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async createCanonicalMystery(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.createCanonicalMystery(arg0, arg1, arg2, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg3), arg4, arg5, arg6, arg7, to_candid_MysteryStatus_n112(this._uploadFile, this._downloadFile, arg8));
+        return from_candid_Mystery_n114(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.createCanonicalMystery(arg0, arg1, arg2, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg3), arg4, arg5, arg6, arg7, to_candid_MysteryStatus_n112(this._uploadFile, this._downloadFile, arg8));
+      return from_candid_Mystery_n114(this._uploadFile, this._downloadFile, result);
     }
   }
   async createMyself(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.createMyself(arg0);
-        return from_candid_Result_15_n108(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_16_n119(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.createMyself(arg0);
-      return from_candid_Result_15_n108(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_16_n119(this._uploadFile, this._downloadFile, result);
     }
   }
   async designateSuccessor(arg0, arg1) {
     if (this.processError) {
       try {
         const result = await this.actor.designateSuccessor(arg0, arg1);
-        return from_candid_Result_14_n118(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_15_n129(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.designateSuccessor(arg0, arg1);
-      return from_candid_Result_14_n118(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_15_n129(this._uploadFile, this._downloadFile, result);
     }
   }
   async execute(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.execute(arg0);
-        return from_candid_Result__1_n124(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result__1_n135(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.execute(arg0);
-      return from_candid_Result__1_n124(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result__1_n135(this._uploadFile, this._downloadFile, result);
     }
   }
   async getApiDoc() {
@@ -36743,60 +37335,88 @@ class Backend {
       return result;
     }
   }
+  async getBoardPost(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getBoardPost(arg0);
+        return from_candid_opt_n84(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getBoardPost(arg0);
+      return from_candid_opt_n84(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async getCallerUserRole() {
     if (this.processError) {
       try {
         const result = await this.actor.getCallerUserRole();
-        return from_candid_UserRole_n132(this._uploadFile, this._downloadFile, result);
+        return from_candid_UserRole_n143(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getCallerUserRole();
-      return from_candid_UserRole_n132(this._uploadFile, this._downloadFile, result);
+      return from_candid_UserRole_n143(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async getConversation(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getConversation(arg0);
+        return from_candid_opt_n145(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getConversation(arg0);
+      return from_candid_opt_n145(this._uploadFile, this._downloadFile, result);
     }
   }
   async getMyAccountId() {
     if (this.processError) {
       try {
         const result = await this.actor.getMyAccountId();
-        return from_candid_Result_13_n134(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_14_n154(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getMyAccountId();
-      return from_candid_Result_13_n134(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_14_n154(this._uploadFile, this._downloadFile, result);
     }
   }
   async getMyAuthMethods() {
     if (this.processError) {
       try {
         const result = await this.actor.getMyAuthMethods();
-        return from_candid_Result_12_n136(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_13_n156(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getMyAuthMethods();
-      return from_candid_Result_12_n136(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_13_n156(this._uploadFile, this._downloadFile, result);
     }
   }
   async getMyProfile() {
     if (this.processError) {
       try {
         const result = await this.actor.getMyProfile();
-        return from_candid_opt_n138(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n158(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getMyProfile();
-      return from_candid_opt_n138(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n158(this._uploadFile, this._downloadFile, result);
     }
   }
   async getMyProfileClaim(arg0) {
@@ -36817,42 +37437,56 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.getMyRelationshipRequests();
-        return from_candid_vec_n139(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n159(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getMyRelationshipRequests();
-      return from_candid_vec_n139(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n159(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async getPendingContributionsCount() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getPendingContributionsCount();
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getPendingContributionsCount();
+      return result;
     }
   }
   async getPersonProfile(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.getPersonProfile(arg0);
-        return from_candid_opt_n138(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n158(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getPersonProfile(arg0);
-      return from_candid_opt_n138(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n158(this._uploadFile, this._downloadFile, result);
     }
   }
   async getProfilePhoto(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.getProfilePhoto(arg0);
-        return from_candid_opt_n140(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n160(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getProfilePhoto(arg0);
-      return from_candid_opt_n140(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n160(this._uploadFile, this._downloadFile, result);
     }
   }
   async getRecipe(arg0) {
@@ -36881,6 +37515,20 @@ class Backend {
     } else {
       const result = await this.actor.getRelationshipRequest(arg0);
       return from_candid_opt_n79(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async getReportedMessage(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getReportedMessage(arg0);
+        return from_candid_opt_n161(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getReportedMessage(arg0);
+      return from_candid_opt_n161(this._uploadFile, this._downloadFile, result);
     }
   }
   async getSingleStewardWarning() {
@@ -36915,42 +37563,42 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.listApprovedArchiveItems();
-        return from_candid_vec_n141(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n168(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listApprovedArchiveItems();
-      return from_candid_vec_n141(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n168(this._uploadFile, this._downloadFile, result);
     }
   }
   async listApprovedRecipes() {
     if (this.processError) {
       try {
         const result = await this.actor.listApprovedRecipes();
-        return from_candid_vec_n142(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n169(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listApprovedRecipes();
-      return from_candid_vec_n142(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n169(this._uploadFile, this._downloadFile, result);
     }
   }
   async listApprovedStories() {
     if (this.processError) {
       try {
         const result = await this.actor.listApprovedStories();
-        return from_candid_vec_n143(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n170(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listApprovedStories();
-      return from_candid_vec_n143(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n170(this._uploadFile, this._downloadFile, result);
     }
   }
   async listArchivedProfileIds() {
@@ -36971,56 +37619,112 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.listArchivedProfiles();
-        return from_candid_vec_n144(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n171(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listArchivedProfiles();
-      return from_candid_vec_n144(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n171(this._uploadFile, this._downloadFile, result);
     }
   }
   async listAuditHistory() {
     if (this.processError) {
       try {
         const result = await this.actor.listAuditHistory();
-        return from_candid_vec_n145(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n172(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listAuditHistory();
-      return from_candid_vec_n145(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n172(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listBlockedUsers() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listBlockedUsers();
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listBlockedUsers();
+      return result;
+    }
+  }
+  async listBoardPosts(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listBoardPosts(to_candid_opt_n177(this._uploadFile, this._downloadFile, arg0));
+        return from_candid_vec_n178(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listBoardPosts(to_candid_opt_n177(this._uploadFile, this._downloadFile, arg0));
+      return from_candid_vec_n178(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listBoardReplies(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listBoardReplies(arg0);
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listBoardReplies(arg0);
+      return result;
     }
   }
   async listConfirmedRelationships() {
     if (this.processError) {
       try {
         const result = await this.actor.listConfirmedRelationships();
-        return from_candid_vec_n150(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n179(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listConfirmedRelationships();
-      return from_candid_vec_n150(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n179(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listConversations() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listConversations();
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listConversations();
+      return result;
     }
   }
   async listDuplicateCandidates() {
     if (this.processError) {
       try {
         const result = await this.actor.listDuplicateCandidates();
-        return from_candid_vec_n151(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n180(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listDuplicateCandidates();
-      return from_candid_vec_n151(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n180(this._uploadFile, this._downloadFile, result);
     }
   }
   async listEligibleStewardCandidates() {
@@ -37037,172 +37741,200 @@ class Backend {
       return result;
     }
   }
+  async listMessageableMembers() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listMessageableMembers();
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listMessageableMembers();
+      return result;
+    }
+  }
   async listMysteries() {
     if (this.processError) {
       try {
         const result = await this.actor.listMysteries();
-        return from_candid_vec_n156(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n185(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listMysteries();
-      return from_candid_vec_n156(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n185(this._uploadFile, this._downloadFile, result);
     }
   }
   async listNotifications() {
     if (this.processError) {
       try {
         const result = await this.actor.listNotifications();
-        return from_candid_vec_n157(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n186(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listNotifications();
-      return from_candid_vec_n157(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n186(this._uploadFile, this._downloadFile, result);
     }
   }
   async listPendingArchiveItems() {
     if (this.processError) {
       try {
         const result = await this.actor.listPendingArchiveItems();
-        return from_candid_vec_n141(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listPendingArchiveItems();
-      return from_candid_vec_n141(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listPendingMysteryContributions() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listPendingMysteryContributions();
-        return from_candid_vec_n162(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listPendingMysteryContributions();
-      return from_candid_vec_n162(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listPendingRecipes() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listPendingRecipes();
-        return from_candid_vec_n142(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listPendingRecipes();
-      return from_candid_vec_n142(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listPendingStories() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listPendingStories();
-        return from_candid_vec_n143(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listPendingStories();
-      return from_candid_vec_n143(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listPersonRelationships(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listPersonRelationships(arg0);
-        return from_candid_vec_n150(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listPersonRelationships(arg0);
-      return from_candid_vec_n150(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listPhotos(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listPhotos(arg0);
         return from_candid_vec_n168(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.listPhotos(arg0);
+      const result = await this.actor.listPendingArchiveItems();
       return from_candid_vec_n168(this._uploadFile, this._downloadFile, result);
     }
   }
-  async listProfileClaims() {
+  async listPendingMysteryContributions() {
     if (this.processError) {
       try {
-        const result = await this.actor.listProfileClaims();
+        const result = await this.actor.listPendingMysteryContributions();
+        return from_candid_vec_n191(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listPendingMysteryContributions();
+      return from_candid_vec_n191(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listPendingRecipes() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listPendingRecipes();
         return from_candid_vec_n169(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.listProfileClaims();
+      const result = await this.actor.listPendingRecipes();
       return from_candid_vec_n169(this._uploadFile, this._downloadFile, result);
     }
   }
-  async listProfileRemovalRequests() {
+  async listPendingStories() {
     if (this.processError) {
       try {
-        const result = await this.actor.listProfileRemovalRequests();
+        const result = await this.actor.listPendingStories();
         return from_candid_vec_n170(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.listProfileRemovalRequests();
+      const result = await this.actor.listPendingStories();
       return from_candid_vec_n170(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listPersonRelationships(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listPersonRelationships(arg0);
+        return from_candid_vec_n179(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listPersonRelationships(arg0);
+      return from_candid_vec_n179(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listPhotos(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listPhotos(arg0);
+        return from_candid_vec_n197(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listPhotos(arg0);
+      return from_candid_vec_n197(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listProfileClaims() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listProfileClaims();
+        return from_candid_vec_n198(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listProfileClaims();
+      return from_candid_vec_n198(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listProfileRemovalRequests() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listProfileRemovalRequests();
+        return from_candid_vec_n199(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listProfileRemovalRequests();
+      return from_candid_vec_n199(this._uploadFile, this._downloadFile, result);
     }
   }
   async listRecipesForPerson(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.listRecipesForPerson(arg0);
-        return from_candid_vec_n142(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n169(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listRecipesForPerson(arg0);
-      return from_candid_vec_n142(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n169(this._uploadFile, this._downloadFile, result);
     }
   }
   async listRelationshipRequests() {
     if (this.processError) {
       try {
         const result = await this.actor.listRelationshipRequests();
-        return from_candid_vec_n139(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n159(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listRelationshipRequests();
-      return from_candid_vec_n139(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n159(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listReports() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listReports();
+        return from_candid_vec_n200(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listReports();
+      return from_candid_vec_n200(this._uploadFile, this._downloadFile, result);
     }
   }
   async listStewardIdentities() {
@@ -37223,153 +37955,167 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.listStewards();
-        return from_candid_vec_n171(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n201(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listStewards();
-      return from_candid_vec_n171(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n201(this._uploadFile, this._downloadFile, result);
     }
   }
   async listSuccessors() {
     if (this.processError) {
       try {
         const result = await this.actor.listSuccessors();
-        return from_candid_vec_n172(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n202(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listSuccessors();
-      return from_candid_vec_n172(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n202(this._uploadFile, this._downloadFile, result);
     }
   }
   async listTimelineEvents() {
     if (this.processError) {
       try {
         const result = await this.actor.listTimelineEvents();
-        return from_candid_vec_n173(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n203(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listTimelineEvents();
-      return from_candid_vec_n173(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n203(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async markConversationRead(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.markConversationRead(arg0);
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.markConversationRead(arg0);
+      return result;
     }
   }
   async markMysteryResolved(arg0, arg1, arg2) {
     if (this.processError) {
       try {
         const result = await this.actor.markMysteryResolved(arg0, arg1, arg2);
-        return from_candid_opt_n180(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n210(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.markMysteryResolved(arg0, arg1, arg2);
-      return from_candid_opt_n180(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n210(this._uploadFile, this._downloadFile, result);
     }
   }
   async markNotificationRead(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.markNotificationRead(arg0);
-        return from_candid_opt_n181(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n211(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.markNotificationRead(arg0);
-      return from_candid_opt_n181(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n211(this._uploadFile, this._downloadFile, result);
     }
   }
   async mergeProfiles(arg0, arg1) {
     if (this.processError) {
       try {
         const result = await this.actor.mergeProfiles(arg0, arg1);
-        return from_candid_Result_11_n182(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_12_n212(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.mergeProfiles(arg0, arg1);
-      return from_candid_Result_11_n182(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_12_n212(this._uploadFile, this._downloadFile, result);
     }
   }
   async notDuplicate(arg0, arg1) {
     if (this.processError) {
       try {
         const result = await this.actor.notDuplicate(arg0, arg1);
-        return from_candid_Result_10_n193(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_11_n223(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.notDuplicate(arg0, arg1);
-      return from_candid_Result_10_n193(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_11_n223(this._uploadFile, this._downloadFile, result);
     }
   }
   async permanentlyDeleteProfile(arg0, arg1) {
     if (this.processError) {
       try {
         const result = await this.actor.permanentlyDeleteProfile(arg0, arg1);
-        return from_candid_Result_9_n195(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_10_n225(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.permanentlyDeleteProfile(arg0, arg1);
-      return from_candid_Result_9_n195(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_10_n225(this._uploadFile, this._downloadFile, result);
     }
   }
   async promoteToSteward(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.promoteToSteward(arg0);
-        return from_candid_Result_8_n12(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_9_n12(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.promoteToSteward(arg0);
-      return from_candid_Result_8_n12(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_9_n12(this._uploadFile, this._downloadFile, result);
     }
   }
   async proposeRelationship(arg0, arg1, arg2) {
     if (this.processError) {
       try {
         const result = await this.actor.proposeRelationship(arg0, arg1, to_candid_RelationshipType_n35(this._uploadFile, this._downloadFile, arg2));
-        return from_candid_Result_7_n199(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_8_n229(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.proposeRelationship(arg0, arg1, to_candid_RelationshipType_n35(this._uploadFile, this._downloadFile, arg2));
-      return from_candid_Result_7_n199(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_8_n229(this._uploadFile, this._downloadFile, result);
     }
   }
   async publishRecipe(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14) {
     if (this.processError) {
       try {
-        const result = await this.actor.publishRecipe(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg6), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg7), arg8, arg9, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg10), arg11, to_candid_PrivacyLevel_n203(this._uploadFile, this._downloadFile, arg12), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg13), arg14);
+        const result = await this.actor.publishRecipe(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg6), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg7), arg8, arg9, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg10), arg11, to_candid_PrivacyLevel_n233(this._uploadFile, this._downloadFile, arg12), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg13), arg14);
         return from_candid_Recipe_n75(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.publishRecipe(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg6), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg7), arg8, arg9, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg10), arg11, to_candid_PrivacyLevel_n203(this._uploadFile, this._downloadFile, arg12), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg13), arg14);
+      const result = await this.actor.publishRecipe(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg6), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg7), arg8, arg9, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg10), arg11, to_candid_PrivacyLevel_n233(this._uploadFile, this._downloadFile, arg12), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg13), arg14);
       return from_candid_Recipe_n75(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -37457,18 +38203,32 @@ class Backend {
       return from_candid_opt_n83(this._uploadFile, this._downloadFile, result);
     }
   }
+  async removeBoardReply(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.removeBoardReply(arg0);
+        return from_candid_opt_n235(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.removeBoardReply(arg0);
+      return from_candid_opt_n235(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async removeDuplicateProfile(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.removeDuplicateProfile(arg0);
-        return from_candid_Result_6_n205(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_7_n236(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.removeDuplicateProfile(arg0);
-      return from_candid_Result_6_n205(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_7_n236(this._uploadFile, this._downloadFile, result);
     }
   }
   async removePhoto(arg0, arg1) {
@@ -37489,98 +38249,140 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.removeRelationship(arg0);
-        return from_candid_Result_5_n209(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_6_n240(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.removeRelationship(arg0);
-      return from_candid_Result_5_n209(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_6_n240(this._uploadFile, this._downloadFile, result);
     }
   }
   async removeSteward(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.removeSteward(arg0);
-        return from_candid_Result_4_n211(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_5_n242(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.removeSteward(arg0);
-      return from_candid_Result_4_n211(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_5_n242(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async reportMessage(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.reportMessage(arg0, arg1);
+        return from_candid_Report_n164(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.reportMessage(arg0, arg1);
+      return from_candid_Report_n164(this._uploadFile, this._downloadFile, result);
     }
   }
   async requestProfileClaim(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.requestProfileClaim(arg0);
-        return from_candid_Result_3_n213(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_4_n244(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.requestProfileClaim(arg0);
-      return from_candid_Result_3_n213(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_4_n244(this._uploadFile, this._downloadFile, result);
     }
   }
   async requestProfileRemoval(arg0, arg1) {
     if (this.processError) {
       try {
         const result = await this.actor.requestProfileRemoval(arg0, arg1);
-        return from_candid_Result_2_n217(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_3_n248(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.requestProfileRemoval(arg0, arg1);
-      return from_candid_Result_2_n217(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_3_n248(this._uploadFile, this._downloadFile, result);
     }
   }
   async resolveMergeConflict(arg0, arg1) {
     if (this.processError) {
       try {
         const result = await this.actor.resolveMergeConflict(arg0, arg1);
-        return from_candid_opt_n221(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n252(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.resolveMergeConflict(arg0, arg1);
-      return from_candid_opt_n221(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n252(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async restoreBoardPost(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.restoreBoardPost(arg0);
+        return from_candid_opt_n84(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.restoreBoardPost(arg0);
+      return from_candid_opt_n84(this._uploadFile, this._downloadFile, result);
     }
   }
   async restoreProfile(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.restoreProfile(arg0);
-        return from_candid_Result_1_n84(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_2_n93(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.restoreProfile(arg0);
-      return from_candid_Result_1_n84(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_2_n93(this._uploadFile, this._downloadFile, result);
     }
   }
   async reviewMysteryContribution(arg0, arg1) {
     if (this.processError) {
       try {
         const result = await this.actor.reviewMysteryContribution(arg0, arg1);
-        return from_candid_opt_n222(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n253(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.reviewMysteryContribution(arg0, arg1);
-      return from_candid_opt_n222(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n253(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async reviewReport(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.reviewReport(arg0, to_candid_ReportStatus_n254(this._uploadFile, this._downloadFile, arg1));
+        return from_candid_opt_n256(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.reviewReport(arg0, to_candid_ReportStatus_n254(this._uploadFile, this._downloadFile, arg1));
+      return from_candid_opt_n256(this._uploadFile, this._downloadFile, result);
     }
   }
   async schema() {
@@ -37611,18 +38413,32 @@ class Backend {
       return result;
     }
   }
+  async sendMessage(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.sendMessage(arg0, arg1);
+        return from_candid_Result_1_n257(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.sendMessage(arg0, arg1);
+      return from_candid_Result_1_n257(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async setProfilePhoto(arg0, arg1) {
     if (this.processError) {
       try {
         const result = await this.actor.setProfilePhoto(arg0, arg1);
-        return from_candid_opt_n140(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n160(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.setProfilePhoto(arg0, arg1);
-      return from_candid_opt_n140(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n160(this._uploadFile, this._downloadFile, result);
     }
   }
   async setRelationshipRequestPending(arg0) {
@@ -37642,42 +38458,42 @@ class Backend {
   async submitArchiveItem(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12) {
     if (this.processError) {
       try {
-        const result = await this.actor.submitArchiveItem(arg0, arg1, to_candid_ArchiveItemType_n223(this._uploadFile, this._downloadFile, arg2), await to_candid_ExternalBlob_n31(this._uploadFile, this._downloadFile, arg3), arg4, to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), arg6, arg7, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg8), to_candid_SourceStatus_n225(this._uploadFile, this._downloadFile, arg9), to_candid_PrivacyLevel_n203(this._uploadFile, this._downloadFile, arg10), to_candid_ArchiveItemClassification_n227(this._uploadFile, this._downloadFile, arg11), to_candid_opt_n229(this._uploadFile, this._downloadFile, arg12));
+        const result = await this.actor.submitArchiveItem(arg0, arg1, to_candid_ArchiveItemType_n261(this._uploadFile, this._downloadFile, arg2), await to_candid_ExternalBlob_n31(this._uploadFile, this._downloadFile, arg3), arg4, to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), arg6, arg7, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg8), to_candid_SourceStatus_n263(this._uploadFile, this._downloadFile, arg9), to_candid_PrivacyLevel_n233(this._uploadFile, this._downloadFile, arg10), to_candid_ArchiveItemClassification_n265(this._uploadFile, this._downloadFile, arg11), to_candid_opt_n267(this._uploadFile, this._downloadFile, arg12));
         return from_candid_ArchiveItem_n48(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.submitArchiveItem(arg0, arg1, to_candid_ArchiveItemType_n223(this._uploadFile, this._downloadFile, arg2), await to_candid_ExternalBlob_n31(this._uploadFile, this._downloadFile, arg3), arg4, to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), arg6, arg7, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg8), to_candid_SourceStatus_n225(this._uploadFile, this._downloadFile, arg9), to_candid_PrivacyLevel_n203(this._uploadFile, this._downloadFile, arg10), to_candid_ArchiveItemClassification_n227(this._uploadFile, this._downloadFile, arg11), to_candid_opt_n229(this._uploadFile, this._downloadFile, arg12));
+      const result = await this.actor.submitArchiveItem(arg0, arg1, to_candid_ArchiveItemType_n261(this._uploadFile, this._downloadFile, arg2), await to_candid_ExternalBlob_n31(this._uploadFile, this._downloadFile, arg3), arg4, to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), arg6, arg7, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg8), to_candid_SourceStatus_n263(this._uploadFile, this._downloadFile, arg9), to_candid_PrivacyLevel_n233(this._uploadFile, this._downloadFile, arg10), to_candid_ArchiveItemClassification_n265(this._uploadFile, this._downloadFile, arg11), to_candid_opt_n267(this._uploadFile, this._downloadFile, arg12));
       return from_candid_ArchiveItem_n48(this._uploadFile, this._downloadFile, result);
     }
   }
   async submitMysteryContribution(arg0, arg1, arg2) {
     if (this.processError) {
       try {
-        const result = await this.actor.submitMysteryContribution(arg0, to_candid_MysteryContributionType_n232(this._uploadFile, this._downloadFile, arg1), arg2);
-        return from_candid_MysteryContribution_n163(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.submitMysteryContribution(arg0, to_candid_MysteryContributionType_n270(this._uploadFile, this._downloadFile, arg1), arg2);
+        return from_candid_MysteryContribution_n192(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.submitMysteryContribution(arg0, to_candid_MysteryContributionType_n232(this._uploadFile, this._downloadFile, arg1), arg2);
-      return from_candid_MysteryContribution_n163(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.submitMysteryContribution(arg0, to_candid_MysteryContributionType_n270(this._uploadFile, this._downloadFile, arg1), arg2);
+      return from_candid_MysteryContribution_n192(this._uploadFile, this._downloadFile, result);
     }
   }
   async submitRecipe(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14) {
     if (this.processError) {
       try {
-        const result = await this.actor.submitRecipe(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg6), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg7), arg8, arg9, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg10), arg11, to_candid_PrivacyLevel_n203(this._uploadFile, this._downloadFile, arg12), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg13), arg14);
+        const result = await this.actor.submitRecipe(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg6), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg7), arg8, arg9, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg10), arg11, to_candid_PrivacyLevel_n233(this._uploadFile, this._downloadFile, arg12), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg13), arg14);
         return from_candid_Recipe_n75(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.submitRecipe(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg6), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg7), arg8, arg9, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg10), arg11, to_candid_PrivacyLevel_n203(this._uploadFile, this._downloadFile, arg12), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg13), arg14);
+      const result = await this.actor.submitRecipe(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg6), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg7), arg8, arg9, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg10), arg11, to_candid_PrivacyLevel_n233(this._uploadFile, this._downloadFile, arg12), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg13), arg14);
       return from_candid_Recipe_n75(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -37695,18 +38511,46 @@ class Backend {
       return from_candid_Story_n24(this._uploadFile, this._downloadFile, result);
     }
   }
-  async updateCanonicalMystery(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9) {
+  async unblockUser(arg0) {
     if (this.processError) {
       try {
-        const result = await this.actor.updateCanonicalMystery(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), arg5, arg6, arg7, arg8, to_candid_MysteryStatus_n101(this._uploadFile, this._downloadFile, arg9));
-        return from_candid_opt_n180(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.unblockUser(arg0);
+        return result;
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.updateCanonicalMystery(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), arg5, arg6, arg7, arg8, to_candid_MysteryStatus_n101(this._uploadFile, this._downloadFile, arg9));
-      return from_candid_opt_n180(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.unblockUser(arg0);
+      return result;
+    }
+  }
+  async updateBoardPost(arg0, arg1, arg2, arg3, arg4, arg5) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.updateBoardPost(arg0, to_candid_PostType_n110(this._uploadFile, this._downloadFile, arg1), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg2), arg3, arg4, arg5);
+        return from_candid_opt_n84(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.updateBoardPost(arg0, to_candid_PostType_n110(this._uploadFile, this._downloadFile, arg1), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg2), arg3, arg4, arg5);
+      return from_candid_opt_n84(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async updateCanonicalMystery(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.updateCanonicalMystery(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), arg5, arg6, arg7, arg8, to_candid_MysteryStatus_n112(this._uploadFile, this._downloadFile, arg9));
+        return from_candid_opt_n210(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.updateCanonicalMystery(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), arg5, arg6, arg7, arg8, to_candid_MysteryStatus_n112(this._uploadFile, this._downloadFile, arg9));
+      return from_candid_opt_n210(this._uploadFile, this._downloadFile, result);
     }
   }
   async updateCanonicalStory(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) {
@@ -37726,26 +38570,26 @@ class Backend {
   async updateOwnProfile(arg0, arg1) {
     if (this.processError) {
       try {
-        const result = await this.actor.updateOwnProfile(arg0, to_candid_ProfileEdits_n234(this._uploadFile, this._downloadFile, arg1));
-        return from_candid_Result_n238(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.updateOwnProfile(arg0, to_candid_ProfileEdits_n272(this._uploadFile, this._downloadFile, arg1));
+        return from_candid_Result_n276(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.updateOwnProfile(arg0, to_candid_ProfileEdits_n234(this._uploadFile, this._downloadFile, arg1));
-      return from_candid_Result_n238(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.updateOwnProfile(arg0, to_candid_ProfileEdits_n272(this._uploadFile, this._downloadFile, arg1));
+      return from_candid_Result_n276(this._uploadFile, this._downloadFile, result);
     }
   }
 }
-function from_candid_AccountError_n99(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n100(_uploadFile, _downloadFile, value);
+function from_candid_AccountError_n108(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n109(_uploadFile, _downloadFile, value);
 }
-function from_candid_Account_n94(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n95(_uploadFile, _downloadFile, value);
+function from_candid_Account_n103(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n104(_uploadFile, _downloadFile, value);
 }
-function from_candid_ArchiveError_n86(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n87(_uploadFile, _downloadFile, value);
+function from_candid_ArchiveError_n95(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n96(_uploadFile, _downloadFile, value);
 }
 function from_candid_ArchiveItemClassification_n62(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n63(_uploadFile, _downloadFile, value);
@@ -37759,38 +38603,41 @@ function from_candid_ArchiveItemType_n57(_uploadFile, _downloadFile, value) {
 async function from_candid_ArchiveItem_n48(_uploadFile, _downloadFile, value) {
   return await from_candid_record_n49(_uploadFile, _downloadFile, value);
 }
-function from_candid_AuditActionType_n148(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n149(_uploadFile, _downloadFile, value);
+function from_candid_AuditActionType_n175(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n176(_uploadFile, _downloadFile, value);
 }
-function from_candid_AuditEntry_n146(_uploadFile, _downloadFile, value) {
+function from_candid_AuditEntry_n173(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n174(_uploadFile, _downloadFile, value);
+}
+function from_candid_AuthMethod_n106(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n107(_uploadFile, _downloadFile, value);
+}
+function from_candid_Cell_n139(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n140(_uploadFile, _downloadFile, value);
+}
+function from_candid_ClaimError_n246(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n247(_uploadFile, _downloadFile, value);
+}
+function from_candid_ClaimStatus_n123(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n124(_uploadFile, _downloadFile, value);
+}
+function from_candid_ConversationView_n146(_uploadFile, _downloadFile, value) {
   return from_candid_record_n147(_uploadFile, _downloadFile, value);
 }
-function from_candid_AuthMethod_n97(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n98(_uploadFile, _downloadFile, value);
+function from_candid_CreateError_n127(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n128(_uploadFile, _downloadFile, value);
 }
-function from_candid_Cell_n128(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n129(_uploadFile, _downloadFile, value);
+function from_candid_DeleteError_n227(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n228(_uploadFile, _downloadFile, value);
 }
-function from_candid_ClaimError_n215(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n216(_uploadFile, _downloadFile, value);
+function from_candid_DuplicateCandidate_n183(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n184(_uploadFile, _downloadFile, value);
 }
-function from_candid_ClaimStatus_n112(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n113(_uploadFile, _downloadFile, value);
+function from_candid_DuplicatePair_n181(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n182(_uploadFile, _downloadFile, value);
 }
-function from_candid_CreateError_n116(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n117(_uploadFile, _downloadFile, value);
-}
-function from_candid_DeleteError_n197(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n198(_uploadFile, _downloadFile, value);
-}
-function from_candid_DuplicateCandidate_n154(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n155(_uploadFile, _downloadFile, value);
-}
-function from_candid_DuplicatePair_n152(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n153(_uploadFile, _downloadFile, value);
-}
-function from_candid_EditError_n240(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n241(_uploadFile, _downloadFile, value);
+function from_candid_EditError_n278(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n279(_uploadFile, _downloadFile, value);
 }
 function from_candid_Error_n10(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n11(_uploadFile, _downloadFile, value);
@@ -37801,53 +38648,74 @@ function from_candid_EvidenceStatus_n29(_uploadFile, _downloadFile, value) {
 async function from_candid_ExternalBlob_n34(_uploadFile, _downloadFile, value) {
   return await _downloadFile(value);
 }
-function from_candid_LivingStatus_n114(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n115(_uploadFile, _downloadFile, value);
+function from_candid_LivingStatus_n125(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n126(_uploadFile, _downloadFile, value);
 }
-function from_candid_MergeConflictStatus_n189(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n190(_uploadFile, _downloadFile, value);
+function from_candid_MergeConflictStatus_n219(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n220(_uploadFile, _downloadFile, value);
 }
-function from_candid_MergeConflict_n187(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n188(_uploadFile, _downloadFile, value);
+function from_candid_MergeConflict_n217(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n218(_uploadFile, _downloadFile, value);
 }
-function from_candid_MergeError_n191(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n192(_uploadFile, _downloadFile, value);
+function from_candid_MergeError_n221(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n222(_uploadFile, _downloadFile, value);
 }
-function from_candid_MergeResult_n184(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n185(_uploadFile, _downloadFile, value);
+function from_candid_MergeResult_n214(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n215(_uploadFile, _downloadFile, value);
 }
-function from_candid_MysteryContributionStatus_n165(_uploadFile, _downloadFile, value) {
+function from_candid_MessageError_n259(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n260(_uploadFile, _downloadFile, value);
+}
+function from_candid_MessageStatus_n151(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n152(_uploadFile, _downloadFile, value);
+}
+function from_candid_Message_n149(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n150(_uploadFile, _downloadFile, value);
+}
+function from_candid_MysteryContributionStatus_n194(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n28(_uploadFile, _downloadFile, value);
 }
-function from_candid_MysteryContributionType_n166(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n167(_uploadFile, _downloadFile, value);
+function from_candid_MysteryContributionType_n195(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n196(_uploadFile, _downloadFile, value);
 }
-function from_candid_MysteryContribution_n163(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n164(_uploadFile, _downloadFile, value);
+function from_candid_MysteryContribution_n192(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n193(_uploadFile, _downloadFile, value);
 }
-function from_candid_MysteryStatus_n105(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n106(_uploadFile, _downloadFile, value);
+function from_candid_MysteryStatus_n116(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n117(_uploadFile, _downloadFile, value);
 }
-function from_candid_Mystery_n103(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n104(_uploadFile, _downloadFile, value);
+function from_candid_Mystery_n114(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n115(_uploadFile, _downloadFile, value);
 }
-function from_candid_NotificationType_n160(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n161(_uploadFile, _downloadFile, value);
+function from_candid_NotificationType_n189(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n190(_uploadFile, _downloadFile, value);
 }
-function from_candid_Notification_n158(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n159(_uploadFile, _downloadFile, value);
+function from_candid_Notification_n187(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n188(_uploadFile, _downloadFile, value);
 }
 function from_candid_OralHistorySpeaker_n54(_uploadFile, _downloadFile, value) {
   return from_candid_record_n55(_uploadFile, _downloadFile, value);
 }
-function from_candid_PersonProfile_n110(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n111(_uploadFile, _downloadFile, value);
+function from_candid_PersonProfile_n121(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n122(_uploadFile, _downloadFile, value);
 }
 async function from_candid_Photo_n32(_uploadFile, _downloadFile, value) {
   return await from_candid_record_n33(_uploadFile, _downloadFile, value);
 }
+function from_candid_PostStatus_n87(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n88(_uploadFile, _downloadFile, value);
+}
+function from_candid_PostType_n89(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n90(_uploadFile, _downloadFile, value);
+}
+function from_candid_Post_n85(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n86(_uploadFile, _downloadFile, value);
+}
 function from_candid_PrivacyLevel_n51(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n52(_uploadFile, _downloadFile, value);
+}
+function from_candid_PrivacyScope_n91(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n92(_uploadFile, _downloadFile, value);
 }
 function from_candid_ProfileClaimStatus_n67(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n28(_uploadFile, _downloadFile, value);
@@ -37870,8 +38738,8 @@ function from_candid_Recipe_n75(_uploadFile, _downloadFile, value) {
 function from_candid_RelationshipAdminError_n45(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n46(_uploadFile, _downloadFile, value);
 }
-function from_candid_RelationshipError_n201(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n202(_uploadFile, _downloadFile, value);
+function from_candid_RelationshipError_n231(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n232(_uploadFile, _downloadFile, value);
 }
 function from_candid_RelationshipRequestStatus_n82(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n28(_uploadFile, _downloadFile, value);
@@ -37888,71 +38756,83 @@ function from_candid_RelationshipType_n43(_uploadFile, _downloadFile, value) {
 function from_candid_Relationship_n39(_uploadFile, _downloadFile, value) {
   return from_candid_record_n40(_uploadFile, _downloadFile, value);
 }
-function from_candid_RemovalError_n219(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n220(_uploadFile, _downloadFile, value);
+function from_candid_RemovalError_n250(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n251(_uploadFile, _downloadFile, value);
 }
-function from_candid_RemoveError_n207(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n208(_uploadFile, _downloadFile, value);
+function from_candid_RemoveError_n238(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n239(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_10_n193(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n194(_uploadFile, _downloadFile, value);
+function from_candid_ReportStatus_n166(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n167(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_11_n182(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n183(_uploadFile, _downloadFile, value);
+function from_candid_Report_n164(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n165(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_12_n136(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n137(_uploadFile, _downloadFile, value);
+function from_candid_ReportedMessageView_n162(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n163(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_13_n134(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n135(_uploadFile, _downloadFile, value);
+function from_candid_Result_10_n225(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n226(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_14_n118(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n119(_uploadFile, _downloadFile, value);
+function from_candid_Result_11_n223(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n224(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_15_n108(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n109(_uploadFile, _downloadFile, value);
+function from_candid_Result_12_n212(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n213(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_16_n37(_uploadFile, _downloadFile, value) {
+function from_candid_Result_13_n156(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n157(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_14_n154(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n155(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_15_n129(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n130(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_16_n119(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n120(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_17_n37(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n38(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_17_n92(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n93(_uploadFile, _downloadFile, value);
+function from_candid_Result_18_n101(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n102(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_18_n8(_uploadFile, _downloadFile, value) {
+function from_candid_Result_19_n8(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n9(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_1_n84(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n85(_uploadFile, _downloadFile, value);
+function from_candid_Result_1_n257(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n258(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_2_n217(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n218(_uploadFile, _downloadFile, value);
+function from_candid_Result_2_n93(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n94(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_3_n213(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n214(_uploadFile, _downloadFile, value);
+function from_candid_Result_3_n248(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n249(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_4_n211(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n212(_uploadFile, _downloadFile, value);
+function from_candid_Result_4_n244(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n245(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_5_n209(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n210(_uploadFile, _downloadFile, value);
+function from_candid_Result_5_n242(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n243(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_6_n205(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n206(_uploadFile, _downloadFile, value);
+function from_candid_Result_6_n240(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n241(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_7_n199(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n200(_uploadFile, _downloadFile, value);
+function from_candid_Result_7_n236(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n237(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_8_n12(_uploadFile, _downloadFile, value) {
+function from_candid_Result_8_n229(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n230(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_9_n12(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n13(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_9_n195(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n196(_uploadFile, _downloadFile, value);
+function from_candid_Result__1_n135(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n136(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result__1_n124(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n125(_uploadFile, _downloadFile, value);
-}
-function from_candid_Result_n238(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n239(_uploadFile, _downloadFile, value);
+function from_candid_Result_n276(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n277(_uploadFile, _downloadFile, value);
 }
 function from_candid_SourceStatus_n60(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n61(_uploadFile, _downloadFile, value);
@@ -37972,50 +38852,65 @@ function from_candid_StoryStatus_n27(_uploadFile, _downloadFile, value) {
 function from_candid_Story_n24(_uploadFile, _downloadFile, value) {
   return from_candid_record_n25(_uploadFile, _downloadFile, value);
 }
-function from_candid_SuccessorDesignation_n120(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n121(_uploadFile, _downloadFile, value);
+function from_candid_SuccessorDesignation_n131(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n132(_uploadFile, _downloadFile, value);
 }
-function from_candid_SuccessorStatus_n122(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n123(_uploadFile, _downloadFile, value);
+function from_candid_SuccessorStatus_n133(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n134(_uploadFile, _downloadFile, value);
 }
-function from_candid_TimelineEventType_n178(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n179(_uploadFile, _downloadFile, value);
+function from_candid_TimelineEventType_n208(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n209(_uploadFile, _downloadFile, value);
 }
-function from_candid_TimelineEvent_n174(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n175(_uploadFile, _downloadFile, value);
+function from_candid_TimelineEvent_n204(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n205(_uploadFile, _downloadFile, value);
 }
-function from_candid_TimelineLinkTarget_n176(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n177(_uploadFile, _downloadFile, value);
+function from_candid_TimelineLinkTarget_n206(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n207(_uploadFile, _downloadFile, value);
 }
-function from_candid_UserRole_n132(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n133(_uploadFile, _downloadFile, value);
+function from_candid_UserRole_n143(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n144(_uploadFile, _downloadFile, value);
 }
-function from_candid_Value_n130(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n131(_uploadFile, _downloadFile, value);
+function from_candid_Value_n141(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n142(_uploadFile, _downloadFile, value);
 }
 function from_candid__ImmutableObjectStorageRefillResult_n4(_uploadFile, _downloadFile, value) {
   return from_candid_record_n5(_uploadFile, _downloadFile, value);
 }
-function from_candid_opt_n107(_uploadFile, _downloadFile, value) {
+function from_candid_opt_n118(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n138(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_PersonProfile_n110(_uploadFile, _downloadFile, value[0]);
+function from_candid_opt_n145(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_ConversationView_n146(_uploadFile, _downloadFile, value[0]);
 }
-async function from_candid_opt_n140(_uploadFile, _downloadFile, value) {
+function from_candid_opt_n153(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n158(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_PersonProfile_n121(_uploadFile, _downloadFile, value[0]);
+}
+async function from_candid_opt_n160(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : await from_candid_Photo_n32(_uploadFile, _downloadFile, value[0]);
 }
-function from_candid_opt_n180(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_Mystery_n103(_uploadFile, _downloadFile, value[0]);
+function from_candid_opt_n161(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_ReportedMessageView_n162(_uploadFile, _downloadFile, value[0]);
 }
-function from_candid_opt_n181(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_Notification_n158(_uploadFile, _downloadFile, value[0]);
+function from_candid_opt_n210(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_Mystery_n114(_uploadFile, _downloadFile, value[0]);
 }
-function from_candid_opt_n221(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_MergeConflict_n187(_uploadFile, _downloadFile, value[0]);
+function from_candid_opt_n211(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_Notification_n187(_uploadFile, _downloadFile, value[0]);
 }
-function from_candid_opt_n222(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_MysteryContribution_n163(_uploadFile, _downloadFile, value[0]);
+function from_candid_opt_n235(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n252(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_MergeConflict_n217(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n253(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_MysteryContribution_n192(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n256(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_Report_n164(_uploadFile, _downloadFile, value[0]);
 }
 function from_candid_opt_n26(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : value[0];
@@ -38059,16 +38954,26 @@ function from_candid_opt_n79(_uploadFile, _downloadFile, value) {
 function from_candid_opt_n83(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : from_candid_Story_n24(_uploadFile, _downloadFile, value[0]);
 }
+function from_candid_opt_n84(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_Post_n85(_uploadFile, _downloadFile, value[0]);
+}
 function from_candid_record_n104(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
-    status: from_candid_MysteryStatus_n105(_uploadFile, _downloadFile, value.status),
+    createdAt: value.createdAt,
+    authMethods: from_candid_vec_n105(_uploadFile, _downloadFile, value.authMethods)
+  };
+}
+function from_candid_record_n115(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
+    status: from_candid_MysteryStatus_n116(_uploadFile, _downloadFile, value.status),
     title: value.title,
     relatedMemberIds: value.relatedMemberIds,
     createdAt: value.createdAt,
     relatedArchiveItemIds: value.relatedArchiveItemIds,
     description: value.description,
-    resolution: record_opt_to_undefined(from_candid_opt_n107(_uploadFile, _downloadFile, value.resolution)),
+    resolution: record_opt_to_undefined(from_candid_opt_n118(_uploadFile, _downloadFile, value.resolution)),
     updatedAt: value.updatedAt,
     knownFacts: value.knownFacts,
     possibilities: value.possibilities,
@@ -38077,7 +38982,7 @@ function from_candid_record_n104(_uploadFile, _downloadFile, value) {
     contributor: value.contributor
   };
 }
-function from_candid_record_n111(_uploadFile, _downloadFile, value) {
+function from_candid_record_n122(_uploadFile, _downloadFile, value) {
   return {
     occupation: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.occupation)),
     privacySettings: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.privacySettings)),
@@ -38085,8 +38990,8 @@ function from_candid_record_n111(_uploadFile, _downloadFile, value) {
     claimedByUserId: record_opt_to_undefined(from_candid_opt_n69(_uploadFile, _downloadFile, value.claimedByUserId)),
     birthDate: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.birthDate)),
     birthInfo: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.birthInfo)),
-    claimStatus: from_candid_ClaimStatus_n112(_uploadFile, _downloadFile, value.claimStatus),
-    livingStatus: from_candid_LivingStatus_n114(_uploadFile, _downloadFile, value.livingStatus),
+    claimStatus: from_candid_ClaimStatus_n123(_uploadFile, _downloadFile, value.claimStatus),
+    livingStatus: from_candid_LivingStatus_n125(_uploadFile, _downloadFile, value.livingStatus),
     name: value.name,
     longerStory: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.longerStory)),
     personId: value.personId,
@@ -38102,35 +39007,33 @@ function from_candid_record_n111(_uploadFile, _downloadFile, value) {
     firstName: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.firstName))
   };
 }
-function from_candid_record_n121(_uploadFile, _downloadFile, value) {
+function from_candid_record_n132(_uploadFile, _downloadFile, value) {
   return {
-    status: from_candid_SuccessorStatus_n122(_uploadFile, _downloadFile, value.status),
+    status: from_candid_SuccessorStatus_n133(_uploadFile, _downloadFile, value.status),
     assignedAt: value.assignedAt,
     assignedBy: value.assignedBy,
     personId: value.personId,
     priority: value.priority
   };
 }
-function from_candid_record_n125(_uploadFile, _downloadFile, value) {
+function from_candid_record_n136(_uploadFile, _downloadFile, value) {
   return {
     hasMore: value.hasMore,
-    rows: from_candid_vec_n126(_uploadFile, _downloadFile, value.rows)
+    rows: from_candid_vec_n137(_uploadFile, _downloadFile, value.rows)
   };
 }
-function from_candid_record_n129(_uploadFile, _downloadFile, value) {
+function from_candid_record_n140(_uploadFile, _downloadFile, value) {
   return {
-    value: from_candid_Value_n130(_uploadFile, _downloadFile, value.value),
+    value: from_candid_Value_n141(_uploadFile, _downloadFile, value.value),
     name: value.name
   };
 }
 function from_candid_record_n147(_uploadFile, _downloadFile, value) {
   return {
-    id: value.id,
-    affectedPersonIds: value.affectedPersonIds,
-    actionType: from_candid_AuditActionType_n148(_uploadFile, _downloadFile, value.actionType),
-    summary: value.summary,
-    timestamp: value.timestamp,
-    actorAccountId: value.actorAccountId
+    messages: from_candid_vec_n148(_uploadFile, _downloadFile, value.messages),
+    participantPersonIds: value.participantPersonIds,
+    conversationId: value.conversationId,
+    participantDisplayNames: value.participantDisplayNames
   };
 }
 function from_candid_record_n15(_uploadFile, _downloadFile, value) {
@@ -38142,13 +39045,51 @@ function from_candid_record_n15(_uploadFile, _downloadFile, value) {
     roleStatus: from_candid_StewardRoleStatus_n16(_uploadFile, _downloadFile, value.roleStatus)
   };
 }
-function from_candid_record_n153(_uploadFile, _downloadFile, value) {
+function from_candid_record_n150(_uploadFile, _downloadFile, value) {
   return {
-    candidateA: from_candid_DuplicateCandidate_n154(_uploadFile, _downloadFile, value.candidateA),
-    candidateB: from_candid_DuplicateCandidate_n154(_uploadFile, _downloadFile, value.candidateB)
+    status: from_candid_MessageStatus_n151(_uploadFile, _downloadFile, value.status),
+    messageId: value.messageId,
+    body: value.body,
+    createdAt: value.createdAt,
+    conversationId: value.conversationId,
+    senderAccountId: value.senderAccountId,
+    senderPersonId: value.senderPersonId,
+    readAt: record_opt_to_undefined(from_candid_opt_n153(_uploadFile, _downloadFile, value.readAt))
   };
 }
-function from_candid_record_n155(_uploadFile, _downloadFile, value) {
+function from_candid_record_n163(_uploadFile, _downloadFile, value) {
+  return {
+    report: from_candid_Report_n164(_uploadFile, _downloadFile, value.report),
+    message: from_candid_Message_n149(_uploadFile, _downloadFile, value.message)
+  };
+}
+function from_candid_record_n165(_uploadFile, _downloadFile, value) {
+  return {
+    status: from_candid_ReportStatus_n166(_uploadFile, _downloadFile, value.status),
+    reportedMessageId: value.reportedMessageId,
+    createdAt: value.createdAt,
+    reportingAccountId: value.reportingAccountId,
+    reportId: value.reportId,
+    reason: value.reason
+  };
+}
+function from_candid_record_n174(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
+    affectedPersonIds: value.affectedPersonIds,
+    actionType: from_candid_AuditActionType_n175(_uploadFile, _downloadFile, value.actionType),
+    summary: value.summary,
+    timestamp: value.timestamp,
+    actorAccountId: value.actorAccountId
+  };
+}
+function from_candid_record_n182(_uploadFile, _downloadFile, value) {
+  return {
+    candidateA: from_candid_DuplicateCandidate_n183(_uploadFile, _downloadFile, value.candidateA),
+    candidateB: from_candid_DuplicateCandidate_n183(_uploadFile, _downloadFile, value.candidateB)
+  };
+}
+function from_candid_record_n184(_uploadFile, _downloadFile, value) {
   return {
     deathDate: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.deathDate)),
     ownerAccount: record_opt_to_undefined(from_candid_opt_n69(_uploadFile, _downloadFile, value.ownerAccount)),
@@ -38165,53 +39106,53 @@ function from_candid_record_n155(_uploadFile, _downloadFile, value) {
     parents: value.parents
   };
 }
-function from_candid_record_n159(_uploadFile, _downloadFile, value) {
+function from_candid_record_n188(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
-    notificationType: from_candid_NotificationType_n160(_uploadFile, _downloadFile, value.notificationType),
+    notificationType: from_candid_NotificationType_n189(_uploadFile, _downloadFile, value.notificationType),
     createdAt: value.createdAt,
     read: value.read,
     recipient: value.recipient,
     message: value.message
   };
 }
-function from_candid_record_n164(_uploadFile, _downloadFile, value) {
+function from_candid_record_n193(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
-    status: from_candid_MysteryContributionStatus_n165(_uploadFile, _downloadFile, value.status),
+    status: from_candid_MysteryContributionStatus_n194(_uploadFile, _downloadFile, value.status),
     createdAt: value.createdAt,
     text: value.text,
     mysteryId: value.mysteryId,
     reviewedAt: record_opt_to_undefined(from_candid_opt_n68(_uploadFile, _downloadFile, value.reviewedAt)),
     reviewedBy: record_opt_to_undefined(from_candid_opt_n69(_uploadFile, _downloadFile, value.reviewedBy)),
-    contributionType: from_candid_MysteryContributionType_n166(_uploadFile, _downloadFile, value.contributionType),
+    contributionType: from_candid_MysteryContributionType_n195(_uploadFile, _downloadFile, value.contributionType),
     contributor: value.contributor
   };
 }
-function from_candid_record_n175(_uploadFile, _downloadFile, value) {
+function from_candid_record_n205(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
     era: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.era)),
     title: value.title,
     year: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.year)),
-    linkTarget: from_candid_TimelineLinkTarget_n176(_uploadFile, _downloadFile, value.linkTarget),
+    linkTarget: from_candid_TimelineLinkTarget_n206(_uploadFile, _downloadFile, value.linkTarget),
     description: value.description,
     evidenceStatus: from_candid_EvidenceStatus_n29(_uploadFile, _downloadFile, value.evidenceStatus),
-    eventType: from_candid_TimelineEventType_n178(_uploadFile, _downloadFile, value.eventType)
+    eventType: from_candid_TimelineEventType_n208(_uploadFile, _downloadFile, value.eventType)
   };
 }
-function from_candid_record_n185(_uploadFile, _downloadFile, value) {
+function from_candid_record_n215(_uploadFile, _downloadFile, value) {
   return {
     archivedPersonId: value.archivedPersonId,
-    conflicts: from_candid_vec_n186(_uploadFile, _downloadFile, value.conflicts),
+    conflicts: from_candid_vec_n216(_uploadFile, _downloadFile, value.conflicts),
     canonicalPersonId: value.canonicalPersonId
   };
 }
-function from_candid_record_n188(_uploadFile, _downloadFile, value) {
+function from_candid_record_n218(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
     field: value.field,
-    status: from_candid_MergeConflictStatus_n189(_uploadFile, _downloadFile, value.status),
+    status: from_candid_MergeConflictStatus_n219(_uploadFile, _downloadFile, value.status),
     alternateValue: value.alternateValue,
     canonicalValue: value.canonicalValue,
     resolvedAt: record_opt_to_undefined(from_candid_opt_n68(_uploadFile, _downloadFile, value.resolvedAt)),
@@ -38355,27 +39296,36 @@ function from_candid_record_n81(_uploadFile, _downloadFile, value) {
     reviewer: record_opt_to_undefined(from_candid_opt_n69(_uploadFile, _downloadFile, value.reviewer))
   };
 }
-function from_candid_record_n95(_uploadFile, _downloadFile, value) {
+function from_candid_record_n86(_uploadFile, _downloadFile, value) {
   return {
-    id: value.id,
+    status: from_candid_PostStatus_n87(_uploadFile, _downloadFile, value.status),
+    authorAccountId: value.authorAccountId,
+    postType: from_candid_PostType_n89(_uploadFile, _downloadFile, value.postType),
+    title: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.title)),
+    body: value.body,
     createdAt: value.createdAt,
-    authMethods: from_candid_vec_n96(_uploadFile, _downloadFile, value.authMethods)
+    linkedMediaIds: value.linkedMediaIds,
+    privacyScope: from_candid_PrivacyScope_n91(_uploadFile, _downloadFile, value.privacyScope),
+    authorPersonId: value.authorPersonId,
+    updatedAt: value.updatedAt,
+    relatedPersonIds: value.relatedPersonIds,
+    postId: value.postId
   };
 }
-function from_candid_variant_n100(_uploadFile, _downloadFile, value) {
-  return "AccountNotFound" in value ? "AccountNotFound" : "NotSignedIn" in value ? "NotSignedIn" : value;
-}
-function from_candid_variant_n106(_uploadFile, _downloadFile, value) {
-  return "Researching" in value ? "Researching" : "Open" in value ? "Open" : "PartiallyResolved" in value ? "PartiallyResolved" : "Resolved" in value ? "Resolved" : value;
-}
-function from_candid_variant_n109(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n102(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
-    ok: from_candid_PersonProfile_n110(_uploadFile, _downloadFile, value.ok)
+    ok: from_candid_Account_n103(_uploadFile, _downloadFile, value.ok)
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_CreateError_n116(_uploadFile, _downloadFile, value.err)
+    err: from_candid_AccountError_n108(_uploadFile, _downloadFile, value.err)
   } : value;
+}
+function from_candid_variant_n107(_uploadFile, _downloadFile, value) {
+  return "Google" in value ? "Google" : "Apple" in value ? "Apple" : value;
+}
+function from_candid_variant_n109(_uploadFile, _downloadFile, value) {
+  return "AccountNotFound" in value ? "AccountNotFound" : "NotSignedIn" in value ? "NotSignedIn" : value;
 }
 function from_candid_variant_n11(_uploadFile, _downloadFile, value) {
   return "FrontendOriginsNotConfigured" in value ? {
@@ -38410,26 +39360,26 @@ function from_candid_variant_n11(_uploadFile, _downloadFile, value) {
     FrontendOriginMismatch: value.FrontendOriginMismatch
   } : value;
 }
-function from_candid_variant_n113(_uploadFile, _downloadFile, value) {
-  return "Unclaimed" in value ? "Unclaimed" : "Claimed" in value ? "Claimed" : value;
-}
-function from_candid_variant_n115(_uploadFile, _downloadFile, value) {
-  return "Living" in value ? "Living" : "Deceased" in value ? "Deceased" : value;
-}
 function from_candid_variant_n117(_uploadFile, _downloadFile, value) {
-  return "NotSignedIn" in value ? "NotSignedIn" : value;
+  return "Researching" in value ? "Researching" : "Open" in value ? "Open" : "PartiallyResolved" in value ? "PartiallyResolved" : "Resolved" in value ? "Resolved" : value;
 }
-function from_candid_variant_n119(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n120(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
-    ok: from_candid_SuccessorDesignation_n120(_uploadFile, _downloadFile, value.ok)
+    ok: from_candid_PersonProfile_n121(_uploadFile, _downloadFile, value.ok)
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_StewardError_n18(_uploadFile, _downloadFile, value.err)
+    err: from_candid_CreateError_n127(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n123(_uploadFile, _downloadFile, value) {
-  return "Activated" in value ? "Activated" : "Removed" in value ? "Removed" : "Designated" in value ? "Designated" : value;
+function from_candid_variant_n124(_uploadFile, _downloadFile, value) {
+  return "Unclaimed" in value ? "Unclaimed" : "Claimed" in value ? "Claimed" : value;
+}
+function from_candid_variant_n126(_uploadFile, _downloadFile, value) {
+  return "Living" in value ? "Living" : "Deceased" in value ? "Deceased" : value;
+}
+function from_candid_variant_n128(_uploadFile, _downloadFile, value) {
+  return "NotSignedIn" in value ? "NotSignedIn" : value;
 }
 function from_candid_variant_n13(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
@@ -38440,7 +39390,19 @@ function from_candid_variant_n13(_uploadFile, _downloadFile, value) {
     err: from_candid_StewardError_n18(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n131(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n130(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: from_candid_SuccessorDesignation_n131(_uploadFile, _downloadFile, value.ok)
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_StewardError_n18(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n134(_uploadFile, _downloadFile, value) {
+  return "Activated" in value ? "Activated" : "Removed" in value ? "Removed" : "Designated" in value ? "Designated" : value;
+}
+function from_candid_variant_n142(_uploadFile, _downloadFile, value) {
   return "int" in value ? {
     __kind__: "int",
     int: value.int
@@ -38461,40 +39423,49 @@ function from_candid_variant_n131(_uploadFile, _downloadFile, value) {
     text: value.text
   } : value;
 }
-function from_candid_variant_n133(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n144(_uploadFile, _downloadFile, value) {
   return "admin" in value ? "admin" : "user" in value ? "user" : "guest" in value ? "guest" : value;
 }
-function from_candid_variant_n135(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n152(_uploadFile, _downloadFile, value) {
+  return "Blocked" in value ? "Blocked" : "Sent" in value ? "Sent" : value;
+}
+function from_candid_variant_n155(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
     ok: value.ok
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_AccountError_n99(_uploadFile, _downloadFile, value.err)
+    err: from_candid_AccountError_n108(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n137(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n157(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
     ok: value.ok
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_AccountError_n99(_uploadFile, _downloadFile, value.err)
+    err: from_candid_AccountError_n108(_uploadFile, _downloadFile, value.err)
   } : value;
-}
-function from_candid_variant_n149(_uploadFile, _downloadFile, value) {
-  return "ProfileRemovalRequested" in value ? "ProfileRemovalRequested" : "ClaimRejected" in value ? "ClaimRejected" : "RelationshipTypeCorrected" in value ? "RelationshipTypeCorrected" : "RelationshipRequestPending" in value ? "RelationshipRequestPending" : "StewardPromoted" in value ? "StewardPromoted" : "SuccessorActivated" in value ? "SuccessorActivated" : "StewardRemoved" in value ? "StewardRemoved" : "RelationshipRequestApproved" in value ? "RelationshipRequestApproved" : "DuplicateMerged" in value ? "DuplicateMerged" : "ProfilePermanentlyDeleted" in value ? "ProfilePermanentlyDeleted" : "RelationshipRequestRejected" in value ? "RelationshipRequestRejected" : "ProfileArchived" in value ? "ProfileArchived" : "ProfileRestored" in value ? "ProfileRestored" : "RelationshipAdded" in value ? "RelationshipAdded" : "RelationshipRemoved" in value ? "RelationshipRemoved" : "ProfileRemovalReviewed" in value ? "ProfileRemovalReviewed" : "ClaimApproved" in value ? "ClaimApproved" : "SuccessorDesignated" in value ? "SuccessorDesignated" : value;
-}
-function from_candid_variant_n161(_uploadFile, _downloadFile, value) {
-  return "RelationshipRequested" in value ? "RelationshipRequested" : "RelationshipReviewed" in value ? "RelationshipReviewed" : "ProfileClaimReviewed" in value ? "ProfileClaimReviewed" : "ProfileClaimRequested" in value ? "ProfileClaimRequested" : value;
 }
 function from_candid_variant_n167(_uploadFile, _downloadFile, value) {
-  return "Lead" in value ? "Lead" : "Note" in value ? "Note" : "Memory" in value ? "Memory" : "Source" in value ? "Source" : value;
+  return "Dismissed" in value ? "Dismissed" : "Reviewed" in value ? "Reviewed" : "Pending" in value ? "Pending" : value;
 }
 function from_candid_variant_n17(_uploadFile, _downloadFile, value) {
   return "Active" in value ? "Active" : "Removed" in value ? "Removed" : value;
 }
-function from_candid_variant_n177(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n176(_uploadFile, _downloadFile, value) {
+  return "ProfileRemovalRequested" in value ? "ProfileRemovalRequested" : "ClaimRejected" in value ? "ClaimRejected" : "RelationshipTypeCorrected" in value ? "RelationshipTypeCorrected" : "RelationshipRequestPending" in value ? "RelationshipRequestPending" : "StewardPromoted" in value ? "StewardPromoted" : "BoardReplyRemoved" in value ? "BoardReplyRemoved" : "SuccessorActivated" in value ? "SuccessorActivated" : "StewardRemoved" in value ? "StewardRemoved" : "RelationshipRequestApproved" in value ? "RelationshipRequestApproved" : "DuplicateMerged" in value ? "DuplicateMerged" : "ProfilePermanentlyDeleted" in value ? "ProfilePermanentlyDeleted" : "RelationshipRequestRejected" in value ? "RelationshipRequestRejected" : "ProfileArchived" in value ? "ProfileArchived" : "ProfileRestored" in value ? "ProfileRestored" : "BoardPostArchived" in value ? "BoardPostArchived" : "BoardPostRestored" in value ? "BoardPostRestored" : "RelationshipAdded" in value ? "RelationshipAdded" : "RelationshipRemoved" in value ? "RelationshipRemoved" : "ProfileRemovalReviewed" in value ? "ProfileRemovalReviewed" : "ClaimApproved" in value ? "ClaimApproved" : "SuccessorDesignated" in value ? "SuccessorDesignated" : value;
+}
+function from_candid_variant_n19(_uploadFile, _downloadFile, value) {
+  return "LastSteward" in value ? "LastSteward" : "NotSteward" in value ? "NotSteward" : "AlreadySteward" in value ? "AlreadySteward" : "NotSignedIn" in value ? "NotSignedIn" : "NotApprovedClaimedMember" in value ? "NotApprovedClaimedMember" : "NotDesignated" in value ? "NotDesignated" : value;
+}
+function from_candid_variant_n190(_uploadFile, _downloadFile, value) {
+  return "RelationshipRequested" in value ? "RelationshipRequested" : "BoardMention" in value ? "BoardMention" : "RelationshipReviewed" in value ? "RelationshipReviewed" : "BoardReply" in value ? "BoardReply" : "NewMessage" in value ? "NewMessage" : "ProfileClaimReviewed" in value ? "ProfileClaimReviewed" : "ProfileClaimRequested" in value ? "ProfileClaimRequested" : value;
+}
+function from_candid_variant_n196(_uploadFile, _downloadFile, value) {
+  return "Lead" in value ? "Lead" : "Note" in value ? "Note" : "Memory" in value ? "Memory" : "Source" in value ? "Source" : value;
+}
+function from_candid_variant_n207(_uploadFile, _downloadFile, value) {
   return "Story" in value ? {
     __kind__: "Story",
     Story: value.Story
@@ -38509,73 +39480,70 @@ function from_candid_variant_n177(_uploadFile, _downloadFile, value) {
     ArchiveItem: value.ArchiveItem
   } : value;
 }
-function from_candid_variant_n179(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n209(_uploadFile, _downloadFile, value) {
   return "MilitaryService" in value ? "MilitaryService" : "Story" in value ? "Story" : "Birth" in value ? "Birth" : "FamilyEvent" in value ? "FamilyEvent" : "Migration" in value ? "Migration" : "Mystery" in value ? "Mystery" : "Death" in value ? "Death" : "PhotoDocument" in value ? "PhotoDocument" : "Marriage" in value ? "Marriage" : "CensusDocument" in value ? "CensusDocument" : "Location" in value ? "Location" : value;
 }
-function from_candid_variant_n183(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n213(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
-    ok: from_candid_MergeResult_n184(_uploadFile, _downloadFile, value.ok)
+    ok: from_candid_MergeResult_n214(_uploadFile, _downloadFile, value.ok)
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_MergeError_n191(_uploadFile, _downloadFile, value.err)
+    err: from_candid_MergeError_n221(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n19(_uploadFile, _downloadFile, value) {
-  return "LastSteward" in value ? "LastSteward" : "NotSteward" in value ? "NotSteward" : "AlreadySteward" in value ? "AlreadySteward" : "NotSignedIn" in value ? "NotSignedIn" : "NotApprovedClaimedMember" in value ? "NotApprovedClaimedMember" : "NotDesignated" in value ? "NotDesignated" : value;
-}
-function from_candid_variant_n190(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n220(_uploadFile, _downloadFile, value) {
   return "Resolved" in value ? "Resolved" : "Pending" in value ? "Pending" : value;
 }
-function from_candid_variant_n192(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n222(_uploadFile, _downloadFile, value) {
   return "NotDuplicate" in value ? "NotDuplicate" : "ProfileNotFound" in value ? "ProfileNotFound" : "NotSignedIn" in value ? "NotSignedIn" : "SameProfile" in value ? "SameProfile" : value;
 }
-function from_candid_variant_n194(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n224(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
     ok: value.ok
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_MergeError_n191(_uploadFile, _downloadFile, value.err)
+    err: from_candid_MergeError_n221(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n196(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n226(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
     ok: value.ok
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_DeleteError_n197(_uploadFile, _downloadFile, value.err)
+    err: from_candid_DeleteError_n227(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n198(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n228(_uploadFile, _downloadFile, value) {
   return "HasOwnershipHistory" in value ? "HasOwnershipHistory" : "ProfileNotFound" in value ? "ProfileNotFound" : "HasMedia" in value ? "HasMedia" : "HasArchiveItems" in value ? "HasArchiveItems" : "NotSignedIn" in value ? "NotSignedIn" : "ConfirmationRequired" in value ? "ConfirmationRequired" : "HasTimeline" in value ? "HasTimeline" : "HasApprovedRelationships" in value ? "HasApprovedRelationships" : value;
 }
-function from_candid_variant_n200(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n230(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
     ok: from_candid_RelationshipRequest_n80(_uploadFile, _downloadFile, value.ok)
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_RelationshipError_n201(_uploadFile, _downloadFile, value.err)
+    err: from_candid_RelationshipError_n231(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n202(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n232(_uploadFile, _downloadFile, value) {
   return "DuplicateRequest" in value ? "DuplicateRequest" : "NotSignedIn" in value ? "NotSignedIn" : "PersonNotFound" in value ? "PersonNotFound" : value;
 }
-function from_candid_variant_n206(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n237(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
     ok: value.ok
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_RemoveError_n207(_uploadFile, _downloadFile, value.err)
+    err: from_candid_RemoveError_n238(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n208(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n239(_uploadFile, _downloadFile, value) {
   return "ProfileNotFound" in value ? "ProfileNotFound" : "NotSignedIn" in value ? "NotSignedIn" : value;
 }
-function from_candid_variant_n210(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n241(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
     ok: value.ok
@@ -38584,7 +39552,7 @@ function from_candid_variant_n210(_uploadFile, _downloadFile, value) {
     err: from_candid_RelationshipAdminError_n45(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n212(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n243(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
     ok: value.ok
@@ -38593,40 +39561,52 @@ function from_candid_variant_n212(_uploadFile, _downloadFile, value) {
     err: from_candid_StewardError_n18(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n214(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n245(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
     ok: from_candid_ProfileClaim_n65(_uploadFile, _downloadFile, value.ok)
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_ClaimError_n215(_uploadFile, _downloadFile, value.err)
+    err: from_candid_ClaimError_n246(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n216(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n247(_uploadFile, _downloadFile, value) {
   return "AlreadyPending" in value ? "AlreadyPending" : "ProfileNotFound" in value ? "ProfileNotFound" : "AlreadyClaimed" in value ? "AlreadyClaimed" : "NotSignedIn" in value ? "NotSignedIn" : "DeceasedProfile" in value ? "DeceasedProfile" : value;
 }
-function from_candid_variant_n218(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n249(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
     ok: from_candid_ProfileRemovalRequest_n71(_uploadFile, _downloadFile, value.ok)
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_RemovalError_n219(_uploadFile, _downloadFile, value.err)
+    err: from_candid_RemovalError_n250(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n220(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n251(_uploadFile, _downloadFile, value) {
   return "AlreadyPending" in value ? "AlreadyPending" : "ProfileNotFound" in value ? "ProfileNotFound" : "NotSignedIn" in value ? "NotSignedIn" : "NotOwner" in value ? "NotOwner" : "DeceasedProfile" in value ? "DeceasedProfile" : value;
 }
-function from_candid_variant_n239(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n258(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
-    ok: from_candid_PersonProfile_n110(_uploadFile, _downloadFile, value.ok)
+    ok: from_candid_Message_n149(_uploadFile, _downloadFile, value.ok)
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_EditError_n240(_uploadFile, _downloadFile, value.err)
+    err: from_candid_MessageError_n259(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n241(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n260(_uploadFile, _downloadFile, value) {
+  return "ConversationNotFound" in value ? "ConversationNotFound" : "RecipientArchived" in value ? "RecipientArchived" : "NotApprovedMember" in value ? "NotApprovedMember" : "RecipientNotClaimed" in value ? "RecipientNotClaimed" : "NotSignedIn" in value ? "NotSignedIn" : "BlockedByRecipient" in value ? "BlockedByRecipient" : "NotParticipant" in value ? "NotParticipant" : "CannotMessageSelf" in value ? "CannotMessageSelf" : "RecipientNotFound" in value ? "RecipientNotFound" : value;
+}
+function from_candid_variant_n277(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: from_candid_PersonProfile_n121(_uploadFile, _downloadFile, value.ok)
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_EditError_n278(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n279(_uploadFile, _downloadFile, value) {
   return "ProfileNotFound" in value ? "ProfileNotFound" : "NotSignedIn" in value ? "NotSignedIn" : "NotOwner" in value ? "NotOwner" : "DeceasedProfile" in value ? "DeceasedProfile" : value;
 }
 function from_candid_variant_n28(_uploadFile, _downloadFile, value) {
@@ -38668,17 +39648,8 @@ function from_candid_variant_n63(_uploadFile, _downloadFile, value) {
 function from_candid_variant_n78(_uploadFile, _downloadFile, value) {
   return "Approved" in value ? "Approved" : "Rejected" in value ? "Rejected" : "Archived" in value ? "Archived" : "Pending" in value ? "Pending" : value;
 }
-function from_candid_variant_n85(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: value.ok
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_ArchiveError_n86(_uploadFile, _downloadFile, value.err)
-  } : value;
-}
-function from_candid_variant_n87(_uploadFile, _downloadFile, value) {
-  return "NotArchived" in value ? "NotArchived" : "ProfileNotFound" in value ? "ProfileNotFound" : "AlreadyArchived" in value ? "AlreadyArchived" : "NotSignedIn" in value ? "NotSignedIn" : value;
+function from_candid_variant_n88(_uploadFile, _downloadFile, value) {
+  return "Active" in value ? "Active" : "Archived" in value ? "Archived" : value;
 }
 function from_candid_variant_n9(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
@@ -38689,89 +39660,104 @@ function from_candid_variant_n9(_uploadFile, _downloadFile, value) {
     err: from_candid_Error_n10(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n93(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n90(_uploadFile, _downloadFile, value) {
+  return "Announcement" in value ? "Announcement" : "Recipe" in value ? "Recipe" : "ResearchHistory" in value ? "ResearchHistory" : "FamilyQuestion" in value ? "FamilyQuestion" : "Memorial" in value ? "Memorial" : "General" in value ? "General" : "Other" in value ? "Other" : "ReunionEvent" in value ? "ReunionEvent" : "PhotoIdentification" in value ? "PhotoIdentification" : value;
+}
+function from_candid_variant_n92(_uploadFile, _downloadFile, value) {
+  return "FamilyOnly" in value ? "FamilyOnly" : value;
+}
+function from_candid_variant_n94(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
-    ok: from_candid_Account_n94(_uploadFile, _downloadFile, value.ok)
+    ok: value.ok
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_AccountError_n99(_uploadFile, _downloadFile, value.err)
+    err: from_candid_ArchiveError_n95(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n98(_uploadFile, _downloadFile, value) {
-  return "Google" in value ? "Google" : "Apple" in value ? "Apple" : value;
+function from_candid_variant_n96(_uploadFile, _downloadFile, value) {
+  return "NotArchived" in value ? "NotArchived" : "ProfileNotFound" in value ? "ProfileNotFound" : "AlreadyArchived" in value ? "AlreadyArchived" : "NotSignedIn" in value ? "NotSignedIn" : value;
 }
-function from_candid_vec_n126(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_vec_n127(_uploadFile, _downloadFile, x2));
+function from_candid_vec_n105(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_AuthMethod_n106(_uploadFile, _downloadFile, x2));
 }
-function from_candid_vec_n127(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_Cell_n128(_uploadFile, _downloadFile, x2));
+function from_candid_vec_n137(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_vec_n138(_uploadFile, _downloadFile, x2));
 }
-function from_candid_vec_n139(_uploadFile, _downloadFile, value) {
+function from_candid_vec_n138(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_Cell_n139(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n148(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_Message_n149(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n159(_uploadFile, _downloadFile, value) {
   return value.map((x2) => from_candid_RelationshipRequest_n80(_uploadFile, _downloadFile, x2));
 }
-async function from_candid_vec_n141(_uploadFile, _downloadFile, value) {
+async function from_candid_vec_n168(_uploadFile, _downloadFile, value) {
   return await Promise.all(value.map(async (x2) => await from_candid_ArchiveItem_n48(_uploadFile, _downloadFile, x2)));
 }
-function from_candid_vec_n142(_uploadFile, _downloadFile, value) {
+function from_candid_vec_n169(_uploadFile, _downloadFile, value) {
   return value.map((x2) => from_candid_Recipe_n75(_uploadFile, _downloadFile, x2));
 }
-function from_candid_vec_n143(_uploadFile, _downloadFile, value) {
+function from_candid_vec_n170(_uploadFile, _downloadFile, value) {
   return value.map((x2) => from_candid_Story_n24(_uploadFile, _downloadFile, x2));
 }
-function from_candid_vec_n144(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_PersonProfile_n110(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n145(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_AuditEntry_n146(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n150(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_Relationship_n39(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n151(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_DuplicatePair_n152(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n156(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_Mystery_n103(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n157(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_Notification_n158(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n162(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_MysteryContribution_n163(_uploadFile, _downloadFile, x2));
-}
-async function from_candid_vec_n168(_uploadFile, _downloadFile, value) {
-  return await Promise.all(value.map(async (x2) => await from_candid_Photo_n32(_uploadFile, _downloadFile, x2)));
-}
-function from_candid_vec_n169(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_ProfileClaim_n65(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n170(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_ProfileRemovalRequest_n71(_uploadFile, _downloadFile, x2));
-}
 function from_candid_vec_n171(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_StewardRecord_n14(_uploadFile, _downloadFile, x2));
+  return value.map((x2) => from_candid_PersonProfile_n121(_uploadFile, _downloadFile, x2));
 }
 function from_candid_vec_n172(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_SuccessorDesignation_n120(_uploadFile, _downloadFile, x2));
+  return value.map((x2) => from_candid_AuditEntry_n173(_uploadFile, _downloadFile, x2));
 }
-function from_candid_vec_n173(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_TimelineEvent_n174(_uploadFile, _downloadFile, x2));
+function from_candid_vec_n178(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_Post_n85(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n179(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_Relationship_n39(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n180(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_DuplicatePair_n181(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n185(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_Mystery_n114(_uploadFile, _downloadFile, x2));
 }
 function from_candid_vec_n186(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_MergeConflict_n187(_uploadFile, _downloadFile, x2));
+  return value.map((x2) => from_candid_Notification_n187(_uploadFile, _downloadFile, x2));
 }
-function from_candid_vec_n96(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_AuthMethod_n97(_uploadFile, _downloadFile, x2));
+function from_candid_vec_n191(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_MysteryContribution_n192(_uploadFile, _downloadFile, x2));
 }
-function to_candid_ArchiveItemClassification_n227(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n228(_uploadFile, _downloadFile, value);
+async function from_candid_vec_n197(_uploadFile, _downloadFile, value) {
+  return await Promise.all(value.map(async (x2) => await from_candid_Photo_n32(_uploadFile, _downloadFile, x2)));
 }
-function to_candid_ArchiveItemType_n223(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n224(_uploadFile, _downloadFile, value);
+function from_candid_vec_n198(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_ProfileClaim_n65(_uploadFile, _downloadFile, x2));
 }
-function to_candid_AuthMethod_n90(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n91(_uploadFile, _downloadFile, value);
+function from_candid_vec_n199(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_ProfileRemovalRequest_n71(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n200(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_Report_n164(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n201(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_StewardRecord_n14(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n202(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_SuccessorDesignation_n131(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n203(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_TimelineEvent_n204(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n216(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_MergeConflict_n217(_uploadFile, _downloadFile, x2));
+}
+function to_candid_ArchiveItemClassification_n265(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n266(_uploadFile, _downloadFile, value);
+}
+function to_candid_ArchiveItemType_n261(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n262(_uploadFile, _downloadFile, value);
+}
+function to_candid_AuthMethod_n99(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n100(_uploadFile, _downloadFile, value);
 }
 function to_candid_EvidenceStatus_n22(_uploadFile, _downloadFile, value) {
   return to_candid_variant_n23(_uploadFile, _downloadFile, value);
@@ -38779,32 +39765,38 @@ function to_candid_EvidenceStatus_n22(_uploadFile, _downloadFile, value) {
 async function to_candid_ExternalBlob_n31(_uploadFile, _downloadFile, value) {
   return await _uploadFile(value);
 }
-function to_candid_LivingStatus_n236(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n237(_uploadFile, _downloadFile, value);
+function to_candid_LivingStatus_n274(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n275(_uploadFile, _downloadFile, value);
 }
-function to_candid_MysteryContributionType_n232(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n233(_uploadFile, _downloadFile, value);
+function to_candid_MysteryContributionType_n270(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n271(_uploadFile, _downloadFile, value);
 }
-function to_candid_MysteryStatus_n101(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n102(_uploadFile, _downloadFile, value);
+function to_candid_MysteryStatus_n112(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n113(_uploadFile, _downloadFile, value);
 }
-function to_candid_OralHistorySpeaker_n230(_uploadFile, _downloadFile, value) {
-  return to_candid_record_n231(_uploadFile, _downloadFile, value);
+function to_candid_OralHistorySpeaker_n268(_uploadFile, _downloadFile, value) {
+  return to_candid_record_n269(_uploadFile, _downloadFile, value);
 }
-function to_candid_PrivacyLevel_n203(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n204(_uploadFile, _downloadFile, value);
+function to_candid_PostType_n110(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n111(_uploadFile, _downloadFile, value);
 }
-function to_candid_ProfileEdits_n234(_uploadFile, _downloadFile, value) {
-  return to_candid_record_n235(_uploadFile, _downloadFile, value);
+function to_candid_PrivacyLevel_n233(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n234(_uploadFile, _downloadFile, value);
+}
+function to_candid_ProfileEdits_n272(_uploadFile, _downloadFile, value) {
+  return to_candid_record_n273(_uploadFile, _downloadFile, value);
 }
 function to_candid_RelationshipType_n35(_uploadFile, _downloadFile, value) {
   return to_candid_variant_n36(_uploadFile, _downloadFile, value);
 }
-function to_candid_SourceStatus_n225(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n226(_uploadFile, _downloadFile, value);
+function to_candid_ReportStatus_n254(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n255(_uploadFile, _downloadFile, value);
 }
-function to_candid_UserRole_n88(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n89(_uploadFile, _downloadFile, value);
+function to_candid_SourceStatus_n263(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n264(_uploadFile, _downloadFile, value);
+}
+function to_candid_UserRole_n97(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n98(_uploadFile, _downloadFile, value);
 }
 function to_candid__ImmutableObjectStorageRefillInformation_n2(_uploadFile, _downloadFile, value) {
   return to_candid_record_n3(_uploadFile, _downloadFile, value);
@@ -38812,29 +39804,32 @@ function to_candid__ImmutableObjectStorageRefillInformation_n2(_uploadFile, _dow
 function to_candid_opt_n1(_uploadFile, _downloadFile, value) {
   return value === null ? candid_none() : candid_some(to_candid__ImmutableObjectStorageRefillInformation_n2(_uploadFile, _downloadFile, value));
 }
+function to_candid_opt_n177(_uploadFile, _downloadFile, value) {
+  return value === null ? candid_none() : candid_some(to_candid_PostType_n110(_uploadFile, _downloadFile, value));
+}
 function to_candid_opt_n20(_uploadFile, _downloadFile, value) {
   return value === null ? candid_none() : candid_some(value);
 }
 function to_candid_opt_n21(_uploadFile, _downloadFile, value) {
   return value === null ? candid_none() : candid_some(value);
 }
-function to_candid_opt_n229(_uploadFile, _downloadFile, value) {
-  return value === null ? candid_none() : candid_some(to_candid_OralHistorySpeaker_n230(_uploadFile, _downloadFile, value));
+function to_candid_opt_n267(_uploadFile, _downloadFile, value) {
+  return value === null ? candid_none() : candid_some(to_candid_OralHistorySpeaker_n268(_uploadFile, _downloadFile, value));
 }
-function to_candid_record_n231(_uploadFile, _downloadFile, value) {
+function to_candid_record_n269(_uploadFile, _downloadFile, value) {
   return {
     name: value.name,
     personId: value.personId ? candid_some(value.personId) : candid_none()
   };
 }
-function to_candid_record_n235(_uploadFile, _downloadFile, value) {
+function to_candid_record_n273(_uploadFile, _downloadFile, value) {
   return {
     occupation: value.occupation ? candid_some(value.occupation) : candid_none(),
     privacySettings: value.privacySettings ? candid_some(value.privacySettings) : candid_none(),
     nickname: value.nickname ? candid_some(value.nickname) : candid_none(),
     birthDate: value.birthDate ? candid_some(value.birthDate) : candid_none(),
     birthInfo: value.birthInfo ? candid_some(value.birthInfo) : candid_none(),
-    livingStatus: value.livingStatus ? candid_some(to_candid_LivingStatus_n236(_uploadFile, _downloadFile, value.livingStatus)) : candid_none(),
+    livingStatus: value.livingStatus ? candid_some(to_candid_LivingStatus_n274(_uploadFile, _downloadFile, value.livingStatus)) : candid_none(),
     longerStory: value.longerStory ? candid_some(value.longerStory) : candid_none(),
     story: value.story ? candid_some(value.story) : candid_none(),
     middleName: value.middleName ? candid_some(value.middleName) : candid_none(),
@@ -38853,7 +39848,35 @@ function to_candid_record_n3(_uploadFile, _downloadFile, value) {
     proposed_top_up_amount: value.proposed_top_up_amount ? candid_some(value.proposed_top_up_amount) : candid_none()
   };
 }
-function to_candid_variant_n102(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n100(_uploadFile, _downloadFile, value) {
+  return value == "Google" ? {
+    Google: null
+  } : value == "Apple" ? {
+    Apple: null
+  } : value;
+}
+function to_candid_variant_n111(_uploadFile, _downloadFile, value) {
+  return value == "Announcement" ? {
+    Announcement: null
+  } : value == "Recipe" ? {
+    Recipe: null
+  } : value == "ResearchHistory" ? {
+    ResearchHistory: null
+  } : value == "FamilyQuestion" ? {
+    FamilyQuestion: null
+  } : value == "Memorial" ? {
+    Memorial: null
+  } : value == "General" ? {
+    General: null
+  } : value == "Other" ? {
+    Other: null
+  } : value == "ReunionEvent" ? {
+    ReunionEvent: null
+  } : value == "PhotoIdentification" ? {
+    PhotoIdentification: null
+  } : value;
+}
+function to_candid_variant_n113(_uploadFile, _downloadFile, value) {
   return value == "Researching" ? {
     Researching: null
   } : value == "Open" ? {
@@ -38864,7 +39887,18 @@ function to_candid_variant_n102(_uploadFile, _downloadFile, value) {
     Resolved: null
   } : value;
 }
-function to_candid_variant_n204(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n23(_uploadFile, _downloadFile, value) {
+  return value == "Unresolved" ? {
+    Unresolved: null
+  } : value == "Documented" ? {
+    Documented: null
+  } : value == "FamilyHistory" ? {
+    FamilyHistory: null
+  } : value == "PersonalMemory" ? {
+    PersonalMemory: null
+  } : value;
+}
+function to_candid_variant_n234(_uploadFile, _downloadFile, value) {
   return value == "Private" ? {
     Private: null
   } : value == "Public" ? {
@@ -38873,7 +39907,16 @@ function to_candid_variant_n204(_uploadFile, _downloadFile, value) {
     FamilyOnly: null
   } : value;
 }
-function to_candid_variant_n224(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n255(_uploadFile, _downloadFile, value) {
+  return value == "Dismissed" ? {
+    Dismissed: null
+  } : value == "Reviewed" ? {
+    Reviewed: null
+  } : value == "Pending" ? {
+    Pending: null
+  } : value;
+}
+function to_candid_variant_n262(_uploadFile, _downloadFile, value) {
   return value == "Research" ? {
     Research: null
   } : value == "Photo" ? {
@@ -38892,7 +39935,7 @@ function to_candid_variant_n224(_uploadFile, _downloadFile, value) {
     Video: null
   } : value;
 }
-function to_candid_variant_n226(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n264(_uploadFile, _downloadFile, value) {
   return value == "Copy" ? {
     Copy: null
   } : value == "Unverified" ? {
@@ -38903,25 +39946,14 @@ function to_candid_variant_n226(_uploadFile, _downloadFile, value) {
     Original: null
   } : value;
 }
-function to_candid_variant_n228(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n266(_uploadFile, _downloadFile, value) {
   return value == "OralHistory" ? {
     OralHistory: null
   } : value == "Standard" ? {
     Standard: null
   } : value;
 }
-function to_candid_variant_n23(_uploadFile, _downloadFile, value) {
-  return value == "Unresolved" ? {
-    Unresolved: null
-  } : value == "Documented" ? {
-    Documented: null
-  } : value == "FamilyHistory" ? {
-    FamilyHistory: null
-  } : value == "PersonalMemory" ? {
-    PersonalMemory: null
-  } : value;
-}
-function to_candid_variant_n233(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n271(_uploadFile, _downloadFile, value) {
   return value == "Lead" ? {
     Lead: null
   } : value == "Note" ? {
@@ -38932,7 +39964,7 @@ function to_candid_variant_n233(_uploadFile, _downloadFile, value) {
     Source: null
   } : value;
 }
-function to_candid_variant_n237(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n275(_uploadFile, _downloadFile, value) {
   return value == "Living" ? {
     Living: null
   } : value == "Deceased" ? {
@@ -38950,20 +39982,13 @@ function to_candid_variant_n36(_uploadFile, _downloadFile, value) {
     Child: null
   } : value;
 }
-function to_candid_variant_n89(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n98(_uploadFile, _downloadFile, value) {
   return value == "admin" ? {
     admin: null
   } : value == "user" ? {
     user: null
   } : value == "guest" ? {
     guest: null
-  } : value;
-}
-function to_candid_variant_n91(_uploadFile, _downloadFile, value) {
-  return value == "Google" ? {
-    Google: null
-  } : value == "Apple" ? {
-    Apple: null
   } : value;
 }
 function createActor(canisterId, _uploadFile, _downloadFile, options = {}) {
@@ -39021,559 +40046,6 @@ function NotificationBadge({ count: count2 }) {
       children: unread > 99 ? "99+" : unread
     }
   );
-}
-const NAV_BASE = "inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
-const NAV_IDLE = "border-border bg-background text-foreground hover:border-accent/50 hover:bg-muted";
-const NAV_ACTIVE = "border-accent bg-accent/15 text-foreground";
-function navClass(active) {
-  return `${NAV_BASE} ${active ? NAV_ACTIVE : NAV_IDLE}`;
-}
-function navIconClass(active) {
-  return active ? "h-4 w-4 text-accent" : "h-4 w-4 text-accent-foreground";
-}
-function Layout({
-  children,
-  isAdmin,
-  isAuthenticated,
-  identityName,
-  identityStatus = "none",
-  activeView,
-  onMyProfileClick,
-  onSignInClick,
-  onSignOutClick,
-  onAdminClick,
-  onArchiveClick,
-  onStoriesClick,
-  onMysteriesClick,
-  onTimelineClick,
-  onBranchClick,
-  onExploreClick,
-  onStewardClick,
-  onGovernanceClick,
-  onNotificationsClick,
-  onAddMyselfClick
-}) {
-  const isExploreActive = activeView === "family-tree";
-  const isBranchActive = activeView === "heritage-branch";
-  const isArchiveActive = activeView === "archive" || activeView === "archive-detail" || activeView === "archive-contribute" || // Family Videos & Oral History is reached from Family Archive (no separate
-  // top-level pill), so the Family Archive pill stays highlighted there.
-  activeView === "videos" || activeView === "video-detail" || activeView === "video-contribute" || // Family Recipes is reached from Home / Family Archive / Person Profiles
-  // (no separate top-level pill), so the Family Archive pill stays
-  // highlighted there too.
-  activeView === "recipes" || activeView === "recipe-detail" || activeView === "recipe-contribute";
-  const isStoriesActive = activeView === "stories";
-  const isMysteriesActive = activeView === "mysteries";
-  const isTimelineActive = activeView === "timeline";
-  const isAddMyselfActive = activeView === "add-myself";
-  const isStewardActive = activeView === "steward-review";
-  const isGovernanceActive = activeView === "governance";
-  const isNotificationsActive = activeView === "notifications";
-  const isMyProfileActive = activeView === "my-profile" || activeView === "profile-edit";
-  const isAdminActive = activeView === "admin-approval";
-  const showAdminControls = isAuthenticated && isAdmin;
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative flex min-h-screen flex-col bg-background", children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsx(
-      "div",
-      {
-        className: "paper-grain pointer-events-none fixed inset-0 -z-10",
-        "aria-hidden": "true"
-      }
-    ),
-    /* @__PURE__ */ jsxRuntimeExports.jsx("header", { className: "border-b border-border bg-card shadow-subtle", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto flex w-full max-w-3xl flex-wrap items-center justify-between gap-x-4 gap-y-3 px-6 py-3.5", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex min-w-0 items-center gap-2.5", children: /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-display text-xl font-semibold tracking-tight text-foreground", children: "Norwood" }) }),
-      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap items-center gap-2", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsxs(
-          "button",
-          {
-            type: "button",
-            "data-ocid": "layout.explore_link",
-            "aria-current": isExploreActive ? "page" : void 0,
-            onClick: onExploreClick,
-            className: navClass(isExploreActive),
-            children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx(
-                TreePine,
-                {
-                  className: navIconClass(isExploreActive),
-                  strokeWidth: 1.75,
-                  "aria-hidden": "true"
-                }
-              ),
-              "Explore Family"
-            ]
-          }
-        ),
-        /* @__PURE__ */ jsxRuntimeExports.jsxs(
-          "button",
-          {
-            type: "button",
-            "data-ocid": "layout.branch_link",
-            "aria-current": isBranchActive ? "page" : void 0,
-            onClick: onBranchClick,
-            className: navClass(isBranchActive),
-            children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx(
-                GitBranch,
-                {
-                  className: navIconClass(isBranchActive),
-                  strokeWidth: 1.75,
-                  "aria-hidden": "true"
-                }
-              ),
-              "Heritage Branch"
-            ]
-          }
-        ),
-        /* @__PURE__ */ jsxRuntimeExports.jsxs(
-          "button",
-          {
-            type: "button",
-            "data-ocid": "layout.archive_link",
-            "aria-current": isArchiveActive ? "page" : void 0,
-            onClick: onArchiveClick,
-            className: navClass(isArchiveActive),
-            children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx(
-                Archive,
-                {
-                  className: navIconClass(isArchiveActive),
-                  strokeWidth: 1.75,
-                  "aria-hidden": "true"
-                }
-              ),
-              "Family Archive"
-            ]
-          }
-        ),
-        /* @__PURE__ */ jsxRuntimeExports.jsxs(
-          "button",
-          {
-            type: "button",
-            "data-ocid": "layout.stories_link",
-            "aria-current": isStoriesActive ? "page" : void 0,
-            onClick: onStoriesClick,
-            className: navClass(isStoriesActive),
-            children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx(
-                LibraryBig,
-                {
-                  className: navIconClass(isStoriesActive),
-                  strokeWidth: 1.75,
-                  "aria-hidden": "true"
-                }
-              ),
-              "Family Stories"
-            ]
-          }
-        ),
-        /* @__PURE__ */ jsxRuntimeExports.jsxs(
-          "button",
-          {
-            type: "button",
-            "data-ocid": "layout.mysteries_link",
-            "aria-current": isMysteriesActive ? "page" : void 0,
-            onClick: onMysteriesClick,
-            className: navClass(isMysteriesActive),
-            children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx(
-                Search,
-                {
-                  className: navIconClass(isMysteriesActive),
-                  strokeWidth: 1.75,
-                  "aria-hidden": "true"
-                }
-              ),
-              "Family Mysteries"
-            ]
-          }
-        ),
-        /* @__PURE__ */ jsxRuntimeExports.jsxs(
-          "button",
-          {
-            type: "button",
-            "data-ocid": "layout.timeline_link",
-            "aria-current": isTimelineActive ? "page" : void 0,
-            onClick: onTimelineClick,
-            className: navClass(isTimelineActive),
-            children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx(
-                Clock3,
-                {
-                  className: navIconClass(isTimelineActive),
-                  strokeWidth: 1.75,
-                  "aria-hidden": "true"
-                }
-              ),
-              "Travel Through Time"
-            ]
-          }
-        ),
-        /* @__PURE__ */ jsxRuntimeExports.jsxs(
-          "button",
-          {
-            type: "button",
-            "data-ocid": "layout.add_myself_link",
-            "aria-current": isAddMyselfActive ? "page" : void 0,
-            onClick: onAddMyselfClick,
-            className: navClass(isAddMyselfActive),
-            children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx(
-                UserPlus,
-                {
-                  className: navIconClass(isAddMyselfActive),
-                  strokeWidth: 1.75,
-                  "aria-hidden": "true"
-                }
-              ),
-              "Add Myself"
-            ]
-          }
-        ),
-        showAdminControls ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
-          "button",
-          {
-            type: "button",
-            "data-ocid": "layout.admin_link",
-            "aria-current": isAdminActive ? "page" : void 0,
-            onClick: onAdminClick,
-            className: navClass(isAdminActive),
-            children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx(
-                ShieldCheck,
-                {
-                  className: navIconClass(isAdminActive),
-                  strokeWidth: 1.75,
-                  "aria-hidden": "true"
-                }
-              ),
-              "Pending Contributions"
-            ]
-          }
-        ) : null,
-        showAdminControls ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
-          "button",
-          {
-            type: "button",
-            "data-ocid": "layout.steward_link",
-            "aria-current": isStewardActive ? "page" : void 0,
-            onClick: onStewardClick,
-            className: navClass(isStewardActive),
-            children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx(
-                UserCog,
-                {
-                  className: navIconClass(isStewardActive),
-                  strokeWidth: 1.75,
-                  "aria-hidden": "true"
-                }
-              ),
-              "Family Steward"
-            ]
-          }
-        ) : null,
-        showAdminControls ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
-          "button",
-          {
-            type: "button",
-            "data-ocid": "layout.governance_link",
-            "aria-current": isGovernanceActive ? "page" : void 0,
-            onClick: onGovernanceClick,
-            className: navClass(isGovernanceActive),
-            children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx(
-                Landmark,
-                {
-                  className: navIconClass(isGovernanceActive),
-                  strokeWidth: 1.75,
-                  "aria-hidden": "true"
-                }
-              ),
-              "Family Governance"
-            ]
-          }
-        ) : null,
-        /* @__PURE__ */ jsxRuntimeExports.jsxs(
-          "button",
-          {
-            type: "button",
-            "data-ocid": "layout.notifications_link",
-            "aria-current": isNotificationsActive ? "page" : void 0,
-            onClick: onNotificationsClick,
-            className: navClass(isNotificationsActive),
-            children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx(
-                Bell,
-                {
-                  className: navIconClass(isNotificationsActive),
-                  strokeWidth: 1.75,
-                  "aria-hidden": "true"
-                }
-              ),
-              "Notifications",
-              /* @__PURE__ */ jsxRuntimeExports.jsx(NotificationBadge, {})
-            ]
-          }
-        ),
-        /* @__PURE__ */ jsxRuntimeExports.jsx(
-          "span",
-          {
-            className: "hidden h-5 w-px bg-border sm:block",
-            "aria-hidden": "true"
-          }
-        ),
-        isAuthenticated ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsxs(
-            "span",
-            {
-              "data-ocid": "layout.account_identity",
-              title: identityStatus === "none" ? "Complete your profile" : "My Profile",
-              className: "inline-flex max-w-[12rem] items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-semibold text-foreground",
-              children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  CircleUser,
-                  {
-                    className: "h-4 w-4 shrink-0 text-accent-foreground",
-                    strokeWidth: 1.75,
-                    "aria-hidden": "true"
-                  }
-                ),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "truncate", children: identityName || (identityStatus === "pending" ? "Complete Profile" : "My Account") }),
-                identityStatus === "pending" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  "span",
-                  {
-                    "data-ocid": "layout.identity_pending",
-                    className: "inline-flex h-1.5 w-1.5 shrink-0 rounded-full bg-accent",
-                    "aria-label": "Profile pending"
-                  }
-                ) : null
-              ]
-            }
-          ),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs(
-            "button",
-            {
-              type: "button",
-              "data-ocid": "layout.my_profile_link",
-              "aria-current": isMyProfileActive ? "page" : void 0,
-              onClick: onMyProfileClick,
-              className: navClass(isMyProfileActive),
-              children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  CircleUser,
-                  {
-                    className: navIconClass(isMyProfileActive),
-                    strokeWidth: 1.75,
-                    "aria-hidden": "true"
-                  }
-                ),
-                "My Profile"
-              ]
-            }
-          ),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs(
-            "button",
-            {
-              type: "button",
-              "data-ocid": "layout.sign_out_button",
-              onClick: onSignOutClick,
-              className: navClass(false),
-              children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  LogOut,
-                  {
-                    className: "h-4 w-4 text-accent-foreground",
-                    strokeWidth: 1.75,
-                    "aria-hidden": "true"
-                  }
-                ),
-                "Sign out"
-              ]
-            }
-          )
-        ] }) : /* @__PURE__ */ jsxRuntimeExports.jsxs(
-          "button",
-          {
-            type: "button",
-            "data-ocid": "layout.sign_in_button",
-            onClick: onSignInClick,
-            className: navClass(false),
-            children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx(
-                LogIn,
-                {
-                  className: "h-4 w-4 text-accent-foreground",
-                  strokeWidth: 1.75,
-                  "aria-hidden": "true"
-                }
-              ),
-              "Sign in"
-            ]
-          }
-        )
-      ] })
-    ] }) }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx("main", { className: "flex flex-1 flex-col", children }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx("footer", { className: "border-t border-border bg-card/60 py-6", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mx-auto w-full max-w-3xl px-6 text-center", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-sm text-muted-foreground", children: [
-      "© ",
-      (/* @__PURE__ */ new Date()).getFullYear(),
-      ". Built with love using",
-      " ",
-      /* @__PURE__ */ jsxRuntimeExports.jsx(
-        "a",
-        {
-          href: `https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(
-            window.location.hostname
-          )}`,
-          target: "_blank",
-          rel: "noreferrer",
-          className: "font-medium text-foreground underline decoration-accent/60 underline-offset-2 transition-colors hover:text-accent-foreground",
-          children: "caffeine.ai"
-        }
-      )
-    ] }) }) })
-  ] });
-}
-function useAuth() {
-  const {
-    identity,
-    login,
-    clear,
-    isAuthenticated,
-    isInitializing,
-    isLoggingIn,
-    isLoginError,
-    loginError
-  } = useInternetIdentity();
-  const accountId = identity == null ? void 0 : identity.getPrincipal().toString();
-  const signInWithGoogle = () => login({ provider: "google" });
-  const signInWithApple = () => login({ provider: "apple" });
-  const signOut = () => clear();
-  return {
-    accountId,
-    isAuthenticated,
-    isInitializing,
-    isLoggingIn,
-    isLoginError,
-    loginError,
-    signInWithGoogle,
-    signInWithApple,
-    signOut
-  };
-}
-function GoogleLogo$1() {
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs("svg", { viewBox: "0 0 24 24", "aria-hidden": "true", className: "h-5 w-5", children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsx(
-      "path",
-      {
-        fill: "#4285F4",
-        d: "M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z"
-      }
-    ),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(
-      "path",
-      {
-        fill: "#34A853",
-        d: "M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09C3.26 21.3 7.31 24 12 24z"
-      }
-    ),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(
-      "path",
-      {
-        fill: "#FBBC05",
-        d: "M5.27 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.98-3.09z"
-      }
-    ),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(
-      "path",
-      {
-        fill: "#EA4335",
-        d: "M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.98 3.09C6.22 6.86 8.87 4.75 12 4.75z"
-      }
-    )
-  ] });
-}
-function AppleLogo$1() {
-  return /* @__PURE__ */ jsxRuntimeExports.jsx(
-    "svg",
-    {
-      viewBox: "0 0 24 24",
-      fill: "currentColor",
-      "aria-hidden": "true",
-      className: "h-5 w-5",
-      children: /* @__PURE__ */ jsxRuntimeExports.jsx("path", { d: "M17.05 20.28c-.98.95-2.05.86-3.08.38-1.09-.5-2.08-.53-3.2 0-1.44.62-2.2.44-3.06-.38C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.53 4.08zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" })
-    }
-  );
-}
-function LoginSurface() {
-  const {
-    signInWithGoogle,
-    signInWithApple,
-    isLoggingIn,
-    isLoginError,
-    loginError
-  } = useAuth();
-  const [activeProvider, setActiveProvider] = reactExports.useState(null);
-  const handleGoogle = () => {
-    setActiveProvider("google");
-    signInWithGoogle();
-  };
-  const handleApple = () => {
-    setActiveProvider("apple");
-    signInWithApple();
-  };
-  const googlePending = isLoggingIn && activeProvider === "google";
-  const applePending = isLoggingIn && activeProvider === "apple";
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "signin-panel", "data-ocid": "signin.panel", children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "signin-head", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "signin-crest", children: /* @__PURE__ */ jsxRuntimeExports.jsx(TreePine, { className: "h-7 w-7", strokeWidth: 1.75, "aria-hidden": "true" }) }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "signin-title", children: "Welcome to Norwood" }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "signin-subtitle", children: "Sign in to add yourself to the family, claim your profile, and contribute to our shared history." })
-    ] }),
-    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "signin-stack", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsxs(
-        "button",
-        {
-          type: "button",
-          "data-ocid": "signin.google_button",
-          onClick: handleGoogle,
-          disabled: isLoggingIn,
-          className: "signin-btn signin-google",
-          children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "signin-logo", children: googlePending ? /* @__PURE__ */ jsxRuntimeExports.jsx(LoaderCircle, { className: "h-5 w-5 animate-spin", "aria-hidden": "true" }) : /* @__PURE__ */ jsxRuntimeExports.jsx(GoogleLogo$1, {}) }),
-            googlePending ? "Signing in…" : "Continue with Google"
-          ]
-        }
-      ),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "signin-divider", "aria-hidden": "true", children: "or" }),
-      /* @__PURE__ */ jsxRuntimeExports.jsxs(
-        "button",
-        {
-          type: "button",
-          "data-ocid": "signin.apple_button",
-          onClick: handleApple,
-          disabled: isLoggingIn,
-          className: "signin-btn signin-apple",
-          children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "signin-logo", children: applePending ? /* @__PURE__ */ jsxRuntimeExports.jsx(LoaderCircle, { className: "h-5 w-5 animate-spin", "aria-hidden": "true" }) : /* @__PURE__ */ jsxRuntimeExports.jsx(AppleLogo$1, {}) }),
-            applePending ? "Signing in…" : "Continue with Apple"
-          ]
-        }
-      )
-    ] }),
-    isLoginError ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
-      "p",
-      {
-        className: "signin-footnote",
-        "data-ocid": "signin.error_state",
-        role: "alert",
-        children: [
-          "We couldn't sign you in",
-          loginError ? ` (${loginError.message})` : "",
-          ". Please try again."
-        ]
-      }
-    ) : /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "signin-footnote", children: "Your account is private and secure. We never post to your Google or Apple account, and your identity stays yours." })
-  ] });
 }
 const ARCHIVE_ITEM_TYPE_LABELS = {
   [ArchiveItemType.Photo]: "Photo",
@@ -39836,6 +40308,9 @@ function useSubmitArchiveItem() {
       void queryClient2.invalidateQueries({
         queryKey: ["archive", "approved", "media"]
       });
+      void queryClient2.invalidateQueries({
+        queryKey: ["pendingContributionsCount"]
+      });
     }
   });
 }
@@ -39850,6 +40325,15 @@ function useApproveArchiveItem() {
     onSuccess: () => {
       void queryClient2.invalidateQueries({ queryKey: ["archive", "pending"] });
       void queryClient2.invalidateQueries({ queryKey: ["archive", "approved"] });
+      void queryClient2.invalidateQueries({
+        queryKey: ["archive", "approved", "media"]
+      });
+      void queryClient2.invalidateQueries({ queryKey: ["photos"] });
+      void queryClient2.invalidateQueries({ queryKey: ["profilePhoto"] });
+      void queryClient2.invalidateQueries({
+        queryKey: ["pendingContributionsCount"]
+      });
+      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
     }
   });
 }
@@ -39863,8 +40347,961 @@ function useRejectArchiveItem() {
     },
     onSuccess: () => {
       void queryClient2.invalidateQueries({ queryKey: ["archive", "pending"] });
+      void queryClient2.invalidateQueries({
+        queryKey: ["pendingContributionsCount"]
+      });
+      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
     }
   });
+}
+function useListConversations() {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["messaging", "conversations"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.listConversations();
+    },
+    enabled: !!actor && !isFetching
+  });
+}
+function useGetConversation(conversationId) {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: [
+      "messaging",
+      "conversation",
+      (conversationId == null ? void 0 : conversationId.toString()) ?? "all"
+    ],
+    queryFn: async () => {
+      if (!actor || conversationId === null) return null;
+      return actor.getConversation(conversationId);
+    },
+    enabled: !!actor && !isFetching && conversationId !== null
+  });
+}
+function useListMessageableMembers() {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["messaging", "messageableMembers"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.listMessageableMembers();
+    },
+    enabled: !!actor && !isFetching
+  });
+}
+function useCanMessagePerson(personId) {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["messaging", "canMessage", personId],
+    queryFn: async () => {
+      if (!actor || personId === null) return false;
+      return actor.canMessagePerson(personId);
+    },
+    enabled: !!actor && !isFetching && personId !== null
+  });
+}
+function useSendMessage() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (input) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.sendMessage(input.recipientPersonId, input.body);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["messaging", "conversations"]
+      });
+      void queryClient2.invalidateQueries({
+        queryKey: ["messaging", "conversation"]
+      });
+      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
+    }
+  });
+}
+function useMarkConversationRead() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (conversationId) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.markConversationRead(conversationId);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["messaging", "conversations"]
+      });
+      void queryClient2.invalidateQueries({
+        queryKey: ["messaging", "conversation"]
+      });
+    }
+  });
+}
+function useBlockUser() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (blockedAccountId) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.blockUser(blockedAccountId);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["messaging", "blocked"]
+      });
+    }
+  });
+}
+function useUnblockUser() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (blockedAccountId) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.unblockUser(blockedAccountId);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["messaging", "blocked"]
+      });
+    }
+  });
+}
+function useListBlockedUsers() {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["messaging", "blocked"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.listBlockedUsers();
+    },
+    enabled: !!actor && !isFetching
+  });
+}
+function useReportMessage() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (input) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.reportMessage(input.messageId, input.reason);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["messaging", "reports"]
+      });
+      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
+    }
+  });
+}
+function useListReports() {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["messaging", "reports"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.listReports();
+    },
+    enabled: !!actor && !isFetching
+  });
+}
+function useGetReportedMessage(reportId) {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["messaging", "reports", (reportId == null ? void 0 : reportId.toString()) ?? "all"],
+    queryFn: async () => {
+      if (!actor || reportId === null) return null;
+      return actor.getReportedMessage(reportId);
+    },
+    enabled: !!actor && !isFetching && reportId !== null
+  });
+}
+function useReviewReport() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (input) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.reviewReport(input.reportId, input.status);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["messaging", "reports"]
+      });
+      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
+    }
+  });
+}
+function usePersonProfile(personId, options) {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["personProfile", personId],
+    queryFn: async () => {
+      if (!actor) return null;
+      return actor.getPersonProfile(personId);
+    },
+    enabled: ((options == null ? void 0 : options.enabled) ?? true) && !!actor && !isFetching
+  });
+}
+function useMyProfileClaim(personId) {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["myProfileClaim", personId],
+    queryFn: async () => {
+      if (!actor) return null;
+      return actor.getMyProfileClaim(personId);
+    },
+    enabled: !!actor && !isFetching
+  });
+}
+function useMyProfile() {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["myProfile"],
+    queryFn: async () => {
+      if (!actor) return null;
+      return actor.getMyProfile();
+    },
+    enabled: !!actor && !isFetching
+  });
+}
+function useListProfileClaims() {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["profileClaims"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.listProfileClaims();
+    },
+    enabled: !!actor && !isFetching
+  });
+}
+function useRequestProfileClaim() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (personId) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.requestProfileClaim(personId);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({ queryKey: ["profileClaims"] });
+      void queryClient2.invalidateQueries({ queryKey: ["personProfile"] });
+      void queryClient2.invalidateQueries({ queryKey: ["myProfileClaim"] });
+      void queryClient2.invalidateQueries({ queryKey: ["myProfile"] });
+      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient2.invalidateQueries({
+        queryKey: ["pendingContributionsCount"]
+      });
+    }
+  });
+}
+function useApproveProfileClaim() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (claimId) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.approveProfileClaim(claimId);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({ queryKey: ["profileClaims"] });
+      void queryClient2.invalidateQueries({ queryKey: ["personProfile"] });
+      void queryClient2.invalidateQueries({ queryKey: ["myProfileClaim"] });
+      void queryClient2.invalidateQueries({ queryKey: ["myProfile"] });
+      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient2.invalidateQueries({
+        queryKey: ["pendingContributionsCount"]
+      });
+    }
+  });
+}
+function useRejectProfileClaim() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (claimId) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.rejectProfileClaim(claimId);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({ queryKey: ["profileClaims"] });
+      void queryClient2.invalidateQueries({ queryKey: ["personProfile"] });
+      void queryClient2.invalidateQueries({ queryKey: ["myProfileClaim"] });
+      void queryClient2.invalidateQueries({ queryKey: ["myProfile"] });
+      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient2.invalidateQueries({
+        queryKey: ["pendingContributionsCount"]
+      });
+    }
+  });
+}
+function useSearchPossibleMatches() {
+  const { actor } = useActor(createActor);
+  return useMutation({
+    mutationFn: async (name) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.searchPossibleMatches(name);
+    }
+  });
+}
+function useCreateMyself() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (name) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.createMyself(name);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({ queryKey: ["personProfile"] });
+    }
+  });
+}
+function useUpdateOwnProfile() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      personId,
+      edits
+    }) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.updateOwnProfile(personId, edits);
+    },
+    onSuccess: (_data, variables) => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["personProfile", variables.personId]
+      });
+      void queryClient2.invalidateQueries({ queryKey: ["myProfile"] });
+      void queryClient2.invalidateQueries({ queryKey: ["myProfileClaim"] });
+      void queryClient2.invalidateQueries({ queryKey: ["profileClaims"] });
+      void queryClient2.invalidateQueries({
+        queryKey: ["confirmedRelationships"]
+      });
+      void queryClient2.invalidateQueries({
+        queryKey: ["myRelationshipRequests"]
+      });
+      void queryClient2.invalidateQueries({
+        queryKey: ["photos", variables.personId]
+      });
+      void queryClient2.invalidateQueries({
+        queryKey: ["profilePhoto", variables.personId]
+      });
+    }
+  });
+}
+function useMyRelationshipRequests() {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["myRelationshipRequests"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.getMyRelationshipRequests();
+    },
+    enabled: !!actor && !isFetching
+  });
+}
+function useListRelationshipRequests() {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["relationshipRequests"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.listRelationshipRequests();
+    },
+    enabled: !!actor && !isFetching
+  });
+}
+function useProposeRelationship() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      fromPersonId,
+      toPersonId,
+      relationshipType
+    }) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.proposeRelationship(
+        fromPersonId,
+        toPersonId,
+        relationshipType
+      );
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["relationshipRequests"]
+      });
+      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient2.invalidateQueries({
+        queryKey: ["myRelationshipRequests"]
+      });
+    }
+  });
+}
+function useApproveRelationshipRequest() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (requestId) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.approveRelationshipRequest(requestId);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["relationshipRequests"]
+      });
+      void queryClient2.invalidateQueries({
+        queryKey: ["confirmedRelationships"]
+      });
+      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient2.invalidateQueries({
+        queryKey: ["pendingContributionsCount"]
+      });
+      void queryClient2.invalidateQueries({
+        queryKey: ["myRelationshipRequests"]
+      });
+    }
+  });
+}
+function useRejectRelationshipRequest() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (requestId) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.rejectRelationshipRequest(requestId);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["relationshipRequests"]
+      });
+      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient2.invalidateQueries({
+        queryKey: ["pendingContributionsCount"]
+      });
+      void queryClient2.invalidateQueries({
+        queryKey: ["myRelationshipRequests"]
+      });
+    }
+  });
+}
+function useSetRelationshipRequestPending() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (requestId) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.setRelationshipRequestPending(requestId);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["relationshipRequests"]
+      });
+      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient2.invalidateQueries({
+        queryKey: ["pendingContributionsCount"]
+      });
+      void queryClient2.invalidateQueries({
+        queryKey: ["myRelationshipRequests"]
+      });
+    }
+  });
+}
+function useListConfirmedRelationships() {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["confirmedRelationships"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.listConfirmedRelationships();
+    },
+    enabled: !!actor && !isFetching
+  });
+}
+function StewardActionBadge() {
+  const { data: isAdmin = false } = useIsAdmin();
+  const { data: claims = [] } = useListProfileClaims();
+  const { data: requests = [] } = useListRelationshipRequests();
+  const { data: reports = [] } = useListReports();
+  const { data: pendingArchive = [] } = usePendingArchiveItems();
+  if (!isAdmin) return null;
+  const count2 = claims.filter((claim) => claim.status === "Pending").length + requests.filter((request2) => request2.status === "Pending").length + reports.filter((report) => report.status === ReportStatus.Pending).length + pendingArchive.length;
+  if (count2 <= 0) return null;
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    "span",
+    {
+      "data-ocid": "steward_action_badge",
+      "aria-label": `${count2} steward action${count2 === 1 ? "" : "s"} awaiting review`,
+      className: "pending-badge",
+      children: count2 > 99 ? "99+" : count2
+    }
+  );
+}
+const NAV_BASE = "inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+const NAV_IDLE = "border-border bg-background text-foreground hover:border-accent/50 hover:bg-muted";
+const NAV_ACTIVE = "border-accent bg-accent/15 text-foreground";
+function navClass(active) {
+  return `${NAV_BASE} ${active ? NAV_ACTIVE : NAV_IDLE}`;
+}
+function navIconClass(active) {
+  return active ? "h-4 w-4 text-accent" : "h-4 w-4 text-accent-foreground";
+}
+function Layout({
+  children,
+  isAdmin,
+  isAuthenticated,
+  isApprovedMember,
+  identityName,
+  hasClaimedProfile = false,
+  activeView,
+  onMyProfileClick,
+  onSignInClick,
+  onSignOutClick,
+  onArchiveClick,
+  onBranchClick,
+  onExploreClick,
+  onHistoryClick,
+  onAddMyselfClick,
+  onMessageBoardClick,
+  onStewardClick,
+  onNotificationsClick
+}) {
+  const isExploreActive = activeView === "family-tree";
+  const isBranchActive = activeView === "heritage-branch";
+  const isArchiveActive = activeView === "archive" || activeView === "archive-detail" || activeView === "archive-contribute" || // Family Videos & Oral History is reached from Family Archive (no separate
+  // top-level pill), so the Family Archive pill stays highlighted there.
+  activeView === "videos" || activeView === "video-detail" || activeView === "video-contribute" || // Family Recipes is reached from Home / Family Archive / Person Profiles
+  // (no separate top-level pill), so the Family Archive pill stays
+  // highlighted there too.
+  activeView === "recipes" || activeView === "recipe-detail" || activeView === "recipe-contribute";
+  const isHistoryActive = activeView === "family-history" || activeView === "stories" || activeView === "mysteries" || activeView === "timeline";
+  const isAddMyselfActive = activeView === "add-myself";
+  const isMessageBoardActive = activeView === "message-board-hub" || activeView === "board" || activeView === "board-post" || activeView === "board-compose" || activeView === "inbox" || activeView === "conversation";
+  const isStewardActive = activeView === "steward-hub" || activeView === "steward-review" || activeView === "governance" || activeView === "admin-approval";
+  const isNotificationsActive = activeView === "notifications";
+  const isMyProfileActive = activeView === "my-profile" || activeView === "profile-edit";
+  const showAdminControls = isAuthenticated && isAdmin;
+  const showApprovedMemberControls = isAuthenticated && isApprovedMember;
+  const addLabel = hasClaimedProfile ? "Add Family" : "Add Myself";
+  const profileLabel = identityName || "My Profile";
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative flex min-h-screen flex-col bg-background", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "div",
+      {
+        className: "paper-grain pointer-events-none fixed inset-0 -z-10",
+        "aria-hidden": "true"
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("header", { className: "border-b border-border bg-card shadow-subtle", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto flex w-full max-w-3xl flex-wrap items-center justify-between gap-x-4 gap-y-3 px-6 py-3.5", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex min-w-0 items-center gap-2.5", children: /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-display text-xl font-semibold tracking-tight text-foreground", children: "Norwood" }) }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap items-center gap-2", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "button",
+          {
+            type: "button",
+            "data-ocid": "layout.explore_link",
+            "aria-current": isExploreActive ? "page" : void 0,
+            onClick: onExploreClick,
+            className: navClass(isExploreActive),
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                TreePine,
+                {
+                  className: navIconClass(isExploreActive),
+                  strokeWidth: 1.75,
+                  "aria-hidden": "true"
+                }
+              ),
+              "Explore Family"
+            ]
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "button",
+          {
+            type: "button",
+            "data-ocid": "layout.branch_link",
+            "aria-current": isBranchActive ? "page" : void 0,
+            onClick: onBranchClick,
+            className: navClass(isBranchActive),
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                GitBranch,
+                {
+                  className: navIconClass(isBranchActive),
+                  strokeWidth: 1.75,
+                  "aria-hidden": "true"
+                }
+              ),
+              "Heritage Branch"
+            ]
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "button",
+          {
+            type: "button",
+            "data-ocid": "layout.archive_link",
+            "aria-current": isArchiveActive ? "page" : void 0,
+            onClick: onArchiveClick,
+            className: navClass(isArchiveActive),
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                Archive,
+                {
+                  className: navIconClass(isArchiveActive),
+                  strokeWidth: 1.75,
+                  "aria-hidden": "true"
+                }
+              ),
+              "Family Archive"
+            ]
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "button",
+          {
+            type: "button",
+            "data-ocid": "layout.history_link",
+            "aria-current": isHistoryActive ? "page" : void 0,
+            onClick: onHistoryClick,
+            className: navClass(isHistoryActive),
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                LibraryBig,
+                {
+                  className: navIconClass(isHistoryActive),
+                  strokeWidth: 1.75,
+                  "aria-hidden": "true"
+                }
+              ),
+              "Family History"
+            ]
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "button",
+          {
+            type: "button",
+            "data-ocid": "layout.add_myself_link",
+            "aria-current": isAddMyselfActive ? "page" : void 0,
+            onClick: onAddMyselfClick,
+            className: navClass(isAddMyselfActive),
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                UserPlus,
+                {
+                  className: navIconClass(isAddMyselfActive),
+                  strokeWidth: 1.75,
+                  "aria-hidden": "true"
+                }
+              ),
+              addLabel
+            ]
+          }
+        ),
+        showApprovedMemberControls ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "button",
+          {
+            type: "button",
+            "data-ocid": "layout.message_board_link",
+            "aria-current": isMessageBoardActive ? "page" : void 0,
+            onClick: onMessageBoardClick,
+            className: navClass(isMessageBoardActive),
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                MessageSquareText,
+                {
+                  className: navIconClass(isMessageBoardActive),
+                  strokeWidth: 1.75,
+                  "aria-hidden": "true"
+                }
+              ),
+              "Message Board"
+            ]
+          }
+        ) : null,
+        showAdminControls ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "button",
+          {
+            type: "button",
+            "data-ocid": "layout.steward_link",
+            "aria-current": isStewardActive ? "page" : void 0,
+            onClick: onStewardClick,
+            className: navClass(isStewardActive),
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                UserCog,
+                {
+                  className: navIconClass(isStewardActive),
+                  strokeWidth: 1.75,
+                  "aria-hidden": "true"
+                }
+              ),
+              "Family Steward",
+              /* @__PURE__ */ jsxRuntimeExports.jsx(StewardActionBadge, {})
+            ]
+          }
+        ) : null,
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "button",
+          {
+            type: "button",
+            "data-ocid": "layout.notifications_link",
+            "aria-current": isNotificationsActive ? "page" : void 0,
+            onClick: onNotificationsClick,
+            className: navClass(isNotificationsActive),
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                Bell,
+                {
+                  className: navIconClass(isNotificationsActive),
+                  strokeWidth: 1.75,
+                  "aria-hidden": "true"
+                }
+              ),
+              "Notifications",
+              /* @__PURE__ */ jsxRuntimeExports.jsx(NotificationBadge, {})
+            ]
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "span",
+          {
+            className: "hidden h-5 w-px bg-border sm:block",
+            "aria-hidden": "true"
+          }
+        ),
+        isAuthenticated ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "button",
+            {
+              type: "button",
+              "data-ocid": "layout.my_profile_link",
+              "aria-current": isMyProfileActive ? "page" : void 0,
+              onClick: onMyProfileClick,
+              className: navClass(isMyProfileActive),
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  CircleUser,
+                  {
+                    className: navIconClass(isMyProfileActive),
+                    strokeWidth: 1.75,
+                    "aria-hidden": "true"
+                  }
+                ),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "max-w-[10rem] truncate", children: profileLabel })
+              ]
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "button",
+            {
+              type: "button",
+              "data-ocid": "layout.sign_out_button",
+              onClick: onSignOutClick,
+              className: navClass(false),
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  LogOut,
+                  {
+                    className: "h-4 w-4 text-accent-foreground",
+                    strokeWidth: 1.75,
+                    "aria-hidden": "true"
+                  }
+                ),
+                "Sign out"
+              ]
+            }
+          )
+        ] }) : /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "button",
+          {
+            type: "button",
+            "data-ocid": "layout.sign_in_button",
+            onClick: onSignInClick,
+            className: navClass(false),
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                LogIn,
+                {
+                  className: "h-4 w-4 text-accent-foreground",
+                  strokeWidth: 1.75,
+                  "aria-hidden": "true"
+                }
+              ),
+              "Sign in"
+            ]
+          }
+        )
+      ] })
+    ] }) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("main", { className: "flex flex-1 flex-col", children }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("footer", { className: "border-t border-border bg-card/60 py-6", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mx-auto w-full max-w-3xl px-6 text-center", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-sm text-muted-foreground", children: [
+      "© ",
+      (/* @__PURE__ */ new Date()).getFullYear(),
+      ". Built with love using",
+      " ",
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "a",
+        {
+          href: `https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(
+            window.location.hostname
+          )}`,
+          target: "_blank",
+          rel: "noreferrer",
+          className: "font-medium text-foreground underline decoration-accent/60 underline-offset-2 transition-colors hover:text-accent-foreground",
+          children: "caffeine.ai"
+        }
+      )
+    ] }) }) })
+  ] });
+}
+function useAuth() {
+  const {
+    identity,
+    login,
+    clear,
+    isAuthenticated,
+    isInitializing,
+    isLoggingIn,
+    isLoginError,
+    loginError
+  } = useInternetIdentity();
+  const accountId = identity == null ? void 0 : identity.getPrincipal().toString();
+  const signInWithGoogle = () => login({ provider: "google" });
+  const signInWithApple = () => login({ provider: "apple" });
+  const signOut = () => clear();
+  return {
+    accountId,
+    isAuthenticated,
+    isInitializing,
+    isLoggingIn,
+    isLoginError,
+    loginError,
+    signInWithGoogle,
+    signInWithApple,
+    signOut
+  };
+}
+function GoogleLogo$1() {
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("svg", { viewBox: "0 0 24 24", "aria-hidden": "true", className: "h-5 w-5", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "path",
+      {
+        fill: "#4285F4",
+        d: "M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z"
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "path",
+      {
+        fill: "#34A853",
+        d: "M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09C3.26 21.3 7.31 24 12 24z"
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "path",
+      {
+        fill: "#FBBC05",
+        d: "M5.27 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.98-3.09z"
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "path",
+      {
+        fill: "#EA4335",
+        d: "M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.98 3.09C6.22 6.86 8.87 4.75 12 4.75z"
+      }
+    )
+  ] });
+}
+function AppleLogo$1() {
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    "svg",
+    {
+      viewBox: "0 0 24 24",
+      fill: "currentColor",
+      "aria-hidden": "true",
+      className: "h-5 w-5",
+      children: /* @__PURE__ */ jsxRuntimeExports.jsx("path", { d: "M17.05 20.28c-.98.95-2.05.86-3.08.38-1.09-.5-2.08-.53-3.2 0-1.44.62-2.2.44-3.06-.38C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.53 4.08zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" })
+    }
+  );
+}
+function LoginSurface() {
+  const {
+    signInWithGoogle,
+    signInWithApple,
+    isLoggingIn,
+    isLoginError,
+    loginError
+  } = useAuth();
+  const [activeProvider, setActiveProvider] = reactExports.useState(null);
+  const handleGoogle = () => {
+    setActiveProvider("google");
+    signInWithGoogle();
+  };
+  const handleApple = () => {
+    setActiveProvider("apple");
+    signInWithApple();
+  };
+  const googlePending = isLoggingIn && activeProvider === "google";
+  const applePending = isLoggingIn && activeProvider === "apple";
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "signin-panel", "data-ocid": "signin.panel", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "signin-head", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "signin-crest", children: /* @__PURE__ */ jsxRuntimeExports.jsx(TreePine, { className: "h-7 w-7", strokeWidth: 1.75, "aria-hidden": "true" }) }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "signin-title", children: "Welcome to Norwood" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "signin-subtitle", children: "Sign in to add yourself to the family, claim your profile, and contribute to our shared history." })
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "signin-stack", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "signin.google_button",
+          onClick: handleGoogle,
+          disabled: isLoggingIn,
+          className: "signin-btn signin-google",
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "signin-logo", children: googlePending ? /* @__PURE__ */ jsxRuntimeExports.jsx(LoaderCircle, { className: "h-5 w-5 animate-spin", "aria-hidden": "true" }) : /* @__PURE__ */ jsxRuntimeExports.jsx(GoogleLogo$1, {}) }),
+            googlePending ? "Signing in…" : "Continue with Google"
+          ]
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "signin-divider", "aria-hidden": "true", children: "or" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "signin.apple_button",
+          onClick: handleApple,
+          disabled: isLoggingIn,
+          className: "signin-btn signin-apple",
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "signin-logo", children: applePending ? /* @__PURE__ */ jsxRuntimeExports.jsx(LoaderCircle, { className: "h-5 w-5 animate-spin", "aria-hidden": "true" }) : /* @__PURE__ */ jsxRuntimeExports.jsx(AppleLogo$1, {}) }),
+            applePending ? "Signing in…" : "Continue with Apple"
+          ]
+        }
+      )
+    ] }),
+    isLoginError ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "p",
+      {
+        className: "signin-footnote",
+        "data-ocid": "signin.error_state",
+        role: "alert",
+        children: [
+          "We couldn't sign you in",
+          loginError ? ` (${loginError.message})` : "",
+          ". Please try again."
+        ]
+      }
+    ) : /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "signin-footnote", children: "Your account is private and secure. We never post to your Google or Apple account, and your identity stays yours." })
+  ] });
 }
 const CANONICAL_DISPLAY_NAMES = {
   lorenzoSmithJr: "Lorenzo Smith Jr."
@@ -40453,156 +41890,6 @@ function overlayConfirmedRelationships(base, confirmed) {
   }
   return graph;
 }
-function usePersonProfile(personId, options) {
-  const { actor, isFetching } = useActor(createActor);
-  return useQuery({
-    queryKey: ["personProfile", personId],
-    queryFn: async () => {
-      if (!actor) return null;
-      return actor.getPersonProfile(personId);
-    },
-    enabled: ((options == null ? void 0 : options.enabled) ?? true) && !!actor && !isFetching
-  });
-}
-function useMyProfileClaim(personId) {
-  const { actor, isFetching } = useActor(createActor);
-  return useQuery({
-    queryKey: ["myProfileClaim", personId],
-    queryFn: async () => {
-      if (!actor) return null;
-      return actor.getMyProfileClaim(personId);
-    },
-    enabled: !!actor && !isFetching
-  });
-}
-function useMyProfile() {
-  const { actor, isFetching } = useActor(createActor);
-  return useQuery({
-    queryKey: ["myProfile"],
-    queryFn: async () => {
-      if (!actor) return null;
-      return actor.getMyProfile();
-    },
-    enabled: !!actor && !isFetching
-  });
-}
-function useListProfileClaims() {
-  const { actor, isFetching } = useActor(createActor);
-  return useQuery({
-    queryKey: ["profileClaims"],
-    queryFn: async () => {
-      if (!actor) return [];
-      return actor.listProfileClaims();
-    },
-    enabled: !!actor && !isFetching
-  });
-}
-function useRequestProfileClaim() {
-  const { actor } = useActor(createActor);
-  const queryClient2 = useQueryClient();
-  return useMutation({
-    mutationFn: async (personId) => {
-      if (!actor) throw new Error("Backend is not ready");
-      return actor.requestProfileClaim(personId);
-    },
-    onSuccess: () => {
-      void queryClient2.invalidateQueries({ queryKey: ["profileClaims"] });
-      void queryClient2.invalidateQueries({ queryKey: ["personProfile"] });
-      void queryClient2.invalidateQueries({ queryKey: ["myProfileClaim"] });
-      void queryClient2.invalidateQueries({ queryKey: ["myProfile"] });
-      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
-    }
-  });
-}
-function useApproveProfileClaim() {
-  const { actor } = useActor(createActor);
-  const queryClient2 = useQueryClient();
-  return useMutation({
-    mutationFn: async (claimId) => {
-      if (!actor) throw new Error("Backend is not ready");
-      return actor.approveProfileClaim(claimId);
-    },
-    onSuccess: () => {
-      void queryClient2.invalidateQueries({ queryKey: ["profileClaims"] });
-      void queryClient2.invalidateQueries({ queryKey: ["personProfile"] });
-      void queryClient2.invalidateQueries({ queryKey: ["myProfileClaim"] });
-      void queryClient2.invalidateQueries({ queryKey: ["myProfile"] });
-      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
-    }
-  });
-}
-function useRejectProfileClaim() {
-  const { actor } = useActor(createActor);
-  const queryClient2 = useQueryClient();
-  return useMutation({
-    mutationFn: async (claimId) => {
-      if (!actor) throw new Error("Backend is not ready");
-      return actor.rejectProfileClaim(claimId);
-    },
-    onSuccess: () => {
-      void queryClient2.invalidateQueries({ queryKey: ["profileClaims"] });
-      void queryClient2.invalidateQueries({ queryKey: ["personProfile"] });
-      void queryClient2.invalidateQueries({ queryKey: ["myProfileClaim"] });
-      void queryClient2.invalidateQueries({ queryKey: ["myProfile"] });
-      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
-    }
-  });
-}
-function useSearchPossibleMatches() {
-  const { actor } = useActor(createActor);
-  return useMutation({
-    mutationFn: async (name) => {
-      if (!actor) throw new Error("Backend is not ready");
-      return actor.searchPossibleMatches(name);
-    }
-  });
-}
-function useCreateMyself() {
-  const { actor } = useActor(createActor);
-  const queryClient2 = useQueryClient();
-  return useMutation({
-    mutationFn: async (name) => {
-      if (!actor) throw new Error("Backend is not ready");
-      return actor.createMyself(name);
-    },
-    onSuccess: () => {
-      void queryClient2.invalidateQueries({ queryKey: ["personProfile"] });
-    }
-  });
-}
-function useUpdateOwnProfile() {
-  const { actor } = useActor(createActor);
-  const queryClient2 = useQueryClient();
-  return useMutation({
-    mutationFn: async ({
-      personId,
-      edits
-    }) => {
-      if (!actor) throw new Error("Backend is not ready");
-      return actor.updateOwnProfile(personId, edits);
-    },
-    onSuccess: (_data, variables) => {
-      void queryClient2.invalidateQueries({
-        queryKey: ["personProfile", variables.personId]
-      });
-      void queryClient2.invalidateQueries({ queryKey: ["myProfile"] });
-      void queryClient2.invalidateQueries({ queryKey: ["myProfileClaim"] });
-      void queryClient2.invalidateQueries({ queryKey: ["profileClaims"] });
-      void queryClient2.invalidateQueries({
-        queryKey: ["confirmedRelationships"]
-      });
-      void queryClient2.invalidateQueries({
-        queryKey: ["myRelationshipRequests"]
-      });
-      void queryClient2.invalidateQueries({
-        queryKey: ["photos", variables.personId]
-      });
-      void queryClient2.invalidateQueries({
-        queryKey: ["profilePhoto", variables.personId]
-      });
-    }
-  });
-}
 function useNavbarIdentity() {
   const { isAuthenticated } = useAuth();
   const { data: profile } = useMyProfile();
@@ -40641,114 +41928,6 @@ function clearOriginatingView() {
     sessionStorage.removeItem(ORIGINATING_VIEW_KEY);
   } catch {
   }
-}
-function useMyRelationshipRequests() {
-  const { actor, isFetching } = useActor(createActor);
-  return useQuery({
-    queryKey: ["myRelationshipRequests"],
-    queryFn: async () => {
-      if (!actor) return [];
-      return actor.getMyRelationshipRequests();
-    },
-    enabled: !!actor && !isFetching
-  });
-}
-function useListRelationshipRequests() {
-  const { actor, isFetching } = useActor(createActor);
-  return useQuery({
-    queryKey: ["relationshipRequests"],
-    queryFn: async () => {
-      if (!actor) return [];
-      return actor.listRelationshipRequests();
-    },
-    enabled: !!actor && !isFetching
-  });
-}
-function useProposeRelationship() {
-  const { actor } = useActor(createActor);
-  const queryClient2 = useQueryClient();
-  return useMutation({
-    mutationFn: async ({
-      fromPersonId,
-      toPersonId,
-      relationshipType
-    }) => {
-      if (!actor) throw new Error("Backend is not ready");
-      return actor.proposeRelationship(
-        fromPersonId,
-        toPersonId,
-        relationshipType
-      );
-    },
-    onSuccess: () => {
-      void queryClient2.invalidateQueries({
-        queryKey: ["relationshipRequests"]
-      });
-      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
-    }
-  });
-}
-function useApproveRelationshipRequest() {
-  const { actor } = useActor(createActor);
-  const queryClient2 = useQueryClient();
-  return useMutation({
-    mutationFn: async (requestId) => {
-      if (!actor) throw new Error("Backend is not ready");
-      return actor.approveRelationshipRequest(requestId);
-    },
-    onSuccess: () => {
-      void queryClient2.invalidateQueries({
-        queryKey: ["relationshipRequests"]
-      });
-      void queryClient2.invalidateQueries({
-        queryKey: ["confirmedRelationships"]
-      });
-      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
-    }
-  });
-}
-function useRejectRelationshipRequest() {
-  const { actor } = useActor(createActor);
-  const queryClient2 = useQueryClient();
-  return useMutation({
-    mutationFn: async (requestId) => {
-      if (!actor) throw new Error("Backend is not ready");
-      return actor.rejectRelationshipRequest(requestId);
-    },
-    onSuccess: () => {
-      void queryClient2.invalidateQueries({
-        queryKey: ["relationshipRequests"]
-      });
-      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
-    }
-  });
-}
-function useSetRelationshipRequestPending() {
-  const { actor } = useActor(createActor);
-  const queryClient2 = useQueryClient();
-  return useMutation({
-    mutationFn: async (requestId) => {
-      if (!actor) throw new Error("Backend is not ready");
-      return actor.setRelationshipRequestPending(requestId);
-    },
-    onSuccess: () => {
-      void queryClient2.invalidateQueries({
-        queryKey: ["relationshipRequests"]
-      });
-      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
-    }
-  });
-}
-function useListConfirmedRelationships() {
-  const { actor, isFetching } = useActor(createActor);
-  return useQuery({
-    queryKey: ["confirmedRelationships"],
-    queryFn: async () => {
-      if (!actor) return [];
-      return actor.listConfirmedRelationships();
-    },
-    enabled: !!actor && !isFetching
-  });
 }
 const SUFFIX_VARIANTS = {
   jr: "jr",
@@ -40791,7 +41970,10 @@ const NOTIFICATION_TYPE_LABELS = {
   [NotificationType.ProfileClaimRequested]: "Profile claim requested",
   [NotificationType.ProfileClaimReviewed]: "Profile claim reviewed",
   [NotificationType.RelationshipRequested]: "Relationship requested",
-  [NotificationType.RelationshipReviewed]: "Relationship reviewed"
+  [NotificationType.RelationshipReviewed]: "Relationship reviewed",
+  [NotificationType.BoardMention]: "Board mention",
+  [NotificationType.BoardReply]: "Board reply",
+  [NotificationType.NewMessage]: "New message"
 };
 function resolveStatusBadge(kind, status) {
   if (kind === "claim") {
@@ -53910,6 +55092,7 @@ function usePromoteToSteward() {
       void queryClient2.invalidateQueries({
         queryKey: ["governance", "auditHistory"]
       });
+      void queryClient2.invalidateQueries({ queryKey: ["isAdmin"] });
     }
   });
 }
@@ -53928,6 +55111,7 @@ function useRemoveSteward() {
       void queryClient2.invalidateQueries({
         queryKey: ["governance", "auditHistory"]
       });
+      void queryClient2.invalidateQueries({ queryKey: ["isAdmin"] });
     }
   });
 }
@@ -53970,6 +55154,7 @@ function useActivateSuccessor() {
       void queryClient2.invalidateQueries({
         queryKey: ["governance", "auditHistory"]
       });
+      void queryClient2.invalidateQueries({ queryKey: ["isAdmin"] });
     }
   });
 }
@@ -54333,6 +55518,9 @@ function useSubmitRecipe() {
     },
     onSuccess: () => {
       void queryClient2.invalidateQueries({ queryKey: ["recipes", "pending"] });
+      void queryClient2.invalidateQueries({
+        queryKey: ["pendingContributionsCount"]
+      });
     }
   });
 }
@@ -54347,6 +55535,10 @@ function useApproveRecipe() {
     onSuccess: () => {
       void queryClient2.invalidateQueries({ queryKey: ["recipes", "pending"] });
       void queryClient2.invalidateQueries({ queryKey: ["recipes", "approved"] });
+      void queryClient2.invalidateQueries({
+        queryKey: ["pendingContributionsCount"]
+      });
+      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
     }
   });
 }
@@ -54360,6 +55552,10 @@ function useRejectRecipe() {
     },
     onSuccess: () => {
       void queryClient2.invalidateQueries({ queryKey: ["recipes", "pending"] });
+      void queryClient2.invalidateQueries({
+        queryKey: ["pendingContributionsCount"]
+      });
+      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
     }
   });
 }
@@ -56651,7 +57847,7 @@ function backendProfileToPersonProfile(backend) {
     sources: []
   };
 }
-function getInitials$5(name) {
+function getInitials$a(name) {
   var _a2;
   const parts = name.split(/\s+/).filter((part) => part.length > 0 && /[A-Za-z]/.test(part.charAt(0)));
   const first = ((_a2 = parts[0]) == null ? void 0 : _a2.charAt(0)) ?? "";
@@ -56747,7 +57943,7 @@ function FamilyMember({
         className: "h-full w-full object-cover",
         loading: "lazy"
       }
-    ) : getInitials$5(canonical.displayName) }),
+    ) : getInitials$a(canonical.displayName) }),
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-display text-base font-semibold text-foreground", children: canonical.displayName }),
       role ? /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs uppercase tracking-[0.18em] text-muted-foreground", children: role }) : null
@@ -57080,7 +58276,7 @@ function ProfileMediaRow({
                     color: "oklch(var(--speaker-accent-foreground))"
                   },
                   "aria-hidden": "true",
-                  children: getInitials$5(speaker.name)
+                  children: getInitials$a(speaker.name)
                 }
               ),
               /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "contributor", children: speaker.name })
@@ -57417,7 +58613,8 @@ function PersonProfilePage({
   onAddMedia,
   onOpenRecipes,
   onOpenRecipe,
-  onOpenRecipeContribute
+  onOpenRecipeContribute,
+  onOpenConversation
 }) {
   var _a2, _b2, _c2, _d2;
   const storyLabel = person.id === "julia" || person.id === "erma" || person.id === "hudson" || person.id === "gertrude-adams-hill" || person.id === "mary-louise-sims" || person.id === "mary-jane-johnson" || person.id === "mildred-adams" || person.id === "christine-adams" || person.id === "tammy" || person.id === "punchy" || person.id === "patricia-rollins" || person.id === "fannie-adams" || person.id === "christine-adams-tucker" || person.id === "ella-mae-adams" || person.id === "eula-lee-adams" || person.id === "sherriSmith" || person.id === "beatriceSmith" ? "Her Story" : "His Story";
@@ -57461,6 +58658,7 @@ function PersonProfilePage({
   const familyGraphNode = FAMILY_GRAPH[person.id];
   const childIds = (familyGraphNode == null ? void 0 : familyGraphNode.children) ?? [];
   const canonical = useCanonicalPerson(person.id, person.name);
+  const { data: canMessage = false } = useCanMessagePerson(person.id);
   const hasProfilePhoto = Boolean(canonical.profilePhotoUrl);
   const completeness = computeCompleteness(
     person,
@@ -57523,7 +58721,7 @@ function PersonProfilePage({
               {
                 "data-ocid": "profile.header.initials",
                 className: "flex aspect-[4/5] w-full items-center justify-center rounded-xl bg-secondary",
-                children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-display text-6xl font-semibold text-accent-foreground", children: getInitials$5(person.name) })
+                children: /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-display text-6xl font-semibold text-accent-foreground", children: getInitials$a(person.name) })
               }
             ) }),
             portraitCaption ? /* @__PURE__ */ jsxRuntimeExports.jsx("figcaption", { className: "mt-2 text-center text-xs italic leading-relaxed text-muted-foreground", children: portraitCaption }) : null
@@ -57666,7 +58864,35 @@ function PersonProfilePage({
                       onClaimApproved
                     }
                   )
-                ] }) : /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-3 text-sm text-muted-foreground", children: (backendProfile == null ? void 0 : backendProfile.livingStatus) === LivingStatus.Deceased ? "This profile is not claimable." : "This profile is owned by a family member." })
+                ] }) : /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-3 text-sm text-muted-foreground", children: (backendProfile == null ? void 0 : backendProfile.livingStatus) === LivingStatus.Deceased ? "This profile is not claimable." : "This profile is owned by a family member." }),
+                canMessage && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-4 flex flex-col items-start gap-3 border-t border-border/60 pt-4", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "flex items-center gap-2 text-sm text-muted-foreground", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      MessageSquareText,
+                      {
+                        className: "h-4 w-4 shrink-0 text-accent-foreground/70",
+                        strokeWidth: 2,
+                        "aria-hidden": "true"
+                      }
+                    ),
+                    "Send a private message to ",
+                    person.name.split(" ")[0],
+                    "."
+                  ] }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                    "button",
+                    {
+                      type: "button",
+                      "data-ocid": "profile.message_button",
+                      onClick: () => onOpenConversation == null ? void 0 : onOpenConversation(person.id),
+                      className: "this-is-me-action focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                      children: [
+                        /* @__PURE__ */ jsxRuntimeExports.jsx(MessageSquareText, { className: "h-4 w-4", "aria-hidden": "true" }),
+                        "Message"
+                      ]
+                    }
+                  )
+                ] })
               ]
             }
           ),
@@ -60292,7 +61518,7 @@ function formatContributor$4(contributor) {
   const text = contributor.toText();
   return text.length > 18 ? `${text.slice(0, 5)}…${text.slice(-4)}` : text;
 }
-function getInitials$4(name) {
+function getInitials$9(name) {
   var _a2;
   const parts = name.split(/\s+/).filter((part) => part.length > 0 && /[A-Za-z]/.test(part.charAt(0)));
   const first = ((_a2 = parts[0]) == null ? void 0 : _a2.charAt(0)) ?? "";
@@ -60333,7 +61559,7 @@ function ArchiveCard({ item, index: index2, onOpen }) {
             /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "contributed" })
           ] }),
           relatedMembers.length > 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-auto flex flex-wrap items-center gap-1.5 pt-1", children: relatedMembers.map((profile) => /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "member-chip", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "member-avatar", "aria-hidden": "true", children: getInitials$4(profile.name) }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "member-avatar", "aria-hidden": "true", children: getInitials$9(profile.name) }),
             profile.name
           ] }, profile.id)) }) : null
         ] })
@@ -60644,7 +61870,1324 @@ function ArchivePage({
     ) }, item.id.toString())) }) })
   ] });
 }
-function getInitials$3(name) {
+function useListBoardPosts(filter2 = null) {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["board", "posts", filter2 ?? "all"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.listBoardPosts(filter2);
+    },
+    enabled: !!actor && !isFetching
+  });
+}
+function useGetBoardPost(postId) {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["board", "post", (postId == null ? void 0 : postId.toString()) ?? "all"],
+    queryFn: async () => {
+      if (!actor || postId === null) return null;
+      return actor.getBoardPost(postId);
+    },
+    enabled: !!actor && !isFetching && postId !== null
+  });
+}
+function useListBoardReplies(postId) {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["board", "replies", (postId == null ? void 0 : postId.toString()) ?? "all"],
+    queryFn: async () => {
+      if (!actor || postId === null) return [];
+      return actor.listBoardReplies(postId);
+    },
+    enabled: !!actor && !isFetching && postId !== null
+  });
+}
+function useCreateBoardPost() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (input) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.createBoardPost(
+        input.postType,
+        input.title,
+        input.body,
+        input.relatedPersonIds,
+        input.linkedMediaIds
+      );
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({ queryKey: ["board", "posts"] });
+      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
+    }
+  });
+}
+function useUpdateBoardPost() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (input) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.updateBoardPost(
+        input.postId,
+        input.postType,
+        input.title,
+        input.body,
+        input.relatedPersonIds,
+        input.linkedMediaIds
+      );
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({ queryKey: ["board", "posts"] });
+      void queryClient2.invalidateQueries({ queryKey: ["board", "post"] });
+    }
+  });
+}
+function useArchiveBoardPost() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (postId) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.archiveBoardPost(postId);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({ queryKey: ["board", "posts"] });
+      void queryClient2.invalidateQueries({ queryKey: ["board", "post"] });
+    }
+  });
+}
+function useRestoreBoardPost() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (postId) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.restoreBoardPost(postId);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({ queryKey: ["board", "posts"] });
+      void queryClient2.invalidateQueries({ queryKey: ["board", "post"] });
+    }
+  });
+}
+function useAddBoardReply() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (input) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.addBoardReply(input.postId, input.body);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({ queryKey: ["board", "replies"] });
+      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
+    }
+  });
+}
+function useRemoveBoardReply() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (replyId) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.removeBoardReply(replyId);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({ queryKey: ["board", "replies"] });
+    }
+  });
+}
+const POST_TYPE_LABELS = {
+  [PostType.General]: "General",
+  [PostType.Announcement]: "Announcement",
+  [PostType.FamilyQuestion]: "Family Question",
+  [PostType.ResearchHistory]: "Research / History",
+  [PostType.PhotoIdentification]: "Photo Identification",
+  [PostType.Recipe]: "Recipe",
+  [PostType.ReunionEvent]: "Reunion / Event",
+  [PostType.Memorial]: "Memorial",
+  [PostType.Other]: "Other"
+};
+({
+  [PostStatus.Active]: "Active",
+  [PostStatus.Archived]: "Archived"
+});
+const POST_TYPES = [
+  PostType.General,
+  PostType.Announcement,
+  PostType.FamilyQuestion,
+  PostType.ResearchHistory,
+  PostType.PhotoIdentification,
+  PostType.Recipe,
+  PostType.ReunionEvent,
+  PostType.Memorial,
+  PostType.Other
+];
+function BoardPostComposer({ postId, onBack }) {
+  const isEditing = postId !== null;
+  const { data: existingPost } = useGetBoardPost(postId);
+  const { data: archiveItems = [] } = useApprovedArchiveItems();
+  const [postType, setPostType] = reactExports.useState(PostType.General);
+  const [title, setTitle] = reactExports.useState("");
+  const [body, setBody] = reactExports.useState("");
+  const [relatedPersonIds, setRelatedPersonIds] = reactExports.useState([]);
+  const [linkedMediaIds, setLinkedMediaIds] = reactExports.useState([]);
+  const [error, setError] = reactExports.useState(null);
+  const createPost = useCreateBoardPost();
+  const updatePost = useUpdateBoardPost();
+  reactExports.useEffect(() => {
+    if (!existingPost) return;
+    setPostType(existingPost.postType);
+    setTitle(existingPost.title ?? "");
+    setBody(existingPost.body);
+    setRelatedPersonIds(existingPost.relatedPersonIds);
+    setLinkedMediaIds(existingPost.linkedMediaIds);
+  }, [existingPost]);
+  const toggleMember = (id2) => {
+    setRelatedPersonIds(
+      (current) => current.includes(id2) ? current.filter((memberId) => memberId !== id2) : [...current, id2]
+    );
+  };
+  const toggleMedia = (id2) => {
+    setLinkedMediaIds(
+      (current) => current.includes(id2) ? current.filter((mediaId) => mediaId !== id2) : [...current, id2]
+    );
+  };
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    setError(null);
+    const trimmedBody = body.trim();
+    if (!trimmedBody) {
+      setError("Please write a message before posting.");
+      return;
+    }
+    const input = {
+      postType,
+      title: title.trim() ? title.trim() : null,
+      body: trimmedBody,
+      relatedPersonIds,
+      linkedMediaIds
+    };
+    if (isEditing && postId !== null) {
+      updatePost.mutate(
+        { postId, ...input },
+        {
+          onSuccess: (result) => {
+            if (result === null) {
+              setError("This post could not be updated.");
+              return;
+            }
+            onBack();
+          }
+        }
+      );
+    } else {
+      createPost.mutate(input, {
+        onSuccess: () => onBack()
+      });
+    }
+  };
+  const isPending = createPost.isPending || updatePost.isPending;
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-6 py-8", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx("header", { className: "flex flex-wrap items-center justify-between gap-3", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "board_compose.back_button",
+          onClick: onBack,
+          "aria-label": "Back",
+          className: "inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-foreground shadow-subtle transition-colors hover:border-accent/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+          children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+            Send,
+            {
+              className: "h-4 w-4 rotate-180",
+              strokeWidth: 2,
+              "aria-hidden": "true"
+            }
+          )
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "font-display text-2xl font-semibold tracking-tight text-foreground", children: isEditing ? "Edit post" : "New post" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: isEditing ? "Update your post for the family board." : "Share something with the family." })
+      ] })
+    ] }) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "form",
+      {
+        onSubmit: handleSubmit,
+        className: "flex flex-col gap-5 rounded-xl border border-border/60 bg-card p-5 shadow-subtle",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "field-label", children: "Post type" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-wrap gap-2", children: POST_TYPES.map((type) => {
+              const selected = postType === type;
+              return /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "button",
+                {
+                  type: "button",
+                  "data-ocid": `board_compose.type.${type}`,
+                  onClick: () => setPostType(type),
+                  "aria-pressed": selected,
+                  className: `inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${selected ? "border-accent bg-accent text-accent-foreground" : "border-border bg-card text-foreground hover:bg-muted"}`,
+                  children: POST_TYPE_LABELS[type]
+                },
+                type
+              );
+            }) })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("label", { htmlFor: "board-compose-title", className: "field-label", children: [
+              "Title",
+              " ",
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-normal text-muted-foreground", children: "(optional)" })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "input",
+              {
+                id: "board-compose-title",
+                "data-ocid": "board_compose.title",
+                type: "text",
+                value: title,
+                onChange: (event) => setTitle(event.target.value),
+                placeholder: "Give your post a title",
+                className: "form-input"
+              }
+            )
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("label", { htmlFor: "board-compose-body", className: "field-label", children: "Message" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "textarea",
+              {
+                id: "board-compose-body",
+                "data-ocid": "board_compose.body",
+                value: body,
+                onChange: (event) => setBody(event.target.value),
+                placeholder: "What would you like to share with the family?",
+                rows: 5,
+                className: "form-input min-h-[120px] resize-y"
+              }
+            )
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "field-label", children: "Related family members" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap gap-2", children: [
+              Object.values(profiles).map((profile) => {
+                const selected = relatedPersonIds.includes(profile.id);
+                return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                  "button",
+                  {
+                    type: "button",
+                    "data-ocid": `board_compose.member.${profile.id}`,
+                    onClick: () => toggleMember(profile.id),
+                    "aria-pressed": selected,
+                    className: `inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${selected ? "border-accent bg-accent text-accent-foreground" : "border-border bg-card text-foreground hover:bg-muted"}`,
+                    children: [
+                      selected ? /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { className: "h-3.5 w-3.5", "aria-hidden": "true" }) : null,
+                      profile.name
+                    ]
+                  },
+                  profile.id
+                );
+              }),
+              relatedPersonIds.filter((id2) => !profiles[id2]).map((id2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+                ResolvedMemberChip,
+                {
+                  personId: id2,
+                  selected: true,
+                  onToggle: () => toggleMember(id2)
+                },
+                id2
+              ))
+            ] })
+          ] }),
+          archiveItems.length > 0 ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "field-label", children: [
+              "Link existing media",
+              " ",
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-normal text-muted-foreground", children: "(optional)" })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-wrap gap-2", children: archiveItems.map((item) => {
+              const selected = linkedMediaIds.includes(item.id);
+              return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                "button",
+                {
+                  type: "button",
+                  "data-ocid": `board_compose.media.${item.id}`,
+                  onClick: () => toggleMedia(item.id),
+                  "aria-pressed": selected,
+                  className: `inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${selected ? "border-accent bg-accent text-accent-foreground" : "border-border bg-card text-foreground hover:bg-muted"}`,
+                  children: [
+                    selected ? /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { className: "h-3.5 w-3.5", "aria-hidden": "true" }) : /* @__PURE__ */ jsxRuntimeExports.jsx(Image, { className: "h-3.5 w-3.5", "aria-hidden": "true" }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "max-w-[12rem] truncate", children: [
+                      ARCHIVE_ITEM_TYPE_LABELS[item.itemType],
+                      " · ",
+                      item.title
+                    ] })
+                  ]
+                },
+                item.id
+              );
+            }) })
+          ] }) : null,
+          error ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "p",
+            {
+              "data-ocid": "board_compose.error",
+              className: "text-xs font-medium text-destructive",
+              children: error
+            }
+          ) : null,
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-end gap-2 border-t border-border/50 pt-4", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "button",
+              {
+                type: "button",
+                "data-ocid": "board_compose.cancel",
+                onClick: onBack,
+                className: "inline-flex min-h-[36px] items-center gap-1.5 rounded-full border border-border/60 px-4 py-1.5 text-xs font-semibold text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                children: "Cancel"
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "button",
+              {
+                type: "submit",
+                "data-ocid": "board_compose.submit",
+                disabled: isPending,
+                className: "inline-flex min-h-[36px] items-center gap-1.5 rounded-full bg-accent px-4 py-1.5 text-xs font-semibold text-accent-foreground transition-colors hover:bg-accent/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50",
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(Send, { className: "h-3.5 w-3.5", strokeWidth: 2, "aria-hidden": "true" }),
+                  isEditing ? "Save changes" : "Post to board"
+                ]
+              }
+            )
+          ] })
+        ]
+      }
+    )
+  ] });
+}
+function ResolvedMemberChip({
+  personId,
+  selected,
+  onToggle
+}) {
+  const { displayName } = useCanonicalPerson(personId, personId);
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "button",
+    {
+      type: "button",
+      "data-ocid": `board_compose.member.${personId}`,
+      onClick: onToggle,
+      "aria-pressed": selected,
+      className: `inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${selected ? "border-accent bg-accent text-accent-foreground" : "border-border bg-card text-foreground hover:bg-muted"}`,
+      children: [
+        selected ? /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { className: "h-3.5 w-3.5", "aria-hidden": "true" }) : null,
+        displayName
+      ]
+    }
+  );
+}
+function getInitials$8(name) {
+  var _a2;
+  const parts = name.split(/\s+/).filter((part) => part.length > 0 && /[A-Za-z]/.test(part.charAt(0)));
+  const first = ((_a2 = parts[0]) == null ? void 0 : _a2.charAt(0)) ?? "";
+  const last = parts.length > 1 ? parts[parts.length - 1].charAt(0) : "";
+  return (first + last).toUpperCase();
+}
+function formatReplyTime(timestamp) {
+  const date = new Date(Number(timestamp / 1000000n));
+  if (Number.isNaN(date.getTime())) return "";
+  const now2 = Date.now();
+  const diffMs = now2 - date.getTime();
+  const minutes = Math.floor(diffMs / 6e4);
+  if (minutes < 1) return "Just now";
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  if (days < 7) return `${days}d ago`;
+  return date.toLocaleDateString(void 0, {
+    month: "short",
+    day: "numeric",
+    year: date.getFullYear() === (/* @__PURE__ */ new Date()).getFullYear() ? void 0 : "numeric"
+  });
+}
+function BoardReplyThread({
+  replies,
+  isLoading,
+  onSendReply,
+  isSending,
+  onRemoveReply,
+  onOpenProfile
+}) {
+  const { data: isAdmin = false } = useIsAdmin();
+  const [draft, setDraft] = reactExports.useState("");
+  const canSend = draft.trim().length > 0 && !isSending;
+  const handleSend = () => {
+    const body = draft.trim();
+    if (!body || isSending) return;
+    setDraft("");
+    onSendReply(body);
+  };
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "reply-thread", children: [
+    isLoading ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-col gap-2.5", "aria-label": "Loading replies", children: [0, 1].map((i) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "div",
+      {
+        className: "h-16 animate-pulse rounded-lg border border-border/60 bg-card"
+      },
+      i
+    )) }) : replies.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: "No replies yet. Be the first to reply." }) : /* @__PURE__ */ jsxRuntimeExports.jsx("ul", { className: "flex flex-col gap-2.5", children: replies.map((reply) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+      ReplyItem,
+      {
+        reply,
+        isAdmin,
+        onRemoveReply,
+        onOpenProfile
+      },
+      reply.replyId
+    )) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-start gap-2 pt-1", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "textarea",
+        {
+          "data-ocid": "board.reply.composer",
+          value: draft,
+          onChange: (event) => setDraft(event.target.value),
+          onKeyDown: (event) => {
+            if (event.key === "Enter" && !event.shiftKey) {
+              event.preventDefault();
+              handleSend();
+            }
+          },
+          placeholder: "Write a reply…",
+          rows: 2,
+          "aria-label": "Write a reply",
+          className: "min-h-[44px] flex-1 resize-y rounded-lg border border-border/60 bg-card px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "board.reply.send",
+          onClick: handleSend,
+          disabled: !canSend,
+          "aria-label": "Send reply",
+          className: "inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground transition-colors hover:bg-accent/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50",
+          children: /* @__PURE__ */ jsxRuntimeExports.jsx(Send, { className: "h-4 w-4", strokeWidth: 2, "aria-hidden": "true" })
+        }
+      )
+    ] })
+  ] });
+}
+function ReplyItem({
+  reply,
+  isAdmin,
+  onRemoveReply,
+  onOpenProfile
+}) {
+  const canonical = useCanonicalPerson(reply.authorPersonId, "");
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { className: "reply-item", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "button",
+      {
+        type: "button",
+        "data-ocid": `board.reply.${reply.replyId}.author`,
+        onClick: () => onOpenProfile(reply.authorPersonId),
+        className: "reply-avatar shrink-0",
+        "aria-label": "Open profile",
+        children: canonical.profilePhotoUrl ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "img",
+          {
+            src: canonical.profilePhotoUrl,
+            alt: "",
+            loading: "lazy",
+            className: "h-full w-full object-cover"
+          }
+        ) : getInitials$8(canonical.displayName || "?")
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "reply-body", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center justify-between gap-2", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "reply-name", children: canonical.displayName || "Family member" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "reply-meta", children: formatReplyTime(reply.createdAt) })
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "reply-text whitespace-pre-line", children: reply.body })
+    ] }),
+    isAdmin ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "button",
+      {
+        type: "button",
+        "data-ocid": `board.reply.${reply.replyId}.remove`,
+        onClick: () => onRemoveReply(reply.replyId),
+        "aria-label": "Remove reply",
+        className: "inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+        children: /* @__PURE__ */ jsxRuntimeExports.jsx(Trash2, { className: "h-3.5 w-3.5", strokeWidth: 2, "aria-hidden": "true" })
+      }
+    ) : null
+  ] });
+}
+function getInitials$7(name) {
+  var _a2;
+  const parts = name.split(/\s+/).filter((part) => part.length > 0 && /[A-Za-z]/.test(part.charAt(0)));
+  const first = ((_a2 = parts[0]) == null ? void 0 : _a2.charAt(0)) ?? "";
+  const last = parts.length > 1 ? parts[parts.length - 1].charAt(0) : "";
+  return (first + last).toUpperCase();
+}
+function formatPostDate(timestamp) {
+  const date = new Date(Number(timestamp / 1000000n));
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleDateString(void 0, {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    year: date.getFullYear() === (/* @__PURE__ */ new Date()).getFullYear() ? void 0 : "numeric"
+  });
+}
+function postTypeBadgeClass$1(postType) {
+  switch (postType) {
+    case "Announcement":
+      return "post-type-announcement";
+    case "FamilyQuestion":
+      return "post-type-question";
+    case "ResearchHistory":
+      return "post-type-research";
+    case "PhotoIdentification":
+      return "post-type-photo";
+    case "Recipe":
+      return "post-type-recipe";
+    case "ReunionEvent":
+      return "post-type-reunion";
+    case "Memorial":
+      return "post-type-memorial";
+    default:
+      return "";
+  }
+}
+function BoardPostPage({
+  postId,
+  onBack,
+  onOpenProfile,
+  onEdit
+}) {
+  const { personId: myPersonId } = useNavbarIdentity();
+  const { data: isAdmin = false } = useIsAdmin();
+  const { data: post } = useGetBoardPost(postId);
+  const { data: replies = [], isLoading: repliesLoading } = useListBoardReplies(postId);
+  const { data: archiveItems = [] } = useApprovedArchiveItems();
+  const addReply = useAddBoardReply();
+  const removeReply = useRemoveBoardReply();
+  const archivePost = useArchiveBoardPost();
+  const restorePost = useRestoreBoardPost();
+  const canonical = useCanonicalPerson(post == null ? void 0 : post.authorPersonId, "");
+  const isAuthor = myPersonId !== void 0 && (post == null ? void 0 : post.authorPersonId) === myPersonId;
+  const isArchived = (post == null ? void 0 : post.status) === PostStatus.Archived;
+  const linkedMedia = (post ? archiveItems : []).filter(
+    (item) => post == null ? void 0 : post.linkedMediaIds.includes(item.id)
+  );
+  const { data: notifications = [] } = useListNotifications();
+  const markNotificationRead = useMarkNotificationRead();
+  const markedNotificationsRef = reactExports.useRef(false);
+  reactExports.useEffect(() => {
+    if (!post || markedNotificationsRef.current) return;
+    const unreadBoardNotifications = notifications.filter(
+      (notification) => !notification.read && (notification.notificationType === NotificationType.BoardReply || notification.notificationType === NotificationType.BoardMention)
+    );
+    if (unreadBoardNotifications.length === 0) return;
+    markedNotificationsRef.current = true;
+    for (const notification of unreadBoardNotifications) {
+      markNotificationRead.mutate(notification.id);
+    }
+  }, [post, notifications, markNotificationRead]);
+  if (!post) {
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-6 py-8", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("header", { className: "flex items-center gap-3", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "button",
+          {
+            type: "button",
+            "data-ocid": "board_post.back_button",
+            onClick: onBack,
+            "aria-label": "Back",
+            className: "inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-foreground shadow-subtle transition-colors hover:border-accent/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+            children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+              MessageSquare,
+              {
+                className: "h-4 w-4 rotate-180",
+                strokeWidth: 2,
+                "aria-hidden": "true"
+              }
+            )
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "font-display text-2xl font-semibold tracking-tight text-foreground", children: "Post" })
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "div",
+        {
+          "data-ocid": "board_post.loading_state",
+          className: "flex flex-col gap-3",
+          "aria-label": "Loading post",
+          children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-48 animate-pulse rounded-xl border border-border/60 bg-card" })
+        }
+      )
+    ] });
+  }
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-6 py-8", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("header", { className: "flex items-center gap-3", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "board_post.back_button",
+          onClick: onBack,
+          "aria-label": "Back to board",
+          className: "inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-foreground shadow-subtle transition-colors hover:border-accent/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+          children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+            MessageSquare,
+            {
+              className: "h-4 w-4 rotate-180",
+              strokeWidth: 2,
+              "aria-hidden": "true"
+            }
+          )
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "font-display text-2xl font-semibold tracking-tight text-foreground", children: post.title ?? POST_TYPE_LABELS[post.postType] })
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "article",
+      {
+        "data-ocid": "board_post.detail",
+        className: `post-card ${isArchived ? "opacity-70" : ""}`,
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "post-card-head", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "button",
+              {
+                type: "button",
+                "data-ocid": "board_post.author",
+                onClick: () => onOpenProfile(post.authorPersonId),
+                className: "post-card-author min-w-0 text-left",
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "author-avatar", "aria-hidden": "true", children: canonical.profilePhotoUrl ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "img",
+                    {
+                      src: canonical.profilePhotoUrl,
+                      alt: "",
+                      loading: "lazy",
+                      className: "h-full w-full object-cover"
+                    }
+                  ) : getInitials$7(canonical.displayName || "?") }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "min-w-0", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "author-name block", children: canonical.displayName || "Family member" }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "author-meta block", children: [
+                      formatPostDate(post.createdAt),
+                      isArchived ? " · Archived" : ""
+                    ] })
+                  ] })
+                ]
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "span",
+              {
+                className: `post-type-badge ${postTypeBadgeClass$1(post.postType)}`,
+                "data-ocid": "board_post.type_badge",
+                children: POST_TYPE_LABELS[post.postType]
+              }
+            )
+          ] }),
+          post.title ? /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "post-card-title", children: post.title }) : null,
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "post-card-body whitespace-pre-line", children: post.body }),
+          post.relatedPersonIds.length > 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-wrap items-center gap-1.5", children: post.relatedPersonIds.map((personId) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+            RelatedMemberChip$1,
+            {
+              personId,
+              onOpenProfile
+            },
+            personId
+          )) }) : null,
+          linkedMedia.length > 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-wrap items-center gap-1.5", children: linkedMedia.map((item) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "span",
+            {
+              className: "inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-muted/40 px-2.5 py-1 text-[11px] font-semibold text-muted-foreground",
+              children: [
+                ARCHIVE_ITEM_TYPE_LABELS[item.itemType],
+                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "max-w-[10rem] truncate", children: item.title })
+              ]
+            },
+            item.id
+          )) }) : null,
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "post-card-footer", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                MessageSquare,
+                {
+                  className: "h-3.5 w-3.5",
+                  strokeWidth: 2,
+                  "aria-hidden": "true"
+                }
+              ),
+              replies.length,
+              " ",
+              replies.length === 1 ? "reply" : "replies"
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "ml-auto flex items-center gap-1.5", children: [
+              isAuthor && !isArchived ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                "button",
+                {
+                  type: "button",
+                  "data-ocid": "board_post.edit",
+                  onClick: onEdit,
+                  className: "inline-flex items-center gap-1 rounded-full border border-border/60 px-2.5 py-1 text-[11px] font-semibold text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                  children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      Pencil,
+                      {
+                        className: "h-3 w-3",
+                        strokeWidth: 2,
+                        "aria-hidden": "true"
+                      }
+                    ),
+                    "Edit"
+                  ]
+                }
+              ) : null,
+              isAuthor && !isArchived ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                "button",
+                {
+                  type: "button",
+                  "data-ocid": "board_post.archive",
+                  onClick: () => archivePost.mutate(post.postId),
+                  className: "inline-flex items-center gap-1 rounded-full border border-border/60 px-2.5 py-1 text-[11px] font-semibold text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                  children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      Archive,
+                      {
+                        className: "h-3 w-3",
+                        strokeWidth: 2,
+                        "aria-hidden": "true"
+                      }
+                    ),
+                    "Archive"
+                  ]
+                }
+              ) : null,
+              isAdmin && !isArchived ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                "button",
+                {
+                  type: "button",
+                  "data-ocid": "board_post.steward_archive",
+                  onClick: () => archivePost.mutate(post.postId),
+                  className: "inline-flex items-center gap-1 rounded-full border border-border/60 px-2.5 py-1 text-[11px] font-semibold text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                  children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      Archive,
+                      {
+                        className: "h-3 w-3",
+                        strokeWidth: 2,
+                        "aria-hidden": "true"
+                      }
+                    ),
+                    "Hide"
+                  ]
+                }
+              ) : null,
+              isAdmin && isArchived ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                "button",
+                {
+                  type: "button",
+                  "data-ocid": "board_post.restore",
+                  onClick: () => restorePost.mutate(post.postId),
+                  className: "inline-flex items-center gap-1 rounded-full border border-border/60 px-2.5 py-1 text-[11px] font-semibold text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                  children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(Undo2, { className: "h-3 w-3", strokeWidth: 2, "aria-hidden": "true" }),
+                    "Restore"
+                  ]
+                }
+              ) : null
+            ] })
+          ] })
+        ]
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { "aria-label": "Replies", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "mb-3 font-display text-lg font-semibold text-foreground", children: "Replies" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        BoardReplyThread,
+        {
+          replies,
+          isLoading: repliesLoading,
+          onSendReply: (body) => addReply.mutate({ postId, body }),
+          isSending: addReply.isPending,
+          onRemoveReply: (replyId) => removeReply.mutate(replyId),
+          onOpenProfile
+        }
+      )
+    ] })
+  ] });
+}
+function RelatedMemberChip$1({
+  personId,
+  onOpenProfile
+}) {
+  const canonical = useCanonicalPerson(personId, personId);
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "button",
+    {
+      type: "button",
+      "data-ocid": `board_post.related.${personId}`,
+      onClick: () => onOpenProfile(personId),
+      className: "inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-card px-2.5 py-1 text-[11px] font-semibold text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "flex h-4 w-4 items-center justify-center rounded-full bg-muted text-[8px] font-semibold text-muted-foreground", children: getInitials$7(canonical.displayName || "?") }),
+        canonical.displayName
+      ]
+    }
+  );
+}
+function formatMessageTime(timestamp) {
+  const date = new Date(Number(timestamp / 1000000n));
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleTimeString(void 0, {
+    hour: "numeric",
+    minute: "2-digit"
+  });
+}
+function ConversationBubble({
+  message,
+  isSent,
+  onReport
+}) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "div",
+    {
+      "data-ocid": `conversation.msg_row.${isSent ? "sent" : "received"}`,
+      className: `msg-row ${isSent ? "msg-row-sent" : "msg-row-received"}`,
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "div",
+          {
+            className: `msg-bubble ${isSent ? "msg-bubble-sent" : "msg-bubble-received"}`,
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "whitespace-pre-wrap break-words", children: message.body }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "msg-bubble-time", children: formatMessageTime(message.createdAt) })
+            ]
+          }
+        ),
+        !isSent && onReport ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "button",
+          {
+            type: "button",
+            "data-ocid": `conversation.report_button.${message.messageId}`,
+            onClick: () => onReport(message.messageId),
+            "aria-label": "Report this message",
+            className: "msg-report-action ml-1.5 self-end",
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(Flag, { className: "h-3.5 w-3.5", strokeWidth: 2, "aria-hidden": "true" }),
+              "Report"
+            ]
+          }
+        ) : null
+      ]
+    }
+  );
+}
+function MessageComposer({
+  onSend,
+  disabled = false,
+  placeholder = "Write a message…"
+}) {
+  const [draft, setDraft] = reactExports.useState("");
+  const canSend = draft.trim().length > 0 && !disabled;
+  const handleSend = () => {
+    const body = draft.trim();
+    if (!body || disabled) return;
+    setDraft("");
+    onSend(body);
+  };
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "composer", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "textarea",
+      {
+        "data-ocid": "composer.textarea",
+        value: draft,
+        onChange: (event) => setDraft(event.target.value),
+        onKeyDown: (event) => {
+          if (event.key === "Enter" && !event.shiftKey) {
+            event.preventDefault();
+            handleSend();
+          }
+        },
+        placeholder,
+        rows: 1,
+        "aria-label": "Message",
+        disabled,
+        className: "composer-textarea"
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "button",
+      {
+        type: "button",
+        "data-ocid": "composer.send_button",
+        onClick: handleSend,
+        disabled: !canSend,
+        "aria-label": "Send message",
+        className: "composer-send",
+        children: /* @__PURE__ */ jsxRuntimeExports.jsx(Send, { className: "h-4 w-4", strokeWidth: 2, "aria-hidden": "true" })
+      }
+    )
+  ] });
+}
+function Textarea({ className, ...props }) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    "textarea",
+    {
+      "data-slot": "textarea",
+      className: cn(
+        "border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+        className
+      ),
+      ...props
+    }
+  );
+}
+({
+  [MessageStatus.Sent]: "Sent",
+  [MessageStatus.Blocked]: "Blocked"
+});
+const REPORT_STATUS_LABELS = {
+  [ReportStatus.Pending]: "Pending",
+  [ReportStatus.Reviewed]: "Reviewed",
+  [ReportStatus.Dismissed]: "Dismissed"
+};
+const MESSAGE_ERROR_LABELS = {
+  [MessageError.BlockedByRecipient]: "This person has blocked you, so your message wasn't sent.",
+  [MessageError.RecipientArchived]: "This person's profile is archived and can't receive messages.",
+  [MessageError.RecipientNotClaimed]: "This person hasn't connected their profile yet.",
+  [MessageError.NotApprovedMember]: "Only approved family members can send messages.",
+  [MessageError.NotSignedIn]: "Sign in to send messages.",
+  [MessageError.CannotMessageSelf]: "You can't message yourself.",
+  [MessageError.RecipientNotFound]: "This person could not be found.",
+  [MessageError.ConversationNotFound]: "This conversation is no longer available.",
+  [MessageError.NotParticipant]: "You don't have access to this conversation."
+};
+function getInitials$6(name) {
+  var _a2;
+  const parts = name.split(/\s+/).filter((part) => part.length > 0 && /[A-Za-z]/.test(part.charAt(0)));
+  const first = ((_a2 = parts[0]) == null ? void 0 : _a2.charAt(0)) ?? "";
+  const last = parts.length > 1 ? parts[parts.length - 1].charAt(0) : "";
+  return (first + last).toUpperCase();
+}
+function formatMessageDate(timestamp) {
+  const date = new Date(Number(timestamp / 1000000n));
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleDateString(void 0, {
+    weekday: "short",
+    month: "short",
+    day: "numeric"
+  });
+}
+function otherPersonIdFromView(view, myPersonId) {
+  if (!view) return null;
+  return view.participantPersonIds.find((id2) => id2 !== myPersonId) ?? null;
+}
+function otherDisplayNameFromView(view, myPersonId) {
+  if (!view) return null;
+  const idx = view.participantPersonIds.findIndex((id2) => id2 !== myPersonId);
+  return idx >= 0 ? view.participantDisplayNames[idx] ?? null : null;
+}
+function ConversationPage({
+  conversationId,
+  personId,
+  onBack,
+  onOpenProfile
+}) {
+  var _a2;
+  const { personId: myPersonId } = useNavbarIdentity();
+  const { data: viewFromProp } = useGetConversation(conversationId);
+  const { data: conversations = [] } = useListConversations();
+  const otherPersonId = personId ?? otherPersonIdFromView(viewFromProp, myPersonId);
+  const resolvedConversationId = conversationId ?? (otherPersonId ? ((_a2 = conversations.find((c2) => c2.otherPersonId === otherPersonId)) == null ? void 0 : _a2.conversationId) ?? null : null);
+  const { data: view } = useGetConversation(resolvedConversationId);
+  const otherDisplayName = otherDisplayNameFromView(view, myPersonId) ?? otherPersonId ?? "";
+  const canonical = useCanonicalPerson(
+    otherPersonId ?? void 0,
+    otherDisplayName
+  );
+  const { data: otherProfile } = usePersonProfile(otherPersonId ?? "", {
+    enabled: Boolean(otherPersonId)
+  });
+  const otherAccountId = otherProfile == null ? void 0 : otherProfile.claimedByUserId;
+  const { data: blockedUsers = [] } = useListBlockedUsers();
+  const isBlocked = Boolean(
+    otherAccountId && blockedUsers.some((id2) => id2.toString() === otherAccountId.toString())
+  );
+  const sendMessage = useSendMessage();
+  const markRead = useMarkConversationRead();
+  const blockUser = useBlockUser();
+  const unblockUser = useUnblockUser();
+  const reportMessage = useReportMessage();
+  const [sendError, setSendError] = reactExports.useState(null);
+  const [reportMessageId, setReportMessageId] = reactExports.useState(null);
+  const [reportReason, setReportReason] = reactExports.useState("");
+  const markedReadRef = reactExports.useRef(false);
+  reactExports.useEffect(() => {
+    if (resolvedConversationId !== null && !markedReadRef.current) {
+      markedReadRef.current = true;
+      markRead.mutate(resolvedConversationId);
+    }
+  }, [resolvedConversationId, markRead]);
+  const { data: notifications = [] } = useListNotifications();
+  const markNotificationRead = useMarkNotificationRead();
+  const markedNotificationsRef = reactExports.useRef(false);
+  reactExports.useEffect(() => {
+    if (resolvedConversationId === null || markedNotificationsRef.current) {
+      return;
+    }
+    const unreadNewMessages = notifications.filter(
+      (notification) => !notification.read && notification.notificationType === NotificationType.NewMessage
+    );
+    if (unreadNewMessages.length === 0) return;
+    markedNotificationsRef.current = true;
+    for (const notification of unreadNewMessages) {
+      markNotificationRead.mutate(notification.id);
+    }
+  }, [resolvedConversationId, notifications, markNotificationRead]);
+  const handleSend = (body) => {
+    if (!otherPersonId) return;
+    setSendError(null);
+    sendMessage.mutate(
+      { recipientPersonId: otherPersonId, body },
+      {
+        onSuccess: (result) => {
+          if (result.__kind__ === "err") {
+            setSendError(
+              MESSAGE_ERROR_LABELS[result.err] ?? "Your message couldn't be sent."
+            );
+          }
+        }
+      }
+    );
+  };
+  const handleReport = () => {
+    if (reportMessageId === null || !reportReason.trim()) return;
+    reportMessage.mutate(
+      { messageId: reportMessageId, reason: reportReason.trim() },
+      {
+        onSuccess: () => {
+          setReportMessageId(null);
+          setReportReason("");
+        }
+      }
+    );
+  };
+  const messages = (view == null ? void 0 : view.messages) ?? [];
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto flex w-full max-w-3xl flex-1 flex-col gap-4 px-6 py-8", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("header", { className: "conversation-header", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "conversation.back_button",
+          onClick: onBack,
+          "aria-label": "Back to inbox",
+          className: "inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border bg-card text-foreground shadow-subtle transition-colors hover:border-accent/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+          children: /* @__PURE__ */ jsxRuntimeExports.jsx(Undo2, { className: "h-4 w-4", strokeWidth: 2, "aria-hidden": "true" })
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "conversation.participant",
+          onClick: () => otherPersonId && onOpenProfile(otherPersonId),
+          className: "flex min-w-0 flex-1 items-center gap-3 text-left",
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "conversation-portrait", children: canonical.profilePhotoUrl ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "img",
+              {
+                src: canonical.profilePhotoUrl,
+                alt: "",
+                loading: "lazy",
+                className: "h-full w-full object-cover"
+              }
+            ) : getInitials$6(canonical.displayName) }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "min-w-0", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "conversation-name block", children: canonical.displayName }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "conversation-meta block", children: "Private message" })
+            ] })
+          ]
+        }
+      )
+    ] }),
+    isBlocked ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { "data-ocid": "conversation.blocked_note", className: "msg-blocked-note", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        Ban,
+        {
+          className: "h-4 w-4 shrink-0",
+          strokeWidth: 2,
+          "aria-hidden": "true"
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "You've blocked this person. They can't send you new messages. You can unblock them below." })
+    ] }) : null,
+    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "conversation flex-1", children: messages.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "div",
+      {
+        "data-ocid": "conversation.empty_state",
+        className: "flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border/70 bg-card/50 px-6 py-16 text-center",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "flex h-12 w-12 items-center justify-center rounded-full bg-muted text-muted-foreground", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+            ShieldCheck,
+            {
+              className: "h-6 w-6",
+              strokeWidth: 1.5,
+              "aria-hidden": "true"
+            }
+          ) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display text-xl font-semibold text-foreground", children: "Start the conversation" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "max-w-sm text-sm text-muted-foreground", children: [
+            "Send ",
+            canonical.displayName,
+            " a private message. Only the two of you can read this thread."
+          ] })
+        ]
+      }
+    ) : /* @__PURE__ */ jsxRuntimeExports.jsx("div", { "data-ocid": "conversation.thread", className: "conversation-thread", children: messages.map((message, index2) => {
+      const isSent = message.senderPersonId === myPersonId;
+      const showDate = index2 === 0 || formatMessageDate(message.createdAt) !== formatMessageDate(messages[index2 - 1].createdAt);
+      return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-2.5", children: [
+        showDate ? /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "conversation-date", children: formatMessageDate(message.createdAt) }) : null,
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          ConversationBubble,
+          {
+            message,
+            isSent,
+            onReport: isSent ? void 0 : (id2) => setReportMessageId(id2)
+          }
+        )
+      ] }, message.messageId);
+    }) }) }),
+    sendError ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "p",
+      {
+        "data-ocid": "conversation.send_error",
+        className: "text-center text-xs font-medium text-destructive",
+        children: sendError
+      }
+    ) : null,
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      MessageComposer,
+      {
+        onSend: handleSend,
+        disabled: isBlocked || sendMessage.isPending,
+        placeholder: isBlocked ? "You've blocked this person" : `Message ${canonical.displayName}…`
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "msg-safety-actions", children: otherAccountId ? isBlocked ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "button",
+      {
+        type: "button",
+        "data-ocid": "conversation.unblock_button",
+        onClick: () => unblockUser.mutate(otherAccountId),
+        disabled: unblockUser.isPending,
+        className: "msg-block-action",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(Ban, { className: "h-3.5 w-3.5", strokeWidth: 2, "aria-hidden": "true" }),
+          "Unblock"
+        ]
+      }
+    ) : /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "button",
+      {
+        type: "button",
+        "data-ocid": "conversation.block_button",
+        onClick: () => blockUser.mutate(otherAccountId),
+        disabled: blockUser.isPending,
+        className: "msg-block-action",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(Ban, { className: "h-3.5 w-3.5", strokeWidth: 2, "aria-hidden": "true" }),
+          "Block"
+        ]
+      }
+    ) : null }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      Dialog,
+      {
+        open: reportMessageId !== null,
+        onOpenChange: (open) => {
+          if (!open) {
+            setReportMessageId(null);
+            setReportReason("");
+          }
+        },
+        children: /* @__PURE__ */ jsxRuntimeExports.jsxs(DialogContent, { "data-ocid": "conversation.report_dialog", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(DialogHeader, { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(DialogTitle, { children: "Report message" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(DialogDescription, { children: "Tell a Family Steward why this message should be reviewed. Your report is private and only the Steward can see the message content." })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            Textarea,
+            {
+              "data-ocid": "conversation.report_reason_input",
+              value: reportReason,
+              onChange: (event) => setReportReason(event.target.value),
+              placeholder: "Reason for reporting…",
+              rows: 3,
+              "aria-label": "Reason for reporting"
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(DialogFooter, { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "button",
+              {
+                type: "button",
+                "data-ocid": "conversation.report_cancel_button",
+                onClick: () => {
+                  setReportMessageId(null);
+                  setReportReason("");
+                },
+                className: "inline-flex min-h-[36px] items-center gap-1.5 rounded-full border border-border/60 px-3 py-1.5 text-xs font-semibold text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                children: "Cancel"
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "button",
+              {
+                type: "button",
+                "data-ocid": "conversation.report_submit_button",
+                onClick: handleReport,
+                disabled: !reportReason.trim() || reportMessage.isPending,
+                className: "msg-report-action",
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    Flag,
+                    {
+                      className: "h-3.5 w-3.5",
+                      strokeWidth: 2,
+                      "aria-hidden": "true"
+                    }
+                  ),
+                  "Submit report"
+                ]
+              }
+            )
+          ] })
+        ] })
+      }
+    )
+  ] });
+}
+function getInitials$5(name) {
   var _a2;
   const parts = name.split(/\s+/).filter((part) => part.length > 0 && /[A-Za-z]/.test(part.charAt(0)));
   const first = ((_a2 = parts[0]) == null ? void 0 : _a2.charAt(0)) ?? "";
@@ -60707,7 +63250,7 @@ function PersonCard({
               className: "h-full w-full object-cover",
               loading: "lazy"
             }
-          ) : getInitials$3(displayName) }),
+          ) : getInitials$5(displayName) }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: nameClass2, children: displayName }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: relationClass, children: relationLabel ?? person.role })
         ]
@@ -60735,7 +63278,7 @@ function PersonCard({
               className: "h-full w-full object-cover",
               loading: "lazy"
             }
-          ) : getInitials$3(displayName) }),
+          ) : getInitials$5(displayName) }),
           /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "ex-focus-body", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-focus-name", children: displayName }),
             person.years && /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-focus-years", children: person.years }),
@@ -60781,7 +63324,7 @@ function PersonCard({
               className: "h-full w-full object-cover",
               loading: "lazy"
             }
-          ) : getInitials$3(displayName) }),
+          ) : getInitials$5(displayName) }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-spouse-half-name", children: displayName }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ex-spouse-half-relation", children: relationLabel ?? person.role })
         ]
@@ -60817,7 +63360,7 @@ function PersonCard({
               className: "h-full w-full object-cover",
               loading: "lazy"
             }
-          ) }) : /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: portraitClass, "aria-hidden": "true", children: getInitials$3(displayName) }),
+          ) }) : /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: portraitClass, "aria-hidden": "true", children: getInitials$5(displayName) }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: nameClass, children: displayName }),
           person.years && /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "ft-card-years", children: person.years }),
           selected && /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "ft-card-detail", children: [
@@ -61084,6 +63627,106 @@ function ExploreFamilyPage({
     )
   ] });
 }
+function FamilyHistoryHubPage({
+  onBack,
+  onOpenStories,
+  onOpenMysteries,
+  onOpenTimeline
+}) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto w-full max-w-2xl px-4 py-8", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("header", { className: "hub-header mb-8", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "family_history_hub.back_button",
+          onClick: onBack,
+          "aria-label": "Back to Home",
+          className: "hub-back",
+          children: /* @__PURE__ */ jsxRuntimeExports.jsx(ArrowRight, { className: "h-5 w-5 rotate-180", "aria-hidden": "true" })
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "hub-title", children: "Family History" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "hub-subtitle", children: "The stories, mysteries, and milestones that make up the Norwood family story." })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { "data-ocid": "family_history_hub.grid", className: "hub-grid", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "family_history_hub.stories_option",
+          onClick: onOpenStories,
+          className: "hub-option hub-accent-history",
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "hub-option-head", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-icon", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                LibraryBig,
+                {
+                  className: "h-5 w-5",
+                  strokeWidth: 1.75,
+                  "aria-hidden": "true"
+                }
+              ) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-title", children: "Family Stories" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-arrow", "aria-hidden": "true", children: "→" })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-desc", children: "The moments and memories that shaped our family." })
+          ]
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "family_history_hub.mysteries_option",
+          onClick: onOpenMysteries,
+          className: "hub-option hub-accent-history",
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "hub-option-head", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-icon", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                Search,
+                {
+                  className: "h-5 w-5",
+                  strokeWidth: 1.75,
+                  "aria-hidden": "true"
+                }
+              ) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-title", children: "Family Mysteries" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-arrow", "aria-hidden": "true", children: "→" })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-desc", children: "The questions we are still working to answer." })
+          ]
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "family_history_hub.timeline_option",
+          onClick: onOpenTimeline,
+          className: "hub-option hub-accent-history",
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "hub-option-head", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-icon", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                Clock3,
+                {
+                  className: "h-5 w-5",
+                  strokeWidth: 1.75,
+                  "aria-hidden": "true"
+                }
+              ) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-title", children: "Travel Through Time" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-arrow", "aria-hidden": "true", children: "→" })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-desc", children: "Our family's journey across the years." })
+          ]
+        }
+      )
+    ] })
+  ] });
+}
 function profileName(profile) {
   return resolveBackendDisplayName(profile.personId, profile);
 }
@@ -61293,9 +63936,12 @@ const AUDIT_ACTION_LABELS = {
   [AuditActionType.RelationshipRequestApproved]: "Relationship request approved",
   [AuditActionType.RelationshipRequestRejected]: "Relationship request rejected",
   [AuditActionType.RelationshipRequestPending]: "Relationship request pending",
-  [AuditActionType.DuplicateMerged]: "Duplicate merged"
+  [AuditActionType.DuplicateMerged]: "Duplicate merged",
+  [AuditActionType.BoardReplyRemoved]: "Board reply removed",
+  [AuditActionType.BoardPostArchived]: "Board post archived",
+  [AuditActionType.BoardPostRestored]: "Board post restored"
 };
-function formatDateTime$2(timestamp) {
+function formatDateTime$3(timestamp) {
   const date = new Date(Number(timestamp / 1000000n));
   if (Number.isNaN(date.getTime())) return "Unknown date";
   return date.toLocaleString(void 0, {
@@ -61306,11 +63952,11 @@ function formatDateTime$2(timestamp) {
     minute: "2-digit"
   });
 }
-function formatPrincipal$4(principal) {
+function formatPrincipal$5(principal) {
   const text = principal.toText();
   return text.length > 18 ? `${text.slice(0, 5)}…${text.slice(-4)}` : text;
 }
-function personName$4(personId) {
+function personName$5(personId) {
   return resolveDisplayName(personId, profiles);
 }
 function AuditHistoryTab() {
@@ -61361,12 +64007,12 @@ function AuditHistoryTab() {
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "audit-entry-detail", children: entry.summary }),
           entry.affectedPersonIds.length > 0 ? /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "audit-entry-detail", children: [
             "People: ",
-            entry.affectedPersonIds.map(personName$4).join(", ")
+            entry.affectedPersonIds.map(personName$5).join(", ")
           ] }) : null,
           /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "audit-entry-meta", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "audit-actor", children: formatPrincipal$4(entry.actorAccountId) }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "audit-actor", children: formatPrincipal$5(entry.actorAccountId) }),
             "· ",
-            formatDateTime$2(entry.timestamp)
+            formatDateTime$3(entry.timestamp)
           ] })
         ] })
       },
@@ -61374,7 +64020,7 @@ function AuditHistoryTab() {
     )) })
   ] });
 }
-function formatPrincipal$3(principal) {
+function formatPrincipal$4(principal) {
   const text = principal.toText();
   return text.length > 18 ? `${text.slice(0, 5)}…${text.slice(-4)}` : text;
 }
@@ -61550,7 +64196,7 @@ function CandidateCard({ candidate }) {
         FactRow,
         {
           label: "Owner",
-          value: candidate.ownerAccount ? formatPrincipal$3(candidate.ownerAccount) : "Unclaimed"
+          value: candidate.ownerAccount ? formatPrincipal$4(candidate.ownerAccount) : "Unclaimed"
         }
       ),
       /* @__PURE__ */ jsxRuntimeExports.jsx(FactRow, { label: "Parents", value: listOrNone(candidate.parents) }),
@@ -61680,7 +64326,7 @@ function ConflictRow({ conflict, resolving, onResolve }) {
     }
   );
 }
-function personName$3(personId) {
+function personName$4(personId) {
   return resolveDisplayName(personId, profiles);
 }
 const RELATIONSHIP_OPTIONS$1 = [
@@ -61730,7 +64376,7 @@ function RelationshipAdminTab() {
                 value: selectedPersonId,
                 onChange: (e) => setSelectedPersonId(e.target.value),
                 className: "form-select",
-                children: personIds.map((personId) => /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: personId, children: personName$3(personId) }, personId))
+                children: personIds.map((personId) => /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: personId, children: personName$4(personId) }, personId))
               }
             )
           ] })
@@ -61759,7 +64405,7 @@ function RelationshipAdminTab() {
                       children: [
                         /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "steward-row-portrait", "aria-hidden": "true", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Link2, { className: "h-5 w-5", strokeWidth: 1.75 }) }),
                         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "steward-row-body", children: [
-                          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "steward-row-name", children: personName$3(relationship.toPersonId) }),
+                          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "steward-row-name", children: personName$4(relationship.toPersonId) }),
                           /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "steward-row-role", children: [
                             RELATIONSHIP_TYPE_LABELS[relationship.relationshipType],
                             " ·",
@@ -61831,7 +64477,7 @@ function RelationshipAdminTab() {
                     className: "form-select flex-1",
                     children: [
                       /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: "", children: "Select related person…" }),
-                      personIds.filter((personId) => personId !== selectedPersonId).map((personId) => /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: personId, children: personName$3(personId) }, personId))
+                      personIds.filter((personId) => personId !== selectedPersonId).map((personId) => /* @__PURE__ */ jsxRuntimeExports.jsx("option", { value: personId, children: personName$4(personId) }, personId))
                     ]
                   }
                 ),
@@ -61871,7 +64517,7 @@ function RelationshipAdminTab() {
     }
   );
 }
-function formatDateTime$1(timestamp) {
+function formatDateTime$2(timestamp) {
   const date = new Date(Number(timestamp / 1000000n));
   if (Number.isNaN(date.getTime())) return "Unknown date";
   return date.toLocaleString(void 0, {
@@ -61882,11 +64528,11 @@ function formatDateTime$1(timestamp) {
     minute: "2-digit"
   });
 }
-function formatPrincipal$2(principal) {
+function formatPrincipal$3(principal) {
   const text = principal.toText();
   return text.length > 18 ? `${text.slice(0, 5)}…${text.slice(-4)}` : text;
 }
-function personName$2(personId) {
+function personName$3(personId) {
   return resolveDisplayName(personId, profiles);
 }
 function ReviewRequestsTab() {
@@ -62010,13 +64656,13 @@ function ClaimCard$1({
       children: [
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "review-card-head", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "review-card-title", children: personName$2(claim.personId) }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "review-card-title", children: personName$3(claim.personId) }),
             /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "review-card-meta", children: [
               "Claimed by ",
-              formatPrincipal$2(claim.requestingUserId),
+              formatPrincipal$3(claim.requestingUserId),
               " · submitted",
               " ",
-              formatDateTime$1(claim.submittedDate)
+              formatDateTime$2(claim.submittedDate)
             ] })
           ] }),
           /* @__PURE__ */ jsxRuntimeExports.jsx(StatusBadge, { kind: "claim", status: claim.status })
@@ -62076,17 +64722,17 @@ function RelationshipCard$1({
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "review-card-head", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsxs("h3", { className: "review-card-title", children: [
-              personName$2(request2.requestingPersonId),
+              personName$3(request2.requestingPersonId),
               " →",
               " ",
-              personName$2(request2.relatedPersonId)
+              personName$3(request2.relatedPersonId)
             ] }),
             /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "review-card-meta", children: [
               "Proposed ",
               relationLabel,
               " · submitted",
               " ",
-              formatDateTime$1(request2.submittedDate)
+              formatDateTime$2(request2.submittedDate)
             ] })
           ] }),
           /* @__PURE__ */ jsxRuntimeExports.jsx(StatusBadge, { kind: "relationshipRequest", status: request2.status })
@@ -62148,18 +64794,18 @@ function formatDate$2(timestamp) {
     day: "numeric"
   });
 }
-function formatPrincipal$1(principal) {
+function formatPrincipal$2(principal) {
   const text = principal.toText();
   return text.length > 18 ? `${text.slice(0, 5)}…${text.slice(-4)}` : text;
 }
-function personName$1(personId) {
+function personName$2(personId) {
   return resolveDisplayName(personId, profiles);
 }
 function stewardDisplayName(identity) {
   var _a2, _b2;
   if ((_a2 = identity.displayName) == null ? void 0 : _a2.trim()) return identity.displayName.trim();
   if ((_b2 = identity.canonicalName) == null ? void 0 : _b2.trim()) return identity.canonicalName.trim();
-  return formatPrincipal$1(identity.accountId);
+  return formatPrincipal$2(identity.accountId);
 }
 function StewardManagementTab() {
   const { data: stewards = [], isLoading: stewardsLoading } = useListStewards();
@@ -62251,7 +64897,7 @@ function StewardManagementTab() {
             const identity = identityByAccount.get(
               steward.stewardAccountId.toText()
             );
-            const displayName = identity ? stewardDisplayName(identity) : formatPrincipal$1(steward.stewardAccountId);
+            const displayName = identity ? stewardDisplayName(identity) : formatPrincipal$2(steward.stewardAccountId);
             return /* @__PURE__ */ jsxRuntimeExports.jsxs(
               "li",
               {
@@ -62405,7 +65051,7 @@ function StewardManagementTab() {
               className: "steward-list",
               children: successors.slice().sort((a2, b2) => Number(a2.priority - b2.priority)).map((successor, index2) => {
                 const identity = identityByPersonId.get(successor.personId);
-                const displayName = identity ? stewardDisplayName(identity) : personName$1(successor.personId);
+                const displayName = identity ? stewardDisplayName(identity) : personName$2(successor.personId);
                 return /* @__PURE__ */ jsxRuntimeExports.jsxs(
                   "li",
                   {
@@ -62568,6 +65214,494 @@ function FamilyStewardGovernancePage({
     /* @__PURE__ */ jsxRuntimeExports.jsx("div", { "data-ocid": "governance.panel", className: "gov-panel mt-6", children: activeTab === "review" ? /* @__PURE__ */ jsxRuntimeExports.jsx(ReviewRequestsTab, {}) : activeTab === "stewards" ? /* @__PURE__ */ jsxRuntimeExports.jsx(StewardManagementTab, {}) : activeTab === "duplicates" ? /* @__PURE__ */ jsxRuntimeExports.jsx(DuplicateReviewTab, {}) : activeTab === "relationships" ? /* @__PURE__ */ jsxRuntimeExports.jsx(RelationshipAdminTab, {}) : activeTab === "archived" ? /* @__PURE__ */ jsxRuntimeExports.jsx(ArchivedProfilesTab, {}) : /* @__PURE__ */ jsxRuntimeExports.jsx(AuditHistoryTab, {}) })
   ] });
 }
+function usePendingCount() {
+  const { data: isAdmin = false } = useIsAdmin();
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["pendingContributionsCount"],
+    queryFn: async () => {
+      if (!actor) return 0;
+      const count2 = await actor.getPendingContributionsCount();
+      return Number(count2);
+    },
+    enabled: isAdmin && !!actor && !isFetching
+  });
+}
+function PendingContributionsBadge() {
+  const { data: count2 = 0 } = usePendingCount();
+  if (count2 <= 0) return null;
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    "span",
+    {
+      "data-ocid": "pending_contributions_badge",
+      "aria-label": `${count2} pending contribution${count2 === 1 ? "" : "s"}`,
+      className: "pending-badge",
+      children: count2 > 99 ? "99+" : count2
+    }
+  );
+}
+function StewardCountBadge({ count: count2 }) {
+  if (count2 <= 0) return null;
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    "span",
+    {
+      "data-ocid": "steward_hub.count_badge",
+      "aria-label": `${count2} pending`,
+      className: "steward-count-badge",
+      children: count2 > 99 ? "99+" : count2
+    }
+  );
+}
+function FamilyStewardHubPage({
+  onBack,
+  onOpenReview,
+  onOpenPendingContributions,
+  onOpenGovernance
+}) {
+  const { data: isAdmin = false } = useIsAdmin();
+  const { data: claims = [] } = useListProfileClaims();
+  const { data: requests = [] } = useListRelationshipRequests();
+  const { data: reports = [] } = useListReports();
+  const { data: pendingArchiveItems = [] } = usePendingArchiveItems();
+  const pendingClaims = claims.filter((c2) => c2.status === "Pending").length;
+  const pendingRequests = requests.filter((r2) => r2.status === "Pending").length;
+  const pendingReports = reports.filter((r2) => r2.status === "Pending").length;
+  const pendingArchiveCount = pendingArchiveItems.length;
+  if (!isAdmin) {
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto w-full max-w-2xl px-4 py-8", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("header", { className: "hub-header mb-8", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "button",
+          {
+            type: "button",
+            "data-ocid": "steward_hub.back_button",
+            onClick: onBack,
+            "aria-label": "Back to Home",
+            className: "hub-back",
+            children: /* @__PURE__ */ jsxRuntimeExports.jsx(ArrowRight, { className: "h-5 w-5 rotate-180", "aria-hidden": "true" })
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "hub-title", children: "Family Steward" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "hub-subtitle", children: "Review, govern, and keep the family archive safe." })
+        ] })
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "div",
+        {
+          "data-ocid": "steward_hub.unauthorized_state",
+          className: "flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-border/70 px-6 py-16 text-center",
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-display text-xl font-semibold text-foreground", children: "Steward access only" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "max-w-sm text-sm text-muted-foreground", children: "The Family Steward area is reserved for authorized Stewards. If you believe this is a mistake, contact a current Steward." })
+          ]
+        }
+      )
+    ] });
+  }
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto w-full max-w-2xl px-4 py-8", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("header", { className: "hub-header mb-8", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "steward_hub.back_button",
+          onClick: onBack,
+          "aria-label": "Back to Home",
+          className: "hub-back",
+          children: /* @__PURE__ */ jsxRuntimeExports.jsx(ArrowRight, { className: "h-5 w-5 rotate-180", "aria-hidden": "true" })
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "hub-title", children: "Family Steward" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "hub-subtitle", children: "Review, govern, and keep the family archive safe." })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { "data-ocid": "steward_hub.grid", className: "hub-grid", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "steward_hub.review_option",
+          onClick: onOpenReview,
+          className: "hub-option hub-accent-steward",
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "hub-option-head", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-icon", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                ClipboardCheck,
+                {
+                  className: "h-5 w-5",
+                  strokeWidth: 1.75,
+                  "aria-hidden": "true"
+                }
+              ) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-title", children: "Review Requests" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(StewardCountBadge, { count: pendingClaims }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-arrow", "aria-hidden": "true", children: "→" })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-desc", children: "Confirm profile claims and family connections." })
+          ]
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "steward_hub.pending_option",
+          onClick: onOpenPendingContributions,
+          className: "hub-option hub-accent-steward",
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "hub-option-head", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-icon", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                Inbox,
+                {
+                  className: "h-5 w-5",
+                  strokeWidth: 1.75,
+                  "aria-hidden": "true"
+                }
+              ) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-title", children: "Pending Contributions" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(StewardCountBadge, { count: pendingArchiveCount }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-arrow", "aria-hidden": "true", children: "→" })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-desc", children: "Approve or reject new archive contributions." }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(PendingContributionsBadge, {})
+          ]
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "steward_hub.governance_option",
+          onClick: onOpenGovernance,
+          className: "hub-option hub-accent-steward",
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "hub-option-head", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-icon", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                Landmark,
+                {
+                  className: "h-5 w-5",
+                  strokeWidth: 1.75,
+                  "aria-hidden": "true"
+                }
+              ) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-title", children: "Family Governance" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-arrow", "aria-hidden": "true", children: "→" })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-desc", children: "Manage stewards, successors, and safety controls." })
+          ]
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "steward_hub.stewards_option",
+          onClick: onOpenGovernance,
+          className: "hub-option hub-accent-steward",
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "hub-option-head", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-icon", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                UserCog,
+                {
+                  className: "h-5 w-5",
+                  strokeWidth: 1.75,
+                  "aria-hidden": "true"
+                }
+              ) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-title", children: "Steward Management" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-arrow", "aria-hidden": "true", children: "→" })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-desc", children: "Promote and remove Family Stewards." })
+          ]
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "steward_hub.duplicates_option",
+          onClick: onOpenGovernance,
+          className: "hub-option hub-accent-steward",
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "hub-option-head", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-icon", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                GitMerge,
+                {
+                  className: "h-5 w-5",
+                  strokeWidth: 1.75,
+                  "aria-hidden": "true"
+                }
+              ) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-title", children: "Duplicate Profiles" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-arrow", "aria-hidden": "true", children: "→" })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-desc", children: "Review and merge duplicate family profiles." })
+          ]
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "steward_hub.relationships_option",
+          onClick: onOpenGovernance,
+          className: "hub-option hub-accent-steward",
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "hub-option-head", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-icon", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                Network,
+                {
+                  className: "h-5 w-5",
+                  strokeWidth: 1.75,
+                  "aria-hidden": "true"
+                }
+              ) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-title", children: "Relationship Management" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(StewardCountBadge, { count: pendingRequests }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-arrow", "aria-hidden": "true", children: "→" })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-desc", children: "Add, correct, and remove family relationships." })
+          ]
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "steward_hub.archived_option",
+          onClick: onOpenGovernance,
+          className: "hub-option hub-accent-steward",
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "hub-option-head", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-icon", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                FolderArchive,
+                {
+                  className: "h-5 w-5",
+                  strokeWidth: 1.75,
+                  "aria-hidden": "true"
+                }
+              ) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-title", children: "Archived Profiles" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-arrow", "aria-hidden": "true", children: "→" })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-desc", children: "Restore or permanently remove archived profiles." })
+          ]
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "steward_hub.audit_option",
+          onClick: onOpenGovernance,
+          className: "hub-option hub-accent-steward",
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "hub-option-head", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-icon", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                ShieldCheck,
+                {
+                  className: "h-5 w-5",
+                  strokeWidth: 1.75,
+                  "aria-hidden": "true"
+                }
+              ) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-title", children: "Audit History" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-arrow", "aria-hidden": "true", children: "→" })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-desc", children: "Review the steward action log." })
+          ]
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "steward_hub.reported_option",
+          onClick: onOpenReview,
+          className: "hub-option hub-accent-steward",
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "hub-option-head", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-icon", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Flag, { className: "h-5 w-5", strokeWidth: 1.75, "aria-hidden": "true" }) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-title", children: "Reported Messages" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(StewardCountBadge, { count: pendingReports }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-arrow", "aria-hidden": "true", children: "→" })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-desc", children: "Review messages reported by family members." })
+          ]
+        }
+      )
+    ] })
+  ] });
+}
+function formatDateTime$1(timestamp) {
+  const date = new Date(Number(timestamp / 1000000n));
+  if (Number.isNaN(date.getTime())) return "Unknown date";
+  return date.toLocaleString(void 0, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit"
+  });
+}
+function formatPrincipal$1(principal) {
+  const text = principal.toText();
+  return text.length > 18 ? `${text.slice(0, 5)}…${text.slice(-4)}` : text;
+}
+function personName$1(personId) {
+  return resolveDisplayName(personId, profiles);
+}
+function ReportStatusPill({ status }) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    "span",
+    {
+      "data-ocid": "reported_messages.status_pill",
+      className: "inline-flex shrink-0 items-center rounded-full border border-border/70 bg-muted px-2.5 py-0.5 text-[11px] font-semibold text-muted-foreground",
+      children: REPORT_STATUS_LABELS[status]
+    }
+  );
+}
+function ReportedMessagesTab() {
+  const { data: reports = [], isLoading } = useListReports();
+  const reviewReport = useReviewReport();
+  if (isLoading) {
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "div",
+      {
+        "data-ocid": "reported_messages.loading_state",
+        className: "space-y-4",
+        "aria-label": "Loading reported messages",
+        children: [0, 1, 2].map((i) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "div",
+          {
+            className: "animate-pulse rounded-2xl border border-border bg-card p-5",
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mb-3 h-4 w-1/3 rounded bg-muted" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mb-2 h-5 w-2/3 rounded bg-muted" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-4 w-full rounded bg-muted" })
+            ]
+          },
+          i
+        ))
+      }
+    );
+  }
+  if (reports.length === 0) {
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { "data-ocid": "reported_messages.empty_state", className: "gov-empty", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mb-1 flex h-12 w-12 items-center justify-center rounded-full bg-muted", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+        Flag,
+        {
+          className: "h-6 w-6 text-muted-foreground",
+          strokeWidth: 1.5,
+          "aria-hidden": "true"
+        }
+      ) }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "gov-empty-title", children: "No reported messages" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "gov-empty-hint", children: "When a family member reports a message, it will appear here for your review. You only ever see reported message content — never an arbitrary conversation." })
+    ] });
+  }
+  return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { "data-ocid": "reported_messages.panel", className: "flex flex-col gap-4", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { "data-ocid": "reported_messages.section", className: "gov-section", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "gov-section-head", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("h2", { className: "gov-section-title", children: [
+      "Reported Messages (",
+      reports.length,
+      ")"
+    ] }) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("ul", { "data-ocid": "reported_messages.list", className: "space-y-3", children: reports.map((report, index2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+      ReportedMessageCard,
+      {
+        report,
+        index: index2,
+        reviewing: reviewReport.isPending,
+        onReview: (status) => reviewReport.mutate({ reportId: report.reportId, status })
+      },
+      report.reportId.toString()
+    )) })
+  ] }) });
+}
+function ReportedMessageCard({
+  report,
+  index: index2,
+  reviewing,
+  onReview
+}) {
+  const position = index2 + 1;
+  const { data: view, isLoading } = useGetReportedMessage(report.reportId);
+  const resolved = view ?? null;
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "li",
+    {
+      "data-ocid": `reported_messages.item.${position}`,
+      className: "review-card",
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "review-card-head", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "review-card-title", children: resolved ? personName$1(resolved.message.senderPersonId) : "Reported message" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "review-card-meta", children: [
+              "Reported by ",
+              formatPrincipal$1(report.reportingAccountId),
+              " ·",
+              " ",
+              formatDateTime$1(report.createdAt)
+            ] })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(ReportStatusPill, { status: report.status })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-2", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-start gap-2 rounded-lg border border-border/60 bg-muted/40 p-3", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              ShieldAlert,
+              {
+                className: "mt-0.5 h-4 w-4 shrink-0 text-muted-foreground",
+                strokeWidth: 1.75,
+                "aria-hidden": "true"
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground", children: "Reason" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-0.5 text-sm text-foreground", children: report.reason })
+            ] })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-1 rounded-lg border border-border/60 bg-card p-3", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground", children: "Reported message" }),
+            isLoading ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-4 w-2/3 animate-pulse rounded bg-muted" }) : resolved ? /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "whitespace-pre-wrap break-words text-sm text-foreground", children: resolved.message.body }) : /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: "Message content is no longer available." })
+          ] })
+        ] }),
+        report.status === ReportStatus.Pending && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "review-card-actions", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "button",
+            {
+              type: "button",
+              "data-ocid": `reported_messages.resolve_button.${position}`,
+              onClick: () => onReview(ReportStatus.Reviewed),
+              disabled: reviewing,
+              className: "steward-approve disabled:cursor-not-allowed disabled:opacity-60",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { className: "h-4 w-4", strokeWidth: 2.25, "aria-hidden": "true" }),
+                reviewing ? "Reviewing…" : "Resolve"
+              ]
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "button",
+            {
+              type: "button",
+              "data-ocid": `reported_messages.dismiss_button.${position}`,
+              onClick: () => onReview(ReportStatus.Dismissed),
+              disabled: reviewing,
+              className: "steward-reject disabled:cursor-not-allowed disabled:opacity-60",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(X, { className: "h-4 w-4", strokeWidth: 2.25, "aria-hidden": "true" }),
+                reviewing ? "Reviewing…" : "Dismiss"
+              ]
+            }
+          )
+        ] })
+      ]
+    }
+  );
+}
 function formatDateTime(timestamp) {
   const date = new Date(Number(timestamp / 1000000n));
   if (Number.isNaN(date.getTime())) return "Unknown date";
@@ -62683,83 +65817,113 @@ function FamilyStewardReviewPage({
           i
         ))
       }
-    ) : pendingClaims.length === 0 && pendingRequests.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
-      "div",
-      {
-        "data-ocid": "steward_review.empty_state",
-        className: "flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/50 px-6 py-16 text-center",
-        children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-muted", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
-            Inbox,
-            {
-              className: "h-7 w-7 text-muted-foreground",
-              strokeWidth: 1.5,
-              "aria-hidden": "true"
-            }
-          ) }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display text-xl font-semibold text-foreground", children: "Nothing awaiting review" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-2 max-w-sm text-sm text-muted-foreground", children: "New profile claims and relationship requests from family members will appear here for your confirmation." })
-        ]
-      }
     ) : /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { "data-ocid": "steward_review.panel", className: "steward-panel", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsxs(
-        "section",
+      pendingClaims.length === 0 && pendingRequests.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "div",
         {
-          "data-ocid": "steward_review.claims_section",
-          className: "steward-section",
+          "data-ocid": "steward_review.empty_state",
+          className: "flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/50 px-6 py-16 text-center",
           children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsxs("h2", { className: "steward-section-title", children: [
-              "Profile Claims (",
-              pendingClaims.length,
-              ")"
-            ] }),
-            pendingClaims.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: "No profile claims awaiting review." }) : /* @__PURE__ */ jsxRuntimeExports.jsx("ul", { "data-ocid": "steward_review.claims_list", className: "space-y-3", children: pendingClaims.map((claim, index2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
-              ClaimCard,
+            /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-muted", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+              Inbox,
               {
-                claim,
-                index: index2,
-                approving: approveClaim.isPending,
-                rejecting: rejectClaim.isPending,
-                onApprove: () => approveClaim.mutate(claim.id),
-                onReject: () => rejectClaim.mutate(claim.id)
-              },
-              claim.id.toString()
-            )) })
+                className: "h-7 w-7 text-muted-foreground",
+                strokeWidth: 1.5,
+                "aria-hidden": "true"
+              }
+            ) }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display text-xl font-semibold text-foreground", children: "Nothing awaiting review" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-2 max-w-sm text-sm text-muted-foreground", children: "New profile claims and relationship requests from family members will appear here for your confirmation." })
           ]
         }
-      ),
+      ) : /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "section",
+          {
+            "data-ocid": "steward_review.claims_section",
+            className: "steward-section",
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("h2", { className: "steward-section-title", children: [
+                "Profile Claims (",
+                pendingClaims.length,
+                ")"
+              ] }),
+              pendingClaims.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: "No profile claims awaiting review." }) : /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "ul",
+                {
+                  "data-ocid": "steward_review.claims_list",
+                  className: "space-y-3",
+                  children: pendingClaims.map((claim, index2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    ClaimCard,
+                    {
+                      claim,
+                      index: index2,
+                      approving: approveClaim.isPending,
+                      rejecting: rejectClaim.isPending,
+                      onApprove: () => approveClaim.mutate(claim.id),
+                      onReject: () => rejectClaim.mutate(claim.id)
+                    },
+                    claim.id.toString()
+                  ))
+                }
+              )
+            ]
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "section",
+          {
+            "data-ocid": "steward_review.requests_section",
+            className: "steward-section",
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("h2", { className: "steward-section-title", children: [
+                "Relationship Requests (",
+                pendingRequests.length,
+                ")"
+              ] }),
+              pendingRequests.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: "No relationship requests awaiting review." }) : /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "ul",
+                {
+                  "data-ocid": "steward_review.requests_list",
+                  className: "space-y-3",
+                  children: pendingRequests.map((request2, index2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    RelationshipCard,
+                    {
+                      request: request2,
+                      index: index2,
+                      approving: approveRequest.isPending,
+                      rejecting: rejectRequest.isPending,
+                      pending: setPending.isPending,
+                      onApprove: () => approveRequest.mutate(request2.id),
+                      onReject: () => rejectRequest.mutate(request2.id),
+                      onPending: () => setPending.mutate(request2.id)
+                    },
+                    request2.id.toString()
+                  ))
+                }
+              )
+            ]
+          }
+        )
+      ] }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs(
         "section",
         {
-          "data-ocid": "steward_review.requests_section",
+          "data-ocid": "steward_review.reported_messages_section",
           className: "steward-section",
           children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsxs("h2", { className: "steward-section-title", children: [
-              "Relationship Requests (",
-              pendingRequests.length,
-              ")"
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                Flag,
+                {
+                  className: "h-3.5 w-3.5 text-muted-foreground",
+                  strokeWidth: 1.75,
+                  "aria-hidden": "true"
+                }
+              ),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "steward-section-title", children: "Reported Messages" })
             ] }),
-            pendingRequests.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: "No relationship requests awaiting review." }) : /* @__PURE__ */ jsxRuntimeExports.jsx(
-              "ul",
-              {
-                "data-ocid": "steward_review.requests_list",
-                className: "space-y-3",
-                children: pendingRequests.map((request2, index2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  RelationshipCard,
-                  {
-                    request: request2,
-                    index: index2,
-                    approving: approveRequest.isPending,
-                    rejecting: rejectRequest.isPending,
-                    pending: setPending.isPending,
-                    onApprove: () => approveRequest.mutate(request2.id),
-                    onReject: () => rejectRequest.mutate(request2.id),
-                    onPending: () => setPending.mutate(request2.id)
-                  },
-                  request2.id.toString()
-                ))
-              }
-            )
+            /* @__PURE__ */ jsxRuntimeExports.jsx(ReportedMessagesTab, {})
           ]
         }
       )
@@ -62912,7 +66076,7 @@ function RelationshipCard({
     }
   );
 }
-function getInitials$2(name) {
+function getInitials$4(name) {
   var _a2;
   const parts = name.split(/\s+/).filter((part) => part.length > 0 && /[A-Za-z]/.test(part.charAt(0)));
   const first = ((_a2 = parts[0]) == null ? void 0 : _a2.charAt(0)) ?? "";
@@ -62959,7 +66123,7 @@ function HeritageBranchCard({
         },
         className: `${cardClass2} focus-visible:outline-none`,
         children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: portraitClass, "aria-hidden": "true", children: photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: photoSrc, alt: photoAlt, loading: "lazy" }) : getInitials$2(displayName) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: portraitClass, "aria-hidden": "true", children: photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: photoSrc, alt: photoAlt, loading: "lazy" }) : getInitials$4(displayName) }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: nameClass, children: displayName }),
           count2 && /* @__PURE__ */ jsxRuntimeExports.jsx(
             "span",
@@ -62997,7 +66161,7 @@ function HeritageBranchCard({
             {
               className: isCouple ? "hb-couple-portrait" : "hb-node-portrait",
               "aria-hidden": "true",
-              children: photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: photoSrc, alt: photoAlt, loading: "lazy" }) : getInitials$2(displayName)
+              children: photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: photoSrc, alt: photoAlt, loading: "lazy" }) : getInitials$4(displayName)
             }
           ),
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: isCouple ? "hb-couple-name" : "hb-node-name", children: displayName })
@@ -63033,7 +66197,7 @@ function HeritageBranchCard({
           {
             className: `branch-portrait ${large ? "h-16 w-16 text-xl" : ""}`,
             "aria-hidden": "true",
-            children: photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: photoSrc, alt: photoAlt, loading: "lazy" }) : getInitials$2(displayName)
+            children: photoSrc ? /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: photoSrc, alt: photoAlt, loading: "lazy" }) : getInitials$4(displayName)
           }
         ),
         /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: `branch-card-name ${large ? "text-sm" : ""}`, children: displayName }),
@@ -63390,6 +66554,666 @@ function HomePage({
     /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-10 max-w-sm text-center text-sm text-muted-foreground", children: "A living record of the people, places, and moments that make us who we are." })
   ] });
 }
+function formatInboxTime(timestamp) {
+  const date = new Date(Number(timestamp / 1000000n));
+  if (Number.isNaN(date.getTime())) return "";
+  const now2 = Date.now();
+  const diffMs = now2 - date.getTime();
+  const minutes = Math.floor(diffMs / 6e4);
+  if (minutes < 1) return "Just now";
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  if (days < 7) return `${days}d ago`;
+  return date.toLocaleDateString(void 0, {
+    month: "short",
+    day: "numeric",
+    year: date.getFullYear() === (/* @__PURE__ */ new Date()).getFullYear() ? void 0 : "numeric"
+  });
+}
+function getInitials$3(name) {
+  var _a2;
+  const parts = name.split(/\s+/).filter((part) => part.length > 0 && /[A-Za-z]/.test(part.charAt(0)));
+  const first = ((_a2 = parts[0]) == null ? void 0 : _a2.charAt(0)) ?? "";
+  const last = parts.length > 1 ? parts[parts.length - 1].charAt(0) : "";
+  return (first + last).toUpperCase();
+}
+function InboxRow({
+  conversation,
+  index: index2,
+  onOpenConversation
+}) {
+  const canonical = useCanonicalPerson(
+    conversation.otherPersonId,
+    conversation.otherDisplayName
+  );
+  const hasUnread = conversation.unreadCount > 0n;
+  return /* @__PURE__ */ jsxRuntimeExports.jsx("li", { children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "button",
+    {
+      type: "button",
+      "data-ocid": `inbox.item.${index2}`,
+      onClick: () => onOpenConversation(conversation.conversationId),
+      className: `inbox-card w-full text-left ${hasUnread ? "inbox-card-unread" : ""}`,
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "inbox-portrait", children: canonical.profilePhotoUrl ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "img",
+          {
+            src: canonical.profilePhotoUrl,
+            alt: "",
+            loading: "lazy",
+            className: "h-full w-full object-cover"
+          }
+        ) : getInitials$3(canonical.displayName) }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "inbox-body", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "inbox-row", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "inbox-name", children: canonical.displayName }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "inbox-time", children: formatInboxTime(conversation.latestMessageAt) })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "inbox-preview", children: conversation.latestMessagePreview || "No messages yet" })
+        ] }),
+        hasUnread ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "span",
+          {
+            className: "unread-pill",
+            "aria-label": `${conversation.unreadCount} unread`,
+            children: conversation.unreadCount.toString()
+          }
+        ) : null
+      ]
+    }
+  ) });
+}
+function InboxPage({ onOpenConversation, onBack }) {
+  const { data: conversations = [], isLoading } = useListConversations();
+  const { personId: myPersonId } = useNavbarIdentity();
+  const { data: messageableMembers = [] } = useListMessageableMembers();
+  const hasOtherEligibleMember = messageableMembers.some(
+    (personId) => personId !== myPersonId
+  );
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-6 py-8", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx("header", { className: "flex flex-wrap items-center justify-between gap-3", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "inbox.back_button",
+          onClick: onBack,
+          "aria-label": "Back",
+          className: "inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-foreground shadow-subtle transition-colors hover:border-accent/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+          children: /* @__PURE__ */ jsxRuntimeExports.jsx(ArrowLeft, { className: "h-4 w-4", strokeWidth: 2, "aria-hidden": "true" })
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "flex h-10 w-10 items-center justify-center rounded-full bg-accent/15 text-accent-foreground", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+        MessageSquareText,
+        {
+          className: "h-5 w-5",
+          strokeWidth: 1.75,
+          "aria-hidden": "true"
+        }
+      ) }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "font-display text-2xl font-semibold tracking-tight text-foreground", children: "Private Messages" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: conversations.length > 0 ? `${conversations.length} conversation${conversations.length === 1 ? "" : "s"}` : "Your 1:1 conversations" })
+      ] })
+    ] }) }),
+    isLoading ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "div",
+      {
+        "data-ocid": "inbox.loading_state",
+        className: "flex flex-col gap-2",
+        "aria-label": "Loading conversations",
+        children: [0, 1, 2].map((i) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "div",
+          {
+            className: "h-20 animate-pulse rounded-xl border border-border/60 bg-card"
+          },
+          i
+        ))
+      }
+    ) : conversations.length === 0 && !hasOtherEligibleMember ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "div",
+      {
+        "data-ocid": "inbox.empty_state",
+        className: "flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-border/70 bg-card/50 px-6 py-16 text-center",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "flex h-12 w-12 items-center justify-center rounded-full bg-muted text-muted-foreground", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Users, { className: "h-6 w-6", strokeWidth: 1.5, "aria-hidden": "true" }) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display text-xl font-semibold text-foreground", children: "No other family members are available to message yet." }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "max-w-sm text-sm text-muted-foreground", children: "Once another relative claims and receives approval for their Norwood profile, you'll be able to message them privately here." })
+        ]
+      }
+    ) : conversations.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "div",
+      {
+        "data-ocid": "inbox.no_conversations_state",
+        className: "flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-border/70 bg-card/50 px-6 py-16 text-center",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "flex h-12 w-12 items-center justify-center rounded-full bg-muted text-muted-foreground", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Inbox, { className: "h-6 w-6", strokeWidth: 1.5, "aria-hidden": "true" }) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display text-xl font-semibold text-foreground", children: "No conversations yet" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "max-w-sm text-sm text-muted-foreground", children: "When a family member messages you, the conversation will appear here. You can also start one from a claimed family member's profile." })
+        ]
+      }
+    ) : /* @__PURE__ */ jsxRuntimeExports.jsx("ul", { "data-ocid": "inbox.list", className: "flex flex-col gap-2", children: conversations.map((conversation, index2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+      InboxRow,
+      {
+        conversation,
+        index: index2,
+        onOpenConversation
+      },
+      conversation.conversationId
+    )) })
+  ] });
+}
+function MessageBoardHubPage({
+  onBack,
+  onOpenBoard,
+  onOpenInbox
+}) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto w-full max-w-2xl px-4 py-8", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("header", { className: "hub-header mb-8", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "message_board_hub.back_button",
+          onClick: onBack,
+          "aria-label": "Back to Home",
+          className: "hub-back",
+          children: /* @__PURE__ */ jsxRuntimeExports.jsx(ArrowRight, { className: "h-5 w-5 rotate-180", "aria-hidden": "true" })
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "hub-title", children: "Message Board" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "hub-subtitle", children: "Keep in touch with the family — share on the board or message someone privately." })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { "data-ocid": "message_board_hub.grid", className: "hub-grid", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "message_board_hub.board_option",
+          onClick: onOpenBoard,
+          className: "hub-option hub-option-primary hub-accent-comm",
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "hub-option-head", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-icon", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                MessageSquareText,
+                {
+                  className: "h-5 w-5",
+                  strokeWidth: 1.75,
+                  "aria-hidden": "true"
+                }
+              ) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-title", children: "Family Message Board" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-arrow", "aria-hidden": "true", children: "→" })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-desc", children: "Post updates, questions, and announcements for the whole family." })
+          ]
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "message_board_hub.inbox_option",
+          onClick: onOpenInbox,
+          className: "hub-option hub-option-secondary hub-accent-comm",
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "hub-option-head", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-icon", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Mail, { className: "h-5 w-5", strokeWidth: 1.75, "aria-hidden": "true" }) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-title", children: "Private Messages" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-arrow", "aria-hidden": "true", children: "→" })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hub-option-desc", children: "Send and read private 1:1 messages with family members." })
+          ]
+        }
+      )
+    ] })
+  ] });
+}
+const BOARD_FILTERS = [
+  { value: "all", label: "All" },
+  { value: PostType.Announcement, label: "Announcements" },
+  { value: PostType.FamilyQuestion, label: "Questions" },
+  { value: PostType.ResearchHistory, label: "Research / History" },
+  { value: PostType.Recipe, label: "Recipes" },
+  { value: PostType.ReunionEvent, label: "Events" },
+  { value: PostType.Memorial, label: "Memorials" }
+];
+function BoardFilterBar({ active, onChange }) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { role: "tablist", "aria-label": "Filter board posts", className: "filter-bar", children: BOARD_FILTERS.map((filter2) => {
+    const isActive = active === filter2.value;
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "button",
+      {
+        type: "button",
+        role: "tab",
+        "aria-selected": isActive,
+        "data-ocid": `board.filter.${filter2.value}`,
+        onClick: () => onChange(filter2.value),
+        className: `filter-tab focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${isActive ? "filter-tab-active-board" : ""}`,
+        children: filter2.label
+      },
+      filter2.value
+    );
+  }) });
+}
+function getInitials$2(name) {
+  var _a2;
+  const parts = name.split(/\s+/).filter((part) => part.length > 0 && /[A-Za-z]/.test(part.charAt(0)));
+  const first = ((_a2 = parts[0]) == null ? void 0 : _a2.charAt(0)) ?? "";
+  const last = parts.length > 1 ? parts[parts.length - 1].charAt(0) : "";
+  return (first + last).toUpperCase();
+}
+function formatPostTime(timestamp) {
+  const date = new Date(Number(timestamp / 1000000n));
+  if (Number.isNaN(date.getTime())) return "";
+  const now2 = Date.now();
+  const diffMs = now2 - date.getTime();
+  const minutes = Math.floor(diffMs / 6e4);
+  if (minutes < 1) return "Just now";
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  if (days < 7) return `${days}d ago`;
+  return date.toLocaleDateString(void 0, {
+    month: "short",
+    day: "numeric",
+    year: date.getFullYear() === (/* @__PURE__ */ new Date()).getFullYear() ? void 0 : "numeric"
+  });
+}
+function postTypeBadgeClass(postType) {
+  switch (postType) {
+    case "Announcement":
+      return "post-type-announcement";
+    case "FamilyQuestion":
+      return "post-type-question";
+    case "ResearchHistory":
+      return "post-type-research";
+    case "PhotoIdentification":
+      return "post-type-photo";
+    case "Recipe":
+      return "post-type-recipe";
+    case "ReunionEvent":
+      return "post-type-reunion";
+    case "Memorial":
+      return "post-type-memorial";
+    default:
+      return "";
+  }
+}
+function BoardPostCard({
+  post,
+  index: index2,
+  onOpen,
+  onOpenProfile,
+  onEdit,
+  onArchive,
+  onRestore
+}) {
+  const { personId: myPersonId } = useNavbarIdentity();
+  const { data: isAdmin = false } = useIsAdmin();
+  const { data: archiveItems = [] } = useApprovedArchiveItems();
+  const { data: replies = [] } = useListBoardReplies(post.postId);
+  const canonical = useCanonicalPerson(post.authorPersonId, "");
+  const isAuthor = myPersonId !== void 0 && post.authorPersonId === myPersonId;
+  const isArchived = post.status === PostStatus.Archived;
+  const linkedMedia = archiveItems.filter(
+    (item) => post.linkedMediaIds.includes(item.id)
+  );
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "article",
+    {
+      "data-ocid": `board.post.${index2 + 1}`,
+      className: `post-card ${isArchived ? "opacity-70" : ""}`,
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "post-card-head", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "button",
+            {
+              type: "button",
+              "data-ocid": `board.post.${index2 + 1}.author`,
+              onClick: () => onOpenProfile(post.authorPersonId),
+              className: "post-card-author min-w-0 text-left",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "author-avatar", "aria-hidden": "true", children: canonical.profilePhotoUrl ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  "img",
+                  {
+                    src: canonical.profilePhotoUrl,
+                    alt: "",
+                    loading: "lazy",
+                    className: "h-full w-full object-cover"
+                  }
+                ) : getInitials$2(canonical.displayName || "?") }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "min-w-0", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "author-name block", children: canonical.displayName || "Family member" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "author-meta block", children: [
+                    formatPostTime(post.createdAt),
+                    isArchived ? " · Archived" : ""
+                  ] })
+                ] })
+              ]
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "span",
+            {
+              className: `post-type-badge ${postTypeBadgeClass(post.postType)}`,
+              "data-ocid": `board.post.${index2 + 1}.type_badge`,
+              children: POST_TYPE_LABELS[post.postType]
+            }
+          )
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "button",
+          {
+            type: "button",
+            "data-ocid": `board.post.${index2 + 1}.open`,
+            onClick: onOpen,
+            className: "flex flex-col gap-2 text-left",
+            children: [
+              post.title ? /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "post-card-title", children: post.title }) : null,
+              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "post-card-body whitespace-pre-line", children: post.body })
+            ]
+          }
+        ),
+        post.relatedPersonIds.length > 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-wrap items-center gap-1.5", children: post.relatedPersonIds.map((personId) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+          RelatedMemberChip,
+          {
+            personId,
+            onOpenProfile
+          },
+          personId
+        )) }) : null,
+        linkedMedia.length > 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-wrap items-center gap-1.5", children: linkedMedia.map((item) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "span",
+          {
+            className: "inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-muted/40 px-2.5 py-1 text-[11px] font-semibold text-muted-foreground",
+            children: [
+              ARCHIVE_ITEM_TYPE_LABELS[item.itemType],
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "max-w-[10rem] truncate", children: item.title })
+            ]
+          },
+          item.id
+        )) }) : null,
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "post-card-footer", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "span",
+            {
+              className: "inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground",
+              "data-ocid": `board.post.${index2 + 1}.reply_count`,
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  MessageSquare,
+                  {
+                    className: "h-3.5 w-3.5",
+                    strokeWidth: 2,
+                    "aria-hidden": "true"
+                  }
+                ),
+                replies.length,
+                " ",
+                replies.length === 1 ? "reply" : "replies"
+              ]
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "ml-auto flex items-center gap-1.5", children: [
+            isAuthor && !isArchived ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "button",
+              {
+                type: "button",
+                "data-ocid": `board.post.${index2 + 1}.edit`,
+                onClick: onEdit,
+                className: "inline-flex items-center gap-1 rounded-full border border-border/60 px-2.5 py-1 text-[11px] font-semibold text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(Pencil, { className: "h-3 w-3", strokeWidth: 2, "aria-hidden": "true" }),
+                  "Edit"
+                ]
+              }
+            ) : null,
+            isAuthor && !isArchived ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "button",
+              {
+                type: "button",
+                "data-ocid": `board.post.${index2 + 1}.archive`,
+                onClick: onArchive,
+                className: "inline-flex items-center gap-1 rounded-full border border-border/60 px-2.5 py-1 text-[11px] font-semibold text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(Archive, { className: "h-3 w-3", strokeWidth: 2, "aria-hidden": "true" }),
+                  "Archive"
+                ]
+              }
+            ) : null,
+            isAdmin && !isArchived ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "button",
+              {
+                type: "button",
+                "data-ocid": `board.post.${index2 + 1}.steward_archive`,
+                onClick: onArchive,
+                className: "inline-flex items-center gap-1 rounded-full border border-border/60 px-2.5 py-1 text-[11px] font-semibold text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(Archive, { className: "h-3 w-3", strokeWidth: 2, "aria-hidden": "true" }),
+                  "Hide"
+                ]
+              }
+            ) : null,
+            isAdmin && isArchived ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "button",
+              {
+                type: "button",
+                "data-ocid": `board.post.${index2 + 1}.restore`,
+                onClick: onRestore,
+                className: "inline-flex items-center gap-1 rounded-full border border-border/60 px-2.5 py-1 text-[11px] font-semibold text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(Undo2, { className: "h-3 w-3", strokeWidth: 2, "aria-hidden": "true" }),
+                  "Restore"
+                ]
+              }
+            ) : null
+          ] })
+        ] })
+      ]
+    }
+  );
+}
+function RelatedMemberChip({
+  personId,
+  onOpenProfile
+}) {
+  const canonical = useCanonicalPerson(personId, personId);
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "button",
+    {
+      type: "button",
+      "data-ocid": `board.related.${personId}`,
+      onClick: () => onOpenProfile(personId),
+      className: "inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-card px-2.5 py-1 text-[11px] font-semibold text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "flex h-4 w-4 items-center justify-center rounded-full bg-muted text-[8px] font-semibold text-muted-foreground", children: getInitials$2(canonical.displayName || "?") }),
+        canonical.displayName
+      ]
+    }
+  );
+}
+function filterToPostType(filter2) {
+  return filter2 === "all" ? null : filter2;
+}
+function MessageBoardPage({
+  onBack,
+  onOpenPost,
+  onCompose,
+  onOpenProfile
+}) {
+  const { claimStatus } = useNavbarIdentity();
+  const [filter2, setFilter] = reactExports.useState("all");
+  const { data: posts = [], isLoading } = useListBoardPosts(
+    filterToPostType(filter2)
+  );
+  const archivePost = useArchiveBoardPost();
+  const restorePost = useRestoreBoardPost();
+  const isApprovedMember = claimStatus === ClaimStatus.Claimed;
+  if (!isApprovedMember) {
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-6 py-8", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("header", { className: "flex items-center gap-3", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "button",
+          {
+            type: "button",
+            "data-ocid": "board.back_button",
+            onClick: onBack,
+            "aria-label": "Back",
+            className: "inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-foreground shadow-subtle transition-colors hover:border-accent/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+            children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+              MessageSquarePlus,
+              {
+                className: "h-4 w-4 rotate-180",
+                strokeWidth: 2,
+                "aria-hidden": "true"
+              }
+            )
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "font-display text-2xl font-semibold tracking-tight text-foreground", children: "Family Message Board" })
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "div",
+        {
+          "data-ocid": "board.no_access",
+          className: "flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-border/70 bg-card/50 px-6 py-16 text-center",
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "flex h-12 w-12 items-center justify-center rounded-full bg-muted text-muted-foreground", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+              ShieldAlert,
+              {
+                className: "h-6 w-6",
+                strokeWidth: 1.5,
+                "aria-hidden": "true"
+              }
+            ) }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display text-xl font-semibold text-foreground", children: "Family only" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "max-w-sm text-sm text-muted-foreground", children: "The Message Board is private to approved family members. Connect your family profile to join the conversation." })
+          ]
+        }
+      )
+    ] });
+  }
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-6 py-8", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("header", { className: "flex flex-wrap items-center justify-between gap-3", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "button",
+          {
+            type: "button",
+            "data-ocid": "board.back_button",
+            onClick: onBack,
+            "aria-label": "Back",
+            className: "inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-foreground shadow-subtle transition-colors hover:border-accent/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+            children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+              MessageSquarePlus,
+              {
+                className: "h-4 w-4 rotate-180",
+                strokeWidth: 2,
+                "aria-hidden": "true"
+              }
+            )
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "font-display text-2xl font-semibold tracking-tight text-foreground", children: "Family Message Board" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: posts.length > 0 ? `${posts.length} post${posts.length === 1 ? "" : "s"}` : "Share news, questions, and memories" })
+        ] })
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        "button",
+        {
+          type: "button",
+          "data-ocid": "board.new_post",
+          onClick: onCompose,
+          className: "inline-flex min-h-[40px] items-center gap-1.5 rounded-full bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground transition-colors hover:bg-accent/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+          children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              MessageSquarePlus,
+              {
+                className: "h-4 w-4",
+                strokeWidth: 2,
+                "aria-hidden": "true"
+              }
+            ),
+            "New Post"
+          ]
+        }
+      )
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(BoardFilterBar, { active: filter2, onChange: setFilter }),
+    isLoading ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "div",
+      {
+        "data-ocid": "board.loading_state",
+        className: "flex flex-col gap-3",
+        "aria-label": "Loading posts",
+        children: [0, 1, 2].map((i) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "div",
+          {
+            className: "h-40 animate-pulse rounded-xl border border-border/60 bg-card"
+          },
+          i
+        ))
+      }
+    ) : posts.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "div",
+      {
+        "data-ocid": "board.empty_state",
+        className: "flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-border/70 bg-card/50 px-6 py-16 text-center",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "flex h-12 w-12 items-center justify-center rounded-full bg-muted text-muted-foreground", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+            MessageSquarePlus,
+            {
+              className: "h-6 w-6",
+              strokeWidth: 1.5,
+              "aria-hidden": "true"
+            }
+          ) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display text-xl font-semibold text-foreground", children: "No posts yet" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "max-w-sm text-sm text-muted-foreground", children: "Be the first to share something with the family." }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "button",
+            {
+              type: "button",
+              "data-ocid": "board.empty_compose",
+              onClick: onCompose,
+              className: "mt-1 inline-flex min-h-[36px] items-center gap-1.5 rounded-full bg-accent px-4 py-1.5 text-xs font-semibold text-accent-foreground transition-colors hover:bg-accent/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  MessageSquarePlus,
+                  {
+                    className: "h-3.5 w-3.5",
+                    strokeWidth: 2,
+                    "aria-hidden": "true"
+                  }
+                ),
+                "New Post"
+              ]
+            }
+          )
+        ]
+      }
+    ) : /* @__PURE__ */ jsxRuntimeExports.jsx("div", { "data-ocid": "board.list", className: "flex flex-col gap-3", children: posts.map((post, index2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+      BoardPostCard,
+      {
+        post,
+        index: index2,
+        onOpen: () => onOpenPost(post.postId),
+        onOpenProfile,
+        onEdit: () => onOpenPost(post.postId),
+        onArchive: () => archivePost.mutate(post.postId),
+        onRestore: () => restorePost.mutate(post.postId)
+      },
+      post.postId
+    )) })
+  ] });
+}
 const EVIDENCE_STATUS_LABELS = {
   [EvidenceStatus.Documented]: "Documented",
   [EvidenceStatus.FamilyHistory]: "Family History",
@@ -63568,6 +67392,9 @@ function useSubmitStory() {
       void queryClient2.invalidateQueries({
         queryKey: ["familyHistory", "stories", "pending"]
       });
+      void queryClient2.invalidateQueries({
+        queryKey: ["pendingContributionsCount"]
+      });
     }
   });
 }
@@ -63586,6 +67413,10 @@ function useApproveStory() {
       void queryClient2.invalidateQueries({
         queryKey: ["familyHistory", "stories", "approved"]
       });
+      void queryClient2.invalidateQueries({
+        queryKey: ["pendingContributionsCount"]
+      });
+      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
     }
   });
 }
@@ -63601,6 +67432,10 @@ function useRejectStory() {
       void queryClient2.invalidateQueries({
         queryKey: ["familyHistory", "stories", "pending"]
       });
+      void queryClient2.invalidateQueries({
+        queryKey: ["pendingContributionsCount"]
+      });
+      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
     }
   });
 }
@@ -63681,6 +67516,9 @@ function useSubmitMysteryContribution() {
       void queryClient2.invalidateQueries({
         queryKey: ["familyHistory", "mysteries", "contributions", "pending"]
       });
+      void queryClient2.invalidateQueries({
+        queryKey: ["pendingContributionsCount"]
+      });
     }
   });
 }
@@ -63711,6 +67549,10 @@ function useReviewMysteryContribution() {
       void queryClient2.invalidateQueries({
         queryKey: ["familyHistory", "mysteries"]
       });
+      void queryClient2.invalidateQueries({
+        queryKey: ["pendingContributionsCount"]
+      });
+      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
     }
   });
 }
@@ -69670,7 +73512,15 @@ const VALID_VIEWS = [
   "timeline",
   "recipes",
   "recipe-detail",
-  "recipe-contribute"
+  "recipe-contribute",
+  "board",
+  "board-post",
+  "board-compose",
+  "inbox",
+  "conversation",
+  "family-history",
+  "message-board-hub",
+  "steward-hub"
 ];
 function isView(value) {
   return VALID_VIEWS.includes(value);
@@ -69708,6 +73558,10 @@ function App() {
   const [exploreFocusId, setExploreFocusId] = reactExports.useState(null);
   const [mediaContributePreselect, setMediaContributePreselect] = reactExports.useState(null);
   const [selectedRecipeId, setSelectedRecipeId] = reactExports.useState(null);
+  const [selectedPostId, setSelectedPostId] = reactExports.useState(null);
+  const [composePostId, setComposePostId] = reactExports.useState(null);
+  const [selectedConversationId, setSelectedConversationId] = reactExports.useState(null);
+  const [selectedConversationPersonId, setSelectedConversationPersonId] = reactExports.useState(null);
   const [recipeContributePreselect, setRecipeContributePreselect] = reactExports.useState(null);
   const { data: isAdmin = false } = useIsAdmin();
   const { isAuthenticated, accountId, signOut } = useAuth();
@@ -69717,6 +73571,8 @@ function App() {
     personId: myPersonId,
     claimStatus
   } = useNavbarIdentity();
+  const isApprovedMember = claimStatus === ClaimStatus.Claimed;
+  const hasClaimedProfile = claimStatus === ClaimStatus.Claimed;
   const profile = profiles[profileId] ?? profiles.julia;
   const isStaticProfile = Boolean(profiles[profileId]);
   const { data: myBackendProfile } = usePersonProfile(profileId, {
@@ -69797,6 +73653,8 @@ function App() {
     {
       isAdmin,
       isAuthenticated,
+      isApprovedMember,
+      hasClaimedProfile,
       accountId,
       identityName: displayName,
       identityStatus,
@@ -69807,23 +73665,14 @@ function App() {
         setView("sign-in");
       },
       onSignOutClick: signOut,
-      onAdminClick: () => setView("admin-approval"),
       onArchiveClick: () => setView("archive"),
-      onStoriesClick: () => {
-        setPendingStoryId(null);
-        setView("stories");
-      },
-      onMysteriesClick: () => {
-        setPendingMysteryId(null);
-        setView("mysteries");
-      },
-      onTimelineClick: () => setView("timeline"),
       onBranchClick: () => setView("heritage-branch"),
       onExploreClick: () => openExploreFamily(null),
-      onStewardClick: () => setView("steward-review"),
-      onGovernanceClick: () => setView("governance"),
-      onNotificationsClick: () => setView("notifications"),
+      onHistoryClick: () => setView("family-history"),
       onAddMyselfClick: () => setView("add-myself"),
+      onMessageBoardClick: () => setView("message-board-hub"),
+      onStewardClick: () => setView("steward-hub"),
+      onNotificationsClick: () => setView("notifications"),
       children: view === "home" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
         HomePage,
         {
@@ -69865,6 +73714,11 @@ function App() {
           onOpenMediaItem: openMediaItem,
           onOpenRecipes: openRecipes,
           onOpenRecipe: openRecipe,
+          onOpenConversation: (personId) => {
+            setSelectedConversationPersonId(personId);
+            setSelectedConversationId(null);
+            setView("conversation");
+          },
           onOpenRecipeContribute: (preselect) => openRecipeContribute({
             personId: preselect.personId,
             role: "originating",
@@ -69889,6 +73743,11 @@ function App() {
           onOpenMediaItem: openMediaItem,
           onOpenRecipes: openRecipes,
           onOpenRecipe: openRecipe,
+          onOpenConversation: (personId) => {
+            setSelectedConversationPersonId(personId);
+            setSelectedConversationId(null);
+            setView("conversation");
+          },
           onOpenRecipeContribute: (preselect) => openRecipeContribute({
             personId: preselect.personId,
             role: "originating",
@@ -70014,6 +73873,97 @@ function App() {
             personId: recipeContributePreselect.personId,
             role: recipeContributePreselect.role
           } : void 0
+        }
+      ) : view === "board" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+        MessageBoardPage,
+        {
+          onBack: () => setView("home"),
+          onOpenPost: (id2) => {
+            setSelectedPostId(id2);
+            setView("board-post");
+          },
+          onCompose: () => {
+            setComposePostId(null);
+            setView("board-compose");
+          },
+          onOpenProfile: (id2) => {
+            setProfileId(id2);
+            setView("profile");
+          }
+        }
+      ) : view === "board-post" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+        BoardPostPage,
+        {
+          postId: selectedPostId ?? 0n,
+          onBack: () => setView("board"),
+          onOpenProfile: (id2) => {
+            setProfileId(id2);
+            setView("profile");
+          },
+          onEdit: () => {
+            setComposePostId(selectedPostId);
+            setView("board-compose");
+          }
+        }
+      ) : view === "board-compose" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+        BoardPostComposer,
+        {
+          postId: composePostId,
+          onBack: () => composePostId !== null ? setView("board-post") : setView("board"),
+          onOpenProfile: (id2) => {
+            setProfileId(id2);
+            setView("profile");
+          }
+        }
+      ) : view === "inbox" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+        InboxPage,
+        {
+          onBack: () => setView("home"),
+          onOpenConversation: (id2) => {
+            setSelectedConversationId(id2);
+            setSelectedConversationPersonId(null);
+            setView("conversation");
+          }
+        }
+      ) : view === "conversation" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+        ConversationPage,
+        {
+          conversationId: selectedConversationId,
+          personId: selectedConversationPersonId,
+          onBack: () => setView("inbox"),
+          onOpenProfile: (id2) => {
+            setProfileId(id2);
+            setView("profile");
+          }
+        }
+      ) : view === "family-history" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+        FamilyHistoryHubPage,
+        {
+          onBack: () => setView("home"),
+          onOpenStories: () => {
+            setPendingStoryId(null);
+            setView("stories");
+          },
+          onOpenMysteries: () => {
+            setPendingMysteryId(null);
+            setView("mysteries");
+          },
+          onOpenTimeline: () => setView("timeline")
+        }
+      ) : view === "message-board-hub" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+        MessageBoardHubPage,
+        {
+          onBack: () => setView("home"),
+          onOpenBoard: () => setView("board"),
+          onOpenInbox: () => setView("inbox")
+        }
+      ) : view === "steward-hub" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+        FamilyStewardHubPage,
+        {
+          onBack: () => setView("home"),
+          onOpenReview: () => setView("steward-review"),
+          onOpenPendingContributions: () => setView("admin-approval"),
+          onOpenGovernance: () => setView("governance")
         }
       ) : /* @__PURE__ */ jsxRuntimeExports.jsx(
         ArchiveDetailPage,

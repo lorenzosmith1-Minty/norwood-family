@@ -65,6 +65,7 @@ export type AuditActionType = { 'ProfileRemovalRequested' : null } |
   { 'RelationshipTypeCorrected' : null } |
   { 'RelationshipRequestPending' : null } |
   { 'StewardPromoted' : null } |
+  { 'BoardReplyRemoved' : null } |
   { 'SuccessorActivated' : null } |
   { 'StewardRemoved' : null } |
   { 'RelationshipRequestApproved' : null } |
@@ -73,6 +74,8 @@ export type AuditActionType = { 'ProfileRemovalRequested' : null } |
   { 'RelationshipRequestRejected' : null } |
   { 'ProfileArchived' : null } |
   { 'ProfileRestored' : null } |
+  { 'BoardPostArchived' : null } |
+  { 'BoardPostRestored' : null } |
   { 'RelationshipAdded' : null } |
   { 'RelationshipRemoved' : null } |
   { 'ProfileRemovalReviewed' : null } |
@@ -98,6 +101,21 @@ export type ClaimError = { 'AlreadyPending' : null } |
   { 'DeceasedProfile' : null };
 export type ClaimStatus = { 'Unclaimed' : null } |
   { 'Claimed' : null };
+export type ConversationId = bigint;
+export interface ConversationSummary {
+  'otherPersonId' : PersonId,
+  'conversationId' : ConversationId,
+  'unreadCount' : bigint,
+  'otherDisplayName' : string,
+  'latestMessagePreview' : string,
+  'latestMessageAt' : Timestamp,
+}
+export interface ConversationView {
+  'messages' : Array<Message>,
+  'participantPersonIds' : Array<PersonId>,
+  'conversationId' : ConversationId,
+  'participantDisplayNames' : Array<string>,
+}
 export type CreateError = { 'NotSignedIn' : null };
 export type DeleteError = { 'HasOwnershipHistory' : null } |
   { 'ProfileNotFound' : null } |
@@ -172,6 +190,28 @@ export interface MergeResult {
   'conflicts' : Array<MergeConflict>,
   'canonicalPersonId' : PersonId,
 }
+export interface Message {
+  'status' : MessageStatus,
+  'messageId' : MessageId,
+  'body' : string,
+  'createdAt' : Timestamp,
+  'conversationId' : ConversationId,
+  'senderAccountId' : AccountId,
+  'senderPersonId' : PersonId,
+  'readAt' : [] | [Timestamp],
+}
+export type MessageError = { 'ConversationNotFound' : null } |
+  { 'RecipientArchived' : null } |
+  { 'NotApprovedMember' : null } |
+  { 'RecipientNotClaimed' : null } |
+  { 'NotSignedIn' : null } |
+  { 'BlockedByRecipient' : null } |
+  { 'NotParticipant' : null } |
+  { 'CannotMessageSelf' : null } |
+  { 'RecipientNotFound' : null };
+export type MessageId = bigint;
+export type MessageStatus = { 'Blocked' : null } |
+  { 'Sent' : null };
 export interface Mystery {
   'id' : MysteryId,
   'status' : MysteryStatus,
@@ -222,7 +262,10 @@ export interface Notification {
 }
 export type NotificationId = bigint;
 export type NotificationType = { 'RelationshipRequested' : null } |
+  { 'BoardMention' : null } |
   { 'RelationshipReviewed' : null } |
+  { 'BoardReply' : null } |
+  { 'NewMessage' : null } |
   { 'ProfileClaimReviewed' : null } |
   { 'ProfileClaimRequested' : null };
 export interface OralHistorySpeaker {
@@ -267,9 +310,36 @@ export interface Photo {
   'uploadedBy' : Principal,
 }
 export type PhotoId = bigint;
+export interface Post {
+  'status' : PostStatus,
+  'authorAccountId' : AccountId,
+  'postType' : PostType,
+  'title' : [] | [string],
+  'body' : string,
+  'createdAt' : Timestamp,
+  'linkedMediaIds' : Array<bigint>,
+  'privacyScope' : PrivacyScope,
+  'authorPersonId' : PersonId,
+  'updatedAt' : Timestamp,
+  'relatedPersonIds' : Array<PersonId>,
+  'postId' : PostId,
+}
+export type PostId = bigint;
+export type PostStatus = { 'Active' : null } |
+  { 'Archived' : null };
+export type PostType = { 'Announcement' : null } |
+  { 'Recipe' : null } |
+  { 'ResearchHistory' : null } |
+  { 'FamilyQuestion' : null } |
+  { 'Memorial' : null } |
+  { 'General' : null } |
+  { 'Other' : null } |
+  { 'ReunionEvent' : null } |
+  { 'PhotoIdentification' : null };
 export type PrivacyLevel = { 'Private' : null } |
   { 'Public' : null } |
   { 'FamilyOnly' : null };
+export type PrivacyScope = { 'FamilyOnly' : null };
 export interface ProfileClaim {
   'id' : bigint,
   'submittedDate' : bigint,
@@ -386,6 +456,28 @@ export type RemovalError = { 'AlreadyPending' : null } |
   { 'DeceasedProfile' : null };
 export type RemoveError = { 'ProfileNotFound' : null } |
   { 'NotSignedIn' : null };
+export interface Reply {
+  'authorAccountId' : AccountId,
+  'body' : string,
+  'createdAt' : Timestamp,
+  'authorPersonId' : PersonId,
+  'replyId' : ReplyId,
+  'postId' : PostId,
+}
+export type ReplyId = bigint;
+export interface Report {
+  'status' : ReportStatus,
+  'reportedMessageId' : MessageId,
+  'createdAt' : Timestamp,
+  'reportingAccountId' : AccountId,
+  'reportId' : ReportId,
+  'reason' : string,
+}
+export type ReportId = bigint;
+export type ReportStatus = { 'Dismissed' : null } |
+  { 'Reviewed' : null } |
+  { 'Pending' : null };
+export interface ReportedMessageView { 'report' : Report, 'message' : Message }
 export interface Resolution {
   'supportingEvidence' : Array<string>,
   'summary' : string,
@@ -394,42 +486,44 @@ export interface Resolution {
 }
 export type Result = { 'ok' : PersonProfile } |
   { 'err' : EditError };
-export type Result_1 = { 'ok' : null } |
-  { 'err' : ArchiveError };
+export type Result_1 = { 'ok' : Message } |
+  { 'err' : MessageError };
 export type Result_10 = { 'ok' : null } |
-  { 'err' : MergeError };
-export type Result_11 = { 'ok' : MergeResult } |
-  { 'err' : MergeError };
-export type Result_12 = { 'ok' : AuthMethods } |
-  { 'err' : AccountError };
-export type Result_13 = { 'ok' : AccountId } |
-  { 'err' : AccountError };
-export type Result_14 = { 'ok' : SuccessorDesignation } |
-  { 'err' : StewardError };
-export type Result_15 = { 'ok' : PersonProfile } |
-  { 'err' : CreateError };
-export type Result_16 = { 'ok' : Relationship } |
-  { 'err' : RelationshipAdminError };
-export type Result_17 = { 'ok' : Account } |
-  { 'err' : AccountError };
-export type Result_18 = { 'ok' : null } |
-  { 'err' : Error };
-export type Result_2 = { 'ok' : ProfileRemovalRequest } |
-  { 'err' : RemovalError };
-export type Result_3 = { 'ok' : ProfileClaim } |
-  { 'err' : ClaimError };
-export type Result_4 = { 'ok' : null } |
-  { 'err' : StewardError };
-export type Result_5 = { 'ok' : null } |
-  { 'err' : RelationshipAdminError };
-export type Result_6 = { 'ok' : null } |
-  { 'err' : RemoveError };
-export type Result_7 = { 'ok' : RelationshipRequest } |
-  { 'err' : RelationshipError };
-export type Result_8 = { 'ok' : StewardRecord } |
-  { 'err' : StewardError };
-export type Result_9 = { 'ok' : null } |
   { 'err' : DeleteError };
+export type Result_11 = { 'ok' : null } |
+  { 'err' : MergeError };
+export type Result_12 = { 'ok' : MergeResult } |
+  { 'err' : MergeError };
+export type Result_13 = { 'ok' : AuthMethods } |
+  { 'err' : AccountError };
+export type Result_14 = { 'ok' : AccountId } |
+  { 'err' : AccountError };
+export type Result_15 = { 'ok' : SuccessorDesignation } |
+  { 'err' : StewardError };
+export type Result_16 = { 'ok' : PersonProfile } |
+  { 'err' : CreateError };
+export type Result_17 = { 'ok' : Relationship } |
+  { 'err' : RelationshipAdminError };
+export type Result_18 = { 'ok' : Account } |
+  { 'err' : AccountError };
+export type Result_19 = { 'ok' : null } |
+  { 'err' : Error };
+export type Result_2 = { 'ok' : null } |
+  { 'err' : ArchiveError };
+export type Result_3 = { 'ok' : ProfileRemovalRequest } |
+  { 'err' : RemovalError };
+export type Result_4 = { 'ok' : ProfileClaim } |
+  { 'err' : ClaimError };
+export type Result_5 = { 'ok' : null } |
+  { 'err' : StewardError };
+export type Result_6 = { 'ok' : null } |
+  { 'err' : RelationshipAdminError };
+export type Result_7 = { 'ok' : null } |
+  { 'err' : RemoveError };
+export type Result_8 = { 'ok' : RelationshipRequest } |
+  { 'err' : RelationshipError };
+export type Result_9 = { 'ok' : StewardRecord } |
+  { 'err' : StewardError };
 export interface Result__1 { 'hasMore' : boolean, 'rows' : Array<Array<Cell>> }
 export type SourceStatus = { 'Copy' : null } |
   { 'Unverified' : null } |
@@ -510,6 +604,7 @@ export type TimelineLinkTarget = { 'Story' : StoryId } |
   { 'Mystery' : MysteryId } |
   { 'Person' : string } |
   { 'ArchiveItem' : bigint };
+export type Timestamp = bigint;
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
   { 'guest' : null };
@@ -550,9 +645,21 @@ export interface _SERVICE {
   >,
   '_immutableObjectStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
   '_initialize_access_control' : ActorMethod<[], undefined>,
-  '_internet_identity_sign_in_finish' : ActorMethod<[], Result_18>,
+  '_internet_identity_sign_in_finish' : ActorMethod<[], Result_19>,
   '_internet_identity_sign_in_start' : ActorMethod<[], Uint8Array>,
-  'activateSuccessor' : ActorMethod<[PersonId], Result_8>,
+  /**
+   * / Activates/promotes a designated successor into the active steward role.
+   * / Family Steward only.
+   */
+  'activateSuccessor' : ActorMethod<[PersonId], Result_9>,
+  /**
+   * / Adds a one-level reply to a board post. Approved family members only.
+   * / Creates a reply notification for the post author.
+   */
+  'addBoardReply' : ActorMethod<[PostId, string], Reply>,
+  /**
+   * / Adds a canonical story directly (steward only), already approved.
+   */
   'addCanonicalStory' : ActorMethod<
     [
       string,
@@ -566,27 +673,106 @@ export interface _SERVICE {
     ],
     Story
   >,
+  /**
+   * / Uploads a new photo to a person's gallery. The signed-in caller is
+   * / recorded as the uploader. When the gallery has no profile photo yet, the
+   * / newly added photo is automatically set as the profile photo. Returns the
+   * / stored photo.
+   */
   'addPhoto' : ActorMethod<[PersonId, string, string, ExternalBlob], Photo>,
+  /**
+   * / Adds a missing relationship to the shared family graph. Family Steward
+   * / only.
+   */
   'addRelationship' : ActorMethod<
     [PersonId, PersonId, RelationshipType],
-    Result_16
+    Result_17
   >,
+  /**
+   * / Approves a pending archive item (admin only). Returns the updated item, or
+   * / `null` when the item does not exist or is not pending.
+   */
   'approveArchiveItem' : ActorMethod<[ArchiveItemId], [] | [ArchiveItem]>,
+  /**
+   * / Approves a pending profile claim, marking the profile claimed and
+   * / associating it with the requesting user. Family Steward only.
+   */
   'approveProfileClaim' : ActorMethod<[bigint], [] | [ProfileClaim]>,
+  /**
+   * / Approves a profile removal request, archiving the profile. Family Steward
+   * / only.
+   */
   'approveProfileRemoval' : ActorMethod<[bigint], [] | [ProfileRemovalRequest]>,
+  /**
+   * / Approves a pending recipe (steward only). Returns the updated recipe, or
+   * / `null` when the recipe does not exist or is not pending.
+   */
   'approveRecipe' : ActorMethod<[RecipeId], [] | [Recipe]>,
+  /**
+   * / Approves a relationship request, adding/confirming the relationship in the
+   * / shared family graph. Family Steward only.
+   */
   'approveRelationshipRequest' : ActorMethod<
     [bigint],
     [] | [RelationshipRequest]
   >,
+  /**
+   * / Approves a pending story (steward only). Returns the updated story, or
+   * / `null` when the story does not exist or is not pending.
+   */
   'approveStory' : ActorMethod<[StoryId], [] | [Story]>,
-  'archiveProfile' : ActorMethod<[PersonId], Result_1>,
+  /**
+   * / Archives (hides) a board post. The author or a Family Steward may archive.
+   * / Governance actions create audit entries.
+   */
+  'archiveBoardPost' : ActorMethod<[PostId], [] | [Post]>,
+  /**
+   * / Archives a profile, removing it from normal family browsing while
+   * / preserving relationships, media, timeline, sources, and ownership history.
+   * / Family Steward only.
+   */
+  'archiveProfile' : ActorMethod<[PersonId], Result_2>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
-  'bindAuthMethod' : ActorMethod<[AuthMethod], Result_17>,
+  /**
+   * / Binds an authentication method (Google or Apple) to the signed-in caller's
+   * / account. The account id is the caller's stable principal, so the same
+   * / person profile stays intact if the provider changes.
+   */
+  'bindAuthMethod' : ActorMethod<[AuthMethod], Result_18>,
+  /**
+   * / Blocks another member, preventing them from sending new messages to the
+   * / caller. Approved family members only.
+   */
+  'blockUser' : ActorMethod<[Principal], undefined>,
+  /**
+   * / Returns whether the signed-in caller may message the person identified by
+   * / `personId`: the viewer is signed in, the target has an active linked
+   * / account, the target is not the viewer, and the target is not archived.
+   * / Unclaimed profiles are never messageable. Drives the Message button on a
+   * / living claimed Person Profile.
+   */
+  'canMessagePerson' : ActorMethod<[string], boolean>,
+  /**
+   * / Corrects the relationship type of an existing relationship. Family Steward
+   * / only.
+   */
   'correctRelationshipType' : ActorMethod<
     [bigint, RelationshipType],
-    Result_16
+    Result_17
   >,
+  /**
+   * / Creates a board post with a type, optional title, body, related family
+   * / members, and optional linked existing Archive/media ids. Approved family
+   * / members only. Creates a mention notification for related members where
+   * / appropriate.
+   */
+  'createBoardPost' : ActorMethod<
+    [PostType, [] | [string], string, Array<string>, Array<bigint>],
+    Post
+  >,
+  /**
+   * / Creates a canonical mystery directly (steward only).
+   */
   'createCanonicalMystery' : ActorMethod<
     [
       string,
@@ -601,63 +787,307 @@ export interface _SERVICE {
     ],
     Mystery
   >,
-  'createMyself' : ActorMethod<[string], Result_15>,
-  'designateSuccessor' : ActorMethod<[PersonId, bigint], Result_14>,
+  /**
+   * / "Add Myself to This Family": creates a minimal person profile for a user
+   * / who does not already exist. The user must then connect to an existing
+   * / family member via a relationship request.
+   */
+  'createMyself' : ActorMethod<[string], Result_16>,
+  /**
+   * / Designates an approved claimed family member as a successor steward with a
+   * / priority/order. A successor is a designation only until activated.
+   * / Family Steward only.
+   */
+  'designateSuccessor' : ActorMethod<[PersonId, bigint], Result_15>,
   'execute' : ActorMethod<[string], Result__1>,
   'getApiDoc' : ActorMethod<[], string>,
+  /**
+   * / Returns a single active board post by id. Approved family members only.
+   */
+  'getBoardPost' : ActorMethod<[PostId], [] | [Post]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
-  'getMyAccountId' : ActorMethod<[], Result_13>,
-  'getMyAuthMethods' : ActorMethod<[], Result_12>,
+  /**
+   * / Returns a full conversation view for a participant. Only participants may
+   * / read a conversation.
+   */
+  'getConversation' : ActorMethod<[ConversationId], [] | [ConversationView]>,
+  /**
+   * / Returns the stable account id of the signed-in caller. Anonymous callers
+   * / receive #NotSignedIn.
+   */
+  'getMyAccountId' : ActorMethod<[], Result_14>,
+  /**
+   * / Returns the authentication methods bound to the signed-in caller's account.
+   */
+  'getMyAuthMethods' : ActorMethod<[], Result_13>,
+  /**
+   * / Returns the signed-in caller's own linked/claimed Person Profile, or, when
+   * / none is linked, the caller's pending profile (created via `createMyself` or
+   * / with a pending claim by the caller). Returns `null` when the caller has no
+   * / profile. Not gated to admin — any signed-in caller may query their own
+   * / profile.
+   */
   'getMyProfile' : ActorMethod<[], [] | [PersonProfile]>,
+  /**
+   * / Returns the current caller's own claim on a specific profile, or `null`
+   * / when the caller has no claim on that profile. Not gated to admin — any
+   * / signed-in caller may query their own claim.
+   */
   'getMyProfileClaim' : ActorMethod<[PersonId], [] | [ProfileClaim]>,
+  /**
+   * / Returns the signed-in caller's own pending relationship requests (requests
+   * / involving a profile the caller owns or created). Not gated to admin — any
+   * / signed-in caller may query their own pending relationship state.
+   */
   'getMyRelationshipRequests' : ActorMethod<[], Array<RelationshipRequest>>,
+  /**
+   * / Returns the count of all current pending review items (archive/media,
+   * / video/audio, recipes, recipe media, and other contribution types) for the
+   * / Steward-facing Pending Contributions badge. Family Steward only. The count
+   * / is derived from canonical pending data, so it increments on new pending
+   * / items and decrements on Approve/Reject automatically.
+   */
+  'getPendingContributionsCount' : ActorMethod<[], bigint>,
+  /**
+   * / Returns the ownership/lifecycle state of a person profile, or `null` when
+   * / the person is not tracked.
+   */
   'getPersonProfile' : ActorMethod<[PersonId], [] | [PersonProfile]>,
+  /**
+   * / Returns the person's current profile photo, or `null` when none is set.
+   */
   'getProfilePhoto' : ActorMethod<[PersonId], [] | [Photo]>,
+  /**
+   * / Returns a single recipe by id, or `null` when it does not exist or is not
+   * / visible to the caller. Private recipes are only visible to their
+   * / contributor or a Family Steward; non-approved recipes are only visible to
+   * / a Family Steward.
+   */
   'getRecipe' : ActorMethod<[RecipeId], [] | [Recipe]>,
+  /**
+   * / Returns a single relationship request by id.
+   */
   'getRelationshipRequest' : ActorMethod<[bigint], [] | [RelationshipRequest]>,
+  /**
+   * / Returns the reported message content for a report. Family Steward only;
+   * / reported message content is visible only when a report is filed. Stewards
+   * / cannot browse arbitrary private conversations.
+   */
+  'getReportedMessage' : ActorMethod<[ReportId], [] | [ReportedMessageView]>,
+  /**
+   * / Returns a warning encouraging successor designation when only one steward
+   * / exists, or `null` when there are multiple stewards. Family Steward only.
+   */
   'getSingleStewardWarning' : ActorMethod<[], [] | [string]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
+  /**
+   * / Lists all archive items in approved state (visible in the archive).
+   */
   'listApprovedArchiveItems' : ActorMethod<[], Array<ArchiveItem>>,
+  /**
+   * / Lists all approved recipes visible to the caller. Private recipes are only
+   * / visible to their contributor or a Family Steward.
+   */
   'listApprovedRecipes' : ActorMethod<[], Array<Recipe>>,
+  /**
+   * / Lists all approved stories (visible to viewers).
+   */
   'listApprovedStories' : ActorMethod<[], Array<Story>>,
+  /**
+   * / Returns the ids of all archived profiles so normal family browsing can
+   * / filter them out. Not gated to stewards — any caller may read archived ids.
+   */
   'listArchivedProfileIds' : ActorMethod<[], Array<PersonId>>,
+  /**
+   * / Lists all archived profiles. Family Steward only.
+   */
   'listArchivedProfiles' : ActorMethod<[], Array<PersonProfile>>,
+  /**
+   * / Returns the governance audit log. Audit History is strictly steward-only.
+   */
   'listAuditHistory' : ActorMethod<[], Array<AuditEntry>>,
+  /**
+   * / Lists the account ids the caller has blocked. Approved family members only.
+   */
+  'listBlockedUsers' : ActorMethod<[], Array<Principal>>,
+  /**
+   * / Lists active board posts, newest first, optionally filtered by post type.
+   * / Approved family members only.
+   */
+  'listBoardPosts' : ActorMethod<[[] | [PostType]], Array<Post>>,
+  /**
+   * / Lists the replies to a board post, chronologically. Approved family members
+   * / only.
+   */
+  'listBoardReplies' : ActorMethod<[PostId], Array<Reply>>,
+  /**
+   * / Lists all confirmed relationships for the frontend to merge into the
+   * / shared family graph.
+   */
   'listConfirmedRelationships' : ActorMethod<[], Array<Relationship>>,
+  /**
+   * / Returns the signed-in caller's inbox: one summary per conversation they
+   * / participate in, newest activity first. Approved family members only.
+   */
+  'listConversations' : ActorMethod<[], Array<ConversationSummary>>,
+  /**
+   * / Lists suspected duplicate Person records with comparison data. Family
+   * / Steward only.
+   */
   'listDuplicateCandidates' : ActorMethod<[], Array<DuplicatePair>>,
+  /**
+   * / Returns the eligible promotion/successor candidate list: all people who
+   * / are living, have an APPROVED/CLAIMED profile, are linked to a valid
+   * / account, are not already an active Steward, and are not archived. This is
+   * / data-driven — as additional family members claim and receive approval they
+   * / automatically appear without code changes. Family Steward only.
+   */
   'listEligibleStewardCandidates' : ActorMethod<[], Array<StewardIdentity>>,
+  /**
+   * / Returns the person ids of every other member the signed-in caller may
+   * / message: living, claimed, linked to an active account, not archived, and
+   * / not the caller. Not gated to stewards — any approved member may read it, so
+   * / the Private Messages inbox can determine whether any other eligible member
+   * / exists. Data-driven: as another relative claims and receives approval they
+   * / automatically appear without code changes.
+   */
+  'listMessageableMembers' : ActorMethod<[], Array<string>>,
+  /**
+   * / Lists all mysteries (visible to viewers).
+   */
   'listMysteries' : ActorMethod<[], Array<Mystery>>,
+  /**
+   * / Lists in-app notification records for the signed-in caller.
+   */
   'listNotifications' : ActorMethod<[], Array<Notification>>,
+  /**
+   * / Lists all archive items in pending state (admin only).
+   */
   'listPendingArchiveItems' : ActorMethod<[], Array<ArchiveItem>>,
+  /**
+   * / Lists all mystery contributions in pending state (steward only).
+   */
   'listPendingMysteryContributions' : ActorMethod<
     [],
     Array<MysteryContribution>
   >,
+  /**
+   * / Lists all recipes in pending state (steward only).
+   */
   'listPendingRecipes' : ActorMethod<[], Array<Recipe>>,
+  /**
+   * / Lists all stories in pending state (steward only).
+   */
   'listPendingStories' : ActorMethod<[], Array<Story>>,
+  /**
+   * / Returns the current relationships for a person. Family Steward only.
+   */
   'listPersonRelationships' : ActorMethod<[PersonId], Array<Relationship>>,
+  /**
+   * / Lists all uploaded photos for a person, in upload order.
+   */
   'listPhotos' : ActorMethod<[PersonId], Array<Photo>>,
+  /**
+   * / Lists all profile claim requests for the Family Steward review area.
+   */
   'listProfileClaims' : ActorMethod<[], Array<ProfileClaim>>,
+  /**
+   * / Lists all profile removal requests for steward review. Family Steward only.
+   */
   'listProfileRemovalRequests' : ActorMethod<[], Array<ProfileRemovalRequest>>,
+  /**
+   * / Lists recipes linked to a person, whether as the originating member or a
+   * / related member. Returns only approved recipes visible to the caller;
+   * / private recipes are only visible to their contributor or a Family Steward.
+   */
   'listRecipesForPerson' : ActorMethod<[string], Array<Recipe>>,
+  /**
+   * / Lists all relationship requests for the Family Steward review area.
+   */
   'listRelationshipRequests' : ActorMethod<[], Array<RelationshipRequest>>,
+  /**
+   * / Lists all reports. Family Steward only.
+   */
+  'listReports' : ActorMethod<[], Array<Report>>,
+  /**
+   * / Returns each current Steward and designated Successor enriched with the
+   * / linked approved Person identity (personId, preferred/display name, and
+   * / canonical full person name), resolved via steward accountId -> approved
+   * / linked personId (PersonProfile.claimedByUserId) -> canonical Person
+   * / Profile. The internal account id is carried only for authorization/audit.
+   * / Family Steward only.
+   */
   'listStewardIdentities' : ActorMethod<[], Array<StewardIdentity>>,
+  /**
+   * / Lists all current Family Stewards with role status and account identity.
+   * / Family Steward only.
+   */
   'listStewards' : ActorMethod<[], Array<StewardRecord>>,
+  /**
+   * / Lists all successor designations. Family Steward only.
+   */
   'listSuccessors' : ActorMethod<[], Array<SuccessorDesignation>>,
+  /**
+   * / Lists timeline events aggregated from existing canonical data (visible to
+   * / viewers).
+   */
   'listTimelineEvents' : ActorMethod<[], Array<TimelineEvent>>,
+  /**
+   * / Marks all of the caller's messages in a conversation as read. Only
+   * / participants may mark a conversation read.
+   */
+  'markConversationRead' : ActorMethod<[ConversationId], undefined>,
+  /**
+   * / Marks a mystery resolved (steward only), recording the resolution summary
+   * / and supporting evidence while preserving the prior theories/history.
+   * / Returns the updated mystery, or `null` when it does not exist.
+   */
   'markMysteryResolved' : ActorMethod<
     [MysteryId, string, Array<string>],
     [] | [Mystery]
   >,
+  /**
+   * / Marks one of the signed-in caller's notifications as read. Returns the
+   * / updated notification, or `null` when it does not exist or is not addressed
+   * / to the caller.
+   */
   'markNotificationRead' : ActorMethod<[NotificationId], [] | [Notification]>,
-  'mergeProfiles' : ActorMethod<[PersonId, PersonId], Result_11>,
-  'notDuplicate' : ActorMethod<[PersonId, PersonId], Result_10>,
-  'permanentlyDeleteProfile' : ActorMethod<[PersonId, boolean], Result_9>,
-  'promoteToSteward' : ActorMethod<[PersonId], Result_8>,
+  /**
+   * / Merges two duplicate profiles into one canonical record, preserving all
+   * / valid relationships, media, timeline, stories, sources, archive references,
+   * / and ownership/claim history without duplicating shared items. Conflicting
+   * / fields are preserved as conflict/review items. The merged-away record is
+   * / archived rather than hard-deleted. Family Steward only.
+   */
+  'mergeProfiles' : ActorMethod<[PersonId, PersonId], Result_12>,
+  /**
+   * / Marks two suspected duplicates as not a duplicate. Family Steward only.
+   */
+  'notDuplicate' : ActorMethod<[PersonId, PersonId], Result_11>,
+  /**
+   * / Permanently deletes a profile only when it is empty of archive items,
+   * / media, timeline/history, approved relationships, and ownership history,
+   * / and explicit confirmation is given. Family Steward only.
+   */
+  'permanentlyDeleteProfile' : ActorMethod<[PersonId, boolean], Result_10>,
+  /**
+   * / Promotes an existing approved claimed family member to Family Steward.
+   * / Family Steward only.
+   */
+  'promoteToSteward' : ActorMethod<[PersonId], Result_9>,
+  /**
+   * / Proposes a new relationship between two people. The request starts pending
+   * / and is never treated as confirmed until a Family Steward approves it.
+   */
   'proposeRelationship' : ActorMethod<
     [PersonId, PersonId, RelationshipType],
-    Result_7
+    Result_8
   >,
+  /**
+   * / Publishes a canonical recipe directly (steward only), already approved.
+   * / This is the steward-only add flow; it does not create a second Recipe on
+   * / approval.
+   */
   'publishRecipe' : ActorMethod<
     [
       string,
@@ -678,34 +1108,145 @@ export interface _SERVICE {
     ],
     Recipe
   >,
+  /**
+   * / Rejects a pending archive item (admin only). Returns the updated item, or
+   * / `null` when the item does not exist or is not pending.
+   */
   'rejectArchiveItem' : ActorMethod<[ArchiveItemId], [] | [ArchiveItem]>,
+  /**
+   * / Rejects a pending profile claim. Family Steward only.
+   */
   'rejectProfileClaim' : ActorMethod<[bigint], [] | [ProfileClaim]>,
+  /**
+   * / Rejects a profile removal request. Family Steward only.
+   */
   'rejectProfileRemoval' : ActorMethod<[bigint], [] | [ProfileRemovalRequest]>,
+  /**
+   * / Rejects a pending recipe (steward only). Returns the updated recipe, or
+   * / `null` when the recipe does not exist or is not pending.
+   */
   'rejectRecipe' : ActorMethod<[RecipeId], [] | [Recipe]>,
+  /**
+   * / Rejects a relationship request. Family Steward only.
+   */
   'rejectRelationshipRequest' : ActorMethod<
     [bigint],
     [] | [RelationshipRequest]
   >,
+  /**
+   * / Rejects a pending story (steward only). Returns the updated story, or
+   * / `null` when the story does not exist or is not pending.
+   */
   'rejectStory' : ActorMethod<[StoryId], [] | [Story]>,
-  'removeDuplicateProfile' : ActorMethod<[PersonId], Result_6>,
+  /**
+   * / Removes a reply. Family Steward only. Governance actions create audit
+   * / entries.
+   */
+  'removeBoardReply' : ActorMethod<[ReplyId], [] | [Reply]>,
+  /**
+   * / Removes a duplicate test-created profile and any pending relationship
+   * / requests or claims tied only to it, preserving the original profile, the
+   * / confirmed family graph, and the signed-in account. Family Steward only.
+   */
+  'removeDuplicateProfile' : ActorMethod<[PersonId], Result_7>,
+  /**
+   * / Removes a photo from a person's gallery. Returns `true` when a photo was
+   * / removed. If the removed photo was the profile photo, the profile photo is
+   * / cleared.
+   */
   'removePhoto' : ActorMethod<[PersonId, PhotoId], boolean>,
-  'removeRelationship' : ActorMethod<[bigint], Result_5>,
-  'removeSteward' : ActorMethod<[Principal], Result_4>,
-  'requestProfileClaim' : ActorMethod<[PersonId], Result_3>,
-  'requestProfileRemoval' : ActorMethod<[PersonId, string], Result_2>,
+  /**
+   * / Removes an incorrect relationship from the shared family graph. Family
+   * / Steward only.
+   */
+  'removeRelationship' : ActorMethod<[bigint], Result_6>,
+  /**
+   * / Removes the steward role from another steward, never allowing the last
+   * / steward to be removed. Family Steward only.
+   */
+  'removeSteward' : ActorMethod<[Principal], Result_5>,
+  /**
+   * / Reports a specific message with a reason. Approved family members only.
+   */
+  'reportMessage' : ActorMethod<[MessageId, string], Report>,
+  /**
+   * / "This is Me": creates a pending profile claim for an unclaimed living
+   * / profile. Requires sign-in; does not grant ownership until approved.
+   */
+  'requestProfileClaim' : ActorMethod<[PersonId], Result_4>,
+  /**
+   * / A claimed living profile owner requests removal of their own profile.
+   * / A Family Steward reviews the request.
+   */
+  'requestProfileRemoval' : ActorMethod<[PersonId, string], Result_3>,
+  /**
+   * / Resolves a merge conflict by choosing the canonical display value. Family
+   * / Steward only.
+   */
   'resolveMergeConflict' : ActorMethod<[bigint, string], [] | [MergeConflict]>,
-  'restoreProfile' : ActorMethod<[PersonId], Result_1>,
+  /**
+   * / Restores an archived board post. Family Steward only. Governance actions
+   * / create audit entries.
+   */
+  'restoreBoardPost' : ActorMethod<[PostId], [] | [Post]>,
+  /**
+   * / Restores an archived profile to normal family browsing. Family Steward
+   * / only.
+   */
+  'restoreProfile' : ActorMethod<[PersonId], Result_2>,
+  /**
+   * / Approves or rejects a pending mystery contribution (steward only). Returns
+   * / the updated contribution, or `null` when it does not exist or is not
+   * / pending.
+   */
   'reviewMysteryContribution' : ActorMethod<
     [MysteryContributionId, boolean],
     [] | [MysteryContribution]
   >,
+  /**
+   * / Updates a report's review status. Family Steward only.
+   */
+  'reviewReport' : ActorMethod<[ReportId, ReportStatus], [] | [Report]>,
   'schema' : ActorMethod<[], string>,
+  /**
+   * / Searches the authoritative shared profile data for possible duplicate
+   * / matches by name, returning name plus parents when known. Names are
+   * / normalized before matching (case-insensitive, punctuation ignored, periods
+   * / normalized, extra spaces collapsed, suffix variants recognized, partial/
+   * / fuzzy allowed).
+   */
   'searchPossibleMatches' : ActorMethod<[string], Array<PersonMatch>>,
+  /**
+   * / Sends a private message to the person identified by `personId`, reusing the
+   * / existing 1:1 conversation when one exists. Approved family members only.
+   * / Creates a new-message notification for the recipient. Blocking prevents new
+   * / messages from the blocked user.
+   */
+  'sendMessage' : ActorMethod<[string, string], Result_1>,
+  /**
+   * / Marks the photo with `photoId` as the person's profile photo. Returns the
+   * / newly selected photo, or `null` when the photo does not exist.
+   */
   'setProfilePhoto' : ActorMethod<[PersonId, PhotoId], [] | [Photo]>,
+  /**
+   * / Returns a relationship request to pending state. Family Steward only.
+   */
   'setRelationshipRequestPending' : ActorMethod<
     [bigint],
     [] | [RelationshipRequest]
   >,
+  /**
+   * / Submits a new archive item. Requires sign-in; the signed-in caller is
+   * / recorded as the contributor. The item is stored in pending state and waits
+   * / for admin approval before appearing in the archive.
+   * /
+   * / `classification` marks the item as Oral History (distinct from `itemType`).
+   * / When `#OralHistory`, `primarySpeaker` is required (exactly one primary
+   * / speaker); when `#Standard`, `primarySpeaker` must be `null`. The reserved
+   * / future-ready fields (transcript, searchable transcript, chapter markers,
+   * / AI summary, extracted names) are initialized to `null` and are not
+   * / populated by any logic yet.
+   */
   'submitArchiveItem' : ActorMethod<
     [
       string,
@@ -724,10 +1265,22 @@ export interface _SERVICE {
     ],
     ArchiveItem
   >,
+  /**
+   * / Submits a mystery contribution (a note, memory, possible lead, or
+   * / source/document reference). Requires sign-in; the signed-in caller is
+   * / recorded as the contributor. The contribution is stored in pending state
+   * / and waits for a Family Steward to review it before altering the canonical
+   * / mystery record.
+   */
   'submitMysteryContribution' : ActorMethod<
     [MysteryId, MysteryContributionType, string],
     MysteryContribution
   >,
+  /**
+   * / Submits a new recipe. Requires sign-in; the signed-in caller is recorded as
+   * / the contributor. The recipe is stored in pending state and waits for a
+   * / Family Steward to approve it before becoming visible in Family Recipes.
+   */
   'submitRecipe' : ActorMethod<
     [
       string,
@@ -748,6 +1301,11 @@ export interface _SERVICE {
     ],
     Recipe
   >,
+  /**
+   * / Submits a new story. Requires sign-in; the signed-in caller is recorded as
+   * / the contributor. The story is stored in pending state and waits for a
+   * / Family Steward to approve it before becoming visible.
+   */
   'submitStory' : ActorMethod<
     [
       string,
@@ -761,6 +1319,23 @@ export interface _SERVICE {
     ],
     Story
   >,
+  /**
+   * / Unblocks another member, allowing them to message the caller again.
+   * / Approved family members only.
+   */
+  'unblockUser' : ActorMethod<[Principal], undefined>,
+  /**
+   * / Updates the caller's own board post. Approved family members only; the
+   * / caller must be the post author.
+   */
+  'updateBoardPost' : ActorMethod<
+    [PostId, PostType, [] | [string], string, Array<string>, Array<bigint>],
+    [] | [Post]
+  >,
+  /**
+   * / Edits a canonical mystery (steward only). Returns the updated mystery, or
+   * / `null` when it does not exist.
+   */
   'updateCanonicalMystery' : ActorMethod<
     [
       MysteryId,
@@ -776,6 +1351,10 @@ export interface _SERVICE {
     ],
     [] | [Mystery]
   >,
+  /**
+   * / Edits a canonical story (steward only). Returns the updated story, or
+   * / `null` when the story does not exist.
+   */
   'updateCanonicalStory' : ActorMethod<
     [
       StoryId,
@@ -790,6 +1369,10 @@ export interface _SERVICE {
     ],
     [] | [Story]
   >,
+  /**
+   * / Updates an approved owner's own living profile fields. Never rewrites
+   * / family relationships directly.
+   */
   'updateOwnProfile' : ActorMethod<[PersonId, ProfileEdits], Result>,
 }
 export declare const idlService: IDL.ServiceClass;

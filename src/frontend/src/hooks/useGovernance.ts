@@ -7,16 +7,16 @@ import type {
   ProfileRemovalRequest,
   Relationship,
   RelationshipType,
-  Result_1,
   Result_2,
-  Result_4,
+  Result_3,
   Result_5,
-  Result_8,
+  Result_6,
   Result_9,
   Result_10,
   Result_11,
-  Result_14,
-  Result_16,
+  Result_12,
+  Result_15,
+  Result_17,
   StewardIdentity,
   StewardRecord,
   SuccessorDesignation,
@@ -93,7 +93,7 @@ export function usePromoteToSteward() {
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (personId: string): Promise<Result_8> => {
+    mutationFn: async (personId: string): Promise<Result_9> => {
       if (!actor) throw new Error("Backend is not ready");
       return actor.promoteToSteward(personId);
     },
@@ -104,6 +104,9 @@ export function usePromoteToSteward() {
       void queryClient.invalidateQueries({
         queryKey: ["governance", "auditHistory"],
       });
+      // Promotion changes the caller's steward permission when they are the
+      // promoted person, so the Family Steward nav pill must appear immediately.
+      void queryClient.invalidateQueries({ queryKey: ["isAdmin"] });
     },
   });
 }
@@ -113,7 +116,7 @@ export function useRemoveSteward() {
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (stewardAccountId: Principal): Promise<Result_4> => {
+    mutationFn: async (stewardAccountId: Principal): Promise<Result_5> => {
       if (!actor) throw new Error("Backend is not ready");
       return actor.removeSteward(stewardAccountId);
     },
@@ -124,6 +127,10 @@ export function useRemoveSteward() {
       void queryClient.invalidateQueries({
         queryKey: ["governance", "auditHistory"],
       });
+      // Removal changes the caller's steward permission when they are the
+      // removed steward, so the Family Steward nav pill must disappear
+      // immediately.
+      void queryClient.invalidateQueries({ queryKey: ["isAdmin"] });
     },
   });
 }
@@ -139,7 +146,7 @@ export function useDesignateSuccessor() {
     }: {
       personId: string;
       priority: bigint;
-    }): Promise<Result_14> => {
+    }): Promise<Result_15> => {
       if (!actor) throw new Error("Backend is not ready");
       return actor.designateSuccessor(personId, priority);
     },
@@ -159,7 +166,7 @@ export function useActivateSuccessor() {
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (personId: string): Promise<Result_8> => {
+    mutationFn: async (personId: string): Promise<Result_9> => {
       if (!actor) throw new Error("Backend is not ready");
       return actor.activateSuccessor(personId);
     },
@@ -173,6 +180,9 @@ export function useActivateSuccessor() {
       void queryClient.invalidateQueries({
         queryKey: ["governance", "auditHistory"],
       });
+      // Activating a successor grants them active steward permission, so the
+      // Family Steward nav pill must appear immediately for that caller.
+      void queryClient.invalidateQueries({ queryKey: ["isAdmin"] });
     },
   });
 }
@@ -216,7 +226,7 @@ export function useRequestProfileRemoval() {
     }: {
       personId: string;
       reason: string;
-    }): Promise<Result_2> => {
+    }): Promise<Result_3> => {
       if (!actor) throw new Error("Backend is not ready");
       return actor.requestProfileRemoval(personId, reason);
     },
@@ -294,7 +304,7 @@ export function useArchiveProfile() {
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (personId: string): Promise<Result_1> => {
+    mutationFn: async (personId: string): Promise<Result_2> => {
       if (!actor) throw new Error("Backend is not ready");
       return actor.archiveProfile(personId);
     },
@@ -314,7 +324,7 @@ export function useRestoreProfile() {
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (personId: string): Promise<Result_1> => {
+    mutationFn: async (personId: string): Promise<Result_2> => {
       if (!actor) throw new Error("Backend is not ready");
       return actor.restoreProfile(personId);
     },
@@ -369,7 +379,7 @@ export function usePermanentlyDeleteProfile() {
     }: {
       personId: string;
       confirmation: boolean;
-    }): Promise<Result_9> => {
+    }): Promise<Result_10> => {
       if (!actor) throw new Error("Backend is not ready");
       return actor.permanentlyDeleteProfile(personId, confirmation);
     },
@@ -409,7 +419,7 @@ export function useNotDuplicate() {
     }: {
       personIdA: string;
       personIdB: string;
-    }): Promise<Result_10> => {
+    }): Promise<Result_11> => {
       if (!actor) throw new Error("Backend is not ready");
       return actor.notDuplicate(personIdA, personIdB);
     },
@@ -432,7 +442,7 @@ export function useMergeProfiles() {
     }: {
       canonicalPersonId: string;
       mergedAwayPersonId: string;
-    }): Promise<Result_11> => {
+    }): Promise<Result_12> => {
       if (!actor) throw new Error("Backend is not ready");
       return actor.mergeProfiles(canonicalPersonId, mergedAwayPersonId);
     },
@@ -500,7 +510,7 @@ export function useAddRelationship() {
       fromPersonId: string;
       toPersonId: string;
       relationshipType: RelationshipType;
-    }): Promise<Result_16> => {
+    }): Promise<Result_17> => {
       if (!actor) throw new Error("Backend is not ready");
       return actor.addRelationship(fromPersonId, toPersonId, relationshipType);
     },
@@ -523,7 +533,7 @@ export function useRemoveRelationship() {
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (relationshipId: bigint): Promise<Result_5> => {
+    mutationFn: async (relationshipId: bigint): Promise<Result_6> => {
       if (!actor) throw new Error("Backend is not ready");
       return actor.removeRelationship(relationshipId);
     },
@@ -549,7 +559,7 @@ export function useCorrectRelationshipType() {
     }: {
       relationshipId: bigint;
       relationshipType: RelationshipType;
-    }): Promise<Result_16> => {
+    }): Promise<Result_17> => {
       if (!actor) throw new Error("Backend is not ready");
       return actor.correctRelationshipType(relationshipId, relationshipType);
     },

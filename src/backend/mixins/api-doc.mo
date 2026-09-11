@@ -43,6 +43,22 @@ a simple destructive delete — it flows through a steward-reviewed request or a
 explicit archive, and permanent deletion is allowed only for empty error-created
 profiles with explicit confirmation.
 
+The backend also provides a private family-wide Message Board and private 1:1
+messaging for approved family members. The Message Board lets approved members
+post announcements, family questions, research/history leads, photo
+identification requests, recipes, reunion/event notices, memorials, and general
+conversation, with one-level replies, related-member links, and optional linked
+Archive/media. Posts are Family Only; authors can edit/archive their own posts,
+and Family Stewards can archive/restore posts and remove replies, with governance
+actions recorded in the audit log. Private messaging provides one canonical 1:1
+text-only conversation per account pair (reused when the same two users message
+again), an inbox with unread counts, blocking/unblocking, and message reporting
+that Stewards review. Only participants can read a conversation; Stewards cannot
+browse arbitrary private conversations and see reported message content only when
+a report is filed. The backend also exposes a Steward-only Pending Contributions
+count that aggregates all current pending review items for the Pending
+Contributions badge.
+
 ## Public methods
 
 ### Photo gallery
@@ -468,6 +484,111 @@ profiles with explicit confirmation.
   Person record — the call traps with `\"Originating family member not found\"`
   when that person is not tracked.
 
+### Family Message Board
+
+- `listBoardPosts(filter : ?PostType) : async [Post]` — query. Approved family
+  members only. Returns all active board posts, newest first, optionally filtered
+  by post type. Archived posts are never returned.
+- `getBoardPost(postId : PostId) : async ?Post` — query. Approved family members
+  only. Returns a single active board post by id, or `null` when it does not
+  exist or is archived.
+- `createBoardPost(postType : PostType, title : ?Text, body : Text, relatedPersonIds : [Text], linkedMediaIds : [Nat]) : async Post` —
+  update. Approved family members only. Creates a board post with a type,
+  optional title, body, related family members, and optional linked existing
+  Archive/media ids. The signed-in caller is recorded as the author (both the
+  stable `authorAccountId` for authorization and the canonical `authorPersonId`
+  for rendering the Person Profile identity). The post is created `#Active` with
+  `privacyScope = #FamilyOnly`. A mention notification is created for each
+  related member who has a linked account (other than the author), avoiding
+  duplicates.
+- `updateBoardPost(postId : PostId, postType : PostType, title : ?Text, body : Text, relatedPersonIds : [Text], linkedMediaIds : [Nat]) : async ?Post` —
+  update. Approved family members only; the caller must be the post author. Edits
+  the caller's own board post and returns the updated post, or `null` when the
+  post does not exist. Traps with `\"Unauthorized: Only the post author can edit
+  this post\"` when the caller is not the author.
+- `archiveBoardPost(postId : PostId) : async ?Post` — update. Approved family
+  members only. Archives (hides) a board post. The post author or a Family
+  Steward may archive. Returns the updated post, or `null` when it does not
+  exist. Traps with `\"Unauthorized: Only the post author or a Family Steward can
+  archive this post\"` when the caller is neither. Records a `#BoardPostArchived`
+  audit entry.
+- `restoreBoardPost(postId : PostId) : async ?Post` — update. Family Steward
+  only. Restores an archived board post. Returns the updated post, or `null`
+  when it does not exist. Records a `#BoardPostRestored` audit entry.
+- `listBoardReplies(postId : PostId) : async [Reply]` — query. Approved family
+  members only. Returns the one-level replies to a board post, chronologically.
+- `addBoardReply(postId : PostId, body : Text) : async Reply` — update. Approved
+  family members only. Adds a one-level reply to an active board post. Traps with
+  `\"Post not found\"` when the post does not exist or is archived. Creates a
+  `#BoardReply` notification for the post author (unless they replied to their
+  own post).
+- `removeBoardReply(replyId : ReplyId) : async ?Reply` — update. Family Steward
+  only. Removes a reply. Returns the removed reply, or `null` when it does not
+  exist. Records a `#BoardReplyRemoved` audit entry.
+
+### Private Messaging
+
+- `canMessagePerson(personId : Text) : async Bool` — query. Returns whether the
+  signed-in caller may message the person identified by `personId`: the viewer is
+  signed in, the target has an active linked account, the target is not the
+  viewer, and the target is not archived. Unclaimed profiles are never
+  messageable. Drives the Message button on a living claimed Person Profile.
+  Returns `false` for an anonymous caller.
+- `listConversations() : async [ConversationSummary]` — query. Approved family
+  members only. Returns the signed-in caller's inbox: one summary per
+  conversation they participate in, newest activity first, with the other
+  participant's identity, latest message preview, timestamp, and unread count.
+- `getConversation(conversationId : ConversationId) : async ?ConversationView` —
+  query. Approved family members only. Returns a full conversation view
+  (participant identity plus message history) for a participant, or `null` when
+  the conversation does not exist or the caller is not a participant. Only
+  participants may read a conversation.
+- `sendMessage(recipientPersonId : Text, body : Text) : async Result<Message, MessageError>` —
+  update. Approved family members only. Sends a private message to the person
+  identified by `recipientPersonId`, reusing the existing canonical 1:1
+  conversation for the account pair when one exists. Creates a `#NewMessage`
+  notification for the recipient. Returns `#err(#BlockedByRecipient)` when the
+  recipient has blocked the sender (no message is stored).
+- `markConversationRead(conversationId : ConversationId) : async ()` — update.
+  Approved family members only. Marks all of the caller's messages in a
+  conversation as read. Traps with `\"Conversation not found\"` when the
+  conversation does not exist and `\"Unauthorized: Only participants can mark a
+  conversation read\"` when the caller is not a participant.
+- `blockUser(blockedAccountId : Principal) : async ()` — update. Approved family
+  members only. Blocks another member, preventing them from sending new messages
+  to the caller. Idempotent — blocking an already-blocked account is a no-op.
+- `unblockUser(blockedAccountId : Principal) : async ()` — update. Approved
+  family members only. Unblocks another member, allowing them to message the
+  caller again.
+- `listBlockedUsers() : async [Principal]` — query. Approved family members only.
+  Returns the account ids the caller has blocked.
+- `reportMessage(messageId : MessageId, reason : Text) : async Report` — update.
+  Approved family members only. Reports a specific message with a reason. Only a
+  participant of the message's conversation may report it. Traps with
+  `\"Message not found\"` when the message does not exist, `\"Conversation not
+  found\"` when its conversation does not exist, and `\"Unauthorized: Only
+  conversation participants can report a message\"` when the caller is not a
+  participant. The report is stored `#Pending`.
+- `listReports() : async [Report]` — query. Family Steward only. Lists all
+  reports.
+- `reviewReport(reportId : ReportId, status : ReportStatus) : async ?Report` —
+  update. Family Steward only. Updates a report's review status. Returns the
+  updated report, or `null` when it does not exist.
+- `getReportedMessage(reportId : ReportId) : async ?ReportedMessageView` —
+  query. Family Steward only. Returns the reported message content for a report.
+  Reported message content is visible only when a report is filed; Stewards
+  cannot browse arbitrary private conversations. Returns `null` when the report
+  or message does not exist.
+
+### Pending Contributions
+
+- `getPendingContributionsCount() : async Nat` — query. Family Steward only.
+  Returns the count of all current pending review items (archive/media, video/
+  audio, recipes, recipe media, stories, and mystery contributions) for the
+  Steward-facing Pending Contributions badge. The count is derived from canonical
+  pending data, so it increments on new pending items and decrements on
+  Approve/Reject automatically.
+
 ### Object Query Layer (OQL)
 
 - `schema() : async Text` — query. Returns a JSON catalogue of the exposed
@@ -478,8 +599,12 @@ profiles with explicit confirmation.
 The exposed entities are `photo`, `archiveItem`, `profile`, `claim`,
 `relationshipRequest`, `confirmedRelationship`, `notification`, `account`,
 `steward`, `successor`, `removalRequest`, `auditLog`, `mergeConflict`,
-`archivedProfile`, `story`, `mystery`, `mysteryContribution`, and `recipe`, all
-declared `.controllerOnly()` (see the authorization section). `photo` rows are flattened
+`archivedProfile`, `dismissedPair`, `story`, `mystery`, `mysteryContribution`,
+`recipe`, `boardPost`, `boardReply`, `conversation`, `message`, `block`, and
+`report`.
+Most are declared `.controllerOnly()` (see the authorization section); the
+`conversation` entity is `.controllerOrScoped()` and the `message` entity is
+`.scopedPerUser()`, both with a participant-only visibility rule. `photo` rows are flattened
 photo metadata: `key` (globally-unique \"<personId>:<id>\", the primary key),
 `personId`, `id`, `filename`, `mimeType`, `uploadedAt` (nanoseconds since epoch,
 `Int`), `uploadedBy` (the uploading principal, rendered as text), and
@@ -540,7 +665,10 @@ affected person ids), `timestamp` (nanoseconds since epoch, `Int`), and
 `canonicalValue`, `alternateValue`, `status` (`\"Pending\"`/`\"Resolved\"`),
 `resolvedBy` (principal text, `\"\"` when unresolved), and `resolvedAt` (`Int`,
 `0` when unresolved). `archivedProfile` rows (primary key `personId`) carry only
-`personId` — the id of each archived profile.
+`personId` — the id of each archived profile. `dismissedPair` rows (primary key
+`key`, the composite `\"<personIdA>:<personIdB>\"`) carry `personIdA` and
+`personIdB` — the two Person ids a steward dismissed as \"Not a duplicate\", so
+the pair does not reappear in the duplicate review list.
 
 The family-history entities are flattened views of the corresponding records.
 `story` rows (primary key `id`) carry `title`, `storyText`,
@@ -583,6 +711,35 @@ as counts since OQL has no array value type. The reserved future-ready fields
 (`ocrText`, `transcript`, `extractedIngredients`, `aiDerivedText`) are not
 exposed.
 
+The board entities are flattened views of the corresponding records.
+`boardPost` rows (primary key `postId`, a `Nat`) carry `authorAccountId` (the
+author's account principal rendered as text), `authorPersonId` (the canonical
+Person id of the author), `title` (`\"\"` when absent), `body`, `postType`
+(`\"General\"`/`\"Announcement\"`/`\"FamilyQuestion\"`/`\"ResearchHistory\"`/`\"PhotoIdentification\"`/`\"Recipe\"`/`\"ReunionEvent\"`/`\"Memorial\"`/`\"Other\"`),
+`relatedPersonCount` (`Nat`, the number of related member ids),
+`linkedMediaCount` (`Nat`, the number of linked Archive/media ids), `createdAt`
+(`Int`, nanoseconds since epoch), `updatedAt` (`Int`), `status`
+(`\"Active\"`/`\"Archived\"`), and `privacyScope` (`\"FamilyOnly\"`). The
+array-valued fields (`relatedPersonIds`, `linkedMediaIds`) are exposed as counts
+since OQL has no array value type. `boardReply` rows (primary key `replyId`, a
+`Nat`) carry `postId`, `authorAccountId` (principal text), `authorPersonId`,
+`body`, and `createdAt` (`Int`).
+
+The messaging entities are flattened views of the corresponding records.
+`conversation` rows (primary key `conversationId`, a `Nat`) carry
+`participantCount` (`Nat`, the number of participant account ids), `createdAt`
+(`Int`), and `updatedAt` (`Int`). The array-valued fields
+(`participantAccountIds`, `participantPersonIds`) are exposed as counts since
+OQL has no array value type. `message` rows (primary key `messageId`, a `Nat`)
+carry `conversationId`, `senderAccountId` (principal text), `senderPersonId`,
+`body`, `createdAt` (`Int`), `readAt` (`Int`, `0` when unread), and `status`
+(`\"Sent\"`/`\"Blocked\"`). `block` rows (primary key `key`, the composite
+`\"<blockerAccountId>:<blockedAccountId>\"`) carry `blockerAccountId` (principal
+text), `blockedAccountId` (principal text), and `createdAt` (`Int`). `report`
+rows (primary key `reportId`, a `Nat`) carry `reportingAccountId` (principal
+text), `reportedMessageId` (`Nat`), `reason`, `createdAt` (`Int`), and `status`
+(`\"Pending\"`/`\"Reviewed\"`/`\"Dismissed\"`).
+
 ### Access control and Internet Identity
 
 - `_initialize_access_control() : async ()` — update. Registers the signed-in
@@ -622,14 +779,24 @@ are callable by any caller. The photo query methods (`listPhotos`,
 enforce the admin/user/guest model described in their entries.
 
 The OQL methods (`schema`, `execute`) enforce authorization per entity against
-the live caller. All exposed entities — `photo`, `archiveItem`, `profile`,
+the live caller. Most exposed entities — `photo`, `archiveItem`, `profile`,
 `claim`, `relationshipRequest`, `confirmedRelationship`, `notification`,
 `account`, `steward`, `successor`, `removalRequest`, `auditLog`,
-`mergeConflict`, `archivedProfile`, `story`, `mystery`,
-`mysteryContribution`, and `recipe` — are declared `.controllerOnly()`, so only the platform controller can read their
+`mergeConflict`, `archivedProfile`, `dismissedPair`, `story`, `mystery`,
+`mysteryContribution`, `recipe`, `boardPost`, `boardReply`, `block`, and
+`report` — are declared `.controllerOnly()`, so only the platform controller can read their
 rows through `schema()`/`execute()`; end users do not read them directly. This
-keeps the family, archive, and governance metadata private to the platform while
-still letting the Data Intelligence agent answer over it.
+keeps the family, archive, governance, board, block, and report metadata private
+to the platform while still letting the Data Intelligence agent answer over it.
+The `conversation` entity is declared `.controllerOrScoped()` with a
+participant-only visibility rule: the platform controller reads all rows, while
+a signed-in caller reads only the conversations they participate in. The
+`message` entity is declared `.scopedPerUser()` with a participant-only
+visibility rule, so a signed-in caller reads only the messages in conversations
+they participate in and the platform controller/agent is blind to message
+content. This preserves private-messaging privacy — no user can read another
+user's private conversations or messages through OQL, and no private message
+content is steward-readable unless reported.
 
 The archive methods gate on sign-in and role. `submitArchiveItem` requires a
 signed-in (non-anonymous) caller and traps with `\"Sign-in required to submit an
@@ -695,6 +862,44 @@ admin-only and trap with `\"Unauthorized: Only Family Stewards can ...\"` when
 the caller is not an admin. `listApprovedRecipes`, `getRecipe`, and
 `listRecipesForPerson` are readable by any caller (respecting the existing
 privacy conventions).
+
+The Family Message Board methods gate on sign-in and approved-membership. The
+member methods — `listBoardPosts`, `getBoardPost`, `createBoardPost`,
+`updateBoardPost`, `archiveBoardPost`, `listBoardReplies`, and `addBoardReply` —
+require a signed-in approved family member and trap with `\"Unauthorized: You
+must be signed in\"` for an anonymous caller and `\"Unauthorized: Only approved
+family members can access the message board\"` when the caller is not an
+approved member. `updateBoardPost` additionally requires the caller to be the
+post author (trapping with `\"Unauthorized: Only the post author can edit this
+post\"`), and `archiveBoardPost` requires the author or a Family Steward
+(trapping with `\"Unauthorized: Only the post author or a Family Steward can
+archive this post\"`). The steward methods — `restoreBoardPost` and
+`removeBoardReply` — are admin-only and trap with `\"Unauthorized: Only Family
+Stewards can perform this action\"` when the caller is not an admin. Board
+governance actions (`archiveBoardPost`, `restoreBoardPost`, `removeBoardReply`)
+record audit entries in the steward-only audit log.
+
+The Private Messaging methods gate on sign-in and approved-membership. The
+member methods — `listConversations`, `getConversation`, `sendMessage`,
+`markConversationRead`, `blockUser`, `unblockUser`, `listBlockedUsers`, and
+`reportMessage` — require a signed-in approved family member and trap with
+`\"Unauthorized: You must be signed in\"` for an anonymous caller and
+`\"Unauthorized: Only approved family members can use private messaging\"` when
+the caller is not an approved member. `getConversation` returns `null` (it does
+not trap) when the caller is not a participant, and `markConversationRead` traps
+with `\"Unauthorized: Only participants can mark a conversation read\"` when the
+caller is not a participant. `reportMessage` traps with `\"Unauthorized: Only
+conversation participants can report a message\"` when the caller is not a
+participant of the message's conversation. The steward methods — `listReports`,
+`reviewReport`, and `getReportedMessage` — are admin-only and trap with
+`\"Unauthorized: Only Family Stewards can perform this action\"` when the caller
+is not an admin. Stewards cannot browse arbitrary private conversations; they see
+reported message content only when a report is filed (via `getReportedMessage`).
+
+The Pending Contributions method `getPendingContributionsCount` is Family
+Steward only: it traps with `\"Unauthorized: You must be signed in\"` for an
+anonymous caller and `\"Unauthorized: Only Family Stewards can view the pending
+contributions count\"` when the caller is not an admin.
 
 Registration gates role-guarded access. A direct API caller must call
 `_initialize_access_control()` once as a signed-in caller before any
@@ -791,8 +996,8 @@ already reference the caller's stable principal (`requestingUserId`,
 - `RelationshipRequestStatus` is a variant: `#Pending`, `#Approved`, or
   `#Rejected`.
 - `NotificationType` is a variant: `#ProfileClaimRequested`,
-  `#ProfileClaimReviewed`, `#RelationshipRequested`, or
-  `#RelationshipReviewed`.
+  `#ProfileClaimReviewed`, `#RelationshipRequested`, `#RelationshipReviewed`,
+  `#BoardReply`, `#BoardMention`, or `#NewMessage`.
 - `PersonProfile` fields: `personId` (`Text`), `name` (`Text`),
   `livingStatus`, `claimStatus`, `claimedByUserId` (`?Principal`, `null` when
   unclaimed), and the owner-editable optionals `preferredName`, `firstName`,
@@ -937,6 +1142,52 @@ already reference the caller's stable principal (`requestingUserId`,
   fields `ocrText` (`?Text`), `transcript` (`?Text`), `extractedIngredients`
   (`?[Text]`), and `aiDerivedText` (`?Text`) — all `null` and not populated by
   any logic yet, kept separate from the original source material.
+- `PostId` and `ReplyId` are `Nat`, unique across their respective collections.
+- `PostType` is a variant: `#General`, `#Announcement`, `#FamilyQuestion`,
+  `#ResearchHistory`, `#PhotoIdentification`, `#Recipe`, `#ReunionEvent`,
+  `#Memorial`, or `#Other`.
+- `PostStatus` is a variant: `#Active` or `#Archived`.
+- `PrivacyScope` is a variant: `#FamilyOnly` (every board post is Family Only for
+  MVP).
+- `Post` fields: `postId` (`Nat`), `authorAccountId` (`Principal`, the stable
+  account id used for authorization — never exposed to the UI), `authorPersonId`
+  (`Text`, the canonical Person id used to render the Person Profile identity),
+  `title` (`?Text`), `body` (`Text`), `postType`, `relatedPersonIds` (`[Text]`,
+  canonical Person ids), `linkedMediaIds` (`[Nat]`, references to canonical
+  Archive/media records), `createdAt` (`Int`, nanoseconds since epoch),
+  `updatedAt` (`Int`), `status`, and `privacyScope`.
+- `Reply` fields: `replyId` (`Nat`), `postId` (`Nat`), `authorAccountId`
+  (`Principal`), `authorPersonId` (`Text`), `body` (`Text`), and `createdAt`
+  (`Int`, nanoseconds since epoch).
+- `BoardError` is a variant: `#NotSignedIn`, `#NotApprovedMember`,
+  `#PostNotFound`, `#NotAuthor`, or `#NotSteward`.
+- `ConversationId`, `MessageId`, and `ReportId` are `Nat`, unique across their
+  respective collections.
+- `Conversation` fields: `conversationId` (`Nat`), `participantAccountIds`
+  (`[Principal]`, exactly two for a 1:1 conversation), `participantPersonIds`
+  (`[Text]`, the canonical Person ids of the two participants), `createdAt`
+  (`Int`), and `updatedAt` (`Int`).
+- `MessageStatus` is a variant: `#Sent` or `#Blocked` (a send attempt prevented
+  because the recipient blocked the sender).
+- `Message` fields: `messageId` (`Nat`), `conversationId` (`Nat`),
+  `senderAccountId` (`Principal`), `senderPersonId` (`Text`), `body` (`Text`),
+  `createdAt` (`Int`), `readAt` (`?Int`, `null` until read), and `status`.
+- `Block` fields: `blockerAccountId` (`Principal`), `blockedAccountId`
+  (`Principal`), and `createdAt` (`Int`).
+- `ReportStatus` is a variant: `#Pending`, `#Reviewed`, or `#Dismissed`.
+- `Report` fields: `reportId` (`Nat`), `reportingAccountId` (`Principal`),
+  `reportedMessageId` (`MessageId`), `reason` (`Text`), `createdAt` (`Int`), and
+  `status`.
+- `ConversationSummary` fields: `conversationId` (`Nat`), `otherPersonId`
+  (`Text`), `otherDisplayName` (`Text`), `latestMessagePreview` (`Text`),
+  `latestMessageAt` (`Int`), and `unreadCount` (`Nat`).
+- `ConversationView` fields: `conversationId` (`Nat`), `participantPersonIds`
+  (`[Text]`), `participantDisplayNames` (`[Text]`), and `messages` (`[Message]`).
+- `ReportedMessageView` fields: `report` (`Report`) and `message` (`Message`).
+- `MessageError` is a variant: `#NotSignedIn`, `#NotApprovedMember`,
+  `#RecipientNotFound`, `#RecipientNotClaimed`, `#RecipientArchived`,
+  `#CannotMessageSelf`, `#BlockedByRecipient`, `#NotParticipant`, or
+  `#ConversationNotFound`.
 - `TimelineEventType` is a variant: `#Birth`, `#Death`, `#Marriage`,
   `#FamilyEvent`, `#Migration`, `#MilitaryService`, `#CensusDocument`, `#Story`,
   `#PhotoDocument`, `#Location`, or `#Mystery`.
@@ -1066,6 +1317,37 @@ entries, ArchiveItem year/era, Story era/date, and Mystery records. Empty eras
 are never fabricated; only actual stored data is surfaced. Each event carries an
 evidence badge and a link target so clicking it opens the relevant Person
 Profile, Story, Archive Item, or Mystery.
+
+Board posts follow an active → archived lifecycle. `createBoardPost` stores the
+post `#Active`. `archiveBoardPost` (author or Family Steward) moves it to
+`#Archived`, hiding it from `listBoardPosts`/`getBoardPost`; `restoreBoardPost`
+(Family Steward) returns it to `#Active`. Replies are one-level and shown
+chronologically under each post; `removeBoardReply` (Family Steward) removes a
+reply. There is no async job to poll; the frontend can call `listBoardPosts`,
+`getBoardPost`, or `listBoardReplies` to observe the current state. Board
+governance actions record audit entries readable only by Family Stewards.
+
+Private messaging is synchronous and conversation-based. `sendMessage` reuses the
+existing canonical 1:1 conversation for the account pair when one exists, so the
+same two users always share one conversation. `listConversations` returns the
+caller's inbox (newest activity first) with an unread count; `getConversation`
+returns the full history for a participant. `markConversationRead` sets `readAt`
+on the caller's incoming messages, which clears the unread badge. Blocking
+(`blockUser`) prevents the blocked user from sending new messages to the blocker
+(`sendMessage` returns `#err(#BlockedByRecipient)` and stores nothing);
+`unblockUser` re-enables messaging. Reports (`reportMessage`) are stored
+`#Pending`; a Family Steward reviews them via `reviewReport` and sees the
+reported message content via `getReportedMessage`. There is no async job to
+poll; the frontend can call `listConversations`, `getConversation`,
+`listBlockedUsers`, or `listReports` (steward) to observe the current state.
+
+The Pending Contributions count is derived on demand. `getPendingContributionsCount`
+counts all current pending review items (pending archive/media, pending recipes,
+pending stories, and pending mystery contributions) from canonical pending data.
+It increments when a new pending item is submitted and decrements when an item is
+approved or rejected, automatically — there is no separate counter to maintain.
+The frontend calls it to render the Steward-facing Pending Contributions badge
+and hides the badge when the count is `0`.
 
 ## Mutation retry safety, idempotency, and destructive effects
 
@@ -1208,6 +1490,35 @@ Profile, Story, Archive Item, or Mystery.
   preserved in either terminal state, and approval never creates a second Recipe.
 - `publishRecipe` is not idempotent: each call stores a new canonical recipe with
   a fresh id, already in `#Approved` state.
+- `createBoardPost` is not idempotent: each call stores a new post with a fresh
+  id. Retrying a submission that actually succeeded creates a duplicate post.
+- `updateBoardPost` is idempotent: applying the same edit again yields the same
+  post. It only ever edits the caller's own post.
+- `archiveBoardPost` is idempotent: archiving an already-archived (or
+  nonexistent) post returns `null` and changes nothing. It is not destructive —
+  the post is retained and can be restored. `restoreBoardPost` is idempotent:
+  restoring a non-archived (or nonexistent) post returns `null` and changes
+  nothing.
+- `addBoardReply` is not idempotent: each call adds a new reply with a fresh id.
+  Retrying a reply that actually succeeded creates a duplicate reply.
+- `removeBoardReply` is idempotent: removing an already-removed (or nonexistent)
+  reply returns `null` and changes nothing. It is destructive and irreversible —
+  the reply is removed from the board.
+- `sendMessage` is not idempotent: each call stores a new message with a fresh
+  id. Retrying a send that actually succeeded creates a duplicate message. It
+  reuses the existing canonical 1:1 conversation for the account pair, so it
+  never creates a second conversation. When the recipient has blocked the sender
+  it returns `#err(#BlockedByRecipient)` and stores nothing.
+- `markConversationRead` is idempotent: marking an already-read conversation read
+  is a no-op.
+- `blockUser` is idempotent: blocking an already-blocked account is a no-op.
+  `unblockUser` is idempotent: unblocking a non-blocked account is a no-op.
+- `reportMessage` is not idempotent: each call stores a new report with a fresh
+  id. Retrying a report that actually succeeded creates a duplicate report.
+- `reviewReport` is idempotent: reviewing an already-reviewed (or nonexistent)
+  report returns `null` and changes nothing.
+- `getPendingContributionsCount` is a read-only query with no side effects; it is
+  always idempotent.
 
 ## Errors, traps, limits, and gotchas
 
@@ -1324,6 +1635,55 @@ Profile, Story, Archive Item, or Mystery.
   their tag text, optional fields render as empty text or `0`, and the
   array-valued fields (`relatedPersonIds`, `ingredients`, `tags`,
   `linkedMediaIds`) are exposed as counts since OQL has no array value type.
+- The board and messaging methods gate on approved family membership. The member
+  board methods trap with `\"Unauthorized: You must be signed in\"` for an
+  anonymous caller and `\"Unauthorized: Only approved family members can access
+  the message board\"` when the caller is not an approved member. The member
+  messaging methods trap with `\"Unauthorized: You must be signed in\"` for an
+  anonymous caller and `\"Unauthorized: Only approved family members can use
+  private messaging\"` when the caller is not an approved member. The steward
+  board/messaging methods (`restoreBoardPost`, `removeBoardReply`, `listReports`,
+  `reviewReport`, `getReportedMessage`) and `getPendingContributionsCount` trap
+  with `\"Unauthorized: Only Family Stewards can perform this action\"` (or the
+  equivalent pending-count message) when the caller is not an admin.
+- `getBoardPost` returns `null` (it does not trap) when the post does not exist
+  or is archived. `updateBoardPost` returns `null` when the post does not exist
+  and traps with `\"Unauthorized: Only the post author can edit this post\"` when
+  the caller is not the author. `archiveBoardPost` returns `null` when the post
+  does not exist and traps with `\"Unauthorized: Only the post author or a Family
+  Steward can archive this post\"` when the caller is neither. `restoreBoardPost`
+  and `removeBoardReply` return `null` when the target does not exist.
+- `addBoardReply` traps with `\"Post not found\"` when the post does not exist or
+  is archived. `getConversation` returns `null` (it does not trap) when the
+  conversation does not exist or the caller is not a participant.
+  `markConversationRead` traps with `\"Conversation not found\"` when the
+  conversation does not exist and `\"Unauthorized: Only participants can mark a
+  conversation read\"` when the caller is not a participant. `reportMessage`
+  traps with `\"Message not found\"`, `\"Conversation not found\"`, or
+  `\"Unauthorized: Only conversation participants can report a message\"` as
+  appropriate. `reviewReport` and `getReportedMessage` return `null` when the
+  report (or message) does not exist.
+- `sendMessage` returns `#err(#BlockedByRecipient)` when the recipient has
+  blocked the sender; no message is stored. It returns `#err(#RecipientArchived)`
+  for an archived or deceased recipient, `#err(#RecipientNotClaimed)` for an
+  unclaimed profile, `#err(#CannotMessageSelf)` when messaging oneself, and
+  `#err(#RecipientNotFound)` when the person is not tracked.
+- Board posts and replies reference canonical Person ids (`authorPersonId`,
+  `relatedPersonIds`) and canonical Archive/media ids (`linkedMediaIds`) only;
+  they never create duplicate Person records or duplicate media files. Raw
+  account ids are stored for authorization but never exposed to the UI — the
+  frontend renders the canonical Person Profile identity.
+- The OQL board and messaging entities are flattened views: enumerated variants
+  render as their tag text, optional fields render as empty text or `0`, and the
+  array-valued fields (`relatedPersonIds`, `linkedMediaIds`,
+  `participantAccountIds`, `participantPersonIds`) are exposed as counts since
+  OQL has no array value type. The `conversation` entity is
+  `.controllerOrScoped()` and the `message` entity is `.scopedPerUser()`, both
+  with a participant-only rule, so a signed-in caller reads only their own
+  conversations/messages through OQL and the platform controller/agent is blind
+  to message content; the `block` entity's
+  primary key is the composite `key` (`\"<blocker>:<blocked>\"`) because a block
+  is a pair with no single unique id.
 "
   };
 };

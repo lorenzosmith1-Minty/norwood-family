@@ -365,7 +365,10 @@ describe("Admin approval flow", () => {
     );
 
     await user.click(
-      await screen.findByRole("button", { name: "Pending Contributions" }),
+      await screen.findByRole("button", { name: "Family Steward" }),
+    );
+    await user.click(
+      await screen.findByRole("button", { name: /Pending Contributions/ }),
     );
 
     expect(
@@ -403,7 +406,10 @@ describe("Admin approval flow", () => {
     );
 
     await user.click(
-      await screen.findByRole("button", { name: "Pending Contributions" }),
+      await screen.findByRole("button", { name: "Family Steward" }),
+    );
+    await user.click(
+      await screen.findByRole("button", { name: /Pending Contributions/ }),
     );
     await user.click(screen.getByRole("button", { name: "Approve" }));
 
@@ -440,7 +446,10 @@ describe("Admin approval flow", () => {
     );
 
     await user.click(
-      await screen.findByRole("button", { name: "Pending Contributions" }),
+      await screen.findByRole("button", { name: "Family Steward" }),
+    );
+    await user.click(
+      await screen.findByRole("button", { name: /Pending Contributions/ }),
     );
     await user.click(screen.getByRole("button", { name: "Reject" }));
 
@@ -457,7 +466,10 @@ describe("Admin approval flow", () => {
     renderApp();
 
     await user.click(
-      await screen.findByRole("button", { name: "Pending Contributions" }),
+      await screen.findByRole("button", { name: "Family Steward" }),
+    );
+    await user.click(
+      await screen.findByRole("button", { name: /Pending Contributions/ }),
     );
 
     expect(

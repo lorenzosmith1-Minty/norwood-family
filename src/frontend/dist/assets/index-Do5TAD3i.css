@@ -737,6 +737,66 @@ video {
     --recipe-accent-foreground: 0.96 0.02 70;
     --recipe-hand: 0.32 0.06 40;
     --recipe-surface: 0.94 0.025 65;
+
+    /* Family Message Board: communal bulletin on aged paper. Post cards wear
+       a warm plate surface; the board accent is the sepia primary so the
+       board reads as part of the same family archive. */
+    --board-surface: 0.95 0.02 72;
+    --board-accent: 0.42 0.11 35;
+    --board-accent-foreground: 0.96 0.02 70;
+    --post-general: 0.5 0.03 45;
+    --post-announcement: 0.42 0.11 35;
+    --post-question: 0.55 0.09 60;
+    --post-research: 0.48 0.05 200;
+    --post-photo: 0.55 0.12 150;
+    --post-recipe: 0.5 0.14 30;
+    --post-reunion: 0.6 0.11 55;
+    --post-memorial: 0.5 0.2 25;
+    --reply-rule: 0.42 0.11 35 / 0.25;
+
+    /* Private Messaging: warm ink-and-paper conversation. Sent bubbles are
+       the sepia primary (the writer's ink); received bubbles sit on a paper
+       card. Unread reads as bronze; block/report use terracotta/ochre. */
+    --msg-sent: 0.42 0.11 35;
+    --msg-sent-foreground: 0.96 0.02 70;
+    --msg-received: 0.985 0.015 70;
+    --msg-received-foreground: 0.22 0.04 45;
+    --msg-unread: 0.55 0.09 60;
+    --msg-unread-foreground: 0.96 0.02 70;
+    --msg-muted: 0.5 0.03 45;
+    --msg-block: 0.5 0.2 25;
+    --msg-report: 0.7 0.13 80;
+
+    /* Pending Contributions badge: Family Stewards count of pending review
+       items. Same red style as the Notifications badge (--notif-badge). */
+    --pending-badge: 0.5 0.2 25;
+    --pending-badge-foreground: 0.96 0.02 70;
+
+    /* Consolidated navigation hubs (Family History / Message Board / Family
+       Steward): grouping pages that mirror the Home navigation cards. Hub
+       option cards wear the same warm plate + sepia accent language as the
+       Home cards so every hub reads as part of one Norwood archive. */
+    --hub-surface: 0.95 0.02 72;
+    --hub-surface-foreground: 0.3 0.04 45;
+    --hub-accent: 0.42 0.11 35;
+    --hub-accent-foreground: 0.96 0.02 70;
+    --hub-rule: 0.42 0.11 35 / 0.18;
+    --hub-muted: 0.5 0.03 45;
+    --hub-primary: 0.42 0.11 35;
+    --hub-primary-foreground: 0.96 0.02 70;
+    --hub-secondary: 0.55 0.09 60;
+    --hub-secondary-foreground: 0.96 0.02 70;
+
+    /* Per-hub accent: Family History is the dusty bronze of memory, the
+       Message Board is the sepia ink of conversation, and Family Steward is
+       the spiced rust of governance — each a distinct but on-palette hue so
+       the three hubs stay visually consistent yet individually recognizable. */
+    --history-accent: 0.55 0.09 60;
+    --history-accent-foreground: 0.96 0.02 70;
+    --comm-accent: 0.42 0.11 35;
+    --comm-accent-foreground: 0.96 0.02 70;
+    --steward-accent: 0.5 0.14 30;
+    --steward-accent-foreground: 0.96 0.02 70;
   }
 
   .dark {
@@ -962,6 +1022,57 @@ video {
     --recipe-accent-foreground: 0.16 0.02 55;
     --recipe-hand: 0.82 0.05 55;
     --recipe-surface: 0.22 0.025 55;
+
+    /* Family Message Board (dark): communal bulletin on aged paper */
+    --board-surface: 0.21 0.02 55;
+    --board-accent: 0.72 0.14 60;
+    --board-accent-foreground: 0.16 0.02 55;
+    --post-general: 0.7 0.1 55;
+    --post-announcement: 0.72 0.14 60;
+    --post-question: 0.58 0.12 30;
+    --post-research: 0.62 0.07 220;
+    --post-photo: 0.6 0.15 150;
+    --post-recipe: 0.72 0.13 30;
+    --post-reunion: 0.65 0.13 55;
+    --post-memorial: 0.55 0.2 25;
+    --reply-rule: 0.72 0.14 60 / 0.3;
+
+    /* Private Messaging (dark): warm ink-and-paper conversation */
+    --msg-sent: 0.72 0.14 60;
+    --msg-sent-foreground: 0.16 0.02 55;
+    --msg-received: 0.2 0.02 55;
+    --msg-received-foreground: 0.93 0.02 60;
+    --msg-unread: 0.58 0.12 30;
+    --msg-unread-foreground: 0.95 0.01 60;
+    --msg-muted: 0.7 0.1 55;
+    --msg-block: 0.55 0.2 25;
+    --msg-report: 0.72 0.13 80;
+
+    /* Pending Contributions badge (dark): same red style as Notifications */
+    --pending-badge: 0.55 0.2 25;
+    --pending-badge-foreground: 0.93 0.02 60;
+
+    /* Consolidated navigation hubs (dark): warm plate surfaces and sepia
+       accents mirror the Home cards on the dark paper. */
+    --hub-surface: 0.21 0.02 55;
+    --hub-surface-foreground: 0.85 0.02 60;
+    --hub-accent: 0.72 0.14 60;
+    --hub-accent-foreground: 0.16 0.02 55;
+    --hub-rule: 0.72 0.14 60 / 0.22;
+    --hub-muted: 0.7 0.1 55;
+    --hub-primary: 0.72 0.14 60;
+    --hub-primary-foreground: 0.16 0.02 55;
+    --hub-secondary: 0.58 0.12 30;
+    --hub-secondary-foreground: 0.95 0.01 60;
+
+    /* Per-hub accent (dark): Family History bronze, Message Board sepia,
+       Family Steward rust. */
+    --history-accent: 0.58 0.12 30;
+    --history-accent-foreground: 0.95 0.01 60;
+    --comm-accent: 0.72 0.14 60;
+    --comm-accent-foreground: 0.16 0.02 55;
+    --steward-accent: 0.72 0.13 30;
+    --steward-accent-foreground: 0.16 0.02 55;
   }
 
   * {
@@ -1221,6 +1332,9 @@ video {
 .ml-1 {
   margin-left: 0.25rem;
 }
+.ml-1\.5 {
+  margin-left: 0.375rem;
+}
 .ml-auto {
   margin-left: auto;
 }
@@ -1414,6 +1528,9 @@ video {
 .h-40 {
   height: 10rem;
 }
+.h-48 {
+  height: 12rem;
+}
 .h-5 {
   height: 1.25rem;
 }
@@ -1471,8 +1588,14 @@ video {
 .min-h-4 {
   min-height: 1rem;
 }
+.min-h-\[120px\] {
+  min-height: 120px;
+}
 .min-h-\[36px\] {
   min-height: 36px;
+}
+.min-h-\[40px\] {
+  min-height: 40px;
 }
 .min-h-\[44px\] {
   min-height: 44px;
@@ -1641,6 +1764,9 @@ video {
 .max-w-6xl {
   max-width: 72rem;
 }
+.max-w-\[10rem\] {
+  max-width: 10rem;
+}
 .max-w-\[12rem\] {
   max-width: 12rem;
 }
@@ -1661,6 +1787,9 @@ video {
 }
 .max-w-\[6rem\] {
   max-width: 6rem;
+}
+.max-w-\[80\%\] {
+  max-width: 80%;
 }
 .max-w-\[calc\(100\%-2rem\)\] {
   max-width: calc(100% - 2rem);
@@ -1747,6 +1876,10 @@ video {
   --tw-translate-y: calc(-50% - 2px);
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
+.rotate-180 {
+  --tw-rotate: 180deg;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
 .rotate-45 {
   --tw-rotate: 45deg;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
@@ -1786,6 +1919,9 @@ video {
   -webkit-user-select: none;
      -moz-user-select: none;
           user-select: none;
+}
+.resize-none {
+  resize: none;
 }
 .resize-y {
   resize: vertical;
@@ -1941,6 +2077,12 @@ video {
 .self-start {
   align-self: flex-start;
 }
+.self-end {
+  align-self: flex-end;
+}
+.self-center {
+  align-self: center;
+}
 .justify-self-end {
   justify-self: end;
 }
@@ -1969,6 +2111,9 @@ video {
 }
 .whitespace-pre-line {
   white-space: pre-line;
+}
+.whitespace-pre-wrap {
+  white-space: pre-wrap;
 }
 .text-balance {
   text-wrap: balance;
@@ -2145,6 +2290,9 @@ video {
 .bg-muted {
   --tw-bg-opacity: 1;
   background-color: oklch(var(--muted) / var(--tw-bg-opacity, 1));
+}
+.bg-muted\/40 {
+  background-color: oklch(var(--muted) / 0.4);
 }
 .bg-muted\/50 {
   background-color: oklch(var(--muted) / 0.5);
@@ -8447,6 +8595,836 @@ video {
 .recipe-empty-action:hover {
     box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.24);
   }
+/* ---- Family Message Board: communal family bulletin ---- */
+/* Board filter pills: reuse .filter-tab with a board-aware active state
+     using the sepia primary (same language as Archive/Media/Recipe filters). */
+.filter-tab-active-board {
+    background-color: oklch(var(--board-accent));
+    color: oklch(var(--board-accent-foreground));
+    border-color: oklch(var(--board-accent));
+  }
+.filter-tab-active-board:hover {
+    color: oklch(var(--board-accent-foreground));
+    border-color: oklch(var(--board-accent));
+  }
+/* Post card: a framed warm plate for one board post. Header carries the
+     author (canonical Person Profile) + post-type badge; body holds title +
+     message; footer holds replies + related-member chips. */
+.post-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  background-color: oklch(var(--card));
+  padding: 1rem;
+}
+@media (min-width: 640px) {
+
+  .post-card {
+    padding: 1.25rem;
+  }
+}
+.post-card {
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.1);
+    transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+  }
+.post-card:hover,
+  .post-card:focus-within {
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.2);
+    transform: translateY(-2px);
+    border-color: oklch(var(--board-accent) / 0.5);
+  }
+.post-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+.post-card-author {
+  display: flex;
+  min-width: 0px;
+  align-items: center;
+  gap: 0.625rem;
+}
+.post-card-author .author-avatar {
+  display: flex;
+  height: 2.25rem;
+  width: 2.25rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  font-family: var(--font-display), serif;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 600;
+    background-color: oklch(var(--muted));
+    color: oklch(var(--muted-foreground));
+    box-shadow: 0 0 0 2px oklch(var(--photo-ring-soft));
+    overflow: hidden;
+}
+.post-card-author .author-avatar img {
+  height: 100%;
+  width: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.post-card-author .author-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  line-height: 1.25;
+    color: oklch(var(--foreground));
+}
+.post-card-author .author-meta {
+  font-size: 11px;
+  font-weight: 500;
+    color: oklch(var(--muted-foreground));
+}
+.post-card-title {
+  font-family: var(--font-display), serif;
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+  line-height: 1.375;
+    color: oklch(var(--foreground));
+}
+.post-card-body {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  line-height: 1.625;
+    color: oklch(var(--foreground));
+}
+.post-card-footer {
+  margin-top: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  border-top-width: 1px;
+  border-color: oklch(var(--border) / 0.5);
+  padding-top: 0.75rem;
+}
+/* Post type badge: dot-pill where the dot color encodes the post type */
+.post-type-badge {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: 9999px;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  background-color: oklch(var(--card));
+  padding-left: 0.625rem;
+  padding-right: 0.625rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+    color: oklch(var(--muted-foreground));
+}
+.post-type-badge::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background-color: oklch(var(--post-general));
+  }
+.post-type-announcement::before {
+    background-color: oklch(var(--post-announcement));
+  }
+.post-type-question::before {
+    background-color: oklch(var(--post-question));
+  }
+.post-type-research::before {
+    background-color: oklch(var(--post-research));
+  }
+.post-type-photo::before {
+    background-color: oklch(var(--post-photo));
+  }
+.post-type-recipe::before {
+    background-color: oklch(var(--post-recipe));
+  }
+.post-type-reunion::before {
+    background-color: oklch(var(--post-reunion));
+  }
+.post-type-memorial::before {
+    background-color: oklch(var(--post-memorial));
+  }
+/* Reply thread: one-level replies stacked chronologically under a post.
+     Each reply is a compact plate with a short bronze rule above it. */
+.reply-thread {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  border-top-width: 1px;
+  border-color: oklch(var(--border) / 0.5);
+  padding-top: 0.75rem;
+}
+.reply-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+  border-radius: var(--radius);
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  background-color: oklch(var(--card));
+  padding: 0.75rem;
+}
+.reply-item .reply-avatar {
+  display: flex;
+  height: 1.75rem;
+  width: 1.75rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  font-family: var(--font-display), serif;
+  font-size: 9px;
+  font-weight: 600;
+    background-color: oklch(var(--muted));
+    color: oklch(var(--muted-foreground));
+    box-shadow: 0 0 0 2px oklch(var(--photo-ring-soft));
+    overflow: hidden;
+}
+.reply-item .reply-avatar img {
+  height: 100%;
+  width: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.reply-item .reply-body {
+  display: flex;
+  min-width: 0px;
+  flex: 1 1 0%;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+.reply-item .reply-name {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 600;
+  line-height: 1.25;
+    color: oklch(var(--foreground));
+}
+.reply-item .reply-text {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  line-height: 1.625;
+    color: oklch(var(--foreground));
+}
+.reply-item .reply-meta {
+  font-size: 11px;
+  font-weight: 500;
+    color: oklch(var(--muted-foreground));
+}
+/* ---- Private Messaging: warm ink-and-paper conversation ---- */
+/* Inbox card: one 1:1 conversation row with the other person's portrait,
+     name, latest message preview, timestamp, and an unread count pill. */
+.inbox-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  background-color: oklch(var(--card));
+  padding: 0.875rem;
+    box-shadow: 0 1px 2px -1px oklch(0.36 0.05 45 / 0.08);
+    transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+}
+.inbox-card:hover,
+  .inbox-card:focus-within {
+    border-color: oklch(var(--msg-unread) / 0.6);
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.2);
+  }
+.inbox-card-unread {
+    background-color: oklch(var(--msg-unread) / 0.06);
+    border-color: oklch(var(--msg-unread) / 0.35);
+  }
+.inbox-portrait {
+  display: flex;
+  height: 2.75rem;
+  width: 2.75rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  font-family: var(--font-display), serif;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+    background-color: oklch(var(--muted));
+    color: oklch(var(--muted-foreground));
+    box-shadow: 0 0 0 2px oklch(var(--photo-ring-soft));
+    overflow: hidden;
+}
+.inbox-portrait img {
+  height: 100%;
+  width: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.inbox-body {
+  display: flex;
+  min-width: 0px;
+  flex: 1 1 0%;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+.inbox-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.inbox-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-display), serif;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  line-height: 1.25;
+    color: oklch(var(--foreground));
+}
+.inbox-time {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 500;
+  --tw-numeric-spacing: tabular-nums;
+  font-variant-numeric: var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction);
+    color: oklch(var(--muted-foreground));
+}
+.inbox-preview {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  line-height: 1.375;
+    color: oklch(var(--muted-foreground));
+}
+.inbox-card-unread .inbox-preview {
+    color: oklch(var(--foreground));
+  }
+/* Unread count pill: bronze dot-pill marking how many unread messages */
+.unread-pill {
+  display: inline-flex;
+  height: 1.25rem;
+  min-width: 1.25rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  padding-left: 0.375rem;
+  padding-right: 0.375rem;
+  font-size: 10px;
+  font-weight: 700;
+  --tw-numeric-spacing: tabular-nums;
+  font-variant-numeric: var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction);
+    color: oklch(var(--msg-unread-foreground));
+    background-color: oklch(var(--msg-unread));
+}
+/* Conversation view: participant header + threaded bubbles + composer.
+     Mobile-first; bubbles align to their side and never overflow. */
+.conversation {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.conversation-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-bottom-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  padding-bottom: 0.75rem;
+}
+.conversation-header .conversation-portrait {
+  display: flex;
+  height: 2.5rem;
+  width: 2.5rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  font-family: var(--font-display), serif;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+    background-color: oklch(var(--muted));
+    color: oklch(var(--muted-foreground));
+    box-shadow: 0 0 0 2px oklch(var(--photo-ring-soft));
+    overflow: hidden;
+}
+.conversation-header .conversation-portrait img {
+  height: 100%;
+  width: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.conversation-header .conversation-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-display), serif;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 600;
+  line-height: 1.25;
+    color: oklch(var(--foreground));
+}
+.conversation-header .conversation-meta {
+  font-size: 11px;
+  font-weight: 500;
+    color: oklch(var(--muted-foreground));
+}
+.conversation-thread {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+.conversation-date {
+  align-self: center;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  --tw-numeric-spacing: tabular-nums;
+  font-variant-numeric: var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction);
+  letter-spacing: 0.14em;
+    color: oklch(var(--muted-foreground));
+}
+/* Message bubble: sent bubbles are the sepia ink (right), received sit on
+     paper (left). Max-width keeps bubbles readable and never full-bleed. */
+.msg-row {
+  display: flex;
+  width: 100%;
+}
+.msg-row-sent {
+  justify-content: flex-end;
+}
+.msg-row-received {
+  justify-content: flex-start;
+}
+.msg-bubble {
+  max-width: 80%;
+  border-radius: 1rem;
+  padding-left: 0.875rem;
+  padding-right: 0.875rem;
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  line-height: 1.625;
+}
+.msg-bubble-sent {
+    background-color: oklch(var(--msg-sent));
+    color: oklch(var(--msg-sent-foreground));
+    border-bottom-right-radius: 0.375rem;
+  }
+.msg-bubble-received {
+    background-color: oklch(var(--msg-received));
+    color: oklch(var(--msg-received-foreground));
+    border: 1px solid oklch(var(--border));
+    border-bottom-left-radius: 0.375rem;
+  }
+.msg-bubble-time {
+  margin-top: 0.25rem;
+  display: block;
+  text-align: right;
+  font-size: 10px;
+  font-weight: 500;
+  --tw-numeric-spacing: tabular-nums;
+  font-variant-numeric: var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction);
+    color: oklch(var(--msg-sent-foreground) / 0.7);
+}
+.msg-bubble-received .msg-bubble-time {
+    color: oklch(var(--msg-muted));
+  }
+/* Message composer: a paper input row pinned below the thread */
+.composer {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  background-color: oklch(var(--card));
+  padding: 0.5rem;
+    box-shadow: 0 1px 2px -1px oklch(0.36 0.05 45 / 0.08);
+}
+.composer-textarea {
+  min-height: 44px;
+  flex: 1 1 0%;
+  resize: none;
+  border-radius: var(--radius);
+  background-color: transparent;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  line-height: 1.625;
+    color: oklch(var(--foreground));
+}
+.composer-textarea:focus {
+    outline: none;
+  }
+.composer-textarea::-moz-placeholder {
+    color: oklch(var(--muted-foreground) / 0.7);
+  }
+.composer-textarea::placeholder {
+    color: oklch(var(--muted-foreground) / 0.7);
+  }
+.composer-send {
+  display: inline-flex;
+  height: 2.5rem;
+  width: 2.5rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+    color: oklch(var(--msg-sent-foreground));
+    background-color: oklch(var(--msg-sent));
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.18);
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow
+      0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.composer-send:hover {
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.24);
+  }
+.composer-send:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(var(--ring) / 0.35);
+  }
+.composer-send:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+/* Block / report affordances: quiet outline actions with safety colors */
+.msg-safety-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+.msg-block-action {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: 9999px;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  padding-top: 0.375rem;
+  padding-bottom: 0.375rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 600;
+    background-color: oklch(var(--card));
+    color: oklch(var(--msg-block));
+    transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color
+      0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.msg-block-action:hover {
+    border-color: oklch(var(--msg-block) / 0.5);
+    background-color: oklch(var(--msg-block) / 0.08);
+  }
+.msg-report-action {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: 9999px;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  padding-top: 0.375rem;
+  padding-bottom: 0.375rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 600;
+    background-color: oklch(var(--card));
+    color: oklch(var(--msg-report));
+    transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color
+      0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.msg-report-action:hover {
+    border-color: oklch(var(--msg-report) / 0.5);
+    background-color: oklch(var(--msg-report) / 0.08);
+  }
+.msg-blocked-note {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: var(--radius);
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  background-color: oklch(var(--card));
+  padding-left: 0.875rem;
+  padding-right: 0.875rem;
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  line-height: 1.625;
+    color: oklch(var(--msg-muted));
+}
+/* ---- Pending Contributions badge (Family Stewards) ---- */
+/* Numeric badge on the Pending Contributions link. Same red style as the
+     Notifications badge (.notif-badge) so both read as the same alert. */
+.pending-badge {
+  display: inline-flex;
+  height: 1.25rem;
+  min-width: 1.25rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+  font-size: 10px;
+  font-weight: 700;
+  --tw-numeric-spacing: tabular-nums;
+  font-variant-numeric: var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction);
+    color: oklch(var(--pending-badge-foreground));
+    background-color: oklch(var(--pending-badge));
+    box-shadow: 0 0 0 2px oklch(var(--card));
+}
+/* ---- Consolidated navigation hubs ---- */
+/* Hub page header: a back affordance + hub title on the paper, mirroring
+     the Home header. The hub title uses the display serif for a keepsake feel. */
+.hub-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.hub-back {
+  display: inline-flex;
+  height: 2.5rem;
+  width: 2.5rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  background-color: oklch(var(--card));
+    color: oklch(var(--foreground));
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.1);
+    transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+}
+.hub-back:hover,
+  .hub-back:focus-visible {
+    border-color: oklch(var(--hub-accent) / 0.6);
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.2);
+  }
+.hub-back:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(var(--ring) / 0.25);
+  }
+.hub-title {
+  font-family: var(--font-display), serif;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+  line-height: 1.25;
+    color: oklch(var(--foreground));
+}
+.hub-subtitle {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+    color: oklch(var(--hub-muted));
+}
+/* Hub option card: a large tappable card that mirrors the Home navigation
+     cards — warm plate surface, rounded-xl, sepia/bronze accent border on
+     hover, gentle lift. Each option carries a title + descriptive subtitle. */
+.hub-option {
+  position: relative;
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  background-color: oklch(var(--card));
+  padding: 1rem;
+  text-align: left;
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.12);
+    transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    animation: hub-in 0.35s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+.hub-option:hover,
+  .hub-option:focus-within {
+    transform: translateY(-2px);
+    border-color: oklch(var(--hub-accent) / 0.6);
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.2);
+  }
+.hub-option:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(var(--ring) / 0.25);
+  }
+.hub-option-head {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.75rem;
+}
+.hub-option-icon {
+  display: flex;
+  height: 2.75rem;
+  width: 2.75rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+    color: oklch(var(--hub-accent-foreground));
+    background-color: oklch(var(--hub-accent));
+    box-shadow: 0 0 0 3px oklch(var(--hub-accent) / 0.25);
+}
+.hub-option-title {
+  font-family: var(--font-display), serif;
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+  line-height: 1.375;
+    color: oklch(var(--foreground));
+}
+.hub-option-desc {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  line-height: 1.625;
+    color: oklch(var(--hub-muted));
+}
+.hub-option-arrow {
+  margin-left: auto;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+    color: oklch(var(--hub-accent));
+}
+/* Primary vs secondary hub access (Message Board hub): the default Family
+     Message Board reads as the sepia primary; Private Messages as the bronze
+     secondary. */
+.hub-option-primary {
+    border-color: oklch(var(--hub-primary) / 0.45);
+  }
+.hub-option-primary .hub-option-icon {
+    color: oklch(var(--hub-primary-foreground));
+    background-color: oklch(var(--hub-primary));
+    box-shadow: 0 0 0 3px oklch(var(--hub-primary) / 0.25);
+  }
+.hub-option-primary .hub-option-arrow {
+    color: oklch(var(--hub-primary));
+  }
+.hub-option-secondary .hub-option-icon {
+    color: oklch(var(--hub-secondary-foreground));
+    background-color: oklch(var(--hub-secondary));
+    box-shadow: 0 0 0 3px oklch(var(--hub-secondary) / 0.25);
+  }
+.hub-option-secondary .hub-option-arrow {
+    color: oklch(var(--hub-secondary));
+  }
+/* Per-hub accent tint on the option icon so each hub stays recognizable:
+     Family History bronze, Message Board sepia, Family Steward rust. */
+.hub-accent-history .hub-option-icon {
+    color: oklch(var(--history-accent-foreground));
+    background-color: oklch(var(--history-accent));
+    box-shadow: 0 0 0 3px oklch(var(--history-accent) / 0.25);
+  }
+.hub-accent-history .hub-option-arrow {
+    color: oklch(var(--history-accent));
+  }
+.hub-accent-comm .hub-option-icon {
+    color: oklch(var(--comm-accent-foreground));
+    background-color: oklch(var(--comm-accent));
+    box-shadow: 0 0 0 3px oklch(var(--comm-accent) / 0.25);
+  }
+.hub-accent-comm .hub-option-arrow {
+    color: oklch(var(--comm-accent));
+  }
+.hub-accent-steward .hub-option-icon {
+    color: oklch(var(--steward-accent-foreground));
+    background-color: oklch(var(--steward-accent));
+    box-shadow: 0 0 0 3px oklch(var(--steward-accent) / 0.25);
+  }
+.hub-accent-steward .hub-option-arrow {
+    color: oklch(var(--steward-accent));
+  }
+/* Hub group label: a tracked caption flanked by short rules, matching the
+     fu-children-label language for section headers inside a hub. */
+.hub-group-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+    color: oklch(var(--hub-muted));
+}
+.hub-group-label::before,
+  .hub-group-label::after {
+    content: "";
+    width: 1.5rem;
+    height: 1px;
+    background-color: oklch(var(--hub-rule));
+  }
+/* Hub option grid: single column on mobile, two columns on wider screens,
+     so the large cards stay tappable and never crowd a narrow viewport. */
+.hub-grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 1rem;
+}
+@media (min-width: 640px) {
+
+  .hub-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+/* Steward hub category count: a compact pill on a steward option card that
+     shows how many pending items await review in that area. It reuses the
+     pending-badge alert language (red pill) so it reads as the same "action
+     needed" signal as the Pending Contributions badge. */
+.steward-count-badge {
+  display: inline-flex;
+  height: 1.25rem;
+  min-width: 1.25rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+  font-size: 10px;
+  font-weight: 700;
+  --tw-numeric-spacing: tabular-nums;
+  font-variant-numeric: var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction);
+    color: oklch(var(--pending-badge-foreground));
+    background-color: oklch(var(--pending-badge));
+    box-shadow: 0 0 0 2px oklch(var(--card));
+}
 .\[--cell-size\:--spacing\(8\)\] {
   --cell-size: var(--spacing(8));
 }
@@ -8627,6 +9605,14 @@ video {
   background-color: oklch(var(--accent) / var(--tw-bg-opacity, 1));
 }
 
+.hover\:bg-accent\/90:hover {
+  background-color: oklch(var(--accent) / 0.9);
+}
+
+.hover\:bg-destructive\/10:hover {
+  background-color: oklch(var(--destructive) / 0.1);
+}
+
 .hover\:bg-destructive\/90:hover {
   background-color: oklch(var(--destructive) / 0.9);
 }
@@ -8654,6 +9640,11 @@ video {
 
 .hover\:text-accent-foreground:hover {
   color: oklch(var(--accent-foreground));
+}
+
+.hover\:text-destructive:hover {
+  --tw-text-opacity: 1;
+  color: oklch(var(--destructive) / var(--tw-text-opacity, 1));
 }
 
 .hover\:text-foreground:hover {

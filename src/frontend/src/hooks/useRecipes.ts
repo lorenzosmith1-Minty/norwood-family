@@ -107,6 +107,9 @@ export function useSubmitRecipe() {
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["recipes", "pending"] });
+      void queryClient.invalidateQueries({
+        queryKey: ["pendingContributionsCount"],
+      });
     },
   });
 }
@@ -123,6 +126,11 @@ export function useApproveRecipe() {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["recipes", "pending"] });
       void queryClient.invalidateQueries({ queryKey: ["recipes", "approved"] });
+      void queryClient.invalidateQueries({
+        queryKey: ["pendingContributionsCount"],
+      });
+      // Approval notifies the contributor, so the unread badge must refresh.
+      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
   });
 }
@@ -138,6 +146,11 @@ export function useRejectRecipe() {
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["recipes", "pending"] });
+      void queryClient.invalidateQueries({
+        queryKey: ["pendingContributionsCount"],
+      });
+      // Rejection notifies the contributor, so the unread badge must refresh.
+      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
   });
 }

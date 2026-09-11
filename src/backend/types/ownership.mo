@@ -119,6 +119,9 @@ module {
     #ProfileClaimReviewed;
     #RelationshipRequested;
     #RelationshipReviewed;
+    #BoardReply;
+    #BoardMention;
+    #NewMessage;
   };
 
   /// An in-app notification record addressed to one user. Email is never used

@@ -262,20 +262,29 @@ describe("Navigation: Family Archive stays the primary archive parent", () => {
       .getByTestId("layout.explore_link")
       .closest("header") as HTMLElement;
 
-    // The existing primary nav pills remain.
+    // The consolidated primary nav pills remain. Family Stories, Family
+    // Mysteries, and Travel Through Time are no longer separate top-level pills
+    // — they live behind the single Family History hub pill.
     for (const label of [
       "Explore Family",
       "Heritage Branch",
       "Family Archive",
-      "Family Stories",
-      "Family Mysteries",
-      "Travel Through Time",
+      "Family History",
       "Add Myself",
       "Notifications",
     ]) {
       expect(
         within(header).getByRole("button", { name: label }),
       ).toBeInTheDocument();
+    }
+    for (const label of [
+      "Family Stories",
+      "Family Mysteries",
+      "Travel Through Time",
+    ]) {
+      expect(
+        within(header).queryByRole("button", { name: label }),
+      ).not.toBeInTheDocument();
     }
 
     // The new Family Videos & Oral History page must NOT be a top-level pill.

@@ -45,7 +45,7 @@ export function useListRelationshipRequests() {
 export function useGetRelationshipRequest(requestId: bigint) {
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["relationshipRequests", requestId],
+    queryKey: ["relationshipRequests", requestId.toString()],
     queryFn: async () => {
       if (!actor) return null;
       return actor.getRelationshipRequest(requestId);
@@ -83,6 +83,10 @@ export function useProposeRelationship() {
         queryKey: ["relationshipRequests"],
       });
       void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      // The caller's own request list must reflect the new pending request.
+      void queryClient.invalidateQueries({
+        queryKey: ["myRelationshipRequests"],
+      });
     },
   });
 }
@@ -104,6 +108,14 @@ export function useApproveRelationshipRequest() {
         queryKey: ["confirmedRelationships"],
       });
       void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      // Approving removes the request from the steward-review queue, so the
+      // Pending Contributions badge and steward aggregate badge refresh.
+      void queryClient.invalidateQueries({
+        queryKey: ["pendingContributionsCount"],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["myRelationshipRequests"],
+      });
     },
   });
 }
@@ -122,6 +134,14 @@ export function useRejectRelationshipRequest() {
         queryKey: ["relationshipRequests"],
       });
       void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      // Rejecting removes the request from the steward-review queue, so the
+      // Pending Contributions badge and steward aggregate badge refresh.
+      void queryClient.invalidateQueries({
+        queryKey: ["pendingContributionsCount"],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["myRelationshipRequests"],
+      });
     },
   });
 }
@@ -140,6 +160,14 @@ export function useSetRelationshipRequestPending() {
         queryKey: ["relationshipRequests"],
       });
       void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      // Returning to Pending re-adds the request to the steward-review queue,
+      // so the Pending Contributions badge and steward aggregate badge refresh.
+      void queryClient.invalidateQueries({
+        queryKey: ["pendingContributionsCount"],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["myRelationshipRequests"],
+      });
     },
   });
 }

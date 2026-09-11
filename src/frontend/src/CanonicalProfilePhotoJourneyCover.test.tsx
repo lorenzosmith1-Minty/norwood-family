@@ -328,8 +328,14 @@ async function navigateToLorenzoSmithSr(
 }
 
 async function openWaxxHero(user: ReturnType<typeof userEvent.setup>) {
-  // Open the owner's own profile via the navbar "My Profile" entry.
-  await user.click(screen.getByRole("button", { name: /My Profile/ }));
+  // Open the owner's own profile via the navbar profile button, which is
+  // labeled with the canonical display name. The label resolves from the async
+  // myProfile query, so wait for it to appear before clicking. Scope to the
+  // navbar profile button (layout.my_profile_link) because the Explore Family
+  // view can also show a "Waxx Minty Child" card with the same name.
+  const profileButton = await screen.findByTestId("layout.my_profile_link");
+  await within(profileButton).findByText("Waxx Minty");
+  await user.click(profileButton);
   expect(await screen.findByRole("heading", { level: 1 })).toHaveTextContent(
     "Waxx Minty",
   );

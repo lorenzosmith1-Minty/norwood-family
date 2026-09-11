@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Layout } from "./components/Layout";
 import { LoginSurface } from "./components/LoginSurface";
+import PendingContributionsBadge from "./components/PendingContributionsBadge";
 import { useIsAdmin } from "./hooks/useArchiveStorage";
 import { useAuth } from "./hooks/useAuth";
 import { useNavbarIdentity } from "./hooks/useNavbarIdentity";
@@ -15,11 +16,19 @@ import { AdminApprovalPage } from "./pages/AdminApprovalPage";
 import { ArchiveContributionPage } from "./pages/ArchiveContributionPage";
 import { ArchiveDetailPage } from "./pages/ArchiveDetailPage";
 import { ArchivePage } from "./pages/ArchivePage";
+import { BoardPostComposer } from "./pages/BoardPostComposer";
+import { BoardPostPage } from "./pages/BoardPostPage";
+import { ConversationPage } from "./pages/ConversationPage";
 import ExploreFamilyPage from "./pages/ExploreFamilyPage";
+import { FamilyHistoryHubPage } from "./pages/FamilyHistoryHubPage";
 import { FamilyStewardGovernancePage } from "./pages/FamilyStewardGovernancePage";
+import { FamilyStewardHubPage } from "./pages/FamilyStewardHubPage";
 import { FamilyStewardReviewPage } from "./pages/FamilyStewardReviewPage";
 import HeritageBranchPage from "./pages/HeritageBranchPage";
 import { HomePage } from "./pages/HomePage";
+import { InboxPage } from "./pages/InboxPage";
+import { MessageBoardHubPage } from "./pages/MessageBoardHubPage";
+import { MessageBoardPage } from "./pages/MessageBoardPage";
 import { MysteriesPage } from "./pages/MysteriesPage";
 import { NotificationsPage } from "./pages/NotificationsPage";
 import {
@@ -37,7 +46,7 @@ import { VideoContributePage } from "./pages/VideoContributePage";
 import { VideoDetailPage } from "./pages/VideoDetailPage";
 import { VideosPage } from "./pages/VideosPage";
 import type { MediaKind } from "./types/archive";
-import { resolveMyProfileRoute } from "./types/ownership";
+import { ClaimStatus, resolveMyProfileRoute } from "./types/ownership";
 
 type View =
   | "home"
@@ -63,7 +72,15 @@ type View =
   | "timeline"
   | "recipes"
   | "recipe-detail"
-  | "recipe-contribute";
+  | "recipe-contribute"
+  | "board"
+  | "board-post"
+  | "board-compose"
+  | "inbox"
+  | "conversation"
+  | "family-history"
+  | "message-board-hub"
+  | "steward-hub";
 
 const VALID_VIEWS: readonly View[] = [
   "home",
@@ -90,6 +107,14 @@ const VALID_VIEWS: readonly View[] = [
   "recipes",
   "recipe-detail",
   "recipe-contribute",
+  "board",
+  "board-post",
+  "board-compose",
+  "inbox",
+  "conversation",
+  "family-history",
+  "message-board-hub",
+  "steward-hub",
 ];
 
 function isView(value: string): value is View {
@@ -168,6 +193,22 @@ export default function App() {
   // The recipe currently open in the Family Recipes detail view. Cleared when
   // navigating away from the detail view.
   const [selectedRecipeId, setSelectedRecipeId] = useState<bigint | null>(null);
+  // The board post currently open in the Message Board detail view. Cleared
+  // when navigating away from the detail view.
+  const [selectedPostId, setSelectedPostId] = useState<bigint | null>(null);
+  // The board post being composed/edited in the composer view. Null means a
+  // new post; a value means editing that existing post.
+  const [composePostId, setComposePostId] = useState<bigint | null>(null);
+  // The conversation currently open in the Private Messages conversation view.
+  // Cleared when navigating away from the conversation view.
+  const [selectedConversationId, setSelectedConversationId] = useState<
+    bigint | null
+  >(null);
+  // The other participant's personId when opening a conversation from a Person
+  // Profile. Null when the conversation was opened from the inbox (where the
+  // participant is derived from the conversation view).
+  const [selectedConversationPersonId, setSelectedConversationPersonId] =
+    useState<string | null>(null);
   // Preselection carried into the add-recipe flow when launched from a Person
   // Profile: the profile person (as the originating or related member) and
   // where to return on back. When launched from the Family Recipes page this
@@ -185,6 +226,14 @@ export default function App() {
     personId: myPersonId,
     claimStatus,
   } = useNavbarIdentity();
+  // Approved family members (a linked, claimed Person Profile) may use the
+  // Message Board and Private Messaging. Guests and members with no approved
+  // claim are excluded from these nav links.
+  const isApprovedMember = claimStatus === ClaimStatus.Claimed;
+  // The Add Myself / Add Family nav position toggles on claim state: before an
+  // approved claim it reads "Add Myself"; after an approved/claimed profile it
+  // reads "Add Family" (which begins the family-member addition workflow).
+  const hasClaimedProfile = claimStatus === ClaimStatus.Claimed;
 
   const profile = profiles[profileId] ?? profiles.julia;
 
@@ -338,6 +387,8 @@ export default function App() {
     <Layout
       isAdmin={isAdmin}
       isAuthenticated={isAuthenticated}
+      isApprovedMember={isApprovedMember}
+      hasClaimedProfile={hasClaimedProfile}
       accountId={accountId}
       identityName={displayName}
       identityStatus={identityStatus}
@@ -348,23 +399,14 @@ export default function App() {
         setView("sign-in");
       }}
       onSignOutClick={signOut}
-      onAdminClick={() => setView("admin-approval")}
       onArchiveClick={() => setView("archive")}
-      onStoriesClick={() => {
-        setPendingStoryId(null);
-        setView("stories");
-      }}
-      onMysteriesClick={() => {
-        setPendingMysteryId(null);
-        setView("mysteries");
-      }}
-      onTimelineClick={() => setView("timeline")}
       onBranchClick={() => setView("heritage-branch")}
       onExploreClick={() => openExploreFamily(null)}
-      onStewardClick={() => setView("steward-review")}
-      onGovernanceClick={() => setView("governance")}
-      onNotificationsClick={() => setView("notifications")}
+      onHistoryClick={() => setView("family-history")}
       onAddMyselfClick={() => setView("add-myself")}
+      onMessageBoardClick={() => setView("message-board-hub")}
+      onStewardClick={() => setView("steward-hub")}
+      onNotificationsClick={() => setView("notifications")}
     >
       {view === "home" ? (
         <HomePage
@@ -406,6 +448,11 @@ export default function App() {
             onOpenMediaItem={openMediaItem}
             onOpenRecipes={openRecipes}
             onOpenRecipe={openRecipe}
+            onOpenConversation={(personId) => {
+              setSelectedConversationPersonId(personId);
+              setSelectedConversationId(null);
+              setView("conversation");
+            }}
             onOpenRecipeContribute={(preselect) =>
               openRecipeContribute({
                 personId: preselect.personId,
@@ -444,6 +491,11 @@ export default function App() {
             onOpenMediaItem={openMediaItem}
             onOpenRecipes={openRecipes}
             onOpenRecipe={openRecipe}
+            onOpenConversation={(personId) => {
+              setSelectedConversationPersonId(personId);
+              setSelectedConversationId(null);
+              setView("conversation");
+            }}
             onOpenRecipeContribute={(preselect) =>
               openRecipeContribute({
                 personId: preselect.personId,
@@ -605,6 +657,91 @@ export default function App() {
                 }
               : undefined
           }
+        />
+      ) : view === "board" ? (
+        <MessageBoardPage
+          onBack={() => setView("home")}
+          onOpenPost={(id) => {
+            setSelectedPostId(id);
+            setView("board-post");
+          }}
+          onCompose={() => {
+            setComposePostId(null);
+            setView("board-compose");
+          }}
+          onOpenProfile={(id) => {
+            setProfileId(id);
+            setView("profile");
+          }}
+        />
+      ) : view === "board-post" ? (
+        <BoardPostPage
+          postId={selectedPostId ?? 0n}
+          onBack={() => setView("board")}
+          onOpenProfile={(id) => {
+            setProfileId(id);
+            setView("profile");
+          }}
+          onEdit={() => {
+            setComposePostId(selectedPostId);
+            setView("board-compose");
+          }}
+        />
+      ) : view === "board-compose" ? (
+        <BoardPostComposer
+          postId={composePostId}
+          onBack={() =>
+            composePostId !== null ? setView("board-post") : setView("board")
+          }
+          onOpenProfile={(id) => {
+            setProfileId(id);
+            setView("profile");
+          }}
+        />
+      ) : view === "inbox" ? (
+        <InboxPage
+          onBack={() => setView("home")}
+          onOpenConversation={(id) => {
+            setSelectedConversationId(id);
+            setSelectedConversationPersonId(null);
+            setView("conversation");
+          }}
+        />
+      ) : view === "conversation" ? (
+        <ConversationPage
+          conversationId={selectedConversationId}
+          personId={selectedConversationPersonId}
+          onBack={() => setView("inbox")}
+          onOpenProfile={(id) => {
+            setProfileId(id);
+            setView("profile");
+          }}
+        />
+      ) : view === "family-history" ? (
+        <FamilyHistoryHubPage
+          onBack={() => setView("home")}
+          onOpenStories={() => {
+            setPendingStoryId(null);
+            setView("stories");
+          }}
+          onOpenMysteries={() => {
+            setPendingMysteryId(null);
+            setView("mysteries");
+          }}
+          onOpenTimeline={() => setView("timeline")}
+        />
+      ) : view === "message-board-hub" ? (
+        <MessageBoardHubPage
+          onBack={() => setView("home")}
+          onOpenBoard={() => setView("board")}
+          onOpenInbox={() => setView("inbox")}
+        />
+      ) : view === "steward-hub" ? (
+        <FamilyStewardHubPage
+          onBack={() => setView("home")}
+          onOpenReview={() => setView("steward-review")}
+          onOpenPendingContributions={() => setView("admin-approval")}
+          onOpenGovernance={() => setView("governance")}
         />
       ) : (
         <ArchiveDetailPage

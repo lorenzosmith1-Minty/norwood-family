@@ -6,6 +6,11 @@
       "sourceType": "github",
       "computedHash": "9b6401d1a40048616b39d3f12591f4418700688283968cb7898d5f790657d6fd"
     },
+    "connector-googledrive": {
+      "source": "caffeinelabs/skills",
+      "sourceType": "github",
+      "computedHash": "66b32d6f169115ac286db4fb6f4f490d73db18471bf7672ef6a9f22b34d08da7"
+    },
     "connector-googlemail": {
       "source": "caffeinelabs/skills",
       "sourceType": "github",

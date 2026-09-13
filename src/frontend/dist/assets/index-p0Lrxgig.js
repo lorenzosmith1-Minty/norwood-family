@@ -37244,6 +37244,17 @@ const ProposedFinding = Record({
   "personId": Opt(Text),
   "findingType": FindingType$1
 });
+const NewPersonCandidate = Record({
+  "id": Nat,
+  "status": ReviewStatus$1,
+  "name": Text,
+  "submittedAt": Int,
+  "submittedBy": Principal2,
+  "sourceId": SourceId,
+  "reviewedAt": Opt(Int),
+  "reviewedBy": Opt(Principal2),
+  "details": Text
+});
 const ProfileClaimStatus = Variant({
   "Approved": Null,
   "Rejected": Null,
@@ -37305,6 +37316,18 @@ const Recipe = Record({
   "originatingPersonId": Text,
   "ingredients": Vec(Text),
   "relatedPersonIds": Vec(Text)
+});
+const RelationshipProposal = Record({
+  "id": Nat,
+  "status": ReviewStatus$1,
+  "fromPersonId": Text,
+  "submittedAt": Int,
+  "submittedBy": Principal2,
+  "sourceId": SourceId,
+  "reviewedAt": Opt(Int),
+  "reviewedBy": Opt(Principal2),
+  "toPersonId": Text,
+  "relationshipType": Text
 });
 const RelationshipRequestStatus = Variant({
   "Approved": Null,
@@ -37478,32 +37501,9 @@ const Result_20 = Variant({
   "ok": PersonProfile,
   "err": CreateError$1
 });
-const NewPersonCandidate = Record({
-  "id": Nat,
-  "status": ReviewStatus$1,
-  "name": Text,
-  "submittedAt": Int,
-  "submittedBy": Principal2,
-  "sourceId": SourceId,
-  "reviewedAt": Opt(Int),
-  "reviewedBy": Opt(Principal2),
-  "details": Text
-});
 const Result_19 = Variant({
   "ok": NewPersonCandidate,
   "err": ResearchError
-});
-const RelationshipProposal = Record({
-  "id": Nat,
-  "status": ReviewStatus$1,
-  "fromPersonId": Text,
-  "submittedAt": Int,
-  "submittedBy": Principal2,
-  "sourceId": SourceId,
-  "reviewedAt": Opt(Int),
-  "reviewedBy": Opt(Principal2),
-  "toPersonId": Text,
-  "relationshipType": Text
 });
 const Result_18 = Variant({
   "ok": RelationshipProposal,
@@ -37979,6 +37979,11 @@ Service({
   ),
   "approveArchiveItem": Func([ArchiveItemId], [Opt(ArchiveItem)], []),
   "approveFinding": Func([FindingId], [Opt(ProposedFinding)], []),
+  "approveNewPersonCandidate": Func(
+    [Nat],
+    [Opt(NewPersonCandidate)],
+    []
+  ),
   "approveProfileClaim": Func([Nat], [Opt(ProfileClaim)], []),
   "approveProfileRemoval": Func(
     [Nat],
@@ -37986,6 +37991,11 @@ Service({
     []
   ),
   "approveRecipe": Func([RecipeId], [Opt(Recipe)], []),
+  "approveRelationshipProposal": Func(
+    [Nat],
+    [Opt(RelationshipProposal)],
+    []
+  ),
   "approveRelationshipRequest": Func(
     [Nat],
     [Opt(RelationshipRequest)],
@@ -38231,6 +38241,16 @@ Service({
     [Opt(ProposedFinding)],
     []
   ),
+  "needsResearchNewPersonCandidate": Func(
+    [Nat],
+    [Opt(NewPersonCandidate)],
+    []
+  ),
+  "needsResearchRelationshipProposal": Func(
+    [Nat],
+    [Opt(RelationshipProposal)],
+    []
+  ),
   "needsResearchSource": Func([SourceId], [Opt(SourceRecord)], []),
   "notDuplicate": Func([PersonId, PersonId], [Result_11], []),
   "permanentlyDeleteProfile": Func([PersonId, Bool], [Result_10], []),
@@ -38264,6 +38284,11 @@ Service({
   "reconcileClaimNotifications": Func([Nat], [Nat], []),
   "rejectArchiveItem": Func([ArchiveItemId], [Opt(ArchiveItem)], []),
   "rejectFinding": Func([FindingId], [Opt(ProposedFinding)], []),
+  "rejectNewPersonCandidate": Func(
+    [Nat],
+    [Opt(NewPersonCandidate)],
+    []
+  ),
   "rejectProfileClaim": Func([Nat], [Opt(ProfileClaim)], []),
   "rejectProfileRemoval": Func(
     [Nat],
@@ -38271,6 +38296,11 @@ Service({
     []
   ),
   "rejectRecipe": Func([RecipeId], [Opt(Recipe)], []),
+  "rejectRelationshipProposal": Func(
+    [Nat],
+    [Opt(RelationshipProposal)],
+    []
+  ),
   "rejectRelationshipRequest": Func(
     [Nat],
     [Opt(RelationshipRequest)],
@@ -38708,6 +38738,17 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "personId": IDL2.Opt(IDL2.Text),
     "findingType": FindingType2
   });
+  const NewPersonCandidate2 = IDL2.Record({
+    "id": IDL2.Nat,
+    "status": ReviewStatus2,
+    "name": IDL2.Text,
+    "submittedAt": IDL2.Int,
+    "submittedBy": IDL2.Principal,
+    "sourceId": SourceId2,
+    "reviewedAt": IDL2.Opt(IDL2.Int),
+    "reviewedBy": IDL2.Opt(IDL2.Principal),
+    "details": IDL2.Text
+  });
   const ProfileClaimStatus2 = IDL2.Variant({
     "Approved": IDL2.Null,
     "Rejected": IDL2.Null,
@@ -38769,6 +38810,18 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "originatingPersonId": IDL2.Text,
     "ingredients": IDL2.Vec(IDL2.Text),
     "relatedPersonIds": IDL2.Vec(IDL2.Text)
+  });
+  const RelationshipProposal2 = IDL2.Record({
+    "id": IDL2.Nat,
+    "status": ReviewStatus2,
+    "fromPersonId": IDL2.Text,
+    "submittedAt": IDL2.Int,
+    "submittedBy": IDL2.Principal,
+    "sourceId": SourceId2,
+    "reviewedAt": IDL2.Opt(IDL2.Int),
+    "reviewedBy": IDL2.Opt(IDL2.Principal),
+    "toPersonId": IDL2.Text,
+    "relationshipType": IDL2.Text
   });
   const RelationshipRequestStatus2 = IDL2.Variant({
     "Approved": IDL2.Null,
@@ -38936,32 +38989,9 @@ const idlFactory = ({ IDL: IDL2 }) => {
   });
   const CreateError2 = IDL2.Variant({ "NotSignedIn": IDL2.Null });
   const Result_202 = IDL2.Variant({ "ok": PersonProfile2, "err": CreateError2 });
-  const NewPersonCandidate2 = IDL2.Record({
-    "id": IDL2.Nat,
-    "status": ReviewStatus2,
-    "name": IDL2.Text,
-    "submittedAt": IDL2.Int,
-    "submittedBy": IDL2.Principal,
-    "sourceId": SourceId2,
-    "reviewedAt": IDL2.Opt(IDL2.Int),
-    "reviewedBy": IDL2.Opt(IDL2.Principal),
-    "details": IDL2.Text
-  });
   const Result_192 = IDL2.Variant({
     "ok": NewPersonCandidate2,
     "err": ResearchError2
-  });
-  const RelationshipProposal2 = IDL2.Record({
-    "id": IDL2.Nat,
-    "status": ReviewStatus2,
-    "fromPersonId": IDL2.Text,
-    "submittedAt": IDL2.Int,
-    "submittedBy": IDL2.Principal,
-    "sourceId": SourceId2,
-    "reviewedAt": IDL2.Opt(IDL2.Int),
-    "reviewedBy": IDL2.Opt(IDL2.Principal),
-    "toPersonId": IDL2.Text,
-    "relationshipType": IDL2.Text
   });
   const Result_182 = IDL2.Variant({
     "ok": RelationshipProposal2,
@@ -39423,6 +39453,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
       []
     ),
     "approveFinding": IDL2.Func([FindingId2], [IDL2.Opt(ProposedFinding2)], []),
+    "approveNewPersonCandidate": IDL2.Func(
+      [IDL2.Nat],
+      [IDL2.Opt(NewPersonCandidate2)],
+      []
+    ),
     "approveProfileClaim": IDL2.Func([IDL2.Nat], [IDL2.Opt(ProfileClaim2)], []),
     "approveProfileRemoval": IDL2.Func(
       [IDL2.Nat],
@@ -39430,6 +39465,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
       []
     ),
     "approveRecipe": IDL2.Func([RecipeId2], [IDL2.Opt(Recipe2)], []),
+    "approveRelationshipProposal": IDL2.Func(
+      [IDL2.Nat],
+      [IDL2.Opt(RelationshipProposal2)],
+      []
+    ),
     "approveRelationshipRequest": IDL2.Func(
       [IDL2.Nat],
       [IDL2.Opt(RelationshipRequest2)],
@@ -39695,6 +39735,16 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [IDL2.Opt(ProposedFinding2)],
       []
     ),
+    "needsResearchNewPersonCandidate": IDL2.Func(
+      [IDL2.Nat],
+      [IDL2.Opt(NewPersonCandidate2)],
+      []
+    ),
+    "needsResearchRelationshipProposal": IDL2.Func(
+      [IDL2.Nat],
+      [IDL2.Opt(RelationshipProposal2)],
+      []
+    ),
     "needsResearchSource": IDL2.Func([SourceId2], [IDL2.Opt(SourceRecord2)], []),
     "notDuplicate": IDL2.Func([PersonId2, PersonId2], [Result_112], []),
     "permanentlyDeleteProfile": IDL2.Func(
@@ -39732,6 +39782,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "reconcileClaimNotifications": IDL2.Func([IDL2.Nat], [IDL2.Nat], []),
     "rejectArchiveItem": IDL2.Func([ArchiveItemId2], [IDL2.Opt(ArchiveItem2)], []),
     "rejectFinding": IDL2.Func([FindingId2], [IDL2.Opt(ProposedFinding2)], []),
+    "rejectNewPersonCandidate": IDL2.Func(
+      [IDL2.Nat],
+      [IDL2.Opt(NewPersonCandidate2)],
+      []
+    ),
     "rejectProfileClaim": IDL2.Func([IDL2.Nat], [IDL2.Opt(ProfileClaim2)], []),
     "rejectProfileRemoval": IDL2.Func(
       [IDL2.Nat],
@@ -39739,6 +39794,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
       []
     ),
     "rejectRecipe": IDL2.Func([RecipeId2], [IDL2.Opt(Recipe2)], []),
+    "rejectRelationshipProposal": IDL2.Func(
+      [IDL2.Nat],
+      [IDL2.Opt(RelationshipProposal2)],
+      []
+    ),
     "rejectRelationshipRequest": IDL2.Func(
       [IDL2.Nat],
       [IDL2.Opt(RelationshipRequest2)],
@@ -40387,144 +40447,172 @@ class Backend {
       return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
     }
   }
-  async approveProfileClaim(arg0) {
+  async approveNewPersonCandidate(arg0) {
     if (this.processError) {
       try {
-        const result = await this.actor.approveProfileClaim(arg0);
+        const result = await this.actor.approveNewPersonCandidate(arg0);
         return from_candid_opt_n81(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.approveProfileClaim(arg0);
+      const result = await this.actor.approveNewPersonCandidate(arg0);
       return from_candid_opt_n81(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async approveProfileClaim(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.approveProfileClaim(arg0);
+        return from_candid_opt_n84(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.approveProfileClaim(arg0);
+      return from_candid_opt_n84(this._uploadFile, this._downloadFile, result);
     }
   }
   async approveProfileRemoval(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.approveProfileRemoval(arg0);
-        return from_candid_opt_n85(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n88(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.approveProfileRemoval(arg0);
-      return from_candid_opt_n85(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n88(this._uploadFile, this._downloadFile, result);
     }
   }
   async approveRecipe(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.approveRecipe(arg0);
-        return from_candid_opt_n89(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n92(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.approveRecipe(arg0);
-      return from_candid_opt_n89(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n92(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async approveRelationshipProposal(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.approveRelationshipProposal(arg0);
+        return from_candid_opt_n97(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.approveRelationshipProposal(arg0);
+      return from_candid_opt_n97(this._uploadFile, this._downloadFile, result);
     }
   }
   async approveRelationshipRequest(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.approveRelationshipRequest(arg0);
-        return from_candid_opt_n94(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n100(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.approveRelationshipRequest(arg0);
-      return from_candid_opt_n94(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n100(this._uploadFile, this._downloadFile, result);
     }
   }
   async approveSource(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.approveSource(arg0);
-        return from_candid_opt_n98(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n104(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.approveSource(arg0);
-      return from_candid_opt_n98(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n104(this._uploadFile, this._downloadFile, result);
     }
   }
   async approveStory(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.approveStory(arg0);
-        return from_candid_opt_n101(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n107(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.approveStory(arg0);
-      return from_candid_opt_n101(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n107(this._uploadFile, this._downloadFile, result);
     }
   }
   async archiveBoardPost(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.archiveBoardPost(arg0);
-        return from_candid_opt_n102(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n108(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.archiveBoardPost(arg0);
-      return from_candid_opt_n102(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n108(this._uploadFile, this._downloadFile, result);
     }
   }
   async archiveProfile(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.archiveProfile(arg0);
-        return from_candid_Result_2_n111(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_2_n117(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.archiveProfile(arg0);
-      return from_candid_Result_2_n111(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_2_n117(this._uploadFile, this._downloadFile, result);
     }
   }
   async assignCallerUserRole(arg0, arg1) {
     if (this.processError) {
       try {
-        const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n115(this._uploadFile, this._downloadFile, arg1));
+        const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n121(this._uploadFile, this._downloadFile, arg1));
         return result;
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n115(this._uploadFile, this._downloadFile, arg1));
+      const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n121(this._uploadFile, this._downloadFile, arg1));
       return result;
     }
   }
   async bindAuthMethod(arg0) {
     if (this.processError) {
       try {
-        const result = await this.actor.bindAuthMethod(to_candid_AuthMethod_n117(this._uploadFile, this._downloadFile, arg0));
-        return from_candid_Result_23_n119(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.bindAuthMethod(to_candid_AuthMethod_n123(this._uploadFile, this._downloadFile, arg0));
+        return from_candid_Result_23_n125(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.bindAuthMethod(to_candid_AuthMethod_n117(this._uploadFile, this._downloadFile, arg0));
-      return from_candid_Result_23_n119(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.bindAuthMethod(to_candid_AuthMethod_n123(this._uploadFile, this._downloadFile, arg0));
+      return from_candid_Result_23_n125(this._uploadFile, this._downloadFile, result);
     }
   }
   async blockUser(arg0) {
@@ -40572,155 +40660,155 @@ class Backend {
   async createBoardPost(arg0, arg1, arg2, arg3, arg4, arg5) {
     if (this.processError) {
       try {
-        const result = await this.actor.createBoardPost(to_candid_PostType_n128(this._uploadFile, this._downloadFile, arg0), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg1), arg2, arg3, arg4, arg5);
-        return from_candid_Post_n103(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.createBoardPost(to_candid_PostType_n134(this._uploadFile, this._downloadFile, arg0), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg1), arg2, arg3, arg4, arg5);
+        return from_candid_Post_n109(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.createBoardPost(to_candid_PostType_n128(this._uploadFile, this._downloadFile, arg0), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg1), arg2, arg3, arg4, arg5);
-      return from_candid_Post_n103(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.createBoardPost(to_candid_PostType_n134(this._uploadFile, this._downloadFile, arg0), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg1), arg2, arg3, arg4, arg5);
+      return from_candid_Post_n109(this._uploadFile, this._downloadFile, result);
     }
   }
   async createBoardPostWithMedia(arg0, arg1, arg2, arg3, arg4, arg5, arg6) {
     if (this.processError) {
       try {
-        const result = await this.actor.createBoardPostWithMedia(to_candid_PostType_n128(this._uploadFile, this._downloadFile, arg0), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg1), arg2, arg3, arg4, await to_candid_vec_n130(this._uploadFile, this._downloadFile, arg5), arg6);
-        return from_candid_Post_n103(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.createBoardPostWithMedia(to_candid_PostType_n134(this._uploadFile, this._downloadFile, arg0), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg1), arg2, arg3, arg4, await to_candid_vec_n136(this._uploadFile, this._downloadFile, arg5), arg6);
+        return from_candid_Post_n109(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.createBoardPostWithMedia(to_candid_PostType_n128(this._uploadFile, this._downloadFile, arg0), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg1), arg2, arg3, arg4, await to_candid_vec_n130(this._uploadFile, this._downloadFile, arg5), arg6);
-      return from_candid_Post_n103(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.createBoardPostWithMedia(to_candid_PostType_n134(this._uploadFile, this._downloadFile, arg0), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg1), arg2, arg3, arg4, await to_candid_vec_n136(this._uploadFile, this._downloadFile, arg5), arg6);
+      return from_candid_Post_n109(this._uploadFile, this._downloadFile, result);
     }
   }
   async createCanonicalMystery(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) {
     if (this.processError) {
       try {
-        const result = await this.actor.createCanonicalMystery(arg0, arg1, arg2, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg3), arg4, arg5, arg6, arg7, to_candid_MysteryStatus_n143(this._uploadFile, this._downloadFile, arg8));
-        return from_candid_Mystery_n145(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.createCanonicalMystery(arg0, arg1, arg2, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg3), arg4, arg5, arg6, arg7, to_candid_MysteryStatus_n149(this._uploadFile, this._downloadFile, arg8));
+        return from_candid_Mystery_n151(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.createCanonicalMystery(arg0, arg1, arg2, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg3), arg4, arg5, arg6, arg7, to_candid_MysteryStatus_n143(this._uploadFile, this._downloadFile, arg8));
-      return from_candid_Mystery_n145(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.createCanonicalMystery(arg0, arg1, arg2, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg3), arg4, arg5, arg6, arg7, to_candid_MysteryStatus_n149(this._uploadFile, this._downloadFile, arg8));
+      return from_candid_Mystery_n151(this._uploadFile, this._downloadFile, result);
     }
   }
   async createFinding(arg0, arg1, arg2, arg3, arg4, arg5, arg6) {
     if (this.processError) {
       try {
-        const result = await this.actor.createFinding(arg0, to_candid_EvidenceLabel_n150(this._uploadFile, this._downloadFile, arg1), to_candid_FindingType_n152(this._uploadFile, this._downloadFile, arg2), to_candid_FindingContent_n154(this._uploadFile, this._downloadFile, arg3), arg4, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg6));
-        return from_candid_Result_21_n160(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.createFinding(arg0, to_candid_EvidenceLabel_n156(this._uploadFile, this._downloadFile, arg1), to_candid_FindingType_n158(this._uploadFile, this._downloadFile, arg2), to_candid_FindingContent_n160(this._uploadFile, this._downloadFile, arg3), arg4, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg6));
+        return from_candid_Result_21_n166(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.createFinding(arg0, to_candid_EvidenceLabel_n150(this._uploadFile, this._downloadFile, arg1), to_candid_FindingType_n152(this._uploadFile, this._downloadFile, arg2), to_candid_FindingContent_n154(this._uploadFile, this._downloadFile, arg3), arg4, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg6));
-      return from_candid_Result_21_n160(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.createFinding(arg0, to_candid_EvidenceLabel_n156(this._uploadFile, this._downloadFile, arg1), to_candid_FindingType_n158(this._uploadFile, this._downloadFile, arg2), to_candid_FindingContent_n160(this._uploadFile, this._downloadFile, arg3), arg4, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg6));
+      return from_candid_Result_21_n166(this._uploadFile, this._downloadFile, result);
     }
   }
   async createMyself(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.createMyself(arg0);
-        return from_candid_Result_20_n164(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_20_n170(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.createMyself(arg0);
-      return from_candid_Result_20_n164(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_20_n170(this._uploadFile, this._downloadFile, result);
     }
   }
   async createNewPersonCandidate(arg0, arg1, arg2) {
     if (this.processError) {
       try {
         const result = await this.actor.createNewPersonCandidate(arg0, arg1, arg2);
-        return from_candid_Result_19_n174(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_19_n180(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.createNewPersonCandidate(arg0, arg1, arg2);
-      return from_candid_Result_19_n174(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_19_n180(this._uploadFile, this._downloadFile, result);
     }
   }
   async createRelationshipProposal(arg0, arg1, arg2, arg3) {
     if (this.processError) {
       try {
         const result = await this.actor.createRelationshipProposal(arg0, arg1, arg2, arg3);
-        return from_candid_Result_18_n178(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_18_n182(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.createRelationshipProposal(arg0, arg1, arg2, arg3);
-      return from_candid_Result_18_n178(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_18_n182(this._uploadFile, this._downloadFile, result);
     }
   }
   async createSource(arg0, arg1, arg2, arg3) {
     if (this.processError) {
       try {
-        const result = await this.actor.createSource(arg0, to_candid_SourceType_n157(this._uploadFile, this._downloadFile, arg1), arg2, to_candid_opt_n21(this._uploadFile, this._downloadFile, arg3));
-        return from_candid_Result_17_n182(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.createSource(arg0, to_candid_SourceType_n163(this._uploadFile, this._downloadFile, arg1), arg2, to_candid_opt_n21(this._uploadFile, this._downloadFile, arg3));
+        return from_candid_Result_17_n184(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.createSource(arg0, to_candid_SourceType_n157(this._uploadFile, this._downloadFile, arg1), arg2, to_candid_opt_n21(this._uploadFile, this._downloadFile, arg3));
-      return from_candid_Result_17_n182(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.createSource(arg0, to_candid_SourceType_n163(this._uploadFile, this._downloadFile, arg1), arg2, to_candid_opt_n21(this._uploadFile, this._downloadFile, arg3));
+      return from_candid_Result_17_n184(this._uploadFile, this._downloadFile, result);
     }
   }
   async createSourceWithUpload(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10) {
     if (this.processError) {
       try {
-        const result = await this.actor.createSourceWithUpload(arg0, to_candid_SourceType_n157(this._uploadFile, this._downloadFile, arg1), arg2, await to_candid_ExternalBlob_n31(this._uploadFile, this._downloadFile, arg3), arg4, arg5, to_candid_opt_n21(this._uploadFile, this._downloadFile, arg6), arg7, to_candid_PrivacyLevel_n133(this._uploadFile, this._downloadFile, arg8), to_candid_ArchiveItemClassification_n141(this._uploadFile, this._downloadFile, arg9), to_candid_opt_n184(this._uploadFile, this._downloadFile, arg10));
-        return from_candid_Result_16_n185(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.createSourceWithUpload(arg0, to_candid_SourceType_n163(this._uploadFile, this._downloadFile, arg1), arg2, await to_candid_ExternalBlob_n31(this._uploadFile, this._downloadFile, arg3), arg4, arg5, to_candid_opt_n21(this._uploadFile, this._downloadFile, arg6), arg7, to_candid_PrivacyLevel_n139(this._uploadFile, this._downloadFile, arg8), to_candid_ArchiveItemClassification_n147(this._uploadFile, this._downloadFile, arg9), to_candid_opt_n186(this._uploadFile, this._downloadFile, arg10));
+        return from_candid_Result_16_n187(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.createSourceWithUpload(arg0, to_candid_SourceType_n157(this._uploadFile, this._downloadFile, arg1), arg2, await to_candid_ExternalBlob_n31(this._uploadFile, this._downloadFile, arg3), arg4, arg5, to_candid_opt_n21(this._uploadFile, this._downloadFile, arg6), arg7, to_candid_PrivacyLevel_n133(this._uploadFile, this._downloadFile, arg8), to_candid_ArchiveItemClassification_n141(this._uploadFile, this._downloadFile, arg9), to_candid_opt_n184(this._uploadFile, this._downloadFile, arg10));
-      return from_candid_Result_16_n185(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.createSourceWithUpload(arg0, to_candid_SourceType_n163(this._uploadFile, this._downloadFile, arg1), arg2, await to_candid_ExternalBlob_n31(this._uploadFile, this._downloadFile, arg3), arg4, arg5, to_candid_opt_n21(this._uploadFile, this._downloadFile, arg6), arg7, to_candid_PrivacyLevel_n139(this._uploadFile, this._downloadFile, arg8), to_candid_ArchiveItemClassification_n147(this._uploadFile, this._downloadFile, arg9), to_candid_opt_n186(this._uploadFile, this._downloadFile, arg10));
+      return from_candid_Result_16_n187(this._uploadFile, this._downloadFile, result);
     }
   }
   async designateSuccessor(arg0, arg1) {
     if (this.processError) {
       try {
         const result = await this.actor.designateSuccessor(arg0, arg1);
-        return from_candid_Result_15_n189(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_15_n191(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.designateSuccessor(arg0, arg1);
-      return from_candid_Result_15_n189(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_15_n191(this._uploadFile, this._downloadFile, result);
     }
   }
   async execute(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.execute(arg0);
-        return from_candid_Result__1_n195(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result__1_n197(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.execute(arg0);
-      return from_candid_Result__1_n195(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result__1_n197(this._uploadFile, this._downloadFile, result);
     }
   }
   async getApiDoc() {
@@ -40741,42 +40829,42 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.getBoardPost(arg0);
-        return from_candid_opt_n102(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n108(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getBoardPost(arg0);
-      return from_candid_opt_n102(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n108(this._uploadFile, this._downloadFile, result);
     }
   }
   async getCallerUserRole() {
     if (this.processError) {
       try {
         const result = await this.actor.getCallerUserRole();
-        return from_candid_UserRole_n203(this._uploadFile, this._downloadFile, result);
+        return from_candid_UserRole_n205(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getCallerUserRole();
-      return from_candid_UserRole_n203(this._uploadFile, this._downloadFile, result);
+      return from_candid_UserRole_n205(this._uploadFile, this._downloadFile, result);
     }
   }
   async getConversation(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.getConversation(arg0);
-        return from_candid_opt_n205(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n207(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getConversation(arg0);
-      return from_candid_opt_n205(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n207(this._uploadFile, this._downloadFile, result);
     }
   }
   async getFinding(arg0) {
@@ -40797,70 +40885,70 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.getMyAccountId();
-        return from_candid_Result_14_n214(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_14_n216(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getMyAccountId();
-      return from_candid_Result_14_n214(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_14_n216(this._uploadFile, this._downloadFile, result);
     }
   }
   async getMyAuthMethods() {
     if (this.processError) {
       try {
         const result = await this.actor.getMyAuthMethods();
-        return from_candid_Result_13_n216(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_13_n218(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getMyAuthMethods();
-      return from_candid_Result_13_n216(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_13_n218(this._uploadFile, this._downloadFile, result);
     }
   }
   async getMyProfile() {
     if (this.processError) {
       try {
         const result = await this.actor.getMyProfile();
-        return from_candid_opt_n218(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n220(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getMyProfile();
-      return from_candid_opt_n218(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n220(this._uploadFile, this._downloadFile, result);
     }
   }
   async getMyProfileClaim(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.getMyProfileClaim(arg0);
-        return from_candid_opt_n81(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n84(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getMyProfileClaim(arg0);
-      return from_candid_opt_n81(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n84(this._uploadFile, this._downloadFile, result);
     }
   }
   async getMyRelationshipRequests() {
     if (this.processError) {
       try {
         const result = await this.actor.getMyRelationshipRequests();
-        return from_candid_vec_n219(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n221(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getMyRelationshipRequests();
-      return from_candid_vec_n219(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n221(this._uploadFile, this._downloadFile, result);
     }
   }
   async getPendingContributionsCount() {
@@ -40881,98 +40969,98 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.getPersonProfile(arg0);
-        return from_candid_opt_n218(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.getPersonProfile(arg0);
-      return from_candid_opt_n218(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async getProfilePhoto(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.getProfilePhoto(arg0);
         return from_candid_opt_n220(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.getProfilePhoto(arg0);
+      const result = await this.actor.getPersonProfile(arg0);
       return from_candid_opt_n220(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async getProfilePhoto(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getProfilePhoto(arg0);
+        return from_candid_opt_n222(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getProfilePhoto(arg0);
+      return from_candid_opt_n222(this._uploadFile, this._downloadFile, result);
     }
   }
   async getRecipe(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.getRecipe(arg0);
-        return from_candid_opt_n89(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n92(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getRecipe(arg0);
-      return from_candid_opt_n89(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n92(this._uploadFile, this._downloadFile, result);
     }
   }
   async getRelationshipRequest(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.getRelationshipRequest(arg0);
-        return from_candid_opt_n94(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n100(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getRelationshipRequest(arg0);
-      return from_candid_opt_n94(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n100(this._uploadFile, this._downloadFile, result);
     }
   }
   async getReportedMessage(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.getReportedMessage(arg0);
-        return from_candid_opt_n221(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n223(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getReportedMessage(arg0);
-      return from_candid_opt_n221(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n223(this._uploadFile, this._downloadFile, result);
     }
   }
   async getResearchAuditLog() {
     if (this.processError) {
       try {
         const result = await this.actor.getResearchAuditLog();
-        return from_candid_vec_n228(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n230(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getResearchAuditLog();
-      return from_candid_vec_n228(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n230(this._uploadFile, this._downloadFile, result);
     }
   }
   async getReviewQueue() {
     if (this.processError) {
       try {
         const result = await this.actor.getReviewQueue();
-        return from_candid_ReviewQueue_n233(this._uploadFile, this._downloadFile, result);
+        return from_candid_ReviewQueue_n235(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getReviewQueue();
-      return from_candid_ReviewQueue_n233(this._uploadFile, this._downloadFile, result);
+      return from_candid_ReviewQueue_n235(this._uploadFile, this._downloadFile, result);
     }
   }
   async getSingleStewardWarning() {
@@ -40993,14 +41081,14 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.getSource(arg0);
-        return from_candid_opt_n98(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n104(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getSource(arg0);
-      return from_candid_opt_n98(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n104(this._uploadFile, this._downloadFile, result);
     }
   }
   async isCallerAdmin() {
@@ -41021,42 +41109,42 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.listApprovedArchiveItems();
-        return from_candid_vec_n244(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listApprovedArchiveItems();
-      return from_candid_vec_n244(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listApprovedRecipes() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listApprovedRecipes();
-        return from_candid_vec_n245(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listApprovedRecipes();
-      return from_candid_vec_n245(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listApprovedStories() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listApprovedStories();
         return from_candid_vec_n246(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.listApprovedStories();
+      const result = await this.actor.listApprovedArchiveItems();
       return from_candid_vec_n246(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listApprovedRecipes() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listApprovedRecipes();
+        return from_candid_vec_n247(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listApprovedRecipes();
+      return from_candid_vec_n247(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listApprovedStories() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listApprovedStories();
+        return from_candid_vec_n248(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listApprovedStories();
+      return from_candid_vec_n248(this._uploadFile, this._downloadFile, result);
     }
   }
   async listArchivedProfileIds() {
@@ -41077,28 +41165,28 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.listArchivedProfiles();
-        return from_candid_vec_n247(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n249(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listArchivedProfiles();
-      return from_candid_vec_n247(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n249(this._uploadFile, this._downloadFile, result);
     }
   }
   async listAuditHistory() {
     if (this.processError) {
       try {
         const result = await this.actor.listAuditHistory();
-        return from_candid_vec_n248(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n250(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listAuditHistory();
-      return from_candid_vec_n248(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n250(this._uploadFile, this._downloadFile, result);
     }
   }
   async listBlockedUsers() {
@@ -41118,15 +41206,15 @@ class Backend {
   async listBoardPosts(arg0) {
     if (this.processError) {
       try {
-        const result = await this.actor.listBoardPosts(to_candid_opt_n253(this._uploadFile, this._downloadFile, arg0));
-        return from_candid_vec_n254(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.listBoardPosts(to_candid_opt_n255(this._uploadFile, this._downloadFile, arg0));
+        return from_candid_vec_n256(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.listBoardPosts(to_candid_opt_n253(this._uploadFile, this._downloadFile, arg0));
-      return from_candid_vec_n254(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.listBoardPosts(to_candid_opt_n255(this._uploadFile, this._downloadFile, arg0));
+      return from_candid_vec_n256(this._uploadFile, this._downloadFile, result);
     }
   }
   async listBoardReplies(arg0) {
@@ -41147,28 +41235,28 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.listConfirmedRelationships();
-        return from_candid_vec_n255(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n257(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listConfirmedRelationships();
-      return from_candid_vec_n255(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n257(this._uploadFile, this._downloadFile, result);
     }
   }
   async listConflictReviewItems() {
     if (this.processError) {
       try {
         const result = await this.actor.listConflictReviewItems();
-        return from_candid_vec_n256(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n258(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listConflictReviewItems();
-      return from_candid_vec_n256(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n258(this._uploadFile, this._downloadFile, result);
     }
   }
   async listConversations() {
@@ -41189,14 +41277,14 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.listDuplicateCandidates();
-        return from_candid_vec_n259(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n261(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listDuplicateCandidates();
-      return from_candid_vec_n259(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n261(this._uploadFile, this._downloadFile, result);
     }
   }
   async listEligibleStewardCandidates() {
@@ -41217,28 +41305,28 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.listFindings();
-        return from_candid_vec_n264(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n266(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listFindings();
-      return from_candid_vec_n264(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n266(this._uploadFile, this._downloadFile, result);
     }
   }
   async listHiddenBoardPosts() {
     if (this.processError) {
       try {
         const result = await this.actor.listHiddenBoardPosts();
-        return from_candid_vec_n254(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n256(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listHiddenBoardPosts();
-      return from_candid_vec_n254(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n256(this._uploadFile, this._downloadFile, result);
     }
   }
   async listMessageableMembers() {
@@ -41259,224 +41347,224 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.listMysteries();
-        return from_candid_vec_n265(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listMysteries();
-      return from_candid_vec_n265(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listNewPersonCandidates() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listNewPersonCandidates();
-        return from_candid_vec_n266(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listNewPersonCandidates();
-      return from_candid_vec_n266(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listNotifications() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listNotifications();
         return from_candid_vec_n267(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.listNotifications();
+      const result = await this.actor.listMysteries();
       return from_candid_vec_n267(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listNewPersonCandidates() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listNewPersonCandidates();
+        return from_candid_vec_n268(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listNewPersonCandidates();
+      return from_candid_vec_n268(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listNotifications() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listNotifications();
+        return from_candid_vec_n269(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listNotifications();
+      return from_candid_vec_n269(this._uploadFile, this._downloadFile, result);
     }
   }
   async listPendingArchiveItems() {
     if (this.processError) {
       try {
         const result = await this.actor.listPendingArchiveItems();
-        return from_candid_vec_n244(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listPendingArchiveItems();
-      return from_candid_vec_n244(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listPendingMysteryContributions() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listPendingMysteryContributions();
-        return from_candid_vec_n272(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listPendingMysteryContributions();
-      return from_candid_vec_n272(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listPendingRecipes() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listPendingRecipes();
-        return from_candid_vec_n245(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listPendingRecipes();
-      return from_candid_vec_n245(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listPendingStories() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listPendingStories();
         return from_candid_vec_n246(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.listPendingStories();
+      const result = await this.actor.listPendingArchiveItems();
       return from_candid_vec_n246(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listPendingMysteryContributions() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listPendingMysteryContributions();
+        return from_candid_vec_n274(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listPendingMysteryContributions();
+      return from_candid_vec_n274(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listPendingRecipes() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listPendingRecipes();
+        return from_candid_vec_n247(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listPendingRecipes();
+      return from_candid_vec_n247(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listPendingStories() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listPendingStories();
+        return from_candid_vec_n248(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listPendingStories();
+      return from_candid_vec_n248(this._uploadFile, this._downloadFile, result);
     }
   }
   async listPersonRelationships(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.listPersonRelationships(arg0);
-        return from_candid_vec_n255(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n257(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.listPersonRelationships(arg0);
-      return from_candid_vec_n255(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n257(this._uploadFile, this._downloadFile, result);
     }
   }
   async listPhotos(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.listPhotos(arg0);
-        return from_candid_vec_n278(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listPhotos(arg0);
-      return from_candid_vec_n278(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listProfileClaims() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listProfileClaims();
-        return from_candid_vec_n279(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listProfileClaims();
-      return from_candid_vec_n279(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listProfileRemovalRequests() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listProfileRemovalRequests();
         return from_candid_vec_n280(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.listProfileRemovalRequests();
+      const result = await this.actor.listPhotos(arg0);
       return from_candid_vec_n280(this._uploadFile, this._downloadFile, result);
     }
   }
-  async listRecipesForPerson(arg0) {
+  async listProfileClaims() {
     if (this.processError) {
       try {
-        const result = await this.actor.listRecipesForPerson(arg0);
-        return from_candid_vec_n245(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listRecipesForPerson(arg0);
-      return from_candid_vec_n245(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listRelationshipProposals() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listRelationshipProposals();
+        const result = await this.actor.listProfileClaims();
         return from_candid_vec_n281(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.listRelationshipProposals();
+      const result = await this.actor.listProfileClaims();
       return from_candid_vec_n281(this._uploadFile, this._downloadFile, result);
     }
   }
-  async listRelationshipRequests() {
+  async listProfileRemovalRequests() {
     if (this.processError) {
       try {
-        const result = await this.actor.listRelationshipRequests();
-        return from_candid_vec_n219(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listRelationshipRequests();
-      return from_candid_vec_n219(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listReports() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listReports();
+        const result = await this.actor.listProfileRemovalRequests();
         return from_candid_vec_n282(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.listReports();
+      const result = await this.actor.listProfileRemovalRequests();
       return from_candid_vec_n282(this._uploadFile, this._downloadFile, result);
     }
   }
-  async listSources() {
+  async listRecipesForPerson(arg0) {
     if (this.processError) {
       try {
-        const result = await this.actor.listSources();
+        const result = await this.actor.listRecipesForPerson(arg0);
+        return from_candid_vec_n247(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listRecipesForPerson(arg0);
+      return from_candid_vec_n247(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listRelationshipProposals() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listRelationshipProposals();
         return from_candid_vec_n283(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.listSources();
+      const result = await this.actor.listRelationshipProposals();
       return from_candid_vec_n283(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listRelationshipRequests() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listRelationshipRequests();
+        return from_candid_vec_n221(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listRelationshipRequests();
+      return from_candid_vec_n221(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listReports() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listReports();
+        return from_candid_vec_n284(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listReports();
+      return from_candid_vec_n284(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listSources() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listSources();
+        return from_candid_vec_n285(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listSources();
+      return from_candid_vec_n285(this._uploadFile, this._downloadFile, result);
     }
   }
   async listStewardIdentities() {
@@ -41497,42 +41585,42 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.listStewards();
-        return from_candid_vec_n284(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listStewards();
-      return from_candid_vec_n284(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listSuccessors() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listSuccessors();
-        return from_candid_vec_n285(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listSuccessors();
-      return from_candid_vec_n285(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listTimelineEvents() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listTimelineEvents();
         return from_candid_vec_n286(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.listTimelineEvents();
+      const result = await this.actor.listStewards();
       return from_candid_vec_n286(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listSuccessors() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listSuccessors();
+        return from_candid_vec_n287(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listSuccessors();
+      return from_candid_vec_n287(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listTimelineEvents() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listTimelineEvents();
+        return from_candid_vec_n288(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listTimelineEvents();
+      return from_candid_vec_n288(this._uploadFile, this._downloadFile, result);
     }
   }
   async markConversationRead(arg0) {
@@ -41553,42 +41641,42 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.markMysteryResolved(arg0, arg1, arg2);
-        return from_candid_opt_n293(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n295(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.markMysteryResolved(arg0, arg1, arg2);
-      return from_candid_opt_n293(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n295(this._uploadFile, this._downloadFile, result);
     }
   }
   async markNotificationRead(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.markNotificationRead(arg0);
-        return from_candid_opt_n294(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n296(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.markNotificationRead(arg0);
-      return from_candid_opt_n294(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n296(this._uploadFile, this._downloadFile, result);
     }
   }
   async mergeProfiles(arg0, arg1) {
     if (this.processError) {
       try {
         const result = await this.actor.mergeProfiles(arg0, arg1);
-        return from_candid_Result_12_n295(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_12_n297(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.mergeProfiles(arg0, arg1);
-      return from_candid_Result_12_n295(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_12_n297(this._uploadFile, this._downloadFile, result);
     }
   }
   async needsResearchFinding(arg0) {
@@ -41605,46 +41693,74 @@ class Backend {
       return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
     }
   }
+  async needsResearchNewPersonCandidate(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.needsResearchNewPersonCandidate(arg0);
+        return from_candid_opt_n81(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.needsResearchNewPersonCandidate(arg0);
+      return from_candid_opt_n81(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async needsResearchRelationshipProposal(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.needsResearchRelationshipProposal(arg0);
+        return from_candid_opt_n97(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.needsResearchRelationshipProposal(arg0);
+      return from_candid_opt_n97(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async needsResearchSource(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.needsResearchSource(arg0);
-        return from_candid_opt_n98(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n104(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.needsResearchSource(arg0);
-      return from_candid_opt_n98(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n104(this._uploadFile, this._downloadFile, result);
     }
   }
   async notDuplicate(arg0, arg1) {
     if (this.processError) {
       try {
         const result = await this.actor.notDuplicate(arg0, arg1);
-        return from_candid_Result_11_n306(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_11_n308(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.notDuplicate(arg0, arg1);
-      return from_candid_Result_11_n306(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_11_n308(this._uploadFile, this._downloadFile, result);
     }
   }
   async permanentlyDeleteProfile(arg0, arg1) {
     if (this.processError) {
       try {
         const result = await this.actor.permanentlyDeleteProfile(arg0, arg1);
-        return from_candid_Result_10_n308(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_10_n310(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.permanentlyDeleteProfile(arg0, arg1);
-      return from_candid_Result_10_n308(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_10_n310(this._uploadFile, this._downloadFile, result);
     }
   }
   async promoteToSteward(arg0) {
@@ -41665,28 +41781,28 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.proposeRelationship(arg0, arg1, to_candid_RelationshipType_n35(this._uploadFile, this._downloadFile, arg2));
-        return from_candid_Result_8_n312(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_8_n314(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.proposeRelationship(arg0, arg1, to_candid_RelationshipType_n35(this._uploadFile, this._downloadFile, arg2));
-      return from_candid_Result_8_n312(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_8_n314(this._uploadFile, this._downloadFile, result);
     }
   }
   async publishRecipe(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14) {
     if (this.processError) {
       try {
-        const result = await this.actor.publishRecipe(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg6), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg7), arg8, arg9, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg10), arg11, to_candid_PrivacyLevel_n133(this._uploadFile, this._downloadFile, arg12), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg13), arg14);
-        return from_candid_Recipe_n90(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.publishRecipe(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg6), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg7), arg8, arg9, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg10), arg11, to_candid_PrivacyLevel_n139(this._uploadFile, this._downloadFile, arg12), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg13), arg14);
+        return from_candid_Recipe_n93(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.publishRecipe(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg6), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg7), arg8, arg9, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg10), arg11, to_candid_PrivacyLevel_n133(this._uploadFile, this._downloadFile, arg12), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg13), arg14);
-      return from_candid_Recipe_n90(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.publishRecipe(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg6), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg7), arg8, arg9, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg10), arg11, to_candid_PrivacyLevel_n139(this._uploadFile, this._downloadFile, arg12), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg13), arg14);
+      return from_candid_Recipe_n93(this._uploadFile, this._downloadFile, result);
     }
   }
   async reconcileClaimNotifications(arg0) {
@@ -41731,116 +41847,144 @@ class Backend {
       return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
     }
   }
-  async rejectProfileClaim(arg0) {
+  async rejectNewPersonCandidate(arg0) {
     if (this.processError) {
       try {
-        const result = await this.actor.rejectProfileClaim(arg0);
+        const result = await this.actor.rejectNewPersonCandidate(arg0);
         return from_candid_opt_n81(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.rejectProfileClaim(arg0);
+      const result = await this.actor.rejectNewPersonCandidate(arg0);
       return from_candid_opt_n81(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async rejectProfileClaim(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.rejectProfileClaim(arg0);
+        return from_candid_opt_n84(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.rejectProfileClaim(arg0);
+      return from_candid_opt_n84(this._uploadFile, this._downloadFile, result);
     }
   }
   async rejectProfileRemoval(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.rejectProfileRemoval(arg0);
-        return from_candid_opt_n85(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n88(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.rejectProfileRemoval(arg0);
-      return from_candid_opt_n85(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n88(this._uploadFile, this._downloadFile, result);
     }
   }
   async rejectRecipe(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.rejectRecipe(arg0);
-        return from_candid_opt_n89(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n92(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.rejectRecipe(arg0);
-      return from_candid_opt_n89(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n92(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async rejectRelationshipProposal(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.rejectRelationshipProposal(arg0);
+        return from_candid_opt_n97(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.rejectRelationshipProposal(arg0);
+      return from_candid_opt_n97(this._uploadFile, this._downloadFile, result);
     }
   }
   async rejectRelationshipRequest(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.rejectRelationshipRequest(arg0);
-        return from_candid_opt_n94(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n100(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.rejectRelationshipRequest(arg0);
-      return from_candid_opt_n94(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n100(this._uploadFile, this._downloadFile, result);
     }
   }
   async rejectSource(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.rejectSource(arg0);
-        return from_candid_opt_n98(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n104(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.rejectSource(arg0);
-      return from_candid_opt_n98(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n104(this._uploadFile, this._downloadFile, result);
     }
   }
   async rejectStory(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.rejectStory(arg0);
-        return from_candid_opt_n101(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n107(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.rejectStory(arg0);
-      return from_candid_opt_n101(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n107(this._uploadFile, this._downloadFile, result);
     }
   }
   async removeBoardReply(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.removeBoardReply(arg0);
-        return from_candid_opt_n316(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n318(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.removeBoardReply(arg0);
-      return from_candid_opt_n316(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n318(this._uploadFile, this._downloadFile, result);
     }
   }
   async removeDuplicateProfile(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.removeDuplicateProfile(arg0);
-        return from_candid_Result_7_n317(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_7_n319(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.removeDuplicateProfile(arg0);
-      return from_candid_Result_7_n317(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_7_n319(this._uploadFile, this._downloadFile, result);
     }
   }
   async removePhoto(arg0, arg1) {
@@ -41861,154 +42005,154 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.removeRelationship(arg0);
-        return from_candid_Result_6_n321(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_6_n323(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.removeRelationship(arg0);
-      return from_candid_Result_6_n321(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_6_n323(this._uploadFile, this._downloadFile, result);
     }
   }
   async removeSteward(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.removeSteward(arg0);
-        return from_candid_Result_5_n323(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_5_n325(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.removeSteward(arg0);
-      return from_candid_Result_5_n323(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_5_n325(this._uploadFile, this._downloadFile, result);
     }
   }
   async reportMessage(arg0, arg1) {
     if (this.processError) {
       try {
         const result = await this.actor.reportMessage(arg0, arg1);
-        return from_candid_Report_n224(this._uploadFile, this._downloadFile, result);
+        return from_candid_Report_n226(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.reportMessage(arg0, arg1);
-      return from_candid_Report_n224(this._uploadFile, this._downloadFile, result);
+      return from_candid_Report_n226(this._uploadFile, this._downloadFile, result);
     }
   }
   async requestProfileClaim(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.requestProfileClaim(arg0);
-        return from_candid_Result_4_n325(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_4_n327(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.requestProfileClaim(arg0);
-      return from_candid_Result_4_n325(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_4_n327(this._uploadFile, this._downloadFile, result);
     }
   }
   async requestProfileRemoval(arg0, arg1) {
     if (this.processError) {
       try {
         const result = await this.actor.requestProfileRemoval(arg0, arg1);
-        return from_candid_Result_3_n329(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_3_n331(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.requestProfileRemoval(arg0, arg1);
-      return from_candid_Result_3_n329(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_3_n331(this._uploadFile, this._downloadFile, result);
     }
   }
   async resolveConflict(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.resolveConflict(arg0);
-        return from_candid_opt_n333(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.resolveConflict(arg0);
-      return from_candid_opt_n333(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async resolveMergeConflict(arg0, arg1) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.resolveMergeConflict(arg0, arg1);
-        return from_candid_opt_n334(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.resolveMergeConflict(arg0, arg1);
-      return from_candid_opt_n334(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async restoreBoardPost(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.restoreBoardPost(arg0);
-        return from_candid_opt_n102(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.restoreBoardPost(arg0);
-      return from_candid_opt_n102(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async restoreProfile(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.restoreProfile(arg0);
-        return from_candid_Result_2_n111(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.restoreProfile(arg0);
-      return from_candid_Result_2_n111(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async reviewMysteryContribution(arg0, arg1) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.reviewMysteryContribution(arg0, arg1);
         return from_candid_opt_n335(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.reviewMysteryContribution(arg0, arg1);
+      const result = await this.actor.resolveConflict(arg0);
       return from_candid_opt_n335(this._uploadFile, this._downloadFile, result);
     }
   }
-  async reviewReport(arg0, arg1) {
+  async resolveMergeConflict(arg0, arg1) {
     if (this.processError) {
       try {
-        const result = await this.actor.reviewReport(arg0, to_candid_ReportStatus_n336(this._uploadFile, this._downloadFile, arg1));
-        return from_candid_opt_n338(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.resolveMergeConflict(arg0, arg1);
+        return from_candid_opt_n336(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.reviewReport(arg0, to_candid_ReportStatus_n336(this._uploadFile, this._downloadFile, arg1));
-      return from_candid_opt_n338(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.resolveMergeConflict(arg0, arg1);
+      return from_candid_opt_n336(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async restoreBoardPost(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.restoreBoardPost(arg0);
+        return from_candid_opt_n108(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.restoreBoardPost(arg0);
+      return from_candid_opt_n108(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async restoreProfile(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.restoreProfile(arg0);
+        return from_candid_Result_2_n117(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.restoreProfile(arg0);
+      return from_candid_Result_2_n117(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async reviewMysteryContribution(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.reviewMysteryContribution(arg0, arg1);
+        return from_candid_opt_n337(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.reviewMysteryContribution(arg0, arg1);
+      return from_candid_opt_n337(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async reviewReport(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.reviewReport(arg0, to_candid_ReportStatus_n338(this._uploadFile, this._downloadFile, arg1));
+        return from_candid_opt_n340(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.reviewReport(arg0, to_candid_ReportStatus_n338(this._uploadFile, this._downloadFile, arg1));
+      return from_candid_opt_n340(this._uploadFile, this._downloadFile, result);
     }
   }
   async schema() {
@@ -42028,29 +42172,29 @@ class Backend {
   async searchArchiveItems(arg0) {
     if (this.processError) {
       try {
-        const result = await this.actor.searchArchiveItems(to_candid_ArchiveSearchFilter_n339(this._uploadFile, this._downloadFile, arg0));
-        return from_candid_vec_n244(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.searchArchiveItems(to_candid_ArchiveSearchFilter_n341(this._uploadFile, this._downloadFile, arg0));
+        return from_candid_vec_n246(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.searchArchiveItems(to_candid_ArchiveSearchFilter_n339(this._uploadFile, this._downloadFile, arg0));
-      return from_candid_vec_n244(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.searchArchiveItems(to_candid_ArchiveSearchFilter_n341(this._uploadFile, this._downloadFile, arg0));
+      return from_candid_vec_n246(this._uploadFile, this._downloadFile, result);
     }
   }
   async searchBoardPostsByTags(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.searchBoardPostsByTags(arg0);
-        return from_candid_vec_n254(this._uploadFile, this._downloadFile, result);
+        return from_candid_vec_n256(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.searchBoardPostsByTags(arg0);
-      return from_candid_vec_n254(this._uploadFile, this._downloadFile, result);
+      return from_candid_vec_n256(this._uploadFile, this._downloadFile, result);
     }
   }
   async searchPossibleMatches(arg0) {
@@ -42071,84 +42215,84 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.sendMessage(arg0, arg1);
-        return from_candid_Result_1_n341(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_1_n343(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.sendMessage(arg0, arg1);
-      return from_candid_Result_1_n341(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_1_n343(this._uploadFile, this._downloadFile, result);
     }
   }
   async setProfilePhoto(arg0, arg1) {
     if (this.processError) {
       try {
         const result = await this.actor.setProfilePhoto(arg0, arg1);
-        return from_candid_opt_n220(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n222(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.setProfilePhoto(arg0, arg1);
-      return from_candid_opt_n220(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n222(this._uploadFile, this._downloadFile, result);
     }
   }
   async setRelationshipRequestPending(arg0) {
     if (this.processError) {
       try {
         const result = await this.actor.setRelationshipRequestPending(arg0);
-        return from_candid_opt_n94(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n100(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.setRelationshipRequestPending(arg0);
-      return from_candid_opt_n94(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n100(this._uploadFile, this._downloadFile, result);
     }
   }
   async submitArchiveItem(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12) {
     if (this.processError) {
       try {
-        const result = await this.actor.submitArchiveItem(arg0, arg1, to_candid_ArchiveItemType_n137(this._uploadFile, this._downloadFile, arg2), await to_candid_ExternalBlob_n31(this._uploadFile, this._downloadFile, arg3), arg4, to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), arg6, arg7, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg8), to_candid_SourceStatus_n139(this._uploadFile, this._downloadFile, arg9), to_candid_PrivacyLevel_n133(this._uploadFile, this._downloadFile, arg10), to_candid_ArchiveItemClassification_n141(this._uploadFile, this._downloadFile, arg11), to_candid_opt_n184(this._uploadFile, this._downloadFile, arg12));
+        const result = await this.actor.submitArchiveItem(arg0, arg1, to_candid_ArchiveItemType_n143(this._uploadFile, this._downloadFile, arg2), await to_candid_ExternalBlob_n31(this._uploadFile, this._downloadFile, arg3), arg4, to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), arg6, arg7, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg8), to_candid_SourceStatus_n145(this._uploadFile, this._downloadFile, arg9), to_candid_PrivacyLevel_n139(this._uploadFile, this._downloadFile, arg10), to_candid_ArchiveItemClassification_n147(this._uploadFile, this._downloadFile, arg11), to_candid_opt_n186(this._uploadFile, this._downloadFile, arg12));
         return from_candid_ArchiveItem_n48(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.submitArchiveItem(arg0, arg1, to_candid_ArchiveItemType_n137(this._uploadFile, this._downloadFile, arg2), await to_candid_ExternalBlob_n31(this._uploadFile, this._downloadFile, arg3), arg4, to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), arg6, arg7, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg8), to_candid_SourceStatus_n139(this._uploadFile, this._downloadFile, arg9), to_candid_PrivacyLevel_n133(this._uploadFile, this._downloadFile, arg10), to_candid_ArchiveItemClassification_n141(this._uploadFile, this._downloadFile, arg11), to_candid_opt_n184(this._uploadFile, this._downloadFile, arg12));
+      const result = await this.actor.submitArchiveItem(arg0, arg1, to_candid_ArchiveItemType_n143(this._uploadFile, this._downloadFile, arg2), await to_candid_ExternalBlob_n31(this._uploadFile, this._downloadFile, arg3), arg4, to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), arg6, arg7, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg8), to_candid_SourceStatus_n145(this._uploadFile, this._downloadFile, arg9), to_candid_PrivacyLevel_n139(this._uploadFile, this._downloadFile, arg10), to_candid_ArchiveItemClassification_n147(this._uploadFile, this._downloadFile, arg11), to_candid_opt_n186(this._uploadFile, this._downloadFile, arg12));
       return from_candid_ArchiveItem_n48(this._uploadFile, this._downloadFile, result);
     }
   }
   async submitMysteryContribution(arg0, arg1, arg2) {
     if (this.processError) {
       try {
-        const result = await this.actor.submitMysteryContribution(arg0, to_candid_MysteryContributionType_n345(this._uploadFile, this._downloadFile, arg1), arg2);
-        return from_candid_MysteryContribution_n273(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.submitMysteryContribution(arg0, to_candid_MysteryContributionType_n347(this._uploadFile, this._downloadFile, arg1), arg2);
+        return from_candid_MysteryContribution_n275(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.submitMysteryContribution(arg0, to_candid_MysteryContributionType_n345(this._uploadFile, this._downloadFile, arg1), arg2);
-      return from_candid_MysteryContribution_n273(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.submitMysteryContribution(arg0, to_candid_MysteryContributionType_n347(this._uploadFile, this._downloadFile, arg1), arg2);
+      return from_candid_MysteryContribution_n275(this._uploadFile, this._downloadFile, result);
     }
   }
   async submitRecipe(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14) {
     if (this.processError) {
       try {
-        const result = await this.actor.submitRecipe(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg6), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg7), arg8, arg9, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg10), arg11, to_candid_PrivacyLevel_n133(this._uploadFile, this._downloadFile, arg12), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg13), arg14);
-        return from_candid_Recipe_n90(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.submitRecipe(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg6), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg7), arg8, arg9, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg10), arg11, to_candid_PrivacyLevel_n139(this._uploadFile, this._downloadFile, arg12), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg13), arg14);
+        return from_candid_Recipe_n93(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.submitRecipe(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg6), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg7), arg8, arg9, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg10), arg11, to_candid_PrivacyLevel_n133(this._uploadFile, this._downloadFile, arg12), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg13), arg14);
-      return from_candid_Recipe_n90(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.submitRecipe(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg6), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg7), arg8, arg9, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg10), arg11, to_candid_PrivacyLevel_n139(this._uploadFile, this._downloadFile, arg12), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg13), arg14);
+      return from_candid_Recipe_n93(this._uploadFile, this._downloadFile, result);
     }
   }
   async submitStory(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
@@ -42182,68 +42326,68 @@ class Backend {
   async updateBoardPost(arg0, arg1, arg2, arg3, arg4, arg5, arg6) {
     if (this.processError) {
       try {
-        const result = await this.actor.updateBoardPost(arg0, to_candid_PostType_n128(this._uploadFile, this._downloadFile, arg1), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg2), arg3, arg4, arg5, arg6);
-        return from_candid_opt_n102(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.updateBoardPost(arg0, to_candid_PostType_n134(this._uploadFile, this._downloadFile, arg1), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg2), arg3, arg4, arg5, arg6);
+        return from_candid_opt_n108(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.updateBoardPost(arg0, to_candid_PostType_n128(this._uploadFile, this._downloadFile, arg1), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg2), arg3, arg4, arg5, arg6);
-      return from_candid_opt_n102(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.updateBoardPost(arg0, to_candid_PostType_n134(this._uploadFile, this._downloadFile, arg1), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg2), arg3, arg4, arg5, arg6);
+      return from_candid_opt_n108(this._uploadFile, this._downloadFile, result);
     }
   }
   async updateCanonicalMystery(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9) {
     if (this.processError) {
       try {
-        const result = await this.actor.updateCanonicalMystery(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), arg5, arg6, arg7, arg8, to_candid_MysteryStatus_n143(this._uploadFile, this._downloadFile, arg9));
-        return from_candid_opt_n293(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.updateCanonicalMystery(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), arg5, arg6, arg7, arg8, to_candid_MysteryStatus_n149(this._uploadFile, this._downloadFile, arg9));
+        return from_candid_opt_n295(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.updateCanonicalMystery(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), arg5, arg6, arg7, arg8, to_candid_MysteryStatus_n143(this._uploadFile, this._downloadFile, arg9));
-      return from_candid_opt_n293(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.updateCanonicalMystery(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), arg5, arg6, arg7, arg8, to_candid_MysteryStatus_n149(this._uploadFile, this._downloadFile, arg9));
+      return from_candid_opt_n295(this._uploadFile, this._downloadFile, result);
     }
   }
   async updateCanonicalStory(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) {
     if (this.processError) {
       try {
         const result = await this.actor.updateCanonicalStory(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg6), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg7), arg8);
-        return from_candid_opt_n101(this._uploadFile, this._downloadFile, result);
+        return from_candid_opt_n107(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.updateCanonicalStory(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg6), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg7), arg8);
-      return from_candid_opt_n101(this._uploadFile, this._downloadFile, result);
+      return from_candid_opt_n107(this._uploadFile, this._downloadFile, result);
     }
   }
   async updateOwnProfile(arg0, arg1) {
     if (this.processError) {
       try {
-        const result = await this.actor.updateOwnProfile(arg0, to_candid_ProfileEdits_n347(this._uploadFile, this._downloadFile, arg1));
-        return from_candid_Result_n351(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.updateOwnProfile(arg0, to_candid_ProfileEdits_n349(this._uploadFile, this._downloadFile, arg1));
+        return from_candid_Result_n353(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.updateOwnProfile(arg0, to_candid_ProfileEdits_n347(this._uploadFile, this._downloadFile, arg1));
-      return from_candid_Result_n351(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.updateOwnProfile(arg0, to_candid_ProfileEdits_n349(this._uploadFile, this._downloadFile, arg1));
+      return from_candid_Result_n353(this._uploadFile, this._downloadFile, result);
     }
   }
 }
-function from_candid_AccountError_n126(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n127(_uploadFile, _downloadFile, value);
+function from_candid_AccountError_n132(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n133(_uploadFile, _downloadFile, value);
 }
-function from_candid_Account_n121(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n122(_uploadFile, _downloadFile, value);
+function from_candid_Account_n127(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n128(_uploadFile, _downloadFile, value);
 }
-function from_candid_ArchiveError_n113(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n114(_uploadFile, _downloadFile, value);
+function from_candid_ArchiveError_n119(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n120(_uploadFile, _downloadFile, value);
 }
 function from_candid_ArchiveItemClassification_n62(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n63(_uploadFile, _downloadFile, value);
@@ -42257,44 +42401,44 @@ function from_candid_ArchiveItemType_n57(_uploadFile, _downloadFile, value) {
 async function from_candid_ArchiveItem_n48(_uploadFile, _downloadFile, value) {
   return await from_candid_record_n49(_uploadFile, _downloadFile, value);
 }
-function from_candid_AuditActionType_n251(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n252(_uploadFile, _downloadFile, value);
+function from_candid_AuditActionType_n253(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n254(_uploadFile, _downloadFile, value);
 }
-function from_candid_AuditEntry_n249(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n250(_uploadFile, _downloadFile, value);
+function from_candid_AuditEntry_n251(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n252(_uploadFile, _downloadFile, value);
 }
-function from_candid_AuthMethod_n124(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n125(_uploadFile, _downloadFile, value);
+function from_candid_AuthMethod_n130(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n131(_uploadFile, _downloadFile, value);
 }
-function from_candid_Cell_n199(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n200(_uploadFile, _downloadFile, value);
+function from_candid_Cell_n201(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n202(_uploadFile, _downloadFile, value);
 }
-function from_candid_ClaimError_n327(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n328(_uploadFile, _downloadFile, value);
+function from_candid_ClaimError_n329(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n330(_uploadFile, _downloadFile, value);
 }
-function from_candid_ClaimStatus_n168(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n169(_uploadFile, _downloadFile, value);
+function from_candid_ClaimStatus_n174(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n175(_uploadFile, _downloadFile, value);
 }
-function from_candid_ConflictReviewItem_n257(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n258(_uploadFile, _downloadFile, value);
+function from_candid_ConflictReviewItem_n259(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n260(_uploadFile, _downloadFile, value);
 }
-function from_candid_ConversationView_n206(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n207(_uploadFile, _downloadFile, value);
+function from_candid_ConversationView_n208(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n209(_uploadFile, _downloadFile, value);
 }
-function from_candid_CreateError_n172(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n173(_uploadFile, _downloadFile, value);
+function from_candid_CreateError_n178(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n179(_uploadFile, _downloadFile, value);
 }
-function from_candid_DeleteError_n310(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n311(_uploadFile, _downloadFile, value);
+function from_candid_DeleteError_n312(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n313(_uploadFile, _downloadFile, value);
 }
-function from_candid_DuplicateCandidate_n262(_uploadFile, _downloadFile, value) {
+function from_candid_DuplicateCandidate_n264(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n265(_uploadFile, _downloadFile, value);
+}
+function from_candid_DuplicatePair_n262(_uploadFile, _downloadFile, value) {
   return from_candid_record_n263(_uploadFile, _downloadFile, value);
 }
-function from_candid_DuplicatePair_n260(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n261(_uploadFile, _downloadFile, value);
-}
-function from_candid_EditError_n353(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n354(_uploadFile, _downloadFile, value);
+function from_candid_EditError_n355(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n356(_uploadFile, _downloadFile, value);
 }
 function from_candid_Error_n10(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n11(_uploadFile, _downloadFile, value);
@@ -42314,113 +42458,113 @@ function from_candid_FindingContent_n71(_uploadFile, _downloadFile, value) {
 function from_candid_FindingType_n79(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n80(_uploadFile, _downloadFile, value);
 }
-function from_candid_LivingStatus_n170(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n171(_uploadFile, _downloadFile, value);
+function from_candid_LivingStatus_n176(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n177(_uploadFile, _downloadFile, value);
 }
-function from_candid_MergeConflictStatus_n302(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n303(_uploadFile, _downloadFile, value);
-}
-function from_candid_MergeConflict_n300(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n301(_uploadFile, _downloadFile, value);
-}
-function from_candid_MergeError_n304(_uploadFile, _downloadFile, value) {
+function from_candid_MergeConflictStatus_n304(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n305(_uploadFile, _downloadFile, value);
 }
-function from_candid_MergeResult_n297(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n298(_uploadFile, _downloadFile, value);
+function from_candid_MergeConflict_n302(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n303(_uploadFile, _downloadFile, value);
 }
-function from_candid_MessageError_n343(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n344(_uploadFile, _downloadFile, value);
+function from_candid_MergeError_n306(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n307(_uploadFile, _downloadFile, value);
 }
-function from_candid_MessageStatus_n211(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n212(_uploadFile, _downloadFile, value);
+function from_candid_MergeResult_n299(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n300(_uploadFile, _downloadFile, value);
 }
-function from_candid_Message_n209(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n210(_uploadFile, _downloadFile, value);
+function from_candid_MessageError_n345(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n346(_uploadFile, _downloadFile, value);
 }
-function from_candid_MysteryContributionStatus_n275(_uploadFile, _downloadFile, value) {
+function from_candid_MessageStatus_n213(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n214(_uploadFile, _downloadFile, value);
+}
+function from_candid_Message_n211(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n212(_uploadFile, _downloadFile, value);
+}
+function from_candid_MysteryContributionStatus_n277(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n28(_uploadFile, _downloadFile, value);
 }
-function from_candid_MysteryContributionType_n276(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n277(_uploadFile, _downloadFile, value);
+function from_candid_MysteryContributionType_n278(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n279(_uploadFile, _downloadFile, value);
 }
-function from_candid_MysteryContribution_n273(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n274(_uploadFile, _downloadFile, value);
+function from_candid_MysteryContribution_n275(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n276(_uploadFile, _downloadFile, value);
 }
-function from_candid_MysteryStatus_n147(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n148(_uploadFile, _downloadFile, value);
+function from_candid_MysteryStatus_n153(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n154(_uploadFile, _downloadFile, value);
 }
-function from_candid_Mystery_n145(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n146(_uploadFile, _downloadFile, value);
+function from_candid_Mystery_n151(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n152(_uploadFile, _downloadFile, value);
 }
-function from_candid_NewPersonCandidate_n176(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n177(_uploadFile, _downloadFile, value);
+function from_candid_NewPersonCandidate_n82(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n83(_uploadFile, _downloadFile, value);
 }
-function from_candid_NotificationType_n270(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n271(_uploadFile, _downloadFile, value);
+function from_candid_NotificationType_n272(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n273(_uploadFile, _downloadFile, value);
 }
-function from_candid_Notification_n268(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n269(_uploadFile, _downloadFile, value);
+function from_candid_Notification_n270(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n271(_uploadFile, _downloadFile, value);
 }
 function from_candid_OralHistorySpeaker_n54(_uploadFile, _downloadFile, value) {
   return from_candid_record_n55(_uploadFile, _downloadFile, value);
 }
-function from_candid_PersonProfile_n166(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n167(_uploadFile, _downloadFile, value);
+function from_candid_PersonProfile_n172(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n173(_uploadFile, _downloadFile, value);
 }
 async function from_candid_Photo_n32(_uploadFile, _downloadFile, value) {
   return await from_candid_record_n33(_uploadFile, _downloadFile, value);
 }
-function from_candid_PostStatus_n105(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n106(_uploadFile, _downloadFile, value);
+function from_candid_PostStatus_n111(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n112(_uploadFile, _downloadFile, value);
 }
-function from_candid_PostType_n107(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n108(_uploadFile, _downloadFile, value);
+function from_candid_PostType_n113(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n114(_uploadFile, _downloadFile, value);
 }
-function from_candid_Post_n103(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n104(_uploadFile, _downloadFile, value);
+function from_candid_Post_n109(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n110(_uploadFile, _downloadFile, value);
 }
 function from_candid_PrivacyLevel_n51(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n52(_uploadFile, _downloadFile, value);
 }
-function from_candid_PrivacyScope_n109(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n110(_uploadFile, _downloadFile, value);
+function from_candid_PrivacyScope_n115(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n116(_uploadFile, _downloadFile, value);
 }
-function from_candid_ProfileClaimStatus_n84(_uploadFile, _downloadFile, value) {
+function from_candid_ProfileClaimStatus_n87(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n28(_uploadFile, _downloadFile, value);
 }
-function from_candid_ProfileClaim_n82(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n83(_uploadFile, _downloadFile, value);
+function from_candid_ProfileClaim_n85(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n86(_uploadFile, _downloadFile, value);
 }
-function from_candid_ProfileRemovalRequest_n86(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n87(_uploadFile, _downloadFile, value);
+function from_candid_ProfileRemovalRequest_n89(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n90(_uploadFile, _downloadFile, value);
 }
-function from_candid_ProfileRemovalStatus_n88(_uploadFile, _downloadFile, value) {
+function from_candid_ProfileRemovalStatus_n91(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n28(_uploadFile, _downloadFile, value);
 }
 function from_candid_ProposedFinding_n65(_uploadFile, _downloadFile, value) {
   return from_candid_record_n66(_uploadFile, _downloadFile, value);
 }
-function from_candid_RecipeStatus_n92(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n93(_uploadFile, _downloadFile, value);
+function from_candid_RecipeStatus_n95(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n96(_uploadFile, _downloadFile, value);
 }
-function from_candid_Recipe_n90(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n91(_uploadFile, _downloadFile, value);
+function from_candid_Recipe_n93(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n94(_uploadFile, _downloadFile, value);
 }
 function from_candid_RelationshipAdminError_n45(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n46(_uploadFile, _downloadFile, value);
 }
-function from_candid_RelationshipError_n314(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n315(_uploadFile, _downloadFile, value);
+function from_candid_RelationshipError_n316(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n317(_uploadFile, _downloadFile, value);
 }
-function from_candid_RelationshipProposal_n180(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n181(_uploadFile, _downloadFile, value);
+function from_candid_RelationshipProposal_n98(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n99(_uploadFile, _downloadFile, value);
 }
-function from_candid_RelationshipRequestStatus_n97(_uploadFile, _downloadFile, value) {
+function from_candid_RelationshipRequestStatus_n103(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n28(_uploadFile, _downloadFile, value);
 }
-function from_candid_RelationshipRequest_n95(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n96(_uploadFile, _downloadFile, value);
+function from_candid_RelationshipRequest_n101(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n102(_uploadFile, _downloadFile, value);
 }
 function from_candid_RelationshipStatus_n41(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n42(_uploadFile, _downloadFile, value);
@@ -42431,122 +42575,122 @@ function from_candid_RelationshipType_n43(_uploadFile, _downloadFile, value) {
 function from_candid_Relationship_n39(_uploadFile, _downloadFile, value) {
   return from_candid_record_n40(_uploadFile, _downloadFile, value);
 }
-function from_candid_RemovalError_n331(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n332(_uploadFile, _downloadFile, value);
+function from_candid_RemovalError_n333(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n334(_uploadFile, _downloadFile, value);
 }
-function from_candid_RemoveError_n319(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n320(_uploadFile, _downloadFile, value);
+function from_candid_RemoveError_n321(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n322(_uploadFile, _downloadFile, value);
 }
-function from_candid_ReportStatus_n226(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n227(_uploadFile, _downloadFile, value);
+function from_candid_ReportStatus_n228(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n229(_uploadFile, _downloadFile, value);
 }
-function from_candid_Report_n224(_uploadFile, _downloadFile, value) {
+function from_candid_Report_n226(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n227(_uploadFile, _downloadFile, value);
+}
+function from_candid_ReportedMessageView_n224(_uploadFile, _downloadFile, value) {
   return from_candid_record_n225(_uploadFile, _downloadFile, value);
 }
-function from_candid_ReportedMessageView_n222(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n223(_uploadFile, _downloadFile, value);
+function from_candid_ResearchAuditEntry_n231(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n232(_uploadFile, _downloadFile, value);
 }
-function from_candid_ResearchAuditEntry_n229(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n230(_uploadFile, _downloadFile, value);
+function from_candid_ResearchError_n168(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n169(_uploadFile, _downloadFile, value);
 }
-function from_candid_ResearchError_n162(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n163(_uploadFile, _downloadFile, value);
+function from_candid_Result_10_n310(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n311(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_10_n308(_uploadFile, _downloadFile, value) {
+function from_candid_Result_11_n308(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n309(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_11_n306(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n307(_uploadFile, _downloadFile, value);
+function from_candid_Result_12_n297(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n298(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_12_n295(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n296(_uploadFile, _downloadFile, value);
+function from_candid_Result_13_n218(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n219(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_13_n216(_uploadFile, _downloadFile, value) {
+function from_candid_Result_14_n216(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n217(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_14_n214(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n215(_uploadFile, _downloadFile, value);
+function from_candid_Result_15_n191(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n192(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_15_n189(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n190(_uploadFile, _downloadFile, value);
+async function from_candid_Result_16_n187(_uploadFile, _downloadFile, value) {
+  return await from_candid_variant_n188(_uploadFile, _downloadFile, value);
 }
-async function from_candid_Result_16_n185(_uploadFile, _downloadFile, value) {
-  return await from_candid_variant_n186(_uploadFile, _downloadFile, value);
+function from_candid_Result_17_n184(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n185(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_17_n182(_uploadFile, _downloadFile, value) {
+function from_candid_Result_18_n182(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n183(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_18_n178(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n179(_uploadFile, _downloadFile, value);
+function from_candid_Result_19_n180(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n181(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_19_n174(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n175(_uploadFile, _downloadFile, value);
+function from_candid_Result_1_n343(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n344(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_1_n341(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n342(_uploadFile, _downloadFile, value);
+function from_candid_Result_20_n170(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n171(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_20_n164(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n165(_uploadFile, _downloadFile, value);
-}
-function from_candid_Result_21_n160(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n161(_uploadFile, _downloadFile, value);
+function from_candid_Result_21_n166(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n167(_uploadFile, _downloadFile, value);
 }
 function from_candid_Result_22_n37(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n38(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_23_n119(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n120(_uploadFile, _downloadFile, value);
+function from_candid_Result_23_n125(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n126(_uploadFile, _downloadFile, value);
 }
 function from_candid_Result_24_n8(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n9(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_2_n111(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n112(_uploadFile, _downloadFile, value);
+function from_candid_Result_2_n117(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n118(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_3_n329(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n330(_uploadFile, _downloadFile, value);
+function from_candid_Result_3_n331(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n332(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_4_n325(_uploadFile, _downloadFile, value) {
+function from_candid_Result_4_n327(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n328(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_5_n325(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n326(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_5_n323(_uploadFile, _downloadFile, value) {
+function from_candid_Result_6_n323(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n324(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_6_n321(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n322(_uploadFile, _downloadFile, value);
+function from_candid_Result_7_n319(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n320(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_7_n317(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n318(_uploadFile, _downloadFile, value);
-}
-function from_candid_Result_8_n312(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n313(_uploadFile, _downloadFile, value);
+function from_candid_Result_8_n314(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n315(_uploadFile, _downloadFile, value);
 }
 function from_candid_Result_9_n12(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n13(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result__1_n195(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n196(_uploadFile, _downloadFile, value);
+function from_candid_Result__1_n197(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n198(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_n351(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n352(_uploadFile, _downloadFile, value);
+function from_candid_Result_n353(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n354(_uploadFile, _downloadFile, value);
 }
-function from_candid_ReviewAction_n242(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n243(_uploadFile, _downloadFile, value);
+function from_candid_ReviewAction_n244(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n245(_uploadFile, _downloadFile, value);
 }
-function from_candid_ReviewItemKind_n239(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n240(_uploadFile, _downloadFile, value);
+function from_candid_ReviewItemKind_n241(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n242(_uploadFile, _downloadFile, value);
 }
-function from_candid_ReviewQueueItem_n236(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n237(_uploadFile, _downloadFile, value);
+function from_candid_ReviewQueueItem_n238(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n239(_uploadFile, _downloadFile, value);
 }
-function from_candid_ReviewQueue_n233(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n234(_uploadFile, _downloadFile, value);
+function from_candid_ReviewQueue_n235(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n236(_uploadFile, _downloadFile, value);
 }
 function from_candid_ReviewStatus_n67(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n68(_uploadFile, _downloadFile, value);
 }
-function from_candid_SourceRecord_n99(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n100(_uploadFile, _downloadFile, value);
+function from_candid_SourceRecord_n105(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n106(_uploadFile, _downloadFile, value);
 }
 function from_candid_SourceStatus_n60(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n61(_uploadFile, _downloadFile, value);
@@ -42554,8 +42698,8 @@ function from_candid_SourceStatus_n60(_uploadFile, _downloadFile, value) {
 function from_candid_SourceType_n75(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n76(_uploadFile, _downloadFile, value);
 }
-async function from_candid_SourceUploadResult_n187(_uploadFile, _downloadFile, value) {
-  return await from_candid_record_n188(_uploadFile, _downloadFile, value);
+async function from_candid_SourceUploadResult_n189(_uploadFile, _downloadFile, value) {
+  return await from_candid_record_n190(_uploadFile, _downloadFile, value);
 }
 function from_candid_StewardError_n18(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n19(_uploadFile, _downloadFile, value);
@@ -42572,86 +42716,92 @@ function from_candid_StoryStatus_n27(_uploadFile, _downloadFile, value) {
 function from_candid_Story_n24(_uploadFile, _downloadFile, value) {
   return from_candid_record_n25(_uploadFile, _downloadFile, value);
 }
-function from_candid_SuccessorDesignation_n191(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n192(_uploadFile, _downloadFile, value);
+function from_candid_SuccessorDesignation_n193(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n194(_uploadFile, _downloadFile, value);
 }
-function from_candid_SuccessorStatus_n193(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n194(_uploadFile, _downloadFile, value);
+function from_candid_SuccessorStatus_n195(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n196(_uploadFile, _downloadFile, value);
 }
-function from_candid_TimelineEventType_n291(_uploadFile, _downloadFile, value) {
+function from_candid_TimelineEventType_n293(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n294(_uploadFile, _downloadFile, value);
+}
+function from_candid_TimelineEvent_n289(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n290(_uploadFile, _downloadFile, value);
+}
+function from_candid_TimelineLinkTarget_n291(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n292(_uploadFile, _downloadFile, value);
 }
-function from_candid_TimelineEvent_n287(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n288(_uploadFile, _downloadFile, value);
+function from_candid_UserRole_n205(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n206(_uploadFile, _downloadFile, value);
 }
-function from_candid_TimelineLinkTarget_n289(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n290(_uploadFile, _downloadFile, value);
-}
-function from_candid_UserRole_n203(_uploadFile, _downloadFile, value) {
+function from_candid_Value_n203(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n204(_uploadFile, _downloadFile, value);
-}
-function from_candid_Value_n201(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n202(_uploadFile, _downloadFile, value);
 }
 function from_candid__ImmutableObjectStorageRefillResult_n4(_uploadFile, _downloadFile, value) {
   return from_candid_record_n5(_uploadFile, _downloadFile, value);
 }
-function from_candid_opt_n101(_uploadFile, _downloadFile, value) {
+function from_candid_opt_n100(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_RelationshipRequest_n101(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n104(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_SourceRecord_n105(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n107(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : from_candid_Story_n24(_uploadFile, _downloadFile, value[0]);
 }
-function from_candid_opt_n102(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_Post_n103(_uploadFile, _downloadFile, value[0]);
+function from_candid_opt_n108(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_Post_n109(_uploadFile, _downloadFile, value[0]);
 }
-function from_candid_opt_n149(_uploadFile, _downloadFile, value) {
+function from_candid_opt_n155(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n205(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_ConversationView_n206(_uploadFile, _downloadFile, value[0]);
+function from_candid_opt_n207(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_ConversationView_n208(_uploadFile, _downloadFile, value[0]);
 }
-function from_candid_opt_n213(_uploadFile, _downloadFile, value) {
+function from_candid_opt_n215(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n218(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_PersonProfile_n166(_uploadFile, _downloadFile, value[0]);
+function from_candid_opt_n220(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_PersonProfile_n172(_uploadFile, _downloadFile, value[0]);
 }
-async function from_candid_opt_n220(_uploadFile, _downloadFile, value) {
+async function from_candid_opt_n222(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : await from_candid_Photo_n32(_uploadFile, _downloadFile, value[0]);
 }
-function from_candid_opt_n221(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_ReportedMessageView_n222(_uploadFile, _downloadFile, value[0]);
+function from_candid_opt_n223(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_ReportedMessageView_n224(_uploadFile, _downloadFile, value[0]);
 }
-function from_candid_opt_n231(_uploadFile, _downloadFile, value) {
+function from_candid_opt_n233(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n232(_uploadFile, _downloadFile, value) {
+function from_candid_opt_n234(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n238(_uploadFile, _downloadFile, value) {
+function from_candid_opt_n240(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : from_candid_EvidenceLabel_n69(_uploadFile, _downloadFile, value[0]);
 }
 function from_candid_opt_n26(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n293(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_Mystery_n145(_uploadFile, _downloadFile, value[0]);
+function from_candid_opt_n295(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_Mystery_n151(_uploadFile, _downloadFile, value[0]);
 }
-function from_candid_opt_n294(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_Notification_n268(_uploadFile, _downloadFile, value[0]);
+function from_candid_opt_n296(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_Notification_n270(_uploadFile, _downloadFile, value[0]);
 }
-function from_candid_opt_n316(_uploadFile, _downloadFile, value) {
+function from_candid_opt_n318(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n333(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_ConflictReviewItem_n257(_uploadFile, _downloadFile, value[0]);
-}
-function from_candid_opt_n334(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_MergeConflict_n300(_uploadFile, _downloadFile, value[0]);
-}
 function from_candid_opt_n335(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_MysteryContribution_n273(_uploadFile, _downloadFile, value[0]);
+  return value.length === 0 ? null : from_candid_ConflictReviewItem_n259(_uploadFile, _downloadFile, value[0]);
 }
-function from_candid_opt_n338(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_Report_n224(_uploadFile, _downloadFile, value[0]);
+function from_candid_opt_n336(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_MergeConflict_n302(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n337(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_MysteryContribution_n275(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n340(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_Report_n226(_uploadFile, _downloadFile, value[0]);
 }
 async function from_candid_opt_n47(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : await from_candid_ArchiveItem_n48(_uploadFile, _downloadFile, value[0]);
@@ -42681,21 +42831,33 @@ function from_candid_opt_n78(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : value[0];
 }
 function from_candid_opt_n81(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_ProfileClaim_n82(_uploadFile, _downloadFile, value[0]);
+  return value.length === 0 ? null : from_candid_NewPersonCandidate_n82(_uploadFile, _downloadFile, value[0]);
 }
-function from_candid_opt_n85(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_ProfileRemovalRequest_n86(_uploadFile, _downloadFile, value[0]);
+function from_candid_opt_n84(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_ProfileClaim_n85(_uploadFile, _downloadFile, value[0]);
 }
-function from_candid_opt_n89(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_Recipe_n90(_uploadFile, _downloadFile, value[0]);
+function from_candid_opt_n88(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_ProfileRemovalRequest_n89(_uploadFile, _downloadFile, value[0]);
 }
-function from_candid_opt_n94(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_RelationshipRequest_n95(_uploadFile, _downloadFile, value[0]);
+function from_candid_opt_n92(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_Recipe_n93(_uploadFile, _downloadFile, value[0]);
 }
-function from_candid_opt_n98(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_SourceRecord_n99(_uploadFile, _downloadFile, value[0]);
+function from_candid_opt_n97(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_RelationshipProposal_n98(_uploadFile, _downloadFile, value[0]);
 }
-function from_candid_record_n100(_uploadFile, _downloadFile, value) {
+function from_candid_record_n102(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
+    submittedDate: value.submittedDate,
+    status: from_candid_RelationshipRequestStatus_n103(_uploadFile, _downloadFile, value.status),
+    reviewedDate: record_opt_to_undefined(from_candid_opt_n77(_uploadFile, _downloadFile, value.reviewedDate)),
+    relatedPersonId: value.relatedPersonId,
+    requestingPersonId: value.requestingPersonId,
+    proposedRelationship: from_candid_RelationshipType_n43(_uploadFile, _downloadFile, value.proposedRelationship),
+    reviewer: record_opt_to_undefined(from_candid_opt_n78(_uploadFile, _downloadFile, value.reviewer))
+  };
+}
+function from_candid_record_n106(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
     status: from_candid_ReviewStatus_n67(_uploadFile, _downloadFile, value.status),
@@ -42708,46 +42870,28 @@ function from_candid_record_n100(_uploadFile, _downloadFile, value) {
     contributor: value.contributor
   };
 }
-function from_candid_record_n104(_uploadFile, _downloadFile, value) {
+function from_candid_record_n110(_uploadFile, _downloadFile, value) {
   return {
-    status: from_candid_PostStatus_n105(_uploadFile, _downloadFile, value.status),
+    status: from_candid_PostStatus_n111(_uploadFile, _downloadFile, value.status),
     authorAccountId: value.authorAccountId,
-    postType: from_candid_PostType_n107(_uploadFile, _downloadFile, value.postType),
+    postType: from_candid_PostType_n113(_uploadFile, _downloadFile, value.postType),
     title: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.title)),
     body: value.body,
     createdAt: value.createdAt,
     tags: value.tags,
     linkedMediaIds: value.linkedMediaIds,
-    privacyScope: from_candid_PrivacyScope_n109(_uploadFile, _downloadFile, value.privacyScope),
+    privacyScope: from_candid_PrivacyScope_n115(_uploadFile, _downloadFile, value.privacyScope),
     authorPersonId: value.authorPersonId,
     updatedAt: value.updatedAt,
     relatedPersonIds: value.relatedPersonIds,
     postId: value.postId
   };
 }
-function from_candid_record_n122(_uploadFile, _downloadFile, value) {
+function from_candid_record_n128(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
     createdAt: value.createdAt,
-    authMethods: from_candid_vec_n123(_uploadFile, _downloadFile, value.authMethods)
-  };
-}
-function from_candid_record_n146(_uploadFile, _downloadFile, value) {
-  return {
-    id: value.id,
-    status: from_candid_MysteryStatus_n147(_uploadFile, _downloadFile, value.status),
-    title: value.title,
-    relatedMemberIds: value.relatedMemberIds,
-    createdAt: value.createdAt,
-    relatedArchiveItemIds: value.relatedArchiveItemIds,
-    description: value.description,
-    resolution: record_opt_to_undefined(from_candid_opt_n149(_uploadFile, _downloadFile, value.resolution)),
-    updatedAt: value.updatedAt,
-    knownFacts: value.knownFacts,
-    possibilities: value.possibilities,
-    relatedBranchId: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.relatedBranchId)),
-    relatedSourceIds: value.relatedSourceIds,
-    contributor: value.contributor
+    authMethods: from_candid_vec_n129(_uploadFile, _downloadFile, value.authMethods)
   };
 }
 function from_candid_record_n15(_uploadFile, _downloadFile, value) {
@@ -42759,7 +42903,25 @@ function from_candid_record_n15(_uploadFile, _downloadFile, value) {
     roleStatus: from_candid_StewardRoleStatus_n16(_uploadFile, _downloadFile, value.roleStatus)
   };
 }
-function from_candid_record_n167(_uploadFile, _downloadFile, value) {
+function from_candid_record_n152(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
+    status: from_candid_MysteryStatus_n153(_uploadFile, _downloadFile, value.status),
+    title: value.title,
+    relatedMemberIds: value.relatedMemberIds,
+    createdAt: value.createdAt,
+    relatedArchiveItemIds: value.relatedArchiveItemIds,
+    description: value.description,
+    resolution: record_opt_to_undefined(from_candid_opt_n155(_uploadFile, _downloadFile, value.resolution)),
+    updatedAt: value.updatedAt,
+    knownFacts: value.knownFacts,
+    possibilities: value.possibilities,
+    relatedBranchId: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.relatedBranchId)),
+    relatedSourceIds: value.relatedSourceIds,
+    contributor: value.contributor
+  };
+}
+function from_candid_record_n173(_uploadFile, _downloadFile, value) {
   return {
     occupation: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.occupation)),
     privacySettings: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.privacySettings)),
@@ -42767,8 +42929,8 @@ function from_candid_record_n167(_uploadFile, _downloadFile, value) {
     claimedByUserId: record_opt_to_undefined(from_candid_opt_n78(_uploadFile, _downloadFile, value.claimedByUserId)),
     birthDate: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.birthDate)),
     birthInfo: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.birthInfo)),
-    claimStatus: from_candid_ClaimStatus_n168(_uploadFile, _downloadFile, value.claimStatus),
-    livingStatus: from_candid_LivingStatus_n170(_uploadFile, _downloadFile, value.livingStatus),
+    claimStatus: from_candid_ClaimStatus_n174(_uploadFile, _downloadFile, value.claimStatus),
+    livingStatus: from_candid_LivingStatus_n176(_uploadFile, _downloadFile, value.livingStatus),
     name: value.name,
     longerStory: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.longerStory)),
     personId: value.personId,
@@ -42784,89 +42946,62 @@ function from_candid_record_n167(_uploadFile, _downloadFile, value) {
     firstName: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.firstName))
   };
 }
-function from_candid_record_n177(_uploadFile, _downloadFile, value) {
+async function from_candid_record_n190(_uploadFile, _downloadFile, value) {
   return {
-    id: value.id,
-    status: from_candid_ReviewStatus_n67(_uploadFile, _downloadFile, value.status),
-    name: value.name,
-    submittedAt: value.submittedAt,
-    submittedBy: value.submittedBy,
-    sourceId: value.sourceId,
-    reviewedAt: record_opt_to_undefined(from_candid_opt_n77(_uploadFile, _downloadFile, value.reviewedAt)),
-    reviewedBy: record_opt_to_undefined(from_candid_opt_n78(_uploadFile, _downloadFile, value.reviewedBy)),
-    details: value.details
-  };
-}
-function from_candid_record_n181(_uploadFile, _downloadFile, value) {
-  return {
-    id: value.id,
-    status: from_candid_ReviewStatus_n67(_uploadFile, _downloadFile, value.status),
-    fromPersonId: value.fromPersonId,
-    submittedAt: value.submittedAt,
-    submittedBy: value.submittedBy,
-    sourceId: value.sourceId,
-    reviewedAt: record_opt_to_undefined(from_candid_opt_n77(_uploadFile, _downloadFile, value.reviewedAt)),
-    reviewedBy: record_opt_to_undefined(from_candid_opt_n78(_uploadFile, _downloadFile, value.reviewedBy)),
-    toPersonId: value.toPersonId,
-    relationshipType: value.relationshipType
-  };
-}
-async function from_candid_record_n188(_uploadFile, _downloadFile, value) {
-  return {
-    source: from_candid_SourceRecord_n99(_uploadFile, _downloadFile, value.source),
+    source: from_candid_SourceRecord_n105(_uploadFile, _downloadFile, value.source),
     archiveItem: await from_candid_ArchiveItem_n48(_uploadFile, _downloadFile, value.archiveItem)
   };
 }
-function from_candid_record_n192(_uploadFile, _downloadFile, value) {
+function from_candid_record_n194(_uploadFile, _downloadFile, value) {
   return {
-    status: from_candid_SuccessorStatus_n193(_uploadFile, _downloadFile, value.status),
+    status: from_candid_SuccessorStatus_n195(_uploadFile, _downloadFile, value.status),
     assignedAt: value.assignedAt,
     assignedBy: value.assignedBy,
     personId: value.personId,
     priority: value.priority
   };
 }
-function from_candid_record_n196(_uploadFile, _downloadFile, value) {
+function from_candid_record_n198(_uploadFile, _downloadFile, value) {
   return {
     hasMore: value.hasMore,
-    rows: from_candid_vec_n197(_uploadFile, _downloadFile, value.rows)
+    rows: from_candid_vec_n199(_uploadFile, _downloadFile, value.rows)
   };
 }
-function from_candid_record_n200(_uploadFile, _downloadFile, value) {
+function from_candid_record_n202(_uploadFile, _downloadFile, value) {
   return {
-    value: from_candid_Value_n201(_uploadFile, _downloadFile, value.value),
+    value: from_candid_Value_n203(_uploadFile, _downloadFile, value.value),
     name: value.name
   };
 }
-function from_candid_record_n207(_uploadFile, _downloadFile, value) {
+function from_candid_record_n209(_uploadFile, _downloadFile, value) {
   return {
-    messages: from_candid_vec_n208(_uploadFile, _downloadFile, value.messages),
+    messages: from_candid_vec_n210(_uploadFile, _downloadFile, value.messages),
     participantPersonIds: value.participantPersonIds,
     conversationId: value.conversationId,
     participantDisplayNames: value.participantDisplayNames
   };
 }
-function from_candid_record_n210(_uploadFile, _downloadFile, value) {
+function from_candid_record_n212(_uploadFile, _downloadFile, value) {
   return {
-    status: from_candid_MessageStatus_n211(_uploadFile, _downloadFile, value.status),
+    status: from_candid_MessageStatus_n213(_uploadFile, _downloadFile, value.status),
     messageId: value.messageId,
     body: value.body,
     createdAt: value.createdAt,
     conversationId: value.conversationId,
     senderAccountId: value.senderAccountId,
     senderPersonId: value.senderPersonId,
-    readAt: record_opt_to_undefined(from_candid_opt_n213(_uploadFile, _downloadFile, value.readAt))
-  };
-}
-function from_candid_record_n223(_uploadFile, _downloadFile, value) {
-  return {
-    report: from_candid_Report_n224(_uploadFile, _downloadFile, value.report),
-    message: from_candid_Message_n209(_uploadFile, _downloadFile, value.message)
+    readAt: record_opt_to_undefined(from_candid_opt_n215(_uploadFile, _downloadFile, value.readAt))
   };
 }
 function from_candid_record_n225(_uploadFile, _downloadFile, value) {
   return {
-    status: from_candid_ReportStatus_n226(_uploadFile, _downloadFile, value.status),
+    report: from_candid_Report_n226(_uploadFile, _downloadFile, value.report),
+    message: from_candid_Message_n211(_uploadFile, _downloadFile, value.message)
+  };
+}
+function from_candid_record_n227(_uploadFile, _downloadFile, value) {
+  return {
+    status: from_candid_ReportStatus_n228(_uploadFile, _downloadFile, value.status),
     reportedMessageId: value.reportedMessageId,
     createdAt: value.createdAt,
     reportingAccountId: value.reportingAccountId,
@@ -42874,37 +43009,37 @@ function from_candid_record_n225(_uploadFile, _downloadFile, value) {
     reason: value.reason
   };
 }
-function from_candid_record_n230(_uploadFile, _downloadFile, value) {
+function from_candid_record_n232(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
     action: value.action,
-    findingId: record_opt_to_undefined(from_candid_opt_n231(_uploadFile, _downloadFile, value.findingId)),
-    sourceId: record_opt_to_undefined(from_candid_opt_n232(_uploadFile, _downloadFile, value.sourceId)),
+    findingId: record_opt_to_undefined(from_candid_opt_n233(_uploadFile, _downloadFile, value.findingId)),
+    sourceId: record_opt_to_undefined(from_candid_opt_n234(_uploadFile, _downloadFile, value.sourceId)),
     actorId: value.actorId,
     summary: value.summary,
     timestamp: value.timestamp
   };
 }
-function from_candid_record_n234(_uploadFile, _downloadFile, value) {
+function from_candid_record_n236(_uploadFile, _downloadFile, value) {
   return {
     pending: value.pending,
     conflicting: value.conflicting,
     approved: value.approved,
     rejected: value.rejected,
     needsResearch: value.needsResearch,
-    items: from_candid_vec_n235(_uploadFile, _downloadFile, value.items)
+    items: from_candid_vec_n237(_uploadFile, _downloadFile, value.items)
   };
 }
-function from_candid_record_n237(_uploadFile, _downloadFile, value) {
+function from_candid_record_n239(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
     provenance: value.provenance,
     status: from_candid_ReviewStatus_n67(_uploadFile, _downloadFile, value.status),
     title: value.title,
-    evidenceLabel: record_opt_to_undefined(from_candid_opt_n238(_uploadFile, _downloadFile, value.evidenceLabel)),
-    kind: from_candid_ReviewItemKind_n239(_uploadFile, _downloadFile, value.kind),
+    evidenceLabel: record_opt_to_undefined(from_candid_opt_n240(_uploadFile, _downloadFile, value.evidenceLabel)),
+    kind: from_candid_ReviewItemKind_n241(_uploadFile, _downloadFile, value.kind),
     createdAt: value.createdAt,
-    actions: from_candid_vec_n241(_uploadFile, _downloadFile, value.actions),
+    actions: from_candid_vec_n243(_uploadFile, _downloadFile, value.actions),
     summary: value.summary,
     contributor: record_opt_to_undefined(from_candid_opt_n78(_uploadFile, _downloadFile, value.contributor))
   };
@@ -42926,17 +43061,17 @@ function from_candid_record_n25(_uploadFile, _downloadFile, value) {
     contributor: value.contributor
   };
 }
-function from_candid_record_n250(_uploadFile, _downloadFile, value) {
+function from_candid_record_n252(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
     affectedPersonIds: value.affectedPersonIds,
-    actionType: from_candid_AuditActionType_n251(_uploadFile, _downloadFile, value.actionType),
+    actionType: from_candid_AuditActionType_n253(_uploadFile, _downloadFile, value.actionType),
     summary: value.summary,
     timestamp: value.timestamp,
     actorAccountId: value.actorAccountId
   };
 }
-function from_candid_record_n258(_uploadFile, _downloadFile, value) {
+function from_candid_record_n260(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
     field: value.field,
@@ -42948,13 +43083,13 @@ function from_candid_record_n258(_uploadFile, _downloadFile, value) {
     resolvedBy: record_opt_to_undefined(from_candid_opt_n78(_uploadFile, _downloadFile, value.resolvedBy))
   };
 }
-function from_candid_record_n261(_uploadFile, _downloadFile, value) {
+function from_candid_record_n263(_uploadFile, _downloadFile, value) {
   return {
-    candidateA: from_candid_DuplicateCandidate_n262(_uploadFile, _downloadFile, value.candidateA),
-    candidateB: from_candid_DuplicateCandidate_n262(_uploadFile, _downloadFile, value.candidateB)
+    candidateA: from_candid_DuplicateCandidate_n264(_uploadFile, _downloadFile, value.candidateA),
+    candidateB: from_candid_DuplicateCandidate_n264(_uploadFile, _downloadFile, value.candidateB)
   };
 }
-function from_candid_record_n263(_uploadFile, _downloadFile, value) {
+function from_candid_record_n265(_uploadFile, _downloadFile, value) {
   return {
     deathDate: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.deathDate)),
     ownerAccount: record_opt_to_undefined(from_candid_opt_n78(_uploadFile, _downloadFile, value.ownerAccount)),
@@ -42971,53 +43106,53 @@ function from_candid_record_n263(_uploadFile, _downloadFile, value) {
     parents: value.parents
   };
 }
-function from_candid_record_n269(_uploadFile, _downloadFile, value) {
+function from_candid_record_n271(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
-    notificationType: from_candid_NotificationType_n270(_uploadFile, _downloadFile, value.notificationType),
+    notificationType: from_candid_NotificationType_n272(_uploadFile, _downloadFile, value.notificationType),
     createdAt: value.createdAt,
     read: value.read,
     recipient: value.recipient,
     message: value.message
   };
 }
-function from_candid_record_n274(_uploadFile, _downloadFile, value) {
+function from_candid_record_n276(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
-    status: from_candid_MysteryContributionStatus_n275(_uploadFile, _downloadFile, value.status),
+    status: from_candid_MysteryContributionStatus_n277(_uploadFile, _downloadFile, value.status),
     createdAt: value.createdAt,
     text: value.text,
     mysteryId: value.mysteryId,
     reviewedAt: record_opt_to_undefined(from_candid_opt_n77(_uploadFile, _downloadFile, value.reviewedAt)),
     reviewedBy: record_opt_to_undefined(from_candid_opt_n78(_uploadFile, _downloadFile, value.reviewedBy)),
-    contributionType: from_candid_MysteryContributionType_n276(_uploadFile, _downloadFile, value.contributionType),
+    contributionType: from_candid_MysteryContributionType_n278(_uploadFile, _downloadFile, value.contributionType),
     contributor: value.contributor
   };
 }
-function from_candid_record_n288(_uploadFile, _downloadFile, value) {
+function from_candid_record_n290(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
     era: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.era)),
     title: value.title,
     year: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.year)),
-    linkTarget: from_candid_TimelineLinkTarget_n289(_uploadFile, _downloadFile, value.linkTarget),
+    linkTarget: from_candid_TimelineLinkTarget_n291(_uploadFile, _downloadFile, value.linkTarget),
     description: value.description,
     evidenceStatus: from_candid_EvidenceStatus_n29(_uploadFile, _downloadFile, value.evidenceStatus),
-    eventType: from_candid_TimelineEventType_n291(_uploadFile, _downloadFile, value.eventType)
+    eventType: from_candid_TimelineEventType_n293(_uploadFile, _downloadFile, value.eventType)
   };
 }
-function from_candid_record_n298(_uploadFile, _downloadFile, value) {
+function from_candid_record_n300(_uploadFile, _downloadFile, value) {
   return {
     archivedPersonId: value.archivedPersonId,
-    conflicts: from_candid_vec_n299(_uploadFile, _downloadFile, value.conflicts),
+    conflicts: from_candid_vec_n301(_uploadFile, _downloadFile, value.conflicts),
     canonicalPersonId: value.canonicalPersonId
   };
 }
-function from_candid_record_n301(_uploadFile, _downloadFile, value) {
+function from_candid_record_n303(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
     field: value.field,
-    status: from_candid_MergeConflictStatus_n302(_uploadFile, _downloadFile, value.status),
+    status: from_candid_MergeConflictStatus_n304(_uploadFile, _downloadFile, value.status),
     alternateValue: value.alternateValue,
     canonicalValue: value.canonicalValue,
     resolvedAt: record_opt_to_undefined(from_candid_opt_n77(_uploadFile, _downloadFile, value.resolvedAt)),
@@ -43119,19 +43254,32 @@ function from_candid_record_n74(_uploadFile, _downloadFile, value) {
 function from_candid_record_n83(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
+    status: from_candid_ReviewStatus_n67(_uploadFile, _downloadFile, value.status),
+    name: value.name,
+    submittedAt: value.submittedAt,
+    submittedBy: value.submittedBy,
+    sourceId: value.sourceId,
+    reviewedAt: record_opt_to_undefined(from_candid_opt_n77(_uploadFile, _downloadFile, value.reviewedAt)),
+    reviewedBy: record_opt_to_undefined(from_candid_opt_n78(_uploadFile, _downloadFile, value.reviewedBy)),
+    details: value.details
+  };
+}
+function from_candid_record_n86(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
     submittedDate: value.submittedDate,
-    status: from_candid_ProfileClaimStatus_n84(_uploadFile, _downloadFile, value.status),
+    status: from_candid_ProfileClaimStatus_n87(_uploadFile, _downloadFile, value.status),
     reviewedDate: record_opt_to_undefined(from_candid_opt_n77(_uploadFile, _downloadFile, value.reviewedDate)),
     reviewedBy: record_opt_to_undefined(from_candid_opt_n78(_uploadFile, _downloadFile, value.reviewedBy)),
     personId: value.personId,
     requestingUserId: value.requestingUserId
   };
 }
-function from_candid_record_n87(_uploadFile, _downloadFile, value) {
+function from_candid_record_n90(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
     submittedDate: value.submittedDate,
-    status: from_candid_ProfileRemovalStatus_n88(_uploadFile, _downloadFile, value.status),
+    status: from_candid_ProfileRemovalStatus_n91(_uploadFile, _downloadFile, value.status),
     reviewedDate: record_opt_to_undefined(from_candid_opt_n77(_uploadFile, _downloadFile, value.reviewedDate)),
     reviewedBy: record_opt_to_undefined(from_candid_opt_n78(_uploadFile, _downloadFile, value.reviewedBy)),
     personId: value.personId,
@@ -43139,10 +43287,10 @@ function from_candid_record_n87(_uploadFile, _downloadFile, value) {
     reason: value.reason
   };
 }
-function from_candid_record_n91(_uploadFile, _downloadFile, value) {
+function from_candid_record_n94(_uploadFile, _downloadFile, value) {
   return {
     era: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.era)),
-    status: from_candid_RecipeStatus_n92(_uploadFile, _downloadFile, value.status),
+    status: from_candid_RecipeStatus_n95(_uploadFile, _downloadFile, value.status),
     title: value.title,
     recipeId: value.recipeId,
     aiDerivedText: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.aiDerivedText)),
@@ -43167,23 +43315,19 @@ function from_candid_record_n91(_uploadFile, _downloadFile, value) {
     relatedPersonIds: value.relatedPersonIds
   };
 }
-function from_candid_record_n96(_uploadFile, _downloadFile, value) {
+function from_candid_record_n99(_uploadFile, _downloadFile, value) {
   return {
     id: value.id,
-    submittedDate: value.submittedDate,
-    status: from_candid_RelationshipRequestStatus_n97(_uploadFile, _downloadFile, value.status),
-    reviewedDate: record_opt_to_undefined(from_candid_opt_n77(_uploadFile, _downloadFile, value.reviewedDate)),
-    relatedPersonId: value.relatedPersonId,
-    requestingPersonId: value.requestingPersonId,
-    proposedRelationship: from_candid_RelationshipType_n43(_uploadFile, _downloadFile, value.proposedRelationship),
-    reviewer: record_opt_to_undefined(from_candid_opt_n78(_uploadFile, _downloadFile, value.reviewer))
+    status: from_candid_ReviewStatus_n67(_uploadFile, _downloadFile, value.status),
+    fromPersonId: value.fromPersonId,
+    submittedAt: value.submittedAt,
+    submittedBy: value.submittedBy,
+    sourceId: value.sourceId,
+    reviewedAt: record_opt_to_undefined(from_candid_opt_n77(_uploadFile, _downloadFile, value.reviewedAt)),
+    reviewedBy: record_opt_to_undefined(from_candid_opt_n78(_uploadFile, _downloadFile, value.reviewedBy)),
+    toPersonId: value.toPersonId,
+    relationshipType: value.relationshipType
   };
-}
-function from_candid_variant_n106(_uploadFile, _downloadFile, value) {
-  return "Active" in value ? "Active" : "Archived" in value ? "Archived" : value;
-}
-function from_candid_variant_n108(_uploadFile, _downloadFile, value) {
-  return "Announcement" in value ? "Announcement" : "Recipe" in value ? "Recipe" : "ResearchHistory" in value ? "ResearchHistory" : "FamilyQuestion" in value ? "FamilyQuestion" : "Memorial" in value ? "Memorial" : "General" in value ? "General" : "Other" in value ? "Other" : "ReunionEvent" in value ? "ReunionEvent" : "PhotoIdentification" in value ? "PhotoIdentification" : value;
 }
 function from_candid_variant_n11(_uploadFile, _downloadFile, value) {
   return "FrontendOriginsNotConfigured" in value ? {
@@ -43218,35 +43362,35 @@ function from_candid_variant_n11(_uploadFile, _downloadFile, value) {
     FrontendOriginMismatch: value.FrontendOriginMismatch
   } : value;
 }
-function from_candid_variant_n110(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n112(_uploadFile, _downloadFile, value) {
+  return "Active" in value ? "Active" : "Archived" in value ? "Archived" : value;
+}
+function from_candid_variant_n114(_uploadFile, _downloadFile, value) {
+  return "Announcement" in value ? "Announcement" : "Recipe" in value ? "Recipe" : "ResearchHistory" in value ? "ResearchHistory" : "FamilyQuestion" in value ? "FamilyQuestion" : "Memorial" in value ? "Memorial" : "General" in value ? "General" : "Other" in value ? "Other" : "ReunionEvent" in value ? "ReunionEvent" : "PhotoIdentification" in value ? "PhotoIdentification" : value;
+}
+function from_candid_variant_n116(_uploadFile, _downloadFile, value) {
   return "FamilyOnly" in value ? "FamilyOnly" : value;
 }
-function from_candid_variant_n112(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n118(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
     ok: value.ok
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_ArchiveError_n113(_uploadFile, _downloadFile, value.err)
+    err: from_candid_ArchiveError_n119(_uploadFile, _downloadFile, value.err)
   } : value;
-}
-function from_candid_variant_n114(_uploadFile, _downloadFile, value) {
-  return "NotArchived" in value ? "NotArchived" : "ProfileNotFound" in value ? "ProfileNotFound" : "AlreadyArchived" in value ? "AlreadyArchived" : "NotSignedIn" in value ? "NotSignedIn" : value;
 }
 function from_candid_variant_n120(_uploadFile, _downloadFile, value) {
+  return "NotArchived" in value ? "NotArchived" : "ProfileNotFound" in value ? "ProfileNotFound" : "AlreadyArchived" in value ? "AlreadyArchived" : "NotSignedIn" in value ? "NotSignedIn" : value;
+}
+function from_candid_variant_n126(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
-    ok: from_candid_Account_n121(_uploadFile, _downloadFile, value.ok)
+    ok: from_candid_Account_n127(_uploadFile, _downloadFile, value.ok)
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_AccountError_n126(_uploadFile, _downloadFile, value.err)
+    err: from_candid_AccountError_n132(_uploadFile, _downloadFile, value.err)
   } : value;
-}
-function from_candid_variant_n125(_uploadFile, _downloadFile, value) {
-  return "Google" in value ? "Google" : "Apple" in value ? "Apple" : value;
-}
-function from_candid_variant_n127(_uploadFile, _downloadFile, value) {
-  return "AccountNotFound" in value ? "AccountNotFound" : "NotSignedIn" in value ? "NotSignedIn" : value;
 }
 function from_candid_variant_n13(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
@@ -43257,19 +43401,25 @@ function from_candid_variant_n13(_uploadFile, _downloadFile, value) {
     err: from_candid_StewardError_n18(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n148(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n131(_uploadFile, _downloadFile, value) {
+  return "Google" in value ? "Google" : "Apple" in value ? "Apple" : value;
+}
+function from_candid_variant_n133(_uploadFile, _downloadFile, value) {
+  return "AccountNotFound" in value ? "AccountNotFound" : "NotSignedIn" in value ? "NotSignedIn" : value;
+}
+function from_candid_variant_n154(_uploadFile, _downloadFile, value) {
   return "Researching" in value ? "Researching" : "Open" in value ? "Open" : "PartiallyResolved" in value ? "PartiallyResolved" : "Resolved" in value ? "Resolved" : value;
 }
-function from_candid_variant_n161(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n167(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
     ok: from_candid_ProposedFinding_n65(_uploadFile, _downloadFile, value.ok)
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_ResearchError_n162(_uploadFile, _downloadFile, value.err)
+    err: from_candid_ResearchError_n168(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n163(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n169(_uploadFile, _downloadFile, value) {
   return "invalidState" in value ? {
     __kind__: "invalidState",
     invalidState: value.invalidState
@@ -43281,79 +43431,79 @@ function from_candid_variant_n163(_uploadFile, _downloadFile, value) {
     notFound: value.notFound
   } : value;
 }
-function from_candid_variant_n165(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: from_candid_PersonProfile_n166(_uploadFile, _downloadFile, value.ok)
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_CreateError_n172(_uploadFile, _downloadFile, value.err)
-  } : value;
-}
-function from_candid_variant_n169(_uploadFile, _downloadFile, value) {
-  return "Unclaimed" in value ? "Unclaimed" : "Claimed" in value ? "Claimed" : value;
-}
 function from_candid_variant_n17(_uploadFile, _downloadFile, value) {
   return "Active" in value ? "Active" : "Removed" in value ? "Removed" : value;
 }
 function from_candid_variant_n171(_uploadFile, _downloadFile, value) {
-  return "Living" in value ? "Living" : "Deceased" in value ? "Deceased" : value;
-}
-function from_candid_variant_n173(_uploadFile, _downloadFile, value) {
-  return "NotSignedIn" in value ? "NotSignedIn" : value;
-}
-function from_candid_variant_n175(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
-    ok: from_candid_NewPersonCandidate_n176(_uploadFile, _downloadFile, value.ok)
+    ok: from_candid_PersonProfile_n172(_uploadFile, _downloadFile, value.ok)
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_ResearchError_n162(_uploadFile, _downloadFile, value.err)
+    err: from_candid_CreateError_n178(_uploadFile, _downloadFile, value.err)
   } : value;
 }
+function from_candid_variant_n175(_uploadFile, _downloadFile, value) {
+  return "Unclaimed" in value ? "Unclaimed" : "Claimed" in value ? "Claimed" : value;
+}
+function from_candid_variant_n177(_uploadFile, _downloadFile, value) {
+  return "Living" in value ? "Living" : "Deceased" in value ? "Deceased" : value;
+}
 function from_candid_variant_n179(_uploadFile, _downloadFile, value) {
+  return "NotSignedIn" in value ? "NotSignedIn" : value;
+}
+function from_candid_variant_n181(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
-    ok: from_candid_RelationshipProposal_n180(_uploadFile, _downloadFile, value.ok)
+    ok: from_candid_NewPersonCandidate_n82(_uploadFile, _downloadFile, value.ok)
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_ResearchError_n162(_uploadFile, _downloadFile, value.err)
+    err: from_candid_ResearchError_n168(_uploadFile, _downloadFile, value.err)
   } : value;
 }
 function from_candid_variant_n183(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
-    ok: from_candid_SourceRecord_n99(_uploadFile, _downloadFile, value.ok)
+    ok: from_candid_RelationshipProposal_n98(_uploadFile, _downloadFile, value.ok)
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_ResearchError_n162(_uploadFile, _downloadFile, value.err)
+    err: from_candid_ResearchError_n168(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-async function from_candid_variant_n186(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n185(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
-    ok: await from_candid_SourceUploadResult_n187(_uploadFile, _downloadFile, value.ok)
+    ok: from_candid_SourceRecord_n105(_uploadFile, _downloadFile, value.ok)
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_ResearchError_n162(_uploadFile, _downloadFile, value.err)
+    err: from_candid_ResearchError_n168(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+async function from_candid_variant_n188(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: await from_candid_SourceUploadResult_n189(_uploadFile, _downloadFile, value.ok)
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_ResearchError_n168(_uploadFile, _downloadFile, value.err)
   } : value;
 }
 function from_candid_variant_n19(_uploadFile, _downloadFile, value) {
   return "LastSteward" in value ? "LastSteward" : "NotSteward" in value ? "NotSteward" : "AlreadySteward" in value ? "AlreadySteward" : "NotSignedIn" in value ? "NotSignedIn" : "NotApprovedClaimedMember" in value ? "NotApprovedClaimedMember" : "NotDesignated" in value ? "NotDesignated" : value;
 }
-function from_candid_variant_n190(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n192(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
-    ok: from_candid_SuccessorDesignation_n191(_uploadFile, _downloadFile, value.ok)
+    ok: from_candid_SuccessorDesignation_n193(_uploadFile, _downloadFile, value.ok)
   } : "err" in value ? {
     __kind__: "err",
     err: from_candid_StewardError_n18(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n194(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n196(_uploadFile, _downloadFile, value) {
   return "Activated" in value ? "Activated" : "Removed" in value ? "Removed" : "Designated" in value ? "Designated" : value;
 }
-function from_candid_variant_n202(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n204(_uploadFile, _downloadFile, value) {
   return "int" in value ? {
     __kind__: "int",
     int: value.int
@@ -43374,20 +43524,11 @@ function from_candid_variant_n202(_uploadFile, _downloadFile, value) {
     text: value.text
   } : value;
 }
-function from_candid_variant_n204(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n206(_uploadFile, _downloadFile, value) {
   return "admin" in value ? "admin" : "user" in value ? "user" : "guest" in value ? "guest" : value;
 }
-function from_candid_variant_n212(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n214(_uploadFile, _downloadFile, value) {
   return "Blocked" in value ? "Blocked" : "Sent" in value ? "Sent" : value;
-}
-function from_candid_variant_n215(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: value.ok
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_AccountError_n126(_uploadFile, _downloadFile, value.err)
-  } : value;
 }
 function from_candid_variant_n217(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
@@ -43395,31 +43536,40 @@ function from_candid_variant_n217(_uploadFile, _downloadFile, value) {
     ok: value.ok
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_AccountError_n126(_uploadFile, _downloadFile, value.err)
+    err: from_candid_AccountError_n132(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n227(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n219(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: value.ok
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_AccountError_n132(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n229(_uploadFile, _downloadFile, value) {
   return "Dismissed" in value ? "Dismissed" : "Reviewed" in value ? "Reviewed" : "Pending" in value ? "Pending" : value;
 }
-function from_candid_variant_n240(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n242(_uploadFile, _downloadFile, value) {
   return "Source" in value ? "Source" : "RelationshipProposal" in value ? "RelationshipProposal" : "ConflictReview" in value ? "ConflictReview" : "NewPersonCandidate" in value ? "NewPersonCandidate" : "Finding" in value ? "Finding" : value;
 }
-function from_candid_variant_n243(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n245(_uploadFile, _downloadFile, value) {
   return "NeedsResearch" in value ? "NeedsResearch" : "Approve" in value ? "Approve" : "Reject" in value ? "Reject" : value;
 }
-function from_candid_variant_n252(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n254(_uploadFile, _downloadFile, value) {
   return "ProfileRemovalRequested" in value ? "ProfileRemovalRequested" : "ClaimRejected" in value ? "ClaimRejected" : "RelationshipTypeCorrected" in value ? "RelationshipTypeCorrected" : "RelationshipRequestPending" in value ? "RelationshipRequestPending" : "StewardPromoted" in value ? "StewardPromoted" : "BoardReplyRemoved" in value ? "BoardReplyRemoved" : "SuccessorActivated" in value ? "SuccessorActivated" : "StewardRemoved" in value ? "StewardRemoved" : "RelationshipRequestApproved" in value ? "RelationshipRequestApproved" : "DuplicateMerged" in value ? "DuplicateMerged" : "ProfilePermanentlyDeleted" in value ? "ProfilePermanentlyDeleted" : "RelationshipRequestRejected" in value ? "RelationshipRequestRejected" : "ProfileArchived" in value ? "ProfileArchived" : "ProfileRestored" in value ? "ProfileRestored" : "BoardPostArchived" in value ? "BoardPostArchived" : "BoardPostRestored" in value ? "BoardPostRestored" : "RelationshipAdded" in value ? "RelationshipAdded" : "RelationshipRemoved" in value ? "RelationshipRemoved" : "ProfileRemovalReviewed" in value ? "ProfileRemovalReviewed" : "ClaimApproved" in value ? "ClaimApproved" : "SuccessorDesignated" in value ? "SuccessorDesignated" : value;
 }
-function from_candid_variant_n271(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n273(_uploadFile, _downloadFile, value) {
   return "ResearchSubmission" in value ? "ResearchSubmission" : "ResearchApproved" in value ? "ResearchApproved" : "ResearchRejected" in value ? "ResearchRejected" : "RelationshipRequested" in value ? "RelationshipRequested" : "BoardMention" in value ? "BoardMention" : "RelationshipReviewed" in value ? "RelationshipReviewed" : "BoardReply" in value ? "BoardReply" : "NewMessage" in value ? "NewMessage" : "ProfileClaimReviewed" in value ? "ProfileClaimReviewed" : "ProfileClaimRequested" in value ? "ProfileClaimRequested" : value;
 }
-function from_candid_variant_n277(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n279(_uploadFile, _downloadFile, value) {
   return "Lead" in value ? "Lead" : "Note" in value ? "Note" : "Memory" in value ? "Memory" : "Source" in value ? "Source" : value;
 }
 function from_candid_variant_n28(_uploadFile, _downloadFile, value) {
   return "Approved" in value ? "Approved" : "Rejected" in value ? "Rejected" : "Pending" in value ? "Pending" : value;
 }
-function from_candid_variant_n290(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n292(_uploadFile, _downloadFile, value) {
   return "Story" in value ? {
     __kind__: "Story",
     Story: value.Story
@@ -43434,35 +43584,26 @@ function from_candid_variant_n290(_uploadFile, _downloadFile, value) {
     ArchiveItem: value.ArchiveItem
   } : value;
 }
-function from_candid_variant_n292(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n294(_uploadFile, _downloadFile, value) {
   return "MilitaryService" in value ? "MilitaryService" : "Story" in value ? "Story" : "Birth" in value ? "Birth" : "FamilyEvent" in value ? "FamilyEvent" : "Migration" in value ? "Migration" : "Mystery" in value ? "Mystery" : "Death" in value ? "Death" : "PhotoDocument" in value ? "PhotoDocument" : "Marriage" in value ? "Marriage" : "CensusDocument" in value ? "CensusDocument" : "Location" in value ? "Location" : value;
 }
-function from_candid_variant_n296(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n298(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
-    ok: from_candid_MergeResult_n297(_uploadFile, _downloadFile, value.ok)
+    ok: from_candid_MergeResult_n299(_uploadFile, _downloadFile, value.ok)
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_MergeError_n304(_uploadFile, _downloadFile, value.err)
+    err: from_candid_MergeError_n306(_uploadFile, _downloadFile, value.err)
   } : value;
 }
 function from_candid_variant_n30(_uploadFile, _downloadFile, value) {
   return "Unresolved" in value ? "Unresolved" : "Documented" in value ? "Documented" : "FamilyHistory" in value ? "FamilyHistory" : "PersonalMemory" in value ? "PersonalMemory" : value;
 }
-function from_candid_variant_n303(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n305(_uploadFile, _downloadFile, value) {
   return "Resolved" in value ? "Resolved" : "Pending" in value ? "Pending" : value;
 }
-function from_candid_variant_n305(_uploadFile, _downloadFile, value) {
-  return "NotDuplicate" in value ? "NotDuplicate" : "ProfileNotFound" in value ? "ProfileNotFound" : "NotSignedIn" in value ? "NotSignedIn" : "SameProfile" in value ? "SameProfile" : value;
-}
 function from_candid_variant_n307(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: value.ok
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_MergeError_n304(_uploadFile, _downloadFile, value.err)
-  } : value;
+  return "NotDuplicate" in value ? "NotDuplicate" : "ProfileNotFound" in value ? "ProfileNotFound" : "NotSignedIn" in value ? "NotSignedIn" : "SameProfile" in value ? "SameProfile" : value;
 }
 function from_candid_variant_n309(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
@@ -43470,37 +43611,46 @@ function from_candid_variant_n309(_uploadFile, _downloadFile, value) {
     ok: value.ok
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_DeleteError_n310(_uploadFile, _downloadFile, value.err)
+    err: from_candid_MergeError_n306(_uploadFile, _downloadFile, value.err)
   } : value;
 }
 function from_candid_variant_n311(_uploadFile, _downloadFile, value) {
-  return "HasOwnershipHistory" in value ? "HasOwnershipHistory" : "ProfileNotFound" in value ? "ProfileNotFound" : "HasMedia" in value ? "HasMedia" : "HasArchiveItems" in value ? "HasArchiveItems" : "NotSignedIn" in value ? "NotSignedIn" : "ConfirmationRequired" in value ? "ConfirmationRequired" : "HasTimeline" in value ? "HasTimeline" : "HasApprovedRelationships" in value ? "HasApprovedRelationships" : value;
-}
-function from_candid_variant_n313(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: from_candid_RelationshipRequest_n95(_uploadFile, _downloadFile, value.ok)
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_RelationshipError_n314(_uploadFile, _downloadFile, value.err)
-  } : value;
-}
-function from_candid_variant_n315(_uploadFile, _downloadFile, value) {
-  return "DuplicateRequest" in value ? "DuplicateRequest" : "NotSignedIn" in value ? "NotSignedIn" : "PersonNotFound" in value ? "PersonNotFound" : value;
-}
-function from_candid_variant_n318(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
     ok: value.ok
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_RemoveError_n319(_uploadFile, _downloadFile, value.err)
+    err: from_candid_DeleteError_n312(_uploadFile, _downloadFile, value.err)
   } : value;
 }
+function from_candid_variant_n313(_uploadFile, _downloadFile, value) {
+  return "HasOwnershipHistory" in value ? "HasOwnershipHistory" : "ProfileNotFound" in value ? "ProfileNotFound" : "HasMedia" in value ? "HasMedia" : "HasArchiveItems" in value ? "HasArchiveItems" : "NotSignedIn" in value ? "NotSignedIn" : "ConfirmationRequired" in value ? "ConfirmationRequired" : "HasTimeline" in value ? "HasTimeline" : "HasApprovedRelationships" in value ? "HasApprovedRelationships" : value;
+}
+function from_candid_variant_n315(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: from_candid_RelationshipRequest_n101(_uploadFile, _downloadFile, value.ok)
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_RelationshipError_n316(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n317(_uploadFile, _downloadFile, value) {
+  return "DuplicateRequest" in value ? "DuplicateRequest" : "NotSignedIn" in value ? "NotSignedIn" : "PersonNotFound" in value ? "PersonNotFound" : value;
+}
 function from_candid_variant_n320(_uploadFile, _downloadFile, value) {
-  return "ProfileNotFound" in value ? "ProfileNotFound" : "NotSignedIn" in value ? "NotSignedIn" : value;
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: value.ok
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_RemoveError_n321(_uploadFile, _downloadFile, value.err)
+  } : value;
 }
 function from_candid_variant_n322(_uploadFile, _downloadFile, value) {
+  return "ProfileNotFound" in value ? "ProfileNotFound" : "NotSignedIn" in value ? "NotSignedIn" : value;
+}
+function from_candid_variant_n324(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
     ok: value.ok
@@ -43509,7 +43659,7 @@ function from_candid_variant_n322(_uploadFile, _downloadFile, value) {
     err: from_candid_RelationshipAdminError_n45(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n324(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n326(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
     ok: value.ok
@@ -43518,52 +43668,52 @@ function from_candid_variant_n324(_uploadFile, _downloadFile, value) {
     err: from_candid_StewardError_n18(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n326(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n328(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
-    ok: from_candid_ProfileClaim_n82(_uploadFile, _downloadFile, value.ok)
+    ok: from_candid_ProfileClaim_n85(_uploadFile, _downloadFile, value.ok)
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_ClaimError_n327(_uploadFile, _downloadFile, value.err)
+    err: from_candid_ClaimError_n329(_uploadFile, _downloadFile, value.err)
   } : value;
-}
-function from_candid_variant_n328(_uploadFile, _downloadFile, value) {
-  return "AlreadyPending" in value ? "AlreadyPending" : "ProfileNotFound" in value ? "ProfileNotFound" : "AlreadyClaimed" in value ? "AlreadyClaimed" : "NotSignedIn" in value ? "NotSignedIn" : "DeceasedProfile" in value ? "DeceasedProfile" : value;
 }
 function from_candid_variant_n330(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: from_candid_ProfileRemovalRequest_n86(_uploadFile, _downloadFile, value.ok)
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_RemovalError_n331(_uploadFile, _downloadFile, value.err)
-  } : value;
+  return "AlreadyPending" in value ? "AlreadyPending" : "ProfileNotFound" in value ? "ProfileNotFound" : "AlreadyClaimed" in value ? "AlreadyClaimed" : "NotSignedIn" in value ? "NotSignedIn" : "DeceasedProfile" in value ? "DeceasedProfile" : value;
 }
 function from_candid_variant_n332(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: from_candid_ProfileRemovalRequest_n89(_uploadFile, _downloadFile, value.ok)
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_RemovalError_n333(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n334(_uploadFile, _downloadFile, value) {
   return "AlreadyPending" in value ? "AlreadyPending" : "ProfileNotFound" in value ? "ProfileNotFound" : "NotSignedIn" in value ? "NotSignedIn" : "NotOwner" in value ? "NotOwner" : "DeceasedProfile" in value ? "DeceasedProfile" : value;
 }
-function from_candid_variant_n342(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n344(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
-    ok: from_candid_Message_n209(_uploadFile, _downloadFile, value.ok)
+    ok: from_candid_Message_n211(_uploadFile, _downloadFile, value.ok)
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_MessageError_n343(_uploadFile, _downloadFile, value.err)
+    err: from_candid_MessageError_n345(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n344(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n346(_uploadFile, _downloadFile, value) {
   return "ConversationNotFound" in value ? "ConversationNotFound" : "RecipientArchived" in value ? "RecipientArchived" : "NotApprovedMember" in value ? "NotApprovedMember" : "RecipientNotClaimed" in value ? "RecipientNotClaimed" : "NotSignedIn" in value ? "NotSignedIn" : "BlockedByRecipient" in value ? "BlockedByRecipient" : "NotParticipant" in value ? "NotParticipant" : "CannotMessageSelf" in value ? "CannotMessageSelf" : "RecipientNotFound" in value ? "RecipientNotFound" : value;
 }
-function from_candid_variant_n352(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n354(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
-    ok: from_candid_PersonProfile_n166(_uploadFile, _downloadFile, value.ok)
+    ok: from_candid_PersonProfile_n172(_uploadFile, _downloadFile, value.ok)
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_EditError_n353(_uploadFile, _downloadFile, value.err)
+    err: from_candid_EditError_n355(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n354(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n356(_uploadFile, _downloadFile, value) {
   return "ProfileNotFound" in value ? "ProfileNotFound" : "NotSignedIn" in value ? "NotSignedIn" : "NotOwner" in value ? "NotOwner" : "DeceasedProfile" in value ? "DeceasedProfile" : value;
 }
 function from_candid_variant_n38(_uploadFile, _downloadFile, value) {
@@ -43638,122 +43788,122 @@ function from_candid_variant_n9(_uploadFile, _downloadFile, value) {
     err: from_candid_Error_n10(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n93(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n96(_uploadFile, _downloadFile, value) {
   return "Approved" in value ? "Approved" : "Rejected" in value ? "Rejected" : "Archived" in value ? "Archived" : "Pending" in value ? "Pending" : value;
 }
-function from_candid_vec_n123(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_AuthMethod_n124(_uploadFile, _downloadFile, x2));
+function from_candid_vec_n129(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_AuthMethod_n130(_uploadFile, _downloadFile, x2));
 }
-function from_candid_vec_n197(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_vec_n198(_uploadFile, _downloadFile, x2));
+function from_candid_vec_n199(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_vec_n200(_uploadFile, _downloadFile, x2));
 }
-function from_candid_vec_n198(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_Cell_n199(_uploadFile, _downloadFile, x2));
+function from_candid_vec_n200(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_Cell_n201(_uploadFile, _downloadFile, x2));
 }
-function from_candid_vec_n208(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_Message_n209(_uploadFile, _downloadFile, x2));
+function from_candid_vec_n210(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_Message_n211(_uploadFile, _downloadFile, x2));
 }
-function from_candid_vec_n219(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_RelationshipRequest_n95(_uploadFile, _downloadFile, x2));
+function from_candid_vec_n221(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_RelationshipRequest_n101(_uploadFile, _downloadFile, x2));
 }
-function from_candid_vec_n228(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_ResearchAuditEntry_n229(_uploadFile, _downloadFile, x2));
+function from_candid_vec_n230(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_ResearchAuditEntry_n231(_uploadFile, _downloadFile, x2));
 }
-function from_candid_vec_n235(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_ReviewQueueItem_n236(_uploadFile, _downloadFile, x2));
+function from_candid_vec_n237(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_ReviewQueueItem_n238(_uploadFile, _downloadFile, x2));
 }
-function from_candid_vec_n241(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_ReviewAction_n242(_uploadFile, _downloadFile, x2));
+function from_candid_vec_n243(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_ReviewAction_n244(_uploadFile, _downloadFile, x2));
 }
-async function from_candid_vec_n244(_uploadFile, _downloadFile, value) {
+async function from_candid_vec_n246(_uploadFile, _downloadFile, value) {
   return await Promise.all(value.map(async (x2) => await from_candid_ArchiveItem_n48(_uploadFile, _downloadFile, x2)));
 }
-function from_candid_vec_n245(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_Recipe_n90(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n246(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_Story_n24(_uploadFile, _downloadFile, x2));
-}
 function from_candid_vec_n247(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_PersonProfile_n166(_uploadFile, _downloadFile, x2));
+  return value.map((x2) => from_candid_Recipe_n93(_uploadFile, _downloadFile, x2));
 }
 function from_candid_vec_n248(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_AuditEntry_n249(_uploadFile, _downloadFile, x2));
+  return value.map((x2) => from_candid_Story_n24(_uploadFile, _downloadFile, x2));
 }
-function from_candid_vec_n254(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_Post_n103(_uploadFile, _downloadFile, x2));
+function from_candid_vec_n249(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_PersonProfile_n172(_uploadFile, _downloadFile, x2));
 }
-function from_candid_vec_n255(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_Relationship_n39(_uploadFile, _downloadFile, x2));
+function from_candid_vec_n250(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_AuditEntry_n251(_uploadFile, _downloadFile, x2));
 }
 function from_candid_vec_n256(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_ConflictReviewItem_n257(_uploadFile, _downloadFile, x2));
+  return value.map((x2) => from_candid_Post_n109(_uploadFile, _downloadFile, x2));
 }
-function from_candid_vec_n259(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_DuplicatePair_n260(_uploadFile, _downloadFile, x2));
+function from_candid_vec_n257(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_Relationship_n39(_uploadFile, _downloadFile, x2));
 }
-function from_candid_vec_n264(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_ProposedFinding_n65(_uploadFile, _downloadFile, x2));
+function from_candid_vec_n258(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_ConflictReviewItem_n259(_uploadFile, _downloadFile, x2));
 }
-function from_candid_vec_n265(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_Mystery_n145(_uploadFile, _downloadFile, x2));
+function from_candid_vec_n261(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_DuplicatePair_n262(_uploadFile, _downloadFile, x2));
 }
 function from_candid_vec_n266(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_NewPersonCandidate_n176(_uploadFile, _downloadFile, x2));
+  return value.map((x2) => from_candid_ProposedFinding_n65(_uploadFile, _downloadFile, x2));
 }
 function from_candid_vec_n267(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_Notification_n268(_uploadFile, _downloadFile, x2));
+  return value.map((x2) => from_candid_Mystery_n151(_uploadFile, _downloadFile, x2));
 }
-function from_candid_vec_n272(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_MysteryContribution_n273(_uploadFile, _downloadFile, x2));
+function from_candid_vec_n268(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_NewPersonCandidate_n82(_uploadFile, _downloadFile, x2));
 }
-async function from_candid_vec_n278(_uploadFile, _downloadFile, value) {
+function from_candid_vec_n269(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_Notification_n270(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n274(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_MysteryContribution_n275(_uploadFile, _downloadFile, x2));
+}
+async function from_candid_vec_n280(_uploadFile, _downloadFile, value) {
   return await Promise.all(value.map(async (x2) => await from_candid_Photo_n32(_uploadFile, _downloadFile, x2)));
 }
-function from_candid_vec_n279(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_ProfileClaim_n82(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n280(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_ProfileRemovalRequest_n86(_uploadFile, _downloadFile, x2));
-}
 function from_candid_vec_n281(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_RelationshipProposal_n180(_uploadFile, _downloadFile, x2));
+  return value.map((x2) => from_candid_ProfileClaim_n85(_uploadFile, _downloadFile, x2));
 }
 function from_candid_vec_n282(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_Report_n224(_uploadFile, _downloadFile, x2));
+  return value.map((x2) => from_candid_ProfileRemovalRequest_n89(_uploadFile, _downloadFile, x2));
 }
 function from_candid_vec_n283(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_SourceRecord_n99(_uploadFile, _downloadFile, x2));
+  return value.map((x2) => from_candid_RelationshipProposal_n98(_uploadFile, _downloadFile, x2));
 }
 function from_candid_vec_n284(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_StewardRecord_n14(_uploadFile, _downloadFile, x2));
+  return value.map((x2) => from_candid_Report_n226(_uploadFile, _downloadFile, x2));
 }
 function from_candid_vec_n285(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_SuccessorDesignation_n191(_uploadFile, _downloadFile, x2));
+  return value.map((x2) => from_candid_SourceRecord_n105(_uploadFile, _downloadFile, x2));
 }
 function from_candid_vec_n286(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_TimelineEvent_n287(_uploadFile, _downloadFile, x2));
+  return value.map((x2) => from_candid_StewardRecord_n14(_uploadFile, _downloadFile, x2));
 }
-function from_candid_vec_n299(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_MergeConflict_n300(_uploadFile, _downloadFile, x2));
+function from_candid_vec_n287(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_SuccessorDesignation_n193(_uploadFile, _downloadFile, x2));
 }
-function to_candid_ArchiveItemClassification_n141(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n142(_uploadFile, _downloadFile, value);
+function from_candid_vec_n288(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_TimelineEvent_n289(_uploadFile, _downloadFile, x2));
 }
-function to_candid_ArchiveItemType_n137(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n138(_uploadFile, _downloadFile, value);
+function from_candid_vec_n301(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_MergeConflict_n302(_uploadFile, _downloadFile, x2));
 }
-function to_candid_ArchiveSearchFilter_n339(_uploadFile, _downloadFile, value) {
-  return to_candid_record_n340(_uploadFile, _downloadFile, value);
+function to_candid_ArchiveItemClassification_n147(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n148(_uploadFile, _downloadFile, value);
 }
-function to_candid_AuthMethod_n117(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n118(_uploadFile, _downloadFile, value);
+function to_candid_ArchiveItemType_n143(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n144(_uploadFile, _downloadFile, value);
 }
-async function to_candid_BoardMediaUpload_n131(_uploadFile, _downloadFile, value) {
-  return await to_candid_record_n132(_uploadFile, _downloadFile, value);
+function to_candid_ArchiveSearchFilter_n341(_uploadFile, _downloadFile, value) {
+  return to_candid_record_n342(_uploadFile, _downloadFile, value);
 }
-function to_candid_EvidenceLabel_n150(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n151(_uploadFile, _downloadFile, value);
+function to_candid_AuthMethod_n123(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n124(_uploadFile, _downloadFile, value);
+}
+async function to_candid_BoardMediaUpload_n137(_uploadFile, _downloadFile, value) {
+  return await to_candid_record_n138(_uploadFile, _downloadFile, value);
+}
+function to_candid_EvidenceLabel_n156(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n157(_uploadFile, _downloadFile, value);
 }
 function to_candid_EvidenceStatus_n22(_uploadFile, _downloadFile, value) {
   return to_candid_variant_n23(_uploadFile, _downloadFile, value);
@@ -43761,47 +43911,47 @@ function to_candid_EvidenceStatus_n22(_uploadFile, _downloadFile, value) {
 async function to_candid_ExternalBlob_n31(_uploadFile, _downloadFile, value) {
   return await _uploadFile(value);
 }
-function to_candid_FindingContent_n154(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n155(_uploadFile, _downloadFile, value);
+function to_candid_FindingContent_n160(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n161(_uploadFile, _downloadFile, value);
 }
-function to_candid_FindingType_n152(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n153(_uploadFile, _downloadFile, value);
+function to_candid_FindingType_n158(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n159(_uploadFile, _downloadFile, value);
 }
-function to_candid_LivingStatus_n349(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n350(_uploadFile, _downloadFile, value);
+function to_candid_LivingStatus_n351(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n352(_uploadFile, _downloadFile, value);
 }
-function to_candid_MysteryContributionType_n345(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n346(_uploadFile, _downloadFile, value);
+function to_candid_MysteryContributionType_n347(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n348(_uploadFile, _downloadFile, value);
 }
-function to_candid_MysteryStatus_n143(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n144(_uploadFile, _downloadFile, value);
+function to_candid_MysteryStatus_n149(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n150(_uploadFile, _downloadFile, value);
 }
-function to_candid_OralHistorySpeaker_n135(_uploadFile, _downloadFile, value) {
-  return to_candid_record_n136(_uploadFile, _downloadFile, value);
+function to_candid_OralHistorySpeaker_n141(_uploadFile, _downloadFile, value) {
+  return to_candid_record_n142(_uploadFile, _downloadFile, value);
 }
-function to_candid_PostType_n128(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n129(_uploadFile, _downloadFile, value);
+function to_candid_PostType_n134(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n135(_uploadFile, _downloadFile, value);
 }
-function to_candid_PrivacyLevel_n133(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n134(_uploadFile, _downloadFile, value);
+function to_candid_PrivacyLevel_n139(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n140(_uploadFile, _downloadFile, value);
 }
-function to_candid_ProfileEdits_n347(_uploadFile, _downloadFile, value) {
-  return to_candid_record_n348(_uploadFile, _downloadFile, value);
+function to_candid_ProfileEdits_n349(_uploadFile, _downloadFile, value) {
+  return to_candid_record_n350(_uploadFile, _downloadFile, value);
 }
 function to_candid_RelationshipType_n35(_uploadFile, _downloadFile, value) {
   return to_candid_variant_n36(_uploadFile, _downloadFile, value);
 }
-function to_candid_ReportStatus_n336(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n337(_uploadFile, _downloadFile, value);
+function to_candid_ReportStatus_n338(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n339(_uploadFile, _downloadFile, value);
 }
-function to_candid_SourceStatus_n139(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n140(_uploadFile, _downloadFile, value);
+function to_candid_SourceStatus_n145(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n146(_uploadFile, _downloadFile, value);
 }
-function to_candid_SourceType_n157(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n158(_uploadFile, _downloadFile, value);
+function to_candid_SourceType_n163(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n164(_uploadFile, _downloadFile, value);
 }
-function to_candid_UserRole_n115(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n116(_uploadFile, _downloadFile, value);
+function to_candid_UserRole_n121(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n122(_uploadFile, _downloadFile, value);
 }
 function to_candid__ImmutableObjectStorageRefillInformation_n2(_uploadFile, _downloadFile, value) {
   return to_candid_record_n3(_uploadFile, _downloadFile, value);
@@ -43809,8 +43959,8 @@ function to_candid__ImmutableObjectStorageRefillInformation_n2(_uploadFile, _dow
 function to_candid_opt_n1(_uploadFile, _downloadFile, value) {
   return value === null ? candid_none() : candid_some(to_candid__ImmutableObjectStorageRefillInformation_n2(_uploadFile, _downloadFile, value));
 }
-function to_candid_opt_n184(_uploadFile, _downloadFile, value) {
-  return value === null ? candid_none() : candid_some(to_candid_OralHistorySpeaker_n135(_uploadFile, _downloadFile, value));
+function to_candid_opt_n186(_uploadFile, _downloadFile, value) {
+  return value === null ? candid_none() : candid_some(to_candid_OralHistorySpeaker_n141(_uploadFile, _downloadFile, value));
 }
 function to_candid_opt_n20(_uploadFile, _downloadFile, value) {
   return value === null ? candid_none() : candid_some(value);
@@ -43818,10 +43968,10 @@ function to_candid_opt_n20(_uploadFile, _downloadFile, value) {
 function to_candid_opt_n21(_uploadFile, _downloadFile, value) {
   return value === null ? candid_none() : candid_some(value);
 }
-function to_candid_opt_n253(_uploadFile, _downloadFile, value) {
-  return value === null ? candid_none() : candid_some(to_candid_PostType_n128(_uploadFile, _downloadFile, value));
+function to_candid_opt_n255(_uploadFile, _downloadFile, value) {
+  return value === null ? candid_none() : candid_some(to_candid_PostType_n134(_uploadFile, _downloadFile, value));
 }
-async function to_candid_record_n132(_uploadFile, _downloadFile, value) {
+async function to_candid_record_n138(_uploadFile, _downloadFile, value) {
   return {
     era: value.era,
     title: value.title,
@@ -43830,29 +43980,29 @@ async function to_candid_record_n132(_uploadFile, _downloadFile, value) {
     tags: value.tags,
     year: value.year ? candid_some(value.year) : candid_none(),
     description: value.description,
-    privacyLevel: to_candid_PrivacyLevel_n133(_uploadFile, _downloadFile, value.privacyLevel),
-    primarySpeaker: value.primarySpeaker ? candid_some(to_candid_OralHistorySpeaker_n135(_uploadFile, _downloadFile, value.primarySpeaker)) : candid_none(),
-    itemType: to_candid_ArchiveItemType_n137(_uploadFile, _downloadFile, value.itemType),
+    privacyLevel: to_candid_PrivacyLevel_n139(_uploadFile, _downloadFile, value.privacyLevel),
+    primarySpeaker: value.primarySpeaker ? candid_some(to_candid_OralHistorySpeaker_n141(_uploadFile, _downloadFile, value.primarySpeaker)) : candid_none(),
+    itemType: to_candid_ArchiveItemType_n143(_uploadFile, _downloadFile, value.itemType),
     relatedBranchId: value.relatedBranchId ? candid_some(value.relatedBranchId) : candid_none(),
-    sourceStatus: to_candid_SourceStatus_n139(_uploadFile, _downloadFile, value.sourceStatus),
-    classification: to_candid_ArchiveItemClassification_n141(_uploadFile, _downloadFile, value.classification)
+    sourceStatus: to_candid_SourceStatus_n145(_uploadFile, _downloadFile, value.sourceStatus),
+    classification: to_candid_ArchiveItemClassification_n147(_uploadFile, _downloadFile, value.classification)
   };
 }
-function to_candid_record_n136(_uploadFile, _downloadFile, value) {
+function to_candid_record_n142(_uploadFile, _downloadFile, value) {
   return {
     name: value.name,
     personId: value.personId ? candid_some(value.personId) : candid_none()
   };
 }
-function to_candid_record_n156(_uploadFile, _downloadFile, value) {
+function to_candid_record_n162(_uploadFile, _downloadFile, value) {
   return {
     title: value.title,
     archiveItemId: value.archiveItemId ? candid_some(value.archiveItemId) : candid_none(),
     description: value.description,
-    sourceType: to_candid_SourceType_n157(_uploadFile, _downloadFile, value.sourceType)
+    sourceType: to_candid_SourceType_n163(_uploadFile, _downloadFile, value.sourceType)
   };
 }
-function to_candid_record_n159(_uploadFile, _downloadFile, value) {
+function to_candid_record_n165(_uploadFile, _downloadFile, value) {
   return {
     title: value.title,
     date: value.date ? candid_some(value.date) : candid_none(),
@@ -43865,23 +44015,23 @@ function to_candid_record_n3(_uploadFile, _downloadFile, value) {
     proposed_top_up_amount: value.proposed_top_up_amount ? candid_some(value.proposed_top_up_amount) : candid_none()
   };
 }
-function to_candid_record_n340(_uploadFile, _downloadFile, value) {
+function to_candid_record_n342(_uploadFile, _downloadFile, value) {
   return {
     era: value.era ? candid_some(value.era) : candid_none(),
     relatedMemberId: value.relatedMemberId ? candid_some(value.relatedMemberId) : candid_none(),
     tags: value.tags,
     searchTerm: value.searchTerm ? candid_some(value.searchTerm) : candid_none(),
-    itemType: value.itemType ? candid_some(to_candid_ArchiveItemType_n137(_uploadFile, _downloadFile, value.itemType)) : candid_none()
+    itemType: value.itemType ? candid_some(to_candid_ArchiveItemType_n143(_uploadFile, _downloadFile, value.itemType)) : candid_none()
   };
 }
-function to_candid_record_n348(_uploadFile, _downloadFile, value) {
+function to_candid_record_n350(_uploadFile, _downloadFile, value) {
   return {
     occupation: value.occupation ? candid_some(value.occupation) : candid_none(),
     privacySettings: value.privacySettings ? candid_some(value.privacySettings) : candid_none(),
     nickname: value.nickname ? candid_some(value.nickname) : candid_none(),
     birthDate: value.birthDate ? candid_some(value.birthDate) : candid_none(),
     birthInfo: value.birthInfo ? candid_some(value.birthInfo) : candid_none(),
-    livingStatus: value.livingStatus ? candid_some(to_candid_LivingStatus_n349(_uploadFile, _downloadFile, value.livingStatus)) : candid_none(),
+    livingStatus: value.livingStatus ? candid_some(to_candid_LivingStatus_n351(_uploadFile, _downloadFile, value.livingStatus)) : candid_none(),
     longerStory: value.longerStory ? candid_some(value.longerStory) : candid_none(),
     story: value.story ? candid_some(value.story) : candid_none(),
     middleName: value.middleName ? candid_some(value.middleName) : candid_none(),
@@ -43895,7 +44045,7 @@ function to_candid_record_n348(_uploadFile, _downloadFile, value) {
     firstName: value.firstName ? candid_some(value.firstName) : candid_none()
   };
 }
-function to_candid_variant_n116(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n122(_uploadFile, _downloadFile, value) {
   return value == "admin" ? {
     admin: null
   } : value == "user" ? {
@@ -43904,14 +44054,14 @@ function to_candid_variant_n116(_uploadFile, _downloadFile, value) {
     guest: null
   } : value;
 }
-function to_candid_variant_n118(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n124(_uploadFile, _downloadFile, value) {
   return value == "Google" ? {
     Google: null
   } : value == "Apple" ? {
     Apple: null
   } : value;
 }
-function to_candid_variant_n129(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n135(_uploadFile, _downloadFile, value) {
   return value == "Announcement" ? {
     Announcement: null
   } : value == "Recipe" ? {
@@ -43932,7 +44082,7 @@ function to_candid_variant_n129(_uploadFile, _downloadFile, value) {
     PhotoIdentification: null
   } : value;
 }
-function to_candid_variant_n134(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n140(_uploadFile, _downloadFile, value) {
   return value == "Private" ? {
     Private: null
   } : value == "Public" ? {
@@ -43941,7 +44091,7 @@ function to_candid_variant_n134(_uploadFile, _downloadFile, value) {
     FamilyOnly: null
   } : value;
 }
-function to_candid_variant_n138(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n144(_uploadFile, _downloadFile, value) {
   return value == "Research" ? {
     Research: null
   } : value == "Photo" ? {
@@ -43960,7 +44110,7 @@ function to_candid_variant_n138(_uploadFile, _downloadFile, value) {
     Video: null
   } : value;
 }
-function to_candid_variant_n140(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n146(_uploadFile, _downloadFile, value) {
   return value == "Copy" ? {
     Copy: null
   } : value == "Unverified" ? {
@@ -43971,14 +44121,14 @@ function to_candid_variant_n140(_uploadFile, _downloadFile, value) {
     Original: null
   } : value;
 }
-function to_candid_variant_n142(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n148(_uploadFile, _downloadFile, value) {
   return value == "OralHistory" ? {
     OralHistory: null
   } : value == "Standard" ? {
     Standard: null
   } : value;
 }
-function to_candid_variant_n144(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n150(_uploadFile, _downloadFile, value) {
   return value == "Researching" ? {
     Researching: null
   } : value == "Open" ? {
@@ -43989,7 +44139,7 @@ function to_candid_variant_n144(_uploadFile, _downloadFile, value) {
     Resolved: null
   } : value;
 }
-function to_candid_variant_n151(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n157(_uploadFile, _downloadFile, value) {
   return value == "NeedsResearch" ? {
     NeedsResearch: null
   } : value == "Conflicting" ? {
@@ -44004,7 +44154,7 @@ function to_candid_variant_n151(_uploadFile, _downloadFile, value) {
     PersonalMemory: null
   } : value;
 }
-function to_candid_variant_n153(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n159(_uploadFile, _downloadFile, value) {
   return value == "Story" ? {
     Story: null
   } : value == "TimelineEvent" ? {
@@ -44019,22 +44169,22 @@ function to_candid_variant_n153(_uploadFile, _downloadFile, value) {
     Relationship: null
   } : value;
 }
-function to_candid_variant_n155(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n161(_uploadFile, _downloadFile, value) {
   return value.__kind__ === "Story" ? {
     Story: value.Story
   } : value.__kind__ === "TimelineEvent" ? {
-    TimelineEvent: to_candid_record_n159(_uploadFile, _downloadFile, value.TimelineEvent)
+    TimelineEvent: to_candid_record_n165(_uploadFile, _downloadFile, value.TimelineEvent)
   } : value.__kind__ === "PersonFact" ? {
     PersonFact: value.PersonFact
   } : value.__kind__ === "Source" ? {
-    Source: to_candid_record_n156(_uploadFile, _downloadFile, value.Source)
+    Source: to_candid_record_n162(_uploadFile, _downloadFile, value.Source)
   } : value.__kind__ === "Mystery" ? {
     Mystery: value.Mystery
   } : value.__kind__ === "Relationship" ? {
     Relationship: value.Relationship
   } : value;
 }
-function to_candid_variant_n158(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n164(_uploadFile, _downloadFile, value) {
   return value == "CertificateHeadstoneReference" ? {
     CertificateHeadstoneReference: null
   } : value == "DeedPropertyReference" ? {
@@ -44060,7 +44210,7 @@ function to_candid_variant_n23(_uploadFile, _downloadFile, value) {
     PersonalMemory: null
   } : value;
 }
-function to_candid_variant_n337(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n339(_uploadFile, _downloadFile, value) {
   return value == "Dismissed" ? {
     Dismissed: null
   } : value == "Reviewed" ? {
@@ -44069,7 +44219,7 @@ function to_candid_variant_n337(_uploadFile, _downloadFile, value) {
     Pending: null
   } : value;
 }
-function to_candid_variant_n346(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n348(_uploadFile, _downloadFile, value) {
   return value == "Lead" ? {
     Lead: null
   } : value == "Note" ? {
@@ -44080,7 +44230,7 @@ function to_candid_variant_n346(_uploadFile, _downloadFile, value) {
     Source: null
   } : value;
 }
-function to_candid_variant_n350(_uploadFile, _downloadFile, value) {
+function to_candid_variant_n352(_uploadFile, _downloadFile, value) {
   return value == "Living" ? {
     Living: null
   } : value == "Deceased" ? {
@@ -44098,8 +44248,8 @@ function to_candid_variant_n36(_uploadFile, _downloadFile, value) {
     Child: null
   } : value;
 }
-async function to_candid_vec_n130(_uploadFile, _downloadFile, value) {
-  return await Promise.all(value.map(async (x2) => await to_candid_BoardMediaUpload_n131(_uploadFile, _downloadFile, x2)));
+async function to_candid_vec_n136(_uploadFile, _downloadFile, value) {
+  return await Promise.all(value.map(async (x2) => await to_candid_BoardMediaUpload_n137(_uploadFile, _downloadFile, x2)));
 }
 function createActor(canisterId, _uploadFile, _downloadFile, options = {}) {
   const agent = options.agent || HttpAgent.createSync({
@@ -45276,6 +45426,69 @@ function useCreateNewPersonCandidate() {
     }
   });
 }
+function useApproveNewPersonCandidate() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (candidateId) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.approveNewPersonCandidate(candidateId);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["research", "candidates"]
+      });
+      void queryClient2.invalidateQueries({ queryKey: ["research", "queue"] });
+      void queryClient2.invalidateQueries({ queryKey: ["research", "audit"] });
+      void queryClient2.invalidateQueries({
+        queryKey: ["pendingContributionsCount"]
+      });
+      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
+    }
+  });
+}
+function useRejectNewPersonCandidate() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (candidateId) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.rejectNewPersonCandidate(candidateId);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["research", "candidates"]
+      });
+      void queryClient2.invalidateQueries({ queryKey: ["research", "queue"] });
+      void queryClient2.invalidateQueries({ queryKey: ["research", "audit"] });
+      void queryClient2.invalidateQueries({
+        queryKey: ["pendingContributionsCount"]
+      });
+      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
+    }
+  });
+}
+function useNeedsResearchNewPersonCandidate() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (candidateId) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.needsResearchNewPersonCandidate(candidateId);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["research", "candidates"]
+      });
+      void queryClient2.invalidateQueries({ queryKey: ["research", "queue"] });
+      void queryClient2.invalidateQueries({ queryKey: ["research", "audit"] });
+      void queryClient2.invalidateQueries({
+        queryKey: ["pendingContributionsCount"]
+      });
+      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
+    }
+  });
+}
 function useListRelationshipProposals() {
   const providersPresent = useProvidersPresent();
   const { actor, isFetching } = useActor(createActor);
@@ -45305,6 +45518,69 @@ function useCreateRelationshipProposal() {
         relationshipType,
         sourceId
       );
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["research", "relationshipProposals"]
+      });
+      void queryClient2.invalidateQueries({ queryKey: ["research", "queue"] });
+      void queryClient2.invalidateQueries({ queryKey: ["research", "audit"] });
+      void queryClient2.invalidateQueries({
+        queryKey: ["pendingContributionsCount"]
+      });
+      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
+    }
+  });
+}
+function useApproveRelationshipProposal() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (proposalId) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.approveRelationshipProposal(proposalId);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["research", "relationshipProposals"]
+      });
+      void queryClient2.invalidateQueries({ queryKey: ["research", "queue"] });
+      void queryClient2.invalidateQueries({ queryKey: ["research", "audit"] });
+      void queryClient2.invalidateQueries({
+        queryKey: ["pendingContributionsCount"]
+      });
+      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
+    }
+  });
+}
+function useRejectRelationshipProposal() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (proposalId) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.rejectRelationshipProposal(proposalId);
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["research", "relationshipProposals"]
+      });
+      void queryClient2.invalidateQueries({ queryKey: ["research", "queue"] });
+      void queryClient2.invalidateQueries({ queryKey: ["research", "audit"] });
+      void queryClient2.invalidateQueries({
+        queryKey: ["pendingContributionsCount"]
+      });
+      void queryClient2.invalidateQueries({ queryKey: ["notifications"] });
+    }
+  });
+}
+function useNeedsResearchRelationshipProposal() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (proposalId) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.needsResearchRelationshipProposal(proposalId);
     },
     onSuccess: () => {
       void queryClient2.invalidateQueries({
@@ -76405,7 +76681,9 @@ function ResearchIntakePage({
   onOpenConflictReview
 }) {
   const { data: isAdmin = false, isLoading: adminLoading } = useIsAdmin();
+  const { data: reviewQueue } = useGetReviewQueue();
   const [tab, setTab] = reactExports.useState("sources");
+  const reviewQueuePending = reviewQueue ? Number(reviewQueue.pending) : 0;
   if (!adminLoading && !isAdmin) {
     return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto w-full max-w-3xl px-6 py-8", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsxs(
@@ -76476,7 +76754,15 @@ function ResearchIntakePage({
                   "aria-hidden": "true"
                 }
               ),
-              "Review Queue"
+              "Review Queue",
+              reviewQueuePending > 0 && /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "span",
+                {
+                  "data-ocid": "research_intake.review_queue_badge",
+                  className: "research-queue-badge",
+                  children: reviewQueuePending
+                }
+              )
             ]
           }
         ),
@@ -76690,7 +76976,18 @@ function FindingCard({
     }
   );
 }
-function CandidateCard({ candidate, index: index2, sources }) {
+function CandidateCard({
+  candidate,
+  index: index2,
+  sources,
+  approving,
+  rejecting,
+  needsResearch,
+  onApprove,
+  onReject,
+  onNeedsResearch
+}) {
+  const reviewable = candidate.status === ReviewStatus.Pending;
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(
     "li",
     {
@@ -76708,13 +77005,68 @@ function CandidateCard({ candidate, index: index2, sources }) {
         ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "research-match-actions", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx(SourceChip, { sourceId: candidate.sourceId, sources }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "research-match-meta", children: formatDateTime(candidate.submittedAt) })
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "research-match-meta", children: formatDateTime(candidate.submittedAt) }),
+          reviewable ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex shrink-0 items-center gap-2", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "button",
+              {
+                type: "button",
+                "data-ocid": `research_queue.candidate.${index2}.approve_button`,
+                onClick: onApprove,
+                disabled: approving || rejecting || needsResearch,
+                className: "approve-action",
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { className: "h-3.5 w-3.5", "aria-hidden": "true" }),
+                  "Approve"
+                ]
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "button",
+              {
+                type: "button",
+                "data-ocid": `research_queue.candidate.${index2}.reject_button`,
+                onClick: onReject,
+                disabled: approving || rejecting || needsResearch,
+                className: "reject-action",
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(X, { className: "h-3.5 w-3.5", "aria-hidden": "true" }),
+                  "Reject"
+                ]
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "button",
+              {
+                type: "button",
+                "data-ocid": `research_queue.candidate.${index2}.needs_research_button`,
+                onClick: onNeedsResearch,
+                disabled: approving || rejecting || needsResearch,
+                className: "research-needs-action",
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(Search, { className: "h-3.5 w-3.5", "aria-hidden": "true" }),
+                  "Needs Research"
+                ]
+              }
+            )
+          ] }) : null
         ] })
       ]
     }
   );
 }
-function RelationshipCard({ proposal, index: index2, sources }) {
+function RelationshipCard({
+  proposal,
+  index: index2,
+  sources,
+  approving,
+  rejecting,
+  needsResearch,
+  onApprove,
+  onReject,
+  onNeedsResearch
+}) {
+  const reviewable = proposal.status === ReviewStatus.Pending;
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(
     "li",
     {
@@ -76736,7 +77088,51 @@ function RelationshipCard({ proposal, index: index2, sources }) {
         ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "research-match-actions", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx(SourceChip, { sourceId: proposal.sourceId, sources }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "research-match-meta", children: formatDateTime(proposal.submittedAt) })
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "research-match-meta", children: formatDateTime(proposal.submittedAt) }),
+          reviewable ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex shrink-0 items-center gap-2", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "button",
+              {
+                type: "button",
+                "data-ocid": `research_queue.relationship.${index2}.approve_button`,
+                onClick: onApprove,
+                disabled: approving || rejecting || needsResearch,
+                className: "approve-action",
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { className: "h-3.5 w-3.5", "aria-hidden": "true" }),
+                  "Approve"
+                ]
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "button",
+              {
+                type: "button",
+                "data-ocid": `research_queue.relationship.${index2}.reject_button`,
+                onClick: onReject,
+                disabled: approving || rejecting || needsResearch,
+                className: "reject-action",
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(X, { className: "h-3.5 w-3.5", "aria-hidden": "true" }),
+                  "Reject"
+                ]
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "button",
+              {
+                type: "button",
+                "data-ocid": `research_queue.relationship.${index2}.needs_research_button`,
+                onClick: onNeedsResearch,
+                disabled: approving || rejecting || needsResearch,
+                className: "research-needs-action",
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(Search, { className: "h-3.5 w-3.5", "aria-hidden": "true" }),
+                  "Needs Research"
+                ]
+              }
+            )
+          ] }) : null
         ] })
       ]
     }
@@ -76866,6 +77262,12 @@ function ResearchReviewQueuePage({
   const approveSource = useApproveSource();
   const rejectSource = useRejectSource();
   const needsResearchSource = useNeedsResearchSource();
+  const approveCandidate = useApproveNewPersonCandidate();
+  const rejectCandidate = useRejectNewPersonCandidate();
+  const needsResearchCandidate = useNeedsResearchNewPersonCandidate();
+  const approveProposal = useApproveRelationshipProposal();
+  const rejectProposal = useRejectRelationshipProposal();
+  const needsResearchProposal = useNeedsResearchRelationshipProposal();
   const [tab, setTab] = reactExports.useState("findings");
   const sourceById = reactExports.useMemo(
     () => new Map(sources.map((s) => [s.id, s])),
@@ -77132,7 +77534,13 @@ function ResearchReviewQueuePage({
               {
                 candidate,
                 index: index2,
-                sources: sourceById
+                sources: sourceById,
+                approving: approveCandidate.isPending,
+                rejecting: rejectCandidate.isPending,
+                needsResearch: needsResearchCandidate.isPending,
+                onApprove: () => approveCandidate.mutate(candidate.id),
+                onReject: () => rejectCandidate.mutate(candidate.id),
+                onNeedsResearch: () => needsResearchCandidate.mutate(candidate.id)
               },
               candidate.id.toString()
             )) })
@@ -77173,7 +77581,13 @@ function ResearchReviewQueuePage({
               {
                 proposal,
                 index: index2,
-                sources: sourceById
+                sources: sourceById,
+                approving: approveProposal.isPending,
+                rejecting: rejectProposal.isPending,
+                needsResearch: needsResearchProposal.isPending,
+                onApprove: () => approveProposal.mutate(proposal.id),
+                onReject: () => rejectProposal.mutate(proposal.id),
+                onNeedsResearch: () => needsResearchProposal.mutate(proposal.id)
               },
               proposal.id.toString()
             )) })

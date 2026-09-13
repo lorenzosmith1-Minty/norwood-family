@@ -657,6 +657,42 @@ Contributions badge.
   content. The finding remains in the Research Review Queue with status
   `NEEDS_RESEARCH` and a `FindingNeedsResearch` audit entry is recorded. Returns
   the updated finding, or `null` when it does not exist or is not pending.
+- `approveNewPersonCandidate(id : Nat) : async ?NewPersonCandidate` — update.
+  Family Steward only. Approves a pending New Person candidate, creating exactly
+  one canonical Person record (PersonProfile) that preserves the candidate's
+  Source/provenance, recording the approval in Audit History, and marking the
+  candidate `#Approved`. The new profile is unclaimed and living by default.
+  Approving a candidate never auto-creates relationships — a relationship is
+  only added when a separately approved Relationship Proposal exists. Returns
+  the updated candidate, or `null` when it does not exist or is not pending.
+- `rejectNewPersonCandidate(id : Nat) : async ?NewPersonCandidate` — update.
+  Family Steward only. Rejects a pending New Person candidate, marking it
+  `#Rejected`. No canonical Person is created; the candidate and its audit trail
+  are preserved. Returns the updated candidate, or `null` when it does not exist
+  or is not pending.
+- `needsResearchNewPersonCandidate(id : Nat) : async ?NewPersonCandidate` —
+  update. Family Steward only. Marks a pending New Person candidate as needing
+  research, transitioning it to `#NeedsResearch` while preserving the candidate.
+  No canonical Person is created. Returns the updated candidate, or `null` when
+  it does not exist or is not pending.
+- `approveRelationshipProposal(id : Nat) : async ?RelationshipProposal` —
+  update. Family Steward only. Approves a pending Relationship proposal,
+  creating or updating the canonical relationship exactly once, preserving
+  Source/provenance, updating the family graph, recording the approval in Audit
+  History, and marking the proposal `#Approved`. Duplicate canonical
+  relationships are prevented: when an identical confirmed relationship already
+  exists, no second relationship is added. Returns the updated proposal, or
+  `null` when it does not exist or is not pending.
+- `rejectRelationshipProposal(id : Nat) : async ?RelationshipProposal` — update.
+  Family Steward only. Rejects a pending Relationship proposal, marking it
+  `#Rejected`. The family graph is left unchanged; the proposal and its audit
+  trail are preserved. Returns the updated proposal, or `null` when it does not
+  exist or is not pending.
+- `needsResearchRelationshipProposal(id : Nat) : async ?RelationshipProposal` —
+  update. Family Steward only. Marks a pending Relationship proposal as needing
+  research, transitioning it to `#NeedsResearch` while preserving the proposal.
+  The canonical graph is left unchanged. Returns the updated proposal, or `null`
+  when it does not exist or is not pending.
 - `createNewPersonCandidate(name : Text, details : Text, sourceId : SourceId) : async Result<NewPersonCandidate, ResearchError>` —
   update. Creates a candidate for a Person not yet in the canonical set. Requires
   a signed-in (non-anonymous) caller; returns `#err(#notAuthorized)` for an
@@ -1121,8 +1157,11 @@ return `#err(#notAuthorized)` for an anonymous caller (they do not trap). The
 Family Steward review methods — `listSources`, `listFindings`,
 `listNewPersonCandidates`, `listRelationshipProposals`,
 `listConflictReviewItems`, `approveFinding`, `rejectFinding`,
-`needsResearchFinding`, `resolveConflict`, `approveSource`, `rejectSource`, and
-`needsResearchSource` —
+`needsResearchFinding`, `resolveConflict`, `approveSource`, `rejectSource`,
+`needsResearchSource`, `approveNewPersonCandidate`,
+`rejectNewPersonCandidate`, `needsResearchNewPersonCandidate`,
+`approveRelationshipProposal`, `rejectRelationshipProposal`, and
+`needsResearchRelationshipProposal` —
 are admin-only and trap with `\"Unauthorized: You must be
 signed in\"` for an anonymous caller and `\"Unauthorized: Only Family Stewards
 can perform this action\"` when the caller is not an admin. The read methods
@@ -1687,7 +1726,19 @@ writes the proposed value of a conflict review item's underlying finding into it
 canonical area and marks the item resolved. A finding labelled `#Conflicting` is
 never approved directly — `approveFinding`
 routes it to a Conflict Review item (marking the finding `#Conflicting` with a
-`conflictReviewId`) instead of silently overwriting canonical data. Every
+`conflictReviewId`) instead of silently overwriting canonical data. New Person
+candidates are reviewed via `approveNewPersonCandidate` (creates exactly one
+canonical Person record preserving the candidate's Source/provenance and marks
+the candidate `#Approved`), `rejectNewPersonCandidate` (marks `#Rejected` with no
+Person created), and `needsResearchNewPersonCandidate` (marks `#NeedsResearch`
+with no Person created). Approving a candidate never auto-creates relationships —
+a relationship is only added when a separately approved Relationship Proposal
+exists. Relationship proposals are reviewed via `approveRelationshipProposal`
+(creates or updates the canonical relationship exactly once, updating the family
+graph, and marks the proposal `#Approved`; duplicate canonical relationships are
+prevented), `rejectRelationshipProposal` (marks `#Rejected` leaving the family
+graph unchanged), and `needsResearchRelationshipProposal` (marks
+`#NeedsResearch` leaving the canonical graph unchanged). Every
 creation and review action records a `ResearchAuditEntry` in the research audit
 log, readable via `getResearchAuditLog`. The review queue is
 derived on demand via `getReviewQueue`, returning the pending/approved/rejected/
@@ -1896,6 +1947,23 @@ no async job to poll; the frontend can call the list methods (steward) or
   preserves the source and its notes. Each successful review records a
   `#ResearchApproved`/`#ResearchRejected` notification to the contributor
   (approve/reject) without duplicates.
+- `approveNewPersonCandidate`, `rejectNewPersonCandidate`, and
+  `needsResearchNewPersonCandidate` are idempotent: acting on an already-reviewed
+  (or nonexistent) candidate returns `null` and changes nothing. They only
+  transition candidates currently in `#Pending` state. Approving a candidate
+  creates exactly one canonical Person record (a fresh unclaimed living profile
+  with a personId derived from the candidate's name, made unique against
+  existing profiles) and records a `#ResearchApproved` notification to the
+  contributor; it never auto-creates relationships. Rejecting and needs-research
+  create no Person.
+- `approveRelationshipProposal`, `rejectRelationshipProposal`, and
+  `needsResearchRelationshipProposal` are idempotent: acting on an
+  already-reviewed (or nonexistent) proposal returns `null` and changes nothing.
+  They only transition proposals currently in `#Pending` state. Approving a
+  proposal adds the canonical relationship to the family graph exactly once —
+  when an identical confirmed relationship already exists, no second
+  relationship is added — and records a `#ResearchApproved` notification to the
+  contributor. Rejecting and needs-research leave the family graph unchanged.
 - `getSource`, `getFinding`, `getReviewQueue`, and `getResearchAuditLog` are
   read-only queries with no side effects; they are always idempotent.
 
@@ -2072,12 +2140,18 @@ no async job to poll; the frontend can call the list methods (steward) or
 - The Family Steward research-intake review methods (`listSources`,
   `listFindings`, `listNewPersonCandidates`, `listRelationshipProposals`,
   `listConflictReviewItems`, `approveFinding`, `rejectFinding`,
-  `needsResearchFinding`, `resolveConflict`) trap with `\"Unauthorized: You must
+  `needsResearchFinding`, `resolveConflict`, `approveNewPersonCandidate`,
+  `rejectNewPersonCandidate`, `needsResearchNewPersonCandidate`,
+  `approveRelationshipProposal`, `rejectRelationshipProposal`,
+  `needsResearchRelationshipProposal`) trap with `\"Unauthorized: You must
   be signed in\"` for an
   anonymous caller and `\"Unauthorized: Only Family Stewards can perform this
   action\"` when the caller is not an admin.
-- `approveFinding`, `rejectFinding`, `needsResearchFinding`, and
-  `resolveConflict` return `null` (they do
+- `approveFinding`, `rejectFinding`, `needsResearchFinding`, `resolveConflict`,
+  `approveNewPersonCandidate`, `rejectNewPersonCandidate`,
+  `needsResearchNewPersonCandidate`, `approveRelationshipProposal`,
+  `rejectRelationshipProposal`, and `needsResearchRelationshipProposal` return
+  `null` (they do
   not trap) when the target id does not exist or is not in the expected state.
   `getSource` and `getFinding` return `null` when the target id does not exist.
 - The research-intake OQL entities (`researchSource`, `proposedFinding`,

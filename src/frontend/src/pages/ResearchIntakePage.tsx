@@ -28,6 +28,7 @@ import {
   useCreateRelationshipProposal,
   useCreateSource,
   useCreateSourceWithUpload,
+  useGetReviewQueue,
   useListFindings,
   useListNewPersonCandidates,
   useListRelationshipProposals,
@@ -1768,7 +1769,10 @@ export function ResearchIntakePage({
   onOpenConflictReview,
 }: ResearchIntakePageProps) {
   const { data: isAdmin = false, isLoading: adminLoading } = useIsAdmin();
+  const { data: reviewQueue } = useGetReviewQueue();
   const [tab, setTab] = useState<Tab>("sources");
+
+  const reviewQueuePending = reviewQueue ? Number(reviewQueue.pending) : 0;
 
   if (!adminLoading && !isAdmin) {
     return (
@@ -1836,6 +1840,14 @@ export function ResearchIntakePage({
               aria-hidden="true"
             />
             Review Queue
+            {reviewQueuePending > 0 && (
+              <span
+                data-ocid="research_intake.review_queue_badge"
+                className="research-queue-badge"
+              >
+                {reviewQueuePending}
+              </span>
+            )}
           </button>
           <button
             type="button"

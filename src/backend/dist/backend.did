@@ -1161,6 +1161,14 @@ service : {
   /// canonical data. Returns the updated finding, or `null` when it does not
   /// exist or is not pending.
   approveFinding: (id: FindingId) -> (opt ProposedFinding);
+  /// Approves a pending New Person candidate (Family Steward only), creating
+  /// exactly one canonical Person record (PersonProfile) that preserves the
+  /// candidate's Source/provenance, recording the approval in Audit History,
+  /// and marking the candidate `#Approved`. Approving a candidate never
+  /// auto-creates relationships — a relationship is only added when a separately
+  /// approved Relationship Proposal exists. Returns the updated candidate, or
+  /// `null` when it does not exist or is not pending.
+  approveNewPersonCandidate: (id: nat) -> (opt NewPersonCandidate);
   /// Approves a pending profile claim, marking the profile claimed and
   /// associating it with the requesting user. Family Steward only.
   approveProfileClaim: (claimId: nat) -> (opt ProfileClaim);
@@ -1170,6 +1178,14 @@ service : {
   /// Approves a pending recipe (steward only). Returns the updated recipe, or
   /// `null` when the recipe does not exist or is not pending.
   approveRecipe: (id: RecipeId) -> (opt Recipe);
+  /// Approves a pending Relationship proposal (Family Steward only), creating or
+  /// updating the canonical relationship exactly once, preserving
+  /// Source/provenance, updating the family graph, recording the approval in
+  /// Audit History, and marking the proposal `#Approved`. Duplicate canonical
+  /// relationships are prevented: when an identical confirmed relationship
+  /// already exists, no second relationship is added. Returns the updated
+  /// proposal, or `null` when it does not exist or is not pending.
+  approveRelationshipProposal: (id: nat) -> (opt RelationshipProposal);
   /// Approves a relationship request, adding/confirming the relationship in the
   /// shared family graph. Family Steward only.
   approveRelationshipRequest: (requestId: nat) -> (opt RelationshipRequest);
@@ -1457,6 +1473,16 @@ service : {
   /// content. Records a `FindingNeedsResearch` audit entry. Returns the updated
   /// finding, or `null` when it does not exist or is not pending.
   needsResearchFinding: (id: FindingId) -> (opt ProposedFinding);
+  /// Marks a pending New Person candidate as needing research (Family Steward
+  /// only), transitioning it to `#NeedsResearch` while preserving the candidate.
+  /// No canonical Person is created. Returns the updated candidate, or `null`
+  /// when it does not exist or is not pending.
+  needsResearchNewPersonCandidate: (id: nat) -> (opt NewPersonCandidate);
+  /// Marks a pending Relationship proposal as needing research (Family Steward
+  /// only), transitioning it to `#NeedsResearch` while preserving the proposal.
+  /// The canonical graph is left unchanged. Returns the updated proposal, or
+  /// `null` when it does not exist or is not pending.
+  needsResearchRelationshipProposal: (id: nat) -> (opt RelationshipProposal);
   /// Marks a pending source as needing research (Family Steward only),
   /// transitioning it to `#NeedsResearch` while preserving the source and its
   /// notes. Returns the updated source, or `null` when it does not exist or is
@@ -1495,6 +1521,11 @@ service : {
   /// Rejects a pending finding (steward only). Returns the updated finding, or
   /// `null` when it does not exist or is not pending.
   rejectFinding: (id: FindingId) -> (opt ProposedFinding);
+  /// Rejects a pending New Person candidate (Family Steward only), marking it
+  /// `#Rejected`. No canonical Person is created; the candidate and its audit
+  /// trail are preserved. Returns the updated candidate, or `null` when it does
+  /// not exist or is not pending.
+  rejectNewPersonCandidate: (id: nat) -> (opt NewPersonCandidate);
   /// Rejects a pending profile claim. Family Steward only.
   rejectProfileClaim: (claimId: nat) -> (opt ProfileClaim);
   /// Rejects a profile removal request. Family Steward only.
@@ -1502,6 +1533,11 @@ service : {
   /// Rejects a pending recipe (steward only). Returns the updated recipe, or
   /// `null` when the recipe does not exist or is not pending.
   rejectRecipe: (id: RecipeId) -> (opt Recipe);
+  /// Rejects a pending Relationship proposal (Family Steward only), marking it
+  /// `#Rejected`. The family graph is left unchanged; the proposal and its audit
+  /// trail are preserved. Returns the updated proposal, or `null` when it does
+  /// not exist or is not pending.
+  rejectRelationshipProposal: (id: nat) -> (opt RelationshipProposal);
   /// Rejects a relationship request. Family Steward only.
   rejectRelationshipRequest: (requestId: nat) -> (opt RelationshipRequest);
   /// Rejects a pending source (Family Steward only), transitioning it to

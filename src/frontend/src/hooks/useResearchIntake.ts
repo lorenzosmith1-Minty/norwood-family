@@ -431,6 +431,94 @@ export function useCreateNewPersonCandidate() {
   });
 }
 
+/**
+ * Approves a pending New Person candidate (Family Steward only), creating one
+ * canonical Person record that preserves the candidate's source/provenance and
+ * recording the approval in the audit history. The candidate transitions to
+ * `Approved` and is removed from the pending count immediately.
+ */
+export function useApproveNewPersonCandidate() {
+  const { actor } = useActor(createActor);
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (
+      candidateId: bigint,
+    ): Promise<NewPersonCandidate | null> => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.approveNewPersonCandidate(candidateId);
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: ["research", "candidates"],
+      });
+      void queryClient.invalidateQueries({ queryKey: ["research", "queue"] });
+      void queryClient.invalidateQueries({ queryKey: ["research", "audit"] });
+      void queryClient.invalidateQueries({
+        queryKey: ["pendingContributionsCount"],
+      });
+      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    },
+  });
+}
+
+/**
+ * Rejects a pending New Person candidate (Family Steward only). No Person is
+ * created; the candidate and its audit trail are preserved with status
+ * `Rejected`.
+ */
+export function useRejectNewPersonCandidate() {
+  const { actor } = useActor(createActor);
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (
+      candidateId: bigint,
+    ): Promise<NewPersonCandidate | null> => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.rejectNewPersonCandidate(candidateId);
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: ["research", "candidates"],
+      });
+      void queryClient.invalidateQueries({ queryKey: ["research", "queue"] });
+      void queryClient.invalidateQueries({ queryKey: ["research", "audit"] });
+      void queryClient.invalidateQueries({
+        queryKey: ["pendingContributionsCount"],
+      });
+      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    },
+  });
+}
+
+/**
+ * Marks a pending New Person candidate as needing research (Family Steward
+ * only), preserving the candidate with status `NeedsResearch` and creating no
+ * Person.
+ */
+export function useNeedsResearchNewPersonCandidate() {
+  const { actor } = useActor(createActor);
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (
+      candidateId: bigint,
+    ): Promise<NewPersonCandidate | null> => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.needsResearchNewPersonCandidate(candidateId);
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: ["research", "candidates"],
+      });
+      void queryClient.invalidateQueries({ queryKey: ["research", "queue"] });
+      void queryClient.invalidateQueries({ queryKey: ["research", "audit"] });
+      void queryClient.invalidateQueries({
+        queryKey: ["pendingContributionsCount"],
+      });
+      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    },
+  });
+}
+
 /** Lists all relationship proposals (steward only). */
 export function useListRelationshipProposals() {
   const providersPresent = useProvidersPresent();
@@ -468,6 +556,95 @@ export function useCreateRelationshipProposal() {
         relationshipType,
         sourceId,
       );
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: ["research", "relationshipProposals"],
+      });
+      void queryClient.invalidateQueries({ queryKey: ["research", "queue"] });
+      void queryClient.invalidateQueries({ queryKey: ["research", "audit"] });
+      void queryClient.invalidateQueries({
+        queryKey: ["pendingContributionsCount"],
+      });
+      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    },
+  });
+}
+
+/**
+ * Approves a pending relationship proposal (Family Steward only), creating or
+ * updating the canonical relationship exactly once, preserving its
+ * source/provenance, updating the family graph, recording the approval in the
+ * audit history, and marking the proposal `Approved`. Duplicate canonical
+ * relationships are prevented. Pending counts decrement immediately.
+ */
+export function useApproveRelationshipProposal() {
+  const { actor } = useActor(createActor);
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (
+      proposalId: bigint,
+    ): Promise<RelationshipProposal | null> => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.approveRelationshipProposal(proposalId);
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: ["research", "relationshipProposals"],
+      });
+      void queryClient.invalidateQueries({ queryKey: ["research", "queue"] });
+      void queryClient.invalidateQueries({ queryKey: ["research", "audit"] });
+      void queryClient.invalidateQueries({
+        queryKey: ["pendingContributionsCount"],
+      });
+      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    },
+  });
+}
+
+/**
+ * Rejects a pending relationship proposal (Family Steward only). The family
+ * graph is left unchanged and the proposal and its audit trail are preserved
+ * with status `Rejected`.
+ */
+export function useRejectRelationshipProposal() {
+  const { actor } = useActor(createActor);
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (
+      proposalId: bigint,
+    ): Promise<RelationshipProposal | null> => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.rejectRelationshipProposal(proposalId);
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: ["research", "relationshipProposals"],
+      });
+      void queryClient.invalidateQueries({ queryKey: ["research", "queue"] });
+      void queryClient.invalidateQueries({ queryKey: ["research", "audit"] });
+      void queryClient.invalidateQueries({
+        queryKey: ["pendingContributionsCount"],
+      });
+      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    },
+  });
+}
+
+/**
+ * Marks a pending relationship proposal as needing research (Family Steward
+ * only), leaving the canonical graph unchanged and preserving the proposal with
+ * status `NeedsResearch`.
+ */
+export function useNeedsResearchRelationshipProposal() {
+  const { actor } = useActor(createActor);
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (
+      proposalId: bigint,
+    ): Promise<RelationshipProposal | null> => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.needsResearchRelationshipProposal(proposalId);
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({

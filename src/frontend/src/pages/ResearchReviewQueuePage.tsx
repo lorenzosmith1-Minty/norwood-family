@@ -13,6 +13,8 @@ import { useMemo, useState } from "react";
 import { useIsAdmin } from "../hooks/useArchiveStorage";
 import {
   useApproveFinding,
+  useApproveNewPersonCandidate,
+  useApproveRelationshipProposal,
   useApproveSource,
   useGetResearchAuditLog,
   useGetReviewQueue,
@@ -21,8 +23,12 @@ import {
   useListRelationshipProposals,
   useListSources,
   useNeedsResearchFinding,
+  useNeedsResearchNewPersonCandidate,
+  useNeedsResearchRelationshipProposal,
   useNeedsResearchSource,
   useRejectFinding,
+  useRejectNewPersonCandidate,
+  useRejectRelationshipProposal,
   useRejectSource,
 } from "../hooks/useResearchIntake";
 import { resolveDisplayName } from "../types/family";
@@ -265,9 +271,26 @@ interface CandidateCardProps {
   candidate: NewPersonCandidate;
   index: number;
   sources: Map<bigint, SourceRecord>;
+  approving: boolean;
+  rejecting: boolean;
+  needsResearch: boolean;
+  onApprove: () => void;
+  onReject: () => void;
+  onNeedsResearch: () => void;
 }
 
-function CandidateCard({ candidate, index, sources }: CandidateCardProps) {
+function CandidateCard({
+  candidate,
+  index,
+  sources,
+  approving,
+  rejecting,
+  needsResearch,
+  onApprove,
+  onReject,
+  onNeedsResearch,
+}: CandidateCardProps) {
+  const reviewable = candidate.status === ReviewStatus.Pending;
   return (
     <li
       data-ocid={`research_queue.candidate.${index}`}
@@ -291,6 +314,40 @@ function CandidateCard({ candidate, index, sources }: CandidateCardProps) {
         <span className="research-match-meta">
           {formatDateTime(candidate.submittedAt)}
         </span>
+        {reviewable ? (
+          <div className="flex shrink-0 items-center gap-2">
+            <button
+              type="button"
+              data-ocid={`research_queue.candidate.${index}.approve_button`}
+              onClick={onApprove}
+              disabled={approving || rejecting || needsResearch}
+              className="approve-action"
+            >
+              <Check className="h-3.5 w-3.5" aria-hidden="true" />
+              Approve
+            </button>
+            <button
+              type="button"
+              data-ocid={`research_queue.candidate.${index}.reject_button`}
+              onClick={onReject}
+              disabled={approving || rejecting || needsResearch}
+              className="reject-action"
+            >
+              <X className="h-3.5 w-3.5" aria-hidden="true" />
+              Reject
+            </button>
+            <button
+              type="button"
+              data-ocid={`research_queue.candidate.${index}.needs_research_button`}
+              onClick={onNeedsResearch}
+              disabled={approving || rejecting || needsResearch}
+              className="research-needs-action"
+            >
+              <Search className="h-3.5 w-3.5" aria-hidden="true" />
+              Needs Research
+            </button>
+          </div>
+        ) : null}
       </div>
     </li>
   );
@@ -300,9 +357,26 @@ interface RelationshipCardProps {
   proposal: RelationshipProposal;
   index: number;
   sources: Map<bigint, SourceRecord>;
+  approving: boolean;
+  rejecting: boolean;
+  needsResearch: boolean;
+  onApprove: () => void;
+  onReject: () => void;
+  onNeedsResearch: () => void;
 }
 
-function RelationshipCard({ proposal, index, sources }: RelationshipCardProps) {
+function RelationshipCard({
+  proposal,
+  index,
+  sources,
+  approving,
+  rejecting,
+  needsResearch,
+  onApprove,
+  onReject,
+  onNeedsResearch,
+}: RelationshipCardProps) {
+  const reviewable = proposal.status === ReviewStatus.Pending;
   return (
     <li
       data-ocid={`research_queue.relationship.${index}`}
@@ -326,6 +400,40 @@ function RelationshipCard({ proposal, index, sources }: RelationshipCardProps) {
         <span className="research-match-meta">
           {formatDateTime(proposal.submittedAt)}
         </span>
+        {reviewable ? (
+          <div className="flex shrink-0 items-center gap-2">
+            <button
+              type="button"
+              data-ocid={`research_queue.relationship.${index}.approve_button`}
+              onClick={onApprove}
+              disabled={approving || rejecting || needsResearch}
+              className="approve-action"
+            >
+              <Check className="h-3.5 w-3.5" aria-hidden="true" />
+              Approve
+            </button>
+            <button
+              type="button"
+              data-ocid={`research_queue.relationship.${index}.reject_button`}
+              onClick={onReject}
+              disabled={approving || rejecting || needsResearch}
+              className="reject-action"
+            >
+              <X className="h-3.5 w-3.5" aria-hidden="true" />
+              Reject
+            </button>
+            <button
+              type="button"
+              data-ocid={`research_queue.relationship.${index}.needs_research_button`}
+              onClick={onNeedsResearch}
+              disabled={approving || rejecting || needsResearch}
+              className="research-needs-action"
+            >
+              <Search className="h-3.5 w-3.5" aria-hidden="true" />
+              Needs Research
+            </button>
+          </div>
+        ) : null}
       </div>
     </li>
   );
@@ -474,6 +582,12 @@ export function ResearchReviewQueuePage({
   const approveSource = useApproveSource();
   const rejectSource = useRejectSource();
   const needsResearchSource = useNeedsResearchSource();
+  const approveCandidate = useApproveNewPersonCandidate();
+  const rejectCandidate = useRejectNewPersonCandidate();
+  const needsResearchCandidate = useNeedsResearchNewPersonCandidate();
+  const approveProposal = useApproveRelationshipProposal();
+  const rejectProposal = useRejectRelationshipProposal();
+  const needsResearchProposal = useNeedsResearchRelationshipProposal();
 
   const [tab, setTab] = useState<QueueTab>("findings");
 
@@ -754,6 +868,14 @@ export function ResearchReviewQueuePage({
                       candidate={candidate}
                       index={index}
                       sources={sourceById}
+                      approving={approveCandidate.isPending}
+                      rejecting={rejectCandidate.isPending}
+                      needsResearch={needsResearchCandidate.isPending}
+                      onApprove={() => approveCandidate.mutate(candidate.id)}
+                      onReject={() => rejectCandidate.mutate(candidate.id)}
+                      onNeedsResearch={() =>
+                        needsResearchCandidate.mutate(candidate.id)
+                      }
                     />
                   ))}
                 </ul>
@@ -797,6 +919,14 @@ export function ResearchReviewQueuePage({
                       proposal={proposal}
                       index={index}
                       sources={sourceById}
+                      approving={approveProposal.isPending}
+                      rejecting={rejectProposal.isPending}
+                      needsResearch={needsResearchProposal.isPending}
+                      onApprove={() => approveProposal.mutate(proposal.id)}
+                      onReject={() => rejectProposal.mutate(proposal.id)}
+                      onNeedsResearch={() =>
+                        needsResearchProposal.mutate(proposal.id)
+                      }
                     />
                   ))}
                 </ul>

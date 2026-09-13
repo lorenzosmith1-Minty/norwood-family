@@ -908,6 +908,19 @@ export interface _SERVICE {
    */
   'approveFinding' : ActorMethod<[FindingId], [] | [ProposedFinding]>,
   /**
+   * / Approves a pending New Person candidate (Family Steward only), creating
+   * / exactly one canonical Person record (PersonProfile) that preserves the
+   * / candidate's Source/provenance, recording the approval in Audit History,
+   * / and marking the candidate `#Approved`. Approving a candidate never
+   * / auto-creates relationships — a relationship is only added when a separately
+   * / approved Relationship Proposal exists. Returns the updated candidate, or
+   * / `null` when it does not exist or is not pending.
+   */
+  'approveNewPersonCandidate' : ActorMethod<
+    [bigint],
+    [] | [NewPersonCandidate]
+  >,
+  /**
    * / Approves a pending profile claim, marking the profile claimed and
    * / associating it with the requesting user. Family Steward only.
    */
@@ -922,6 +935,19 @@ export interface _SERVICE {
    * / `null` when the recipe does not exist or is not pending.
    */
   'approveRecipe' : ActorMethod<[RecipeId], [] | [Recipe]>,
+  /**
+   * / Approves a pending Relationship proposal (Family Steward only), creating or
+   * / updating the canonical relationship exactly once, preserving
+   * / Source/provenance, updating the family graph, recording the approval in
+   * / Audit History, and marking the proposal `#Approved`. Duplicate canonical
+   * / relationships are prevented: when an identical confirmed relationship
+   * / already exists, no second relationship is added. Returns the updated
+   * / proposal, or `null` when it does not exist or is not pending.
+   */
+  'approveRelationshipProposal' : ActorMethod<
+    [bigint],
+    [] | [RelationshipProposal]
+  >,
   /**
    * / Approves a relationship request, adding/confirming the relationship in the
    * / shared family graph. Family Steward only.
@@ -1429,6 +1455,26 @@ export interface _SERVICE {
    */
   'needsResearchFinding' : ActorMethod<[FindingId], [] | [ProposedFinding]>,
   /**
+   * / Marks a pending New Person candidate as needing research (Family Steward
+   * / only), transitioning it to `#NeedsResearch` while preserving the candidate.
+   * / No canonical Person is created. Returns the updated candidate, or `null`
+   * / when it does not exist or is not pending.
+   */
+  'needsResearchNewPersonCandidate' : ActorMethod<
+    [bigint],
+    [] | [NewPersonCandidate]
+  >,
+  /**
+   * / Marks a pending Relationship proposal as needing research (Family Steward
+   * / only), transitioning it to `#NeedsResearch` while preserving the proposal.
+   * / The canonical graph is left unchanged. Returns the updated proposal, or
+   * / `null` when it does not exist or is not pending.
+   */
+  'needsResearchRelationshipProposal' : ActorMethod<
+    [bigint],
+    [] | [RelationshipProposal]
+  >,
+  /**
    * / Marks a pending source as needing research (Family Steward only),
    * / transitioning it to `#NeedsResearch` while preserving the source and its
    * / notes. Returns the updated source, or `null` when it does not exist or is
@@ -1501,6 +1547,13 @@ export interface _SERVICE {
    */
   'rejectFinding' : ActorMethod<[FindingId], [] | [ProposedFinding]>,
   /**
+   * / Rejects a pending New Person candidate (Family Steward only), marking it
+   * / `#Rejected`. No canonical Person is created; the candidate and its audit
+   * / trail are preserved. Returns the updated candidate, or `null` when it does
+   * / not exist or is not pending.
+   */
+  'rejectNewPersonCandidate' : ActorMethod<[bigint], [] | [NewPersonCandidate]>,
+  /**
    * / Rejects a pending profile claim. Family Steward only.
    */
   'rejectProfileClaim' : ActorMethod<[bigint], [] | [ProfileClaim]>,
@@ -1513,6 +1566,16 @@ export interface _SERVICE {
    * / `null` when the recipe does not exist or is not pending.
    */
   'rejectRecipe' : ActorMethod<[RecipeId], [] | [Recipe]>,
+  /**
+   * / Rejects a pending Relationship proposal (Family Steward only), marking it
+   * / `#Rejected`. The family graph is left unchanged; the proposal and its audit
+   * / trail are preserved. Returns the updated proposal, or `null` when it does
+   * / not exist or is not pending.
+   */
+  'rejectRelationshipProposal' : ActorMethod<
+    [bigint],
+    [] | [RelationshipProposal]
+  >,
   /**
    * / Rejects a relationship request. Family Steward only.
    */

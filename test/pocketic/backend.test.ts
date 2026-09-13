@@ -1390,3 +1390,294 @@ it("gates getReviewQueue and getResearchAuditLog to Family Stewards", async () =
   await expect(anonymousActor.getReviewQueue()).rejects.toThrow();
   await expect(anonymousActor.getResearchAuditLog()).rejects.toThrow();
 });
+
+// ---------------------------------------------------------------------------
+// New Person Candidate review actions (cover for the Research Review Actions
+// change). A pending candidate is created, then approved (creating exactly one
+// canonical Person that preserves the candidate's source/provenance and records
+// the approval in Audit History), rejected (creating no Person), or marked Needs
+// Research (creating no Person). The pending count decrements immediately.
+// ---------------------------------------------------------------------------
+
+it("approves a New Person candidate, creating exactly one canonical Person and recording the audit", async () => {
+  const candSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
+  const candActor = candSetup.actor;
+
+  candActor.setIdentity(adminIdentity);
+  await candActor._initialize_access_control();
+  candActor.setIdentity(contributorIdentity);
+  await candActor._initialize_access_control();
+
+  // A contributor creates a source and a New Person candidate linked to it.
+  candActor.setIdentity(contributorIdentity);
+  const sourceCreated = await candActor.createSource(
+    "1900 census, Norwood household",
+    { CensusCitation: null },
+    "Census record listing the Norwood family.",
+    [],
+  );
+  const sourceId = (sourceCreated as { ok: { id: bigint } }).ok.id;
+  const candidateCreated = await candActor.createNewPersonCandidate(
+    "Unknown Norwood",
+    "A previously unrecorded family member.",
+    sourceId,
+  );
+  expect(candidateCreated).toEqual({
+    ok: expect.objectContaining({
+      name: "Unknown Norwood",
+      sourceId,
+      status: { Pending: null },
+    }),
+  });
+  const candidateId = (candidateCreated as { ok: { id: bigint } }).ok.id;
+
+  // The steward sees the pending candidate in the review queue. The pending
+  // count includes the linked source (still pending) plus the candidate.
+  candActor.setIdentity(adminIdentity);
+  const queueBefore = await candActor.getReviewQueue();
+  expect(queueBefore.pending).toBe(2n);
+  const candidateItem = queueBefore.items.find((i) => i.kind.NewPersonCandidate !== undefined);
+  expect(candidateItem).toMatchObject({
+    id: candidateId,
+    title: "Unknown Norwood",
+    status: { Pending: null },
+  });
+  expect(candidateItem!.actions).toEqual([
+    { Approve: null },
+    { Reject: null },
+    { NeedsResearch: null },
+  ]);
+
+  // Approving creates exactly one canonical Person and marks the candidate
+  // Approved; the pending count decrements immediately (the source remains
+  // pending, so pending drops from 2 to 1).
+  const approved = await candActor.approveNewPersonCandidate(candidateId);
+  expect(approved).toEqual([
+    expect.objectContaining({ id: candidateId, status: { Approved: null } }),
+  ]);
+  const queueAfter = await candActor.getReviewQueue();
+  expect(queueAfter.pending).toBe(1n);
+  expect(queueAfter.approved).toBe(1n);
+
+  // The canonical Person was created (living, unclaimed) with the candidate's
+  // name. uniquePersonId derives the personId from the name (lowercased, words
+  // joined with no separator).
+  const person = await candActor.getPersonProfile("unknownnorwood");
+  expect(person).toEqual([
+    expect.objectContaining({
+      personId: "unknownnorwood",
+      name: "Unknown Norwood",
+      livingStatus: { Living: null },
+      claimStatus: { Unclaimed: null },
+    }),
+  ]);
+
+  // The approval is recorded in Audit History.
+  const audit = await candActor.getResearchAuditLog();
+  expect(
+    audit.some(
+      (e) =>
+        e.action === "NewPersonCandidateApproved" &&
+        e.summary === "New Person Candidate 'Unknown Norwood' approved and created as a canonical Person",
+    ),
+  ).toBe(true);
+});
+
+it("rejects and marks-needs-research New Person candidates, creating no Person", async () => {
+  const candSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
+  const candActor = candSetup.actor;
+
+  candActor.setIdentity(adminIdentity);
+  await candActor._initialize_access_control();
+  candActor.setIdentity(contributorIdentity);
+  await candActor._initialize_access_control();
+
+  // A contributor creates a source and two candidates.
+  candActor.setIdentity(contributorIdentity);
+  const sourceCreated = await candActor.createSource(
+    "1900 census, Norwood household",
+    { CensusCitation: null },
+    "Census record listing the Norwood family.",
+    [],
+  );
+  const sourceId = (sourceCreated as { ok: { id: bigint } }).ok.id;
+  const rejectCreated = await candActor.createNewPersonCandidate(
+    "Rejected Norwood",
+    "A rejected candidate.",
+    sourceId,
+  );
+  const needsCreated = await candActor.createNewPersonCandidate(
+    "NeedsResearch Norwood",
+    "A needs-research candidate.",
+    sourceId,
+  );
+  const rejectId = (rejectCreated as { ok: { id: bigint } }).ok.id;
+  const needsId = (needsCreated as { ok: { id: bigint } }).ok.id;
+
+  // Rejecting marks the candidate Rejected and creates no Person.
+  candActor.setIdentity(adminIdentity);
+  const rejected = await candActor.rejectNewPersonCandidate(rejectId);
+  expect(rejected).toEqual([
+    expect.objectContaining({ id: rejectId, status: { Rejected: null } }),
+  ]);
+  await expect(candActor.getPersonProfile("rejectednorwood")).resolves.toEqual([]);
+
+  // Needs Research marks the candidate NeedsResearch and creates no Person.
+  const needsResearch = await candActor.needsResearchNewPersonCandidate(needsId);
+  expect(needsResearch).toEqual([
+    expect.objectContaining({ id: needsId, status: { NeedsResearch: null } }),
+  ]);
+  await expect(candActor.getPersonProfile("needsresearchnorwood")).resolves.toEqual([]);
+
+  // The queue reflects the rejected and needs-research counts.
+  const queue = await candActor.getReviewQueue();
+  expect(queue.rejected).toBe(1n);
+  expect(queue.needsResearch).toBe(1n);
+});
+
+// ---------------------------------------------------------------------------
+// Relationship Proposal review actions (cover for the Research Review Actions
+// change). A pending proposal is approved (creating/updating the canonical
+// relationship exactly once, updating the family graph, and preventing
+// duplicates), rejected (leaving the graph unchanged), or marked Needs Research
+// (leaving the graph unchanged). Pending counts decrement immediately.
+// ---------------------------------------------------------------------------
+
+it("approves a Relationship proposal, updating the family graph exactly once without duplicates", async () => {
+  const relSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
+  const relActor = relSetup.actor;
+
+  relActor.setIdentity(adminIdentity);
+  await relActor._initialize_access_control();
+  relActor.setIdentity(contributorIdentity);
+  await relActor._initialize_access_control();
+
+  // A contributor creates a source and a relationship proposal.
+  relActor.setIdentity(contributorIdentity);
+  const sourceCreated = await relActor.createSource(
+    "1900 census, Norwood household",
+    { CensusCitation: null },
+    "Census record listing the Norwood family.",
+    [],
+  );
+  const sourceId = (sourceCreated as { ok: { id: bigint } }).ok.id;
+  const proposalCreated = await relActor.createRelationshipProposal(
+    "clayton",
+    "julia",
+    "Father",
+    sourceId,
+  );
+  expect(proposalCreated).toEqual({
+    ok: expect.objectContaining({
+      fromPersonId: "clayton",
+      toPersonId: "julia",
+      relationshipType: "Father",
+      sourceId,
+      status: { Pending: null },
+    }),
+  });
+  const proposalId = (proposalCreated as { ok: { id: bigint } }).ok.id;
+
+  // The steward sees the pending proposal in the review queue. The pending
+  // count includes the linked source (still pending) plus the proposal.
+  relActor.setIdentity(adminIdentity);
+  const queueBefore = await relActor.getReviewQueue();
+  expect(queueBefore.pending).toBe(2n);
+  const proposalItem = queueBefore.items.find((i) => i.kind.RelationshipProposal !== undefined);
+  expect(proposalItem).toMatchObject({
+    id: proposalId,
+    title: "clayton - Father - julia",
+    status: { Pending: null },
+  });
+  expect(proposalItem!.actions).toEqual([
+    { Approve: null },
+    { Reject: null },
+    { NeedsResearch: null },
+  ]);
+
+  // Approving updates the family graph exactly once and marks the proposal
+  // Approved; the pending count decrements immediately (the source remains
+  // pending, so pending drops from 2 to 1).
+  const approved = await relActor.approveRelationshipProposal(proposalId);
+  expect(approved).toEqual([
+    expect.objectContaining({ id: proposalId, status: { Approved: null } }),
+  ]);
+  const queueAfter = await relActor.getReviewQueue();
+  expect(queueAfter.pending).toBe(1n);
+  expect(queueAfter.approved).toBe(1n);
+
+  // The canonical relationship is in the family graph exactly once. "Father"
+  // maps to the #Parent relationship type.
+  const relationships = await relActor.listConfirmedRelationships();
+  const matching = relationships.filter(
+    (r) =>
+      r.fromPersonId === "clayton" &&
+      r.toPersonId === "julia" &&
+      "Parent" in r.relationshipType,
+  );
+  expect(matching).toHaveLength(1);
+
+  // The approval is recorded in Audit History.
+  const audit = await relActor.getResearchAuditLog();
+  expect(
+    audit.some(
+      (e) =>
+        e.action === "RelationshipProposalApproved" &&
+        e.summary === "Relationship proposal 'clayton - Father - julia' approved and added to the family graph",
+    ),
+  ).toBe(true);
+});
+
+it("rejects and marks-needs-research Relationship proposals, leaving the family graph unchanged", async () => {
+  const relSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
+  const relActor = relSetup.actor;
+
+  relActor.setIdentity(adminIdentity);
+  await relActor._initialize_access_control();
+  relActor.setIdentity(contributorIdentity);
+  await relActor._initialize_access_control();
+
+  // A contributor creates a source and two proposals.
+  relActor.setIdentity(contributorIdentity);
+  const sourceCreated = await relActor.createSource(
+    "1900 census, Norwood household",
+    { CensusCitation: null },
+    "Census record listing the Norwood family.",
+    [],
+  );
+  const sourceId = (sourceCreated as { ok: { id: bigint } }).ok.id;
+  const rejectCreated = await relActor.createRelationshipProposal(
+    "clayton",
+    "julia",
+    "Father",
+    sourceId,
+  );
+  const needsCreated = await relActor.createRelationshipProposal(
+    "clayton",
+    "julia",
+    "Brother",
+    sourceId,
+  );
+  const rejectId = (rejectCreated as { ok: { id: bigint } }).ok.id;
+  const needsId = (needsCreated as { ok: { id: bigint } }).ok.id;
+
+  // Rejecting marks the proposal Rejected and leaves the graph unchanged.
+  relActor.setIdentity(adminIdentity);
+  const rejected = await relActor.rejectRelationshipProposal(rejectId);
+  expect(rejected).toEqual([
+    expect.objectContaining({ id: rejectId, status: { Rejected: null } }),
+  ]);
+  await expect(relActor.listConfirmedRelationships()).resolves.toEqual([]);
+
+  // Needs Research marks the proposal NeedsResearch and leaves the graph unchanged.
+  const needsResearch = await relActor.needsResearchRelationshipProposal(needsId);
+  expect(needsResearch).toEqual([
+    expect.objectContaining({ id: needsId, status: { NeedsResearch: null } }),
+  ]);
+  await expect(relActor.listConfirmedRelationships()).resolves.toEqual([]);
+
+  // The queue reflects the rejected and needs-research counts.
+  const queue = await relActor.getReviewQueue();
+  expect(queue.rejected).toBe(1n);
+  expect(queue.needsResearch).toBe(1n);
+});

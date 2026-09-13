@@ -289,6 +289,17 @@ export const ProposedFinding = IDL.Record({
   'personId' : IDL.Opt(IDL.Text),
   'findingType' : FindingType,
 });
+export const NewPersonCandidate = IDL.Record({
+  'id' : IDL.Nat,
+  'status' : ReviewStatus,
+  'name' : IDL.Text,
+  'submittedAt' : IDL.Int,
+  'submittedBy' : IDL.Principal,
+  'sourceId' : SourceId,
+  'reviewedAt' : IDL.Opt(IDL.Int),
+  'reviewedBy' : IDL.Opt(IDL.Principal),
+  'details' : IDL.Text,
+});
 export const ProfileClaimStatus = IDL.Variant({
   'Approved' : IDL.Null,
   'Rejected' : IDL.Null,
@@ -350,6 +361,18 @@ export const Recipe = IDL.Record({
   'originatingPersonId' : IDL.Text,
   'ingredients' : IDL.Vec(IDL.Text),
   'relatedPersonIds' : IDL.Vec(IDL.Text),
+});
+export const RelationshipProposal = IDL.Record({
+  'id' : IDL.Nat,
+  'status' : ReviewStatus,
+  'fromPersonId' : IDL.Text,
+  'submittedAt' : IDL.Int,
+  'submittedBy' : IDL.Principal,
+  'sourceId' : SourceId,
+  'reviewedAt' : IDL.Opt(IDL.Int),
+  'reviewedBy' : IDL.Opt(IDL.Principal),
+  'toPersonId' : IDL.Text,
+  'relationshipType' : IDL.Text,
 });
 export const RelationshipRequestStatus = IDL.Variant({
   'Approved' : IDL.Null,
@@ -523,32 +546,9 @@ export const Result_20 = IDL.Variant({
   'ok' : PersonProfile,
   'err' : CreateError,
 });
-export const NewPersonCandidate = IDL.Record({
-  'id' : IDL.Nat,
-  'status' : ReviewStatus,
-  'name' : IDL.Text,
-  'submittedAt' : IDL.Int,
-  'submittedBy' : IDL.Principal,
-  'sourceId' : SourceId,
-  'reviewedAt' : IDL.Opt(IDL.Int),
-  'reviewedBy' : IDL.Opt(IDL.Principal),
-  'details' : IDL.Text,
-});
 export const Result_19 = IDL.Variant({
   'ok' : NewPersonCandidate,
   'err' : ResearchError,
-});
-export const RelationshipProposal = IDL.Record({
-  'id' : IDL.Nat,
-  'status' : ReviewStatus,
-  'fromPersonId' : IDL.Text,
-  'submittedAt' : IDL.Int,
-  'submittedBy' : IDL.Principal,
-  'sourceId' : SourceId,
-  'reviewedAt' : IDL.Opt(IDL.Int),
-  'reviewedBy' : IDL.Opt(IDL.Principal),
-  'toPersonId' : IDL.Text,
-  'relationshipType' : IDL.Text,
 });
 export const Result_18 = IDL.Variant({
   'ok' : RelationshipProposal,
@@ -1025,6 +1025,11 @@ export const idlService = IDL.Service({
     ),
   'approveArchiveItem' : IDL.Func([ArchiveItemId], [IDL.Opt(ArchiveItem)], []),
   'approveFinding' : IDL.Func([FindingId], [IDL.Opt(ProposedFinding)], []),
+  'approveNewPersonCandidate' : IDL.Func(
+      [IDL.Nat],
+      [IDL.Opt(NewPersonCandidate)],
+      [],
+    ),
   'approveProfileClaim' : IDL.Func([IDL.Nat], [IDL.Opt(ProfileClaim)], []),
   'approveProfileRemoval' : IDL.Func(
       [IDL.Nat],
@@ -1032,6 +1037,11 @@ export const idlService = IDL.Service({
       [],
     ),
   'approveRecipe' : IDL.Func([RecipeId], [IDL.Opt(Recipe)], []),
+  'approveRelationshipProposal' : IDL.Func(
+      [IDL.Nat],
+      [IDL.Opt(RelationshipProposal)],
+      [],
+    ),
   'approveRelationshipRequest' : IDL.Func(
       [IDL.Nat],
       [IDL.Opt(RelationshipRequest)],
@@ -1277,6 +1287,16 @@ export const idlService = IDL.Service({
       [IDL.Opt(ProposedFinding)],
       [],
     ),
+  'needsResearchNewPersonCandidate' : IDL.Func(
+      [IDL.Nat],
+      [IDL.Opt(NewPersonCandidate)],
+      [],
+    ),
+  'needsResearchRelationshipProposal' : IDL.Func(
+      [IDL.Nat],
+      [IDL.Opt(RelationshipProposal)],
+      [],
+    ),
   'needsResearchSource' : IDL.Func([SourceId], [IDL.Opt(SourceRecord)], []),
   'notDuplicate' : IDL.Func([PersonId, PersonId], [Result_11], []),
   'permanentlyDeleteProfile' : IDL.Func([PersonId, IDL.Bool], [Result_10], []),
@@ -1310,6 +1330,11 @@ export const idlService = IDL.Service({
   'reconcileClaimNotifications' : IDL.Func([IDL.Nat], [IDL.Nat], []),
   'rejectArchiveItem' : IDL.Func([ArchiveItemId], [IDL.Opt(ArchiveItem)], []),
   'rejectFinding' : IDL.Func([FindingId], [IDL.Opt(ProposedFinding)], []),
+  'rejectNewPersonCandidate' : IDL.Func(
+      [IDL.Nat],
+      [IDL.Opt(NewPersonCandidate)],
+      [],
+    ),
   'rejectProfileClaim' : IDL.Func([IDL.Nat], [IDL.Opt(ProfileClaim)], []),
   'rejectProfileRemoval' : IDL.Func(
       [IDL.Nat],
@@ -1317,6 +1342,11 @@ export const idlService = IDL.Service({
       [],
     ),
   'rejectRecipe' : IDL.Func([RecipeId], [IDL.Opt(Recipe)], []),
+  'rejectRelationshipProposal' : IDL.Func(
+      [IDL.Nat],
+      [IDL.Opt(RelationshipProposal)],
+      [],
+    ),
   'rejectRelationshipRequest' : IDL.Func(
       [IDL.Nat],
       [IDL.Opt(RelationshipRequest)],
@@ -1757,6 +1787,17 @@ export const idlFactory = ({ IDL }) => {
     'personId' : IDL.Opt(IDL.Text),
     'findingType' : FindingType,
   });
+  const NewPersonCandidate = IDL.Record({
+    'id' : IDL.Nat,
+    'status' : ReviewStatus,
+    'name' : IDL.Text,
+    'submittedAt' : IDL.Int,
+    'submittedBy' : IDL.Principal,
+    'sourceId' : SourceId,
+    'reviewedAt' : IDL.Opt(IDL.Int),
+    'reviewedBy' : IDL.Opt(IDL.Principal),
+    'details' : IDL.Text,
+  });
   const ProfileClaimStatus = IDL.Variant({
     'Approved' : IDL.Null,
     'Rejected' : IDL.Null,
@@ -1818,6 +1859,18 @@ export const idlFactory = ({ IDL }) => {
     'originatingPersonId' : IDL.Text,
     'ingredients' : IDL.Vec(IDL.Text),
     'relatedPersonIds' : IDL.Vec(IDL.Text),
+  });
+  const RelationshipProposal = IDL.Record({
+    'id' : IDL.Nat,
+    'status' : ReviewStatus,
+    'fromPersonId' : IDL.Text,
+    'submittedAt' : IDL.Int,
+    'submittedBy' : IDL.Principal,
+    'sourceId' : SourceId,
+    'reviewedAt' : IDL.Opt(IDL.Int),
+    'reviewedBy' : IDL.Opt(IDL.Principal),
+    'toPersonId' : IDL.Text,
+    'relationshipType' : IDL.Text,
   });
   const RelationshipRequestStatus = IDL.Variant({
     'Approved' : IDL.Null,
@@ -1985,32 +2038,9 @@ export const idlFactory = ({ IDL }) => {
   });
   const CreateError = IDL.Variant({ 'NotSignedIn' : IDL.Null });
   const Result_20 = IDL.Variant({ 'ok' : PersonProfile, 'err' : CreateError });
-  const NewPersonCandidate = IDL.Record({
-    'id' : IDL.Nat,
-    'status' : ReviewStatus,
-    'name' : IDL.Text,
-    'submittedAt' : IDL.Int,
-    'submittedBy' : IDL.Principal,
-    'sourceId' : SourceId,
-    'reviewedAt' : IDL.Opt(IDL.Int),
-    'reviewedBy' : IDL.Opt(IDL.Principal),
-    'details' : IDL.Text,
-  });
   const Result_19 = IDL.Variant({
     'ok' : NewPersonCandidate,
     'err' : ResearchError,
-  });
-  const RelationshipProposal = IDL.Record({
-    'id' : IDL.Nat,
-    'status' : ReviewStatus,
-    'fromPersonId' : IDL.Text,
-    'submittedAt' : IDL.Int,
-    'submittedBy' : IDL.Principal,
-    'sourceId' : SourceId,
-    'reviewedAt' : IDL.Opt(IDL.Int),
-    'reviewedBy' : IDL.Opt(IDL.Principal),
-    'toPersonId' : IDL.Text,
-    'relationshipType' : IDL.Text,
   });
   const Result_18 = IDL.Variant({
     'ok' : RelationshipProposal,
@@ -2473,6 +2503,11 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'approveFinding' : IDL.Func([FindingId], [IDL.Opt(ProposedFinding)], []),
+    'approveNewPersonCandidate' : IDL.Func(
+        [IDL.Nat],
+        [IDL.Opt(NewPersonCandidate)],
+        [],
+      ),
     'approveProfileClaim' : IDL.Func([IDL.Nat], [IDL.Opt(ProfileClaim)], []),
     'approveProfileRemoval' : IDL.Func(
         [IDL.Nat],
@@ -2480,6 +2515,11 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'approveRecipe' : IDL.Func([RecipeId], [IDL.Opt(Recipe)], []),
+    'approveRelationshipProposal' : IDL.Func(
+        [IDL.Nat],
+        [IDL.Opt(RelationshipProposal)],
+        [],
+      ),
     'approveRelationshipRequest' : IDL.Func(
         [IDL.Nat],
         [IDL.Opt(RelationshipRequest)],
@@ -2745,6 +2785,16 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Opt(ProposedFinding)],
         [],
       ),
+    'needsResearchNewPersonCandidate' : IDL.Func(
+        [IDL.Nat],
+        [IDL.Opt(NewPersonCandidate)],
+        [],
+      ),
+    'needsResearchRelationshipProposal' : IDL.Func(
+        [IDL.Nat],
+        [IDL.Opt(RelationshipProposal)],
+        [],
+      ),
     'needsResearchSource' : IDL.Func([SourceId], [IDL.Opt(SourceRecord)], []),
     'notDuplicate' : IDL.Func([PersonId, PersonId], [Result_11], []),
     'permanentlyDeleteProfile' : IDL.Func(
@@ -2782,6 +2832,11 @@ export const idlFactory = ({ IDL }) => {
     'reconcileClaimNotifications' : IDL.Func([IDL.Nat], [IDL.Nat], []),
     'rejectArchiveItem' : IDL.Func([ArchiveItemId], [IDL.Opt(ArchiveItem)], []),
     'rejectFinding' : IDL.Func([FindingId], [IDL.Opt(ProposedFinding)], []),
+    'rejectNewPersonCandidate' : IDL.Func(
+        [IDL.Nat],
+        [IDL.Opt(NewPersonCandidate)],
+        [],
+      ),
     'rejectProfileClaim' : IDL.Func([IDL.Nat], [IDL.Opt(ProfileClaim)], []),
     'rejectProfileRemoval' : IDL.Func(
         [IDL.Nat],
@@ -2789,6 +2844,11 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'rejectRecipe' : IDL.Func([RecipeId], [IDL.Opt(Recipe)], []),
+    'rejectRelationshipProposal' : IDL.Func(
+        [IDL.Nat],
+        [IDL.Opt(RelationshipProposal)],
+        [],
+      ),
     'rejectRelationshipRequest' : IDL.Func(
         [IDL.Nat],
         [IDL.Opt(RelationshipRequest)],

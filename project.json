@@ -1,17 +1,16 @@
 {
-  "overview": "A family history app where members preserve records, research their ancestry, and collaborate through a Family Steward review workflow.",
+  "overview": "A family research and genealogy app where a Family Steward reviews research intake items and maintains the family tree.",
   "features": [
-    "Preserve family records, media, and archive contributions",
-    "Submit and review research findings with provenance",
-    "Family Steward hub for reviewing pending work",
-    "Message board and family collaboration"
+    "Review New Person Candidates with Approve, Reject, and Needs Research actions",
+    "Review Relationship Proposals with Approve, Reject, and Needs Research actions",
+    "Numeric badge on the Review Queue button aggregating unresolved items",
+    "Immediate refresh of queue, steward count, and badge after each review action"
   ],
-  "category": "family-history",
+  "category": "genealogy",
   "tags": [
     "family",
     "genealogy",
-    "research",
-    "collaboration"
+    "research"
   ],
-  "last_updated": "2026-09-13T12:25:16.452Z"
+  "last_updated": "2026-09-13T15:29:24.260Z"
 }

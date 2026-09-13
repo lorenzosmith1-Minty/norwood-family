@@ -505,6 +505,191 @@ module {
     updated;
   };
 
+  /// Approves a pending New Person candidate (steward action), transitioning it
+  /// to `#Approved`. The canonical Person record is created by the API mixin;
+  /// this helper only transitions the candidate's status. Returns the updated
+  /// candidate, or `null` when it does not exist or is not pending.
+  public func approveNewPersonCandidate(
+    candidates : List.List<Types.NewPersonCandidate>,
+    id : Nat,
+    reviewer : Principal,
+    now : Int,
+  ) : ?Types.NewPersonCandidate {
+    ignore reviewer;
+    var updated : ?Types.NewPersonCandidate = null;
+    let snapshot = candidates.toArray();
+    candidates.clear();
+    for (c in snapshot.values()) {
+      if (c.id == id and c.status == #Pending) {
+        let approved : Types.NewPersonCandidate = {
+          c with
+          status = #Approved;
+          reviewedBy = ?reviewer;
+          reviewedAt = ?now;
+        };
+        candidates.add(approved);
+        updated := ?approved;
+      } else {
+        candidates.add(c);
+      };
+    };
+    updated;
+  };
+
+  /// Rejects a pending New Person candidate (steward action), transitioning it
+  /// to `#Rejected`. No canonical Person is created. Returns the updated
+  /// candidate, or `null` when it does not exist or is not pending.
+  public func rejectNewPersonCandidate(
+    candidates : List.List<Types.NewPersonCandidate>,
+    id : Nat,
+    reviewer : Principal,
+    now : Int,
+  ) : ?Types.NewPersonCandidate {
+    ignore reviewer;
+    var updated : ?Types.NewPersonCandidate = null;
+    let snapshot = candidates.toArray();
+    candidates.clear();
+    for (c in snapshot.values()) {
+      if (c.id == id and c.status == #Pending) {
+        let rejected : Types.NewPersonCandidate = {
+          c with
+          status = #Rejected;
+          reviewedBy = ?reviewer;
+          reviewedAt = ?now;
+        };
+        candidates.add(rejected);
+        updated := ?rejected;
+      } else {
+        candidates.add(c);
+      };
+    };
+    updated;
+  };
+
+  /// Marks a pending New Person candidate as needing research (steward action),
+  /// transitioning it to `#NeedsResearch` while preserving the candidate. No
+  /// canonical Person is created. Returns the updated candidate, or `null` when
+  /// it does not exist or is not pending.
+  public func needsResearchNewPersonCandidate(
+    candidates : List.List<Types.NewPersonCandidate>,
+    id : Nat,
+    reviewer : Principal,
+    now : Int,
+  ) : ?Types.NewPersonCandidate {
+    ignore reviewer;
+    var updated : ?Types.NewPersonCandidate = null;
+    let snapshot = candidates.toArray();
+    candidates.clear();
+    for (c in snapshot.values()) {
+      if (c.id == id and c.status == #Pending) {
+        let needsResearch : Types.NewPersonCandidate = {
+          c with
+          status = #NeedsResearch;
+          reviewedBy = ?reviewer;
+          reviewedAt = ?now;
+        };
+        candidates.add(needsResearch);
+        updated := ?needsResearch;
+      } else {
+        candidates.add(c);
+      };
+    };
+    updated;
+  };
+
+  /// Approves a pending Relationship proposal (steward action), transitioning it
+  /// to `#Approved`. The canonical relationship is written into the family graph
+  /// by the API mixin; this helper only transitions the proposal's status.
+  /// Returns the updated proposal, or `null` when it does not exist or is not
+  /// pending.
+  public func approveRelationshipProposal(
+    proposals : List.List<Types.RelationshipProposal>,
+    id : Nat,
+    reviewer : Principal,
+    now : Int,
+  ) : ?Types.RelationshipProposal {
+    ignore reviewer;
+    var updated : ?Types.RelationshipProposal = null;
+    let snapshot = proposals.toArray();
+    proposals.clear();
+    for (p in snapshot.values()) {
+      if (p.id == id and p.status == #Pending) {
+        let approved : Types.RelationshipProposal = {
+          p with
+          status = #Approved;
+          reviewedBy = ?reviewer;
+          reviewedAt = ?now;
+        };
+        proposals.add(approved);
+        updated := ?approved;
+      } else {
+        proposals.add(p);
+      };
+    };
+    updated;
+  };
+
+  /// Rejects a pending Relationship proposal (steward action), transitioning it
+  /// to `#Rejected`. The family graph is left unchanged. Returns the updated
+  /// proposal, or `null` when it does not exist or is not pending.
+  public func rejectRelationshipProposal(
+    proposals : List.List<Types.RelationshipProposal>,
+    id : Nat,
+    reviewer : Principal,
+    now : Int,
+  ) : ?Types.RelationshipProposal {
+    ignore reviewer;
+    var updated : ?Types.RelationshipProposal = null;
+    let snapshot = proposals.toArray();
+    proposals.clear();
+    for (p in snapshot.values()) {
+      if (p.id == id and p.status == #Pending) {
+        let rejected : Types.RelationshipProposal = {
+          p with
+          status = #Rejected;
+          reviewedBy = ?reviewer;
+          reviewedAt = ?now;
+        };
+        proposals.add(rejected);
+        updated := ?rejected;
+      } else {
+        proposals.add(p);
+      };
+    };
+    updated;
+  };
+
+  /// Marks a pending Relationship proposal as needing research (steward action),
+  /// transitioning it to `#NeedsResearch` while preserving the proposal. The
+  /// canonical graph is left unchanged. Returns the updated proposal, or `null`
+  /// when it does not exist or is not pending.
+  public func needsResearchRelationshipProposal(
+    proposals : List.List<Types.RelationshipProposal>,
+    id : Nat,
+    reviewer : Principal,
+    now : Int,
+  ) : ?Types.RelationshipProposal {
+    ignore reviewer;
+    var updated : ?Types.RelationshipProposal = null;
+    let snapshot = proposals.toArray();
+    proposals.clear();
+    for (p in snapshot.values()) {
+      if (p.id == id and p.status == #Pending) {
+        let needsResearch : Types.RelationshipProposal = {
+          p with
+          status = #NeedsResearch;
+          reviewedBy = ?reviewer;
+          reviewedAt = ?now;
+        };
+        proposals.add(needsResearch);
+        updated := ?needsResearch;
+      } else {
+        proposals.add(p);
+      };
+    };
+    updated;
+  };
+
   /// Appends an audit entry recording a provenance or approval action.
   public func appendAudit(
     auditLog : List.List<Types.ResearchAuditEntry>,

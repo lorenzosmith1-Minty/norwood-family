@@ -110,6 +110,16 @@ export function ArchiveCard({ item, index, onOpen }: ArchiveCardProps) {
           <span>contributed</span>
         </p>
 
+        {item.tags.length > 0 ? (
+          <div className="flex flex-wrap items-center gap-1.5">
+            {item.tags.map((tag) => (
+              <span key={tag} className="archive-tag-chip">
+                {tag}
+              </span>
+            ))}
+          </div>
+        ) : null}
+
         {relatedMembers.length > 0 ? (
           <div className="mt-auto flex flex-wrap items-center gap-1.5 pt-1">
             {relatedMembers.map((profile) => (

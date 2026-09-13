@@ -46,6 +46,7 @@ module {
     postType : PostType;
     relatedPersonIds : [Common.PersonId];
     linkedMediaIds : [Nat];
+    tags : [Text];
     createdAt : Common.Timestamp;
     updatedAt : Common.Timestamp;
     status : PostStatus;

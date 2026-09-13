@@ -220,11 +220,19 @@ function MatchCard({
 
   const currentPrincipal = accountId;
 
-  // A pending OR approved claim by the signed-in user on this person means the
-  // profile is already claimed/awaiting review — never offer 'This is Me' again.
-  const hasActiveClaimByCurrentUser =
+  // An APPROVED claim by the signed-in user on this person means the profile is
+  // already owned by the current user (backend canonical ownership). It must
+  // never render as a pending claim — show it as already claimed/owned.
+  const ownedByCurrentUser =
     myClaim?.personId === match.personId &&
-    (myClaim.status === "Pending" || myClaim.status === "Approved") &&
+    myClaim.status === "Approved" &&
+    myClaim.requestingUserId.toString() === currentPrincipal;
+
+  // A genuinely PENDING claim by the signed-in user on a profile not yet owned
+  // by them means the claim is awaiting steward review — show 'Claim pending'.
+  const pendingByCurrentUser =
+    myClaim?.personId === match.personId &&
+    myClaim.status === "Pending" &&
     myClaim.requestingUserId.toString() === currentPrincipal;
 
   return (
@@ -241,7 +249,14 @@ function MatchCard({
         </p>
       </div>
       <div className="match-card-actions">
-        {hasActiveClaimByCurrentUser ? (
+        {ownedByCurrentUser ? (
+          <span
+            data-ocid={`add_myself.this_is_me.owned.${index}`}
+            className="claim-badge claim-badge-claimed"
+          >
+            Already claimed
+          </span>
+        ) : pendingByCurrentUser ? (
           <span
             data-ocid={`add_myself.this_is_me.pending.${index}`}
             className="claim-badge claim-badge-pending"

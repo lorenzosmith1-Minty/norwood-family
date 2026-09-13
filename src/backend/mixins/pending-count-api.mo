@@ -15,10 +15,12 @@ mixin (
   mysteryContributions : List.List<FamilyHistoryTypes.MysteryContribution>,
 ) {
   /// Returns the count of all current pending review items (archive/media,
-  /// video/audio, recipes, recipe media, and other contribution types) for the
-  /// Steward-facing Pending Contributions badge. Family Steward only. The count
-  /// is derived from canonical pending data, so it increments on new pending
-  /// items and decrements on Approve/Reject automatically.
+  /// video/audio, recipes, recipe media, stories, and mystery contributions)
+  /// for the Steward-facing Pending Contributions badge. Research Intake review
+  /// items are NOT included — they resolve exclusively through the Research
+  /// Review Queue (getReviewQueue). Family Steward only. The count is derived
+  /// from canonical pending data, so it increments on new pending items and
+  /// decrements on Approve/Reject automatically.
   public query ({ caller }) func getPendingContributionsCount() : async Nat {
     if (caller.isAnonymous()) {
       Runtime.trap("Unauthorized: You must be signed in");
@@ -26,6 +28,11 @@ mixin (
     if (not AccessControl.isAdmin(accessControlState, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can view the pending contributions count");
     };
-    PendingCountLib.countPending(archiveItems, recipes, stories, mysteryContributions);
+    PendingCountLib.countPending(
+      archiveItems,
+      recipes,
+      stories,
+      mysteryContributions,
+    );
   };
 };

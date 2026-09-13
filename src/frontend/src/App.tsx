@@ -25,6 +25,7 @@ import { FamilyStewardGovernancePage } from "./pages/FamilyStewardGovernancePage
 import { FamilyStewardHubPage } from "./pages/FamilyStewardHubPage";
 import { FamilyStewardReviewPage } from "./pages/FamilyStewardReviewPage";
 import HeritageBranchPage from "./pages/HeritageBranchPage";
+import { HiddenPostsPage } from "./pages/HiddenPostsPage";
 import { HomePage } from "./pages/HomePage";
 import { InboxPage } from "./pages/InboxPage";
 import { MessageBoardHubPage } from "./pages/MessageBoardHubPage";
@@ -84,6 +85,7 @@ type View =
   | "family-history"
   | "message-board-hub"
   | "steward-hub"
+  | "hidden-posts"
   | "research-intake"
   | "research-queue"
   | "research-conflict";
@@ -121,6 +123,7 @@ const VALID_VIEWS: readonly View[] = [
   "family-history",
   "message-board-hub",
   "steward-hub",
+  "hidden-posts",
   "research-intake",
   "research-queue",
   "research-conflict",
@@ -600,6 +603,7 @@ export default function App() {
           onOpenArchiveItem={openArchiveItem}
           onOpenVideos={() => setView("videos")}
           onOpenRecipes={openRecipes}
+          onAddToArchive={() => setView("archive-contribute")}
         />
       ) : view === "videos" ? (
         <VideosPage
@@ -763,6 +767,19 @@ export default function App() {
           onOpenPendingContributions={() => setView("admin-approval")}
           onOpenGovernance={() => setView("governance")}
           onOpenResearchIntake={() => setView("research-intake")}
+          onOpenHiddenPosts={() => setView("hidden-posts")}
+        />
+      ) : view === "hidden-posts" ? (
+        <HiddenPostsPage
+          onBack={() => setView("steward-hub")}
+          onOpenPost={(id) => {
+            setSelectedPostId(id);
+            setView("board-post");
+          }}
+          onOpenProfile={(id) => {
+            setProfileId(id);
+            setView("profile");
+          }}
         />
       ) : view === "research-intake" ? (
         <ResearchIntakePage

@@ -622,12 +622,14 @@ it("round-trips board posts, replies, archive/restore, messaging, block, report,
     "Save the date for the annual reunion.",
     ["hudson"],
     [],
+    ["reunion", "family"],
   );
   expect(post).toMatchObject({
     postType: { Announcement: null },
     title: ["Family reunion"],
     body: "Save the date for the annual reunion.",
     relatedPersonIds: ["hudson"],
+    tags: ["reunion", "family"],
     status: { Active: null },
     privacyScope: { FamilyOnly: null },
     authorPersonId: "clayton",
@@ -819,4 +821,572 @@ it("does not expose unreported private conversation content to a steward", async
       }),
     }),
   ]);
+});
+
+// ---------------------------------------------------------------------------
+// Archive tag search (cover for the archive title + tag search requirement).
+// searchArchiveItems filters approved items by title query and tags, matching
+// case-insensitively by substring, and an item must carry ALL of the given
+// tags. Only #Approved items are returned.
+// ---------------------------------------------------------------------------
+
+it("searches approved archive items by title and tags", async () => {
+  const searchSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
+  const searchActor = searchSetup.actor;
+
+  // ADMIN becomes the Family Steward; CONTRIBUTOR registers as a #user.
+  searchActor.setIdentity(adminIdentity);
+  await searchActor._initialize_access_control();
+  searchActor.setIdentity(contributorIdentity);
+  await searchActor._initialize_access_control();
+
+  // A contributor submits two approved items with distinct titles and tags.
+  searchActor.setIdentity(contributorIdentity);
+  const letter = await searchActor.submitArchiveItem(
+    "A family letter",
+    "A letter from 1924.",
+    { Document: null },
+    blob,
+    "1924",
+    [1924n],
+    ["letters", "1924"],
+    ["julia"],
+    ["branch-1"],
+    { Original: null },
+    { FamilyOnly: null },
+    { Standard: null },
+    [],
+  );
+  const photo = await searchActor.submitArchiveItem(
+    "Wedding portrait",
+    "The couple on their wedding day.",
+    { Photo: null },
+    blob,
+    "1920s",
+    [],
+    ["wedding", "1920s"],
+    ["julia"],
+    ["branch-1"],
+    { Original: null },
+    { FamilyOnly: null },
+    { Standard: null },
+    [],
+  );
+
+  // Approve both items so they enter the searchable archive.
+  searchActor.setIdentity(adminIdentity);
+  await searchActor.approveArchiveItem(letter.id);
+  await searchActor.approveArchiveItem(photo.id);
+
+  // Empty-state search returns everything approved.
+  const all = await searchActor.searchArchiveItems({
+    searchTerm: [],
+    tags: [],
+    itemType: [],
+    relatedMemberId: [],
+    era: [],
+  });
+  expect(all).toHaveLength(2);
+
+  // Title search matches case-insensitively by substring.
+  const byTitle = await searchActor.searchArchiveItems({
+    searchTerm: ["FAMILY"],
+    tags: [],
+    itemType: [],
+    relatedMemberId: [],
+    era: [],
+  });
+  expect(byTitle.map((i) => i.id)).toEqual([letter.id]);
+
+  // Tag search requires ALL of the given tags.
+  const byTag = await searchActor.searchArchiveItems({
+    searchTerm: [],
+    tags: ["wedding"],
+    itemType: [],
+    relatedMemberId: [],
+    era: [],
+  });
+  expect(byTag.map((i) => i.id)).toEqual([photo.id]);
+
+  // A tag present on only one item narrows to that item.
+  const byBothTags = await searchActor.searchArchiveItems({
+    searchTerm: [],
+    tags: ["1924"],
+    itemType: [],
+    relatedMemberId: [],
+    era: [],
+  });
+  expect(byBothTags.map((i) => i.id)).toEqual([letter.id]);
+});
+
+// ---------------------------------------------------------------------------
+// Research source upload (cover for the Research Intake source-upload
+// requirement). createSourceWithUpload creates ONE canonical Archive item
+// (pending) and links a new Research Source record to it via archiveItemId, so
+// no manually typed Archive Item ID is required.
+// ---------------------------------------------------------------------------
+
+it("creates one canonical archive item and links a source via createSourceWithUpload", async () => {
+  const uploadSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
+  const uploadActor = uploadSetup.actor;
+
+  // ADMIN becomes the Family Steward; CONTRIBUTOR registers as a #user.
+  uploadActor.setIdentity(adminIdentity);
+  await uploadActor._initialize_access_control();
+  uploadActor.setIdentity(contributorIdentity);
+  await uploadActor._initialize_access_control();
+
+  // A signed-in contributor uploads a source file.
+  uploadActor.setIdentity(contributorIdentity);
+  const result = await uploadActor.createSourceWithUpload(
+    "1900 census, Norwood household",
+    { CensusCitation: null },
+    "Census record listing the Norwood family.",
+    blob,
+    ["census", "1900"],
+    "1900",
+    [1900n],
+    ["julia"],
+    { FamilyOnly: null },
+    { Standard: null },
+    [],
+  );
+  expect(result).toEqual({
+    ok: expect.objectContaining({
+      source: expect.objectContaining({
+        title: "1900 census, Norwood household",
+        sourceType: { CensusCitation: null },
+        archiveItemId: [expect.any(BigInt)],
+        contributor: CONTRIBUTOR,
+        status: { Pending: null },
+      }),
+      archiveItem: expect.objectContaining({
+        title: "1900 census, Norwood household",
+        itemType: { Document: null },
+        tags: ["census", "1900"],
+        contributor: CONTRIBUTOR,
+        status: { Pending: null },
+      }),
+    }),
+  });
+
+  // Exactly one canonical archive item was created (pending), and the source
+  // links to it by id — no manually typed Archive Item ID was required.
+  // listPendingArchiveItems is admin-gated, so switch to the admin caller.
+  uploadActor.setIdentity(adminIdentity);
+  const pending = await uploadActor.listPendingArchiveItems();
+  expect(pending).toHaveLength(1);
+  const archiveItemId = (result as { ok: { archiveItem: { id: bigint } } }).ok.archiveItem.id;
+  expect(pending[0].id).toBe(archiveItemId);
+
+  // The source record is readable and carries the linked archive item id.
+  const sources = await uploadActor.listSources();
+  expect(sources).toHaveLength(1);
+  expect(sources[0]).toMatchObject({
+    title: "1900 census, Norwood household",
+    archiveItemId: [archiveItemId],
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Board post with media (cover for the Message Board media-attachment
+// requirement). createBoardPostWithMedia attaches existing Archive items by id
+// and/or creates one canonical Archive item per new upload — the underlying
+// file is never duplicated.
+// ---------------------------------------------------------------------------
+
+it("creates a board post attaching existing media and new uploads without duplication", async () => {
+  const mediaSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
+  const mediaActor = mediaSetup.actor;
+
+  // ADMIN becomes the Family Steward; MEMBER_A registers as an approved member
+  // and binds an auth method so their account is active.
+  mediaActor.setIdentity(adminIdentity);
+  await mediaActor._initialize_access_control();
+  mediaActor.setIdentity(memberAIdentity);
+  await mediaActor._initialize_access_control();
+  await mediaActor.bindAuthMethod({ Google: null });
+
+  // MEMBER_A claims the living 'clayton' profile; the steward approves it.
+  mediaActor.setIdentity(memberAIdentity);
+  const claim = (await mediaActor.requestProfileClaim("clayton")) as {
+    ok: { id: bigint };
+  };
+  mediaActor.setIdentity(adminIdentity);
+  await mediaActor.approveProfileClaim(claim.ok.id);
+
+  // Seed an approved archive item to attach by id.
+  mediaActor.setIdentity(memberAIdentity);
+  const existing = await mediaActor.submitArchiveItem(
+    "Existing photo",
+    "Already in the archive.",
+    { Photo: null },
+    blob,
+    "1920s",
+    [],
+    ["existing"],
+    ["clayton"],
+    [],
+    { Original: null },
+    { FamilyOnly: null },
+    { Standard: null },
+    [],
+  );
+  mediaActor.setIdentity(adminIdentity);
+  await mediaActor.approveArchiveItem(existing.id);
+
+  // MEMBER_A creates a post attaching the existing item AND one new upload.
+  mediaActor.setIdentity(memberAIdentity);
+  const post = await mediaActor.createBoardPostWithMedia(
+    { General: null },
+    ["Reunion photos"],
+    "Here are the reunion photos.",
+    ["clayton"],
+    [existing.id],
+    [
+      {
+        title: "New reunion photo",
+        description: "A photo from the reunion.",
+        itemType: { Photo: null },
+        blob,
+        era: "2024",
+        year: [2024n],
+        tags: ["reunion"],
+        relatedMemberIds: ["clayton"],
+        relatedBranchId: [],
+        sourceStatus: { Original: null },
+        privacyLevel: { FamilyOnly: null },
+        classification: { Standard: null },
+        primarySpeaker: [],
+      },
+    ],
+    ["reunion", "photos"],
+  );
+
+  // The post links BOTH the existing item and the new upload's archive item.
+  expect(post.linkedMediaIds).toHaveLength(2);
+  expect(post.linkedMediaIds).toContain(existing.id);
+
+  // The new upload created exactly one canonical Archive item (pending) — the
+  // underlying file is not duplicated. listPendingArchiveItems is admin-gated,
+  // so switch to the admin caller.
+  mediaActor.setIdentity(adminIdentity);
+  const pending = await mediaActor.listPendingArchiveItems();
+  expect(pending).toHaveLength(1);
+  expect(pending[0]).toMatchObject({
+    title: "New reunion photo",
+    itemType: { Photo: null },
+    tags: ["reunion"],
+  });
+  expect(post.linkedMediaIds).toContain(pending[0].id);
+});
+
+// ---------------------------------------------------------------------------
+// Stale claim notification reconciliation (cover for the approved-claim
+// notification requirement). When a profile claim becomes APPROVED, the pending
+// ProfileClaimRequested notification for the claimant is no longer
+// actionable/current — reconcileClaimNotifications marks it read/resolved while
+// the profile status stays CLAIMED.
+// ---------------------------------------------------------------------------
+
+it("reconciles the pending claim notification once the claim is approved", async () => {
+  const notifSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
+  const notifActor = notifSetup.actor;
+
+  // ADMIN becomes the Family Steward; CLAIMANT registers as a user.
+  notifActor.setIdentity(adminIdentity);
+  await notifActor._initialize_access_control();
+  notifActor.setIdentity(claimantIdentity);
+  await notifActor._initialize_access_control();
+
+  // CLAIMANT requests a claim on the canonical lorenzoSmithJr profile, which
+  // creates a pending ProfileClaimRequested notification for the claimant.
+  notifActor.setIdentity(claimantIdentity);
+  const requested = (await notifActor.requestProfileClaim("lorenzoSmithJr")) as {
+    ok: { id: bigint };
+  };
+  const claimId = requested.ok.id;
+
+  // The claimant has a pending, unread claim notification.
+  const before = await notifActor.listNotifications();
+  expect(before).toHaveLength(1);
+  expect(before[0]).toMatchObject({
+    notificationType: { ProfileClaimRequested: null },
+    read: false,
+  });
+
+  // A steward approves the claim. ADMIN is the first caller to
+  // _initialize_access_control, so ADMIN is the Family Steward here.
+  notifActor.setIdentity(adminIdentity);
+  await notifActor.approveProfileClaim(claimId);
+
+  // Reconcile marks the pending claim notification read/resolved.
+  notifActor.setIdentity(claimantIdentity);
+  const reconciled = await notifActor.reconcileClaimNotifications(claimId);
+  expect(reconciled).toBe(1n);
+
+  // The pending claim notification is now read (no longer actionable/current).
+  const after = await notifActor.listNotifications();
+  const claimRequested = after.find(
+    (n) => "ProfileClaimRequested" in n.notificationType,
+  );
+  expect(claimRequested).toMatchObject({ read: true });
+
+  // The profile status stays CLAIMED — no new claim is created.
+  const profile = await notifActor.getPersonProfile("lorenzoSmithJr");
+  expect(profile).toEqual([
+    expect.objectContaining({
+      personId: "lorenzoSmithJr",
+      claimStatus: { Claimed: null },
+      claimedByUserId: [CLAIMANT],
+    }),
+  ]);
+});
+
+// ---------------------------------------------------------------------------
+// Research Intake review workflow (cover for the research review change). A
+// pending Source enters the Research Review Queue with Approve/Reject/Needs
+// Research actions, contributes to the steward action count, and generates the
+// awaiting-review/approved/not-approved notifications without duplicates.
+// getReviewQueue and getResearchAuditLog are Family-Steward-gated.
+// ---------------------------------------------------------------------------
+
+it("round-trips a research source through create -> queue -> approve with notifications", async () => {
+  const researchSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
+  const researchActor = researchSetup.actor;
+
+  // ADMIN becomes the Family Steward; CONTRIBUTOR registers as a #user.
+  researchActor.setIdentity(adminIdentity);
+  await researchActor._initialize_access_control();
+  researchActor.setIdentity(contributorIdentity);
+  await researchActor._initialize_access_control();
+
+  // A signed-in contributor creates a source; it enters as Pending.
+  researchActor.setIdentity(contributorIdentity);
+  const created = await researchActor.createSource(
+    "1900 census, Norwood household",
+    { CensusCitation: null },
+    "Census record listing the Norwood family.",
+    [],
+  );
+  expect(created).toEqual({
+    ok: expect.objectContaining({
+      title: "1900 census, Norwood household",
+      sourceType: { CensusCitation: null },
+      contributor: CONTRIBUTOR,
+      status: { Pending: null },
+    }),
+  });
+  const sourceId = (created as { ok: { id: bigint } }).ok.id;
+
+  // The contributor receives the awaiting-review notification.
+  const contributorNotifs = await researchActor.listNotifications();
+  expect(contributorNotifs).toHaveLength(1);
+  expect(contributorNotifs[0]).toMatchObject({
+    recipient: CONTRIBUTOR,
+    notificationType: { ResearchSubmission: null },
+    message: "Your research submission is awaiting Family Steward review.",
+    read: false,
+  });
+
+  // The steward sees the pending source in the review queue with the
+  // Approve/Reject/Needs Research actions.
+  researchActor.setIdentity(adminIdentity);
+  const queue = await researchActor.getReviewQueue();
+  expect(queue.pending).toBe(1n);
+  expect(queue.needsResearch).toBe(0n);
+  const sourceItem = queue.items.find((i) => i.kind.Source !== undefined);
+  expect(sourceItem).toMatchObject({
+    id: sourceId,
+    title: "1900 census, Norwood household",
+    status: { Pending: null },
+    contributor: [CONTRIBUTOR],
+  });
+  expect(sourceItem!.actions).toEqual([
+    { Approve: null },
+    { Reject: null },
+    { NeedsResearch: null },
+  ]);
+
+  // Approving transitions the source to Approved and records the approved
+  // notification for the contributor.
+  const approved = await researchActor.approveSource(sourceId);
+  expect(approved).toEqual([
+    expect.objectContaining({ id: sourceId, status: { Approved: null } }),
+  ]);
+  const afterApprove = await researchActor.getReviewQueue();
+  expect(afterApprove.pending).toBe(0n);
+  expect(afterApprove.approved).toBe(1n);
+
+  researchActor.setIdentity(contributorIdentity);
+  const approvedNotifs = await researchActor.listNotifications();
+  expect(
+    approvedNotifs.filter(
+      (n) =>
+        "ResearchApproved" in n.notificationType &&
+        n.message === "Your research submission was approved.",
+    ),
+  ).toHaveLength(1);
+});
+
+it("rejects and marks-needs-research sources, preserving the source and notes", async () => {
+  const researchSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
+  const researchActor = researchSetup.actor;
+
+  researchActor.setIdentity(adminIdentity);
+  await researchActor._initialize_access_control();
+  researchActor.setIdentity(contributorIdentity);
+  await researchActor._initialize_access_control();
+
+  // Create two sources to reject and mark needs-research.
+  researchActor.setIdentity(contributorIdentity);
+  const rejectCreated = await researchActor.createSource(
+    "Deed record",
+    { DeedPropertyReference: null },
+    "A deed reference.",
+    [],
+  );
+  const needsCreated = await researchActor.createSource(
+    "Email thread",
+    { EmailThread: null },
+    "An email thread.",
+    [],
+  );
+  const rejectId = (rejectCreated as { ok: { id: bigint } }).ok.id;
+  const needsId = (needsCreated as { ok: { id: bigint } }).ok.id;
+
+  // Rejecting transitions to Rejected and records the not-approved
+  // notification; the source (and its notes/description) is preserved.
+  researchActor.setIdentity(adminIdentity);
+  const rejected = await researchActor.rejectSource(rejectId);
+  expect(rejected).toEqual([
+    expect.objectContaining({
+      id: rejectId,
+      status: { Rejected: null },
+      description: "A deed reference.",
+    }),
+  ]);
+
+  // Needs Research transitions to NeedsResearch, preserving the source.
+  const needsResearch = await researchActor.needsResearchSource(needsId);
+  expect(needsResearch).toEqual([
+    expect.objectContaining({
+      id: needsId,
+      status: { NeedsResearch: null },
+      description: "An email thread.",
+    }),
+  ]);
+
+  // The queue reflects the rejected and needs-research counts.
+  const queue = await researchActor.getReviewQueue();
+  expect(queue.rejected).toBe(1n);
+  expect(queue.needsResearch).toBe(1n);
+
+  // The contributor receives the not-approved notification for the rejection.
+  researchActor.setIdentity(contributorIdentity);
+  const notifs = await researchActor.listNotifications();
+  expect(
+    notifs.filter(
+      (n) =>
+        "ResearchRejected" in n.notificationType &&
+        n.message === "Your research submission was not approved.",
+    ),
+  ).toHaveLength(1);
+});
+
+it("marks a pending finding as Needs Research, retaining it in the queue", async () => {
+  const researchSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
+  const researchActor = researchSetup.actor;
+
+  researchActor.setIdentity(adminIdentity);
+  await researchActor._initialize_access_control();
+  researchActor.setIdentity(contributorIdentity);
+  await researchActor._initialize_access_control();
+
+  // A contributor creates a source and a pending finding linked to it.
+  researchActor.setIdentity(contributorIdentity);
+  const sourceCreated = await researchActor.createSource(
+    "1900 census, Norwood household",
+    { CensusCitation: null },
+    "Census record listing the Norwood family.",
+    [],
+  );
+  const sourceId = (sourceCreated as { ok: { id: bigint } }).ok.id;
+  const findingCreated = await researchActor.createFinding(
+    "Birth date of Julia Norwood",
+    { Documented: null },
+    { PersonFact: null },
+    {
+      PersonFact: {
+        field: "birthDate",
+        value: "12 March 1898",
+        personId: "julia",
+      },
+    },
+    sourceId,
+    ["julia"],
+    [],
+  );
+  expect(findingCreated).toEqual({
+    ok: expect.objectContaining({
+      title: "Birth date of Julia Norwood",
+      status: { Pending: null },
+    }),
+  });
+  const findingId = (findingCreated as { ok: { id: bigint } }).ok.id;
+
+  // The steward marks the finding as Needs Research.
+  researchActor.setIdentity(adminIdentity);
+  const needsResearch = await researchActor.needsResearchFinding(findingId);
+  expect(needsResearch).toEqual([
+    expect.objectContaining({
+      id: findingId,
+      status: { NeedsResearch: null },
+      title: "Birth date of Julia Norwood",
+    }),
+  ]);
+
+  // The finding is retained in the queue with status NEEDS_RESEARCH and the
+  // queue reflects the needs-research count. The linked source is still
+  // pending, so pending remains 1 (the source) while needsResearch is 1 (the
+  // finding).
+  const queue = await researchActor.getReviewQueue();
+  expect(queue.needsResearch).toBe(1n);
+  expect(queue.pending).toBe(1n);
+  const findingItem = queue.items.find((i) => i.kind.Finding !== undefined);
+  expect(findingItem).toMatchObject({
+    id: findingId,
+    title: "Birth date of Julia Norwood",
+    status: { NeedsResearch: null },
+  });
+
+  // The audit log records the FindingNeedsResearch action.
+  const audit = await researchActor.getResearchAuditLog();
+  expect(
+    audit.some(
+      (e) =>
+        e.action === "FindingNeedsResearch" &&
+        e.summary === "Finding 'Birth date of Julia Norwood' marked as needing research",
+    ),
+  ).toBe(true);
+});
+
+it("gates getReviewQueue and getResearchAuditLog to Family Stewards", async () => {
+  const researchSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
+  const researchActor = researchSetup.actor;
+
+  researchActor.setIdentity(adminIdentity);
+  await researchActor._initialize_access_control();
+  researchActor.setIdentity(contributorIdentity);
+  await researchActor._initialize_access_control();
+
+  // A signed-in non-steward cannot read the review queue or audit log.
+  researchActor.setIdentity(contributorIdentity);
+  await expect(researchActor.getReviewQueue()).rejects.toThrow();
+  await expect(researchActor.getResearchAuditLog()).rejects.toThrow();
+
+  // An anonymous caller is also rejected.
+  const anonymousActor = pic!.createActor<_SERVICE>(idlFactory, researchSetup.canisterId);
+  await expect(anonymousActor.getReviewQueue()).rejects.toThrow();
+  await expect(anonymousActor.getResearchAuditLog()).rejects.toThrow();
 });

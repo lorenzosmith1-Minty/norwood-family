@@ -41,6 +41,7 @@ import BoardApi "mixins/board-api";
 import MessagingApi "mixins/messaging-api";
 import PendingCountApi "mixins/pending-count-api";
 import ResearchIntakeApi "mixins/research-intake-api";
+import ArchiveResearchBoardNotificationsApi "mixins/archive-research-board-notifications-api";
 import ApiDocMixin "mixins/api-doc";
 
 actor {
@@ -172,6 +173,7 @@ actor {
       case (#Approved) "Approved";
       case (#Rejected) "Rejected";
       case (#Conflicting) "Conflicting";
+      case (#NeedsResearch) "NeedsResearch";
     };
   };
 
@@ -266,6 +268,7 @@ actor {
         createdAt = 0;
         classification = "";
         primarySpeakerName = "";
+        tags = "";
       })
       .payload("id", func r = r.id)
       .payload("title", func r = r.title)
@@ -279,6 +282,7 @@ actor {
       .payload("createdAt", func r = r.createdAt)
       .payload("classification", func r = r.classification)
       .payload("primarySpeakerName", func r = r.primarySpeakerName)
+      .payload("tags", func r = r.tags)
       .controllerOnly()
       .build(),
       OQL.Entity.new<OwnershipTypes.ProfileRow>(
@@ -691,6 +695,7 @@ actor {
         postType = #General;
         relatedPersonIds = [];
         linkedMediaIds = [];
+        tags = [];
         createdAt = 0;
         updatedAt = 0;
         status = #Active;
@@ -704,6 +709,7 @@ actor {
       .payload("postType", func r = postTypeText(r.postType))
       .payload("relatedPersonCount", func r = r.relatedPersonIds.size())
       .payload("linkedMediaCount", func r = r.linkedMediaIds.size())
+      .payload("tags", func r = r.tags.values().join(", "))
       .payload("createdAt", func r = r.createdAt)
       .payload("updatedAt", func r = r.updatedAt)
       .payload("status", func r = boardPostStatusText(r.status))
@@ -1008,6 +1014,7 @@ actor {
   include BoardApi(accessControlState, posts, replies, profiles, notifications, auditLog);
   include MessagingApi(accessControlState, conversations, messages, blocks, reports, profiles, archivedProfiles, notifications, accounts);
   include PendingCountApi(accessControlState, archiveItems, recipes, stories, mysteryContributions);
-  include ResearchIntakeApi(accessControlState, researchSources, proposedFindings, newPersonCandidates, relationshipProposals, conflictReviewItems, researchAuditLog, researchState, profiles, confirmedRelationships, stories, mysteries, archiveItems);
+  include ResearchIntakeApi(accessControlState, researchSources, proposedFindings, newPersonCandidates, relationshipProposals, conflictReviewItems, researchAuditLog, researchState, profiles, confirmedRelationships, stories, mysteries, archiveItems, notifications);
+  include ArchiveResearchBoardNotificationsApi(accessControlState, archiveItems, researchSources, researchState, posts, notifications, claims);
   include ApiDocMixin();
 };

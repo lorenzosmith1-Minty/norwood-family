@@ -7,6 +7,7 @@ import type {
 } from "@/backend";
 import { useActor } from "@caffeineai/core-infrastructure";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useReconcileClaimNotifications } from "./useNotifications";
 
 /**
  * React Query hooks for the profile-claim and owner-editing workflows,
@@ -121,12 +122,20 @@ export function useRequestProfileClaim() {
 export function useApproveProfileClaim() {
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
+  const reconcile = useReconcileClaimNotifications();
   return useMutation({
     mutationFn: async (claimId: bigint) => {
       if (!actor) throw new Error("Backend is not ready");
       return actor.approveProfileClaim(claimId);
     },
-    onSuccess: () => {
+    onSuccess: (_data, claimId) => {
+      // Reconcile stale claim notifications so the pending ProfileClaimRequested
+      // notification for the claimant is marked resolved/read now that the claim
+      // is approved. Best-effort: a reconcile failure must never roll back the
+      // approval itself.
+      void reconcile.mutateAsync(claimId).catch(() => {
+        // ignore reconcile failure
+      });
       void queryClient.invalidateQueries({ queryKey: ["profileClaims"] });
       void queryClient.invalidateQueries({ queryKey: ["personProfile"] });
       void queryClient.invalidateQueries({ queryKey: ["myProfileClaim"] });

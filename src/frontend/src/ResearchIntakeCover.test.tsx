@@ -1,5 +1,9 @@
 import "@testing-library/jest-dom/vitest";
 import {
+  type ArchiveItem,
+  ArchiveItemClassification,
+  ArchiveItemStatus,
+  ArchiveItemType,
   ClaimStatus,
   EvidenceLabel,
   type FindingContent,
@@ -7,6 +11,7 @@ import {
   LivingStatus,
   type NewPersonCandidate,
   type PersonProfile,
+  PrivacyLevel,
   type ProfileClaim,
   type ProposedFinding,
   type RelationshipProposal,
@@ -17,8 +22,10 @@ import {
   type ReviewQueue,
   ReviewStatus,
   type SourceRecord,
+  SourceStatus,
   SourceType,
 } from "@/backend";
+import { ExternalBlob } from "@caffeineai/object-storage";
 import { Principal } from "@icp-sdk/core/principal";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
@@ -29,7 +36,15 @@ import {
   within,
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from "vitest";
 import App from "./App";
 
 // Cover for the Historical Research Intake feature:
@@ -64,10 +79,13 @@ const {
   setConflicts,
   setReviewQueue,
   getCreatedSources,
+  getCreatedSourceUploads,
   getCreatedFindings,
   getApprovedFindingIds,
   getRejectedFindingIds,
+  getNeedsResearchFindingIds,
   getResolvedConflictIds,
+  setApprovedItems,
 } = vi.hoisted(() => {
   let isAuthenticated = false;
   let isAdmin = false;
@@ -90,12 +108,23 @@ const {
     approved: 0n,
     rejected: 0n,
     conflicting: 0n,
+    needsResearch: 0n,
+    items: [],
   };
   let createdSources: Array<{
     title: string;
     sourceType: SourceType;
     description: string;
     archiveItemId: bigint | null;
+  }> = [];
+  let createdSourceUploads: Array<{
+    title: string;
+    sourceType: SourceType;
+    description: string;
+    tags: string[];
+    era: string;
+    year: bigint | null;
+    relatedMemberIds: string[];
   }> = [];
   let createdFindings: Array<{
     title: string;
@@ -108,9 +137,11 @@ const {
   }> = [];
   let approvedFindingIds: bigint[] = [];
   let rejectedFindingIds: bigint[] = [];
+  let needsResearchFindingIds: bigint[] = [];
   let resolvedConflictIds: bigint[] = [];
   let nextSourceId = 1n;
   let nextFindingId = 1n;
+  let approvedItems: ArchiveItem[] = [];
 
   const mockActor = {
     async isCallerAdmin(): Promise<boolean> {
@@ -136,6 +167,32 @@ const {
     },
     async listPendingArchiveItems(): Promise<unknown[]> {
       return [];
+    },
+    async listApprovedArchiveItems(): Promise<ArchiveItem[]> {
+      return approvedItems;
+    },
+    // The Research Intake Sources tab lists approved archive items to link a
+    // source to. Mirror the backend contract: only approved items, title query
+    // matched case-insensitively by substring, and an item must carry ALL of the
+    // given tags.
+    async searchArchiveItems(filter: {
+      searchTerm: [] | [string] | undefined;
+      tags: string[];
+      itemType: [] | [ArchiveItemType] | undefined;
+      relatedMemberId: [] | [string] | undefined;
+      era: [] | [string] | undefined;
+    }): Promise<ArchiveItem[]> {
+      const query = ((filter.searchTerm ?? [])[0] ?? "").toLowerCase();
+      const tags = filter.tags.map((t) => t.toLowerCase());
+      return approvedItems.filter(
+        (i) =>
+          i.status === ArchiveItemStatus.Approved &&
+          (query === "" || i.title.toLowerCase().includes(query)) &&
+          (tags.length === 0 ||
+            tags.every((t) =>
+              i.tags.some((tag) => tag.toLowerCase().includes(t)),
+            )),
+      );
     },
     async listNotifications(): Promise<unknown[]> {
       return [];
@@ -171,6 +228,67 @@ const {
         { title, sourceType, description, archiveItemId },
       ];
       return { __kind__: "ok", ok: record };
+    },
+    async createSourceWithUpload(
+      title: string,
+      sourceType: SourceType,
+      description: string,
+      _blob: ExternalBlob,
+      tags: string[],
+      era: string,
+      year: bigint | null,
+      relatedMemberIds: string[],
+      _privacyLevel: PrivacyLevel,
+      _classification: ArchiveItemClassification,
+      _primarySpeaker: unknown,
+    ): Promise<
+      | {
+          __kind__: "ok";
+          ok: { source: SourceRecord; archiveItem: ArchiveItem };
+        }
+      | { __kind__: "err"; err: unknown }
+    > {
+      // Mirrors the backend contract: creates ONE canonical Archive item
+      // (pending) and links a new Source record to it via archiveItemId.
+      const archiveItem: ArchiveItem = {
+        id: 1n,
+        title,
+        description,
+        itemType: ArchiveItemType.Document,
+        blob: ExternalBlob.fromBytes(
+          new Uint8Array([1, 2, 3]),
+          "text/plain",
+          "source.txt",
+        ),
+        era,
+        year: year ?? undefined,
+        tags,
+        relatedMemberIds,
+        relatedBranchId: undefined,
+        sourceStatus: SourceStatus.Original,
+        privacyLevel: PrivacyLevel.FamilyOnly,
+        classification: ArchiveItemClassification.Standard,
+        status: ArchiveItemStatus.Pending,
+        createdAt: 1_700_000_000_000_000_000n,
+        contributor: STEWARD,
+      };
+      const record: SourceRecord = {
+        id: nextSourceId++,
+        title,
+        sourceType,
+        description,
+        archiveItemId: archiveItem.id,
+        contributor: STEWARD,
+        status: ReviewStatus.Pending,
+        createdAt: 1_700_000_000_000_000_000n,
+        updatedAt: 1_700_000_000_000_000_000n,
+      };
+      sources = [...sources, record];
+      createdSourceUploads = [
+        ...createdSourceUploads,
+        { title, sourceType, description, tags, era, year, relatedMemberIds },
+      ];
+      return { __kind__: "ok", ok: { source: record, archiveItem } };
     },
     async listFindings(): Promise<ProposedFinding[]> {
       return findings;
@@ -235,6 +353,15 @@ const {
         f.id === id ? { ...f, status: ReviewStatus.Rejected } : f,
       );
       rejectedFindingIds = [...rejectedFindingIds, id];
+      return findings.find((f) => f.id === id) ?? null;
+    },
+    async needsResearchFinding(id: bigint): Promise<ProposedFinding | null> {
+      const found = findings.find((f) => f.id === id);
+      if (!found) return null;
+      findings = findings.map((f) =>
+        f.id === id ? { ...f, status: ReviewStatus.NeedsResearch } : f,
+      );
+      needsResearchFindingIds = [...needsResearchFindingIds, id];
       return findings.find((f) => f.id === id) ?? null;
     },
     async listNewPersonCandidates(): Promise<NewPersonCandidate[]> {
@@ -324,14 +451,19 @@ const {
         approved: 0n,
         rejected: 0n,
         conflicting: 0n,
+        needsResearch: 0n,
+        items: [],
       };
       createdSources = [];
+      createdSourceUploads = [];
       createdFindings = [];
       approvedFindingIds = [];
       rejectedFindingIds = [];
+      needsResearchFindingIds = [];
       resolvedConflictIds = [];
       nextSourceId = 1n;
       nextFindingId = 1n;
+      approvedItems = [];
     },
     getAuthenticated: () => isAuthenticated,
     setAuthenticated: (v: boolean) => {
@@ -365,10 +497,15 @@ const {
       reviewQueue = v;
     },
     getCreatedSources: () => createdSources,
+    getCreatedSourceUploads: () => createdSourceUploads,
     getCreatedFindings: () => createdFindings,
     getApprovedFindingIds: () => approvedFindingIds,
     getRejectedFindingIds: () => rejectedFindingIds,
+    getNeedsResearchFindingIds: () => needsResearchFindingIds,
     getResolvedConflictIds: () => resolvedConflictIds,
+    setApprovedItems: (v: ArchiveItem[]) => {
+      approvedItems = v;
+    },
   };
 });
 
@@ -388,6 +525,26 @@ vi.mock("@caffeineai/core-infrastructure", () => ({
 
 afterEach(cleanup);
 beforeEach(resetState);
+
+beforeAll(() => {
+  // jsdom does not implement URL.createObjectURL, which ExternalBlob.fromBytes
+  // relies on when constructing a blob. Provide a deterministic stand-in.
+  let counter = 0;
+  URL.createObjectURL = vi.fn(() => `blob:mock-${counter++}`);
+
+  // jsdom's File does not implement Blob.prototype.arrayBuffer, which the
+  // source-upload path uses to read the file bytes. Polyfill it via FileReader.
+  if (typeof File.prototype.arrayBuffer !== "function") {
+    File.prototype.arrayBuffer = function arrayBuffer(): Promise<ArrayBuffer> {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as ArrayBuffer);
+        reader.onerror = () => reject(reader.error);
+        reader.readAsArrayBuffer(this);
+      });
+    };
+  }
+});
 
 function renderApp() {
   const queryClient = new QueryClient({
@@ -497,10 +654,35 @@ describe("Research Intake: steward gating and access", () => {
 });
 
 describe("Research Intake: record a source", () => {
-  it("records a source with an optional archive link", async () => {
+  it("records a source linked to an existing archive item", async () => {
     setAuthenticated(true);
     setAdmin(true);
     setMyProfile(claimedProfile("lorenzoSmithJr", "Lorenzo Smith Jr."));
+    // Seed an approved archive item the source can link to.
+    setApprovedItems([
+      {
+        id: 12n,
+        title: "1900 census record",
+        description: "Census record listing the Norwood family.",
+        itemType: ArchiveItemType.Document,
+        blob: ExternalBlob.fromBytes(
+          new Uint8Array([1, 2, 3]),
+          "text/plain",
+          "census.txt",
+        ),
+        era: "1900",
+        year: 1900n,
+        tags: ["census"],
+        relatedMemberIds: ["julia"],
+        relatedBranchId: "branch-1",
+        sourceStatus: SourceStatus.Original,
+        privacyLevel: PrivacyLevel.FamilyOnly,
+        classification: ArchiveItemClassification.Standard,
+        status: ArchiveItemStatus.Approved,
+        createdAt: 1_700_000_000_000_000_000n,
+        contributor: STEWARD,
+      },
+    ]);
     const user = userEvent.setup();
     renderApp();
     await openResearchIntake(user);
@@ -517,10 +699,9 @@ describe("Research Intake: record a source", () => {
       screen.getByTestId("research.source.description_input"),
       "Census record listing the Norwood family.",
     );
-    await user.type(
-      screen.getByTestId("research.source.archive_link_input"),
-      "12",
-    );
+    // The "Choose existing Archive item" mode is the default; select the seeded
+    // approved item by id (no manually typed Archive Item ID is required).
+    await user.click(screen.getByTestId("research.source.item.12"));
     await user.click(screen.getByTestId("research.source.submit_button"));
 
     const created = getCreatedSources();
@@ -530,6 +711,63 @@ describe("Research Intake: record a source", () => {
       sourceType: SourceType.CensusCitation,
       description: "Census record listing the Norwood family.",
       archiveItemId: 12n,
+    });
+  });
+
+  it("uploads new source material, creating one canonical archive item and linking a source", async () => {
+    setAuthenticated(true);
+    setAdmin(true);
+    setMyProfile(claimedProfile("lorenzoSmithJr", "Lorenzo Smith Jr."));
+    const user = userEvent.setup();
+    renderApp();
+    await openResearchIntake(user);
+
+    // Switch to the "Upload new source file" mode.
+    await user.click(screen.getByTestId("research.source.mode_upload_tab"));
+
+    await user.type(
+      screen.getByTestId("research.source.title_input"),
+      "1900 census, Norwood household",
+    );
+    await user.selectOptions(
+      screen.getByTestId("research.source.type_select"),
+      SourceType.CensusCitation,
+    );
+    await user.type(
+      screen.getByTestId("research.source.description_input"),
+      "Census record listing the Norwood family.",
+    );
+
+    // Attach a source file directly (no manually typed Archive Item ID).
+    const input = document.querySelector(
+      '[data-ocid="research.source.file_input"]',
+    ) as HTMLInputElement;
+    const file = new File(["census-bytes"], "census.txt", {
+      type: "text/plain",
+    });
+    await user.upload(input, file);
+    expect(await screen.findByText("census.txt")).toBeInTheDocument();
+
+    await user.type(
+      screen.getByTestId("research.source.tags_input"),
+      "census, 1900",
+    );
+    await user.type(screen.getByTestId("research.source.era_input"), "1900");
+    await user.type(screen.getByTestId("research.source.year_input"), "1900");
+
+    await user.click(screen.getByTestId("research.source.submit_button"));
+
+    // The upload created one canonical archive item (pending) and linked a
+    // source to it — no Archive Item ID was typed by the user.
+    const uploads = getCreatedSourceUploads();
+    expect(uploads).toHaveLength(1);
+    expect(uploads[0]).toMatchObject({
+      title: "1900 census, Norwood household",
+      sourceType: SourceType.CensusCitation,
+      description: "Census record listing the Norwood family.",
+      tags: ["census", "1900"],
+      era: "1900",
+      year: 1900n,
     });
   });
 });
@@ -610,6 +848,8 @@ describe("Research Intake: review queue with badges", () => {
       approved: 0n,
       rejected: 0n,
       conflicting: 0n,
+      needsResearch: 0n,
+      items: [],
     });
     const user = userEvent.setup();
     renderApp();
@@ -647,6 +887,8 @@ describe("Research Intake: review queue with badges", () => {
       approved: 0n,
       rejected: 0n,
       conflicting: 0n,
+      needsResearch: 0n,
+      items: [],
     });
     const user = userEvent.setup();
     renderApp();
@@ -659,6 +901,43 @@ describe("Research Intake: review queue with badges", () => {
       screen.getByTestId("research_queue.finding.0.reject_button"),
     );
     expect(getRejectedFindingIds()).toEqual([1n]);
+  });
+
+  it("marks a pending finding as Needs Research, retaining it with status NEEDS_RESEARCH", async () => {
+    setAuthenticated(true);
+    setAdmin(true);
+    setMyProfile(claimedProfile("lorenzoSmithJr", "Lorenzo Smith Jr."));
+    setSources([sourceRecord(1n, "1900 census")]);
+    setFindings([pendingFinding(1n, "Birth date of Julia Norwood")]);
+    setReviewQueue({
+      pending: 1n,
+      approved: 0n,
+      rejected: 0n,
+      conflicting: 0n,
+      needsResearch: 0n,
+      items: [],
+    });
+    const user = userEvent.setup();
+    renderApp();
+    await openResearchIntake(user);
+
+    await user.click(screen.getByTestId("research_intake.open_review_queue"));
+    await screen.findByRole("heading", { name: "Review Queue" });
+
+    // The Needs Research action is present on the pending finding card.
+    expect(
+      screen.getByTestId("research_queue.finding.0.needs_research_button"),
+    ).toBeInTheDocument();
+
+    await user.click(
+      screen.getByTestId("research_queue.finding.0.needs_research_button"),
+    );
+
+    // The finding was marked Needs Research and retains its content.
+    expect(getNeedsResearchFindingIds()).toEqual([1n]);
+    const findings = await mockActor.listFindings();
+    expect(findings[0].status).toBe(ReviewStatus.NeedsResearch);
+    expect(findings[0].title).toBe("Birth date of Julia Norwood");
   });
 });
 
@@ -684,6 +963,8 @@ describe("Research Intake: conflict review", () => {
       approved: 0n,
       rejected: 0n,
       conflicting: 1n,
+      needsResearch: 0n,
+      items: [],
     });
     const user = userEvent.setup();
     renderApp();

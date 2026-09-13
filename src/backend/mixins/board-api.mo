@@ -25,6 +25,13 @@ mixin (
     BoardLib.listPosts(posts, filter);
   };
 
+  /// Lists active board posts that carry ANY of the given tags. Approved family
+  /// members only.
+  public query ({ caller }) func searchBoardPostsByTags(tags : [Text]) : async [Types.Post] {
+    requireBoardMember(caller);
+    BoardLib.listPostsByTags(posts, tags);
+  };
+
   /// Returns a single active board post by id. Approved family members only.
   public query ({ caller }) func getBoardPost(postId : Types.PostId) : async ?Types.Post {
     requireBoardMember(caller);
@@ -32,15 +39,16 @@ mixin (
   };
 
   /// Creates a board post with a type, optional title, body, related family
-  /// members, and optional linked existing Archive/media ids. Approved family
-  /// members only. Creates a mention notification for related members where
-  /// appropriate.
+  /// members, optional linked existing Archive/media ids, and free-form tags.
+  /// Approved family members only. Creates a mention notification for related
+  /// members where appropriate.
   public shared ({ caller }) func createBoardPost(
     postType : Types.PostType,
     title : ?Text,
     body : Text,
     relatedPersonIds : [Text],
     linkedMediaIds : [Nat],
+    tags : [Text],
   ) : async Types.Post {
     requireBoardMember(caller);
     let authorPersonId = boardCallerPersonId(caller);
@@ -53,6 +61,7 @@ mixin (
       postType;
       relatedPersonIds;
       linkedMediaIds;
+      tags;
       createdAt = Time.now();
       updatedAt = Time.now();
       status = #Active;
@@ -72,6 +81,7 @@ mixin (
     body : Text,
     relatedPersonIds : [Text],
     linkedMediaIds : [Nat],
+    tags : [Text],
   ) : async ?Types.Post {
     requireBoardMember(caller);
     switch (posts.find(func p = p.postId == postId)) {
@@ -80,7 +90,7 @@ mixin (
         if (post.authorAccountId != caller) {
           Runtime.trap("Unauthorized: Only the post author can edit this post");
         };
-        BoardLib.updatePost(posts, postId, postType, title, body, relatedPersonIds, linkedMediaIds);
+        BoardLib.updatePost(posts, postId, postType, title, body, relatedPersonIds, linkedMediaIds, tags);
       };
     };
   };
@@ -114,6 +124,14 @@ mixin (
         updated;
       };
     };
+  };
+
+  /// Lists all hidden (moderated) board posts for the Steward-only Hidden /
+  /// Moderated Posts view. Family Steward only. Hidden posts are preserved with
+  /// their replies and attachments and are never permanently deleted.
+  public query ({ caller }) func listHiddenBoardPosts() : async [Types.Post] {
+    requireBoardSteward(caller);
+    BoardLib.listHiddenPosts(posts);
   };
 
   /// Lists the replies to a board post, chronologically. Approved family members

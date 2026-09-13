@@ -101,6 +101,10 @@ export default {
           "0 2px 8px -2px rgba(93, 64, 55, 0.12), 0 0 0 1px rgba(93, 64, 55, 0.04)",
         research:
           "0 2px 8px -2px rgba(93, 64, 55, 0.12), 0 0 0 1px rgba(74, 128, 156, 0.12)",
+        tag:
+          "0 2px 8px -2px rgba(93, 64, 55, 0.14), 0 0 0 2px rgba(176, 133, 92, 0.18)",
+        attach:
+          "0 2px 8px -2px rgba(93, 64, 55, 0.12), 0 0 0 1px rgba(93, 64, 55, 0.04)",
       },
       keyframes: {
         "accordion-down": {

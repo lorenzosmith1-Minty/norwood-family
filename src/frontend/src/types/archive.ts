@@ -83,6 +83,22 @@ export const ARCHIVE_ITEM_STATUS_PILL: Record<ArchiveItemStatus, string> = {
   [ArchiveItemStatus.Rejected]: "status-rejected",
 };
 
+/**
+ * Filter for searching/filtering approved archive items, mirroring the backend
+ * `ArchiveSearchFilter` contract. All fields are optional; when a field is
+ * null/empty it does not constrain the result. `query` matches the item title
+ * (case-insensitive substring); `tags` matches items carrying ALL of the given
+ * tags; `itemType`, `relatedMemberId`, and `era` filter by category, linked
+ * family member, and era respectively.
+ */
+export interface ArchiveSearchFilter {
+  query: string | null;
+  tags: string[];
+  itemType: ArchiveItemType | null;
+  relatedMemberId: string | null;
+  era: string | null;
+}
+
 /** A single type-filter tab option for the archive browsing screen. */
 export interface ArchiveTypeFilter {
   value: ArchiveItemType | "all";

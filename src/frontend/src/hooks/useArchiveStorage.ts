@@ -1,7 +1,9 @@
 import { createActor } from "@/backend";
 import type {
+  ArchiveItem,
   ArchiveItemClassification,
   ArchiveItemType,
+  ArchiveSearchFilter,
   OralHistorySpeaker,
   PrivacyLevel,
   SourceStatus,
@@ -70,6 +72,38 @@ export function useApprovedMediaItems() {
       if (!actor) return [];
       const items = await actor.listApprovedArchiveItems();
       return items.filter((item) => getMediaKind(item) !== null);
+    },
+    enabled: providersPresent && !!actor && !isFetching,
+  });
+}
+
+/**
+ * Searches/filters approved archive items by title query, tags, item type,
+ * related family member, and era. Returns only approved items. The filter is
+ * serialized into the query key so a change to any field refetches.
+ */
+export function useSearchArchiveItems(filter: ArchiveSearchFilter) {
+  const providersPresent = useProvidersPresent();
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: [
+      "archive",
+      "search",
+      filter.query ?? "",
+      filter.tags.join(","),
+      filter.itemType ?? "",
+      filter.relatedMemberId ?? "",
+      filter.era ?? "",
+    ],
+    queryFn: async () => {
+      if (!actor) return [] as ArchiveItem[];
+      return actor.searchArchiveItems({
+        searchTerm: filter.query ?? undefined,
+        tags: filter.tags,
+        itemType: filter.itemType ?? undefined,
+        relatedMemberId: filter.relatedMemberId ?? undefined,
+        era: filter.era ?? undefined,
+      });
     },
     enabled: providersPresent && !!actor && !isFetching,
   });

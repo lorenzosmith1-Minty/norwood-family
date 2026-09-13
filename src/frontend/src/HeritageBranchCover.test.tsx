@@ -159,4 +159,24 @@ describe("Heritage Branch View", () => {
     );
     expect(screen.getByText("Harvey Adams Sr.")).toBeInTheDocument();
   });
+
+  it("orders ancestors above their descendants in the map", async () => {
+    const user = userEvent.setup();
+    renderApp();
+    await openBranchFromHome(user);
+
+    // The map plates are sorted by generation depth so ancestors render above
+    // their descendants. The Founding Couple (generation 0) must appear above
+    // the Clayton Branch (generation 1), which must appear above the Lula Mae +
+    // Versie family unit (generation 2).
+    const founding = screen.getByTestId("hb.unit_cluster.1");
+    const clayton = screen.getByTestId("hb.branch_cluster.1");
+    const lulaVersie = screen.getByTestId("hb.unit_cluster.2");
+
+    const isBefore = (a: HTMLElement, b: HTMLElement) =>
+      (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0;
+
+    expect(isBefore(founding, clayton)).toBe(true);
+    expect(isBefore(clayton, lulaVersie)).toBe(true);
+  });
 });

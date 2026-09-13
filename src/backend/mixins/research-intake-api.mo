@@ -36,6 +36,7 @@ mixin (
   stories : List.List<FamilyHistoryTypes.Story>,
   mysteries : List.List<FamilyHistoryTypes.Mystery>,
   archiveItems : List.List<ArchiveTypes.ArchiveItem>,
+  notifications : List.List<OwnershipTypes.Notification>,
 ) {
   /// Traps unless the caller is a signed-in Family Steward.
   func requireSteward(caller : Principal) {
@@ -85,6 +86,7 @@ mixin (
       "Source '" # title # "' created",
     );
     state.nextAuditId := state.nextAuditId + 1;
+    addResearchNotification(caller, #ResearchSubmission, "Your research submission is awaiting Family Steward review.");
     #ok(source);
   };
 
@@ -141,6 +143,7 @@ mixin (
       "Finding '" # title # "' submitted",
     );
     state.nextAuditId := state.nextAuditId + 1;
+    addResearchNotification(caller, #ResearchSubmission, "Your research submission is awaiting Family Steward review.");
     #ok(finding);
   };
 
@@ -275,6 +278,7 @@ mixin (
       "New Person Candidate '" # name # "' submitted",
     );
     state.nextAuditId := state.nextAuditId + 1;
+    addResearchNotification(caller, #ResearchSubmission, "Your research submission is awaiting Family Steward review.");
     #ok(candidate);
   };
 
@@ -320,6 +324,7 @@ mixin (
       "Relationship proposal '" # fromPersonId # " - " # relationshipType # " - " # toPersonId # "' submitted",
     );
     state.nextAuditId := state.nextAuditId + 1;
+    addResearchNotification(caller, #ResearchSubmission, "Your research submission is awaiting Family Steward review.");
     #ok(proposal);
   };
 
@@ -366,13 +371,149 @@ mixin (
   };
 
   /// Returns the review queue badge counts (pending, approved, rejected,
-  /// conflicting) across all reviewable research intake items.
-  public query func getReviewQueue() : async Types.ReviewQueue {
-    ResearchLib.computeQueue(findings, candidates, proposals, conflicts);
+  /// conflicting, needs-research) and the full list of reviewable items across
+  /// all research intake records, including pending Sources. Every pending item
+  /// appears with its type, title/summary, contributor, provenance, created
+  /// date, evidence label, and available steward actions. Family Steward only —
+  /// the queue exposes contributor principals, proposed findings content, and
+  /// provenance, so it is not readable by anonymous or non-steward callers.
+  public query ({ caller }) func getReviewQueue() : async Types.ReviewQueue {
+    requireSteward(caller);
+    ResearchLib.computeQueue(sources, findings, candidates, proposals, conflicts);
   };
 
-  /// Returns the full research intake audit history.
-  public query func getResearchAuditLog() : async [Types.ResearchAuditEntry] {
+  /// Approves a pending source (Family Steward only), transitioning it to
+  /// `#Approved` so it becomes usable by Proposed Findings. The linked Archive
+  /// item remains canonical and provenance stays intact. Records a
+  /// `#ResearchApproved` notification to the contributor. Returns the updated
+  /// source, or `null` when it does not exist or is not pending.
+  public shared ({ caller }) func approveSource(id : Types.SourceId) : async ?Types.SourceRecord {
+    requireSteward(caller);
+    let now = Time.now();
+    switch (sources.find(func s = s.id == id)) {
+      case null { null };
+      case (?s) {
+        if (s.status != #Pending) {
+          null;
+        } else {
+          let updated = ResearchLib.approveSource(sources, id, caller, now);
+          ignore ResearchLib.appendAudit(
+            auditLog,
+            { var next = state.nextAuditId },
+            "SourceApproved",
+            null,
+            ?id,
+            caller,
+            now,
+            "Source '" # s.title # "' approved",
+          );
+          state.nextAuditId := state.nextAuditId + 1;
+          addResearchNotification(s.contributor, #ResearchApproved, "Your research submission was approved.");
+          updated;
+        };
+      };
+    };
+  };
+
+  /// Rejects a pending source (Family Steward only), transitioning it to
+  /// `#Rejected`. The original Archive item is not deleted. Records a
+  /// `#ResearchRejected` notification to the contributor. Returns the updated
+  /// source, or `null` when it does not exist or is not pending.
+  public shared ({ caller }) func rejectSource(id : Types.SourceId) : async ?Types.SourceRecord {
+    requireSteward(caller);
+    let now = Time.now();
+    switch (sources.find(func s = s.id == id)) {
+      case null { null };
+      case (?s) {
+        if (s.status != #Pending) {
+          null;
+        } else {
+          let updated = ResearchLib.rejectSource(sources, id, caller, now);
+          ignore ResearchLib.appendAudit(
+            auditLog,
+            { var next = state.nextAuditId },
+            "SourceRejected",
+            null,
+            ?id,
+            caller,
+            now,
+            "Source '" # s.title # "' rejected",
+          );
+          state.nextAuditId := state.nextAuditId + 1;
+          addResearchNotification(s.contributor, #ResearchRejected, "Your research submission was not approved.");
+          updated;
+        };
+      };
+    };
+  };
+
+  /// Marks a pending source as needing research (Family Steward only),
+  /// transitioning it to `#NeedsResearch` while preserving the source and its
+  /// notes. Returns the updated source, or `null` when it does not exist or is
+  /// not pending.
+  public shared ({ caller }) func needsResearchSource(id : Types.SourceId) : async ?Types.SourceRecord {
+    requireSteward(caller);
+    let now = Time.now();
+    switch (sources.find(func s = s.id == id)) {
+      case null { null };
+      case (?s) {
+        if (s.status != #Pending) {
+          null;
+        } else {
+          let updated = ResearchLib.needsResearchSource(sources, id, caller, now);
+          ignore ResearchLib.appendAudit(
+            auditLog,
+            { var next = state.nextAuditId },
+            "SourceNeedsResearch",
+            null,
+            ?id,
+            caller,
+            now,
+            "Source '" # s.title # "' marked as needing research",
+          );
+          state.nextAuditId := state.nextAuditId + 1;
+          updated;
+        };
+      };
+    };
+  };
+
+  /// Marks a pending finding as needing research (Family Steward only),
+  /// transitioning it to `#NeedsResearch` while preserving the finding and its
+  /// content. Records a `FindingNeedsResearch` audit entry. Returns the updated
+  /// finding, or `null` when it does not exist or is not pending.
+  public shared ({ caller }) func needsResearchFinding(id : Types.FindingId) : async ?Types.ProposedFinding {
+    requireSteward(caller);
+    let now = Time.now();
+    switch (findings.find(func f = f.id == id)) {
+      case null { null };
+      case (?f) {
+        if (f.status != #Pending) {
+          null;
+        } else {
+          let updated = ResearchLib.needsResearchFinding(findings, id, caller, now);
+          ignore ResearchLib.appendAudit(
+            auditLog,
+            { var next = state.nextAuditId },
+            "FindingNeedsResearch",
+            ?id,
+            ?f.sourceId,
+            caller,
+            now,
+            "Finding '" # f.title # "' marked as needing research",
+          );
+          state.nextAuditId := state.nextAuditId + 1;
+          updated;
+        };
+      };
+    };
+  };
+
+  /// Returns the full research intake audit history. Family Steward only — the
+  /// audit log records provenance and approval actions, so it is not readable by
+  /// anonymous or non-steward callers.
+  public query ({ caller }) func getResearchAuditLog() : async [Types.ResearchAuditEntry] {
+    requireSteward(caller);
     auditLog.toArray();
   };
 
@@ -762,5 +903,33 @@ mixin (
       if (m.id >= maxId) { maxId := m.id + 1 };
     };
     maxId;
+  };
+
+  /// Computes the next notification id: one greater than the largest existing
+  /// id, or `0` when there are no notifications.
+  func researchNextNotificationId() : Nat {
+    var maxId = 0;
+    for (n in notifications.toArray().values()) {
+      if (n.id >= maxId) { maxId := n.id + 1 };
+    };
+    maxId;
+  };
+
+  /// Appends a research notification for the given recipient, avoiding
+  /// duplicates. Used for submission (awaiting review), approval, and rejection
+  /// of research intake items. A notification is only added when no identical
+  /// (same recipient, type, and message) notification already exists.
+  func addResearchNotification(recipient : Principal, notificationType : OwnershipTypes.NotificationType, message : Text) {
+    let exists = notifications.toArray().any(func n = n.recipient == recipient and n.notificationType == notificationType and n.message == message);
+    if (not exists) {
+      notifications.add({
+        id = researchNextNotificationId();
+        recipient;
+        notificationType;
+        message;
+        createdAt = Time.now();
+        read = false;
+      });
+    };
   };
 };

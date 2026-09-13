@@ -60,6 +60,13 @@ export type ArchiveItemType = { 'Research' : null } |
   { 'Audio' : null } |
   { 'Other' : null } |
   { 'Video' : null };
+export interface ArchiveSearchFilter {
+  'era' : [] | [string],
+  'relatedMemberId' : [] | [string],
+  'tags' : Array<string>,
+  'searchTerm' : [] | [string],
+  'itemType' : [] | [ArchiveItemType],
+}
 export type AuditActionType = { 'ProfileRemovalRequested' : null } |
   { 'ClaimRejected' : null } |
   { 'RelationshipTypeCorrected' : null } |
@@ -92,6 +99,21 @@ export interface AuditEntry {
 export type AuthMethod = { 'Google' : null } |
   { 'Apple' : null };
 export interface AuthMethods { 'apple' : boolean, 'google' : boolean }
+export interface BoardMediaUpload {
+  'era' : string,
+  'title' : string,
+  'relatedMemberIds' : Array<string>,
+  'blob' : ExternalBlob,
+  'tags' : Array<string>,
+  'year' : [] | [bigint],
+  'description' : string,
+  'privacyLevel' : PrivacyLevel,
+  'primarySpeaker' : [] | [OralHistorySpeaker],
+  'itemType' : ArchiveItemType,
+  'relatedBranchId' : [] | [string],
+  'sourceStatus' : SourceStatus,
+  'classification' : ArchiveItemClassification,
+}
 export interface Cell { 'value' : Value, 'name' : string }
 export interface ChapterMarker { 'title' : string, 'timestamp' : bigint }
 export type ClaimError = { 'AlreadyPending' : null } |
@@ -335,7 +357,10 @@ export interface Notification {
   'message' : string,
 }
 export type NotificationId = bigint;
-export type NotificationType = { 'RelationshipRequested' : null } |
+export type NotificationType = { 'ResearchSubmission' : null } |
+  { 'ResearchApproved' : null } |
+  { 'ResearchRejected' : null } |
+  { 'RelationshipRequested' : null } |
   { 'BoardMention' : null } |
   { 'RelationshipReviewed' : null } |
   { 'BoardReply' : null } |
@@ -391,6 +416,7 @@ export interface Post {
   'title' : [] | [string],
   'body' : string,
   'createdAt' : Timestamp,
+  'tags' : Array<string>,
   'linkedMediaIds' : Array<bigint>,
   'privacyScope' : PrivacyScope,
   'authorPersonId' : PersonId,
@@ -615,23 +641,25 @@ export type Result_14 = { 'ok' : AccountId } |
   { 'err' : AccountError };
 export type Result_15 = { 'ok' : SuccessorDesignation } |
   { 'err' : StewardError };
-export type Result_16 = { 'ok' : SourceRecord } |
+export type Result_16 = { 'ok' : SourceUploadResult } |
   { 'err' : ResearchError };
-export type Result_17 = { 'ok' : RelationshipProposal } |
+export type Result_17 = { 'ok' : SourceRecord } |
   { 'err' : ResearchError };
-export type Result_18 = { 'ok' : NewPersonCandidate } |
+export type Result_18 = { 'ok' : RelationshipProposal } |
   { 'err' : ResearchError };
-export type Result_19 = { 'ok' : PersonProfile } |
-  { 'err' : CreateError };
+export type Result_19 = { 'ok' : NewPersonCandidate } |
+  { 'err' : ResearchError };
 export type Result_2 = { 'ok' : null } |
   { 'err' : ArchiveError };
-export type Result_20 = { 'ok' : ProposedFinding } |
+export type Result_20 = { 'ok' : PersonProfile } |
+  { 'err' : CreateError };
+export type Result_21 = { 'ok' : ProposedFinding } |
   { 'err' : ResearchError };
-export type Result_21 = { 'ok' : Relationship } |
+export type Result_22 = { 'ok' : Relationship } |
   { 'err' : RelationshipAdminError };
-export type Result_22 = { 'ok' : Account } |
+export type Result_23 = { 'ok' : Account } |
   { 'err' : AccountError };
-export type Result_23 = { 'ok' : null } |
+export type Result_24 = { 'ok' : null } |
   { 'err' : Error };
 export type Result_3 = { 'ok' : ProfileRemovalRequest } |
   { 'err' : RemovalError };
@@ -648,13 +676,36 @@ export type Result_8 = { 'ok' : RelationshipRequest } |
 export type Result_9 = { 'ok' : StewardRecord } |
   { 'err' : StewardError };
 export interface Result__1 { 'hasMore' : boolean, 'rows' : Array<Array<Cell>> }
+export type ReviewAction = { 'NeedsResearch' : null } |
+  { 'Approve' : null } |
+  { 'Reject' : null };
+export type ReviewItemKind = { 'Source' : null } |
+  { 'RelationshipProposal' : null } |
+  { 'ConflictReview' : null } |
+  { 'NewPersonCandidate' : null } |
+  { 'Finding' : null };
 export interface ReviewQueue {
   'pending' : bigint,
   'conflicting' : bigint,
   'approved' : bigint,
   'rejected' : bigint,
+  'needsResearch' : bigint,
+  'items' : Array<ReviewQueueItem>,
 }
-export type ReviewStatus = { 'Conflicting' : null } |
+export interface ReviewQueueItem {
+  'id' : bigint,
+  'provenance' : string,
+  'status' : ReviewStatus,
+  'title' : string,
+  'evidenceLabel' : [] | [EvidenceLabel],
+  'kind' : ReviewItemKind,
+  'createdAt' : bigint,
+  'actions' : Array<ReviewAction>,
+  'summary' : string,
+  'contributor' : [] | [Principal],
+}
+export type ReviewStatus = { 'NeedsResearch' : null } |
+  { 'Conflicting' : null } |
   { 'Approved' : null } |
   { 'Rejected' : null } |
   { 'Pending' : null };
@@ -680,6 +731,10 @@ export type SourceType = { 'CertificateHeadstoneReference' : null } |
   { 'EmailThread' : null } |
   { 'UploadedDocumentImage' : null } |
   { 'CensusCitation' : null };
+export interface SourceUploadResult {
+  'source' : SourceRecord,
+  'archiveItem' : ArchiveItem,
+}
 export type StewardError = { 'LastSteward' : null } |
   { 'NotSteward' : null } |
   { 'AlreadySteward' : null } |
@@ -796,7 +851,7 @@ export interface _SERVICE {
   >,
   '_immutableObjectStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
   '_initialize_access_control' : ActorMethod<[], undefined>,
-  '_internet_identity_sign_in_finish' : ActorMethod<[], Result_23>,
+  '_internet_identity_sign_in_finish' : ActorMethod<[], Result_24>,
   '_internet_identity_sign_in_start' : ActorMethod<[], Uint8Array>,
   /**
    * / Activates/promotes a designated successor into the active steward role.
@@ -837,7 +892,7 @@ export interface _SERVICE {
    */
   'addRelationship' : ActorMethod<
     [PersonId, PersonId, RelationshipType],
-    Result_21
+    Result_22
   >,
   /**
    * / Approves a pending archive item (admin only). Returns the updated item, or
@@ -876,6 +931,14 @@ export interface _SERVICE {
     [] | [RelationshipRequest]
   >,
   /**
+   * / Approves a pending source (Family Steward only), transitioning it to
+   * / `#Approved` so it becomes usable by Proposed Findings. The linked Archive
+   * / item remains canonical and provenance stays intact. Records a
+   * / `#ResearchApproved` notification to the contributor. Returns the updated
+   * / source, or `null` when it does not exist or is not pending.
+   */
+  'approveSource' : ActorMethod<[SourceId], [] | [SourceRecord]>,
+  /**
    * / Approves a pending story (steward only). Returns the updated story, or
    * / `null` when the story does not exist or is not pending.
    */
@@ -897,7 +960,7 @@ export interface _SERVICE {
    * / account. The account id is the caller's stable principal, so the same
    * / person profile stays intact if the provider changes.
    */
-  'bindAuthMethod' : ActorMethod<[AuthMethod], Result_22>,
+  'bindAuthMethod' : ActorMethod<[AuthMethod], Result_23>,
   /**
    * / Blocks another member, preventing them from sending new messages to the
    * / caller. Approved family members only.
@@ -917,16 +980,41 @@ export interface _SERVICE {
    */
   'correctRelationshipType' : ActorMethod<
     [bigint, RelationshipType],
-    Result_21
+    Result_22
   >,
   /**
    * / Creates a board post with a type, optional title, body, related family
-   * / members, and optional linked existing Archive/media ids. Approved family
-   * / members only. Creates a mention notification for related members where
-   * / appropriate.
+   * / members, optional linked existing Archive/media ids, and free-form tags.
+   * / Approved family members only. Creates a mention notification for related
+   * / members where appropriate.
    */
   'createBoardPost' : ActorMethod<
-    [PostType, [] | [string], string, Array<string>, Array<bigint>],
+    [
+      PostType,
+      [] | [string],
+      string,
+      Array<string>,
+      Array<bigint>,
+      Array<string>,
+    ],
+    Post
+  >,
+  /**
+   * / Creates a board post that attaches existing Archive items (by id) and/or
+   * / new uploads. Each new upload creates one canonical Archive item (pending)
+   * / linked to the post; the underlying file is never duplicated. Approved
+   * / family members only.
+   */
+  'createBoardPostWithMedia' : ActorMethod<
+    [
+      PostType,
+      [] | [string],
+      string,
+      Array<string>,
+      Array<bigint>,
+      Array<BoardMediaUpload>,
+      Array<string>,
+    ],
     Post
   >,
   /**
@@ -960,21 +1048,21 @@ export interface _SERVICE {
       [] | [string],
       [] | [bigint],
     ],
-    Result_20
+    Result_21
   >,
   /**
    * / "Add Myself to This Family": creates a minimal person profile for a user
    * / who does not already exist. The user must then connect to an existing
    * / family member via a relationship request.
    */
-  'createMyself' : ActorMethod<[string], Result_19>,
+  'createMyself' : ActorMethod<[string], Result_20>,
   /**
    * / Creates a new Person candidate. Requires sign-in; the signed-in caller is
    * / recorded as the submitter. The candidate enters as `#Pending`.
    */
   'createNewPersonCandidate' : ActorMethod<
     [string, string, SourceId],
-    Result_18
+    Result_19
   >,
   /**
    * / Creates a new relationship proposal. Requires sign-in; the signed-in
@@ -982,7 +1070,7 @@ export interface _SERVICE {
    */
   'createRelationshipProposal' : ActorMethod<
     [string, string, string, SourceId],
-    Result_17
+    Result_18
   >,
   /**
    * / Creates a new source record. Requires sign-in; the signed-in caller is
@@ -990,6 +1078,28 @@ export interface _SERVICE {
    */
   'createSource' : ActorMethod<
     [string, SourceType, string, [] | [bigint]],
+    Result_17
+  >,
+  /**
+   * / Uploads a research source file: creates one canonical Archive item
+   * / (pending) and links a new Research Source record to it, so no manually
+   * / typed Archive Item ID is required. Requires a signed-in caller; the caller
+   * / is recorded as the contributor of both records.
+   */
+  'createSourceWithUpload' : ActorMethod<
+    [
+      string,
+      SourceType,
+      string,
+      ExternalBlob,
+      Array<string>,
+      string,
+      [] | [bigint],
+      Array<string>,
+      PrivacyLevel,
+      ArchiveItemClassification,
+      [] | [OralHistorySpeaker],
+    ],
     Result_16
   >,
   /**
@@ -1045,10 +1155,12 @@ export interface _SERVICE {
   'getMyRelationshipRequests' : ActorMethod<[], Array<RelationshipRequest>>,
   /**
    * / Returns the count of all current pending review items (archive/media,
-   * / video/audio, recipes, recipe media, and other contribution types) for the
-   * / Steward-facing Pending Contributions badge. Family Steward only. The count
-   * / is derived from canonical pending data, so it increments on new pending
-   * / items and decrements on Approve/Reject automatically.
+   * / video/audio, recipes, recipe media, stories, and mystery contributions)
+   * / for the Steward-facing Pending Contributions badge. Research Intake review
+   * / items are NOT included — they resolve exclusively through the Research
+   * / Review Queue (getReviewQueue). Family Steward only. The count is derived
+   * / from canonical pending data, so it increments on new pending items and
+   * / decrements on Approve/Reject automatically.
    */
   'getPendingContributionsCount' : ActorMethod<[], bigint>,
   /**
@@ -1078,12 +1190,19 @@ export interface _SERVICE {
    */
   'getReportedMessage' : ActorMethod<[ReportId], [] | [ReportedMessageView]>,
   /**
-   * / Returns the full research intake audit history.
+   * / Returns the full research intake audit history. Family Steward only — the
+   * / audit log records provenance and approval actions, so it is not readable by
+   * / anonymous or non-steward callers.
    */
   'getResearchAuditLog' : ActorMethod<[], Array<ResearchAuditEntry>>,
   /**
    * / Returns the review queue badge counts (pending, approved, rejected,
-   * / conflicting) across all reviewable research intake items.
+   * / conflicting, needs-research) and the full list of reviewable items across
+   * / all research intake records, including pending Sources. Every pending item
+   * / appears with its type, title/summary, contributor, provenance, created
+   * / date, evidence label, and available steward actions. Family Steward only —
+   * / the queue exposes contributor principals, proposed findings content, and
+   * / provenance, so it is not readable by anonymous or non-steward callers.
    */
   'getReviewQueue' : ActorMethod<[], ReviewQueue>,
   /**
@@ -1167,6 +1286,12 @@ export interface _SERVICE {
    * / Lists all proposed findings (steward only).
    */
   'listFindings' : ActorMethod<[], Array<ProposedFinding>>,
+  /**
+   * / Lists all hidden (moderated) board posts for the Steward-only Hidden /
+   * / Moderated Posts view. Family Steward only. Hidden posts are preserved with
+   * / their replies and attachments and are never permanently deleted.
+   */
+  'listHiddenBoardPosts' : ActorMethod<[], Array<Post>>,
   /**
    * / Returns the person ids of every other member the signed-in caller may
    * / message: living, claimed, linked to an active account, not archived, and
@@ -1297,6 +1422,20 @@ export interface _SERVICE {
    */
   'mergeProfiles' : ActorMethod<[PersonId, PersonId], Result_12>,
   /**
+   * / Marks a pending finding as needing research (Family Steward only),
+   * / transitioning it to `#NeedsResearch` while preserving the finding and its
+   * / content. Records a `FindingNeedsResearch` audit entry. Returns the updated
+   * / finding, or `null` when it does not exist or is not pending.
+   */
+  'needsResearchFinding' : ActorMethod<[FindingId], [] | [ProposedFinding]>,
+  /**
+   * / Marks a pending source as needing research (Family Steward only),
+   * / transitioning it to `#NeedsResearch` while preserving the source and its
+   * / notes. Returns the updated source, or `null` when it does not exist or is
+   * / not pending.
+   */
+  'needsResearchSource' : ActorMethod<[SourceId], [] | [SourceRecord]>,
+  /**
    * / Marks two suspected duplicates as not a duplicate. Family Steward only.
    */
   'notDuplicate' : ActorMethod<[PersonId, PersonId], Result_11>,
@@ -1345,6 +1484,13 @@ export interface _SERVICE {
     Recipe
   >,
   /**
+   * / Reconciles stale claim notifications for a claim: when the claim is
+   * / `#Approved`, marks the pending `#ProfileClaimRequested` notification for
+   * / the claimant as read/resolved. The profile status stays `#Claimed` and no
+   * / new claim is created. Returns the number of notifications reconciled.
+   */
+  'reconcileClaimNotifications' : ActorMethod<[bigint], bigint>,
+  /**
    * / Rejects a pending archive item (admin only). Returns the updated item, or
    * / `null` when the item does not exist or is not pending.
    */
@@ -1374,6 +1520,13 @@ export interface _SERVICE {
     [bigint],
     [] | [RelationshipRequest]
   >,
+  /**
+   * / Rejects a pending source (Family Steward only), transitioning it to
+   * / `#Rejected`. The original Archive item is not deleted. Records a
+   * / `#ResearchRejected` notification to the contributor. Returns the updated
+   * / source, or `null` when it does not exist or is not pending.
+   */
+  'rejectSource' : ActorMethod<[SourceId], [] | [SourceRecord]>,
   /**
    * / Rejects a pending story (steward only). Returns the updated story, or
    * / `null` when the story does not exist or is not pending.
@@ -1454,6 +1607,16 @@ export interface _SERVICE {
    */
   'reviewReport' : ActorMethod<[ReportId, ReportStatus], [] | [Report]>,
   'schema' : ActorMethod<[], string>,
+  /**
+   * / Searches/filters approved archive items by title query, tags, item type,
+   * / related family member, and era. Returns only `#Approved` items.
+   */
+  'searchArchiveItems' : ActorMethod<[ArchiveSearchFilter], Array<ArchiveItem>>,
+  /**
+   * / Lists active board posts that carry ANY of the given tags. Approved family
+   * / members only.
+   */
+  'searchBoardPostsByTags' : ActorMethod<[Array<string>], Array<Post>>,
   /**
    * / Searches the authoritative shared profile data for possible duplicate
    * / matches by name, returning name plus parents when known. Names are
@@ -1575,7 +1738,15 @@ export interface _SERVICE {
    * / caller must be the post author.
    */
   'updateBoardPost' : ActorMethod<
-    [PostId, PostType, [] | [string], string, Array<string>, Array<bigint>],
+    [
+      PostId,
+      PostType,
+      [] | [string],
+      string,
+      Array<string>,
+      Array<bigint>,
+      Array<string>,
+    ],
     [] | [Post]
   >,
   /**

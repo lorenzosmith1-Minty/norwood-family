@@ -120,5 +120,6 @@ module {
     createdAt : Int;
     classification : Text;
     primarySpeakerName : Text;
+    tags : Text;
   };
 };

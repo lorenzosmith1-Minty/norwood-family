@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { motion } from "motion/react";
 import { useRef, useState } from "react";
-import type { FormEvent } from "react";
+import type { FormEvent, KeyboardEvent } from "react";
 import { useSubmitArchiveItem } from "../hooks/useArchiveStorage";
 import {
   ARCHIVE_ITEM_TYPE_BADGE,
@@ -75,6 +75,21 @@ const TYPE_META: Record<
   },
 };
 
+/**
+ * Modifier class (from index.css) that tints the content-type-card dot to the
+ * on-palette color for each item type. Photo is the default (no modifier).
+ */
+const TYPE_CARD_CLASS: Record<ArchiveItemType, string> = {
+  [ArchiveItemType.Photo]: "",
+  [ArchiveItemType.Document]: "type-document",
+  [ArchiveItemType.Audio]: "type-audio",
+  [ArchiveItemType.Video]: "type-video",
+  [ArchiveItemType.WrittenStoryNote]: "type-story",
+  [ArchiveItemType.Research]: "type-research",
+  [ArchiveItemType.WorkBusiness]: "type-work",
+  [ArchiveItemType.Other]: "type-other",
+};
+
 /** Types that upload an original file; the written story/note is text instead. */
 const FILE_TYPES: ArchiveItemType[] = [
   ArchiveItemType.Photo,
@@ -119,7 +134,8 @@ export function ArchiveContributionPage({
   const [description, setDescription] = useState("");
   const [era, setEra] = useState("");
   const [year, setYear] = useState("");
-  const [tags, setTags] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagDraft, setTagDraft] = useState("");
   const [relatedMemberIds, setRelatedMemberIds] = useState<string[]>([]);
   const [relatedBranch, setRelatedBranch] = useState("");
   const [sourceStatus, setSourceStatus] = useState<SourceStatus>(
@@ -162,13 +178,43 @@ export function ArchiveContributionPage({
     );
   };
 
+  /** Adds a tag from the draft input, de-duplicating case-insensitively. */
+  const addTag = (raw: string) => {
+    const tag = raw.trim().replace(/,+$/, "").trim();
+    if (!tag) return;
+    setTags((current) =>
+      current.some((t) => t.toLowerCase() === tag.toLowerCase())
+        ? current
+        : [...current, tag],
+    );
+    setTagDraft("");
+  };
+
+  const removeTag = (tag: string) => {
+    setTags((current) => current.filter((t) => t !== tag));
+  };
+
+  const handleTagKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter" || event.key === ",") {
+      event.preventDefault();
+      addTag(tagDraft);
+    } else if (
+      event.key === "Backspace" &&
+      tagDraft === "" &&
+      tags.length > 0
+    ) {
+      setTags((current) => current.slice(0, -1));
+    }
+  };
+
   const resetForm = () => {
     setSelectedType(null);
     setTitle("");
     setDescription("");
     setEra("");
     setYear("");
-    setTags("");
+    setTags([]);
+    setTagDraft("");
     setRelatedMemberIds([]);
     setRelatedBranch("");
     setSourceStatus(SourceStatus.Unverified);
@@ -218,10 +264,7 @@ export function ArchiveContributionPage({
         blob,
         era: era.trim(),
         year: parseYear(year),
-        tags: tags
-          .split(",")
-          .map((tag) => tag.trim())
-          .filter(Boolean),
+        tags,
         relatedMemberIds,
         relatedBranchId: relatedBranch.trim() || null,
         sourceStatus,
@@ -410,25 +453,22 @@ export function ArchiveContributionPage({
                   delay: 0.05 + index * 0.04,
                   ease: [0.4, 0, 0.2, 1],
                 }}
-                className="group flex flex-col items-start gap-3 rounded-2xl border border-border bg-card p-5 text-left shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                className={`content-type-card ${TYPE_CARD_CLASS[type]} ${
+                  selectedType === type ? "content-type-card-selected" : ""
+                }`}
               >
-                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-secondary">
+                <span className="flex items-center gap-2">
+                  <span className="content-type-dot" />
                   <Icon
-                    className="h-5 w-5 text-accent-foreground"
+                    className="h-4 w-4 text-accent-foreground"
                     strokeWidth={1.75}
                     aria-hidden="true"
                   />
                 </span>
-                <span className="flex flex-col items-start gap-1.5">
-                  <span
-                    className={`archive-type-badge ${ARCHIVE_ITEM_TYPE_BADGE[type]}`}
-                  >
-                    {ARCHIVE_ITEM_TYPE_LABELS[type]}
-                  </span>
-                  <span className="text-sm leading-relaxed text-muted-foreground">
-                    {meta.description}
-                  </span>
+                <span className="content-type-title">
+                  {ARCHIVE_ITEM_TYPE_LABELS[type]}
                 </span>
+                <span className="content-type-hint">{meta.description}</span>
               </motion.button>
             );
           })}
@@ -678,15 +718,43 @@ export function ArchiveContributionPage({
           <label className="field-label" htmlFor="archive-tags">
             Tags
           </label>
-          <input
-            id="archive-tags"
+          <div
+            className="flex flex-wrap items-center gap-2 rounded-lg border border-input bg-card px-3 py-2 transition-colors focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/15"
             data-ocid="archive.form.tags_input"
-            type="text"
-            value={tags}
-            onChange={(event) => setTags(event.target.value)}
-            placeholder="Separate tags with commas, e.g. wedding, Mississippi, 1920s"
-            className="form-input"
-          />
+          >
+            {tags.map((tag) => (
+              <span key={tag} className="tag-entry">
+                {tag}
+                <button
+                  type="button"
+                  data-ocid={`archive.form.tag_remove.${tag}`}
+                  onClick={() => removeTag(tag)}
+                  aria-label={`Remove tag ${tag}`}
+                  className="tag-remove"
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+            <input
+              id="archive-tags"
+              type="text"
+              value={tagDraft}
+              onChange={(event) => setTagDraft(event.target.value)}
+              onKeyDown={handleTagKeyDown}
+              onBlur={() => addTag(tagDraft)}
+              placeholder={
+                tags.length === 0
+                  ? "Type a tag and press Enter, e.g. Mississippi, 1920s, wedding"
+                  : "Add another tag…"
+              }
+              className="min-w-[8rem] flex-1 bg-transparent py-1 text-sm text-foreground outline-none placeholder:text-muted-foreground/70"
+            />
+          </div>
+          <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+            Press Enter or comma to add a tag. Tags help family members find
+            this item in the archive later.
+          </p>
         </div>
 
         {/* Related family members */}

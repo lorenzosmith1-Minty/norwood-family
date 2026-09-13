@@ -492,29 +492,51 @@ Contributions badge.
 - `getBoardPost(postId : PostId) : async ?Post` — query. Approved family members
   only. Returns a single active board post by id, or `null` when it does not
   exist or is archived.
-- `createBoardPost(postType : PostType, title : ?Text, body : Text, relatedPersonIds : [Text], linkedMediaIds : [Nat]) : async Post` —
+- `createBoardPost(postType : PostType, title : ?Text, body : Text, relatedPersonIds : [Text], linkedMediaIds : [Nat], tags : [Text]) : async Post` —
   update. Approved family members only. Creates a board post with a type,
-  optional title, body, related family members, and optional linked existing
-  Archive/media ids. The signed-in caller is recorded as the author (both the
-  stable `authorAccountId` for authorization and the canonical `authorPersonId`
-  for rendering the Person Profile identity). The post is created `#Active` with
-  `privacyScope = #FamilyOnly`. A mention notification is created for each
-  related member who has a linked account (other than the author), avoiding
-  duplicates.
-- `updateBoardPost(postId : PostId, postType : PostType, title : ?Text, body : Text, relatedPersonIds : [Text], linkedMediaIds : [Nat]) : async ?Post` —
+  optional title, body, related family members, optional linked existing
+  Archive/media ids, and free-form tags. The signed-in caller is recorded as the
+  author (both the stable `authorAccountId` for authorization and the canonical
+  `authorPersonId` for rendering the Person Profile identity). The post is
+  created `#Active` with `privacyScope = #FamilyOnly`. A mention notification is
+  created for each related member who has a linked account (other than the
+  author), avoiding duplicates. `tags` is a free-form list of `Text` labels
+  stored on the canonical post; it may be empty. When linking an Archive item,
+  the frontend may offer/inherit that item's existing tags, but the backend does
+  not duplicate Archive tags or media records — the post's `tags` are its own
+  labels and `linkedMediaIds` reference canonical Archive/media records by id
+  only.
+- `updateBoardPost(postId : PostId, postType : PostType, title : ?Text, body : Text, relatedPersonIds : [Text], linkedMediaIds : [Nat], tags : [Text]) : async ?Post` —
   update. Approved family members only; the caller must be the post author. Edits
-  the caller's own board post and returns the updated post, or `null` when the
-  post does not exist. Traps with `\"Unauthorized: Only the post author can edit
-  this post\"` when the caller is not the author.
+  the caller's own board post, replacing its `tags` with the supplied list, and
+  returns the updated post, or `null` when the post does not exist. Traps with
+  `\"Unauthorized: Only the post author can edit this post\"` when the caller is
+  not the author.
+- `searchBoardPostsByTags(tags : [Text]) : async [Post]` — query. Approved
+  family members only. Returns all active board posts that carry ANY of the given
+  tags (a post matches when at least one of its tags equals at least one of the
+  requested tags). Returns `[]` when no active post matches, or when `tags` is
+  empty. Archived (hidden) posts are never returned.
 - `archiveBoardPost(postId : PostId) : async ?Post` — update. Approved family
-  members only. Archives (hides) a board post. The post author or a Family
-  Steward may archive. Returns the updated post, or `null` when it does not
-  exist. Traps with `\"Unauthorized: Only the post author or a Family Steward can
-  archive this post\"` when the caller is neither. Records a `#BoardPostArchived`
-  audit entry.
+  members only. Hides (archives) a board post as Steward moderation. The post
+  author or a Family Steward may archive. Hiding removes the post from the normal
+  family board while preserving the post, its replies, and its attachments; it is
+  never permanently deleted through Hide. The hidden post appears only in the
+  Steward-only Hidden / Moderated Posts view (`listHiddenBoardPosts`). Returns
+  the updated post, or `null` when it does not exist. Traps with
+  `\"Unauthorized: Only the post author or a Family Steward can archive this
+  post\"` when the caller is neither. Records a `#BoardPostArchived` audit entry.
+- `listHiddenBoardPosts() : async [Post]` — query. Family Steward only. Returns
+  all hidden (moderated) board posts for the Steward-only Hidden / Moderated
+  Posts view. Hidden posts are preserved with their replies and attachments and
+  are never permanently deleted; they are searchable/filterable by title or tag
+  and shown with the full post and replies intact for review before restoring.
 - `restoreBoardPost(postId : PostId) : async ?Post` — update. Family Steward
-  only. Restores an archived board post. Returns the updated post, or `null`
-  when it does not exist. Records a `#BoardPostRestored` audit entry.
+  only. Unhides / restores an archived board post back to the normal family
+  board. Returns the updated post, or `null` when it does not exist. Records a
+  `#BoardPostRestored` audit entry. Hide and Archive remain separate concepts:
+  Archive refers to the Family Archive of contributed items, while Hide is
+  Steward moderation of a board post.
 - `listBoardReplies(postId : PostId) : async [Reply]` — query. Approved family
   members only. Returns the one-level replies to a board post, chronologically.
 - `addBoardReply(postId : PostId, body : Text) : async Reply` — update. Approved
@@ -585,9 +607,12 @@ Contributions badge.
 - `getPendingContributionsCount() : async Nat` — query. Family Steward only.
   Returns the count of all current pending review items (archive/media, video/
   audio, recipes, recipe media, stories, and mystery contributions) for the
-  Steward-facing Pending Contributions badge. The count is derived from canonical
-  pending data, so it increments on new pending items and decrements on
-  Approve/Reject automatically.
+  Steward-facing Pending Contributions badge. Research Intake review items
+  (Sources, Proposed Findings, New Person Candidates, Relationship Proposals,
+  and Conflict Review items) are NOT counted here — they resolve exclusively
+  through the Research Review Queue (`getReviewQueue`). The count is derived
+  from canonical pending data, so it increments on new pending items and
+  decrements on Approve/Reject automatically.
 
 ### Historical Research Intake
 
@@ -626,6 +651,12 @@ Contributions badge.
 - `rejectFinding(id : FindingId) : async ?ProposedFinding` — update. Family
   Steward only. Rejects a pending finding. Returns the updated finding, or `null`
   when it does not exist or is not pending.
+- `needsResearchFinding(id : FindingId) : async ?ProposedFinding` — update.
+  Family Steward only. Marks a pending finding as needing research,
+  transitioning it to `#NeedsResearch` while preserving the finding and its
+  content. The finding remains in the Research Review Queue with status
+  `NEEDS_RESEARCH` and a `FindingNeedsResearch` audit entry is recorded. Returns
+  the updated finding, or `null` when it does not exist or is not pending.
 - `createNewPersonCandidate(name : Text, details : Text, sourceId : SourceId) : async Result<NewPersonCandidate, ResearchError>` —
   update. Creates a candidate for a Person not yet in the canonical set. Requires
   a signed-in (non-anonymous) caller; returns `#err(#notAuthorized)` for an
@@ -651,15 +682,87 @@ Contributions badge.
   Timeline, Family Stories, Family Mysteries, or Archive), then marking the item
   `#Approved` and recording the reviewer and review time. Returns the updated
   item, or `null` when it does not exist.
-- `getReviewQueue() : async ReviewQueue` — query. Returns the review queue badge
-  counts (`pending`, `approved`, `rejected`, `conflicting`) aggregated across all
-  reviewable research intake items (findings, New Person candidates, relationship
-  proposals, and conflict review items). Not gated to admin — any caller may read
-  the queue counts.
-- `getResearchAuditLog() : async [ResearchAuditEntry]` — query. Returns the full
-  research intake audit history recording provenance and approval actions for
-  every finding and its review lifecycle. Not gated to admin — any caller may
-  read the research audit log.
+- `getReviewQueue() : async ReviewQueue` — query. Family Steward only. Returns
+  the review queue badge counts (`pending`, `approved`, `rejected`,
+  `conflicting`, `needsResearch`) and the full list of reviewable items
+  (`items`) aggregated across all reviewable research intake records, including
+  pending Sources. Every pending item appears with its type, title/summary,
+  contributor, provenance, created date, evidence label, and available steward
+  actions. Because the queue exposes contributor principals, proposed findings
+  content, and provenance, it is gated to Family Stewards and traps with
+  `\"Unauthorized: You must be signed in\"` for an anonymous caller and
+  `\"Unauthorized: Only Family Stewards can perform this action\"` when the
+  caller is not an admin.
+- `approveSource(id : SourceId) : async ?SourceRecord` — update. Family Steward
+  only. Approves a pending source, transitioning it to `#Approved` so it becomes
+  usable by Proposed Findings. The linked Archive item remains canonical and
+  provenance stays intact. Records a `#ResearchApproved` notification to the
+  contributor. Returns the updated source, or `null` when it does not exist or is
+  not pending.
+- `rejectSource(id : SourceId) : async ?SourceRecord` — update. Family Steward
+  only. Rejects a pending source, transitioning it to `#Rejected`. The original
+  Archive item is not deleted. Records a `#ResearchRejected` notification to the
+  contributor. Returns the updated source, or `null` when it does not exist or is
+  not pending.
+- `needsResearchSource(id : SourceId) : async ?SourceRecord` — update. Family
+  Steward only. Marks a pending source as needing research, transitioning it to
+  `#NeedsResearch` while preserving the source and its notes. Returns the updated
+  source, or `null` when it does not exist or is not pending.
+- `getResearchAuditLog() : async [ResearchAuditEntry]` — query. Family Steward
+  only. Returns the full research intake audit history recording provenance and
+  approval actions for every finding and its review lifecycle. Because the audit
+  log records provenance and approval actions, it is gated to Family Stewards
+  and traps with `\"Unauthorized: You must be signed in\"` for an anonymous
+  caller and `\"Unauthorized: Only Family Stewards can perform this action\"`
+  when the caller is not an admin.
+
+### Archive search, source upload, board media, and claim notification reconciliation
+
+- `searchArchiveItems(filter : ArchiveSearchFilter) : async [ArchiveItem]` — query.
+  Searches/filters approved archive items by title query, tags, item type,
+  related family member, and era. Returns only `#Approved` items.
+  `filter.searchTerm` matches the item title case-insensitively and by
+  substring; `filter.tags`
+  matches items carrying ALL of the given tags, each matched case-insensitively
+  and by substring against the item's canonical `tags` list; `filter.itemType`,
+  `filter.relatedMemberId`, and `filter.era` filter by category, linked family
+  member, and era respectively. Every field is optional — a `null`/empty field
+  does not constrain the result. Readable by any caller.
+- `createSourceWithUpload(title : Text, sourceType : SourceType, description : Text, blob : Blob, tags : [Text], era : Text, year : ?Nat, relatedMemberIds : [Text], privacyLevel : PrivacyLevel, classification : ArchiveItemClassification, primarySpeaker : ?OralHistorySpeaker) : async Result<SourceUploadResult, ResearchError>` —
+  update. Uploads a research source file: creates exactly ONE canonical Archive
+  item (in `#Pending` state) from the uploaded file and links a new Research
+  Source record to it via `archiveItemId`, so no manually typed Archive Item ID
+  is required. The Archive item's `itemType` is derived from the source type
+  (`#ResearchNotes` becomes `#Research`; the other source types become
+  `#Document`), and the caller is recorded as the `contributor` of both records
+  (provenance). Requires a signed-in (non-anonymous) caller; returns
+  `#err(#notAuthorized)` for an anonymous caller. As with `submitArchiveItem`,
+  `classification == #OralHistory` requires a `primarySpeaker` (returns
+  `#err(#invalidState(\"A primary speaker is required for Oral History items\"))`
+  when `null`) and `classification == #Standard` forbids one (returns
+  `#err(#invalidState(\"A primary speaker is only allowed on Oral History items\"))`
+  when present). The result carries both the created `source` and the
+  canonical `archiveItem`.
+- `createBoardPostWithMedia(postType : PostType, title : ?Text, body : Text, relatedPersonIds : [Text], existingArchiveItemIds : [Nat], newUploads : [BoardMediaUpload]) : async Post` —
+  update. Creates a board post that attaches existing Archive items (by id, no
+  re-upload) and/or new uploads. Each `newUploads` entry creates exactly ONE
+  canonical Archive item (in `#Pending` state) linked to the post; the
+  underlying file is never duplicated. Existing Archive items are attached by
+  id without re-uploading. The post's `linkedMediaIds` is the union of the
+  existing ids that resolve to a real Archive item and the ids of the newly
+  created items. Approved family members only: traps with `\"Unauthorized: You
+  must be signed in\"` for an anonymous caller and `\"Unauthorized: Only
+  approved family members can access the message board\"` when the caller is not
+  an approved member.
+- `reconcileClaimNotifications(claimId : Nat) : async Nat` — update. Reconciles
+  stale claim notifications for a claim. When the claim is `#Approved`, marks
+  the pending `#ProfileClaimRequested` notification for the claimant as
+  read/resolved so it no longer reads \"pending review\"; the `#ProfileClaimReviewed`
+  notification already reflects the final approved state. The profile status
+  stays `#Claimed` and no new claim is created. Returns the number of
+  notifications reconciled (0 when the claim does not exist or is not
+  `#Approved`). Requires a signed-in (non-anonymous) caller; traps with
+  `\"Unauthorized: You must be signed in\"` for an anonymous caller.
 
 ### Object Query Layer (OQL)
 
@@ -685,9 +788,9 @@ photo metadata: `key` (globally-unique \"<personId>:<id>\", the primary key),
 `id` (the primary key), `title`, `itemType`, `era`, `year` (optional year, `0`
 when absent), `contributor` (the submitting principal, rendered as text),
 `sourceStatus`, `privacyLevel`, `status`, `createdAt` (nanoseconds since
-epoch, `Int`), `classification` (`\"Standard\"`/`\"OralHistory\"`), and
-`primarySpeakerName` (the primary speaker's display name, `\"\"` when the item is
-not Oral History). The raw blob bytes are not exposed.
+epoch, `Int`), `classification` (`\"Standard\"`/`\"OralHistory\"`), `primarySpeakerName` (the primary speaker's display name, `\"\"` when the item is
+not Oral History), and `tags` (the item's canonical tag list joined with
+`\", \"`, `\"\"` when the item has no tags). The raw blob bytes are not exposed.
 
 The ownership entities are flattened views of the corresponding records.
 `profile` rows (primary key `personId`) carry `name`, `livingStatus`
@@ -790,7 +893,9 @@ author's account principal rendered as text), `authorPersonId` (the canonical
 Person id of the author), `title` (`\"\"` when absent), `body`, `postType`
 (`\"General\"`/`\"Announcement\"`/`\"FamilyQuestion\"`/`\"ResearchHistory\"`/`\"PhotoIdentification\"`/`\"Recipe\"`/`\"ReunionEvent\"`/`\"Memorial\"`/`\"Other\"`),
 `relatedPersonCount` (`Nat`, the number of related member ids),
-`linkedMediaCount` (`Nat`, the number of linked Archive/media ids), `createdAt`
+`linkedMediaCount` (`Nat`, the number of linked Archive/media ids), `tags` (the
+post's canonical tag list joined with `\", \"`, `\"\"` when the post has no
+tags), `createdAt`
 (`Int`, nanoseconds since epoch), `updatedAt` (`Int`), `status`
 (`\"Active\"`/`\"Archived\"`), and `privacyScope` (`\"FamilyOnly\"`). The
 array-valued fields (`relatedPersonIds`, `linkedMediaIds`) are exposed as counts
@@ -971,7 +1076,8 @@ privacy conventions).
 
 The Family Message Board methods gate on sign-in and approved-membership. The
 member methods — `listBoardPosts`, `getBoardPost`, `createBoardPost`,
-`updateBoardPost`, `archiveBoardPost`, `listBoardReplies`, and `addBoardReply` —
+`updateBoardPost`, `searchBoardPostsByTags`, `archiveBoardPost`,
+`listBoardReplies`, and `addBoardReply` —
 require a signed-in approved family member and trap with `\"Unauthorized: You
 must be signed in\"` for an anonymous caller and `\"Unauthorized: Only approved
 family members can access the message board\"` when the caller is not an
@@ -979,7 +1085,8 @@ approved member. `updateBoardPost` additionally requires the caller to be the
 post author (trapping with `\"Unauthorized: Only the post author can edit this
 post\"`), and `archiveBoardPost` requires the author or a Family Steward
 (trapping with `\"Unauthorized: Only the post author or a Family Steward can
-archive this post\"`). The steward methods — `restoreBoardPost` and
+archive this post\"`). The steward methods — `listHiddenBoardPosts`,
+`restoreBoardPost` and
 `removeBoardReply` — are admin-only and trap with `\"Unauthorized: Only Family
 Stewards can perform this action\"` when the caller is not an admin. Board
 governance actions (`archiveBoardPost`, `restoreBoardPost`, `removeBoardReply`)
@@ -1013,12 +1120,18 @@ methods — `createSource`, `createFinding`, `createNewPersonCandidate`, and
 return `#err(#notAuthorized)` for an anonymous caller (they do not trap). The
 Family Steward review methods — `listSources`, `listFindings`,
 `listNewPersonCandidates`, `listRelationshipProposals`,
-`listConflictReviewItems`, `approveFinding`, `rejectFinding`, and
-`resolveConflict` — are admin-only and trap with `\"Unauthorized: You must be
+`listConflictReviewItems`, `approveFinding`, `rejectFinding`,
+`needsResearchFinding`, `resolveConflict`, `approveSource`, `rejectSource`, and
+`needsResearchSource` —
+are admin-only and trap with `\"Unauthorized: You must be
 signed in\"` for an anonymous caller and `\"Unauthorized: Only Family Stewards
 can perform this action\"` when the caller is not an admin. The read methods
-`getSource`, `getFinding`, `getReviewQueue`, and `getResearchAuditLog` are
-readable by any caller (they are not gated to admin). The research-intake OQL
+`getSource` and `getFinding` are readable by any caller (they are not gated to
+admin). The review surface methods `getReviewQueue` and `getResearchAuditLog`
+are Family Steward only — they expose contributor principals, proposed findings
+content, and provenance, so they trap with `\"Unauthorized: You must be signed
+in\"` for an anonymous caller and `\"Unauthorized: Only Family Stewards can
+perform this action\"` when the caller is not an admin. The research-intake OQL
 entities (`researchSource`, `proposedFinding`, `newPersonCandidate`,
 `relationshipProposal`, `conflictReviewItem`, `researchAuditLog`) are all
 declared `.controllerOnly()`, so only the platform controller can read their
@@ -1122,7 +1235,8 @@ already reference the caller's stable principal (`requestingUserId`,
   `#Rejected`.
 - `NotificationType` is a variant: `#ProfileClaimRequested`,
   `#ProfileClaimReviewed`, `#RelationshipRequested`, `#RelationshipReviewed`,
-  `#BoardReply`, `#BoardMention`, or `#NewMessage`.
+  `#BoardReply`, `#BoardMention`, `#NewMessage`, `#ResearchSubmission`,
+  `#ResearchApproved`, or `#ResearchRejected`.
 - `PersonProfile` fields: `personId` (`Text`), `name` (`Text`),
   `livingStatus`, `claimStatus`, `claimedByUserId` (`?Principal`, `null` when
   unclaimed), and the owner-editable optionals `preferredName`, `firstName`,
@@ -1279,7 +1393,9 @@ already reference the caller's stable principal (`requestingUserId`,
   (`Text`, the canonical Person id used to render the Person Profile identity),
   `title` (`?Text`), `body` (`Text`), `postType`, `relatedPersonIds` (`[Text]`,
   canonical Person ids), `linkedMediaIds` (`[Nat]`, references to canonical
-  Archive/media records), `createdAt` (`Int`, nanoseconds since epoch),
+  Archive/media records), `tags` (`[Text]`, free-form labels stored on the
+  canonical post — never duplicated from Archive tags or media records),
+  `createdAt` (`Int`, nanoseconds since epoch),
   `updatedAt` (`Int`), `status`, and `privacyScope`.
 - `Reply` fields: `replyId` (`Nat`), `postId` (`Nat`), `authorAccountId`
   (`Principal`), `authorPersonId` (`Text`), `body` (`Text`), and `createdAt`
@@ -1330,9 +1446,9 @@ already reference the caller's stable principal (`requestingUserId`,
 - `EvidenceLabel` is a variant: `#Documented`, `#FamilyHistoryOralHistory`,
   `#PersonalMemory`, `#Hypothesis`, `#Conflicting`, or `#NeedsResearch`. Exactly
   one label is assigned per finding.
-- `ReviewStatus` is a variant: `#Pending`, `#Approved`, `#Rejected`, or
-  `#Conflicting`. Everything enters as `#Pending` and is only ever promoted by an
-  explicit steward action.
+- `ReviewStatus` is a variant: `#Pending`, `#Approved`, `#Rejected`,
+  `#Conflicting`, or `#NeedsResearch`. Everything enters as `#Pending` and is
+  only ever promoted by an explicit steward action.
 - `FindingType` is a variant: `#PersonFact`, `#Relationship`, `#TimelineEvent`,
   `#Story`, `#Mystery`, or `#Source`. It determines where an approved finding
   routes.
@@ -1376,7 +1492,18 @@ already reference the caller's stable principal (`requestingUserId`,
   (`?SourceId`, `null` when not tied to a source), `actorId` (`Principal`),
   `timestamp` (`Int`, nanoseconds since epoch), and `summary` (`Text`).
 - `ReviewQueue` fields: `pending` (`Nat`), `approved` (`Nat`), `rejected`
-  (`Nat`), and `conflicting` (`Nat`) — the aggregated review queue badge counts.
+  (`Nat`), `conflicting` (`Nat`), `needsResearch` (`Nat`), and `items`
+  (`[ReviewQueueItem]`) — the aggregated review queue badge counts plus the full
+  list of reviewable items. `pending` counts every item still awaiting steward
+  review (including pending Sources); `needsResearch` counts items marked
+  `#NeedsResearch`.
+- `ReviewQueueItem` fields: `id` (`Nat`), `kind` (`ReviewItemKind`: `#Source`,
+  `#Finding`, `#NewPersonCandidate`, `#RelationshipProposal`, or
+  `#ConflictReview`), `title` (`Text`), `summary` (`Text`), `contributor`
+  (`?Principal`, `null` when the item has no single contributor), `provenance`
+  (`Text`), `createdAt` (`Int`, nanoseconds since epoch), `evidenceLabel`
+  (`?EvidenceLabel`, `null` when not applicable), `status` (`ReviewStatus`), and
+  `actions` (`[ReviewAction]`: `#Approve`, `#Reject`, and/or `#NeedsResearch`).
 - `ResearchError` is a variant: `#notAuthorized`, `#notFound : Nat`, or
   `#invalidState : Text`.
 
@@ -1419,6 +1546,14 @@ claim on a duplicate Lorenzo Smith Jr. profile is dropped and the caller's
 approved claim resolves to the canonical `lorenzoSmithJr` personId, the profile
 page, the father's child card, Explore Family, and My Profile all resolve to
 that same canonical record.
+
+When a claim is approved, the pending `#ProfileClaimRequested` notification
+(\"Your profile claim ... is pending review\") is reconciled so it no longer
+remains actionable/current: `reconcileClaimNotifications(claimId)` marks it
+read/resolved, while the `#ProfileClaimReviewed` notification already reflects
+the final approved state. The profile status stays `#Claimed` and no new claim
+is created. Historical notification history may remain, but it clearly shows the
+final resolved state and no longer implies the claim is pending.
 
 Relationship requests follow a propose → approve/reject lifecycle.
 `proposeRelationship` creates a `#Pending` request that is never treated as
@@ -1526,6 +1661,10 @@ poll; the frontend can call `listConversations`, `getConversation`,
 The Pending Contributions count is derived on demand. `getPendingContributionsCount`
 counts all current pending review items (pending archive/media, pending recipes,
 pending stories, and pending mystery contributions) from canonical pending data.
+Research Intake review items (Sources, Proposed Findings, New Person Candidates,
+Relationship Proposals, and Conflict Review items) are deliberately excluded —
+they resolve exclusively through the Research Review Queue (`getReviewQueue`),
+so they never inflate the Pending Contributions badge.
 It increments when a new pending item is submitted and decrements when an item is
 approved or rejected, automatically — there is no separate counter to maintain.
 The frontend calls it to render the Steward-facing Pending Contributions badge
@@ -1536,18 +1675,25 @@ caller creates a source (`createSource`) and then proposed findings
 (`createFinding`), New Person candidates (`createNewPersonCandidate`), and
 relationship proposals (`createRelationshipProposal`), each referencing a source
 for provenance. Everything enters as `#Pending` and is never auto-approved. A
-Family Steward then reviews each item: `approveFinding` routes an approved
-finding to its target surface (Profile, family graph, Timeline / Travel Through
-Time, Family Stories, Family Mysteries, or Profile Sources / Archive),
-`rejectFinding` rejects it, and `resolveConflict` writes the proposed value of a
-conflict review item's underlying finding into its canonical area and marks the
-item resolved. A finding labelled `#Conflicting` is never approved directly — `approveFinding`
+Family Steward then reviews each item: `approveSource` approves a pending source
+(transitioning it to `#Approved` so it becomes usable by Proposed Findings),
+`rejectSource` rejects it (transitioning to `#Rejected`, without deleting the
+original Archive item), and `needsResearchSource` marks it as needing research
+(transitioning to `#NeedsResearch` while preserving the source and its notes).
+`approveFinding` routes an approved finding to its target surface (Profile,
+family graph, Timeline / Travel Through Time, Family Stories, Family Mysteries,
+or Profile Sources / Archive), `rejectFinding` rejects it, and `resolveConflict`
+writes the proposed value of a conflict review item's underlying finding into its
+canonical area and marks the item resolved. A finding labelled `#Conflicting` is
+never approved directly — `approveFinding`
 routes it to a Conflict Review item (marking the finding `#Conflicting` with a
 `conflictReviewId`) instead of silently overwriting canonical data. Every
 creation and review action records a `ResearchAuditEntry` in the research audit
-log, readable via `getResearchAuditLog`. The review queue badge counts are
-derived on demand via `getReviewQueue`, aggregating pending/approved/rejected/
-conflicting across findings, candidates, proposals, and conflict items. There is
+log, readable via `getResearchAuditLog`. The review queue is
+derived on demand via `getReviewQueue`, returning the pending/approved/rejected/
+conflicting/needs-research counts plus the full list of reviewable items
+(including pending Sources) with type, title/summary, contributor, provenance,
+created date, evidence label, and available steward actions. There is
 no async job to poll; the frontend can call the list methods (steward) or
 `getReviewQueue`/`getResearchAuditLog` to observe the current state.
 
@@ -1733,10 +1879,23 @@ no async job to poll; the frontend can call the list methods (steward) or
   `#Conflicting`-labelled finding does not approve it — it routes the finding to
   a Conflict Review item and marks the finding `#Conflicting` instead of silently
   overwriting canonical data.
+- `needsResearchFinding` is idempotent: marking an already-reviewed (or
+  nonexistent) finding as needing research returns `null` and changes nothing.
+  It only transitions findings currently in `#Pending` state, setting the
+  finding's status to `#NeedsResearch` (with `reviewedBy`/`reviewedAt`/`updatedAt`
+  recorded) while preserving the finding and its content, and records a
+  `FindingNeedsResearch` audit entry.
 - `resolveConflict` is idempotent: resolving an already-resolved (or nonexistent)
   conflict item returns `null` and changes nothing. On the first resolution it
   writes the proposed value of the underlying finding into its canonical area,
   marks the item `#Approved`, and records the reviewer and review time.
+- `approveSource`, `rejectSource`, and `needsResearchSource` are idempotent:
+  acting on an already-reviewed (or nonexistent) source returns `null` and
+  changes nothing. They only transition sources currently in `#Pending` state.
+  `rejectSource` never deletes the original Archive item; `needsResearchSource`
+  preserves the source and its notes. Each successful review records a
+  `#ResearchApproved`/`#ResearchRejected` notification to the contributor
+  (approve/reject) without duplicates.
 - `getSource`, `getFinding`, `getReviewQueue`, and `getResearchAuditLog` are
   read-only queries with no side effects; they are always idempotent.
 
@@ -1913,10 +2072,12 @@ no async job to poll; the frontend can call the list methods (steward) or
 - The Family Steward research-intake review methods (`listSources`,
   `listFindings`, `listNewPersonCandidates`, `listRelationshipProposals`,
   `listConflictReviewItems`, `approveFinding`, `rejectFinding`,
-  `resolveConflict`) trap with `\"Unauthorized: You must be signed in\"` for an
+  `needsResearchFinding`, `resolveConflict`) trap with `\"Unauthorized: You must
+  be signed in\"` for an
   anonymous caller and `\"Unauthorized: Only Family Stewards can perform this
   action\"` when the caller is not an admin.
-- `approveFinding`, `rejectFinding`, and `resolveConflict` return `null` (they do
+- `approveFinding`, `rejectFinding`, `needsResearchFinding`, and
+  `resolveConflict` return `null` (they do
   not trap) when the target id does not exist or is not in the expected state.
   `getSource` and `getFinding` return `null` when the target id does not exist.
 - The research-intake OQL entities (`researchSource`, `proposedFinding`,

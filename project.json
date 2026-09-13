@@ -1,20 +1,17 @@
 {
-  "overview": "A family history app for the Norwood family with profile claiming, family tree exploration, archives, stories, recipes, messaging, governance, and a new Historical Research Intake workspace for documenting proposed findings with sources and evidence.",
+  "overview": "A family history app where members preserve records, research their ancestry, and collaborate through a Family Steward review workflow.",
   "features": [
-    "Claim and manage family member profiles",
-    "Explore the family tree and heritage branches",
-    "Browse family archive, stories, mysteries, and timeline",
-    "Share family recipes and videos",
-    "Message board and private messaging",
-    "Family Steward governance and pending contributions",
-    "Historical Research Intake with sources, proposed findings, and conflict review"
+    "Preserve family records, media, and archive contributions",
+    "Submit and review research findings with provenance",
+    "Family Steward hub for reviewing pending work",
+    "Message board and family collaboration"
   ],
   "category": "family-history",
   "tags": [
     "family",
     "genealogy",
-    "history",
-    "community"
+    "research",
+    "collaboration"
   ],
-  "last_updated": "2026-09-11T20:59:40.781Z"
+  "last_updated": "2026-09-13T12:25:16.452Z"
 }

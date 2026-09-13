@@ -210,6 +210,9 @@ export const RELATIONSHIP_TYPE_LABELS: Record<RelationshipType, string> = {
 
 /** Friendly labels for notification types. */
 export const NOTIFICATION_TYPE_LABELS: Record<NotificationType, string> = {
+  [NotificationType.ResearchSubmission]: "Research submitted",
+  [NotificationType.ResearchApproved]: "Research approved",
+  [NotificationType.ResearchRejected]: "Research rejected",
   [NotificationType.ProfileClaimRequested]: "Profile claim requested",
   [NotificationType.ProfileClaimReviewed]: "Profile claim reviewed",
   [NotificationType.RelationshipRequested]: "Relationship requested",

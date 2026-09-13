@@ -823,6 +823,9 @@ module {
       case (#BoardReply) "BoardReply";
       case (#BoardMention) "BoardMention";
       case (#NewMessage) "NewMessage";
+      case (#ResearchSubmission) "ResearchSubmission";
+      case (#ResearchApproved) "ResearchApproved";
+      case (#ResearchRejected) "ResearchRejected";
     };
   };
 };

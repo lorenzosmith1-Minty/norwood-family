@@ -26,76 +26,112 @@ import App from "./App";
 // A stateful in-memory actor standing in for the real backend so the Family
 // Archive browsing screen and Archive Detail page can be exercised end to end
 // without a canister. It implements the archive methods the app's hooks call.
-const { mockActor, resetArchive, seedApproved, seedPending, seedRejected } =
-  vi.hoisted(() => {
-    let items: ArchiveItem[] = [];
-    let nextId = 0n;
+const {
+  mockActor,
+  resetArchive,
+  seedApproved,
+  seedPending,
+  seedRejected,
+  setAuthenticated,
+  getAuthenticated,
+} = vi.hoisted(() => {
+  let items: ArchiveItem[] = [];
+  let nextId = 0n;
+  let isAuthenticated = false;
 
-    const makeItem = (
-      id: bigint,
-      status: ArchiveItemStatus,
-      overrides: Partial<ArchiveItem> = {},
-    ): ArchiveItem => ({
-      id,
-      title: "A family letter",
-      description: "A letter from 1924.",
-      itemType: ArchiveItemType.Document,
-      blob: ExternalBlob.fromBytes(
-        new Uint8Array([1, 2, 3]),
-        "text/plain",
-        "letter.txt",
-      ),
-      era: "1924",
-      year: 1924n,
-      tags: ["letters"],
-      relatedMemberIds: ["julia"],
-      relatedBranchId: "branch-1",
-      sourceStatus: SourceStatus.Original,
-      privacyLevel: PrivacyLevel.FamilyOnly,
-      classification: ArchiveItemClassification.Standard,
-      status,
-      createdAt: 1_700_000_000_000_000_000n,
-      contributor: Principal.fromText("aaaaa-aa"),
-      ...overrides,
-    });
-
-    const mockActor = {
-      async isCallerAdmin(): Promise<boolean> {
-        return false;
-      },
-      async listApprovedArchiveItems(): Promise<ArchiveItem[]> {
-        return items.filter((i) => i.status === ArchiveItemStatus.Approved);
-      },
-    };
-
-    return {
-      mockActor,
-      resetArchive: () => {
-        items = [];
-        nextId = 0n;
-      },
-      seedApproved: (overrides: Partial<ArchiveItem> = {}) => {
-        const item = makeItem(nextId++, ArchiveItemStatus.Approved, overrides);
-        items = [...items, item];
-        return item;
-      },
-      seedPending: (overrides: Partial<ArchiveItem> = {}) => {
-        const item = makeItem(nextId++, ArchiveItemStatus.Pending, overrides);
-        items = [...items, item];
-        return item;
-      },
-      seedRejected: (overrides: Partial<ArchiveItem> = {}) => {
-        const item = makeItem(nextId++, ArchiveItemStatus.Rejected, overrides);
-        items = [...items, item];
-        return item;
-      },
-    };
+  const makeItem = (
+    id: bigint,
+    status: ArchiveItemStatus,
+    overrides: Partial<ArchiveItem> = {},
+  ): ArchiveItem => ({
+    id,
+    title: "A family letter",
+    description: "A letter from 1924.",
+    itemType: ArchiveItemType.Document,
+    blob: ExternalBlob.fromBytes(
+      new Uint8Array([1, 2, 3]),
+      "text/plain",
+      "letter.txt",
+    ),
+    era: "1924",
+    year: 1924n,
+    tags: ["letters"],
+    relatedMemberIds: ["julia"],
+    relatedBranchId: "branch-1",
+    sourceStatus: SourceStatus.Original,
+    privacyLevel: PrivacyLevel.FamilyOnly,
+    classification: ArchiveItemClassification.Standard,
+    status,
+    createdAt: 1_700_000_000_000_000_000n,
+    contributor: Principal.fromText("aaaaa-aa"),
+    ...overrides,
   });
+
+  const mockActor = {
+    async isCallerAdmin(): Promise<boolean> {
+      return false;
+    },
+    async listApprovedArchiveItems(): Promise<ArchiveItem[]> {
+      return items.filter((i) => i.status === ArchiveItemStatus.Approved);
+    },
+    // The Family Archive browsing screen now runs title + tag search through
+    // the backend searchArchiveItems query. Mirror the backend contract: only
+    // approved items, title query matched case-insensitively by substring, and
+    // an item must carry ALL of the given tags.
+    async searchArchiveItems(filter: {
+      searchTerm: [] | [string] | undefined;
+      tags: string[];
+      itemType: [] | [ArchiveItemType] | undefined;
+      relatedMemberId: [] | [string] | undefined;
+      era: [] | [string] | undefined;
+    }): Promise<ArchiveItem[]> {
+      const query = ((filter.searchTerm ?? [])[0] ?? "").toLowerCase();
+      const tags = filter.tags.map((t) => t.toLowerCase());
+      return items.filter(
+        (i) =>
+          i.status === ArchiveItemStatus.Approved &&
+          (query === "" || i.title.toLowerCase().includes(query)) &&
+          (tags.length === 0 ||
+            tags.every((t) =>
+              i.tags.some((tag) => tag.toLowerCase().includes(t)),
+            )),
+      );
+    },
+  };
+
+  return {
+    mockActor,
+    resetArchive: () => {
+      items = [];
+      nextId = 0n;
+      isAuthenticated = false;
+    },
+    setAuthenticated: (v: boolean) => {
+      isAuthenticated = v;
+    },
+    getAuthenticated: () => isAuthenticated,
+    seedApproved: (overrides: Partial<ArchiveItem> = {}) => {
+      const item = makeItem(nextId++, ArchiveItemStatus.Approved, overrides);
+      items = [...items, item];
+      return item;
+    },
+    seedPending: (overrides: Partial<ArchiveItem> = {}) => {
+      const item = makeItem(nextId++, ArchiveItemStatus.Pending, overrides);
+      items = [...items, item];
+      return item;
+    },
+    seedRejected: (overrides: Partial<ArchiveItem> = {}) => {
+      const item = makeItem(nextId++, ArchiveItemStatus.Rejected, overrides);
+      items = [...items, item];
+      return item;
+    },
+  };
+});
 
 vi.mock("@caffeineai/core-infrastructure", () => ({
   useActor: () => ({ actor: mockActor, isFetching: false }),
   useInternetIdentity: () => ({
-    isAuthenticated: false,
+    isAuthenticated: getAuthenticated(),
     login: () => {},
     isInitializing: false,
     isLoggingIn: false,
@@ -371,6 +407,67 @@ describe("Family Archive browsing screen", () => {
       await screen.findByRole("heading", { name: "Our Family Archive" }),
     ).toBeInTheDocument();
   });
+
+  it("shows the 'Add to Archive' button to a signed-in family member", async () => {
+    setAuthenticated(true);
+    const user = userEvent.setup();
+    renderApp();
+    await openArchive(user);
+
+    // The clear 'Add to Archive' entry point is visible on the Family Archive
+    // page for a signed-in family member.
+    expect(
+      screen.getByRole("button", { name: "Add to Archive" }),
+    ).toBeInTheDocument();
+  });
+
+  it("searches the archive by title through the backend search hook", async () => {
+    seedApproved({
+      title: "Wedding portrait",
+      itemType: ArchiveItemType.Photo,
+    });
+    seedApproved({
+      title: "A family letter",
+      itemType: ArchiveItemType.Document,
+    });
+
+    const user = userEvent.setup();
+    renderApp();
+    await openArchive(user);
+
+    // Type a title query; the list narrows to the matching item.
+    await user.type(
+      screen.getByLabelText("Search archive by title"),
+      "wedding",
+    );
+
+    expect(await screen.findByText("Wedding portrait")).toBeInTheDocument();
+    expect(screen.queryByText("A family letter")).not.toBeInTheDocument();
+  });
+
+  it("filters the archive by tag chips", async () => {
+    seedApproved({
+      title: "Wedding portrait",
+      itemType: ArchiveItemType.Photo,
+      tags: ["wedding", "1920s"],
+    });
+    seedApproved({
+      title: "A family letter",
+      itemType: ArchiveItemType.Document,
+      tags: ["letters", "1924"],
+    });
+
+    const user = userEvent.setup();
+    renderApp();
+    await openArchive(user);
+
+    // The tag filter chips are derived from the approved items' tags.
+    const weddingChip = screen.getByRole("checkbox", { name: "wedding" });
+    await user.click(weddingChip);
+
+    expect(await screen.findByText("Wedding portrait")).toBeInTheDocument();
+    expect(screen.queryByText("A family letter")).not.toBeInTheDocument();
+  });
 });
 
 describe("Archive Detail page", () => {
@@ -446,7 +543,7 @@ describe("Archive Detail page", () => {
     expect(img.getAttribute("src")).toBeTruthy();
   });
 
-  it("renders a document view with an open-original link for a document item", async () => {
+  it("renders a document view with a Download Original action for a document item", async () => {
     seedApproved({
       title: "A family letter",
       itemType: ArchiveItemType.Document,
@@ -458,11 +555,16 @@ describe("Archive Detail page", () => {
 
     await user.click(screen.getByRole("button", { name: /A family letter/ }));
 
-    const openOriginal = await screen.findByRole("link", {
-      name: "Open original",
+    // The document view offers Download Original (a button, not an external
+    // link). A plain text document is not browser-previewable, so no Preview
+    // action is offered.
+    const download = await screen.findByRole("button", {
+      name: "Download Original",
     });
-    expect(openOriginal).toHaveAttribute("href");
-    expect(openOriginal).toHaveAttribute("target", "_blank");
+    expect(download).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Preview" }),
+    ).not.toBeInTheDocument();
   });
 
   it("navigates back to the browsing list from the detail page", async () => {
@@ -480,5 +582,100 @@ describe("Archive Detail page", () => {
     expect(
       await screen.findByRole("heading", { name: "Our Family Archive" }),
     ).toBeInTheDocument();
+  });
+
+  it("offers both Preview and Download Original for a PDF document, with Preview rendering in-app", async () => {
+    seedApproved({
+      title: "Deed scan",
+      itemType: ArchiveItemType.Document,
+      blob: ExternalBlob.fromBytes(
+        new Uint8Array([1, 2, 3]),
+        "application/pdf",
+        "deed.pdf",
+      ),
+    });
+
+    const user = userEvent.setup();
+    renderApp();
+    await openArchive(user);
+
+    await user.click(screen.getByRole("button", { name: /Deed scan/ }));
+    await screen.findByRole("heading", { name: "Deed scan" });
+
+    // A browser-supported PDF offers both actions.
+    expect(screen.getByRole("button", { name: "Preview" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Download Original" }),
+    ).toBeInTheDocument();
+
+    // Opening Preview renders the document in-app (an iframe of the original).
+    await user.click(screen.getByRole("button", { name: "Preview" }));
+    const stage = document.querySelector(
+      '[data-ocid="archive_detail.preview_stage"]',
+    ) as HTMLElement;
+    expect(stage).toBeInTheDocument();
+    const frame = within(stage).getByTitle("deed.pdf");
+    expect(frame).toBeInTheDocument();
+  });
+
+  it("offers both Preview and Download Original for an image document", async () => {
+    seedApproved({
+      title: "Portrait scan",
+      itemType: ArchiveItemType.Document,
+      blob: ExternalBlob.fromBytes(
+        new Uint8Array([1, 2, 3]),
+        "image/png",
+        "portrait.png",
+      ),
+    });
+
+    const user = userEvent.setup();
+    renderApp();
+    await openArchive(user);
+
+    await user.click(screen.getByRole("button", { name: /Portrait scan/ }));
+    await screen.findByRole("heading", { name: "Portrait scan" });
+
+    expect(screen.getByRole("button", { name: "Preview" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Download Original" }),
+    ).toBeInTheDocument();
+
+    // Preview renders the image in-app.
+    await user.click(screen.getByRole("button", { name: "Preview" }));
+    const stage = document.querySelector(
+      '[data-ocid="archive_detail.preview_stage"]',
+    ) as HTMLElement;
+    expect(stage).toBeInTheDocument();
+    expect(
+      within(stage).getByRole("img", { name: "Portrait scan" }),
+    ).toBeInTheDocument();
+  });
+
+  it("offers Download Original only for a Word document", async () => {
+    seedApproved({
+      title: "Family notes",
+      itemType: ArchiveItemType.Document,
+      blob: ExternalBlob.fromBytes(
+        new Uint8Array([1, 2, 3]),
+        "application/msword",
+        "notes.docx",
+      ),
+    });
+
+    const user = userEvent.setup();
+    renderApp();
+    await openArchive(user);
+
+    await user.click(screen.getByRole("button", { name: /Family notes/ }));
+    await screen.findByRole("heading", { name: "Family notes" });
+
+    // Word is not browser-previewable, so only Download Original is offered.
+    expect(
+      screen.getByRole("button", { name: "Download Original" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Preview" }),
+    ).not.toBeInTheDocument();
   });
 });

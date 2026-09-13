@@ -162,7 +162,8 @@ export function Layout({
     activeView === "steward-hub" ||
     activeView === "steward-review" ||
     activeView === "governance" ||
-    activeView === "admin-approval";
+    activeView === "admin-approval" ||
+    activeView === "hidden-posts";
   const isNotificationsActive = activeView === "notifications";
   const isMyProfileActive =
     activeView === "my-profile" || activeView === "profile-edit";
@@ -302,21 +303,23 @@ export function Layout({
                   </button>
                 ) : null}
                 {showAdminControls ? (
-                  <button
-                    type="button"
-                    data-ocid="layout.steward_link"
-                    aria-current={isStewardActive ? "page" : undefined}
-                    onClick={onStewardClick}
-                    className={navClass(isStewardActive)}
-                  >
-                    <UserCog
-                      className={navIconClass(isStewardActive)}
-                      strokeWidth={1.75}
-                      aria-hidden="true"
-                    />
-                    Family Steward
-                    <StewardActionBadge />
-                  </button>
+                  <>
+                    <button
+                      type="button"
+                      data-ocid="layout.steward_link"
+                      aria-current={isStewardActive ? "page" : undefined}
+                      onClick={onStewardClick}
+                      className={navClass(isStewardActive)}
+                    >
+                      <UserCog
+                        className={navIconClass(isStewardActive)}
+                        strokeWidth={1.75}
+                        aria-hidden="true"
+                      />
+                      Family Steward
+                      <StewardActionBadge />
+                    </button>
+                  </>
                 ) : null}
               </>
             )}

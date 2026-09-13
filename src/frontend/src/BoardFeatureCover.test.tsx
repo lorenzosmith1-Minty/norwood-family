@@ -17,7 +17,15 @@ import {
   within,
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from "vitest";
 import App from "./App";
 
 // The generated components use data-ocid for test ids.
@@ -29,170 +37,235 @@ const ACCOUNT = "2vxsx-fae";
 // Message Board journeys (post creation with checkmark multi-select, replies,
 // archive/restore) can be exercised end to end without a canister. It
 // implements the board + identity + archive methods the board pages call.
-const { mockActor, resetBoard, setAuthenticated, setAdmin, getAuthenticated } =
-  vi.hoisted(() => {
-    const MY_PERSON_ID = "julia";
-    let isAuthenticated = false;
-    let isAdmin = false;
-    let posts: Post[] = [];
-    let replies: Reply[] = [];
-    let nextPostId = 0n;
-    let nextReplyId = 0n;
+const {
+  mockActor,
+  resetBoard,
+  setAuthenticated,
+  setAdmin,
+  getAuthenticated,
+  getCreatedUploadItems,
+} = vi.hoisted(() => {
+  const MY_PERSON_ID = "julia";
+  let isAuthenticated = false;
+  let isAdmin = false;
+  let posts: Post[] = [];
+  let replies: Reply[] = [];
+  let nextPostId = 0n;
+  let nextReplyId = 0n;
+  let uploadItems: { title: string; itemType: string }[] = [];
 
-    const myProfile = {
-      personId: MY_PERSON_ID,
-      name: "Julia Norwood",
-      claimStatus: "Claimed",
-      livingStatus: "Living",
-    };
+  const myProfile = {
+    personId: MY_PERSON_ID,
+    name: "Julia Norwood",
+    claimStatus: "Claimed",
+    livingStatus: "Living",
+  };
 
-    const mockActor = {
-      async isCallerAdmin(): Promise<boolean> {
-        return isAdmin;
-      },
-      async getMyProfile() {
-        return isAuthenticated ? myProfile : null;
-      },
-      async getPersonProfile(personId: string) {
-        if (personId === MY_PERSON_ID) return myProfile;
-        return {
-          personId,
-          name: "Family Member",
-          claimStatus: "Unclaimed",
-          livingStatus: "Living",
-        };
-      },
-      async getProfilePhoto() {
-        return null;
-      },
-      async listApprovedArchiveItems() {
-        return [];
-      },
-      async listBoardPosts(filter: PostType | null): Promise<Post[]> {
-        let active = posts.filter((p) => p.status === PostStatus.Active);
-        if (filter !== null) {
-          active = active.filter((p) => p.postType === filter);
-        }
-        return [...active].sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
-      },
-      async getBoardPost(postId: bigint): Promise<Post | null> {
-        return (
-          posts.find(
-            (p) => p.postId === postId && p.status === PostStatus.Active,
-          ) ?? null
-        );
-      },
-      async createBoardPost(
-        postType: PostType,
-        title: string | null,
-        body: string,
-        relatedPersonIds: string[],
-        linkedMediaIds: bigint[],
-      ): Promise<Post> {
-        const post: Post = {
-          postId: nextPostId++,
-          authorAccountId: Principal.fromText(ACCOUNT),
-          authorPersonId: MY_PERSON_ID,
-          title: title ?? undefined,
-          body,
-          postType,
-          relatedPersonIds,
-          linkedMediaIds,
-          createdAt: 1_700_000_000_000_000_000n,
-          updatedAt: 1_700_000_000_000_000_000n,
-          status: PostStatus.Active,
-          privacyScope: PrivacyScope.FamilyOnly,
-        };
-        posts = [...posts, post];
-        return post;
-      },
-      async updateBoardPost(
-        postId: bigint,
-        postType: PostType,
-        title: string | null,
-        body: string,
-        relatedPersonIds: string[],
-        linkedMediaIds: bigint[],
-      ): Promise<Post | null> {
-        const found = posts.find((p) => p.postId === postId);
-        if (!found) return null;
-        const updated: Post = {
-          ...found,
-          postType,
-          title: title ?? undefined,
-          body,
-          relatedPersonIds,
-          linkedMediaIds,
-          updatedAt: found.updatedAt + 1n,
-        };
-        posts = posts.map((p) => (p.postId === postId ? updated : p));
-        return updated;
-      },
-      async archiveBoardPost(postId: bigint): Promise<Post | null> {
-        const found = posts.find((p) => p.postId === postId);
-        if (!found) return null;
-        const updated: Post = { ...found, status: PostStatus.Archived };
-        posts = posts.map((p) => (p.postId === postId ? updated : p));
-        return updated;
-      },
-      async restoreBoardPost(postId: bigint): Promise<Post | null> {
-        const found = posts.find((p) => p.postId === postId);
-        if (!found) return null;
-        const updated: Post = { ...found, status: PostStatus.Active };
-        posts = posts.map((p) => (p.postId === postId ? updated : p));
-        return updated;
-      },
-      async listBoardReplies(postId: bigint): Promise<Reply[]> {
-        return replies
-          .filter((r) => r.postId === postId)
-          .sort((a, b) => (a.createdAt < b.createdAt ? -1 : 1));
-      },
-      async addBoardReply(postId: bigint, body: string): Promise<Reply> {
-        const reply: Reply = {
-          replyId: nextReplyId++,
-          postId,
-          authorAccountId: Principal.fromText(ACCOUNT),
-          authorPersonId: MY_PERSON_ID,
-          body,
-          createdAt: 1_700_000_000_000_000_000n,
-        };
-        replies = [...replies, reply];
-        return reply;
-      },
-      async removeBoardReply(replyId: bigint): Promise<Reply | null> {
-        const found = replies.find((r) => r.replyId === replyId);
-        if (!found) return null;
-        replies = replies.filter((r) => r.replyId !== replyId);
-        return found;
-      },
-      async listNotifications() {
-        return [];
-      },
-      async markNotificationRead() {},
-      async canMessagePerson() {
-        return false;
-      },
-    };
+  const mockActor = {
+    async isCallerAdmin(): Promise<boolean> {
+      return isAdmin;
+    },
+    async getMyProfile() {
+      return isAuthenticated ? myProfile : null;
+    },
+    async getPersonProfile(personId: string) {
+      if (personId === MY_PERSON_ID) return myProfile;
+      return {
+        personId,
+        name: "Family Member",
+        claimStatus: "Unclaimed",
+        livingStatus: "Living",
+      };
+    },
+    async getProfilePhoto() {
+      return null;
+    },
+    async listApprovedArchiveItems() {
+      return [];
+    },
+    async listBoardPosts(filter: PostType | null): Promise<Post[]> {
+      let active = posts.filter((p) => p.status === PostStatus.Active);
+      if (filter !== null) {
+        active = active.filter((p) => p.postType === filter);
+      }
+      return [...active].sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+    },
+    async getBoardPost(postId: bigint): Promise<Post | null> {
+      return (
+        posts.find(
+          (p) => p.postId === postId && p.status === PostStatus.Active,
+        ) ?? null
+      );
+    },
+    async createBoardPost(
+      postType: PostType,
+      title: string | null,
+      body: string,
+      relatedPersonIds: string[],
+      linkedMediaIds: bigint[],
+      tags: string[],
+    ): Promise<Post> {
+      const post: Post = {
+        postId: nextPostId++,
+        authorAccountId: Principal.fromText(ACCOUNT),
+        authorPersonId: MY_PERSON_ID,
+        title: title ?? undefined,
+        body,
+        postType,
+        relatedPersonIds,
+        linkedMediaIds,
+        tags,
+        createdAt: 1_700_000_000_000_000_000n,
+        updatedAt: 1_700_000_000_000_000_000n,
+        status: PostStatus.Active,
+        privacyScope: PrivacyScope.FamilyOnly,
+      };
+      posts = [...posts, post];
+      return post;
+    },
+    async createBoardPostWithMedia(
+      postType: PostType,
+      title: string | null,
+      body: string,
+      relatedPersonIds: string[],
+      existingArchiveItemIds: bigint[],
+      newUploads: Array<{
+        title: string;
+        description: string;
+        itemType: string;
+        blob: unknown;
+        era: string;
+        year: bigint | null;
+        tags: string[];
+        relatedMemberIds: string[];
+        relatedBranchId: string | null;
+        sourceStatus: string;
+        privacyLevel: string;
+        classification: string;
+        primarySpeaker: unknown;
+      }>,
+      tags: string[],
+    ): Promise<Post> {
+      // Mirrors the backend contract: each new upload creates ONE canonical
+      // Archive item (pending) linked to the post; the underlying file is
+      // never duplicated. Existing items are attached by id.
+      const linked = [...existingArchiveItemIds];
+      for (const upload of newUploads) {
+        uploadItems = [
+          ...uploadItems,
+          { title: upload.title, itemType: upload.itemType },
+        ];
+        linked.push(100n + BigInt(uploadItems.length));
+      }
+      const post: Post = {
+        postId: nextPostId++,
+        authorAccountId: Principal.fromText(ACCOUNT),
+        authorPersonId: MY_PERSON_ID,
+        title: title ?? undefined,
+        body,
+        postType,
+        relatedPersonIds,
+        linkedMediaIds: linked,
+        tags,
+        createdAt: 1_700_000_000_000_000_000n,
+        updatedAt: 1_700_000_000_000_000_000n,
+        status: PostStatus.Active,
+        privacyScope: PrivacyScope.FamilyOnly,
+      };
+      posts = [...posts, post];
+      return post;
+    },
+    async updateBoardPost(
+      postId: bigint,
+      postType: PostType,
+      title: string | null,
+      body: string,
+      relatedPersonIds: string[],
+      linkedMediaIds: bigint[],
+      tags: string[],
+    ): Promise<Post | null> {
+      const found = posts.find((p) => p.postId === postId);
+      if (!found) return null;
+      const updated: Post = {
+        ...found,
+        postType,
+        title: title ?? undefined,
+        body,
+        relatedPersonIds,
+        linkedMediaIds,
+        tags,
+        updatedAt: found.updatedAt + 1n,
+      };
+      posts = posts.map((p) => (p.postId === postId ? updated : p));
+      return updated;
+    },
+    async archiveBoardPost(postId: bigint): Promise<Post | null> {
+      const found = posts.find((p) => p.postId === postId);
+      if (!found) return null;
+      const updated: Post = { ...found, status: PostStatus.Archived };
+      posts = posts.map((p) => (p.postId === postId ? updated : p));
+      return updated;
+    },
+    async restoreBoardPost(postId: bigint): Promise<Post | null> {
+      const found = posts.find((p) => p.postId === postId);
+      if (!found) return null;
+      const updated: Post = { ...found, status: PostStatus.Active };
+      posts = posts.map((p) => (p.postId === postId ? updated : p));
+      return updated;
+    },
+    async listBoardReplies(postId: bigint): Promise<Reply[]> {
+      return replies
+        .filter((r) => r.postId === postId)
+        .sort((a, b) => (a.createdAt < b.createdAt ? -1 : 1));
+    },
+    async addBoardReply(postId: bigint, body: string): Promise<Reply> {
+      const reply: Reply = {
+        replyId: nextReplyId++,
+        postId,
+        authorAccountId: Principal.fromText(ACCOUNT),
+        authorPersonId: MY_PERSON_ID,
+        body,
+        createdAt: 1_700_000_000_000_000_000n,
+      };
+      replies = [...replies, reply];
+      return reply;
+    },
+    async removeBoardReply(replyId: bigint): Promise<Reply | null> {
+      const found = replies.find((r) => r.replyId === replyId);
+      if (!found) return null;
+      replies = replies.filter((r) => r.replyId !== replyId);
+      return found;
+    },
+    async listNotifications() {
+      return [];
+    },
+    async markNotificationRead() {},
+    async canMessagePerson() {
+      return false;
+    },
+  };
 
-    return {
-      mockActor,
-      resetBoard: () => {
-        posts = [];
-        replies = [];
-        nextPostId = 0n;
-        nextReplyId = 0n;
-        isAuthenticated = false;
-        isAdmin = false;
-      },
-      setAuthenticated: (v: boolean) => {
-        isAuthenticated = v;
-      },
-      setAdmin: (v: boolean) => {
-        isAdmin = v;
-      },
-      getAuthenticated: () => isAuthenticated,
-    };
-  });
+  return {
+    mockActor,
+    resetBoard: () => {
+      posts = [];
+      replies = [];
+      nextPostId = 0n;
+      nextReplyId = 0n;
+      uploadItems = [];
+      isAuthenticated = false;
+      isAdmin = false;
+    },
+    setAuthenticated: (v: boolean) => {
+      isAuthenticated = v;
+    },
+    setAdmin: (v: boolean) => {
+      isAdmin = v;
+    },
+    getAuthenticated: () => isAuthenticated,
+    getCreatedUploadItems: () => uploadItems,
+  };
+});
 
 vi.mock("@caffeineai/core-infrastructure", () => ({
   useActor: () => ({ actor: mockActor, isFetching: false }),
@@ -221,6 +294,26 @@ function renderApp() {
     </QueryClientProvider>,
   );
 }
+
+beforeAll(() => {
+  // jsdom does not implement URL.createObjectURL, which ExternalBlob.fromBytes
+  // relies on when a file is uploaded. Provide a deterministic stand-in.
+  let counter = 0;
+  URL.createObjectURL = vi.fn(() => `blob:mock-${counter++}`);
+
+  // jsdom's File does not implement Blob.prototype.arrayBuffer, which the
+  // upload path uses to read the file bytes. Polyfill it via FileReader.
+  if (typeof File.prototype.arrayBuffer !== "function") {
+    File.prototype.arrayBuffer = function arrayBuffer(): Promise<ArrayBuffer> {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as ArrayBuffer);
+        reader.onerror = () => reject(reader.error);
+        reader.readAsArrayBuffer(this);
+      });
+    };
+  }
+});
 
 async function openBoard(user: ReturnType<typeof userEvent.setup>) {
   // The Message Board nav button opens the communication hub; the Family
@@ -349,6 +442,51 @@ describe("Family Message Board: post creation with checkmark multi-select", () =
     expect(await mockActor.listBoardPosts(null)).toEqual([]);
   });
 
+  it("creates a post with a new media attachment, reusing the file without duplication", async () => {
+    setAuthenticated(true);
+    const user = userEvent.setup();
+    renderApp();
+
+    await openBoard(user);
+    await user.click(screen.getByTestId("board.new_post"));
+
+    await user.type(
+      screen.getByLabelText("Message"),
+      "Here is the reunion photo.",
+    );
+
+    // Upload a new media file as an attachment.
+    const input = document.querySelector(
+      '[data-ocid="board_compose.upload_input"]',
+    ) as HTMLInputElement;
+    const file = new File(["photo-bytes"], "reunion.png", {
+      type: "image/png",
+    });
+    await user.upload(input, file);
+
+    // The upload appears as an attachment chip with a title field.
+    const titleInput = await screen.findByLabelText("Attachment title");
+    await user.clear(titleInput);
+    await user.type(titleInput, "Reunion photo");
+
+    await user.click(screen.getByRole("button", { name: "Post to board" }));
+
+    // The post is created with the media attached.
+    expect(
+      await screen.findByText("Here is the reunion photo."),
+    ).toBeInTheDocument();
+
+    // Exactly one canonical archive item was created for the upload — the
+    // underlying file is reused, not duplicated.
+    const uploads = getCreatedUploadItems();
+    expect(uploads).toHaveLength(1);
+    expect(uploads[0]).toMatchObject({ title: "Reunion photo" });
+
+    const created = await mockActor.listBoardPosts(null);
+    expect(created).toHaveLength(1);
+    expect(created[0].linkedMediaIds).toHaveLength(1);
+  });
+
   it("reopens saved related-member selections when editing a post", async () => {
     setAuthenticated(true);
     const user = userEvent.setup();
@@ -360,6 +498,7 @@ describe("Family Message Board: post creation with checkmark multi-select", () =
       "Seed post",
       "Seed body",
       ["versie-smith", "lula-mae"],
+      [],
       [],
     );
 
@@ -389,6 +528,7 @@ describe("Family Message Board: replies", () => {
       PostType.General,
       "A question",
       "Does anyone have the old photo?",
+      [],
       [],
       [],
     );
@@ -424,13 +564,16 @@ describe("Family Message Board: archive and restore", () => {
       "This post should be hidden.",
       [],
       [],
+      [],
     );
 
     await openBoard(user);
     await user.click(await screen.findByText("To hide"));
 
-    // A steward sees the Hide action on the post detail view.
+    // A steward sees the Hide action on the post detail view. Hiding is a
+    // moderation action, so it is confirmed in a dialog before applying.
     await user.click(screen.getByRole("button", { name: "Hide" }));
+    await user.click(await screen.findByRole("button", { name: "Hide post" }));
 
     // The post is archived in the backend: it is no longer returned by the
     // active-post reads (getBoardPost and listBoardPosts both filter to Active,

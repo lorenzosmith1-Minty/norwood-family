@@ -1,34 +1,51 @@
+import { CreateError } from "@/backend";
+import { ExternalBlob } from "@caffeineai/object-storage";
 import {
+  Archive,
   BookOpen,
   Check,
   ClipboardList,
   FileText,
   Link2,
+  Loader2,
   Plus,
   Scale,
   ShieldCheck,
   Sparkles,
+  Upload,
   UserPlus,
   Users,
   X,
 } from "lucide-react";
-import { useMemo, useState } from "react";
-import { useIsAdmin } from "../hooks/useArchiveStorage";
+import { useMemo, useRef, useState } from "react";
+import {
+  useApprovedArchiveItems,
+  useIsAdmin,
+} from "../hooks/useArchiveStorage";
 import {
   useCreateFinding,
   useCreateNewPersonCandidate,
   useCreateRelationshipProposal,
   useCreateSource,
+  useCreateSourceWithUpload,
   useListFindings,
   useListNewPersonCandidates,
   useListRelationshipProposals,
   useListSources,
 } from "../hooks/useResearchIntake";
+import {
+  ARCHIVE_ITEM_TYPE_BADGE,
+  ARCHIVE_ITEM_TYPE_LABELS,
+  ArchiveItemClassification,
+  PRIVACY_LEVEL_LABELS,
+  PrivacyLevel,
+} from "../types/archive";
 import { resolveDisplayName } from "../types/family";
 import {
   EVIDENCE_LABEL_LABELS,
   FINDING_TYPE_LABELS,
   REVIEW_STATUS_LABELS,
+  ReviewStatus,
   SOURCE_TYPE_LABELS,
 } from "../types/research-intake";
 import type {
@@ -39,7 +56,6 @@ import type {
   ProposedFinding,
   RelationshipProposal,
   ResearchError,
-  ReviewStatus,
   SourceType,
 } from "../types/research-intake";
 import { profiles } from "./PersonProfilePage";
@@ -70,8 +86,21 @@ function formatDate(timestamp: bigint): string {
   });
 }
 
-/** Maps a backend ResearchError to a friendly, actionable message. */
-function researchErrorMessage(err: ResearchError): string {
+/** Parses an optional year string into a bigint, or null when empty/invalid. */
+function parseYear(value: string): bigint | null {
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  if (!/^\d{1,4}$/.test(trimmed)) return null;
+  return BigInt(trimmed);
+}
+
+/** Maps a backend ResearchError (or CreateError) to a friendly, actionable message. */
+function researchErrorMessage(err: ResearchError | CreateError): string {
+  if (typeof err === "string") {
+    return err === CreateError.NotSignedIn
+      ? "You must be signed in to perform this action."
+      : "The action could not be completed.";
+  }
   switch (err.__kind__) {
     case "notAuthorized":
       return "You are not authorized to perform this action.";
@@ -137,13 +166,15 @@ function ResearchEmpty({
 /** Review-status pill using the shared status language. */
 function StatusPill({ status }: { status: ReviewStatus }) {
   const cls =
-    status === "Approved"
+    status === ReviewStatus.Approved
       ? "status-approved"
-      : status === "Rejected"
+      : status === ReviewStatus.Rejected
         ? "status-rejected"
-        : status === "Conflicting"
-          ? "status-pending"
-          : "status-pending";
+        : status === ReviewStatus.NeedsResearch
+          ? "status-needs"
+          : status === ReviewStatus.Conflicting
+            ? "status-conflicting"
+            : "status-pending";
   return (
     <span className={`status-pill ${cls}`}>{REVIEW_STATUS_LABELS[status]}</span>
   );
@@ -153,50 +184,150 @@ function StatusPill({ status }: { status: ReviewStatus }) {
 /* Sources tab                                                         */
 /* ------------------------------------------------------------------ */
 
-function SourcesTab() {
+function SourcesTab({
+  onOpenReviewQueue,
+}: {
+  onOpenReviewQueue: () => void;
+}) {
   const { data: sources = [], isLoading } = useListSources();
+  const { data: approvedItems = [], isLoading: itemsLoading } =
+    useApprovedArchiveItems();
   const createSource = useCreateSource();
+  const createSourceWithUpload = useCreateSourceWithUpload();
 
+  const pendingCount = sources.filter(
+    (source) => source.status === ReviewStatus.Pending,
+  ).length;
+
+  const [mode, setMode] = useState<"existing" | "upload">("existing");
   const [title, setTitle] = useState("");
   const [sourceType, setSourceType] = useState<SourceType | "">("");
   const [description, setDescription] = useState("");
-  const [archiveItemId, setArchiveItemId] = useState("");
+  const [selectedItemId, setSelectedItemId] = useState<bigint | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  // Upload-only fields
+  const [fileBytes, setFileBytes] = useState<Uint8Array<ArrayBuffer> | null>(
+    null,
+  );
+  const [fileName, setFileName] = useState("");
+  const [fileMime, setFileMime] = useState("");
+  const [progress, setProgress] = useState<number | null>(null);
+  const [dragover, setDragover] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [tags, setTags] = useState("");
+  const [era, setEra] = useState("");
+  const [year, setYear] = useState("");
+  const [relatedMemberIds, setRelatedMemberIds] = useState<string[]>([]);
+  const [privacyLevel, setPrivacyLevel] = useState<PrivacyLevel>(
+    PrivacyLevel.FamilyOnly,
+  );
+
+  const isPending = createSource.isPending || createSourceWithUpload.isPending;
 
   const canSubmit =
     title.trim().length > 0 &&
     sourceType !== "" &&
-    description.trim().length > 0;
+    description.trim().length > 0 &&
+    (mode === "existing" ? selectedItemId !== null : fileBytes !== null);
+
+  const handleFile = async (file: File) => {
+    if (!file) return;
+    setFileBytes(new Uint8Array(await file.arrayBuffer()));
+    setFileName(file.name);
+    setFileMime(file.type);
+    setProgress(null);
+  };
+
+  const toggleMember = (id: string) => {
+    setRelatedMemberIds((current) =>
+      current.includes(id)
+        ? current.filter((memberId) => memberId !== id)
+        : [...current, id],
+    );
+  };
+
+  const resetForm = () => {
+    setTitle("");
+    setSourceType("");
+    setDescription("");
+    setSelectedItemId(null);
+    setFileBytes(null);
+    setFileName("");
+    setFileMime("");
+    setProgress(null);
+    setTags("");
+    setEra("");
+    setYear("");
+    setRelatedMemberIds([]);
+    setPrivacyLevel(PrivacyLevel.FamilyOnly);
+    setError(null);
+  };
 
   const handleSubmit = () => {
     if (!canSubmit) return;
     setError(null);
-    const trimmedArchive = archiveItemId.trim();
-    const parsedArchive = trimmedArchive === "" ? null : BigInt(trimmedArchive);
     const capturedTitle = title.trim();
     const capturedType = sourceType as SourceType;
     const capturedDescription = description.trim();
-    setTitle("");
-    setSourceType("");
-    setDescription("");
-    setArchiveItemId("");
-    createSource.mutate(
-      {
-        title: capturedTitle,
-        sourceType: capturedType,
-        description: capturedDescription,
-        archiveItemId: parsedArchive,
-      },
-      {
-        onSuccess: (result) => {
-          if (result.__kind__ === "err") {
-            setError(researchErrorMessage(result.err));
-          }
+
+    if (mode === "existing" && selectedItemId !== null) {
+      resetForm();
+      createSource.mutate(
+        {
+          title: capturedTitle,
+          sourceType: capturedType,
+          description: capturedDescription,
+          archiveItemId: selectedItemId,
         },
-        onError: () =>
-          setError("Your source couldn't be saved. Please try again."),
-      },
-    );
+        {
+          onSuccess: (result) => {
+            if (result.__kind__ === "err") {
+              setError(researchErrorMessage(result.err));
+            }
+          },
+          onError: () =>
+            setError("Your source couldn't be saved. Please try again."),
+        },
+      );
+      return;
+    }
+
+    if (mode === "upload" && fileBytes) {
+      const blob = ExternalBlob.fromBytes(
+        fileBytes,
+        fileMime,
+        fileName,
+      ).withUploadProgress(setProgress);
+      resetForm();
+      createSourceWithUpload.mutate(
+        {
+          title: capturedTitle,
+          sourceType: capturedType,
+          description: capturedDescription,
+          blob,
+          tags: tags
+            .split(",")
+            .map((tag) => tag.trim())
+            .filter(Boolean),
+          era: era.trim(),
+          year: parseYear(year),
+          relatedMemberIds,
+          privacyLevel,
+          classification: ArchiveItemClassification.Standard,
+          primarySpeaker: null,
+        },
+        {
+          onSuccess: (result) => {
+            if (result.__kind__ === "err") {
+              setError(researchErrorMessage(result.err));
+            }
+          },
+          onError: () =>
+            setError("Your source couldn't be saved. Please try again."),
+        },
+      );
+    }
   };
 
   return (
@@ -206,10 +337,34 @@ function SourcesTab() {
           <span className="research-section-title">Record a source</span>
         </div>
         <p className="research-section-hint">
-          Every fact needs provenance. Create a lightweight source record so a
-          proposed finding can always point back to where the information came
+          Every fact needs provenance. Link a source to an existing archive item
+          or upload new source material — the upload creates one canonical
+          archive item, tags and classifies it, and links the source record so
+          proposed findings can always point back to where the information came
           from. Sources enter as proposed and are reviewed before use.
         </p>
+
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            data-ocid="research.source.mode_existing_tab"
+            onClick={() => setMode("existing")}
+            className={`research-tab ${mode === "existing" ? "research-tab-active" : ""}`}
+          >
+            <Archive className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
+            Choose existing Archive item
+          </button>
+          <button
+            type="button"
+            data-ocid="research.source.mode_upload_tab"
+            onClick={() => setMode("upload")}
+            className={`research-tab ${mode === "upload" ? "research-tab-active" : ""}`}
+          >
+            <Upload className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
+            Upload new source file
+          </button>
+        </div>
+
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <label className="block">
             <span className="field-label">Title</span>
@@ -249,31 +404,271 @@ function SourcesTab() {
             className="form-textarea"
           />
         </label>
-        <label className="block">
-          <span className="field-label">
-            Archive item link{" "}
-            <span className="font-normal normal-case">(optional)</span>
-          </span>
-          <input
-            data-ocid="research.source.archive_link_input"
-            type="text"
-            value={archiveItemId}
-            onChange={(e) => setArchiveItemId(e.target.value)}
-            placeholder="Archive item id, e.g. 12"
-            className="form-input"
-          />
-        </label>
+
+        {mode === "existing" ? (
+          <div>
+            <span className="field-label">Archive item</span>
+            {itemsLoading ? (
+              <div
+                data-ocid="research.source.items.loading_state"
+                className="flex flex-col gap-2"
+              >
+                {Array.from({ length: 3 }, (_, i) => `skeleton-${i}`).map(
+                  (id) => (
+                    <div
+                      key={id}
+                      className="h-16 animate-pulse rounded-xl bg-muted"
+                    />
+                  ),
+                )}
+              </div>
+            ) : approvedItems.length === 0 ? (
+              <div
+                data-ocid="research.source.items.empty_state"
+                className="rounded-xl border border-dashed border-border/70 bg-card/50 px-4 py-6 text-center text-sm text-muted-foreground"
+              >
+                No approved archive items yet. Upload new source material
+                instead, or add items to the archive first.
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                {approvedItems.map((item) => {
+                  const selected = selectedItemId === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      data-ocid={`research.source.item.${item.id}`}
+                      aria-pressed={selected}
+                      onClick={() =>
+                        setSelectedItemId(selected ? null : item.id)
+                      }
+                      className={`content-type-card ${selected ? "content-type-card-selected" : ""}`}
+                    >
+                      <span
+                        className={`archive-type-badge ${ARCHIVE_ITEM_TYPE_BADGE[item.itemType]}`}
+                      >
+                        {ARCHIVE_ITEM_TYPE_LABELS[item.itemType]}
+                      </span>
+                      <span className="content-type-title">{item.title}</span>
+                      <span className="content-type-hint">
+                        {item.description || "No description"}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="flex flex-col gap-4">
+            <div>
+              <label className="field-label" htmlFor="research-source-file">
+                Source file
+              </label>
+              <input
+                ref={fileInputRef}
+                id="research-source-file"
+                type="file"
+                className="sr-only"
+                data-ocid="research.source.file_input"
+                onChange={(event) => {
+                  const file = event.target.files?.[0];
+                  if (file) void handleFile(file);
+                  event.target.value = "";
+                }}
+              />
+              {fileName ? (
+                <div
+                  className="attachment-chip w-full"
+                  data-ocid="research.source.file_selected"
+                >
+                  <span className="attachment-icon">
+                    <FileText
+                      className="h-4 w-4"
+                      strokeWidth={2}
+                      aria-hidden="true"
+                    />
+                  </span>
+                  <span className="flex min-w-0 flex-1 flex-col">
+                    <span className="attachment-name">{fileName}</span>
+                    <span className="attachment-meta">
+                      {fileMime || "File"} · ready to upload
+                    </span>
+                  </span>
+                  <button
+                    type="button"
+                    data-ocid="research.source.change_file_button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="shrink-0 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-semibold text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                  >
+                    Change
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  data-ocid="research.source.dropzone"
+                  onClick={() => fileInputRef.current?.click()}
+                  onDragOver={(event) => {
+                    event.preventDefault();
+                    setDragover(true);
+                  }}
+                  onDragLeave={() => setDragover(false)}
+                  onDrop={(event) => {
+                    event.preventDefault();
+                    setDragover(false);
+                    const file = event.dataTransfer.files?.[0];
+                    if (file) void handleFile(file);
+                  }}
+                  className={`dropzone focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
+                    dragover ? "dragover" : ""
+                  }`}
+                >
+                  <Upload
+                    className="h-6 w-6 text-muted-foreground"
+                    strokeWidth={1.5}
+                    aria-hidden="true"
+                  />
+                  <span className="dropzone-title">
+                    Choose a source file to upload
+                  </span>
+                  <span className="dropzone-hint">
+                    Drag and drop, or tap to browse. Documents, PDFs, images,
+                    video, and audio are supported.
+                  </span>
+                </button>
+              )}
+
+              {progress !== null && (
+                <div
+                  className="upload-progress"
+                  data-ocid="research.source.upload_progress"
+                >
+                  <div className="upload-progress-label">
+                    <span>Uploading…</span>
+                    <span className="upload-percent">{progress}%</span>
+                  </div>
+                  <div
+                    className="progress-track"
+                    role="progressbar"
+                    tabIndex={0}
+                    aria-valuenow={progress}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                  >
+                    <div
+                      className="progress-fill"
+                      style={{ width: `${progress}%` }}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <label className="block">
+                <span className="field-label">Tags</span>
+                <input
+                  data-ocid="research.source.tags_input"
+                  type="text"
+                  value={tags}
+                  onChange={(e) => setTags(e.target.value)}
+                  placeholder="Separate with commas, e.g. census, Mississippi"
+                  className="form-input"
+                />
+              </label>
+              <label className="block">
+                <span className="field-label">Date or era</span>
+                <input
+                  data-ocid="research.source.era_input"
+                  type="text"
+                  value={era}
+                  onChange={(e) => setEra(e.target.value)}
+                  placeholder="e.g. circa 1920s"
+                  className="form-input"
+                />
+              </label>
+              <label className="block">
+                <span className="field-label">Year (optional)</span>
+                <input
+                  data-ocid="research.source.year_input"
+                  type="text"
+                  inputMode="numeric"
+                  value={year}
+                  onChange={(e) => setYear(e.target.value)}
+                  placeholder="e.g. 1924"
+                  className="form-input"
+                />
+              </label>
+              <label className="block">
+                <span className="field-label">Privacy level</span>
+                <select
+                  data-ocid="research.source.privacy_select"
+                  value={privacyLevel}
+                  onChange={(e) =>
+                    setPrivacyLevel(e.target.value as PrivacyLevel)
+                  }
+                  className="form-select"
+                >
+                  {Object.values(PrivacyLevel).map((level) => (
+                    <option key={level} value={level}>
+                      {PRIVACY_LEVEL_LABELS[level]}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+
+            <div>
+              <span className="field-label">Related family members</span>
+              <div className="flex flex-wrap gap-2">
+                {Object.values(profiles).map((profile) => {
+                  const selected = relatedMemberIds.includes(profile.id);
+                  return (
+                    <button
+                      key={profile.id}
+                      type="button"
+                      data-ocid={`research.source.member.${profile.id}`}
+                      onClick={() => toggleMember(profile.id)}
+                      aria-pressed={selected}
+                      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
+                        selected
+                          ? "border-accent bg-accent text-accent-foreground"
+                          : "border-border bg-card text-foreground hover:bg-muted"
+                      }`}
+                    >
+                      {selected ? (
+                        <Check className="h-3.5 w-3.5" aria-hidden="true" />
+                      ) : null}
+                      {profile.name}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+
         {error && <FormError message={error} />}
         <div className="flex items-center justify-end gap-2">
           <button
             type="button"
             data-ocid="research.source.submit_button"
             onClick={handleSubmit}
-            disabled={!canSubmit || createSource.isPending}
+            disabled={!canSubmit || isPending}
             className="research-resolve"
           >
-            <Plus className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
-            {createSource.isPending ? "Saving…" : "Add source"}
+            {isPending ? (
+              <Loader2
+                className="h-4 w-4 animate-spin"
+                strokeWidth={2}
+                aria-hidden="true"
+              />
+            ) : (
+              <Plus className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
+            )}
+            {isPending ? "Saving…" : "Add source"}
           </button>
         </div>
       </section>
@@ -282,6 +677,38 @@ function SourcesTab() {
         <div className="research-section-head">
           <span className="research-section-title">Sources</span>
         </div>
+        {pendingCount > 0 && (
+          <div
+            data-ocid="research.sources.pending_banner"
+            className="research-pending-banner"
+          >
+            <div className="flex items-center gap-2 text-sm text-foreground">
+              <ClipboardList
+                className="research-pending-banner-icon"
+                strokeWidth={2}
+                aria-hidden="true"
+              />
+              <span>
+                <strong>{pendingCount}</strong>{" "}
+                {pendingCount === 1 ? "source is" : "sources are"} pending
+                review.
+              </span>
+            </div>
+            <button
+              type="button"
+              data-ocid="research.sources.review_pending_button"
+              onClick={onOpenReviewQueue}
+              className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3.5 py-1.5 text-xs font-semibold text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            >
+              <ClipboardList
+                className="h-3.5 w-3.5"
+                strokeWidth={2}
+                aria-hidden="true"
+              />
+              Review in queue
+            </button>
+          </div>
+        )}
         {isLoading ? (
           <div
             data-ocid="research.sources.loading_state"
@@ -327,6 +754,21 @@ function SourcesTab() {
                     </span>
                   )}
                   <span>Added {formatDate(source.createdAt)}</span>
+                  {source.status === ReviewStatus.Pending && (
+                    <button
+                      type="button"
+                      data-ocid={`research.sources.review_link.${source.id}`}
+                      onClick={onOpenReviewQueue}
+                      className="research-pending-link"
+                    >
+                      <ClipboardList
+                        className="h-3 w-3"
+                        strokeWidth={2}
+                        aria-hidden="true"
+                      />
+                      Review in queue
+                    </button>
+                  )}
                 </div>
               </article>
             ))}
@@ -1427,7 +1869,9 @@ export function ResearchIntakePage({
         ))}
       </div>
 
-      {tab === "sources" && <SourcesTab />}
+      {tab === "sources" && (
+        <SourcesTab onOpenReviewQueue={onOpenReviewQueue} />
+      )}
       {tab === "findings" && <FindingsTab />}
       {tab === "candidates" && <CandidatesTab />}
       {tab === "relationships" && <RelationshipsTab />}

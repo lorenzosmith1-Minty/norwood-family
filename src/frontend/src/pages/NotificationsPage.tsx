@@ -3,7 +3,7 @@ import {
   useListNotifications,
   useMarkNotificationRead,
 } from "../hooks/useNotifications";
-import { NOTIFICATION_TYPE_LABELS } from "../types/ownership";
+import { NOTIFICATION_TYPE_LABELS, NotificationType } from "../types/ownership";
 
 /**
  * The in-app notifications page. Lists the signed-in user's notifications
@@ -94,6 +94,16 @@ export function NotificationsPage() {
         <ul data-ocid="notifications.list" className="notif-list">
           {notifications.map((notification, index) => {
             const isUnread = !notification.read;
+            const isClaimNotification =
+              notification.notificationType ===
+                NotificationType.ProfileClaimRequested ||
+              notification.notificationType ===
+                NotificationType.ProfileClaimReviewed;
+            // A claim notification that has been read is in its final resolved
+            // state (e.g. the pending ProfileClaimRequested notification is
+            // marked resolved/read once the claim is approved). Render it as
+            // resolved so it never implies the claim is still pending.
+            const isResolvedClaim = isClaimNotification && !isUnread;
             const typeLabel =
               NOTIFICATION_TYPE_LABELS[notification.notificationType] ??
               "Notification";
@@ -106,7 +116,12 @@ export function NotificationsPage() {
                 <span className="notif-dot" aria-hidden="true" />
                 <div className="notif-body">
                   <p className="notif-title">{notification.message}</p>
-                  <p className="notif-detail">{typeLabel}</p>
+                  <p className="notif-detail">
+                    {typeLabel}
+                    {isResolvedClaim ? (
+                      <span className="notif-resolved"> · Resolved</span>
+                    ) : null}
+                  </p>
                   <p className="notif-time">
                     {formatNotificationTime(notification.createdAt)}
                   </p>

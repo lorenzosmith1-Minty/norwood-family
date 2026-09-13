@@ -2,8 +2,10 @@ import {
   ArrowRight,
   Check,
   ClipboardList,
+  FileText,
   Inbox,
   ScrollText,
+  Search,
   ShieldCheck,
   X,
 } from "lucide-react";
@@ -11,13 +13,17 @@ import { useMemo, useState } from "react";
 import { useIsAdmin } from "../hooks/useArchiveStorage";
 import {
   useApproveFinding,
+  useApproveSource,
   useGetResearchAuditLog,
   useGetReviewQueue,
   useListFindings,
   useListNewPersonCandidates,
   useListRelationshipProposals,
   useListSources,
+  useNeedsResearchFinding,
+  useNeedsResearchSource,
   useRejectFinding,
+  useRejectSource,
 } from "../hooks/useResearchIntake";
 import { resolveDisplayName } from "../types/family";
 import {
@@ -157,8 +163,10 @@ interface FindingCardProps {
   sources: Map<bigint, SourceRecord>;
   approving: boolean;
   rejecting: boolean;
+  needsResearch: boolean;
   onApprove: () => void;
   onReject: () => void;
+  onNeedsResearch: () => void;
 }
 
 function FindingCard({
@@ -167,8 +175,10 @@ function FindingCard({
   sources,
   approving,
   rejecting,
+  needsResearch,
   onApprove,
   onReject,
+  onNeedsResearch,
 }: FindingCardProps) {
   const reviewable =
     finding.status === ReviewStatus.Pending ||
@@ -197,7 +207,7 @@ function FindingCard({
               type="button"
               data-ocid={`research_queue.finding.${index}.approve_button`}
               onClick={onApprove}
-              disabled={approving || rejecting}
+              disabled={approving || rejecting || needsResearch}
               className="approve-action"
             >
               <Check className="h-3.5 w-3.5" aria-hidden="true" />
@@ -207,11 +217,21 @@ function FindingCard({
               type="button"
               data-ocid={`research_queue.finding.${index}.reject_button`}
               onClick={onReject}
-              disabled={approving || rejecting}
+              disabled={approving || rejecting || needsResearch}
               className="reject-action"
             >
               <X className="h-3.5 w-3.5" aria-hidden="true" />
               Reject
+            </button>
+            <button
+              type="button"
+              data-ocid={`research_queue.finding.${index}.needs_research_button`}
+              onClick={onNeedsResearch}
+              disabled={approving || rejecting || needsResearch}
+              className="research-needs-action"
+            >
+              <Search className="h-3.5 w-3.5" aria-hidden="true" />
+              Needs Research
             </button>
           </div>
         ) : finding.status === ReviewStatus.Approved ? (
@@ -311,6 +331,96 @@ function RelationshipCard({ proposal, index, sources }: RelationshipCardProps) {
   );
 }
 
+interface SourceCardProps {
+  source: SourceRecord;
+  index: number;
+  approving: boolean;
+  rejecting: boolean;
+  needsResearch: boolean;
+  onApprove: () => void;
+  onReject: () => void;
+  onNeedsResearch: () => void;
+}
+
+function SourceCard({
+  source,
+  index,
+  approving,
+  rejecting,
+  needsResearch,
+  onApprove,
+  onReject,
+  onNeedsResearch,
+}: SourceCardProps) {
+  const reviewable = source.status === ReviewStatus.Pending;
+  return (
+    <li
+      data-ocid={`research_queue.source.${index}`}
+      className="research-finding-card"
+    >
+      <div className="research-finding-head">
+        <div className="flex min-w-0 flex-col gap-1">
+          <span className="research-finding-title">{source.title}</span>
+          <div className="research-finding-meta">
+            <span className="research-evidence research-evidence-finding">
+              {SOURCE_TYPE_LABELS[source.sourceType]}
+            </span>
+            <ReviewStatusPill status={source.status} />
+          </div>
+        </div>
+        {reviewable ? (
+          <div className="flex shrink-0 items-center gap-2">
+            <button
+              type="button"
+              data-ocid={`research_queue.source.${index}.approve_button`}
+              onClick={onApprove}
+              disabled={approving || rejecting || needsResearch}
+              className="approve-action"
+            >
+              <Check className="h-3.5 w-3.5" aria-hidden="true" />
+              Approve
+            </button>
+            <button
+              type="button"
+              data-ocid={`research_queue.source.${index}.reject_button`}
+              onClick={onReject}
+              disabled={approving || rejecting || needsResearch}
+              className="reject-action"
+            >
+              <X className="h-3.5 w-3.5" aria-hidden="true" />
+              Reject
+            </button>
+            <button
+              type="button"
+              data-ocid={`research_queue.source.${index}.needs_research_button`}
+              onClick={onNeedsResearch}
+              disabled={approving || rejecting || needsResearch}
+              className="research-needs-action"
+            >
+              <Search className="h-3.5 w-3.5" aria-hidden="true" />
+              Needs Research
+            </button>
+          </div>
+        ) : null}
+      </div>
+      <p className="research-finding-detail">{source.description}</p>
+      <div className="research-finding-meta">
+        <span className="research-actor">
+          {SOURCE_TYPE_LABELS[source.sourceType]}
+        </span>
+        <span aria-hidden="true">·</span>
+        <span>
+          Submitted by{" "}
+          <span className="research-actor">
+            {formatPrincipal(source.contributor)}
+          </span>{" "}
+          on {formatDateTime(source.createdAt)}
+        </span>
+      </div>
+    </li>
+  );
+}
+
 function AuditEntryRow({
   entry,
   index,
@@ -338,7 +448,12 @@ function AuditEntryRow({
   );
 }
 
-type QueueTab = "findings" | "candidates" | "relationships" | "audit";
+type QueueTab =
+  | "sources"
+  | "findings"
+  | "candidates"
+  | "relationships"
+  | "audit";
 
 export function ResearchReviewQueuePage({
   onBack,
@@ -355,11 +470,20 @@ export function ResearchReviewQueuePage({
 
   const approveFinding = useApproveFinding();
   const rejectFinding = useRejectFinding();
+  const needsResearchFinding = useNeedsResearchFinding();
+  const approveSource = useApproveSource();
+  const rejectSource = useRejectSource();
+  const needsResearchSource = useNeedsResearchSource();
 
   const [tab, setTab] = useState<QueueTab>("findings");
 
   const sourceById = useMemo(
     () => new Map(sources.map((s) => [s.id, s])),
+    [sources],
+  );
+
+  const pendingSources = useMemo(
+    () => sources.filter((s) => s.status === ReviewStatus.Pending),
     [sources],
   );
 
@@ -407,6 +531,7 @@ export function ResearchReviewQueuePage({
   }
 
   const tabs: { id: QueueTab; label: string; count: number }[] = [
+    { id: "sources", label: "Sources", count: pendingSources.length },
     { id: "findings", label: "Findings", count: findings.length },
     { id: "candidates", label: "Candidates", count: candidates.length },
     { id: "relationships", label: "Relationships", count: proposals.length },
@@ -498,6 +623,54 @@ export function ResearchReviewQueuePage({
         </div>
       ) : (
         <div data-ocid="research_queue.panel" className="research-panel">
+          {tab === "sources" && (
+            <section
+              data-ocid="research_queue.sources_section"
+              className="research-section"
+            >
+              <div className="research-section-head">
+                <span className="research-section-title">
+                  Pending Sources ({pendingSources.length})
+                </span>
+              </div>
+              {pendingSources.length === 0 ? (
+                <div
+                  data-ocid="research_queue.sources_empty"
+                  className="research-empty"
+                >
+                  <FileText
+                    className="h-8 w-8 text-muted-foreground"
+                    strokeWidth={1.5}
+                    aria-hidden="true"
+                  />
+                  <p className="research-empty-title">No pending sources</p>
+                  <p className="research-empty-hint">
+                    Sources recorded in Research Intake will appear here for
+                    your review, approval, or further research.
+                  </p>
+                </div>
+              ) : (
+                <ul className="research-queue">
+                  {pendingSources.map((source, index) => (
+                    <SourceCard
+                      key={source.id.toString()}
+                      source={source}
+                      index={index}
+                      approving={approveSource.isPending}
+                      rejecting={rejectSource.isPending}
+                      needsResearch={needsResearchSource.isPending}
+                      onApprove={() => approveSource.mutate(source.id)}
+                      onReject={() => rejectSource.mutate(source.id)}
+                      onNeedsResearch={() =>
+                        needsResearchSource.mutate(source.id)
+                      }
+                    />
+                  ))}
+                </ul>
+              )}
+            </section>
+          )}
+
           {tab === "findings" && (
             <section
               data-ocid="research_queue.findings_section"
@@ -534,8 +707,12 @@ export function ResearchReviewQueuePage({
                       sources={sourceById}
                       approving={approveFinding.isPending}
                       rejecting={rejectFinding.isPending}
+                      needsResearch={needsResearchFinding.isPending}
                       onApprove={() => approveFinding.mutate(finding.id)}
                       onReject={() => rejectFinding.mutate(finding.id)}
+                      onNeedsResearch={() =>
+                        needsResearchFinding.mutate(finding.id)
+                      }
                     />
                   ))}
                 </ul>

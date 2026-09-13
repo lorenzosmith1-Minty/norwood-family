@@ -136,6 +136,29 @@ const {
     async listApprovedArchiveItems(): Promise<ArchiveItem[]> {
       return items.filter((i) => i.status === ArchiveItemStatus.Approved);
     },
+    // The Family Archive browsing screen now runs title + tag search through
+    // the backend searchArchiveItems query. Mirror the backend contract: only
+    // approved items, title query matched case-insensitively by substring, and
+    // an item must carry ALL of the given tags.
+    async searchArchiveItems(filter: {
+      searchTerm: [] | [string] | undefined;
+      tags: string[];
+      itemType: [] | [ArchiveItemType] | undefined;
+      relatedMemberId: [] | [string] | undefined;
+      era: [] | [string] | undefined;
+    }): Promise<ArchiveItem[]> {
+      const query = ((filter.searchTerm ?? [])[0] ?? "").toLowerCase();
+      const tags = filter.tags.map((t) => t.toLowerCase());
+      return items.filter(
+        (i) =>
+          i.status === ArchiveItemStatus.Approved &&
+          (query === "" || i.title.toLowerCase().includes(query)) &&
+          (tags.length === 0 ||
+            tags.every((t) =>
+              i.tags.some((tag) => tag.toLowerCase().includes(t)),
+            )),
+      );
+    },
     async listPendingArchiveItems(): Promise<ArchiveItem[]> {
       return items.filter((i) => i.status === ArchiveItemStatus.Pending);
     },

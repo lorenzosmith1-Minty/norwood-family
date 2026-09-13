@@ -771,6 +771,37 @@ describe("Notifications", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("renders a read claim notification as resolved, no longer actionable", async () => {
+    setAuthenticated(true);
+    setCurrentPrincipal(USER_1);
+    // A pending claim notification that has been read is in its final resolved
+    // state (e.g. once the claim is approved). It must not imply the claim is
+    // still pending/actionable.
+    seedNotification({
+      id: 1n,
+      recipient: Principal.fromText(USER_1),
+      notificationType: NotificationType.ProfileClaimRequested,
+      message:
+        "Your claim for profile clayton is pending Family Steward review.",
+      createdAt: 1_700_000_000_000_000_000n,
+      read: true,
+    });
+    renderPage(<NotificationsPage />);
+
+    expect(
+      await screen.findByText(
+        "Your claim for profile clayton is pending Family Steward review.",
+      ),
+    ).toBeInTheDocument();
+    // The resolved claim notification is labeled Resolved — no longer
+    // actionable/current.
+    expect(screen.getByText(/Resolved/)).toBeInTheDocument();
+    // No "Mark read" action is offered for a resolved notification.
+    expect(
+      screen.queryByTestId("notifications.mark_read_button.0"),
+    ).not.toBeInTheDocument();
+  });
+
   it("shows an empty state when there are no notifications", async () => {
     setAuthenticated(true);
     setCurrentPrincipal(USER_1);

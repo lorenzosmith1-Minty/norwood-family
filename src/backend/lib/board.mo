@@ -19,6 +19,21 @@ module {
     posts.find(func p = p.postId == postId and p.status == #Active);
   };
 
+  /// Lists active board posts that carry ANY of the given tags. A post matches
+  /// when at least one of its tags equals at least one of the requested tags.
+  /// Returns `[]` when no active post matches, or when `tags` is empty.
+  public func listPostsByTags(posts : List.List<Types.Post>, tags : [Text]) : [Types.Post] {
+    let active = posts.toArray().filter(func p = p.status == #Active);
+    active.filter(func p = p.tags.any(func t = tags.any(func q = t == q)));
+  };
+
+  /// Lists all archived (hidden/moderated) board posts for the Steward-only
+  /// Hidden/Moderated Posts view. Archived posts are preserved with their
+  /// replies and attachments and are never permanently deleted.
+  public func listHiddenPosts(posts : List.List<Types.Post>) : [Types.Post] {
+    posts.toArray().filter(func p = p.status == #Archived);
+  };
+
   /// Appends a new board post.
   public func createPost(posts : List.List<Types.Post>, post : Types.Post) : Types.Post {
     posts.add(post);
@@ -35,6 +50,7 @@ module {
     body : Text,
     relatedPersonIds : [Text],
     linkedMediaIds : [Nat],
+    tags : [Text],
   ) : ?Types.Post {
     switch (posts.find(func p = p.postId == postId)) {
       case null { null };
@@ -46,6 +62,7 @@ module {
           body;
           relatedPersonIds;
           linkedMediaIds;
+          tags;
           updatedAt = post.updatedAt + 1;
         };
         replacePost(posts, updated);

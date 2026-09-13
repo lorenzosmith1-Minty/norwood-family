@@ -1,6 +1,8 @@
 import {
   EvidenceLabel,
   FindingType,
+  ReviewAction,
+  ReviewItemKind,
   ReviewStatus,
   SourceType,
 } from "@/backend";
@@ -18,17 +20,20 @@ import type {
   Result_18,
   Result_20,
   ReviewQueue,
+  ReviewQueueItem,
   SourceId,
   SourceRecord,
 } from "@/backend";
+import type { ArchiveItem } from "@/types/archive";
 
 /**
  * Shared frontend types for the Historical Research Intake workspace, mirroring
  * the generated backend.d.ts contract. The backend enums that ARE exported
- * (`SourceType`, `EvidenceLabel`, `FindingType`, `ReviewStatus`, and the
- * `ResearchError` union) are re-exported here as values so page tasks get a
- * single import surface and can use them in `switch` statements and as object
- * keys. The record/result interfaces are re-exported as types.
+ * (`SourceType`, `EvidenceLabel`, `FindingType`, `ReviewStatus`,
+ * `ReviewAction`, `ReviewItemKind`, and the `ResearchError` union) are
+ * re-exported here as values so page tasks get a single import surface and can
+ * use them in `switch` statements and as object keys. The record/result
+ * interfaces are re-exported as types.
  *
  * Page tasks import these rather than reaching into the generated bindings
  * directly.
@@ -47,11 +52,30 @@ export type {
   Result_18,
   Result_20,
   ReviewQueue,
+  ReviewQueueItem,
   SourceId,
   SourceRecord,
   ResearchError,
 };
-export { EvidenceLabel, FindingType, ReviewStatus, SourceType };
+export {
+  EvidenceLabel,
+  FindingType,
+  ReviewAction,
+  ReviewItemKind,
+  ReviewStatus,
+  SourceType,
+};
+
+/**
+ * Result of a research source upload, mirroring the backend `SourceUploadResult`
+ * contract: the created Source record plus the canonical Archive item it links
+ * to. The Archive item is created first (pending) and the Source record links
+ * to it via `archiveItemId`, so no manually typed Archive Item ID is required.
+ */
+export interface SourceUploadResult {
+  source: SourceRecord;
+  archiveItem: ArchiveItem;
+}
 
 /** Friendly labels for a source record's type. */
 export const SOURCE_TYPE_LABELS: Record<SourceType, string> = {
@@ -90,4 +114,5 @@ export const REVIEW_STATUS_LABELS: Record<ReviewStatus, string> = {
   [ReviewStatus.Approved]: "Approved",
   [ReviewStatus.Rejected]: "Rejected",
   [ReviewStatus.Conflicting]: "Conflicting",
+  [ReviewStatus.NeedsResearch]: "Needs research",
 };

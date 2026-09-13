@@ -116,6 +116,7 @@ module {
           case (?s) s.name;
           case null "";
         };
+        tags = item.tags.values().join(", ");
       });
     };
     rows.toArray().values();

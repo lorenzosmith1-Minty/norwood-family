@@ -120,6 +120,60 @@ function ClusterConnector() {
   );
 }
 
+/**
+ * Compute a generation depth for every person in the graph via BFS from the
+ * root ancestors (people with no documented parents). Ancestors get a lower
+ * number than their descendants, so sorting the map plates by this depth
+ * renders ancestors above descendants throughout the Heritage Branch view.
+ */
+function computeGenerations(graph: FamilyGraph): Map<string, number> {
+  const generation = new Map<string, number>();
+  const queue: string[] = [];
+
+  for (const [id, node] of Object.entries(graph)) {
+    if (!node.father && !node.mother) {
+      generation.set(id, 0);
+      queue.push(id);
+    }
+  }
+
+  let head = 0;
+  while (head < queue.length) {
+    const id = queue[head++];
+    const node = graph[id];
+    const depth = generation.get(id) ?? 0;
+    for (const childId of node?.children ?? []) {
+      const child = graph[childId];
+      if (!child) continue;
+      const next = depth + 1;
+      const current = generation.get(childId);
+      // A child sits one generation below each parent. When a child has two
+      // parents at different depths, use the deeper one so the child never
+      // renders above an ancestor.
+      if (current === undefined || next > current) {
+        generation.set(childId, next);
+        queue.push(childId);
+      }
+    }
+  }
+
+  return generation;
+}
+
+/**
+ * One plate in the bounded overview map, carrying its stable data-ocid cluster
+ * id (so reordering never breaks the deterministic markers) and the generation
+ * depth used to place ancestors above descendants.
+ */
+interface MapPlate {
+  kind: "unit" | "anchor";
+  /** Stable data-ocid cluster id, e.g. "unit_cluster.1" or "branch_cluster.3". */
+  clusterId: string;
+  title: string;
+  personIds: string[];
+  generation: number;
+}
+
 export default function HeritageBranchPage({
   onOpenExploreFamily,
 }: HeritageBranchPageProps) {
@@ -144,6 +198,34 @@ export default function HeritageBranchPage({
     (anchor) => !archived.has(anchor.personId),
   );
 
+  // Order the map plates by generation depth so ancestors render above their
+  // descendants throughout the view (e.g. Clayton above his daughter Lula Mae).
+  // Each plate keeps its stable data-ocid cluster id from its original array
+  // position, so reordering never breaks the deterministic markers.
+  const generations = computeGenerations(graph);
+  const plateGeneration = (personIds: string[]): number => {
+    const depths = personIds
+      .map((id) => generations.get(id))
+      .filter((d): d is number => d !== undefined);
+    return depths.length ? Math.min(...depths) : Number.MAX_SAFE_INTEGER;
+  };
+  const mapPlates: MapPlate[] = [
+    ...visibleUnits.map((unit, ui) => ({
+      kind: "unit" as const,
+      clusterId: `unit_cluster.${ui + 1}`,
+      title: unit.title,
+      personIds: unit.personIds,
+      generation: plateGeneration(unit.personIds),
+    })),
+    ...visibleAnchors.map((anchor, bi) => ({
+      kind: "anchor" as const,
+      clusterId: `branch_cluster.${bi + 1}`,
+      title: anchor.title,
+      personIds: [anchor.personId],
+      generation: plateGeneration([anchor.personId]),
+    })),
+  ].sort((a, b) => a.generation - b.generation);
+
   // Running index across the whole map so every card gets a unique data-ocid.
   let cardIndex = 0;
 
@@ -167,13 +249,13 @@ export default function HeritageBranchPage({
     );
   };
 
-  const renderBranchCard = (anchor: BranchAnchor) => {
-    const person = toPerson(anchor.personId, graph);
-    const profile = profiles[anchor.personId];
+  const renderBranchCard = (personId: string) => {
+    const person = toPerson(personId, graph);
+    const profile = profiles[personId];
     const idx = cardIndex++;
     return (
       <HeritageBranchCard
-        key={anchor.id}
+        key={personId}
         person={person}
         portrait={profile?.portrait}
         index={idx}
@@ -182,7 +264,7 @@ export default function HeritageBranchPage({
         isMe={false}
         hasDescendants={false}
         variant="hb-branch"
-        onSelect={() => onOpenExploreFamily(anchor.personId)}
+        onSelect={() => onOpenExploreFamily(personId)}
       />
     );
   };
@@ -220,36 +302,20 @@ export default function HeritageBranchPage({
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.1, ease: [0.4, 0, 0.2, 1] }}
       >
-        {/* Family units: couple plates */}
-        {visibleUnits.map((unit, ui) => (
-          <div key={unit.id}>
-            {ui > 0 && <ClusterConnector />}
-            <section
-              className="hb-cluster"
-              data-ocid={`hb.unit_cluster.${ui + 1}`}
-            >
+        {/* Map plates (family units + branch anchors) ordered so ancestors
+            render above descendants. */}
+        {mapPlates.map((plate, pi) => (
+          <div key={plate.clusterId}>
+            {pi > 0 && <ClusterConnector />}
+            <section className="hb-cluster" data-ocid={`hb.${plate.clusterId}`}>
               <div className="hb-cluster-head">
-                <h2 className="hb-cluster-title">{unit.title}</h2>
+                <h2 className="hb-cluster-title">{plate.title}</h2>
               </div>
               <div className="hb-cluster-grid">
-                {unit.personIds.map((id) => renderUnitCard(id))}
+                {plate.kind === "unit"
+                  ? plate.personIds.map((id) => renderUnitCard(id))
+                  : renderBranchCard(plate.personIds[0])}
               </div>
-            </section>
-          </div>
-        ))}
-
-        {/* Branch anchors: line-head plates */}
-        {visibleAnchors.map((anchor, bi) => (
-          <div key={anchor.id}>
-            <ClusterConnector />
-            <section
-              className="hb-cluster"
-              data-ocid={`hb.branch_cluster.${bi + 1}`}
-            >
-              <div className="hb-cluster-head">
-                <h2 className="hb-cluster-title">{anchor.title}</h2>
-              </div>
-              <div className="hb-cluster-grid">{renderBranchCard(anchor)}</div>
             </section>
           </div>
         ))}

@@ -130,10 +130,20 @@ export function ClaimButton({
 
   const currentPrincipal = accountId;
 
+  // Canonical ownership: the backend profile record marks this profile as
+  // claimed by the current user. An APPROVED claim by the current user is also
+  // ownership (the backend approves a claim by linking the account to the
+  // profile), so it must never render as a pending claim even if the profile
+  // record's claimedByUserId is momentarily stale.
   const ownedByCurrentUser = useMemo(() => {
-    if (!profile?.claimedByUserId || !currentPrincipal) return false;
-    return profile.claimedByUserId.toString() === currentPrincipal;
-  }, [profile?.claimedByUserId, currentPrincipal]);
+    if (!currentPrincipal) return false;
+    if (profile?.claimedByUserId?.toString() === currentPrincipal) return true;
+    return (
+      myClaim?.personId === personId &&
+      myClaim.status === "Approved" &&
+      myClaim.requestingUserId.toString() === currentPrincipal
+    );
+  }, [profile?.claimedByUserId, myClaim, personId, currentPrincipal]);
 
   // A pending claim by the user is awaiting steward review.
   const pendingByCurrentUser = useMemo(

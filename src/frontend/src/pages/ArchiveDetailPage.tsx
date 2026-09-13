@@ -1,8 +1,10 @@
+import type { ExternalBlob } from "@caffeineai/object-storage";
 import {
   ArrowLeft,
   AudioLines,
   CalendarDays,
-  ExternalLink,
+  Download,
+  Eye,
   FileText,
   Image,
   Landmark,
@@ -12,7 +14,9 @@ import {
   Tag,
   User,
   Video,
+  X,
 } from "lucide-react";
+import { useState } from "react";
 import { useApprovedArchiveItems } from "../hooks/useArchiveStorage";
 import type { ArchiveItem } from "../types/archive";
 import {
@@ -68,6 +72,47 @@ function formatContributor(contributor: ArchiveItem["contributor"]): string {
   return text.length > 18 ? `${text.slice(0, 5)}…${text.slice(-4)}` : text;
 }
 
+/** True when the document is a PDF, judged from its MIME type or filename. */
+function isPdfDocument(item: ArchiveItem): boolean {
+  const mime = item.blob.contentType?.toLowerCase() ?? "";
+  const name = item.blob.filename?.toLowerCase() ?? "";
+  return mime === "application/pdf" || name.endsWith(".pdf");
+}
+
+/**
+ * True when a document can be rendered in-app by the browser: PDFs and images.
+ * Browser support is judged from the stored MIME type, falling back to the
+ * filename extension when the MIME type is absent. Word and other formats are
+ * not previewable and offer Download Original only.
+ */
+function isPreviewableDocument(item: ArchiveItem): boolean {
+  if (isPdfDocument(item)) return true;
+  const mime = item.blob.contentType?.toLowerCase() ?? "";
+  if (mime.startsWith("image/")) return true;
+  const name = item.blob.filename?.toLowerCase() ?? "";
+  return /\.(jpe?g|png|gif|webp|svg|bmp|ico)$/.test(name);
+}
+
+/**
+ * Downloads the original uploaded file with its original filename via the
+ * object-storage gateway. The download reads a copy of the bytes and never
+ * alters the stored original.
+ */
+async function downloadOriginal(
+  blob: ExternalBlob,
+  filename: string | undefined,
+): Promise<void> {
+  const bytes = await blob.getBytes();
+  const url = URL.createObjectURL(new Blob([bytes]));
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = filename || "document";
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  URL.revokeObjectURL(url);
+}
+
 interface ArchiveDetailPageProps {
   itemId: bigint;
   onBack: () => void;
@@ -86,6 +131,10 @@ export function ArchiveDetailPage({
 }: ArchiveDetailPageProps) {
   const { data: items = [] } = useApprovedArchiveItems();
   const item = items.find((i) => i.id === itemId);
+  // Whether the in-app document preview stage is open. Only meaningful for
+  // browser-supported documents (PDFs and images); unsupported formats never
+  // show a preview.
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   if (!item) {
     return (
@@ -204,7 +253,9 @@ export function ArchiveDetailPage({
                 </p>
               </div>
             ) : (
-              /* Document view: icon + filename + open-original link */
+              /* Document view: icon + filename + Preview (browser-supported)
+                 formats) + Download Original. Unsupported formats (e.g. Word)
+                 offer Download Original only. */
               <div className="artifact-viewer-frame flex-col gap-3 p-6">
                 <Icon
                   className="h-12 w-12 text-muted-foreground"
@@ -219,19 +270,66 @@ export function ArchiveDetailPage({
                     {filename}
                   </p>
                 ) : null}
-                <a
-                  href={artifactUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  data-ocid="archive_detail.open_original"
-                  className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3.5 py-1.5 text-xs font-semibold text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-                >
-                  <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
-                  Open original
-                </a>
+                <div className="flex flex-wrap items-center justify-center gap-2">
+                  {isPreviewableDocument(item) ? (
+                    <button
+                      type="button"
+                      data-ocid="archive_detail.preview_button"
+                      onClick={() => setPreviewOpen(true)}
+                      className="preview-action"
+                    >
+                      <Eye className="h-4 w-4" aria-hidden="true" />
+                      Preview
+                    </button>
+                  ) : null}
+                  <button
+                    type="button"
+                    data-ocid="archive_detail.download_button"
+                    onClick={() => void downloadOriginal(item.blob, filename)}
+                    className="preview-download"
+                  >
+                    <Download className="h-4 w-4" aria-hidden="true" />
+                    Download Original
+                  </button>
+                </div>
               </div>
             )}
           </div>
+
+          {/* In-app preview stage for browser-supported documents (PDFs and
+              images). Renders a copy of the original via the gateway URL and
+              never alters the stored file. */}
+          {previewOpen && isPreviewableDocument(item) ? (
+            <div
+              data-ocid="archive_detail.preview_stage"
+              className="preview-stage mt-6"
+            >
+              <div className="preview-stage-head">
+                <div className="min-w-0">
+                  <p className="preview-stage-title">
+                    {filename || item.title}
+                  </p>
+                  <p className="preview-stage-meta">Preview</p>
+                </div>
+                <button
+                  type="button"
+                  data-ocid="archive_detail.preview_close"
+                  onClick={() => setPreviewOpen(false)}
+                  aria-label="Close preview"
+                  className="preview-stage-close"
+                >
+                  <X className="h-4 w-4" aria-hidden="true" />
+                </button>
+              </div>
+              <div className="preview-stage-body">
+                {isPdfDocument(item) ? (
+                  <iframe src={artifactUrl} title={filename || item.title} />
+                ) : (
+                  <img src={artifactUrl} alt={item.title} />
+                )}
+              </div>
+            </div>
+          ) : null}
 
           {/* Text-based types: the original content is the description */}
           {isTextType && item.description ? (

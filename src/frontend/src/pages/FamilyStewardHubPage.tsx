@@ -1,6 +1,7 @@
 import {
   ArrowRight,
   ClipboardCheck,
+  EyeOff,
   Flag,
   FolderArchive,
   GitMerge,
@@ -24,6 +25,7 @@ interface FamilyStewardHubPageProps {
   onOpenPendingContributions: () => void;
   onOpenGovernance: () => void;
   onOpenResearchIntake: () => void;
+  onOpenHiddenPosts: () => void;
 }
 
 /**
@@ -60,6 +62,7 @@ export function FamilyStewardHubPage({
   onOpenPendingContributions,
   onOpenGovernance,
   onOpenResearchIntake,
+  onOpenHiddenPosts,
 }: FamilyStewardHubPageProps) {
   const { data: isAdmin = false } = useIsAdmin();
   const { data: claims = [] } = useListProfileClaims();
@@ -72,10 +75,12 @@ export function FamilyStewardHubPage({
   const pendingRequests = requests.filter((r) => r.status === "Pending").length;
   const pendingReports = reports.filter((r) => r.status === "Pending").length;
   const pendingArchiveCount = pendingArchiveItems.length;
-  // Research intake items awaiting steward review: pending findings plus
-  // conflicting items that need resolution.
+  // Research intake items awaiting steward review: pending items plus items
+  // flagged as needing further research. This matches the canonical definition
+  // used by the StewardActionBadge nav pill (reviewQueue.pending +
+  // reviewQueue.needsResearch), so the hub card and the nav badge always agree.
   const pendingResearchCount = reviewQueue
-    ? Number(reviewQueue.pending) + Number(reviewQueue.conflicting)
+    ? Number(reviewQueue.pending) + Number(reviewQueue.needsResearch)
     : 0;
 
   // Normal family members must never see Steward controls. The nav link is
@@ -377,6 +382,30 @@ export function FamilyStewardHubPage({
           </span>
           <span className="hub-option-desc">
             Review messages reported by family members.
+          </span>
+        </button>
+
+        <button
+          type="button"
+          data-ocid="steward_hub.hidden_posts_option"
+          onClick={onOpenHiddenPosts}
+          className="hub-option hub-accent-steward"
+        >
+          <span className="hub-option-head">
+            <span className="hub-option-icon">
+              <EyeOff
+                className="h-5 w-5"
+                strokeWidth={1.75}
+                aria-hidden="true"
+              />
+            </span>
+            <span className="hub-option-title">Hidden / Moderated Posts</span>
+            <span className="hub-option-arrow" aria-hidden="true">
+              →
+            </span>
+          </span>
+          <span className="hub-option-desc">
+            Review hidden posts and restore them to the Message Board.
           </span>
         </button>
       </div>

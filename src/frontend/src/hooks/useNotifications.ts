@@ -48,4 +48,24 @@ export function useUnreadNotificationCount() {
   return notifications.filter((notification) => !notification.read).length;
 }
 
+/**
+ * Reconciles stale claim notifications for a claim: marks the pending
+ * `ProfileClaimRequested` notification for the claimant as read/resolved and
+ * ensures the `ProfileClaimReviewed` notification reflects the final claim
+ * state. Returns the number of notifications reconciled.
+ */
+export function useReconcileClaimNotifications() {
+  const { actor } = useActor(createActor);
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (claimId: bigint) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.reconcileClaimNotifications(claimId);
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    },
+  });
+}
+
 export type { Notification };

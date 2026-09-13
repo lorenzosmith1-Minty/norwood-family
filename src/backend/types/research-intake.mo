@@ -37,6 +37,7 @@ module {
     #Approved;
     #Rejected;
     #Conflicting;
+    #NeedsResearch;
   };
 
   /// Where an approved finding routes in the app.
@@ -175,13 +176,51 @@ module {
     summary : Text;
   };
 
-  /// Aggregated counts for the review queue badges (pending, approved,
-  /// rejected, conflicting).
+  /// The kind of a reviewable research intake item in the Research Review
+  /// Queue.
+  public type ReviewItemKind = {
+    #Source;
+    #Finding;
+    #NewPersonCandidate;
+    #RelationshipProposal;
+    #ConflictReview;
+  };
+
+  /// An action a Family Steward may take on a review queue item.
+  public type ReviewAction = {
+    #Approve;
+    #Reject;
+    #NeedsResearch;
+  };
+
+  /// A single reviewable item in the Research Review Queue. Every pending
+  /// research intake record (Source, Proposed Finding, New Person Candidate,
+  /// Relationship Proposal, or Conflict Review item) appears here with the
+  /// metadata a steward needs to decide.
+  public type ReviewQueueItem = {
+    id : Nat;
+    kind : ReviewItemKind;
+    title : Text;
+    summary : Text;
+    contributor : ?Principal;
+    provenance : Text;
+    createdAt : Int;
+    evidenceLabel : ?EvidenceLabel;
+    status : ReviewStatus;
+    actions : [ReviewAction];
+  };
+
+  /// Aggregated counts for the review queue badges plus the full list of
+  /// reviewable items. `pending` counts every item still awaiting steward
+  /// review (including pending Sources); `needsResearch` counts items marked
+  /// `#NeedsResearch`.
   public type ReviewQueue = {
     pending : Nat;
     approved : Nat;
     rejected : Nat;
     conflicting : Nat;
+    needsResearch : Nat;
+    items : [ReviewQueueItem];
   };
 
   /// Error variants for research intake operations.

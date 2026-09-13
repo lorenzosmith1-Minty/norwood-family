@@ -3,12 +3,16 @@ import {
   Clapperboard,
   Inbox,
   Mic,
+  Plus,
   UtensilsCrossed,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { ArchiveCard } from "../components/ArchiveCard";
 import { ArchiveFilterBar } from "../components/ArchiveFilterBar";
-import { useApprovedArchiveItems } from "../hooks/useArchiveStorage";
+import {
+  useApprovedArchiveItems,
+  useSearchArchiveItems,
+} from "../hooks/useArchiveStorage";
 import type { ArchiveItemType } from "../types/archive";
 import { ARCHIVE_ERAS, getArchiveItemYear } from "../types/archive";
 
@@ -19,15 +23,25 @@ interface ArchivePageProps {
   onOpenVideos: () => void;
   /** Navigates to the dedicated Family Recipes page. */
   onOpenRecipes: () => void;
+  /** Navigates to the Add to Archive contribution view. */
+  onAddToArchive: () => void;
 }
 
 interface Filters {
   type: ArchiveItemType | "all";
   member: string;
   era: string;
+  query: string;
+  tags: string[];
 }
 
-const DEFAULT_FILTERS: Filters = { type: "all", member: "all", era: "all" };
+const DEFAULT_FILTERS: Filters = {
+  type: "all",
+  member: "all",
+  era: "all",
+  query: "",
+  tags: [],
+};
 
 /** Reads filter selections from the page URL query string. */
 function readFilters(): Filters {
@@ -35,25 +49,47 @@ function readFilters(): Filters {
   const type = params.get("type") as ArchiveItemType | null;
   const member = params.get("member");
   const era = params.get("era");
+  const query = params.get("query");
+  const tagsParam = params.get("tags");
   return {
     type: type ?? "all",
     member: member ?? "all",
     era: era ?? "all",
+    query: query ?? "",
+    tags: tagsParam ? tagsParam.split(",").filter(Boolean) : [],
   };
 }
 
 /**
  * Family Archive browsing screen: lists all approved archive items newest
- * first, with type / family-member / era filters that persist in the URL.
+ * first, with a title search box, tag filter chips, and type / family-member /
+ * era filters that persist in the URL. Title + tag filtering runs through the
+ * backend search hook; the category / member / era filters are applied on top
+ * so the existing year-range era behavior is preserved.
  */
 export function ArchivePage({
   onBack,
   onOpenArchiveItem,
   onOpenVideos,
   onOpenRecipes,
+  onAddToArchive,
 }: ArchivePageProps) {
-  const { data: items = [], isLoading } = useApprovedArchiveItems();
   const [filters, setFilters] = useState<Filters>(readFilters);
+  // The full approved set, used to derive the stable list of available tag
+  // filter chips regardless of the currently active filters.
+  const { data: allItems = [], isLoading: allLoading } =
+    useApprovedArchiveItems();
+  // Title + tag search via the backend. Category / member / era are applied
+  // client-side on the results so the existing era year-range behavior holds.
+  const { data: searchResults = [], isLoading: searchLoading } =
+    useSearchArchiveItems({
+      query: filters.query || null,
+      tags: filters.tags,
+      itemType: null,
+      relatedMemberId: null,
+      era: null,
+    });
+  const isLoading = allLoading || searchLoading;
 
   // Persist filter selections in the URL so they survive refresh and can be
   // shared. Back navigation to this view re-reads them from the URL.
@@ -65,6 +101,10 @@ export function ArchivePage({
     else params.delete("member");
     if (filters.era !== "all") params.set("era", filters.era);
     else params.delete("era");
+    if (filters.query) params.set("query", filters.query);
+    else params.delete("query");
+    if (filters.tags.length > 0) params.set("tags", filters.tags.join(","));
+    else params.delete("tags");
     const qs = params.toString();
     const url = qs
       ? `${window.location.pathname}?${qs}`
@@ -72,9 +112,20 @@ export function ArchivePage({
     window.history.replaceState(null, "", url);
   }, [filters]);
 
-  // Newest first, then apply the active filters.
+  // Every tag present across the approved archive, sorted, for the filter
+  // chips. Derived from the full set so chips stay visible while filtering.
+  const availableTags = useMemo(() => {
+    const set = new Set<string>();
+    for (const item of allItems) {
+      for (const tag of item.tags) set.add(tag);
+    }
+    return [...set].sort((a, b) => a.localeCompare(b));
+  }, [allItems]);
+
+  // Newest first, then apply the category / member / era filters on top of the
+  // backend title + tag search results.
   const filtered = useMemo(() => {
-    const sorted = [...items].sort((a, b) =>
+    const sorted = [...searchResults].sort((a, b) =>
       a.createdAt < b.createdAt ? 1 : a.createdAt > b.createdAt ? -1 : 0,
     );
     return sorted
@@ -96,12 +147,24 @@ export function ArchivePage({
         if (era.max !== null && year > era.max) return false;
         return true;
       });
-  }, [items, filters]);
+  }, [searchResults, filters]);
 
   const hasActiveFilters =
-    filters.type !== "all" || filters.member !== "all" || filters.era !== "all";
+    filters.type !== "all" ||
+    filters.member !== "all" ||
+    filters.era !== "all" ||
+    filters.query !== "" ||
+    filters.tags.length > 0;
 
   const resetFilters = () => setFilters(DEFAULT_FILTERS);
+
+  const toggleTag = (tag: string) =>
+    setFilters((f) => ({
+      ...f,
+      tags: f.tags.includes(tag)
+        ? f.tags.filter((t) => t !== tag)
+        : [...f.tags, tag],
+    }));
 
   return (
     <div className="mx-auto w-full max-w-6xl px-6 py-8">
@@ -122,13 +185,26 @@ export function ArchivePage({
           />
           Family Archive
         </div>
-        <h1 className="font-display text-3xl font-semibold text-foreground">
-          Our Family Archive
-        </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Approved photos, documents, stories, and more — preserved as they were
-          contributed.
-        </p>
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h1 className="font-display text-3xl font-semibold text-foreground">
+              Our Family Archive
+            </h1>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Approved photos, documents, stories, and more — preserved as they
+              were contributed.
+            </p>
+          </div>
+          <button
+            type="button"
+            data-ocid="archive.add_button"
+            onClick={onAddToArchive}
+            className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:translate-y-0"
+          >
+            <Plus className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
+            Add to Archive
+          </button>
+        </div>
       </header>
 
       {/* Prominent entry point to the dedicated Family Videos & Oral History
@@ -222,9 +298,14 @@ export function ArchivePage({
         typeFilter={filters.type}
         memberFilter={filters.member}
         eraFilter={filters.era}
+        query={filters.query}
+        tags={filters.tags}
+        availableTags={availableTags}
         onTypeChange={(type) => setFilters((f) => ({ ...f, type }))}
         onMemberChange={(member) => setFilters((f) => ({ ...f, member }))}
         onEraChange={(era) => setFilters((f) => ({ ...f, era }))}
+        onQueryChange={(query) => setFilters((f) => ({ ...f, query }))}
+        onTagToggle={toggleTag}
       />
 
       <div className="mt-6">

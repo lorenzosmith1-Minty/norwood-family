@@ -1,14 +1,15 @@
 import { MessageSquarePlus, ShieldAlert } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { type BoardFilter, BoardFilterBar } from "../components/BoardFilterBar";
 import { BoardPostCard } from "../components/BoardPostCard";
 import {
   useArchiveBoardPost,
   useListBoardPosts,
   useRestoreBoardPost,
+  useSearchBoardPostsByTags,
 } from "../hooks/useBoard";
 import { useNavbarIdentity } from "../hooks/useNavbarIdentity";
-import type { PostType } from "../types/board";
+import type { PostTag, PostType } from "../types/board";
 import { ClaimStatus } from "../types/ownership";
 
 interface MessageBoardPageProps {
@@ -41,12 +42,30 @@ export function MessageBoardPage({
 }: MessageBoardPageProps) {
   const { claimStatus } = useNavbarIdentity();
   const [filter, setFilter] = useState<BoardFilter>("all");
+  const [activeTag, setActiveTag] = useState<PostTag | null>(null);
 
-  const { data: posts = [], isLoading } = useListBoardPosts(
+  const { data: typePosts = [], isLoading: typeLoading } = useListBoardPosts(
     filterToPostType(filter),
   );
+  const { data: tagPosts = [], isLoading: tagLoading } =
+    useSearchBoardPostsByTags(activeTag ? [activeTag] : []);
   const archivePost = useArchiveBoardPost();
   const restorePost = useRestoreBoardPost();
+
+  // The tag filter takes precedence over the post-type filter: when a tag is
+  // active we show the tag-filtered results from the backend.
+  const posts = activeTag ? tagPosts : typePosts;
+  const isLoading = activeTag ? tagLoading : typeLoading;
+
+  // Every existing tag across the board (derived from the type-filtered list so
+  // the dropdown stays stable regardless of the active tag filter).
+  const allTags = useMemo(() => {
+    const seen = new Set<string>();
+    for (const post of typePosts) {
+      for (const tag of post.tags) seen.add(tag);
+    }
+    return Array.from(seen).sort();
+  }, [typePosts]);
 
   const isApprovedMember = claimStatus === ClaimStatus.Claimed;
 
@@ -137,7 +156,13 @@ export function MessageBoardPage({
         </button>
       </header>
 
-      <BoardFilterBar active={filter} onChange={setFilter} />
+      <BoardFilterBar
+        active={filter}
+        onChange={setFilter}
+        tags={allTags}
+        activeTag={activeTag}
+        onTagChange={setActiveTag}
+      />
 
       {isLoading ? (
         <div

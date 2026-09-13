@@ -1,5 +1,22 @@
-import { Archive, MessageSquare, Pencil, Undo2 } from "lucide-react";
-import { useEffect, useRef } from "react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
+  Archive,
+  EyeOff,
+  MessageSquare,
+  Paperclip,
+  Pencil,
+  Undo2,
+} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { BoardReplyThread } from "../components/BoardReplyThread";
 import { useApprovedArchiveItems } from "../hooks/useArchiveStorage";
 import { useIsAdmin } from "../hooks/useArchiveStorage";
@@ -101,6 +118,12 @@ export function BoardPostPage({
   const removeReply = useRemoveBoardReply();
   const archivePost = useArchiveBoardPost();
   const restorePost = useRestoreBoardPost();
+
+  // Confirmation state for the Steward Hide action. Hiding is a moderation
+  // action that removes the post from the normal board but preserves it (with
+  // replies and attachments) in the Steward-only Hidden/Moderated Posts view,
+  // so we confirm before applying it.
+  const [hideConfirmOpen, setHideConfirmOpen] = useState(false);
 
   // Hooks must run unconditionally, so resolve the author's canonical identity
   // before the early return below.
@@ -233,6 +256,20 @@ export function BoardPostPage({
         {post.title ? <h2 className="post-card-title">{post.title}</h2> : null}
         <p className="post-card-body whitespace-pre-line">{post.body}</p>
 
+        {/* Tags: bronze-ink card-catalog labels on the post */}
+        {post.tags.length > 0 ? (
+          <div
+            className="flex flex-wrap items-center gap-1.5"
+            data-ocid="board_post.tags"
+          >
+            {post.tags.map((tag) => (
+              <span key={tag} className="archive-tag-chip">
+                {tag}
+              </span>
+            ))}
+          </div>
+        ) : null}
+
         {/* Related members */}
         {post.relatedPersonIds.length > 0 ? (
           <div className="flex flex-wrap items-center gap-1.5">
@@ -248,14 +285,22 @@ export function BoardPostPage({
 
         {/* Linked media */}
         {linkedMedia.length > 0 ? (
-          <div className="flex flex-wrap items-center gap-1.5">
+          <div className="flex flex-wrap items-center gap-2">
             {linkedMedia.map((item) => (
-              <span
-                key={item.id}
-                className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-muted/40 px-2.5 py-1 text-[11px] font-semibold text-muted-foreground"
-              >
-                {ARCHIVE_ITEM_TYPE_LABELS[item.itemType]}
-                <span className="max-w-[10rem] truncate">{item.title}</span>
+              <span key={item.id} className="attachment-chip">
+                <span className="attachment-icon">
+                  <Paperclip
+                    className="h-3.5 w-3.5"
+                    strokeWidth={2}
+                    aria-hidden="true"
+                  />
+                </span>
+                <span className="flex min-w-0 flex-col">
+                  <span className="attachment-name">{item.title}</span>
+                  <span className="attachment-meta">
+                    {ARCHIVE_ITEM_TYPE_LABELS[item.itemType]}
+                  </span>
+                </span>
               </span>
             ))}
           </div>
@@ -306,10 +351,10 @@ export function BoardPostPage({
               <button
                 type="button"
                 data-ocid="board_post.steward_archive"
-                onClick={() => archivePost.mutate(post.postId)}
+                onClick={() => setHideConfirmOpen(true)}
                 className="inline-flex items-center gap-1 rounded-full border border-border/60 px-2.5 py-1 text-[11px] font-semibold text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
-                <Archive
+                <EyeOff
                   className="h-3 w-3"
                   strokeWidth={2}
                   aria-hidden="true"
@@ -331,6 +376,41 @@ export function BoardPostPage({
           </span>
         </div>
       </article>
+
+      {/* Steward Hide confirmation: clarifies that hiding is moderation, not
+          deletion. The post is removed from the normal board but preserved
+          (with replies and attachments) in the Steward-only Hidden/Moderated
+          Posts view, and can be restored at any time. */}
+      <AlertDialog open={hideConfirmOpen} onOpenChange={setHideConfirmOpen}>
+        <AlertDialogContent data-ocid="board_post.hide_dialog">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Hide this post?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This is a Steward moderation action. The post will be removed from
+              the normal board but preserved — with its replies and attachments
+              — in the Steward-only Hidden / Moderated Posts view. It is never
+              permanently deleted and can be restored at any time.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              data-ocid="board_post.hide_cancel"
+              className="min-h-[44px]"
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              data-ocid="board_post.hide_confirm"
+              onClick={() => archivePost.mutate(post.postId)}
+              disabled={archivePost.isPending}
+              className="min-h-[44px]"
+            >
+              <EyeOff className="h-4 w-4" aria-hidden="true" />
+              Hide post
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Reply thread */}
       <section aria-label="Replies">

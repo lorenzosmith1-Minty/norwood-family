@@ -10,12 +10,22 @@ import type {
   Result_16,
   Result_17,
   Result_18,
+  Result_19,
   Result_20,
+  Result_21,
   ReviewQueue,
+  ReviewQueueItem,
   SourceId,
   SourceRecord,
 } from "@/backend";
+import type {
+  ArchiveItemClassification,
+  ArchiveItemType,
+  OralHistorySpeaker,
+  PrivacyLevel,
+} from "@/types/archive";
 import { useActor } from "@caffeineai/core-infrastructure";
+import type { ExternalBlob } from "@caffeineai/object-storage";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useProvidersPresent } from "./usePhotoStorage";
 
@@ -73,13 +83,148 @@ export function useCreateSource() {
       sourceType: SourceRecord["sourceType"];
       description: string;
       archiveItemId: bigint | null;
-    }): Promise<Result_16> => {
+    }): Promise<Result_17> => {
       if (!actor) throw new Error("Backend is not ready");
       return actor.createSource(title, sourceType, description, archiveItemId);
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["research", "sources"] });
+      void queryClient.invalidateQueries({ queryKey: ["research", "queue"] });
       void queryClient.invalidateQueries({ queryKey: ["research", "audit"] });
+      void queryClient.invalidateQueries({
+        queryKey: ["pendingContributionsCount"],
+      });
+      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    },
+  });
+}
+
+export interface CreateSourceWithUploadInput {
+  title: string;
+  sourceType: SourceRecord["sourceType"];
+  description: string;
+  blob: ExternalBlob;
+  tags: string[];
+  era: string;
+  year: bigint | null;
+  relatedMemberIds: string[];
+  privacyLevel: PrivacyLevel;
+  classification: ArchiveItemClassification;
+  primarySpeaker: OralHistorySpeaker | null;
+}
+
+/**
+ * Uploads a research source file: creates one canonical Archive item (pending)
+ * and links a new Research Source record to it, so no manually typed Archive
+ * Item ID is required. Returns the created Source record plus the Archive item.
+ */
+export function useCreateSourceWithUpload() {
+  const { actor } = useActor(createActor);
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: CreateSourceWithUploadInput) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.createSourceWithUpload(
+        input.title,
+        input.sourceType,
+        input.description,
+        input.blob,
+        input.tags,
+        input.era,
+        input.year,
+        input.relatedMemberIds,
+        input.privacyLevel,
+        input.classification,
+        input.primarySpeaker,
+      );
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["research", "sources"] });
+      void queryClient.invalidateQueries({ queryKey: ["research", "queue"] });
+      void queryClient.invalidateQueries({ queryKey: ["research", "audit"] });
+      // The upload creates a pending Archive item, so the pending/approved
+      // archive lists must refresh.
+      void queryClient.invalidateQueries({ queryKey: ["archive", "pending"] });
+      void queryClient.invalidateQueries({ queryKey: ["archive", "approved"] });
+      void queryClient.invalidateQueries({
+        queryKey: ["pendingContributionsCount"],
+      });
+      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    },
+  });
+}
+
+/**
+ * Approves a pending source (Family Steward only), transitioning it to
+ * `Approved` so it becomes usable by Proposed Findings. Records a
+ * `ResearchApproved` notification to the contributor.
+ */
+export function useApproveSource() {
+  const { actor } = useActor(createActor);
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (sourceId: SourceId): Promise<SourceRecord | null> => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.approveSource(sourceId);
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["research", "sources"] });
+      void queryClient.invalidateQueries({ queryKey: ["research", "queue"] });
+      void queryClient.invalidateQueries({ queryKey: ["research", "audit"] });
+      void queryClient.invalidateQueries({
+        queryKey: ["pendingContributionsCount"],
+      });
+      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    },
+  });
+}
+
+/**
+ * Rejects a pending source (Family Steward only), transitioning it to
+ * `Rejected`. The original Archive item is not deleted. Records a
+ * `ResearchRejected` notification to the contributor.
+ */
+export function useRejectSource() {
+  const { actor } = useActor(createActor);
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (sourceId: SourceId): Promise<SourceRecord | null> => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.rejectSource(sourceId);
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["research", "sources"] });
+      void queryClient.invalidateQueries({ queryKey: ["research", "queue"] });
+      void queryClient.invalidateQueries({ queryKey: ["research", "audit"] });
+      void queryClient.invalidateQueries({
+        queryKey: ["pendingContributionsCount"],
+      });
+      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    },
+  });
+}
+
+/**
+ * Marks a pending source as needing research (Family Steward only),
+ * transitioning it to `NeedsResearch` while preserving the source and its
+ * notes.
+ */
+export function useNeedsResearchSource() {
+  const { actor } = useActor(createActor);
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (sourceId: SourceId): Promise<SourceRecord | null> => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.needsResearchSource(sourceId);
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["research", "sources"] });
+      void queryClient.invalidateQueries({ queryKey: ["research", "queue"] });
+      void queryClient.invalidateQueries({ queryKey: ["research", "audit"] });
+      void queryClient.invalidateQueries({
+        queryKey: ["pendingContributionsCount"],
+      });
+      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
   });
 }
@@ -133,7 +278,7 @@ export function useCreateFinding() {
       sourceId: SourceId;
       personId: string | null;
       newPersonCandidateId: bigint | null;
-    }): Promise<Result_20> => {
+    }): Promise<Result_21> => {
       if (!actor) throw new Error("Backend is not ready");
       return actor.createFinding(
         title,
@@ -151,6 +296,10 @@ export function useCreateFinding() {
       });
       void queryClient.invalidateQueries({ queryKey: ["research", "queue"] });
       void queryClient.invalidateQueries({ queryKey: ["research", "audit"] });
+      void queryClient.invalidateQueries({
+        queryKey: ["pendingContributionsCount"],
+      });
+      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
   });
 }
@@ -170,8 +319,13 @@ export function useApproveFinding() {
       void queryClient.invalidateQueries({
         queryKey: ["research", "findings"],
       });
+      void queryClient.invalidateQueries({ queryKey: ["research", "sources"] });
       void queryClient.invalidateQueries({ queryKey: ["research", "queue"] });
       void queryClient.invalidateQueries({ queryKey: ["research", "audit"] });
+      void queryClient.invalidateQueries({
+        queryKey: ["pendingContributionsCount"],
+      });
+      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
   });
 }
@@ -191,8 +345,43 @@ export function useRejectFinding() {
       void queryClient.invalidateQueries({
         queryKey: ["research", "findings"],
       });
+      void queryClient.invalidateQueries({ queryKey: ["research", "sources"] });
       void queryClient.invalidateQueries({ queryKey: ["research", "queue"] });
       void queryClient.invalidateQueries({ queryKey: ["research", "audit"] });
+      void queryClient.invalidateQueries({
+        queryKey: ["pendingContributionsCount"],
+      });
+      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    },
+  });
+}
+
+/**
+ * Marks a pending finding as needing research (Family Steward only),
+ * transitioning it to `NeedsResearch` while keeping it in the review queue.
+ * Records a `FindingNeedsResearch` audit entry.
+ */
+export function useNeedsResearchFinding() {
+  const { actor } = useActor(createActor);
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (
+      findingId: FindingId,
+    ): Promise<ProposedFinding | null> => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.needsResearchFinding(findingId);
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: ["research", "findings"],
+      });
+      void queryClient.invalidateQueries({ queryKey: ["research", "sources"] });
+      void queryClient.invalidateQueries({ queryKey: ["research", "queue"] });
+      void queryClient.invalidateQueries({ queryKey: ["research", "audit"] });
+      void queryClient.invalidateQueries({
+        queryKey: ["pendingContributionsCount"],
+      });
+      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
   });
 }
@@ -224,7 +413,7 @@ export function useCreateNewPersonCandidate() {
       name: string;
       details: string;
       sourceId: SourceId;
-    }): Promise<Result_18> => {
+    }): Promise<Result_19> => {
       if (!actor) throw new Error("Backend is not ready");
       return actor.createNewPersonCandidate(name, details, sourceId);
     },
@@ -234,6 +423,10 @@ export function useCreateNewPersonCandidate() {
       });
       void queryClient.invalidateQueries({ queryKey: ["research", "queue"] });
       void queryClient.invalidateQueries({ queryKey: ["research", "audit"] });
+      void queryClient.invalidateQueries({
+        queryKey: ["pendingContributionsCount"],
+      });
+      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
   });
 }
@@ -267,7 +460,7 @@ export function useCreateRelationshipProposal() {
       toPersonId: string;
       relationshipType: string;
       sourceId: SourceId;
-    }): Promise<Result_17> => {
+    }): Promise<Result_18> => {
       if (!actor) throw new Error("Backend is not ready");
       return actor.createRelationshipProposal(
         fromPersonId,
@@ -282,6 +475,10 @@ export function useCreateRelationshipProposal() {
       });
       void queryClient.invalidateQueries({ queryKey: ["research", "queue"] });
       void queryClient.invalidateQueries({ queryKey: ["research", "audit"] });
+      void queryClient.invalidateQueries({
+        queryKey: ["pendingContributionsCount"],
+      });
+      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
   });
 }
@@ -315,8 +512,16 @@ export function useResolveConflict() {
       void queryClient.invalidateQueries({
         queryKey: ["research", "conflicts"],
       });
+      void queryClient.invalidateQueries({
+        queryKey: ["research", "findings"],
+      });
+      void queryClient.invalidateQueries({ queryKey: ["research", "sources"] });
       void queryClient.invalidateQueries({ queryKey: ["research", "queue"] });
       void queryClient.invalidateQueries({ queryKey: ["research", "audit"] });
+      void queryClient.invalidateQueries({
+        queryKey: ["pendingContributionsCount"],
+      });
+      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
   });
 }
@@ -358,6 +563,7 @@ export type {
   RelationshipProposal,
   ResearchAuditEntry,
   ReviewQueue,
+  ReviewQueueItem,
   SourceId,
   SourceRecord,
 };

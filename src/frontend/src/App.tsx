@@ -4,6 +4,7 @@ import { LoginSurface } from "./components/LoginSurface";
 import PendingContributionsBadge from "./components/PendingContributionsBadge";
 import { useIsAdmin } from "./hooks/useArchiveStorage";
 import { useAuth } from "./hooks/useAuth";
+import { resolveCanonicalPersonProfile } from "./hooks/useCanonicalPerson";
 import { useNavbarIdentity } from "./hooks/useNavbarIdentity";
 import { usePersonProfile } from "./hooks/useProfileClaims";
 import {
@@ -259,19 +260,28 @@ export default function App() {
 
   const profile = profiles[profileId] ?? profiles.julia;
 
-  // A genuinely new, account-owned profile (created via createMyself and keyed
-  // by the caller's principal) or a graph-only node (e.g. lorenzoSmithJr) has
-  // no entry in the static `profiles` record. When the "My Profile" or
-  // "Profile" view targets such a personId, resolve the profile from the
-  // backend so it renders instead of falling back to another person or an
-  // empty page.
+  // Every profile view fetches the backend PersonProfile record for the
+  // targeted personId — for BOTH static/seeded people and backend-only/new
+  // people — so owner-editable edits (e.g. a preferred-name change or a new
+  // story saved on a seeded profile like Lula Mae) propagate to the main
+  // profile page instead of rendering the static record directly.
   const isStaticProfile = Boolean(profiles[profileId]);
   const { data: myBackendProfile } = usePersonProfile(profileId, {
-    enabled: (view === "my-profile" || view === "profile") && !isStaticProfile,
+    enabled: view === "my-profile" || view === "profile",
   });
   const resolvedProfile = isStaticProfile
-    ? profiles[profileId]
-    : myBackendProfile
+    ? // Static/seeded person: merge the backend editable fields into the static
+      // canonical display record via the single canonical read adapter. The
+      // backend record wins for the fields it owns; the static canonical fills
+      // the gaps. When the backend record is unavailable (still loading or
+      // absent), fall back safely to the static profile.
+      myBackendProfile
+      ? resolveCanonicalPersonProfile(myBackendProfile, profiles[profileId])
+      : profiles[profileId]
+    : // Backend-only person (a createMyself profile keyed by the caller's
+      // principal or a graph-only node): preserve the existing non-static path
+      // through the canonical adapter with no static canonical record.
+      myBackendProfile
       ? backendProfileToPersonProfile(myBackendProfile)
       : undefined;
 

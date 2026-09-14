@@ -46939,69 +46939,6 @@ function overlayConfirmedRelationships(base, confirmed) {
   }
   return graph;
 }
-function useNavbarIdentity() {
-  const { isAuthenticated } = useAuth();
-  const { data: profile, isLoading } = useMyProfile();
-  if (!isAuthenticated) {
-    return { displayName: "", status: "none", isLoading: false };
-  }
-  if (isLoading) {
-    return { displayName: "", status: "none", isLoading: true };
-  }
-  if (!profile) {
-    return { displayName: "", status: "none", isLoading: false };
-  }
-  const displayName = resolveBackendDisplayName(profile.personId, profile);
-  const status = profile.claimStatus === ClaimStatus.Claimed ? "linked" : "pending";
-  return {
-    displayName,
-    status,
-    personId: profile.personId,
-    claimStatus: profile.claimStatus,
-    isLoading: false
-  };
-}
-const ORIGINATING_VIEW_KEY = "app.originatingView.v1";
-function saveOriginatingView(origin) {
-  try {
-    sessionStorage.setItem(ORIGINATING_VIEW_KEY, JSON.stringify(origin));
-  } catch {
-  }
-}
-function loadOriginatingView() {
-  try {
-    const raw = sessionStorage.getItem(ORIGINATING_VIEW_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw);
-    if (!parsed || typeof parsed.view !== "string") return null;
-    return parsed;
-  } catch {
-    return null;
-  }
-}
-function clearOriginatingView() {
-  try {
-    sessionStorage.removeItem(ORIGINATING_VIEW_KEY);
-  } catch {
-  }
-}
-const SUFFIX_VARIANTS = {
-  jr: "jr",
-  sr: "sr",
-  ii: "ii",
-  iii: "iii",
-  iv: "iv"
-};
-function normalizeName(name) {
-  return name.toLowerCase().replace(/[.,'"“”‘’]/g, "").replace(/\s+/g, " ").trim().split(" ").map((part) => SUFFIX_VARIANTS[part] ?? part).join(" ");
-}
-function namesMatch(a2, b2) {
-  const na = normalizeName(a2);
-  const nb = normalizeName(b2);
-  if (!na || !nb) return false;
-  if (na === nb) return true;
-  return na.includes(nb) || nb.includes(na);
-}
 function resolveMyProfileRoute(claimStatus, personId) {
   if (claimStatus === ClaimStatus.Claimed && personId) return "owned";
   if (claimStatus === ClaimStatus.Unclaimed && personId) return "pending";
@@ -47086,6 +47023,142 @@ function resolveStatusBadge(kind, status) {
     default:
       return null;
   }
+}
+function resolveCanonicalPersonProfile(backend, canonical) {
+  var _a2;
+  if (!canonical) {
+    const name = backend.preferredName || backend.name;
+    const isClaimed = backend.claimStatus === ClaimStatus.Claimed;
+    const facts2 = [];
+    if (backend.birthDate)
+      facts2.push({ label: "Born", value: backend.birthDate });
+    if (backend.birthplace)
+      facts2.push({ label: "Birthplace", value: backend.birthplace });
+    if (backend.currentLocation)
+      facts2.push({ label: "Location", value: backend.currentLocation });
+    if (backend.occupation)
+      facts2.push({ label: "Occupation", value: backend.occupation });
+    const story2 = backend.shortBio || backend.longerStory || backend.story || "";
+    return {
+      id: backend.personId,
+      name,
+      role: isClaimed ? "Family member" : "Pending profile",
+      portrait: { src: "", alt: `Profile for ${name}` },
+      facts: facts2,
+      story: story2,
+      family: { spouseName: "", spouseRole: "", childrenText: "" },
+      timeline: (backend.timeline ?? []).map((text, index2) => ({
+        date: "",
+        title: `Timeline entry ${index2 + 1}`,
+        detail: text
+      })),
+      sources: []
+    };
+  }
+  const facts = [...canonical.facts];
+  const upsertFact = (label, value) => {
+    const idx = facts.findIndex((fact) => fact.label === label);
+    if (idx >= 0) facts[idx] = { label, value };
+    else facts.push({ label, value });
+  };
+  if (backend.birthDate) upsertFact("Born", backend.birthDate);
+  if (backend.birthplace) upsertFact("Birthplace", backend.birthplace);
+  if (backend.currentLocation) upsertFact("Location", backend.currentLocation);
+  if (backend.occupation) upsertFact("Occupation", backend.occupation);
+  const story = backend.shortBio || backend.longerStory || canonical.story;
+  const timeline = ((_a2 = backend.timeline) == null ? void 0 : _a2.length) ? backend.timeline.map((text, index2) => ({
+    date: "",
+    title: `Timeline entry ${index2 + 1}`,
+    detail: text
+  })) : canonical.timeline;
+  return {
+    ...canonical,
+    name: backend.preferredName || canonical.name,
+    facts,
+    story,
+    timeline
+  };
+}
+function useCanonicalPerson(personId, fallbackName) {
+  const { data: backendProfile } = usePersonProfile(personId ?? "", {
+    enabled: Boolean(personId)
+  });
+  const { data: profilePhoto, isLoading: photoLoading } = useProfilePhoto(
+    personId ?? ""
+  );
+  const hasCanonicalProfile = Boolean(backendProfile);
+  const displayName = backendProfile ? resolveBackendDisplayName(personId ?? "", backendProfile) : fallbackName;
+  const profilePhotoUrl = profilePhoto ? profilePhoto.blob.getDirectURL() : null;
+  const photoPending = photoLoading;
+  return {
+    displayName,
+    profilePhotoUrl,
+    hasCanonicalProfile,
+    isLoading: Boolean(personId) && photoPending
+  };
+}
+function useNavbarIdentity() {
+  const { isAuthenticated } = useAuth();
+  const { data: profile, isLoading } = useMyProfile();
+  if (!isAuthenticated) {
+    return { displayName: "", status: "none", isLoading: false };
+  }
+  if (isLoading) {
+    return { displayName: "", status: "none", isLoading: true };
+  }
+  if (!profile) {
+    return { displayName: "", status: "none", isLoading: false };
+  }
+  const displayName = resolveBackendDisplayName(profile.personId, profile);
+  const status = profile.claimStatus === ClaimStatus.Claimed ? "linked" : "pending";
+  return {
+    displayName,
+    status,
+    personId: profile.personId,
+    claimStatus: profile.claimStatus,
+    isLoading: false
+  };
+}
+const ORIGINATING_VIEW_KEY = "app.originatingView.v1";
+function saveOriginatingView(origin) {
+  try {
+    sessionStorage.setItem(ORIGINATING_VIEW_KEY, JSON.stringify(origin));
+  } catch {
+  }
+}
+function loadOriginatingView() {
+  try {
+    const raw = sessionStorage.getItem(ORIGINATING_VIEW_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed.view !== "string") return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+function clearOriginatingView() {
+  try {
+    sessionStorage.removeItem(ORIGINATING_VIEW_KEY);
+  } catch {
+  }
+}
+const SUFFIX_VARIANTS = {
+  jr: "jr",
+  sr: "sr",
+  ii: "ii",
+  iii: "iii",
+  iv: "iv"
+};
+function normalizeName(name) {
+  return name.toLowerCase().replace(/[.,'"“”‘’]/g, "").replace(/\s+/g, " ").trim().split(" ").map((part) => SUFFIX_VARIANTS[part] ?? part).join(" ");
+}
+function namesMatch(a2, b2) {
+  const na = normalizeName(a2);
+  const nb = normalizeName(b2);
+  if (!na || !nb) return false;
+  if (na === nb) return true;
+  return na.includes(nb) || nb.includes(na);
 }
 const LayoutGroupContext = reactExports.createContext({});
 function useConstant(init) {
@@ -57614,79 +57687,6 @@ function DialogDescription({
       ...props
     }
   );
-}
-function resolveCanonicalPersonProfile(backend, canonical) {
-  var _a2;
-  if (!canonical) {
-    const name = backend.preferredName || backend.name;
-    const isClaimed = backend.claimStatus === ClaimStatus.Claimed;
-    const facts2 = [];
-    if (backend.birthDate)
-      facts2.push({ label: "Born", value: backend.birthDate });
-    if (backend.birthplace)
-      facts2.push({ label: "Birthplace", value: backend.birthplace });
-    if (backend.currentLocation)
-      facts2.push({ label: "Location", value: backend.currentLocation });
-    if (backend.occupation)
-      facts2.push({ label: "Occupation", value: backend.occupation });
-    const story2 = backend.shortBio || backend.longerStory || backend.story || "";
-    return {
-      id: backend.personId,
-      name,
-      role: isClaimed ? "Family member" : "Pending profile",
-      portrait: { src: "", alt: `Profile for ${name}` },
-      facts: facts2,
-      story: story2,
-      family: { spouseName: "", spouseRole: "", childrenText: "" },
-      timeline: (backend.timeline ?? []).map((text, index2) => ({
-        date: "",
-        title: `Timeline entry ${index2 + 1}`,
-        detail: text
-      })),
-      sources: []
-    };
-  }
-  const facts = [...canonical.facts];
-  const upsertFact = (label, value) => {
-    const idx = facts.findIndex((fact) => fact.label === label);
-    if (idx >= 0) facts[idx] = { label, value };
-    else facts.push({ label, value });
-  };
-  if (backend.birthDate) upsertFact("Born", backend.birthDate);
-  if (backend.birthplace) upsertFact("Birthplace", backend.birthplace);
-  if (backend.currentLocation) upsertFact("Location", backend.currentLocation);
-  if (backend.occupation) upsertFact("Occupation", backend.occupation);
-  const story = backend.shortBio || backend.longerStory || canonical.story;
-  const timeline = ((_a2 = backend.timeline) == null ? void 0 : _a2.length) ? backend.timeline.map((text, index2) => ({
-    date: "",
-    title: `Timeline entry ${index2 + 1}`,
-    detail: text
-  })) : canonical.timeline;
-  return {
-    ...canonical,
-    name: backend.preferredName || canonical.name,
-    facts,
-    story,
-    timeline
-  };
-}
-function useCanonicalPerson(personId, fallbackName) {
-  const { data: backendProfile } = usePersonProfile(personId ?? "", {
-    enabled: Boolean(personId)
-  });
-  const { data: profilePhoto, isLoading: photoLoading } = useProfilePhoto(
-    personId ?? ""
-  );
-  const hasCanonicalProfile = Boolean(backendProfile);
-  const displayName = backendProfile ? resolveBackendDisplayName(personId ?? "", backendProfile) : fallbackName;
-  const profilePhotoUrl = profilePhoto ? profilePhoto.blob.getDirectURL() : null;
-  const photoPending = photoLoading;
-  return {
-    displayName,
-    profilePhotoUrl,
-    hasCanonicalProfile,
-    isLoading: Boolean(personId) && photoPending
-  };
 }
 function useListStewards() {
   const providersPresent = useProvidersPresent();
@@ -80800,9 +80800,21 @@ function App() {
   const profile = profiles[profileId] ?? profiles.julia;
   const isStaticProfile = Boolean(profiles[profileId]);
   const { data: myBackendProfile } = usePersonProfile(profileId, {
-    enabled: (view === "my-profile" || view === "profile") && !isStaticProfile
+    enabled: view === "my-profile" || view === "profile"
   });
-  const resolvedProfile = isStaticProfile ? profiles[profileId] : myBackendProfile ? backendProfileToPersonProfile(myBackendProfile) : void 0;
+  const resolvedProfile = isStaticProfile ? (
+    // Static/seeded person: merge the backend editable fields into the static
+    // canonical display record via the single canonical read adapter. The
+    // backend record wins for the fields it owns; the static canonical fills
+    // the gaps. When the backend record is unavailable (still loading or
+    // absent), fall back safely to the static profile.
+    myBackendProfile ? resolveCanonicalPersonProfile(myBackendProfile, profiles[profileId]) : profiles[profileId]
+  ) : (
+    // Backend-only person (a createMyself profile keyed by the caller's
+    // principal or a graph-only node): preserve the existing non-static path
+    // through the canonical adapter with no static canonical record.
+    myBackendProfile ? backendProfileToPersonProfile(myBackendProfile) : void 0
+  );
   reactExports.useEffect(() => {
     if (!isAuthenticated) return;
     const origin2 = loadOriginatingView();

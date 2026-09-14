@@ -65,7 +65,20 @@ const {
       return profiles[personId] ?? null;
     },
     async getMyProfile(): Promise<PersonProfile | null> {
-      return null;
+      if (!isAuthenticated) return null;
+      return {
+        personId: "self",
+        name: "Self Norwood",
+        livingStatus: LivingStatus.Living,
+        claimStatus: ClaimStatus.Claimed,
+        claimedByUserId: Principal.fromText(currentPrincipal),
+        preferredName: undefined,
+        story: undefined,
+        occupation: undefined,
+        birthInfo: undefined,
+        timeline: undefined,
+        privacySettings: undefined,
+      };
     },
     async getMyProfileClaim(personId: string): Promise<ProfileClaim | null> {
       return (
@@ -186,20 +199,15 @@ describe("FAMILY_GRAPH canonical Lorenzo Smith Jr. record", () => {
 });
 
 describe("Explore Family renders the confirmed graph regardless of claim state", () => {
-  it("renders Lorenzo Smith Jr. as Lorenzo Smith Sr.'s child card when not signed in", async () => {
+  it("gates a guest out of Explore Family with the no-access state", async () => {
     const user = userEvent.setup();
     renderApp();
     await openExploreFamily(user);
-    await navigateToLorenzoSmithSr(user);
 
-    const childrenZone = screen.getByTestId("explore.zone.children");
-    // Exactly one child card renders in the Children zone. The card's name is
-    // intentionally NOT asserted here: the upcoming build replaces the raw
-    // graph id fallback ('lorenzoSmithJr') with the canonical display name, so
-    // freezing the current leaky name would lock in the bug being fixed.
-    expect(
-      within(childrenZone).getAllByRole("button", { name: / Child$/ }),
-    ).toHaveLength(1);
+    // Explore Family is private to approved family members; a guest sees the
+    // no-access state instead of the family graph.
+    expect(screen.getByTestId("family_access.no_access")).toBeInTheDocument();
+    expect(screen.getByText("Family only")).toBeInTheDocument();
   });
 
   it("still renders Lorenzo Smith Jr. as the child card while the signed-in account has a pending claim", async () => {

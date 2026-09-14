@@ -5,11 +5,13 @@ import Runtime "mo:core/Runtime";
 import Storage "mo:caffeineai-object-storage/Storage";
 import Time "mo:core/Time";
 import Types "../types/archive";
+import OwnershipTypes "../types/ownership";
 import ArchiveLib "../lib/archive";
 
 mixin (
   accessControlState : AccessControl.AccessControlState,
   items : List.List<Types.ArchiveItem>,
+  claims : List.List<OwnershipTypes.ProfileClaim>,
 ) {
   /// Computes the next archive item id: one greater than the largest existing
   /// id, or `0` when the archive is empty.
@@ -21,16 +23,18 @@ mixin (
     maxId;
   };
 
+  /// Whether the caller is an approved family member: they hold at least one
+  /// approved profile claim, or they are an admin.
+  func isApprovedFamilyMemberForArchive(caller : Principal) : Bool {
+    if (AccessControl.isAdmin(accessControlState, caller)) {
+      return true;
+    };
+    claims.toArray().any(func c = c.requestingUserId == caller and c.status == #Approved);
+  };
+
   /// Submits a new archive item. Requires sign-in; the signed-in caller is
   /// recorded as the contributor. The item is stored in pending state and waits
   /// for admin approval before appearing in the archive.
-  ///
-  /// `classification` marks the item as Oral History (distinct from `itemType`).
-  /// When `#OralHistory`, `primarySpeaker` is required (exactly one primary
-  /// speaker); when `#Standard`, `primarySpeaker` must be `null`. The reserved
-  /// future-ready fields (transcript, searchable transcript, chapter markers,
-  /// AI summary, extracted names) are initialized to `null` and are not
-  /// populated by any logic yet.
   public shared ({ caller }) func submitArchiveItem(
     title : Text,
     description : Text,
@@ -47,7 +51,7 @@ mixin (
     primarySpeaker : ?Types.OralHistorySpeaker,
   ) : async Types.ArchiveItem {
     if (caller.isAnonymous()) {
-      Runtime.trap("Sign-in required to submit an archive item");
+      Runtime.trap("Unauthorized: You must be signed in");
     };
     if (classification == #OralHistory and primarySpeaker == null) {
       Runtime.trap("A primary speaker is required for Oral History items");
@@ -85,7 +89,7 @@ mixin (
   /// Lists all archive items in pending state (admin only).
   public query ({ caller }) func listPendingArchiveItems() : async [Types.ArchiveItem] {
     if (not AccessControl.isAdmin(accessControlState, caller)) {
-      Runtime.trap("Unauthorized: Only admins can list pending archive items");
+      Runtime.trap("Unauthorized: Only Family Stewards can perform this action");
     };
     ArchiveLib.listPending(items);
   };
@@ -96,7 +100,7 @@ mixin (
     id : Types.ArchiveItemId,
   ) : async ?Types.ArchiveItem {
     if (not AccessControl.isAdmin(accessControlState, caller)) {
-      Runtime.trap("Unauthorized: Only admins can approve archive items");
+      Runtime.trap("Unauthorized: Only Family Stewards can perform this action");
     };
     ArchiveLib.approve(items, id);
   };
@@ -107,13 +111,21 @@ mixin (
     id : Types.ArchiveItemId,
   ) : async ?Types.ArchiveItem {
     if (not AccessControl.isAdmin(accessControlState, caller)) {
-      Runtime.trap("Unauthorized: Only admins can reject archive items");
+      Runtime.trap("Unauthorized: Only Family Stewards can perform this action");
     };
     ArchiveLib.reject(items, id);
   };
 
-  /// Lists all archive items in approved state (visible in the archive).
-  public query func listApprovedArchiveItems() : async [Types.ArchiveItem] {
-    ArchiveLib.listApproved(items);
+  /// Lists all archive items in approved state visible to the caller. Privacy
+  /// is enforced server-side: guests and non-approved members see only Public
+  /// items; FamilyOnly items require approved family membership; Private items
+  /// are visible only to their contributor or an admin.
+  public query ({ caller }) func listApprovedArchiveItems() : async [Types.ArchiveItem] {
+    ArchiveLib.listApproved(
+      items,
+      caller,
+      AccessControl.isAdmin(accessControlState, caller),
+      isApprovedFamilyMemberForArchive(caller),
+    );
   };
 };

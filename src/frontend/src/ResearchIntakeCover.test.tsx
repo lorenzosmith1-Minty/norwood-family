@@ -5,6 +5,8 @@ import {
   ArchiveItemStatus,
   ArchiveItemType,
   ClaimStatus,
+  ConflictResolutionAction,
+  type ConflictReviewItem,
   EvidenceLabel,
   type FindingContent,
   FindingType,
@@ -85,6 +87,7 @@ const {
   getRejectedFindingIds,
   getNeedsResearchFindingIds,
   getResolvedConflictIds,
+  getResolvedConflictActions,
   setApprovedItems,
 } = vi.hoisted(() => {
   let isAuthenticated = false;
@@ -94,14 +97,7 @@ const {
   let findings: ProposedFinding[] = [];
   let candidates: NewPersonCandidate[] = [];
   let proposals: RelationshipProposal[] = [];
-  let conflicts: {
-    id: bigint;
-    findingId: bigint;
-    field: string;
-    canonicalValue: string;
-    proposedValue: string;
-    status: ReviewStatus;
-  }[] = [];
+  let conflicts: ConflictReviewItem[] = [];
   let audit: ResearchAuditEntry[] = [];
   let reviewQueue: ReviewQueue = {
     pending: 0n,
@@ -139,6 +135,11 @@ const {
   let rejectedFindingIds: bigint[] = [];
   let needsResearchFindingIds: bigint[] = [];
   let resolvedConflictIds: bigint[] = [];
+  let resolvedConflictActions: Array<{
+    id: bigint;
+    action: ConflictResolutionAction;
+    notes: string;
+  }> = [];
   let nextSourceId = 1n;
   let nextFindingId = 1n;
   let approvedItems: ArchiveItem[] = [];
@@ -412,18 +413,45 @@ const {
       proposals = [...proposals, record];
       return { __kind__: "ok", ok: record };
     },
-    async listConflictReviewItems(): Promise<typeof conflicts> {
+    async listConflictReviewItems(): Promise<ConflictReviewItem[]> {
       return conflicts;
+    },
+    async listConflictsForPerson(
+      personId: string,
+    ): Promise<ConflictReviewItem[]> {
+      // Mirrors the backend: only unresolved (Conflicting / NeedsResearch)
+      // conflicts for the given person are returned.
+      return conflicts.filter(
+        (c) =>
+          c.personId === personId &&
+          (c.status === ReviewStatus.Conflicting ||
+            c.status === ReviewStatus.NeedsResearch),
+      );
     },
     async resolveConflict(
       id: bigint,
-    ): Promise<(typeof conflicts)[number] | null> {
+      action: ConflictResolutionAction,
+      notes: string,
+    ): Promise<ConflictReviewItem | null> {
       const found = conflicts.find((c) => c.id === id);
       if (!found) return null;
+      // Mirrors the backend: Keep Existing and Replace Existing resolve the
+      // item (#Approved); Preserve Both keeps it #Conflicting; Needs Research
+      // moves it to #NeedsResearch. The steward's notes are recorded.
+      const newStatus =
+        action === ConflictResolutionAction.PreserveBoth
+          ? ReviewStatus.Conflicting
+          : action === ConflictResolutionAction.NeedsResearch
+            ? ReviewStatus.NeedsResearch
+            : ReviewStatus.Approved;
       conflicts = conflicts.map((c) =>
-        c.id === id ? { ...c, status: ReviewStatus.Approved } : c,
+        c.id === id ? { ...c, status: newStatus, stewardNotes: notes } : c,
       );
       resolvedConflictIds = [...resolvedConflictIds, id];
+      resolvedConflictActions = [
+        ...resolvedConflictActions,
+        { id, action, notes },
+      ];
       return conflicts.find((c) => c.id === id) ?? null;
     },
     async getReviewQueue(): Promise<ReviewQueue> {
@@ -461,6 +489,7 @@ const {
       rejectedFindingIds = [];
       needsResearchFindingIds = [];
       resolvedConflictIds = [];
+      resolvedConflictActions = [];
       nextSourceId = 1n;
       nextFindingId = 1n;
       approvedItems = [];
@@ -503,6 +532,7 @@ const {
     getRejectedFindingIds: () => rejectedFindingIds,
     getNeedsResearchFindingIds: () => needsResearchFindingIds,
     getResolvedConflictIds: () => resolvedConflictIds,
+    getResolvedConflictActions: () => resolvedConflictActions,
     setApprovedItems: (v: ArchiveItem[]) => {
       approvedItems = v;
     },
@@ -601,6 +631,27 @@ function pendingFinding(id: bigint, title: string): ProposedFinding {
     submittedBy: STEWARD,
     submittedAt: 1_700_000_000_000_000_000n,
     updatedAt: 1_700_000_000_000_000_000n,
+  };
+}
+
+function conflictItem(
+  id: bigint,
+  findingId: bigint,
+  overrides: Partial<ConflictReviewItem> = {},
+): ConflictReviewItem {
+  return {
+    id,
+    findingId,
+    field: "Birth date",
+    canonicalValue: "1899",
+    proposedValue: "1898",
+    status: ReviewStatus.Conflicting,
+    evidenceLabel: EvidenceLabel.Documented,
+    stewardNotes: "",
+    personId: "julia",
+    existingSourceId: 1n,
+    proposedSourceId: 1n,
+    ...overrides,
   };
 }
 
@@ -939,25 +990,65 @@ describe("Research Intake: review queue with badges", () => {
     expect(findings[0].status).toBe(ReviewStatus.NeedsResearch);
     expect(findings[0].title).toBe("Birth date of Julia Norwood");
   });
-});
 
-describe("Research Intake: conflict review", () => {
-  it("shows canonical and proposed values side by side and resolves explicitly", async () => {
+  it("shows the Conflict Review badge as the aggregate of conflicting and needs-research items", async () => {
     setAuthenticated(true);
     setAdmin(true);
     setMyProfile(claimedProfile("lorenzoSmithJr", "Lorenzo Smith Jr."));
     setSources([sourceRecord(1n, "1900 census")]);
     setFindings([pendingFinding(1n, "Birth date of Julia Norwood")]);
-    setConflicts([
-      {
-        id: 1n,
-        findingId: 1n,
-        field: "Birth date",
-        canonicalValue: "1899",
-        proposedValue: "1898",
-        status: ReviewStatus.Conflicting,
-      },
-    ]);
+    setConflicts([conflictItem(1n, 1n)]);
+    // Two unresolved items: one #Conflicting and one #NeedsResearch. The
+    // Conflict Review badge must count both, not just the conflicting ones.
+    setReviewQueue({
+      pending: 0n,
+      approved: 0n,
+      rejected: 0n,
+      conflicting: 1n,
+      needsResearch: 1n,
+      items: [],
+    });
+    const user = userEvent.setup();
+    renderApp();
+    await openResearchIntake(user);
+
+    const badge = screen.getByTestId("research_intake.conflict_review_badge");
+    expect(badge).toHaveTextContent("2");
+  });
+
+  it("hides the Conflict Review badge when there are no unresolved conflicts", async () => {
+    setAuthenticated(true);
+    setAdmin(true);
+    setMyProfile(claimedProfile("lorenzoSmithJr", "Lorenzo Smith Jr."));
+    setSources([sourceRecord(1n, "1900 census")]);
+    setFindings([pendingFinding(1n, "Birth date of Julia Norwood")]);
+    setReviewQueue({
+      pending: 1n,
+      approved: 0n,
+      rejected: 0n,
+      conflicting: 0n,
+      needsResearch: 0n,
+      items: [],
+    });
+    const user = userEvent.setup();
+    renderApp();
+    await openResearchIntake(user);
+
+    // No unresolved conflicts, so no badge is shown on the Conflict Review tab.
+    expect(
+      screen.queryByTestId("research_intake.conflict_review_badge"),
+    ).not.toBeInTheDocument();
+  });
+});
+
+describe("Research Intake: conflict review", () => {
+  it("shows canonical and proposed values side by side with four resolution actions", async () => {
+    setAuthenticated(true);
+    setAdmin(true);
+    setMyProfile(claimedProfile("lorenzoSmithJr", "Lorenzo Smith Jr."));
+    setSources([sourceRecord(1n, "1900 census")]);
+    setFindings([pendingFinding(1n, "Birth date of Julia Norwood")]);
+    setConflicts([conflictItem(1n, 1n)]);
     setReviewQueue({
       pending: 0n,
       approved: 0n,
@@ -975,15 +1066,266 @@ describe("Research Intake: conflict review", () => {
     );
     await screen.findByRole("heading", { name: "Conflict Review" });
 
-    // The conflicting finding shows both the canonical and proposed values.
-    expect(screen.getByText("Canonical record")).toBeInTheDocument();
+    // The conflicting finding shows both the canonical and proposed values,
+    // clearly separated by their owners.
+    expect(screen.getByText("Existing · canonical")).toBeInTheDocument();
     expect(screen.getByText("1899")).toBeInTheDocument();
-    expect(screen.getByText("Proposed finding")).toBeInTheDocument();
+    expect(screen.getByText("Proposed")).toBeInTheDocument();
     expect(screen.getByText("1898")).toBeInTheDocument();
 
-    // Resolving is an explicit, confirmed action.
-    await user.click(screen.getByTestId("research_conflict.resolve_button.1"));
-    await user.click(screen.getByTestId("research_conflict.confirm_button.1"));
+    // All four resolution actions are present on the unresolved conflict.
+    for (const label of [
+      "Keep Existing",
+      "Replace Existing",
+      "Preserve Both / Unresolved",
+      "Needs Research",
+    ]) {
+      expect(screen.getByRole("button", { name: label })).toBeInTheDocument();
+    }
+  });
+
+  it("resolves a conflict with Keep Existing, recording the action and notes", async () => {
+    setAuthenticated(true);
+    setAdmin(true);
+    setMyProfile(claimedProfile("lorenzoSmithJr", "Lorenzo Smith Jr."));
+    setSources([sourceRecord(1n, "1900 census")]);
+    setFindings([pendingFinding(1n, "Birth date of Julia Norwood")]);
+    setConflicts([conflictItem(1n, 1n)]);
+    setReviewQueue({
+      pending: 0n,
+      approved: 0n,
+      rejected: 0n,
+      conflicting: 1n,
+      needsResearch: 0n,
+      items: [],
+    });
+    const user = userEvent.setup();
+    renderApp();
+    await openResearchIntake(user);
+
+    await user.click(
+      screen.getByTestId("research_intake.open_conflict_review"),
+    );
+    await screen.findByRole("heading", { name: "Conflict Review" });
+
+    // Keep Existing is an explicit, confirmed action with optional notes.
+    await user.click(
+      screen.getByTestId(
+        `research_conflict.action_button.1.${ConflictResolutionAction.KeepExisting}`,
+      ),
+    );
+    await user.type(
+      screen.getByTestId(
+        `research_conflict.notes_input.1.${ConflictResolutionAction.KeepExisting}`,
+      ),
+      "Canonical record is authoritative",
+    );
+    await user.click(
+      screen.getByTestId(
+        `research_conflict.confirm_button.1.${ConflictResolutionAction.KeepExisting}`,
+      ),
+    );
+
     expect(getResolvedConflictIds()).toEqual([1n]);
+    expect(getResolvedConflictActions()).toEqual([
+      {
+        id: 1n,
+        action: ConflictResolutionAction.KeepExisting,
+        notes: "Canonical record is authoritative",
+      },
+    ]);
+  });
+
+  it("resolves a conflict with Replace Existing", async () => {
+    setAuthenticated(true);
+    setAdmin(true);
+    setMyProfile(claimedProfile("lorenzoSmithJr", "Lorenzo Smith Jr."));
+    setSources([sourceRecord(1n, "1900 census")]);
+    setFindings([pendingFinding(1n, "Birth date of Julia Norwood")]);
+    setConflicts([conflictItem(1n, 1n)]);
+    setReviewQueue({
+      pending: 0n,
+      approved: 0n,
+      rejected: 0n,
+      conflicting: 1n,
+      needsResearch: 0n,
+      items: [],
+    });
+    const user = userEvent.setup();
+    renderApp();
+    await openResearchIntake(user);
+
+    await user.click(
+      screen.getByTestId("research_intake.open_conflict_review"),
+    );
+    await screen.findByRole("heading", { name: "Conflict Review" });
+
+    await user.click(
+      screen.getByTestId(
+        `research_conflict.action_button.1.${ConflictResolutionAction.ReplaceExisting}`,
+      ),
+    );
+    await user.click(
+      screen.getByTestId(
+        `research_conflict.confirm_button.1.${ConflictResolutionAction.ReplaceExisting}`,
+      ),
+    );
+
+    expect(getResolvedConflictActions()).toEqual([
+      {
+        id: 1n,
+        action: ConflictResolutionAction.ReplaceExisting,
+        notes: "",
+      },
+    ]);
+  });
+
+  it("keeps both values visible as an unresolved conflict with Preserve Both", async () => {
+    setAuthenticated(true);
+    setAdmin(true);
+    setMyProfile(claimedProfile("lorenzoSmithJr", "Lorenzo Smith Jr."));
+    setSources([sourceRecord(1n, "1900 census")]);
+    setFindings([pendingFinding(1n, "Birth date of Julia Norwood")]);
+    setConflicts([conflictItem(1n, 1n)]);
+    setReviewQueue({
+      pending: 0n,
+      approved: 0n,
+      rejected: 0n,
+      conflicting: 1n,
+      needsResearch: 0n,
+      items: [],
+    });
+    const user = userEvent.setup();
+    renderApp();
+    await openResearchIntake(user);
+
+    await user.click(
+      screen.getByTestId("research_intake.open_conflict_review"),
+    );
+    await screen.findByRole("heading", { name: "Conflict Review" });
+
+    await user.click(
+      screen.getByTestId(
+        `research_conflict.action_button.1.${ConflictResolutionAction.PreserveBoth}`,
+      ),
+    );
+    await user.click(
+      screen.getByTestId(
+        `research_conflict.confirm_button.1.${ConflictResolutionAction.PreserveBoth}`,
+      ),
+    );
+
+    // Preserve Both keeps the item unresolved (#Conflicting) — neither value
+    // is silently chosen.
+    expect(getResolvedConflictActions()).toEqual([
+      {
+        id: 1n,
+        action: ConflictResolutionAction.PreserveBoth,
+        notes: "",
+      },
+    ]);
+    const remaining = await mockActor.listConflictReviewItems();
+    expect(remaining[0].status).toBe(ReviewStatus.Conflicting);
+  });
+
+  it("retains the conflict with Needs Research status", async () => {
+    setAuthenticated(true);
+    setAdmin(true);
+    setMyProfile(claimedProfile("lorenzoSmithJr", "Lorenzo Smith Jr."));
+    setSources([sourceRecord(1n, "1900 census")]);
+    setFindings([pendingFinding(1n, "Birth date of Julia Norwood")]);
+    setConflicts([conflictItem(1n, 1n)]);
+    setReviewQueue({
+      pending: 0n,
+      approved: 0n,
+      rejected: 0n,
+      conflicting: 1n,
+      needsResearch: 0n,
+      items: [],
+    });
+    const user = userEvent.setup();
+    renderApp();
+    await openResearchIntake(user);
+
+    await user.click(
+      screen.getByTestId("research_intake.open_conflict_review"),
+    );
+    await screen.findByRole("heading", { name: "Conflict Review" });
+
+    await user.click(
+      screen.getByTestId(
+        `research_conflict.action_button.1.${ConflictResolutionAction.NeedsResearch}`,
+      ),
+    );
+    await user.click(
+      screen.getByTestId(
+        `research_conflict.confirm_button.1.${ConflictResolutionAction.NeedsResearch}`,
+      ),
+    );
+
+    // Needs Research retains the conflict with #NeedsResearch status.
+    expect(getResolvedConflictActions()).toEqual([
+      {
+        id: 1n,
+        action: ConflictResolutionAction.NeedsResearch,
+        notes: "",
+      },
+    ]);
+    const remaining = await mockActor.listConflictReviewItems();
+    expect(remaining[0].status).toBe(ReviewStatus.NeedsResearch);
+  });
+
+  it("shows the empty state when there are no conflicts to review", async () => {
+    setAuthenticated(true);
+    setAdmin(true);
+    setMyProfile(claimedProfile("lorenzoSmithJr", "Lorenzo Smith Jr."));
+    const user = userEvent.setup();
+    renderApp();
+    await openResearchIntake(user);
+
+    await user.click(
+      screen.getByTestId("research_intake.open_conflict_review"),
+    );
+    await screen.findByRole("heading", { name: "Conflict Review" });
+
+    // With no conflict review items, the page shows a clear empty state rather
+    // than a blank list. This is stable behavior the four-action change does
+    // not remove.
+    expect(
+      screen.getByTestId("research_conflict.empty_state"),
+    ).toBeInTheDocument();
+    expect(screen.getByText("No conflicts to review")).toBeInTheDocument();
+  });
+
+  it("renders the linked finding's evidence label and source alongside the disputed values", async () => {
+    setAuthenticated(true);
+    setAdmin(true);
+    setMyProfile(claimedProfile("lorenzoSmithJr", "Lorenzo Smith Jr."));
+    setSources([sourceRecord(1n, "1900 census")]);
+    setFindings([pendingFinding(1n, "Birth date of Julia Norwood")]);
+    setConflicts([conflictItem(1n, 1n)]);
+    const user = userEvent.setup();
+    renderApp();
+    await openResearchIntake(user);
+
+    await user.click(
+      screen.getByTestId("research_intake.open_conflict_review"),
+    );
+    await screen.findByRole("heading", { name: "Conflict Review" });
+
+    // The disputed values are shown side by side with the canonical and
+    // proposed owners clearly separated.
+    expect(screen.getByText("Existing · canonical")).toBeInTheDocument();
+    expect(screen.getByText("1899")).toBeInTheDocument();
+    expect(screen.getByText("Proposed")).toBeInTheDocument();
+    expect(screen.getByText("1898")).toBeInTheDocument();
+
+    // The linked finding's evidence label and its source are resolved and
+    // shown so the steward decides with full provenance. This provenance
+    // display is stable behavior the four-action change does not remove. The
+    // source title appears on both the existing/proposed provenance lines and
+    // the linked source card, so it may legitimately match more than once.
+    expect(screen.getByText("Documented")).toBeInTheDocument();
+    expect(screen.getAllByText("1900 census").length).toBeGreaterThan(0);
   });
 });

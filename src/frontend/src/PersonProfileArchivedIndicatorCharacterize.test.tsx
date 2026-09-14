@@ -107,10 +107,24 @@ const {
       return profiles[personId] ?? null;
     },
     async getMyProfile(): Promise<PersonProfile | null> {
+      if (!isAuthenticated) return null;
       const owned = Object.values(profiles).find(
         (p) => p.claimedByUserId?.toString() === currentPrincipal,
       );
-      return owned ?? null;
+      if (owned) return owned;
+      return {
+        personId: "self",
+        name: "Self Norwood",
+        livingStatus: LivingStatus.Living,
+        claimStatus: ClaimStatus.Claimed,
+        claimedByUserId: Principal.fromText(currentPrincipal),
+        preferredName: undefined,
+        story: undefined,
+        occupation: undefined,
+        birthInfo: undefined,
+        timeline: undefined,
+        privacySettings: undefined,
+      };
     },
     async getMyProfileClaim(): Promise<null> {
       return null;
@@ -323,30 +337,18 @@ describe("Person Profile archived-state seam", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("lets a guest open a profile and renders the Videos & Oral History section without add/record actions", async () => {
+  it("gates a guest out of Explore Family with the no-access state", async () => {
     seedJuliaProfile();
-    // Guest: not authenticated.
+    // Guest: not authenticated. Explore Family is private to approved family
+    // members, so a guest sees the no-access state instead of the family graph.
     const user = userEvent.setup();
     renderApp();
 
-    await openJuliaProfile(user);
+    await user.click(
+      screen.getByRole("button", { name: "Explore the Family" }),
+    );
 
-    // The Videos & Oral History section renders for the guest.
-    const section = screen.getByLabelText("Videos & Oral History");
-    expect(
-      within(section).getByText("No videos or oral histories yet"),
-    ).toBeInTheDocument();
-    // No add/record actions for guests.
-    expect(
-      within(section).queryByTestId("profile.videos.add_video_button"),
-    ).not.toBeInTheDocument();
-    expect(
-      within(section).queryByTestId(
-        "profile.videos.record_oral_history_button",
-      ),
-    ).not.toBeInTheDocument();
-    expect(
-      within(section).queryByTestId("profile.videos.add_audio_button"),
-    ).not.toBeInTheDocument();
+    expect(screen.getByTestId("family_access.no_access")).toBeInTheDocument();
+    expect(screen.getByText("Family only")).toBeInTheDocument();
   });
 });

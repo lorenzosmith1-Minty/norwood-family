@@ -89,7 +89,7 @@ mixin (
   /// who does not already exist. The user must then connect to an existing
   /// family member via a relationship request.
   public shared ({ caller }) func createMyself(name : Text) : async Result.Result<Types.PersonProfile, Types.CreateError> {
-    OwnershipLib.createMyself(profiles, notifications, name, caller);
+    OwnershipLib.createMyself(profiles, claims, notifications, name, caller);
   };
 
   /// Proposes a new relationship between two people. The request starts pending
@@ -135,13 +135,15 @@ mixin (
     OwnershipLib.setRelationshipPending(relationshipRequests, auditLog, requestId, caller);
   };
 
-  /// Updates an approved owner's own living profile fields. Never rewrites
+  /// Updates an approved owner's own living profile fields, or, for a Family
+  /// Steward, the fields of an unclaimed/historical profile. Never rewrites
   /// family relationships directly.
   public shared ({ caller }) func updateOwnProfile(
     personId : Types.PersonId,
     edits : Types.ProfileEdits,
   ) : async Result.Result<Types.PersonProfile, Types.EditError> {
-    OwnershipLib.updateOwnProfile(profiles, personId, caller, edits);
+    let isSteward = AccessControl.isAdmin(accessControlState, caller);
+    OwnershipLib.updateOwnProfile(profiles, personId, caller, isSteward, edits);
   };
 
   /// Lists in-app notification records for the signed-in caller.

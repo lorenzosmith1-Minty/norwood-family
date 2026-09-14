@@ -14,6 +14,8 @@ import {
   ARCHIVE_ITEM_TYPE_BADGE,
   ARCHIVE_ITEM_TYPE_LABELS,
   ArchiveItemType,
+  PRIVACY_LEVEL_BADGE,
+  PRIVACY_LEVEL_LABELS,
 } from "../types/archive";
 
 /** Type-appropriate icon shown in the card thumbnail for non-photo items. */
@@ -92,6 +94,12 @@ export function ArchiveCard({ item, index, onOpen }: ArchiveCardProps) {
             data-ocid={`archive.card.${position}.type_badge`}
           >
             {ARCHIVE_ITEM_TYPE_LABELS[item.itemType]}
+          </span>
+          <span
+            className={`privacy-badge ${PRIVACY_LEVEL_BADGE[item.privacyLevel]}`}
+            data-ocid={`archive.card.${position}.privacy_badge`}
+          >
+            {PRIVACY_LEVEL_LABELS[item.privacyLevel]}
           </span>
           {dateLabel ? (
             <span className="text-xs font-medium text-muted-foreground">

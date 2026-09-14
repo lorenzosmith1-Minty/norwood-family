@@ -8,6 +8,8 @@ import Text "mo:core/Text";
 import Time "mo:core/Time";
 import Types "../types/ownership";
 import GovernanceTypes "../types/governance";
+import ClaimPersistenceTypes "../types/claim-persistence";
+import ClaimPersistenceLib "../lib/claim-persistence";
 
 module {
   /// Returns the ownership/lifecycle state of a person profile, or `null` when
@@ -31,17 +33,19 @@ module {
     if (caller.isAnonymous()) {
       return #err(#NotSignedIn);
     };
+    // Enforce authoritative ownership and no-duplicate-claims rules via the
+    // claim-persistence checks: a user cannot claim a profile they already own
+    // or have a pending claim on, and a profile with an approved owner cannot be
+    // claimed by anyone else.
+    let eligibility = ClaimPersistenceLib.checkClaimEligibility(profiles, claims, personId, caller);
+    if (not eligibility.eligible) {
+      return #err(claimErrorFromEligibility(eligibility.reason));
+    };
     switch (profiles.get(personId)) {
       case null { #err(#ProfileNotFound) };
       case (?profile) {
         if (profile.livingStatus == #Deceased) {
           return #err(#DeceasedProfile);
-        };
-        if (profile.claimStatus == #Claimed) {
-          return #err(#AlreadyClaimed);
-        };
-        if (claims.toArray().any(func c = c.personId == personId and c.status == #Pending)) {
-          return #err(#AlreadyPending);
         };
         let claim : Types.ProfileClaim = {
           id = nextId(claims.toArray().map(func c = c.id));
@@ -269,12 +273,18 @@ module {
   /// relationship request. The creator owns the new profile.
   public func createMyself(
     profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    claims : List.List<Types.ProfileClaim>,
     notifications : List.List<Types.Notification>,
     name : Text,
     caller : Principal.Principal,
   ) : Result.Result<Types.PersonProfile, Types.CreateError> {
     if (caller.isAnonymous()) {
       return #err(#NotSignedIn);
+    };
+    // Do not create a duplicate when the caller already owns a profile (approved
+    // claim) or has a pending claim on one.
+    if (ClaimPersistenceLib.callerHasActiveOwnership(profiles, claims, caller)) {
+      return #err(#AlreadyOwned);
     };
     let personId = caller.toText();
     let profile : Types.PersonProfile = {
@@ -465,6 +475,7 @@ module {
     profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
     personId : Types.PersonId,
     caller : Principal.Principal,
+    isSteward : Bool,
     edits : Types.ProfileEdits,
   ) : Result.Result<Types.PersonProfile, Types.EditError> {
     if (caller.isAnonymous()) {
@@ -473,11 +484,22 @@ module {
     switch (profiles.get(personId)) {
       case null { #err(#ProfileNotFound) };
       case (?profile) {
-        if (profile.livingStatus == #Deceased) {
-          return #err(#DeceasedProfile);
-        };
-        if (profile.claimedByUserId != ?caller) {
+        // The caller may edit the profile when they are its owner, or when they
+        // are a Family Steward editing an unclaimed/historical profile. A
+        // steward must never edit a profile claimed by another user.
+        let isOwner = profile.claimedByUserId == ?caller;
+        let isStewardEditable = isSteward and profile.claimedByUserId == null;
+        if (not isOwner and not isStewardEditable) {
           return #err(#NotOwner);
+        };
+        // A deceased profile is non-editable for everyone except a Family
+        // Steward editing an unclaimed/historical profile (isStewardEditable).
+        // This guard runs after the ownership check so a steward editing an
+        // unclaimed deceased profile is allowed, while an owner (or a steward
+        // editing a claimed deceased profile, which already returned #NotOwner)
+        // is still blocked.
+        if (profile.livingStatus == #Deceased and not isStewardEditable) {
+          return #err(#DeceasedProfile);
         };
         let updated : Types.PersonProfile = {
           profile with
@@ -685,6 +707,24 @@ module {
   };
 
   // --- helpers ---
+
+  /// Maps a claim-persistence eligibility reason onto the public `ClaimError`
+  /// variants. Both "already owned by the caller" and "an approved owner exists"
+  /// surface as `#AlreadyClaimed` in the existing public API.
+  func claimErrorFromEligibility(reason : ?ClaimPersistenceTypes.ClaimPersistenceError) : Types.ClaimError {
+    switch (reason) {
+      case (?r) {
+        switch (r) {
+          case (#NotSignedIn) #NotSignedIn;
+          case (#ProfileNotFound) #ProfileNotFound;
+          case (#AlreadyOwned) #AlreadyClaimed;
+          case (#ApprovedOwnerExists) #AlreadyClaimed;
+          case (#AlreadyPending) #AlreadyPending;
+        };
+      };
+      case null #AlreadyClaimed;
+    };
+  };
 
   /// Computes the next id: one greater than the largest existing id, or `0`
   /// when the collection is empty.

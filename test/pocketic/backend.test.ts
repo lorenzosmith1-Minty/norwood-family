@@ -219,6 +219,110 @@ it("does not let a non-admin list or approve pending contributions", async () =>
 });
 
 // ---------------------------------------------------------------------------
+// Archive privacy enforcement (cover for the server-side privacy requirement).
+// Approved archive items are returned to a caller only when the caller's access
+// matches the item's privacy level: Public items are visible to everyone,
+// FamilyOnly items require approved family membership, and Private items are
+// visible only to their contributor or an admin. This is enforced in the
+// backend, not just displayed client-side — the frontend suite mocks the actor
+// and cannot see it, so it is asserted here against the real canister.
+// ---------------------------------------------------------------------------
+
+it("enforces archive privacy levels server-side: a guest sees only Public approved items", async () => {
+  const privacySetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
+  const privacyActor = privacySetup.actor;
+
+  // ADMIN becomes the Family Steward; CONTRIBUTOR registers as a #user.
+  privacyActor.setIdentity(adminIdentity);
+  await privacyActor._initialize_access_control();
+  privacyActor.setIdentity(contributorIdentity);
+  await privacyActor._initialize_access_control();
+
+  // A contributor submits three approved items with different privacy levels.
+  privacyActor.setIdentity(contributorIdentity);
+  const publicItem = await privacyActor.submitArchiveItem(
+    "Public letter",
+    "A public letter.",
+    { Document: null },
+    blob,
+    "1924",
+    [1924n],
+    ["letters"],
+    ["julia"],
+    ["branch-1"],
+    { Original: null },
+    { Public: null },
+    { Standard: null },
+    [],
+  );
+  const familyItem = await privacyActor.submitArchiveItem(
+    "Family letter",
+    "A family letter.",
+    { Document: null },
+    blob,
+    "1924",
+    [1924n],
+    ["letters"],
+    ["julia"],
+    ["branch-1"],
+    { Original: null },
+    { FamilyOnly: null },
+    { Standard: null },
+    [],
+  );
+  const privateItem = await privacyActor.submitArchiveItem(
+    "Private letter",
+    "A private letter.",
+    { Document: null },
+    blob,
+    "1924",
+    [1924n],
+    ["letters"],
+    ["julia"],
+    ["branch-1"],
+    { Original: null },
+    { Private: null },
+    { Standard: null },
+    [],
+  );
+
+  // Approve all three so they enter the archive.
+  privacyActor.setIdentity(adminIdentity);
+  await privacyActor.approveArchiveItem(publicItem.id);
+  await privacyActor.approveArchiveItem(familyItem.id);
+  await privacyActor.approveArchiveItem(privateItem.id);
+
+  // A guest (anonymous, no approved claim) sees ONLY the Public item — the
+  // FamilyOnly and Private items are not returned to them.
+  const guestActor = pic!.createActor<_SERVICE>(idlFactory, privacySetup.canisterId);
+  const guestView = await guestActor.listApprovedArchiveItems();
+  expect(guestView.map((i) => i.id)).toEqual([publicItem.id]);
+
+  // The contributor sees their own Private item plus the Public item, but NOT
+  // the FamilyOnly item (they are not an approved family member).
+  privacyActor.setIdentity(contributorIdentity);
+  const contributorView = await privacyActor.listApprovedArchiveItems();
+  expect(contributorView.map((i) => i.id).sort()).toEqual(
+    [publicItem.id, privateItem.id].sort(),
+  );
+
+  // An approved family member (a caller holding an approved claim) sees Public
+  // + FamilyOnly, but not another contributor's Private item.
+  privacyActor.setIdentity(memberAIdentity);
+  await privacyActor._initialize_access_control();
+  const claim = (await privacyActor.requestProfileClaim("clayton")) as {
+    ok: { id: bigint };
+  };
+  privacyActor.setIdentity(adminIdentity);
+  await privacyActor.approveProfileClaim(claim.ok.id);
+  privacyActor.setIdentity(memberAIdentity);
+  const memberView = await privacyActor.listApprovedArchiveItems();
+  expect(memberView.map((i) => i.id).sort()).toEqual(
+    [publicItem.id, familyItem.id].sort(),
+  );
+});
+
+// ---------------------------------------------------------------------------
 // Pending Contributions count derives from canonical pending records (cover for
 // the pending-badge repair). The Steward-facing badge must reflect the same
 // canonical backend pending data that listPendingArchiveItems returns, so a
@@ -421,6 +525,11 @@ it("prevents duplicate claim submissions for the same person", async () => {
 it("updates the canonical record in place via updateOwnProfile, preserving claim ownership", async () => {
   // The claim-flow test left lorenzoSmithJr CLAIMED by CLAIMANT on claimActor.
   claimActor.setIdentity(claimantIdentity);
+  // updateOwnProfile now resolves the caller's steward status via isAdmin, which
+  // requires the caller to be registered (the real app registers every signed-in
+  // user through the Internet Identity sign-in flow). Register CLAIMANT as a
+  // #user so the owner-edit path is exercised as it is in the deployed app.
+  await claimActor._initialize_access_control();
 
   const edits = {
     preferredName: ["Lorenzo Smith Jr."],
@@ -530,6 +639,107 @@ it("rejects a non-owner from updateOwnProfile with NotOwner", async () => {
       claimedByUserId: [CLAIMANT],
     }),
   ]);
+});
+
+// ---------------------------------------------------------------------------
+// Steward-authorized update path (cover for the profile-edit hydration build).
+// updateOwnProfile now lets a Family Steward edit an unclaimed/historical
+// profile (treated as editing an existing profile, never creating a new one),
+// and the #DeceasedProfile guard runs AFTER the ownership check so a steward
+// editing an unclaimed deceased profile is allowed while an owner (or a steward
+// editing a profile claimed by another user) is still blocked. These run
+// against a dedicated canister so the claim/approve state never leaks into the
+// shared `actor` canister.
+// ---------------------------------------------------------------------------
+
+it("lets a Family Steward edit an unclaimed living profile via updateOwnProfile", async () => {
+  const stewardSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
+  const stewardActor = stewardSetup.actor;
+
+  // STEWARD becomes the Family Steward (first caller to _initialize_access_control).
+  stewardActor.setIdentity(stewardIdentity);
+  await stewardActor._initialize_access_control();
+
+  // 'clayton' is a seeded living, unclaimed profile. A steward may edit it as
+  // an existing profile — the update succeeds and the canonical record is
+  // updated in place (same personId, still unclaimed, no duplicate created).
+  const result = await stewardActor.updateOwnProfile("clayton", {
+    preferredName: ["Clayton Norwood"],
+    firstName: [],
+    middleName: [],
+    lastName: [],
+    suffix: ["II"],
+    nickname: [],
+    birthDate: [],
+    birthplace: [],
+    currentLocation: [],
+    occupation: [],
+    livingStatus: [],
+    shortBio: [],
+    longerStory: [],
+    story: [],
+    birthInfo: [],
+    timeline: [],
+    privacySettings: [],
+  });
+  expect(result).toEqual({
+    ok: expect.objectContaining({
+      personId: "clayton",
+      preferredName: ["Clayton Norwood"],
+      suffix: ["II"],
+      claimStatus: { Unclaimed: null },
+    }),
+  });
+
+  // The canonical record is updated in place — same personId, still unclaimed.
+  const profile = await stewardActor.getPersonProfile("clayton");
+  expect(profile).toEqual([
+    expect.objectContaining({
+      personId: "clayton",
+      suffix: ["II"],
+      claimStatus: { Unclaimed: null },
+    }),
+  ]);
+});
+
+it("lets a Family Steward edit an unclaimed deceased profile (reordered guard)", async () => {
+  const deceasedSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
+  const deceasedActor = deceasedSetup.actor;
+
+  // STEWARD becomes the Family Steward.
+  deceasedActor.setIdentity(stewardIdentity);
+  await deceasedActor._initialize_access_control();
+
+  // 'julia' is a seeded deceased, unclaimed profile. The #DeceasedProfile guard
+  // runs after the ownership check, so a steward editing an unclaimed deceased
+  // profile is allowed (isStewardEditable) rather than blocked.
+  const result = await deceasedActor.updateOwnProfile("julia", {
+    preferredName: ["Julia Norwood"],
+    firstName: [],
+    middleName: [],
+    lastName: [],
+    suffix: [],
+    nickname: [],
+    birthDate: [],
+    birthplace: [],
+    currentLocation: [],
+    occupation: [],
+    livingStatus: [],
+    shortBio: [],
+    longerStory: [],
+    story: [],
+    birthInfo: [],
+    timeline: [],
+    privacySettings: [],
+  });
+  expect(result).toEqual({
+    ok: expect.objectContaining({
+      personId: "julia",
+      preferredName: ["Julia Norwood"],
+      livingStatus: { Deceased: null },
+      claimStatus: { Unclaimed: null },
+    }),
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -1680,4 +1890,393 @@ it("rejects and marks-needs-research Relationship proposals, leaving the family 
   const queue = await relActor.getReviewQueue();
   expect(queue.rejected).toBe(1n);
   expect(queue.needsResearch).toBe(1n);
+});
+
+// ---------------------------------------------------------------------------
+// Conflict Review lifecycle (cover for the Conflict Review change). When a
+// Proposed Finding labelled `#Conflicting` is approved, it is routed to a
+// Conflict Review item instead of silently overwriting canonical data. The item
+// captures the affected Person, the disputed field, both the existing canonical
+// value and the proposed value, the proposed finding's source, and its evidence
+// label. Canonical data is never altered at creation. A steward then resolves
+// the item with one of four explicit actions (Keep Existing, Replace Existing,
+// Preserve Both / Unresolved, Needs Research), each recording an audit entry.
+// These tests run against dedicated canisters so the resolution state never
+// leaks into the shared `actor` canister the other tests use.
+// ---------------------------------------------------------------------------
+
+// A helper that seeds a `#Conflicting` PersonFact finding on the canonical
+// lorenzoSmithJr profile (whose preferredName is 'Waxx Minty' from the
+// 20260907_000000.mo migration) and routes it to Conflict Review by approving
+// it as a steward. Returns the created conflict review item id and the finding
+// id.
+async function routeConflictingFindingToReview(
+  conflictActor: _SERVICE,
+): Promise<{ conflictId: bigint; findingId: bigint }> {
+  // ADMIN becomes the Family Steward; CONTRIBUTOR registers as a #user.
+  conflictActor.setIdentity(adminIdentity);
+  await conflictActor._initialize_access_control();
+  conflictActor.setIdentity(contributorIdentity);
+  await conflictActor._initialize_access_control();
+
+  // A signed-in contributor creates a source and a `#Conflicting` PersonFact
+  // finding that disagrees with the canonical preferredName 'Waxx Minty'.
+  conflictActor.setIdentity(contributorIdentity);
+  const sourceCreated = await conflictActor.createSource(
+    "1900 census, Norwood household",
+    { CensusCitation: null },
+    "Census record listing the Norwood family.",
+    [],
+  );
+  const sourceId = (sourceCreated as { ok: { id: bigint } }).ok.id;
+  const findingCreated = await conflictActor.createFinding(
+    "Preferred name of Lorenzo Smith Jr.",
+    { Conflicting: null },
+    { PersonFact: null },
+    {
+      PersonFact: {
+        field: "preferredName",
+        value: "Lorenzo Smith Jr.",
+        personId: "lorenzoSmithJr",
+      },
+    },
+    sourceId,
+    ["lorenzoSmithJr"],
+    [],
+  );
+  expect(findingCreated).toEqual({
+    ok: expect.objectContaining({
+      title: "Preferred name of Lorenzo Smith Jr.",
+      status: { Pending: null },
+    }),
+  });
+  const findingId = (findingCreated as { ok: { id: bigint } }).ok.id;
+
+  // A steward approves the `#Conflicting` finding, which routes it to Conflict
+  // Review instead of silently overwriting canonical data.
+  conflictActor.setIdentity(adminIdentity);
+  const approved = await conflictActor.approveFinding(findingId);
+  expect(approved).toEqual([
+    expect.objectContaining({
+      id: findingId,
+      status: { Conflicting: null },
+    }),
+  ]);
+
+  // The conflict review item was created with the canonical and proposed values
+  // and the proposed finding's source.
+  const items = await conflictActor.listConflictReviewItems();
+  const conflict = items.find((c) => c.findingId === findingId);
+  expect(conflict).toBeDefined();
+  expect(conflict).toMatchObject({
+    findingId,
+    personId: ["lorenzoSmithJr"],
+    field: "preferredName",
+    canonicalValue: "Waxx Minty",
+    proposedValue: "Lorenzo Smith Jr.",
+    proposedSourceId: [sourceId],
+    evidenceLabel: { Conflicting: null },
+    stewardNotes: "",
+  });
+  return { conflictId: conflict!.id, findingId };
+}
+
+it("creates a Conflict Review item on a disagreeing finding and leaves canonical data unchanged", async () => {
+  const conflictSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
+  const conflictActor = conflictSetup.actor;
+
+  const { conflictId, findingId } = await routeConflictingFindingToReview(conflictActor);
+
+  // The conflict review item exists with the disputed field and both values.
+  const items = await conflictActor.listConflictReviewItems();
+  const conflict = items.find((c) => c.id === conflictId);
+  expect(conflict).toMatchObject({
+    id: conflictId,
+    findingId,
+    personId: ["lorenzoSmithJr"],
+    field: "preferredName",
+    canonicalValue: "Waxx Minty",
+    proposedValue: "Lorenzo Smith Jr.",
+    evidenceLabel: { Conflicting: null },
+  });
+
+  // Canonical data is NEVER altered at conflict creation: the canonical
+  // preferredName stays 'Waxx Minty' before any review decision.
+  const profile = await conflictActor.getPersonProfile("lorenzoSmithJr");
+  expect(profile).toEqual([
+    expect.objectContaining({
+      personId: "lorenzoSmithJr",
+      preferredName: ["Waxx Minty"],
+    }),
+  ]);
+});
+
+it("resolves a conflict with Keep Existing, leaving canonical unchanged and preserving the proposed research", async () => {
+  const conflictSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
+  const conflictActor = conflictSetup.actor;
+
+  const { conflictId, findingId } = await routeConflictingFindingToReview(conflictActor);
+
+  // Keep Existing resolves the conflict (#Approved) and leaves canonical data
+  // unchanged.
+  conflictActor.setIdentity(adminIdentity);
+  const resolved = await conflictActor.resolveConflict(
+    conflictId,
+    { KeepExisting: null },
+    "Canonical record is authoritative",
+  );
+  expect(resolved).toEqual([
+    expect.objectContaining({
+      id: conflictId,
+      status: { Approved: null },
+      stewardNotes: "Canonical record is authoritative",
+      resolvedBy: [ADMIN],
+    }),
+  ]);
+
+  // Canonical data is unchanged.
+  const profile = await conflictActor.getPersonProfile("lorenzoSmithJr");
+  expect(profile).toEqual([
+    expect.objectContaining({ preferredName: ["Waxx Minty"] }),
+  ]);
+
+  // The linked finding is marked Rejected (the proposed research is preserved
+  // but not adopted), and the conflict is no longer unresolved.
+  const finding = await conflictActor.getFinding(findingId);
+  expect(finding).toEqual([
+    expect.objectContaining({ id: findingId, status: { Rejected: null } }),
+  ]);
+  const items = await conflictActor.listConflictReviewItems();
+  expect(items.find((c) => c.id === conflictId)!.status).toEqual({ Approved: null });
+
+  // The resolution is recorded in Audit History.
+  const audit = await conflictActor.getResearchAuditLog();
+  expect(
+    audit.some(
+      (e) =>
+        e.action === "ConflictResolved" &&
+        e.summary === "Conflict Review item #" + conflictId.toString() + " resolved (KeepExisting)",
+    ),
+  ).toBe(true);
+});
+
+it("resolves a conflict with Replace Existing, updating canonical once and preserving old + new provenance", async () => {
+  const conflictSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
+  const conflictActor = conflictSetup.actor;
+
+  const { conflictId, findingId } = await routeConflictingFindingToReview(conflictActor);
+
+  // Replace Existing writes the proposed value into canonical data exactly once
+  // and resolves the conflict (#Approved).
+  conflictActor.setIdentity(adminIdentity);
+  const resolved = await conflictActor.resolveConflict(
+    conflictId,
+    { ReplaceExisting: null },
+    "New source is more reliable",
+  );
+  expect(resolved).toEqual([
+    expect.objectContaining({
+      id: conflictId,
+      status: { Approved: null },
+      stewardNotes: "New source is more reliable",
+      resolvedBy: [ADMIN],
+    }),
+  ]);
+
+  // The canonical preferredName is now the proposed value.
+  const profile = await conflictActor.getPersonProfile("lorenzoSmithJr");
+  expect(profile).toEqual([
+    expect.objectContaining({
+      personId: "lorenzoSmithJr",
+      preferredName: ["Lorenzo Smith Jr."],
+    }),
+  ]);
+
+  // The old value and its provenance are preserved in the conflict/audit
+  // history: the conflict item still records the canonical value 'Waxx Minty'
+  // it replaced.
+  const items = await conflictActor.listConflictReviewItems();
+  expect(items.find((c) => c.id === conflictId)).toMatchObject({
+    canonicalValue: "Waxx Minty",
+    proposedValue: "Lorenzo Smith Jr.",
+  });
+
+  // The linked finding is marked Approved (the proposed research was adopted).
+  const finding = await conflictActor.getFinding(findingId);
+  expect(finding).toEqual([
+    expect.objectContaining({ id: findingId, status: { Approved: null } }),
+  ]);
+
+  // The resolution is recorded in Audit History.
+  const audit = await conflictActor.getResearchAuditLog();
+  expect(
+    audit.some(
+      (e) =>
+        e.action === "ConflictResolved" &&
+        e.summary === "Conflict Review item #" + conflictId.toString() + " resolved (ReplaceExisting)",
+    ),
+  ).toBe(true);
+});
+
+it("keeps both values visible as an unresolved conflict with Preserve Both", async () => {
+  const conflictSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
+  const conflictActor = conflictSetup.actor;
+
+  const { conflictId } = await routeConflictingFindingToReview(conflictActor);
+
+  // Preserve Both keeps the item #Conflicting (unresolved) without silently
+  // choosing either value, and leaves canonical data unchanged.
+  conflictActor.setIdentity(adminIdentity);
+  const resolved = await conflictActor.resolveConflict(
+    conflictId,
+    { PreserveBoth: null },
+    "Keep both until more evidence",
+  );
+  expect(resolved).toEqual([
+    expect.objectContaining({
+      id: conflictId,
+      status: { Conflicting: null },
+      stewardNotes: "Keep both until more evidence",
+    }),
+  ]);
+
+  // Canonical data is unchanged.
+  const profile = await conflictActor.getPersonProfile("lorenzoSmithJr");
+  expect(profile).toEqual([
+    expect.objectContaining({ preferredName: ["Waxx Minty"] }),
+  ]);
+
+  // The conflict remains unresolved (#Conflicting) and is surfaced by
+  // listConflictsForPerson.
+  const items = await conflictActor.listConflictReviewItems();
+  expect(items.find((c) => c.id === conflictId)!.status).toEqual({ Conflicting: null });
+  const surfaced = await conflictActor.listConflictsForPerson("lorenzoSmithJr");
+  expect(surfaced.map((c) => c.id)).toContain(conflictId);
+});
+
+it("retains the conflict with Needs Research status, leaving canonical unchanged", async () => {
+  const conflictSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
+  const conflictActor = conflictSetup.actor;
+
+  const { conflictId, findingId } = await routeConflictingFindingToReview(conflictActor);
+
+  // Needs Research leaves canonical data unchanged and retains the conflict
+  // with #NeedsResearch status.
+  conflictActor.setIdentity(adminIdentity);
+  const resolved = await conflictActor.resolveConflict(
+    conflictId,
+    { NeedsResearch: null },
+    "Need to verify the source",
+  );
+  expect(resolved).toEqual([
+    expect.objectContaining({
+      id: conflictId,
+      status: { NeedsResearch: null },
+      stewardNotes: "Need to verify the source",
+    }),
+  ]);
+
+  // Canonical data is unchanged.
+  const profile = await conflictActor.getPersonProfile("lorenzoSmithJr");
+  expect(profile).toEqual([
+    expect.objectContaining({ preferredName: ["Waxx Minty"] }),
+  ]);
+
+  // The conflict is retained with #NeedsResearch status and surfaced.
+  const items = await conflictActor.listConflictReviewItems();
+  expect(items.find((c) => c.id === conflictId)!.status).toEqual({ NeedsResearch: null });
+  const surfaced = await conflictActor.listConflictsForPerson("lorenzoSmithJr");
+  expect(surfaced.map((c) => c.id)).toContain(conflictId);
+
+  // The linked finding is marked NeedsResearch.
+  const finding = await conflictActor.getFinding(findingId);
+  expect(finding).toEqual([
+    expect.objectContaining({ id: findingId, status: { NeedsResearch: null } }),
+  ]);
+});
+
+it("records audit entries for every conflict resolution and persists state across callers", async () => {
+  const conflictSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
+  const conflictActor = conflictSetup.actor;
+
+  const { conflictId } = await routeConflictingFindingToReview(conflictActor);
+
+  // Resolve the conflict as the steward.
+  conflictActor.setIdentity(adminIdentity);
+  await conflictActor.resolveConflict(
+    conflictId,
+    { KeepExisting: null },
+    "Canonical is authoritative",
+  );
+
+  // The audit log records the resolution with the acting steward and timestamp.
+  const audit = await conflictActor.getResearchAuditLog();
+  const resolution = audit.find(
+    (e) =>
+      e.action === "ConflictResolved" &&
+      e.summary === "Conflict Review item #" + conflictId.toString() + " resolved (KeepExisting)",
+  );
+  expect(resolution).toBeDefined();
+  expect(resolution!.actorId).toEqual(ADMIN);
+  expect(resolution!.timestamp).toEqual(expect.any(BigInt));
+
+  // State persists across sign out/sign in: a fresh actor (a different caller
+  // session) reading the same canister still sees the resolved conflict and the
+  // unchanged canonical value. The conflict item is steward-readable and the
+  // canonical profile is public.
+  const freshActor = pic!.createActor<_SERVICE>(idlFactory, conflictSetup.canisterId);
+  freshActor.setIdentity(adminIdentity);
+  const items = await freshActor.listConflictReviewItems();
+  expect(items.find((c) => c.id === conflictId)!.status).toEqual({ Approved: null });
+  const profile = await freshActor.getPersonProfile("lorenzoSmithJr");
+  expect(profile).toEqual([
+    expect.objectContaining({ preferredName: ["Waxx Minty"] }),
+  ]);
+});
+
+it("gates listConflictReviewItems and resolveConflict to Family Stewards", async () => {
+  const conflictSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
+  const conflictActor = conflictSetup.actor;
+
+  const { conflictId } = await routeConflictingFindingToReview(conflictActor);
+
+  // A signed-in non-steward cannot list or resolve conflict review items.
+  conflictActor.setIdentity(contributorIdentity);
+  await expect(conflictActor.listConflictReviewItems()).rejects.toThrow();
+  await expect(
+    conflictActor.resolveConflict(conflictId, { KeepExisting: null }, ""),
+  ).rejects.toThrow();
+
+  // An anonymous caller is also rejected.
+  const anonymousActor = pic!.createActor<_SERVICE>(idlFactory, conflictSetup.canisterId);
+  await expect(anonymousActor.listConflictReviewItems()).rejects.toThrow();
+  await expect(
+    anonymousActor.resolveConflict(conflictId, { KeepExisting: null }, ""),
+  ).rejects.toThrow();
+});
+
+it("counts each unresolved conflict exactly once in the review queue, not double-counting the linked finding", async () => {
+  const conflictSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
+  const conflictActor = conflictSetup.actor;
+
+  const { conflictId } = await routeConflictingFindingToReview(conflictActor);
+
+  // The conflict item is created as #Conflicting (unresolved) and the linked
+  // finding is excluded from the queue, so the unresolved conflict is counted
+  // exactly once — not double-counted as both a finding and a conflict item.
+  conflictActor.setIdentity(adminIdentity);
+  const queue = await conflictActor.getReviewQueue();
+  expect(queue.conflicting).toBe(1n);
+
+  // The linked finding is not present as a separate queue item.
+  const findingItems = queue.items.filter((i) => i.kind.Finding !== undefined);
+  expect(findingItems).toHaveLength(0);
+
+  // The conflict item is present in the queue exactly once, as #Conflicting.
+  const conflictItems = queue.items.filter((i) => i.kind.ConflictReview !== undefined);
+  expect(conflictItems).toHaveLength(1);
+  expect(conflictItems[0]).toMatchObject({
+    id: conflictId,
+    status: { Conflicting: null },
+  });
 });

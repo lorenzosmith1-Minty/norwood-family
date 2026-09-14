@@ -69,6 +69,18 @@ export const PRIVACY_LEVEL_LABELS: Record<PrivacyLevel, string> = {
   [PrivacyLevel.Private]: "Private",
 };
 
+/**
+ * Privacy badge modifier class (from index.css) for each privacy level. Used
+ * with the shared `.privacy-badge` dot-pill so server-enforced archive privacy
+ * reads native to the archive: Public = open warm green, FamilyOnly = dusty
+ * bronze, Private = terracotta lock.
+ */
+export const PRIVACY_LEVEL_BADGE: Record<PrivacyLevel, string> = {
+  [PrivacyLevel.Public]: "privacy-public",
+  [PrivacyLevel.FamilyOnly]: "privacy-family",
+  [PrivacyLevel.Private]: "privacy-private",
+};
+
 /** Friendly labels for archive item status. */
 export const ARCHIVE_ITEM_STATUS_LABELS: Record<ArchiveItemStatus, string> = {
   [ArchiveItemStatus.Pending]: "Pending",

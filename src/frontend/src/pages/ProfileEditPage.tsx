@@ -17,10 +17,11 @@ import {
   Trash2,
   UserCheck,
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { RelationshipRequestForm } from "../components/RelationshipRequestForm";
 import { StatusBadge } from "../components/StatusBadge";
 import { useIsAdmin } from "../hooks/useArchiveStorage";
+import { resolveCanonicalPersonProfile } from "../hooks/useCanonicalPerson";
 import {
   useAddPhoto,
   usePhotos,
@@ -41,7 +42,7 @@ import {
   type ProfileDraft,
   type TimelineDraft,
 } from "../types/ownership";
-import { profiles } from "./PersonProfilePage";
+import { type PersonProfile, profiles } from "./PersonProfilePage";
 
 /**
  * Owner editing of a claimed living profile. The signed-in user whose principal
@@ -114,52 +115,262 @@ function parseTimelineLine(line: string): TimelineDraft {
   return { id: 0, date: "", title: "", detail: line, location: "" };
 }
 
-/** Build the editable draft from a backend profile record. */
-function fromBackend(backend: BackendPersonProfile): ProfileDraft {
+/** Look up a fact value by label from the resolved canonical profile record. */
+function factValue(canonical: PersonProfile, label: string): string {
+  return canonical.facts.find((fact) => fact.label === label)?.value ?? "";
+}
+
+/**
+ * True when a canonical fact value represents real data rather than a
+ * placeholder ("Not recorded", "Unknown", etc.). Placeholder values must never
+ * be hydrated into editable fields as if they were real facts.
+ */
+function isMeaningfulValue(value: string): boolean {
+  const v = value.trim().toLowerCase();
+  if (!v) return false;
+  return !/^(not recorded|unknown|uncertain|unresolved|none|n\/a)$/.test(v);
+}
+
+/**
+ * Build the editable draft from the SAME resolved canonical Person record that
+ * the profile page displays. The canonical PersonProfile is resolved through
+ * the shared `resolveCanonicalPersonProfile` adapter (backend record merged
+ * with the static canonical `profiles` record), so the editor initializes from
+ * the exact values already shown on the profile page rather than a separate,
+ * incomplete copy of the data.
+ *
+ * The backend record is the source of truth and always wins; the resolved
+ * canonical record fills in the gaps for seeded profiles whose backend record
+ * carries only `name` (all owner-editable fields null). Only the Preferred /
+ * Display Name is populated from the canonical display name, and only when a
+ * static canonical record exists (`hasCanonical`): for a profile with no static
+ * canonical record (e.g. a createMyself profile keyed by the caller's
+ * principal), the preferred name stays blank rather than being invented from
+ * the backend's full `name`. The first/middle/last/suffix component fields are
+ * NEVER invented from the display name: for records like Lula Mae where the
+ * data model stores only a full `name`, those component fields stay blank so
+ * the user can fill them in rather than guessing at name boundaries. A
+ * backend-carried component value still wins.
+ */
+function fromPersonProfile(
+  personProfile: PersonProfile,
+  backend: BackendPersonProfile,
+  hasCanonical: boolean,
+): ProfileDraft {
+  const born = factValue(personProfile, "Born");
+  const birthplace = factValue(personProfile, "Birthplace");
+  const location = factValue(personProfile, "Location");
+  const occupation = factValue(personProfile, "Occupation");
+
   return {
-    preferredName: backend.preferredName ?? "",
+    preferredName:
+      backend.preferredName || (hasCanonical ? personProfile.name : ""),
     firstName: backend.firstName ?? "",
     middleName: backend.middleName ?? "",
     lastName: backend.lastName ?? "",
     suffix: backend.suffix ?? "",
     nickname: backend.nickname ?? "",
-    birthDate: backend.birthDate ?? "",
+    birthDate: backend.birthDate || (isMeaningfulValue(born) ? born : ""),
     birthYearOnly: false,
-    birthplace: backend.birthplace ?? "",
-    currentLocation: backend.currentLocation ?? "",
-    occupation: backend.occupation ?? "",
+    birthplace:
+      backend.birthplace || (isMeaningfulValue(birthplace) ? birthplace : ""),
+    currentLocation:
+      backend.currentLocation || (isMeaningfulValue(location) ? location : ""),
+    occupation:
+      backend.occupation || (isMeaningfulValue(occupation) ? occupation : ""),
     livingStatus: backend.livingStatus ?? LivingStatus.Living,
     shortBio: backend.shortBio ?? "",
-    longerStory: backend.longerStory ?? "",
-    timeline: (backend.timeline ?? []).map((line, index) => ({
-      ...parseTimelineLine(line),
-      id: index,
-    })),
+    longerStory: backend.longerStory || personProfile.story,
+    timeline: backend.timeline?.length
+      ? backend.timeline.map((line, index) => ({
+          ...parseTimelineLine(line),
+          id: index,
+        }))
+      : personProfile.timeline.map((entry, index) => ({
+          id: index,
+          date: entry.date,
+          title: entry.title,
+          detail: entry.detail,
+          location: "",
+        })),
     privacySettings: backend.privacySettings ?? PrivacyLevel.FamilyOnly,
   };
 }
 
-/** Map the editable draft to a backend ProfileEdits payload. */
-function toEdits(draft: ProfileDraft): ProfileEdits {
+/**
+ * Merge a saved local draft over the canonical hydrated draft. Non-empty saved
+ * values override the canonical value; blank saved values leave the canonical
+ * value intact, so a partial stale browser draft (e.g. only a suffix) never
+ * blanks out the complete canonical Person data. livingStatus and
+ * privacySettings always carry a value in a saved draft, so they always
+ * override. The timeline is replaced only when the saved draft carries entries.
+ */
+function mergeDraftOverCanonical(
+  canonical: ProfileDraft,
+  saved: ProfileDraft,
+): ProfileDraft {
+  const mergeString = (savedValue: string, canonicalValue: string) =>
+    savedValue.trim() !== "" ? savedValue : canonicalValue;
+
   return {
-    preferredName: draft.preferredName.trim(),
-    firstName: draft.firstName.trim(),
-    middleName: draft.middleName.trim(),
-    lastName: draft.lastName.trim(),
-    suffix: draft.suffix.trim(),
-    nickname: draft.nickname.trim(),
-    birthDate: draft.birthDate.trim(),
-    birthplace: draft.birthplace.trim(),
-    currentLocation: draft.currentLocation.trim(),
-    occupation: draft.occupation.trim(),
-    livingStatus: draft.livingStatus,
-    shortBio: draft.shortBio.trim(),
-    longerStory: draft.longerStory.trim(),
-    timeline: draft.timeline
-      .map(serializeTimelineEntry)
-      .filter((line) => line.trim() !== ""),
-    privacySettings: draft.privacySettings.trim(),
+    preferredName: mergeString(saved.preferredName, canonical.preferredName),
+    firstName: mergeString(saved.firstName, canonical.firstName),
+    middleName: mergeString(saved.middleName, canonical.middleName),
+    lastName: mergeString(saved.lastName, canonical.lastName),
+    suffix: mergeString(saved.suffix, canonical.suffix),
+    nickname: mergeString(saved.nickname, canonical.nickname),
+    birthDate: mergeString(saved.birthDate, canonical.birthDate),
+    birthYearOnly: saved.birthYearOnly || canonical.birthYearOnly,
+    birthplace: mergeString(saved.birthplace, canonical.birthplace),
+    currentLocation: mergeString(
+      saved.currentLocation,
+      canonical.currentLocation,
+    ),
+    occupation: mergeString(saved.occupation, canonical.occupation),
+    livingStatus: saved.livingStatus,
+    shortBio: mergeString(saved.shortBio, canonical.shortBio),
+    longerStory: mergeString(saved.longerStory, canonical.longerStory),
+    timeline: saved.timeline.length > 0 ? saved.timeline : canonical.timeline,
+    privacySettings: saved.privacySettings,
   };
+}
+
+/**
+ * True when two drafts carry identical content. Used to detect whether the
+ * current draft differs from the saved Profile (the canonical hydrated draft):
+ * when they match, the editor reflects the saved Profile; when they differ, a
+ * local draft is pending and must be labeled as such.
+ */
+function draftsEqual(a: ProfileDraft, b: ProfileDraft): boolean {
+  return (
+    a.preferredName === b.preferredName &&
+    a.firstName === b.firstName &&
+    a.middleName === b.middleName &&
+    a.lastName === b.lastName &&
+    a.suffix === b.suffix &&
+    a.nickname === b.nickname &&
+    a.birthDate === b.birthDate &&
+    a.birthYearOnly === b.birthYearOnly &&
+    a.birthplace === b.birthplace &&
+    a.currentLocation === b.currentLocation &&
+    a.occupation === b.occupation &&
+    a.livingStatus === b.livingStatus &&
+    a.shortBio === b.shortBio &&
+    a.longerStory === b.longerStory &&
+    a.privacySettings === b.privacySettings &&
+    JSON.stringify(a.timeline) === JSON.stringify(b.timeline)
+  );
+}
+
+/**
+ * True when a draft carries any actual user content. Used to distinguish a
+ * genuine in-progress draft (restored from localStorage so a refresh does not
+ * lose work) from a stale/empty draft that must not block hydration from the
+ * canonical backend record. livingStatus and privacySettings always carry
+ * defaults, so they are intentionally excluded from the content check.
+ */
+function hasDraftContent(draft: ProfileDraft): boolean {
+  return (
+    draft.preferredName.trim() !== "" ||
+    draft.firstName.trim() !== "" ||
+    draft.middleName.trim() !== "" ||
+    draft.lastName.trim() !== "" ||
+    draft.suffix.trim() !== "" ||
+    draft.nickname.trim() !== "" ||
+    draft.birthDate.trim() !== "" ||
+    draft.birthplace.trim() !== "" ||
+    draft.currentLocation.trim() !== "" ||
+    draft.occupation.trim() !== "" ||
+    draft.shortBio.trim() !== "" ||
+    draft.longerStory.trim() !== "" ||
+    draft.timeline.length > 0
+  );
+}
+
+/**
+ * Map the editable draft to a backend ProfileEdits payload, submitting ONLY the
+ * fields the user intentionally changed. A field whose current value matches
+ * the canonical record is omitted (left undefined) so the backend keeps its
+ * current value — a patch-only save that never overwrites canonical data with
+ * blank values. Changing only the suffix to 'II' therefore updates the suffix
+ * alone and does not re-submit the other existing canonical fields.
+ *
+ * The comparison baseline is the SAME resolved canonical record used for
+ * hydration (fromPersonProfile(resolveCanonicalPersonProfile(original,
+ * canonical), original)), not the raw backend record. Seeded profiles' backend
+ * record carries only `name`, so comparing against the raw backend record would
+ * treat every hydrated canonical field (preferredName, currentLocation,
+ * longerStory, timeline, etc.) as changed and re-submit them even when the user
+ * only edits the suffix. Comparing against the resolved canonical record
+ * recognizes those hydrated fields as unchanged and omits them from the patch.
+ */
+function toEdits(
+  draft: ProfileDraft,
+  original: BackendPersonProfile,
+  canonical?: PersonProfile,
+): ProfileEdits {
+  const edits: ProfileEdits = {};
+  const orig = fromPersonProfile(
+    resolveCanonicalPersonProfile(original, canonical),
+    original,
+    Boolean(canonical),
+  );
+
+  if (draft.preferredName.trim() !== orig.preferredName) {
+    edits.preferredName = draft.preferredName.trim();
+  }
+  if (draft.firstName.trim() !== orig.firstName) {
+    edits.firstName = draft.firstName.trim();
+  }
+  if (draft.middleName.trim() !== orig.middleName) {
+    edits.middleName = draft.middleName.trim();
+  }
+  if (draft.lastName.trim() !== orig.lastName) {
+    edits.lastName = draft.lastName.trim();
+  }
+  if (draft.suffix.trim() !== orig.suffix) {
+    edits.suffix = draft.suffix.trim();
+  }
+  if (draft.nickname.trim() !== orig.nickname) {
+    edits.nickname = draft.nickname.trim();
+  }
+  if (draft.birthDate.trim() !== orig.birthDate) {
+    edits.birthDate = draft.birthDate.trim();
+  }
+  if (draft.birthplace.trim() !== orig.birthplace) {
+    edits.birthplace = draft.birthplace.trim();
+  }
+  if (draft.currentLocation.trim() !== orig.currentLocation) {
+    edits.currentLocation = draft.currentLocation.trim();
+  }
+  if (draft.occupation.trim() !== orig.occupation) {
+    edits.occupation = draft.occupation.trim();
+  }
+  if (draft.livingStatus !== orig.livingStatus) {
+    edits.livingStatus = draft.livingStatus;
+  }
+  if (draft.shortBio.trim() !== orig.shortBio) {
+    edits.shortBio = draft.shortBio.trim();
+  }
+  if (draft.longerStory.trim() !== orig.longerStory) {
+    edits.longerStory = draft.longerStory.trim();
+  }
+
+  const draftTimeline = draft.timeline
+    .map(serializeTimelineEntry)
+    .filter((line) => line.trim() !== "");
+  const origTimeline = orig.timeline
+    .map(serializeTimelineEntry)
+    .filter((line) => line.trim() !== "");
+  if (JSON.stringify(draftTimeline) !== JSON.stringify(origTimeline)) {
+    edits.timeline = draftTimeline;
+  }
+
+  if (draft.privacySettings.trim() !== orig.privacySettings) {
+    edits.privacySettings = draft.privacySettings.trim();
+  }
+
+  return edits;
 }
 
 /** True when a value is a 4-digit year or a parseable calendar date. */
@@ -442,35 +653,77 @@ export function ProfileEditPage({
   const canEdit =
     (isOwner && isLiving && isClaimed) || (isSteward && !isClaimedByAnother);
 
-  // Draft state. Restored from localStorage when a saved draft exists for this
-  // person, otherwise initialized once from the loaded backend profile and
-  // never overwritten by a refetch.
+  // Draft state. The canonical hydrated ProfileDraft is ALWAYS built first from
+  // the resolved canonical Person record (backend profile merged with the
+  // static canonical data), then any saved local draft is MERGED over it:
+  // non-empty saved values override canonical, blank saved values leave the
+  // canonical value intact. This prevents a partial stale browser draft (e.g.
+  // only a suffix) from replacing the complete canonical Person data. The saved
+  // draft is read once on mount into a ref so it can be merged once the backend
+  // profile loads.
   const restoredFromStorage = useRef(false);
-  const [draft, setDraft] = useState<ProfileDraft>(() => {
+  const savedDraftRef = useRef<ProfileDraft | null>(null);
+  const [draft, setDraft] = useState<ProfileDraft>(EMPTY_DRAFT);
+
+  useEffect(() => {
     try {
       const raw = localStorage.getItem(draftKey(personId));
       if (raw) {
         const parsed = JSON.parse(raw) as ProfileDraft;
-        if (parsed && typeof parsed === "object" && "preferredName" in parsed) {
+        if (
+          parsed &&
+          typeof parsed === "object" &&
+          "preferredName" in parsed &&
+          hasDraftContent(parsed)
+        ) {
+          savedDraftRef.current = parsed;
           restoredFromStorage.current = true;
-          return parsed;
         }
       }
     } catch {
       // ignore malformed draft
     }
-    return EMPTY_DRAFT;
-  });
+  }, [personId]);
 
   const initialized = useRef(false);
   useEffect(() => {
     if (backendProfile && !initialized.current) {
       initialized.current = true;
-      if (!restoredFromStorage.current) {
-        setDraft(fromBackend(backendProfile));
-      }
+      // Always build the canonical hydrated draft first...
+      const canonical = fromPersonProfile(
+        resolveCanonicalPersonProfile(backendProfile, profiles[personId]),
+        backendProfile,
+        Boolean(profiles[personId]),
+      );
+      // ...then merge any saved local draft over it so non-empty saved values
+      // win while blank saved values keep the canonical value.
+      setDraft(
+        savedDraftRef.current
+          ? mergeDraftOverCanonical(canonical, savedDraftRef.current)
+          : canonical,
+      );
     }
-  }, [backendProfile]);
+  }, [backendProfile, personId]);
+
+  // The canonical hydrated draft of the SAVED Profile (backend record merged
+  // with the static canonical data). Comparing the current draft against this
+  // tells us whether the editor reflects the saved Profile or carries a pending
+  // local draft that differs from it.
+  const canonicalDraft = useMemo(() => {
+    if (!backendProfile) return null;
+    return fromPersonProfile(
+      resolveCanonicalPersonProfile(backendProfile, profiles[personId]),
+      backendProfile,
+      Boolean(profiles[personId]),
+    );
+  }, [backendProfile, personId]);
+
+  // True when the current draft differs from the saved Profile — i.e. a local
+  // draft is pending and has not yet been saved to the backend. When false, the
+  // editor reflects the saved Profile and shows the 'Profile saved' label.
+  const draftDiffersFromSaved = Boolean(
+    canonicalDraft && !draftsEqual(draft, canonicalDraft),
+  );
 
   const [draftStatus, setDraftStatus] = useState<"saved" | "unsaved">("saved");
   const [saveState, setSaveState] = useState<
@@ -545,7 +798,15 @@ export function ProfileEditPage({
       setSaveError("Please fix the highlighted fields before saving.");
       return;
     }
-    const edits = toEdits(draft);
+    if (!backendProfile) {
+      setSaveState("error");
+      setSaveError("This profile could not be found.");
+      return;
+    }
+    // Patch-only save: only the fields the user intentionally changed are
+    // submitted; unchanged canonical fields are omitted so the backend keeps
+    // its current value and blank values never erase existing data.
+    const edits = toEdits(draft, backendProfile, profiles[personId]);
     setSaveState("saving");
     update.mutate(
       { personId, edits },
@@ -558,7 +819,18 @@ export function ProfileEditPage({
             } catch {
               // ignore storage failures
             }
-            setDraft(fromBackend(data.ok));
+            // Re-hydrate from the same canonical merged record used for
+            // hydration so seeded profiles (whose backend record carries only
+            // `name` plus any newly-set fields) keep showing their canonical
+            // values (preferredName, currentLocation, longerStory, timeline)
+            // immediately after saving instead of blanking out.
+            setDraft(
+              fromPersonProfile(
+                resolveCanonicalPersonProfile(data.ok, profiles[personId]),
+                data.ok,
+                Boolean(profiles[personId]),
+              ),
+            );
             setDraftStatus("saved");
           } else {
             setSaveState("error");
@@ -676,11 +948,30 @@ export function ProfileEditPage({
             </span>
             <span
               data-ocid="profile_edit.draft_status"
-              className={`draft-status ${draftStatus === "saved" ? "draft-saved" : "draft-unsaved"}`}
+              className={`draft-status ${
+                !draftDiffersFromSaved
+                  ? "draft-saved"
+                  : draftStatus === "saved"
+                    ? "draft-stale"
+                    : "draft-unsaved"
+              }`}
             >
-              {draftStatus === "saved" ? "Draft saved" : "Unsaved changes"}
+              {!draftDiffersFromSaved
+                ? "Profile saved"
+                : draftStatus === "saved"
+                  ? "Draft saved locally"
+                  : "Unsaved changes"}
             </span>
           </div>
+          {restoredFromStorage.current ? (
+            <p
+              data-ocid="profile_edit.restored_draft_notice"
+              className="text-sm text-muted-foreground"
+            >
+              Restored your in-progress draft from this browser. Your changes
+              are saved to your profile only when you press Save changes.
+            </p>
+          ) : null}
 
           <form
             className="owner-form"

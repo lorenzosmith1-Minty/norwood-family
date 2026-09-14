@@ -1,4 +1,9 @@
 import "@testing-library/jest-dom/vitest";
+import {
+  type PersonProfile as BackendPersonProfile,
+  ClaimStatus,
+  LivingStatus,
+} from "@/backend";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -165,9 +170,13 @@ vi.mock("./pages/PersonProfilePage", async (importOriginal) => {
 
 // ExploreFamilyPage now derives its constellation through useExploreFamily,
 // which calls useListConfirmedRelationships (useActor) and the page reads the
-// caller's identity (useInternetIdentity). Stub the provider seam so the focus
-// card badge can be asserted without a canister or an InternetIdentityProvider.
-const { mockActor } = vi.hoisted(() => {
+// caller's identity (useInternetIdentity). Explore Family is gated behind
+// approved family access, so the caller must hold an approved (CLAIMED) profile
+// for the graph to render; getMyProfile resolves that approved claim. Stub the
+// provider seam so the focus card badge can be asserted without a canister or
+// an InternetIdentityProvider.
+const { mockActor, setAuthenticated, getAuthenticated } = vi.hoisted(() => {
+  let isAuthenticated = false;
   const mockActor = {
     async listConfirmedRelationships(): Promise<unknown[]> {
       return [];
@@ -178,16 +187,41 @@ const { mockActor } = vi.hoisted(() => {
     async getProfilePhoto(): Promise<null> {
       return null;
     },
+    async getMyProfile(): Promise<BackendPersonProfile | null> {
+      if (!isAuthenticated) return null;
+      // The approved-family-access gate resolves the caller's own claim through
+      // useNavbarIdentity -> useMyProfile -> getMyProfile. For the graph to
+      // render the caller must hold an approved (Claimed) profile, so return a
+      // backend-shaped profile carrying claimStatus: Claimed.
+      return {
+        personId: "me-person",
+        name: "Me Person",
+        claimStatus: ClaimStatus.Claimed,
+        livingStatus: LivingStatus.Living,
+      };
+    },
   };
-  return { mockActor };
+  return {
+    mockActor,
+    setAuthenticated: (v: boolean) => {
+      isAuthenticated = v;
+    },
+    getAuthenticated: () => isAuthenticated,
+  };
 });
 
 vi.mock("@caffeineai/core-infrastructure", () => ({
   useActor: () => ({ actor: mockActor, isFetching: false }),
   useInternetIdentity: () => ({
-    isAuthenticated: false,
+    isAuthenticated: getAuthenticated(),
     login: () => {},
-    identity: null,
+    identity: getAuthenticated()
+      ? {
+          getPrincipal: () => ({
+            toString: () => "rrkah-fqaaa-aaaaa-aaaaq-cai",
+          }),
+        }
+      : null,
     isInitializing: false,
     isLoggingIn: false,
   }),
@@ -209,17 +243,23 @@ function renderExplore(focusPersonId: string | null) {
 }
 
 describe("Explore Family focus card 'This is me' badge characterization", () => {
-  it("shows no 'This is me' badge for a profile without the me flag", () => {
+  it("shows no 'This is me' badge for a profile without the me flag", async () => {
+    // Explore Family is gated behind approved family access, so the caller must
+    // hold an approved (CLAIMED) profile for the graph to render.
+    setAuthenticated(true);
     renderExplore("plain-person");
 
-    expect(screen.getByText("Plain Person")).toBeInTheDocument();
+    expect(await screen.findByText("Plain Person")).toBeInTheDocument();
     expect(screen.queryByText("This is me")).not.toBeInTheDocument();
   });
 
-  it("shows the 'This is me' badge when the focus profile carries the me flag", () => {
+  it("shows the 'This is me' badge when the focus profile carries the me flag", async () => {
+    // Explore Family is gated behind approved family access, so the caller must
+    // hold an approved (CLAIMED) profile for the graph to render.
+    setAuthenticated(true);
     renderExplore("me-person");
 
-    expect(screen.getByText("Me Person")).toBeInTheDocument();
+    expect(await screen.findByText("Me Person")).toBeInTheDocument();
     expect(screen.getByText("This is me")).toBeInTheDocument();
   });
 });

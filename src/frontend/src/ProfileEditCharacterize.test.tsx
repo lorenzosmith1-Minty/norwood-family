@@ -340,6 +340,10 @@ describe("Edit My Profile button gating on the profile page", () => {
     // Clayton's profile is claimed by OWNER; the signed-in OTHER_USER is just a
     // viewer, so the Edit My Profile button must not appear on the profile page.
     seedClaimedLivingProfile("clayton", "Clayton Norwood", OWNER);
+    // OTHER_USER must hold their own approved (CLAIMED) profile to pass the
+    // Explore Family approved-access gate while still being a non-owner of
+    // Clayton's profile.
+    seedClaimedLivingProfile("other-self", "Other Self", OTHER_USER);
     setAuthenticated(true);
     setCurrentPrincipal(OTHER_USER);
     const user = userEvent.setup();

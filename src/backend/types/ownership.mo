@@ -181,6 +181,7 @@ module {
   /// Errors for creating a new person profile.
   public type CreateError = {
     #NotSignedIn;
+    #AlreadyOwned;
   };
 
   /// Errors for relationship requests.

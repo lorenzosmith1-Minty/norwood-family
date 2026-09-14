@@ -217,6 +217,9 @@ describe("Profile-edit draft persistence lifecycle", () => {
 
     expect(await screen.findByText("You own this profile")).toBeInTheDocument();
 
+    // The canonical clayton profile pre-fills preferredName, so clear it before
+    // typing so the autosaved value is exactly the typed value.
+    await user.clear(screen.getByTestId("profile_edit.preferred_name_input"));
     // Type into a field; the draft is autosaved (debounced) to localStorage.
     await user.type(
       screen.getByTestId("profile_edit.preferred_name_input"),

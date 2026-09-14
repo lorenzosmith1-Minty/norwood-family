@@ -116,22 +116,40 @@ export interface BoardMediaUpload {
 }
 export interface Cell { 'value' : Value, 'name' : string }
 export interface ChapterMarker { 'title' : string, 'timestamp' : bigint }
+export interface ClaimEligibility {
+  'eligible' : boolean,
+  'reason' : [] | [ClaimPersistenceError],
+}
 export type ClaimError = { 'AlreadyPending' : null } |
   { 'ProfileNotFound' : null } |
   { 'AlreadyClaimed' : null } |
   { 'NotSignedIn' : null } |
   { 'DeceasedProfile' : null };
+export type ClaimPersistenceError = { 'AlreadyOwned' : null } |
+  { 'AlreadyPending' : null } |
+  { 'ProfileNotFound' : null } |
+  { 'NotSignedIn' : null } |
+  { 'ApprovedOwnerExists' : null };
 export type ClaimStatus = { 'Unclaimed' : null } |
   { 'Claimed' : null };
+export type ConflictResolutionAction = { 'NeedsResearch' : null } |
+  { 'PreserveBoth' : null } |
+  { 'ReplaceExisting' : null } |
+  { 'KeepExisting' : null };
 export interface ConflictReviewItem {
   'id' : bigint,
   'field' : string,
   'status' : ReviewStatus,
+  'evidenceLabel' : EvidenceLabel,
   'findingId' : FindingId,
   'proposedValue' : string,
+  'stewardNotes' : string,
+  'proposedSourceId' : [] | [bigint],
+  'personId' : [] | [string],
   'canonicalValue' : string,
   'resolvedAt' : [] | [bigint],
   'resolvedBy' : [] | [Principal],
+  'existingSourceId' : [] | [bigint],
 }
 export type ConversationId = bigint;
 export interface ConversationSummary {
@@ -148,7 +166,8 @@ export interface ConversationView {
   'conversationId' : ConversationId,
   'participantDisplayNames' : Array<string>,
 }
-export type CreateError = { 'NotSignedIn' : null };
+export type CreateError = { 'AlreadyOwned' : null } |
+  { 'NotSignedIn' : null };
 export type DeleteError = { 'HasOwnershipHistory' : null } |
   { 'ProfileNotFound' : null } |
   { 'HasMedia' : null } |
@@ -993,6 +1012,13 @@ export interface _SERVICE {
    */
   'blockUser' : ActorMethod<[Principal], undefined>,
   /**
+   * / Whether the caller may claim a profile, enforcing approved ownership
+   * / authority and the no-duplicate-claims rule. Returns an eligibility result
+   * / the caller can act on. Read-only view over the same authoritative state
+   * / the ownership flow enforces.
+   */
+  'canClaimProfile' : ActorMethod<[PersonId], ClaimEligibility>,
+  /**
    * / Returns whether the signed-in caller may message the person identified by
    * / `personId`: the viewer is signed in, the target has an active linked
    * / account, the target is not the viewer, and the target is not archived.
@@ -1240,9 +1266,20 @@ export interface _SERVICE {
    * / Returns a single source record by id.
    */
   'getSource' : ActorMethod<[SourceId], [] | [SourceRecord]>,
+  /**
+   * / Whether a profile already has an approved owner. Approved ownership is
+   * / authoritative: once a profile claim is approved, the approved owner is the
+   * / canonical owner and no other claim or Add Myself flow can override or
+   * / duplicate it. Read-only view over the same authoritative state the
+   * / ownership flow enforces.
+   */
+  'hasApprovedOwner' : ActorMethod<[PersonId], boolean>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
   /**
-   * / Lists all archive items in approved state (visible in the archive).
+   * / Lists all archive items in approved state visible to the caller. Privacy
+   * / is enforced server-side: guests and non-approved members see only Public
+   * / items; FamilyOnly items require approved family membership; Private items
+   * / are visible only to their contributor or an admin.
    */
   'listApprovedArchiveItems' : ActorMethod<[], Array<ArchiveItem>>,
   /**
@@ -1290,6 +1327,14 @@ export interface _SERVICE {
    * / Lists all conflict review items (steward only).
    */
   'listConflictReviewItems' : ActorMethod<[], Array<ConflictReviewItem>>,
+  /**
+   * / Lists the unresolved conflict review items (`#Conflicting` and
+   * / `#NeedsResearch`) affecting a given Person, so the frontend can surface
+   * / them alongside canonical values on the person profile and source history
+   * / views. Requires a signed-in (non-anonymous) caller; anonymous callers
+   * / receive `[]`. Resolved conflicts are never returned.
+   */
+  'listConflictsForPerson' : ActorMethod<[string], Array<ConflictReviewItem>>,
   /**
    * / Returns the signed-in caller's inbox: one summary per conversation they
    * / participate in, newest activity first. Approved family members only.
@@ -1637,10 +1682,20 @@ export interface _SERVICE {
    */
   'requestProfileRemoval' : ActorMethod<[PersonId, string], Result_3>,
   /**
-   * / Resolves a conflict review item (steward only). Returns the updated item,
-   * / or `null` when it does not exist.
+   * / Resolves a conflict review item (steward only) with an explicit decision.
+   * / `#KeepExisting` leaves canonical data unchanged and resolves the conflict;
+   * / `#ReplaceExisting` writes the proposed value into canonical data exactly
+   * / once (preserving the old value and its provenance in the conflict/audit
+   * / history and the new Source); `#PreserveBoth` keeps both values visible as an
+   * / unresolved `#Conflicting` conflict; `#NeedsResearch` leaves canonical data
+   * / unchanged and retains the conflict with `#NeedsResearch` status. Every
+   * / resolution records an audit entry. Returns the updated item, or `null` when
+   * / it does not exist.
    */
-  'resolveConflict' : ActorMethod<[bigint], [] | [ConflictReviewItem]>,
+  'resolveConflict' : ActorMethod<
+    [bigint, ConflictResolutionAction, string],
+    [] | [ConflictReviewItem]
+  >,
   /**
    * / Resolves a merge conflict by choosing the canonical display value. Family
    * / Steward only.
@@ -1672,7 +1727,8 @@ export interface _SERVICE {
   'schema' : ActorMethod<[], string>,
   /**
    * / Searches/filters approved archive items by title query, tags, item type,
-   * / related family member, and era. Returns only `#Approved` items.
+   * / related family member, and era. Returns only `#Approved` items visible to
+   * / the caller under the archive privacy rules.
    */
   'searchArchiveItems' : ActorMethod<[ArchiveSearchFilter], Array<ArchiveItem>>,
   /**
@@ -1711,13 +1767,6 @@ export interface _SERVICE {
    * / Submits a new archive item. Requires sign-in; the signed-in caller is
    * / recorded as the contributor. The item is stored in pending state and waits
    * / for admin approval before appearing in the archive.
-   * /
-   * / `classification` marks the item as Oral History (distinct from `itemType`).
-   * / When `#OralHistory`, `primarySpeaker` is required (exactly one primary
-   * / speaker); when `#Standard`, `primarySpeaker` must be `null`. The reserved
-   * / future-ready fields (transcript, searchable transcript, chapter markers,
-   * / AI summary, extracted names) are initialized to `null` and are not
-   * / populated by any logic yet.
    */
   'submitArchiveItem' : ActorMethod<
     [
@@ -1850,7 +1899,8 @@ export interface _SERVICE {
     [] | [Story]
   >,
   /**
-   * / Updates an approved owner's own living profile fields. Never rewrites
+   * / Updates an approved owner's own living profile fields, or, for a Family
+   * / Steward, the fields of an unclaimed/historical profile. Never rewrites
    * / family relationships directly.
    */
   'updateOwnProfile' : ActorMethod<[PersonId, ProfileEdits], Result>,

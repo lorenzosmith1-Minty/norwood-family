@@ -31,6 +31,7 @@ import RecipesLib "lib/recipes";
 import ObjectStorageApi "mixins/object-storage-api";
 import ArchiveApi "mixins/archive-api";
 import OwnershipApi "mixins/ownership-api";
+import ClaimPersistenceApi "mixins/claim-persistence-api";
 import RelationshipsApi "mixins/relationships-api";
 import NotificationsApi "mixins/notifications-api";
 import AccountIdentityApi "mixins/account-identity-api";
@@ -227,6 +228,42 @@ actor {
     };
   };
 
+  /// Whether the caller is an approved family member: they hold at least one
+  /// approved profile claim, or they are an admin.
+  func isApprovedFamilyMember(caller : Principal) : Bool {
+    if (AccessControl.isAdmin(accessControlState, caller)) {
+      return true;
+    };
+    claims.toArray().any(func c = c.requestingUserId == caller and c.status == #Approved);
+  };
+
+  /// OQL row-visibility rule for archive items, mirroring the server-side
+  /// archive privacy enforcement in `listApprovedArchiveItems` /
+  /// `searchArchiveItems`: `#Public` items are visible to everyone; `#FamilyOnly`
+  /// items to approved family members or admins; `#Private` items to their
+  /// contributor or an admin. The owner column is the archive item's `id`, which
+  /// lets the rule look up the item's privacy level and contributor.
+  func canSeeArchiveItem(caller : Principal, owner : OQL.Value) : Bool {
+    if (AccessControl.isAdmin(accessControlState, caller)) {
+      return true;
+    };
+    switch (owner) {
+      case (#nat id) {
+        switch (archiveItems.find(func it = it.id == id)) {
+          case (?item) {
+            switch (item.privacyLevel) {
+              case (#Public) true;
+              case (#FamilyOnly) isApprovedFamilyMember(caller);
+              case (#Private) item.contributor == caller;
+            };
+          };
+          case null false;
+        };
+      };
+      case _ false;
+    };
+  };
+
   include MixinAuthorization(accessControlState, null);
   include Expose({
     entities = [
@@ -283,7 +320,8 @@ actor {
       .payload("classification", func r = r.classification)
       .payload("primarySpeakerName", func r = r.primarySpeakerName)
       .payload("tags", func r = r.tags)
-      .controllerOnly()
+      .ownedByWith("id", canSeeArchiveItem)
+      .controllerOrScoped()
       .build(),
       OQL.Entity.new<OwnershipTypes.ProfileRow>(
         "profile",
@@ -958,18 +996,28 @@ actor {
       .sample({
         id = 0;
         findingId = 0;
+        personId = null;
         field = "";
         canonicalValue = "";
         proposedValue = "";
+        existingSourceId = null;
+        proposedSourceId = null;
+        evidenceLabel = #Conflicting;
+        stewardNotes = "";
         status = #Pending;
         resolvedBy = null;
         resolvedAt = null;
       })
       .payload("id", func r = r.id)
       .payload("findingId", func r = r.findingId)
+      .payload("personId", func r = r.personId ?? "")
       .payload("field", func r = r.field)
       .payload("canonicalValue", func r = r.canonicalValue)
       .payload("proposedValue", func r = r.proposedValue)
+      .payload("existingSourceId", func r = r.existingSourceId ?? 0)
+      .payload("proposedSourceId", func r = r.proposedSourceId ?? 0)
+      .payload("evidenceLabel", func r = evidenceLabelText(r.evidenceLabel))
+      .payload("stewardNotes", func r = r.stewardNotes)
       .payload("status", func r = reviewStatusText(r.status))
       .payload("resolvedBy", func r = switch (r.resolvedBy) { case (?p) p.toText(); case null "" })
       .payload("resolvedAt", func r = r.resolvedAt ?? 0)
@@ -1003,8 +1051,9 @@ actor {
   });
   include MixinObjectStorage();
   include ObjectStorageApi(galleries);
-  include ArchiveApi(accessControlState, archiveItems);
+  include ArchiveApi(accessControlState, archiveItems, claims);
   include OwnershipApi(accessControlState, profiles, claims, confirmedRelationships, relationshipRequests, notifications, auditLog);
+  include ClaimPersistenceApi(profiles, claims);
   include RelationshipsApi(relationshipRequests, confirmedRelationships);
   include NotificationsApi(notifications);
   include AccountIdentityApi(accounts);

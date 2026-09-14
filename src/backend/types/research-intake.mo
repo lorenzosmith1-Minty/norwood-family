@@ -152,16 +152,44 @@ module {
   };
 
   /// A review item for a finding that contradicts existing canonical data.
-  /// Created instead of silently overwriting conflicting data.
+  /// Created instead of silently overwriting conflicting data. It captures the
+  /// affected Person, the disputed field, both the existing canonical value and
+  /// the proposed value, the provenance/source of each side when available, the
+  /// proposed finding's evidence label, and any steward notes. Canonical data is
+  /// never altered at creation — the item enters as `#Conflicting` (unresolved)
+  /// and only an explicit steward resolution action changes canonical data.
   public type ConflictReviewItem = {
     id : Nat;
     findingId : FindingId;
+    /// The affected canonical Person, when the finding targets one.
+    personId : ?Text;
+    /// The disputed field/fact type (e.g. "birthDate").
     field : Text;
+    /// The existing canonical value being contradicted.
     canonicalValue : Text;
+    /// The proposed value from the finding.
     proposedValue : Text;
+    /// The source of the existing canonical value, when known.
+    existingSourceId : ?Nat;
+    /// The source of the proposed finding.
+    proposedSourceId : ?Nat;
+    /// The evidence label carried by the proposed finding.
+    evidenceLabel : EvidenceLabel;
+    /// Free-text notes recorded by the steward during resolution.
+    stewardNotes : Text;
     status : ReviewStatus;
     resolvedBy : ?Principal;
     resolvedAt : ?Int;
+  };
+
+  /// The explicit decision a Family Steward makes when resolving a Conflict
+  /// Review item. Keep Existing and Replace Existing resolve the conflict;
+  /// Preserve Both and Needs Research leave it unresolved.
+  public type ConflictResolutionAction = {
+    #KeepExisting;
+    #ReplaceExisting;
+    #PreserveBoth;
+    #NeedsResearch;
   };
 
   /// A single audit entry recording provenance and approval actions for every

@@ -368,33 +368,28 @@ describe("Person Profile Videos & Oral History add-media actions", () => {
 
   it("hides all add/record actions for a guest", async () => {
     seedWaxxMintyProfile();
-    // Guest: not authenticated.
+    // Guest: not authenticated. Explore Family is private to approved family
+    // members, so a guest sees the no-access state instead of the family graph
+    // (and therefore never reaches a profile's add/record actions).
     const user = userEvent.setup();
     renderApp();
 
-    // A guest cannot reach "My Profile"; open Waxx Minty's profile via the
-    // Explore Family tree instead (graph-only node resolves from the backend).
     await user.click(
       screen.getByRole("button", { name: "Explore the Family" }),
     );
-    await user.click(screen.getByRole("button", { name: "View Profile" }));
-    await screen.findByRole("heading", { level: 1 });
 
-    const section = screen.getByLabelText("Videos & Oral History");
+    // The guest is gated out of the family graph entirely, so no profile (and
+    // no add/record action) is reachable.
+    expect(screen.getByTestId("family_access.no_access")).toBeInTheDocument();
+    expect(screen.getByText("Family only")).toBeInTheDocument();
     expect(
-      within(section).getByText("No videos or oral histories yet"),
-    ).toBeInTheDocument();
-    // No add/record actions for guests.
-    expect(
-      within(section).queryByTestId("profile.videos.add_video_button"),
+      screen.queryByTestId("profile.videos.add_video_button"),
     ).not.toBeInTheDocument();
     expect(
-      within(section).queryByTestId(
-        "profile.videos.record_oral_history_button",
-      ),
+      screen.queryByTestId("profile.videos.record_oral_history_button"),
     ).not.toBeInTheDocument();
     expect(
-      within(section).queryByTestId("profile.videos.add_audio_button"),
+      screen.queryByTestId("profile.videos.add_audio_button"),
     ).not.toBeInTheDocument();
   });
 });

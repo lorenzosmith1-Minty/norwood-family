@@ -1,6 +1,7 @@
 import { GitBranch, Users } from "lucide-react";
 import { motion } from "motion/react";
 import { useMemo } from "react";
+import { FamilyAccessGate } from "../components/FamilyAccessGate";
 import {
   HeritageBranchCard,
   type HeritagePerson,
@@ -16,6 +17,8 @@ import { profiles } from "./PersonProfilePage";
 
 interface HeritageBranchPageProps {
   onOpenExploreFamily: (personId: string) => void;
+  /** Navigates to the shared sign-in surface from the no-access state. */
+  onSignIn: () => void;
 }
 
 /**
@@ -176,6 +179,7 @@ interface MapPlate {
 
 export default function HeritageBranchPage({
   onOpenExploreFamily,
+  onSignIn,
 }: HeritageBranchPageProps) {
   // Overlay the backend's confirmed relationships onto the shared graph at
   // render time so approved relationship requests appear in the map without
@@ -270,70 +274,76 @@ export default function HeritageBranchPage({
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col px-4 py-6 sm:py-10">
-      {/* Header */}
-      <motion.header
-        className="flex flex-col items-center text-center"
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
-      >
-        <span className="mb-3 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-accent-foreground/70">
-          <GitBranch
-            className="h-4 w-4"
-            strokeWidth={1.75}
-            aria-hidden="true"
-          />
-          The Norwood Family
-        </span>
-        <h1 className="font-display text-3xl font-semibold leading-tight text-foreground sm:text-4xl">
-          Heritage Branch View
-        </h1>
-        <p className="mt-3 max-w-md text-base text-muted-foreground">
-          A 10,000-foot map of the major family units and branch lines. Tap any
-          card to open Explore Family focused on that person.
-        </p>
-      </motion.header>
+    <FamilyAccessGate onSignIn={onSignIn}>
+      <div className="mx-auto flex w-full max-w-2xl flex-col px-4 py-6 sm:py-10">
+        {/* Header */}
+        <motion.header
+          className="flex flex-col items-center text-center"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+        >
+          <span className="mb-3 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-accent-foreground/70">
+            <GitBranch
+              className="h-4 w-4"
+              strokeWidth={1.75}
+              aria-hidden="true"
+            />
+            The Norwood Family
+          </span>
+          <h1 className="font-display text-3xl font-semibold leading-tight text-foreground sm:text-4xl">
+            Heritage Branch View
+          </h1>
+          <p className="mt-3 max-w-md text-base text-muted-foreground">
+            A 10,000-foot map of the major family units and branch lines. Tap
+            any card to open Explore Family focused on that person.
+          </p>
+        </motion.header>
 
-      {/* Bounded overview map */}
-      <motion.div
-        className="hb-map mt-8"
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.1, ease: [0.4, 0, 0.2, 1] }}
-      >
-        {/* Map plates (family units + branch anchors) ordered so ancestors
+        {/* Bounded overview map */}
+        <motion.div
+          className="hb-map mt-8"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1, ease: [0.4, 0, 0.2, 1] }}
+        >
+          {/* Map plates (family units + branch anchors) ordered so ancestors
             render above descendants. */}
-        {mapPlates.map((plate, pi) => (
-          <div key={plate.clusterId}>
-            {pi > 0 && <ClusterConnector />}
-            <section className="hb-cluster" data-ocid={`hb.${plate.clusterId}`}>
-              <div className="hb-cluster-head">
-                <h2 className="hb-cluster-title">{plate.title}</h2>
-              </div>
-              <div className="hb-cluster-grid">
-                {plate.kind === "unit"
-                  ? plate.personIds.map((id) => renderUnitCard(id))
-                  : renderBranchCard(plate.personIds[0])}
-              </div>
-            </section>
-          </div>
-        ))}
-      </motion.div>
+          {mapPlates.map((plate, pi) => (
+            <div key={plate.clusterId}>
+              {pi > 0 && <ClusterConnector />}
+              <section
+                className="hb-cluster"
+                data-ocid={`hb.${plate.clusterId}`}
+              >
+                <div className="hb-cluster-head">
+                  <h2 className="hb-cluster-title">{plate.title}</h2>
+                </div>
+                <div className="hb-cluster-grid">
+                  {plate.kind === "unit"
+                    ? plate.personIds.map((id) => renderUnitCard(id))
+                    : renderBranchCard(plate.personIds[0])}
+                </div>
+              </section>
+            </div>
+          ))}
+        </motion.div>
 
-      {/* Legend / guidance */}
-      <motion.footer
-        className="mt-6 flex items-start gap-2 rounded-xl border border-border/60 bg-card px-4 py-3 text-sm text-muted-foreground"
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.2, ease: [0.4, 0, 0.2, 1] }}
-      >
-        <Users className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-        <p>
-          This is a simplified overview of the major family lines. Tap any card
-          to open Explore Family centered on that person for the full detail.
-        </p>
-      </motion.footer>
-    </div>
+        {/* Legend / guidance */}
+        <motion.footer
+          className="mt-6 flex items-start gap-2 rounded-xl border border-border/60 bg-card px-4 py-3 text-sm text-muted-foreground"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2, ease: [0.4, 0, 0.2, 1] }}
+        >
+          <Users className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+          <p>
+            This is a simplified overview of the major family lines. Tap any
+            card to open Explore Family centered on that person for the full
+            detail.
+          </p>
+        </motion.footer>
+      </div>
+    </FamilyAccessGate>
   );
 }

@@ -1,16 +1,17 @@
 {
-  "overview": "A family research and genealogy app where a Family Steward reviews research intake items and maintains the family tree.",
+  "overview": "A private family website for the Norwood family to explore their family tree, share photos and stories, manage the family archive, and connect with relatives.",
   "features": [
-    "Review New Person Candidates with Approve, Reject, and Needs Research actions",
-    "Review Relationship Proposals with Approve, Reject, and Needs Research actions",
-    "Numeric badge on the Review Queue button aggregating unresolved items",
-    "Immediate refresh of queue, steward count, and badge after each review action"
+    "Explore the family tree and heritage branches",
+    "Claim and manage your own family profile",
+    "Browse and contribute to the family archive",
+    "Share recipes, videos, and stories",
+    "Message board and private messaging for family members"
   ],
-  "category": "genealogy",
+  "category": "family",
   "tags": [
     "family",
     "genealogy",
-    "research"
+    "community"
   ],
-  "last_updated": "2026-09-13T15:29:24.260Z"
+  "last_updated": "2026-09-14T16:32:37.659Z"
 }

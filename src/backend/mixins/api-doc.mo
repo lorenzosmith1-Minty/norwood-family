@@ -117,8 +117,13 @@ Contributions badge.
 - `rejectArchiveItem(id : Nat) : async ?ArchiveItem` — update. Admin only. Moves
   a pending item to `#Rejected` state and returns the updated item, or `null`
   when no pending item with that id exists.
-- `listApprovedArchiveItems() : async [ArchiveItem]` — query. Returns all
-  archive items in `#Approved` state (the items visible in the archive).
+- `listApprovedArchiveItems() : async [ArchiveItem]` — query. Returns the
+  archive items in `#Approved` state visible to the caller under the archive
+  privacy rules. Privacy is enforced server-side: `#Public` items are returned
+  to everyone; `#FamilyOnly` items are returned only to approved family members
+  (a caller holding at least one `#Approved` profile claim) or Family Stewards;
+  `#Private` items are returned only to their contributor or a Family Steward.
+  Guests and non-approved members see only `#Public` items.
 
 ### Profile ownership and relationship verification
 
@@ -134,11 +139,12 @@ Contributions badge.
   when the person is not tracked, `#err(#DeceasedProfile)` for a deceased
   profile (deceased profiles can never be claimed), `#err(#AlreadyClaimed)` when
   the profile is already claimed, and `#err(#AlreadyPending)` when a pending
-  claim already exists for that person. Duplicate-claim prevention is per
-  account + personId: a second `requestProfileClaim` for the same person by the
-  same signed-in caller (or by any caller, since only one pending claim may
-  exist per person) is rejected with `#err(#AlreadyPending)` rather than
-  creating a second claim. On success it records a `#ProfileClaimRequested`
+  claim already exists for that person. Duplicate-claim prevention is enforced
+  server-side: a caller who already owns the profile (an approved claim) or who
+  already has a pending claim on it is rejected with `#err(#AlreadyClaimed)` /
+  `#err(#AlreadyPending)` respectively rather than creating a second claim, and
+  a profile with an approved owner cannot be claimed by anyone else (also
+  `#err(#AlreadyClaimed)`). On success it records a `#ProfileClaimRequested`
   notification to the caller.
 - `listProfileClaims() : async [ProfileClaim]` — query. Family Steward only.
   Lists all profile claim requests for the review area.
@@ -189,7 +195,10 @@ Contributions badge.
 - `createMyself(name : Text) : async Result<PersonProfile, CreateError>` —
   update. \"Add Myself to This Family\": creates a minimal living person profile
   owned by the signed-in caller. Requires a signed-in caller; returns
-  `#err(#NotSignedIn)` for an anonymous caller. The new profile is created
+  `#err(#NotSignedIn)` for an anonymous caller and `#err(#AlreadyOwned)` when the
+  caller already owns a profile (an approved claim) or has a pending claim on
+  one — the no-duplicate-ownership rule prevents a caller from creating a second
+  profile while an active ownership path exists. The new profile is created
   claimed by the caller; the user must then connect to an existing family member
   via a relationship request.
 - `proposeRelationship(fromPersonId : Text, toPersonId : Text, relationshipType : RelationshipType) : async Result<RelationshipRequest, RelationshipError>` —
@@ -228,13 +237,22 @@ Contributions badge.
   (`claimStatus`/`claimedByUserId`), confirmed relationships, archive links,
   notifications, and verification history. It never rewrites family
   relationships directly; any relationship addition or change must go through
-  `proposeRelationship`. A profile already `#Deceased` remains non-editable
+  `proposeRelationship`. A caller may edit a profile when they are its owner
+  (`claimedByUserId == caller`) or when they are a Family Steward and the
+  profile is unclaimed (`claimedByUserId == null`). A Family Steward may NOT
+  edit a profile claimed by another user — such a call returns
+  `#err(#NotOwner)`. A profile already `#Deceased` is non-editable for an owner
   (returns `#err(#DeceasedProfile)`); a living profile may be marked
-  `#Deceased` via `edits.livingStatus`, after which it can no longer be edited.
-  Requires a signed-in caller; returns `#err(#NotSignedIn)` for an anonymous
-  caller, `#err(#ProfileNotFound)` when the person is not tracked,
-  `#err(#NotOwner)` when the caller is not the profile's owner, and
-  `#err(#DeceasedProfile)` for a deceased profile.
+  `#Deceased` via `edits.livingStatus`, after which it can no longer be edited
+  by its owner. A Family Steward editing an unclaimed/historical profile may
+  update it even when it is `#Deceased` — the deceased guard does not block the
+  steward-editable path, so a steward can correct or complete an unclaimed
+  deceased/historical profile. Requires a signed-in caller; returns
+  `#err(#NotSignedIn)` for an anonymous caller, `#err(#ProfileNotFound)` when
+  the person is not tracked, `#err(#NotOwner)` when the caller is neither the
+  profile's owner nor a Family Steward editing an unclaimed profile, and
+  `#err(#DeceasedProfile)` for a deceased profile when the caller is not on the
+  steward-editable path.
 - `listNotifications() : async [Notification]` — query. Returns the in-app
   notification records addressed to the signed-in caller.
 - `removeDuplicateProfile(personId : Text) : async Result<(), RemoveError>` —
@@ -711,13 +729,29 @@ Contributions badge.
 - `listConflictReviewItems() : async [ConflictReviewItem]` — query. Family
   Steward only. Lists all conflict review items (findings that contradict
   existing canonical data and were routed to review instead of silently
-  overwriting it).
-- `resolveConflict(id : Nat) : async ?ConflictReviewItem` — update. Family
-  Steward only. Resolves a conflict review item, writing the proposed value of
-  the underlying finding into its canonical area (Profile, family graph,
-  Timeline, Family Stories, Family Mysteries, or Archive), then marking the item
-  `#Approved` and recording the reviewer and review time. Returns the updated
-  item, or `null` when it does not exist.
+  overwriting it). Each item captures the affected Person (`personId`), the
+  disputed `field`, the existing `canonicalValue` and the `proposedValue`, the
+  provenance/source of each side when available (`existingSourceId`,
+  `proposedSourceId`), the proposed finding's `evidenceLabel`, and any
+  `stewardNotes`. Items are created `#Conflicting` (unresolved) and canonical
+  data is never altered at creation.
+- `listConflictsForPerson(personId : Text) : async [ConflictReviewItem]` —
+  query. Returns the unresolved conflict review items (`#Conflicting` and
+  `#NeedsResearch`) affecting a given Person, so the frontend can surface them
+  alongside canonical values on the person profile and source history views.
+  Requires a signed-in (non-anonymous) caller; anonymous callers receive `[]`.
+  Resolved conflicts are never returned.
+- `resolveConflict(id : Nat, action : ConflictResolutionAction, notes : Text) : async ?ConflictReviewItem` —
+  update. Family Steward only. Resolves a conflict review item with an explicit
+  decision. `#KeepExisting` leaves canonical data unchanged and resolves the
+  conflict (the proposed research and its provenance are preserved). `#ReplaceExisting`
+  writes the proposed value into canonical data exactly once, preserving the old
+  value and its provenance in the conflict/audit history and the new Source, and
+  records the actor and timestamp. `#PreserveBoth` keeps both values visible as
+  an unresolved `#Conflicting` conflict without silently choosing either.
+  `#NeedsResearch` leaves canonical data unchanged and retains the conflict with
+  `#NeedsResearch` status. Every resolution records an audit entry. Returns the
+  updated item, or `null` when it does not exist.
 - `getReviewQueue() : async ReviewQueue` — query. Family Steward only. Returns
   the review queue badge counts (`pending`, `approved`, `rejected`,
   `conflicting`, `needsResearch`) and the full list of reviewable items
@@ -756,14 +790,19 @@ Contributions badge.
 
 - `searchArchiveItems(filter : ArchiveSearchFilter) : async [ArchiveItem]` — query.
   Searches/filters approved archive items by title query, tags, item type,
-  related family member, and era. Returns only `#Approved` items.
+  related family member, and era. Returns only `#Approved` items visible to the
+  caller under the archive privacy rules (same server-side enforcement as
+  `listApprovedArchiveItems`: `#Public` to everyone, `#FamilyOnly` to approved
+  family members or Family Stewards, `#Private` to their contributor or a Family
+  Steward).
   `filter.searchTerm` matches the item title case-insensitively and by
   substring; `filter.tags`
   matches items carrying ALL of the given tags, each matched case-insensitively
   and by substring against the item's canonical `tags` list; `filter.itemType`,
   `filter.relatedMemberId`, and `filter.era` filter by category, linked family
   member, and era respectively. Every field is optional — a `null`/empty field
-  does not constrain the result. Readable by any caller.
+  does not constrain the result. Readable by any caller, subject to the privacy
+  filter above.
 - `createSourceWithUpload(title : Text, sourceType : SourceType, description : Text, blob : Blob, tags : [Text], era : Text, year : ?Nat, relatedMemberIds : [Text], privacyLevel : PrivacyLevel, classification : ArchiveItemClassification, primarySpeaker : ?OralHistorySpeaker) : async Result<SourceUploadResult, ResearchError>` —
   update. Uploads a research source file: creates exactly ONE canonical Archive
   item (in `#Pending` state) from the uploaded file and links a new Research
@@ -815,8 +854,10 @@ The exposed entities are `photo`, `archiveItem`, `profile`, `claim`,
 `report`, `researchSource`, `proposedFinding`, `newPersonCandidate`,
 `relationshipProposal`, `conflictReviewItem`, and `researchAuditLog`.
 Most are declared `.controllerOnly()` (see the authorization section); the
-`conversation` entity is `.controllerOrScoped()` and the `message` entity is
-`.scopedPerUser()`, both with a participant-only visibility rule. `photo` rows are flattened
+`archiveItem` and `conversation` entities are `.controllerOrScoped()` and the
+`message` entity is `.scopedPerUser()`. `archiveItem` uses a privacy-reflecting
+row-visibility rule (see the authorization section); `conversation` and
+`message` use a participant-only visibility rule. `photo` rows are flattened
 photo metadata: `key` (globally-unique \"<personId>:<id>\", the primary key),
 `personId`, `id`, `filename`, `mimeType`, `uploadedAt` (nanoseconds since epoch,
 `Int`), `uploadedBy` (the uploading principal, rendered as text), and
@@ -979,8 +1020,13 @@ carry `fromPersonId`, `toPersonId`, `relationshipType`, `sourceId`, `status`,
 `submittedBy` (principal text), `submittedAt` (`Int`), `reviewedBy` (principal
 text, `\"\"` when unreviewed), and `reviewedAt` (`Int`, `0` when unreviewed).
 `conflictReviewItem` rows (primary key `id`, a `Nat`) carry `findingId` (`Nat`),
-`field`, `canonicalValue`, `proposedValue`, `status`, `resolvedBy` (principal
-text, `\"\"` when unresolved), and `resolvedAt` (`Int`, `0` when unresolved).
+`personId` (`\"\"` when the conflict targets no canonical Person), `field`,
+`canonicalValue`, `proposedValue`, `existingSourceId` (`Nat`, `0` when the
+existing canonical value's source is unknown), `proposedSourceId` (`Nat`, `0`
+when the proposed finding has no source), `evidenceLabel`
+(`\"Documented\"`/`\"FamilyHistoryOralHistory\"`/`\"PersonalMemory\"`/`\"Hypothesis\"`/`\"Conflicting\"`/`\"NeedsResearch\"`),
+`stewardNotes`, `status`, `resolvedBy` (principal text, `\"\"` when unresolved),
+and `resolvedAt` (`Int`, `0` when unresolved).
 `researchAuditLog` rows (primary key `id`, a `Nat`) carry `action` (the audit
 action tag text, e.g. `\"SourceCreated\"`/`\"FindingSubmitted\"`/`\"FindingApproved\"`/`\"FindingRoutedToConflict\"`/`\"ConflictResolved\"`),
 `findingId` (`Nat`, `0` when the entry is not tied to a finding), `sourceId`
@@ -1026,16 +1072,25 @@ are callable by any caller. The photo query methods (`listPhotos`,
 enforce the admin/user/guest model described in their entries.
 
 The OQL methods (`schema`, `execute`) enforce authorization per entity against
-the live caller. Most exposed entities — `photo`, `archiveItem`, `profile`,
+the live caller. Most exposed entities — `photo`, `profile`,
 `claim`, `relationshipRequest`, `confirmedRelationship`, `notification`,
 `account`, `steward`, `successor`, `removalRequest`, `auditLog`,
 `mergeConflict`, `archivedProfile`, `dismissedPair`, `story`, `mystery`,
 `mysteryContribution`, `recipe`, `boardPost`, `boardReply`, `block`, and
 `report` — are declared `.controllerOnly()`, so only the platform controller can read their
 rows through `schema()`/`execute()`; end users do not read them directly. This
-keeps the family, archive, governance, board, block, and report metadata private
+keeps the family, governance, board, block, and report metadata private
 to the platform while still letting the Data Intelligence agent answer over it.
-The `conversation` entity is declared `.controllerOrScoped()` with a
+The `archiveItem` entity is declared `.controllerOrScoped()` with a
+privacy-reflecting row-visibility rule that mirrors the server-side archive
+privacy enforcement: the platform controller reads all rows, while a signed-in
+caller reads only the archive items they may see under the Public/FamilyOnly/
+Private access model — `#Public` items to everyone, `#FamilyOnly` items to
+approved family members (a caller holding at least one `#Approved` profile
+claim) or Family Stewards, and `#Private` items to their contributor or a
+Family Steward. This keeps the archive privacy enforcement consistent between
+the direct API methods (`listApprovedArchiveItems`, `searchArchiveItems`) and
+OQL. The `conversation` entity is declared `.controllerOrScoped()` with a
 participant-only visibility rule: the platform controller reads all rows, while
 a signed-in caller reads only the conversations they participate in. The
 `message` entity is declared `.scopedPerUser()` with a participant-only
@@ -1046,16 +1101,21 @@ user's private conversations or messages through OQL, and no private message
 content is steward-readable unless reported.
 
 The archive methods gate on sign-in and role. `submitArchiveItem` requires a
-signed-in (non-anonymous) caller and traps with `\"Sign-in required to submit an
-archive item\"` for an anonymous caller. It also validates the Oral History
+signed-in (non-anonymous) caller and traps with `\"Unauthorized: You must be
+signed in\"` for an anonymous caller. It also validates the Oral History
 speaker: it traps with `\"A primary speaker is required for Oral History
 items\"` when `classification == #OralHistory` and `primarySpeaker` is `null`,
 and with `\"A primary speaker is only allowed on Oral History items\"` when
 `classification == #Standard` and `primarySpeaker` is not `null`.
 `listPendingArchiveItems`,
 `approveArchiveItem`, and `rejectArchiveItem` are admin-only and trap with
-`\"Unauthorized: Only admins can ...\"` when the caller is not an admin.
-`listApprovedArchiveItems` is readable by any caller.
+`\"Unauthorized: Only Family Stewards can perform this action\"` when the caller
+is not an admin.
+`listApprovedArchiveItems` and `searchArchiveItems` are readable by any caller,
+but enforce the archive privacy rules server-side: `#Public` items are returned
+to everyone; `#FamilyOnly` items are returned only to approved family members (a
+caller holding at least one `#Approved` profile claim) or Family Stewards;
+`#Private` items are returned only to their contributor or a Family Steward.
 
 The profile-claim and relationship-request methods gate on sign-in and role.
 `requestProfileClaim`, `createMyself`, `proposeRelationship`, and
@@ -1166,7 +1226,10 @@ are admin-only and trap with `\"Unauthorized: You must be
 signed in\"` for an anonymous caller and `\"Unauthorized: Only Family Stewards
 can perform this action\"` when the caller is not an admin. The read methods
 `getSource` and `getFinding` are readable by any caller (they are not gated to
-admin). The review surface methods `getReviewQueue` and `getResearchAuditLog`
+admin). `listConflictsForPerson` requires a signed-in (non-anonymous) caller and
+returns `[]` for an anonymous caller (it does not trap); it returns only the
+unresolved conflicts for the requested Person. The review surface methods
+`getReviewQueue` and `getResearchAuditLog`
 are Family Steward only — they expose contributor principals, proposed findings
 content, and provenance, so they trap with `\"Unauthorized: You must be signed
 in\"` for an anonymous caller and `\"Unauthorized: Only Family Stewards can
@@ -1521,10 +1584,20 @@ already reference the caller's stable principal (`requestingUserId`,
   `status` (`ReviewStatus`), `submittedBy` (`Principal`), `submittedAt` (`Int`),
   `reviewedBy` (`?Principal`), and `reviewedAt` (`?Int`). Approved proposals route
   to the family graph.
-- `ConflictReviewItem` fields: `id` (`Nat`), `findingId` (`FindingId`), `field`
-  (`Text`), `canonicalValue` (`Text`), `proposedValue` (`Text`), `status`
+- `ConflictReviewItem` fields: `id` (`Nat`), `findingId` (`FindingId`),
+  `personId` (`?Text`, the affected canonical Person, `null` when the finding
+  targets no Person), `field` (`Text`), `canonicalValue` (`Text`),
+  `proposedValue` (`Text`), `existingSourceId` (`?Nat`, the source of the
+  existing canonical value when known, `null` otherwise), `proposedSourceId`
+  (`?Nat`, the source of the proposed finding), `evidenceLabel`
+  (`EvidenceLabel`, the proposed finding's evidence label), `stewardNotes`
+  (`Text`, free-text notes recorded by the steward during resolution), `status`
   (`ReviewStatus`), `resolvedBy` (`?Principal`), and `resolvedAt` (`?Int`). A
-  conflict item is created instead of silently overwriting conflicting data.
+  conflict item is created as `#Conflicting` (unresolved) instead of silently
+  overwriting conflicting data; canonical data is never altered at creation.
+- `ConflictResolutionAction` is a variant: `#KeepExisting`, `#ReplaceExisting`,
+  `#PreserveBoth`, or `#NeedsResearch` — the explicit decision a Family Steward
+  makes when resolving a conflict review item.
 - `ResearchAuditEntry` fields: `id` (`Nat`), `action` (`Text`, the audit action
   tag, e.g. `\"SourceCreated\"`/`\"FindingSubmitted\"`/`\"FindingApproved\"`/`\"FindingRoutedToConflict\"`/`\"ConflictResolved\"`),
   `findingId` (`?FindingId`, `null` when not tied to a finding), `sourceId`
@@ -1568,8 +1641,10 @@ the approval lifecycle.
 Profile claims follow a request → approve/reject lifecycle. `requestProfileClaim`
 creates a `#Pending` claim without granting ownership. A Family Steward then
 calls `approveProfileClaim` (marking the profile `#Claimed` and associating it
-with the requesting user) or `rejectProfileClaim`. Only an approved claim unlocks
-owner editing via `updateOwnProfile`. A deceased profile can never be claimed
+with the requesting user) or `rejectProfileClaim`. An approved claim unlocks
+owner editing via `updateOwnProfile`; a Family Steward may also edit an
+unclaimed/historical profile via `updateOwnProfile` (but never a profile claimed
+by another user). A deceased profile can never be claimed
 (`requestProfileClaim` returns `#err(#DeceasedProfile)`). A signed-in caller can
 observe their own claim state on a profile at any time via `getMyProfileClaim`
 (returns `null` when they have no claim on it), and can resolve their own linked
@@ -1722,8 +1797,12 @@ original Archive item), and `needsResearchSource` marks it as needing research
 `approveFinding` routes an approved finding to its target surface (Profile,
 family graph, Timeline / Travel Through Time, Family Stories, Family Mysteries,
 or Profile Sources / Archive), `rejectFinding` rejects it, and `resolveConflict`
-writes the proposed value of a conflict review item's underlying finding into its
-canonical area and marks the item resolved. A finding labelled `#Conflicting` is
+applies the steward's explicit decision to a conflict review item: `#KeepExisting`
+leaves canonical data unchanged and resolves the conflict, `#ReplaceExisting`
+writes the proposed value into canonical data once, `#PreserveBoth` keeps both
+values visible as an unresolved `#Conflicting` conflict, and `#NeedsResearch`
+retains the conflict with `#NeedsResearch` status. A finding labelled
+`#Conflicting` is
 never approved directly — `approveFinding`
 routes it to a Conflict Review item (marking the finding `#Conflicting` with a
 `conflictReviewId`) instead of silently overwriting canonical data. New Person
@@ -1805,9 +1884,10 @@ no async job to poll; the frontend can call the list methods (steward) or
   same profile. It updates the existing canonical Person record in place —
   preserving `personId`, claim ownership, confirmed relationships, archive
   links, notifications, and verification history — and never creates a new
-  person. It only ever updates the caller's own living profile and never
-  rewrites family relationships; any relationship addition or change must go
-  through `proposeRelationship`.
+  person. It only ever updates the caller's own living profile or, for a Family
+  Steward, an unclaimed/historical profile, and never rewrites family
+  relationships; any relationship addition or change must go through
+  `proposeRelationship`.
 - `bindAuthMethod` is idempotent: binding an authentication method that is
   already bound to the account is a no-op that returns the unchanged account.
   It never removes or replaces other bound methods, so a retry that actually
@@ -1938,8 +2018,12 @@ no async job to poll; the frontend can call the list methods (steward) or
   `FindingNeedsResearch` audit entry.
 - `resolveConflict` is idempotent: resolving an already-resolved (or nonexistent)
   conflict item returns `null` and changes nothing. On the first resolution it
-  writes the proposed value of the underlying finding into its canonical area,
-  marks the item `#Approved`, and records the reviewer and review time.
+  applies the steward's chosen action: `#KeepExisting` and `#ReplaceExisting`
+  mark the item `#Approved` (resolved) and record the reviewer and review time,
+  with `#ReplaceExisting` also writing the proposed value into canonical data
+  once; `#PreserveBoth` keeps the item `#Conflicting` (unresolved) and
+  `#NeedsResearch` moves it to `#NeedsResearch` (unresolved), both leaving
+  canonical data unchanged. Every resolution records an audit entry.
 - `approveSource`, `rejectSource`, and `needsResearchSource` are idempotent:
   acting on an already-reviewed (or nonexistent) source returns `null` and
   changes nothing. They only transition sources currently in `#Pending` state.
@@ -1994,7 +2078,8 @@ no async job to poll; the frontend can call the list methods (steward) or
 - `requestProfileClaim` returns `#err(#DeceasedProfile)` for a deceased profile
   — deceased profiles can never be claimed. `updateOwnProfile` likewise returns
   `#err(#DeceasedProfile)` for a deceased profile and `#err(#NotOwner)` when the
-  caller is not the profile's owner.
+  caller is neither the profile's owner nor a Family Steward editing an
+  unclaimed profile.
 - `approveProfileClaim`, `rejectProfileClaim`, `approveRelationshipRequest`,
   `rejectRelationshipRequest`, and `setRelationshipRequestPending` return `null`
   (they do not trap) when the target id does not exist or is not in the expected

@@ -1773,6 +1773,9 @@ export function ResearchIntakePage({
   const [tab, setTab] = useState<Tab>("sources");
 
   const reviewQueuePending = reviewQueue ? Number(reviewQueue.pending) : 0;
+  const reviewQueueConflicting = reviewQueue
+    ? Number(reviewQueue.conflicting) + Number(reviewQueue.needsResearch)
+    : 0;
 
   if (!adminLoading && !isAdmin) {
     return (
@@ -1857,6 +1860,14 @@ export function ResearchIntakePage({
           >
             <Scale className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
             Conflict Review
+            {reviewQueueConflicting > 0 && (
+              <span
+                data-ocid="research_intake.conflict_review_badge"
+                className="research-queue-badge"
+              >
+                {reviewQueueConflicting}
+              </span>
+            )}
           </button>
         </div>
       </header>

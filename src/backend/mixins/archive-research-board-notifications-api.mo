@@ -56,9 +56,12 @@ mixin (
   };
 
   /// Searches/filters approved archive items by title query, tags, item type,
-  /// related family member, and era. Returns only `#Approved` items.
-  public query func searchArchiveItems(filter : Types.ArchiveSearchFilter) : async [ArchiveTypes.ArchiveItem] {
-    Lib.searchArchiveItems(archiveItems, filter);
+  /// related family member, and era. Returns only `#Approved` items visible to
+  /// the caller under the archive privacy rules.
+  public query ({ caller }) func searchArchiveItems(filter : Types.ArchiveSearchFilter) : async [ArchiveTypes.ArchiveItem] {
+    let isAdmin = AccessControl.isAdmin(accessControlState, caller);
+    let isApprovedFamilyMember = isAdmin or claims.toArray().any(func c = c.requestingUserId == caller and c.status == #Approved);
+    Lib.searchArchiveItems(archiveItems, filter, caller, isAdmin, isApprovedFamilyMember);
   };
 
   /// Uploads a research source file: creates one canonical Archive item

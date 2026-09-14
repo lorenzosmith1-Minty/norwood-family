@@ -424,6 +424,11 @@ describe("Profile Completeness data updates after editing", () => {
       within(claimSection).getByRole("button", { name: "Edit My Profile" }),
     );
     expect(await screen.findByText("You own this profile")).toBeInTheDocument();
+
+    // The canonical clayton profile pre-fills preferredName and birthDate, so
+    // clear them before typing to assert the new values are recorded.
+    await user.clear(screen.getByTestId("profile_edit.preferred_name_input"));
+    await user.clear(screen.getByTestId("profile_edit.birth_date_input"));
     await user.type(
       screen.getByTestId("profile_edit.preferred_name_input"),
       "Clayton Norwood",
@@ -509,6 +514,13 @@ describe("Edit form validation", () => {
 
     expect(await screen.findByText("You own this profile")).toBeInTheDocument();
 
+    // The canonical clayton profile pre-fills preferredName from the canonical
+    // display name. The component fields (firstName/lastName) are not invented
+    // from the display name, so clear all three to exercise the
+    // display-name-required validation.
+    await user.clear(screen.getByTestId("profile_edit.preferred_name_input"));
+    await user.clear(screen.getByTestId("profile_edit.first_name_input"));
+    await user.clear(screen.getByTestId("profile_edit.last_name_input"));
     // Enter a first name but no display name and no last name, then save.
     await user.type(
       screen.getByTestId("profile_edit.first_name_input"),
@@ -542,6 +554,10 @@ describe("Edit form validation", () => {
 
     expect(await screen.findByText("You own this profile")).toBeInTheDocument();
 
+    // The canonical clayton profile pre-fills preferredName and birthDate, so
+    // clear them before typing the invalid value.
+    await user.clear(screen.getByTestId("profile_edit.preferred_name_input"));
+    await user.clear(screen.getByTestId("profile_edit.birth_date_input"));
     // Enter a display name and an invalid birth date, then save.
     await user.type(
       screen.getByTestId("profile_edit.preferred_name_input"),
@@ -579,6 +595,9 @@ describe("Autosave draft to localStorage", () => {
 
     expect(await screen.findByText("You own this profile")).toBeInTheDocument();
 
+    // The canonical clayton profile pre-fills preferredName, so clear it before
+    // typing so the autosaved value is exactly the typed value.
+    await user.clear(screen.getByTestId("profile_edit.preferred_name_input"));
     // Type into a field; the draft is autosaved (debounced) to localStorage.
     await user.type(
       screen.getByTestId("profile_edit.preferred_name_input"),

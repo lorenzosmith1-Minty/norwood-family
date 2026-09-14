@@ -6,6 +6,7 @@ import ResearchIntakeTypes "../types/research-intake";
 import BoardTypes "../types/board";
 import OwnershipTypes "../types/ownership";
 import Types "../types/archive-research-board-notifications";
+import ArchiveLib "../lib/archive";
 
 module {
   /// Computes the next archive item id: one greater than the largest existing
@@ -29,17 +30,22 @@ module {
   };
 
   /// Searches/filters approved archive items by title query, tags, item type,
-  /// related family member, and era. Returns only `#Approved` items. The title
+  /// related family member, and era. Returns only `#Approved` items visible to
+  /// the given caller under the archive privacy rules. The title
   /// query and tags match case-insensitively and by substring; an item must
   /// carry ALL of the given tags.
   public func searchArchiveItems(
     items : List.List<ArchiveTypes.ArchiveItem>,
     filter : Types.ArchiveSearchFilter,
+    caller : Principal,
+    isAdmin : Bool,
+    isApprovedFamilyMember : Bool,
   ) : [ArchiveTypes.ArchiveItem] {
     let queryText = switch (filter.searchTerm) { case (?q) q.toLower(); case null "" };
     let tags = filter.tags.map(func t = t.toLower());
     items.toArray().filter(func it =
       it.status == #Approved and
+      ArchiveLib.isVisible(it, caller, isAdmin, isApprovedFamilyMember) and
       (queryText == "" or it.title.toLower().contains(#text queryText)) and
       (tags.size() == 0 or tags.all(func t = it.tags.any(func tag = tag.toLower().contains(#text t)))) and
       (switch (filter.itemType) { case (?t) it.itemType == t; case null true }) and

@@ -23,6 +23,8 @@ import {
   ARCHIVE_ITEM_TYPE_BADGE,
   ARCHIVE_ITEM_TYPE_LABELS,
   ArchiveItemType,
+  PRIVACY_LEVEL_BADGE,
+  PRIVACY_LEVEL_LABELS,
   SOURCE_STATUS_LABELS,
   SourceStatus,
 } from "../types/archive";
@@ -181,6 +183,12 @@ export function ArchiveDetailPage({
         <div className="flex flex-wrap items-center gap-2">
           <span className={`archive-type-badge ${typeBadge}`}>
             {ARCHIVE_ITEM_TYPE_LABELS[item.itemType]}
+          </span>
+          <span
+            className={`privacy-badge ${PRIVACY_LEVEL_BADGE[item.privacyLevel]}`}
+            data-ocid="archive_detail.privacy_badge"
+          >
+            {PRIVACY_LEVEL_LABELS[item.privacyLevel]}
           </span>
           {item.era ? (
             <span className="text-xs font-medium text-muted-foreground">

@@ -1,4 +1,11 @@
-import { ArrowRight, Check, GitMerge, Scale } from "lucide-react";
+import {
+  ArrowRight,
+  Check,
+  GitMerge,
+  Scale,
+  Search,
+  ShieldAlert,
+} from "lucide-react";
 import { useState } from "react";
 import {
   AlertDialog,
@@ -19,11 +26,13 @@ import {
   useResolveConflict,
 } from "../hooks/useResearchIntake";
 import {
+  CONFLICT_ACTION_LABELS,
   EVIDENCE_LABEL_LABELS,
   FINDING_TYPE_LABELS,
   REVIEW_STATUS_LABELS,
   SOURCE_TYPE_LABELS,
 } from "../types/research-intake";
+import { ConflictResolutionAction } from "../types/research-intake";
 import type {
   ConflictReviewItem,
   FindingContent,
@@ -72,19 +81,57 @@ function findingContentSummary(content: FindingContent): string {
   }
 }
 
+/** The four steward resolution actions, in display order. */
+const RESOLUTION_ACTIONS: ConflictResolutionAction[] = [
+  ConflictResolutionAction.KeepExisting,
+  ConflictResolutionAction.ReplaceExisting,
+  ConflictResolutionAction.PreserveBoth,
+  ConflictResolutionAction.NeedsResearch,
+];
+
+/** Short guidance shown under each resolution action in the confirm dialog. */
+const ACTION_GUIDANCE: Record<ConflictResolutionAction, string> = {
+  [ConflictResolutionAction.KeepExisting]:
+    "The canonical value stays unchanged. The proposed research and its provenance are preserved, and the conflict is resolved and recorded in the audit history.",
+  [ConflictResolutionAction.ReplaceExisting]:
+    "The canonical value is updated once to the proposed value. The old value and its provenance are preserved in the conflict and audit history, and the new source is kept.",
+  [ConflictResolutionAction.PreserveBoth]:
+    "Both values stay visible as an unresolved conflict marked Conflicting. Neither value is silently chosen.",
+  [ConflictResolutionAction.NeedsResearch]:
+    "The canonical value stays unchanged and the conflict is retained with a Needs Research status for future investigation.",
+};
+
 /**
  * A single conflict review card. A proposed finding contradicts existing
- * canonical family data, so the two values sit side by side on a cool cyan
- * plate and the steward decides the outcome. The linked finding and its source
- * are resolved from the backend so the decision is made with full provenance.
+ * canonical family data, so the EXISTING value (canonical, source/provenance,
+ * evidence status) and the PROPOSED value (proposed, source, evidence label)
+ * sit side by side on a cool cyan plate and the steward picks one of four
+ * explicit resolution actions. The linked finding and both sources are resolved
+ * from the backend so the decision is made with full provenance.
  */
 function ConflictCard({ item }: { item: ConflictReviewItem }) {
   const { data: finding } = useGetFinding(item.findingId);
-  const { data: source } = useGetSource(finding?.sourceId ?? 0n);
+  const { data: existingSource } = useGetSource(item.existingSourceId ?? 0n);
+  const { data: proposedSource } = useGetSource(item.proposedSourceId ?? 0n);
   const resolve = useResolveConflict();
-  const [open, setOpen] = useState(false);
+  const [openAction, setOpenAction] = useState<ConflictResolutionAction | null>(
+    null,
+  );
+  const [notes, setNotes] = useState("");
 
   const isResolved = item.status === "Approved" || item.status === "Rejected";
+
+  const confirmResolve = (action: ConflictResolutionAction) => {
+    resolve.mutate(
+      { conflictId: item.id, action, notes },
+      {
+        onSuccess: () => {
+          setOpenAction(null);
+          setNotes("");
+        },
+      },
+    );
+  };
 
   return (
     <article
@@ -111,14 +158,34 @@ function ConflictCard({ item }: { item: ConflictReviewItem }) {
         <span className="research-conflict-label">Disputed value</span>
         <div className="research-conflict-values">
           <div className="research-conflict-value">
-            <span className="research-conflict-owner">Canonical record</span>
+            <span className="research-conflict-owner">
+              Existing · canonical
+            </span>
             <span className="research-conflict-text">
               {item.canonicalValue}
             </span>
+            {existingSource ? (
+              <span className="research-conflict-provenance">
+                {existingSource.title}
+              </span>
+            ) : (
+              <span className="research-conflict-provenance">
+                Existing source
+              </span>
+            )}
           </div>
           <div className="research-conflict-value">
-            <span className="research-conflict-owner">Proposed finding</span>
+            <span className="research-conflict-owner">Proposed</span>
             <span className="research-conflict-text">{item.proposedValue}</span>
+            {proposedSource ? (
+              <span className="research-conflict-provenance">
+                {proposedSource.title}
+              </span>
+            ) : (
+              <span className="research-conflict-provenance">
+                Proposed source
+              </span>
+            )}
           </div>
         </div>
       </div>
@@ -150,16 +217,18 @@ function ConflictCard({ item }: { item: ConflictReviewItem }) {
         </div>
       )}
 
-      {source ? (
+      {proposedSource ? (
         <div className="research-source-card">
           <div className="research-source-head">
-            <span className="research-source-title">{source.title}</span>
+            <span className="research-source-title">
+              {proposedSource.title}
+            </span>
             <span className="research-evidence">
-              {SOURCE_TYPE_LABELS[source.sourceType]}
+              {SOURCE_TYPE_LABELS[proposedSource.sourceType]}
             </span>
           </div>
           <p className="research-source-meta">
-            {source.description || "No description"}
+            {proposedSource.description || "No description"}
           </p>
         </div>
       ) : (
@@ -175,44 +244,68 @@ function ConflictCard({ item }: { item: ConflictReviewItem }) {
             {REVIEW_STATUS_LABELS[item.status]}
           </span>
         ) : (
-          <AlertDialog open={open} onOpenChange={setOpen}>
-            <AlertDialogTrigger asChild>
-              <button
-                type="button"
-                data-ocid={`research_conflict.resolve_button.${item.id}`}
-                className="research-resolve"
-              >
-                <GitMerge className="h-4 w-4" aria-hidden="true" />
-                Resolve conflict
-              </button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Resolve this conflict?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Resolving records the steward's decision and writes the
-                  proposed value into the family archive. The canonical value is
-                  never overwritten silently — this action is the explicit
-                  decision point, and it is recorded in the audit history.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  data-ocid={`research_conflict.confirm_button.${item.id}`}
-                  disabled={resolve.isPending}
-                  onClick={(event) => {
-                    event.preventDefault();
-                    resolve.mutate(item.id, {
-                      onSuccess: () => setOpen(false),
-                    });
-                  }}
+          RESOLUTION_ACTIONS.map((action) => (
+            <AlertDialog
+              key={action}
+              open={openAction === action}
+              onOpenChange={(open) => {
+                setOpenAction(open ? action : null);
+                if (!open) setNotes("");
+              }}
+            >
+              <AlertDialogTrigger asChild>
+                <button
+                  type="button"
+                  data-ocid={`research_conflict.action_button.${item.id}.${action}`}
+                  className="research-resolve"
                 >
-                  {resolve.isPending ? "Resolving…" : "Resolve conflict"}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+                  <GitMerge className="h-4 w-4" aria-hidden="true" />
+                  {CONFLICT_ACTION_LABELS[action]}
+                </button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    {CONFLICT_ACTION_LABELS[action]}?
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    {ACTION_GUIDANCE[action]} This decision is recorded in the
+                    audit history with your identity and timestamp.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <label
+                  htmlFor={`conflict-notes-${item.id}-${action}`}
+                  className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground"
+                >
+                  Steward notes (optional)
+                </label>
+                <textarea
+                  id={`conflict-notes-${item.id}-${action}`}
+                  data-ocid={`research_conflict.notes_input.${item.id}.${action}`}
+                  value={notes}
+                  onChange={(event) => setNotes(event.target.value)}
+                  rows={3}
+                  placeholder="Why did you choose this resolution?"
+                  className="w-full resize-none rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                />
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    data-ocid={`research_conflict.confirm_button.${item.id}.${action}`}
+                    disabled={resolve.isPending}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      confirmResolve(action);
+                    }}
+                  >
+                    {resolve.isPending
+                      ? "Resolving…"
+                      : CONFLICT_ACTION_LABELS[action]}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          ))
         )}
         {resolve.isError && (
           <p className="text-xs font-medium text-destructive">
@@ -227,9 +320,9 @@ function ConflictCard({ item }: { item: ConflictReviewItem }) {
 /**
  * Conflict Review: the Historical Research Intake surface where a steward
  * decides the outcome when a proposed finding contradicts existing canonical
- * family data. Canonical and proposed values are shown side by side with the
- * linked finding and source, and resolving is an explicit, audited action —
- * conflicting data is never overwritten silently.
+ * family data. Existing and proposed values are shown side by side with their
+ * sources and evidence, and resolving is an explicit, audited action chosen
+ * from four options — conflicting data is never overwritten silently.
  */
 export function ResearchConflictReviewPage({
   onBack,
@@ -261,6 +354,10 @@ export function ResearchConflictReviewPage({
           data-ocid="research_conflict.unauthorized_state"
           className="flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-border/70 px-6 py-16 text-center"
         >
+          <ShieldAlert
+            className="h-8 w-8 text-muted-foreground"
+            aria-hidden="true"
+          />
           <p className="font-display text-xl font-semibold text-foreground">
             Steward access only
           </p>
@@ -300,8 +397,9 @@ export function ResearchConflictReviewPage({
           </div>
           <p className="research-section-hint">
             A proposed finding below contradicts existing canonical family data.
-            Nothing is changed automatically — review the canonical and proposed
-            values, then resolve to record the steward's decision.
+            Nothing is changed automatically — compare the existing and proposed
+            values, then choose one of the four resolution actions to record the
+            steward's decision.
           </p>
         </section>
 

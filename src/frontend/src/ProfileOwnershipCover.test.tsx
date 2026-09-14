@@ -82,6 +82,17 @@ const {
     async getPersonProfile(personId: string): Promise<PersonProfile | null> {
       return profiles[personId] ?? null;
     },
+    async getMyProfile(): Promise<PersonProfile | null> {
+      // The caller's own linked/claimed profile, if any. The navbar identity
+      // and the Explore Family / Heritage Branch gate resolve approved family
+      // access from this: a caller is an approved member only when getMyProfile
+      // resolves a CLAIMED profile owned by them.
+      return (
+        Object.values(profiles).find(
+          (p) => p.claimedByUserId?.toString() === currentPrincipal,
+        ) ?? null
+      );
+    },
     async getMyProfileClaim(personId: string): Promise<ProfileClaim | null> {
       return (
         claims.find(
@@ -466,6 +477,27 @@ function seedLivingUnclaimed(personId: string, name: string) {
     id === personId ? profile : null;
 }
 
+// Seed a CLAIMED living profile owned by the signed-in caller so getMyProfile
+// resolves an approved/owned profile. Explore Family is now gated behind
+// approved family access, so a signed-in caller must hold an approved claim to
+// see the family graph and reach a person's profile page through it.
+function seedApprovedMember(personId: string, name: string) {
+  const profile: PersonProfile = {
+    personId,
+    name,
+    livingStatus: LivingStatus.Living,
+    claimStatus: ClaimStatus.Claimed,
+    claimedByUserId: Principal.fromText(getCurrentPrincipal()),
+    preferredName: undefined,
+    story: undefined,
+    occupation: undefined,
+    birthInfo: undefined,
+    timeline: undefined,
+    privacySettings: undefined,
+  };
+  seedProfile(profile);
+}
+
 function seedDeceased(personId: string, name: string) {
   const profile: PersonProfile = {
     personId,
@@ -501,6 +533,9 @@ describe("Profile claim flow", () => {
     seedLivingUnclaimed("clayton", "Clayton Norwood");
     setAuthenticated(true);
     setCurrentPrincipal(USER_1);
+    // The signed-in caller must hold an approved claim to pass the Explore
+    // Family gate and reach Clayton's profile page.
+    seedApprovedMember("self", "Self Norwood");
     const user = userEvent.setup();
     renderApp();
 
@@ -537,6 +572,9 @@ describe("Profile claim flow", () => {
     });
     setAuthenticated(true);
     setCurrentPrincipal(USER_1);
+    // The signed-in caller must hold an approved claim to pass the Explore
+    // Family gate and reach Clayton's profile page.
+    seedApprovedMember("self", "Self Norwood");
     const user = userEvent.setup();
     renderApp();
 
@@ -564,6 +602,9 @@ describe("Profile claim flow", () => {
     seedDeceased("julia", "Julia “Julie” Norwood");
     setAuthenticated(true);
     setCurrentPrincipal(USER_1);
+    // The signed-in caller must hold an approved claim to pass the Explore
+    // Family gate and reach Julia's profile page.
+    seedApprovedMember("self", "Self Norwood");
     const user = userEvent.setup();
     renderApp();
 
@@ -581,6 +622,9 @@ describe("Profile claim flow", () => {
   it("shows the owner's edit entry on a claimed profile owned by the signed-in user", async () => {
     setAuthenticated(true);
     setCurrentPrincipal(OWNER);
+    // The signed-in caller must hold an approved claim to pass the Explore
+    // Family gate and reach Clayton's profile page.
+    seedApprovedMember("self", "Self Norwood");
     mockActor.getPersonProfile = async (id: string) =>
       id === "clayton"
         ? {

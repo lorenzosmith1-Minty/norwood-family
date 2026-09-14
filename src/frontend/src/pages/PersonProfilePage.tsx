@@ -6,6 +6,7 @@ import {
   Archive,
   ArchiveRestore,
   ArrowLeft,
+  ArrowRight,
   AudioLines,
   BookOpen,
   CalendarDays,
@@ -60,7 +61,10 @@ import {
   useApprovedMediaItems,
   useIsAdmin,
 } from "../hooks/useArchiveStorage";
-import { useCanonicalPerson } from "../hooks/useCanonicalPerson";
+import {
+  resolveCanonicalPersonProfile,
+  useCanonicalPerson,
+} from "../hooks/useCanonicalPerson";
 import {
   useArchiveProfile,
   useListArchivedProfileIds,
@@ -80,6 +84,7 @@ import {
 import { useMyProfileClaim, usePersonProfile } from "../hooks/useProfileClaims";
 import { useRecipesForPerson } from "../hooks/useRecipes";
 import { useMyRelationshipRequests } from "../hooks/useRelationshipRequests";
+import { useListConflictsForPerson } from "../hooks/useResearchIntake";
 import type { ArchiveItem } from "../types/archive";
 import { getMediaKind } from "../types/archive";
 import {
@@ -91,6 +96,10 @@ import {
 import { ClaimStatus, LivingStatus } from "../types/ownership";
 import { getRecipePrimaryImage, getRecipeYear } from "../types/recipes";
 import type { Recipe } from "../types/recipes";
+import {
+  EVIDENCE_LABEL_LABELS,
+  REVIEW_STATUS_LABELS,
+} from "../types/research-intake";
 
 export interface ProfileFact {
   label: string;
@@ -2612,43 +2621,16 @@ export const profiles: Record<string, PersonProfile> = {
  * createMyself and keyed by the caller's principal) that has no entry in the
  * static `profiles` record, so the "My Profile" view shows the pending profile
  * instead of falling back to another person or an empty page.
+ *
+ * This is the display's non-static path through the single canonical Person
+ * read adapter (`resolveCanonicalPersonProfile` with no static canonical
+ * record), so the profile display and the profile editor resolve the same
+ * canonical PersonProfile from the same adapter.
  */
 export function backendProfileToPersonProfile(
   backend: BackendPersonProfile,
 ): PersonProfile {
-  const name = backend.preferredName || backend.name;
-  // An approved/claimed profile renders the normal claimed state; only a
-  // genuinely pending profile (a claim awaiting review, or a newly created
-  // profile awaiting a confirmed connection) shows the pending label.
-  const isClaimed = backend.claimStatus === ClaimStatus.Claimed;
-  // Surface the owner-editable fields on the profile page. The editor writes
-  // birthDate/birthplace/currentLocation/occupation and shortBio/longerStory,
-  // so map them into the frontend facts/story so edits appear immediately.
-  const facts: ProfileFact[] = [];
-  if (backend.birthDate)
-    facts.push({ label: "Born", value: backend.birthDate });
-  if (backend.birthplace)
-    facts.push({ label: "Birthplace", value: backend.birthplace });
-  if (backend.currentLocation)
-    facts.push({ label: "Location", value: backend.currentLocation });
-  if (backend.occupation)
-    facts.push({ label: "Occupation", value: backend.occupation });
-  const story = backend.shortBio || backend.longerStory || backend.story || "";
-  return {
-    id: backend.personId,
-    name,
-    role: isClaimed ? "Family member" : "Pending profile",
-    portrait: { src: "", alt: `Profile for ${name}` },
-    facts,
-    story,
-    family: { spouseName: "", spouseRole: "", childrenText: "" },
-    timeline: (backend.timeline ?? []).map((text, index) => ({
-      date: "",
-      title: `Timeline entry ${index + 1}`,
-      detail: text,
-    })),
-    sources: [],
-  };
+  return resolveCanonicalPersonProfile(backend);
 }
 
 interface PersonProfilePageProps {
@@ -2689,6 +2671,11 @@ interface PersonProfilePageProps {
    * message (see useCanMessagePerson).
    */
   onOpenConversation?: (personId: string) => void;
+  /**
+   * Opens the Conflict Review page (steward only). Used by the unresolved
+   * conflicts surfaced on this profile so a steward can resolve them.
+   */
+  onOpenConflictReview?: () => void;
 }
 
 function getInitials(name: string): string {
@@ -3581,6 +3568,7 @@ export function PersonProfilePage({
   onOpenRecipe,
   onOpenRecipeContribute,
   onOpenConversation,
+  onOpenConflictReview,
 }: PersonProfilePageProps) {
   const storyLabel =
     person.id === "julia" ||
@@ -3704,6 +3692,10 @@ export function PersonProfilePage({
   // account, target is not the viewer, and target is not archived. Returns
   // false for unclaimed/deceased profiles and for guests.
   const { data: canMessage = false } = useCanMessagePerson(person.id);
+  // Unresolved (Conflicting / NeedsResearch) conflicts for this person, so they
+  // can be surfaced alongside the canonical values with a link to Conflict
+  // Review. Requires a signed-in caller; anonymous callers get an empty list.
+  const { data: personConflicts = [] } = useListConflictsForPerson(person.id);
   const hasProfilePhoto = Boolean(canonical.profilePhotoUrl);
   const completeness = computeCompleteness(
     person,
@@ -4330,6 +4322,73 @@ export function PersonProfilePage({
           <EmptySection />
         )}
       </motion.section>
+
+      {/* Unresolved conflicts */}
+      {personConflicts.length > 0 && (
+        <motion.section
+          aria-label="Unresolved conflicts"
+          className="mt-10"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.28, ease: [0.4, 0, 0.2, 1] }}
+        >
+          <SectionHeader icon={AlertTriangle} label="Unresolved conflicts" />
+          <p className="mt-1 text-sm text-muted-foreground">
+            Research sources disagree about this person. The conflicting values
+            are shown below alongside the canonical record.
+          </p>
+          <div className="mt-3 flex flex-col gap-3">
+            {personConflicts.map((conflict) => (
+              <div
+                key={conflict.id.toString()}
+                data-ocid={`profile.conflict.${conflict.id}`}
+                className="rounded-2xl border border-border bg-card px-4 py-3 shadow-subtle"
+              >
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="font-display text-base font-semibold text-foreground">
+                    {conflict.field}
+                  </p>
+                  <span className="inline-flex items-center rounded-full bg-destructive/15 px-2 py-0.5 text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-destructive">
+                    {REVIEW_STATUS_LABELS[conflict.status]}
+                  </span>
+                </div>
+                <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  <div className="rounded-lg border border-border/60 bg-muted/40 p-2.5">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                      Existing · canonical
+                    </p>
+                    <p className="mt-0.5 text-sm font-semibold text-foreground">
+                      {conflict.canonicalValue}
+                    </p>
+                  </div>
+                  <div className="rounded-lg border border-border/60 bg-muted/40 p-2.5">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                      Proposed
+                    </p>
+                    <p className="mt-0.5 text-sm font-semibold text-foreground">
+                      {conflict.proposedValue}
+                    </p>
+                  </div>
+                </div>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  Evidence: {EVIDENCE_LABEL_LABELS[conflict.evidenceLabel]}
+                </p>
+                {onOpenConflictReview && (
+                  <button
+                    type="button"
+                    data-ocid={`profile.conflict.review_link.${conflict.id}`}
+                    onClick={onOpenConflictReview}
+                    className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3.5 py-1.5 text-xs font-semibold text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                  >
+                    Review in Conflict Review
+                    <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        </motion.section>
+      )}
 
       {/* Photos */}
       <PhotosSection

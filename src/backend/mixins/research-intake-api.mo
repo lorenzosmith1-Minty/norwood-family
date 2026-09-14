@@ -178,9 +178,13 @@ mixin (
             conflicts,
             { var next = state.nextConflictId },
             f.id,
+            conflictPersonId(f),
             conflictField(f),
             canonicalValueFor(f),
             conflictProposedValue(f),
+            null,
+            ?f.sourceId,
+            f.evidenceLabel,
           );
           state.nextConflictId := state.nextConflictId + 1;
           let updated = markFindingConflicting(id, conflict.id, caller, now);
@@ -341,20 +345,65 @@ mixin (
     conflicts.toArray();
   };
 
-  /// Resolves a conflict review item (steward only). Returns the updated item,
-  /// or `null` when it does not exist.
-  public shared ({ caller }) func resolveConflict(id : Nat) : async ?Types.ConflictReviewItem {
+  /// Lists the unresolved conflict review items (`#Conflicting` and
+  /// `#NeedsResearch`) affecting a given Person, so the frontend can surface
+  /// them alongside canonical values on the person profile and source history
+  /// views. Requires a signed-in (non-anonymous) caller; anonymous callers
+  /// receive `[]`. Resolved conflicts are never returned.
+  public query ({ caller }) func listConflictsForPerson(personId : Text) : async [Types.ConflictReviewItem] {
+    if (caller.isAnonymous()) {
+      return [];
+    };
+    conflicts.toArray().filter(func c =
+      c.personId == ?personId and
+      (c.status == #Conflicting or c.status == #NeedsResearch)
+    );
+  };
+
+  /// Resolves a conflict review item (steward only) with an explicit decision.
+  /// `#KeepExisting` leaves canonical data unchanged and resolves the conflict;
+  /// `#ReplaceExisting` writes the proposed value into canonical data exactly
+  /// once (preserving the old value and its provenance in the conflict/audit
+  /// history and the new Source); `#PreserveBoth` keeps both values visible as an
+  /// unresolved `#Conflicting` conflict; `#NeedsResearch` leaves canonical data
+  /// unchanged and retains the conflict with `#NeedsResearch` status. Every
+  /// resolution records an audit entry. Returns the updated item, or `null` when
+  /// it does not exist.
+  public shared ({ caller }) func resolveConflict(
+    id : Nat,
+    action : Types.ConflictResolutionAction,
+    notes : Text,
+  ) : async ?Types.ConflictReviewItem {
     requireSteward(caller);
     let now = Time.now();
     switch (conflicts.find(func c = c.id == id)) {
       case null { null };
       case (?c) {
-        // Resolving a conflict writes the proposed value into canonical data.
-        switch (findings.find(func f = f.id == c.findingId)) {
-          case (?f) { routeToCanonical(f, caller, now) };
-          case null {};
+        // Only Replace Existing writes the proposed value into canonical data.
+        // Keep Existing, Preserve Both, and Needs Research leave canonical data
+        // unchanged — no silent overwrite.
+        if (action == #ReplaceExisting) {
+          switch (findings.find(func f = f.id == c.findingId)) {
+            case (?f) { routeToCanonical(f, caller, now) };
+            case null {};
+          };
         };
-        let updated = ResearchLib.resolveConflict(conflicts, id, caller, now);
+        let updated = ResearchLib.resolveConflict(conflicts, id, action, notes, caller, now);
+        // Reflect the resolution outcome on the linked finding so it no longer
+        // counts as an unresolved conflict after Keep/Replace, and so Preserve
+        // Both / Needs Research keep it visible as unresolved.
+        switch (action) {
+          case (#KeepExisting) {
+            ignore ResearchLib.updateFindingStatus(findings, c.findingId, #Rejected, caller, now);
+          };
+          case (#ReplaceExisting) {
+            ignore ResearchLib.updateFindingStatus(findings, c.findingId, #Approved, caller, now);
+          };
+          case (#PreserveBoth) {};
+          case (#NeedsResearch) {
+            ignore ResearchLib.updateFindingStatus(findings, c.findingId, #NeedsResearch, caller, now);
+          };
+        };
         ignore ResearchLib.appendAudit(
           auditLog,
           { var next = state.nextAuditId },
@@ -363,7 +412,7 @@ mixin (
           null,
           caller,
           now,
-          "Conflict Review item #" # id.toText() # " resolved",
+          "Conflict Review item #" # id.toText() # " resolved (" # conflictActionText(action) # ")",
         );
         state.nextAuditId := state.nextAuditId + 1;
         updated;
@@ -758,6 +807,28 @@ mixin (
       case (#Story _) "story";
       case (#Mystery _) "mystery";
       case (#Source _) "source";
+    };
+  };
+
+  /// The affected canonical Person to record on a conflict review item for a
+  /// finding. Prefers the person embedded in the finding content (PersonFact /
+  /// TimelineEvent), falling back to the finding's `personId`.
+  func conflictPersonId(f : Types.ProposedFinding) : ?Text {
+    switch (f.content) {
+      case (#PersonFact pf) { ?pf.personId };
+      case (#TimelineEvent t) { ?t.personId };
+      case _ { f.personId };
+    };
+  };
+
+  /// Renders a conflict resolution action variant as its tag text for audit
+  /// summaries.
+  func conflictActionText(a : Types.ConflictResolutionAction) : Text {
+    switch (a) {
+      case (#KeepExisting) "KeepExisting";
+      case (#ReplaceExisting) "ReplaceExisting";
+      case (#PreserveBoth) "PreserveBoth";
+      case (#NeedsResearch) "NeedsResearch";
     };
   };
 

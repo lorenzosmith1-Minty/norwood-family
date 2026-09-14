@@ -1,8 +1,26 @@
 import Iter "mo:core/Iter";
 import List "mo:core/List";
+import Principal "mo:core/Principal";
 import Types "../types/archive";
 
 module {
+  /// Whether an approved archive item is visible to the given caller. Public
+  /// items are visible to everyone; FamilyOnly items require approved family
+  /// membership or admin; Private items are visible only to their contributor
+  /// or an admin.
+  public func isVisible(
+    item : Types.ArchiveItem,
+    caller : Principal,
+    isAdmin : Bool,
+    isApprovedFamilyMember : Bool,
+  ) : Bool {
+    switch (item.privacyLevel) {
+      case (#Public) true;
+      case (#FamilyOnly) isAdmin or isApprovedFamilyMember;
+      case (#Private) isAdmin or item.contributor == caller;
+    };
+  };
+
   /// Submits a new archive item in pending state. The caller is recorded as the
   /// contributor. Returns the stored item.
   public func submit(
@@ -60,11 +78,19 @@ module {
     };
   };
 
-  /// Lists all archive items in approved state (visible in the archive).
+  /// Lists all archive items in approved state visible to the given caller.
+  /// Privacy is enforced server-side: Public items are visible to everyone;
+  /// FamilyOnly items require approved family membership; Private items are
+  /// visible only to their contributor or an admin.
   public func listApproved(
     items : List.List<Types.ArchiveItem>,
+    caller : Principal,
+    isAdmin : Bool,
+    isApprovedFamilyMember : Bool,
   ) : [Types.ArchiveItem] {
-    items.toArray().filter(func it = it.status == #Approved);
+    items.toArray().filter(
+      func it = it.status == #Approved and isVisible(it, caller, isAdmin, isApprovedFamilyMember)
+    );
   };
 
   /// Flattens every archive item into OQL-exposable rows. The raw blob bytes
@@ -73,12 +99,11 @@ module {
   public func archiveRows(
     items : List.List<Types.ArchiveItem>,
   ) : Iter.Iter<Types.ArchiveItemRow> {
-    let rows = List.empty<Types.ArchiveItemRow>();
-    for (item in items.toArray().values()) {
-      rows.add({
-        id = item.id;
-        title = item.title;
-        itemType = switch (item.itemType) {
+    items.toArray().map(
+      func it : Types.ArchiveItemRow = {
+        id = it.id;
+        title = it.title;
+        itemType = switch (it.itemType) {
           case (#Photo) "Photo";
           case (#Document) "Document";
           case (#Audio) "Audio";
@@ -88,37 +113,36 @@ module {
           case (#WorkBusiness) "WorkBusiness";
           case (#Other) "Other";
         };
-        era = item.era;
-        year = item.year;
-        contributor = item.contributor;
-        sourceStatus = switch (item.sourceStatus) {
+        era = it.era;
+        year = it.year;
+        contributor = it.contributor;
+        sourceStatus = switch (it.sourceStatus) {
           case (#Original) "Original";
           case (#Copy) "Copy";
           case (#Transcribed) "Transcribed";
           case (#Unverified) "Unverified";
         };
-        privacyLevel = switch (item.privacyLevel) {
+        privacyLevel = switch (it.privacyLevel) {
           case (#Public) "Public";
           case (#FamilyOnly) "FamilyOnly";
           case (#Private) "Private";
         };
-        status = switch (item.status) {
+        status = switch (it.status) {
           case (#Pending) "Pending";
           case (#Approved) "Approved";
           case (#Rejected) "Rejected";
         };
-        createdAt = item.createdAt;
-        classification = switch (item.classification) {
+        createdAt = it.createdAt;
+        classification = switch (it.classification) {
           case (#Standard) "Standard";
           case (#OralHistory) "OralHistory";
         };
-        primarySpeakerName = switch (item.primarySpeaker) {
+        primarySpeakerName = switch (it.primarySpeaker) {
           case (?s) s.name;
           case null "";
         };
-        tags = item.tags.values().join(", ");
-      });
-    };
-    rows.toArray().values();
+        tags = it.tags.values().join(", ");
+      }
+    ).values();
   };
 };

@@ -4,7 +4,10 @@ import {
   ArchiveItemClassification,
   ArchiveItemStatus,
   ArchiveItemType,
+  ClaimStatus,
+  LivingStatus,
   type OralHistorySpeaker,
+  type PersonProfile,
   PrivacyLevel,
   SourceStatus,
 } from "@/backend";
@@ -84,6 +87,22 @@ const {
   const mockActor = {
     async isCallerAdmin(): Promise<boolean> {
       return false;
+    },
+    async getMyProfile(): Promise<PersonProfile | null> {
+      if (!isAuthenticated) return null;
+      return {
+        personId: "self",
+        name: "Self Norwood",
+        livingStatus: LivingStatus.Living,
+        claimStatus: ClaimStatus.Claimed,
+        claimedByUserId: Principal.fromText("rrkah-fqaaa-aaaaa-aaaaq-cai"),
+        preferredName: undefined,
+        story: undefined,
+        occupation: undefined,
+        birthInfo: undefined,
+        timeline: undefined,
+        privacySettings: undefined,
+      };
     },
     async listApprovedArchiveItems(): Promise<ArchiveItem[]> {
       return items.filter((i) => i.status === ArchiveItemStatus.Approved);
@@ -479,6 +498,9 @@ describe("Person Profile Videos & Oral History section", () => {
     ]);
 
     const user = userEvent.setup();
+    // Explore Family is gated behind approved family access, so the caller must
+    // hold an approved (CLAIMED) profile for the graph to render.
+    setAuthenticated(true);
     renderApp();
 
     // Open Julia's profile (the default Explore Family focus) via the tree.

@@ -24,7 +24,11 @@ import { namesMatch } from "../lib/nameMatch";
 import { saveOriginatingView } from "../lib/originatingView";
 import { FAMILY_GRAPH, resolveDisplayName } from "../types/family";
 import type { PersonMatch } from "../types/ownership";
-import { ClaimError, RELATIONSHIP_TYPE_LABELS } from "../types/ownership";
+import {
+  ClaimError,
+  CreateError,
+  RELATIONSHIP_TYPE_LABELS,
+} from "../types/ownership";
 import { profiles } from "./PersonProfilePage";
 
 /**
@@ -215,8 +219,10 @@ function MatchCard({
   onThisIsMe: (personId: string) => void;
   onNoMatch: () => void;
 }) {
-  const { accountId } = useAuth();
-  const { data: myClaim } = useMyProfileClaim(match.personId);
+  const { accountId, isInitializing } = useAuth();
+  const { data: myClaim, isLoading: claimLoading } = useMyProfileClaim(
+    match.personId,
+  );
 
   const currentPrincipal = accountId;
 
@@ -235,6 +241,13 @@ function MatchCard({
     myClaim.status === "Pending" &&
     myClaim.requestingUserId.toString() === currentPrincipal;
 
+  // While the caller's own claim on this person is still resolving (or auth is
+  // still initializing), we cannot yet know whether they already own or have a
+  // pending claim on this profile. Do not render the "This is Me" claim control
+  // until that ownership state resolves — otherwise a signed-in owner would be
+  // offered a duplicate claim for a profile they already own or have pending.
+  const ownershipResolving = isInitializing || claimLoading;
+
   return (
     <div data-ocid={`add_myself.match.${index}`} className="match-card">
       <div className="match-card-portrait" aria-hidden="true">
@@ -249,7 +262,15 @@ function MatchCard({
         </p>
       </div>
       <div className="match-card-actions">
-        {ownedByCurrentUser ? (
+        {ownershipResolving ? (
+          <span
+            data-ocid={`add_myself.this_is_me.loading.${index}`}
+            className="claim-badge claim-badge-pending"
+          >
+            <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+            Checking…
+          </span>
+        ) : ownedByCurrentUser ? (
           <span
             data-ocid={`add_myself.this_is_me.owned.${index}`}
             className="claim-badge claim-badge-claimed"
@@ -336,6 +357,10 @@ export function AddMyselfPage({
   // screen with a visible error instead of silently navigating without a
   // persisted claim.
   const [claimError, setClaimError] = useState<string | null>(null);
+  // Set when the backend reports the caller already owns a profile
+  // (createMyself #AlreadyOwned), so the connect step shows a clear message
+  // instead of silently stalling on a duplicate Add Myself submission.
+  const [createError, setCreateError] = useState<string | null>(null);
 
   // Ref guards that ensure the auto-submit effect fires each backend call
   // exactly once per submission attempt. The react-query mutation objects
@@ -503,6 +528,7 @@ export function AddMyselfPage({
     // effect can run create + propose again (e.g. after a failed attempt).
     createInitiatedRef.current = false;
     proposeInitiatedRef.current = false;
+    setCreateError(null);
     setSubmissionAttempt((n) => n + 1);
     if (!isAuthenticated) {
       setShowSignIn(true);
@@ -535,7 +561,21 @@ export function AddMyselfPage({
         onSuccess: (result) => {
           if (result.__kind__ === "ok") {
             setCreatedPersonId(result.ok.personId);
+            return;
           }
+          if (result.err === CreateError.AlreadyOwned) {
+            // The caller already owns a profile (or has a pending claim), so
+            // the backend correctly refused to create a duplicate. Surface a
+            // clear message instead of silently stalling the flow.
+            setCreateError(
+              "You already have a profile in this family. Your place is already saved — no duplicate was created.",
+            );
+            return;
+          }
+          setCreateError("We couldn't create your profile. Please try again.");
+        },
+        onError: () => {
+          setCreateError("We couldn't create your profile. Please try again.");
         },
       });
     } else {
@@ -1105,7 +1145,15 @@ export function AddMyselfPage({
                       : "Save your place in the family"}
                 </button>
 
-                {create.isError || propose.isError ? (
+                {createError ? (
+                  <p
+                    data-ocid="add_myself.already_owned_state"
+                    className="text-sm text-destructive"
+                    role="alert"
+                  >
+                    {createError}
+                  </p>
+                ) : create.isError || propose.isError ? (
                   <p
                     data-ocid="add_myself.error_state"
                     className="text-sm text-destructive"

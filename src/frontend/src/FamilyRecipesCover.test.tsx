@@ -4,7 +4,10 @@ import {
   ArchiveItemClassification,
   ArchiveItemStatus,
   ArchiveItemType,
+  ClaimStatus,
   EvidenceStatus,
+  LivingStatus,
+  type PersonProfile,
   PrivacyLevel,
   type Recipe,
   RecipeStatus,
@@ -52,6 +55,8 @@ const {
   resetState,
   setAuthenticated,
   getAuthenticated,
+  setCurrentPrincipal,
+  getCurrentPrincipal,
   setAdmin,
 } = vi.hoisted(() => {
   let recipes: Recipe[] = [];
@@ -60,6 +65,7 @@ const {
   let nextMediaId = 0n;
   let isAuthenticated = false;
   let isAdmin = false;
+  let currentPrincipal = "aaaaa-aa";
 
   const makeRecipe = (id: bigint, overrides: Partial<Recipe> = {}): Recipe => ({
     recipeId: id,
@@ -115,6 +121,22 @@ const {
   const mockActor = {
     async isCallerAdmin(): Promise<boolean> {
       return isAdmin;
+    },
+    async getMyProfile(): Promise<PersonProfile | null> {
+      if (!isAuthenticated) return null;
+      return {
+        personId: "self",
+        name: "Self Norwood",
+        livingStatus: LivingStatus.Living,
+        claimStatus: ClaimStatus.Claimed,
+        claimedByUserId: Principal.fromText(currentPrincipal),
+        preferredName: undefined,
+        story: undefined,
+        occupation: undefined,
+        birthInfo: undefined,
+        timeline: undefined,
+        privacySettings: undefined,
+      };
     },
     async getPersonProfile(personId: string): Promise<{
       personId: string;
@@ -267,11 +289,16 @@ const {
       nextMediaId = 0n;
       isAuthenticated = false;
       isAdmin = false;
+      currentPrincipal = "aaaaa-aa";
     },
     setAuthenticated: (value: boolean) => {
       isAuthenticated = value;
     },
     getAuthenticated: () => isAuthenticated,
+    setCurrentPrincipal: (p: string) => {
+      currentPrincipal = p;
+    },
+    getCurrentPrincipal: () => currentPrincipal,
     setAdmin: (value: boolean) => {
       isAdmin = value;
     },
@@ -283,6 +310,9 @@ vi.mock("@caffeineai/core-infrastructure", () => ({
   useInternetIdentity: () => ({
     isAuthenticated: getAuthenticated(),
     login: () => {},
+    identity: getAuthenticated()
+      ? { getPrincipal: () => Principal.fromText(getCurrentPrincipal()) }
+      : null,
     isInitializing: false,
     isLoggingIn: false,
   }),
@@ -598,6 +628,10 @@ describe("Person Profile Family Recipes section", () => {
     ]);
 
     const user = userEvent.setup();
+    // Explore Family is gated behind approved family access, so the caller must
+    // hold an approved (CLAIMED) profile for the graph to render.
+    setAuthenticated(true);
+    setCurrentPrincipal("rrkah-fqaaa-aaaaa-aaaaq-cai");
     renderApp();
 
     // Open Julia's profile (the default Explore Family focus) via the tree.

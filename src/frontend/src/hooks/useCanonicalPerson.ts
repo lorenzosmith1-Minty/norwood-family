@@ -1,6 +1,89 @@
+import type { PersonProfile as BackendPersonProfile } from "@/backend";
+import type { PersonProfile } from "../types/family";
 import { resolveBackendDisplayName } from "../types/family";
+import { ClaimStatus } from "../types/ownership";
 import { useProfilePhoto } from "./usePhotoStorage";
 import { usePersonProfile } from "./useProfileClaims";
+
+/**
+ * The single canonical Person read adapter used by BOTH the profile display and
+ * the profile editor. Given the backend PersonProfile record (the source of
+ * truth for owner-editable fields) and the static canonical PersonProfile (the
+ * display record), it resolves the canonical frontend PersonProfile that the
+ * profile page renders and that the editor initializes from — so the editor
+ * never maintains a separate, incomplete copy of profile data.
+ *
+ * Field priority (requirement): new editable value -> canonical/legacy Person
+ * value -> empty only if truly unknown. The backend record wins for every field
+ * it owns; the static canonical record fills the gaps for seeded profiles whose
+ * backend record carries only `name`. No facts are inferred or invented.
+ */
+export function resolveCanonicalPersonProfile(
+  backend: BackendPersonProfile,
+  canonical?: PersonProfile,
+): PersonProfile {
+  if (!canonical) {
+    // No static canonical record (a genuinely new account-owned profile or a
+    // graph-only node): build the display record from the backend alone.
+    const name = backend.preferredName || backend.name;
+    const isClaimed = backend.claimStatus === ClaimStatus.Claimed;
+    const facts: PersonProfile["facts"] = [];
+    if (backend.birthDate)
+      facts.push({ label: "Born", value: backend.birthDate });
+    if (backend.birthplace)
+      facts.push({ label: "Birthplace", value: backend.birthplace });
+    if (backend.currentLocation)
+      facts.push({ label: "Location", value: backend.currentLocation });
+    if (backend.occupation)
+      facts.push({ label: "Occupation", value: backend.occupation });
+    const story =
+      backend.shortBio || backend.longerStory || backend.story || "";
+    return {
+      id: backend.personId,
+      name,
+      role: isClaimed ? "Family member" : "Pending profile",
+      portrait: { src: "", alt: `Profile for ${name}` },
+      facts,
+      story,
+      family: { spouseName: "", spouseRole: "", childrenText: "" },
+      timeline: (backend.timeline ?? []).map((text, index) => ({
+        date: "",
+        title: `Timeline entry ${index + 1}`,
+        detail: text,
+      })),
+      sources: [],
+    };
+  }
+
+  // Merge the backend editable fields into the canonical display record. The
+  // backend record is the source of truth and wins; the canonical record fills
+  // the gaps for seeded profiles whose backend record carries only `name`.
+  const facts = [...canonical.facts];
+  const upsertFact = (label: string, value: string) => {
+    const idx = facts.findIndex((fact) => fact.label === label);
+    if (idx >= 0) facts[idx] = { label, value };
+    else facts.push({ label, value });
+  };
+  if (backend.birthDate) upsertFact("Born", backend.birthDate);
+  if (backend.birthplace) upsertFact("Birthplace", backend.birthplace);
+  if (backend.currentLocation) upsertFact("Location", backend.currentLocation);
+  if (backend.occupation) upsertFact("Occupation", backend.occupation);
+  const story = backend.shortBio || backend.longerStory || canonical.story;
+  const timeline = backend.timeline?.length
+    ? backend.timeline.map((text, index) => ({
+        date: "",
+        title: `Timeline entry ${index + 1}`,
+        detail: text,
+      }))
+    : canonical.timeline;
+  return {
+    ...canonical,
+    name: backend.preferredName || canonical.name,
+    facts,
+    story,
+    timeline,
+  };
+}
 
 /**
  * The canonical, single-source-of-truth person data that every PersonCard

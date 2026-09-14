@@ -78,7 +78,20 @@ const {
       return profiles[personId] ?? null;
     },
     async getMyProfile(): Promise<PersonProfile | null> {
-      return null;
+      if (!isAuthenticated) return null;
+      return {
+        personId: "self",
+        name: "Self Norwood",
+        livingStatus: LivingStatus.Living,
+        claimStatus: ClaimStatus.Claimed,
+        claimedByUserId: Principal.fromText(currentPrincipal),
+        preferredName: undefined,
+        story: undefined,
+        occupation: undefined,
+        birthInfo: undefined,
+        timeline: undefined,
+        privacySettings: undefined,
+      };
     },
     async getMyProfileClaim(personId: string): Promise<ProfileClaim | null> {
       return (
@@ -216,6 +229,9 @@ async function navigateToLorenzoSmithSr(
 
 describe("Canonical Lorenzo Smith Jr. display name in Explore Family", () => {
   it("renders the canonical name on the child card under Lorenzo Smith Sr., with no raw id leak", async () => {
+    // Explore Family is gated behind approved family access, so the caller must
+    // hold an approved (CLAIMED) profile for the graph to render.
+    setAuthenticated(true);
     const user = userEvent.setup();
     renderApp();
     await openExploreFamily(user);
@@ -238,6 +254,9 @@ describe("Canonical Lorenzo Smith Jr. display name in Explore Family", () => {
     // The canonical Lorenzo Smith Jr. profile exists in the backend as a
     // claimed (approved) living profile.
     seedClaimedProfile("lorenzoSmithJr", "Lorenzo Smith Jr.");
+    // Explore Family is gated behind approved family access, so the caller must
+    // hold an approved (CLAIMED) profile for the graph to render.
+    setAuthenticated(true);
     const user = userEvent.setup();
     renderApp();
     await openExploreFamily(user);

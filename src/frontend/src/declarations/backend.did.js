@@ -457,6 +457,17 @@ export const AccountError = IDL.Variant({
   'NotSignedIn' : IDL.Null,
 });
 export const Result_23 = IDL.Variant({ 'ok' : Account, 'err' : AccountError });
+export const ClaimPersistenceError = IDL.Variant({
+  'AlreadyOwned' : IDL.Null,
+  'AlreadyPending' : IDL.Null,
+  'ProfileNotFound' : IDL.Null,
+  'NotSignedIn' : IDL.Null,
+  'ApprovedOwnerExists' : IDL.Null,
+});
+export const ClaimEligibility = IDL.Record({
+  'eligible' : IDL.Bool,
+  'reason' : IDL.Opt(ClaimPersistenceError),
+});
 export const BoardMediaUpload = IDL.Record({
   'era' : IDL.Text,
   'title' : IDL.Text,
@@ -541,7 +552,10 @@ export const PersonProfile = IDL.Record({
   'timeline' : IDL.Opt(IDL.Vec(IDL.Text)),
   'firstName' : IDL.Opt(IDL.Text),
 });
-export const CreateError = IDL.Variant({ 'NotSignedIn' : IDL.Null });
+export const CreateError = IDL.Variant({
+  'AlreadyOwned' : IDL.Null,
+  'NotSignedIn' : IDL.Null,
+});
 export const Result_20 = IDL.Variant({
   'ok' : PersonProfile,
   'err' : CreateError,
@@ -723,11 +737,16 @@ export const ConflictReviewItem = IDL.Record({
   'id' : IDL.Nat,
   'field' : IDL.Text,
   'status' : ReviewStatus,
+  'evidenceLabel' : EvidenceLabel,
   'findingId' : FindingId,
   'proposedValue' : IDL.Text,
+  'stewardNotes' : IDL.Text,
+  'proposedSourceId' : IDL.Opt(IDL.Nat),
+  'personId' : IDL.Opt(IDL.Text),
   'canonicalValue' : IDL.Text,
   'resolvedAt' : IDL.Opt(IDL.Int),
   'resolvedBy' : IDL.Opt(IDL.Principal),
+  'existingSourceId' : IDL.Opt(IDL.Nat),
 });
 export const ConversationSummary = IDL.Record({
   'otherPersonId' : PersonId,
@@ -916,6 +935,12 @@ export const Result_3 = IDL.Variant({
   'ok' : ProfileRemovalRequest,
   'err' : RemovalError,
 });
+export const ConflictResolutionAction = IDL.Variant({
+  'NeedsResearch' : IDL.Null,
+  'PreserveBoth' : IDL.Null,
+  'ReplaceExisting' : IDL.Null,
+  'KeepExisting' : IDL.Null,
+});
 export const ArchiveSearchFilter = IDL.Record({
   'era' : IDL.Opt(IDL.Text),
   'relatedMemberId' : IDL.Opt(IDL.Text),
@@ -1054,6 +1079,7 @@ export const idlService = IDL.Service({
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
   'bindAuthMethod' : IDL.Func([AuthMethod], [Result_23], []),
   'blockUser' : IDL.Func([IDL.Principal], [], []),
+  'canClaimProfile' : IDL.Func([PersonId], [ClaimEligibility], ['query']),
   'canMessagePerson' : IDL.Func([IDL.Text], [IDL.Bool], ['query']),
   'correctRelationshipType' : IDL.Func(
       [IDL.Nat, RelationshipType],
@@ -1196,6 +1222,7 @@ export const idlService = IDL.Service({
   'getReviewQueue' : IDL.Func([], [ReviewQueue], ['query']),
   'getSingleStewardWarning' : IDL.Func([], [IDL.Opt(IDL.Text)], ['query']),
   'getSource' : IDL.Func([SourceId], [IDL.Opt(SourceRecord)], ['query']),
+  'hasApprovedOwner' : IDL.Func([PersonId], [IDL.Bool], ['query']),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
   'listApprovedArchiveItems' : IDL.Func([], [IDL.Vec(ArchiveItem)], ['query']),
   'listApprovedRecipes' : IDL.Func([], [IDL.Vec(Recipe)], ['query']),
@@ -1213,6 +1240,11 @@ export const idlService = IDL.Service({
     ),
   'listConflictReviewItems' : IDL.Func(
       [],
+      [IDL.Vec(ConflictReviewItem)],
+      ['query'],
+    ),
+  'listConflictsForPerson' : IDL.Func(
+      [IDL.Text],
       [IDL.Vec(ConflictReviewItem)],
       ['query'],
     ),
@@ -1362,7 +1394,11 @@ export const idlService = IDL.Service({
   'reportMessage' : IDL.Func([MessageId, IDL.Text], [Report], []),
   'requestProfileClaim' : IDL.Func([PersonId], [Result_4], []),
   'requestProfileRemoval' : IDL.Func([PersonId, IDL.Text], [Result_3], []),
-  'resolveConflict' : IDL.Func([IDL.Nat], [IDL.Opt(ConflictReviewItem)], []),
+  'resolveConflict' : IDL.Func(
+      [IDL.Nat, ConflictResolutionAction, IDL.Text],
+      [IDL.Opt(ConflictReviewItem)],
+      [],
+    ),
   'resolveMergeConflict' : IDL.Func(
       [IDL.Nat, IDL.Text],
       [IDL.Opt(MergeConflict)],
@@ -1952,6 +1988,17 @@ export const idlFactory = ({ IDL }) => {
     'NotSignedIn' : IDL.Null,
   });
   const Result_23 = IDL.Variant({ 'ok' : Account, 'err' : AccountError });
+  const ClaimPersistenceError = IDL.Variant({
+    'AlreadyOwned' : IDL.Null,
+    'AlreadyPending' : IDL.Null,
+    'ProfileNotFound' : IDL.Null,
+    'NotSignedIn' : IDL.Null,
+    'ApprovedOwnerExists' : IDL.Null,
+  });
+  const ClaimEligibility = IDL.Record({
+    'eligible' : IDL.Bool,
+    'reason' : IDL.Opt(ClaimPersistenceError),
+  });
   const BoardMediaUpload = IDL.Record({
     'era' : IDL.Text,
     'title' : IDL.Text,
@@ -2036,7 +2083,10 @@ export const idlFactory = ({ IDL }) => {
     'timeline' : IDL.Opt(IDL.Vec(IDL.Text)),
     'firstName' : IDL.Opt(IDL.Text),
   });
-  const CreateError = IDL.Variant({ 'NotSignedIn' : IDL.Null });
+  const CreateError = IDL.Variant({
+    'AlreadyOwned' : IDL.Null,
+    'NotSignedIn' : IDL.Null,
+  });
   const Result_20 = IDL.Variant({ 'ok' : PersonProfile, 'err' : CreateError });
   const Result_19 = IDL.Variant({
     'ok' : NewPersonCandidate,
@@ -2203,11 +2253,16 @@ export const idlFactory = ({ IDL }) => {
     'id' : IDL.Nat,
     'field' : IDL.Text,
     'status' : ReviewStatus,
+    'evidenceLabel' : EvidenceLabel,
     'findingId' : FindingId,
     'proposedValue' : IDL.Text,
+    'stewardNotes' : IDL.Text,
+    'proposedSourceId' : IDL.Opt(IDL.Nat),
+    'personId' : IDL.Opt(IDL.Text),
     'canonicalValue' : IDL.Text,
     'resolvedAt' : IDL.Opt(IDL.Int),
     'resolvedBy' : IDL.Opt(IDL.Principal),
+    'existingSourceId' : IDL.Opt(IDL.Nat),
   });
   const ConversationSummary = IDL.Record({
     'otherPersonId' : PersonId,
@@ -2390,6 +2445,12 @@ export const idlFactory = ({ IDL }) => {
     'ok' : ProfileRemovalRequest,
     'err' : RemovalError,
   });
+  const ConflictResolutionAction = IDL.Variant({
+    'NeedsResearch' : IDL.Null,
+    'PreserveBoth' : IDL.Null,
+    'ReplaceExisting' : IDL.Null,
+    'KeepExisting' : IDL.Null,
+  });
   const ArchiveSearchFilter = IDL.Record({
     'era' : IDL.Opt(IDL.Text),
     'relatedMemberId' : IDL.Opt(IDL.Text),
@@ -2532,6 +2593,7 @@ export const idlFactory = ({ IDL }) => {
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
     'bindAuthMethod' : IDL.Func([AuthMethod], [Result_23], []),
     'blockUser' : IDL.Func([IDL.Principal], [], []),
+    'canClaimProfile' : IDL.Func([PersonId], [ClaimEligibility], ['query']),
     'canMessagePerson' : IDL.Func([IDL.Text], [IDL.Bool], ['query']),
     'correctRelationshipType' : IDL.Func(
         [IDL.Nat, RelationshipType],
@@ -2674,6 +2736,7 @@ export const idlFactory = ({ IDL }) => {
     'getReviewQueue' : IDL.Func([], [ReviewQueue], ['query']),
     'getSingleStewardWarning' : IDL.Func([], [IDL.Opt(IDL.Text)], ['query']),
     'getSource' : IDL.Func([SourceId], [IDL.Opt(SourceRecord)], ['query']),
+    'hasApprovedOwner' : IDL.Func([PersonId], [IDL.Bool], ['query']),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
     'listApprovedArchiveItems' : IDL.Func(
         [],
@@ -2699,6 +2762,11 @@ export const idlFactory = ({ IDL }) => {
       ),
     'listConflictReviewItems' : IDL.Func(
         [],
+        [IDL.Vec(ConflictReviewItem)],
+        ['query'],
+      ),
+    'listConflictsForPerson' : IDL.Func(
+        [IDL.Text],
         [IDL.Vec(ConflictReviewItem)],
         ['query'],
       ),
@@ -2864,7 +2932,11 @@ export const idlFactory = ({ IDL }) => {
     'reportMessage' : IDL.Func([MessageId, IDL.Text], [Report], []),
     'requestProfileClaim' : IDL.Func([PersonId], [Result_4], []),
     'requestProfileRemoval' : IDL.Func([PersonId, IDL.Text], [Result_3], []),
-    'resolveConflict' : IDL.Func([IDL.Nat], [IDL.Opt(ConflictReviewItem)], []),
+    'resolveConflict' : IDL.Func(
+        [IDL.Nat, ConflictResolutionAction, IDL.Text],
+        [IDL.Opt(ConflictReviewItem)],
+        [],
+      ),
     'resolveMergeConflict' : IDL.Func(
         [IDL.Nat, IDL.Text],
         [IDL.Opt(MergeConflict)],

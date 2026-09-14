@@ -191,24 +191,40 @@ module {
   };
 
   /// Creates a conflict review item for a finding that contradicts canonical
-  /// data, instead of silently overwriting it. The item enters as `#Pending`.
+  /// data, instead of silently overwriting it. The item enters as `#Conflicting`
+  /// (unresolved, awaiting the steward's decision) and captures the affected
+  /// Person, the disputed field, both values, the provenance/source of each side
+  /// when available, and the proposed finding's evidence label. Canonical data
+  /// is never altered here. The linked finding is marked `#Conflicting` by the
+  /// API mixin, so an unresolved conflict contributes to the Conflict Review
+  /// count (via this conflicting item) and to the Family Steward aggregate count
+  /// (via this item).
   public func createConflictReviewItem(
     conflicts : List.List<Types.ConflictReviewItem>,
     nextId : { var next : Nat },
     findingId : Types.FindingId,
+    personId : ?Text,
     field : Text,
     canonicalValue : Text,
     proposedValue : Text,
+    existingSourceId : ?Nat,
+    proposedSourceId : ?Nat,
+    evidenceLabel : Types.EvidenceLabel,
   ) : Types.ConflictReviewItem {
     let id = nextId.next;
     nextId.next += 1;
     let item : Types.ConflictReviewItem = {
       id;
       findingId;
+      personId;
       field;
       canonicalValue;
       proposedValue;
-      status = #Pending;
+      existingSourceId;
+      proposedSourceId;
+      evidenceLabel;
+      stewardNotes = "";
+      status = #Conflicting;
       resolvedBy = null;
       resolvedAt = null;
     };
@@ -216,11 +232,17 @@ module {
     item;
   };
 
-  /// Resolves a conflict review item. Returns the updated item, or `null` when
-  /// it does not exist.
+  /// Resolves a conflict review item according to the steward's chosen action.
+  /// Keep Existing and Replace Existing resolve the item (`#Approved`); Preserve
+  /// Both keeps it `#Conflicting` (unresolved); Needs Research moves it to
+  /// `#NeedsResearch` (unresolved). The steward's notes are recorded on the item
+  /// and the reviewer/timestamp are set only when the item is resolved. Returns
+  /// the updated item, or `null` when it does not exist.
   public func resolveConflict(
     conflicts : List.List<Types.ConflictReviewItem>,
     id : Nat,
+    action : Types.ConflictResolutionAction,
+    notes : Text,
     reviewer : Principal,
     now : Int,
   ) : ?Types.ConflictReviewItem {
@@ -229,16 +251,54 @@ module {
     conflicts.clear();
     for (c in snapshot.values()) {
       if (c.id == id) {
-        let resolved : Types.ConflictReviewItem = {
-          c with
-          status = #Approved;
-          resolvedBy = ?reviewer;
-          resolvedAt = ?now;
+        let (newStatus, resolved) = switch (action) {
+          case (#KeepExisting) (#Approved, true);
+          case (#ReplaceExisting) (#Approved, true);
+          case (#PreserveBoth) (#Conflicting, false);
+          case (#NeedsResearch) (#NeedsResearch, false);
         };
-        conflicts.add(resolved);
-        updated := ?resolved;
+        let resolvedItem : Types.ConflictReviewItem = {
+          c with
+          status = newStatus;
+          stewardNotes = notes;
+          resolvedBy = if (resolved) ?reviewer else c.resolvedBy;
+          resolvedAt = if (resolved) ?now else c.resolvedAt;
+        };
+        conflicts.add(resolvedItem);
+        updated := ?resolvedItem;
       } else {
         conflicts.add(c);
+      };
+    };
+    updated;
+  };
+
+  /// Updates a finding's review status (used to reflect a conflict resolution
+  /// outcome on the linked finding). Returns the updated finding, or `null` when
+  /// it does not exist.
+  public func updateFindingStatus(
+    findings : List.List<Types.ProposedFinding>,
+    id : Types.FindingId,
+    status : Types.ReviewStatus,
+    reviewer : Principal,
+    now : Int,
+  ) : ?Types.ProposedFinding {
+    var updated : ?Types.ProposedFinding = null;
+    let snapshot = findings.toArray();
+    findings.clear();
+    for (f in snapshot.values()) {
+      if (f.id == id) {
+        let updatedFinding : Types.ProposedFinding = {
+          f with
+          status;
+          reviewedBy = ?reviewer;
+          reviewedAt = ?now;
+          updatedAt = now;
+        };
+        findings.add(updatedFinding);
+        updated := ?updatedFinding;
+      } else {
+        findings.add(f);
       };
     };
     updated;
@@ -306,18 +366,24 @@ module {
       });
     };
     for (f in findings.toArray().values()) {
-      items.add({
-        id = f.id;
-        kind = #Finding;
-        title = f.title;
-        summary = findingSummary(f);
-        contributor = ?f.submittedBy;
-        provenance = "Source #" # f.sourceId.toText();
-        createdAt = f.submittedAt;
-        evidenceLabel = ?f.evidenceLabel;
-        status = f.status;
-        actions = actionsFor(f.status);
-      });
+      // A finding that has a linked conflict review item is represented in the
+      // queue by that conflict item. Skip it here so each unresolved conflict is
+      // counted exactly once (the conflict item carries the status) instead of
+      // double-counting both the finding and its linked conflict item.
+      if (f.conflictReviewId == null) {
+        items.add({
+          id = f.id;
+          kind = #Finding;
+          title = f.title;
+          summary = findingSummary(f);
+          contributor = ?f.submittedBy;
+          provenance = "Source #" # f.sourceId.toText();
+          createdAt = f.submittedAt;
+          evidenceLabel = ?f.evidenceLabel;
+          status = f.status;
+          actions = actionsFor(f.status);
+        });
+      };
     };
     for (c in candidates.toArray().values()) {
       items.add({

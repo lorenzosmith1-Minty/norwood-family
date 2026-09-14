@@ -932,7 +932,11 @@ type DeleteError =
    NotSignedIn;
    ProfileNotFound;
  };
-type CreateError = variant {NotSignedIn;};
+type CreateError = 
+ variant {
+   AlreadyOwned;
+   NotSignedIn;
+ };
 type ConversationView = 
  record {
    conversationId: ConversationId;
@@ -953,18 +957,38 @@ type ConversationId = nat;
 type ConflictReviewItem = 
  record {
    canonicalValue: text;
+   evidenceLabel: EvidenceLabel;
+   existingSourceId: opt nat;
    field: text;
    findingId: FindingId;
    id: nat;
+   personId: opt text;
+   proposedSourceId: opt nat;
    proposedValue: text;
    resolvedAt: opt int;
    resolvedBy: opt principal;
    status: ReviewStatus;
+   stewardNotes: text;
+ };
+type ConflictResolutionAction = 
+ variant {
+   KeepExisting;
+   NeedsResearch;
+   PreserveBoth;
+   ReplaceExisting;
  };
 type ClaimStatus = 
  variant {
    Claimed;
    Unclaimed;
+ };
+type ClaimPersistenceError = 
+ variant {
+   AlreadyOwned;
+   AlreadyPending;
+   ApprovedOwnerExists;
+   NotSignedIn;
+   ProfileNotFound;
  };
 type ClaimError = 
  variant {
@@ -973,6 +997,11 @@ type ClaimError =
    DeceasedProfile;
    NotSignedIn;
    ProfileNotFound;
+ };
+type ClaimEligibility = 
+ record {
+   eligible: bool;
+   reason: opt ClaimPersistenceError;
  };
 type ChapterMarker = 
  record {
@@ -1213,6 +1242,11 @@ service : {
   /// Blocks another member, preventing them from sending new messages to the
   /// caller. Approved family members only.
   blockUser: (blockedAccountId: principal) -> ();
+  /// Whether the caller may claim a profile, enforcing approved ownership
+  /// authority and the no-duplicate-claims rule. Returns an eligibility result
+  /// the caller can act on. Read-only view over the same authoritative state
+  /// the ownership flow enforces.
+  canClaimProfile: (personId: PersonId) -> (ClaimEligibility) query;
   /// Returns whether the signed-in caller may message the person identified by
   /// `personId`: the viewer is signed in, the target has an active linked
   /// account, the target is not the viewer, and the target is not archived.
@@ -1347,8 +1381,17 @@ service : {
   getSingleStewardWarning: () -> (opt text) query;
   /// Returns a single source record by id.
   getSource: (id: SourceId) -> (opt SourceRecord) query;
+  /// Whether a profile already has an approved owner. Approved ownership is
+  /// authoritative: once a profile claim is approved, the approved owner is the
+  /// canonical owner and no other claim or Add Myself flow can override or
+  /// duplicate it. Read-only view over the same authoritative state the
+  /// ownership flow enforces.
+  hasApprovedOwner: (personId: PersonId) -> (bool) query;
   isCallerAdmin: () -> (bool) query;
-  /// Lists all archive items in approved state (visible in the archive).
+  /// Lists all archive items in approved state visible to the caller. Privacy
+  /// is enforced server-side: guests and non-approved members see only Public
+  /// items; FamilyOnly items require approved family membership; Private items
+  /// are visible only to their contributor or an admin.
   listApprovedArchiveItems: () -> (vec ArchiveItem) query;
   /// Lists all approved recipes visible to the caller. Private recipes are only
   /// visible to their contributor or a Family Steward.
@@ -1375,6 +1418,12 @@ service : {
   listConfirmedRelationships: () -> (vec Relationship) query;
   /// Lists all conflict review items (steward only).
   listConflictReviewItems: () -> (vec ConflictReviewItem) query;
+  /// Lists the unresolved conflict review items (`#Conflicting` and
+  /// `#NeedsResearch`) affecting a given Person, so the frontend can surface
+  /// them alongside canonical values on the person profile and source history
+  /// views. Requires a signed-in (non-anonymous) caller; anonymous callers
+  /// receive `[]`. Resolved conflicts are never returned.
+  listConflictsForPerson: (personId: text) -> (vec ConflictReviewItem) query;
   /// Returns the signed-in caller's inbox: one summary per conversation they
   /// participate in, newest activity first. Approved family members only.
   listConversations: () -> (vec ConversationSummary) query;
@@ -1573,9 +1622,17 @@ service : {
   /// A claimed living profile owner requests removal of their own profile.
   /// A Family Steward reviews the request.
   requestProfileRemoval: (personId: PersonId, reason: text) -> (Result_3);
-  /// Resolves a conflict review item (steward only). Returns the updated item,
-  /// or `null` when it does not exist.
-  resolveConflict: (id: nat) -> (opt ConflictReviewItem);
+  /// Resolves a conflict review item (steward only) with an explicit decision.
+  /// `#KeepExisting` leaves canonical data unchanged and resolves the conflict;
+  /// `#ReplaceExisting` writes the proposed value into canonical data exactly
+  /// once (preserving the old value and its provenance in the conflict/audit
+  /// history and the new Source); `#PreserveBoth` keeps both values visible as an
+  /// unresolved `#Conflicting` conflict; `#NeedsResearch` leaves canonical data
+  /// unchanged and retains the conflict with `#NeedsResearch` status. Every
+  /// resolution records an audit entry. Returns the updated item, or `null` when
+  /// it does not exist.
+  resolveConflict: (id: nat, action: ConflictResolutionAction, notes:
+   text) -> (opt ConflictReviewItem);
   /// Resolves a merge conflict by choosing the canonical display value. Family
   /// Steward only.
   resolveMergeConflict: (conflictId: nat, canonicalValue: text) ->
@@ -1595,7 +1652,8 @@ service : {
   reviewReport: (reportId: ReportId, status: ReportStatus) -> (opt Report);
   schema: () -> (text) query;
   /// Searches/filters approved archive items by title query, tags, item type,
-  /// related family member, and era. Returns only `#Approved` items.
+  /// related family member, and era. Returns only `#Approved` items visible to
+  /// the caller under the archive privacy rules.
   searchArchiveItems: (filter: ArchiveSearchFilter) ->
    (vec ArchiveItem) query;
   /// Lists active board posts that carry ANY of the given tags. Approved family
@@ -1621,13 +1679,6 @@ service : {
   /// Submits a new archive item. Requires sign-in; the signed-in caller is
   /// recorded as the contributor. The item is stored in pending state and waits
   /// for admin approval before appearing in the archive.
-  /// 
-  /// `classification` marks the item as Oral History (distinct from `itemType`).
-  /// When `#OralHistory`, `primarySpeaker` is required (exactly one primary
-  /// speaker); when `#Standard`, `primarySpeaker` must be `null`. The reserved
-  /// future-ready fields (transcript, searchable transcript, chapter markers,
-  /// AI summary, extracted names) are initialized to `null` and are not
-  /// populated by any logic yet.
   submitArchiveItem: (title: text, description: text, itemType:
    ArchiveItemType, "blob": ExternalBlob, era: text, year: opt nat, tags:
    vec text, relatedMemberIds: vec text, relatedBranchId: opt text,
@@ -1675,7 +1726,8 @@ service : {
    relatedMemberIds: vec text, era: opt text, year: opt nat, location:
    opt text, evidenceStatus: EvidenceStatus, relatedArchiveItemIds:
    vec nat) -> (opt Story);
-  /// Updates an approved owner's own living profile fields. Never rewrites
+  /// Updates an approved owner's own living profile fields, or, for a Family
+  /// Steward, the fields of an unclaimed/historical profile. Never rewrites
   /// family relationships directly.
   updateOwnProfile: (personId: PersonId, edits: ProfileEdits) -> (Result);
 }

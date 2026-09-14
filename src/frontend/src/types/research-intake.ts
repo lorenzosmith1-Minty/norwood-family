@@ -1,4 +1,5 @@
 import {
+  ConflictResolutionAction,
   EvidenceLabel,
   FindingType,
   ReviewAction,
@@ -58,6 +59,7 @@ export type {
   ResearchError,
 };
 export {
+  ConflictResolutionAction,
   EvidenceLabel,
   FindingType,
   ReviewAction,
@@ -116,3 +118,12 @@ export const REVIEW_STATUS_LABELS: Record<ReviewStatus, string> = {
   [ReviewStatus.Conflicting]: "Conflicting",
   [ReviewStatus.NeedsResearch]: "Needs research",
 };
+
+/** Friendly labels for a conflict resolution action. */
+export const CONFLICT_ACTION_LABELS: Record<ConflictResolutionAction, string> =
+  {
+    [ConflictResolutionAction.KeepExisting]: "Keep Existing",
+    [ConflictResolutionAction.ReplaceExisting]: "Replace Existing",
+    [ConflictResolutionAction.PreserveBoth]: "Preserve Both / Unresolved",
+    [ConflictResolutionAction.NeedsResearch]: "Needs Research",
+  };

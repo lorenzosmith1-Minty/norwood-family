@@ -660,6 +660,27 @@ video {
     --edit-surface: 0.95 0.02 72;
     --draft-saved: 0.55 0.12 150;
     --draft-unsaved: 0.55 0.09 60;
+    /* Stale local draft: a locally saved Draft that no longer matches the
+       saved Profile and should be cleared after a successful backend save.
+       Reads as an ochre "needs attention" state distinct from the saved
+       warm-green and the unsaved bronze. */
+    --draft-stale: 0.7 0.13 80;
+
+    /* Gated family-graph access: clear no-access state for pages that
+       require approved family access (Explore Family, Heritage Branch).
+       A quiet warm plate with a muted lock accent and a request-access
+       affordance — privacy, not a broken page. */
+    --gated-surface: 0.94 0.02 60;
+    --gated-surface-foreground: 0.3 0.04 45;
+    --gated-accent: 0.5 0.03 45;
+    --gated-accent-foreground: 0.96 0.02 70;
+    --gated-rule: 0.5 0.03 45 / 0.3;
+
+    /* Archive privacy indicator: Public (open warm green), FamilyOnly
+       (dusty bronze), Private (terracotta lock) — enforced server-side. */
+    --privacy-public: 0.55 0.12 150;
+    --privacy-family: 0.55 0.09 60;
+    --privacy-private: 0.5 0.2 25;
 
     /* Consumer sign-in (Google + Apple): warm paper auth surface + familiar
        provider buttons. Brand logos are inline SVGs carrying their own
@@ -1034,6 +1055,22 @@ video {
     --edit-surface: 0.21 0.02 55;
     --draft-saved: 0.6 0.15 150;
     --draft-unsaved: 0.72 0.14 60;
+
+    /* Stale local draft (dark): ochre "needs attention" distinct from saved
+       green and unsaved bronze. */
+    --draft-stale: 0.72 0.13 80;
+
+    /* Gated family-graph access (dark): quiet warm plate + muted lock. */
+    --gated-surface: 0.22 0.02 55;
+    --gated-surface-foreground: 0.85 0.02 60;
+    --gated-accent: 0.7 0.1 55;
+    --gated-accent-foreground: 0.16 0.02 55;
+    --gated-rule: 0.7 0.1 55 / 0.35;
+
+    /* Archive privacy indicator (dark) */
+    --privacy-public: 0.6 0.15 150;
+    --privacy-family: 0.58 0.12 30;
+    --privacy-private: 0.55 0.2 25;
 
     /* Consumer sign-in (Google + Apple): warm paper auth surface + familiar
        provider buttons. Brand logos are inline SVGs carrying their own
@@ -1682,6 +1719,9 @@ video {
 .h-6 {
   height: 1.5rem;
 }
+.h-64 {
+  height: 16rem;
+}
 .h-7 {
   height: 1.75rem;
 }
@@ -1846,6 +1886,9 @@ video {
 }
 .w-52 {
   width: 13rem;
+}
+.w-56 {
+  width: 14rem;
 }
 .w-6 {
   width: 1.5rem;
@@ -2510,6 +2553,9 @@ video {
 }
 .p-2 {
   padding: 0.5rem;
+}
+.p-2\.5 {
+  padding: 0.625rem;
 }
 .p-3 {
   padding: 0.75rem;
@@ -10488,6 +10534,12 @@ video {
   line-height: 1.375;
     color: oklch(var(--foreground));
 }
+.research-conflict-provenance {
+  margin-top: 0.25rem;
+  font-size: 11px;
+  line-height: 1.375;
+    color: oklch(var(--muted-foreground));
+}
 .research-conflict-actions {
   display: flex;
   flex-wrap: wrap;
@@ -11100,6 +11152,144 @@ video {
 .preview-download:focus-visible {
     outline: none;
     box-shadow: 0 0 0 3px oklch(var(--ring) / 0.25);
+  }
+/* ---- Gated family-graph access (no-access state) ---- */
+/* No-access panel: the clear state shown on Explore Family / Heritage
+     Branch when a guest lacks approved family access. A quiet warm plate
+     with a muted lock crest and a request-access affordance — reads as
+     privacy gating, never a broken page. */
+.gated-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  padding-top: 3.5rem;
+  padding-bottom: 3.5rem;
+  text-align: center;
+    background-color: oklch(var(--gated-surface));
+    color: oklch(var(--gated-surface-foreground));
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.1);
+    animation: fold-in 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+.gated-lock {
+  display: flex;
+  height: 3.5rem;
+  width: 3.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+    background-color: oklch(var(--gated-accent) / 0.14);
+    color: oklch(var(--gated-accent));
+    box-shadow: 0 0 0 2px oklch(var(--gated-accent) / 0.4);
+}
+.gated-title {
+  font-family: var(--font-display), serif;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+    color: oklch(var(--gated-surface-foreground));
+}
+.gated-hint {
+  max-width: 24rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  line-height: 1.625;
+    color: oklch(var(--muted-foreground));
+}
+.gated-rule {
+    width: 3rem;
+    height: 1px;
+    background-color: oklch(var(--gated-rule));
+  }
+.gated-action {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: 9999px;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+    color: oklch(var(--gated-accent-foreground));
+    background-color: oklch(var(--gated-accent));
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.18);
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow
+      0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.gated-action:hover {
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.24);
+  }
+.gated-action:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(var(--ring) / 0.35);
+  }
+/* ---- Profile draft clarity ---- */
+/* Stale draft chip: a locally saved Draft that no longer matches the
+     saved Profile and should be cleared after a successful backend save.
+     Reuses the .draft-status dot-pill language but in ochre so it reads as
+     "needs attention", distinct from the saved green and unsaved bronze. */
+.draft-stale {
+    color: oklch(var(--draft-stale));
+  }
+.draft-stale::before {
+    background-color: oklch(var(--draft-stale));
+    animation: draft-pulse 2s ease-in-out infinite;
+  }
+/* ---- Archive privacy indicator ---- */
+/* Privacy badge: dot-pill encoding server-enforced Archive privacy.
+     Public = open warm green, FamilyOnly = dusty bronze, Private =
+     terracotta lock. Mirrors the archive's status/claim badge language. */
+.privacy-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: 9999px;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  padding-left: 0.625rem;
+  padding-right: 0.625rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+    background-color: oklch(var(--card));
+    color: oklch(var(--muted-foreground));
+}
+.privacy-badge::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+  }
+.privacy-public {
+    color: oklch(var(--privacy-public));
+  }
+.privacy-public::before {
+    background-color: oklch(var(--privacy-public));
+  }
+.privacy-family {
+    color: oklch(var(--privacy-family));
+  }
+.privacy-family::before {
+    background-color: oklch(var(--privacy-family));
+  }
+.privacy-private {
+    color: oklch(var(--privacy-private));
+  }
+.privacy-private::before {
+    background-color: oklch(var(--privacy-private));
   }
 .\[--cell-size\:--spacing\(8\)\] {
   --cell-size: var(--spacing(8));

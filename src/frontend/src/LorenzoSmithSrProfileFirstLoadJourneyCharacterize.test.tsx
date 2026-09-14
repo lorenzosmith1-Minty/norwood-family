@@ -75,7 +75,19 @@ const { mockActor, resetState, seedProfile, seedProfilePhoto } = vi.hoisted(
         return profilePhotos[personId] ? [profilePhotos[personId]!] : [];
       },
       async getMyProfile(): Promise<PersonProfile | null> {
-        return null;
+        return {
+          personId: "self",
+          name: "Self Norwood",
+          livingStatus: LivingStatus.Living,
+          claimStatus: ClaimStatus.Claimed,
+          claimedByUserId: Principal.fromText(ACCOUNT),
+          preferredName: undefined,
+          story: undefined,
+          occupation: undefined,
+          birthInfo: undefined,
+          timeline: undefined,
+          privacySettings: undefined,
+        };
       },
       async getMyProfileClaim(_personId: string): Promise<ProfileClaim | null> {
         return null;
@@ -137,10 +149,12 @@ const { mockActor, resetState, seedProfile, seedProfilePhoto } = vi.hoisted(
 vi.mock("@caffeineai/core-infrastructure", () => ({
   useActor: () => ({ actor: mockActor, isFetching: false }),
   useInternetIdentity: () => ({
-    isAuthenticated: false,
+    isAuthenticated: true,
     login: () => {},
     clear: () => {},
-    identity: null,
+    identity: {
+      getPrincipal: () => Principal.fromText(ACCOUNT),
+    },
     isInitializing: false,
     isLoggingIn: false,
     isLoginError: false,

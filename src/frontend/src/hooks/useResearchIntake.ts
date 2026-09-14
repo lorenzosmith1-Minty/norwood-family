@@ -1,4 +1,4 @@
-import { createActor } from "@/backend";
+import { type ConflictResolutionAction, createActor } from "@/backend";
 import type {
   ConflictReviewItem,
   FindingContent,
@@ -674,16 +674,22 @@ export function useListConflictReviewItems() {
   });
 }
 
-/** Resolves a conflict review item. */
+/** Resolves a conflict review item with an explicit action and steward notes. */
 export function useResolveConflict() {
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (
-      conflictId: bigint,
-    ): Promise<ConflictReviewItem | null> => {
+    mutationFn: async ({
+      conflictId,
+      action,
+      notes,
+    }: {
+      conflictId: bigint;
+      action: ConflictResolutionAction;
+      notes: string;
+    }): Promise<ConflictReviewItem | null> => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.resolveConflict(conflictId);
+      return actor.resolveConflict(conflictId, action, notes);
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({
@@ -700,6 +706,25 @@ export function useResolveConflict() {
       });
       void queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
+  });
+}
+
+/**
+ * Lists the unresolved (Conflicting / NeedsResearch) conflict review items for
+ * a single person, so the person profile and source history views can surface
+ * them alongside the canonical values. Requires a signed-in caller; returns an
+ * empty list for anonymous callers.
+ */
+export function useListConflictsForPerson(personId: string) {
+  const providersPresent = useProvidersPresent();
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["research", "conflicts", "person", personId],
+    queryFn: async () => {
+      if (!actor) return [] as ConflictReviewItem[];
+      return actor.listConflictsForPerson(personId);
+    },
+    enabled: providersPresent && !!actor && !isFetching,
   });
 }
 

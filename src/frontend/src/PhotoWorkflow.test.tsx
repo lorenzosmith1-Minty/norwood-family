@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom/vitest";
 import type { Photo, PhotoId } from "@/backend";
 import type { ExternalBlob } from "@caffeineai/object-storage";
-import type { Principal } from "@icp-sdk/core/principal";
+import { Principal } from "@icp-sdk/core/principal";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { cleanup, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -30,6 +30,33 @@ const { mockActor, resetPhotos } = vi.hoisted(() => {
     },
     async getProfilePhoto(personId: string): Promise<Photo | null> {
       return profilePhotoByPerson[personId] ?? null;
+    },
+    async getMyProfile(): Promise<{
+      personId: string;
+      name: string;
+      livingStatus: string;
+      claimStatus: string;
+      claimedByUserId: unknown;
+      preferredName: unknown;
+      story: unknown;
+      occupation: unknown;
+      birthInfo: unknown;
+      timeline: unknown;
+      privacySettings: unknown;
+    } | null> {
+      return {
+        personId: "self",
+        name: "Self Norwood",
+        livingStatus: "Living",
+        claimStatus: "Claimed",
+        claimedByUserId: "rrkah-fqaaa-aaaaa-aaaaq-cai",
+        preferredName: null,
+        story: null,
+        occupation: null,
+        birthInfo: null,
+        timeline: null,
+        privacySettings: null,
+      };
     },
     async addPhoto(
       personId: string,
@@ -110,9 +137,11 @@ const { mockBackendProfile } = vi.hoisted(() => {
 vi.mock("@caffeineai/core-infrastructure", () => ({
   useActor: () => ({ actor: mockActor, isFetching: false }),
   useInternetIdentity: () => ({
-    isAuthenticated: false,
+    isAuthenticated: true,
     login: () => {},
-    identity: null,
+    identity: {
+      getPrincipal: () => Principal.fromText("rrkah-fqaaa-aaaaa-aaaaq-cai"),
+    },
     isInitializing: false,
     isLoggingIn: false,
   }),

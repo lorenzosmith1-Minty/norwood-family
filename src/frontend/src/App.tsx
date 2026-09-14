@@ -457,9 +457,19 @@ export default function App() {
             setProfileId(id);
             setView("profile");
           }}
+          onSignIn={() => {
+            saveOriginatingView({ view });
+            setView("sign-in");
+          }}
         />
       ) : view === "heritage-branch" ? (
-        <HeritageBranchPage onOpenExploreFamily={openExploreFamily} />
+        <HeritageBranchPage
+          onOpenExploreFamily={openExploreFamily}
+          onSignIn={() => {
+            saveOriginatingView({ view });
+            setView("sign-in");
+          }}
+        />
       ) : view === "profile" ? (
         isStaticProfile || resolvedProfile ? (
           <PersonProfilePage
@@ -483,6 +493,7 @@ export default function App() {
                 context: "profile",
               })
             }
+            onOpenConflictReview={() => setView("research-conflict")}
             onAddMedia={(action) =>
               openMediaContribute({
                 personId: (resolvedProfile ?? profile).id,
@@ -526,6 +537,7 @@ export default function App() {
                 context: "profile",
               })
             }
+            onOpenConflictReview={() => setView("research-conflict")}
             onAddMedia={(action) =>
               openMediaContribute({
                 personId: (resolvedProfile ?? profile).id,

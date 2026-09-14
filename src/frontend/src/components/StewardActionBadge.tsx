@@ -31,7 +31,8 @@ export function StewardActionBadge() {
 
   const researchPending =
     Number(reviewQueue?.pending ?? 0n) +
-    Number(reviewQueue?.needsResearch ?? 0n);
+    Number(reviewQueue?.needsResearch ?? 0n) +
+    Number(reviewQueue?.conflicting ?? 0n);
 
   const count =
     claims.filter((claim) => claim.status === "Pending").length +

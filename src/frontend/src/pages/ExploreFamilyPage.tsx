@@ -1,3 +1,4 @@
+import { FamilyAccessGate } from "../components/FamilyAccessGate";
 import {
   type Person,
   PersonCard,
@@ -21,6 +22,10 @@ export interface ExploreFamilyPageProps {
   onSelectPerson: (id: string) => void;
   /** Open the existing profile page for the focus person. */
   onOpenProfile: (id: string) => void;
+  /** Navigate to the shared sign-in surface from the no-access state. When
+   *  omitted (e.g. in characterization tests), the gate's sign-in affordance
+   *  is a no-op. */
+  onSignIn?: () => void;
 }
 
 /** Pull the first 4-digit year out of a fact value like "approx. 1860". */
@@ -130,6 +135,7 @@ export default function ExploreFamilyPage({
   focusPersonId,
   onSelectPerson,
   onOpenProfile,
+  onSignIn,
 }: ExploreFamilyPageProps) {
   const {
     focusPersonId: resolvedId,
@@ -156,117 +162,122 @@ export default function ExploreFamilyPage({
   // graph do we show the empty state.
   const focusProfile = focus ?? buildGraphFallbackProfile(resolvedId);
 
-  if (!focusProfile) {
-    return (
-      <div className="ex-stage" data-ocid="explore.empty_state">
-        <p className="text-sm text-muted-foreground">
-          No family member found to explore.
-        </p>
-      </div>
-    );
-  }
-
-  const years = getYears(focusProfile);
-  const isMe =
-    focusProfile.relationToYou === "me" ||
-    (focusProfile as PersonProfile & { me?: boolean }).me === true;
-  const relationText = focusProfile.relationToYou ?? "Family member";
-
   return (
-    <div className="ex-stage" data-ocid="explore.page">
-      <header className="w-full text-center">
-        <h1 className="font-display text-xl font-semibold text-foreground">
-          Explore Family
-        </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Tap a relative to move through the family.
-        </p>
-      </header>
+    <FamilyAccessGate onSignIn={onSignIn ?? (() => {})}>
+      {!focusProfile ? (
+        <div className="ex-stage" data-ocid="explore.empty_state">
+          <p className="text-sm text-muted-foreground">
+            No family member found to explore.
+          </p>
+        </div>
+      ) : (
+        <div className="ex-stage" data-ocid="explore.page">
+          {(() => {
+            const years = getYears(focusProfile);
+            const isMe =
+              focusProfile.relationToYou === "me" ||
+              (focusProfile as PersonProfile & { me?: boolean }).me === true;
+            const relationText = focusProfile.relationToYou ?? "Family member";
+            return (
+              <>
+                <header className="w-full text-center">
+                  <h1 className="font-display text-xl font-semibold text-foreground">
+                    Explore Family
+                  </h1>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Tap a relative to move through the family.
+                  </p>
+                </header>
 
-      {/* Parents: father upper-left, mother upper-right of the focus card */}
-      <div className="ex-parent-row">
-        <RelativeZone
-          label="Father"
-          relatives={visibleRelatives.father}
-          onSelectPerson={onSelectPerson}
-          rowClassName="ex-parent-row"
-          relationRole="father"
-        />
-        <RelativeZone
-          label="Mother"
-          relatives={visibleRelatives.mother}
-          onSelectPerson={onSelectPerson}
-          rowClassName="ex-parent-row"
-          relationRole="mother"
-        />
-      </div>
+                {/* Parents: father upper-left, mother upper-right of the focus card */}
+                <div className="ex-parent-row">
+                  <RelativeZone
+                    label="Father"
+                    relatives={visibleRelatives.father}
+                    onSelectPerson={onSelectPerson}
+                    rowClassName="ex-parent-row"
+                    relationRole="father"
+                  />
+                  <RelativeZone
+                    label="Mother"
+                    relatives={visibleRelatives.mother}
+                    onSelectPerson={onSelectPerson}
+                    rowClassName="ex-parent-row"
+                    relationRole="mother"
+                  />
+                </div>
 
-      <span className="ex-connector" aria-hidden="true" />
+                <span className="ex-connector" aria-hidden="true" />
 
-      {/* Center band: spouse(s) immediately LEFT of the focus card at half
-          size and the focus card as the largest centered card. The band is
-          sized so spouse + focus fit fully within the mobile viewport — the
-          spouse card is compact and never clipped, and never pushes the focus
-          card off-screen. */}
-      <div className="ex-center-band">
-        {visibleRelatives.spouse.length > 0 && (
-          <div
-            className="ex-spouse-stack shrink-0"
-            data-ocid="explore.zone.spouse"
-          >
-            {visibleRelatives.spouse.map((ref, index) => (
-              <PersonCard
-                key={ref.personId}
-                person={toPerson(ref)}
-                selected={false}
-                onSelect={() => onSelectPerson(ref.personId)}
-                index={index}
-                variant="spouse-half"
-                relationLabel={ref.label}
-              />
-            ))}
-          </div>
-        )}
+                {/* Center band: spouse(s) immediately LEFT of the focus card at
+                    half size and the focus card as the largest centered card. The
+                    band is sized so spouse + focus fit fully within the mobile
+                    viewport — the spouse card is compact and never clipped, and
+                    never pushes the focus card off-screen. */}
+                <div className="ex-center-band">
+                  {visibleRelatives.spouse.length > 0 && (
+                    <div
+                      className="ex-spouse-stack shrink-0"
+                      data-ocid="explore.zone.spouse"
+                    >
+                      {visibleRelatives.spouse.map((ref, index) => (
+                        <PersonCard
+                          key={ref.personId}
+                          person={toPerson(ref)}
+                          selected={false}
+                          onSelect={() => onSelectPerson(ref.personId)}
+                          index={index}
+                          variant="spouse-half"
+                          relationLabel={ref.label}
+                        />
+                      ))}
+                    </div>
+                  )}
 
-        <PersonCard
-          person={{
-            id: resolvedId,
-            name: focusProfile.name,
-            role: relationText,
-            photo: focusProfile.portrait,
-            years,
-          }}
-          selected={false}
-          onSelect={() => onSelectPerson(resolvedId)}
-          index={0}
-          variant="focus"
-          isMe={isMe}
-          relationLabel={relationText}
-          onOpen={() => onOpenProfile(resolvedId)}
-        />
-      </div>
+                  <PersonCard
+                    person={{
+                      id: resolvedId,
+                      name: focusProfile.name,
+                      role: relationText,
+                      photo: focusProfile.portrait,
+                      years,
+                    }}
+                    selected={false}
+                    onSelect={() => onSelectPerson(resolvedId)}
+                    index={0}
+                    variant="focus"
+                    isMe={isMe}
+                    relationLabel={relationText}
+                    onOpen={() => onOpenProfile(resolvedId)}
+                  />
+                </div>
 
-      {/* Siblings: a compact section BELOW the focus card that wraps into
-          multiple rows on mobile. All sibling cards stay fully visible with
-          no horizontal scrolling. */}
-      <RelativeZone
-        label="Siblings"
-        relatives={visibleRelatives.siblings}
-        onSelectPerson={onSelectPerson}
-        className="w-full"
-        rowClassName="ex-siblings-row"
-        relationRole="sibling"
-      />
+                {/* Siblings: a compact section BELOW the focus card that wraps
+                    into multiple rows on mobile. All sibling cards stay fully
+                    visible with no horizontal scrolling. */}
+                <RelativeZone
+                  label="Siblings"
+                  relatives={visibleRelatives.siblings}
+                  onSelectPerson={onSelectPerson}
+                  className="w-full"
+                  rowClassName="ex-siblings-row"
+                  relationRole="sibling"
+                />
 
-      {/* Children directly below the Siblings section */}
-      <RelativeZone
-        label="Children"
-        relatives={visibleRelatives.children}
-        onSelectPerson={onSelectPerson}
-        className="w-full"
-        rowClassName="ex-children-row"
-        relationRole="child"
-      />
-    </div>
+                {/* Children directly below the Siblings section */}
+                <RelativeZone
+                  label="Children"
+                  relatives={visibleRelatives.children}
+                  onSelectPerson={onSelectPerson}
+                  className="w-full"
+                  rowClassName="ex-children-row"
+                  relationRole="child"
+                />
+              </>
+            );
+          })()}
+        </div>
+      )}
+    </FamilyAccessGate>
   );
 }

@@ -75,12 +75,15 @@ export function FamilyStewardHubPage({
   const pendingRequests = requests.filter((r) => r.status === "Pending").length;
   const pendingReports = reports.filter((r) => r.status === "Pending").length;
   const pendingArchiveCount = pendingArchiveItems.length;
-  // Research intake items awaiting steward review: pending items plus items
-  // flagged as needing further research. This matches the canonical definition
-  // used by the StewardActionBadge nav pill (reviewQueue.pending +
-  // reviewQueue.needsResearch), so the hub card and the nav badge always agree.
+  // Research intake items awaiting steward review: pending items, items flagged
+  // as needing further research, and unresolved conflicts. This matches the
+  // canonical definition used by the StewardActionBadge nav pill
+  // (reviewQueue.pending + reviewQueue.needsResearch + reviewQueue.conflicting),
+  // so the hub card and the nav badge always agree.
   const pendingResearchCount = reviewQueue
-    ? Number(reviewQueue.pending) + Number(reviewQueue.needsResearch)
+    ? Number(reviewQueue.pending) +
+      Number(reviewQueue.needsResearch) +
+      Number(reviewQueue.conflicting)
     : 0;
 
   // Normal family members must never see Steward controls. The nav link is

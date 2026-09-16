@@ -5,6 +5,7 @@ import {
   LivingStatus,
   type PersonProfile,
   type ProfileClaim,
+  ProfileClaimStatus,
 } from "@/backend";
 import { Principal } from "@icp-sdk/core/principal";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -128,7 +129,7 @@ const {
         id: nextClaimId++,
         personId,
         requestingUserId: principal(),
-        status: "Pending",
+        status: ProfileClaimStatus.Pending,
         submittedDate: 1_700_000_000_000_000_000n,
       };
       claims = [...claims, claim];
@@ -141,7 +142,7 @@ const {
       if (!claim) return null;
       const updated: ProfileClaim = {
         ...claim,
-        status: "Approved",
+        status: ProfileClaimStatus.Approved,
         reviewedBy: principal(),
         reviewedDate: 1_700_000_000_000_000_000n,
       };
@@ -425,7 +426,7 @@ describe("The canonical profile shows PENDING CLAIM and hides This is Me / UNCLA
       id: 1n,
       personId: "lorenzoSmithJr",
       requestingUserId: Principal.fromText(ACCOUNT),
-      status: "Pending",
+      status: ProfileClaimStatus.Pending,
       submittedDate: 1_700_000_000_000_000_000n,
     });
     setAuthenticated(true);
@@ -468,7 +469,7 @@ describe("Family Steward queue shows the pending claim and approval persists own
       id: 1n,
       personId: "lorenzoSmithJr",
       requestingUserId: Principal.fromText(CLAIMANT),
-      status: "Pending",
+      status: ProfileClaimStatus.Pending,
       submittedDate: 1_700_000_000_000_000_000n,
     });
     setAuthenticated(true);

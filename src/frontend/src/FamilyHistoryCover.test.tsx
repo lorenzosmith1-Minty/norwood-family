@@ -4,17 +4,18 @@ import {
   EvidenceStatus as EvidenceStatusEnum,
   type Mystery,
   type MysteryContribution,
+  MysteryContributionStatus,
   type MysteryContributionType,
   MysteryContributionType as MysteryContributionTypeEnum,
   type MysteryStatus,
   MysteryStatus as MysteryStatusEnum,
   type Story,
+  StoryStatus,
   type TimelineEvent,
   type TimelineEventType,
   TimelineEventType as TimelineEventTypeEnum,
   type TimelineLinkTarget,
 } from "@/backend";
-import type { StoryStatus } from "@/types/family-history";
 import { Principal } from "@icp-sdk/core/principal";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
@@ -99,7 +100,7 @@ const {
         relatedArchiveItemIds,
         createdAt: 1_700_000_000_000_000_000n,
         updatedAt: 1_700_000_000_000_000_000n,
-        status: "Pending",
+        status: StoryStatus.Pending,
       };
       stories = [...stories, story];
       return story;
@@ -127,7 +128,7 @@ const {
         relatedArchiveItemIds,
         createdAt: 1_700_000_000_000_000_000n,
         updatedAt: 1_700_000_000_000_000_000n,
-        status: "Approved",
+        status: StoryStatus.Approved,
       };
       stories = [...stories, story];
       return story;
@@ -163,14 +164,14 @@ const {
     async approveStory(id: bigint): Promise<Story | null> {
       const found = stories.find((s) => s.id === id && s.status === "Pending");
       if (!found) return null;
-      const updated: Story = { ...found, status: "Approved" };
+      const updated: Story = { ...found, status: StoryStatus.Approved };
       stories = stories.map((s) => (s.id === id ? updated : s));
       return updated;
     },
     async rejectStory(id: bigint): Promise<Story | null> {
       const found = stories.find((s) => s.id === id && s.status === "Pending");
       if (!found) return null;
-      const updated: Story = { ...found, status: "Rejected" };
+      const updated: Story = { ...found, status: StoryStatus.Rejected };
       stories = stories.map((s) => (s.id === id ? updated : s));
       return updated;
     },
@@ -269,7 +270,7 @@ const {
         contributionType,
         text,
         contributor: CONTRIBUTOR,
-        status: "Pending",
+        status: MysteryContributionStatus.Pending,
         createdAt: 1_700_000_000_000_000_000n,
         reviewedBy: undefined,
         reviewedAt: undefined,
@@ -290,7 +291,9 @@ const {
       if (!found) return null;
       const updated: MysteryContribution = {
         ...found,
-        status: approve ? "Approved" : "Rejected",
+        status: approve
+          ? MysteryContributionStatus.Approved
+          : MysteryContributionStatus.Rejected,
         reviewedBy: CONTRIBUTOR,
         reviewedAt: 1_700_000_000_000_000_000n,
       };
@@ -398,7 +401,7 @@ function makeStory(overrides: Partial<Story> = {}): Story {
     relatedArchiveItemIds: [],
     createdAt: 1_700_000_000_000_000_000n,
     updatedAt: 1_700_000_000_000_000_000n,
-    status: "Approved",
+    status: StoryStatus.Approved,
     ...overrides,
   };
 }
@@ -508,7 +511,7 @@ describe("Family Stories page", () => {
       makeStory({
         id: 3n,
         title: "Not yet approved",
-        status: "Pending" as StoryStatus,
+        status: StoryStatus.Pending,
       }),
     );
 
@@ -580,7 +583,7 @@ describe("Family Stories page", () => {
       makeStory({
         id: 1n,
         title: "Awaiting review",
-        status: "Pending" as StoryStatus,
+        status: StoryStatus.Pending,
       }),
     );
 
@@ -607,7 +610,7 @@ describe("Family Stories page", () => {
       makeStory({
         id: 1n,
         title: "Awaiting review",
-        status: "Pending" as StoryStatus,
+        status: StoryStatus.Pending,
       }),
     );
 

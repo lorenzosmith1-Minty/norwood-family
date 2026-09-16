@@ -4,6 +4,7 @@ import {
   LivingStatus,
   type PersonProfile,
   type ProfileClaim,
+  ProfileClaimStatus,
 } from "@/backend";
 import { Principal } from "@icp-sdk/core/principal";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -165,10 +166,7 @@ function seedLivingUnclaimed(personId: string, name: string): PersonProfile {
   return profile;
 }
 
-function claimFor(
-  personId: string,
-  status: "Pending" | "Approved",
-): ProfileClaim {
+function claimFor(personId: string, status: ProfileClaimStatus): ProfileClaim {
   return {
     id: 1n,
     personId,
@@ -193,7 +191,7 @@ describe("Add Myself MatchCard: an Approved claim by the current user renders as
     // the current user holds an APPROVED ownership record for it (the stale
     // pending-claim UI must not override this).
     seedLivingUnclaimed("lorenzoSmithJr", "Lorenzo Smith Jr.");
-    seedClaim(claimFor("lorenzoSmithJr", "Approved"));
+    seedClaim(claimFor("lorenzoSmithJr", ProfileClaimStatus.Approved));
     setAuthenticated(true);
     setCurrentPrincipal(ACCOUNT);
     const user = userEvent.setup();
@@ -214,7 +212,7 @@ describe("Add Myself MatchCard: an Approved claim by the current user renders as
 
   it("still shows 'Claim pending' for a genuinely Pending claim by the current user on an unclaimed profile", async () => {
     seedLivingUnclaimed("lorenzoSmithJr", "Lorenzo Smith Jr.");
-    seedClaim(claimFor("lorenzoSmithJr", "Pending"));
+    seedClaim(claimFor("lorenzoSmithJr", ProfileClaimStatus.Pending));
     setAuthenticated(true);
     setCurrentPrincipal(ACCOUNT);
     const user = userEvent.setup();
@@ -236,7 +234,7 @@ describe("Add Myself MatchCard: an Approved claim by the current user renders as
 describe("ClaimButton: an Approved claim by the current user renders as owned, never 'Claim pending'", () => {
   it("shows 'You own this profile' for an Approved claim by the current user", async () => {
     const profile = seedLivingUnclaimed("lorenzoSmithJr", "Lorenzo Smith Jr.");
-    seedClaim(claimFor("lorenzoSmithJr", "Approved"));
+    seedClaim(claimFor("lorenzoSmithJr", ProfileClaimStatus.Approved));
     setAuthenticated(true);
     setCurrentPrincipal(ACCOUNT);
     renderPage(<ClaimButton personId="lorenzoSmithJr" profile={profile} />);
@@ -252,7 +250,7 @@ describe("ClaimButton: an Approved claim by the current user renders as owned, n
 
   it("still shows 'Claim pending' for a genuinely Pending claim by the current user", async () => {
     const profile = seedLivingUnclaimed("lorenzoSmithJr", "Lorenzo Smith Jr.");
-    seedClaim(claimFor("lorenzoSmithJr", "Pending"));
+    seedClaim(claimFor("lorenzoSmithJr", ProfileClaimStatus.Pending));
     setAuthenticated(true);
     setCurrentPrincipal(ACCOUNT);
     renderPage(<ClaimButton personId="lorenzoSmithJr" profile={profile} />);

@@ -9,6 +9,7 @@ import {
   type ProfileEdits,
   type Relationship,
   type RelationshipRequest,
+  RelationshipRequestStatus,
   type RelationshipType,
 } from "@/backend";
 import { ExternalBlob } from "@caffeineai/object-storage";
@@ -153,7 +154,7 @@ const {
           requestingPersonId: fromPersonId,
           relatedPersonId: toPersonId,
           proposedRelationship: relationshipType,
-          status: "Pending",
+          status: RelationshipRequestStatus.Pending,
           submittedDate: 1_700_000_000_000_000_000n,
         },
       };

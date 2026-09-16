@@ -273,6 +273,25 @@ module {
     updated;
   };
 
+  /// Returns the facts on a Person Profile that have an unresolved conflict
+  /// (`#Conflicting` or `#NeedsResearch`), so the Person Profile can show a
+  /// subtle disputed indicator on each disputed fact. Includes conflicts where
+  /// the canonical value is blank but a proposed value exists. Resolved
+  /// conflicts are never returned.
+  public func disputedFactsForPerson(
+    conflicts : List.List<Types.ConflictReviewItem>,
+    personId : Text,
+  ) : [Types.DisputedFact] {
+    conflicts.toArray()
+      .filter(func c = c.personId == ?personId and (c.status == #Conflicting or c.status == #NeedsResearch))
+      .map(func c = {
+        field = c.field;
+        canonicalValue = c.canonicalValue;
+        proposedValue = c.proposedValue;
+        status = c.status;
+      });
+  };
+
   /// Updates a finding's review status (used to reflect a conflict resolution
   /// outcome on the linked finding). Returns the updated finding, or `null` when
   /// it does not exist.
@@ -304,11 +323,15 @@ module {
     updated;
   };
 
-  /// The steward actions available for an item in a given review status. Only
-  /// pending items are actionable; resolved items carry no actions.
+  /// The steward actions available for an item in a given review status. Pending
+  /// items can be approved, rejected, or marked as needing research. Items
+  /// already marked `#NeedsResearch` remain actionable — a steward can approve
+  /// or reject them to resolve the item — so they never become stranded.
+  /// Resolved items carry no actions.
   func actionsFor(status : Types.ReviewStatus) : [Types.ReviewAction] {
     switch (status) {
       case (#Pending) [#Approve, #Reject, #NeedsResearch];
+      case (#NeedsResearch) [#Approve, #Reject];
       case _ [];
     };
   };

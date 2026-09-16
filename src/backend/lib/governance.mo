@@ -467,10 +467,17 @@ module {
         let a = idArr[i];
         let b = idArr[j];
         if (not isDismissed(dismissedDuplicates, a, b)) {
-          pairs.add({
-            candidateA = buildCandidate(profiles, confirmedRelationships, galleries, archiveItems, a);
-            candidateB = buildCandidate(profiles, confirmedRelationships, galleries, archiveItems, b);
-          });
+          switch (profiles.get(a), profiles.get(b)) {
+            case (?pa, ?pb) {
+              if (isDuplicateCandidate(profiles, confirmedRelationships, pa, pb)) {
+                pairs.add({
+                  candidateA = buildCandidate(profiles, confirmedRelationships, galleries, archiveItems, a);
+                  candidateB = buildCandidate(profiles, confirmedRelationships, galleries, archiveItems, b);
+                });
+              };
+            };
+            case _ {};
+          };
         };
         j += 1;
       };
@@ -828,6 +835,107 @@ module {
     dismissedDuplicates.toArray().any(func p =
       (p.personIdA == a and p.personIdB == b) or (p.personIdA == b and p.personIdB == a)
     );
+  };
+
+  /// Whether two profiles are a duplicate candidate. A pair is a candidate only
+  /// when the two profiles share meaningful name similarity AND have at least
+  /// one corroborating signal beyond name. Sparse profiles (few populated
+  /// fields) require stronger confidence to be flagged, not weaker.
+  func isDuplicateCandidate(
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    confirmedRelationships : List.List<Types.Relationship>,
+    a : Types.PersonProfile,
+    b : Types.PersonProfile,
+  ) : Bool {
+    if (not hasMeaningfulNameSimilarity(a, b)) {
+      return false;
+    };
+    let signals = corroboratingSignalCount(profiles, confirmedRelationships, a, b);
+    let required = if (isSparse(a) or isSparse(b)) { 2 } else { 1 };
+    signals >= required;
+  };
+
+  /// Whether two profiles share at least one significant name token (a word in
+  /// the canonical full name, or a structured first/last/nickname).
+  func hasMeaningfulNameSimilarity(a : Types.PersonProfile, b : Types.PersonProfile) : Bool {
+    let aTokens = nameTokens(a);
+    let bTokens = nameTokens(b);
+    aTokens.any(func at = bTokens.any(func bt = at == bt));
+  };
+
+  /// Collects the significant name tokens of a profile for similarity matching.
+  func nameTokens(p : Types.PersonProfile) : [Text] {
+    let tokens = List.empty<Text>();
+    for (tok in p.name.toLower().split(#char ' ')) {
+      if (tok != "") { tokens.add(tok) };
+    };
+    switch (p.firstName) { case (?t) { if (t != "") { tokens.add(t.toLower()) } }; case null {} };
+    switch (p.lastName) { case (?t) { if (t != "") { tokens.add(t.toLower()) } }; case null {} };
+    switch (p.nickname) { case (?t) { if (t != "") { tokens.add(t.toLower()) } }; case null {} };
+    tokens.toArray();
+  };
+
+  /// Counts corroborating signals beyond name shared by two profiles: shared
+  /// parent, spouse, child, sibling, birth info, death info, location, or
+  /// nickname. Shared emptiness (both fields blank) never counts as a signal.
+  func corroboratingSignalCount(
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    confirmedRelationships : List.List<Types.Relationship>,
+    a : Types.PersonProfile,
+    b : Types.PersonProfile,
+  ) : Nat {
+    var count = 0;
+    if (sharedName(relatedNames(profiles, confirmedRelationships, a.personId, #Parent), relatedNames(profiles, confirmedRelationships, b.personId, #Parent))) { count += 1 };
+    if (sharedName(relatedNames(profiles, confirmedRelationships, a.personId, #SpousePartner), relatedNames(profiles, confirmedRelationships, b.personId, #SpousePartner))) { count += 1 };
+    if (sharedName(relatedNames(profiles, confirmedRelationships, a.personId, #Child), relatedNames(profiles, confirmedRelationships, b.personId, #Child))) { count += 1 };
+    if (sharedName(relatedNames(profiles, confirmedRelationships, a.personId, #Sibling), relatedNames(profiles, confirmedRelationships, b.personId, #Sibling))) { count += 1 };
+    if (birthInfoMatches(a, b)) { count += 1 };
+    if (a.livingStatus == #Deceased and b.livingStatus == #Deceased) { count += 1 };
+    if (optTextMatches(a.currentLocation, b.currentLocation)) { count += 1 };
+    if (optTextMatches(a.nickname, b.nickname)) { count += 1 };
+    count;
+  };
+
+  /// Whether two name lists share a non-empty name (case-insensitive).
+  func sharedName(xs : [Text], ys : [Text]) : Bool {
+    xs.any(func x = x != "" and ys.any(func y = y != "" and x.toLower() == y.toLower()));
+  };
+
+  /// Whether two optional text fields both hold the same non-empty value.
+  func optTextMatches(x : ?Text, y : ?Text) : Bool {
+    switch (x, y) {
+      case (?a, ?b) { a != "" and b != "" and a.toLower() == b.toLower() };
+      case _ false;
+    };
+  };
+
+  /// Whether two profiles share birth information (birth date or birthplace).
+  func birthInfoMatches(a : Types.PersonProfile, b : Types.PersonProfile) : Bool {
+    optTextMatches(a.birthDate, b.birthDate) or optTextMatches(a.birthplace, b.birthplace);
+  };
+
+  /// Whether a profile is sparse: it has few populated personal fields, so it
+  /// requires stronger confidence to be flagged as a duplicate.
+  func isSparse(p : Types.PersonProfile) : Bool {
+    populatedFieldCount(p) < 4;
+  };
+
+  /// Counts the populated (non-empty) personal fields of a profile.
+  func populatedFieldCount(p : Types.PersonProfile) : Nat {
+    var count = 0;
+    if (isPopulated(p.firstName)) { count += 1 };
+    if (isPopulated(p.lastName)) { count += 1 };
+    if (isPopulated(p.nickname)) { count += 1 };
+    if (isPopulated(p.birthDate)) { count += 1 };
+    if (isPopulated(p.birthplace)) { count += 1 };
+    if (isPopulated(p.currentLocation)) { count += 1 };
+    if (isPopulated(p.occupation)) { count += 1 };
+    count;
+  };
+
+  /// Whether an optional text field holds a non-empty value.
+  func isPopulated(v : ?Text) : Bool {
+    switch (v) { case (?t) t != ""; case null false };
   };
 
   /// Computes the next id: one greater than the largest existing id, or `0`

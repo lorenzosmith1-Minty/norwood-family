@@ -7,12 +7,11 @@ import type {
   ProposedFinding,
   RelationshipProposal,
   ResearchAuditEntry,
-  Result_16,
-  Result_17,
+  Result_3,
   Result_18,
   Result_19,
   Result_20,
-  Result_21,
+  Result_22,
   ReviewQueue,
   ReviewQueueItem,
   SourceId,
@@ -83,7 +82,7 @@ export function useCreateSource() {
       sourceType: SourceRecord["sourceType"];
       description: string;
       archiveItemId: bigint | null;
-    }): Promise<Result_17> => {
+    }): Promise<Result_18> => {
       if (!actor) throw new Error("Backend is not ready");
       return actor.createSource(title, sourceType, description, archiveItemId);
     },
@@ -278,7 +277,7 @@ export function useCreateFinding() {
       sourceId: SourceId;
       personId: string | null;
       newPersonCandidateId: bigint | null;
-    }): Promise<Result_21> => {
+    }): Promise<Result_22> => {
       if (!actor) throw new Error("Backend is not ready");
       return actor.createFinding(
         title,
@@ -322,6 +321,11 @@ export function useApproveFinding() {
       void queryClient.invalidateQueries({ queryKey: ["research", "sources"] });
       void queryClient.invalidateQueries({ queryKey: ["research", "queue"] });
       void queryClient.invalidateQueries({ queryKey: ["research", "audit"] });
+      // Approving a finding can route it to the Conflict Review surface, so the
+      // conflict list must refresh immediately.
+      void queryClient.invalidateQueries({
+        queryKey: ["research", "conflicts"],
+      });
       void queryClient.invalidateQueries({
         queryKey: ["pendingContributionsCount"],
       });
@@ -413,7 +417,7 @@ export function useCreateNewPersonCandidate() {
       name: string;
       details: string;
       sourceId: SourceId;
-    }): Promise<Result_19> => {
+    }): Promise<Result_20> => {
       if (!actor) throw new Error("Backend is not ready");
       return actor.createNewPersonCandidate(name, details, sourceId);
     },
@@ -548,7 +552,7 @@ export function useCreateRelationshipProposal() {
       toPersonId: string;
       relationshipType: string;
       sourceId: SourceId;
-    }): Promise<Result_18> => {
+    }): Promise<Result_19> => {
       if (!actor) throw new Error("Backend is not ready");
       return actor.createRelationshipProposal(
         fromPersonId,
@@ -687,7 +691,7 @@ export function useResolveConflict() {
       conflictId: bigint;
       action: ConflictResolutionAction;
       notes: string;
-    }): Promise<ConflictReviewItem | null> => {
+    }): Promise<Result_3> => {
       if (!actor) throw new Error("Backend is not ready");
       return actor.resolveConflict(conflictId, action, notes);
     },
@@ -705,6 +709,11 @@ export function useResolveConflict() {
         queryKey: ["pendingContributionsCount"],
       });
       void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      // Resolving a conflict records a ConflictResolved entry in the merged
+      // Steward Audit History, so that query must refresh immediately.
+      void queryClient.invalidateQueries({
+        queryKey: ["governance", "stewardAuditHistory"],
+      });
     },
   });
 }
@@ -764,6 +773,7 @@ export type {
   ProposedFinding,
   RelationshipProposal,
   ResearchAuditEntry,
+  Result_3,
   ReviewQueue,
   ReviewQueueItem,
   SourceId,

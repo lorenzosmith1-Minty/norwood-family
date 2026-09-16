@@ -4,7 +4,9 @@ import {
   LivingStatus,
   type PersonProfile,
   type ProfileClaim,
+  ProfileClaimStatus,
   type RelationshipRequest,
+  RelationshipRequestStatus,
   type RelationshipType,
   type Report,
   ReportStatus,
@@ -174,7 +176,7 @@ function pendingClaim(id: bigint): ProfileClaim {
   return {
     id,
     submittedDate: 1_700_000_000_000_000_000n,
-    status: "Pending",
+    status: ProfileClaimStatus.Pending,
     personId: "lorenzoSmithJr",
     requestingUserId: Principal.fromText(ACCOUNT),
   };
@@ -184,7 +186,7 @@ function pendingRequest(id: bigint): RelationshipRequest {
   return {
     id,
     submittedDate: 1_700_000_000_000_000_000n,
-    status: "Pending",
+    status: RelationshipRequestStatus.Pending,
     relatedPersonId: "julia",
     requestingPersonId: "clayton",
     proposedRelationship: "Father" as RelationshipType,

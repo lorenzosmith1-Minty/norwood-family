@@ -5239,6 +5239,17 @@
     @apply max-w-sm text-sm;
     color: oklch(var(--muted-foreground));
   }
+  .research-retry {
+    @apply inline-flex min-h-[44px] items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold;
+    color: oklch(var(--research-accent-foreground));
+    background-color: oklch(var(--research-accent));
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.18);
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow
+      0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .research-retry:hover {
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.24);
+  }
 
   /* ---- Message Board: tag input with suggestions ---- */
 

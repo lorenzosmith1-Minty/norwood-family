@@ -16,6 +16,7 @@ import type {
   RelationshipProposal,
   ResearchAuditEntry,
   ResearchError,
+  Result_3,
   Result_16,
   Result_17,
   Result_18,
@@ -52,6 +53,7 @@ export type {
   Result_17,
   Result_18,
   Result_20,
+  Result_3,
   ReviewQueue,
   ReviewQueueItem,
   SourceId,
@@ -127,3 +129,25 @@ export const CONFLICT_ACTION_LABELS: Record<ConflictResolutionAction, string> =
     [ConflictResolutionAction.PreserveBoth]: "Preserve Both / Unresolved",
     [ConflictResolutionAction.NeedsResearch]: "Needs Research",
   };
+
+/**
+ * The canonical Person fact fields selectable in the Research Intake form.
+ * Each entry pairs the internal canonical key (stored on the finding) with the
+ * user-facing label shown in the dropdown. The canonical key is what the
+ * backend maps onto the Person profile on approval, so the form stores the key,
+ * never the display label.
+ */
+export const PERSON_FACT_FIELDS: { key: string; label: string }[] = [
+  { key: "birthDate", label: "Birth Date" },
+  { key: "birthplace", label: "Birthplace" },
+  { key: "currentLocation", label: "Current Location" },
+  { key: "occupation", label: "Occupation / Profession" },
+  { key: "preferredName", label: "Preferred / Display Name" },
+  { key: "firstName", label: "First Name" },
+  { key: "middleName", label: "Middle Name" },
+  { key: "lastName", label: "Last Name" },
+  { key: "suffix", label: "Suffix" },
+  { key: "nickname", label: "Nickname / Known As" },
+  { key: "shortBio", label: "Short Biography" },
+  { key: "longerStory", label: "Longer Story" },
+];

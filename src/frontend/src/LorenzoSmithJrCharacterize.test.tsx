@@ -4,6 +4,7 @@ import {
   LivingStatus,
   type PersonProfile,
   type ProfileClaim,
+  ProfileClaimStatus,
 } from "@/backend";
 import { Principal } from "@icp-sdk/core/principal";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -220,7 +221,7 @@ describe("Explore Family renders the confirmed graph regardless of claim state",
       id: 1n,
       personId: "lorenzoSmithJr",
       requestingUserId: Principal.fromText(ACCOUNT),
-      status: "Pending",
+      status: ProfileClaimStatus.Pending,
       submittedDate: 1_700_000_000_000_000_000n,
     });
     const user = userEvent.setup();

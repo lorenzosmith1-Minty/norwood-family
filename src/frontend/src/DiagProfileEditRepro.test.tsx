@@ -8,6 +8,7 @@ import {
   type ProfileEdits,
   type Relationship,
   type RelationshipRequest,
+  RelationshipRequestStatus,
   type RelationshipType,
 } from "@/backend";
 import { Principal } from "@icp-sdk/core/principal";
@@ -96,7 +97,7 @@ const {
           requestingPersonId: fromPersonId,
           relatedPersonId: toPersonId,
           proposedRelationship: relationshipType,
-          status: "Pending",
+          status: RelationshipRequestStatus.Pending,
           submittedDate: 1_700_000_000_000_000_000n,
         },
       };

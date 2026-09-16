@@ -6,8 +6,10 @@ import {
   NotificationType,
   type PersonProfile,
   type ProfileClaim,
+  ProfileClaimStatus,
   type Relationship,
   type RelationshipRequest,
+  RelationshipRequestStatus,
   RelationshipStatus,
   RelationshipType,
 } from "@/backend";
@@ -120,7 +122,7 @@ const {
         id: nextClaimId++,
         personId,
         requestingUserId: principal(),
-        status: "Pending",
+        status: ProfileClaimStatus.Pending,
         submittedDate: 1_700_000_000_000_000_000n,
       };
       claims = [...claims, claim];
@@ -139,12 +141,12 @@ const {
     },
     async approveProfileClaim(claimId: bigint): Promise<ProfileClaim | null> {
       const claim = claims.find(
-        (c) => c.id === claimId && c.status === "Pending",
+        (c) => c.id === claimId && c.status === ProfileClaimStatus.Pending,
       );
       if (!claim) return null;
       const updated: ProfileClaim = {
         ...claim,
-        status: "Approved",
+        status: ProfileClaimStatus.Approved,
         reviewedBy: principal(),
         reviewedDate: 1_700_000_000_000_000_000n,
       };
@@ -175,12 +177,12 @@ const {
     },
     async rejectProfileClaim(claimId: bigint): Promise<ProfileClaim | null> {
       const claim = claims.find(
-        (c) => c.id === claimId && c.status === "Pending",
+        (c) => c.id === claimId && c.status === ProfileClaimStatus.Pending,
       );
       if (!claim) return null;
       const updated: ProfileClaim = {
         ...claim,
-        status: "Rejected",
+        status: ProfileClaimStatus.Rejected,
         reviewedBy: principal(),
         reviewedDate: 1_700_000_000_000_000_000n,
       };
@@ -241,7 +243,7 @@ const {
         requestingPersonId: fromPersonId,
         relatedPersonId: toPersonId,
         proposedRelationship: relationshipType,
-        status: "Pending",
+        status: RelationshipRequestStatus.Pending,
         submittedDate: 1_700_000_000_000_000_000n,
       };
       requests = [...requests, request];
@@ -271,12 +273,13 @@ const {
       requestId: bigint,
     ): Promise<RelationshipRequest | null> {
       const request = requests.find(
-        (r) => r.id === requestId && r.status === "Pending",
+        (r) =>
+          r.id === requestId && r.status === RelationshipRequestStatus.Pending,
       );
       if (!request) return null;
       const updated: RelationshipRequest = {
         ...request,
-        status: "Approved",
+        status: RelationshipRequestStatus.Approved,
         reviewer: principal(),
         reviewedDate: 1_700_000_000_000_000_000n,
       };
@@ -297,12 +300,13 @@ const {
       requestId: bigint,
     ): Promise<RelationshipRequest | null> {
       const request = requests.find(
-        (r) => r.id === requestId && r.status === "Pending",
+        (r) =>
+          r.id === requestId && r.status === RelationshipRequestStatus.Pending,
       );
       if (!request) return null;
       const updated: RelationshipRequest = {
         ...request,
-        status: "Rejected",
+        status: RelationshipRequestStatus.Rejected,
         reviewer: principal(),
         reviewedDate: 1_700_000_000_000_000_000n,
       };
@@ -314,7 +318,10 @@ const {
     ): Promise<RelationshipRequest | null> {
       const request = requests.find((r) => r.id === requestId);
       if (!request) return null;
-      const updated: RelationshipRequest = { ...request, status: "Pending" };
+      const updated: RelationshipRequest = {
+        ...request,
+        status: RelationshipRequestStatus.Pending,
+      };
       requests = requests.map((r) => (r.id === requestId ? updated : r));
       return updated;
     },
@@ -567,7 +574,7 @@ describe("Profile claim flow", () => {
       id: 1n,
       personId: "clayton",
       requestingUserId: Principal.fromText(USER_1),
-      status: "Pending",
+      status: ProfileClaimStatus.Pending,
       submittedDate: 1_700_000_000_000_000_000n,
     });
     setAuthenticated(true);
@@ -738,7 +745,7 @@ describe("Family Steward review", () => {
       id: 1n,
       personId: "clayton",
       requestingUserId: Principal.fromText(CLAIMANT),
-      status: "Pending",
+      status: ProfileClaimStatus.Pending,
       submittedDate: 1_700_000_000_000_000_000n,
     });
     const user = userEvent.setup();
@@ -765,7 +772,7 @@ describe("Family Steward review", () => {
       requestingPersonId: NEW_USER,
       relatedPersonId: "clayton",
       proposedRelationship: RelationshipType.Child,
-      status: "Pending",
+      status: RelationshipRequestStatus.Pending,
       submittedDate: 1_700_000_000_000_000_000n,
     });
     const user = userEvent.setup();

@@ -1,17 +1,18 @@
 {
-  "overview": "A private family website for the Norwood family to explore their family tree, share photos and stories, manage the family archive, and connect with relatives.",
+  "overview": "A family connection app for the Norwood family with profiles, research intake, conflict review, and family steward governance.",
   "features": [
-    "Explore the family tree and heritage branches",
-    "Claim and manage your own family profile",
-    "Browse and contribute to the family archive",
-    "Share recipes, videos, and stories",
-    "Message board and private messaging for family members"
+    "Family member profiles with stories and timelines",
+    "Historical research intake with source and finding review",
+    "Conflict review for disputed facts",
+    "Duplicate profile detection for steward review",
+    "Family steward governance and audit"
   ],
   "category": "family",
   "tags": [
     "family",
     "genealogy",
-    "community"
+    "research",
+    "governance"
   ],
-  "last_updated": "2026-09-14T16:32:37.659Z"
+  "last_updated": "2026-09-15T19:18:16.240Z"
 }

@@ -3,13 +3,26 @@ import {
   Check,
   ClipboardList,
   FileText,
+  GitMerge,
   Inbox,
+  Scale,
   ScrollText,
   Search,
   ShieldCheck,
   X,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "../components/ui/alert-dialog";
 import { useIsAdmin } from "../hooks/useArchiveStorage";
 import {
   useApproveFinding,
@@ -18,6 +31,7 @@ import {
   useApproveSource,
   useGetResearchAuditLog,
   useGetReviewQueue,
+  useListConflictReviewItems,
   useListFindings,
   useListNewPersonCandidates,
   useListRelationshipProposals,
@@ -30,21 +44,26 @@ import {
   useRejectNewPersonCandidate,
   useRejectRelationshipProposal,
   useRejectSource,
+  useResolveConflict,
 } from "../hooks/useResearchIntake";
 import { resolveDisplayName } from "../types/family";
 import {
+  CONFLICT_ACTION_LABELS,
   EVIDENCE_LABEL_LABELS,
   FINDING_TYPE_LABELS,
   REVIEW_STATUS_LABELS,
   ReviewStatus,
   SOURCE_TYPE_LABELS,
 } from "../types/research-intake";
+import { ConflictResolutionAction } from "../types/research-intake";
 import type {
+  ConflictReviewItem,
   FindingContent,
   NewPersonCandidate,
   ProposedFinding,
   RelationshipProposal,
   ResearchAuditEntry,
+  Result_3,
   SourceRecord,
 } from "../types/research-intake";
 import { profiles } from "./PersonProfilePage";
@@ -153,8 +172,8 @@ function ReviewStatusPill({ status }: { status: ReviewStatus }) {
       ? "status-approved"
       : status === ReviewStatus.Rejected
         ? "status-rejected"
-        : status === ReviewStatus.Conflicting
-          ? "status-pending"
+        : status === ReviewStatus.NeedsResearch
+          ? "status-needs"
           : "status-pending";
   return (
     <span className={`status-pill ${tone}`}>
@@ -188,7 +207,8 @@ function FindingCard({
 }: FindingCardProps) {
   const reviewable =
     finding.status === ReviewStatus.Pending ||
-    finding.status === ReviewStatus.Conflicting;
+    finding.status === ReviewStatus.Conflicting ||
+    finding.status === ReviewStatus.NeedsResearch;
   return (
     <li
       data-ocid={`research_queue.finding.${index}`}
@@ -290,7 +310,9 @@ function CandidateCard({
   onReject,
   onNeedsResearch,
 }: CandidateCardProps) {
-  const reviewable = candidate.status === ReviewStatus.Pending;
+  const reviewable =
+    candidate.status === ReviewStatus.Pending ||
+    candidate.status === ReviewStatus.NeedsResearch;
   return (
     <li
       data-ocid={`research_queue.candidate.${index}`}
@@ -376,7 +398,9 @@ function RelationshipCard({
   onReject,
   onNeedsResearch,
 }: RelationshipCardProps) {
-  const reviewable = proposal.status === ReviewStatus.Pending;
+  const reviewable =
+    proposal.status === ReviewStatus.Pending ||
+    proposal.status === ReviewStatus.NeedsResearch;
   return (
     <li
       data-ocid={`research_queue.relationship.${index}`}
@@ -460,7 +484,9 @@ function SourceCard({
   onReject,
   onNeedsResearch,
 }: SourceCardProps) {
-  const reviewable = source.status === ReviewStatus.Pending;
+  const reviewable =
+    source.status === ReviewStatus.Pending ||
+    source.status === ReviewStatus.NeedsResearch;
   return (
     <li
       data-ocid={`research_queue.source.${index}`}
@@ -556,12 +582,231 @@ function AuditEntryRow({
   );
 }
 
+/** The four steward resolution actions, in display order. */
+const RESOLUTION_ACTIONS: ConflictResolutionAction[] = [
+  ConflictResolutionAction.KeepExisting,
+  ConflictResolutionAction.ReplaceExisting,
+  ConflictResolutionAction.PreserveBoth,
+  ConflictResolutionAction.NeedsResearch,
+];
+
+/** Short guidance shown under each resolution action in the confirm dialog. */
+const ACTION_GUIDANCE: Record<ConflictResolutionAction, string> = {
+  [ConflictResolutionAction.KeepExisting]:
+    "The canonical value stays unchanged. The proposed research and its provenance are preserved, and the conflict is resolved and recorded in the audit history.",
+  [ConflictResolutionAction.ReplaceExisting]:
+    "The canonical value is updated once to the proposed value. The old value and its provenance are preserved in the conflict and audit history, and the new source is kept.",
+  [ConflictResolutionAction.PreserveBoth]:
+    "Both values stay visible as an unresolved conflict marked Conflicting. Neither value is silently chosen.",
+  [ConflictResolutionAction.NeedsResearch]:
+    "The canonical value stays unchanged and the conflict is retained with a Needs Research status for future investigation.",
+};
+
+/** Maps a backend ResearchError to a clear, user-facing message. */
+function researchErrorMessage(error: {
+  __kind__: string;
+  invalidState?: string;
+}): string {
+  switch (error.__kind__) {
+    case "invalidState":
+      return error.invalidState ?? "The conflict is in an invalid state.";
+    case "notAuthorized":
+      return "You are not authorized to resolve this conflict.";
+    case "notFound":
+      return "This conflict no longer exists. It may have been resolved already.";
+    default:
+      return "Could not resolve this conflict.";
+  }
+}
+
+/**
+ * A single conflict review card rendered inside the Review Queue. A proposed
+ * finding contradicts existing canonical family data, so the EXISTING value
+ * (canonical) and the PROPOSED value sit side by side and the steward picks one
+ * of four explicit resolution actions. Items marked Needs Research are shown
+ * here too, so they stay visible and actionable in the queue itself.
+ */
+function ConflictCard({ item }: { item: ConflictReviewItem }) {
+  const resolve = useResolveConflict();
+  const [openAction, setOpenAction] = useState<ConflictResolutionAction | null>(
+    null,
+  );
+  const [notes, setNotes] = useState("");
+  const [resolveError, setResolveError] = useState<string | null>(null);
+
+  const isResolved = item.status === "Approved" || item.status === "Rejected";
+
+  const confirmResolve = (action: ConflictResolutionAction) => {
+    setResolveError(null);
+    resolve.mutate(
+      { conflictId: item.id, action, notes },
+      {
+        onSuccess: (result: Result_3) => {
+          if (result.__kind__ === "err") {
+            setResolveError(researchErrorMessage(result.err));
+            return;
+          }
+          setOpenAction(null);
+          setNotes("");
+        },
+      },
+    );
+  };
+
+  return (
+    <li
+      data-ocid={`research_queue.conflict.${item.id}`}
+      className="research-conflict-card"
+    >
+      <div className="research-conflict-head">
+        <div className="flex min-w-0 flex-col gap-1">
+          <span className="research-conflict-title">{item.field}</span>
+          <div className="research-finding-meta">
+            <span className="research-evidence research-evidence-conflict">
+              Conflict
+            </span>
+            <ReviewStatusPill status={item.status} />
+          </div>
+        </div>
+        {isResolved ? (
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-card px-3.5 py-1.5 text-xs font-semibold text-muted-foreground">
+            <Check className="h-3.5 w-3.5" aria-hidden="true" />
+            {REVIEW_STATUS_LABELS[item.status]}
+          </span>
+        ) : null}
+      </div>
+
+      <div className="research-conflict-block">
+        <span className="research-conflict-label">Disputed value</span>
+        <div className="research-conflict-values">
+          <div className="research-conflict-value">
+            <span className="research-conflict-owner">
+              Existing · canonical
+            </span>
+            <span className="research-conflict-text">
+              {item.canonicalValue}
+            </span>
+          </div>
+          <div className="research-conflict-value">
+            <span className="research-conflict-owner">Proposed</span>
+            <span className="research-conflict-text">{item.proposedValue}</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="research-conflict-actions">
+        {isResolved ? (
+          <span className="research-finding-meta">
+            {item.resolvedAt
+              ? `Resolved ${formatDateTime(item.resolvedAt)}`
+              : "Resolved"}
+            {item.resolvedBy ? ` · by ${formatPrincipal(item.resolvedBy)}` : ""}
+          </span>
+        ) : (
+          RESOLUTION_ACTIONS.map((action) => (
+            <AlertDialog
+              key={action}
+              open={openAction === action}
+              onOpenChange={(open) => {
+                setOpenAction(open ? action : null);
+                if (!open) {
+                  setNotes("");
+                  setResolveError(null);
+                }
+              }}
+            >
+              <AlertDialogTrigger asChild>
+                <button
+                  type="button"
+                  data-ocid={`research_queue.conflict.${item.id}.action_button.${action}`}
+                  className="research-resolve"
+                >
+                  <GitMerge className="h-4 w-4" aria-hidden="true" />
+                  {CONFLICT_ACTION_LABELS[action]}
+                </button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    {CONFLICT_ACTION_LABELS[action]}?
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    {ACTION_GUIDANCE[action]} This decision is recorded in the
+                    audit history with your identity and timestamp.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <label
+                  htmlFor={`conflict-notes-${item.id}-${action}`}
+                  className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground"
+                >
+                  Steward notes (optional)
+                </label>
+                <textarea
+                  id={`conflict-notes-${item.id}-${action}`}
+                  data-ocid={`research_queue.conflict.${item.id}.notes_input.${action}`}
+                  value={notes}
+                  onChange={(event) => setNotes(event.target.value)}
+                  rows={3}
+                  placeholder="Why did you choose this resolution?"
+                  className="w-full resize-none rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                />
+                {resolveError && (
+                  <div
+                    data-ocid={`research_queue.conflict.${item.id}.dialog_error.${action}`}
+                    className="flex items-start gap-2 rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2.5 text-sm text-destructive"
+                  >
+                    <ShieldCheck
+                      className="mt-0.5 h-4 w-4 shrink-0"
+                      aria-hidden="true"
+                    />
+                    <span>
+                      {resolveError} The conflict was left unresolved and no
+                      canonical data was changed.
+                    </span>
+                  </div>
+                )}
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    data-ocid={`research_queue.conflict.${item.id}.confirm_button.${action}`}
+                    disabled={resolve.isPending}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      confirmResolve(action);
+                    }}
+                  >
+                    {resolve.isPending
+                      ? "Resolving…"
+                      : CONFLICT_ACTION_LABELS[action]}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          ))
+        )}
+        {resolveError && (
+          <p
+            data-ocid={`research_queue.conflict.${item.id}.resolve_error`}
+            className="text-xs font-medium text-destructive"
+          >
+            {resolveError}
+          </p>
+        )}
+      </div>
+    </li>
+  );
+}
+
 type QueueTab =
   | "sources"
   | "findings"
   | "candidates"
   | "relationships"
+  | "conflicts"
   | "audit";
+
+/** A status filter applied to the current entity tab's items. */
+type StatusFilter = "All" | ReviewStatus;
 
 export function ResearchReviewQueuePage({
   onBack,
@@ -575,6 +820,8 @@ export function ResearchReviewQueuePage({
     useListRelationshipProposals();
   const { data: audit = [] } = useGetResearchAuditLog();
   const { data: sources = [] } = useListSources();
+  const { data: conflicts = [], isLoading: conflictsLoading } =
+    useListConflictReviewItems();
 
   const approveFinding = useApproveFinding();
   const rejectFinding = useRejectFinding();
@@ -590,23 +837,53 @@ export function ResearchReviewQueuePage({
   const needsResearchProposal = useNeedsResearchRelationshipProposal();
 
   const [tab, setTab] = useState<QueueTab>("findings");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("All");
 
   const sourceById = useMemo(
     () => new Map(sources.map((s) => [s.id, s])),
     [sources],
   );
 
-  const pendingSources = useMemo(
-    () => sources.filter((s) => s.status === ReviewStatus.Pending),
-    [sources],
+  /** Applies the active status filter to a list of review items. */
+  const byStatus = useCallback(
+    <T extends { status: ReviewStatus }>(items: T[]): T[] =>
+      statusFilter === "All"
+        ? items
+        : items.filter((item) => item.status === statusFilter),
+    [statusFilter],
+  );
+
+  const filteredFindings = useMemo(
+    () => byStatus(findings),
+    [findings, byStatus],
+  );
+  const filteredCandidates = useMemo(
+    () => byStatus(candidates),
+    [candidates, byStatus],
+  );
+  const filteredProposals = useMemo(
+    () => byStatus(proposals),
+    [proposals, byStatus],
+  );
+  const filteredSources = useMemo(() => byStatus(sources), [sources, byStatus]);
+  const filteredConflicts = useMemo(
+    () => byStatus(conflicts),
+    [conflicts, byStatus],
   );
 
   const pendingCount = reviewQueue ? Number(reviewQueue.pending) : 0;
   const approvedCount = reviewQueue ? Number(reviewQueue.approved) : 0;
   const conflictingCount = reviewQueue ? Number(reviewQueue.conflicting) : 0;
+  const needsResearchCount = reviewQueue
+    ? Number(reviewQueue.needsResearch)
+    : 0;
 
   const isLoading =
-    adminLoading || findingsLoading || candidatesLoading || proposalsLoading;
+    adminLoading ||
+    findingsLoading ||
+    candidatesLoading ||
+    proposalsLoading ||
+    conflictsLoading;
 
   if (!adminLoading && !isAdmin) {
     return (
@@ -645,10 +922,11 @@ export function ResearchReviewQueuePage({
   }
 
   const tabs: { id: QueueTab; label: string; count: number }[] = [
-    { id: "sources", label: "Sources", count: pendingSources.length },
+    { id: "sources", label: "Sources", count: sources.length },
     { id: "findings", label: "Findings", count: findings.length },
     { id: "candidates", label: "Candidates", count: candidates.length },
     { id: "relationships", label: "Relationships", count: proposals.length },
+    { id: "conflicts", label: "Conflicts", count: conflicts.length },
     { id: "audit", label: "Audit", count: audit.length },
   ];
 
@@ -686,20 +964,53 @@ export function ResearchReviewQueuePage({
       {/* Badge summary row */}
       <div
         data-ocid="research_queue.badges"
-        className="mb-6 grid grid-cols-3 gap-3"
+        className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4"
       >
         <div className="research-section">
           <span className="research-section-title">Pending</span>
           <span className="research-queue-badge">{pendingCount}</span>
         </div>
         <div className="research-section">
-          <span className="research-section-title">Approved</span>
-          <span className="research-queue-badge">{approvedCount}</span>
+          <span className="research-section-title">Needs Research</span>
+          <span className="research-queue-badge">{needsResearchCount}</span>
         </div>
         <div className="research-section">
           <span className="research-section-title">Conflicting</span>
           <span className="research-queue-badge">{conflictingCount}</span>
         </div>
+        <div className="research-section">
+          <span className="research-section-title">Approved</span>
+          <span className="research-queue-badge">{approvedCount}</span>
+        </div>
+      </div>
+
+      {/* Status filter row */}
+      <div
+        data-ocid="research_queue.status_filters"
+        className="mb-5 flex flex-wrap items-center gap-2"
+      >
+        <span className="mr-1 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+          Status
+        </span>
+        {(
+          [
+            { id: "All" as StatusFilter, label: "All" },
+            { id: ReviewStatus.Pending, label: "Pending" },
+            { id: ReviewStatus.NeedsResearch, label: "Needs Research" },
+            { id: ReviewStatus.Conflicting, label: "Conflicting" },
+            { id: ReviewStatus.Approved, label: "Resolved / Approved" },
+          ] as { id: StatusFilter; label: string }[]
+        ).map((f) => (
+          <button
+            key={f.id}
+            type="button"
+            data-ocid={`research_queue.status_filter.${f.id}`}
+            onClick={() => setStatusFilter(f.id)}
+            className={`research-tab ${statusFilter === f.id ? "research-tab-active" : ""}`}
+          >
+            {f.label}
+          </button>
+        ))}
       </div>
 
       {/* Tabs */}
@@ -744,10 +1055,10 @@ export function ResearchReviewQueuePage({
             >
               <div className="research-section-head">
                 <span className="research-section-title">
-                  Pending Sources ({pendingSources.length})
+                  Sources ({filteredSources.length})
                 </span>
               </div>
-              {pendingSources.length === 0 ? (
+              {filteredSources.length === 0 ? (
                 <div
                   data-ocid="research_queue.sources_empty"
                   className="research-empty"
@@ -757,15 +1068,18 @@ export function ResearchReviewQueuePage({
                     strokeWidth={1.5}
                     aria-hidden="true"
                   />
-                  <p className="research-empty-title">No pending sources</p>
+                  <p className="research-empty-title">
+                    No sources in this view
+                  </p>
                   <p className="research-empty-hint">
                     Sources recorded in Research Intake will appear here for
-                    your review, approval, or further research.
+                    your review, approval, or further research. Adjust the
+                    status filter to see other states.
                   </p>
                 </div>
               ) : (
                 <ul className="research-queue">
-                  {pendingSources.map((source, index) => (
+                  {filteredSources.map((source, index) => (
                     <SourceCard
                       key={source.id.toString()}
                       source={source}
@@ -792,10 +1106,10 @@ export function ResearchReviewQueuePage({
             >
               <div className="research-section-head">
                 <span className="research-section-title">
-                  Proposed Findings ({findings.length})
+                  Proposed Findings ({filteredFindings.length})
                 </span>
               </div>
-              {findings.length === 0 ? (
+              {filteredFindings.length === 0 ? (
                 <div
                   data-ocid="research_queue.findings_empty"
                   className="research-empty"
@@ -805,15 +1119,18 @@ export function ResearchReviewQueuePage({
                     strokeWidth={1.5}
                     aria-hidden="true"
                   />
-                  <p className="research-empty-title">No proposed findings</p>
+                  <p className="research-empty-title">
+                    No findings in this view
+                  </p>
                   <p className="research-empty-hint">
                     Findings recorded in Research Intake will appear here for
-                    your review and approval.
+                    your review and approval. Adjust the status filter to see
+                    other states.
                   </p>
                 </div>
               ) : (
                 <ul className="research-queue">
-                  {findings.map((finding, index) => (
+                  {filteredFindings.map((finding, index) => (
                     <FindingCard
                       key={finding.id.toString()}
                       finding={finding}
@@ -841,10 +1158,10 @@ export function ResearchReviewQueuePage({
             >
               <div className="research-section-head">
                 <span className="research-section-title">
-                  New Person Candidates ({candidates.length})
+                  New Person Candidates ({filteredCandidates.length})
                 </span>
               </div>
-              {candidates.length === 0 ? (
+              {filteredCandidates.length === 0 ? (
                 <div
                   data-ocid="research_queue.candidates_empty"
                   className="research-empty"
@@ -854,15 +1171,17 @@ export function ResearchReviewQueuePage({
                     strokeWidth={1.5}
                     aria-hidden="true"
                   />
-                  <p className="research-empty-title">No person candidates</p>
+                  <p className="research-empty-title">
+                    No candidates in this view
+                  </p>
                   <p className="research-empty-hint">
                     New person candidates proposed from research sources will
-                    appear here.
+                    appear here. Adjust the status filter to see other states.
                   </p>
                 </div>
               ) : (
                 <ul className="research-queue">
-                  {candidates.map((candidate, index) => (
+                  {filteredCandidates.map((candidate, index) => (
                     <CandidateCard
                       key={candidate.id.toString()}
                       candidate={candidate}
@@ -890,10 +1209,10 @@ export function ResearchReviewQueuePage({
             >
               <div className="research-section-head">
                 <span className="research-section-title">
-                  Relationship Proposals ({proposals.length})
+                  Relationship Proposals ({filteredProposals.length})
                 </span>
               </div>
-              {proposals.length === 0 ? (
+              {filteredProposals.length === 0 ? (
                 <div
                   data-ocid="research_queue.relationships_empty"
                   className="research-empty"
@@ -904,16 +1223,16 @@ export function ResearchReviewQueuePage({
                     aria-hidden="true"
                   />
                   <p className="research-empty-title">
-                    No relationship proposals
+                    No proposals in this view
                   </p>
                   <p className="research-empty-hint">
                     Proposed family connections from research sources will
-                    appear here.
+                    appear here. Adjust the status filter to see other states.
                   </p>
                 </div>
               ) : (
                 <ul className="research-queue">
-                  {proposals.map((proposal, index) => (
+                  {filteredProposals.map((proposal, index) => (
                     <RelationshipCard
                       key={proposal.id.toString()}
                       proposal={proposal}
@@ -928,6 +1247,52 @@ export function ResearchReviewQueuePage({
                         needsResearchProposal.mutate(proposal.id)
                       }
                     />
+                  ))}
+                </ul>
+              )}
+            </section>
+          )}
+
+          {tab === "conflicts" && (
+            <section
+              data-ocid="research_queue.conflicts_section"
+              className="research-section"
+            >
+              <div className="research-section-head">
+                <span className="research-section-title">
+                  Conflicts ({filteredConflicts.length})
+                </span>
+              </div>
+              <p className="research-section-hint">
+                A proposed finding below contradicts existing canonical family
+                data. Compare the existing and proposed values, then choose one
+                of the four resolution actions to record the steward's decision.
+                Items marked Needs Research stay here so they remain visible and
+                actionable.
+              </p>
+              {filteredConflicts.length === 0 ? (
+                <div
+                  data-ocid="research_queue.conflicts_empty"
+                  className="research-empty"
+                >
+                  <Scale
+                    className="h-8 w-8 text-muted-foreground"
+                    strokeWidth={1.5}
+                    aria-hidden="true"
+                  />
+                  <p className="research-empty-title">
+                    No conflicts in this view
+                  </p>
+                  <p className="research-empty-hint">
+                    When a proposed finding contradicts existing canonical
+                    family data, it will appear here for a steward to resolve.
+                    Adjust the status filter to see other states.
+                  </p>
+                </div>
+              ) : (
+                <ul className="research-queue">
+                  {filteredConflicts.map((item) => (
+                    <ConflictCard key={item.id.toString()} item={item} />
                   ))}
                 </ul>
               )}

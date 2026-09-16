@@ -1,3 +1,4 @@
+import { RemovalError } from "@/backend";
 import type { PersonProfile as BackendPersonProfile, Photo } from "@/backend";
 import { useInternetIdentity } from "@caffeineai/core-infrastructure";
 import { ExternalBlob } from "@caffeineai/object-storage";
@@ -2689,6 +2690,52 @@ function getInitials(name: string): string {
 
 const PLACEHOLDER_SRC = "/assets/images/placeholder.svg";
 
+/**
+ * Maps a profile fact's display label to the canonical conflict field key used
+ * by Research Intake (PERSON_FACT_FIELDS). Facts whose label has no canonical
+ * field (e.g. "Evidence status", "Husband", "Parents") are never treated as
+ * disputed. This lets the profile surface a subtle disputed indicator on a fact
+ * that has an unresolved conflict without inventing new backend data.
+ */
+const FACT_LABEL_TO_CONFLICT_FIELD: Record<string, string> = {
+  Born: "birthDate",
+  "Birth year": "birthDate",
+  Birthplace: "birthplace",
+  Location: "currentLocation",
+  "Current Location": "currentLocation",
+  Occupation: "occupation",
+  "Occupation / Profession": "occupation",
+  "Preferred / Display Name": "preferredName",
+  "First Name": "firstName",
+  "Middle Name": "middleName",
+  "Last Name": "lastName",
+  Suffix: "suffix",
+  Nickname: "nickname",
+  "Short Biography": "shortBio",
+  "Longer Story": "longerStory",
+};
+
+/**
+ * Reverse of FACT_LABEL_TO_CONFLICT_FIELD: maps a canonical conflict field key
+ * (as stored on a ConflictReviewItem) back to the display label used on the
+ * profile facts grid. Used to render a disputed fact card for an unresolved
+ * conflict whose canonical field has no existing fact card in person.facts.
+ */
+const CONFLICT_FIELD_TO_LABEL: Record<string, string> = {
+  birthDate: "Born",
+  birthplace: "Birthplace",
+  currentLocation: "Location",
+  occupation: "Occupation",
+  preferredName: "Preferred / Display Name",
+  firstName: "First Name",
+  middleName: "Middle Name",
+  lastName: "Last Name",
+  suffix: "Suffix",
+  nickname: "Nickname",
+  shortBio: "Short Biography",
+  longerStory: "Longer Story",
+};
+
 interface CompletenessField {
   label: string;
   done: boolean;
@@ -3848,19 +3895,119 @@ export function PersonProfilePage({
         </div>
 
         <dl className="mt-6 grid w-full max-w-md grid-cols-1 gap-3 sm:grid-cols-2">
-          {person.facts.map((fact) => (
-            <div
-              key={fact.label}
-              className="rounded-2xl border border-border bg-card px-4 py-3 text-left shadow-subtle"
-            >
-              <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                {fact.label}
-              </dt>
-              <dd className="mt-1 font-display text-base font-semibold text-foreground">
-                {fact.value}
-              </dd>
-            </div>
-          ))}
+          {person.facts.map((fact) => {
+            const conflictField = FACT_LABEL_TO_CONFLICT_FIELD[fact.label];
+            const conflict = conflictField
+              ? personConflicts.find((c) => c.field === conflictField)
+              : undefined;
+            // When the canonical value is blank but a proposed value exists, the
+            // fact surfaces only as disputed (the proposed value with a
+            // "— disputed" suffix) rather than showing an empty canonical value.
+            const showDisputedOnly = Boolean(
+              conflict &&
+                conflict.canonicalValue.trim() === "" &&
+                conflict.proposedValue.trim() !== "",
+            );
+            const displayValue = showDisputedOnly
+              ? `${conflict!.proposedValue} — disputed`
+              : fact.value;
+            return (
+              <div
+                key={fact.label}
+                className="rounded-2xl border border-border bg-card px-4 py-3 text-left shadow-subtle"
+              >
+                <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                  {fact.label}
+                </dt>
+                <dd className="mt-1 font-display text-base font-semibold text-foreground">
+                  {displayValue}
+                </dd>
+                {conflict &&
+                  (onOpenConflictReview ? (
+                    <button
+                      type="button"
+                      data-ocid={`profile.fact.disputed.${conflict.field.toLowerCase()}`}
+                      onClick={onOpenConflictReview}
+                      className="mt-2 inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-destructive transition-colors hover:text-destructive/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                    >
+                      <AlertTriangle
+                        className="h-3 w-3"
+                        strokeWidth={2}
+                        aria-hidden="true"
+                      />
+                      Disputed
+                      <ArrowRight className="h-3 w-3" aria-hidden="true" />
+                    </button>
+                  ) : (
+                    <span
+                      data-ocid={`profile.fact.disputed.${conflict.field.toLowerCase()}`}
+                      className="mt-2 inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-destructive"
+                    >
+                      <AlertTriangle
+                        className="h-3 w-3"
+                        strokeWidth={2}
+                        aria-hidden="true"
+                      />
+                      Disputed
+                    </span>
+                  ))}
+              </div>
+            );
+          })}
+          {/* Unresolved Person Fact conflicts whose canonical field has no
+              existing fact card are surfaced as their own disputed fact cards
+              (e.g. "Occupation / Welder — disputed") so a conflict is never
+              hidden just because the canonical profile lacks a card for it. */}
+          {personConflicts
+            .filter(
+              (conflict) =>
+                CONFLICT_FIELD_TO_LABEL[conflict.field] &&
+                !person.facts.some(
+                  (fact) =>
+                    FACT_LABEL_TO_CONFLICT_FIELD[fact.label] === conflict.field,
+                ),
+            )
+            .map((conflict) => (
+              <div
+                key={conflict.id.toString()}
+                className="rounded-2xl border border-border bg-card px-4 py-3 text-left shadow-subtle"
+              >
+                <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                  {CONFLICT_FIELD_TO_LABEL[conflict.field]}
+                </dt>
+                <dd className="mt-1 font-display text-base font-semibold text-foreground">
+                  {conflict.proposedValue} — disputed
+                </dd>
+                {onOpenConflictReview ? (
+                  <button
+                    type="button"
+                    data-ocid={`profile.fact.disputed.${conflict.field.toLowerCase()}`}
+                    onClick={onOpenConflictReview}
+                    className="mt-2 inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-destructive transition-colors hover:text-destructive/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                  >
+                    <AlertTriangle
+                      className="h-3 w-3"
+                      strokeWidth={2}
+                      aria-hidden="true"
+                    />
+                    Disputed
+                    <ArrowRight className="h-3 w-3" aria-hidden="true" />
+                  </button>
+                ) : (
+                  <span
+                    data-ocid={`profile.fact.disputed.${conflict.field.toLowerCase()}`}
+                    className="mt-2 inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-destructive"
+                  >
+                    <AlertTriangle
+                      className="h-3 w-3"
+                      strokeWidth={2}
+                      aria-hidden="true"
+                    />
+                    Disputed
+                  </span>
+                )}
+              </div>
+            ))}
         </dl>
 
         {/* Profile ownership & claim status */}
@@ -4445,7 +4592,7 @@ export function PersonProfilePage({
                 className="text-sm text-destructive"
               >
                 {requestRemoval.data?.__kind__ === "err" &&
-                requestRemoval.data.err === "AlreadyPending"
+                requestRemoval.data.err === RemovalError.AlreadyPending
                   ? "A removal request for this profile is already pending review."
                   : "We couldn't submit your removal request. Please try again."}
               </p>

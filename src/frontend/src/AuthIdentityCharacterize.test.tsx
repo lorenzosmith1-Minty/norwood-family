@@ -4,6 +4,7 @@ import {
   LivingStatus,
   type PersonProfile,
   type ProfileClaim,
+  ProfileClaimStatus,
 } from "@/backend";
 import { Principal } from "@icp-sdk/core/principal";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -90,7 +91,7 @@ const {
         id: nextClaimId++,
         personId,
         requestingUserId: principal(),
-        status: "Pending",
+        status: ProfileClaimStatus.Pending,
         submittedDate: 1_700_000_000_000_000_000n,
       };
       claims = [...claims, claim];

@@ -29,6 +29,7 @@ import {
   useCreateSource,
   useCreateSourceWithUpload,
   useGetReviewQueue,
+  useListConflictReviewItems,
   useListFindings,
   useListNewPersonCandidates,
   useListRelationshipProposals,
@@ -45,6 +46,7 @@ import { resolveDisplayName } from "../types/family";
 import {
   EVIDENCE_LABEL_LABELS,
   FINDING_TYPE_LABELS,
+  PERSON_FACT_FIELDS,
   REVIEW_STATUS_LABELS,
   ReviewStatus,
   SOURCE_TYPE_LABELS,
@@ -803,14 +805,19 @@ function FindingContentFields({
       <>
         <label className="block">
           <span className="field-label">Field</span>
-          <input
-            data-ocid="research.finding.content.field_input"
-            type="text"
+          <select
+            data-ocid="research.finding.content.field_select"
             value={content.field ?? ""}
             onChange={(e) => set("field", e.target.value)}
-            placeholder="e.g. Birth date"
-            className="form-input"
-          />
+            className="form-select"
+          >
+            <option value="">Select a field…</option>
+            {PERSON_FACT_FIELDS.map((field) => (
+              <option key={field.key} value={field.key}>
+                {field.label}
+              </option>
+            ))}
+          </select>
         </label>
         <label className="block">
           <span className="field-label">Value</span>
@@ -1770,12 +1777,19 @@ export function ResearchIntakePage({
 }: ResearchIntakePageProps) {
   const { data: isAdmin = false, isLoading: adminLoading } = useIsAdmin();
   const { data: reviewQueue } = useGetReviewQueue();
+  const { data: conflictItems = [] } = useListConflictReviewItems();
   const [tab, setTab] = useState<Tab>("sources");
 
   const reviewQueuePending = reviewQueue ? Number(reviewQueue.pending) : 0;
-  const reviewQueueConflicting = reviewQueue
-    ? Number(reviewQueue.conflicting) + Number(reviewQueue.needsResearch)
-    : 0;
+  // The Conflict Review badge counts only actual unresolved ConflictReviewItems
+  // (status Conflicting or NeedsResearch). Ordinary Findings, Sources,
+  // Candidates, and Relationships marked NeedsResearch are NOT conflicts and
+  // must not inflate this badge.
+  const reviewQueueConflicting = conflictItems.filter(
+    (item) =>
+      item.status === ReviewStatus.Conflicting ||
+      item.status === ReviewStatus.NeedsResearch,
+  ).length;
 
   if (!adminLoading && !isAdmin) {
     return (

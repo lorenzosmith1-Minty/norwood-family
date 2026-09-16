@@ -360,6 +360,18 @@ mixin (
     );
   };
 
+  /// Returns the facts on a Person Profile that have an unresolved conflict, so
+  /// the Person Profile can show a subtle disputed indicator on each disputed
+  /// fact. Includes conflicts where the canonical value is blank but a proposed
+  /// value exists. Requires a signed-in (non-anonymous) caller; anonymous
+  /// callers receive `[]`. Resolved conflicts are never returned.
+  public query ({ caller }) func listDisputedFactsForPerson(personId : Text) : async [Types.DisputedFact] {
+    if (caller.isAnonymous()) {
+      return [];
+    };
+    ResearchLib.disputedFactsForPerson(conflicts, personId);
+  };
+
   /// Resolves a conflict review item (steward only) with an explicit decision.
   /// `#KeepExisting` leaves canonical data unchanged and resolves the conflict;
   /// `#ReplaceExisting` writes the proposed value into canonical data exactly
@@ -373,22 +385,39 @@ mixin (
     id : Nat,
     action : Types.ConflictResolutionAction,
     notes : Text,
-  ) : async ?Types.ConflictReviewItem {
+  ) : async Result.Result<Types.ConflictReviewItem, Types.ResearchError> {
     requireSteward(caller);
     let now = Time.now();
     switch (conflicts.find(func c = c.id == id)) {
-      case null { null };
+      case null { #err(#notFound(id)) };
       case (?c) {
         // Only Replace Existing writes the proposed value into canonical data.
         // Keep Existing, Preserve Both, and Needs Research leave canonical data
         // unchanged — no silent overwrite.
         if (action == #ReplaceExisting) {
           switch (findings.find(func f = f.id == c.findingId)) {
-            case (?f) { routeToCanonical(f, caller, now) };
+            case (?f) {
+              // Unknown Person Fact fields must not silently resolve Replace
+              // Existing as successful. Return a clear unsupported-field error,
+              // leave the conflict unresolved, and do not alter canonical data.
+              switch (f.content) {
+                case (#PersonFact pf) {
+                  switch (normalizePersonFactField(pf.field)) {
+                    case null {
+                      return #err(#invalidState("Unsupported Person Fact field: '" # pf.field # "'"));
+                    };
+                    case (?_) {};
+                  };
+                };
+                case _ {};
+              };
+              routeToCanonical(f, caller, now);
+            };
             case null {};
           };
         };
-        let updated = ResearchLib.resolveConflict(conflicts, id, action, notes, caller, now);
+        let updated = ResearchLib.resolveConflict(conflicts, id, action, notes, caller, now)
+          ?? Runtime.trap("Conflict not found");
         // Reflect the resolution outcome on the linked finding so it no longer
         // counts as an unresolved conflict after Keep/Replace, and so Preserve
         // Both / Needs Research keep it visible as unresolved.
@@ -415,7 +444,7 @@ mixin (
           "Conflict Review item #" # id.toText() # " resolved (" # conflictActionText(action) # ")",
         );
         state.nextAuditId := state.nextAuditId + 1;
-        updated;
+        #ok(updated);
       };
     };
   };
@@ -938,31 +967,81 @@ mixin (
     };
   };
 
+  /// Normalizes a free-text Person Fact field label into a canonical internal
+  /// key. Trims whitespace, ignores capitalization, and tolerates spaces,
+  /// hyphens, and underscores. Returns `null` when the label cannot be mapped to
+  /// a known canonical Person field. Both `canonicalValueFor` and
+  /// `applyPersonFact` use this same function so Conflict Review reads and
+  /// writes the same canonical field, and previously saved free-text findings
+  /// (e.g. "Birth Place") keep mapping correctly.
+  func normalizePersonFactField(field : Text) : ?Text {
+    switch (normalizeFieldLabel(field)) {
+      case "birthplace" { ?"birthplace" };
+      case "birthdate" { ?"birthDate" };
+      case "currentlocation" { ?"currentLocation" };
+      case "location" { ?"currentLocation" };
+      case "preferredname" { ?"preferredName" };
+      case "displayname" { ?"preferredName" };
+      case "firstname" { ?"firstName" };
+      case "middlename" { ?"middleName" };
+      case "lastname" { ?"lastName" };
+      case "knownas" { ?"nickname" };
+      case "nickname" { ?"nickname" };
+      case "shortbio" { ?"shortBio" };
+      case "longerstory" { ?"longerStory" };
+      case "occupation" { ?"occupation" };
+      case "profession" { ?"occupation" };
+      case "story" { ?"story" };
+      case "suffix" { ?"suffix" };
+      case "birthinfo" { ?"birthInfo" };
+      case "privacysettings" { ?"privacySettings" };
+      case _ { null };
+    };
+  };
+
+  /// Lowercases a field label and removes whitespace, hyphens, and underscores
+  /// so equivalent human labels compare equal (e.g. "Birth Place",
+  /// "birth-place", and "birth_place" all normalize to "birthplace").
+  func normalizeFieldLabel(field : Text) : Text {
+    var out = "";
+    for (ch in field.toLower().chars()) {
+      if (not (ch.isWhitespace() or ch == '-' or ch == '_')) {
+        out := out # ch.toText();
+      };
+    };
+    out;
+  };
+
   /// The actual canonical value being contradicted by a finding, used to
   /// populate a Conflict Review item so the steward can compare it against the
   /// proposed value. Returns empty text when no canonical value exists.
   func canonicalValueFor(f : Types.ProposedFinding) : Text {
     switch (f.content) {
       case (#PersonFact pf) {
-        switch (profiles.get(pf.personId)) {
-          case (?profile) {
-            switch (pf.field) {
-              case "birthDate" { profile.birthDate ?? "" };
-              case "birthplace" { profile.birthplace ?? "" };
-              case "occupation" { profile.occupation ?? "" };
-              case "story" { profile.story ?? "" };
-              case "shortBio" { profile.shortBio ?? "" };
-              case "longerStory" { profile.longerStory ?? "" };
-              case "currentLocation" { profile.currentLocation ?? "" };
-              case "preferredName" { profile.preferredName ?? "" };
-              case "firstName" { profile.firstName ?? "" };
-              case "middleName" { profile.middleName ?? "" };
-              case "lastName" { profile.lastName ?? "" };
-              case "suffix" { profile.suffix ?? "" };
-              case "nickname" { profile.nickname ?? "" };
-              case "birthInfo" { profile.birthInfo ?? "" };
-              case "privacySettings" { profile.privacySettings ?? "" };
-              case _ { "" };
+        switch (normalizePersonFactField(pf.field)) {
+          case (?key) {
+            switch (profiles.get(pf.personId)) {
+              case (?profile) {
+                switch (key) {
+                  case "birthDate" { profile.birthDate ?? "" };
+                  case "birthplace" { profile.birthplace ?? "" };
+                  case "occupation" { profile.occupation ?? "" };
+                  case "story" { profile.story ?? "" };
+                  case "shortBio" { profile.shortBio ?? "" };
+                  case "longerStory" { profile.longerStory ?? "" };
+                  case "currentLocation" { profile.currentLocation ?? "" };
+                  case "preferredName" { profile.preferredName ?? "" };
+                  case "firstName" { profile.firstName ?? "" };
+                  case "middleName" { profile.middleName ?? "" };
+                  case "lastName" { profile.lastName ?? "" };
+                  case "suffix" { profile.suffix ?? "" };
+                  case "nickname" { profile.nickname ?? "" };
+                  case "birthInfo" { profile.birthInfo ?? "" };
+                  case "privacySettings" { profile.privacySettings ?? "" };
+                  case _ { "" };
+                };
+              };
+              case null { "" };
             };
           };
           case null { "" };
@@ -1015,27 +1094,32 @@ mixin (
   /// finding's free-text field name to the matching profile field. Unknown
   /// field names are ignored (no-op) rather than corrupting the profile.
   func applyPersonFact(personId : Text, field : Text, value : Text) {
-    switch (profiles.get(personId)) {
-      case (?profile) {
-        let updated : OwnershipTypes.PersonProfile = switch (field) {
-          case "birthDate" { { profile with birthDate = ?value } };
-          case "birthplace" { { profile with birthplace = ?value } };
-          case "occupation" { { profile with occupation = ?value } };
-          case "story" { { profile with story = ?value } };
-          case "shortBio" { { profile with shortBio = ?value } };
-          case "longerStory" { { profile with longerStory = ?value } };
-          case "currentLocation" { { profile with currentLocation = ?value } };
-          case "preferredName" { { profile with preferredName = ?value } };
-          case "firstName" { { profile with firstName = ?value } };
-          case "middleName" { { profile with middleName = ?value } };
-          case "lastName" { { profile with lastName = ?value } };
-          case "suffix" { { profile with suffix = ?value } };
-          case "nickname" { { profile with nickname = ?value } };
-          case "birthInfo" { { profile with birthInfo = ?value } };
-          case "privacySettings" { { profile with privacySettings = ?value } };
-          case _ { profile };
+    switch (normalizePersonFactField(field)) {
+      case (?key) {
+        switch (profiles.get(personId)) {
+          case (?profile) {
+            let updated : OwnershipTypes.PersonProfile = switch (key) {
+              case "birthDate" { { profile with birthDate = ?value } };
+              case "birthplace" { { profile with birthplace = ?value } };
+              case "occupation" { { profile with occupation = ?value } };
+              case "story" { { profile with story = ?value } };
+              case "shortBio" { { profile with shortBio = ?value } };
+              case "longerStory" { { profile with longerStory = ?value } };
+              case "currentLocation" { { profile with currentLocation = ?value } };
+              case "preferredName" { { profile with preferredName = ?value } };
+              case "firstName" { { profile with firstName = ?value } };
+              case "middleName" { { profile with middleName = ?value } };
+              case "lastName" { { profile with lastName = ?value } };
+              case "suffix" { { profile with suffix = ?value } };
+              case "nickname" { { profile with nickname = ?value } };
+              case "birthInfo" { { profile with birthInfo = ?value } };
+              case "privacySettings" { { profile with privacySettings = ?value } };
+              case _ { profile };
+            };
+            profiles.add(personId, updated);
+          };
+          case null {};
         };
-        profiles.add(personId, updated);
       };
       case null {};
     };

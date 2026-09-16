@@ -4,6 +4,7 @@ import {
   LivingStatus,
   type PersonProfile,
   type ProfileClaim,
+  ProfileClaimStatus,
 } from "@/backend";
 import { Principal } from "@icp-sdk/core/principal";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -99,7 +100,7 @@ const {
         id: 1n,
         personId,
         requestingUserId: principal(),
-        status: "Pending",
+        status: ProfileClaimStatus.Pending,
         submittedDate: 1_700_000_000_000_000_000n,
       };
       claims = [claim];
@@ -306,7 +307,7 @@ describe("My Profile routes by claim state", () => {
       id: 1n,
       personId: "lorenzoSmithJr",
       requestingUserId: Principal.fromText(ACCOUNT),
-      status: "Pending",
+      status: ProfileClaimStatus.Pending,
       submittedDate: 1_700_000_000_000_000_000n,
     });
     setMyProfile({

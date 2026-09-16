@@ -6,6 +6,7 @@ import {
   RelationshipStatus,
   RelationshipType,
   RemovalError,
+  StewardAuditKind,
   StewardError,
   StewardRoleStatus,
   SuccessorStatus,
@@ -28,6 +29,7 @@ import type {
   Result_11,
   Result_14,
   Result_16,
+  StewardAuditEntry,
   StewardRecord,
   SuccessorDesignation,
 } from "@/backend";
@@ -48,6 +50,20 @@ import type {
 /** Review status of a profile-removal request: pending, approved, or rejected. */
 export type ProfileRemovalStatus = "Approved" | "Rejected" | "Pending";
 
+/** Friendly labels for a merged steward audit entry's kind. */
+export const STEWARD_AUDIT_KIND_LABELS: Record<StewardAuditKind, string> = {
+  [StewardAuditKind.Governance]: "Governance",
+  [StewardAuditKind.ConflictResolution]: "Conflict resolution",
+};
+
+/** Friendly labels for a conflict-resolution action recorded in the audit. */
+export const CONFLICT_RESOLUTION_LABELS: Record<string, string> = {
+  KeepExisting: "Keep Existing",
+  ReplaceExisting: "Replace Existing",
+  PreserveBoth: "Preserve Both / Unresolved",
+  NeedsResearch: "Needs Research",
+};
+
 export type {
   AuditEntry,
   DuplicateCandidate,
@@ -66,6 +82,7 @@ export type {
   Result_5,
   Result_8,
   Result_9,
+  StewardAuditEntry,
   StewardRecord,
   SuccessorDesignation,
 };
@@ -77,6 +94,7 @@ export {
   RelationshipStatus,
   RelationshipType,
   RemovalError,
+  StewardAuditKind,
   StewardError,
   StewardRoleStatus,
   SuccessorStatus,

@@ -2025,14 +2025,14 @@ it("resolves a conflict with Keep Existing, leaving canonical unchanged and pres
     { KeepExisting: null },
     "Canonical record is authoritative",
   );
-  expect(resolved).toEqual([
-    expect.objectContaining({
+  expect(resolved).toEqual({
+    ok: expect.objectContaining({
       id: conflictId,
       status: { Approved: null },
       stewardNotes: "Canonical record is authoritative",
       resolvedBy: [ADMIN],
     }),
-  ]);
+  });
 
   // Canonical data is unchanged.
   const profile = await conflictActor.getPersonProfile("lorenzoSmithJr");
@@ -2074,14 +2074,14 @@ it("resolves a conflict with Replace Existing, updating canonical once and prese
     { ReplaceExisting: null },
     "New source is more reliable",
   );
-  expect(resolved).toEqual([
-    expect.objectContaining({
+  expect(resolved).toEqual({
+    ok: expect.objectContaining({
       id: conflictId,
       status: { Approved: null },
       stewardNotes: "New source is more reliable",
       resolvedBy: [ADMIN],
     }),
-  ]);
+  });
 
   // The canonical preferredName is now the proposed value.
   const profile = await conflictActor.getPersonProfile("lorenzoSmithJr");
@@ -2132,13 +2132,13 @@ it("keeps both values visible as an unresolved conflict with Preserve Both", asy
     { PreserveBoth: null },
     "Keep both until more evidence",
   );
-  expect(resolved).toEqual([
-    expect.objectContaining({
+  expect(resolved).toEqual({
+    ok: expect.objectContaining({
       id: conflictId,
       status: { Conflicting: null },
       stewardNotes: "Keep both until more evidence",
     }),
-  ]);
+  });
 
   // Canonical data is unchanged.
   const profile = await conflictActor.getPersonProfile("lorenzoSmithJr");
@@ -2168,13 +2168,13 @@ it("retains the conflict with Needs Research status, leaving canonical unchanged
     { NeedsResearch: null },
     "Need to verify the source",
   );
-  expect(resolved).toEqual([
-    expect.objectContaining({
+  expect(resolved).toEqual({
+    ok: expect.objectContaining({
       id: conflictId,
       status: { NeedsResearch: null },
       stewardNotes: "Need to verify the source",
     }),
-  ]);
+  });
 
   // Canonical data is unchanged.
   const profile = await conflictActor.getPersonProfile("lorenzoSmithJr");
@@ -2279,4 +2279,576 @@ it("counts each unresolved conflict exactly once in the review queue, not double
     id: conflictId,
     status: { Conflicting: null },
   });
+});
+
+it("reports one conflicting item in the review queue and one conflict review item with structured fields", async () => {
+  const conflictSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
+  const conflictActor = conflictSetup.actor;
+
+  const { conflictId, findingId } = await routeConflictingFindingToReview(conflictActor);
+
+  // The review queue counts the single routed conflict exactly once as
+  // #Conflicting.
+  conflictActor.setIdentity(adminIdentity);
+  const queue = await conflictActor.getReviewQueue();
+  expect(queue.conflicting).toBe(1n);
+
+  // The conflict review list holds exactly the one routed item, with the
+  // expected structured fields: the disputed field, both values, the affected
+  // person, the proposed finding's source, and the #Conflicting evidence label.
+  const items = await conflictActor.listConflictReviewItems();
+  expect(items).toHaveLength(1);
+  expect(items[0]).toMatchObject({
+    id: conflictId,
+    findingId,
+    personId: ["lorenzoSmithJr"],
+    field: "preferredName",
+    canonicalValue: "Waxx Minty",
+    proposedValue: "Lorenzo Smith Jr.",
+    proposedSourceId: [expect.any(BigInt)],
+    evidenceLabel: { Conflicting: null },
+    status: { Conflicting: null },
+    stewardNotes: "",
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Conflict Review structured-field contract (cover for the Conflict Review
+// list-query / error-masking repair). This test pins the full ConflictReviewItem
+// shape the frontend depends on — personId, existingSourceId, proposedSourceId,
+// evidenceLabel, stewardNotes, status, resolvedBy, resolvedAt — so a stale or
+// drifted backend contract is caught here rather than surfacing as a masked
+// "No conflicts to review" in the UI. It reuses routeConflictingFindingToReview
+// and the PocketIc setup, and needs no OAuth (setIdentity with the admin and
+// contributor identities, exactly as the other conflict tests do).
+// ---------------------------------------------------------------------------
+
+it("returns one conflict review item with the full structured field contract, and populates resolvedBy/resolvedAt on resolution", async () => {
+  const conflictSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
+  const conflictActor = conflictSetup.actor;
+
+  // Create a conflicting finding and route it into Conflict Review.
+  const { conflictId, findingId } = await routeConflictingFindingToReview(conflictActor);
+
+  // The review queue counts the single routed conflict exactly once.
+  conflictActor.setIdentity(adminIdentity);
+  const queue = await conflictActor.getReviewQueue();
+  expect(queue.conflicting).toBe(1n);
+
+  // The conflict review list holds exactly the one routed item.
+  const items = await conflictActor.listConflictReviewItems();
+  expect(items).toHaveLength(1);
+
+  // The returned conflict carries every structured field the frontend reads.
+  // existingSourceId is null because the canonical 'Waxx Minty' value is seeded
+  // by the migration with no known source; proposedSourceId is the finding's
+  // source. An unresolved item has no resolvedBy/resolvedAt yet.
+  const conflict = items[0];
+  expect(conflict).toMatchObject({
+    id: conflictId,
+    findingId,
+    personId: ["lorenzoSmithJr"],
+    field: "preferredName",
+    canonicalValue: "Waxx Minty",
+    proposedValue: "Lorenzo Smith Jr.",
+    existingSourceId: [],
+    proposedSourceId: [expect.any(BigInt)],
+    evidenceLabel: { Conflicting: null },
+    stewardNotes: "",
+    status: { Conflicting: null },
+    resolvedBy: [],
+    resolvedAt: [],
+  });
+
+  // Resolving the conflict populates resolvedBy (the acting steward) and
+  // resolvedAt (a timestamp), so the frontend can render who/when it was
+  // resolved.
+  const resolved = await conflictActor.resolveConflict(
+    conflictId,
+    { KeepExisting: null },
+    "Canonical record is authoritative",
+  );
+  expect(resolved).toEqual({
+    ok: expect.objectContaining({
+      id: conflictId,
+      status: { Approved: null },
+      stewardNotes: "Canonical record is authoritative",
+      resolvedBy: [ADMIN],
+      resolvedAt: [expect.any(BigInt)],
+    }),
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Person Fact field mapping (cover for the field-mapping change). A Person Fact
+// finding submitted with a human label like 'Birth Place' is normalized to the
+// canonical 'birthplace' key in both canonicalValueFor and applyPersonFact, so
+// Conflict Review reads and writes the same canonical field. An unmappable
+// field returns a clear unsupported-field error on Replace Existing instead of
+// silently resolving, leaving the conflict unresolved and canonical data
+// unchanged.
+// ---------------------------------------------------------------------------
+
+// A helper that seeds a `#Conflicting` PersonFact finding whose field is a
+// human label ('Birth Place') that must normalize to the canonical 'birthplace'
+// key, and routes it to Conflict Review. Returns the conflict item id.
+async function routeHumanLabelFindingToReview(
+  conflictActor: _SERVICE,
+): Promise<{ conflictId: bigint; findingId: bigint }> {
+  conflictActor.setIdentity(adminIdentity);
+  await conflictActor._initialize_access_control();
+  conflictActor.setIdentity(contributorIdentity);
+  await conflictActor._initialize_access_control();
+
+  // A contributor creates a source and a `#Conflicting` PersonFact finding whose
+  // field is the human label 'Birth Place' (not the canonical key).
+  conflictActor.setIdentity(contributorIdentity);
+  const sourceCreated = await conflictActor.createSource(
+    "1900 census, Norwood household",
+    { CensusCitation: null },
+    "Census record listing the Norwood family.",
+    [],
+  );
+  const sourceId = (sourceCreated as { ok: { id: bigint } }).ok.id;
+  const findingCreated = await conflictActor.createFinding(
+    "Birthplace of Julia Norwood",
+    { Conflicting: null },
+    { PersonFact: null },
+    {
+      PersonFact: {
+        field: "Birth Place",
+        value: "Springfield, IL",
+        personId: "julia",
+      },
+    },
+    sourceId,
+    ["julia"],
+    [],
+  );
+  const findingId = (findingCreated as { ok: { id: bigint } }).ok.id;
+
+  // A steward approves the `#Conflicting` finding, routing it to Conflict
+  // Review. canonicalValueFor normalizes 'Birth Place' to 'birthplace' so the
+  // conflict reads the canonical birthplace value.
+  conflictActor.setIdentity(adminIdentity);
+  await conflictActor.approveFinding(findingId);
+  const items = await conflictActor.listConflictReviewItems();
+  const conflict = items.find((c) => c.findingId === findingId);
+  expect(conflict).toBeDefined();
+  return { conflictId: conflict!.id, findingId };
+}
+
+it("normalizes a human Person Fact field label to its canonical key in Conflict Review", async () => {
+  const conflictSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
+  const conflictActor = conflictSetup.actor;
+
+  const { conflictId } = await routeHumanLabelFindingToReview(conflictActor);
+
+  // The conflict item's field is the human label as submitted, but the
+  // canonical value is read from the 'birthplace' profile field (the human
+  // label 'Birth Place' normalized to the canonical key). Julia's canonical
+  // birthplace is seeded by the migration.
+  const items = await conflictActor.listConflictReviewItems();
+  const conflict = items.find((c) => c.id === conflictId);
+  expect(conflict).toMatchObject({
+    id: conflictId,
+    field: "Birth Place",
+    personId: ["julia"],
+  });
+
+  // Replace Existing writes the proposed value into the canonical 'birthplace'
+  // field (applyPersonFact normalizes 'Birth Place' to 'birthplace') and
+  // resolves the conflict.
+  conflictActor.setIdentity(adminIdentity);
+  const resolved = await conflictActor.resolveConflict(
+    conflictId,
+    { ReplaceExisting: null },
+    "New source is more reliable",
+  );
+  expect(resolved).toEqual({
+    ok: expect.objectContaining({ id: conflictId, status: { Approved: null } }),
+  });
+
+  // The canonical birthplace field was updated to the proposed value.
+  const profile = await conflictActor.getPersonProfile("julia");
+  expect(profile).toEqual([
+    expect.objectContaining({ birthplace: ["Springfield, IL"] }),
+  ]);
+});
+
+it("returns a clear unsupported-field error on Replace Existing for an unmappable Person Fact field, leaving the conflict unresolved and canonical data unchanged", async () => {
+  const conflictSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
+  const conflictActor = conflictSetup.actor;
+
+  // ADMIN becomes the Family Steward; CONTRIBUTOR registers as a #user.
+  conflictActor.setIdentity(adminIdentity);
+  await conflictActor._initialize_access_control();
+  conflictActor.setIdentity(contributorIdentity);
+  await conflictActor._initialize_access_control();
+
+  // A contributor creates a source and a `#Conflicting` PersonFact finding with
+  // an unmappable field.
+  conflictActor.setIdentity(contributorIdentity);
+  const sourceCreated = await conflictActor.createSource(
+    "1900 census, Norwood household",
+    { CensusCitation: null },
+    "Census record listing the Norwood family.",
+    [],
+  );
+  const sourceId = (sourceCreated as { ok: { id: bigint } }).ok.id;
+  const findingCreated = await conflictActor.createFinding(
+    "Favorite color of Julia Norwood",
+    { Conflicting: null },
+    { PersonFact: null },
+    {
+      PersonFact: {
+        field: "Favorite Color",
+        value: "Blue",
+        personId: "julia",
+      },
+    },
+    sourceId,
+    ["julia"],
+    [],
+  );
+  const findingId = (findingCreated as { ok: { id: bigint } }).ok.id;
+
+  // A steward approves the `#Conflicting` finding, routing it to Conflict
+  // Review.
+  conflictActor.setIdentity(adminIdentity);
+  await conflictActor.approveFinding(findingId);
+  const items = await conflictActor.listConflictReviewItems();
+  const conflict = items.find((c) => c.findingId === findingId);
+  expect(conflict).toBeDefined();
+  const conflictId = conflict!.id;
+
+  // Replace Existing on the unmappable field returns a clear unsupported-field
+  // error instead of silently resolving.
+  const resolved = await conflictActor.resolveConflict(
+    conflictId,
+    { ReplaceExisting: null },
+    "Replace it",
+  );
+  expect(resolved).toEqual({
+    err: { invalidState: "Unsupported Person Fact field: 'Favorite Color'" },
+  });
+
+  // The conflict is left unresolved (#Conflicting) and no resolution was
+  // recorded.
+  const after = await conflictActor.listConflictReviewItems();
+  expect(after.find((c) => c.id === conflictId)!.status).toEqual({ Conflicting: null });
+
+  // Canonical data is unchanged: Julia's birthplace is still unset (null).
+  const profile = await conflictActor.getPersonProfile("julia");
+  expect(profile).toEqual([
+    expect.objectContaining({ birthplace: [] }),
+  ]);
+});
+
+// ---------------------------------------------------------------------------
+// Merged Family Steward Audit History (cover for the audit-and-workload change).
+// getStewardAuditHistory merges the governance audit log with the research
+// audit log's ConflictResolved actions into one chronological list, newest
+// first, without duplicating records. Each conflict-resolution entry is
+// enriched from the linked ConflictReviewItem: person, field, existing value,
+// proposed value, resolution, steward notes, and provenance/source refs. It is
+// Family-Steward-gated.
+// ---------------------------------------------------------------------------
+
+it("merges governance and conflict-resolution entries into getStewardAuditHistory without duplicates", async () => {
+  const auditSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
+  const auditActor = auditSetup.actor;
+
+  // ADMIN becomes the Family Steward; CONTRIBUTOR registers as a #user.
+  auditActor.setIdentity(adminIdentity);
+  await auditActor._initialize_access_control();
+  auditActor.setIdentity(contributorIdentity);
+  await auditActor._initialize_access_control();
+
+  // Create a governance audit entry: a profile claim approved by the steward
+  // records a #ClaimApproved governance AuditEntry.
+  auditActor.setIdentity(contributorIdentity);
+  const requested = (await auditActor.requestProfileClaim("lorenzoSmithJr")) as {
+    ok: { id: bigint };
+  };
+  auditActor.setIdentity(adminIdentity);
+  await auditActor.approveProfileClaim(requested.ok.id);
+
+  // Create a conflict-resolution research audit entry: route a #Conflicting
+  // finding to Conflict Review and resolve it with Keep Existing.
+  const { conflictId } = await routeConflictingFindingToReview(auditActor);
+  auditActor.setIdentity(adminIdentity);
+  await auditActor.resolveConflict(
+    conflictId,
+    { KeepExisting: null },
+    "Canonical record is authoritative",
+  );
+
+  // The merged view contains BOTH the governance entry and the conflict
+  // resolution entry, each exactly once (no duplication).
+  const merged = await auditActor.getStewardAuditHistory();
+  const governanceEntries = merged.filter((e) => "Governance" in e.kind);
+  const conflictEntries = merged.filter((e) => "ConflictResolution" in e.kind);
+  expect(governanceEntries.length).toBeGreaterThanOrEqual(1);
+  expect(conflictEntries).toHaveLength(1);
+
+  // The governance entry maps to a #Governance StewardAuditEntry with its
+  // action type and summary.
+  const claimApproved = governanceEntries.find(
+    (e) => e.actionType === "ClaimApproved",
+  );
+  expect(claimApproved).toBeDefined();
+  expect(claimApproved!.summary).toContain("lorenzoSmithJr");
+
+  // The conflict-resolution entry is enriched from the linked ConflictReviewItem:
+  // person, field, existing/proposed values, resolution, steward notes, and
+  // provenance/source refs.
+  const conflictEntry = conflictEntries[0];
+  expect(conflictEntry).toMatchObject({
+    actionType: "ConflictResolved",
+    resolution: ["KeepExisting"],
+    personId: ["lorenzoSmithJr"],
+    field: "preferredName",
+    existingValue: ["Waxx Minty"],
+    proposedValue: ["Lorenzo Smith Jr."],
+    stewardNotes: ["Canonical record is authoritative"],
+    proposedSourceId: [expect.any(BigInt)],
+  });
+  expect(conflictEntry.actorAccountId).toEqual(ADMIN);
+  expect(conflictEntry.timestamp).toEqual(expect.any(BigInt));
+
+  // The merged list is sorted newest first by timestamp.
+  const timestamps = merged.map((e) => e.timestamp);
+  const sorted = [...timestamps].sort((a, b) => Number(b - a));
+  expect(timestamps).toEqual(sorted);
+});
+
+it("gates getStewardAuditHistory to Family Stewards", async () => {
+  const auditSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
+  const auditActor = auditSetup.actor;
+
+  auditActor.setIdentity(adminIdentity);
+  await auditActor._initialize_access_control();
+  auditActor.setIdentity(contributorIdentity);
+  await auditActor._initialize_access_control();
+
+  // A signed-in non-steward cannot read the merged audit history.
+  auditActor.setIdentity(contributorIdentity);
+  await expect(auditActor.getStewardAuditHistory()).rejects.toThrow();
+
+  // An anonymous caller is also rejected.
+  const anonymousActor = pic!.createActor<_SERVICE>(idlFactory, auditSetup.canisterId);
+  await expect(anonymousActor.getStewardAuditHistory()).rejects.toThrow();
+});
+
+// ---------------------------------------------------------------------------
+// Needs Research actionability (cover for the review-queue change). A finding
+// marked Needs Research remains actionable in the review queue — it carries
+// [#Approve, #Reject] actions so it can be resolved or rejected and never
+// becomes stranded.
+// ---------------------------------------------------------------------------
+
+it("keeps a Needs Research finding actionable with Approve and Reject actions in the queue", async () => {
+  const researchSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
+  const researchActor = researchSetup.actor;
+
+  researchActor.setIdentity(adminIdentity);
+  await researchActor._initialize_access_control();
+  researchActor.setIdentity(contributorIdentity);
+  await researchActor._initialize_access_control();
+
+  // A contributor creates a source and a pending finding linked to it.
+  researchActor.setIdentity(contributorIdentity);
+  const sourceCreated = await researchActor.createSource(
+    "1900 census, Norwood household",
+    { CensusCitation: null },
+    "Census record listing the Norwood family.",
+    [],
+  );
+  const sourceId = (sourceCreated as { ok: { id: bigint } }).ok.id;
+  const findingCreated = await researchActor.createFinding(
+    "Birth date of Julia Norwood",
+    { Documented: null },
+    { PersonFact: null },
+    {
+      PersonFact: {
+        field: "birthDate",
+        value: "12 March 1898",
+        personId: "julia",
+      },
+    },
+    sourceId,
+    ["julia"],
+    [],
+  );
+  const findingId = (findingCreated as { ok: { id: bigint } }).ok.id;
+
+  // The steward marks the finding as Needs Research.
+  researchActor.setIdentity(adminIdentity);
+  await researchActor.needsResearchFinding(findingId);
+
+  // The queue item for the Needs Research finding carries [#Approve, #Reject]
+  // actions — it remains actionable and cannot become stranded.
+  const queue = await researchActor.getReviewQueue();
+  const findingItem = queue.items.find((i) => i.kind.Finding !== undefined);
+  expect(findingItem).toMatchObject({
+    id: findingId,
+    status: { NeedsResearch: null },
+  });
+  expect(findingItem!.actions).toEqual([{ Approve: null }, { Reject: null }]);
+
+  // The steward can resolve it: approving transitions it to Approved and the
+  // needs-research count decrements.
+  const approved = await researchActor.approveFinding(findingId);
+  expect(approved).toEqual([
+    expect.objectContaining({ id: findingId, status: { Approved: null } }),
+  ]);
+  const after = await researchActor.getReviewQueue();
+  expect(after.needsResearch).toBe(0n);
+});
+
+// ---------------------------------------------------------------------------
+// Duplicate candidate generation (cover for the duplicate-candidate change).
+// listDuplicateCandidates flags a pair only when the two profiles share
+// meaningful name similarity AND have at least one corroborating signal beyond
+// name. Shared emptiness (both fields blank) never counts as evidence, and
+// sparse profiles (few populated fields) require stronger confidence (two
+// signals) to be flagged, not weaker. These run against dedicated canisters so
+// the created profiles never leak into the shared `actor` canister.
+// ---------------------------------------------------------------------------
+
+const dupAIdentity = createIdentity("dup-a-seed");
+const dupBIdentity = createIdentity("dup-b-seed");
+const dupCIdentity = createIdentity("dup-c-seed");
+const dupDIdentity = createIdentity("dup-d-seed");
+
+// Creates a profile via createMyself as the given identity, then edits its
+// structured fields via updateOwnProfile. Returns the created personId.
+async function createAndEditProfile(
+  dupActor: _SERVICE,
+  identity: ReturnType<typeof createIdentity>,
+  name: string,
+  edits: {
+    firstName?: string;
+    lastName?: string;
+    nickname?: string;
+    birthDate?: string;
+    birthplace?: string;
+    currentLocation?: string;
+    occupation?: string;
+  },
+): Promise<string> {
+  dupActor.setIdentity(identity);
+  const created = (await dupActor.createMyself(name)) as {
+    ok: { personId: string };
+  };
+  const personId = created.ok.personId;
+  await dupActor.updateOwnProfile(personId, {
+    preferredName: [],
+    firstName: edits.firstName ? [edits.firstName] : [],
+    middleName: [],
+    lastName: edits.lastName ? [edits.lastName] : [],
+    suffix: [],
+    nickname: edits.nickname ? [edits.nickname] : [],
+    birthDate: edits.birthDate ? [edits.birthDate] : [],
+    birthplace: edits.birthplace ? [edits.birthplace] : [],
+    currentLocation: edits.currentLocation ? [edits.currentLocation] : [],
+    occupation: edits.occupation ? [edits.occupation] : [],
+    livingStatus: [],
+    shortBio: [],
+    longerStory: [],
+    story: [],
+    birthInfo: [],
+    timeline: [],
+    privacySettings: [],
+  });
+  return personId;
+}
+
+it("flags a pair with meaningful name similarity and a corroborating signal as a duplicate candidate", async () => {
+  const dupSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
+  const dupActor = dupSetup.actor;
+
+  // ADMIN becomes the Family Steward (listDuplicateCandidates is steward-gated).
+  dupActor.setIdentity(adminIdentity);
+  await dupActor._initialize_access_control();
+
+  // Two non-sparse profiles sharing the name tokens 'julia'/'norwood' and the
+  // same currentLocation 'Mississippi' (a corroborating signal beyond name).
+  await createAndEditProfile(dupActor, dupAIdentity, "Julia Norwood", {
+    firstName: "Julia",
+    lastName: "Norwood",
+    currentLocation: "Mississippi",
+    occupation: "Teacher",
+  });
+  await createAndEditProfile(dupActor, dupBIdentity, "Julia Norwood-Smith", {
+    firstName: "Julia",
+    lastName: "Norwood-Smith",
+    currentLocation: "Mississippi",
+    occupation: "Nurse",
+  });
+
+  // The pair is flagged: meaningful name similarity + one corroborating signal.
+  dupActor.setIdentity(adminIdentity);
+  const candidates = await dupActor.listDuplicateCandidates();
+  expect(candidates.length).toBeGreaterThanOrEqual(1);
+  const pair = candidates.find(
+    (p) =>
+      (p.candidateA.name === "Julia Norwood" &&
+        p.candidateB.name === "Julia Norwood-Smith") ||
+      (p.candidateA.name === "Julia Norwood-Smith" &&
+        p.candidateB.name === "Julia Norwood"),
+  );
+  expect(pair).toBeDefined();
+});
+
+it("does not flag a pair sharing only emptiness (no name similarity, no corroborating signal)", async () => {
+  const dupSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
+  const dupActor = dupSetup.actor;
+
+  dupActor.setIdentity(adminIdentity);
+  await dupActor._initialize_access_control();
+
+  // Two profiles with identical names but NO populated fields: no corroborating
+  // signal beyond name, so shared emptiness is never used as duplicate evidence.
+  await createAndEditProfile(dupActor, dupCIdentity, "John Doe", {});
+  await createAndEditProfile(dupActor, dupDIdentity, "John Doe", {});
+
+  dupActor.setIdentity(adminIdentity);
+  const candidates = await dupActor.listDuplicateCandidates();
+  // No pair involving the two 'John Doe' profiles is flagged.
+  const johnPair = candidates.filter(
+    (p) =>
+      p.candidateA.name === "John Doe" && p.candidateB.name === "John Doe",
+  );
+  expect(johnPair).toHaveLength(0);
+});
+
+it("does not flag a sparse pair with only one corroborating signal (requires stronger confidence)", async () => {
+  const dupSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
+  const dupActor = dupSetup.actor;
+
+  dupActor.setIdentity(adminIdentity);
+  await dupActor._initialize_access_control();
+
+  // Two sparse profiles (only currentLocation populated -> 1 field each) sharing
+  // the name token 'jane' and one corroborating signal (same location). Sparse
+  // profiles require TWO signals, so this pair is NOT flagged.
+  await createAndEditProfile(dupActor, dupAIdentity, "Jane Smith", {
+    currentLocation: "Chicago",
+  });
+  await createAndEditProfile(dupActor, dupBIdentity, "Jane Smith-Jones", {
+    currentLocation: "Chicago",
+  });
+
+  dupActor.setIdentity(adminIdentity);
+  const candidates = await dupActor.listDuplicateCandidates();
+  const janePair = candidates.filter(
+    (p) =>
+      (p.candidateA.name === "Jane Smith" &&
+        p.candidateB.name === "Jane Smith-Jones") ||
+      (p.candidateA.name === "Jane Smith-Jones" &&
+        p.candidateB.name === "Jane Smith"),
+  );
+  expect(janePair).toHaveLength(0);
 });

@@ -1,4 +1,5 @@
 import "@testing-library/jest-dom/vitest";
+import { StoryStatus } from "@/backend";
 import type { Story } from "@/types/family-history";
 import { EvidenceStatus } from "@/types/family-history";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -138,7 +139,7 @@ describe("StoryContributionForm Related Family Members chips", () => {
       location: "Mississippi",
       evidenceStatus: EvidenceStatus.FamilyHistory,
       relatedArchiveItemIds: [],
-      status: "Approved",
+      status: StoryStatus.Approved,
       createdAt: 1_700_000_000_000_000_000n,
       updatedAt: 1_700_000_000_000_000_000n,
       contributor: "aaaaa-aa" as unknown as Story["contributor"],

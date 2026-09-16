@@ -852,9 +852,13 @@ describe("Research Intake: propose a finding with an evidence label", () => {
       screen.getByTestId("research.finding.source_select"),
       "1",
     );
-    await user.type(
-      screen.getByTestId("research.finding.content.field_input"),
-      "Birth date",
+    // The Person Fact Field is now a dropdown of canonical fields (data-ocid
+    // research.finding.content.field_select), not a free-text input. Selecting
+    // the "Birth Date" option stores the canonical key 'birthDate' on the
+    // finding, which the backend maps onto the Person profile on approval.
+    await user.selectOptions(
+      screen.getByTestId("research.finding.content.field_select"),
+      "birthDate",
     );
     await user.type(
       screen.getByTestId("research.finding.content.value_input"),
@@ -879,7 +883,7 @@ describe("Research Intake: propose a finding with an evidence label", () => {
     expect(created[0].content).toEqual({
       __kind__: "PersonFact",
       PersonFact: {
-        field: "Birth date",
+        field: "birthDate",
         value: "12 March 1898",
         personId: "julia",
       },
@@ -991,15 +995,17 @@ describe("Research Intake: review queue with badges", () => {
     expect(findings[0].title).toBe("Birth date of Julia Norwood");
   });
 
-  it("shows the Conflict Review badge as the aggregate of conflicting and needs-research items", async () => {
+  it("shows the Conflict Review badge counting only actual ConflictReviewItems, not ordinary needs-research items", async () => {
     setAuthenticated(true);
     setAdmin(true);
     setMyProfile(claimedProfile("lorenzoSmithJr", "Lorenzo Smith Jr."));
     setSources([sourceRecord(1n, "1900 census")]);
     setFindings([pendingFinding(1n, "Birth date of Julia Norwood")]);
+    // One actual ConflictReviewItem (status Conflicting).
     setConflicts([conflictItem(1n, 1n)]);
-    // Two unresolved items: one #Conflicting and one #NeedsResearch. The
-    // Conflict Review badge must count both, not just the conflicting ones.
+    // The queue reports needsResearch=1 (an ordinary research item marked Needs
+    // Research that never became a conflict). The Conflict Review badge must
+    // count only the actual ConflictReviewItem, so it is 1, not 2.
     setReviewQueue({
       pending: 0n,
       approved: 0n,
@@ -1013,7 +1019,7 @@ describe("Research Intake: review queue with badges", () => {
     await openResearchIntake(user);
 
     const badge = screen.getByTestId("research_intake.conflict_review_badge");
-    expect(badge).toHaveTextContent("2");
+    expect(badge).toHaveTextContent("1");
   });
 
   it("hides the Conflict Review badge when there are no unresolved conflicts", async () => {

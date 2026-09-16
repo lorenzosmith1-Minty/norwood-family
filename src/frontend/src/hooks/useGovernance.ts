@@ -8,16 +8,15 @@ import type {
   Relationship,
   RelationshipType,
   Result_2,
-  Result_3,
-  Result_5,
+  Result_4,
   Result_6,
-  Result_9,
+  Result_7,
   Result_10,
   Result_11,
   Result_12,
-  Result_15,
-  Result_17,
-  Result_22,
+  Result_13,
+  Result_16,
+  Result_23,
   StewardIdentity,
   StewardRecord,
   SuccessorDesignation,
@@ -25,6 +24,7 @@ import type {
 import { useActor } from "@caffeineai/core-infrastructure";
 import type { Principal } from "@icp-sdk/core/principal";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { StewardAuditEntry } from "../types/governance";
 import { useProvidersPresent } from "./usePhotoStorage";
 
 /**
@@ -94,7 +94,7 @@ export function usePromoteToSteward() {
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (personId: string): Promise<Result_9> => {
+    mutationFn: async (personId: string): Promise<Result_10> => {
       if (!actor) throw new Error("Backend is not ready");
       return actor.promoteToSteward(personId);
     },
@@ -117,7 +117,7 @@ export function useRemoveSteward() {
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (stewardAccountId: Principal): Promise<Result_5> => {
+    mutationFn: async (stewardAccountId: Principal): Promise<Result_6> => {
       if (!actor) throw new Error("Backend is not ready");
       return actor.removeSteward(stewardAccountId);
     },
@@ -147,7 +147,7 @@ export function useDesignateSuccessor() {
     }: {
       personId: string;
       priority: bigint;
-    }): Promise<Result_15> => {
+    }): Promise<Result_16> => {
       if (!actor) throw new Error("Backend is not ready");
       return actor.designateSuccessor(personId, priority);
     },
@@ -167,7 +167,7 @@ export function useActivateSuccessor() {
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (personId: string): Promise<Result_9> => {
+    mutationFn: async (personId: string): Promise<Result_10> => {
       if (!actor) throw new Error("Backend is not ready");
       return actor.activateSuccessor(personId);
     },
@@ -227,7 +227,7 @@ export function useRequestProfileRemoval() {
     }: {
       personId: string;
       reason: string;
-    }): Promise<Result_3> => {
+    }): Promise<Result_4> => {
       if (!actor) throw new Error("Backend is not ready");
       return actor.requestProfileRemoval(personId, reason);
     },
@@ -380,7 +380,7 @@ export function usePermanentlyDeleteProfile() {
     }: {
       personId: string;
       confirmation: boolean;
-    }): Promise<Result_10> => {
+    }): Promise<Result_11> => {
       if (!actor) throw new Error("Backend is not ready");
       return actor.permanentlyDeleteProfile(personId, confirmation);
     },
@@ -420,7 +420,7 @@ export function useNotDuplicate() {
     }: {
       personIdA: string;
       personIdB: string;
-    }): Promise<Result_11> => {
+    }): Promise<Result_12> => {
       if (!actor) throw new Error("Backend is not ready");
       return actor.notDuplicate(personIdA, personIdB);
     },
@@ -443,7 +443,7 @@ export function useMergeProfiles() {
     }: {
       canonicalPersonId: string;
       mergedAwayPersonId: string;
-    }): Promise<Result_12> => {
+    }): Promise<Result_13> => {
       if (!actor) throw new Error("Backend is not ready");
       return actor.mergeProfiles(canonicalPersonId, mergedAwayPersonId);
     },
@@ -511,7 +511,7 @@ export function useAddRelationship() {
       fromPersonId: string;
       toPersonId: string;
       relationshipType: RelationshipType;
-    }): Promise<Result_22> => {
+    }): Promise<Result_23> => {
       if (!actor) throw new Error("Backend is not ready");
       return actor.addRelationship(fromPersonId, toPersonId, relationshipType);
     },
@@ -534,7 +534,7 @@ export function useRemoveRelationship() {
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (relationshipId: bigint): Promise<Result_6> => {
+    mutationFn: async (relationshipId: bigint): Promise<Result_7> => {
       if (!actor) throw new Error("Backend is not ready");
       return actor.removeRelationship(relationshipId);
     },
@@ -560,7 +560,7 @@ export function useCorrectRelationshipType() {
     }: {
       relationshipId: bigint;
       relationshipType: RelationshipType;
-    }): Promise<Result_22> => {
+    }): Promise<Result_23> => {
       if (!actor) throw new Error("Backend is not ready");
       return actor.correctRelationshipType(relationshipId, relationshipType);
     },
@@ -589,6 +589,26 @@ export function useListAuditHistory() {
   });
 }
 
+/**
+ * Returns the merged Family Steward Audit History: governance audit entries
+ * plus research conflict-resolution actions, merged chronologically as
+ * StewardAuditEntry[]. Conflict-resolution actions (Keep Existing, Replace
+ * Existing, Preserve Both/Unresolved, Needs Research) appear once alongside
+ * the existing governance entries without duplication.
+ */
+export function useGetStewardAuditHistory() {
+  const providersPresent = useProvidersPresent();
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["governance", "stewardAuditHistory"],
+    queryFn: async () => {
+      if (!actor) return [] as StewardAuditEntry[];
+      return actor.getStewardAuditHistory();
+    },
+    enabled: providersPresent && !!actor && !isFetching,
+  });
+}
+
 export type {
   AuditEntry,
   DuplicatePair,
@@ -596,6 +616,7 @@ export type {
   MergeResult,
   ProfileRemovalRequest,
   Relationship,
+  StewardAuditEntry,
   StewardIdentity,
   StewardRecord,
   SuccessorDesignation,

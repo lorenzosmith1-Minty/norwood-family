@@ -9,14 +9,12 @@ export interface None {
 export type Option<T> = Some<T> | None;
 import type { ExternalBlob } from "@caffeineai/object-storage";
 export type { ExternalBlob } from "@caffeineai/object-storage";
-export type Result_2 = {
-    __kind__: "ok";
-    ok: null;
-} | {
-    __kind__: "err";
-    err: ArchiveError;
-};
-export type PhotoId = bigint;
+export interface Account {
+    id: AccountId;
+    createdAt: bigint;
+    authMethods: Array<AuthMethod>;
+}
+export type AccountId = Principal;
 export interface ArchiveItem {
     id: ArchiveItemId;
     era: string;
@@ -41,24 +39,25 @@ export interface ArchiveItem {
     classification: ArchiveItemClassification;
     contributor: Principal;
 }
-export interface Result__1 {
-    hasMore: boolean;
-    rows: Array<Array<Cell>>;
+export type ArchiveItemId = bigint;
+export interface ArchiveSearchFilter {
+    era?: string;
+    relatedMemberId?: string;
+    tags: Array<string>;
+    searchTerm?: string;
+    itemType?: ArchiveItemType;
 }
-export type Result_4 = {
-    __kind__: "ok";
-    ok: ProfileClaim;
-} | {
-    __kind__: "err";
-    err: ClaimError;
-};
-export type AccountId = Principal;
-export interface StewardRecord {
-    assignedAt: bigint;
-    assignedBy: Principal;
-    stewardAccountId: Principal;
-    successorPriority?: bigint;
-    roleStatus: StewardRoleStatus;
+export interface AuditEntry {
+    id: bigint;
+    affectedPersonIds: Array<PersonId>;
+    actionType: AuditActionType;
+    summary: string;
+    timestamp: bigint;
+    actorAccountId: Principal;
+}
+export interface AuthMethods {
+    apple: boolean;
+    google: boolean;
 }
 export interface BoardMediaUpload {
     era: string;
@@ -75,124 +74,72 @@ export interface BoardMediaUpload {
     sourceStatus: SourceStatus;
     classification: ArchiveItemClassification;
 }
-export interface Photo {
-    id: PhotoId;
-    blob: ExternalBlob;
-    mimeType: string;
-    filename: string;
-    uploadedAt: bigint;
-    uploadedBy: Principal;
-}
-export interface ArchiveSearchFilter {
-    era?: string;
-    relatedMemberId?: string;
-    tags: Array<string>;
-    searchTerm?: string;
-    itemType?: ArchiveItemType;
-}
-export type Result_6 = {
-    __kind__: "ok";
-    ok: null;
-} | {
-    __kind__: "err";
-    err: RelationshipAdminError;
-};
-export interface Story {
-    id: StoryId;
-    era?: string;
-    status: StoryStatus;
-    title: string;
-    relatedMemberIds: Array<string>;
-    storyText: string;
-    createdAt: bigint;
-    year?: bigint;
-    relatedArchiveItemIds: Array<bigint>;
-    updatedAt: bigint;
-    evidenceStatus: EvidenceStatus;
-    location?: string;
-    contributor: Principal;
-}
-export interface MergeResult {
-    archivedPersonId: PersonId;
-    conflicts: Array<MergeConflict>;
-    canonicalPersonId: PersonId;
-}
-export interface SuccessorDesignation {
-    status: SuccessorStatus;
-    assignedAt: bigint;
-    assignedBy: Principal;
-    personId: PersonId;
-    priority: bigint;
-}
-export interface ReviewQueue {
-    pending: bigint;
-    conflicting: bigint;
-    approved: bigint;
-    rejected: bigint;
-    needsResearch: bigint;
-    items: Array<ReviewQueueItem>;
-}
-export type Result_12 = {
-    __kind__: "ok";
-    ok: MergeResult;
-} | {
-    __kind__: "err";
-    err: MergeError;
-};
-export interface ProfileClaim {
-    id: bigint;
-    submittedDate: bigint;
-    status: ProfileClaimStatus;
-    reviewedDate?: bigint;
-    reviewedBy?: Principal;
-    personId: PersonId;
-    requestingUserId: Principal;
-}
-export interface OralHistorySpeaker {
+export interface Cell {
+    value: Value;
     name: string;
-    personId?: string;
 }
-export interface MergeConflict {
+export interface ChapterMarker {
+    title: string;
+    timestamp: bigint;
+}
+export interface ClaimEligibility {
+    eligible: boolean;
+    reason?: ClaimPersistenceError;
+}
+export interface ConflictReviewItem {
     id: bigint;
     field: string;
-    status: MergeConflictStatus;
-    alternateValue: string;
+    status: ReviewStatus;
+    evidenceLabel: EvidenceLabel;
+    findingId: FindingId;
+    proposedValue: string;
+    stewardNotes: string;
+    proposedSourceId?: bigint;
+    personId?: string;
     canonicalValue: string;
     resolvedAt?: bigint;
     resolvedBy?: Principal;
+    existingSourceId?: bigint;
 }
-export type MysteryId = bigint;
-export type FindingId = bigint;
-export type Result = {
-    __kind__: "ok";
-    ok: PersonProfile;
-} | {
-    __kind__: "err";
-    err: EditError;
-};
-export type Result_10 = {
-    __kind__: "ok";
-    ok: null;
-} | {
-    __kind__: "err";
-    err: DeleteError;
-};
-export type MessageId = bigint;
-export type NotificationId = bigint;
-export type Result_8 = {
-    __kind__: "ok";
-    ok: RelationshipRequest;
-} | {
-    __kind__: "err";
-    err: RelationshipError;
-};
-export interface Notification {
-    id: bigint;
-    notificationType: NotificationType;
-    createdAt: bigint;
-    read: boolean;
-    recipient: Principal;
-    message: string;
+export type ConversationId = bigint;
+export interface ConversationSummary {
+    otherPersonId: PersonId;
+    conversationId: ConversationId;
+    unreadCount: bigint;
+    otherDisplayName: string;
+    latestMessagePreview: string;
+    latestMessageAt: Timestamp;
+}
+export interface ConversationView {
+    messages: Array<Message>;
+    participantPersonIds: Array<PersonId>;
+    conversationId: ConversationId;
+    participantDisplayNames: Array<string>;
+}
+export interface DisputedFact {
+    field: string;
+    status: ReviewStatus;
+    proposedValue: string;
+    canonicalValue: string;
+}
+export interface DuplicateCandidate {
+    deathDate?: string;
+    ownerAccount?: Principal;
+    birthDate?: string;
+    claimStatus: string;
+    name: string;
+    archiveLinks: Array<string>;
+    children: Array<string>;
+    sourceCount: bigint;
+    personId: PersonId;
+    spouses: Array<string>;
+    photoCount: bigint;
+    timelineCount: bigint;
+    parents: Array<string>;
+}
+export interface DuplicatePair {
+    candidateA: DuplicateCandidate;
+    candidateB: DuplicateCandidate;
 }
 export type Error_ = {
     __kind__: "FrontendOriginsNotConfigured";
@@ -238,461 +185,6 @@ export type Error_ = {
         expected: Array<string>;
     };
 };
-export interface ClaimEligibility {
-    eligible: boolean;
-    reason?: ClaimPersistenceError;
-}
-export interface Recipe {
-    era?: string;
-    status: RecipeStatus;
-    title: string;
-    recipeId: RecipeId;
-    aiDerivedText?: string;
-    createdAt: bigint;
-    tags: Array<string>;
-    year?: bigint;
-    contributorAccountId: Principal;
-    privacyLevel: PrivacyLevel;
-    linkedMediaIds: Array<bigint>;
-    instructions: string;
-    ocrText?: string;
-    familyBranch?: string;
-    familyStory?: string;
-    updatedAt: bigint;
-    evidenceStatus: EvidenceStatus;
-    shortDescription: string;
-    extractedIngredients?: Array<string>;
-    transcript?: string;
-    location?: string;
-    originatingPersonId: string;
-    ingredients: Array<string>;
-    relatedPersonIds: Array<string>;
-}
-export interface Account {
-    id: AccountId;
-    createdAt: bigint;
-    authMethods: Array<AuthMethod>;
-}
-export type Result_13 = {
-    __kind__: "ok";
-    ok: AuthMethods;
-} | {
-    __kind__: "err";
-    err: AccountError;
-};
-export type PostId = bigint;
-export type ReplyId = bigint;
-export type PersonId = string;
-export interface Report {
-    status: ReportStatus;
-    reportedMessageId: MessageId;
-    createdAt: Timestamp;
-    reportingAccountId: AccountId;
-    reportId: ReportId;
-    reason: string;
-}
-export interface AuthMethods {
-    apple: boolean;
-    google: boolean;
-}
-export interface PersonMatch {
-    name: string;
-    personId: PersonId;
-    parents: Array<string>;
-}
-export type Result_11 = {
-    __kind__: "ok";
-    ok: null;
-} | {
-    __kind__: "err";
-    err: MergeError;
-};
-export interface Post {
-    status: PostStatus;
-    authorAccountId: AccountId;
-    postType: PostType;
-    title?: string;
-    body: string;
-    createdAt: Timestamp;
-    tags: Array<string>;
-    linkedMediaIds: Array<bigint>;
-    privacyScope: PrivacyScope;
-    authorPersonId: PersonId;
-    updatedAt: Timestamp;
-    relatedPersonIds: Array<PersonId>;
-    postId: PostId;
-}
-export interface DuplicateCandidate {
-    deathDate?: string;
-    ownerAccount?: Principal;
-    birthDate?: string;
-    claimStatus: string;
-    name: string;
-    archiveLinks: Array<string>;
-    children: Array<string>;
-    sourceCount: bigint;
-    personId: PersonId;
-    spouses: Array<string>;
-    photoCount: bigint;
-    timelineCount: bigint;
-    parents: Array<string>;
-}
-export interface ConversationSummary {
-    otherPersonId: PersonId;
-    conversationId: ConversationId;
-    unreadCount: bigint;
-    otherDisplayName: string;
-    latestMessagePreview: string;
-    latestMessageAt: Timestamp;
-}
-export interface ResearchAuditEntry {
-    id: bigint;
-    action: string;
-    findingId?: FindingId;
-    sourceId?: SourceId;
-    actorId: Principal;
-    summary: string;
-    timestamp: bigint;
-}
-export type TimelineLinkTarget = {
-    __kind__: "Story";
-    Story: StoryId;
-} | {
-    __kind__: "Mystery";
-    Mystery: MysteryId;
-} | {
-    __kind__: "Person";
-    Person: string;
-} | {
-    __kind__: "ArchiveItem";
-    ArchiveItem: bigint;
-};
-export type StoryId = bigint;
-export type Result_21 = {
-    __kind__: "ok";
-    ok: ProposedFinding;
-} | {
-    __kind__: "err";
-    err: ResearchError;
-};
-export type Result_18 = {
-    __kind__: "ok";
-    ok: RelationshipProposal;
-} | {
-    __kind__: "err";
-    err: ResearchError;
-};
-export type Result_3 = {
-    __kind__: "ok";
-    ok: ProfileRemovalRequest;
-} | {
-    __kind__: "err";
-    err: RemovalError;
-};
-export type Result_23 = {
-    __kind__: "ok";
-    ok: Account;
-} | {
-    __kind__: "err";
-    err: AccountError;
-};
-export type Result_15 = {
-    __kind__: "ok";
-    ok: SuccessorDesignation;
-} | {
-    __kind__: "err";
-    err: StewardError;
-};
-export interface PersonProfile {
-    occupation?: string;
-    privacySettings?: string;
-    nickname?: string;
-    claimedByUserId?: Principal;
-    birthDate?: string;
-    birthInfo?: string;
-    claimStatus: ClaimStatus;
-    livingStatus: LivingStatus;
-    name: string;
-    longerStory?: string;
-    personId: PersonId;
-    story?: string;
-    middleName?: string;
-    suffix?: string;
-    preferredName?: string;
-    currentLocation?: string;
-    birthplace?: string;
-    lastName?: string;
-    shortBio?: string;
-    timeline?: Array<string>;
-    firstName?: string;
-}
-export interface MysteryContribution {
-    id: MysteryContributionId;
-    status: MysteryContributionStatus;
-    createdAt: bigint;
-    text: string;
-    mysteryId: MysteryId;
-    reviewedAt?: bigint;
-    reviewedBy?: Principal;
-    contributionType: MysteryContributionType;
-    contributor: Principal;
-}
-export interface ChapterMarker {
-    title: string;
-    timestamp: bigint;
-}
-export interface ProfileEdits {
-    occupation?: string;
-    privacySettings?: string;
-    nickname?: string;
-    birthDate?: string;
-    birthInfo?: string;
-    livingStatus?: LivingStatus;
-    longerStory?: string;
-    story?: string;
-    middleName?: string;
-    suffix?: string;
-    preferredName?: string;
-    currentLocation?: string;
-    birthplace?: string;
-    lastName?: string;
-    shortBio?: string;
-    timeline?: Array<string>;
-    firstName?: string;
-}
-export interface RelationshipRequest {
-    id: bigint;
-    submittedDate: bigint;
-    status: RelationshipRequestStatus;
-    reviewedDate?: bigint;
-    relatedPersonId: PersonId;
-    requestingPersonId: PersonId;
-    proposedRelationship: RelationshipType;
-    reviewer?: Principal;
-}
-export type ResearchError = {
-    __kind__: "invalidState";
-    invalidState: string;
-} | {
-    __kind__: "notAuthorized";
-    notAuthorized: null;
-} | {
-    __kind__: "notFound";
-    notFound: bigint;
-};
-export interface NewPersonCandidate {
-    id: bigint;
-    status: ReviewStatus;
-    name: string;
-    submittedAt: bigint;
-    submittedBy: Principal;
-    sourceId: SourceId;
-    reviewedAt?: bigint;
-    reviewedBy?: Principal;
-    details: string;
-}
-export interface AuditEntry {
-    id: bigint;
-    affectedPersonIds: Array<PersonId>;
-    actionType: AuditActionType;
-    summary: string;
-    timestamp: bigint;
-    actorAccountId: Principal;
-}
-export type Result_5 = {
-    __kind__: "ok";
-    ok: null;
-} | {
-    __kind__: "err";
-    err: StewardError;
-};
-export interface TimelineEvent {
-    id: string;
-    era?: string;
-    title: string;
-    year?: bigint;
-    linkTarget: TimelineLinkTarget;
-    description: string;
-    evidenceStatus: EvidenceStatus;
-    eventType: TimelineEventType;
-}
-export type RecipeId = bigint;
-export interface Cell {
-    value: Value;
-    name: string;
-}
-export type Result_7 = {
-    __kind__: "ok";
-    ok: null;
-} | {
-    __kind__: "err";
-    err: RemoveError;
-};
-export type Result_9 = {
-    __kind__: "ok";
-    ok: StewardRecord;
-} | {
-    __kind__: "err";
-    err: StewardError;
-};
-export interface ConflictReviewItem {
-    id: bigint;
-    field: string;
-    status: ReviewStatus;
-    evidenceLabel: EvidenceLabel;
-    findingId: FindingId;
-    proposedValue: string;
-    stewardNotes: string;
-    proposedSourceId?: bigint;
-    personId?: string;
-    canonicalValue: string;
-    resolvedAt?: bigint;
-    resolvedBy?: Principal;
-    existingSourceId?: bigint;
-}
-export type SourceId = bigint;
-export interface ReviewQueueItem {
-    id: bigint;
-    provenance: string;
-    status: ReviewStatus;
-    title: string;
-    evidenceLabel?: EvidenceLabel;
-    kind: ReviewItemKind;
-    createdAt: bigint;
-    actions: Array<ReviewAction>;
-    summary: string;
-    contributor?: Principal;
-}
-export type Timestamp = bigint;
-export interface Reply {
-    authorAccountId: AccountId;
-    body: string;
-    createdAt: Timestamp;
-    authorPersonId: PersonId;
-    replyId: ReplyId;
-    postId: PostId;
-}
-export type Result_17 = {
-    __kind__: "ok";
-    ok: SourceRecord;
-} | {
-    __kind__: "err";
-    err: ResearchError;
-};
-export interface StewardIdentity {
-    accountId: Principal;
-    displayName: string;
-    personId: PersonId;
-    canonicalName: string;
-}
-export type Result_16 = {
-    __kind__: "ok";
-    ok: SourceUploadResult;
-} | {
-    __kind__: "err";
-    err: ResearchError;
-};
-export type Result_1 = {
-    __kind__: "ok";
-    ok: Message;
-} | {
-    __kind__: "err";
-    err: MessageError;
-};
-export type Result_22 = {
-    __kind__: "ok";
-    ok: Relationship;
-} | {
-    __kind__: "err";
-    err: RelationshipAdminError;
-};
-export interface Resolution {
-    supportingEvidence: Array<string>;
-    summary: string;
-    resolvedAt: bigint;
-    resolvedBy: Principal;
-}
-export type ReportId = bigint;
-export interface RelationshipProposal {
-    id: bigint;
-    status: ReviewStatus;
-    fromPersonId: string;
-    submittedAt: bigint;
-    submittedBy: Principal;
-    sourceId: SourceId;
-    reviewedAt?: bigint;
-    reviewedBy?: Principal;
-    toPersonId: string;
-    relationshipType: string;
-}
-export type Result_19 = {
-    __kind__: "ok";
-    ok: NewPersonCandidate;
-} | {
-    __kind__: "err";
-    err: ResearchError;
-};
-export interface Mystery {
-    id: MysteryId;
-    status: MysteryStatus;
-    title: string;
-    relatedMemberIds: Array<string>;
-    createdAt: bigint;
-    relatedArchiveItemIds: Array<bigint>;
-    description: string;
-    resolution?: Resolution;
-    updatedAt: bigint;
-    knownFacts: Array<string>;
-    possibilities: Array<string>;
-    relatedBranchId?: string;
-    relatedSourceIds: Array<bigint>;
-    contributor: Principal;
-}
-export type ConversationId = bigint;
-export type Result_24 = {
-    __kind__: "ok";
-    ok: null;
-} | {
-    __kind__: "err";
-    err: Error_;
-};
-export type Result_14 = {
-    __kind__: "ok";
-    ok: AccountId;
-} | {
-    __kind__: "err";
-    err: AccountError;
-};
-export type ArchiveItemId = bigint;
-export type Value = {
-    __kind__: "int";
-    int: bigint;
-} | {
-    __kind__: "nat";
-    nat: bigint;
-} | {
-    __kind__: "float";
-    float: number;
-} | {
-    __kind__: "bool";
-    bool: boolean;
-} | {
-    __kind__: "null";
-    null: null;
-} | {
-    __kind__: "text";
-    text: string;
-};
-export interface DuplicatePair {
-    candidateA: DuplicateCandidate;
-    candidateB: DuplicateCandidate;
-}
-export interface ConversationView {
-    messages: Array<Message>;
-    participantPersonIds: Array<PersonId>;
-    conversationId: ConversationId;
-    participantDisplayNames: Array<string>;
-}
 export type FindingContent = {
     __kind__: "Story";
     Story: {
@@ -738,6 +230,177 @@ export type FindingContent = {
         relationshipType: string;
     };
 };
+export type FindingId = bigint;
+export interface MergeConflict {
+    id: bigint;
+    field: string;
+    status: MergeConflictStatus;
+    alternateValue: string;
+    canonicalValue: string;
+    resolvedAt?: bigint;
+    resolvedBy?: Principal;
+}
+export interface MergeResult {
+    archivedPersonId: PersonId;
+    conflicts: Array<MergeConflict>;
+    canonicalPersonId: PersonId;
+}
+export interface Message {
+    status: MessageStatus;
+    messageId: MessageId;
+    body: string;
+    createdAt: Timestamp;
+    conversationId: ConversationId;
+    senderAccountId: AccountId;
+    senderPersonId: PersonId;
+    readAt?: Timestamp;
+}
+export type MessageId = bigint;
+export interface Mystery {
+    id: MysteryId;
+    status: MysteryStatus;
+    title: string;
+    relatedMemberIds: Array<string>;
+    createdAt: bigint;
+    relatedArchiveItemIds: Array<bigint>;
+    description: string;
+    resolution?: Resolution;
+    updatedAt: bigint;
+    knownFacts: Array<string>;
+    possibilities: Array<string>;
+    relatedBranchId?: string;
+    relatedSourceIds: Array<bigint>;
+    contributor: Principal;
+}
+export interface MysteryContribution {
+    id: MysteryContributionId;
+    status: MysteryContributionStatus;
+    createdAt: bigint;
+    text: string;
+    mysteryId: MysteryId;
+    reviewedAt?: bigint;
+    reviewedBy?: Principal;
+    contributionType: MysteryContributionType;
+    contributor: Principal;
+}
+export type MysteryContributionId = bigint;
+export type MysteryId = bigint;
+export interface NewPersonCandidate {
+    id: bigint;
+    status: ReviewStatus;
+    name: string;
+    submittedAt: bigint;
+    submittedBy: Principal;
+    sourceId: SourceId;
+    reviewedAt?: bigint;
+    reviewedBy?: Principal;
+    details: string;
+}
+export interface Notification {
+    id: bigint;
+    notificationType: NotificationType;
+    createdAt: bigint;
+    read: boolean;
+    recipient: Principal;
+    message: string;
+}
+export type NotificationId = bigint;
+export interface OralHistorySpeaker {
+    name: string;
+    personId?: string;
+}
+export type PersonId = string;
+export interface PersonMatch {
+    name: string;
+    personId: PersonId;
+    parents: Array<string>;
+}
+export interface PersonProfile {
+    occupation?: string;
+    privacySettings?: string;
+    nickname?: string;
+    claimedByUserId?: Principal;
+    birthDate?: string;
+    birthInfo?: string;
+    claimStatus: ClaimStatus;
+    livingStatus: LivingStatus;
+    name: string;
+    longerStory?: string;
+    personId: PersonId;
+    story?: string;
+    middleName?: string;
+    suffix?: string;
+    preferredName?: string;
+    currentLocation?: string;
+    birthplace?: string;
+    lastName?: string;
+    shortBio?: string;
+    timeline?: Array<string>;
+    firstName?: string;
+}
+export interface Photo {
+    id: PhotoId;
+    blob: ExternalBlob;
+    mimeType: string;
+    filename: string;
+    uploadedAt: bigint;
+    uploadedBy: Principal;
+}
+export type PhotoId = bigint;
+export interface Post {
+    status: PostStatus;
+    authorAccountId: AccountId;
+    postType: PostType;
+    title?: string;
+    body: string;
+    createdAt: Timestamp;
+    tags: Array<string>;
+    linkedMediaIds: Array<bigint>;
+    privacyScope: PrivacyScope;
+    authorPersonId: PersonId;
+    updatedAt: Timestamp;
+    relatedPersonIds: Array<PersonId>;
+    postId: PostId;
+}
+export type PostId = bigint;
+export interface ProfileClaim {
+    id: bigint;
+    submittedDate: bigint;
+    status: ProfileClaimStatus;
+    reviewedDate?: bigint;
+    reviewedBy?: Principal;
+    personId: PersonId;
+    requestingUserId: Principal;
+}
+export interface ProfileEdits {
+    occupation?: string;
+    privacySettings?: string;
+    nickname?: string;
+    birthDate?: string;
+    birthInfo?: string;
+    livingStatus?: LivingStatus;
+    longerStory?: string;
+    story?: string;
+    middleName?: string;
+    suffix?: string;
+    preferredName?: string;
+    currentLocation?: string;
+    birthplace?: string;
+    lastName?: string;
+    shortBio?: string;
+    timeline?: Array<string>;
+    firstName?: string;
+}
+export interface ProfileRemovalRequest {
+    id: bigint;
+    submittedDate: bigint;
+    status: ProfileRemovalStatus;
+    reviewedDate?: bigint;
+    reviewedBy?: Principal;
+    personId: PersonId;
+    requestingUserId: Principal;
+    reason: string;
+}
 export interface ProposedFinding {
     id: FindingId;
     status: ReviewStatus;
@@ -755,21 +418,316 @@ export interface ProposedFinding {
     personId?: string;
     findingType: FindingType;
 }
-export interface ProfileRemovalRequest {
+export interface Recipe {
+    era?: string;
+    status: RecipeStatus;
+    title: string;
+    recipeId: RecipeId;
+    aiDerivedText?: string;
+    createdAt: bigint;
+    tags: Array<string>;
+    year?: bigint;
+    contributorAccountId: Principal;
+    privacyLevel: PrivacyLevel;
+    linkedMediaIds: Array<bigint>;
+    instructions: string;
+    ocrText?: string;
+    familyBranch?: string;
+    familyStory?: string;
+    updatedAt: bigint;
+    evidenceStatus: EvidenceStatus;
+    shortDescription: string;
+    extractedIngredients?: Array<string>;
+    transcript?: string;
+    location?: string;
+    originatingPersonId: string;
+    ingredients: Array<string>;
+    relatedPersonIds: Array<string>;
+}
+export type RecipeId = bigint;
+export interface Relationship {
+    id: bigint;
+    status: RelationshipStatus;
+    fromPersonId: PersonId;
+    toPersonId: PersonId;
+    relationshipType: RelationshipType;
+}
+export interface RelationshipProposal {
+    id: bigint;
+    status: ReviewStatus;
+    fromPersonId: string;
+    submittedAt: bigint;
+    submittedBy: Principal;
+    sourceId: SourceId;
+    reviewedAt?: bigint;
+    reviewedBy?: Principal;
+    toPersonId: string;
+    relationshipType: string;
+}
+export interface RelationshipRequest {
     id: bigint;
     submittedDate: bigint;
-    status: ProfileRemovalStatus;
+    status: RelationshipRequestStatus;
     reviewedDate?: bigint;
-    reviewedBy?: Principal;
-    personId: PersonId;
-    requestingUserId: Principal;
+    relatedPersonId: PersonId;
+    requestingPersonId: PersonId;
+    proposedRelationship: RelationshipType;
+    reviewer?: Principal;
+}
+export interface Reply {
+    authorAccountId: AccountId;
+    body: string;
+    createdAt: Timestamp;
+    authorPersonId: PersonId;
+    replyId: ReplyId;
+    postId: PostId;
+}
+export type ReplyId = bigint;
+export interface Report {
+    status: ReportStatus;
+    reportedMessageId: MessageId;
+    createdAt: Timestamp;
+    reportingAccountId: AccountId;
+    reportId: ReportId;
     reason: string;
 }
-export interface SourceUploadResult {
-    source: SourceRecord;
-    archiveItem: ArchiveItem;
+export type ReportId = bigint;
+export interface ReportedMessageView {
+    report: Report;
+    message: Message;
 }
-export type MysteryContributionId = bigint;
+export interface ResearchAuditEntry {
+    id: bigint;
+    action: string;
+    findingId?: FindingId;
+    sourceId?: SourceId;
+    actorId: Principal;
+    summary: string;
+    timestamp: bigint;
+}
+export type ResearchError = {
+    __kind__: "invalidState";
+    invalidState: string;
+} | {
+    __kind__: "notAuthorized";
+    notAuthorized: null;
+} | {
+    __kind__: "notFound";
+    notFound: bigint;
+};
+export interface Resolution {
+    supportingEvidence: Array<string>;
+    summary: string;
+    resolvedAt: bigint;
+    resolvedBy: Principal;
+}
+export type Result = {
+    __kind__: "ok";
+    ok: PersonProfile;
+} | {
+    __kind__: "err";
+    err: EditError;
+};
+export type Result_1 = {
+    __kind__: "ok";
+    ok: Message;
+} | {
+    __kind__: "err";
+    err: MessageError;
+};
+export type Result_10 = {
+    __kind__: "ok";
+    ok: StewardRecord;
+} | {
+    __kind__: "err";
+    err: StewardError;
+};
+export type Result_11 = {
+    __kind__: "ok";
+    ok: null;
+} | {
+    __kind__: "err";
+    err: DeleteError;
+};
+export type Result_12 = {
+    __kind__: "ok";
+    ok: null;
+} | {
+    __kind__: "err";
+    err: MergeError;
+};
+export type Result_13 = {
+    __kind__: "ok";
+    ok: MergeResult;
+} | {
+    __kind__: "err";
+    err: MergeError;
+};
+export type Result_14 = {
+    __kind__: "ok";
+    ok: AuthMethods;
+} | {
+    __kind__: "err";
+    err: AccountError;
+};
+export type Result_15 = {
+    __kind__: "ok";
+    ok: AccountId;
+} | {
+    __kind__: "err";
+    err: AccountError;
+};
+export type Result_16 = {
+    __kind__: "ok";
+    ok: SuccessorDesignation;
+} | {
+    __kind__: "err";
+    err: StewardError;
+};
+export type Result_17 = {
+    __kind__: "ok";
+    ok: SourceUploadResult;
+} | {
+    __kind__: "err";
+    err: ResearchError;
+};
+export type Result_18 = {
+    __kind__: "ok";
+    ok: SourceRecord;
+} | {
+    __kind__: "err";
+    err: ResearchError;
+};
+export type Result_19 = {
+    __kind__: "ok";
+    ok: RelationshipProposal;
+} | {
+    __kind__: "err";
+    err: ResearchError;
+};
+export type Result_2 = {
+    __kind__: "ok";
+    ok: null;
+} | {
+    __kind__: "err";
+    err: ArchiveError;
+};
+export type Result_20 = {
+    __kind__: "ok";
+    ok: NewPersonCandidate;
+} | {
+    __kind__: "err";
+    err: ResearchError;
+};
+export type Result_21 = {
+    __kind__: "ok";
+    ok: PersonProfile;
+} | {
+    __kind__: "err";
+    err: CreateError;
+};
+export type Result_22 = {
+    __kind__: "ok";
+    ok: ProposedFinding;
+} | {
+    __kind__: "err";
+    err: ResearchError;
+};
+export type Result_23 = {
+    __kind__: "ok";
+    ok: Relationship;
+} | {
+    __kind__: "err";
+    err: RelationshipAdminError;
+};
+export type Result_24 = {
+    __kind__: "ok";
+    ok: Account;
+} | {
+    __kind__: "err";
+    err: AccountError;
+};
+export type Result_25 = {
+    __kind__: "ok";
+    ok: null;
+} | {
+    __kind__: "err";
+    err: Error_;
+};
+export type Result_3 = {
+    __kind__: "ok";
+    ok: ConflictReviewItem;
+} | {
+    __kind__: "err";
+    err: ResearchError;
+};
+export type Result_4 = {
+    __kind__: "ok";
+    ok: ProfileRemovalRequest;
+} | {
+    __kind__: "err";
+    err: RemovalError;
+};
+export type Result_5 = {
+    __kind__: "ok";
+    ok: ProfileClaim;
+} | {
+    __kind__: "err";
+    err: ClaimError;
+};
+export type Result_6 = {
+    __kind__: "ok";
+    ok: null;
+} | {
+    __kind__: "err";
+    err: StewardError;
+};
+export type Result_7 = {
+    __kind__: "ok";
+    ok: null;
+} | {
+    __kind__: "err";
+    err: RelationshipAdminError;
+};
+export type Result_8 = {
+    __kind__: "ok";
+    ok: null;
+} | {
+    __kind__: "err";
+    err: RemoveError;
+};
+export type Result_9 = {
+    __kind__: "ok";
+    ok: RelationshipRequest;
+} | {
+    __kind__: "err";
+    err: RelationshipError;
+};
+export interface Result__1 {
+    hasMore: boolean;
+    rows: Array<Array<Cell>>;
+}
+export interface ReviewQueue {
+    pending: bigint;
+    conflicting: bigint;
+    approved: bigint;
+    rejected: bigint;
+    needsResearch: bigint;
+    items: Array<ReviewQueueItem>;
+}
+export interface ReviewQueueItem {
+    id: bigint;
+    provenance: string;
+    status: ReviewStatus;
+    title: string;
+    evidenceLabel?: EvidenceLabel;
+    kind: ReviewItemKind;
+    createdAt: bigint;
+    actions: Array<ReviewAction>;
+    summary: string;
+    contributor?: Principal;
+}
+export type SourceId = bigint;
 export interface SourceRecord {
     id: SourceId;
     status: ReviewStatus;
@@ -781,34 +739,106 @@ export interface SourceRecord {
     updatedAt: bigint;
     contributor: Principal;
 }
-export interface Message {
-    status: MessageStatus;
-    messageId: MessageId;
-    body: string;
-    createdAt: Timestamp;
-    conversationId: ConversationId;
-    senderAccountId: AccountId;
-    senderPersonId: PersonId;
-    readAt?: Timestamp;
+export interface SourceUploadResult {
+    source: SourceRecord;
+    archiveItem: ArchiveItem;
 }
-export interface ReportedMessageView {
-    report: Report;
-    message: Message;
-}
-export type Result_20 = {
-    __kind__: "ok";
-    ok: PersonProfile;
-} | {
-    __kind__: "err";
-    err: CreateError;
-};
-export interface Relationship {
+export interface StewardAuditEntry {
     id: bigint;
-    status: RelationshipStatus;
-    fromPersonId: PersonId;
-    toPersonId: PersonId;
-    relationshipType: RelationshipType;
+    field?: string;
+    affectedPersonIds: Array<string>;
+    proposedValue?: string;
+    stewardNotes?: string;
+    kind: StewardAuditKind;
+    proposedSourceId?: bigint;
+    actionType: string;
+    resolution?: string;
+    existingValue?: string;
+    summary: string;
+    personId?: string;
+    timestamp: bigint;
+    actorAccountId: Principal;
+    existingSourceId?: bigint;
 }
+export interface StewardIdentity {
+    accountId: Principal;
+    displayName: string;
+    personId: PersonId;
+    canonicalName: string;
+}
+export interface StewardRecord {
+    assignedAt: bigint;
+    assignedBy: Principal;
+    stewardAccountId: Principal;
+    successorPriority?: bigint;
+    roleStatus: StewardRoleStatus;
+}
+export interface Story {
+    id: StoryId;
+    era?: string;
+    status: StoryStatus;
+    title: string;
+    relatedMemberIds: Array<string>;
+    storyText: string;
+    createdAt: bigint;
+    year?: bigint;
+    relatedArchiveItemIds: Array<bigint>;
+    updatedAt: bigint;
+    evidenceStatus: EvidenceStatus;
+    location?: string;
+    contributor: Principal;
+}
+export type StoryId = bigint;
+export interface SuccessorDesignation {
+    status: SuccessorStatus;
+    assignedAt: bigint;
+    assignedBy: Principal;
+    personId: PersonId;
+    priority: bigint;
+}
+export interface TimelineEvent {
+    id: string;
+    era?: string;
+    title: string;
+    year?: bigint;
+    linkTarget: TimelineLinkTarget;
+    description: string;
+    evidenceStatus: EvidenceStatus;
+    eventType: TimelineEventType;
+}
+export type TimelineLinkTarget = {
+    __kind__: "Story";
+    Story: StoryId;
+} | {
+    __kind__: "Mystery";
+    Mystery: MysteryId;
+} | {
+    __kind__: "Person";
+    Person: string;
+} | {
+    __kind__: "ArchiveItem";
+    ArchiveItem: bigint;
+};
+export type Timestamp = bigint;
+export type Value = {
+    __kind__: "int";
+    int: bigint;
+} | {
+    __kind__: "nat";
+    nat: bigint;
+} | {
+    __kind__: "float";
+    float: number;
+} | {
+    __kind__: "bool";
+    bool: boolean;
+} | {
+    __kind__: "null";
+    null: null;
+} | {
+    __kind__: "text";
+    text: string;
+};
 export enum AccountError {
     AccountNotFound = "AccountNotFound",
     NotSignedIn = "NotSignedIn"
@@ -960,6 +990,11 @@ export enum MessageStatus {
     Blocked = "Blocked",
     Sent = "Sent"
 }
+export enum MysteryContributionStatus {
+    Approved = "Approved",
+    Rejected = "Rejected",
+    Pending = "Pending"
+}
 export enum MysteryContributionType {
     Lead = "Lead",
     Note = "Note",
@@ -1007,6 +1042,16 @@ export enum PrivacyLevel {
 export enum PrivacyScope {
     FamilyOnly = "FamilyOnly"
 }
+export enum ProfileClaimStatus {
+    Approved = "Approved",
+    Rejected = "Rejected",
+    Pending = "Pending"
+}
+export enum ProfileRemovalStatus {
+    Approved = "Approved",
+    Rejected = "Rejected",
+    Pending = "Pending"
+}
 export enum RecipeStatus {
     Approved = "Approved",
     Rejected = "Rejected",
@@ -1023,6 +1068,11 @@ export enum RelationshipError {
     DuplicateRequest = "DuplicateRequest",
     NotSignedIn = "NotSignedIn",
     PersonNotFound = "PersonNotFound"
+}
+export enum RelationshipRequestStatus {
+    Approved = "Approved",
+    Rejected = "Rejected",
+    Pending = "Pending"
 }
 export enum RelationshipStatus {
     Disputed = "Disputed",
@@ -1084,6 +1134,10 @@ export enum SourceType {
     UploadedDocumentImage = "UploadedDocumentImage",
     CensusCitation = "CensusCitation"
 }
+export enum StewardAuditKind {
+    ConflictResolution = "ConflictResolution",
+    Governance = "Governance"
+}
 export enum StewardError {
     LastSteward = "LastSteward",
     NotSteward = "NotSteward",
@@ -1095,6 +1149,11 @@ export enum StewardError {
 export enum StewardRoleStatus {
     Active = "Active",
     Removed = "Removed"
+}
+export enum StoryStatus {
+    Approved = "Approved",
+    Rejected = "Rejected",
+    Pending = "Pending"
 }
 export enum SuccessorStatus {
     Activated = "Activated",
@@ -1124,7 +1183,7 @@ export interface backendInterface {
      * / Activates/promotes a designated successor into the active steward role.
      * / Family Steward only.
      */
-    activateSuccessor(personId: PersonId): Promise<Result_9>;
+    activateSuccessor(personId: PersonId): Promise<Result_10>;
     /**
      * / Adds a one-level reply to a board post. Approved family members only.
      * / Creates a reply notification for the post author.
@@ -1145,7 +1204,7 @@ export interface backendInterface {
      * / Adds a missing relationship to the shared family graph. Family Steward
      * / only.
      */
-    addRelationship(fromPersonId: PersonId, toPersonId: PersonId, relationshipType: RelationshipType): Promise<Result_22>;
+    addRelationship(fromPersonId: PersonId, toPersonId: PersonId, relationshipType: RelationshipType): Promise<Result_23>;
     /**
      * / Approves a pending archive item (admin only). Returns the updated item, or
      * / `null` when the item does not exist or is not pending.
@@ -1229,7 +1288,7 @@ export interface backendInterface {
      * / account. The account id is the caller's stable principal, so the same
      * / person profile stays intact if the provider changes.
      */
-    bindAuthMethod(method: AuthMethod): Promise<Result_23>;
+    bindAuthMethod(method: AuthMethod): Promise<Result_24>;
     /**
      * / Blocks another member, preventing them from sending new messages to the
      * / caller. Approved family members only.
@@ -1254,7 +1313,7 @@ export interface backendInterface {
      * / Corrects the relationship type of an existing relationship. Family Steward
      * / only.
      */
-    correctRelationshipType(relationshipId: bigint, relationshipType: RelationshipType): Promise<Result_22>;
+    correctRelationshipType(relationshipId: bigint, relationshipType: RelationshipType): Promise<Result_23>;
     /**
      * / Creates a board post with a type, optional title, body, related family
      * / members, optional linked existing Archive/media ids, and free-form tags.
@@ -1277,41 +1336,41 @@ export interface backendInterface {
      * / Creates a new proposed finding. Requires sign-in; the signed-in caller is
      * / recorded as the submitter. The finding enters as `#Pending`.
      */
-    createFinding(title: string, evidenceLabel: EvidenceLabel, findingType: FindingType, content: FindingContent, sourceId: SourceId, personId: string | null, newPersonCandidateId: bigint | null): Promise<Result_21>;
+    createFinding(title: string, evidenceLabel: EvidenceLabel, findingType: FindingType, content: FindingContent, sourceId: SourceId, personId: string | null, newPersonCandidateId: bigint | null): Promise<Result_22>;
     /**
      * / "Add Myself to This Family": creates a minimal person profile for a user
      * / who does not already exist. The user must then connect to an existing
      * / family member via a relationship request.
      */
-    createMyself(name: string): Promise<Result_20>;
+    createMyself(name: string): Promise<Result_21>;
     /**
      * / Creates a new Person candidate. Requires sign-in; the signed-in caller is
      * / recorded as the submitter. The candidate enters as `#Pending`.
      */
-    createNewPersonCandidate(name: string, details: string, sourceId: SourceId): Promise<Result_19>;
+    createNewPersonCandidate(name: string, details: string, sourceId: SourceId): Promise<Result_20>;
     /**
      * / Creates a new relationship proposal. Requires sign-in; the signed-in
      * / caller is recorded as the submitter. The proposal enters as `#Pending`.
      */
-    createRelationshipProposal(fromPersonId: string, toPersonId: string, relationshipType: string, sourceId: SourceId): Promise<Result_18>;
+    createRelationshipProposal(fromPersonId: string, toPersonId: string, relationshipType: string, sourceId: SourceId): Promise<Result_19>;
     /**
      * / Creates a new source record. Requires sign-in; the signed-in caller is
      * / recorded as the contributor. The source enters as `#Pending`.
      */
-    createSource(title: string, sourceType: SourceType, description: string, archiveItemId: bigint | null): Promise<Result_17>;
+    createSource(title: string, sourceType: SourceType, description: string, archiveItemId: bigint | null): Promise<Result_18>;
     /**
      * / Uploads a research source file: creates one canonical Archive item
      * / (pending) and links a new Research Source record to it, so no manually
      * / typed Archive Item ID is required. Requires a signed-in caller; the caller
      * / is recorded as the contributor of both records.
      */
-    createSourceWithUpload(title: string, sourceType: SourceType, description: string, blob: ExternalBlob, tags: Array<string>, era: string, year: bigint | null, relatedMemberIds: Array<string>, privacyLevel: PrivacyLevel, classification: ArchiveItemClassification, primarySpeaker: OralHistorySpeaker | null): Promise<Result_16>;
+    createSourceWithUpload(title: string, sourceType: SourceType, description: string, blob: ExternalBlob, tags: Array<string>, era: string, year: bigint | null, relatedMemberIds: Array<string>, privacyLevel: PrivacyLevel, classification: ArchiveItemClassification, primarySpeaker: OralHistorySpeaker | null): Promise<Result_17>;
     /**
      * / Designates an approved claimed family member as a successor steward with a
      * / priority/order. A successor is a designation only until activated.
      * / Family Steward only.
      */
-    designateSuccessor(personId: PersonId, priority: bigint): Promise<Result_15>;
+    designateSuccessor(personId: PersonId, priority: bigint): Promise<Result_16>;
     execute(qJson: string): Promise<Result__1>;
     getApiDoc(): Promise<string>;
     /**
@@ -1332,11 +1391,11 @@ export interface backendInterface {
      * / Returns the stable account id of the signed-in caller. Anonymous callers
      * / receive #NotSignedIn.
      */
-    getMyAccountId(): Promise<Result_14>;
+    getMyAccountId(): Promise<Result_15>;
     /**
      * / Returns the authentication methods bound to the signed-in caller's account.
      */
-    getMyAuthMethods(): Promise<Result_13>;
+    getMyAuthMethods(): Promise<Result_14>;
     /**
      * / Returns the signed-in caller's own linked/claimed Person Profile, or, when
      * / none is linked, the caller's pending profile (created via `createMyself` or
@@ -1419,6 +1478,16 @@ export interface backendInterface {
      */
     getSource(id: SourceId): Promise<SourceRecord | null>;
     /**
+     * / Returns the merged Family Steward Audit History: every governance audit
+     * / entry plus every conflict-resolution action (Keep Existing, Replace
+     * / Existing, Preserve Both/Unresolved, Needs Research) merged
+     * / chronologically, newest first, without duplicating records. Each
+     * / conflict-resolution entry carries person, field, existing value, proposed
+     * / value, resolution, steward notes, steward identity, timestamp, and
+     * / provenance/source refs where available. Family Steward only.
+     */
+    getStewardAuditHistory(): Promise<Array<StewardAuditEntry>>;
+    /**
      * / Whether a profile already has an approved owner. Approved ownership is
      * / authoritative: once a profile claim is approved, the approved owner is the
      * / canonical owner and no other claim or Add Myself flow can override or
@@ -1492,6 +1561,14 @@ export interface backendInterface {
      * / participate in, newest activity first. Approved family members only.
      */
     listConversations(): Promise<Array<ConversationSummary>>;
+    /**
+     * / Returns the facts on a Person Profile that have an unresolved conflict, so
+     * / the Person Profile can show a subtle disputed indicator on each disputed
+     * / fact. Includes conflicts where the canonical value is blank but a proposed
+     * / value exists. Requires a signed-in (non-anonymous) caller; anonymous
+     * / callers receive `[]`. Resolved conflicts are never returned.
+     */
+    listDisputedFactsForPerson(personId: string): Promise<Array<DisputedFact>>;
     /**
      * / Lists suspected duplicate Person records with comparison data. Family
      * / Steward only.
@@ -1637,7 +1714,7 @@ export interface backendInterface {
      * / fields are preserved as conflict/review items. The merged-away record is
      * / archived rather than hard-deleted. Family Steward only.
      */
-    mergeProfiles(canonicalPersonId: PersonId, mergedAwayPersonId: PersonId): Promise<Result_12>;
+    mergeProfiles(canonicalPersonId: PersonId, mergedAwayPersonId: PersonId): Promise<Result_13>;
     /**
      * / Marks a pending finding as needing research (Family Steward only),
      * / transitioning it to `#NeedsResearch` while preserving the finding and its
@@ -1669,23 +1746,23 @@ export interface backendInterface {
     /**
      * / Marks two suspected duplicates as not a duplicate. Family Steward only.
      */
-    notDuplicate(personIdA: PersonId, personIdB: PersonId): Promise<Result_11>;
+    notDuplicate(personIdA: PersonId, personIdB: PersonId): Promise<Result_12>;
     /**
      * / Permanently deletes a profile only when it is empty of archive items,
      * / media, timeline/history, approved relationships, and ownership history,
      * / and explicit confirmation is given. Family Steward only.
      */
-    permanentlyDeleteProfile(personId: PersonId, confirmation: boolean): Promise<Result_10>;
+    permanentlyDeleteProfile(personId: PersonId, confirmation: boolean): Promise<Result_11>;
     /**
      * / Promotes an existing approved claimed family member to Family Steward.
      * / Family Steward only.
      */
-    promoteToSteward(personId: PersonId): Promise<Result_9>;
+    promoteToSteward(personId: PersonId): Promise<Result_10>;
     /**
      * / Proposes a new relationship between two people. The request starts pending
      * / and is never treated as confirmed until a Family Steward approves it.
      */
-    proposeRelationship(fromPersonId: PersonId, toPersonId: PersonId, relationshipType: RelationshipType): Promise<Result_8>;
+    proposeRelationship(fromPersonId: PersonId, toPersonId: PersonId, relationshipType: RelationshipType): Promise<Result_9>;
     /**
      * / Publishes a canonical recipe directly (steward only), already approved.
      * / This is the steward-only add flow; it does not create a second Recipe on
@@ -1762,7 +1839,7 @@ export interface backendInterface {
      * / requests or claims tied only to it, preserving the original profile, the
      * / confirmed family graph, and the signed-in account. Family Steward only.
      */
-    removeDuplicateProfile(personId: PersonId): Promise<Result_7>;
+    removeDuplicateProfile(personId: PersonId): Promise<Result_8>;
     /**
      * / Removes a photo from a person's gallery. Returns `true` when a photo was
      * / removed. If the removed photo was the profile photo, the profile photo is
@@ -1773,12 +1850,12 @@ export interface backendInterface {
      * / Removes an incorrect relationship from the shared family graph. Family
      * / Steward only.
      */
-    removeRelationship(relationshipId: bigint): Promise<Result_6>;
+    removeRelationship(relationshipId: bigint): Promise<Result_7>;
     /**
      * / Removes the steward role from another steward, never allowing the last
      * / steward to be removed. Family Steward only.
      */
-    removeSteward(stewardAccountId: Principal): Promise<Result_5>;
+    removeSteward(stewardAccountId: Principal): Promise<Result_6>;
     /**
      * / Reports a specific message with a reason. Approved family members only.
      */
@@ -1787,12 +1864,12 @@ export interface backendInterface {
      * / "This is Me": creates a pending profile claim for an unclaimed living
      * / profile. Requires sign-in; does not grant ownership until approved.
      */
-    requestProfileClaim(personId: PersonId): Promise<Result_4>;
+    requestProfileClaim(personId: PersonId): Promise<Result_5>;
     /**
      * / A claimed living profile owner requests removal of their own profile.
      * / A Family Steward reviews the request.
      */
-    requestProfileRemoval(personId: PersonId, reason: string): Promise<Result_3>;
+    requestProfileRemoval(personId: PersonId, reason: string): Promise<Result_4>;
     /**
      * / Resolves a conflict review item (steward only) with an explicit decision.
      * / `#KeepExisting` leaves canonical data unchanged and resolves the conflict;
@@ -1804,7 +1881,7 @@ export interface backendInterface {
      * / resolution records an audit entry. Returns the updated item, or `null` when
      * / it does not exist.
      */
-    resolveConflict(id: bigint, action: ConflictResolutionAction, notes: string): Promise<ConflictReviewItem | null>;
+    resolveConflict(id: bigint, action: ConflictResolutionAction, notes: string): Promise<Result_3>;
     /**
      * / Resolves a merge conflict by choosing the canonical display value. Family
      * / Steward only.

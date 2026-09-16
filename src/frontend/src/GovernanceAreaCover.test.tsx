@@ -9,10 +9,13 @@ import {
   type PersonProfile,
   type ProfileClaim,
   type ProfileRemovalRequest,
+  ProfileRemovalStatus,
   type Relationship,
   type RelationshipRequest,
   RelationshipStatus,
   RelationshipType,
+  type StewardAuditEntry,
+  StewardAuditKind,
   type StewardIdentity,
   type StewardRecord,
   StewardRoleStatus,
@@ -261,6 +264,21 @@ const {
     async listAuditHistory(): Promise<AuditEntry[]> {
       return auditEntries;
     },
+    async getStewardAuditHistory(): Promise<StewardAuditEntry[]> {
+      // The merged Family Steward Audit History surfaces each governance audit
+      // entry as a #Governance StewardAuditEntry (the conflict-resolution
+      // entries come from the research audit log, which this governance mock
+      // does not model). The AuditHistoryTab consumes this merged view.
+      return auditEntries.map((e) => ({
+        id: e.id,
+        kind: StewardAuditKind.Governance,
+        actionType: e.actionType,
+        actorAccountId: e.actorAccountId,
+        timestamp: e.timestamp,
+        summary: e.summary,
+        affectedPersonIds: e.affectedPersonIds,
+      }));
+    },
     async listArchivedProfiles(): Promise<PersonProfile[]> {
       return archivedProfiles;
     },
@@ -300,7 +318,7 @@ const {
         id: 1n,
         personId,
         reason,
-        status: "Pending",
+        status: ProfileRemovalStatus.Pending,
         submittedDate: 1_700_000_000_000_000_000n,
         requestingUserId: Principal.fromText(OTHER_ACCOUNT),
       };
@@ -315,7 +333,7 @@ const {
     async approveProfileRemoval(requestId: bigint) {
       const found = removalRequests.find((r) => r.id === requestId);
       if (!found) return null;
-      const updated = { ...found, status: "Approved" as const };
+      const updated = { ...found, status: ProfileRemovalStatus.Approved };
       removalRequests = removalRequests.map((r) =>
         r.id === requestId ? updated : r,
       );
@@ -329,7 +347,7 @@ const {
     async rejectProfileRemoval(requestId: bigint) {
       const found = removalRequests.find((r) => r.id === requestId);
       if (!found) return null;
-      const updated = { ...found, status: "Rejected" as const };
+      const updated = { ...found, status: ProfileRemovalStatus.Rejected };
       removalRequests = removalRequests.map((r) =>
         r.id === requestId ? updated : r,
       );
@@ -1008,7 +1026,7 @@ describe("Audit History tab", () => {
     expect(screen.getByText("Steward promoted")).toBeInTheDocument();
     expect(screen.getByText("Promoted julia")).toBeInTheDocument();
     expect(
-      screen.getByText("Visible to Family Stewards only."),
+      screen.getByText(/Visible to Family Stewards only\./),
     ).toBeInTheDocument();
   });
 });

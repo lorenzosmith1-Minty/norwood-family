@@ -400,6 +400,18 @@ Contributions badge.
   that id exists.
 - `listAuditHistory() : async [AuditEntry]` — query. Family Steward only.
   Returns the governance audit log. Audit History is strictly steward-only.
+- `getStewardAuditHistory() : async [StewardAuditEntry]` — query. Family
+  Steward only. Returns the merged Family Steward Audit History: every
+  governance audit entry plus every conflict-resolution action (Keep Existing,
+  Replace Existing, Preserve Both/Unresolved, Needs Research) merged
+  chronologically, newest first, without duplicating records. Each
+  conflict-resolution entry is enriched from its linked Conflict Review item so
+  it carries the affected person, disputed field, existing value, proposed
+  value, resolution action, steward notes, steward identity (the resolving
+  steward's account principal), timestamp, and provenance/source refs where
+  available. This is a computed read over the existing governance audit log and
+  research audit log — it does not add or alter any persisted records, and the
+  existing `listAuditHistory` endpoint is unchanged.
 
 ### Family Stories, Family Mysteries, and Travel Through Time
 
@@ -741,7 +753,16 @@ Contributions badge.
   alongside canonical values on the person profile and source history views.
   Requires a signed-in (non-anonymous) caller; anonymous callers receive `[]`.
   Resolved conflicts are never returned.
-- `resolveConflict(id : Nat, action : ConflictResolutionAction, notes : Text) : async ?ConflictReviewItem` —
+- `listDisputedFactsForPerson(personId : Text) : async [DisputedFact]` —
+  query. Returns the facts on a Person Profile that have an unresolved conflict
+  (`#Conflicting` or `#NeedsResearch`), so the Person Profile can show a subtle
+  disputed indicator on each disputed fact. Each `DisputedFact` carries the
+  disputed `field`, the `canonicalValue` (which may be blank when no canonical
+  value exists yet and only a proposed value is present), the `proposedValue`,
+  and the unresolved `status`. Requires a signed-in (non-anonymous) caller;
+  anonymous callers receive `[]`. Resolved conflicts are never returned. This is
+  a read-only view — it never resolves or alters conflicts.
+- `resolveConflict(id : Nat, action : ConflictResolutionAction, notes : Text) : async Result<ConflictReviewItem, ResearchError>` —
   update. Family Steward only. Resolves a conflict review item with an explicit
   decision. `#KeepExisting` leaves canonical data unchanged and resolves the
   conflict (the proposed research and its provenance are preserved). `#ReplaceExisting`
@@ -750,8 +771,12 @@ Contributions badge.
   records the actor and timestamp. `#PreserveBoth` keeps both values visible as
   an unresolved `#Conflicting` conflict without silently choosing either.
   `#NeedsResearch` leaves canonical data unchanged and retains the conflict with
-  `#NeedsResearch` status. Every resolution records an audit entry. Returns the
-  updated item, or `null` when it does not exist.
+  `#NeedsResearch` status. Every resolution records an audit entry. Returns
+  `#ok(updatedItem)` on success, `#err(#notFound(id))` when the item does not
+  exist, and `#err(#invalidState(...))` when a `#ReplaceExisting` resolution
+  targets a Person Fact whose field cannot be mapped to a canonical Person field
+  — in that case the conflict is left unresolved and canonical data is not
+  altered.
 - `getReviewQueue() : async ReviewQueue` — query. Family Steward only. Returns
   the review queue badge counts (`pending`, `approved`, `rejected`,
   `conflicting`, `needsResearch`) and the full list of reviewable items
@@ -1144,7 +1169,10 @@ The Family Governance methods are steward-only. `listStewards`,
 `resolveMergeConflict`, `listPersonRelationships`, `addRelationship`,
 `removeRelationship`, `correctRelationshipType`, and `listAuditHistory` all trap
 with `\"Unauthorized: Only Family Stewards can ...\"` when the caller is not an
-admin. `requestProfileRemoval` is the one governance method a normal family
+admin. `getStewardAuditHistory` is likewise Family Steward only: it traps with
+`\"Unauthorized: You must be signed in\"` for an anonymous caller and
+`\"Unauthorized: Only Family Stewards can view audit history\"` when the caller
+is not an admin. `requestProfileRemoval` is the one governance method a normal family
 member calls: it requires a signed-in (non-anonymous) caller and returns
 `#err(#NotSignedIn)` for an anonymous caller (it does not trap), and it only
 ever requests removal of the caller's own claimed living profile.
@@ -1226,9 +1254,10 @@ are admin-only and trap with `\"Unauthorized: You must be
 signed in\"` for an anonymous caller and `\"Unauthorized: Only Family Stewards
 can perform this action\"` when the caller is not an admin. The read methods
 `getSource` and `getFinding` are readable by any caller (they are not gated to
-admin). `listConflictsForPerson` requires a signed-in (non-anonymous) caller and
-returns `[]` for an anonymous caller (it does not trap); it returns only the
-unresolved conflicts for the requested Person. The review surface methods
+admin). `listConflictsForPerson` and `listDisputedFactsForPerson` require a
+signed-in (non-anonymous) caller and
+return `[]` for an anonymous caller (they do not trap); they return only the
+unresolved conflicts / disputed facts for the requested Person. The review surface methods
 `getReviewQueue` and `getResearchAuditLog`
 are Family Steward only — they expose contributor principals, proposed findings
 content, and provenance, so they trap with `\"Unauthorized: You must be signed
@@ -1398,6 +1427,21 @@ already reference the caller's stable principal (`requestingUserId`,
 - `AuditEntry` fields: `id` (`Nat`), `actionType` (`AuditActionType` variant),
   `actorAccountId` (`Principal`), `affectedPersonIds` (`[Text]`), `timestamp`
   (`Int`, nanoseconds since epoch), and `summary` (`Text`).
+- `StewardAuditKind` is a variant: `#Governance` or `#ConflictResolution`.
+- `StewardAuditEntry` fields: `id` (`Nat`), `kind` (`StewardAuditKind`),
+  `actionType` (`Text`, the governance action tag text for `#Governance`
+  entries, or `\"ConflictResolved\"` for `#ConflictResolution` entries),
+  `actorAccountId` (`Principal`, the acting steward's account — the governance
+  `actorAccountId` or the research audit `actorId`), `timestamp` (`Int`,
+  nanoseconds since epoch), `summary` (`Text`), `affectedPersonIds` (`[Text]`,
+  the affected person ids; for a conflict entry this is the single affected
+  person when known, else empty), and the conflict-specific optionals
+  `personId` (`?Text`), `field` (`?Text`), `existingValue` (`?Text`, the
+  canonical value being contradicted), `proposedValue` (`?Text`),
+  `resolution` (`?Text`, the resolution action text — `KeepExisting`,
+  `ReplaceExisting`, `PreserveBoth`, or `NeedsResearch`), `stewardNotes`
+  (`?Text`), `existingSourceId` (`?Nat`), and `proposedSourceId` (`?Nat`).
+  Fields not applicable to a given `kind` are `null`/empty.
 - `AuditActionType` is a variant: `#ClaimApproved`, `#ClaimRejected`,
   `#RelationshipRequestApproved`, `#RelationshipRequestRejected`,
   `#StewardPromoted`, `#StewardRemoved`, `#SuccessorDesignated`,
@@ -1598,6 +1642,13 @@ already reference the caller's stable principal (`requestingUserId`,
 - `ConflictResolutionAction` is a variant: `#KeepExisting`, `#ReplaceExisting`,
   `#PreserveBoth`, or `#NeedsResearch` — the explicit decision a Family Steward
   makes when resolving a conflict review item.
+- `DisputedFact` fields: `field` (`Text`, the disputed fact/field name),
+  `canonicalValue` (`Text`, the existing canonical value — blank when no
+  canonical value exists yet and only a proposed value is present),
+  `proposedValue` (`Text`), and `status` (`ReviewStatus`, `#Conflicting` or
+  `#NeedsResearch` — both unresolved). Exposed by `listDisputedFactsForPerson`
+  so the Person Profile can show a subtle disputed indicator on each disputed
+  fact; resolved conflicts are never included.
 - `ResearchAuditEntry` fields: `id` (`Nat`), `action` (`Text`, the audit action
   tag, e.g. `\"SourceCreated\"`/`\"FindingSubmitted\"`/`\"FindingApproved\"`/`\"FindingRoutedToConflict\"`/`\"ConflictResolved\"`),
   `findingId` (`?FindingId`, `null` when not tied to a finding), `sourceId`
@@ -1707,6 +1758,17 @@ on the shared family graph; normal family members continue to use the pending
 records an `AuditEntry` in the audit log, readable only by Family Stewards via
 `listAuditHistory`. There is no async job to poll; the frontend can call the
 relevant list methods to observe current state.
+
+The merged Family Steward Audit History (`getStewardAuditHistory`) is a
+computed, read-only view derived on demand from the governance audit log and
+the research audit log. It is not a separate persisted store — it merges every
+governance `AuditEntry` with every research `ConflictResolved` entry (enriched
+from the linked Conflict Review item) and returns them newest first. Because it
+is computed, it always reflects the current audit records with no polling or
+refresh step beyond calling it again; resolving a conflict via `resolveConflict`
+immediately makes the corresponding `#ConflictResolution` entry appear in the
+next call. The existing `listAuditHistory` (governance-only) is unchanged and
+remains available.
 
 Family Stories follow a submit → approve/reject lifecycle. `submitStory` stores
 the story in `#Pending` state. A Family Steward then calls `approveStory` or
@@ -2016,14 +2078,18 @@ no async job to poll; the frontend can call the list methods (steward) or
   finding's status to `#NeedsResearch` (with `reviewedBy`/`reviewedAt`/`updatedAt`
   recorded) while preserving the finding and its content, and records a
   `FindingNeedsResearch` audit entry.
-- `resolveConflict` is idempotent: resolving an already-resolved (or nonexistent)
-  conflict item returns `null` and changes nothing. On the first resolution it
-  applies the steward's chosen action: `#KeepExisting` and `#ReplaceExisting`
-  mark the item `#Approved` (resolved) and record the reviewer and review time,
-  with `#ReplaceExisting` also writing the proposed value into canonical data
-  once; `#PreserveBoth` keeps the item `#Conflicting` (unresolved) and
-  `#NeedsResearch` moves it to `#NeedsResearch` (unresolved), both leaving
-  canonical data unchanged. Every resolution records an audit entry.
+- `resolveConflict` is idempotent: resolving an already-resolved conflict item
+  applies the steward's chosen action again without corrupting data, and a
+  nonexistent item returns `#err(#notFound(id))` and changes nothing. On the
+  first resolution it applies the steward's chosen action: `#KeepExisting` and
+  `#ReplaceExisting` mark the item `#Approved` (resolved) and record the reviewer
+  and review time, with `#ReplaceExisting` also writing the proposed value into
+  canonical data once; `#PreserveBoth` keeps the item `#Conflicting` (unresolved)
+  and `#NeedsResearch` moves it to `#NeedsResearch` (unresolved), both leaving
+  canonical data unchanged. A `#ReplaceExisting` resolution whose Person Fact
+  field cannot be mapped to a canonical Person field returns
+  `#err(#invalidState(...))`, leaves the conflict unresolved, and does not alter
+  canonical data. Every resolution records an audit entry.
 - `approveSource`, `rejectSource`, and `needsResearchSource` are idempotent:
   acting on an already-reviewed (or nonexistent) source returns `null` and
   changes nothing. They only transition sources currently in `#Pending` state.
@@ -2050,6 +2116,8 @@ no async job to poll; the frontend can call the list methods (steward) or
   contributor. Rejecting and needs-research leave the family graph unchanged.
 - `getSource`, `getFinding`, `getReviewQueue`, and `getResearchAuditLog` are
   read-only queries with no side effects; they are always idempotent.
+- `getStewardAuditHistory` is a read-only query with no side effects; it is
+  always idempotent and never mutates or duplicates any audit record.
 
 ## Errors, traps, limits, and gotchas
 
@@ -2245,6 +2313,16 @@ no async job to poll; the frontend can call the list methods (steward) or
   tag text, optional fields render as empty text or `0`, and the nested
   `content` variant on a proposed finding is not exposed (OQL has no variant
   value type) — the `findingType` column carries the routing target.
+- `getStewardAuditHistory` is Family Steward only and traps with
+  `\"Unauthorized: You must be signed in\"` for an anonymous caller and
+  `\"Unauthorized: Only Family Stewards can view audit history\"` when the
+  caller is not an admin. It is a computed read over existing records — it
+  never writes, duplicates, or deletes any audit entry, and it does not require
+  a migration. A conflict-resolution entry's `resolution` field is derived from
+  the research audit summary text (the parenthesized action), so it is `null`
+  only when that summary does not carry a parenthesized action; the other
+  conflict-specific fields are populated from the linked Conflict Review item
+  and are `null` when no linked item exists.
 "
   };
 };

@@ -2,11 +2,12 @@ import {
   ArrowRight,
   Check,
   GitMerge,
+  RefreshCw,
   Scale,
   Search,
   ShieldAlert,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,6 +22,7 @@ import {
 import { useIsAdmin } from "../hooks/useArchiveStorage";
 import {
   useGetFinding,
+  useGetReviewQueue,
   useGetSource,
   useListConflictReviewItems,
   useResolveConflict,
@@ -36,6 +38,8 @@ import { ConflictResolutionAction } from "../types/research-intake";
 import type {
   ConflictReviewItem,
   FindingContent,
+  ResearchError,
+  Result_3,
 } from "../types/research-intake";
 
 interface ResearchConflictReviewPageProps {
@@ -81,6 +85,20 @@ function findingContentSummary(content: FindingContent): string {
   }
 }
 
+/** Maps a backend ResearchError to a clear, user-facing message. */
+function researchErrorMessage(error: ResearchError): string {
+  switch (error.__kind__) {
+    case "invalidState":
+      return error.invalidState;
+    case "notAuthorized":
+      return "You are not authorized to resolve this conflict.";
+    case "notFound":
+      return "This conflict no longer exists. It may have been resolved already.";
+    default:
+      return "Could not resolve this conflict.";
+  }
+}
+
 /** The four steward resolution actions, in display order. */
 const RESOLUTION_ACTIONS: ConflictResolutionAction[] = [
   ConflictResolutionAction.KeepExisting,
@@ -88,7 +106,6 @@ const RESOLUTION_ACTIONS: ConflictResolutionAction[] = [
   ConflictResolutionAction.PreserveBoth,
   ConflictResolutionAction.NeedsResearch,
 ];
-
 /** Short guidance shown under each resolution action in the confirm dialog. */
 const ACTION_GUIDANCE: Record<ConflictResolutionAction, string> = {
   [ConflictResolutionAction.KeepExisting]:
@@ -118,14 +135,24 @@ function ConflictCard({ item }: { item: ConflictReviewItem }) {
     null,
   );
   const [notes, setNotes] = useState("");
+  const [resolveError, setResolveError] = useState<string | null>(null);
 
   const isResolved = item.status === "Approved" || item.status === "Rejected";
 
   const confirmResolve = (action: ConflictResolutionAction) => {
+    setResolveError(null);
     resolve.mutate(
       { conflictId: item.id, action, notes },
       {
-        onSuccess: () => {
+        onSuccess: (result: Result_3) => {
+          if (result.__kind__ === "err") {
+            // The backend refused to resolve (e.g. an unmappable Person Fact
+            // field on Replace Existing). Leave the conflict unresolved, keep
+            // the dialog open, and surface the specific error so canonical data
+            // is never silently altered.
+            setResolveError(researchErrorMessage(result.err));
+            return;
+          }
           setOpenAction(null);
           setNotes("");
         },
@@ -250,7 +277,10 @@ function ConflictCard({ item }: { item: ConflictReviewItem }) {
               open={openAction === action}
               onOpenChange={(open) => {
                 setOpenAction(open ? action : null);
-                if (!open) setNotes("");
+                if (!open) {
+                  setNotes("");
+                  setResolveError(null);
+                }
               }}
             >
               <AlertDialogTrigger asChild>
@@ -288,6 +318,21 @@ function ConflictCard({ item }: { item: ConflictReviewItem }) {
                   placeholder="Why did you choose this resolution?"
                   className="w-full resize-none rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 />
+                {resolveError && (
+                  <div
+                    data-ocid={`research_conflict.dialog_error.${item.id}.${action}`}
+                    className="flex items-start gap-2 rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2.5 text-sm text-destructive"
+                  >
+                    <ShieldAlert
+                      className="mt-0.5 h-4 w-4 shrink-0"
+                      aria-hidden="true"
+                    />
+                    <span>
+                      {resolveError} The conflict was left unresolved and no
+                      canonical data was changed.
+                    </span>
+                  </div>
+                )}
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
                   <AlertDialogAction
@@ -307,7 +352,15 @@ function ConflictCard({ item }: { item: ConflictReviewItem }) {
             </AlertDialog>
           ))
         )}
-        {resolve.isError && (
+        {resolveError && (
+          <p
+            data-ocid={`research_conflict.resolve_error.${item.id}`}
+            className="text-xs font-medium text-destructive"
+          >
+            {resolveError}
+          </p>
+        )}
+        {resolve.isError && !resolveError && (
           <p className="text-xs font-medium text-destructive">
             Could not resolve this conflict. Please try again.
           </p>
@@ -328,7 +381,35 @@ export function ResearchConflictReviewPage({
   onBack,
 }: ResearchConflictReviewPageProps) {
   const { data: isAdmin = false } = useIsAdmin();
-  const { data: conflicts = [], isLoading } = useListConflictReviewItems();
+  const {
+    data: conflicts = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+    isFetching,
+  } = useListConflictReviewItems();
+  const { data: reviewQueue } = useGetReviewQueue();
+  // Tracks whether the consistency guard has already auto-refetched the
+  // conflict list once, so it never loops on a persistent mismatch.
+  const autoRefetched = useRef(false);
+
+  // Consistency guard: the review queue reports unresolved conflicts
+  // (Conflicting) but the conflict list came back empty. That is a
+  // synchronization mismatch, so the empty state must not be shown. Only the
+  // queue's `conflicting` count is compared — `needsResearch` counts ALL
+  // research items (sources/findings/candidates/proposals), not just
+  // ConflictReviewItems, so it must not drive this guard.
+  const queueConflictCount = Number(reviewQueue?.conflicting ?? 0n);
+  const guardActive =
+    !isLoading && !isError && queueConflictCount > 0 && conflicts.length === 0;
+
+  useEffect(() => {
+    if (guardActive && !autoRefetched.current) {
+      autoRefetched.current = true;
+      void refetch();
+    }
+  }, [guardActive, refetch]);
 
   if (!isAdmin) {
     return (
@@ -420,6 +501,78 @@ export function ResearchConflictReviewPage({
               </div>
             ))}
           </div>
+        ) : isError ? (
+          <div
+            data-ocid="research_conflict.error_state"
+            className="research-empty"
+          >
+            <ShieldAlert
+              className="h-8 w-8 text-destructive"
+              aria-hidden="true"
+            />
+            <p className="research-empty-title">
+              Conflict Review could not be loaded
+            </p>
+            <p className="research-empty-hint">
+              {error?.message ||
+                "The conflict list could not be fetched. Please try again."}
+            </p>
+            <button
+              type="button"
+              data-ocid="research_conflict.retry_button"
+              onClick={() => void refetch()}
+              className="research-retry"
+            >
+              <RefreshCw className="h-4 w-4" aria-hidden="true" />
+              Retry
+            </button>
+          </div>
+        ) : guardActive ? (
+          autoRefetched.current && !isFetching ? (
+            <div
+              data-ocid="research_conflict.sync_state"
+              className="research-empty"
+            >
+              <GitMerge
+                className="h-8 w-8 text-muted-foreground"
+                aria-hidden="true"
+              />
+              <p className="research-empty-title">Conflicts are out of sync</p>
+              <p className="research-empty-hint">
+                The review queue reports {queueConflictCount} unresolved
+                conflict{queueConflictCount === 1 ? "" : "s"}, but the conflict
+                list returned none. The data may still be synchronizing.
+              </p>
+              <button
+                type="button"
+                data-ocid="research_conflict.sync_retry_button"
+                onClick={() => void refetch()}
+                className="research-retry"
+              >
+                <RefreshCw className="h-4 w-4" aria-hidden="true" />
+                Retry
+              </button>
+            </div>
+          ) : (
+            <div
+              data-ocid="research_conflict.loading_state"
+              className="flex flex-col gap-4"
+            >
+              {Array.from({ length: 3 }, (_, i) => `skeleton-${i}`).map(
+                (id) => (
+                  <div
+                    key={id}
+                    className="research-conflict-card"
+                    aria-hidden="true"
+                  >
+                    <div className="h-4 w-40 animate-pulse rounded-full bg-muted" />
+                    <div className="h-20 w-full animate-pulse rounded-lg bg-muted" />
+                    <div className="h-16 w-full animate-pulse rounded-lg bg-muted" />
+                  </div>
+                ),
+              )}
+            </div>
+          )
         ) : conflicts.length === 0 ? (
           <div
             data-ocid="research_conflict.empty_state"

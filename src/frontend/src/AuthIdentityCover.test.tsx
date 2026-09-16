@@ -4,6 +4,7 @@ import {
   LivingStatus,
   type PersonProfile,
   type ProfileClaim,
+  ProfileClaimStatus,
   RelationshipType,
 } from "@/backend";
 import { Principal } from "@icp-sdk/core/principal";
@@ -111,7 +112,7 @@ const {
         id: nextClaimId++,
         personId,
         requestingUserId: principal(),
-        status: "Pending",
+        status: ProfileClaimStatus.Pending,
         submittedDate: 1_700_000_000_000_000_000n,
       };
       claims = [...claims, claim];

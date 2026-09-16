@@ -43,6 +43,7 @@ import MessagingApi "mixins/messaging-api";
 import PendingCountApi "mixins/pending-count-api";
 import ResearchIntakeApi "mixins/research-intake-api";
 import ArchiveResearchBoardNotificationsApi "mixins/archive-research-board-notifications-api";
+import AuditAndWorkloadApi "mixins/audit-and-workload-api";
 import ApiDocMixin "mixins/api-doc";
 
 actor {
@@ -1065,5 +1066,6 @@ actor {
   include PendingCountApi(accessControlState, archiveItems, recipes, stories, mysteryContributions);
   include ResearchIntakeApi(accessControlState, researchSources, proposedFindings, newPersonCandidates, relationshipProposals, conflictReviewItems, researchAuditLog, researchState, profiles, confirmedRelationships, stories, mysteries, archiveItems, notifications);
   include ArchiveResearchBoardNotificationsApi(accessControlState, archiveItems, researchSources, researchState, posts, notifications, claims);
+  include AuditAndWorkloadApi(accessControlState, auditLog, researchAuditLog, conflictReviewItems);
   include ApiDocMixin();
 };

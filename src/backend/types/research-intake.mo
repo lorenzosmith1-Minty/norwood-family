@@ -192,6 +192,18 @@ module {
     #NeedsResearch;
   };
 
+  /// A single fact on a Person Profile that has an unresolved conflict, exposed
+  /// so the Person Profile can show a subtle disputed indicator on that fact.
+  /// `canonicalValue` may be blank when no canonical value exists yet and only a
+  /// proposed value is present. `status` is `#Conflicting` or `#NeedsResearch`
+  /// (both unresolved); resolved conflicts are never exposed here.
+  public type DisputedFact = {
+    field : Text;
+    canonicalValue : Text;
+    proposedValue : Text;
+    status : ReviewStatus;
+  };
+
   /// A single audit entry recording provenance and approval actions for every
   /// finding and its review lifecycle.
   public type ResearchAuditEntry = {

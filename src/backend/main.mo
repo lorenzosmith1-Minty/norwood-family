@@ -24,6 +24,7 @@ import BoardTypes "types/board";
 import MessagingTypes "types/messaging";
 import ResearchIntakeTypes "types/research-intake";
 import ObjectStorageLib "lib/object-storage";
+import FamilyAuthorizationLib "lib/family-authorization";
 import ArchiveLib "lib/archive";
 import OwnershipLib "lib/ownership";
 import AccountIdentityLib "lib/account-identity";
@@ -229,15 +230,6 @@ actor {
     };
   };
 
-  /// Whether the caller is an approved family member: they hold at least one
-  /// approved profile claim, or they are an admin.
-  func isApprovedFamilyMember(caller : Principal) : Bool {
-    if (AccessControl.isAdmin(accessControlState, caller)) {
-      return true;
-    };
-    claims.toArray().any(func c = c.requestingUserId == caller and c.status == #Approved);
-  };
-
   /// OQL row-visibility rule for archive items, mirroring the server-side
   /// archive privacy enforcement in `listApprovedArchiveItems` /
   /// `searchArchiveItems`: `#Public` items are visible to everyone; `#FamilyOnly`
@@ -254,7 +246,7 @@ actor {
           case (?item) {
             switch (item.privacyLevel) {
               case (#Public) true;
-              case (#FamilyOnly) isApprovedFamilyMember(caller);
+              case (#FamilyOnly) FamilyAuthorizationLib.isApprovedFamilyMember(accessControlState, claims, caller);
               case (#Private) item.contributor == caller;
             };
           };
@@ -1051,7 +1043,7 @@ actor {
     ];
   });
   include MixinObjectStorage();
-  include ObjectStorageApi(galleries);
+  include ObjectStorageApi(accessControlState, galleries, claims);
   include ArchiveApi(accessControlState, archiveItems, claims);
   include OwnershipApi(accessControlState, profiles, claims, confirmedRelationships, relationshipRequests, notifications, auditLog);
   include ClaimPersistenceApi(profiles, claims);
@@ -1059,12 +1051,12 @@ actor {
   include NotificationsApi(notifications);
   include AccountIdentityApi(accounts);
   include GovernanceApi(accessControlState, profiles, confirmedRelationships, stewards, successors, removalRequests, auditLog, mergeConflicts, archivedProfiles, galleries, archiveItems, dismissedDuplicates);
-  include FamilyHistoryApi(accessControlState, stories, mysteries, mysteryContributions, profiles, archiveItems);
-  include RecipesApi(accessControlState, recipes, profiles);
+  include FamilyHistoryApi(accessControlState, stories, mysteries, mysteryContributions, profiles, archiveItems, claims);
+  include RecipesApi(accessControlState, recipes, profiles, claims);
   include BoardApi(accessControlState, posts, replies, profiles, notifications, auditLog);
   include MessagingApi(accessControlState, conversations, messages, blocks, reports, profiles, archivedProfiles, notifications, accounts);
   include PendingCountApi(accessControlState, archiveItems, recipes, stories, mysteryContributions);
-  include ResearchIntakeApi(accessControlState, researchSources, proposedFindings, newPersonCandidates, relationshipProposals, conflictReviewItems, researchAuditLog, researchState, profiles, confirmedRelationships, stories, mysteries, archiveItems, notifications);
+  include ResearchIntakeApi(accessControlState, researchSources, proposedFindings, newPersonCandidates, relationshipProposals, conflictReviewItems, researchAuditLog, researchState, profiles, confirmedRelationships, stories, mysteries, archiveItems, notifications, claims);
   include ArchiveResearchBoardNotificationsApi(accessControlState, archiveItems, researchSources, researchState, posts, notifications, claims);
   include AuditAndWorkloadApi(accessControlState, auditLog, researchAuditLog, conflictReviewItems);
   include ApiDocMixin();

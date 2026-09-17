@@ -1194,10 +1194,10 @@ export interface backendInterface {
      */
     addCanonicalStory(title: string, storyText: string, relatedMemberIds: Array<string>, era: string | null, year: bigint | null, location: string | null, evidenceStatus: EvidenceStatus, relatedArchiveItemIds: Array<bigint>): Promise<Story>;
     /**
-     * / Uploads a new photo to a person's gallery. The signed-in caller is
-     * / recorded as the uploader. When the gallery has no profile photo yet, the
-     * / newly added photo is automatically set as the profile photo. Returns the
-     * / stored photo.
+     * / Uploads a new photo to a person's gallery. Requires an approved family
+     * / member; the caller is recorded as the uploader. When the gallery has no
+     * / profile photo yet, the newly added photo is automatically set as the
+     * / profile photo. Returns the stored photo.
      */
     addPhoto(personId: PersonId, filename: string, mimeType: string, blob: ExternalBlob): Promise<Photo>;
     /**
@@ -1333,8 +1333,8 @@ export interface backendInterface {
      */
     createCanonicalMystery(title: string, description: string, relatedMemberIds: Array<string>, relatedBranchId: string | null, knownFacts: Array<string>, possibilities: Array<string>, relatedSourceIds: Array<bigint>, relatedArchiveItemIds: Array<bigint>, status: MysteryStatus): Promise<Mystery>;
     /**
-     * / Creates a new proposed finding. Requires sign-in; the signed-in caller is
-     * / recorded as the submitter. The finding enters as `#Pending`.
+     * / Creates a new proposed finding. Requires an approved family member; the
+     * / caller is recorded as the submitter. The finding enters as `#Pending`.
      */
     createFinding(title: string, evidenceLabel: EvidenceLabel, findingType: FindingType, content: FindingContent, sourceId: SourceId, personId: string | null, newPersonCandidateId: bigint | null): Promise<Result_22>;
     /**
@@ -1344,25 +1344,25 @@ export interface backendInterface {
      */
     createMyself(name: string): Promise<Result_21>;
     /**
-     * / Creates a new Person candidate. Requires sign-in; the signed-in caller is
-     * / recorded as the submitter. The candidate enters as `#Pending`.
+     * / Creates a new Person candidate. Requires an approved family member; the
+     * / caller is recorded as the submitter. The candidate enters as `#Pending`.
      */
     createNewPersonCandidate(name: string, details: string, sourceId: SourceId): Promise<Result_20>;
     /**
-     * / Creates a new relationship proposal. Requires sign-in; the signed-in
-     * / caller is recorded as the submitter. The proposal enters as `#Pending`.
+     * / Creates a new relationship proposal. Requires an approved family member;
+     * / the caller is recorded as the submitter. The proposal enters as `#Pending`.
      */
     createRelationshipProposal(fromPersonId: string, toPersonId: string, relationshipType: string, sourceId: SourceId): Promise<Result_19>;
     /**
-     * / Creates a new source record. Requires sign-in; the signed-in caller is
-     * / recorded as the contributor. The source enters as `#Pending`.
+     * / Creates a new source record. Requires an approved family member; the caller
+     * / is recorded as the contributor. The source enters as `#Pending`.
      */
     createSource(title: string, sourceType: SourceType, description: string, archiveItemId: bigint | null): Promise<Result_18>;
     /**
      * / Uploads a research source file: creates one canonical Archive item
      * / (pending) and links a new Research Source record to it, so no manually
-     * / typed Archive Item ID is required. Requires a signed-in caller; the caller
-     * / is recorded as the contributor of both records.
+     * / typed Archive Item ID is required. Requires an approved family member; the
+     * / caller is recorded as the contributor of both records.
      */
     createSourceWithUpload(title: string, sourceType: SourceType, description: string, blob: ExternalBlob, tags: Array<string>, era: string, year: bigint | null, relatedMemberIds: Array<string>, privacyLevel: PrivacyLevel, classification: ArchiveItemClassification, primarySpeaker: OralHistorySpeaker | null): Promise<Result_17>;
     /**
@@ -1944,29 +1944,30 @@ export interface backendInterface {
      */
     setRelationshipRequestPending(requestId: bigint): Promise<RelationshipRequest | null>;
     /**
-     * / Submits a new archive item. Requires sign-in; the signed-in caller is
-     * / recorded as the contributor. The item is stored in pending state and waits
-     * / for admin approval before appearing in the archive.
+     * / Submits a new archive item. Requires an approved family member; the caller
+     * / is recorded as the contributor. The item is stored in pending state and
+     * / waits for admin approval before appearing in the archive.
      */
     submitArchiveItem(title: string, description: string, itemType: ArchiveItemType, blob: ExternalBlob, era: string, year: bigint | null, tags: Array<string>, relatedMemberIds: Array<string>, relatedBranchId: string | null, sourceStatus: SourceStatus, privacyLevel: PrivacyLevel, classification: ArchiveItemClassification, primarySpeaker: OralHistorySpeaker | null): Promise<ArchiveItem>;
     /**
      * / Submits a mystery contribution (a note, memory, possible lead, or
-     * / source/document reference). Requires sign-in; the signed-in caller is
-     * / recorded as the contributor. The contribution is stored in pending state
+     * / source/document reference). Requires an approved family member; the caller
+     * / is recorded as the contributor. The contribution is stored in pending state
      * / and waits for a Family Steward to review it before altering the canonical
      * / mystery record.
      */
     submitMysteryContribution(mysteryId: MysteryId, contributionType: MysteryContributionType, text: string): Promise<MysteryContribution>;
     /**
-     * / Submits a new recipe. Requires sign-in; the signed-in caller is recorded as
-     * / the contributor. The recipe is stored in pending state and waits for a
-     * / Family Steward to approve it before becoming visible in Family Recipes.
+     * / Submits a new recipe. Requires an approved family member; the caller is
+     * / recorded as the contributor. The recipe is stored in pending state and
+     * / waits for a Family Steward to approve it before becoming visible in Family
+     * / Recipes.
      */
     submitRecipe(title: string, shortDescription: string, originatingPersonId: string, relatedPersonIds: Array<string>, era: string | null, year: bigint | null, location: string | null, familyBranch: string | null, ingredients: Array<string>, instructions: string, familyStory: string | null, tags: Array<string>, privacyLevel: PrivacyLevel, evidenceStatus: EvidenceStatus, linkedMediaIds: Array<bigint>): Promise<Recipe>;
     /**
-     * / Submits a new story. Requires sign-in; the signed-in caller is recorded as
-     * / the contributor. The story is stored in pending state and waits for a
-     * / Family Steward to approve it before becoming visible.
+     * / Submits a new story. Requires an approved family member; the caller is
+     * / recorded as the contributor. The story is stored in pending state and waits
+     * / for a Family Steward to approve it before becoming visible.
      */
     submitStory(title: string, storyText: string, relatedMemberIds: Array<string>, era: string | null, year: bigint | null, location: string | null, evidenceStatus: EvidenceStatus, relatedArchiveItemIds: Array<bigint>): Promise<Story>;
     /**

@@ -12,6 +12,7 @@ import OwnershipTypes "../types/ownership";
 import FamilyHistoryTypes "../types/family-history";
 import ArchiveTypes "../types/archive";
 import ResearchLib "../lib/research-intake";
+import FamilyAuthorizationLib "../lib/family-authorization";
 
 /// Public API for the Historical Research Intake feature. Everything enters as
 /// proposed/reviewable information first; canonical family data is only ever
@@ -38,6 +39,7 @@ mixin (
   mysteries : List.List<FamilyHistoryTypes.Mystery>,
   archiveItems : List.List<ArchiveTypes.ArchiveItem>,
   notifications : List.List<OwnershipTypes.Notification>,
+  claims : List.List<OwnershipTypes.ProfileClaim>,
 ) {
   /// Traps unless the caller is a signed-in Family Steward.
   func requireSteward(caller : Principal) {
@@ -54,15 +56,15 @@ mixin (
     sources.find(func s = s.id == id) != null;
   };
 
-  /// Creates a new source record. Requires sign-in; the signed-in caller is
-  /// recorded as the contributor. The source enters as `#Pending`.
+  /// Creates a new source record. Requires an approved family member; the caller
+  /// is recorded as the contributor. The source enters as `#Pending`.
   public shared ({ caller }) func createSource(
     title : Text,
     sourceType : Types.SourceType,
     description : Text,
     archiveItemId : ?Nat,
   ) : async Result.Result<Types.SourceRecord, Types.ResearchError> {
-    if (caller.isAnonymous()) {
+    if (not FamilyAuthorizationLib.isApprovedFamilyMember(accessControlState, claims, caller)) {
       return #err(#notAuthorized);
     };
     let source = ResearchLib.createSource(
@@ -102,8 +104,8 @@ mixin (
     sources.find(func s = s.id == id);
   };
 
-  /// Creates a new proposed finding. Requires sign-in; the signed-in caller is
-  /// recorded as the submitter. The finding enters as `#Pending`.
+  /// Creates a new proposed finding. Requires an approved family member; the
+  /// caller is recorded as the submitter. The finding enters as `#Pending`.
   public shared ({ caller }) func createFinding(
     title : Text,
     evidenceLabel : Types.EvidenceLabel,
@@ -113,7 +115,7 @@ mixin (
     personId : ?Text,
     newPersonCandidateId : ?Nat,
   ) : async Result.Result<Types.ProposedFinding, Types.ResearchError> {
-    if (caller.isAnonymous()) {
+    if (not FamilyAuthorizationLib.isApprovedFamilyMember(accessControlState, claims, caller)) {
       return #err(#notAuthorized);
     };
     if (not sourceExists(sourceId)) {
@@ -249,14 +251,14 @@ mixin (
     };
   };
 
-  /// Creates a new Person candidate. Requires sign-in; the signed-in caller is
-  /// recorded as the submitter. The candidate enters as `#Pending`.
+  /// Creates a new Person candidate. Requires an approved family member; the
+  /// caller is recorded as the submitter. The candidate enters as `#Pending`.
   public shared ({ caller }) func createNewPersonCandidate(
     name : Text,
     details : Text,
     sourceId : Types.SourceId,
   ) : async Result.Result<Types.NewPersonCandidate, Types.ResearchError> {
-    if (caller.isAnonymous()) {
+    if (not FamilyAuthorizationLib.isApprovedFamilyMember(accessControlState, claims, caller)) {
       return #err(#notAuthorized);
     };
     if (not sourceExists(sourceId)) {
@@ -293,15 +295,15 @@ mixin (
     candidates.toArray();
   };
 
-  /// Creates a new relationship proposal. Requires sign-in; the signed-in
-  /// caller is recorded as the submitter. The proposal enters as `#Pending`.
+  /// Creates a new relationship proposal. Requires an approved family member;
+  /// the caller is recorded as the submitter. The proposal enters as `#Pending`.
   public shared ({ caller }) func createRelationshipProposal(
     fromPersonId : Text,
     toPersonId : Text,
     relationshipType : Text,
     sourceId : Types.SourceId,
   ) : async Result.Result<Types.RelationshipProposal, Types.ResearchError> {
-    if (caller.isAnonymous()) {
+    if (not FamilyAuthorizationLib.isApprovedFamilyMember(accessControlState, claims, caller)) {
       return #err(#notAuthorized);
     };
     if (not sourceExists(sourceId)) {

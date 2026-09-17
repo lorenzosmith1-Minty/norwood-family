@@ -1,17 +1,18 @@
 import AccessControl "mo:caffeineai-authorization/access-control";
 import List "mo:core/List";
 import Map "mo:core/Map";
-import Principal "mo:core/Principal";
 import Runtime "mo:core/Runtime";
 import Time "mo:core/Time";
 import Types "../types/recipes";
 import OwnershipTypes "../types/ownership";
 import RecipesLib "../lib/recipes";
+import FamilyAuthorizationLib "../lib/family-authorization";
 
 mixin (
   accessControlState : AccessControl.AccessControlState,
   recipes : List.List<Types.Recipe>,
   profiles : Map.Map<OwnershipTypes.PersonId, OwnershipTypes.PersonProfile>,
+  claims : List.List<OwnershipTypes.ProfileClaim>,
 ) {
   /// Computes the next recipe id: one greater than the largest existing id, or
   /// `0` when there are no recipes.
@@ -23,9 +24,10 @@ mixin (
     maxId;
   };
 
-  /// Submits a new recipe. Requires sign-in; the signed-in caller is recorded as
-  /// the contributor. The recipe is stored in pending state and waits for a
-  /// Family Steward to approve it before becoming visible in Family Recipes.
+  /// Submits a new recipe. Requires an approved family member; the caller is
+  /// recorded as the contributor. The recipe is stored in pending state and
+  /// waits for a Family Steward to approve it before becoming visible in Family
+  /// Recipes.
   public shared ({ caller }) func submitRecipe(
     title : Text,
     shortDescription : Text,
@@ -43,9 +45,7 @@ mixin (
     evidenceStatus : Types.EvidenceStatus,
     linkedMediaIds : [Nat],
   ) : async Types.Recipe {
-    if (caller.isAnonymous()) {
-      Runtime.trap("Sign-in required to submit a recipe");
-    };
+    FamilyAuthorizationLib.requireApprovedFamilyMember(accessControlState, claims, caller);
     if (profiles.get(originatingPersonId) == null) {
       Runtime.trap("Originating family member not found");
     };

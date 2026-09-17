@@ -1,10 +1,18 @@
+import AccessControl "mo:caffeineai-authorization/access-control";
+import List "mo:core/List";
 import Map "mo:core/Map";
 import Storage "mo:caffeineai-object-storage/Storage";
 import Time "mo:core/Time";
 import Types "../types/object-storage";
+import OwnershipTypes "../types/ownership";
 import ObjectStorageLib "../lib/object-storage";
+import FamilyAuthorizationLib "../lib/family-authorization";
 
-mixin (galleries : Map.Map<Types.PersonId, Types.PhotoGallery>) {
+mixin (
+  accessControlState : AccessControl.AccessControlState,
+  galleries : Map.Map<Types.PersonId, Types.PhotoGallery>,
+  claims : List.List<OwnershipTypes.ProfileClaim>,
+) {
   /// Computes the next photo id for a person's gallery: one greater than the
   /// largest existing id, or `0` when the gallery is empty or absent.
   func nextPhotoId(personId : Types.PersonId) : Types.PhotoId {
@@ -25,16 +33,17 @@ mixin (galleries : Map.Map<Types.PersonId, Types.PhotoGallery>) {
     ObjectStorageLib.listPhotos(galleries, personId);
   };
 
-  /// Uploads a new photo to a person's gallery. The signed-in caller is
-  /// recorded as the uploader. When the gallery has no profile photo yet, the
-  /// newly added photo is automatically set as the profile photo. Returns the
-  /// stored photo.
+  /// Uploads a new photo to a person's gallery. Requires an approved family
+  /// member; the caller is recorded as the uploader. When the gallery has no
+  /// profile photo yet, the newly added photo is automatically set as the
+  /// profile photo. Returns the stored photo.
   public shared ({ caller }) func addPhoto(
     personId : Types.PersonId,
     filename : Text,
     mimeType : Text,
     blob : Storage.ExternalBlob,
   ) : async Types.Photo {
+    FamilyAuthorizationLib.requireApprovedFamilyMember(accessControlState, claims, caller);
     let photo : Types.Photo = {
       id = nextPhotoId(personId);
       blob;

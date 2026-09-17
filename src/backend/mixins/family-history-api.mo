@@ -1,13 +1,13 @@
 import AccessControl "mo:caffeineai-authorization/access-control";
 import List "mo:core/List";
 import Map "mo:core/Map";
-import Principal "mo:core/Principal";
 import Runtime "mo:core/Runtime";
 import Time "mo:core/Time";
 import Types "../types/family-history";
 import OwnershipTypes "../types/ownership";
 import ArchiveTypes "../types/archive";
 import FamilyHistoryLib "../lib/family-history";
+import FamilyAuthorizationLib "../lib/family-authorization";
 
 mixin (
   accessControlState : AccessControl.AccessControlState,
@@ -16,6 +16,7 @@ mixin (
   mysteryContributions : List.List<Types.MysteryContribution>,
   profiles : Map.Map<OwnershipTypes.PersonId, OwnershipTypes.PersonProfile>,
   archiveItems : List.List<ArchiveTypes.ArchiveItem>,
+  claims : List.List<OwnershipTypes.ProfileClaim>,
 ) {
   /// Computes the next story id: one greater than the largest existing id, or
   /// `0` when there are no stories.
@@ -60,9 +61,9 @@ mixin (
     FamilyHistoryLib.listPending(stories);
   };
 
-  /// Submits a new story. Requires sign-in; the signed-in caller is recorded as
-  /// the contributor. The story is stored in pending state and waits for a
-  /// Family Steward to approve it before becoming visible.
+  /// Submits a new story. Requires an approved family member; the caller is
+  /// recorded as the contributor. The story is stored in pending state and waits
+  /// for a Family Steward to approve it before becoming visible.
   public shared ({ caller }) func submitStory(
     title : Text,
     storyText : Text,
@@ -73,9 +74,7 @@ mixin (
     evidenceStatus : Types.EvidenceStatus,
     relatedArchiveItemIds : [Nat],
   ) : async Types.Story {
-    if (caller.isAnonymous()) {
-      Runtime.trap("Sign-in required to submit a story");
-    };
+    FamilyAuthorizationLib.requireApprovedFamilyMember(accessControlState, claims, caller);
     let story : Types.Story = {
       id = nextStoryId();
       title;
@@ -189,8 +188,8 @@ mixin (
   };
 
   /// Submits a mystery contribution (a note, memory, possible lead, or
-  /// source/document reference). Requires sign-in; the signed-in caller is
-  /// recorded as the contributor. The contribution is stored in pending state
+  /// source/document reference). Requires an approved family member; the caller
+  /// is recorded as the contributor. The contribution is stored in pending state
   /// and waits for a Family Steward to review it before altering the canonical
   /// mystery record.
   public shared ({ caller }) func submitMysteryContribution(
@@ -198,9 +197,7 @@ mixin (
     contributionType : Types.MysteryContributionType,
     text : Text,
   ) : async Types.MysteryContribution {
-    if (caller.isAnonymous()) {
-      Runtime.trap("Sign-in required to contribute to a mystery");
-    };
+    FamilyAuthorizationLib.requireApprovedFamilyMember(accessControlState, claims, caller);
     let contribution : Types.MysteryContribution = {
       id = nextContributionId();
       mysteryId;

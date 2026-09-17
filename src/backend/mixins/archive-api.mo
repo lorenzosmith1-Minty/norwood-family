@@ -1,12 +1,12 @@
 import AccessControl "mo:caffeineai-authorization/access-control";
 import List "mo:core/List";
-import Principal "mo:core/Principal";
 import Runtime "mo:core/Runtime";
 import Storage "mo:caffeineai-object-storage/Storage";
 import Time "mo:core/Time";
 import Types "../types/archive";
 import OwnershipTypes "../types/ownership";
 import ArchiveLib "../lib/archive";
+import FamilyAuthorizationLib "../lib/family-authorization";
 
 mixin (
   accessControlState : AccessControl.AccessControlState,
@@ -23,18 +23,9 @@ mixin (
     maxId;
   };
 
-  /// Whether the caller is an approved family member: they hold at least one
-  /// approved profile claim, or they are an admin.
-  func isApprovedFamilyMemberForArchive(caller : Principal) : Bool {
-    if (AccessControl.isAdmin(accessControlState, caller)) {
-      return true;
-    };
-    claims.toArray().any(func c = c.requestingUserId == caller and c.status == #Approved);
-  };
-
-  /// Submits a new archive item. Requires sign-in; the signed-in caller is
-  /// recorded as the contributor. The item is stored in pending state and waits
-  /// for admin approval before appearing in the archive.
+  /// Submits a new archive item. Requires an approved family member; the caller
+  /// is recorded as the contributor. The item is stored in pending state and
+  /// waits for admin approval before appearing in the archive.
   public shared ({ caller }) func submitArchiveItem(
     title : Text,
     description : Text,
@@ -50,9 +41,7 @@ mixin (
     classification : Types.ArchiveItemClassification,
     primarySpeaker : ?Types.OralHistorySpeaker,
   ) : async Types.ArchiveItem {
-    if (caller.isAnonymous()) {
-      Runtime.trap("Unauthorized: You must be signed in");
-    };
+    FamilyAuthorizationLib.requireApprovedFamilyMember(accessControlState, claims, caller);
     if (classification == #OralHistory and primarySpeaker == null) {
       Runtime.trap("A primary speaker is required for Oral History items");
     };
@@ -125,7 +114,7 @@ mixin (
       items,
       caller,
       AccessControl.isAdmin(accessControlState, caller),
-      isApprovedFamilyMemberForArchive(caller),
+      FamilyAuthorizationLib.isApprovedFamilyMember(accessControlState, claims, caller),
     );
   };
 };

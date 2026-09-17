@@ -11,6 +11,7 @@ import BoardTypes "../types/board";
 import OwnershipTypes "../types/ownership";
 import Types "../types/archive-research-board-notifications";
 import Lib "../lib/archive-research-board-notifications";
+import FamilyAuthorizationLib "../lib/family-authorization";
 
 /// Public API for the cross-cutting archive / research-intake / board /
 /// notifications features: archive tag search, research source upload that
@@ -66,8 +67,8 @@ mixin (
 
   /// Uploads a research source file: creates one canonical Archive item
   /// (pending) and links a new Research Source record to it, so no manually
-  /// typed Archive Item ID is required. Requires a signed-in caller; the caller
-  /// is recorded as the contributor of both records.
+  /// typed Archive Item ID is required. Requires an approved family member; the
+  /// caller is recorded as the contributor of both records.
   public shared ({ caller }) func createSourceWithUpload(
     title : Text,
     sourceType : ResearchIntakeTypes.SourceType,
@@ -81,7 +82,7 @@ mixin (
     classification : ArchiveTypes.ArchiveItemClassification,
     primarySpeaker : ?ArchiveTypes.OralHistorySpeaker,
   ) : async Result.Result<Types.SourceUploadResult, ResearchIntakeTypes.ResearchError> {
-    if (caller.isAnonymous()) {
+    if (not FamilyAuthorizationLib.isApprovedFamilyMember(accessControlState, claims, caller)) {
       return #err(#notAuthorized);
     };
     if (classification == #OralHistory and primarySpeaker == null) {
@@ -160,9 +161,7 @@ mixin (
   /// the claimant as read/resolved. The profile status stays `#Claimed` and no
   /// new claim is created. Returns the number of notifications reconciled.
   public shared ({ caller }) func reconcileClaimNotifications(claimId : Nat) : async Nat {
-    if (caller.isAnonymous()) {
-      Runtime.trap("Unauthorized: You must be signed in");
-    };
+    FamilyAuthorizationLib.requireApprovedFamilyMember(accessControlState, claims, caller);
     switch (claims.find(func c = c.id == claimId)) {
       case null { 0 };
       case (?claim) {

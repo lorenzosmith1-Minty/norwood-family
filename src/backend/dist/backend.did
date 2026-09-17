@@ -1206,10 +1206,10 @@ service : {
    vec text, era: opt text, year: opt nat, location: opt text,
    evidenceStatus: EvidenceStatus, relatedArchiveItemIds: vec nat) -> (
    Story);
-  /// Uploads a new photo to a person's gallery. The signed-in caller is
-  /// recorded as the uploader. When the gallery has no profile photo yet, the
-  /// newly added photo is automatically set as the profile photo. Returns the
-  /// stored photo.
+  /// Uploads a new photo to a person's gallery. Requires an approved family
+  /// member; the caller is recorded as the uploader. When the gallery has no
+  /// profile photo yet, the newly added photo is automatically set as the
+  /// profile photo. Returns the stored photo.
   addPhoto: (personId: PersonId, filename: text, mimeType: text, "blob":
    ExternalBlob) -> (Photo);
   /// Adds a missing relationship to the shared family graph. Family Steward
@@ -1311,8 +1311,8 @@ service : {
    vec text, relatedBranchId: opt text, knownFacts: vec text, possibilities:
    vec text, relatedSourceIds: vec nat, relatedArchiveItemIds: vec nat,
    status: MysteryStatus) -> (Mystery);
-  /// Creates a new proposed finding. Requires sign-in; the signed-in caller is
-  /// recorded as the submitter. The finding enters as `#Pending`.
+  /// Creates a new proposed finding. Requires an approved family member; the
+  /// caller is recorded as the submitter. The finding enters as `#Pending`.
   createFinding: (title: text, evidenceLabel: EvidenceLabel, findingType:
    FindingType, content: FindingContent, sourceId: SourceId, personId:
    opt text, newPersonCandidateId: opt nat) -> (Result_22);
@@ -1320,22 +1320,22 @@ service : {
   /// who does not already exist. The user must then connect to an existing
   /// family member via a relationship request.
   createMyself: (name: text) -> (Result_21);
-  /// Creates a new Person candidate. Requires sign-in; the signed-in caller is
-  /// recorded as the submitter. The candidate enters as `#Pending`.
+  /// Creates a new Person candidate. Requires an approved family member; the
+  /// caller is recorded as the submitter. The candidate enters as `#Pending`.
   createNewPersonCandidate: (name: text, details: text, sourceId:
    SourceId) -> (Result_20);
-  /// Creates a new relationship proposal. Requires sign-in; the signed-in
-  /// caller is recorded as the submitter. The proposal enters as `#Pending`.
+  /// Creates a new relationship proposal. Requires an approved family member;
+  /// the caller is recorded as the submitter. The proposal enters as `#Pending`.
   createRelationshipProposal: (fromPersonId: text, toPersonId: text,
    relationshipType: text, sourceId: SourceId) -> (Result_19);
-  /// Creates a new source record. Requires sign-in; the signed-in caller is
-  /// recorded as the contributor. The source enters as `#Pending`.
+  /// Creates a new source record. Requires an approved family member; the caller
+  /// is recorded as the contributor. The source enters as `#Pending`.
   createSource: (title: text, sourceType: SourceType, description: text,
    archiveItemId: opt nat) -> (Result_18);
   /// Uploads a research source file: creates one canonical Archive item
   /// (pending) and links a new Research Source record to it, so no manually
-  /// typed Archive Item ID is required. Requires a signed-in caller; the caller
-  /// is recorded as the contributor of both records.
+  /// typed Archive Item ID is required. Requires an approved family member; the
+  /// caller is recorded as the contributor of both records.
   createSourceWithUpload: (title: text, sourceType: SourceType, description:
    text, "blob": ExternalBlob, tags: vec text, era: text, year: opt nat,
    relatedMemberIds: vec text, privacyLevel: PrivacyLevel, classification:
@@ -1725,9 +1725,9 @@ service : {
   /// Returns a relationship request to pending state. Family Steward only.
   setRelationshipRequestPending: (requestId: nat) ->
    (opt RelationshipRequest);
-  /// Submits a new archive item. Requires sign-in; the signed-in caller is
-  /// recorded as the contributor. The item is stored in pending state and waits
-  /// for admin approval before appearing in the archive.
+  /// Submits a new archive item. Requires an approved family member; the caller
+  /// is recorded as the contributor. The item is stored in pending state and
+  /// waits for admin approval before appearing in the archive.
   submitArchiveItem: (title: text, description: text, itemType:
    ArchiveItemType, "blob": ExternalBlob, era: text, year: opt nat, tags:
    vec text, relatedMemberIds: vec text, relatedBranchId: opt text,
@@ -1735,23 +1735,24 @@ service : {
    ArchiveItemClassification, primarySpeaker: opt OralHistorySpeaker) ->
    (ArchiveItem);
   /// Submits a mystery contribution (a note, memory, possible lead, or
-  /// source/document reference). Requires sign-in; the signed-in caller is
-  /// recorded as the contributor. The contribution is stored in pending state
+  /// source/document reference). Requires an approved family member; the caller
+  /// is recorded as the contributor. The contribution is stored in pending state
   /// and waits for a Family Steward to review it before altering the canonical
   /// mystery record.
   submitMysteryContribution: (mysteryId: MysteryId, contributionType:
    MysteryContributionType, "text": text) -> (MysteryContribution);
-  /// Submits a new recipe. Requires sign-in; the signed-in caller is recorded as
-  /// the contributor. The recipe is stored in pending state and waits for a
-  /// Family Steward to approve it before becoming visible in Family Recipes.
+  /// Submits a new recipe. Requires an approved family member; the caller is
+  /// recorded as the contributor. The recipe is stored in pending state and
+  /// waits for a Family Steward to approve it before becoming visible in Family
+  /// Recipes.
   submitRecipe: (title: text, shortDescription: text, originatingPersonId:
    text, relatedPersonIds: vec text, era: opt text, year: opt nat, location:
    opt text, familyBranch: opt text, ingredients: vec text, instructions:
    text, familyStory: opt text, tags: vec text, privacyLevel: PrivacyLevel,
    evidenceStatus: EvidenceStatus, linkedMediaIds: vec nat) -> (Recipe);
-  /// Submits a new story. Requires sign-in; the signed-in caller is recorded as
-  /// the contributor. The story is stored in pending state and waits for a
-  /// Family Steward to approve it before becoming visible.
+  /// Submits a new story. Requires an approved family member; the caller is
+  /// recorded as the contributor. The story is stored in pending state and waits
+  /// for a Family Steward to approve it before becoming visible.
   submitStory: (title: text, storyText: text, relatedMemberIds: vec text,
    era: opt text, year: opt nat, location: opt text, evidenceStatus:
    EvidenceStatus, relatedArchiveItemIds: vec nat) -> (Story);

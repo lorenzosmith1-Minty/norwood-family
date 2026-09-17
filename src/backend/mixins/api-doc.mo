@@ -71,7 +71,10 @@ Contributions badge.
   shows the initials placeholder).
 - `addPhoto(personId : Text, filename : Text, mimeType : Text, blob : Blob) : async Photo` —
   update. Uploads a new photo to a person's gallery and returns the stored
-  photo. The signed-in caller is recorded as `uploadedBy`. Photo ids are
+  photo. Requires an approved family member (a caller holding at least one
+  `#Approved` profile claim, or a Family Steward); anonymous and signed-in but
+  unapproved callers are rejected with a trap. The caller is recorded as
+  `uploadedBy`. Photo ids are
   assigned per person as `max-existing-id + 1` (or `0` when the gallery is
   empty). The `blob` is the external storage reference (a `Blob`). When the
   person's gallery has no profile photo yet, the newly added photo is
@@ -89,8 +92,10 @@ Contributions badge.
 ### Family Archive
 
 - `submitArchiveItem(title : Text, description : Text, itemType : ArchiveItemType, blob : Blob, era : Text, year : ?Nat, tags : [Text], relatedMemberIds : [Text], relatedBranchId : ?Text, sourceStatus : SourceStatus, privacyLevel : PrivacyLevel, classification : ArchiveItemClassification, primarySpeaker : ?OralHistorySpeaker) : async ArchiveItem` —
-  update. Submits a new archive item. Requires a signed-in (non-anonymous)
-  caller; the caller is recorded as the `contributor`. The item is stored in
+  update. Submits a new archive item. Requires an approved family member (a
+  caller holding at least one `#Approved` profile claim, or a Family Steward);
+  anonymous and signed-in but unapproved callers are rejected with a trap. The
+  caller is recorded as the `contributor`. The item is stored in
   `#Pending` state, assigned a fresh id, and `createdAt` is set to the current
   time. It does not appear in the archive until an admin approves it. The
   `blob` is the external storage reference (a `Blob`); the original file bytes
@@ -421,7 +426,9 @@ Contributions badge.
 - `listPendingStories() : async [Story]` — query. Family Steward only. Returns
   all stories currently in `#Pending` state.
 - `submitStory(title : Text, storyText : Text, relatedMemberIds : [Text], era : ?Text, year : ?Nat, location : ?Text, evidenceStatus : EvidenceStatus, relatedArchiveItemIds : [Nat]) : async Story` —
-  update. Submits a new story. Requires a signed-in (non-anonymous) caller; the
+  update. Submits a new story. Requires an approved family member (a caller
+  holding at least one `#Approved` profile claim, or a Family Steward);
+  anonymous and signed-in but unapproved callers are rejected with a trap. The
   caller is recorded as the `contributor`. The story is stored in `#Pending`
   state and waits for a Family Steward to approve it before becoming visible.
   `evidenceStatus` carries the evidence distinction (`#Documented`,
@@ -447,7 +454,9 @@ Contributions badge.
   becomes a confirmed fact.
 - `submitMysteryContribution(mysteryId : Nat, contributionType : MysteryContributionType, text : Text) : async MysteryContribution` —
   update. Submits a mystery contribution (a note, memory, possible lead, or
-  source/document reference). Requires a signed-in (non-anonymous) caller; the
+  source/document reference). Requires an approved family member (a caller
+  holding at least one `#Approved` profile claim, or a Family Steward);
+  anonymous and signed-in but unapproved callers are rejected with a trap. The
   caller is recorded as the `contributor`. The contribution is stored in
   `#Pending` state and waits for a Family Steward to review it before altering
   the canonical mystery record.
@@ -478,8 +487,10 @@ Contributions badge.
 ### Family Recipes
 
 - `submitRecipe(title : Text, shortDescription : Text, originatingPersonId : Text, relatedPersonIds : [Text], era : ?Text, year : ?Nat, location : ?Text, familyBranch : ?Text, ingredients : [Text], instructions : Text, familyStory : ?Text, tags : [Text], privacyLevel : PrivacyLevel, evidenceStatus : EvidenceStatus, linkedMediaIds : [Nat]) : async Recipe` —
-  update. Submits a new family recipe. Requires a signed-in (non-anonymous)
-  caller; the caller is recorded as the `contributorAccountId`. The recipe is
+  update. Submits a new family recipe. Requires an approved family member (a
+  caller holding at least one `#Approved` profile claim, or a Family Steward);
+  anonymous and signed-in but unapproved callers are rejected with a trap. The
+  caller is recorded as the `contributorAccountId`. The recipe is
   stored in `#Pending` state and waits for a Family Steward to approve it before
   appearing in Family Recipes. `originatingPersonId` must reference a canonical
   Person record — the call traps with `\"Originating family member not found\"`
@@ -648,8 +659,10 @@ Contributions badge.
 
 - `createSource(title : Text, sourceType : SourceType, description : Text, archiveItemId : ?Nat) : async Result<SourceRecord, ResearchError>` —
   update. Creates a lightweight source record so every fact retains provenance.
-  Requires a signed-in (non-anonymous) caller; returns `#err(#notAuthorized)` for
-  an anonymous caller. The signed-in caller is recorded as the `contributor`. The
+  Requires an approved family member (a caller holding at least one `#Approved`
+  profile claim, or a Family Steward); returns `#err(#notAuthorized)` for an
+  anonymous or signed-in but unapproved caller. The caller is recorded as the
+  `contributor`. The
   source enters as `#Pending` and is never auto-approved. `archiveItemId` is
   optional — a source may link to an Archive item without requiring one.
 - `listSources() : async [SourceRecord]` — query. Family Steward only. Lists all
@@ -659,8 +672,10 @@ Contributions badge.
   caller may query a source by id.
 - `createFinding(title : Text, evidenceLabel : EvidenceLabel, findingType : FindingType, content : FindingContent, sourceId : SourceId, personId : ?Text, newPersonCandidateId : ?Nat) : async Result<ProposedFinding, ResearchError>` —
   update. Creates a proposed finding carrying exactly one evidence label and a
-  required source link. Requires a signed-in (non-anonymous) caller; returns
-  `#err(#notAuthorized)` for an anonymous caller and `#err(#notFound(sourceId))`
+  required source link. Requires an approved family member (a caller holding at
+  least one `#Approved` profile claim, or a Family Steward); returns
+  `#err(#notAuthorized)` for an anonymous or signed-in but unapproved caller and
+  `#err(#notFound(sourceId))`
   when the referenced source does not exist. The finding may match an existing
   canonical Person (`personId`) or reference a New Person Candidate
   (`newPersonCandidateId`). The finding enters as `#Pending` and is never
@@ -725,15 +740,19 @@ Contributions badge.
   when it does not exist or is not pending.
 - `createNewPersonCandidate(name : Text, details : Text, sourceId : SourceId) : async Result<NewPersonCandidate, ResearchError>` —
   update. Creates a candidate for a Person not yet in the canonical set. Requires
-  a signed-in (non-anonymous) caller; returns `#err(#notAuthorized)` for an
-  anonymous caller and `#err(#notFound(sourceId))` when the referenced source
+  an approved family member (a caller holding at least one `#Approved` profile
+  claim, or a Family Steward); returns `#err(#notAuthorized)` for an anonymous or
+  signed-in but unapproved caller and `#err(#notFound(sourceId))` when the
+  referenced source
   does not exist. The candidate enters as `#Pending`; approved candidates become
   canonical Person records.
 - `listNewPersonCandidates() : async [NewPersonCandidate]` — query. Family
   Steward only. Lists all New Person candidates.
 - `createRelationshipProposal(fromPersonId : Text, toPersonId : Text, relationshipType : Text, sourceId : SourceId) : async Result<RelationshipProposal, ResearchError>` —
-  update. Proposes a relationship between two Persons. Requires a signed-in
-  (non-anonymous) caller; returns `#err(#notAuthorized)` for an anonymous caller
+  update. Proposes a relationship between two Persons. Requires an approved
+  family member (a caller holding at least one `#Approved` profile claim, or a
+  Family Steward); returns `#err(#notAuthorized)` for an anonymous or signed-in
+  but unapproved caller
   and `#err(#notFound(sourceId))` when the referenced source does not exist. The
   proposal enters as `#Pending`; approved proposals route to the family graph.
 - `listRelationshipProposals() : async [RelationshipProposal]` — query. Family
@@ -835,8 +854,10 @@ Contributions badge.
   is required. The Archive item's `itemType` is derived from the source type
   (`#ResearchNotes` becomes `#Research`; the other source types become
   `#Document`), and the caller is recorded as the `contributor` of both records
-  (provenance). Requires a signed-in (non-anonymous) caller; returns
-  `#err(#notAuthorized)` for an anonymous caller. As with `submitArchiveItem`,
+  (provenance). Requires an approved family member (a caller holding at least one
+  `#Approved` profile claim, or a Family Steward); returns
+  `#err(#notAuthorized)` for an anonymous or signed-in but unapproved caller. As
+  with `submitArchiveItem`,
   `classification == #OralHistory` requires a `primarySpeaker` (returns
   `#err(#invalidState(\"A primary speaker is required for Oral History items\"))`
   when `null`) and `classification == #Standard` forbids one (returns
@@ -861,8 +882,11 @@ Contributions badge.
   notification already reflects the final approved state. The profile status
   stays `#Claimed` and no new claim is created. Returns the number of
   notifications reconciled (0 when the claim does not exist or is not
-  `#Approved`). Requires a signed-in (non-anonymous) caller; traps with
-  `\"Unauthorized: You must be signed in\"` for an anonymous caller.
+  `#Approved`). Requires an approved family member (a caller holding at least one
+  `#Approved` profile claim, or a Family Steward); traps with
+  `\"Unauthorized: You must be signed in\"` for an anonymous caller and
+  `\"Unauthorized: Only approved family members can contribute family content\"`
+  for a signed-in but unapproved caller.
 
 ### Object Query Layer (OQL)
 
@@ -1240,8 +1264,10 @@ contributions count\"` when the caller is not an admin.
 
 The Historical Research Intake methods gate on sign-in and role. The creation
 methods — `createSource`, `createFinding`, `createNewPersonCandidate`, and
-`createRelationshipProposal` — require a signed-in (non-anonymous) caller and
-return `#err(#notAuthorized)` for an anonymous caller (they do not trap). The
+`createRelationshipProposal` — require an approved family member (a caller
+holding at least one `#Approved` profile claim, or a Family Steward) and
+return `#err(#notAuthorized)` for an anonymous or signed-in but unapproved
+caller (they do not trap). The
 Family Steward review methods — `listSources`, `listFindings`,
 `listNewPersonCandidates`, `listRelationshipProposals`,
 `listConflictReviewItems`, `approveFinding`, `rejectFinding`,
@@ -2286,7 +2312,8 @@ no async job to poll; the frontend can call the list methods (steward) or
   is a pair with no single unique id.
 - The Historical Research Intake creation methods (`createSource`,
   `createFinding`, `createNewPersonCandidate`, `createRelationshipProposal`)
-  return `#err(#notAuthorized)` for an anonymous caller rather than trapping.
+  return `#err(#notAuthorized)` for an anonymous or signed-in but unapproved
+  caller rather than trapping.
   `createFinding`, `createNewPersonCandidate`, and
   `createRelationshipProposal` return `#err(#notFound(sourceId))` when the
   referenced source does not exist.

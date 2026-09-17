@@ -926,10 +926,10 @@ export interface _SERVICE {
     Story
   >,
   /**
-   * / Uploads a new photo to a person's gallery. The signed-in caller is
-   * / recorded as the uploader. When the gallery has no profile photo yet, the
-   * / newly added photo is automatically set as the profile photo. Returns the
-   * / stored photo.
+   * / Uploads a new photo to a person's gallery. Requires an approved family
+   * / member; the caller is recorded as the uploader. When the gallery has no
+   * / profile photo yet, the newly added photo is automatically set as the
+   * / profile photo. Returns the stored photo.
    */
   'addPhoto' : ActorMethod<[PersonId, string, string, ExternalBlob], Photo>,
   /**
@@ -1114,8 +1114,8 @@ export interface _SERVICE {
     Mystery
   >,
   /**
-   * / Creates a new proposed finding. Requires sign-in; the signed-in caller is
-   * / recorded as the submitter. The finding enters as `#Pending`.
+   * / Creates a new proposed finding. Requires an approved family member; the
+   * / caller is recorded as the submitter. The finding enters as `#Pending`.
    */
   'createFinding' : ActorMethod<
     [
@@ -1136,24 +1136,24 @@ export interface _SERVICE {
    */
   'createMyself' : ActorMethod<[string], Result_21>,
   /**
-   * / Creates a new Person candidate. Requires sign-in; the signed-in caller is
-   * / recorded as the submitter. The candidate enters as `#Pending`.
+   * / Creates a new Person candidate. Requires an approved family member; the
+   * / caller is recorded as the submitter. The candidate enters as `#Pending`.
    */
   'createNewPersonCandidate' : ActorMethod<
     [string, string, SourceId],
     Result_20
   >,
   /**
-   * / Creates a new relationship proposal. Requires sign-in; the signed-in
-   * / caller is recorded as the submitter. The proposal enters as `#Pending`.
+   * / Creates a new relationship proposal. Requires an approved family member;
+   * / the caller is recorded as the submitter. The proposal enters as `#Pending`.
    */
   'createRelationshipProposal' : ActorMethod<
     [string, string, string, SourceId],
     Result_19
   >,
   /**
-   * / Creates a new source record. Requires sign-in; the signed-in caller is
-   * / recorded as the contributor. The source enters as `#Pending`.
+   * / Creates a new source record. Requires an approved family member; the caller
+   * / is recorded as the contributor. The source enters as `#Pending`.
    */
   'createSource' : ActorMethod<
     [string, SourceType, string, [] | [bigint]],
@@ -1162,8 +1162,8 @@ export interface _SERVICE {
   /**
    * / Uploads a research source file: creates one canonical Archive item
    * / (pending) and links a new Research Source record to it, so no manually
-   * / typed Archive Item ID is required. Requires a signed-in caller; the caller
-   * / is recorded as the contributor of both records.
+   * / typed Archive Item ID is required. Requires an approved family member; the
+   * / caller is recorded as the contributor of both records.
    */
   'createSourceWithUpload' : ActorMethod<
     [
@@ -1809,9 +1809,9 @@ export interface _SERVICE {
     [] | [RelationshipRequest]
   >,
   /**
-   * / Submits a new archive item. Requires sign-in; the signed-in caller is
-   * / recorded as the contributor. The item is stored in pending state and waits
-   * / for admin approval before appearing in the archive.
+   * / Submits a new archive item. Requires an approved family member; the caller
+   * / is recorded as the contributor. The item is stored in pending state and
+   * / waits for admin approval before appearing in the archive.
    */
   'submitArchiveItem' : ActorMethod<
     [
@@ -1833,8 +1833,8 @@ export interface _SERVICE {
   >,
   /**
    * / Submits a mystery contribution (a note, memory, possible lead, or
-   * / source/document reference). Requires sign-in; the signed-in caller is
-   * / recorded as the contributor. The contribution is stored in pending state
+   * / source/document reference). Requires an approved family member; the caller
+   * / is recorded as the contributor. The contribution is stored in pending state
    * / and waits for a Family Steward to review it before altering the canonical
    * / mystery record.
    */
@@ -1843,9 +1843,10 @@ export interface _SERVICE {
     MysteryContribution
   >,
   /**
-   * / Submits a new recipe. Requires sign-in; the signed-in caller is recorded as
-   * / the contributor. The recipe is stored in pending state and waits for a
-   * / Family Steward to approve it before becoming visible in Family Recipes.
+   * / Submits a new recipe. Requires an approved family member; the caller is
+   * / recorded as the contributor. The recipe is stored in pending state and
+   * / waits for a Family Steward to approve it before becoming visible in Family
+   * / Recipes.
    */
   'submitRecipe' : ActorMethod<
     [
@@ -1868,9 +1869,9 @@ export interface _SERVICE {
     Recipe
   >,
   /**
-   * / Submits a new story. Requires sign-in; the signed-in caller is recorded as
-   * / the contributor. The story is stored in pending state and waits for a
-   * / Family Steward to approve it before becoming visible.
+   * / Submits a new story. Requires an approved family member; the caller is
+   * / recorded as the contributor. The story is stored in pending state and waits
+   * / for a Family Steward to approve it before becoming visible.
    */
   'submitStory' : ActorMethod<
     [

@@ -113,6 +113,8 @@ export interface SubmitArchiveItemInput {
   title: string;
   description: string;
   itemType: ArchiveItemType;
+  /** The declared MIME type of the uploaded file. */
+  mimeType: string;
   blob: ExternalBlob;
   era: string;
   year: bigint | null;
@@ -138,6 +140,7 @@ export function useSubmitArchiveItem() {
         input.title,
         input.description,
         input.itemType,
+        input.mimeType,
         input.blob,
         input.era,
         input.year,

@@ -12,6 +12,9 @@ module {
     title : Text;
     description : Text;
     itemType : ArchiveTypes.ArchiveItemType;
+    /// Caller-declared MIME type of the uploaded bytes. Validated against the
+    /// board attachment allowlist before the upload is stored.
+    mimeType : Text;
     blob : Storage.ExternalBlob;
     era : Text;
     year : ?Nat;

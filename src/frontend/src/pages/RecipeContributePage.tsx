@@ -18,6 +18,7 @@ import {
 } from "../hooks/useArchiveStorage";
 import { useCanonicalPerson } from "../hooks/useCanonicalPerson";
 import { useSubmitRecipe } from "../hooks/useRecipes";
+import { sanitizeFilename, validateRecipeMedia } from "../lib/fileValidation";
 import {
   ArchiveItemClassification,
   ArchiveItemType,
@@ -166,8 +167,30 @@ export function RecipeContributePage({
 
   const handleFile = async (file: File) => {
     if (!file) return;
+    // Pre-read validation: recipe media is image-only, 10 MB ceiling.
+    const validation = validateRecipeMedia(file);
+    if (!validation.valid) {
+      setError(validation.error);
+      setFileBytes(null);
+      setFileName("");
+      setFileMime("");
+      setProgress(null);
+      return;
+    }
+    const safeName = sanitizeFilename(file.name);
+    if (safeName === null) {
+      setError(
+        "That filename can't be used. Please rename the file and try again.",
+      );
+      setFileBytes(null);
+      setFileName("");
+      setFileMime("");
+      setProgress(null);
+      return;
+    }
+    setError(null);
     setFileBytes(new Uint8Array(await file.arrayBuffer()));
-    setFileName(file.name);
+    setFileName(safeName);
     setFileMime(file.type);
     setProgress(null);
   };
@@ -277,6 +300,7 @@ export function RecipeContributePage({
           title: fileName,
           description: `Recipe media for "${title.trim()}"`,
           itemType: ArchiveItemType.Photo,
+          mimeType: fileMime,
           blob,
           era: era.trim(),
           year: parseYear(year),

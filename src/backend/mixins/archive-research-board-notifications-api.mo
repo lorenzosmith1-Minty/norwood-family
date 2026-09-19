@@ -4,7 +4,6 @@ import Principal "mo:core/Principal";
 import Runtime "mo:core/Runtime";
 import Time "mo:core/Time";
 import Storage "mo:caffeineai-object-storage/Storage";
-import AccessControl "mo:caffeineai-authorization/access-control";
 import ArchiveTypes "../types/archive";
 import ResearchIntakeTypes "../types/research-intake";
 import BoardTypes "../types/board";
@@ -14,13 +13,14 @@ import Types "../types/archive-research-board-notifications";
 import Lib "../lib/archive-research-board-notifications";
 import FamilyAuthorizationLib "../lib/family-authorization";
 import StewardAuthorityLib "../lib/steward-authority";
+import InputValidation "../lib/input-validation";
+import InputValidationTypes "../types/input-validation";
 
 /// Public API for the cross-cutting archive / research-intake / board /
 /// notifications features: archive tag search, research source upload that
 /// creates a canonical Archive item, board posts with media attachments, and
 /// stale claim notification reconciliation.
 mixin (
-  accessControlState : AccessControl.AccessControlState,
   archiveItems : List.List<ArchiveTypes.ArchiveItem>,
   researchSources : List.List<ResearchIntakeTypes.SourceRecord>,
   researchState : { var nextSourceId : Nat },
@@ -34,8 +34,24 @@ mixin (
     if (caller.isAnonymous()) {
       Runtime.trap("Unauthorized: You must be signed in");
     };
-    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
+    if (not FamilyAuthorizationLib.isApprovedFamilyMember(stewards, claims, caller)) {
       Runtime.trap("Unauthorized: Only approved family members can access the message board");
+    };
+  };
+
+  /// Maps an archive item type to the upload surface whose MIME allowlist and
+  /// byte ceiling apply. The itemType is not trusted on its own: the caller's
+  /// MIME type must be allowed for the surface the itemType selects.
+  func mediaArchiveSurfaceFor(itemType : ArchiveTypes.ArchiveItemType) : InputValidationTypes.UploadSurface {
+    switch (itemType) {
+      case (#Photo) #ArchiveImage;
+      case (#Document) #ArchiveDocument;
+      case (#Audio) #ArchiveAudio;
+      case (#Video) #ArchiveVideo;
+      case (#WrittenStoryNote) #ArchiveDocument;
+      case (#Research) #ArchiveDocument;
+      case (#WorkBusiness) #ArchiveDocument;
+      case (#Other) #ArchiveDocument;
     };
   };
 
@@ -76,6 +92,7 @@ mixin (
     title : Text,
     sourceType : ResearchIntakeTypes.SourceType,
     description : Text,
+    mimeType : Text,
     blob : Storage.ExternalBlob,
     tags : [Text],
     era : Text,
@@ -94,6 +111,15 @@ mixin (
     if (classification == #Standard and primarySpeaker != null) {
       return #err(#invalidState("A primary speaker is only allowed on Oral History items"));
     };
+    // Feature/content-type consistency: a research source upload is a document
+    // or research note, so it validates against the archive document surface.
+    // The MIME type is not trusted on its own.
+    InputValidation.requireUpload(#ArchiveDocument, mimeType, blob);
+    let cleanTitle = InputValidation.requireText("title", title, InputValidation.MAX_TITLE_CHARS);
+    let cleanDescription = InputValidation.requireText("description", description, InputValidation.MAX_DESCRIPTION_CHARS);
+    let cleanEra = InputValidation.requireText("era", era, InputValidation.MAX_LOCATION_CHARS);
+    let cleanTags = InputValidation.requireTags(tags);
+    let cleanRelated = InputValidation.requireRelatedPersonIds(relatedMemberIds);
     let result = Lib.createSourceWithUpload(
       archiveItems,
       researchSources,
@@ -141,16 +167,35 @@ mixin (
     tags : [Text],
   ) : async BoardTypes.Post {
     requireBoardMemberForMedia(caller);
+    let cleanTitle = InputValidation.requireOptionalText("title", title, InputValidation.MAX_TITLE_CHARS);
+    let cleanBody = InputValidation.requireText("body", body, InputValidation.MAX_BOARD_POST_CHARS);
+    let cleanRelated = InputValidation.requireRelatedPersonIds(relatedPersonIds);
+    let cleanTags = InputValidation.requireTags(tags);
+    InputValidation.requireArraySize("newUploads", newUploads.size(), InputValidation.MAX_BOARD_ATTACHMENTS);
+    InputValidation.requireArraySize("existingArchiveItemIds", existingArchiveItemIds.size(), InputValidation.MAX_MEDIA_ITEMS_PER_CALL);
+    // Validate every new upload before any of them is stored. The itemType is
+    // not trusted on its own: the declared MIME type must be allowed both for
+    // the board attachment surface and for the surface the itemType selects, so
+    // an #Audio itemType carrying an image MIME is rejected.
+    for (upload in newUploads.values()) {
+      InputValidation.requireUpload(#BoardAttachment, upload.mimeType, upload.blob);
+      InputValidation.requireMimeType(mediaArchiveSurfaceFor(upload.itemType), upload.mimeType);
+      ignore InputValidation.requireText("upload title", upload.title, InputValidation.MAX_TITLE_CHARS);
+      ignore InputValidation.requireText("upload description", upload.description, InputValidation.MAX_DESCRIPTION_CHARS);
+      ignore InputValidation.requireText("upload era", upload.era, InputValidation.MAX_LOCATION_CHARS);
+      ignore InputValidation.requireTags(upload.tags);
+      ignore InputValidation.requireRelatedPersonIds(upload.relatedMemberIds);
+    };
     let post : BoardTypes.Post = {
       postId = nextPostId();
       authorAccountId = caller;
       authorPersonId = caller.toText();
-      title;
-      body;
+      title = cleanTitle;
+      body = cleanBody;
       postType;
-      relatedPersonIds;
+      relatedPersonIds = cleanRelated;
       linkedMediaIds = [];
-      tags;
+      tags = cleanTags;
       createdAt = Time.now();
       updatedAt = Time.now();
       status = #Active;

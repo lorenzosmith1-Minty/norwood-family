@@ -82,17 +82,48 @@ function isPdfDocument(item: ArchiveItem): boolean {
 }
 
 /**
- * True when a document can be rendered in-app by the browser: PDFs and images.
- * Browser support is judged from the stored MIME type, falling back to the
- * filename extension when the MIME type is absent. Word and other formats are
- * not previewable and offer Download Original only.
+ * Raster image MIME types that are safe to render inline as an <img>. SVG is
+ * deliberately excluded: it is a scriptable document type that can execute
+ * embedded scripts and same-origin requests when loaded as a top-level
+ * document, so it is download-only.
+ */
+const SAFE_IMAGE_MIME_TYPES = new Set([
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/gif",
+  "image/webp",
+  "image/bmp",
+  "image/x-icon",
+  "image/vnd.microsoft.icon",
+  "image/avif",
+  "image/tiff",
+]);
+
+/** Raster image filename extensions, used only when the MIME type is absent. */
+const SAFE_IMAGE_EXTENSIONS = /\.(jpe?g|png|gif|webp|bmp|ico|avif|tiff?)$/;
+
+/**
+ * True when the document is a raster image that can be rendered inline as an
+ * <img>. Judged from the stored MIME type, falling back to the filename
+ * extension only when the MIME type is absent. SVG, HTML, XML, and every other
+ * scriptable or unknown type are excluded and remain download-only.
+ */
+function isRasterImageDocument(item: ArchiveItem): boolean {
+  const mime = item.blob.contentType?.toLowerCase() ?? "";
+  if (mime) return SAFE_IMAGE_MIME_TYPES.has(mime);
+  const name = item.blob.filename?.toLowerCase() ?? "";
+  return SAFE_IMAGE_EXTENSIONS.test(name);
+}
+
+/**
+ * True when a document can be rendered in-app by the browser: PDFs (in a
+ * sandboxed iframe) and raster images (as an <img>). HTML, SVG, XML, and any
+ * other scriptable or unknown MIME type are never previewed inline and offer
+ * Download Original only.
  */
 function isPreviewableDocument(item: ArchiveItem): boolean {
-  if (isPdfDocument(item)) return true;
-  const mime = item.blob.contentType?.toLowerCase() ?? "";
-  if (mime.startsWith("image/")) return true;
-  const name = item.blob.filename?.toLowerCase() ?? "";
-  return /\.(jpe?g|png|gif|webp|svg|bmp|ico)$/.test(name);
+  return isPdfDocument(item) || isRasterImageDocument(item);
 }
 
 /**
@@ -331,7 +362,15 @@ export function ArchiveDetailPage({
               </div>
               <div className="preview-stage-body">
                 {isPdfDocument(item) ? (
-                  <iframe src={artifactUrl} title={filename || item.title} />
+                  /* sandbox="" applies every restriction: no script execution,
+                     no forms, no top-level navigation, and no same-origin
+                     access. The PDF viewer needs no permission to render, so
+                     none is granted. */
+                  <iframe
+                    src={artifactUrl}
+                    title={filename || item.title}
+                    sandbox=""
+                  />
                 ) : (
                   <img src={artifactUrl} alt={item.title} />
                 )}

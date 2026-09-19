@@ -9,6 +9,7 @@ import GovernanceTypes "../types/governance";
 import FamilyHistoryLib "../lib/family-history";
 import FamilyAuthorizationLib "../lib/family-authorization";
 import StewardAuthorityLib "../lib/steward-authority";
+import InputValidation "../lib/input-validation";
 
 mixin (
   stories : List.List<Types.Story>,
@@ -76,14 +77,20 @@ mixin (
     relatedArchiveItemIds : [Nat],
   ) : async Types.Story {
     FamilyAuthorizationLib.requireApprovedFamilyMember(stewards, claims, caller);
+    let cleanTitle = InputValidation.requireText("title", title, InputValidation.MAX_TITLE_CHARS);
+    let cleanStoryText = InputValidation.requireText("storyText", storyText, InputValidation.MAX_DESCRIPTION_CHARS);
+    let cleanRelated = InputValidation.requireRelatedPersonIds(relatedMemberIds);
+    let cleanEra = InputValidation.requireOptionalText("era", era, InputValidation.MAX_LOCATION_CHARS);
+    let cleanLocation = InputValidation.requireOptionalText("location", location, InputValidation.MAX_LOCATION_CHARS);
+    InputValidation.requireArraySize("relatedArchiveItemIds", relatedArchiveItemIds.size(), InputValidation.MAX_MEDIA_ITEMS_PER_CALL);
     let story : Types.Story = {
       id = nextStoryId();
-      title;
-      storyText;
-      relatedMemberIds;
-      era;
+      title = cleanTitle;
+      storyText = cleanStoryText;
+      relatedMemberIds = cleanRelated;
+      era = cleanEra;
       year;
-      location;
+      location = cleanLocation;
       contributor = caller;
       evidenceStatus;
       relatedArchiveItemIds;
@@ -126,14 +133,20 @@ mixin (
     if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can add canonical stories");
     };
+    let cleanTitle = InputValidation.requireText("title", title, InputValidation.MAX_TITLE_CHARS);
+    let cleanStoryText = InputValidation.requireText("storyText", storyText, InputValidation.MAX_DESCRIPTION_CHARS);
+    let cleanRelated = InputValidation.requireRelatedPersonIds(relatedMemberIds);
+    let cleanEra = InputValidation.requireOptionalText("era", era, InputValidation.MAX_LOCATION_CHARS);
+    let cleanLocation = InputValidation.requireOptionalText("location", location, InputValidation.MAX_LOCATION_CHARS);
+    InputValidation.requireArraySize("relatedArchiveItemIds", relatedArchiveItemIds.size(), InputValidation.MAX_MEDIA_ITEMS_PER_CALL);
     let story : Types.Story = {
       id = nextStoryId();
-      title;
-      storyText;
-      relatedMemberIds;
-      era;
+      title = cleanTitle;
+      storyText = cleanStoryText;
+      relatedMemberIds = cleanRelated;
+      era = cleanEra;
       year;
-      location;
+      location = cleanLocation;
       contributor = caller;
       evidenceStatus;
       relatedArchiveItemIds;
@@ -160,16 +173,22 @@ mixin (
     if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can edit canonical stories");
     };
+    let cleanTitle = InputValidation.requireText("title", title, InputValidation.MAX_TITLE_CHARS);
+    let cleanStoryText = InputValidation.requireText("storyText", storyText, InputValidation.MAX_DESCRIPTION_CHARS);
+    let cleanRelated = InputValidation.requireRelatedPersonIds(relatedMemberIds);
+    let cleanEra = InputValidation.requireOptionalText("era", era, InputValidation.MAX_LOCATION_CHARS);
+    let cleanLocation = InputValidation.requireOptionalText("location", location, InputValidation.MAX_LOCATION_CHARS);
+    InputValidation.requireArraySize("relatedArchiveItemIds", relatedArchiveItemIds.size(), InputValidation.MAX_MEDIA_ITEMS_PER_CALL);
     switch (stories.find(func s = s.id == id)) {
       case (?existing) {
         let updated : Types.Story = {
           id;
-          title;
-          storyText;
-          relatedMemberIds;
-          era;
+          title = cleanTitle;
+          storyText = cleanStoryText;
+          relatedMemberIds = cleanRelated;
+          era = cleanEra;
           year;
-          location;
+          location = cleanLocation;
           contributor = existing.contributor;
           evidenceStatus;
           relatedArchiveItemIds;
@@ -199,11 +218,12 @@ mixin (
     text : Text,
   ) : async Types.MysteryContribution {
     FamilyAuthorizationLib.requireApprovedFamilyMember(stewards, claims, caller);
+    let cleanText = InputValidation.requireText("text", text, InputValidation.MAX_DESCRIPTION_CHARS);
     let contribution : Types.MysteryContribution = {
       id = nextContributionId();
       mysteryId;
       contributionType;
-      text;
+      text = cleanText;
       contributor = caller;
       status = #Pending;
       createdAt = Time.now();
@@ -246,12 +266,18 @@ mixin (
     if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can create canonical mysteries");
     };
+    let cleanTitle = InputValidation.requireText("title", title, InputValidation.MAX_TITLE_CHARS);
+    let cleanDescription = InputValidation.requireText("description", description, InputValidation.MAX_DESCRIPTION_CHARS);
+    let cleanRelated = InputValidation.requireRelatedPersonIds(relatedMemberIds);
+    let cleanBranch = InputValidation.requireOptionalText("relatedBranchId", relatedBranchId, InputValidation.MAX_LOCATION_CHARS);
+    InputValidation.requireArraySize("relatedSourceIds", relatedSourceIds.size(), InputValidation.MAX_MEDIA_ITEMS_PER_CALL);
+    InputValidation.requireArraySize("relatedArchiveItemIds", relatedArchiveItemIds.size(), InputValidation.MAX_MEDIA_ITEMS_PER_CALL);
     let mystery : Types.Mystery = {
       id = nextMysteryId();
-      title;
-      description;
-      relatedMemberIds;
-      relatedBranchId;
+      title = cleanTitle;
+      description = cleanDescription;
+      relatedMemberIds = cleanRelated;
+      relatedBranchId = cleanBranch;
       knownFacts;
       possibilities;
       relatedSourceIds;
@@ -282,14 +308,20 @@ mixin (
     if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can edit canonical mysteries");
     };
+    let cleanTitle = InputValidation.requireText("title", title, InputValidation.MAX_TITLE_CHARS);
+    let cleanDescription = InputValidation.requireText("description", description, InputValidation.MAX_DESCRIPTION_CHARS);
+    let cleanRelated = InputValidation.requireRelatedPersonIds(relatedMemberIds);
+    let cleanBranch = InputValidation.requireOptionalText("relatedBranchId", relatedBranchId, InputValidation.MAX_LOCATION_CHARS);
+    InputValidation.requireArraySize("relatedSourceIds", relatedSourceIds.size(), InputValidation.MAX_MEDIA_ITEMS_PER_CALL);
+    InputValidation.requireArraySize("relatedArchiveItemIds", relatedArchiveItemIds.size(), InputValidation.MAX_MEDIA_ITEMS_PER_CALL);
     switch (mysteries.find(func m = m.id == id)) {
       case (?existing) {
         let updated : Types.Mystery = {
           id;
-          title;
-          description;
-          relatedMemberIds;
-          relatedBranchId;
+          title = cleanTitle;
+          description = cleanDescription;
+          relatedMemberIds = cleanRelated;
+          relatedBranchId = cleanBranch;
           knownFacts;
           possibilities;
           relatedSourceIds;
@@ -317,8 +349,10 @@ mixin (
     if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can mark mysteries resolved");
     };
+    let cleanSummary = InputValidation.requireText("summary", summary, InputValidation.MAX_DESCRIPTION_CHARS);
+    InputValidation.requireArraySize("supportingEvidence", supportingEvidence.size(), InputValidation.MAX_MEDIA_ITEMS_PER_CALL);
     let resolution : Types.Resolution = {
-      summary;
+      summary = cleanSummary;
       supportingEvidence;
       resolvedAt = Time.now();
       resolvedBy = caller;

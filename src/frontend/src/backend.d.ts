@@ -66,6 +66,7 @@ export interface BoardMediaUpload {
     blob: ExternalBlob;
     tags: Array<string>;
     year?: bigint;
+    mimeType: string;
     description: string;
     privacyLevel: PrivacyLevel;
     primarySpeaker?: OralHistorySpeaker;
@@ -1389,7 +1390,7 @@ export interface backendInterface {
      * / typed Archive Item ID is required. Requires an approved family member; the
      * / caller is recorded as the contributor of both records.
      */
-    createSourceWithUpload(title: string, sourceType: SourceType, description: string, blob: ExternalBlob, tags: Array<string>, era: string, year: bigint | null, relatedMemberIds: Array<string>, privacyLevel: PrivacyLevel, classification: ArchiveItemClassification, primarySpeaker: OralHistorySpeaker | null): Promise<Result_17>;
+    createSourceWithUpload(title: string, sourceType: SourceType, description: string, mimeType: string, blob: ExternalBlob, tags: Array<string>, era: string, year: bigint | null, relatedMemberIds: Array<string>, privacyLevel: PrivacyLevel, classification: ArchiveItemClassification, primarySpeaker: OralHistorySpeaker | null): Promise<Result_17>;
     /**
      * / Designates an approved claimed family member as a successor steward with a
      * / priority/order. A successor is a designation only until activated.
@@ -1996,7 +1997,7 @@ export interface backendInterface {
      * / is recorded as the contributor. The item is stored in pending state and
      * / waits for admin approval before appearing in the archive.
      */
-    submitArchiveItem(title: string, description: string, itemType: ArchiveItemType, blob: ExternalBlob, era: string, year: bigint | null, tags: Array<string>, relatedMemberIds: Array<string>, relatedBranchId: string | null, sourceStatus: SourceStatus, privacyLevel: PrivacyLevel, classification: ArchiveItemClassification, primarySpeaker: OralHistorySpeaker | null): Promise<ArchiveItem>;
+    submitArchiveItem(title: string, description: string, itemType: ArchiveItemType, mimeType: string, blob: ExternalBlob, era: string, year: bigint | null, tags: Array<string>, relatedMemberIds: Array<string>, relatedBranchId: string | null, sourceStatus: SourceStatus, privacyLevel: PrivacyLevel, classification: ArchiveItemClassification, primarySpeaker: OralHistorySpeaker | null): Promise<ArchiveItem>;
     /**
      * / Submits a mystery contribution (a note, memory, possible lead, or
      * / source/document reference). Requires an approved family member; the caller

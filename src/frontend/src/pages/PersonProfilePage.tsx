@@ -86,6 +86,7 @@ import { useRecipesForPerson } from "../hooks/useRecipes";
 import { useMyRelationshipRequests } from "../hooks/useRelationshipRequests";
 import { useListConflictsForPerson } from "../hooks/useResearchIntake";
 import { useIsSteward } from "../hooks/useStewardAuthority";
+import { sanitizeFilename, validateFile } from "../lib/fileValidation";
 import type { ArchiveItem } from "../types/archive";
 import { getMediaKind } from "../types/archive";
 import {
@@ -2911,6 +2912,7 @@ function PhotoGallery({
   const setProfilePhoto = useSetProfilePhoto();
   const removePhoto = useRemovePhoto();
   const [progress, setProgress] = useState<number | null>(null);
+  const [fileError, setFileError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Report the loaded profile photo up to App so it can be shared with the
@@ -2930,15 +2932,32 @@ function PhotoGallery({
 
   const handleFile = async (file: File) => {
     if (!file) return;
+    // Pre-read validation: inspect only size and MIME type before touching the
+    // bytes. Rejected files never reach file.arrayBuffer().
+    const validation = validateFile(file, "profileImage");
+    if (!validation.valid) {
+      setFileError(validation.error);
+      setProgress(null);
+      return;
+    }
+    const safeName = sanitizeFilename(file.name);
+    if (!safeName) {
+      setFileError(
+        "That file name could not be used. Rename the file and try again.",
+      );
+      setProgress(null);
+      return;
+    }
+    setFileError(null);
     setProgress(0);
     const bytes = new Uint8Array(await file.arrayBuffer());
     const blob = ExternalBlob.fromBytes(
       bytes,
       file.type,
-      file.name,
+      safeName,
     ).withUploadProgress(setProgress);
     addPhoto.mutate(
-      { personId, blob, filename: file.name, mimeType: file.type },
+      { personId, blob, filename: safeName, mimeType: file.type },
       {
         onSuccess: () => setProgress(null),
         onError: () => setProgress(null),
@@ -2981,6 +3000,16 @@ function PhotoGallery({
           {addPhoto.isPending ? "Uploading…" : "Add Photo"}
         </button>
       </div>
+
+      {fileError ? (
+        <p
+          data-ocid="profile.add_photo_error"
+          role="alert"
+          className="mt-3 text-sm text-destructive"
+        >
+          {fileError}
+        </p>
+      ) : null}
 
       {progress !== null && (
         <div className="mt-3" data-ocid="profile.upload_progress">

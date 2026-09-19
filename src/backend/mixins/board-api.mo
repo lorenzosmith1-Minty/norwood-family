@@ -4,21 +4,22 @@ import Nat "mo:core/Nat";
 import Principal "mo:core/Principal";
 import Runtime "mo:core/Runtime";
 import Time "mo:core/Time";
-import AccessControl "mo:caffeineai-authorization/access-control";
 import Types "../types/board";
 import OwnershipTypes "../types/ownership";
 import GovernanceTypes "../types/governance";
 import BoardLib "../lib/board";
+import FamilyAuthorizationLib "../lib/family-authorization";
 import StewardAuthorityLib "../lib/steward-authority";
+import InputValidation "../lib/input-validation";
 
 mixin (
-  accessControlState : AccessControl.AccessControlState,
   posts : List.List<Types.Post>,
   replies : List.List<Types.Reply>,
   profiles : Map.Map<OwnershipTypes.PersonId, OwnershipTypes.PersonProfile>,
   notifications : List.List<OwnershipTypes.Notification>,
   auditLog : List.List<GovernanceTypes.AuditEntry>,
   stewards : List.List<GovernanceTypes.StewardRecord>,
+  claims : List.List<OwnershipTypes.ProfileClaim>,
 ) {
   /// Lists active board posts, newest first, optionally filtered by post type.
   /// Approved family members only.
@@ -53,17 +54,22 @@ mixin (
     tags : [Text],
   ) : async Types.Post {
     requireBoardMember(caller);
+    let cleanTitle = InputValidation.requireOptionalText("title", title, InputValidation.MAX_TITLE_CHARS);
+    let cleanBody = InputValidation.requireText("body", body, InputValidation.MAX_BOARD_POST_CHARS);
+    let cleanRelated = InputValidation.requireRelatedPersonIds(relatedPersonIds);
+    let cleanTags = InputValidation.requireTags(tags);
+    InputValidation.requireArraySize("linkedMediaIds", linkedMediaIds.size(), InputValidation.MAX_MEDIA_ITEMS_PER_CALL);
     let authorPersonId = boardCallerPersonId(caller);
     let post : Types.Post = {
       postId = boardNextId(posts.toArray().map(func p = p.postId));
       authorAccountId = caller;
       authorPersonId;
-      title;
-      body;
+      title = cleanTitle;
+      body = cleanBody;
       postType;
-      relatedPersonIds;
+      relatedPersonIds = cleanRelated;
       linkedMediaIds;
-      tags;
+      tags = cleanTags;
       createdAt = Time.now();
       updatedAt = Time.now();
       status = #Active;
@@ -86,13 +92,18 @@ mixin (
     tags : [Text],
   ) : async ?Types.Post {
     requireBoardMember(caller);
+    let cleanTitle = InputValidation.requireOptionalText("title", title, InputValidation.MAX_TITLE_CHARS);
+    let cleanBody = InputValidation.requireText("body", body, InputValidation.MAX_BOARD_POST_CHARS);
+    let cleanRelated = InputValidation.requireRelatedPersonIds(relatedPersonIds);
+    let cleanTags = InputValidation.requireTags(tags);
+    InputValidation.requireArraySize("linkedMediaIds", linkedMediaIds.size(), InputValidation.MAX_MEDIA_ITEMS_PER_CALL);
     switch (posts.find(func p = p.postId == postId)) {
       case null { null };
       case (?post) {
         if (post.authorAccountId != caller) {
           Runtime.trap("Unauthorized: Only the post author can edit this post");
         };
-        BoardLib.updatePost(posts, postId, postType, title, body, relatedPersonIds, linkedMediaIds, tags);
+        BoardLib.updatePost(posts, postId, postType, cleanTitle, cleanBody, cleanRelated, linkedMediaIds, cleanTags);
       };
     };
   };
@@ -147,6 +158,7 @@ mixin (
   /// Creates a reply notification for the post author.
   public shared ({ caller }) func addBoardReply(postId : Types.PostId, body : Text) : async Types.Reply {
     requireBoardMember(caller);
+    let cleanBody = InputValidation.requireText("reply", body, InputValidation.MAX_BOARD_REPLY_CHARS);
     switch (posts.find(func p = p.postId == postId and p.status == #Active)) {
       case null { Runtime.trap("Post not found") };
       case (?post) {
@@ -155,7 +167,7 @@ mixin (
           postId;
           authorAccountId = caller;
           authorPersonId = boardCallerPersonId(caller);
-          body;
+          body = cleanBody;
           createdAt = Time.now();
         };
         ignore (BoardLib.addReply(replies, reply));
@@ -188,7 +200,7 @@ mixin (
     if (caller.isAnonymous()) {
       Runtime.trap("Unauthorized: You must be signed in");
     };
-    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
+    if (not FamilyAuthorizationLib.isApprovedFamilyMember(stewards, claims, caller)) {
       Runtime.trap("Unauthorized: Only approved family members can access the message board");
     };
   };

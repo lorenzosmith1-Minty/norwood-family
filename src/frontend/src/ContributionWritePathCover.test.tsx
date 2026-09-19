@@ -48,6 +48,7 @@ const { mockActor, resetArchive, setAuthenticated, getAuthenticated } =
         title: string,
         description: string,
         itemType: ArchiveItemType,
+        _mimeType: string,
         blob: ExternalBlob,
         era: string,
         year: bigint | null,
@@ -196,6 +197,7 @@ describe("Contribution write path: success only after durable storage", () => {
         "Wedding portrait",
         "",
         ArchiveItemType.Photo,
+        "image/png",
         ExternalBlob.fromBytes(
           new Uint8Array([1, 2, 3]),
           "image/png",

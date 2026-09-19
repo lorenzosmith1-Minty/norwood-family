@@ -102,6 +102,8 @@ export interface CreateSourceWithUploadInput {
   title: string;
   sourceType: SourceRecord["sourceType"];
   description: string;
+  /** The declared MIME type of the uploaded file. */
+  mimeType: string;
   blob: ExternalBlob;
   tags: string[];
   era: string;
@@ -127,6 +129,7 @@ export function useCreateSourceWithUpload() {
         input.title,
         input.sourceType,
         input.description,
+        input.mimeType,
         input.blob,
         input.tags,
         input.era,

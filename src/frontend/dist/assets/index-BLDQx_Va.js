@@ -33673,6 +33673,7 @@ const BoardMediaUpload = Record({
   "blob": ExternalBlob2,
   "tags": Vec(Text),
   "year": Opt(Nat),
+  "mimeType": Text,
   "description": Text,
   "privacyLevel": PrivacyLevel$1,
   "primarySpeaker": Opt(OralHistorySpeaker),
@@ -34389,6 +34390,7 @@ Service({
       Text,
       SourceType$1,
       Text,
+      Text,
       ExternalBlob2,
       Vec(Text),
       Text,
@@ -34681,6 +34683,7 @@ Service({
       Text,
       Text,
       ArchiveItemType$1,
+      Text,
       ExternalBlob2,
       Text,
       Opt(Nat),
@@ -35258,6 +35261,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "blob": ExternalBlob3,
     "tags": IDL2.Vec(IDL2.Text),
     "year": IDL2.Opt(IDL2.Nat),
+    "mimeType": IDL2.Text,
     "description": IDL2.Text,
     "privacyLevel": PrivacyLevel2,
     "primarySpeaker": IDL2.Opt(OralHistorySpeaker2),
@@ -35957,6 +35961,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
         IDL2.Text,
         SourceType2,
         IDL2.Text,
+        IDL2.Text,
         ExternalBlob3,
         IDL2.Vec(IDL2.Text),
         IDL2.Text,
@@ -36273,6 +36278,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
         IDL2.Text,
         IDL2.Text,
         ArchiveItemType2,
+        IDL2.Text,
         ExternalBlob3,
         IDL2.Text,
         IDL2.Opt(IDL2.Nat),
@@ -37241,17 +37247,17 @@ class Backend {
       return from_candid_Result_18_n152(this._uploadFile, this._downloadFile, result);
     }
   }
-  async createSourceWithUpload(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10) {
+  async createSourceWithUpload(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11) {
     if (this.processError) {
       try {
-        const result = await this.actor.createSourceWithUpload(arg0, to_candid_SourceType_n135(this._uploadFile, this._downloadFile, arg1), arg2, await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg3), arg4, arg5, to_candid_opt_n19(this._uploadFile, this._downloadFile, arg6), arg7, to_candid_PrivacyLevel_n119(this._uploadFile, this._downloadFile, arg8), to_candid_ArchiveItemClassification_n124(this._uploadFile, this._downloadFile, arg9), to_candid_opt_n154(this._uploadFile, this._downloadFile, arg10));
+        const result = await this.actor.createSourceWithUpload(arg0, to_candid_SourceType_n135(this._uploadFile, this._downloadFile, arg1), arg2, arg3, await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg4), arg5, arg6, to_candid_opt_n19(this._uploadFile, this._downloadFile, arg7), arg8, to_candid_PrivacyLevel_n119(this._uploadFile, this._downloadFile, arg9), to_candid_ArchiveItemClassification_n124(this._uploadFile, this._downloadFile, arg10), to_candid_opt_n154(this._uploadFile, this._downloadFile, arg11));
         return from_candid_Result_17_n155(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.createSourceWithUpload(arg0, to_candid_SourceType_n135(this._uploadFile, this._downloadFile, arg1), arg2, await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg3), arg4, arg5, to_candid_opt_n19(this._uploadFile, this._downloadFile, arg6), arg7, to_candid_PrivacyLevel_n119(this._uploadFile, this._downloadFile, arg8), to_candid_ArchiveItemClassification_n124(this._uploadFile, this._downloadFile, arg9), to_candid_opt_n154(this._uploadFile, this._downloadFile, arg10));
+      const result = await this.actor.createSourceWithUpload(arg0, to_candid_SourceType_n135(this._uploadFile, this._downloadFile, arg1), arg2, arg3, await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg4), arg5, arg6, to_candid_opt_n19(this._uploadFile, this._downloadFile, arg7), arg8, to_candid_PrivacyLevel_n119(this._uploadFile, this._downloadFile, arg9), to_candid_ArchiveItemClassification_n124(this._uploadFile, this._downloadFile, arg10), to_candid_opt_n154(this._uploadFile, this._downloadFile, arg11));
       return from_candid_Result_17_n155(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -38809,17 +38815,17 @@ class Backend {
       return from_candid_opt_n82(this._uploadFile, this._downloadFile, result);
     }
   }
-  async submitArchiveItem(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12) {
+  async submitArchiveItem(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13) {
     if (this.processError) {
       try {
-        const result = await this.actor.submitArchiveItem(arg0, arg1, to_candid_ArchiveItemType_n122(this._uploadFile, this._downloadFile, arg2), await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg3), arg4, to_candid_opt_n19(this._uploadFile, this._downloadFile, arg5), arg6, arg7, to_candid_opt_n18(this._uploadFile, this._downloadFile, arg8), to_candid_SourceStatus_n123(this._uploadFile, this._downloadFile, arg9), to_candid_PrivacyLevel_n119(this._uploadFile, this._downloadFile, arg10), to_candid_ArchiveItemClassification_n124(this._uploadFile, this._downloadFile, arg11), to_candid_opt_n154(this._uploadFile, this._downloadFile, arg12));
+        const result = await this.actor.submitArchiveItem(arg0, arg1, to_candid_ArchiveItemType_n122(this._uploadFile, this._downloadFile, arg2), arg3, await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg4), arg5, to_candid_opt_n19(this._uploadFile, this._downloadFile, arg6), arg7, arg8, to_candid_opt_n18(this._uploadFile, this._downloadFile, arg9), to_candid_SourceStatus_n123(this._uploadFile, this._downloadFile, arg10), to_candid_PrivacyLevel_n119(this._uploadFile, this._downloadFile, arg11), to_candid_ArchiveItemClassification_n124(this._uploadFile, this._downloadFile, arg12), to_candid_opt_n154(this._uploadFile, this._downloadFile, arg13));
         return from_candid_ArchiveItem_n39(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.submitArchiveItem(arg0, arg1, to_candid_ArchiveItemType_n122(this._uploadFile, this._downloadFile, arg2), await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg3), arg4, to_candid_opt_n19(this._uploadFile, this._downloadFile, arg5), arg6, arg7, to_candid_opt_n18(this._uploadFile, this._downloadFile, arg8), to_candid_SourceStatus_n123(this._uploadFile, this._downloadFile, arg9), to_candid_PrivacyLevel_n119(this._uploadFile, this._downloadFile, arg10), to_candid_ArchiveItemClassification_n124(this._uploadFile, this._downloadFile, arg11), to_candid_opt_n154(this._uploadFile, this._downloadFile, arg12));
+      const result = await this.actor.submitArchiveItem(arg0, arg1, to_candid_ArchiveItemType_n122(this._uploadFile, this._downloadFile, arg2), arg3, await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg4), arg5, to_candid_opt_n19(this._uploadFile, this._downloadFile, arg6), arg7, arg8, to_candid_opt_n18(this._uploadFile, this._downloadFile, arg9), to_candid_SourceStatus_n123(this._uploadFile, this._downloadFile, arg10), to_candid_PrivacyLevel_n119(this._uploadFile, this._downloadFile, arg11), to_candid_ArchiveItemClassification_n124(this._uploadFile, this._downloadFile, arg12), to_candid_opt_n154(this._uploadFile, this._downloadFile, arg13));
       return from_candid_ArchiveItem_n39(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -40637,6 +40643,7 @@ async function to_candid_record_n118(_uploadFile, _downloadFile, value) {
     blob: await to_candid_ExternalBlob_n26(_uploadFile, _downloadFile, value.blob),
     tags: value.tags,
     year: value.year ? candid_some(value.year) : candid_none(),
+    mimeType: value.mimeType,
     description: value.description,
     privacyLevel: to_candid_PrivacyLevel_n119(_uploadFile, _downloadFile, value.privacyLevel),
     primarySpeaker: value.primarySpeaker ? candid_some(to_candid_OralHistorySpeaker_n120(_uploadFile, _downloadFile, value.primarySpeaker)) : candid_none(),
@@ -44998,6 +45005,7 @@ function useSubmitArchiveItem() {
         input.title,
         input.description,
         input.itemType,
+        input.mimeType,
         input.blob,
         input.era,
         input.year,
@@ -45605,6 +45613,7 @@ function useCreateSourceWithUpload() {
         input.title,
         input.sourceType,
         input.description,
+        input.mimeType,
         input.blob,
         input.tags,
         input.era,
@@ -58460,6 +58469,229 @@ function useRejectRecipe() {
     }
   });
 }
+const MAX_PROFILE_IMAGE_BYTES = 10 * 1024 * 1024;
+const MAX_RECIPE_IMAGE_BYTES = 10 * 1024 * 1024;
+const MAX_ARCHIVE_IMAGE_BYTES = 15 * 1024 * 1024;
+const MAX_ARCHIVE_DOCUMENT_BYTES = 20 * 1024 * 1024;
+const MAX_ARCHIVE_AUDIO_BYTES = 40 * 1024 * 1024;
+const MAX_ARCHIVE_VIDEO_BYTES = 75 * 1024 * 1024;
+const MAX_BOARD_ATTACHMENT_BYTES = 20 * 1024 * 1024;
+const MAX_FILENAME_CHARS = 120;
+const SURFACE_MAX_BYTES = {
+  profileImage: MAX_PROFILE_IMAGE_BYTES,
+  recipeImage: MAX_RECIPE_IMAGE_BYTES,
+  archiveImage: MAX_ARCHIVE_IMAGE_BYTES,
+  archiveDocument: MAX_ARCHIVE_DOCUMENT_BYTES,
+  archiveAudio: MAX_ARCHIVE_AUDIO_BYTES,
+  archiveVideo: MAX_ARCHIVE_VIDEO_BYTES,
+  boardAttachment: MAX_BOARD_ATTACHMENT_BYTES
+};
+const SURFACE_LABELS = {
+  profileImage: "profile image",
+  recipeImage: "recipe image",
+  archiveImage: "archive image",
+  archiveDocument: "archive document",
+  archiveAudio: "archive audio",
+  archiveVideo: "archive video",
+  boardAttachment: "board attachment"
+};
+const IMAGE_MIME_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/webp"
+];
+const DOCUMENT_MIME_TYPES = ["application/pdf", "text/plain"];
+const AUDIO_MIME_TYPES = [
+  "audio/mpeg",
+  "audio/mp4",
+  "audio/wav",
+  "audio/x-wav",
+  "audio/webm"
+];
+const VIDEO_MIME_TYPES = [
+  "video/mp4",
+  "video/webm",
+  "video/quicktime"
+];
+const FORBIDDEN_MIME_TYPES = [
+  "text/html",
+  "application/javascript",
+  "text/javascript",
+  "application/x-sh",
+  "application/x-msdownload",
+  "application/x-executable",
+  "application/zip",
+  "application/x-rar-compressed",
+  "application/x-7z-compressed",
+  "image/svg+xml"
+];
+const SURFACE_ALLOWED_MIME_TYPES = {
+  profileImage: IMAGE_MIME_TYPES,
+  recipeImage: IMAGE_MIME_TYPES,
+  archiveImage: IMAGE_MIME_TYPES,
+  archiveDocument: DOCUMENT_MIME_TYPES,
+  archiveAudio: AUDIO_MIME_TYPES,
+  archiveVideo: VIDEO_MIME_TYPES,
+  boardAttachment: [
+    ...IMAGE_MIME_TYPES,
+    ...VIDEO_MIME_TYPES,
+    ...DOCUMENT_MIME_TYPES
+  ]
+};
+function normalizeMimeType(mimeType) {
+  return mimeType.trim().toLowerCase();
+}
+function isForbiddenMimeType(mimeType) {
+  const normalized = normalizeMimeType(mimeType);
+  return FORBIDDEN_MIME_TYPES.some((forbidden) => forbidden === normalized);
+}
+function allowedMimeTypes(surface) {
+  return SURFACE_ALLOWED_MIME_TYPES[surface];
+}
+function maxBytesForSurface(surface) {
+  return SURFACE_MAX_BYTES[surface];
+}
+function surfaceLabel(surface) {
+  return SURFACE_LABELS[surface];
+}
+function isMimeTypeAllowed(surface, mimeType) {
+  if (isForbiddenMimeType(mimeType)) return false;
+  const normalized = normalizeMimeType(mimeType);
+  return allowedMimeTypes(surface).some((allowed) => allowed === normalized);
+}
+function formatBytes$1(bytes) {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+const OK = { valid: true, error: null };
+function validateFile(file, surface) {
+  const label = surfaceLabel(surface);
+  const mimeType = normalizeMimeType(file.type);
+  if (isForbiddenMimeType(mimeType)) {
+    return {
+      valid: false,
+      error: `This file type (${mimeType || "unknown"}) is not permitted. Choose a supported ${label} format.`
+    };
+  }
+  if (!isMimeTypeAllowed(surface, mimeType)) {
+    return {
+      valid: false,
+      error: `Unsupported file type${mimeType ? ` "${mimeType}"` : ""} for ${label}. Allowed: ${allowedMimeTypes(surface).join(", ")}.`
+    };
+  }
+  if (file.size === 0) {
+    return { valid: false, error: `The ${label} file is empty.` };
+  }
+  const maxBytes = maxBytesForSurface(surface);
+  if (file.size > maxBytes) {
+    return {
+      valid: false,
+      error: `The ${label} must be at most ${formatBytes$1(maxBytes)} (this file is ${formatBytes$1(file.size)}).`
+    };
+  }
+  return OK;
+}
+function validateRecipeMedia(file) {
+  return validateFile(file, "recipeImage");
+}
+function validateVideoContribution(file) {
+  return validateFile(file, "archiveVideo");
+}
+function validateAudioContribution(file) {
+  return validateFile(file, "archiveAudio");
+}
+function validateMediaContribution(file, kind) {
+  return kind === "audio-only-oral-history" ? validateAudioContribution(file) : validateVideoContribution(file);
+}
+function validateBoardAttachment(file) {
+  return validateFile(file, "boardAttachment");
+}
+function surfaceForArchiveItemType(itemType) {
+  switch (itemType) {
+    case "Photo":
+      return "archiveImage";
+    case "Document":
+      return "archiveDocument";
+    case "Audio":
+      return "archiveAudio";
+    case "Video":
+      return "archiveVideo";
+    default:
+      return null;
+  }
+}
+function surfaceForSourceType(sourceType) {
+  return sourceType === "" ? null : "archiveDocument";
+}
+function validateSourceFile(file, sourceType) {
+  const surface = surfaceForSourceType(sourceType);
+  if (surface === null) {
+    return {
+      valid: false,
+      error: "Choose a source type before uploading a file."
+    };
+  }
+  return validateFile(file, surface);
+}
+function validateArchiveFile(file, itemType) {
+  const surface = surfaceForArchiveItemType(itemType);
+  if (surface === null) {
+    return {
+      valid: false,
+      error: "The selected archive item type does not accept an uploaded file."
+    };
+  }
+  return validateFile(file, surface);
+}
+function isPathSeparator(ch) {
+  return ch === "/" || ch === "\\";
+}
+function isControlChar(ch) {
+  const code = ch.codePointAt(0) ?? 0;
+  return code < 32 || code === 127;
+}
+function safeExtension(filename) {
+  const dot = filename.lastIndexOf(".");
+  if (dot <= 0 || dot + 1 >= filename.length) return null;
+  const ext = filename.slice(dot);
+  if (ext.length - 1 > 10) return null;
+  return /^\.[A-Za-z0-9]+$/.test(ext) ? ext : null;
+}
+function capFilenamePreservingExtension(filename) {
+  const ext = safeExtension(filename);
+  if (ext === null) {
+    return filename.slice(0, MAX_FILENAME_CHARS);
+  }
+  if (ext.length >= MAX_FILENAME_CHARS) {
+    return ext;
+  }
+  const stem = filename.slice(0, MAX_FILENAME_CHARS - ext.length);
+  return stem + ext;
+}
+function sanitizeFilename(filename) {
+  let cleaned = "";
+  let lastWasSpace = false;
+  for (const ch of filename) {
+    if (isPathSeparator(ch) || isControlChar(ch)) {
+      continue;
+    }
+    if (/\s/.test(ch)) {
+      if (!lastWasSpace) {
+        cleaned += " ";
+        lastWasSpace = true;
+      }
+      continue;
+    }
+    cleaned += ch;
+    lastWasSpace = false;
+  }
+  const trimmed = cleaned.trim();
+  if (trimmed.length === 0) return null;
+  if (trimmed.length <= MAX_FILENAME_CHARS) return trimmed;
+  const capped = capFilenamePreservingExtension(trimmed);
+  return capped.length === 0 ? null : capped;
+}
 const RECIPE_STATUS_LABELS = {
   [RecipeStatus.Pending]: "Pending",
   [RecipeStatus.Approved]: "Approved",
@@ -60918,6 +61150,7 @@ function PhotoGallery({
   const setProfilePhoto = useSetProfilePhoto();
   const removePhoto = useRemovePhoto();
   const [progress2, setProgress] = reactExports.useState(null);
+  const [fileError, setFileError] = reactExports.useState(null);
   const fileInputRef = reactExports.useRef(null);
   reactExports.useEffect(() => {
     if (profilePhotoLoading) return;
@@ -60929,15 +61162,30 @@ function PhotoGallery({
   const profilePhotoUrl = profilePhoto == null ? void 0 : profilePhoto.blob.getDirectURL();
   const handleFile = async (file) => {
     if (!file) return;
+    const validation = validateFile(file, "profileImage");
+    if (!validation.valid) {
+      setFileError(validation.error);
+      setProgress(null);
+      return;
+    }
+    const safeName = sanitizeFilename(file.name);
+    if (!safeName) {
+      setFileError(
+        "That file name could not be used. Rename the file and try again."
+      );
+      setProgress(null);
+      return;
+    }
+    setFileError(null);
     setProgress(0);
     const bytes = new Uint8Array(await file.arrayBuffer());
     const blob = ExternalBlob$1.fromBytes(
       bytes,
       file.type,
-      file.name
+      safeName
     ).withUploadProgress(setProgress);
     addPhoto.mutate(
-      { personId, blob, filename: file.name, mimeType: file.type },
+      { personId, blob, filename: safeName, mimeType: file.type },
       {
         onSuccess: () => setProgress(null),
         onError: () => setProgress(null)
@@ -60981,6 +61229,15 @@ function PhotoGallery({
         }
       )
     ] }),
+    fileError ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "p",
+      {
+        "data-ocid": "profile.add_photo_error",
+        role: "alert",
+        className: "mt-3 text-sm text-destructive",
+        children: fileError
+      }
+    ) : null,
     progress2 !== null && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-3", "data-ocid": "profile.upload_progress", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx(
         "div",
@@ -63802,8 +64059,29 @@ function ArchiveContributionPage({
   const isFileType = selectedType !== null && FILE_TYPES.includes(selectedType);
   const handleFile = async (file) => {
     if (!file) return;
+    const validation = validateArchiveFile(file, selectedType ?? "");
+    if (!validation.valid) {
+      setError(validation.error);
+      setFileBytes(null);
+      setFileName("");
+      setFileMime("");
+      setProgress(null);
+      return;
+    }
+    const safeName = sanitizeFilename(file.name);
+    if (safeName === null) {
+      setError(
+        "That filename can't be used. Please rename the file and try again."
+      );
+      setFileBytes(null);
+      setFileName("");
+      setFileMime("");
+      setProgress(null);
+      return;
+    }
+    setError(null);
     setFileBytes(new Uint8Array(await file.arrayBuffer()));
-    setFileName(file.name);
+    setFileName(safeName);
     setFileMime(file.type);
     setProgress(null);
   };
@@ -63882,6 +64160,7 @@ function ArchiveContributionPage({
         title: title.trim(),
         description: description.trim(),
         itemType: selectedType,
+        mimeType: fileMime,
         blob,
         era: era.trim(),
         year: parseYear$3(year),
@@ -64537,13 +64816,28 @@ function isPdfDocument(item) {
   const name = ((_b2 = item.blob.filename) == null ? void 0 : _b2.toLowerCase()) ?? "";
   return mime === "application/pdf" || name.endsWith(".pdf");
 }
-function isPreviewableDocument(item) {
+const SAFE_IMAGE_MIME_TYPES = /* @__PURE__ */ new Set([
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/gif",
+  "image/webp",
+  "image/bmp",
+  "image/x-icon",
+  "image/vnd.microsoft.icon",
+  "image/avif",
+  "image/tiff"
+]);
+const SAFE_IMAGE_EXTENSIONS = /\.(jpe?g|png|gif|webp|bmp|ico|avif|tiff?)$/;
+function isRasterImageDocument(item) {
   var _a2, _b2;
-  if (isPdfDocument(item)) return true;
   const mime = ((_a2 = item.blob.contentType) == null ? void 0 : _a2.toLowerCase()) ?? "";
-  if (mime.startsWith("image/")) return true;
+  if (mime) return SAFE_IMAGE_MIME_TYPES.has(mime);
   const name = ((_b2 = item.blob.filename) == null ? void 0 : _b2.toLowerCase()) ?? "";
-  return /\.(jpe?g|png|gif|webp|svg|bmp|ico)$/.test(name);
+  return SAFE_IMAGE_EXTENSIONS.test(name);
+}
+function isPreviewableDocument(item) {
+  return isPdfDocument(item) || isRasterImageDocument(item);
 }
 async function downloadOriginal(blob, filename) {
   const bytes = await blob.getBytes();
@@ -64744,7 +65038,20 @@ function ArchiveDetailPage({
                   }
                 )
               ] }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "preview-stage-body", children: isPdfDocument(item) ? /* @__PURE__ */ jsxRuntimeExports.jsx("iframe", { src: artifactUrl, title: filename || item.title }) : /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: artifactUrl, alt: item.title }) })
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "preview-stage-body", children: isPdfDocument(item) ? (
+                /* sandbox="" applies every restriction: no script execution,
+                   no forms, no top-level navigation, and no same-origin
+                   access. The PDF viewer needs no permission to render, so
+                   none is granted. */
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  "iframe",
+                  {
+                    src: artifactUrl,
+                    title: filename || item.title,
+                    sandbox: ""
+                  }
+                )
+              ) : /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: artifactUrl, alt: item.title }) })
             ]
           }
         ) : null,
@@ -65346,6 +65653,7 @@ function useCreateBoardPostWithMedia() {
           title: upload.title,
           description: upload.description,
           itemType: upload.itemType,
+          mimeType: upload.mimeType,
           blob: upload.blob,
           era: upload.era,
           year: upload.year ?? void 0,
@@ -65507,6 +65815,7 @@ const POST_TYPES = [
   PostType.Memorial,
   PostType.Other
 ];
+const MAX_BOARD_ATTACHMENTS = 5;
 function detectItemType(mime) {
   if (mime.startsWith("image/")) return ArchiveItemType.Photo;
   if (mime.startsWith("video/")) return ArchiveItemType.Video;
@@ -65630,16 +65939,36 @@ function BoardPostComposer({ postId, onBack }) {
     const file = (_a2 = event.target.files) == null ? void 0 : _a2[0];
     event.target.value = "";
     if (!file) return;
+    const validation = validateBoardAttachment(file);
+    if (!validation.valid) {
+      setError(validation.error);
+      return;
+    }
+    if (newUploads.length >= MAX_BOARD_ATTACHMENTS) {
+      setError(
+        `You can attach at most ${MAX_BOARD_ATTACHMENTS} files to a post.`
+      );
+      return;
+    }
+    const safeName = sanitizeFilename(file.name);
+    if (safeName === null) {
+      setError(
+        "This file's name is not valid. Please rename it and try again."
+      );
+      return;
+    }
+    setError(null);
     const bytes = new Uint8Array(await file.arrayBuffer());
-    const blob = ExternalBlob$1.fromBytes(bytes, file.type, file.name);
+    const blob = ExternalBlob$1.fromBytes(bytes, file.type, safeName);
     const key = `upload-${uploadKeyRef.current++}`;
     setNewUploads((current) => [
       ...current,
       {
         key,
-        title: file.name.replace(/\.[^.]+$/, ""),
+        title: safeName.replace(/\.[^.]+$/, ""),
         description: "",
         itemType: detectItemType(file.type),
+        mimeType: file.type,
         blob,
         size: bytes.byteLength,
         era: "",
@@ -65712,6 +66041,7 @@ function BoardPostComposer({ postId, onBack }) {
             title: upload.title.trim(),
             description: upload.description.trim(),
             itemType: upload.itemType,
+            mimeType: upload.mimeType,
             blob: upload.blob,
             era: upload.era.trim(),
             year: upload.year,
@@ -66077,14 +66407,20 @@ function BoardPostComposer({ postId, onBack }) {
                     var _a2;
                     return (_a2 = fileInputRef.current) == null ? void 0 : _a2.click();
                   },
-                  className: "mt-2 inline-flex items-center gap-1.5 rounded-full border border-dashed border-border/70 px-3 py-1.5 text-xs font-semibold text-foreground transition-colors hover:border-accent/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                  disabled: newUploads.length >= MAX_BOARD_ATTACHMENTS,
+                  className: "mt-2 inline-flex items-center gap-1.5 rounded-full border border-dashed border-border/70 px-3 py-1.5 text-xs font-semibold text-foreground transition-colors hover:border-accent/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50",
                   children: [
                     /* @__PURE__ */ jsxRuntimeExports.jsx(Upload, { className: "h-3.5 w-3.5", "aria-hidden": "true" }),
                     "Add a photo, document, or video"
                   ]
                 }
               ),
-              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-1.5 text-[11px] leading-relaxed text-muted-foreground", children: "Each upload becomes one Archive item linked to this post. The original file is never duplicated." })
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "mt-1.5 text-[11px] leading-relaxed text-muted-foreground", children: [
+                "Each upload becomes one Archive item linked to this post. The original file is never duplicated. Up to ",
+                MAX_BOARD_ATTACHMENTS,
+                " ",
+                "attachments per post, 20 MB each."
+              ] })
             ] }) : null
           ] }),
           error ? /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -73482,19 +73818,35 @@ function EditPhotoSection({
   const setProfilePhoto = useSetProfilePhoto();
   const removePhoto = useRemovePhoto();
   const [progress2, setProgress] = reactExports.useState(null);
+  const [fileError, setFileError] = reactExports.useState(null);
   const fileInputRef = reactExports.useRef(null);
   const profilePhotoUrl = profilePhoto == null ? void 0 : profilePhoto.blob.getDirectURL();
   const handleFile = async (file) => {
     if (!file) return;
+    const validation = validateFile(file, "profileImage");
+    if (!validation.valid) {
+      setFileError(validation.error);
+      setProgress(null);
+      return;
+    }
+    const safeName = sanitizeFilename(file.name);
+    if (!safeName) {
+      setFileError(
+        "That file name could not be used. Rename the file and try again."
+      );
+      setProgress(null);
+      return;
+    }
+    setFileError(null);
     setProgress(0);
     const bytes = new Uint8Array(await file.arrayBuffer());
     const blob = ExternalBlob$1.fromBytes(
       bytes,
       file.type,
-      file.name
+      safeName
     ).withUploadProgress(setProgress);
     addPhoto.mutate(
-      { personId, blob, filename: file.name, mimeType: file.type },
+      { personId, blob, filename: safeName, mimeType: file.type },
       { onSuccess: () => setProgress(null), onError: () => setProgress(null) }
     );
   };
@@ -73577,6 +73929,15 @@ function EditPhotoSection({
         }
       ) : null
     ] }),
+    fileError ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "p",
+      {
+        "data-ocid": "profile_edit.photo_error",
+        role: "alert",
+        className: "text-sm text-destructive",
+        children: fileError
+      }
+    ) : null,
     progress2 !== null ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { "data-ocid": "profile_edit.photo_progress", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx(
         "div",
@@ -74524,8 +74885,29 @@ function RecipeContributePage({
   );
   const handleFile = async (file) => {
     if (!file) return;
+    const validation = validateRecipeMedia(file);
+    if (!validation.valid) {
+      setError(validation.error);
+      setFileBytes(null);
+      setFileName("");
+      setFileMime("");
+      setProgress(null);
+      return;
+    }
+    const safeName = sanitizeFilename(file.name);
+    if (safeName === null) {
+      setError(
+        "That filename can't be used. Please rename the file and try again."
+      );
+      setFileBytes(null);
+      setFileName("");
+      setFileMime("");
+      setProgress(null);
+      return;
+    }
+    setError(null);
     setFileBytes(new Uint8Array(await file.arrayBuffer()));
-    setFileName(file.name);
+    setFileName(safeName);
     setFileMime(file.type);
     setProgress(null);
   };
@@ -74614,6 +74996,7 @@ function RecipeContributePage({
           title: fileName,
           description: `Recipe media for "${title.trim()}"`,
           itemType: ArchiveItemType.Photo,
+          mimeType: fileMime,
           blob,
           era: era.trim(),
           year: parseYear$2(year),
@@ -76418,8 +76801,29 @@ function SourcesTab({
   const canSubmit = title.trim().length > 0 && sourceType !== "" && description.trim().length > 0 && (mode === "existing" ? selectedItemId !== null : fileBytes !== null);
   const handleFile = async (file) => {
     if (!file) return;
+    const validation = validateSourceFile(file, sourceType);
+    if (!validation.valid) {
+      setError(validation.error);
+      setFileBytes(null);
+      setFileName("");
+      setFileMime("");
+      setProgress(null);
+      return;
+    }
+    const safeName = sanitizeFilename(file.name);
+    if (safeName === null) {
+      setError(
+        "That filename can't be used. Please rename the file and try again."
+      );
+      setFileBytes(null);
+      setFileName("");
+      setFileMime("");
+      setProgress(null);
+      return;
+    }
+    setError(null);
     setFileBytes(new Uint8Array(await file.arrayBuffer()));
-    setFileName(file.name);
+    setFileName(safeName);
     setFileMime(file.type);
     setProgress(null);
   };
@@ -76482,6 +76886,7 @@ function SourcesTab({
           title: capturedTitle,
           sourceType: capturedType,
           description: capturedDescription,
+          mimeType: fileMime,
           blob,
           tags: tags.split(",").map((tag) => tag.trim()).filter(Boolean),
           era: era.trim(),
@@ -80446,16 +80851,49 @@ function VideoContributePage({
   const isOralHistory = selectedKind !== null && isOralHistoryKind(selectedKind);
   const handleFile = async (file) => {
     if (!file) return;
+    const validation = validateMediaContribution(
+      file,
+      selectedKind ?? "uploaded-video"
+    );
+    if (!validation.valid) {
+      setError(validation.error);
+      return;
+    }
+    const safeName = sanitizeFilename(file.name);
+    if (safeName === null) {
+      setError(
+        "This file's name is not valid. Please rename it and try again."
+      );
+      return;
+    }
+    setError(null);
     setFileBytes(new Uint8Array(await file.arrayBuffer()));
-    setFileName(file.name);
+    setFileName(safeName);
     setFileMime(file.type);
     setProgress(null);
   };
   const handleRecorded = async (blob) => {
-    setFileBytes(new Uint8Array(await blob.arrayBuffer()));
-    setFileName(
+    const recordedFile = new File([blob], "recording.webm", {
+      type: blob.type
+    });
+    const validation = validateMediaContribution(
+      recordedFile,
+      selectedKind ?? "uploaded-video"
+    );
+    if (!validation.valid) {
+      setError(validation.error);
+      return;
+    }
+    const safeName = sanitizeFilename(
       selectedKind === "audio-only-oral-history" ? "audio-recording.webm" : "video-recording.webm"
     );
+    if (safeName === null) {
+      setError("The recording could not be named. Please try again.");
+      return;
+    }
+    setError(null);
+    setFileBytes(new Uint8Array(await blob.arrayBuffer()));
+    setFileName(safeName);
     setFileMime(blob.type);
     setProgress(null);
   };
@@ -80486,6 +80924,7 @@ function VideoContributePage({
         title: title.trim(),
         description: description.trim(),
         itemType: kindToItemType(selectedKind),
+        mimeType: fileMime,
         blob,
         era: era.trim(),
         year: parseYear(year),
@@ -80866,7 +81305,7 @@ function VideoContributePage({
                     }
                   ),
                   /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "dropzone-title", children: "Choose a file to upload" }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "dropzone-hint", children: "Drag and drop, or tap to browse. The original file is preserved as-is." })
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "dropzone-hint", children: "Drag and drop, or tap to browse. Video only, up to 75 MB. The original file is preserved as-is." })
                 ]
               }
             ),

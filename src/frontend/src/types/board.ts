@@ -55,6 +55,8 @@ export interface BoardMediaUpload {
   title: string;
   description: string;
   itemType: ArchiveItemType;
+  /** The declared MIME type of the uploaded file. */
+  mimeType: string;
   blob: ExternalBlob;
   era: string;
   year: bigint | null;

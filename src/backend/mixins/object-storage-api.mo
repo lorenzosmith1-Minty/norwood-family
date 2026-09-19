@@ -7,6 +7,7 @@ import OwnershipTypes "../types/ownership";
 import GovernanceTypes "../types/governance";
 import ObjectStorageLib "../lib/object-storage";
 import FamilyAuthorizationLib "../lib/family-authorization";
+import InputValidation "../lib/input-validation";
 
 mixin (
   galleries : Map.Map<Types.PersonId, Types.PhotoGallery>,
@@ -62,11 +63,13 @@ mixin (
     blob : Storage.ExternalBlob,
   ) : async Types.Photo {
     FamilyAuthorizationLib.requirePhotoMutationAuthority(stewards, profiles, claims, caller, personId);
+    InputValidation.requireUpload(#ProfileImage, mimeType, blob);
+    let cleanFilename = InputValidation.requireFilename(filename);
     let photo : Types.Photo = {
       id = nextPhotoId(personId);
       blob;
-      filename;
-      mimeType;
+      filename = cleanFilename;
+      mimeType = InputValidation.normalizeMimeType(mimeType);
       uploadedAt = Time.now();
       uploadedBy = caller;
     };

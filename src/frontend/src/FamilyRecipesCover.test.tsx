@@ -246,6 +246,7 @@ const {
       title: string,
       description: string,
       itemType: ArchiveItemType,
+      _mimeType: string,
       blob: ExternalBlob,
       era: string,
       year: bigint | null,

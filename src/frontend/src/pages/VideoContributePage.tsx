@@ -21,6 +21,10 @@ import type { FormEvent } from "react";
 import { useSubmitArchiveItem } from "../hooks/useArchiveStorage";
 import { useCanonicalPerson } from "../hooks/useCanonicalPerson";
 import {
+  sanitizeFilename,
+  validateMediaContribution,
+} from "../lib/fileValidation";
+import {
   ArchiveItemClassification,
   ArchiveItemType,
   MEDIA_KIND_LABELS,
@@ -394,8 +398,30 @@ export function VideoContributePage({
 
   const handleFile = async (file: File) => {
     if (!file) return;
+
+    // Pre-read validation: the surface follows the selected contribution kind —
+    // the video kinds accept video only (75 MB), while the audio-only oral
+    // history accepts audio only (40 MB). Reject before any arrayBuffer() read.
+    const validation = validateMediaContribution(
+      file,
+      selectedKind ?? "uploaded-video",
+    );
+    if (!validation.valid) {
+      setError(validation.error);
+      return;
+    }
+
+    const safeName = sanitizeFilename(file.name);
+    if (safeName === null) {
+      setError(
+        "This file's name is not valid. Please rename it and try again.",
+      );
+      return;
+    }
+
+    setError(null);
     setFileBytes(new Uint8Array(await file.arrayBuffer()));
-    setFileName(file.name);
+    setFileName(safeName);
     setFileMime(file.type);
     setProgress(null);
   };
@@ -403,12 +429,34 @@ export function VideoContributePage({
   // the standard upload path, so the recorded media submits through the
   // canonical Archive item architecture.
   const handleRecorded = async (blob: Blob) => {
-    setFileBytes(new Uint8Array(await blob.arrayBuffer()));
-    setFileName(
+    // Validate the recorded blob's size and type before reading it, using the
+    // surface implied by the selected contribution kind: a video oral history
+    // records video/webm, an audio-only oral history records audio/webm.
+    const recordedFile = new File([blob], "recording.webm", {
+      type: blob.type,
+    });
+    const validation = validateMediaContribution(
+      recordedFile,
+      selectedKind ?? "uploaded-video",
+    );
+    if (!validation.valid) {
+      setError(validation.error);
+      return;
+    }
+
+    const safeName = sanitizeFilename(
       selectedKind === "audio-only-oral-history"
         ? "audio-recording.webm"
         : "video-recording.webm",
     );
+    if (safeName === null) {
+      setError("The recording could not be named. Please try again.");
+      return;
+    }
+
+    setError(null);
+    setFileBytes(new Uint8Array(await blob.arrayBuffer()));
+    setFileName(safeName);
     setFileMime(blob.type);
     setProgress(null);
   };
@@ -447,6 +495,7 @@ export function VideoContributePage({
         title: title.trim(),
         description: description.trim(),
         itemType: kindToItemType(selectedKind),
+        mimeType: fileMime,
         blob,
         era: era.trim(),
         year: parseYear(year),
@@ -816,8 +865,8 @@ export function VideoContributePage({
               />
               <span className="dropzone-title">Choose a file to upload</span>
               <span className="dropzone-hint">
-                Drag and drop, or tap to browse. The original file is preserved
-                as-is.
+                Drag and drop, or tap to browse. Video only, up to 75 MB. The
+                original file is preserved as-is.
               </span>
             </button>
           )}

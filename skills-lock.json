@@ -99,7 +99,7 @@
     "extension-openai": {
       "source": "caffeinelabs/skills",
       "sourceType": "github",
-      "computedHash": "dcfb75da657f682f77364f71a308bdad2086e28252b1da77feed5938dbf9c233"
+      "computedHash": "bd38d2cc4fa6f51d9f599ed48682a933b324a155d8e33f6948889afaeab95674"
     },
     "extension-oql": {
       "source": "caffeinelabs/skills",

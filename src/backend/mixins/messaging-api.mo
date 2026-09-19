@@ -4,16 +4,16 @@ import Principal "mo:core/Principal";
 import Result "mo:core/Result";
 import Runtime "mo:core/Runtime";
 import Time "mo:core/Time";
-import AccessControl "mo:caffeineai-authorization/access-control";
 import Types "../types/messaging";
 import OwnershipTypes "../types/ownership";
 import GovernanceTypes "../types/governance";
 import AccountIdentityTypes "../types/account-identity";
 import MessagingLib "../lib/messaging";
+import FamilyAuthorizationLib "../lib/family-authorization";
 import StewardAuthorityLib "../lib/steward-authority";
+import InputValidation "../lib/input-validation";
 
 mixin (
-  accessControlState : AccessControl.AccessControlState,
   conversations : List.List<Types.Conversation>,
   messages : List.List<Types.Message>,
   blocks : List.List<Types.Block>,
@@ -23,6 +23,7 @@ mixin (
   notifications : List.List<OwnershipTypes.Notification>,
   accounts : Map.Map<AccountIdentityTypes.AccountId, AccountIdentityTypes.Account>,
   stewards : List.List<GovernanceTypes.StewardRecord>,
+  claims : List.List<OwnershipTypes.ProfileClaim>,
 ) {
   /// Returns whether the signed-in caller may message the person identified by
   /// `personId`: the viewer is signed in, the target has an active linked
@@ -100,11 +101,12 @@ mixin (
   /// messages from the blocked user.
   public shared ({ caller }) func sendMessage(recipientPersonId : Text, body : Text) : async Result.Result<Types.Message, Types.MessageError> {
     requireMessagingMember(caller);
+    let cleanBody = InputValidation.requireText("message", body, InputValidation.MAX_DESCRIPTION_CHARS);
     let senderPersonId = messagingCallerPersonId(caller);
     switch (resolveMessagingRecipient(recipientPersonId, caller)) {
       case (#err e) { #err(e) };
       case (#ok recipientAccountId) {
-        switch (MessagingLib.sendMessage(conversations, messages, blocks, caller, senderPersonId, recipientAccountId, recipientPersonId, body)) {
+        switch (MessagingLib.sendMessage(conversations, messages, blocks, caller, senderPersonId, recipientAccountId, recipientPersonId, cleanBody)) {
           case (#err e) { #err(e) };
           case (#ok message) {
             addMessagingNotification(recipientAccountId, #NewMessage, "You have a new private message");
@@ -153,6 +155,7 @@ mixin (
   /// Reports a specific message with a reason. Approved family members only.
   public shared ({ caller }) func reportMessage(messageId : Types.MessageId, reason : Text) : async Types.Report {
     requireMessagingMember(caller);
+    let cleanReason = InputValidation.requireText("reason", reason, InputValidation.MAX_SHORT_DESCRIPTION_CHARS);
     switch (messages.find(func m = m.messageId == messageId)) {
       case null { Runtime.trap("Message not found") };
       case (?message) {
@@ -167,7 +170,7 @@ mixin (
               reportId = messagingNextId(reports.toArray().map(func r = r.reportId));
               reportingAccountId = caller;
               reportedMessageId = messageId;
-              reason;
+              reason = cleanReason;
               createdAt = Time.now();
               status = #Pending;
             };
@@ -204,7 +207,7 @@ mixin (
     if (caller.isAnonymous()) {
       Runtime.trap("Unauthorized: You must be signed in");
     };
-    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
+    if (not FamilyAuthorizationLib.isApprovedFamilyMember(stewards, claims, caller)) {
       Runtime.trap("Unauthorized: Only approved family members can use private messaging");
     };
   };

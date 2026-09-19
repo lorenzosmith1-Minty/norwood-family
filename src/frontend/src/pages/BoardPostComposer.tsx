@@ -28,6 +28,10 @@ import {
   useUpdateBoardPost,
 } from "../hooks/useBoard";
 import { useCanonicalPerson } from "../hooks/useCanonicalPerson";
+import {
+  sanitizeFilename,
+  validateBoardAttachment,
+} from "../lib/fileValidation";
 import { profiles } from "../pages/PersonProfilePage";
 import {
   ARCHIVE_ITEM_TYPE_LABELS,
@@ -67,6 +71,9 @@ const POST_TYPES: PostType[] = [
   PostType.Other,
 ];
 
+/** The maximum number of new attachments allowed on a single post. */
+const MAX_BOARD_ATTACHMENTS = 5;
+
 /**
  * A single new media upload attached to a board post. Uploading creates one
  * canonical Archive item (pending) linked to the post; the underlying file is
@@ -77,6 +84,8 @@ interface NewUploadDraft {
   title: string;
   description: string;
   itemType: ArchiveItemType;
+  /** The declared MIME type of the uploaded file. */
+  mimeType: string;
   blob: ExternalBlob;
   /** Byte length of the underlying file, for the size label. */
   size: number;
@@ -262,16 +271,44 @@ export function BoardPostComposer({ postId, onBack }: BoardPostComposerProps) {
     const file = event.target.files?.[0];
     event.target.value = "";
     if (!file) return;
+
+    // Pre-read validation: reject invalid or oversized files before any
+    // arrayBuffer() read. Board attachments accept image, video, PDF, or plain
+    // text only, up to 20 MB each.
+    const validation = validateBoardAttachment(file);
+    if (!validation.valid) {
+      setError(validation.error);
+      return;
+    }
+
+    // Enforce the per-post attachment ceiling in the composer.
+    if (newUploads.length >= MAX_BOARD_ATTACHMENTS) {
+      setError(
+        `You can attach at most ${MAX_BOARD_ATTACHMENTS} files to a post.`,
+      );
+      return;
+    }
+
+    const safeName = sanitizeFilename(file.name);
+    if (safeName === null) {
+      setError(
+        "This file's name is not valid. Please rename it and try again.",
+      );
+      return;
+    }
+
+    setError(null);
     const bytes = new Uint8Array(await file.arrayBuffer());
-    const blob = ExternalBlob.fromBytes(bytes, file.type, file.name);
+    const blob = ExternalBlob.fromBytes(bytes, file.type, safeName);
     const key = `upload-${uploadKeyRef.current++}`;
     setNewUploads((current) => [
       ...current,
       {
         key,
-        title: file.name.replace(/\.[^.]+$/, ""),
+        title: safeName.replace(/\.[^.]+$/, ""),
         description: "",
         itemType: detectItemType(file.type),
+        mimeType: file.type,
         blob,
         size: bytes.byteLength,
         era: "",
@@ -351,6 +388,7 @@ export function BoardPostComposer({ postId, onBack }: BoardPostComposerProps) {
             title: upload.title.trim(),
             description: upload.description.trim(),
             itemType: upload.itemType,
+            mimeType: upload.mimeType,
             blob: upload.blob,
             era: upload.era.trim(),
             year: upload.year,
@@ -767,14 +805,16 @@ export function BoardPostComposer({ postId, onBack }: BoardPostComposerProps) {
                 type="button"
                 data-ocid="board_compose.upload_button"
                 onClick={() => fileInputRef.current?.click()}
-                className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-dashed border-border/70 px-3 py-1.5 text-xs font-semibold text-foreground transition-colors hover:border-accent/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                disabled={newUploads.length >= MAX_BOARD_ATTACHMENTS}
+                className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-dashed border-border/70 px-3 py-1.5 text-xs font-semibold text-foreground transition-colors hover:border-accent/50 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <Upload className="h-3.5 w-3.5" aria-hidden="true" />
                 Add a photo, document, or video
               </button>
               <p className="mt-1.5 text-[11px] leading-relaxed text-muted-foreground">
                 Each upload becomes one Archive item linked to this post. The
-                original file is never duplicated.
+                original file is never duplicated. Up to {MAX_BOARD_ATTACHMENTS}{" "}
+                attachments per post, 20 MB each.
               </p>
             </div>
           ) : null}

@@ -8,6 +8,8 @@ import GovernanceTypes "../types/governance";
 import ArchiveLib "../lib/archive";
 import FamilyAuthorizationLib "../lib/family-authorization";
 import StewardAuthorityLib "../lib/steward-authority";
+import InputValidation "../lib/input-validation";
+import InputValidationTypes "../types/input-validation";
 
 mixin (
   items : List.List<Types.ArchiveItem>,
@@ -24,6 +26,25 @@ mixin (
     maxId;
   };
 
+  /// Maps an archive item type to the upload surface whose MIME allowlist and
+  /// byte ceiling apply. The itemType is not trusted on its own: the caller's
+  /// MIME type must be allowed for the surface the itemType selects, so a
+  /// `#Photo` item cannot carry a video and a `#Video` item cannot carry an
+  /// image. `#WrittenStoryNote`, `#Research`, `#WorkBusiness`, and `#Other`
+  /// accept documents (PDF / plain text).
+  func archiveSurfaceFor(itemType : Types.ArchiveItemType) : InputValidationTypes.UploadSurface {
+    switch (itemType) {
+      case (#Photo) #ArchiveImage;
+      case (#Document) #ArchiveDocument;
+      case (#Audio) #ArchiveAudio;
+      case (#Video) #ArchiveVideo;
+      case (#WrittenStoryNote) #ArchiveDocument;
+      case (#Research) #ArchiveDocument;
+      case (#WorkBusiness) #ArchiveDocument;
+      case (#Other) #ArchiveDocument;
+    };
+  };
+
   /// Submits a new archive item. Requires an approved family member; the caller
   /// is recorded as the contributor. The item is stored in pending state and
   /// waits for admin approval before appearing in the archive.
@@ -31,6 +52,7 @@ mixin (
     title : Text,
     description : Text,
     itemType : Types.ArchiveItemType,
+    mimeType : Text,
     blob : Storage.ExternalBlob,
     era : Text,
     year : ?Nat,
@@ -49,18 +71,29 @@ mixin (
     if (classification == #Standard and primarySpeaker != null) {
       Runtime.trap("A primary speaker is only allowed on Oral History items");
     };
+    // Feature/content-type consistency: the archive item type determines which
+    // upload surface (and therefore which MIME allowlist and byte ceiling)
+    // applies. The itemType is not trusted on its own — the MIME type must be
+    // allowed for the surface the itemType selects.
+    InputValidation.requireUpload(archiveSurfaceFor(itemType), mimeType, blob);
+    let cleanTitle = InputValidation.requireText("title", title, InputValidation.MAX_TITLE_CHARS);
+    let cleanDescription = InputValidation.requireText("description", description, InputValidation.MAX_DESCRIPTION_CHARS);
+    let cleanEra = InputValidation.requireText("era", era, InputValidation.MAX_LOCATION_CHARS);
+    let cleanTags = InputValidation.requireTags(tags);
+    let cleanRelated = InputValidation.requireRelatedPersonIds(relatedMemberIds);
+    let cleanBranch = InputValidation.requireOptionalText("relatedBranchId", relatedBranchId, InputValidation.MAX_LOCATION_CHARS);
     let item : Types.ArchiveItem = {
       id = nextArchiveItemId();
-      title;
-      description;
+      title = cleanTitle;
+      description = cleanDescription;
       itemType;
       blob;
-      era;
+      era = cleanEra;
       year;
-      tags;
+      tags = cleanTags;
       contributor = caller;
-      relatedMemberIds;
-      relatedBranchId;
+      relatedMemberIds = cleanRelated;
+      relatedBranchId = cleanBranch;
       sourceStatus;
       privacyLevel;
       status = #Pending;

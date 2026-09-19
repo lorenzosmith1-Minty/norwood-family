@@ -8,6 +8,7 @@ import GovernanceTypes "../types/governance";
 import RecipesLib "../lib/recipes";
 import FamilyAuthorizationLib "../lib/family-authorization";
 import StewardAuthorityLib "../lib/steward-authority";
+import InputValidation "../lib/input-validation";
 
 mixin (
   recipes : List.List<Types.Recipe>,
@@ -50,21 +51,31 @@ mixin (
     if (profiles.get(originatingPersonId) == null) {
       Runtime.trap("Originating family member not found");
     };
+    let cleanTitle = InputValidation.requireText("title", title, InputValidation.MAX_TITLE_CHARS);
+    let cleanShortDescription = InputValidation.requireText("shortDescription", shortDescription, InputValidation.MAX_SHORT_DESCRIPTION_CHARS);
+    let cleanRelated = InputValidation.requireRelatedPersonIds(relatedPersonIds);
+    let cleanEra = InputValidation.requireOptionalText("era", era, InputValidation.MAX_LOCATION_CHARS);
+    let cleanLocation = InputValidation.requireOptionalText("location", location, InputValidation.MAX_LOCATION_CHARS);
+    let cleanBranch = InputValidation.requireOptionalText("familyBranch", familyBranch, InputValidation.MAX_LOCATION_CHARS);
+    let cleanInstructions = InputValidation.requireText("instructions", instructions, InputValidation.MAX_DESCRIPTION_CHARS);
+    let cleanStory = InputValidation.requireOptionalText("familyStory", familyStory, InputValidation.MAX_DESCRIPTION_CHARS);
+    let cleanTags = InputValidation.requireTags(tags);
+    InputValidation.requireArraySize("linkedMediaIds", linkedMediaIds.size(), InputValidation.MAX_MEDIA_ITEMS_PER_CALL);
     let recipe : Types.Recipe = {
       recipeId = nextRecipeId();
-      title;
-      shortDescription;
+      title = cleanTitle;
+      shortDescription = cleanShortDescription;
       originatingPersonId;
-      relatedPersonIds;
+      relatedPersonIds = cleanRelated;
       contributorAccountId = caller;
-      era;
+      era = cleanEra;
       year;
-      location;
-      familyBranch;
+      location = cleanLocation;
+      familyBranch = cleanBranch;
       ingredients;
-      instructions;
-      familyStory;
-      tags;
+      instructions = cleanInstructions;
+      familyStory = cleanStory;
+      tags = cleanTags;
       privacyLevel;
       evidenceStatus;
       linkedMediaIds;
@@ -152,21 +163,31 @@ mixin (
     if (profiles.get(originatingPersonId) == null) {
       Runtime.trap("Originating family member not found");
     };
+    let cleanTitle = InputValidation.requireText("title", title, InputValidation.MAX_TITLE_CHARS);
+    let cleanShortDescription = InputValidation.requireText("shortDescription", shortDescription, InputValidation.MAX_SHORT_DESCRIPTION_CHARS);
+    let cleanRelated = InputValidation.requireRelatedPersonIds(relatedPersonIds);
+    let cleanEra = InputValidation.requireOptionalText("era", era, InputValidation.MAX_LOCATION_CHARS);
+    let cleanLocation = InputValidation.requireOptionalText("location", location, InputValidation.MAX_LOCATION_CHARS);
+    let cleanBranch = InputValidation.requireOptionalText("familyBranch", familyBranch, InputValidation.MAX_LOCATION_CHARS);
+    let cleanInstructions = InputValidation.requireText("instructions", instructions, InputValidation.MAX_DESCRIPTION_CHARS);
+    let cleanStory = InputValidation.requireOptionalText("familyStory", familyStory, InputValidation.MAX_DESCRIPTION_CHARS);
+    let cleanTags = InputValidation.requireTags(tags);
+    InputValidation.requireArraySize("linkedMediaIds", linkedMediaIds.size(), InputValidation.MAX_MEDIA_ITEMS_PER_CALL);
     let recipe : Types.Recipe = {
       recipeId = nextRecipeId();
-      title;
-      shortDescription;
+      title = cleanTitle;
+      shortDescription = cleanShortDescription;
       originatingPersonId;
-      relatedPersonIds;
+      relatedPersonIds = cleanRelated;
       contributorAccountId = caller;
-      era;
+      era = cleanEra;
       year;
-      location;
-      familyBranch;
+      location = cleanLocation;
+      familyBranch = cleanBranch;
       ingredients;
-      instructions;
-      familyStory;
-      tags;
+      instructions = cleanInstructions;
+      familyStory = cleanStory;
+      tags = cleanTags;
       privacyLevel;
       evidenceStatus;
       linkedMediaIds;

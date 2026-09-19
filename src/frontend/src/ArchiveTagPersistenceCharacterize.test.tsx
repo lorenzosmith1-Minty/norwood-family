@@ -54,6 +54,7 @@ const { mockActor, resetArchive, setAuthenticated, getAuthenticated } =
         title: string,
         description: string,
         itemType: ArchiveItemType,
+        _mimeType: string,
         blob: ExternalBlob,
         era: string,
         year: bigint | null,
@@ -240,6 +241,7 @@ describe("Archive tag persistence: tags persist on the canonical item", () => {
       "Grandma's recipe",
       "Sunday dinner recipe.",
       ArchiveItemType.WrittenStoryNote,
+      "text/plain",
       ExternalBlob.fromBytes(
         new Uint8Array([1, 2, 3]),
         "text/plain",

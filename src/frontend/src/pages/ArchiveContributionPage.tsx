@@ -20,6 +20,7 @@ import { motion } from "motion/react";
 import { useRef, useState } from "react";
 import type { FormEvent, KeyboardEvent } from "react";
 import { useSubmitArchiveItem } from "../hooks/useArchiveStorage";
+import { sanitizeFilename, validateArchiveFile } from "../lib/fileValidation";
 import {
   ARCHIVE_ITEM_TYPE_BADGE,
   ARCHIVE_ITEM_TYPE_LABELS,
@@ -165,8 +166,30 @@ export function ArchiveContributionPage({
 
   const handleFile = async (file: File) => {
     if (!file) return;
+    // Pre-read validation: reject invalid/oversized files before touching bytes.
+    const validation = validateArchiveFile(file, selectedType ?? "");
+    if (!validation.valid) {
+      setError(validation.error);
+      setFileBytes(null);
+      setFileName("");
+      setFileMime("");
+      setProgress(null);
+      return;
+    }
+    const safeName = sanitizeFilename(file.name);
+    if (safeName === null) {
+      setError(
+        "That filename can't be used. Please rename the file and try again.",
+      );
+      setFileBytes(null);
+      setFileName("");
+      setFileMime("");
+      setProgress(null);
+      return;
+    }
+    setError(null);
     setFileBytes(new Uint8Array(await file.arrayBuffer()));
-    setFileName(file.name);
+    setFileName(safeName);
     setFileMime(file.type);
     setProgress(null);
   };
@@ -261,6 +284,7 @@ export function ArchiveContributionPage({
         title: title.trim(),
         description: description.trim(),
         itemType: selectedType,
+        mimeType: fileMime,
         blob,
         era: era.trim(),
         year: parseYear(year),

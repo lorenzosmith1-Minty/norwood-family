@@ -14,6 +14,7 @@ import GovernanceTypes "../types/governance";
 import ResearchLib "../lib/research-intake";
 import FamilyAuthorizationLib "../lib/family-authorization";
 import StewardAuthorityLib "../lib/steward-authority";
+import InputValidation "../lib/input-validation";
 
 /// Public API for the Historical Research Intake feature. Everything enters as
 /// proposed/reviewable information first; canonical family data is only ever
@@ -57,6 +58,45 @@ mixin (
     sources.find(func s = s.id == id) != null;
   };
 
+  /// Validates the user-controlled text inside a proposed finding's content,
+  /// trapping with a clear message when any field exceeds its limit. The
+  /// content variant is not trusted on its own — every text field it carries is
+  /// bounded before the finding is stored.
+  func requireFindingContent(content : Types.FindingContent) {
+    switch (content) {
+      case (#PersonFact pf) {
+        ignore InputValidation.requireText("personId", pf.personId, InputValidation.MAX_LOCATION_CHARS);
+        ignore InputValidation.requireText("field", pf.field, InputValidation.MAX_LOCATION_CHARS);
+        ignore InputValidation.requireText("value", pf.value, InputValidation.MAX_DESCRIPTION_CHARS);
+      };
+      case (#Relationship r) {
+        ignore InputValidation.requireText("fromPersonId", r.fromPersonId, InputValidation.MAX_LOCATION_CHARS);
+        ignore InputValidation.requireText("toPersonId", r.toPersonId, InputValidation.MAX_LOCATION_CHARS);
+        ignore InputValidation.requireText("relationshipType", r.relationshipType, InputValidation.MAX_LOCATION_CHARS);
+      };
+      case (#TimelineEvent t) {
+        ignore InputValidation.requireText("personId", t.personId, InputValidation.MAX_LOCATION_CHARS);
+        ignore InputValidation.requireText("title", t.title, InputValidation.MAX_TITLE_CHARS);
+        ignore InputValidation.requireOptionalText("date", t.date, InputValidation.MAX_LOCATION_CHARS);
+        ignore InputValidation.requireText("description", t.description, InputValidation.MAX_DESCRIPTION_CHARS);
+      };
+      case (#Story s) {
+        ignore InputValidation.requireText("title", s.title, InputValidation.MAX_TITLE_CHARS);
+        ignore InputValidation.requireText("storyText", s.storyText, InputValidation.MAX_DESCRIPTION_CHARS);
+        ignore InputValidation.requireRelatedPersonIds(s.relatedPersonIds);
+      };
+      case (#Mystery m) {
+        ignore InputValidation.requireText("title", m.title, InputValidation.MAX_TITLE_CHARS);
+        ignore InputValidation.requireText("description", m.description, InputValidation.MAX_DESCRIPTION_CHARS);
+        ignore InputValidation.requireRelatedPersonIds(m.relatedPersonIds);
+      };
+      case (#Source s) {
+        ignore InputValidation.requireText("title", s.title, InputValidation.MAX_TITLE_CHARS);
+        ignore InputValidation.requireText("description", s.description, InputValidation.MAX_DESCRIPTION_CHARS);
+      };
+    };
+  };
+
   /// Creates a new source record. Requires an approved family member; the caller
   /// is recorded as the contributor. The source enters as `#Pending`.
   public shared ({ caller }) func createSource(
@@ -68,12 +108,14 @@ mixin (
     if (not FamilyAuthorizationLib.isApprovedFamilyMember(stewards, claims, caller)) {
       return #err(#notAuthorized);
     };
+    let cleanTitle = InputValidation.requireText("title", title, InputValidation.MAX_TITLE_CHARS);
+    let cleanDescription = InputValidation.requireText("description", description, InputValidation.MAX_DESCRIPTION_CHARS);
     let source = ResearchLib.createSource(
       sources,
       { var next = state.nextSourceId },
-      title,
+      cleanTitle,
       sourceType,
-      description,
+      cleanDescription,
       archiveItemId,
       caller,
       Time.now(),
@@ -87,7 +129,7 @@ mixin (
       ?source.id,
       caller,
       Time.now(),
-      "Source '" # title # "' created",
+      "Source '" # cleanTitle # "' created",
     );
     state.nextAuditId := state.nextAuditId + 1;
     addResearchNotification(caller, #ResearchSubmission, "Your research submission is awaiting Family Steward review.");
@@ -125,15 +167,18 @@ mixin (
     if (not sourceExists(sourceId)) {
       return #err(#notFound(sourceId));
     };
+    let cleanTitle = InputValidation.requireText("title", title, InputValidation.MAX_TITLE_CHARS);
+    let cleanPersonId = InputValidation.requireOptionalText("personId", personId, InputValidation.MAX_LOCATION_CHARS);
+    requireFindingContent(content);
     let finding = ResearchLib.createFinding(
       findings,
       { var next = state.nextFindingId },
-      title,
+      cleanTitle,
       evidenceLabel,
       findingType,
       content,
       sourceId,
-      personId,
+      cleanPersonId,
       newPersonCandidateId,
       caller,
       Time.now(),
@@ -147,7 +192,7 @@ mixin (
       ?sourceId,
       caller,
       Time.now(),
-      "Finding '" # title # "' submitted",
+      "Finding '" # cleanTitle # "' submitted",
     );
     state.nextAuditId := state.nextAuditId + 1;
     addResearchNotification(caller, #ResearchSubmission, "Your research submission is awaiting Family Steward review.");
@@ -271,11 +316,13 @@ mixin (
     if (not sourceExists(sourceId)) {
       return #err(#notFound(sourceId));
     };
+    let cleanName = InputValidation.requireText("name", name, InputValidation.MAX_TITLE_CHARS);
+    let cleanDetails = InputValidation.requireText("details", details, InputValidation.MAX_DESCRIPTION_CHARS);
     let candidate = ResearchLib.createNewPersonCandidate(
       candidates,
       { var next = state.nextCandidateId },
-      name,
-      details,
+      cleanName,
+      cleanDetails,
       sourceId,
       caller,
       Time.now(),
@@ -289,7 +336,7 @@ mixin (
       ?sourceId,
       caller,
       Time.now(),
-      "New Person Candidate '" # name # "' submitted",
+      "New Person Candidate '" # cleanName # "' submitted",
     );
     state.nextAuditId := state.nextAuditId + 1;
     addResearchNotification(caller, #ResearchSubmission, "Your research submission is awaiting Family Steward review.");
@@ -316,12 +363,15 @@ mixin (
     if (not sourceExists(sourceId)) {
       return #err(#notFound(sourceId));
     };
+    let cleanFrom = InputValidation.requireText("fromPersonId", fromPersonId, InputValidation.MAX_LOCATION_CHARS);
+    let cleanTo = InputValidation.requireText("toPersonId", toPersonId, InputValidation.MAX_LOCATION_CHARS);
+    let cleanType = InputValidation.requireText("relationshipType", relationshipType, InputValidation.MAX_LOCATION_CHARS);
     let proposal = ResearchLib.createRelationshipProposal(
       proposals,
       { var next = state.nextProposalId },
-      fromPersonId,
-      toPersonId,
-      relationshipType,
+      cleanFrom,
+      cleanTo,
+      cleanType,
       sourceId,
       caller,
       Time.now(),
@@ -335,7 +385,7 @@ mixin (
       ?sourceId,
       caller,
       Time.now(),
-      "Relationship proposal '" # fromPersonId # " - " # relationshipType # " - " # toPersonId # "' submitted",
+      "Relationship proposal '" # cleanFrom # " - " # cleanType # " - " # cleanTo # "' submitted",
     );
     state.nextAuditId := state.nextAuditId + 1;
     addResearchNotification(caller, #ResearchSubmission, "Your research submission is awaiting Family Steward review.");
@@ -396,6 +446,7 @@ mixin (
     notes : Text,
   ) : async Result.Result<Types.ConflictReviewItem, Types.ResearchError> {
     requireSteward(caller);
+    let cleanNotes = InputValidation.requireText("notes", notes, InputValidation.MAX_DESCRIPTION_CHARS);
     let now = Time.now();
     switch (conflicts.find(func c = c.id == id)) {
       case null { #err(#notFound(id)) };
@@ -425,7 +476,7 @@ mixin (
             case null {};
           };
         };
-        let updated = ResearchLib.resolveConflict(conflicts, id, action, notes, caller, now)
+        let updated = ResearchLib.resolveConflict(conflicts, id, action, cleanNotes, caller, now)
           ?? Runtime.trap("Conflict not found");
         // Reflect the resolution outcome on the linked finding so it no longer
         // counts as an unresolved conflict after Keep/Replace, and so Preserve

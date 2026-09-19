@@ -1072,6 +1072,7 @@ type BoardMediaUpload =
    description: text;
    era: text;
    itemType: ArchiveItemType;
+   mimeType: text;
    primarySpeaker: opt OralHistorySpeaker;
    privacyLevel: PrivacyLevel;
    relatedBranchId: opt text;
@@ -1360,10 +1361,10 @@ service : {
   /// typed Archive Item ID is required. Requires an approved family member; the
   /// caller is recorded as the contributor of both records.
   createSourceWithUpload: (title: text, sourceType: SourceType, description:
-   text, "blob": ExternalBlob, tags: vec text, era: text, year: opt nat,
-   relatedMemberIds: vec text, privacyLevel: PrivacyLevel, classification:
-   ArchiveItemClassification, primarySpeaker: opt OralHistorySpeaker) ->
-   (Result_17);
+   text, mimeType: text, "blob": ExternalBlob, tags: vec text, era: text,
+   year: opt nat, relatedMemberIds: vec text, privacyLevel: PrivacyLevel,
+   classification: ArchiveItemClassification, primarySpeaker:
+   opt OralHistorySpeaker) -> (Result_17);
   /// Designates an approved claimed family member as a successor steward with a
   /// priority/order. A successor is a designation only until activated.
   /// Family Steward only.
@@ -1771,11 +1772,11 @@ service : {
   /// is recorded as the contributor. The item is stored in pending state and
   /// waits for admin approval before appearing in the archive.
   submitArchiveItem: (title: text, description: text, itemType:
-   ArchiveItemType, "blob": ExternalBlob, era: text, year: opt nat, tags:
-   vec text, relatedMemberIds: vec text, relatedBranchId: opt text,
-   sourceStatus: SourceStatus, privacyLevel: PrivacyLevel, classification:
-   ArchiveItemClassification, primarySpeaker: opt OralHistorySpeaker) ->
-   (ArchiveItem);
+   ArchiveItemType, mimeType: text, "blob": ExternalBlob, era: text, year:
+   opt nat, tags: vec text, relatedMemberIds: vec text, relatedBranchId:
+   opt text, sourceStatus: SourceStatus, privacyLevel: PrivacyLevel,
+   classification: ArchiveItemClassification, primarySpeaker:
+   opt OralHistorySpeaker) -> (ArchiveItem);
   /// Submits a mystery contribution (a note, memory, possible lead, or
   /// source/document reference). Requires an approved family member; the caller
   /// is recorded as the contributor. The contribution is stored in pending state

@@ -33,6 +33,7 @@ import {
   useListSources,
 } from "../hooks/useResearchIntake";
 import { useIsSteward } from "../hooks/useStewardAuthority";
+import { sanitizeFilename, validateSourceFile } from "../lib/fileValidation";
 import {
   ARCHIVE_ITEM_TYPE_BADGE,
   ARCHIVE_ITEM_TYPE_LABELS,
@@ -234,8 +235,33 @@ function SourcesTab({
 
   const handleFile = async (file: File) => {
     if (!file) return;
+    // Pre-read validation: reject invalid/oversized files before touching bytes.
+    // Every research source upload is created through the backend
+    // createSourceWithUpload path, which validates against #ArchiveDocument, so
+    // the document surface is the correct gate for every source type.
+    const validation = validateSourceFile(file, sourceType);
+    if (!validation.valid) {
+      setError(validation.error);
+      setFileBytes(null);
+      setFileName("");
+      setFileMime("");
+      setProgress(null);
+      return;
+    }
+    const safeName = sanitizeFilename(file.name);
+    if (safeName === null) {
+      setError(
+        "That filename can't be used. Please rename the file and try again.",
+      );
+      setFileBytes(null);
+      setFileName("");
+      setFileMime("");
+      setProgress(null);
+      return;
+    }
+    setError(null);
     setFileBytes(new Uint8Array(await file.arrayBuffer()));
-    setFileName(file.name);
+    setFileName(safeName);
     setFileMime(file.type);
     setProgress(null);
   };
@@ -306,6 +332,7 @@ function SourcesTab({
           title: capturedTitle,
           sourceType: capturedType,
           description: capturedDescription,
+          mimeType: fileMime,
           blob,
           tags: tags
             .split(",")

@@ -242,6 +242,7 @@ const {
       title: string,
       sourceType: SourceType,
       description: string,
+      _mimeType: string,
       _blob: ExternalBlob,
       tags: string[],
       era: string,

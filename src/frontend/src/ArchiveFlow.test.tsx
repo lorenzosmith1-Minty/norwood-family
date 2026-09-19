@@ -64,6 +64,7 @@ const {
       title: string,
       description: string,
       itemType: ArchiveItemType,
+      _mimeType: string,
       blob: ExternalBlob,
       era: string,
       year: bigint | null,
@@ -356,6 +357,7 @@ describe("Admin approval flow", () => {
       "A family letter",
       "A letter from 1924.",
       ArchiveItemType.Document,
+      "text/plain",
       ExternalBlob.fromBytes(
         new Uint8Array([1, 2, 3]),
         "text/plain",
@@ -397,6 +399,7 @@ describe("Admin approval flow", () => {
       "A family letter",
       "A letter from 1924.",
       ArchiveItemType.Document,
+      "text/plain",
       ExternalBlob.fromBytes(
         new Uint8Array([1, 2, 3]),
         "text/plain",
@@ -441,6 +444,7 @@ describe("Admin approval flow", () => {
       "Duplicate photo",
       "Already in the archive.",
       ArchiveItemType.Photo,
+      "image/png",
       ExternalBlob.fromBytes(new Uint8Array([9]), "image/png", "dup.png"),
       "1920s",
       null,

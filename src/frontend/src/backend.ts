@@ -110,6 +110,7 @@ export interface BoardMediaUpload {
     blob: ExternalBlob;
     tags: Array<string>;
     year?: bigint;
+    mimeType: string;
     description: string;
     privacyLevel: PrivacyLevel;
     primarySpeaker?: OralHistorySpeaker;
@@ -1453,7 +1454,7 @@ export interface backendInterface {
      * / typed Archive Item ID is required. Requires an approved family member; the
      * / caller is recorded as the contributor of both records.
      */
-    createSourceWithUpload(title: string, sourceType: SourceType, description: string, blob: ExternalBlob, tags: Array<string>, era: string, year: bigint | null, relatedMemberIds: Array<string>, privacyLevel: PrivacyLevel, classification: ArchiveItemClassification, primarySpeaker: OralHistorySpeaker | null): Promise<Result_17>;
+    createSourceWithUpload(title: string, sourceType: SourceType, description: string, mimeType: string, blob: ExternalBlob, tags: Array<string>, era: string, year: bigint | null, relatedMemberIds: Array<string>, privacyLevel: PrivacyLevel, classification: ArchiveItemClassification, primarySpeaker: OralHistorySpeaker | null): Promise<Result_17>;
     /**
      * / Designates an approved claimed family member as a successor steward with a
      * / priority/order. A successor is a designation only until activated.
@@ -2060,7 +2061,7 @@ export interface backendInterface {
      * / is recorded as the contributor. The item is stored in pending state and
      * / waits for admin approval before appearing in the archive.
      */
-    submitArchiveItem(title: string, description: string, itemType: ArchiveItemType, blob: ExternalBlob, era: string, year: bigint | null, tags: Array<string>, relatedMemberIds: Array<string>, relatedBranchId: string | null, sourceStatus: SourceStatus, privacyLevel: PrivacyLevel, classification: ArchiveItemClassification, primarySpeaker: OralHistorySpeaker | null): Promise<ArchiveItem>;
+    submitArchiveItem(title: string, description: string, itemType: ArchiveItemType, mimeType: string, blob: ExternalBlob, era: string, year: bigint | null, tags: Array<string>, relatedMemberIds: Array<string>, relatedBranchId: string | null, sourceStatus: SourceStatus, privacyLevel: PrivacyLevel, classification: ArchiveItemClassification, primarySpeaker: OralHistorySpeaker | null): Promise<ArchiveItem>;
     /**
      * / Submits a mystery contribution (a note, memory, possible lead, or
      * / source/document reference). Requires an approved family member; the caller
@@ -2686,17 +2687,17 @@ export class Backend implements backendInterface {
             return from_candid_Result_18_n152(this._uploadFile, this._downloadFile, result);
         }
     }
-    async createSourceWithUpload(arg0: string, arg1: SourceType, arg2: string, arg3: ExternalBlob, arg4: Array<string>, arg5: string, arg6: bigint | null, arg7: Array<string>, arg8: PrivacyLevel, arg9: ArchiveItemClassification, arg10: OralHistorySpeaker | null): Promise<Result_17> {
+    async createSourceWithUpload(arg0: string, arg1: SourceType, arg2: string, arg3: string, arg4: ExternalBlob, arg5: Array<string>, arg6: string, arg7: bigint | null, arg8: Array<string>, arg9: PrivacyLevel, arg10: ArchiveItemClassification, arg11: OralHistorySpeaker | null): Promise<Result_17> {
         if (this.processError) {
             try {
-                const result = await this.actor.createSourceWithUpload(arg0, to_candid_SourceType_n135(this._uploadFile, this._downloadFile, arg1), arg2, await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg3), arg4, arg5, to_candid_opt_n19(this._uploadFile, this._downloadFile, arg6), arg7, to_candid_PrivacyLevel_n119(this._uploadFile, this._downloadFile, arg8), to_candid_ArchiveItemClassification_n124(this._uploadFile, this._downloadFile, arg9), to_candid_opt_n154(this._uploadFile, this._downloadFile, arg10));
+                const result = await this.actor.createSourceWithUpload(arg0, to_candid_SourceType_n135(this._uploadFile, this._downloadFile, arg1), arg2, arg3, await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg4), arg5, arg6, to_candid_opt_n19(this._uploadFile, this._downloadFile, arg7), arg8, to_candid_PrivacyLevel_n119(this._uploadFile, this._downloadFile, arg9), to_candid_ArchiveItemClassification_n124(this._uploadFile, this._downloadFile, arg10), to_candid_opt_n154(this._uploadFile, this._downloadFile, arg11));
                 return from_candid_Result_17_n155(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.createSourceWithUpload(arg0, to_candid_SourceType_n135(this._uploadFile, this._downloadFile, arg1), arg2, await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg3), arg4, arg5, to_candid_opt_n19(this._uploadFile, this._downloadFile, arg6), arg7, to_candid_PrivacyLevel_n119(this._uploadFile, this._downloadFile, arg8), to_candid_ArchiveItemClassification_n124(this._uploadFile, this._downloadFile, arg9), to_candid_opt_n154(this._uploadFile, this._downloadFile, arg10));
+            const result = await this.actor.createSourceWithUpload(arg0, to_candid_SourceType_n135(this._uploadFile, this._downloadFile, arg1), arg2, arg3, await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg4), arg5, arg6, to_candid_opt_n19(this._uploadFile, this._downloadFile, arg7), arg8, to_candid_PrivacyLevel_n119(this._uploadFile, this._downloadFile, arg9), to_candid_ArchiveItemClassification_n124(this._uploadFile, this._downloadFile, arg10), to_candid_opt_n154(this._uploadFile, this._downloadFile, arg11));
             return from_candid_Result_17_n155(this._uploadFile, this._downloadFile, result);
         }
     }
@@ -4254,17 +4255,17 @@ export class Backend implements backendInterface {
             return from_candid_opt_n82(this._uploadFile, this._downloadFile, result);
         }
     }
-    async submitArchiveItem(arg0: string, arg1: string, arg2: ArchiveItemType, arg3: ExternalBlob, arg4: string, arg5: bigint | null, arg6: Array<string>, arg7: Array<string>, arg8: string | null, arg9: SourceStatus, arg10: PrivacyLevel, arg11: ArchiveItemClassification, arg12: OralHistorySpeaker | null): Promise<ArchiveItem> {
+    async submitArchiveItem(arg0: string, arg1: string, arg2: ArchiveItemType, arg3: string, arg4: ExternalBlob, arg5: string, arg6: bigint | null, arg7: Array<string>, arg8: Array<string>, arg9: string | null, arg10: SourceStatus, arg11: PrivacyLevel, arg12: ArchiveItemClassification, arg13: OralHistorySpeaker | null): Promise<ArchiveItem> {
         if (this.processError) {
             try {
-                const result = await this.actor.submitArchiveItem(arg0, arg1, to_candid_ArchiveItemType_n122(this._uploadFile, this._downloadFile, arg2), await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg3), arg4, to_candid_opt_n19(this._uploadFile, this._downloadFile, arg5), arg6, arg7, to_candid_opt_n18(this._uploadFile, this._downloadFile, arg8), to_candid_SourceStatus_n123(this._uploadFile, this._downloadFile, arg9), to_candid_PrivacyLevel_n119(this._uploadFile, this._downloadFile, arg10), to_candid_ArchiveItemClassification_n124(this._uploadFile, this._downloadFile, arg11), to_candid_opt_n154(this._uploadFile, this._downloadFile, arg12));
+                const result = await this.actor.submitArchiveItem(arg0, arg1, to_candid_ArchiveItemType_n122(this._uploadFile, this._downloadFile, arg2), arg3, await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg4), arg5, to_candid_opt_n19(this._uploadFile, this._downloadFile, arg6), arg7, arg8, to_candid_opt_n18(this._uploadFile, this._downloadFile, arg9), to_candid_SourceStatus_n123(this._uploadFile, this._downloadFile, arg10), to_candid_PrivacyLevel_n119(this._uploadFile, this._downloadFile, arg11), to_candid_ArchiveItemClassification_n124(this._uploadFile, this._downloadFile, arg12), to_candid_opt_n154(this._uploadFile, this._downloadFile, arg13));
                 return from_candid_ArchiveItem_n39(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.submitArchiveItem(arg0, arg1, to_candid_ArchiveItemType_n122(this._uploadFile, this._downloadFile, arg2), await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg3), arg4, to_candid_opt_n19(this._uploadFile, this._downloadFile, arg5), arg6, arg7, to_candid_opt_n18(this._uploadFile, this._downloadFile, arg8), to_candid_SourceStatus_n123(this._uploadFile, this._downloadFile, arg9), to_candid_PrivacyLevel_n119(this._uploadFile, this._downloadFile, arg10), to_candid_ArchiveItemClassification_n124(this._uploadFile, this._downloadFile, arg11), to_candid_opt_n154(this._uploadFile, this._downloadFile, arg12));
+            const result = await this.actor.submitArchiveItem(arg0, arg1, to_candid_ArchiveItemType_n122(this._uploadFile, this._downloadFile, arg2), arg3, await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg4), arg5, to_candid_opt_n19(this._uploadFile, this._downloadFile, arg6), arg7, arg8, to_candid_opt_n18(this._uploadFile, this._downloadFile, arg9), to_candid_SourceStatus_n123(this._uploadFile, this._downloadFile, arg10), to_candid_PrivacyLevel_n119(this._uploadFile, this._downloadFile, arg11), to_candid_ArchiveItemClassification_n124(this._uploadFile, this._downloadFile, arg12), to_candid_opt_n154(this._uploadFile, this._downloadFile, arg13));
             return from_candid_ArchiveItem_n39(this._uploadFile, this._downloadFile, result);
         }
     }
@@ -7354,6 +7355,7 @@ async function to_candid_record_n118(_uploadFile: (file: ExternalBlob) => Promis
     blob: ExternalBlob;
     tags: Array<string>;
     year?: bigint;
+    mimeType: string;
     description: string;
     privacyLevel: PrivacyLevel;
     primarySpeaker?: OralHistorySpeaker;
@@ -7368,6 +7370,7 @@ async function to_candid_record_n118(_uploadFile: (file: ExternalBlob) => Promis
     blob: _ExternalBlob;
     tags: Array<string>;
     year: [] | [bigint];
+    mimeType: string;
     description: string;
     privacyLevel: _PrivacyLevel;
     primarySpeaker: [] | [_OralHistorySpeaker];
@@ -7383,6 +7386,7 @@ async function to_candid_record_n118(_uploadFile: (file: ExternalBlob) => Promis
         blob: await to_candid_ExternalBlob_n26(_uploadFile, _downloadFile, value.blob),
         tags: value.tags,
         year: value.year ? candid_some(value.year) : candid_none(),
+        mimeType: value.mimeType,
         description: value.description,
         privacyLevel: to_candid_PrivacyLevel_n119(_uploadFile, _downloadFile, value.privacyLevel),
         primarySpeaker: value.primarySpeaker ? candid_some(to_candid_OralHistorySpeaker_n120(_uploadFile, _downloadFile, value.primarySpeaker)) : candid_none(),

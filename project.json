@@ -1,20 +1,21 @@
 {
-  "overview": "A private family history app for the Norwood family to explore their tree, share stories, photos, and recipes, and preserve their heritage.",
+  "overview": "A private family history platform for the Norwood family to preserve photos, stories, recipes, and research together.",
   "features": [
-    "Explore an interactive family tree",
-    "Claim and edit your own family profile",
-    "Contribute photos, videos, stories, and recipes to the family archive",
-    "Review and approve family contributions as a Family Steward",
-    "Message board and private messaging between family members",
-    "Research intake and conflict review for historical records"
+    "Family message board and private messaging for approved members",
+    "Photo galleries and profile pages for family members",
+    "Family Archive for documents, images, audio, and video",
+    "Family recipes collection with contributions",
+    "Historical research intake and steward review",
+    "Family stories, mysteries, and timeline",
+    "Steward governance and approval workflows"
   ],
   "category": "family-history",
   "tags": [
     "family",
     "genealogy",
     "archive",
-    "heritage",
-    "community"
+    "community",
+    "history"
   ],
-  "last_updated": "2026-09-18T11:44:08.392Z"
+  "last_updated": "2026-09-19T04:18:29.094Z"
 }

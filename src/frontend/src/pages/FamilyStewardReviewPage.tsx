@@ -9,7 +9,6 @@ import {
 } from "lucide-react";
 import { StatusBadge } from "../components/StatusBadge";
 import { ReportedMessagesTab } from "../components/governance/ReportedMessagesTab";
-import { useIsAdmin } from "../hooks/useArchiveStorage";
 import {
   useApproveProfileClaim,
   useListProfileClaims,
@@ -21,6 +20,7 @@ import {
   useRejectRelationshipRequest,
   useSetRelationshipRequestPending,
 } from "../hooks/useRelationshipRequests";
+import { useIsSteward } from "../hooks/useStewardAuthority";
 import { resolveDisplayName } from "../types/family";
 import type { ProfileClaim, RelationshipRequest } from "../types/ownership";
 import { RELATIONSHIP_TYPE_LABELS } from "../types/ownership";
@@ -59,7 +59,7 @@ function personName(personId: string): string {
 export function FamilyStewardReviewPage({
   onBack,
 }: FamilyStewardReviewPageProps) {
-  const { data: isAdmin = false, isLoading: adminLoading } = useIsAdmin();
+  const { data: isSteward = false, isLoading: stewardLoading } = useIsSteward();
   const { data: claims = [], isLoading: claimsLoading } =
     useListProfileClaims();
   const { data: requests = [], isLoading: requestsLoading } =
@@ -74,9 +74,9 @@ export function FamilyStewardReviewPage({
   const pendingClaims = claims.filter((c) => c.status === "Pending");
   const pendingRequests = requests.filter((r) => r.status === "Pending");
 
-  const isLoading = adminLoading || claimsLoading || requestsLoading;
+  const isLoading = stewardLoading || claimsLoading || requestsLoading;
 
-  if (!adminLoading && !isAdmin) {
+  if (!stewardLoading && !isSteward) {
     return (
       <div className="mx-auto w-full max-w-3xl px-6 py-8">
         <button

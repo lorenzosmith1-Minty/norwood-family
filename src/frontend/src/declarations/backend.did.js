@@ -40,7 +40,7 @@ export const Error = IDL.Variant({
     'expected' : IDL.Vec(IDL.Text),
   }),
 });
-export const Result_25 = IDL.Variant({ 'ok' : IDL.Null, 'err' : Error });
+export const Result_26 = IDL.Variant({ 'ok' : IDL.Null, 'err' : Error });
 export const PersonId = IDL.Text;
 export const StewardRoleStatus = IDL.Variant({
   'Active' : IDL.Null,
@@ -456,7 +456,7 @@ export const AccountError = IDL.Variant({
   'AccountNotFound' : IDL.Null,
   'NotSignedIn' : IDL.Null,
 });
-export const Result_24 = IDL.Variant({ 'ok' : Account, 'err' : AccountError });
+export const Result_25 = IDL.Variant({ 'ok' : Account, 'err' : AccountError });
 export const ClaimPersistenceError = IDL.Variant({
   'AlreadyOwned' : IDL.Null,
   'AlreadyPending' : IDL.Null,
@@ -467,6 +467,20 @@ export const ClaimPersistenceError = IDL.Variant({
 export const ClaimEligibility = IDL.Record({
   'eligible' : IDL.Bool,
   'reason' : IDL.Opt(ClaimPersistenceError),
+});
+export const StewardClaimResult = IDL.Record({
+  'stewardAccountId' : IDL.Principal,
+  'claimedAt' : IDL.Int,
+  'claimedBy' : IDL.Principal,
+});
+export const StewardClaimError = IDL.Variant({
+  'StewardAlreadyExists' : IDL.Null,
+  'AlreadySteward' : IDL.Null,
+  'NotSignedIn' : IDL.Null,
+});
+export const Result_24 = IDL.Variant({
+  'ok' : StewardClaimResult,
+  'err' : StewardClaimError,
 });
 export const BoardMediaUpload = IDL.Record({
   'era' : IDL.Text,
@@ -1051,7 +1065,7 @@ export const idlService = IDL.Service({
     ),
   '_immutableObjectStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
   '_initialize_access_control' : IDL.Func([], [], []),
-  '_internet_identity_sign_in_finish' : IDL.Func([], [Result_25], []),
+  '_internet_identity_sign_in_finish' : IDL.Func([], [Result_26], []),
   '_internet_identity_sign_in_start' : IDL.Func([], [IDL.Vec(IDL.Nat8)], []),
   'activateSuccessor' : IDL.Func([PersonId], [Result_10], []),
   'addBoardReply' : IDL.Func([PostId, IDL.Text], [Reply], []),
@@ -1108,10 +1122,11 @@ export const idlService = IDL.Service({
   'archiveBoardPost' : IDL.Func([PostId], [IDL.Opt(Post)], []),
   'archiveProfile' : IDL.Func([PersonId], [Result_2], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-  'bindAuthMethod' : IDL.Func([AuthMethod], [Result_24], []),
+  'bindAuthMethod' : IDL.Func([AuthMethod], [Result_25], []),
   'blockUser' : IDL.Func([IDL.Principal], [], []),
   'canClaimProfile' : IDL.Func([PersonId], [ClaimEligibility], ['query']),
   'canMessagePerson' : IDL.Func([IDL.Text], [IDL.Bool], ['query']),
+  'claimSteward' : IDL.Func([], [Result_24], []),
   'correctRelationshipType' : IDL.Func(
       [IDL.Nat, RelationshipType],
       [Result_23],
@@ -1258,8 +1273,10 @@ export const idlService = IDL.Service({
       [IDL.Vec(StewardAuditEntry)],
       ['query'],
     ),
+  'hasActiveSteward' : IDL.Func([], [IDL.Bool], ['query']),
   'hasApprovedOwner' : IDL.Func([PersonId], [IDL.Bool], ['query']),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+  'isCallerSteward' : IDL.Func([], [IDL.Bool], ['query']),
   'listApprovedArchiveItems' : IDL.Func([], [IDL.Vec(ArchiveItem)], ['query']),
   'listApprovedRecipes' : IDL.Func([], [IDL.Vec(Recipe)], ['query']),
   'listApprovedStories' : IDL.Func([], [IDL.Vec(Story)], ['query']),
@@ -1618,7 +1635,7 @@ export const idlFactory = ({ IDL }) => {
       'expected' : IDL.Vec(IDL.Text),
     }),
   });
-  const Result_25 = IDL.Variant({ 'ok' : IDL.Null, 'err' : Error });
+  const Result_26 = IDL.Variant({ 'ok' : IDL.Null, 'err' : Error });
   const PersonId = IDL.Text;
   const StewardRoleStatus = IDL.Variant({
     'Active' : IDL.Null,
@@ -2028,7 +2045,7 @@ export const idlFactory = ({ IDL }) => {
     'AccountNotFound' : IDL.Null,
     'NotSignedIn' : IDL.Null,
   });
-  const Result_24 = IDL.Variant({ 'ok' : Account, 'err' : AccountError });
+  const Result_25 = IDL.Variant({ 'ok' : Account, 'err' : AccountError });
   const ClaimPersistenceError = IDL.Variant({
     'AlreadyOwned' : IDL.Null,
     'AlreadyPending' : IDL.Null,
@@ -2039,6 +2056,20 @@ export const idlFactory = ({ IDL }) => {
   const ClaimEligibility = IDL.Record({
     'eligible' : IDL.Bool,
     'reason' : IDL.Opt(ClaimPersistenceError),
+  });
+  const StewardClaimResult = IDL.Record({
+    'stewardAccountId' : IDL.Principal,
+    'claimedAt' : IDL.Int,
+    'claimedBy' : IDL.Principal,
+  });
+  const StewardClaimError = IDL.Variant({
+    'StewardAlreadyExists' : IDL.Null,
+    'AlreadySteward' : IDL.Null,
+    'NotSignedIn' : IDL.Null,
+  });
+  const Result_24 = IDL.Variant({
+    'ok' : StewardClaimResult,
+    'err' : StewardClaimError,
   });
   const BoardMediaUpload = IDL.Record({
     'era' : IDL.Text,
@@ -2602,7 +2633,7 @@ export const idlFactory = ({ IDL }) => {
       ),
     '_immutableObjectStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
     '_initialize_access_control' : IDL.Func([], [], []),
-    '_internet_identity_sign_in_finish' : IDL.Func([], [Result_25], []),
+    '_internet_identity_sign_in_finish' : IDL.Func([], [Result_26], []),
     '_internet_identity_sign_in_start' : IDL.Func([], [IDL.Vec(IDL.Nat8)], []),
     'activateSuccessor' : IDL.Func([PersonId], [Result_10], []),
     'addBoardReply' : IDL.Func([PostId, IDL.Text], [Reply], []),
@@ -2663,10 +2694,11 @@ export const idlFactory = ({ IDL }) => {
     'archiveBoardPost' : IDL.Func([PostId], [IDL.Opt(Post)], []),
     'archiveProfile' : IDL.Func([PersonId], [Result_2], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-    'bindAuthMethod' : IDL.Func([AuthMethod], [Result_24], []),
+    'bindAuthMethod' : IDL.Func([AuthMethod], [Result_25], []),
     'blockUser' : IDL.Func([IDL.Principal], [], []),
     'canClaimProfile' : IDL.Func([PersonId], [ClaimEligibility], ['query']),
     'canMessagePerson' : IDL.Func([IDL.Text], [IDL.Bool], ['query']),
+    'claimSteward' : IDL.Func([], [Result_24], []),
     'correctRelationshipType' : IDL.Func(
         [IDL.Nat, RelationshipType],
         [Result_23],
@@ -2813,8 +2845,10 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(StewardAuditEntry)],
         ['query'],
       ),
+    'hasActiveSteward' : IDL.Func([], [IDL.Bool], ['query']),
     'hasApprovedOwner' : IDL.Func([PersonId], [IDL.Bool], ['query']),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+    'isCallerSteward' : IDL.Func([], [IDL.Bool], ['query']),
     'listApprovedArchiveItems' : IDL.Func(
         [],
         [IDL.Vec(ArchiveItem)],

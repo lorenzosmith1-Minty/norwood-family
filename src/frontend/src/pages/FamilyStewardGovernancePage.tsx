@@ -6,7 +6,7 @@ import { DuplicateReviewTab } from "../components/governance/DuplicateReviewTab"
 import { RelationshipAdminTab } from "../components/governance/RelationshipAdminTab";
 import { ReviewRequestsTab } from "../components/governance/ReviewRequestsTab";
 import { StewardManagementTab } from "../components/governance/StewardManagementTab";
-import { useIsAdmin } from "../hooks/useArchiveStorage";
+import { useIsSteward } from "../hooks/useStewardAuthority";
 
 type GovernanceTab =
   | "review"
@@ -32,10 +32,10 @@ interface FamilyStewardGovernancePageProps {
 export function FamilyStewardGovernancePage({
   onBack,
 }: FamilyStewardGovernancePageProps) {
-  const { data: isAdmin = false, isLoading: adminLoading } = useIsAdmin();
+  const { data: isSteward = false, isLoading: stewardLoading } = useIsSteward();
   const [activeTab, setActiveTab] = useState<GovernanceTab>("review");
 
-  if (!adminLoading && !isAdmin) {
+  if (!stewardLoading && !isSteward) {
     return (
       <div className="mx-auto w-full max-w-3xl px-6 py-8">
         <button

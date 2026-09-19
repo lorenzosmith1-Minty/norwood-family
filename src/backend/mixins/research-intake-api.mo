@@ -6,19 +6,19 @@ import Principal "mo:core/Principal";
 import Runtime "mo:core/Runtime";
 import Text "mo:core/Text";
 import Time "mo:core/Time";
-import AccessControl "mo:caffeineai-authorization/access-control";
 import Types "../types/research-intake";
 import OwnershipTypes "../types/ownership";
 import FamilyHistoryTypes "../types/family-history";
 import ArchiveTypes "../types/archive";
+import GovernanceTypes "../types/governance";
 import ResearchLib "../lib/research-intake";
 import FamilyAuthorizationLib "../lib/family-authorization";
+import StewardAuthorityLib "../lib/steward-authority";
 
 /// Public API for the Historical Research Intake feature. Everything enters as
 /// proposed/reviewable information first; canonical family data is only ever
 /// changed by an explicit steward approval action.
 mixin (
-  accessControlState : AccessControl.AccessControlState,
   sources : List.List<Types.SourceRecord>,
   findings : List.List<Types.ProposedFinding>,
   candidates : List.List<Types.NewPersonCandidate>,
@@ -40,13 +40,14 @@ mixin (
   archiveItems : List.List<ArchiveTypes.ArchiveItem>,
   notifications : List.List<OwnershipTypes.Notification>,
   claims : List.List<OwnershipTypes.ProfileClaim>,
+  stewards : List.List<GovernanceTypes.StewardRecord>,
 ) {
   /// Traps unless the caller is a signed-in Family Steward.
   func requireSteward(caller : Principal) {
     if (caller.isAnonymous()) {
       Runtime.trap("Unauthorized: You must be signed in");
     };
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can perform this action");
     };
   };
@@ -64,7 +65,7 @@ mixin (
     description : Text,
     archiveItemId : ?Nat,
   ) : async Result.Result<Types.SourceRecord, Types.ResearchError> {
-    if (not FamilyAuthorizationLib.isApprovedFamilyMember(accessControlState, claims, caller)) {
+    if (not FamilyAuthorizationLib.isApprovedFamilyMember(stewards, claims, caller)) {
       return #err(#notAuthorized);
     };
     let source = ResearchLib.createSource(
@@ -115,7 +116,7 @@ mixin (
     personId : ?Text,
     newPersonCandidateId : ?Nat,
   ) : async Result.Result<Types.ProposedFinding, Types.ResearchError> {
-    if (not FamilyAuthorizationLib.isApprovedFamilyMember(accessControlState, claims, caller)) {
+    if (not FamilyAuthorizationLib.isApprovedFamilyMember(stewards, claims, caller)) {
       return #err(#notAuthorized);
     };
     if (not sourceExists(sourceId)) {
@@ -258,7 +259,7 @@ mixin (
     details : Text,
     sourceId : Types.SourceId,
   ) : async Result.Result<Types.NewPersonCandidate, Types.ResearchError> {
-    if (not FamilyAuthorizationLib.isApprovedFamilyMember(accessControlState, claims, caller)) {
+    if (not FamilyAuthorizationLib.isApprovedFamilyMember(stewards, claims, caller)) {
       return #err(#notAuthorized);
     };
     if (not sourceExists(sourceId)) {
@@ -303,7 +304,7 @@ mixin (
     relationshipType : Text,
     sourceId : Types.SourceId,
   ) : async Result.Result<Types.RelationshipProposal, Types.ResearchError> {
-    if (not FamilyAuthorizationLib.isApprovedFamilyMember(accessControlState, claims, caller)) {
+    if (not FamilyAuthorizationLib.isApprovedFamilyMember(stewards, claims, caller)) {
       return #err(#notAuthorized);
     };
     if (not sourceExists(sourceId)) {

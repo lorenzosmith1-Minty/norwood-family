@@ -642,12 +642,19 @@ export type Result_23 = {
 };
 export type Result_24 = {
     __kind__: "ok";
+    ok: StewardClaimResult;
+} | {
+    __kind__: "err";
+    err: StewardClaimError;
+};
+export type Result_25 = {
+    __kind__: "ok";
     ok: Account;
 } | {
     __kind__: "err";
     err: AccountError;
 };
-export type Result_25 = {
+export type Result_26 = {
     __kind__: "ok";
     ok: null;
 } | {
@@ -759,6 +766,11 @@ export interface StewardAuditEntry {
     timestamp: bigint;
     actorAccountId: Principal;
     existingSourceId?: bigint;
+}
+export interface StewardClaimResult {
+    stewardAccountId: Principal;
+    claimedAt: bigint;
+    claimedBy: Principal;
 }
 export interface StewardIdentity {
     accountId: Principal;
@@ -1138,6 +1150,11 @@ export enum StewardAuditKind {
     ConflictResolution = "ConflictResolution",
     Governance = "Governance"
 }
+export enum StewardClaimError {
+    StewardAlreadyExists = "StewardAlreadyExists",
+    AlreadySteward = "AlreadySteward",
+    NotSignedIn = "NotSignedIn"
+}
 export enum StewardError {
     LastSteward = "LastSteward",
     NotSteward = "NotSteward",
@@ -1194,10 +1211,10 @@ export interface backendInterface {
      */
     addCanonicalStory(title: string, storyText: string, relatedMemberIds: Array<string>, era: string | null, year: bigint | null, location: string | null, evidenceStatus: EvidenceStatus, relatedArchiveItemIds: Array<bigint>): Promise<Story>;
     /**
-     * / Uploads a new photo to a person's gallery. Requires an approved family
-     * / member; the caller is recorded as the uploader. When the gallery has no
-     * / profile photo yet, the newly added photo is automatically set as the
-     * / profile photo. Returns the stored photo.
+     * / Uploads a new photo to a person's gallery. Requires the approved owner of
+     * / that claimed profile or a Family Steward; the caller is recorded as the
+     * / uploader. When the gallery has no profile photo yet, the newly added photo
+     * / is automatically set as the profile photo. Returns the stored photo.
      */
     addPhoto(personId: PersonId, filename: string, mimeType: string, blob: ExternalBlob): Promise<Photo>;
     /**
@@ -1288,7 +1305,7 @@ export interface backendInterface {
      * / account. The account id is the caller's stable principal, so the same
      * / person profile stays intact if the provider changes.
      */
-    bindAuthMethod(method: AuthMethod): Promise<Result_24>;
+    bindAuthMethod(method: AuthMethod): Promise<Result_25>;
     /**
      * / Blocks another member, preventing them from sending new messages to the
      * / caller. Approved family members only.
@@ -1309,6 +1326,14 @@ export interface backendInterface {
      * / living claimed Person Profile.
      */
     canMessagePerson(personId: string): Promise<boolean>;
+    /**
+     * / One-time "Claim Family Steward" bootstrap. Any signed-in account may claim
+     * / while no active Steward exists; no approved family profile is required.
+     * / Succeeds only when no active Steward exists, creating an ACTIVE
+     * / `StewardRecord` for the claimer. Once any active Steward exists the claim
+     * / permanently refuses.
+     */
+    claimSteward(): Promise<Result_24>;
     /**
      * / Corrects the relationship type of an existing relationship. Family Steward
      * / only.
@@ -1433,6 +1458,9 @@ export interface backendInterface {
     getPersonProfile(personId: PersonId): Promise<PersonProfile | null>;
     /**
      * / Returns the person's current profile photo, or `null` when none is set.
+     * / The single designated portrait of an unclaimed/historical profile stays
+     * / readable by guests so Add Myself / claim discovery works; for a claimed
+     * / profile only an approved family member or Family Steward may read it.
      */
     getProfilePhoto(personId: PersonId): Promise<Photo | null>;
     /**
@@ -1488,6 +1516,11 @@ export interface backendInterface {
      */
     getStewardAuditHistory(): Promise<Array<StewardAuditEntry>>;
     /**
+     * / Whether any active Family Steward exists. Public so the frontend can show
+     * / or hide the one-time "Claim Family Steward" control.
+     */
+    hasActiveSteward(): Promise<boolean>;
+    /**
      * / Whether a profile already has an approved owner. Approved ownership is
      * / authoritative: once a profile claim is approved, the approved owner is the
      * / canonical owner and no other claim or Add Myself flow can override or
@@ -1496,6 +1529,13 @@ export interface backendInterface {
      */
     hasApprovedOwner(personId: PersonId): Promise<boolean>;
     isCallerAdmin(): Promise<boolean>;
+    /**
+     * / Whether the caller is an active Norwood Family Steward. Public so the
+     * / frontend can ask "am I an active Norwood Family Steward?". Returns `false`
+     * / for an anonymous caller and for an account holding only the platform admin
+     * / role.
+     */
+    isCallerSteward(): Promise<boolean>;
     /**
      * / Lists all archive items in approved state visible to the caller. Privacy
      * / is enforced server-side: guests and non-approved members see only Public
@@ -1634,7 +1674,9 @@ export interface backendInterface {
      */
     listPersonRelationships(personId: PersonId): Promise<Array<Relationship>>;
     /**
-     * / Lists all uploaded photos for a person, in upload order.
+     * / Lists all uploaded photos for a person, in upload order. Requires an
+     * / approved family member or a Family Steward; the full gallery is never
+     * / public.
      */
     listPhotos(personId: PersonId): Promise<Array<Photo>>;
     /**
@@ -1841,7 +1883,8 @@ export interface backendInterface {
      */
     removeDuplicateProfile(personId: PersonId): Promise<Result_8>;
     /**
-     * / Removes a photo from a person's gallery. Returns `true` when a photo was
+     * / Removes a photo from a person's gallery. Requires the approved owner of
+     * / that claimed profile or a Family Steward. Returns `true` when a photo was
      * / removed. If the removed photo was the profile photo, the profile photo is
      * / cleared.
      */
@@ -1935,7 +1978,8 @@ export interface backendInterface {
      */
     sendMessage(recipientPersonId: string, body: string): Promise<Result_1>;
     /**
-     * / Marks the photo with `photoId` as the person's profile photo. Returns the
+     * / Marks the photo with `photoId` as the person's profile photo. Requires the
+     * / approved owner of that claimed profile or a Family Steward. Returns the
      * / newly selected photo, or `null` when the photo does not exist.
      */
     setProfilePhoto(personId: PersonId, photoId: PhotoId): Promise<Photo | null>;

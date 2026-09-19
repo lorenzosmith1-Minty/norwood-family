@@ -2471,6 +2471,9 @@ video {
 .bg-accent\/15 {
   background-color: oklch(var(--accent) / 0.15);
 }
+.bg-accent\/20 {
+  background-color: oklch(var(--accent) / 0.2);
+}
 .bg-background {
   background-color: oklch(var(--background));
 }
@@ -2666,6 +2669,10 @@ video {
   padding-top: 1rem;
   padding-bottom: 1rem;
 }
+.py-5 {
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
+}
 .py-6 {
   padding-top: 1.5rem;
   padding-bottom: 1.5rem;
@@ -2718,6 +2725,9 @@ video {
 }
 .pt-4 {
   padding-top: 1rem;
+}
+.pt-8 {
+  padding-top: 2rem;
 }
 .text-left {
   text-align: left;

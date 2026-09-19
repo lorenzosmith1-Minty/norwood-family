@@ -10,6 +10,7 @@ import OwnershipTypes "../types/ownership";
 import GovernanceTypes "../types/governance";
 import AccountIdentityTypes "../types/account-identity";
 import MessagingLib "../lib/messaging";
+import StewardAuthorityLib "../lib/steward-authority";
 
 mixin (
   accessControlState : AccessControl.AccessControlState,
@@ -21,6 +22,7 @@ mixin (
   archivedProfiles : List.List<GovernanceTypes.PersonId>,
   notifications : List.List<OwnershipTypes.Notification>,
   accounts : Map.Map<AccountIdentityTypes.AccountId, AccountIdentityTypes.Account>,
+  stewards : List.List<GovernanceTypes.StewardRecord>,
 ) {
   /// Returns whether the signed-in caller may message the person identified by
   /// `personId`: the viewer is signed in, the target has an active linked
@@ -211,7 +213,7 @@ mixin (
     if (caller.isAnonymous()) {
       Runtime.trap("Unauthorized: You must be signed in");
     };
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can perform this action");
     };
   };

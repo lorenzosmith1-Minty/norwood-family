@@ -23,7 +23,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../components/ui/alert-dialog";
-import { useIsAdmin } from "../hooks/useArchiveStorage";
 import {
   useApproveFinding,
   useApproveNewPersonCandidate,
@@ -46,6 +45,7 @@ import {
   useRejectSource,
   useResolveConflict,
 } from "../hooks/useResearchIntake";
+import { useIsSteward } from "../hooks/useStewardAuthority";
 import { resolveDisplayName } from "../types/family";
 import {
   CONFLICT_ACTION_LABELS,
@@ -811,7 +811,7 @@ type StatusFilter = "All" | ReviewStatus;
 export function ResearchReviewQueuePage({
   onBack,
 }: ResearchReviewQueuePageProps) {
-  const { data: isAdmin = false, isLoading: adminLoading } = useIsAdmin();
+  const { data: isSteward = false, isLoading: stewardLoading } = useIsSteward();
   const { data: reviewQueue } = useGetReviewQueue();
   const { data: findings = [], isLoading: findingsLoading } = useListFindings();
   const { data: candidates = [], isLoading: candidatesLoading } =
@@ -879,13 +879,13 @@ export function ResearchReviewQueuePage({
     : 0;
 
   const isLoading =
-    adminLoading ||
+    stewardLoading ||
     findingsLoading ||
     candidatesLoading ||
     proposalsLoading ||
     conflictsLoading;
 
-  if (!adminLoading && !isAdmin) {
+  if (!stewardLoading && !isSteward) {
     return (
       <div className="mx-auto w-full max-w-3xl px-6 py-8">
         <button

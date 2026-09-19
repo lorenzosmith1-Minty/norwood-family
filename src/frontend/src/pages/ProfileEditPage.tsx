@@ -20,7 +20,6 @@ import {
 import { useEffect, useMemo, useRef, useState } from "react";
 import { RelationshipRequestForm } from "../components/RelationshipRequestForm";
 import { StatusBadge } from "../components/StatusBadge";
-import { useIsAdmin } from "../hooks/useArchiveStorage";
 import { resolveCanonicalPersonProfile } from "../hooks/useCanonicalPerson";
 import {
   useAddPhoto,
@@ -34,6 +33,7 @@ import {
   usePersonProfile,
   useUpdateOwnProfile,
 } from "../hooks/useProfileClaims";
+import { useIsSteward } from "../hooks/useStewardAuthority";
 import {
   ClaimStatus,
   EditError,
@@ -641,7 +641,7 @@ export function ProfileEditPage({
   );
   const isLiving = backendProfile?.livingStatus === LivingStatus.Living;
   const isClaimed = backendProfile?.claimStatus === ClaimStatus.Claimed;
-  const { data: isSteward = false } = useIsAdmin();
+  const { data: isSteward = false } = useIsSteward();
   // A profile claimed by a different user must never be overwritten, even by a
   // steward. A steward may edit unclaimed/deceased/historical profiles (those
   // not claimed by another user) per existing steward permissions.

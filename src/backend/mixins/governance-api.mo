@@ -8,6 +8,7 @@ import Types "../types/governance";
 import ObjectStorageTypes "../types/object-storage";
 import ArchiveTypes "../types/archive";
 import GovernanceLib "../lib/governance";
+import StewardAuthorityLib "../lib/steward-authority";
 
 mixin (
   accessControlState : AccessControl.AccessControlState,
@@ -30,7 +31,7 @@ mixin (
   /// Lists all current Family Stewards with role status and account identity.
   /// Family Steward only.
   public query ({ caller }) func listStewards() : async [Types.StewardRecord] {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can list stewards");
     };
     GovernanceLib.listStewards(stewards);
@@ -39,7 +40,7 @@ mixin (
   /// Promotes an existing approved claimed family member to Family Steward.
   /// Family Steward only.
   public shared ({ caller }) func promoteToSteward(personId : Types.PersonId) : async Result.Result<Types.StewardRecord, Types.StewardError> {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can promote stewards");
     };
     GovernanceLib.promoteToSteward(stewards, auditLog, profiles, personId, caller);
@@ -48,7 +49,7 @@ mixin (
   /// Removes the steward role from another steward, never allowing the last
   /// steward to be removed. Family Steward only.
   public shared ({ caller }) func removeSteward(stewardAccountId : Principal) : async Result.Result<(), Types.StewardError> {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can remove stewards");
     };
     GovernanceLib.removeSteward(stewards, auditLog, stewardAccountId, caller);
@@ -58,7 +59,7 @@ mixin (
   /// priority/order. A successor is a designation only until activated.
   /// Family Steward only.
   public shared ({ caller }) func designateSuccessor(personId : Types.PersonId, priority : Nat) : async Result.Result<Types.SuccessorDesignation, Types.StewardError> {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can designate successors");
     };
     GovernanceLib.designateSuccessor(stewards, successors, auditLog, profiles, personId, priority, caller);
@@ -67,7 +68,7 @@ mixin (
   /// Activates/promotes a designated successor into the active steward role.
   /// Family Steward only.
   public shared ({ caller }) func activateSuccessor(personId : Types.PersonId) : async Result.Result<Types.StewardRecord, Types.StewardError> {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can activate successors");
     };
     GovernanceLib.activateSuccessor(stewards, successors, auditLog, profiles, personId, caller);
@@ -75,7 +76,7 @@ mixin (
 
   /// Lists all successor designations. Family Steward only.
   public query ({ caller }) func listSuccessors() : async [Types.SuccessorDesignation] {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can list successors");
     };
     GovernanceLib.listSuccessors(successors);
@@ -84,7 +85,7 @@ mixin (
   /// Returns a warning encouraging successor designation when only one steward
   /// exists, or `null` when there are multiple stewards. Family Steward only.
   public query ({ caller }) func getSingleStewardWarning() : async ?Text {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can view steward warnings");
     };
     GovernanceLib.getSingleStewardWarning(stewards);
@@ -97,7 +98,7 @@ mixin (
   /// Profile. The internal account id is carried only for authorization/audit.
   /// Family Steward only.
   public query ({ caller }) func listStewardIdentities() : async [Types.StewardIdentity] {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can list steward identities");
     };
     GovernanceLib.listStewardIdentities(stewards, successors, profiles);
@@ -109,7 +110,7 @@ mixin (
   /// data-driven — as additional family members claim and receive approval they
   /// automatically appear without code changes. Family Steward only.
   public query ({ caller }) func listEligibleStewardCandidates() : async [Types.StewardIdentity] {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can list eligible steward candidates");
     };
     GovernanceLib.listEligibleStewardCandidates(stewards, profiles, archivedProfiles);
@@ -127,7 +128,7 @@ mixin (
 
   /// Lists all profile removal requests for steward review. Family Steward only.
   public query ({ caller }) func listProfileRemovalRequests() : async [Types.ProfileRemovalRequest] {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can list profile removal requests");
     };
     GovernanceLib.listProfileRemovalRequests(removalRequests);
@@ -136,7 +137,7 @@ mixin (
   /// Approves a profile removal request, archiving the profile. Family Steward
   /// only.
   public shared ({ caller }) func approveProfileRemoval(requestId : Nat) : async ?Types.ProfileRemovalRequest {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can approve profile removal requests");
     };
     GovernanceLib.approveProfileRemoval(removalRequests, archivedProfiles, auditLog, requestId, caller);
@@ -144,7 +145,7 @@ mixin (
 
   /// Rejects a profile removal request. Family Steward only.
   public shared ({ caller }) func rejectProfileRemoval(requestId : Nat) : async ?Types.ProfileRemovalRequest {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can reject profile removal requests");
     };
     GovernanceLib.rejectProfileRemoval(removalRequests, auditLog, requestId, caller);
@@ -154,7 +155,7 @@ mixin (
   /// preserving relationships, media, timeline, sources, and ownership history.
   /// Family Steward only.
   public shared ({ caller }) func archiveProfile(personId : Types.PersonId) : async Result.Result<(), Types.ArchiveError> {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can archive profiles");
     };
     GovernanceLib.archiveProfile(archivedProfiles, auditLog, profiles, personId, caller);
@@ -163,7 +164,7 @@ mixin (
   /// Restores an archived profile to normal family browsing. Family Steward
   /// only.
   public shared ({ caller }) func restoreProfile(personId : Types.PersonId) : async Result.Result<(), Types.ArchiveError> {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can restore profiles");
     };
     GovernanceLib.restoreProfile(archivedProfiles, auditLog, personId, caller);
@@ -171,7 +172,7 @@ mixin (
 
   /// Lists all archived profiles. Family Steward only.
   public query ({ caller }) func listArchivedProfiles() : async [Types.PersonProfile] {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can list archived profiles");
     };
     GovernanceLib.listArchivedProfiles(archivedProfiles, profiles);
@@ -187,7 +188,7 @@ mixin (
   /// media, timeline/history, approved relationships, and ownership history,
   /// and explicit confirmation is given. Family Steward only.
   public shared ({ caller }) func permanentlyDeleteProfile(personId : Types.PersonId, confirmation : Bool) : async Result.Result<(), Types.DeleteError> {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can permanently delete profiles");
     };
     GovernanceLib.permanentlyDeleteProfile(archivedProfiles, auditLog, profiles, confirmedRelationships, galleries, archiveItems, personId, confirmation, caller);
@@ -200,7 +201,7 @@ mixin (
   /// Lists suspected duplicate Person records with comparison data. Family
   /// Steward only.
   public query ({ caller }) func listDuplicateCandidates() : async [Types.DuplicatePair] {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can list duplicate candidates");
     };
     GovernanceLib.listDuplicateCandidates(profiles, confirmedRelationships, galleries, archiveItems, dismissedDuplicates);
@@ -208,7 +209,7 @@ mixin (
 
   /// Marks two suspected duplicates as not a duplicate. Family Steward only.
   public shared ({ caller }) func notDuplicate(personIdA : Types.PersonId, personIdB : Types.PersonId) : async Result.Result<(), Types.MergeError> {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can review duplicates");
     };
     GovernanceLib.notDuplicate(dismissedDuplicates, auditLog, personIdA, personIdB, caller);
@@ -220,7 +221,7 @@ mixin (
   /// fields are preserved as conflict/review items. The merged-away record is
   /// archived rather than hard-deleted. Family Steward only.
   public shared ({ caller }) func mergeProfiles(canonicalPersonId : Types.PersonId, mergedAwayPersonId : Types.PersonId) : async Result.Result<Types.MergeResult, Types.MergeError> {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can merge profiles");
     };
     GovernanceLib.mergeProfiles(archivedProfiles, mergeConflicts, auditLog, profiles, confirmedRelationships, galleries, archiveItems, canonicalPersonId, mergedAwayPersonId, caller);
@@ -229,7 +230,7 @@ mixin (
   /// Resolves a merge conflict by choosing the canonical display value. Family
   /// Steward only.
   public shared ({ caller }) func resolveMergeConflict(conflictId : Nat, canonicalValue : Text) : async ?Types.MergeConflict {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can resolve merge conflicts");
     };
     GovernanceLib.resolveMergeConflict(mergeConflicts, conflictId, canonicalValue, caller);
@@ -241,7 +242,7 @@ mixin (
 
   /// Returns the current relationships for a person. Family Steward only.
   public query ({ caller }) func listPersonRelationships(personId : Types.PersonId) : async [Types.Relationship] {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can list relationships");
     };
     GovernanceLib.listPersonRelationships(confirmedRelationships, personId);
@@ -250,7 +251,7 @@ mixin (
   /// Adds a missing relationship to the shared family graph. Family Steward
   /// only.
   public shared ({ caller }) func addRelationship(fromPersonId : Types.PersonId, toPersonId : Types.PersonId, relationshipType : Types.RelationshipType) : async Result.Result<Types.Relationship, Types.RelationshipAdminError> {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can add relationships");
     };
     GovernanceLib.addRelationship(confirmedRelationships, auditLog, fromPersonId, toPersonId, relationshipType, caller);
@@ -259,7 +260,7 @@ mixin (
   /// Removes an incorrect relationship from the shared family graph. Family
   /// Steward only.
   public shared ({ caller }) func removeRelationship(relationshipId : Nat) : async Result.Result<(), Types.RelationshipAdminError> {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can remove relationships");
     };
     GovernanceLib.removeRelationship(confirmedRelationships, auditLog, relationshipId, caller);
@@ -268,7 +269,7 @@ mixin (
   /// Corrects the relationship type of an existing relationship. Family Steward
   /// only.
   public shared ({ caller }) func correctRelationshipType(relationshipId : Nat, relationshipType : Types.RelationshipType) : async Result.Result<Types.Relationship, Types.RelationshipAdminError> {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can correct relationships");
     };
     GovernanceLib.correctRelationshipType(confirmedRelationships, auditLog, relationshipId, relationshipType, caller);
@@ -280,7 +281,7 @@ mixin (
 
   /// Returns the governance audit log. Audit History is strictly steward-only.
   public query ({ caller }) func listAuditHistory() : async [Types.AuditEntry] {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can view audit history");
     };
     GovernanceLib.listAuditHistory(auditLog);

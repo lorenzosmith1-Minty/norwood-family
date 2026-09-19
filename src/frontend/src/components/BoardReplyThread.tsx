@@ -1,7 +1,7 @@
 import { Send, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { useIsAdmin } from "../hooks/useArchiveStorage";
 import { useCanonicalPerson } from "../hooks/useCanonicalPerson";
+import { useIsSteward } from "../hooks/useStewardAuthority";
 import type { Reply } from "../types/board";
 
 interface BoardReplyThreadProps {
@@ -64,7 +64,7 @@ export function BoardReplyThread({
   onRemoveReply,
   onOpenProfile,
 }: BoardReplyThreadProps) {
-  const { data: isAdmin = false } = useIsAdmin();
+  const { data: isSteward = false } = useIsSteward();
   const [draft, setDraft] = useState("");
 
   const canSend = draft.trim().length > 0 && !isSending;
@@ -97,7 +97,7 @@ export function BoardReplyThread({
             <ReplyItem
               key={reply.replyId}
               reply={reply}
-              isAdmin={isAdmin}
+              isSteward={isSteward}
               onRemoveReply={onRemoveReply}
               onOpenProfile={onOpenProfile}
             />
@@ -140,12 +140,12 @@ export function BoardReplyThread({
 /** A single reply plate with the replier's canonical identity. */
 function ReplyItem({
   reply,
-  isAdmin,
+  isSteward,
   onRemoveReply,
   onOpenProfile,
 }: {
   reply: Reply;
-  isAdmin: boolean;
+  isSteward: boolean;
   onRemoveReply: (replyId: bigint) => void;
   onOpenProfile: (personId: string) => void;
 }) {
@@ -179,7 +179,7 @@ function ReplyItem({
         </div>
         <p className="reply-text whitespace-pre-line">{reply.body}</p>
       </div>
-      {isAdmin ? (
+      {isSteward ? (
         <button
           type="button"
           data-ocid={`board.reply.${reply.replyId}.remove`}

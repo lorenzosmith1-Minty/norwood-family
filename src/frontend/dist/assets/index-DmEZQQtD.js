@@ -33192,6 +33192,9295 @@ function checkDCE() {
 }
 var clientExports = client.exports;
 const ReactDOM = /* @__PURE__ */ getDefaultExportFromCjs(clientExports);
+const _ImmutableObjectStorageCreateCertificateResult = Record({
+  "method": Text,
+  "blob_hash": Text
+});
+const _ImmutableObjectStorageRefillInformation = Record({
+  "proposed_top_up_amount": Opt(Nat)
+});
+const _ImmutableObjectStorageRefillResult = Record({
+  "success": Opt(Bool),
+  "topped_up_amount": Opt(Nat)
+});
+const Error$1 = Variant({
+  "FrontendOriginsNotConfigured": Null,
+  "MixedSsoSources": Record({
+    "otherKeys": Vec(Text),
+    "ssoKeys": Vec(Text)
+  }),
+  "Stale": Record({ "ageNs": Nat }),
+  "MalformedCandid": Null,
+  "AmbiguousAttribute": Record({
+    "field": Text,
+    "sources": Vec(Text)
+  }),
+  "NoAttributes": Null,
+  "UnknownNonce": Null,
+  "UntrustedSsoSource": Record({ "domain": Text }),
+  "MissingField": Text,
+  "FrontendOriginMismatch": Record({
+    "got": Text,
+    "expected": Vec(Text)
+  })
+});
+const Result_26 = Variant({ "ok": Null, "err": Error$1 });
+const PersonId = Text;
+const StewardRoleStatus$1 = Variant({
+  "Active": Null,
+  "Removed": Null
+});
+const StewardRecord = Record({
+  "assignedAt": Int,
+  "assignedBy": Principal2,
+  "stewardAccountId": Principal2,
+  "successorPriority": Opt(Nat),
+  "roleStatus": StewardRoleStatus$1
+});
+const StewardError = Variant({
+  "LastSteward": Null,
+  "NotSteward": Null,
+  "AlreadySteward": Null,
+  "NotSignedIn": Null,
+  "NotApprovedClaimedMember": Null,
+  "NotDesignated": Null
+});
+const Result_10 = Variant({
+  "ok": StewardRecord,
+  "err": StewardError
+});
+const PostId = Nat;
+const AccountId = Principal2;
+const Timestamp = Int;
+const ReplyId = Nat;
+const Reply = Record({
+  "authorAccountId": AccountId,
+  "body": Text,
+  "createdAt": Timestamp,
+  "authorPersonId": PersonId,
+  "replyId": ReplyId,
+  "postId": PostId
+});
+const EvidenceStatus$1 = Variant({
+  "Unresolved": Null,
+  "Documented": Null,
+  "FamilyHistory": Null,
+  "PersonalMemory": Null
+});
+const StoryId = Nat;
+const StoryStatus = Variant({
+  "Approved": Null,
+  "Rejected": Null,
+  "Pending": Null
+});
+const Story = Record({
+  "id": StoryId,
+  "era": Opt(Text),
+  "status": StoryStatus,
+  "title": Text,
+  "relatedMemberIds": Vec(Text),
+  "storyText": Text,
+  "createdAt": Int,
+  "year": Opt(Nat),
+  "relatedArchiveItemIds": Vec(Nat),
+  "updatedAt": Int,
+  "evidenceStatus": EvidenceStatus$1,
+  "location": Opt(Text),
+  "contributor": Principal2
+});
+const ExternalBlob2 = Vec(Nat8);
+const PhotoId = Nat;
+const Photo = Record({
+  "id": PhotoId,
+  "blob": ExternalBlob2,
+  "mimeType": Text,
+  "filename": Text,
+  "uploadedAt": Int,
+  "uploadedBy": Principal2
+});
+const RelationshipType$1 = Variant({
+  "Parent": Null,
+  "Sibling": Null,
+  "SpousePartner": Null,
+  "Child": Null
+});
+const RelationshipStatus$1 = Variant({
+  "Disputed": Null,
+  "Confirmed": Null,
+  "Pending": Null
+});
+const Relationship = Record({
+  "id": Nat,
+  "status": RelationshipStatus$1,
+  "fromPersonId": PersonId,
+  "toPersonId": PersonId,
+  "relationshipType": RelationshipType$1
+});
+const RelationshipAdminError = Variant({
+  "RelationshipNotFound": Null,
+  "NotSignedIn": Null,
+  "DuplicateRelationship": Null,
+  "PersonNotFound": Null
+});
+const Result_23 = Variant({
+  "ok": Relationship,
+  "err": RelationshipAdminError
+});
+const ArchiveItemId = Nat;
+const ArchiveItemStatus$1 = Variant({
+  "Approved": Null,
+  "Rejected": Null,
+  "Pending": Null
+});
+const PrivacyLevel$1 = Variant({
+  "Private": Null,
+  "Public": Null,
+  "FamilyOnly": Null
+});
+const OralHistorySpeaker = Record({
+  "name": Text,
+  "personId": Opt(Text)
+});
+const ArchiveItemType$1 = Variant({
+  "Research": Null,
+  "Photo": Null,
+  "Document": Null,
+  "WorkBusiness": Null,
+  "WrittenStoryNote": Null,
+  "Audio": Null,
+  "Other": Null,
+  "Video": Null
+});
+const ChapterMarker = Record({
+  "title": Text,
+  "timestamp": Nat
+});
+const SourceStatus$1 = Variant({
+  "Copy": Null,
+  "Unverified": Null,
+  "Transcribed": Null,
+  "Original": Null
+});
+const ArchiveItemClassification$1 = Variant({
+  "OralHistory": Null,
+  "Standard": Null
+});
+const ArchiveItem = Record({
+  "id": ArchiveItemId,
+  "era": Text,
+  "status": ArchiveItemStatus$1,
+  "title": Text,
+  "relatedMemberIds": Vec(Text),
+  "blob": ExternalBlob2,
+  "createdAt": Int,
+  "tags": Vec(Text),
+  "year": Opt(Nat),
+  "description": Text,
+  "privacyLevel": PrivacyLevel$1,
+  "primarySpeaker": Opt(OralHistorySpeaker),
+  "extractedNames": Opt(Vec(Text)),
+  "itemType": ArchiveItemType$1,
+  "aiSummary": Opt(Text),
+  "searchableTranscript": Opt(Text),
+  "relatedBranchId": Opt(Text),
+  "transcript": Opt(Text),
+  "chapterMarkers": Opt(Vec(ChapterMarker)),
+  "sourceStatus": SourceStatus$1,
+  "classification": ArchiveItemClassification$1,
+  "contributor": Principal2
+});
+const FindingId = Nat;
+const ReviewStatus$1 = Variant({
+  "NeedsResearch": Null,
+  "Conflicting": Null,
+  "Approved": Null,
+  "Rejected": Null,
+  "Pending": Null
+});
+const EvidenceLabel$1 = Variant({
+  "NeedsResearch": Null,
+  "Conflicting": Null,
+  "Hypothesis": Null,
+  "Documented": Null,
+  "FamilyHistoryOralHistory": Null,
+  "PersonalMemory": Null
+});
+const SourceType$1 = Variant({
+  "CertificateHeadstoneReference": Null,
+  "DeedPropertyReference": Null,
+  "ResearchNotes": Null,
+  "EmailThread": Null,
+  "UploadedDocumentImage": Null,
+  "CensusCitation": Null
+});
+const FindingContent = Variant({
+  "Story": Record({
+    "title": Text,
+    "storyText": Text,
+    "relatedPersonIds": Vec(Text)
+  }),
+  "TimelineEvent": Record({
+    "title": Text,
+    "date": Opt(Text),
+    "description": Text,
+    "personId": Text
+  }),
+  "PersonFact": Record({
+    "field": Text,
+    "value": Text,
+    "personId": Text
+  }),
+  "Source": Record({
+    "title": Text,
+    "archiveItemId": Opt(Nat),
+    "description": Text,
+    "sourceType": SourceType$1
+  }),
+  "Mystery": Record({
+    "title": Text,
+    "description": Text,
+    "relatedPersonIds": Vec(Text)
+  }),
+  "Relationship": Record({
+    "fromPersonId": Text,
+    "toPersonId": Text,
+    "relationshipType": Text
+  })
+});
+const SourceId = Nat;
+const FindingType$1 = Variant({
+  "Story": Null,
+  "TimelineEvent": Null,
+  "PersonFact": Null,
+  "Source": Null,
+  "Mystery": Null,
+  "Relationship": Null
+});
+const ProposedFinding = Record({
+  "id": FindingId,
+  "status": ReviewStatus$1,
+  "title": Text,
+  "evidenceLabel": EvidenceLabel$1,
+  "newPersonCandidateId": Opt(Nat),
+  "content": FindingContent,
+  "conflictReviewId": Opt(Nat),
+  "submittedAt": Int,
+  "submittedBy": Principal2,
+  "sourceId": SourceId,
+  "reviewedAt": Opt(Int),
+  "reviewedBy": Opt(Principal2),
+  "updatedAt": Int,
+  "personId": Opt(Text),
+  "findingType": FindingType$1
+});
+const NewPersonCandidate = Record({
+  "id": Nat,
+  "status": ReviewStatus$1,
+  "name": Text,
+  "submittedAt": Int,
+  "submittedBy": Principal2,
+  "sourceId": SourceId,
+  "reviewedAt": Opt(Int),
+  "reviewedBy": Opt(Principal2),
+  "details": Text
+});
+const ProfileClaimStatus = Variant({
+  "Approved": Null,
+  "Rejected": Null,
+  "Pending": Null
+});
+const ProfileClaim = Record({
+  "id": Nat,
+  "submittedDate": Int,
+  "status": ProfileClaimStatus,
+  "reviewedDate": Opt(Int),
+  "reviewedBy": Opt(Principal2),
+  "personId": PersonId,
+  "requestingUserId": Principal2
+});
+const ProfileRemovalStatus = Variant({
+  "Approved": Null,
+  "Rejected": Null,
+  "Pending": Null
+});
+const ProfileRemovalRequest = Record({
+  "id": Nat,
+  "submittedDate": Int,
+  "status": ProfileRemovalStatus,
+  "reviewedDate": Opt(Int),
+  "reviewedBy": Opt(Principal2),
+  "personId": PersonId,
+  "requestingUserId": Principal2,
+  "reason": Text
+});
+const RecipeId = Nat;
+const RecipeStatus$1 = Variant({
+  "Approved": Null,
+  "Rejected": Null,
+  "Archived": Null,
+  "Pending": Null
+});
+const Recipe = Record({
+  "era": Opt(Text),
+  "status": RecipeStatus$1,
+  "title": Text,
+  "recipeId": RecipeId,
+  "aiDerivedText": Opt(Text),
+  "createdAt": Int,
+  "tags": Vec(Text),
+  "year": Opt(Nat),
+  "contributorAccountId": Principal2,
+  "privacyLevel": PrivacyLevel$1,
+  "linkedMediaIds": Vec(Nat),
+  "instructions": Text,
+  "ocrText": Opt(Text),
+  "familyBranch": Opt(Text),
+  "familyStory": Opt(Text),
+  "updatedAt": Int,
+  "evidenceStatus": EvidenceStatus$1,
+  "shortDescription": Text,
+  "extractedIngredients": Opt(Vec(Text)),
+  "transcript": Opt(Text),
+  "location": Opt(Text),
+  "originatingPersonId": Text,
+  "ingredients": Vec(Text),
+  "relatedPersonIds": Vec(Text)
+});
+const RelationshipProposal = Record({
+  "id": Nat,
+  "status": ReviewStatus$1,
+  "fromPersonId": Text,
+  "submittedAt": Int,
+  "submittedBy": Principal2,
+  "sourceId": SourceId,
+  "reviewedAt": Opt(Int),
+  "reviewedBy": Opt(Principal2),
+  "toPersonId": Text,
+  "relationshipType": Text
+});
+const RelationshipRequestStatus = Variant({
+  "Approved": Null,
+  "Rejected": Null,
+  "Pending": Null
+});
+const RelationshipRequest = Record({
+  "id": Nat,
+  "submittedDate": Int,
+  "status": RelationshipRequestStatus,
+  "reviewedDate": Opt(Int),
+  "relatedPersonId": PersonId,
+  "requestingPersonId": PersonId,
+  "proposedRelationship": RelationshipType$1,
+  "reviewer": Opt(Principal2)
+});
+const SourceRecord = Record({
+  "id": SourceId,
+  "status": ReviewStatus$1,
+  "title": Text,
+  "archiveItemId": Opt(Nat),
+  "createdAt": Int,
+  "description": Text,
+  "sourceType": SourceType$1,
+  "updatedAt": Int,
+  "contributor": Principal2
+});
+const PostStatus$1 = Variant({
+  "Active": Null,
+  "Archived": Null
+});
+const PostType$1 = Variant({
+  "Announcement": Null,
+  "Recipe": Null,
+  "ResearchHistory": Null,
+  "FamilyQuestion": Null,
+  "Memorial": Null,
+  "General": Null,
+  "Other": Null,
+  "ReunionEvent": Null,
+  "PhotoIdentification": Null
+});
+const PrivacyScope = Variant({ "FamilyOnly": Null });
+const Post = Record({
+  "status": PostStatus$1,
+  "authorAccountId": AccountId,
+  "postType": PostType$1,
+  "title": Opt(Text),
+  "body": Text,
+  "createdAt": Timestamp,
+  "tags": Vec(Text),
+  "linkedMediaIds": Vec(Nat),
+  "privacyScope": PrivacyScope,
+  "authorPersonId": PersonId,
+  "updatedAt": Timestamp,
+  "relatedPersonIds": Vec(PersonId),
+  "postId": PostId
+});
+const ArchiveError = Variant({
+  "NotArchived": Null,
+  "ProfileNotFound": Null,
+  "AlreadyArchived": Null,
+  "NotSignedIn": Null
+});
+const Result_2 = Variant({ "ok": Null, "err": ArchiveError });
+const UserRole = Variant({
+  "admin": Null,
+  "user": Null,
+  "guest": Null
+});
+const AuthMethod = Variant({
+  "Google": Null,
+  "Apple": Null
+});
+const Account = Record({
+  "id": AccountId,
+  "createdAt": Int,
+  "authMethods": Vec(AuthMethod)
+});
+const AccountError = Variant({
+  "AccountNotFound": Null,
+  "NotSignedIn": Null
+});
+const Result_25 = Variant({ "ok": Account, "err": AccountError });
+const ClaimPersistenceError = Variant({
+  "AlreadyOwned": Null,
+  "AlreadyPending": Null,
+  "ProfileNotFound": Null,
+  "NotSignedIn": Null,
+  "ApprovedOwnerExists": Null
+});
+const ClaimEligibility = Record({
+  "eligible": Bool,
+  "reason": Opt(ClaimPersistenceError)
+});
+const StewardClaimResult = Record({
+  "stewardAccountId": Principal2,
+  "claimedAt": Int,
+  "claimedBy": Principal2
+});
+const StewardClaimError$1 = Variant({
+  "StewardAlreadyExists": Null,
+  "AlreadySteward": Null,
+  "NotSignedIn": Null
+});
+const Result_24 = Variant({
+  "ok": StewardClaimResult,
+  "err": StewardClaimError$1
+});
+const BoardMediaUpload = Record({
+  "era": Text,
+  "title": Text,
+  "relatedMemberIds": Vec(Text),
+  "blob": ExternalBlob2,
+  "tags": Vec(Text),
+  "year": Opt(Nat),
+  "description": Text,
+  "privacyLevel": PrivacyLevel$1,
+  "primarySpeaker": Opt(OralHistorySpeaker),
+  "itemType": ArchiveItemType$1,
+  "relatedBranchId": Opt(Text),
+  "sourceStatus": SourceStatus$1,
+  "classification": ArchiveItemClassification$1
+});
+const MysteryStatus$1 = Variant({
+  "Researching": Null,
+  "Open": Null,
+  "PartiallyResolved": Null,
+  "Resolved": Null
+});
+const MysteryId = Nat;
+const Resolution = Record({
+  "supportingEvidence": Vec(Text),
+  "summary": Text,
+  "resolvedAt": Int,
+  "resolvedBy": Principal2
+});
+const Mystery = Record({
+  "id": MysteryId,
+  "status": MysteryStatus$1,
+  "title": Text,
+  "relatedMemberIds": Vec(Text),
+  "createdAt": Int,
+  "relatedArchiveItemIds": Vec(Nat),
+  "description": Text,
+  "resolution": Opt(Resolution),
+  "updatedAt": Int,
+  "knownFacts": Vec(Text),
+  "possibilities": Vec(Text),
+  "relatedBranchId": Opt(Text),
+  "relatedSourceIds": Vec(Nat),
+  "contributor": Principal2
+});
+const ResearchError = Variant({
+  "invalidState": Text,
+  "notAuthorized": Null,
+  "notFound": Nat
+});
+const Result_22 = Variant({
+  "ok": ProposedFinding,
+  "err": ResearchError
+});
+const ClaimStatus$1 = Variant({
+  "Unclaimed": Null,
+  "Claimed": Null
+});
+const LivingStatus$1 = Variant({
+  "Living": Null,
+  "Deceased": Null
+});
+const PersonProfile = Record({
+  "occupation": Opt(Text),
+  "privacySettings": Opt(Text),
+  "nickname": Opt(Text),
+  "claimedByUserId": Opt(Principal2),
+  "birthDate": Opt(Text),
+  "birthInfo": Opt(Text),
+  "claimStatus": ClaimStatus$1,
+  "livingStatus": LivingStatus$1,
+  "name": Text,
+  "longerStory": Opt(Text),
+  "personId": PersonId,
+  "story": Opt(Text),
+  "middleName": Opt(Text),
+  "suffix": Opt(Text),
+  "preferredName": Opt(Text),
+  "currentLocation": Opt(Text),
+  "birthplace": Opt(Text),
+  "lastName": Opt(Text),
+  "shortBio": Opt(Text),
+  "timeline": Opt(Vec(Text)),
+  "firstName": Opt(Text)
+});
+const CreateError$1 = Variant({
+  "AlreadyOwned": Null,
+  "NotSignedIn": Null
+});
+const Result_21 = Variant({
+  "ok": PersonProfile,
+  "err": CreateError$1
+});
+const Result_20 = Variant({
+  "ok": NewPersonCandidate,
+  "err": ResearchError
+});
+const Result_19 = Variant({
+  "ok": RelationshipProposal,
+  "err": ResearchError
+});
+const Result_18 = Variant({
+  "ok": SourceRecord,
+  "err": ResearchError
+});
+const SourceUploadResult = Record({
+  "source": SourceRecord,
+  "archiveItem": ArchiveItem
+});
+const Result_17 = Variant({
+  "ok": SourceUploadResult,
+  "err": ResearchError
+});
+const SuccessorStatus$1 = Variant({
+  "Activated": Null,
+  "Removed": Null,
+  "Designated": Null
+});
+const SuccessorDesignation = Record({
+  "status": SuccessorStatus$1,
+  "assignedAt": Int,
+  "assignedBy": Principal2,
+  "personId": PersonId,
+  "priority": Nat
+});
+const Result_16 = Variant({
+  "ok": SuccessorDesignation,
+  "err": StewardError
+});
+const Value = Variant({
+  "int": Int,
+  "nat": Nat,
+  "float": Float64,
+  "bool": Bool,
+  "null": Null,
+  "text": Text
+});
+const Cell = Record({ "value": Value, "name": Text });
+const Result__1 = Record({
+  "hasMore": Bool,
+  "rows": Vec(Vec(Cell))
+});
+const ConversationId = Nat;
+const MessageStatus$1 = Variant({
+  "Blocked": Null,
+  "Sent": Null
+});
+const MessageId = Nat;
+const Message = Record({
+  "status": MessageStatus$1,
+  "messageId": MessageId,
+  "body": Text,
+  "createdAt": Timestamp,
+  "conversationId": ConversationId,
+  "senderAccountId": AccountId,
+  "senderPersonId": PersonId,
+  "readAt": Opt(Timestamp)
+});
+const ConversationView = Record({
+  "messages": Vec(Message),
+  "participantPersonIds": Vec(PersonId),
+  "conversationId": ConversationId,
+  "participantDisplayNames": Vec(Text)
+});
+const Result_15 = Variant({
+  "ok": AccountId,
+  "err": AccountError
+});
+const AuthMethods = Record({
+  "apple": Bool,
+  "google": Bool
+});
+const Result_14 = Variant({
+  "ok": AuthMethods,
+  "err": AccountError
+});
+const ReportId = Nat;
+const ReportStatus$1 = Variant({
+  "Dismissed": Null,
+  "Reviewed": Null,
+  "Pending": Null
+});
+const Report = Record({
+  "status": ReportStatus$1,
+  "reportedMessageId": MessageId,
+  "createdAt": Timestamp,
+  "reportingAccountId": AccountId,
+  "reportId": ReportId,
+  "reason": Text
+});
+const ReportedMessageView = Record({
+  "report": Report,
+  "message": Message
+});
+const ResearchAuditEntry = Record({
+  "id": Nat,
+  "action": Text,
+  "findingId": Opt(FindingId),
+  "sourceId": Opt(SourceId),
+  "actorId": Principal2,
+  "summary": Text,
+  "timestamp": Int
+});
+const ReviewItemKind = Variant({
+  "Source": Null,
+  "RelationshipProposal": Null,
+  "ConflictReview": Null,
+  "NewPersonCandidate": Null,
+  "Finding": Null
+});
+const ReviewAction = Variant({
+  "NeedsResearch": Null,
+  "Approve": Null,
+  "Reject": Null
+});
+const ReviewQueueItem = Record({
+  "id": Nat,
+  "provenance": Text,
+  "status": ReviewStatus$1,
+  "title": Text,
+  "evidenceLabel": Opt(EvidenceLabel$1),
+  "kind": ReviewItemKind,
+  "createdAt": Int,
+  "actions": Vec(ReviewAction),
+  "summary": Text,
+  "contributor": Opt(Principal2)
+});
+const ReviewQueue = Record({
+  "pending": Nat,
+  "conflicting": Nat,
+  "approved": Nat,
+  "rejected": Nat,
+  "needsResearch": Nat,
+  "items": Vec(ReviewQueueItem)
+});
+const StewardAuditKind$1 = Variant({
+  "ConflictResolution": Null,
+  "Governance": Null
+});
+const StewardAuditEntry = Record({
+  "id": Nat,
+  "field": Opt(Text),
+  "affectedPersonIds": Vec(Text),
+  "proposedValue": Opt(Text),
+  "stewardNotes": Opt(Text),
+  "kind": StewardAuditKind$1,
+  "proposedSourceId": Opt(Nat),
+  "actionType": Text,
+  "resolution": Opt(Text),
+  "existingValue": Opt(Text),
+  "summary": Text,
+  "personId": Opt(Text),
+  "timestamp": Int,
+  "actorAccountId": Principal2,
+  "existingSourceId": Opt(Nat)
+});
+const AuditActionType$1 = Variant({
+  "ProfileRemovalRequested": Null,
+  "ClaimRejected": Null,
+  "RelationshipTypeCorrected": Null,
+  "RelationshipRequestPending": Null,
+  "StewardPromoted": Null,
+  "BoardReplyRemoved": Null,
+  "SuccessorActivated": Null,
+  "StewardRemoved": Null,
+  "RelationshipRequestApproved": Null,
+  "DuplicateMerged": Null,
+  "ProfilePermanentlyDeleted": Null,
+  "RelationshipRequestRejected": Null,
+  "ProfileArchived": Null,
+  "ProfileRestored": Null,
+  "BoardPostArchived": Null,
+  "BoardPostRestored": Null,
+  "RelationshipAdded": Null,
+  "RelationshipRemoved": Null,
+  "ProfileRemovalReviewed": Null,
+  "ClaimApproved": Null,
+  "SuccessorDesignated": Null
+});
+const AuditEntry = Record({
+  "id": Nat,
+  "affectedPersonIds": Vec(PersonId),
+  "actionType": AuditActionType$1,
+  "summary": Text,
+  "timestamp": Int,
+  "actorAccountId": Principal2
+});
+const ConflictReviewItem = Record({
+  "id": Nat,
+  "field": Text,
+  "status": ReviewStatus$1,
+  "evidenceLabel": EvidenceLabel$1,
+  "findingId": FindingId,
+  "proposedValue": Text,
+  "stewardNotes": Text,
+  "proposedSourceId": Opt(Nat),
+  "personId": Opt(Text),
+  "canonicalValue": Text,
+  "resolvedAt": Opt(Int),
+  "resolvedBy": Opt(Principal2),
+  "existingSourceId": Opt(Nat)
+});
+const ConversationSummary = Record({
+  "otherPersonId": PersonId,
+  "conversationId": ConversationId,
+  "unreadCount": Nat,
+  "otherDisplayName": Text,
+  "latestMessagePreview": Text,
+  "latestMessageAt": Timestamp
+});
+const DisputedFact = Record({
+  "field": Text,
+  "status": ReviewStatus$1,
+  "proposedValue": Text,
+  "canonicalValue": Text
+});
+const DuplicateCandidate = Record({
+  "deathDate": Opt(Text),
+  "ownerAccount": Opt(Principal2),
+  "birthDate": Opt(Text),
+  "claimStatus": Text,
+  "name": Text,
+  "archiveLinks": Vec(Text),
+  "children": Vec(Text),
+  "sourceCount": Nat,
+  "personId": PersonId,
+  "spouses": Vec(Text),
+  "photoCount": Nat,
+  "timelineCount": Nat,
+  "parents": Vec(Text)
+});
+const DuplicatePair = Record({
+  "candidateA": DuplicateCandidate,
+  "candidateB": DuplicateCandidate
+});
+const StewardIdentity = Record({
+  "accountId": Principal2,
+  "displayName": Text,
+  "personId": PersonId,
+  "canonicalName": Text
+});
+const NotificationType$1 = Variant({
+  "ResearchSubmission": Null,
+  "ResearchApproved": Null,
+  "ResearchRejected": Null,
+  "RelationshipRequested": Null,
+  "BoardMention": Null,
+  "RelationshipReviewed": Null,
+  "BoardReply": Null,
+  "NewMessage": Null,
+  "ProfileClaimReviewed": Null,
+  "ProfileClaimRequested": Null
+});
+const Notification = Record({
+  "id": Nat,
+  "notificationType": NotificationType$1,
+  "createdAt": Int,
+  "read": Bool,
+  "recipient": Principal2,
+  "message": Text
+});
+const MysteryContributionId = Nat;
+const MysteryContributionStatus = Variant({
+  "Approved": Null,
+  "Rejected": Null,
+  "Pending": Null
+});
+const MysteryContributionType$1 = Variant({
+  "Lead": Null,
+  "Note": Null,
+  "Memory": Null,
+  "Source": Null
+});
+const MysteryContribution = Record({
+  "id": MysteryContributionId,
+  "status": MysteryContributionStatus,
+  "createdAt": Int,
+  "text": Text,
+  "mysteryId": MysteryId,
+  "reviewedAt": Opt(Int),
+  "reviewedBy": Opt(Principal2),
+  "contributionType": MysteryContributionType$1,
+  "contributor": Principal2
+});
+const TimelineLinkTarget = Variant({
+  "Story": StoryId,
+  "Mystery": MysteryId,
+  "Person": Text,
+  "ArchiveItem": Nat
+});
+const TimelineEventType$1 = Variant({
+  "MilitaryService": Null,
+  "Story": Null,
+  "Birth": Null,
+  "FamilyEvent": Null,
+  "Migration": Null,
+  "Mystery": Null,
+  "Death": Null,
+  "PhotoDocument": Null,
+  "Marriage": Null,
+  "CensusDocument": Null,
+  "Location": Null
+});
+const TimelineEvent = Record({
+  "id": Text,
+  "era": Opt(Text),
+  "title": Text,
+  "year": Opt(Nat),
+  "linkTarget": TimelineLinkTarget,
+  "description": Text,
+  "evidenceStatus": EvidenceStatus$1,
+  "eventType": TimelineEventType$1
+});
+const NotificationId = Nat;
+const MergeConflictStatus$1 = Variant({
+  "Resolved": Null,
+  "Pending": Null
+});
+const MergeConflict = Record({
+  "id": Nat,
+  "field": Text,
+  "status": MergeConflictStatus$1,
+  "alternateValue": Text,
+  "canonicalValue": Text,
+  "resolvedAt": Opt(Int),
+  "resolvedBy": Opt(Principal2)
+});
+const MergeResult = Record({
+  "archivedPersonId": PersonId,
+  "conflicts": Vec(MergeConflict),
+  "canonicalPersonId": PersonId
+});
+const MergeError = Variant({
+  "NotDuplicate": Null,
+  "ProfileNotFound": Null,
+  "NotSignedIn": Null,
+  "SameProfile": Null
+});
+const Result_13 = Variant({
+  "ok": MergeResult,
+  "err": MergeError
+});
+const Result_12 = Variant({ "ok": Null, "err": MergeError });
+const DeleteError = Variant({
+  "HasOwnershipHistory": Null,
+  "ProfileNotFound": Null,
+  "HasMedia": Null,
+  "HasArchiveItems": Null,
+  "NotSignedIn": Null,
+  "ConfirmationRequired": Null,
+  "HasTimeline": Null,
+  "HasApprovedRelationships": Null
+});
+const Result_11 = Variant({ "ok": Null, "err": DeleteError });
+const RelationshipError = Variant({
+  "DuplicateRequest": Null,
+  "NotSignedIn": Null,
+  "PersonNotFound": Null
+});
+const Result_9 = Variant({
+  "ok": RelationshipRequest,
+  "err": RelationshipError
+});
+const RemoveError = Variant({
+  "ProfileNotFound": Null,
+  "NotSignedIn": Null
+});
+const Result_8 = Variant({ "ok": Null, "err": RemoveError });
+const Result_7 = Variant({
+  "ok": Null,
+  "err": RelationshipAdminError
+});
+const Result_6 = Variant({ "ok": Null, "err": StewardError });
+const ClaimError$1 = Variant({
+  "AlreadyPending": Null,
+  "ProfileNotFound": Null,
+  "AlreadyClaimed": Null,
+  "NotSignedIn": Null,
+  "DeceasedProfile": Null
+});
+const Result_5 = Variant({
+  "ok": ProfileClaim,
+  "err": ClaimError$1
+});
+const RemovalError$1 = Variant({
+  "AlreadyPending": Null,
+  "ProfileNotFound": Null,
+  "NotSignedIn": Null,
+  "NotOwner": Null,
+  "DeceasedProfile": Null
+});
+const Result_4 = Variant({
+  "ok": ProfileRemovalRequest,
+  "err": RemovalError$1
+});
+const ConflictResolutionAction$1 = Variant({
+  "NeedsResearch": Null,
+  "PreserveBoth": Null,
+  "ReplaceExisting": Null,
+  "KeepExisting": Null
+});
+const Result_3 = Variant({
+  "ok": ConflictReviewItem,
+  "err": ResearchError
+});
+const ArchiveSearchFilter = Record({
+  "era": Opt(Text),
+  "relatedMemberId": Opt(Text),
+  "tags": Vec(Text),
+  "searchTerm": Opt(Text),
+  "itemType": Opt(ArchiveItemType$1)
+});
+const PersonMatch = Record({
+  "name": Text,
+  "personId": PersonId,
+  "parents": Vec(Text)
+});
+const MessageError$1 = Variant({
+  "ConversationNotFound": Null,
+  "RecipientArchived": Null,
+  "NotApprovedMember": Null,
+  "RecipientNotClaimed": Null,
+  "NotSignedIn": Null,
+  "BlockedByRecipient": Null,
+  "NotParticipant": Null,
+  "CannotMessageSelf": Null,
+  "RecipientNotFound": Null
+});
+const Result_1 = Variant({ "ok": Message, "err": MessageError$1 });
+const ProfileEdits = Record({
+  "occupation": Opt(Text),
+  "privacySettings": Opt(Text),
+  "nickname": Opt(Text),
+  "birthDate": Opt(Text),
+  "birthInfo": Opt(Text),
+  "livingStatus": Opt(LivingStatus$1),
+  "longerStory": Opt(Text),
+  "story": Opt(Text),
+  "middleName": Opt(Text),
+  "suffix": Opt(Text),
+  "preferredName": Opt(Text),
+  "currentLocation": Opt(Text),
+  "birthplace": Opt(Text),
+  "lastName": Opt(Text),
+  "shortBio": Opt(Text),
+  "timeline": Opt(Vec(Text)),
+  "firstName": Opt(Text)
+});
+const EditError$1 = Variant({
+  "ProfileNotFound": Null,
+  "NotSignedIn": Null,
+  "NotOwner": Null,
+  "DeceasedProfile": Null
+});
+const Result = Variant({ "ok": PersonProfile, "err": EditError$1 });
+Service({
+  "_immutableObjectStorageBlobsAreLive": Func(
+    [Vec(Vec(Nat8))],
+    [Vec(Bool)],
+    ["query"]
+  ),
+  "_immutableObjectStorageBlobsToDelete": Func(
+    [],
+    [Vec(Vec(Nat8))],
+    ["query"]
+  ),
+  "_immutableObjectStorageConfirmBlobDeletion": Func(
+    [Vec(Vec(Nat8))],
+    [],
+    []
+  ),
+  "_immutableObjectStorageCreateCertificate": Func(
+    [Text],
+    [_ImmutableObjectStorageCreateCertificateResult],
+    []
+  ),
+  "_immutableObjectStorageRefillCashier": Func(
+    [Opt(_ImmutableObjectStorageRefillInformation)],
+    [_ImmutableObjectStorageRefillResult],
+    []
+  ),
+  "_immutableObjectStorageUpdateGatewayPrincipals": Func([], [], []),
+  "_initialize_access_control": Func([], [], []),
+  "_internet_identity_sign_in_finish": Func([], [Result_26], []),
+  "_internet_identity_sign_in_start": Func([], [Vec(Nat8)], []),
+  "activateSuccessor": Func([PersonId], [Result_10], []),
+  "addBoardReply": Func([PostId, Text], [Reply], []),
+  "addCanonicalStory": Func(
+    [
+      Text,
+      Text,
+      Vec(Text),
+      Opt(Text),
+      Opt(Nat),
+      Opt(Text),
+      EvidenceStatus$1,
+      Vec(Nat)
+    ],
+    [Story],
+    []
+  ),
+  "addPhoto": Func(
+    [PersonId, Text, Text, ExternalBlob2],
+    [Photo],
+    []
+  ),
+  "addRelationship": Func(
+    [PersonId, PersonId, RelationshipType$1],
+    [Result_23],
+    []
+  ),
+  "approveArchiveItem": Func([ArchiveItemId], [Opt(ArchiveItem)], []),
+  "approveFinding": Func([FindingId], [Opt(ProposedFinding)], []),
+  "approveNewPersonCandidate": Func(
+    [Nat],
+    [Opt(NewPersonCandidate)],
+    []
+  ),
+  "approveProfileClaim": Func([Nat], [Opt(ProfileClaim)], []),
+  "approveProfileRemoval": Func(
+    [Nat],
+    [Opt(ProfileRemovalRequest)],
+    []
+  ),
+  "approveRecipe": Func([RecipeId], [Opt(Recipe)], []),
+  "approveRelationshipProposal": Func(
+    [Nat],
+    [Opt(RelationshipProposal)],
+    []
+  ),
+  "approveRelationshipRequest": Func(
+    [Nat],
+    [Opt(RelationshipRequest)],
+    []
+  ),
+  "approveSource": Func([SourceId], [Opt(SourceRecord)], []),
+  "approveStory": Func([StoryId], [Opt(Story)], []),
+  "archiveBoardPost": Func([PostId], [Opt(Post)], []),
+  "archiveProfile": Func([PersonId], [Result_2], []),
+  "assignCallerUserRole": Func([Principal2, UserRole], [], []),
+  "bindAuthMethod": Func([AuthMethod], [Result_25], []),
+  "blockUser": Func([Principal2], [], []),
+  "canClaimProfile": Func([PersonId], [ClaimEligibility], ["query"]),
+  "canMessagePerson": Func([Text], [Bool], ["query"]),
+  "claimSteward": Func([], [Result_24], []),
+  "correctRelationshipType": Func(
+    [Nat, RelationshipType$1],
+    [Result_23],
+    []
+  ),
+  "createBoardPost": Func(
+    [
+      PostType$1,
+      Opt(Text),
+      Text,
+      Vec(Text),
+      Vec(Nat),
+      Vec(Text)
+    ],
+    [Post],
+    []
+  ),
+  "createBoardPostWithMedia": Func(
+    [
+      PostType$1,
+      Opt(Text),
+      Text,
+      Vec(Text),
+      Vec(Nat),
+      Vec(BoardMediaUpload),
+      Vec(Text)
+    ],
+    [Post],
+    []
+  ),
+  "createCanonicalMystery": Func(
+    [
+      Text,
+      Text,
+      Vec(Text),
+      Opt(Text),
+      Vec(Text),
+      Vec(Text),
+      Vec(Nat),
+      Vec(Nat),
+      MysteryStatus$1
+    ],
+    [Mystery],
+    []
+  ),
+  "createFinding": Func(
+    [
+      Text,
+      EvidenceLabel$1,
+      FindingType$1,
+      FindingContent,
+      SourceId,
+      Opt(Text),
+      Opt(Nat)
+    ],
+    [Result_22],
+    []
+  ),
+  "createMyself": Func([Text], [Result_21], []),
+  "createNewPersonCandidate": Func(
+    [Text, Text, SourceId],
+    [Result_20],
+    []
+  ),
+  "createRelationshipProposal": Func(
+    [Text, Text, Text, SourceId],
+    [Result_19],
+    []
+  ),
+  "createSource": Func(
+    [Text, SourceType$1, Text, Opt(Nat)],
+    [Result_18],
+    []
+  ),
+  "createSourceWithUpload": Func(
+    [
+      Text,
+      SourceType$1,
+      Text,
+      ExternalBlob2,
+      Vec(Text),
+      Text,
+      Opt(Nat),
+      Vec(Text),
+      PrivacyLevel$1,
+      ArchiveItemClassification$1,
+      Opt(OralHistorySpeaker)
+    ],
+    [Result_17],
+    []
+  ),
+  "designateSuccessor": Func([PersonId, Nat], [Result_16], []),
+  "execute": Func([Text], [Result__1], ["query"]),
+  "getApiDoc": Func([], [Text], ["query"]),
+  "getBoardPost": Func([PostId], [Opt(Post)], ["query"]),
+  "getCallerUserRole": Func([], [UserRole], ["query"]),
+  "getConversation": Func(
+    [ConversationId],
+    [Opt(ConversationView)],
+    ["query"]
+  ),
+  "getFinding": Func([FindingId], [Opt(ProposedFinding)], ["query"]),
+  "getMyAccountId": Func([], [Result_15], ["query"]),
+  "getMyAuthMethods": Func([], [Result_14], ["query"]),
+  "getMyProfile": Func([], [Opt(PersonProfile)], ["query"]),
+  "getMyProfileClaim": Func(
+    [PersonId],
+    [Opt(ProfileClaim)],
+    ["query"]
+  ),
+  "getMyRelationshipRequests": Func(
+    [],
+    [Vec(RelationshipRequest)],
+    ["query"]
+  ),
+  "getPendingContributionsCount": Func([], [Nat], ["query"]),
+  "getPersonProfile": Func(
+    [PersonId],
+    [Opt(PersonProfile)],
+    ["query"]
+  ),
+  "getProfilePhoto": Func([PersonId], [Opt(Photo)], ["query"]),
+  "getRecipe": Func([RecipeId], [Opt(Recipe)], ["query"]),
+  "getRelationshipRequest": Func(
+    [Nat],
+    [Opt(RelationshipRequest)],
+    ["query"]
+  ),
+  "getReportedMessage": Func(
+    [ReportId],
+    [Opt(ReportedMessageView)],
+    ["query"]
+  ),
+  "getResearchAuditLog": Func(
+    [],
+    [Vec(ResearchAuditEntry)],
+    ["query"]
+  ),
+  "getReviewQueue": Func([], [ReviewQueue], ["query"]),
+  "getSingleStewardWarning": Func([], [Opt(Text)], ["query"]),
+  "getSource": Func([SourceId], [Opt(SourceRecord)], ["query"]),
+  "getStewardAuditHistory": Func(
+    [],
+    [Vec(StewardAuditEntry)],
+    ["query"]
+  ),
+  "hasActiveSteward": Func([], [Bool], ["query"]),
+  "hasApprovedOwner": Func([PersonId], [Bool], ["query"]),
+  "isCallerAdmin": Func([], [Bool], ["query"]),
+  "isCallerSteward": Func([], [Bool], ["query"]),
+  "listApprovedArchiveItems": Func([], [Vec(ArchiveItem)], ["query"]),
+  "listApprovedRecipes": Func([], [Vec(Recipe)], ["query"]),
+  "listApprovedStories": Func([], [Vec(Story)], ["query"]),
+  "listArchivedProfileIds": Func([], [Vec(PersonId)], ["query"]),
+  "listArchivedProfiles": Func([], [Vec(PersonProfile)], ["query"]),
+  "listAuditHistory": Func([], [Vec(AuditEntry)], ["query"]),
+  "listBlockedUsers": Func([], [Vec(Principal2)], ["query"]),
+  "listBoardPosts": Func([Opt(PostType$1)], [Vec(Post)], ["query"]),
+  "listBoardReplies": Func([PostId], [Vec(Reply)], ["query"]),
+  "listConfirmedRelationships": Func(
+    [],
+    [Vec(Relationship)],
+    ["query"]
+  ),
+  "listConflictReviewItems": Func(
+    [],
+    [Vec(ConflictReviewItem)],
+    ["query"]
+  ),
+  "listConflictsForPerson": Func(
+    [Text],
+    [Vec(ConflictReviewItem)],
+    ["query"]
+  ),
+  "listConversations": Func([], [Vec(ConversationSummary)], ["query"]),
+  "listDisputedFactsForPerson": Func(
+    [Text],
+    [Vec(DisputedFact)],
+    ["query"]
+  ),
+  "listDuplicateCandidates": Func([], [Vec(DuplicatePair)], ["query"]),
+  "listEligibleStewardCandidates": Func(
+    [],
+    [Vec(StewardIdentity)],
+    ["query"]
+  ),
+  "listFindings": Func([], [Vec(ProposedFinding)], ["query"]),
+  "listHiddenBoardPosts": Func([], [Vec(Post)], ["query"]),
+  "listMessageableMembers": Func([], [Vec(Text)], ["query"]),
+  "listMysteries": Func([], [Vec(Mystery)], ["query"]),
+  "listNewPersonCandidates": Func(
+    [],
+    [Vec(NewPersonCandidate)],
+    ["query"]
+  ),
+  "listNotifications": Func([], [Vec(Notification)], ["query"]),
+  "listPendingArchiveItems": Func([], [Vec(ArchiveItem)], ["query"]),
+  "listPendingMysteryContributions": Func(
+    [],
+    [Vec(MysteryContribution)],
+    ["query"]
+  ),
+  "listPendingRecipes": Func([], [Vec(Recipe)], ["query"]),
+  "listPendingStories": Func([], [Vec(Story)], ["query"]),
+  "listPersonRelationships": Func(
+    [PersonId],
+    [Vec(Relationship)],
+    ["query"]
+  ),
+  "listPhotos": Func([PersonId], [Vec(Photo)], ["query"]),
+  "listProfileClaims": Func([], [Vec(ProfileClaim)], ["query"]),
+  "listProfileRemovalRequests": Func(
+    [],
+    [Vec(ProfileRemovalRequest)],
+    ["query"]
+  ),
+  "listRecipesForPerson": Func([Text], [Vec(Recipe)], ["query"]),
+  "listRelationshipProposals": Func(
+    [],
+    [Vec(RelationshipProposal)],
+    ["query"]
+  ),
+  "listRelationshipRequests": Func(
+    [],
+    [Vec(RelationshipRequest)],
+    ["query"]
+  ),
+  "listReports": Func([], [Vec(Report)], ["query"]),
+  "listSources": Func([], [Vec(SourceRecord)], ["query"]),
+  "listStewardIdentities": Func([], [Vec(StewardIdentity)], ["query"]),
+  "listStewards": Func([], [Vec(StewardRecord)], ["query"]),
+  "listSuccessors": Func([], [Vec(SuccessorDesignation)], ["query"]),
+  "listTimelineEvents": Func([], [Vec(TimelineEvent)], ["query"]),
+  "markConversationRead": Func([ConversationId], [], []),
+  "markMysteryResolved": Func(
+    [MysteryId, Text, Vec(Text)],
+    [Opt(Mystery)],
+    []
+  ),
+  "markNotificationRead": Func(
+    [NotificationId],
+    [Opt(Notification)],
+    []
+  ),
+  "mergeProfiles": Func([PersonId, PersonId], [Result_13], []),
+  "needsResearchFinding": Func(
+    [FindingId],
+    [Opt(ProposedFinding)],
+    []
+  ),
+  "needsResearchNewPersonCandidate": Func(
+    [Nat],
+    [Opt(NewPersonCandidate)],
+    []
+  ),
+  "needsResearchRelationshipProposal": Func(
+    [Nat],
+    [Opt(RelationshipProposal)],
+    []
+  ),
+  "needsResearchSource": Func([SourceId], [Opt(SourceRecord)], []),
+  "notDuplicate": Func([PersonId, PersonId], [Result_12], []),
+  "permanentlyDeleteProfile": Func([PersonId, Bool], [Result_11], []),
+  "promoteToSteward": Func([PersonId], [Result_10], []),
+  "proposeRelationship": Func(
+    [PersonId, PersonId, RelationshipType$1],
+    [Result_9],
+    []
+  ),
+  "publishRecipe": Func(
+    [
+      Text,
+      Text,
+      Text,
+      Vec(Text),
+      Opt(Text),
+      Opt(Nat),
+      Opt(Text),
+      Opt(Text),
+      Vec(Text),
+      Text,
+      Opt(Text),
+      Vec(Text),
+      PrivacyLevel$1,
+      EvidenceStatus$1,
+      Vec(Nat)
+    ],
+    [Recipe],
+    []
+  ),
+  "reconcileClaimNotifications": Func([Nat], [Nat], []),
+  "rejectArchiveItem": Func([ArchiveItemId], [Opt(ArchiveItem)], []),
+  "rejectFinding": Func([FindingId], [Opt(ProposedFinding)], []),
+  "rejectNewPersonCandidate": Func(
+    [Nat],
+    [Opt(NewPersonCandidate)],
+    []
+  ),
+  "rejectProfileClaim": Func([Nat], [Opt(ProfileClaim)], []),
+  "rejectProfileRemoval": Func(
+    [Nat],
+    [Opt(ProfileRemovalRequest)],
+    []
+  ),
+  "rejectRecipe": Func([RecipeId], [Opt(Recipe)], []),
+  "rejectRelationshipProposal": Func(
+    [Nat],
+    [Opt(RelationshipProposal)],
+    []
+  ),
+  "rejectRelationshipRequest": Func(
+    [Nat],
+    [Opt(RelationshipRequest)],
+    []
+  ),
+  "rejectSource": Func([SourceId], [Opt(SourceRecord)], []),
+  "rejectStory": Func([StoryId], [Opt(Story)], []),
+  "removeBoardReply": Func([ReplyId], [Opt(Reply)], []),
+  "removeDuplicateProfile": Func([PersonId], [Result_8], []),
+  "removePhoto": Func([PersonId, PhotoId], [Bool], []),
+  "removeRelationship": Func([Nat], [Result_7], []),
+  "removeSteward": Func([Principal2], [Result_6], []),
+  "reportMessage": Func([MessageId, Text], [Report], []),
+  "requestProfileClaim": Func([PersonId], [Result_5], []),
+  "requestProfileRemoval": Func([PersonId, Text], [Result_4], []),
+  "resolveConflict": Func(
+    [Nat, ConflictResolutionAction$1, Text],
+    [Result_3],
+    []
+  ),
+  "resolveMergeConflict": Func(
+    [Nat, Text],
+    [Opt(MergeConflict)],
+    []
+  ),
+  "restoreBoardPost": Func([PostId], [Opt(Post)], []),
+  "restoreProfile": Func([PersonId], [Result_2], []),
+  "reviewMysteryContribution": Func(
+    [MysteryContributionId, Bool],
+    [Opt(MysteryContribution)],
+    []
+  ),
+  "reviewReport": Func([ReportId, ReportStatus$1], [Opt(Report)], []),
+  "schema": Func([], [Text], ["query"]),
+  "searchArchiveItems": Func(
+    [ArchiveSearchFilter],
+    [Vec(ArchiveItem)],
+    ["query"]
+  ),
+  "searchBoardPostsByTags": Func(
+    [Vec(Text)],
+    [Vec(Post)],
+    ["query"]
+  ),
+  "searchPossibleMatches": Func(
+    [Text],
+    [Vec(PersonMatch)],
+    ["query"]
+  ),
+  "sendMessage": Func([Text, Text], [Result_1], []),
+  "setProfilePhoto": Func([PersonId, PhotoId], [Opt(Photo)], []),
+  "setRelationshipRequestPending": Func(
+    [Nat],
+    [Opt(RelationshipRequest)],
+    []
+  ),
+  "submitArchiveItem": Func(
+    [
+      Text,
+      Text,
+      ArchiveItemType$1,
+      ExternalBlob2,
+      Text,
+      Opt(Nat),
+      Vec(Text),
+      Vec(Text),
+      Opt(Text),
+      SourceStatus$1,
+      PrivacyLevel$1,
+      ArchiveItemClassification$1,
+      Opt(OralHistorySpeaker)
+    ],
+    [ArchiveItem],
+    []
+  ),
+  "submitMysteryContribution": Func(
+    [MysteryId, MysteryContributionType$1, Text],
+    [MysteryContribution],
+    []
+  ),
+  "submitRecipe": Func(
+    [
+      Text,
+      Text,
+      Text,
+      Vec(Text),
+      Opt(Text),
+      Opt(Nat),
+      Opt(Text),
+      Opt(Text),
+      Vec(Text),
+      Text,
+      Opt(Text),
+      Vec(Text),
+      PrivacyLevel$1,
+      EvidenceStatus$1,
+      Vec(Nat)
+    ],
+    [Recipe],
+    []
+  ),
+  "submitStory": Func(
+    [
+      Text,
+      Text,
+      Vec(Text),
+      Opt(Text),
+      Opt(Nat),
+      Opt(Text),
+      EvidenceStatus$1,
+      Vec(Nat)
+    ],
+    [Story],
+    []
+  ),
+  "unblockUser": Func([Principal2], [], []),
+  "updateBoardPost": Func(
+    [
+      PostId,
+      PostType$1,
+      Opt(Text),
+      Text,
+      Vec(Text),
+      Vec(Nat),
+      Vec(Text)
+    ],
+    [Opt(Post)],
+    []
+  ),
+  "updateCanonicalMystery": Func(
+    [
+      MysteryId,
+      Text,
+      Text,
+      Vec(Text),
+      Opt(Text),
+      Vec(Text),
+      Vec(Text),
+      Vec(Nat),
+      Vec(Nat),
+      MysteryStatus$1
+    ],
+    [Opt(Mystery)],
+    []
+  ),
+  "updateCanonicalStory": Func(
+    [
+      StoryId,
+      Text,
+      Text,
+      Vec(Text),
+      Opt(Text),
+      Opt(Nat),
+      Opt(Text),
+      EvidenceStatus$1,
+      Vec(Nat)
+    ],
+    [Opt(Story)],
+    []
+  ),
+  "updateOwnProfile": Func([PersonId, ProfileEdits], [Result], [])
+});
+const idlFactory = ({ IDL: IDL2 }) => {
+  const _ImmutableObjectStorageCreateCertificateResult2 = IDL2.Record({
+    "method": IDL2.Text,
+    "blob_hash": IDL2.Text
+  });
+  const _ImmutableObjectStorageRefillInformation2 = IDL2.Record({
+    "proposed_top_up_amount": IDL2.Opt(IDL2.Nat)
+  });
+  const _ImmutableObjectStorageRefillResult2 = IDL2.Record({
+    "success": IDL2.Opt(IDL2.Bool),
+    "topped_up_amount": IDL2.Opt(IDL2.Nat)
+  });
+  const Error2 = IDL2.Variant({
+    "FrontendOriginsNotConfigured": IDL2.Null,
+    "MixedSsoSources": IDL2.Record({
+      "otherKeys": IDL2.Vec(IDL2.Text),
+      "ssoKeys": IDL2.Vec(IDL2.Text)
+    }),
+    "Stale": IDL2.Record({ "ageNs": IDL2.Nat }),
+    "MalformedCandid": IDL2.Null,
+    "AmbiguousAttribute": IDL2.Record({
+      "field": IDL2.Text,
+      "sources": IDL2.Vec(IDL2.Text)
+    }),
+    "NoAttributes": IDL2.Null,
+    "UnknownNonce": IDL2.Null,
+    "UntrustedSsoSource": IDL2.Record({ "domain": IDL2.Text }),
+    "MissingField": IDL2.Text,
+    "FrontendOriginMismatch": IDL2.Record({
+      "got": IDL2.Text,
+      "expected": IDL2.Vec(IDL2.Text)
+    })
+  });
+  const Result_262 = IDL2.Variant({ "ok": IDL2.Null, "err": Error2 });
+  const PersonId2 = IDL2.Text;
+  const StewardRoleStatus2 = IDL2.Variant({
+    "Active": IDL2.Null,
+    "Removed": IDL2.Null
+  });
+  const StewardRecord2 = IDL2.Record({
+    "assignedAt": IDL2.Int,
+    "assignedBy": IDL2.Principal,
+    "stewardAccountId": IDL2.Principal,
+    "successorPriority": IDL2.Opt(IDL2.Nat),
+    "roleStatus": StewardRoleStatus2
+  });
+  const StewardError2 = IDL2.Variant({
+    "LastSteward": IDL2.Null,
+    "NotSteward": IDL2.Null,
+    "AlreadySteward": IDL2.Null,
+    "NotSignedIn": IDL2.Null,
+    "NotApprovedClaimedMember": IDL2.Null,
+    "NotDesignated": IDL2.Null
+  });
+  const Result_102 = IDL2.Variant({ "ok": StewardRecord2, "err": StewardError2 });
+  const PostId2 = IDL2.Nat;
+  const AccountId2 = IDL2.Principal;
+  const Timestamp2 = IDL2.Int;
+  const ReplyId2 = IDL2.Nat;
+  const Reply2 = IDL2.Record({
+    "authorAccountId": AccountId2,
+    "body": IDL2.Text,
+    "createdAt": Timestamp2,
+    "authorPersonId": PersonId2,
+    "replyId": ReplyId2,
+    "postId": PostId2
+  });
+  const EvidenceStatus2 = IDL2.Variant({
+    "Unresolved": IDL2.Null,
+    "Documented": IDL2.Null,
+    "FamilyHistory": IDL2.Null,
+    "PersonalMemory": IDL2.Null
+  });
+  const StoryId2 = IDL2.Nat;
+  const StoryStatus2 = IDL2.Variant({
+    "Approved": IDL2.Null,
+    "Rejected": IDL2.Null,
+    "Pending": IDL2.Null
+  });
+  const Story2 = IDL2.Record({
+    "id": StoryId2,
+    "era": IDL2.Opt(IDL2.Text),
+    "status": StoryStatus2,
+    "title": IDL2.Text,
+    "relatedMemberIds": IDL2.Vec(IDL2.Text),
+    "storyText": IDL2.Text,
+    "createdAt": IDL2.Int,
+    "year": IDL2.Opt(IDL2.Nat),
+    "relatedArchiveItemIds": IDL2.Vec(IDL2.Nat),
+    "updatedAt": IDL2.Int,
+    "evidenceStatus": EvidenceStatus2,
+    "location": IDL2.Opt(IDL2.Text),
+    "contributor": IDL2.Principal
+  });
+  const ExternalBlob3 = IDL2.Vec(IDL2.Nat8);
+  const PhotoId2 = IDL2.Nat;
+  const Photo2 = IDL2.Record({
+    "id": PhotoId2,
+    "blob": ExternalBlob3,
+    "mimeType": IDL2.Text,
+    "filename": IDL2.Text,
+    "uploadedAt": IDL2.Int,
+    "uploadedBy": IDL2.Principal
+  });
+  const RelationshipType2 = IDL2.Variant({
+    "Parent": IDL2.Null,
+    "Sibling": IDL2.Null,
+    "SpousePartner": IDL2.Null,
+    "Child": IDL2.Null
+  });
+  const RelationshipStatus2 = IDL2.Variant({
+    "Disputed": IDL2.Null,
+    "Confirmed": IDL2.Null,
+    "Pending": IDL2.Null
+  });
+  const Relationship2 = IDL2.Record({
+    "id": IDL2.Nat,
+    "status": RelationshipStatus2,
+    "fromPersonId": PersonId2,
+    "toPersonId": PersonId2,
+    "relationshipType": RelationshipType2
+  });
+  const RelationshipAdminError2 = IDL2.Variant({
+    "RelationshipNotFound": IDL2.Null,
+    "NotSignedIn": IDL2.Null,
+    "DuplicateRelationship": IDL2.Null,
+    "PersonNotFound": IDL2.Null
+  });
+  const Result_232 = IDL2.Variant({
+    "ok": Relationship2,
+    "err": RelationshipAdminError2
+  });
+  const ArchiveItemId2 = IDL2.Nat;
+  const ArchiveItemStatus2 = IDL2.Variant({
+    "Approved": IDL2.Null,
+    "Rejected": IDL2.Null,
+    "Pending": IDL2.Null
+  });
+  const PrivacyLevel2 = IDL2.Variant({
+    "Private": IDL2.Null,
+    "Public": IDL2.Null,
+    "FamilyOnly": IDL2.Null
+  });
+  const OralHistorySpeaker2 = IDL2.Record({
+    "name": IDL2.Text,
+    "personId": IDL2.Opt(IDL2.Text)
+  });
+  const ArchiveItemType2 = IDL2.Variant({
+    "Research": IDL2.Null,
+    "Photo": IDL2.Null,
+    "Document": IDL2.Null,
+    "WorkBusiness": IDL2.Null,
+    "WrittenStoryNote": IDL2.Null,
+    "Audio": IDL2.Null,
+    "Other": IDL2.Null,
+    "Video": IDL2.Null
+  });
+  const ChapterMarker2 = IDL2.Record({
+    "title": IDL2.Text,
+    "timestamp": IDL2.Nat
+  });
+  const SourceStatus2 = IDL2.Variant({
+    "Copy": IDL2.Null,
+    "Unverified": IDL2.Null,
+    "Transcribed": IDL2.Null,
+    "Original": IDL2.Null
+  });
+  const ArchiveItemClassification2 = IDL2.Variant({
+    "OralHistory": IDL2.Null,
+    "Standard": IDL2.Null
+  });
+  const ArchiveItem2 = IDL2.Record({
+    "id": ArchiveItemId2,
+    "era": IDL2.Text,
+    "status": ArchiveItemStatus2,
+    "title": IDL2.Text,
+    "relatedMemberIds": IDL2.Vec(IDL2.Text),
+    "blob": ExternalBlob3,
+    "createdAt": IDL2.Int,
+    "tags": IDL2.Vec(IDL2.Text),
+    "year": IDL2.Opt(IDL2.Nat),
+    "description": IDL2.Text,
+    "privacyLevel": PrivacyLevel2,
+    "primarySpeaker": IDL2.Opt(OralHistorySpeaker2),
+    "extractedNames": IDL2.Opt(IDL2.Vec(IDL2.Text)),
+    "itemType": ArchiveItemType2,
+    "aiSummary": IDL2.Opt(IDL2.Text),
+    "searchableTranscript": IDL2.Opt(IDL2.Text),
+    "relatedBranchId": IDL2.Opt(IDL2.Text),
+    "transcript": IDL2.Opt(IDL2.Text),
+    "chapterMarkers": IDL2.Opt(IDL2.Vec(ChapterMarker2)),
+    "sourceStatus": SourceStatus2,
+    "classification": ArchiveItemClassification2,
+    "contributor": IDL2.Principal
+  });
+  const FindingId2 = IDL2.Nat;
+  const ReviewStatus2 = IDL2.Variant({
+    "NeedsResearch": IDL2.Null,
+    "Conflicting": IDL2.Null,
+    "Approved": IDL2.Null,
+    "Rejected": IDL2.Null,
+    "Pending": IDL2.Null
+  });
+  const EvidenceLabel2 = IDL2.Variant({
+    "NeedsResearch": IDL2.Null,
+    "Conflicting": IDL2.Null,
+    "Hypothesis": IDL2.Null,
+    "Documented": IDL2.Null,
+    "FamilyHistoryOralHistory": IDL2.Null,
+    "PersonalMemory": IDL2.Null
+  });
+  const SourceType2 = IDL2.Variant({
+    "CertificateHeadstoneReference": IDL2.Null,
+    "DeedPropertyReference": IDL2.Null,
+    "ResearchNotes": IDL2.Null,
+    "EmailThread": IDL2.Null,
+    "UploadedDocumentImage": IDL2.Null,
+    "CensusCitation": IDL2.Null
+  });
+  const FindingContent2 = IDL2.Variant({
+    "Story": IDL2.Record({
+      "title": IDL2.Text,
+      "storyText": IDL2.Text,
+      "relatedPersonIds": IDL2.Vec(IDL2.Text)
+    }),
+    "TimelineEvent": IDL2.Record({
+      "title": IDL2.Text,
+      "date": IDL2.Opt(IDL2.Text),
+      "description": IDL2.Text,
+      "personId": IDL2.Text
+    }),
+    "PersonFact": IDL2.Record({
+      "field": IDL2.Text,
+      "value": IDL2.Text,
+      "personId": IDL2.Text
+    }),
+    "Source": IDL2.Record({
+      "title": IDL2.Text,
+      "archiveItemId": IDL2.Opt(IDL2.Nat),
+      "description": IDL2.Text,
+      "sourceType": SourceType2
+    }),
+    "Mystery": IDL2.Record({
+      "title": IDL2.Text,
+      "description": IDL2.Text,
+      "relatedPersonIds": IDL2.Vec(IDL2.Text)
+    }),
+    "Relationship": IDL2.Record({
+      "fromPersonId": IDL2.Text,
+      "toPersonId": IDL2.Text,
+      "relationshipType": IDL2.Text
+    })
+  });
+  const SourceId2 = IDL2.Nat;
+  const FindingType2 = IDL2.Variant({
+    "Story": IDL2.Null,
+    "TimelineEvent": IDL2.Null,
+    "PersonFact": IDL2.Null,
+    "Source": IDL2.Null,
+    "Mystery": IDL2.Null,
+    "Relationship": IDL2.Null
+  });
+  const ProposedFinding2 = IDL2.Record({
+    "id": FindingId2,
+    "status": ReviewStatus2,
+    "title": IDL2.Text,
+    "evidenceLabel": EvidenceLabel2,
+    "newPersonCandidateId": IDL2.Opt(IDL2.Nat),
+    "content": FindingContent2,
+    "conflictReviewId": IDL2.Opt(IDL2.Nat),
+    "submittedAt": IDL2.Int,
+    "submittedBy": IDL2.Principal,
+    "sourceId": SourceId2,
+    "reviewedAt": IDL2.Opt(IDL2.Int),
+    "reviewedBy": IDL2.Opt(IDL2.Principal),
+    "updatedAt": IDL2.Int,
+    "personId": IDL2.Opt(IDL2.Text),
+    "findingType": FindingType2
+  });
+  const NewPersonCandidate2 = IDL2.Record({
+    "id": IDL2.Nat,
+    "status": ReviewStatus2,
+    "name": IDL2.Text,
+    "submittedAt": IDL2.Int,
+    "submittedBy": IDL2.Principal,
+    "sourceId": SourceId2,
+    "reviewedAt": IDL2.Opt(IDL2.Int),
+    "reviewedBy": IDL2.Opt(IDL2.Principal),
+    "details": IDL2.Text
+  });
+  const ProfileClaimStatus2 = IDL2.Variant({
+    "Approved": IDL2.Null,
+    "Rejected": IDL2.Null,
+    "Pending": IDL2.Null
+  });
+  const ProfileClaim2 = IDL2.Record({
+    "id": IDL2.Nat,
+    "submittedDate": IDL2.Int,
+    "status": ProfileClaimStatus2,
+    "reviewedDate": IDL2.Opt(IDL2.Int),
+    "reviewedBy": IDL2.Opt(IDL2.Principal),
+    "personId": PersonId2,
+    "requestingUserId": IDL2.Principal
+  });
+  const ProfileRemovalStatus2 = IDL2.Variant({
+    "Approved": IDL2.Null,
+    "Rejected": IDL2.Null,
+    "Pending": IDL2.Null
+  });
+  const ProfileRemovalRequest2 = IDL2.Record({
+    "id": IDL2.Nat,
+    "submittedDate": IDL2.Int,
+    "status": ProfileRemovalStatus2,
+    "reviewedDate": IDL2.Opt(IDL2.Int),
+    "reviewedBy": IDL2.Opt(IDL2.Principal),
+    "personId": PersonId2,
+    "requestingUserId": IDL2.Principal,
+    "reason": IDL2.Text
+  });
+  const RecipeId2 = IDL2.Nat;
+  const RecipeStatus2 = IDL2.Variant({
+    "Approved": IDL2.Null,
+    "Rejected": IDL2.Null,
+    "Archived": IDL2.Null,
+    "Pending": IDL2.Null
+  });
+  const Recipe2 = IDL2.Record({
+    "era": IDL2.Opt(IDL2.Text),
+    "status": RecipeStatus2,
+    "title": IDL2.Text,
+    "recipeId": RecipeId2,
+    "aiDerivedText": IDL2.Opt(IDL2.Text),
+    "createdAt": IDL2.Int,
+    "tags": IDL2.Vec(IDL2.Text),
+    "year": IDL2.Opt(IDL2.Nat),
+    "contributorAccountId": IDL2.Principal,
+    "privacyLevel": PrivacyLevel2,
+    "linkedMediaIds": IDL2.Vec(IDL2.Nat),
+    "instructions": IDL2.Text,
+    "ocrText": IDL2.Opt(IDL2.Text),
+    "familyBranch": IDL2.Opt(IDL2.Text),
+    "familyStory": IDL2.Opt(IDL2.Text),
+    "updatedAt": IDL2.Int,
+    "evidenceStatus": EvidenceStatus2,
+    "shortDescription": IDL2.Text,
+    "extractedIngredients": IDL2.Opt(IDL2.Vec(IDL2.Text)),
+    "transcript": IDL2.Opt(IDL2.Text),
+    "location": IDL2.Opt(IDL2.Text),
+    "originatingPersonId": IDL2.Text,
+    "ingredients": IDL2.Vec(IDL2.Text),
+    "relatedPersonIds": IDL2.Vec(IDL2.Text)
+  });
+  const RelationshipProposal2 = IDL2.Record({
+    "id": IDL2.Nat,
+    "status": ReviewStatus2,
+    "fromPersonId": IDL2.Text,
+    "submittedAt": IDL2.Int,
+    "submittedBy": IDL2.Principal,
+    "sourceId": SourceId2,
+    "reviewedAt": IDL2.Opt(IDL2.Int),
+    "reviewedBy": IDL2.Opt(IDL2.Principal),
+    "toPersonId": IDL2.Text,
+    "relationshipType": IDL2.Text
+  });
+  const RelationshipRequestStatus2 = IDL2.Variant({
+    "Approved": IDL2.Null,
+    "Rejected": IDL2.Null,
+    "Pending": IDL2.Null
+  });
+  const RelationshipRequest2 = IDL2.Record({
+    "id": IDL2.Nat,
+    "submittedDate": IDL2.Int,
+    "status": RelationshipRequestStatus2,
+    "reviewedDate": IDL2.Opt(IDL2.Int),
+    "relatedPersonId": PersonId2,
+    "requestingPersonId": PersonId2,
+    "proposedRelationship": RelationshipType2,
+    "reviewer": IDL2.Opt(IDL2.Principal)
+  });
+  const SourceRecord2 = IDL2.Record({
+    "id": SourceId2,
+    "status": ReviewStatus2,
+    "title": IDL2.Text,
+    "archiveItemId": IDL2.Opt(IDL2.Nat),
+    "createdAt": IDL2.Int,
+    "description": IDL2.Text,
+    "sourceType": SourceType2,
+    "updatedAt": IDL2.Int,
+    "contributor": IDL2.Principal
+  });
+  const PostStatus2 = IDL2.Variant({
+    "Active": IDL2.Null,
+    "Archived": IDL2.Null
+  });
+  const PostType2 = IDL2.Variant({
+    "Announcement": IDL2.Null,
+    "Recipe": IDL2.Null,
+    "ResearchHistory": IDL2.Null,
+    "FamilyQuestion": IDL2.Null,
+    "Memorial": IDL2.Null,
+    "General": IDL2.Null,
+    "Other": IDL2.Null,
+    "ReunionEvent": IDL2.Null,
+    "PhotoIdentification": IDL2.Null
+  });
+  const PrivacyScope2 = IDL2.Variant({ "FamilyOnly": IDL2.Null });
+  const Post2 = IDL2.Record({
+    "status": PostStatus2,
+    "authorAccountId": AccountId2,
+    "postType": PostType2,
+    "title": IDL2.Opt(IDL2.Text),
+    "body": IDL2.Text,
+    "createdAt": Timestamp2,
+    "tags": IDL2.Vec(IDL2.Text),
+    "linkedMediaIds": IDL2.Vec(IDL2.Nat),
+    "privacyScope": PrivacyScope2,
+    "authorPersonId": PersonId2,
+    "updatedAt": Timestamp2,
+    "relatedPersonIds": IDL2.Vec(PersonId2),
+    "postId": PostId2
+  });
+  const ArchiveError2 = IDL2.Variant({
+    "NotArchived": IDL2.Null,
+    "ProfileNotFound": IDL2.Null,
+    "AlreadyArchived": IDL2.Null,
+    "NotSignedIn": IDL2.Null
+  });
+  const Result_27 = IDL2.Variant({ "ok": IDL2.Null, "err": ArchiveError2 });
+  const UserRole2 = IDL2.Variant({
+    "admin": IDL2.Null,
+    "user": IDL2.Null,
+    "guest": IDL2.Null
+  });
+  const AuthMethod2 = IDL2.Variant({ "Google": IDL2.Null, "Apple": IDL2.Null });
+  const Account2 = IDL2.Record({
+    "id": AccountId2,
+    "createdAt": IDL2.Int,
+    "authMethods": IDL2.Vec(AuthMethod2)
+  });
+  const AccountError2 = IDL2.Variant({
+    "AccountNotFound": IDL2.Null,
+    "NotSignedIn": IDL2.Null
+  });
+  const Result_252 = IDL2.Variant({ "ok": Account2, "err": AccountError2 });
+  const ClaimPersistenceError2 = IDL2.Variant({
+    "AlreadyOwned": IDL2.Null,
+    "AlreadyPending": IDL2.Null,
+    "ProfileNotFound": IDL2.Null,
+    "NotSignedIn": IDL2.Null,
+    "ApprovedOwnerExists": IDL2.Null
+  });
+  const ClaimEligibility2 = IDL2.Record({
+    "eligible": IDL2.Bool,
+    "reason": IDL2.Opt(ClaimPersistenceError2)
+  });
+  const StewardClaimResult2 = IDL2.Record({
+    "stewardAccountId": IDL2.Principal,
+    "claimedAt": IDL2.Int,
+    "claimedBy": IDL2.Principal
+  });
+  const StewardClaimError2 = IDL2.Variant({
+    "StewardAlreadyExists": IDL2.Null,
+    "AlreadySteward": IDL2.Null,
+    "NotSignedIn": IDL2.Null
+  });
+  const Result_242 = IDL2.Variant({
+    "ok": StewardClaimResult2,
+    "err": StewardClaimError2
+  });
+  const BoardMediaUpload2 = IDL2.Record({
+    "era": IDL2.Text,
+    "title": IDL2.Text,
+    "relatedMemberIds": IDL2.Vec(IDL2.Text),
+    "blob": ExternalBlob3,
+    "tags": IDL2.Vec(IDL2.Text),
+    "year": IDL2.Opt(IDL2.Nat),
+    "description": IDL2.Text,
+    "privacyLevel": PrivacyLevel2,
+    "primarySpeaker": IDL2.Opt(OralHistorySpeaker2),
+    "itemType": ArchiveItemType2,
+    "relatedBranchId": IDL2.Opt(IDL2.Text),
+    "sourceStatus": SourceStatus2,
+    "classification": ArchiveItemClassification2
+  });
+  const MysteryStatus2 = IDL2.Variant({
+    "Researching": IDL2.Null,
+    "Open": IDL2.Null,
+    "PartiallyResolved": IDL2.Null,
+    "Resolved": IDL2.Null
+  });
+  const MysteryId2 = IDL2.Nat;
+  const Resolution2 = IDL2.Record({
+    "supportingEvidence": IDL2.Vec(IDL2.Text),
+    "summary": IDL2.Text,
+    "resolvedAt": IDL2.Int,
+    "resolvedBy": IDL2.Principal
+  });
+  const Mystery2 = IDL2.Record({
+    "id": MysteryId2,
+    "status": MysteryStatus2,
+    "title": IDL2.Text,
+    "relatedMemberIds": IDL2.Vec(IDL2.Text),
+    "createdAt": IDL2.Int,
+    "relatedArchiveItemIds": IDL2.Vec(IDL2.Nat),
+    "description": IDL2.Text,
+    "resolution": IDL2.Opt(Resolution2),
+    "updatedAt": IDL2.Int,
+    "knownFacts": IDL2.Vec(IDL2.Text),
+    "possibilities": IDL2.Vec(IDL2.Text),
+    "relatedBranchId": IDL2.Opt(IDL2.Text),
+    "relatedSourceIds": IDL2.Vec(IDL2.Nat),
+    "contributor": IDL2.Principal
+  });
+  const ResearchError2 = IDL2.Variant({
+    "invalidState": IDL2.Text,
+    "notAuthorized": IDL2.Null,
+    "notFound": IDL2.Nat
+  });
+  const Result_222 = IDL2.Variant({
+    "ok": ProposedFinding2,
+    "err": ResearchError2
+  });
+  const ClaimStatus2 = IDL2.Variant({
+    "Unclaimed": IDL2.Null,
+    "Claimed": IDL2.Null
+  });
+  const LivingStatus2 = IDL2.Variant({
+    "Living": IDL2.Null,
+    "Deceased": IDL2.Null
+  });
+  const PersonProfile2 = IDL2.Record({
+    "occupation": IDL2.Opt(IDL2.Text),
+    "privacySettings": IDL2.Opt(IDL2.Text),
+    "nickname": IDL2.Opt(IDL2.Text),
+    "claimedByUserId": IDL2.Opt(IDL2.Principal),
+    "birthDate": IDL2.Opt(IDL2.Text),
+    "birthInfo": IDL2.Opt(IDL2.Text),
+    "claimStatus": ClaimStatus2,
+    "livingStatus": LivingStatus2,
+    "name": IDL2.Text,
+    "longerStory": IDL2.Opt(IDL2.Text),
+    "personId": PersonId2,
+    "story": IDL2.Opt(IDL2.Text),
+    "middleName": IDL2.Opt(IDL2.Text),
+    "suffix": IDL2.Opt(IDL2.Text),
+    "preferredName": IDL2.Opt(IDL2.Text),
+    "currentLocation": IDL2.Opt(IDL2.Text),
+    "birthplace": IDL2.Opt(IDL2.Text),
+    "lastName": IDL2.Opt(IDL2.Text),
+    "shortBio": IDL2.Opt(IDL2.Text),
+    "timeline": IDL2.Opt(IDL2.Vec(IDL2.Text)),
+    "firstName": IDL2.Opt(IDL2.Text)
+  });
+  const CreateError2 = IDL2.Variant({
+    "AlreadyOwned": IDL2.Null,
+    "NotSignedIn": IDL2.Null
+  });
+  const Result_212 = IDL2.Variant({ "ok": PersonProfile2, "err": CreateError2 });
+  const Result_202 = IDL2.Variant({
+    "ok": NewPersonCandidate2,
+    "err": ResearchError2
+  });
+  const Result_192 = IDL2.Variant({
+    "ok": RelationshipProposal2,
+    "err": ResearchError2
+  });
+  const Result_182 = IDL2.Variant({ "ok": SourceRecord2, "err": ResearchError2 });
+  const SourceUploadResult2 = IDL2.Record({
+    "source": SourceRecord2,
+    "archiveItem": ArchiveItem2
+  });
+  const Result_172 = IDL2.Variant({
+    "ok": SourceUploadResult2,
+    "err": ResearchError2
+  });
+  const SuccessorStatus2 = IDL2.Variant({
+    "Activated": IDL2.Null,
+    "Removed": IDL2.Null,
+    "Designated": IDL2.Null
+  });
+  const SuccessorDesignation2 = IDL2.Record({
+    "status": SuccessorStatus2,
+    "assignedAt": IDL2.Int,
+    "assignedBy": IDL2.Principal,
+    "personId": PersonId2,
+    "priority": IDL2.Nat
+  });
+  const Result_162 = IDL2.Variant({
+    "ok": SuccessorDesignation2,
+    "err": StewardError2
+  });
+  const Value2 = IDL2.Variant({
+    "int": IDL2.Int,
+    "nat": IDL2.Nat,
+    "float": IDL2.Float64,
+    "bool": IDL2.Bool,
+    "null": IDL2.Null,
+    "text": IDL2.Text
+  });
+  const Cell2 = IDL2.Record({ "value": Value2, "name": IDL2.Text });
+  const Result__12 = IDL2.Record({
+    "hasMore": IDL2.Bool,
+    "rows": IDL2.Vec(IDL2.Vec(Cell2))
+  });
+  const ConversationId2 = IDL2.Nat;
+  const MessageStatus2 = IDL2.Variant({
+    "Blocked": IDL2.Null,
+    "Sent": IDL2.Null
+  });
+  const MessageId2 = IDL2.Nat;
+  const Message2 = IDL2.Record({
+    "status": MessageStatus2,
+    "messageId": MessageId2,
+    "body": IDL2.Text,
+    "createdAt": Timestamp2,
+    "conversationId": ConversationId2,
+    "senderAccountId": AccountId2,
+    "senderPersonId": PersonId2,
+    "readAt": IDL2.Opt(Timestamp2)
+  });
+  const ConversationView2 = IDL2.Record({
+    "messages": IDL2.Vec(Message2),
+    "participantPersonIds": IDL2.Vec(PersonId2),
+    "conversationId": ConversationId2,
+    "participantDisplayNames": IDL2.Vec(IDL2.Text)
+  });
+  const Result_152 = IDL2.Variant({ "ok": AccountId2, "err": AccountError2 });
+  const AuthMethods2 = IDL2.Record({ "apple": IDL2.Bool, "google": IDL2.Bool });
+  const Result_142 = IDL2.Variant({ "ok": AuthMethods2, "err": AccountError2 });
+  const ReportId2 = IDL2.Nat;
+  const ReportStatus2 = IDL2.Variant({
+    "Dismissed": IDL2.Null,
+    "Reviewed": IDL2.Null,
+    "Pending": IDL2.Null
+  });
+  const Report2 = IDL2.Record({
+    "status": ReportStatus2,
+    "reportedMessageId": MessageId2,
+    "createdAt": Timestamp2,
+    "reportingAccountId": AccountId2,
+    "reportId": ReportId2,
+    "reason": IDL2.Text
+  });
+  const ReportedMessageView2 = IDL2.Record({
+    "report": Report2,
+    "message": Message2
+  });
+  const ResearchAuditEntry2 = IDL2.Record({
+    "id": IDL2.Nat,
+    "action": IDL2.Text,
+    "findingId": IDL2.Opt(FindingId2),
+    "sourceId": IDL2.Opt(SourceId2),
+    "actorId": IDL2.Principal,
+    "summary": IDL2.Text,
+    "timestamp": IDL2.Int
+  });
+  const ReviewItemKind2 = IDL2.Variant({
+    "Source": IDL2.Null,
+    "RelationshipProposal": IDL2.Null,
+    "ConflictReview": IDL2.Null,
+    "NewPersonCandidate": IDL2.Null,
+    "Finding": IDL2.Null
+  });
+  const ReviewAction2 = IDL2.Variant({
+    "NeedsResearch": IDL2.Null,
+    "Approve": IDL2.Null,
+    "Reject": IDL2.Null
+  });
+  const ReviewQueueItem2 = IDL2.Record({
+    "id": IDL2.Nat,
+    "provenance": IDL2.Text,
+    "status": ReviewStatus2,
+    "title": IDL2.Text,
+    "evidenceLabel": IDL2.Opt(EvidenceLabel2),
+    "kind": ReviewItemKind2,
+    "createdAt": IDL2.Int,
+    "actions": IDL2.Vec(ReviewAction2),
+    "summary": IDL2.Text,
+    "contributor": IDL2.Opt(IDL2.Principal)
+  });
+  const ReviewQueue2 = IDL2.Record({
+    "pending": IDL2.Nat,
+    "conflicting": IDL2.Nat,
+    "approved": IDL2.Nat,
+    "rejected": IDL2.Nat,
+    "needsResearch": IDL2.Nat,
+    "items": IDL2.Vec(ReviewQueueItem2)
+  });
+  const StewardAuditKind2 = IDL2.Variant({
+    "ConflictResolution": IDL2.Null,
+    "Governance": IDL2.Null
+  });
+  const StewardAuditEntry2 = IDL2.Record({
+    "id": IDL2.Nat,
+    "field": IDL2.Opt(IDL2.Text),
+    "affectedPersonIds": IDL2.Vec(IDL2.Text),
+    "proposedValue": IDL2.Opt(IDL2.Text),
+    "stewardNotes": IDL2.Opt(IDL2.Text),
+    "kind": StewardAuditKind2,
+    "proposedSourceId": IDL2.Opt(IDL2.Nat),
+    "actionType": IDL2.Text,
+    "resolution": IDL2.Opt(IDL2.Text),
+    "existingValue": IDL2.Opt(IDL2.Text),
+    "summary": IDL2.Text,
+    "personId": IDL2.Opt(IDL2.Text),
+    "timestamp": IDL2.Int,
+    "actorAccountId": IDL2.Principal,
+    "existingSourceId": IDL2.Opt(IDL2.Nat)
+  });
+  const AuditActionType2 = IDL2.Variant({
+    "ProfileRemovalRequested": IDL2.Null,
+    "ClaimRejected": IDL2.Null,
+    "RelationshipTypeCorrected": IDL2.Null,
+    "RelationshipRequestPending": IDL2.Null,
+    "StewardPromoted": IDL2.Null,
+    "BoardReplyRemoved": IDL2.Null,
+    "SuccessorActivated": IDL2.Null,
+    "StewardRemoved": IDL2.Null,
+    "RelationshipRequestApproved": IDL2.Null,
+    "DuplicateMerged": IDL2.Null,
+    "ProfilePermanentlyDeleted": IDL2.Null,
+    "RelationshipRequestRejected": IDL2.Null,
+    "ProfileArchived": IDL2.Null,
+    "ProfileRestored": IDL2.Null,
+    "BoardPostArchived": IDL2.Null,
+    "BoardPostRestored": IDL2.Null,
+    "RelationshipAdded": IDL2.Null,
+    "RelationshipRemoved": IDL2.Null,
+    "ProfileRemovalReviewed": IDL2.Null,
+    "ClaimApproved": IDL2.Null,
+    "SuccessorDesignated": IDL2.Null
+  });
+  const AuditEntry2 = IDL2.Record({
+    "id": IDL2.Nat,
+    "affectedPersonIds": IDL2.Vec(PersonId2),
+    "actionType": AuditActionType2,
+    "summary": IDL2.Text,
+    "timestamp": IDL2.Int,
+    "actorAccountId": IDL2.Principal
+  });
+  const ConflictReviewItem2 = IDL2.Record({
+    "id": IDL2.Nat,
+    "field": IDL2.Text,
+    "status": ReviewStatus2,
+    "evidenceLabel": EvidenceLabel2,
+    "findingId": FindingId2,
+    "proposedValue": IDL2.Text,
+    "stewardNotes": IDL2.Text,
+    "proposedSourceId": IDL2.Opt(IDL2.Nat),
+    "personId": IDL2.Opt(IDL2.Text),
+    "canonicalValue": IDL2.Text,
+    "resolvedAt": IDL2.Opt(IDL2.Int),
+    "resolvedBy": IDL2.Opt(IDL2.Principal),
+    "existingSourceId": IDL2.Opt(IDL2.Nat)
+  });
+  const ConversationSummary2 = IDL2.Record({
+    "otherPersonId": PersonId2,
+    "conversationId": ConversationId2,
+    "unreadCount": IDL2.Nat,
+    "otherDisplayName": IDL2.Text,
+    "latestMessagePreview": IDL2.Text,
+    "latestMessageAt": Timestamp2
+  });
+  const DisputedFact2 = IDL2.Record({
+    "field": IDL2.Text,
+    "status": ReviewStatus2,
+    "proposedValue": IDL2.Text,
+    "canonicalValue": IDL2.Text
+  });
+  const DuplicateCandidate2 = IDL2.Record({
+    "deathDate": IDL2.Opt(IDL2.Text),
+    "ownerAccount": IDL2.Opt(IDL2.Principal),
+    "birthDate": IDL2.Opt(IDL2.Text),
+    "claimStatus": IDL2.Text,
+    "name": IDL2.Text,
+    "archiveLinks": IDL2.Vec(IDL2.Text),
+    "children": IDL2.Vec(IDL2.Text),
+    "sourceCount": IDL2.Nat,
+    "personId": PersonId2,
+    "spouses": IDL2.Vec(IDL2.Text),
+    "photoCount": IDL2.Nat,
+    "timelineCount": IDL2.Nat,
+    "parents": IDL2.Vec(IDL2.Text)
+  });
+  const DuplicatePair2 = IDL2.Record({
+    "candidateA": DuplicateCandidate2,
+    "candidateB": DuplicateCandidate2
+  });
+  const StewardIdentity2 = IDL2.Record({
+    "accountId": IDL2.Principal,
+    "displayName": IDL2.Text,
+    "personId": PersonId2,
+    "canonicalName": IDL2.Text
+  });
+  const NotificationType2 = IDL2.Variant({
+    "ResearchSubmission": IDL2.Null,
+    "ResearchApproved": IDL2.Null,
+    "ResearchRejected": IDL2.Null,
+    "RelationshipRequested": IDL2.Null,
+    "BoardMention": IDL2.Null,
+    "RelationshipReviewed": IDL2.Null,
+    "BoardReply": IDL2.Null,
+    "NewMessage": IDL2.Null,
+    "ProfileClaimReviewed": IDL2.Null,
+    "ProfileClaimRequested": IDL2.Null
+  });
+  const Notification2 = IDL2.Record({
+    "id": IDL2.Nat,
+    "notificationType": NotificationType2,
+    "createdAt": IDL2.Int,
+    "read": IDL2.Bool,
+    "recipient": IDL2.Principal,
+    "message": IDL2.Text
+  });
+  const MysteryContributionId2 = IDL2.Nat;
+  const MysteryContributionStatus2 = IDL2.Variant({
+    "Approved": IDL2.Null,
+    "Rejected": IDL2.Null,
+    "Pending": IDL2.Null
+  });
+  const MysteryContributionType2 = IDL2.Variant({
+    "Lead": IDL2.Null,
+    "Note": IDL2.Null,
+    "Memory": IDL2.Null,
+    "Source": IDL2.Null
+  });
+  const MysteryContribution2 = IDL2.Record({
+    "id": MysteryContributionId2,
+    "status": MysteryContributionStatus2,
+    "createdAt": IDL2.Int,
+    "text": IDL2.Text,
+    "mysteryId": MysteryId2,
+    "reviewedAt": IDL2.Opt(IDL2.Int),
+    "reviewedBy": IDL2.Opt(IDL2.Principal),
+    "contributionType": MysteryContributionType2,
+    "contributor": IDL2.Principal
+  });
+  const TimelineLinkTarget2 = IDL2.Variant({
+    "Story": StoryId2,
+    "Mystery": MysteryId2,
+    "Person": IDL2.Text,
+    "ArchiveItem": IDL2.Nat
+  });
+  const TimelineEventType2 = IDL2.Variant({
+    "MilitaryService": IDL2.Null,
+    "Story": IDL2.Null,
+    "Birth": IDL2.Null,
+    "FamilyEvent": IDL2.Null,
+    "Migration": IDL2.Null,
+    "Mystery": IDL2.Null,
+    "Death": IDL2.Null,
+    "PhotoDocument": IDL2.Null,
+    "Marriage": IDL2.Null,
+    "CensusDocument": IDL2.Null,
+    "Location": IDL2.Null
+  });
+  const TimelineEvent2 = IDL2.Record({
+    "id": IDL2.Text,
+    "era": IDL2.Opt(IDL2.Text),
+    "title": IDL2.Text,
+    "year": IDL2.Opt(IDL2.Nat),
+    "linkTarget": TimelineLinkTarget2,
+    "description": IDL2.Text,
+    "evidenceStatus": EvidenceStatus2,
+    "eventType": TimelineEventType2
+  });
+  const NotificationId2 = IDL2.Nat;
+  const MergeConflictStatus2 = IDL2.Variant({
+    "Resolved": IDL2.Null,
+    "Pending": IDL2.Null
+  });
+  const MergeConflict2 = IDL2.Record({
+    "id": IDL2.Nat,
+    "field": IDL2.Text,
+    "status": MergeConflictStatus2,
+    "alternateValue": IDL2.Text,
+    "canonicalValue": IDL2.Text,
+    "resolvedAt": IDL2.Opt(IDL2.Int),
+    "resolvedBy": IDL2.Opt(IDL2.Principal)
+  });
+  const MergeResult2 = IDL2.Record({
+    "archivedPersonId": PersonId2,
+    "conflicts": IDL2.Vec(MergeConflict2),
+    "canonicalPersonId": PersonId2
+  });
+  const MergeError2 = IDL2.Variant({
+    "NotDuplicate": IDL2.Null,
+    "ProfileNotFound": IDL2.Null,
+    "NotSignedIn": IDL2.Null,
+    "SameProfile": IDL2.Null
+  });
+  const Result_132 = IDL2.Variant({ "ok": MergeResult2, "err": MergeError2 });
+  const Result_122 = IDL2.Variant({ "ok": IDL2.Null, "err": MergeError2 });
+  const DeleteError2 = IDL2.Variant({
+    "HasOwnershipHistory": IDL2.Null,
+    "ProfileNotFound": IDL2.Null,
+    "HasMedia": IDL2.Null,
+    "HasArchiveItems": IDL2.Null,
+    "NotSignedIn": IDL2.Null,
+    "ConfirmationRequired": IDL2.Null,
+    "HasTimeline": IDL2.Null,
+    "HasApprovedRelationships": IDL2.Null
+  });
+  const Result_112 = IDL2.Variant({ "ok": IDL2.Null, "err": DeleteError2 });
+  const RelationshipError2 = IDL2.Variant({
+    "DuplicateRequest": IDL2.Null,
+    "NotSignedIn": IDL2.Null,
+    "PersonNotFound": IDL2.Null
+  });
+  const Result_92 = IDL2.Variant({
+    "ok": RelationshipRequest2,
+    "err": RelationshipError2
+  });
+  const RemoveError2 = IDL2.Variant({
+    "ProfileNotFound": IDL2.Null,
+    "NotSignedIn": IDL2.Null
+  });
+  const Result_82 = IDL2.Variant({ "ok": IDL2.Null, "err": RemoveError2 });
+  const Result_72 = IDL2.Variant({
+    "ok": IDL2.Null,
+    "err": RelationshipAdminError2
+  });
+  const Result_62 = IDL2.Variant({ "ok": IDL2.Null, "err": StewardError2 });
+  const ClaimError2 = IDL2.Variant({
+    "AlreadyPending": IDL2.Null,
+    "ProfileNotFound": IDL2.Null,
+    "AlreadyClaimed": IDL2.Null,
+    "NotSignedIn": IDL2.Null,
+    "DeceasedProfile": IDL2.Null
+  });
+  const Result_52 = IDL2.Variant({ "ok": ProfileClaim2, "err": ClaimError2 });
+  const RemovalError2 = IDL2.Variant({
+    "AlreadyPending": IDL2.Null,
+    "ProfileNotFound": IDL2.Null,
+    "NotSignedIn": IDL2.Null,
+    "NotOwner": IDL2.Null,
+    "DeceasedProfile": IDL2.Null
+  });
+  const Result_42 = IDL2.Variant({
+    "ok": ProfileRemovalRequest2,
+    "err": RemovalError2
+  });
+  const ConflictResolutionAction2 = IDL2.Variant({
+    "NeedsResearch": IDL2.Null,
+    "PreserveBoth": IDL2.Null,
+    "ReplaceExisting": IDL2.Null,
+    "KeepExisting": IDL2.Null
+  });
+  const Result_32 = IDL2.Variant({
+    "ok": ConflictReviewItem2,
+    "err": ResearchError2
+  });
+  const ArchiveSearchFilter2 = IDL2.Record({
+    "era": IDL2.Opt(IDL2.Text),
+    "relatedMemberId": IDL2.Opt(IDL2.Text),
+    "tags": IDL2.Vec(IDL2.Text),
+    "searchTerm": IDL2.Opt(IDL2.Text),
+    "itemType": IDL2.Opt(ArchiveItemType2)
+  });
+  const PersonMatch2 = IDL2.Record({
+    "name": IDL2.Text,
+    "personId": PersonId2,
+    "parents": IDL2.Vec(IDL2.Text)
+  });
+  const MessageError2 = IDL2.Variant({
+    "ConversationNotFound": IDL2.Null,
+    "RecipientArchived": IDL2.Null,
+    "NotApprovedMember": IDL2.Null,
+    "RecipientNotClaimed": IDL2.Null,
+    "NotSignedIn": IDL2.Null,
+    "BlockedByRecipient": IDL2.Null,
+    "NotParticipant": IDL2.Null,
+    "CannotMessageSelf": IDL2.Null,
+    "RecipientNotFound": IDL2.Null
+  });
+  const Result_110 = IDL2.Variant({ "ok": Message2, "err": MessageError2 });
+  const ProfileEdits2 = IDL2.Record({
+    "occupation": IDL2.Opt(IDL2.Text),
+    "privacySettings": IDL2.Opt(IDL2.Text),
+    "nickname": IDL2.Opt(IDL2.Text),
+    "birthDate": IDL2.Opt(IDL2.Text),
+    "birthInfo": IDL2.Opt(IDL2.Text),
+    "livingStatus": IDL2.Opt(LivingStatus2),
+    "longerStory": IDL2.Opt(IDL2.Text),
+    "story": IDL2.Opt(IDL2.Text),
+    "middleName": IDL2.Opt(IDL2.Text),
+    "suffix": IDL2.Opt(IDL2.Text),
+    "preferredName": IDL2.Opt(IDL2.Text),
+    "currentLocation": IDL2.Opt(IDL2.Text),
+    "birthplace": IDL2.Opt(IDL2.Text),
+    "lastName": IDL2.Opt(IDL2.Text),
+    "shortBio": IDL2.Opt(IDL2.Text),
+    "timeline": IDL2.Opt(IDL2.Vec(IDL2.Text)),
+    "firstName": IDL2.Opt(IDL2.Text)
+  });
+  const EditError2 = IDL2.Variant({
+    "ProfileNotFound": IDL2.Null,
+    "NotSignedIn": IDL2.Null,
+    "NotOwner": IDL2.Null,
+    "DeceasedProfile": IDL2.Null
+  });
+  const Result2 = IDL2.Variant({ "ok": PersonProfile2, "err": EditError2 });
+  return IDL2.Service({
+    "_immutableObjectStorageBlobsAreLive": IDL2.Func(
+      [IDL2.Vec(IDL2.Vec(IDL2.Nat8))],
+      [IDL2.Vec(IDL2.Bool)],
+      ["query"]
+    ),
+    "_immutableObjectStorageBlobsToDelete": IDL2.Func(
+      [],
+      [IDL2.Vec(IDL2.Vec(IDL2.Nat8))],
+      ["query"]
+    ),
+    "_immutableObjectStorageConfirmBlobDeletion": IDL2.Func(
+      [IDL2.Vec(IDL2.Vec(IDL2.Nat8))],
+      [],
+      []
+    ),
+    "_immutableObjectStorageCreateCertificate": IDL2.Func(
+      [IDL2.Text],
+      [_ImmutableObjectStorageCreateCertificateResult2],
+      []
+    ),
+    "_immutableObjectStorageRefillCashier": IDL2.Func(
+      [IDL2.Opt(_ImmutableObjectStorageRefillInformation2)],
+      [_ImmutableObjectStorageRefillResult2],
+      []
+    ),
+    "_immutableObjectStorageUpdateGatewayPrincipals": IDL2.Func([], [], []),
+    "_initialize_access_control": IDL2.Func([], [], []),
+    "_internet_identity_sign_in_finish": IDL2.Func([], [Result_262], []),
+    "_internet_identity_sign_in_start": IDL2.Func([], [IDL2.Vec(IDL2.Nat8)], []),
+    "activateSuccessor": IDL2.Func([PersonId2], [Result_102], []),
+    "addBoardReply": IDL2.Func([PostId2, IDL2.Text], [Reply2], []),
+    "addCanonicalStory": IDL2.Func(
+      [
+        IDL2.Text,
+        IDL2.Text,
+        IDL2.Vec(IDL2.Text),
+        IDL2.Opt(IDL2.Text),
+        IDL2.Opt(IDL2.Nat),
+        IDL2.Opt(IDL2.Text),
+        EvidenceStatus2,
+        IDL2.Vec(IDL2.Nat)
+      ],
+      [Story2],
+      []
+    ),
+    "addPhoto": IDL2.Func(
+      [PersonId2, IDL2.Text, IDL2.Text, ExternalBlob3],
+      [Photo2],
+      []
+    ),
+    "addRelationship": IDL2.Func(
+      [PersonId2, PersonId2, RelationshipType2],
+      [Result_232],
+      []
+    ),
+    "approveArchiveItem": IDL2.Func(
+      [ArchiveItemId2],
+      [IDL2.Opt(ArchiveItem2)],
+      []
+    ),
+    "approveFinding": IDL2.Func([FindingId2], [IDL2.Opt(ProposedFinding2)], []),
+    "approveNewPersonCandidate": IDL2.Func(
+      [IDL2.Nat],
+      [IDL2.Opt(NewPersonCandidate2)],
+      []
+    ),
+    "approveProfileClaim": IDL2.Func([IDL2.Nat], [IDL2.Opt(ProfileClaim2)], []),
+    "approveProfileRemoval": IDL2.Func(
+      [IDL2.Nat],
+      [IDL2.Opt(ProfileRemovalRequest2)],
+      []
+    ),
+    "approveRecipe": IDL2.Func([RecipeId2], [IDL2.Opt(Recipe2)], []),
+    "approveRelationshipProposal": IDL2.Func(
+      [IDL2.Nat],
+      [IDL2.Opt(RelationshipProposal2)],
+      []
+    ),
+    "approveRelationshipRequest": IDL2.Func(
+      [IDL2.Nat],
+      [IDL2.Opt(RelationshipRequest2)],
+      []
+    ),
+    "approveSource": IDL2.Func([SourceId2], [IDL2.Opt(SourceRecord2)], []),
+    "approveStory": IDL2.Func([StoryId2], [IDL2.Opt(Story2)], []),
+    "archiveBoardPost": IDL2.Func([PostId2], [IDL2.Opt(Post2)], []),
+    "archiveProfile": IDL2.Func([PersonId2], [Result_27], []),
+    "assignCallerUserRole": IDL2.Func([IDL2.Principal, UserRole2], [], []),
+    "bindAuthMethod": IDL2.Func([AuthMethod2], [Result_252], []),
+    "blockUser": IDL2.Func([IDL2.Principal], [], []),
+    "canClaimProfile": IDL2.Func([PersonId2], [ClaimEligibility2], ["query"]),
+    "canMessagePerson": IDL2.Func([IDL2.Text], [IDL2.Bool], ["query"]),
+    "claimSteward": IDL2.Func([], [Result_242], []),
+    "correctRelationshipType": IDL2.Func(
+      [IDL2.Nat, RelationshipType2],
+      [Result_232],
+      []
+    ),
+    "createBoardPost": IDL2.Func(
+      [
+        PostType2,
+        IDL2.Opt(IDL2.Text),
+        IDL2.Text,
+        IDL2.Vec(IDL2.Text),
+        IDL2.Vec(IDL2.Nat),
+        IDL2.Vec(IDL2.Text)
+      ],
+      [Post2],
+      []
+    ),
+    "createBoardPostWithMedia": IDL2.Func(
+      [
+        PostType2,
+        IDL2.Opt(IDL2.Text),
+        IDL2.Text,
+        IDL2.Vec(IDL2.Text),
+        IDL2.Vec(IDL2.Nat),
+        IDL2.Vec(BoardMediaUpload2),
+        IDL2.Vec(IDL2.Text)
+      ],
+      [Post2],
+      []
+    ),
+    "createCanonicalMystery": IDL2.Func(
+      [
+        IDL2.Text,
+        IDL2.Text,
+        IDL2.Vec(IDL2.Text),
+        IDL2.Opt(IDL2.Text),
+        IDL2.Vec(IDL2.Text),
+        IDL2.Vec(IDL2.Text),
+        IDL2.Vec(IDL2.Nat),
+        IDL2.Vec(IDL2.Nat),
+        MysteryStatus2
+      ],
+      [Mystery2],
+      []
+    ),
+    "createFinding": IDL2.Func(
+      [
+        IDL2.Text,
+        EvidenceLabel2,
+        FindingType2,
+        FindingContent2,
+        SourceId2,
+        IDL2.Opt(IDL2.Text),
+        IDL2.Opt(IDL2.Nat)
+      ],
+      [Result_222],
+      []
+    ),
+    "createMyself": IDL2.Func([IDL2.Text], [Result_212], []),
+    "createNewPersonCandidate": IDL2.Func(
+      [IDL2.Text, IDL2.Text, SourceId2],
+      [Result_202],
+      []
+    ),
+    "createRelationshipProposal": IDL2.Func(
+      [IDL2.Text, IDL2.Text, IDL2.Text, SourceId2],
+      [Result_192],
+      []
+    ),
+    "createSource": IDL2.Func(
+      [IDL2.Text, SourceType2, IDL2.Text, IDL2.Opt(IDL2.Nat)],
+      [Result_182],
+      []
+    ),
+    "createSourceWithUpload": IDL2.Func(
+      [
+        IDL2.Text,
+        SourceType2,
+        IDL2.Text,
+        ExternalBlob3,
+        IDL2.Vec(IDL2.Text),
+        IDL2.Text,
+        IDL2.Opt(IDL2.Nat),
+        IDL2.Vec(IDL2.Text),
+        PrivacyLevel2,
+        ArchiveItemClassification2,
+        IDL2.Opt(OralHistorySpeaker2)
+      ],
+      [Result_172],
+      []
+    ),
+    "designateSuccessor": IDL2.Func([PersonId2, IDL2.Nat], [Result_162], []),
+    "execute": IDL2.Func([IDL2.Text], [Result__12], ["query"]),
+    "getApiDoc": IDL2.Func([], [IDL2.Text], ["query"]),
+    "getBoardPost": IDL2.Func([PostId2], [IDL2.Opt(Post2)], ["query"]),
+    "getCallerUserRole": IDL2.Func([], [UserRole2], ["query"]),
+    "getConversation": IDL2.Func(
+      [ConversationId2],
+      [IDL2.Opt(ConversationView2)],
+      ["query"]
+    ),
+    "getFinding": IDL2.Func([FindingId2], [IDL2.Opt(ProposedFinding2)], ["query"]),
+    "getMyAccountId": IDL2.Func([], [Result_152], ["query"]),
+    "getMyAuthMethods": IDL2.Func([], [Result_142], ["query"]),
+    "getMyProfile": IDL2.Func([], [IDL2.Opt(PersonProfile2)], ["query"]),
+    "getMyProfileClaim": IDL2.Func(
+      [PersonId2],
+      [IDL2.Opt(ProfileClaim2)],
+      ["query"]
+    ),
+    "getMyRelationshipRequests": IDL2.Func(
+      [],
+      [IDL2.Vec(RelationshipRequest2)],
+      ["query"]
+    ),
+    "getPendingContributionsCount": IDL2.Func([], [IDL2.Nat], ["query"]),
+    "getPersonProfile": IDL2.Func(
+      [PersonId2],
+      [IDL2.Opt(PersonProfile2)],
+      ["query"]
+    ),
+    "getProfilePhoto": IDL2.Func([PersonId2], [IDL2.Opt(Photo2)], ["query"]),
+    "getRecipe": IDL2.Func([RecipeId2], [IDL2.Opt(Recipe2)], ["query"]),
+    "getRelationshipRequest": IDL2.Func(
+      [IDL2.Nat],
+      [IDL2.Opt(RelationshipRequest2)],
+      ["query"]
+    ),
+    "getReportedMessage": IDL2.Func(
+      [ReportId2],
+      [IDL2.Opt(ReportedMessageView2)],
+      ["query"]
+    ),
+    "getResearchAuditLog": IDL2.Func(
+      [],
+      [IDL2.Vec(ResearchAuditEntry2)],
+      ["query"]
+    ),
+    "getReviewQueue": IDL2.Func([], [ReviewQueue2], ["query"]),
+    "getSingleStewardWarning": IDL2.Func([], [IDL2.Opt(IDL2.Text)], ["query"]),
+    "getSource": IDL2.Func([SourceId2], [IDL2.Opt(SourceRecord2)], ["query"]),
+    "getStewardAuditHistory": IDL2.Func(
+      [],
+      [IDL2.Vec(StewardAuditEntry2)],
+      ["query"]
+    ),
+    "hasActiveSteward": IDL2.Func([], [IDL2.Bool], ["query"]),
+    "hasApprovedOwner": IDL2.Func([PersonId2], [IDL2.Bool], ["query"]),
+    "isCallerAdmin": IDL2.Func([], [IDL2.Bool], ["query"]),
+    "isCallerSteward": IDL2.Func([], [IDL2.Bool], ["query"]),
+    "listApprovedArchiveItems": IDL2.Func(
+      [],
+      [IDL2.Vec(ArchiveItem2)],
+      ["query"]
+    ),
+    "listApprovedRecipes": IDL2.Func([], [IDL2.Vec(Recipe2)], ["query"]),
+    "listApprovedStories": IDL2.Func([], [IDL2.Vec(Story2)], ["query"]),
+    "listArchivedProfileIds": IDL2.Func([], [IDL2.Vec(PersonId2)], ["query"]),
+    "listArchivedProfiles": IDL2.Func([], [IDL2.Vec(PersonProfile2)], ["query"]),
+    "listAuditHistory": IDL2.Func([], [IDL2.Vec(AuditEntry2)], ["query"]),
+    "listBlockedUsers": IDL2.Func([], [IDL2.Vec(IDL2.Principal)], ["query"]),
+    "listBoardPosts": IDL2.Func(
+      [IDL2.Opt(PostType2)],
+      [IDL2.Vec(Post2)],
+      ["query"]
+    ),
+    "listBoardReplies": IDL2.Func([PostId2], [IDL2.Vec(Reply2)], ["query"]),
+    "listConfirmedRelationships": IDL2.Func(
+      [],
+      [IDL2.Vec(Relationship2)],
+      ["query"]
+    ),
+    "listConflictReviewItems": IDL2.Func(
+      [],
+      [IDL2.Vec(ConflictReviewItem2)],
+      ["query"]
+    ),
+    "listConflictsForPerson": IDL2.Func(
+      [IDL2.Text],
+      [IDL2.Vec(ConflictReviewItem2)],
+      ["query"]
+    ),
+    "listConversations": IDL2.Func(
+      [],
+      [IDL2.Vec(ConversationSummary2)],
+      ["query"]
+    ),
+    "listDisputedFactsForPerson": IDL2.Func(
+      [IDL2.Text],
+      [IDL2.Vec(DisputedFact2)],
+      ["query"]
+    ),
+    "listDuplicateCandidates": IDL2.Func(
+      [],
+      [IDL2.Vec(DuplicatePair2)],
+      ["query"]
+    ),
+    "listEligibleStewardCandidates": IDL2.Func(
+      [],
+      [IDL2.Vec(StewardIdentity2)],
+      ["query"]
+    ),
+    "listFindings": IDL2.Func([], [IDL2.Vec(ProposedFinding2)], ["query"]),
+    "listHiddenBoardPosts": IDL2.Func([], [IDL2.Vec(Post2)], ["query"]),
+    "listMessageableMembers": IDL2.Func([], [IDL2.Vec(IDL2.Text)], ["query"]),
+    "listMysteries": IDL2.Func([], [IDL2.Vec(Mystery2)], ["query"]),
+    "listNewPersonCandidates": IDL2.Func(
+      [],
+      [IDL2.Vec(NewPersonCandidate2)],
+      ["query"]
+    ),
+    "listNotifications": IDL2.Func([], [IDL2.Vec(Notification2)], ["query"]),
+    "listPendingArchiveItems": IDL2.Func([], [IDL2.Vec(ArchiveItem2)], ["query"]),
+    "listPendingMysteryContributions": IDL2.Func(
+      [],
+      [IDL2.Vec(MysteryContribution2)],
+      ["query"]
+    ),
+    "listPendingRecipes": IDL2.Func([], [IDL2.Vec(Recipe2)], ["query"]),
+    "listPendingStories": IDL2.Func([], [IDL2.Vec(Story2)], ["query"]),
+    "listPersonRelationships": IDL2.Func(
+      [PersonId2],
+      [IDL2.Vec(Relationship2)],
+      ["query"]
+    ),
+    "listPhotos": IDL2.Func([PersonId2], [IDL2.Vec(Photo2)], ["query"]),
+    "listProfileClaims": IDL2.Func([], [IDL2.Vec(ProfileClaim2)], ["query"]),
+    "listProfileRemovalRequests": IDL2.Func(
+      [],
+      [IDL2.Vec(ProfileRemovalRequest2)],
+      ["query"]
+    ),
+    "listRecipesForPerson": IDL2.Func([IDL2.Text], [IDL2.Vec(Recipe2)], ["query"]),
+    "listRelationshipProposals": IDL2.Func(
+      [],
+      [IDL2.Vec(RelationshipProposal2)],
+      ["query"]
+    ),
+    "listRelationshipRequests": IDL2.Func(
+      [],
+      [IDL2.Vec(RelationshipRequest2)],
+      ["query"]
+    ),
+    "listReports": IDL2.Func([], [IDL2.Vec(Report2)], ["query"]),
+    "listSources": IDL2.Func([], [IDL2.Vec(SourceRecord2)], ["query"]),
+    "listStewardIdentities": IDL2.Func(
+      [],
+      [IDL2.Vec(StewardIdentity2)],
+      ["query"]
+    ),
+    "listStewards": IDL2.Func([], [IDL2.Vec(StewardRecord2)], ["query"]),
+    "listSuccessors": IDL2.Func([], [IDL2.Vec(SuccessorDesignation2)], ["query"]),
+    "listTimelineEvents": IDL2.Func([], [IDL2.Vec(TimelineEvent2)], ["query"]),
+    "markConversationRead": IDL2.Func([ConversationId2], [], []),
+    "markMysteryResolved": IDL2.Func(
+      [MysteryId2, IDL2.Text, IDL2.Vec(IDL2.Text)],
+      [IDL2.Opt(Mystery2)],
+      []
+    ),
+    "markNotificationRead": IDL2.Func(
+      [NotificationId2],
+      [IDL2.Opt(Notification2)],
+      []
+    ),
+    "mergeProfiles": IDL2.Func([PersonId2, PersonId2], [Result_132], []),
+    "needsResearchFinding": IDL2.Func(
+      [FindingId2],
+      [IDL2.Opt(ProposedFinding2)],
+      []
+    ),
+    "needsResearchNewPersonCandidate": IDL2.Func(
+      [IDL2.Nat],
+      [IDL2.Opt(NewPersonCandidate2)],
+      []
+    ),
+    "needsResearchRelationshipProposal": IDL2.Func(
+      [IDL2.Nat],
+      [IDL2.Opt(RelationshipProposal2)],
+      []
+    ),
+    "needsResearchSource": IDL2.Func([SourceId2], [IDL2.Opt(SourceRecord2)], []),
+    "notDuplicate": IDL2.Func([PersonId2, PersonId2], [Result_122], []),
+    "permanentlyDeleteProfile": IDL2.Func(
+      [PersonId2, IDL2.Bool],
+      [Result_112],
+      []
+    ),
+    "promoteToSteward": IDL2.Func([PersonId2], [Result_102], []),
+    "proposeRelationship": IDL2.Func(
+      [PersonId2, PersonId2, RelationshipType2],
+      [Result_92],
+      []
+    ),
+    "publishRecipe": IDL2.Func(
+      [
+        IDL2.Text,
+        IDL2.Text,
+        IDL2.Text,
+        IDL2.Vec(IDL2.Text),
+        IDL2.Opt(IDL2.Text),
+        IDL2.Opt(IDL2.Nat),
+        IDL2.Opt(IDL2.Text),
+        IDL2.Opt(IDL2.Text),
+        IDL2.Vec(IDL2.Text),
+        IDL2.Text,
+        IDL2.Opt(IDL2.Text),
+        IDL2.Vec(IDL2.Text),
+        PrivacyLevel2,
+        EvidenceStatus2,
+        IDL2.Vec(IDL2.Nat)
+      ],
+      [Recipe2],
+      []
+    ),
+    "reconcileClaimNotifications": IDL2.Func([IDL2.Nat], [IDL2.Nat], []),
+    "rejectArchiveItem": IDL2.Func([ArchiveItemId2], [IDL2.Opt(ArchiveItem2)], []),
+    "rejectFinding": IDL2.Func([FindingId2], [IDL2.Opt(ProposedFinding2)], []),
+    "rejectNewPersonCandidate": IDL2.Func(
+      [IDL2.Nat],
+      [IDL2.Opt(NewPersonCandidate2)],
+      []
+    ),
+    "rejectProfileClaim": IDL2.Func([IDL2.Nat], [IDL2.Opt(ProfileClaim2)], []),
+    "rejectProfileRemoval": IDL2.Func(
+      [IDL2.Nat],
+      [IDL2.Opt(ProfileRemovalRequest2)],
+      []
+    ),
+    "rejectRecipe": IDL2.Func([RecipeId2], [IDL2.Opt(Recipe2)], []),
+    "rejectRelationshipProposal": IDL2.Func(
+      [IDL2.Nat],
+      [IDL2.Opt(RelationshipProposal2)],
+      []
+    ),
+    "rejectRelationshipRequest": IDL2.Func(
+      [IDL2.Nat],
+      [IDL2.Opt(RelationshipRequest2)],
+      []
+    ),
+    "rejectSource": IDL2.Func([SourceId2], [IDL2.Opt(SourceRecord2)], []),
+    "rejectStory": IDL2.Func([StoryId2], [IDL2.Opt(Story2)], []),
+    "removeBoardReply": IDL2.Func([ReplyId2], [IDL2.Opt(Reply2)], []),
+    "removeDuplicateProfile": IDL2.Func([PersonId2], [Result_82], []),
+    "removePhoto": IDL2.Func([PersonId2, PhotoId2], [IDL2.Bool], []),
+    "removeRelationship": IDL2.Func([IDL2.Nat], [Result_72], []),
+    "removeSteward": IDL2.Func([IDL2.Principal], [Result_62], []),
+    "reportMessage": IDL2.Func([MessageId2, IDL2.Text], [Report2], []),
+    "requestProfileClaim": IDL2.Func([PersonId2], [Result_52], []),
+    "requestProfileRemoval": IDL2.Func([PersonId2, IDL2.Text], [Result_42], []),
+    "resolveConflict": IDL2.Func(
+      [IDL2.Nat, ConflictResolutionAction2, IDL2.Text],
+      [Result_32],
+      []
+    ),
+    "resolveMergeConflict": IDL2.Func(
+      [IDL2.Nat, IDL2.Text],
+      [IDL2.Opt(MergeConflict2)],
+      []
+    ),
+    "restoreBoardPost": IDL2.Func([PostId2], [IDL2.Opt(Post2)], []),
+    "restoreProfile": IDL2.Func([PersonId2], [Result_27], []),
+    "reviewMysteryContribution": IDL2.Func(
+      [MysteryContributionId2, IDL2.Bool],
+      [IDL2.Opt(MysteryContribution2)],
+      []
+    ),
+    "reviewReport": IDL2.Func([ReportId2, ReportStatus2], [IDL2.Opt(Report2)], []),
+    "schema": IDL2.Func([], [IDL2.Text], ["query"]),
+    "searchArchiveItems": IDL2.Func(
+      [ArchiveSearchFilter2],
+      [IDL2.Vec(ArchiveItem2)],
+      ["query"]
+    ),
+    "searchBoardPostsByTags": IDL2.Func(
+      [IDL2.Vec(IDL2.Text)],
+      [IDL2.Vec(Post2)],
+      ["query"]
+    ),
+    "searchPossibleMatches": IDL2.Func(
+      [IDL2.Text],
+      [IDL2.Vec(PersonMatch2)],
+      ["query"]
+    ),
+    "sendMessage": IDL2.Func([IDL2.Text, IDL2.Text], [Result_110], []),
+    "setProfilePhoto": IDL2.Func([PersonId2, PhotoId2], [IDL2.Opt(Photo2)], []),
+    "setRelationshipRequestPending": IDL2.Func(
+      [IDL2.Nat],
+      [IDL2.Opt(RelationshipRequest2)],
+      []
+    ),
+    "submitArchiveItem": IDL2.Func(
+      [
+        IDL2.Text,
+        IDL2.Text,
+        ArchiveItemType2,
+        ExternalBlob3,
+        IDL2.Text,
+        IDL2.Opt(IDL2.Nat),
+        IDL2.Vec(IDL2.Text),
+        IDL2.Vec(IDL2.Text),
+        IDL2.Opt(IDL2.Text),
+        SourceStatus2,
+        PrivacyLevel2,
+        ArchiveItemClassification2,
+        IDL2.Opt(OralHistorySpeaker2)
+      ],
+      [ArchiveItem2],
+      []
+    ),
+    "submitMysteryContribution": IDL2.Func(
+      [MysteryId2, MysteryContributionType2, IDL2.Text],
+      [MysteryContribution2],
+      []
+    ),
+    "submitRecipe": IDL2.Func(
+      [
+        IDL2.Text,
+        IDL2.Text,
+        IDL2.Text,
+        IDL2.Vec(IDL2.Text),
+        IDL2.Opt(IDL2.Text),
+        IDL2.Opt(IDL2.Nat),
+        IDL2.Opt(IDL2.Text),
+        IDL2.Opt(IDL2.Text),
+        IDL2.Vec(IDL2.Text),
+        IDL2.Text,
+        IDL2.Opt(IDL2.Text),
+        IDL2.Vec(IDL2.Text),
+        PrivacyLevel2,
+        EvidenceStatus2,
+        IDL2.Vec(IDL2.Nat)
+      ],
+      [Recipe2],
+      []
+    ),
+    "submitStory": IDL2.Func(
+      [
+        IDL2.Text,
+        IDL2.Text,
+        IDL2.Vec(IDL2.Text),
+        IDL2.Opt(IDL2.Text),
+        IDL2.Opt(IDL2.Nat),
+        IDL2.Opt(IDL2.Text),
+        EvidenceStatus2,
+        IDL2.Vec(IDL2.Nat)
+      ],
+      [Story2],
+      []
+    ),
+    "unblockUser": IDL2.Func([IDL2.Principal], [], []),
+    "updateBoardPost": IDL2.Func(
+      [
+        PostId2,
+        PostType2,
+        IDL2.Opt(IDL2.Text),
+        IDL2.Text,
+        IDL2.Vec(IDL2.Text),
+        IDL2.Vec(IDL2.Nat),
+        IDL2.Vec(IDL2.Text)
+      ],
+      [IDL2.Opt(Post2)],
+      []
+    ),
+    "updateCanonicalMystery": IDL2.Func(
+      [
+        MysteryId2,
+        IDL2.Text,
+        IDL2.Text,
+        IDL2.Vec(IDL2.Text),
+        IDL2.Opt(IDL2.Text),
+        IDL2.Vec(IDL2.Text),
+        IDL2.Vec(IDL2.Text),
+        IDL2.Vec(IDL2.Nat),
+        IDL2.Vec(IDL2.Nat),
+        MysteryStatus2
+      ],
+      [IDL2.Opt(Mystery2)],
+      []
+    ),
+    "updateCanonicalStory": IDL2.Func(
+      [
+        StoryId2,
+        IDL2.Text,
+        IDL2.Text,
+        IDL2.Vec(IDL2.Text),
+        IDL2.Opt(IDL2.Text),
+        IDL2.Opt(IDL2.Nat),
+        IDL2.Opt(IDL2.Text),
+        EvidenceStatus2,
+        IDL2.Vec(IDL2.Nat)
+      ],
+      [IDL2.Opt(Story2)],
+      []
+    ),
+    "updateOwnProfile": IDL2.Func([PersonId2, ProfileEdits2], [Result2], [])
+  });
+};
+function candid_some(value) {
+  return [
+    value
+  ];
+}
+function candid_none() {
+  return [];
+}
+function record_opt_to_undefined(arg) {
+  return arg == null ? void 0 : arg;
+}
+var ArchiveItemClassification = /* @__PURE__ */ ((ArchiveItemClassification2) => {
+  ArchiveItemClassification2["OralHistory"] = "OralHistory";
+  ArchiveItemClassification2["Standard"] = "Standard";
+  return ArchiveItemClassification2;
+})(ArchiveItemClassification || {});
+var ArchiveItemStatus = /* @__PURE__ */ ((ArchiveItemStatus2) => {
+  ArchiveItemStatus2["Approved"] = "Approved";
+  ArchiveItemStatus2["Rejected"] = "Rejected";
+  ArchiveItemStatus2["Pending"] = "Pending";
+  return ArchiveItemStatus2;
+})(ArchiveItemStatus || {});
+var ArchiveItemType = /* @__PURE__ */ ((ArchiveItemType2) => {
+  ArchiveItemType2["Research"] = "Research";
+  ArchiveItemType2["Photo"] = "Photo";
+  ArchiveItemType2["Document"] = "Document";
+  ArchiveItemType2["WorkBusiness"] = "WorkBusiness";
+  ArchiveItemType2["WrittenStoryNote"] = "WrittenStoryNote";
+  ArchiveItemType2["Audio"] = "Audio";
+  ArchiveItemType2["Other"] = "Other";
+  ArchiveItemType2["Video"] = "Video";
+  return ArchiveItemType2;
+})(ArchiveItemType || {});
+var AuditActionType = /* @__PURE__ */ ((AuditActionType2) => {
+  AuditActionType2["ProfileRemovalRequested"] = "ProfileRemovalRequested";
+  AuditActionType2["ClaimRejected"] = "ClaimRejected";
+  AuditActionType2["RelationshipTypeCorrected"] = "RelationshipTypeCorrected";
+  AuditActionType2["RelationshipRequestPending"] = "RelationshipRequestPending";
+  AuditActionType2["StewardPromoted"] = "StewardPromoted";
+  AuditActionType2["BoardReplyRemoved"] = "BoardReplyRemoved";
+  AuditActionType2["SuccessorActivated"] = "SuccessorActivated";
+  AuditActionType2["StewardRemoved"] = "StewardRemoved";
+  AuditActionType2["RelationshipRequestApproved"] = "RelationshipRequestApproved";
+  AuditActionType2["DuplicateMerged"] = "DuplicateMerged";
+  AuditActionType2["ProfilePermanentlyDeleted"] = "ProfilePermanentlyDeleted";
+  AuditActionType2["RelationshipRequestRejected"] = "RelationshipRequestRejected";
+  AuditActionType2["ProfileArchived"] = "ProfileArchived";
+  AuditActionType2["ProfileRestored"] = "ProfileRestored";
+  AuditActionType2["BoardPostArchived"] = "BoardPostArchived";
+  AuditActionType2["BoardPostRestored"] = "BoardPostRestored";
+  AuditActionType2["RelationshipAdded"] = "RelationshipAdded";
+  AuditActionType2["RelationshipRemoved"] = "RelationshipRemoved";
+  AuditActionType2["ProfileRemovalReviewed"] = "ProfileRemovalReviewed";
+  AuditActionType2["ClaimApproved"] = "ClaimApproved";
+  AuditActionType2["SuccessorDesignated"] = "SuccessorDesignated";
+  return AuditActionType2;
+})(AuditActionType || {});
+var ClaimError = /* @__PURE__ */ ((ClaimError2) => {
+  ClaimError2["AlreadyPending"] = "AlreadyPending";
+  ClaimError2["ProfileNotFound"] = "ProfileNotFound";
+  ClaimError2["AlreadyClaimed"] = "AlreadyClaimed";
+  ClaimError2["NotSignedIn"] = "NotSignedIn";
+  ClaimError2["DeceasedProfile"] = "DeceasedProfile";
+  return ClaimError2;
+})(ClaimError || {});
+var ClaimStatus = /* @__PURE__ */ ((ClaimStatus2) => {
+  ClaimStatus2["Unclaimed"] = "Unclaimed";
+  ClaimStatus2["Claimed"] = "Claimed";
+  return ClaimStatus2;
+})(ClaimStatus || {});
+var ConflictResolutionAction = /* @__PURE__ */ ((ConflictResolutionAction2) => {
+  ConflictResolutionAction2["NeedsResearch"] = "NeedsResearch";
+  ConflictResolutionAction2["PreserveBoth"] = "PreserveBoth";
+  ConflictResolutionAction2["ReplaceExisting"] = "ReplaceExisting";
+  ConflictResolutionAction2["KeepExisting"] = "KeepExisting";
+  return ConflictResolutionAction2;
+})(ConflictResolutionAction || {});
+var CreateError = /* @__PURE__ */ ((CreateError2) => {
+  CreateError2["AlreadyOwned"] = "AlreadyOwned";
+  CreateError2["NotSignedIn"] = "NotSignedIn";
+  return CreateError2;
+})(CreateError || {});
+var EditError = /* @__PURE__ */ ((EditError2) => {
+  EditError2["ProfileNotFound"] = "ProfileNotFound";
+  EditError2["NotSignedIn"] = "NotSignedIn";
+  EditError2["NotOwner"] = "NotOwner";
+  EditError2["DeceasedProfile"] = "DeceasedProfile";
+  return EditError2;
+})(EditError || {});
+var EvidenceLabel = /* @__PURE__ */ ((EvidenceLabel2) => {
+  EvidenceLabel2["NeedsResearch"] = "NeedsResearch";
+  EvidenceLabel2["Conflicting"] = "Conflicting";
+  EvidenceLabel2["Hypothesis"] = "Hypothesis";
+  EvidenceLabel2["Documented"] = "Documented";
+  EvidenceLabel2["FamilyHistoryOralHistory"] = "FamilyHistoryOralHistory";
+  EvidenceLabel2["PersonalMemory"] = "PersonalMemory";
+  return EvidenceLabel2;
+})(EvidenceLabel || {});
+var EvidenceStatus = /* @__PURE__ */ ((EvidenceStatus2) => {
+  EvidenceStatus2["Unresolved"] = "Unresolved";
+  EvidenceStatus2["Documented"] = "Documented";
+  EvidenceStatus2["FamilyHistory"] = "FamilyHistory";
+  EvidenceStatus2["PersonalMemory"] = "PersonalMemory";
+  return EvidenceStatus2;
+})(EvidenceStatus || {});
+var FindingType = /* @__PURE__ */ ((FindingType2) => {
+  FindingType2["Story"] = "Story";
+  FindingType2["TimelineEvent"] = "TimelineEvent";
+  FindingType2["PersonFact"] = "PersonFact";
+  FindingType2["Source"] = "Source";
+  FindingType2["Mystery"] = "Mystery";
+  FindingType2["Relationship"] = "Relationship";
+  return FindingType2;
+})(FindingType || {});
+var LivingStatus = /* @__PURE__ */ ((LivingStatus2) => {
+  LivingStatus2["Living"] = "Living";
+  LivingStatus2["Deceased"] = "Deceased";
+  return LivingStatus2;
+})(LivingStatus || {});
+var MergeConflictStatus = /* @__PURE__ */ ((MergeConflictStatus2) => {
+  MergeConflictStatus2["Resolved"] = "Resolved";
+  MergeConflictStatus2["Pending"] = "Pending";
+  return MergeConflictStatus2;
+})(MergeConflictStatus || {});
+var MessageError = /* @__PURE__ */ ((MessageError2) => {
+  MessageError2["ConversationNotFound"] = "ConversationNotFound";
+  MessageError2["RecipientArchived"] = "RecipientArchived";
+  MessageError2["NotApprovedMember"] = "NotApprovedMember";
+  MessageError2["RecipientNotClaimed"] = "RecipientNotClaimed";
+  MessageError2["NotSignedIn"] = "NotSignedIn";
+  MessageError2["BlockedByRecipient"] = "BlockedByRecipient";
+  MessageError2["NotParticipant"] = "NotParticipant";
+  MessageError2["CannotMessageSelf"] = "CannotMessageSelf";
+  MessageError2["RecipientNotFound"] = "RecipientNotFound";
+  return MessageError2;
+})(MessageError || {});
+var MessageStatus = /* @__PURE__ */ ((MessageStatus2) => {
+  MessageStatus2["Blocked"] = "Blocked";
+  MessageStatus2["Sent"] = "Sent";
+  return MessageStatus2;
+})(MessageStatus || {});
+var MysteryContributionType = /* @__PURE__ */ ((MysteryContributionType2) => {
+  MysteryContributionType2["Lead"] = "Lead";
+  MysteryContributionType2["Note"] = "Note";
+  MysteryContributionType2["Memory"] = "Memory";
+  MysteryContributionType2["Source"] = "Source";
+  return MysteryContributionType2;
+})(MysteryContributionType || {});
+var MysteryStatus = /* @__PURE__ */ ((MysteryStatus2) => {
+  MysteryStatus2["Researching"] = "Researching";
+  MysteryStatus2["Open"] = "Open";
+  MysteryStatus2["PartiallyResolved"] = "PartiallyResolved";
+  MysteryStatus2["Resolved"] = "Resolved";
+  return MysteryStatus2;
+})(MysteryStatus || {});
+var NotificationType = /* @__PURE__ */ ((NotificationType2) => {
+  NotificationType2["ResearchSubmission"] = "ResearchSubmission";
+  NotificationType2["ResearchApproved"] = "ResearchApproved";
+  NotificationType2["ResearchRejected"] = "ResearchRejected";
+  NotificationType2["RelationshipRequested"] = "RelationshipRequested";
+  NotificationType2["BoardMention"] = "BoardMention";
+  NotificationType2["RelationshipReviewed"] = "RelationshipReviewed";
+  NotificationType2["BoardReply"] = "BoardReply";
+  NotificationType2["NewMessage"] = "NewMessage";
+  NotificationType2["ProfileClaimReviewed"] = "ProfileClaimReviewed";
+  NotificationType2["ProfileClaimRequested"] = "ProfileClaimRequested";
+  return NotificationType2;
+})(NotificationType || {});
+var PostStatus = /* @__PURE__ */ ((PostStatus2) => {
+  PostStatus2["Active"] = "Active";
+  PostStatus2["Archived"] = "Archived";
+  return PostStatus2;
+})(PostStatus || {});
+var PostType = /* @__PURE__ */ ((PostType2) => {
+  PostType2["Announcement"] = "Announcement";
+  PostType2["Recipe"] = "Recipe";
+  PostType2["ResearchHistory"] = "ResearchHistory";
+  PostType2["FamilyQuestion"] = "FamilyQuestion";
+  PostType2["Memorial"] = "Memorial";
+  PostType2["General"] = "General";
+  PostType2["Other"] = "Other";
+  PostType2["ReunionEvent"] = "ReunionEvent";
+  PostType2["PhotoIdentification"] = "PhotoIdentification";
+  return PostType2;
+})(PostType || {});
+var PrivacyLevel = /* @__PURE__ */ ((PrivacyLevel2) => {
+  PrivacyLevel2["Private"] = "Private";
+  PrivacyLevel2["Public"] = "Public";
+  PrivacyLevel2["FamilyOnly"] = "FamilyOnly";
+  return PrivacyLevel2;
+})(PrivacyLevel || {});
+var RecipeStatus = /* @__PURE__ */ ((RecipeStatus2) => {
+  RecipeStatus2["Approved"] = "Approved";
+  RecipeStatus2["Rejected"] = "Rejected";
+  RecipeStatus2["Archived"] = "Archived";
+  RecipeStatus2["Pending"] = "Pending";
+  return RecipeStatus2;
+})(RecipeStatus || {});
+var RelationshipStatus = /* @__PURE__ */ ((RelationshipStatus2) => {
+  RelationshipStatus2["Disputed"] = "Disputed";
+  RelationshipStatus2["Confirmed"] = "Confirmed";
+  RelationshipStatus2["Pending"] = "Pending";
+  return RelationshipStatus2;
+})(RelationshipStatus || {});
+var RelationshipType = /* @__PURE__ */ ((RelationshipType2) => {
+  RelationshipType2["Parent"] = "Parent";
+  RelationshipType2["Sibling"] = "Sibling";
+  RelationshipType2["SpousePartner"] = "SpousePartner";
+  RelationshipType2["Child"] = "Child";
+  return RelationshipType2;
+})(RelationshipType || {});
+var RemovalError = /* @__PURE__ */ ((RemovalError2) => {
+  RemovalError2["AlreadyPending"] = "AlreadyPending";
+  RemovalError2["ProfileNotFound"] = "ProfileNotFound";
+  RemovalError2["NotSignedIn"] = "NotSignedIn";
+  RemovalError2["NotOwner"] = "NotOwner";
+  RemovalError2["DeceasedProfile"] = "DeceasedProfile";
+  return RemovalError2;
+})(RemovalError || {});
+var ReportStatus = /* @__PURE__ */ ((ReportStatus2) => {
+  ReportStatus2["Dismissed"] = "Dismissed";
+  ReportStatus2["Reviewed"] = "Reviewed";
+  ReportStatus2["Pending"] = "Pending";
+  return ReportStatus2;
+})(ReportStatus || {});
+var ReviewStatus = /* @__PURE__ */ ((ReviewStatus2) => {
+  ReviewStatus2["NeedsResearch"] = "NeedsResearch";
+  ReviewStatus2["Conflicting"] = "Conflicting";
+  ReviewStatus2["Approved"] = "Approved";
+  ReviewStatus2["Rejected"] = "Rejected";
+  ReviewStatus2["Pending"] = "Pending";
+  return ReviewStatus2;
+})(ReviewStatus || {});
+var SourceStatus = /* @__PURE__ */ ((SourceStatus2) => {
+  SourceStatus2["Copy"] = "Copy";
+  SourceStatus2["Unverified"] = "Unverified";
+  SourceStatus2["Transcribed"] = "Transcribed";
+  SourceStatus2["Original"] = "Original";
+  return SourceStatus2;
+})(SourceStatus || {});
+var SourceType = /* @__PURE__ */ ((SourceType2) => {
+  SourceType2["CertificateHeadstoneReference"] = "CertificateHeadstoneReference";
+  SourceType2["DeedPropertyReference"] = "DeedPropertyReference";
+  SourceType2["ResearchNotes"] = "ResearchNotes";
+  SourceType2["EmailThread"] = "EmailThread";
+  SourceType2["UploadedDocumentImage"] = "UploadedDocumentImage";
+  SourceType2["CensusCitation"] = "CensusCitation";
+  return SourceType2;
+})(SourceType || {});
+var StewardAuditKind = /* @__PURE__ */ ((StewardAuditKind2) => {
+  StewardAuditKind2["ConflictResolution"] = "ConflictResolution";
+  StewardAuditKind2["Governance"] = "Governance";
+  return StewardAuditKind2;
+})(StewardAuditKind || {});
+var StewardClaimError = /* @__PURE__ */ ((StewardClaimError2) => {
+  StewardClaimError2["StewardAlreadyExists"] = "StewardAlreadyExists";
+  StewardClaimError2["AlreadySteward"] = "AlreadySteward";
+  StewardClaimError2["NotSignedIn"] = "NotSignedIn";
+  return StewardClaimError2;
+})(StewardClaimError || {});
+var StewardRoleStatus = /* @__PURE__ */ ((StewardRoleStatus2) => {
+  StewardRoleStatus2["Active"] = "Active";
+  StewardRoleStatus2["Removed"] = "Removed";
+  return StewardRoleStatus2;
+})(StewardRoleStatus || {});
+var SuccessorStatus = /* @__PURE__ */ ((SuccessorStatus2) => {
+  SuccessorStatus2["Activated"] = "Activated";
+  SuccessorStatus2["Removed"] = "Removed";
+  SuccessorStatus2["Designated"] = "Designated";
+  return SuccessorStatus2;
+})(SuccessorStatus || {});
+var TimelineEventType = /* @__PURE__ */ ((TimelineEventType2) => {
+  TimelineEventType2["MilitaryService"] = "MilitaryService";
+  TimelineEventType2["Story"] = "Story";
+  TimelineEventType2["Birth"] = "Birth";
+  TimelineEventType2["FamilyEvent"] = "FamilyEvent";
+  TimelineEventType2["Migration"] = "Migration";
+  TimelineEventType2["Mystery"] = "Mystery";
+  TimelineEventType2["Death"] = "Death";
+  TimelineEventType2["PhotoDocument"] = "PhotoDocument";
+  TimelineEventType2["Marriage"] = "Marriage";
+  TimelineEventType2["CensusDocument"] = "CensusDocument";
+  TimelineEventType2["Location"] = "Location";
+  return TimelineEventType2;
+})(TimelineEventType || {});
+class Backend {
+  constructor(actor, _uploadFile, _downloadFile, processError2) {
+    this.actor = actor;
+    this._uploadFile = _uploadFile;
+    this._downloadFile = _downloadFile;
+    this.processError = processError2;
+  }
+  async _immutableObjectStorageBlobsAreLive(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor._immutableObjectStorageBlobsAreLive(arg0);
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor._immutableObjectStorageBlobsAreLive(arg0);
+      return result;
+    }
+  }
+  async _immutableObjectStorageBlobsToDelete() {
+    if (this.processError) {
+      try {
+        const result = await this.actor._immutableObjectStorageBlobsToDelete();
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor._immutableObjectStorageBlobsToDelete();
+      return result;
+    }
+  }
+  async _immutableObjectStorageConfirmBlobDeletion(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor._immutableObjectStorageConfirmBlobDeletion(arg0);
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor._immutableObjectStorageConfirmBlobDeletion(arg0);
+      return result;
+    }
+  }
+  async _immutableObjectStorageCreateCertificate(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor._immutableObjectStorageCreateCertificate(arg0);
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor._immutableObjectStorageCreateCertificate(arg0);
+      return result;
+    }
+  }
+  async _immutableObjectStorageRefillCashier(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor._immutableObjectStorageRefillCashier(to_candid_opt_n1(this._uploadFile, this._downloadFile, arg0));
+        return from_candid__ImmutableObjectStorageRefillResult_n4(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor._immutableObjectStorageRefillCashier(to_candid_opt_n1(this._uploadFile, this._downloadFile, arg0));
+      return from_candid__ImmutableObjectStorageRefillResult_n4(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async _immutableObjectStorageUpdateGatewayPrincipals() {
+    if (this.processError) {
+      try {
+        const result = await this.actor._immutableObjectStorageUpdateGatewayPrincipals();
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor._immutableObjectStorageUpdateGatewayPrincipals();
+      return result;
+    }
+  }
+  async _initialize_access_control() {
+    if (this.processError) {
+      try {
+        const result = await this.actor._initialize_access_control();
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor._initialize_access_control();
+      return result;
+    }
+  }
+  async _internet_identity_sign_in_finish() {
+    if (this.processError) {
+      try {
+        const result = await this.actor._internet_identity_sign_in_finish();
+        return from_candid_Result_26_n8(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor._internet_identity_sign_in_finish();
+      return from_candid_Result_26_n8(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async _internet_identity_sign_in_start() {
+    if (this.processError) {
+      try {
+        const result = await this.actor._internet_identity_sign_in_start();
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor._internet_identity_sign_in_start();
+      return result;
+    }
+  }
+  async activateSuccessor(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.activateSuccessor(arg0);
+        return from_candid_Result_10_n12(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.activateSuccessor(arg0);
+      return from_candid_Result_10_n12(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async addBoardReply(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.addBoardReply(arg0, arg1);
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.addBoardReply(arg0, arg1);
+      return result;
+    }
+  }
+  async addCanonicalStory(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.addCanonicalStory(arg0, arg1, arg2, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg3), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg5), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg6), arg7);
+        return from_candid_Story_n24(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.addCanonicalStory(arg0, arg1, arg2, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg3), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg5), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg6), arg7);
+      return from_candid_Story_n24(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async addPhoto(arg0, arg1, arg2, arg3) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.addPhoto(arg0, arg1, arg2, await to_candid_ExternalBlob_n31(this._uploadFile, this._downloadFile, arg3));
+        return from_candid_Photo_n32(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.addPhoto(arg0, arg1, arg2, await to_candid_ExternalBlob_n31(this._uploadFile, this._downloadFile, arg3));
+      return from_candid_Photo_n32(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async addRelationship(arg0, arg1, arg2) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.addRelationship(arg0, arg1, to_candid_RelationshipType_n35(this._uploadFile, this._downloadFile, arg2));
+        return from_candid_Result_23_n37(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.addRelationship(arg0, arg1, to_candid_RelationshipType_n35(this._uploadFile, this._downloadFile, arg2));
+      return from_candid_Result_23_n37(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async approveArchiveItem(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.approveArchiveItem(arg0);
+        return from_candid_opt_n47(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.approveArchiveItem(arg0);
+      return from_candid_opt_n47(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async approveFinding(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.approveFinding(arg0);
+        return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.approveFinding(arg0);
+      return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async approveNewPersonCandidate(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.approveNewPersonCandidate(arg0);
+        return from_candid_opt_n81(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.approveNewPersonCandidate(arg0);
+      return from_candid_opt_n81(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async approveProfileClaim(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.approveProfileClaim(arg0);
+        return from_candid_opt_n84(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.approveProfileClaim(arg0);
+      return from_candid_opt_n84(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async approveProfileRemoval(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.approveProfileRemoval(arg0);
+        return from_candid_opt_n88(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.approveProfileRemoval(arg0);
+      return from_candid_opt_n88(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async approveRecipe(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.approveRecipe(arg0);
+        return from_candid_opt_n92(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.approveRecipe(arg0);
+      return from_candid_opt_n92(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async approveRelationshipProposal(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.approveRelationshipProposal(arg0);
+        return from_candid_opt_n97(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.approveRelationshipProposal(arg0);
+      return from_candid_opt_n97(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async approveRelationshipRequest(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.approveRelationshipRequest(arg0);
+        return from_candid_opt_n100(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.approveRelationshipRequest(arg0);
+      return from_candid_opt_n100(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async approveSource(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.approveSource(arg0);
+        return from_candid_opt_n104(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.approveSource(arg0);
+      return from_candid_opt_n104(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async approveStory(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.approveStory(arg0);
+        return from_candid_opt_n107(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.approveStory(arg0);
+      return from_candid_opt_n107(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async archiveBoardPost(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.archiveBoardPost(arg0);
+        return from_candid_opt_n108(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.archiveBoardPost(arg0);
+      return from_candid_opt_n108(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async archiveProfile(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.archiveProfile(arg0);
+        return from_candid_Result_2_n117(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.archiveProfile(arg0);
+      return from_candid_Result_2_n117(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async assignCallerUserRole(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n121(this._uploadFile, this._downloadFile, arg1));
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n121(this._uploadFile, this._downloadFile, arg1));
+      return result;
+    }
+  }
+  async bindAuthMethod(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.bindAuthMethod(to_candid_AuthMethod_n123(this._uploadFile, this._downloadFile, arg0));
+        return from_candid_Result_25_n125(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.bindAuthMethod(to_candid_AuthMethod_n123(this._uploadFile, this._downloadFile, arg0));
+      return from_candid_Result_25_n125(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async blockUser(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.blockUser(arg0);
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.blockUser(arg0);
+      return result;
+    }
+  }
+  async canClaimProfile(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.canClaimProfile(arg0);
+        return from_candid_ClaimEligibility_n134(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.canClaimProfile(arg0);
+      return from_candid_ClaimEligibility_n134(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async canMessagePerson(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.canMessagePerson(arg0);
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.canMessagePerson(arg0);
+      return result;
+    }
+  }
+  async claimSteward() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.claimSteward();
+        return from_candid_Result_24_n139(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.claimSteward();
+      return from_candid_Result_24_n139(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async correctRelationshipType(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.correctRelationshipType(arg0, to_candid_RelationshipType_n35(this._uploadFile, this._downloadFile, arg1));
+        return from_candid_Result_23_n37(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.correctRelationshipType(arg0, to_candid_RelationshipType_n35(this._uploadFile, this._downloadFile, arg1));
+      return from_candid_Result_23_n37(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async createBoardPost(arg0, arg1, arg2, arg3, arg4, arg5) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.createBoardPost(to_candid_PostType_n143(this._uploadFile, this._downloadFile, arg0), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg1), arg2, arg3, arg4, arg5);
+        return from_candid_Post_n109(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.createBoardPost(to_candid_PostType_n143(this._uploadFile, this._downloadFile, arg0), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg1), arg2, arg3, arg4, arg5);
+      return from_candid_Post_n109(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async createBoardPostWithMedia(arg0, arg1, arg2, arg3, arg4, arg5, arg6) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.createBoardPostWithMedia(to_candid_PostType_n143(this._uploadFile, this._downloadFile, arg0), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg1), arg2, arg3, arg4, await to_candid_vec_n145(this._uploadFile, this._downloadFile, arg5), arg6);
+        return from_candid_Post_n109(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.createBoardPostWithMedia(to_candid_PostType_n143(this._uploadFile, this._downloadFile, arg0), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg1), arg2, arg3, arg4, await to_candid_vec_n145(this._uploadFile, this._downloadFile, arg5), arg6);
+      return from_candid_Post_n109(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async createCanonicalMystery(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.createCanonicalMystery(arg0, arg1, arg2, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg3), arg4, arg5, arg6, arg7, to_candid_MysteryStatus_n158(this._uploadFile, this._downloadFile, arg8));
+        return from_candid_Mystery_n160(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.createCanonicalMystery(arg0, arg1, arg2, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg3), arg4, arg5, arg6, arg7, to_candid_MysteryStatus_n158(this._uploadFile, this._downloadFile, arg8));
+      return from_candid_Mystery_n160(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async createFinding(arg0, arg1, arg2, arg3, arg4, arg5, arg6) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.createFinding(arg0, to_candid_EvidenceLabel_n165(this._uploadFile, this._downloadFile, arg1), to_candid_FindingType_n167(this._uploadFile, this._downloadFile, arg2), to_candid_FindingContent_n169(this._uploadFile, this._downloadFile, arg3), arg4, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg6));
+        return from_candid_Result_22_n175(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.createFinding(arg0, to_candid_EvidenceLabel_n165(this._uploadFile, this._downloadFile, arg1), to_candid_FindingType_n167(this._uploadFile, this._downloadFile, arg2), to_candid_FindingContent_n169(this._uploadFile, this._downloadFile, arg3), arg4, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg6));
+      return from_candid_Result_22_n175(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async createMyself(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.createMyself(arg0);
+        return from_candid_Result_21_n179(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.createMyself(arg0);
+      return from_candid_Result_21_n179(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async createNewPersonCandidate(arg0, arg1, arg2) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.createNewPersonCandidate(arg0, arg1, arg2);
+        return from_candid_Result_20_n189(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.createNewPersonCandidate(arg0, arg1, arg2);
+      return from_candid_Result_20_n189(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async createRelationshipProposal(arg0, arg1, arg2, arg3) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.createRelationshipProposal(arg0, arg1, arg2, arg3);
+        return from_candid_Result_19_n191(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.createRelationshipProposal(arg0, arg1, arg2, arg3);
+      return from_candid_Result_19_n191(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async createSource(arg0, arg1, arg2, arg3) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.createSource(arg0, to_candid_SourceType_n172(this._uploadFile, this._downloadFile, arg1), arg2, to_candid_opt_n21(this._uploadFile, this._downloadFile, arg3));
+        return from_candid_Result_18_n193(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.createSource(arg0, to_candid_SourceType_n172(this._uploadFile, this._downloadFile, arg1), arg2, to_candid_opt_n21(this._uploadFile, this._downloadFile, arg3));
+      return from_candid_Result_18_n193(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async createSourceWithUpload(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.createSourceWithUpload(arg0, to_candid_SourceType_n172(this._uploadFile, this._downloadFile, arg1), arg2, await to_candid_ExternalBlob_n31(this._uploadFile, this._downloadFile, arg3), arg4, arg5, to_candid_opt_n21(this._uploadFile, this._downloadFile, arg6), arg7, to_candid_PrivacyLevel_n148(this._uploadFile, this._downloadFile, arg8), to_candid_ArchiveItemClassification_n156(this._uploadFile, this._downloadFile, arg9), to_candid_opt_n195(this._uploadFile, this._downloadFile, arg10));
+        return from_candid_Result_17_n196(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.createSourceWithUpload(arg0, to_candid_SourceType_n172(this._uploadFile, this._downloadFile, arg1), arg2, await to_candid_ExternalBlob_n31(this._uploadFile, this._downloadFile, arg3), arg4, arg5, to_candid_opt_n21(this._uploadFile, this._downloadFile, arg6), arg7, to_candid_PrivacyLevel_n148(this._uploadFile, this._downloadFile, arg8), to_candid_ArchiveItemClassification_n156(this._uploadFile, this._downloadFile, arg9), to_candid_opt_n195(this._uploadFile, this._downloadFile, arg10));
+      return from_candid_Result_17_n196(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async designateSuccessor(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.designateSuccessor(arg0, arg1);
+        return from_candid_Result_16_n200(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.designateSuccessor(arg0, arg1);
+      return from_candid_Result_16_n200(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async execute(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.execute(arg0);
+        return from_candid_Result__1_n206(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.execute(arg0);
+      return from_candid_Result__1_n206(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async getApiDoc() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getApiDoc();
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getApiDoc();
+      return result;
+    }
+  }
+  async getBoardPost(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getBoardPost(arg0);
+        return from_candid_opt_n108(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getBoardPost(arg0);
+      return from_candid_opt_n108(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async getCallerUserRole() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getCallerUserRole();
+        return from_candid_UserRole_n214(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getCallerUserRole();
+      return from_candid_UserRole_n214(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async getConversation(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getConversation(arg0);
+        return from_candid_opt_n216(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getConversation(arg0);
+      return from_candid_opt_n216(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async getFinding(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getFinding(arg0);
+        return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getFinding(arg0);
+      return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async getMyAccountId() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getMyAccountId();
+        return from_candid_Result_15_n225(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getMyAccountId();
+      return from_candid_Result_15_n225(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async getMyAuthMethods() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getMyAuthMethods();
+        return from_candid_Result_14_n227(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getMyAuthMethods();
+      return from_candid_Result_14_n227(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async getMyProfile() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getMyProfile();
+        return from_candid_opt_n229(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getMyProfile();
+      return from_candid_opt_n229(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async getMyProfileClaim(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getMyProfileClaim(arg0);
+        return from_candid_opt_n84(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getMyProfileClaim(arg0);
+      return from_candid_opt_n84(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async getMyRelationshipRequests() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getMyRelationshipRequests();
+        return from_candid_vec_n230(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getMyRelationshipRequests();
+      return from_candid_vec_n230(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async getPendingContributionsCount() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getPendingContributionsCount();
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getPendingContributionsCount();
+      return result;
+    }
+  }
+  async getPersonProfile(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getPersonProfile(arg0);
+        return from_candid_opt_n229(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getPersonProfile(arg0);
+      return from_candid_opt_n229(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async getProfilePhoto(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getProfilePhoto(arg0);
+        return from_candid_opt_n231(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getProfilePhoto(arg0);
+      return from_candid_opt_n231(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async getRecipe(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getRecipe(arg0);
+        return from_candid_opt_n92(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getRecipe(arg0);
+      return from_candid_opt_n92(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async getRelationshipRequest(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getRelationshipRequest(arg0);
+        return from_candid_opt_n100(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getRelationshipRequest(arg0);
+      return from_candid_opt_n100(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async getReportedMessage(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getReportedMessage(arg0);
+        return from_candid_opt_n232(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getReportedMessage(arg0);
+      return from_candid_opt_n232(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async getResearchAuditLog() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getResearchAuditLog();
+        return from_candid_vec_n239(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getResearchAuditLog();
+      return from_candid_vec_n239(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async getReviewQueue() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getReviewQueue();
+        return from_candid_ReviewQueue_n244(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getReviewQueue();
+      return from_candid_ReviewQueue_n244(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async getSingleStewardWarning() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getSingleStewardWarning();
+        return from_candid_opt_n26(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getSingleStewardWarning();
+      return from_candid_opt_n26(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async getSource(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getSource(arg0);
+        return from_candid_opt_n104(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getSource(arg0);
+      return from_candid_opt_n104(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async getStewardAuditHistory() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getStewardAuditHistory();
+        return from_candid_vec_n255(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getStewardAuditHistory();
+      return from_candid_vec_n255(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async hasActiveSteward() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.hasActiveSteward();
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.hasActiveSteward();
+      return result;
+    }
+  }
+  async hasApprovedOwner(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.hasApprovedOwner(arg0);
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.hasApprovedOwner(arg0);
+      return result;
+    }
+  }
+  async isCallerAdmin() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.isCallerAdmin();
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.isCallerAdmin();
+      return result;
+    }
+  }
+  async isCallerSteward() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.isCallerSteward();
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.isCallerSteward();
+      return result;
+    }
+  }
+  async listApprovedArchiveItems() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listApprovedArchiveItems();
+        return from_candid_vec_n260(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listApprovedArchiveItems();
+      return from_candid_vec_n260(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listApprovedRecipes() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listApprovedRecipes();
+        return from_candid_vec_n261(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listApprovedRecipes();
+      return from_candid_vec_n261(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listApprovedStories() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listApprovedStories();
+        return from_candid_vec_n262(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listApprovedStories();
+      return from_candid_vec_n262(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listArchivedProfileIds() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listArchivedProfileIds();
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listArchivedProfileIds();
+      return result;
+    }
+  }
+  async listArchivedProfiles() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listArchivedProfiles();
+        return from_candid_vec_n263(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listArchivedProfiles();
+      return from_candid_vec_n263(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listAuditHistory() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listAuditHistory();
+        return from_candid_vec_n264(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listAuditHistory();
+      return from_candid_vec_n264(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listBlockedUsers() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listBlockedUsers();
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listBlockedUsers();
+      return result;
+    }
+  }
+  async listBoardPosts(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listBoardPosts(to_candid_opt_n269(this._uploadFile, this._downloadFile, arg0));
+        return from_candid_vec_n270(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listBoardPosts(to_candid_opt_n269(this._uploadFile, this._downloadFile, arg0));
+      return from_candid_vec_n270(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listBoardReplies(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listBoardReplies(arg0);
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listBoardReplies(arg0);
+      return result;
+    }
+  }
+  async listConfirmedRelationships() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listConfirmedRelationships();
+        return from_candid_vec_n271(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listConfirmedRelationships();
+      return from_candid_vec_n271(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listConflictReviewItems() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listConflictReviewItems();
+        return from_candid_vec_n272(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listConflictReviewItems();
+      return from_candid_vec_n272(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listConflictsForPerson(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listConflictsForPerson(arg0);
+        return from_candid_vec_n272(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listConflictsForPerson(arg0);
+      return from_candid_vec_n272(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listConversations() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listConversations();
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listConversations();
+      return result;
+    }
+  }
+  async listDisputedFactsForPerson(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listDisputedFactsForPerson(arg0);
+        return from_candid_vec_n275(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listDisputedFactsForPerson(arg0);
+      return from_candid_vec_n275(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listDuplicateCandidates() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listDuplicateCandidates();
+        return from_candid_vec_n278(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listDuplicateCandidates();
+      return from_candid_vec_n278(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listEligibleStewardCandidates() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listEligibleStewardCandidates();
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listEligibleStewardCandidates();
+      return result;
+    }
+  }
+  async listFindings() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listFindings();
+        return from_candid_vec_n283(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listFindings();
+      return from_candid_vec_n283(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listHiddenBoardPosts() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listHiddenBoardPosts();
+        return from_candid_vec_n270(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listHiddenBoardPosts();
+      return from_candid_vec_n270(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listMessageableMembers() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listMessageableMembers();
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listMessageableMembers();
+      return result;
+    }
+  }
+  async listMysteries() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listMysteries();
+        return from_candid_vec_n284(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listMysteries();
+      return from_candid_vec_n284(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listNewPersonCandidates() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listNewPersonCandidates();
+        return from_candid_vec_n285(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listNewPersonCandidates();
+      return from_candid_vec_n285(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listNotifications() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listNotifications();
+        return from_candid_vec_n286(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listNotifications();
+      return from_candid_vec_n286(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listPendingArchiveItems() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listPendingArchiveItems();
+        return from_candid_vec_n260(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listPendingArchiveItems();
+      return from_candid_vec_n260(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listPendingMysteryContributions() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listPendingMysteryContributions();
+        return from_candid_vec_n291(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listPendingMysteryContributions();
+      return from_candid_vec_n291(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listPendingRecipes() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listPendingRecipes();
+        return from_candid_vec_n261(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listPendingRecipes();
+      return from_candid_vec_n261(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listPendingStories() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listPendingStories();
+        return from_candid_vec_n262(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listPendingStories();
+      return from_candid_vec_n262(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listPersonRelationships(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listPersonRelationships(arg0);
+        return from_candid_vec_n271(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listPersonRelationships(arg0);
+      return from_candid_vec_n271(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listPhotos(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listPhotos(arg0);
+        return from_candid_vec_n297(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listPhotos(arg0);
+      return from_candid_vec_n297(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listProfileClaims() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listProfileClaims();
+        return from_candid_vec_n298(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listProfileClaims();
+      return from_candid_vec_n298(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listProfileRemovalRequests() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listProfileRemovalRequests();
+        return from_candid_vec_n299(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listProfileRemovalRequests();
+      return from_candid_vec_n299(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listRecipesForPerson(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listRecipesForPerson(arg0);
+        return from_candid_vec_n261(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listRecipesForPerson(arg0);
+      return from_candid_vec_n261(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listRelationshipProposals() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listRelationshipProposals();
+        return from_candid_vec_n300(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listRelationshipProposals();
+      return from_candid_vec_n300(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listRelationshipRequests() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listRelationshipRequests();
+        return from_candid_vec_n230(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listRelationshipRequests();
+      return from_candid_vec_n230(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listReports() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listReports();
+        return from_candid_vec_n301(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listReports();
+      return from_candid_vec_n301(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listSources() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listSources();
+        return from_candid_vec_n302(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listSources();
+      return from_candid_vec_n302(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listStewardIdentities() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listStewardIdentities();
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listStewardIdentities();
+      return result;
+    }
+  }
+  async listStewards() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listStewards();
+        return from_candid_vec_n303(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listStewards();
+      return from_candid_vec_n303(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listSuccessors() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listSuccessors();
+        return from_candid_vec_n304(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listSuccessors();
+      return from_candid_vec_n304(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listTimelineEvents() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listTimelineEvents();
+        return from_candid_vec_n305(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listTimelineEvents();
+      return from_candid_vec_n305(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async markConversationRead(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.markConversationRead(arg0);
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.markConversationRead(arg0);
+      return result;
+    }
+  }
+  async markMysteryResolved(arg0, arg1, arg2) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.markMysteryResolved(arg0, arg1, arg2);
+        return from_candid_opt_n312(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.markMysteryResolved(arg0, arg1, arg2);
+      return from_candid_opt_n312(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async markNotificationRead(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.markNotificationRead(arg0);
+        return from_candid_opt_n313(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.markNotificationRead(arg0);
+      return from_candid_opt_n313(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async mergeProfiles(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.mergeProfiles(arg0, arg1);
+        return from_candid_Result_13_n314(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.mergeProfiles(arg0, arg1);
+      return from_candid_Result_13_n314(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async needsResearchFinding(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.needsResearchFinding(arg0);
+        return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.needsResearchFinding(arg0);
+      return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async needsResearchNewPersonCandidate(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.needsResearchNewPersonCandidate(arg0);
+        return from_candid_opt_n81(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.needsResearchNewPersonCandidate(arg0);
+      return from_candid_opt_n81(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async needsResearchRelationshipProposal(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.needsResearchRelationshipProposal(arg0);
+        return from_candid_opt_n97(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.needsResearchRelationshipProposal(arg0);
+      return from_candid_opt_n97(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async needsResearchSource(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.needsResearchSource(arg0);
+        return from_candid_opt_n104(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.needsResearchSource(arg0);
+      return from_candid_opt_n104(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async notDuplicate(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.notDuplicate(arg0, arg1);
+        return from_candid_Result_12_n325(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.notDuplicate(arg0, arg1);
+      return from_candid_Result_12_n325(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async permanentlyDeleteProfile(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.permanentlyDeleteProfile(arg0, arg1);
+        return from_candid_Result_11_n327(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.permanentlyDeleteProfile(arg0, arg1);
+      return from_candid_Result_11_n327(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async promoteToSteward(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.promoteToSteward(arg0);
+        return from_candid_Result_10_n12(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.promoteToSteward(arg0);
+      return from_candid_Result_10_n12(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async proposeRelationship(arg0, arg1, arg2) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.proposeRelationship(arg0, arg1, to_candid_RelationshipType_n35(this._uploadFile, this._downloadFile, arg2));
+        return from_candid_Result_9_n331(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.proposeRelationship(arg0, arg1, to_candid_RelationshipType_n35(this._uploadFile, this._downloadFile, arg2));
+      return from_candid_Result_9_n331(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async publishRecipe(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.publishRecipe(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg6), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg7), arg8, arg9, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg10), arg11, to_candid_PrivacyLevel_n148(this._uploadFile, this._downloadFile, arg12), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg13), arg14);
+        return from_candid_Recipe_n93(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.publishRecipe(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg6), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg7), arg8, arg9, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg10), arg11, to_candid_PrivacyLevel_n148(this._uploadFile, this._downloadFile, arg12), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg13), arg14);
+      return from_candid_Recipe_n93(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async reconcileClaimNotifications(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.reconcileClaimNotifications(arg0);
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.reconcileClaimNotifications(arg0);
+      return result;
+    }
+  }
+  async rejectArchiveItem(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.rejectArchiveItem(arg0);
+        return from_candid_opt_n47(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.rejectArchiveItem(arg0);
+      return from_candid_opt_n47(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async rejectFinding(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.rejectFinding(arg0);
+        return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.rejectFinding(arg0);
+      return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async rejectNewPersonCandidate(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.rejectNewPersonCandidate(arg0);
+        return from_candid_opt_n81(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.rejectNewPersonCandidate(arg0);
+      return from_candid_opt_n81(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async rejectProfileClaim(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.rejectProfileClaim(arg0);
+        return from_candid_opt_n84(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.rejectProfileClaim(arg0);
+      return from_candid_opt_n84(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async rejectProfileRemoval(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.rejectProfileRemoval(arg0);
+        return from_candid_opt_n88(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.rejectProfileRemoval(arg0);
+      return from_candid_opt_n88(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async rejectRecipe(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.rejectRecipe(arg0);
+        return from_candid_opt_n92(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.rejectRecipe(arg0);
+      return from_candid_opt_n92(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async rejectRelationshipProposal(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.rejectRelationshipProposal(arg0);
+        return from_candid_opt_n97(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.rejectRelationshipProposal(arg0);
+      return from_candid_opt_n97(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async rejectRelationshipRequest(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.rejectRelationshipRequest(arg0);
+        return from_candid_opt_n100(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.rejectRelationshipRequest(arg0);
+      return from_candid_opt_n100(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async rejectSource(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.rejectSource(arg0);
+        return from_candid_opt_n104(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.rejectSource(arg0);
+      return from_candid_opt_n104(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async rejectStory(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.rejectStory(arg0);
+        return from_candid_opt_n107(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.rejectStory(arg0);
+      return from_candid_opt_n107(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async removeBoardReply(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.removeBoardReply(arg0);
+        return from_candid_opt_n335(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.removeBoardReply(arg0);
+      return from_candid_opt_n335(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async removeDuplicateProfile(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.removeDuplicateProfile(arg0);
+        return from_candid_Result_8_n336(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.removeDuplicateProfile(arg0);
+      return from_candid_Result_8_n336(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async removePhoto(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.removePhoto(arg0, arg1);
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.removePhoto(arg0, arg1);
+      return result;
+    }
+  }
+  async removeRelationship(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.removeRelationship(arg0);
+        return from_candid_Result_7_n340(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.removeRelationship(arg0);
+      return from_candid_Result_7_n340(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async removeSteward(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.removeSteward(arg0);
+        return from_candid_Result_6_n342(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.removeSteward(arg0);
+      return from_candid_Result_6_n342(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async reportMessage(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.reportMessage(arg0, arg1);
+        return from_candid_Report_n235(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.reportMessage(arg0, arg1);
+      return from_candid_Report_n235(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async requestProfileClaim(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.requestProfileClaim(arg0);
+        return from_candid_Result_5_n344(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.requestProfileClaim(arg0);
+      return from_candid_Result_5_n344(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async requestProfileRemoval(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.requestProfileRemoval(arg0, arg1);
+        return from_candid_Result_4_n348(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.requestProfileRemoval(arg0, arg1);
+      return from_candid_Result_4_n348(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async resolveConflict(arg0, arg1, arg2) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.resolveConflict(arg0, to_candid_ConflictResolutionAction_n352(this._uploadFile, this._downloadFile, arg1), arg2);
+        return from_candid_Result_3_n354(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.resolveConflict(arg0, to_candid_ConflictResolutionAction_n352(this._uploadFile, this._downloadFile, arg1), arg2);
+      return from_candid_Result_3_n354(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async resolveMergeConflict(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.resolveMergeConflict(arg0, arg1);
+        return from_candid_opt_n356(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.resolveMergeConflict(arg0, arg1);
+      return from_candid_opt_n356(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async restoreBoardPost(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.restoreBoardPost(arg0);
+        return from_candid_opt_n108(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.restoreBoardPost(arg0);
+      return from_candid_opt_n108(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async restoreProfile(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.restoreProfile(arg0);
+        return from_candid_Result_2_n117(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.restoreProfile(arg0);
+      return from_candid_Result_2_n117(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async reviewMysteryContribution(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.reviewMysteryContribution(arg0, arg1);
+        return from_candid_opt_n357(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.reviewMysteryContribution(arg0, arg1);
+      return from_candid_opt_n357(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async reviewReport(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.reviewReport(arg0, to_candid_ReportStatus_n358(this._uploadFile, this._downloadFile, arg1));
+        return from_candid_opt_n360(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.reviewReport(arg0, to_candid_ReportStatus_n358(this._uploadFile, this._downloadFile, arg1));
+      return from_candid_opt_n360(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async schema() {
+    if (this.processError) {
+      try {
+        const result = await this.actor.schema();
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.schema();
+      return result;
+    }
+  }
+  async searchArchiveItems(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.searchArchiveItems(to_candid_ArchiveSearchFilter_n361(this._uploadFile, this._downloadFile, arg0));
+        return from_candid_vec_n260(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.searchArchiveItems(to_candid_ArchiveSearchFilter_n361(this._uploadFile, this._downloadFile, arg0));
+      return from_candid_vec_n260(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async searchBoardPostsByTags(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.searchBoardPostsByTags(arg0);
+        return from_candid_vec_n270(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.searchBoardPostsByTags(arg0);
+      return from_candid_vec_n270(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async searchPossibleMatches(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.searchPossibleMatches(arg0);
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.searchPossibleMatches(arg0);
+      return result;
+    }
+  }
+  async sendMessage(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.sendMessage(arg0, arg1);
+        return from_candid_Result_1_n363(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.sendMessage(arg0, arg1);
+      return from_candid_Result_1_n363(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async setProfilePhoto(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.setProfilePhoto(arg0, arg1);
+        return from_candid_opt_n231(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.setProfilePhoto(arg0, arg1);
+      return from_candid_opt_n231(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async setRelationshipRequestPending(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.setRelationshipRequestPending(arg0);
+        return from_candid_opt_n100(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.setRelationshipRequestPending(arg0);
+      return from_candid_opt_n100(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async submitArchiveItem(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.submitArchiveItem(arg0, arg1, to_candid_ArchiveItemType_n152(this._uploadFile, this._downloadFile, arg2), await to_candid_ExternalBlob_n31(this._uploadFile, this._downloadFile, arg3), arg4, to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), arg6, arg7, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg8), to_candid_SourceStatus_n154(this._uploadFile, this._downloadFile, arg9), to_candid_PrivacyLevel_n148(this._uploadFile, this._downloadFile, arg10), to_candid_ArchiveItemClassification_n156(this._uploadFile, this._downloadFile, arg11), to_candid_opt_n195(this._uploadFile, this._downloadFile, arg12));
+        return from_candid_ArchiveItem_n48(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.submitArchiveItem(arg0, arg1, to_candid_ArchiveItemType_n152(this._uploadFile, this._downloadFile, arg2), await to_candid_ExternalBlob_n31(this._uploadFile, this._downloadFile, arg3), arg4, to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), arg6, arg7, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg8), to_candid_SourceStatus_n154(this._uploadFile, this._downloadFile, arg9), to_candid_PrivacyLevel_n148(this._uploadFile, this._downloadFile, arg10), to_candid_ArchiveItemClassification_n156(this._uploadFile, this._downloadFile, arg11), to_candid_opt_n195(this._uploadFile, this._downloadFile, arg12));
+      return from_candid_ArchiveItem_n48(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async submitMysteryContribution(arg0, arg1, arg2) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.submitMysteryContribution(arg0, to_candid_MysteryContributionType_n367(this._uploadFile, this._downloadFile, arg1), arg2);
+        return from_candid_MysteryContribution_n292(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.submitMysteryContribution(arg0, to_candid_MysteryContributionType_n367(this._uploadFile, this._downloadFile, arg1), arg2);
+      return from_candid_MysteryContribution_n292(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async submitRecipe(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.submitRecipe(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg6), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg7), arg8, arg9, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg10), arg11, to_candid_PrivacyLevel_n148(this._uploadFile, this._downloadFile, arg12), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg13), arg14);
+        return from_candid_Recipe_n93(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.submitRecipe(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg6), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg7), arg8, arg9, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg10), arg11, to_candid_PrivacyLevel_n148(this._uploadFile, this._downloadFile, arg12), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg13), arg14);
+      return from_candid_Recipe_n93(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async submitStory(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.submitStory(arg0, arg1, arg2, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg3), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg5), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg6), arg7);
+        return from_candid_Story_n24(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.submitStory(arg0, arg1, arg2, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg3), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg5), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg6), arg7);
+      return from_candid_Story_n24(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async unblockUser(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.unblockUser(arg0);
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.unblockUser(arg0);
+      return result;
+    }
+  }
+  async updateBoardPost(arg0, arg1, arg2, arg3, arg4, arg5, arg6) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.updateBoardPost(arg0, to_candid_PostType_n143(this._uploadFile, this._downloadFile, arg1), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg2), arg3, arg4, arg5, arg6);
+        return from_candid_opt_n108(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.updateBoardPost(arg0, to_candid_PostType_n143(this._uploadFile, this._downloadFile, arg1), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg2), arg3, arg4, arg5, arg6);
+      return from_candid_opt_n108(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async updateCanonicalMystery(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.updateCanonicalMystery(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), arg5, arg6, arg7, arg8, to_candid_MysteryStatus_n158(this._uploadFile, this._downloadFile, arg9));
+        return from_candid_opt_n312(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.updateCanonicalMystery(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), arg5, arg6, arg7, arg8, to_candid_MysteryStatus_n158(this._uploadFile, this._downloadFile, arg9));
+      return from_candid_opt_n312(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async updateCanonicalStory(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.updateCanonicalStory(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg6), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg7), arg8);
+        return from_candid_opt_n107(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.updateCanonicalStory(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg6), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg7), arg8);
+      return from_candid_opt_n107(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async updateOwnProfile(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.updateOwnProfile(arg0, to_candid_ProfileEdits_n369(this._uploadFile, this._downloadFile, arg1));
+        return from_candid_Result_n373(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.updateOwnProfile(arg0, to_candid_ProfileEdits_n369(this._uploadFile, this._downloadFile, arg1));
+      return from_candid_Result_n373(this._uploadFile, this._downloadFile, result);
+    }
+  }
+}
+function from_candid_AccountError_n132(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n133(_uploadFile, _downloadFile, value);
+}
+function from_candid_Account_n127(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n128(_uploadFile, _downloadFile, value);
+}
+function from_candid_ArchiveError_n119(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n120(_uploadFile, _downloadFile, value);
+}
+function from_candid_ArchiveItemClassification_n62(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n63(_uploadFile, _downloadFile, value);
+}
+function from_candid_ArchiveItemStatus_n50(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n28(_uploadFile, _downloadFile, value);
+}
+function from_candid_ArchiveItemType_n57(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n58(_uploadFile, _downloadFile, value);
+}
+async function from_candid_ArchiveItem_n48(_uploadFile, _downloadFile, value) {
+  return await from_candid_record_n49(_uploadFile, _downloadFile, value);
+}
+function from_candid_AuditActionType_n267(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n268(_uploadFile, _downloadFile, value);
+}
+function from_candid_AuditEntry_n265(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n266(_uploadFile, _downloadFile, value);
+}
+function from_candid_AuthMethod_n130(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n131(_uploadFile, _downloadFile, value);
+}
+function from_candid_Cell_n210(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n211(_uploadFile, _downloadFile, value);
+}
+function from_candid_ClaimEligibility_n134(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n135(_uploadFile, _downloadFile, value);
+}
+function from_candid_ClaimError_n346(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n347(_uploadFile, _downloadFile, value);
+}
+function from_candid_ClaimPersistenceError_n137(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n138(_uploadFile, _downloadFile, value);
+}
+function from_candid_ClaimStatus_n183(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n184(_uploadFile, _downloadFile, value);
+}
+function from_candid_ConflictReviewItem_n273(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n274(_uploadFile, _downloadFile, value);
+}
+function from_candid_ConversationView_n217(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n218(_uploadFile, _downloadFile, value);
+}
+function from_candid_CreateError_n187(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n188(_uploadFile, _downloadFile, value);
+}
+function from_candid_DeleteError_n329(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n330(_uploadFile, _downloadFile, value);
+}
+function from_candid_DisputedFact_n276(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n277(_uploadFile, _downloadFile, value);
+}
+function from_candid_DuplicateCandidate_n281(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n282(_uploadFile, _downloadFile, value);
+}
+function from_candid_DuplicatePair_n279(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n280(_uploadFile, _downloadFile, value);
+}
+function from_candid_EditError_n375(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n376(_uploadFile, _downloadFile, value);
+}
+function from_candid_Error_n10(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n11(_uploadFile, _downloadFile, value);
+}
+function from_candid_EvidenceLabel_n69(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n70(_uploadFile, _downloadFile, value);
+}
+function from_candid_EvidenceStatus_n29(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n30(_uploadFile, _downloadFile, value);
+}
+async function from_candid_ExternalBlob_n34(_uploadFile, _downloadFile, value) {
+  return await _downloadFile(value);
+}
+function from_candid_FindingContent_n71(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n72(_uploadFile, _downloadFile, value);
+}
+function from_candid_FindingType_n79(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n80(_uploadFile, _downloadFile, value);
+}
+function from_candid_LivingStatus_n185(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n186(_uploadFile, _downloadFile, value);
+}
+function from_candid_MergeConflictStatus_n321(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n322(_uploadFile, _downloadFile, value);
+}
+function from_candid_MergeConflict_n319(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n320(_uploadFile, _downloadFile, value);
+}
+function from_candid_MergeError_n323(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n324(_uploadFile, _downloadFile, value);
+}
+function from_candid_MergeResult_n316(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n317(_uploadFile, _downloadFile, value);
+}
+function from_candid_MessageError_n365(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n366(_uploadFile, _downloadFile, value);
+}
+function from_candid_MessageStatus_n222(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n223(_uploadFile, _downloadFile, value);
+}
+function from_candid_Message_n220(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n221(_uploadFile, _downloadFile, value);
+}
+function from_candid_MysteryContributionStatus_n294(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n28(_uploadFile, _downloadFile, value);
+}
+function from_candid_MysteryContributionType_n295(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n296(_uploadFile, _downloadFile, value);
+}
+function from_candid_MysteryContribution_n292(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n293(_uploadFile, _downloadFile, value);
+}
+function from_candid_MysteryStatus_n162(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n163(_uploadFile, _downloadFile, value);
+}
+function from_candid_Mystery_n160(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n161(_uploadFile, _downloadFile, value);
+}
+function from_candid_NewPersonCandidate_n82(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n83(_uploadFile, _downloadFile, value);
+}
+function from_candid_NotificationType_n289(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n290(_uploadFile, _downloadFile, value);
+}
+function from_candid_Notification_n287(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n288(_uploadFile, _downloadFile, value);
+}
+function from_candid_OralHistorySpeaker_n54(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n55(_uploadFile, _downloadFile, value);
+}
+function from_candid_PersonProfile_n181(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n182(_uploadFile, _downloadFile, value);
+}
+async function from_candid_Photo_n32(_uploadFile, _downloadFile, value) {
+  return await from_candid_record_n33(_uploadFile, _downloadFile, value);
+}
+function from_candid_PostStatus_n111(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n112(_uploadFile, _downloadFile, value);
+}
+function from_candid_PostType_n113(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n114(_uploadFile, _downloadFile, value);
+}
+function from_candid_Post_n109(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n110(_uploadFile, _downloadFile, value);
+}
+function from_candid_PrivacyLevel_n51(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n52(_uploadFile, _downloadFile, value);
+}
+function from_candid_PrivacyScope_n115(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n116(_uploadFile, _downloadFile, value);
+}
+function from_candid_ProfileClaimStatus_n87(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n28(_uploadFile, _downloadFile, value);
+}
+function from_candid_ProfileClaim_n85(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n86(_uploadFile, _downloadFile, value);
+}
+function from_candid_ProfileRemovalRequest_n89(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n90(_uploadFile, _downloadFile, value);
+}
+function from_candid_ProfileRemovalStatus_n91(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n28(_uploadFile, _downloadFile, value);
+}
+function from_candid_ProposedFinding_n65(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n66(_uploadFile, _downloadFile, value);
+}
+function from_candid_RecipeStatus_n95(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n96(_uploadFile, _downloadFile, value);
+}
+function from_candid_Recipe_n93(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n94(_uploadFile, _downloadFile, value);
+}
+function from_candid_RelationshipAdminError_n45(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n46(_uploadFile, _downloadFile, value);
+}
+function from_candid_RelationshipError_n333(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n334(_uploadFile, _downloadFile, value);
+}
+function from_candid_RelationshipProposal_n98(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n99(_uploadFile, _downloadFile, value);
+}
+function from_candid_RelationshipRequestStatus_n103(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n28(_uploadFile, _downloadFile, value);
+}
+function from_candid_RelationshipRequest_n101(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n102(_uploadFile, _downloadFile, value);
+}
+function from_candid_RelationshipStatus_n41(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n42(_uploadFile, _downloadFile, value);
+}
+function from_candid_RelationshipType_n43(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n44(_uploadFile, _downloadFile, value);
+}
+function from_candid_Relationship_n39(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n40(_uploadFile, _downloadFile, value);
+}
+function from_candid_RemovalError_n350(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n351(_uploadFile, _downloadFile, value);
+}
+function from_candid_RemoveError_n338(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n339(_uploadFile, _downloadFile, value);
+}
+function from_candid_ReportStatus_n237(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n238(_uploadFile, _downloadFile, value);
+}
+function from_candid_Report_n235(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n236(_uploadFile, _downloadFile, value);
+}
+function from_candid_ReportedMessageView_n233(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n234(_uploadFile, _downloadFile, value);
+}
+function from_candid_ResearchAuditEntry_n240(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n241(_uploadFile, _downloadFile, value);
+}
+function from_candid_ResearchError_n177(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n178(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_10_n12(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n13(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_11_n327(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n328(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_12_n325(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n326(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_13_n314(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n315(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_14_n227(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n228(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_15_n225(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n226(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_16_n200(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n201(_uploadFile, _downloadFile, value);
+}
+async function from_candid_Result_17_n196(_uploadFile, _downloadFile, value) {
+  return await from_candid_variant_n197(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_18_n193(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n194(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_19_n191(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n192(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_1_n363(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n364(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_20_n189(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n190(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_21_n179(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n180(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_22_n175(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n176(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_23_n37(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n38(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_24_n139(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n140(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_25_n125(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n126(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_26_n8(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n9(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_2_n117(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n118(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_3_n354(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n355(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_4_n348(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n349(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_5_n344(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n345(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_6_n342(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n343(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_7_n340(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n341(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_8_n336(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n337(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_9_n331(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n332(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result__1_n206(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n207(_uploadFile, _downloadFile, value);
+}
+function from_candid_Result_n373(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n374(_uploadFile, _downloadFile, value);
+}
+function from_candid_ReviewAction_n253(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n254(_uploadFile, _downloadFile, value);
+}
+function from_candid_ReviewItemKind_n250(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n251(_uploadFile, _downloadFile, value);
+}
+function from_candid_ReviewQueueItem_n247(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n248(_uploadFile, _downloadFile, value);
+}
+function from_candid_ReviewQueue_n244(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n245(_uploadFile, _downloadFile, value);
+}
+function from_candid_ReviewStatus_n67(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n68(_uploadFile, _downloadFile, value);
+}
+function from_candid_SourceRecord_n105(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n106(_uploadFile, _downloadFile, value);
+}
+function from_candid_SourceStatus_n60(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n61(_uploadFile, _downloadFile, value);
+}
+function from_candid_SourceType_n75(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n76(_uploadFile, _downloadFile, value);
+}
+async function from_candid_SourceUploadResult_n198(_uploadFile, _downloadFile, value) {
+  return await from_candid_record_n199(_uploadFile, _downloadFile, value);
+}
+function from_candid_StewardAuditEntry_n256(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n257(_uploadFile, _downloadFile, value);
+}
+function from_candid_StewardAuditKind_n258(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n259(_uploadFile, _downloadFile, value);
+}
+function from_candid_StewardClaimError_n141(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n142(_uploadFile, _downloadFile, value);
+}
+function from_candid_StewardError_n18(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n19(_uploadFile, _downloadFile, value);
+}
+function from_candid_StewardRecord_n14(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n15(_uploadFile, _downloadFile, value);
+}
+function from_candid_StewardRoleStatus_n16(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n17(_uploadFile, _downloadFile, value);
+}
+function from_candid_StoryStatus_n27(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n28(_uploadFile, _downloadFile, value);
+}
+function from_candid_Story_n24(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n25(_uploadFile, _downloadFile, value);
+}
+function from_candid_SuccessorDesignation_n202(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n203(_uploadFile, _downloadFile, value);
+}
+function from_candid_SuccessorStatus_n204(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n205(_uploadFile, _downloadFile, value);
+}
+function from_candid_TimelineEventType_n310(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n311(_uploadFile, _downloadFile, value);
+}
+function from_candid_TimelineEvent_n306(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n307(_uploadFile, _downloadFile, value);
+}
+function from_candid_TimelineLinkTarget_n308(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n309(_uploadFile, _downloadFile, value);
+}
+function from_candid_UserRole_n214(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n215(_uploadFile, _downloadFile, value);
+}
+function from_candid_Value_n212(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n213(_uploadFile, _downloadFile, value);
+}
+function from_candid__ImmutableObjectStorageRefillResult_n4(_uploadFile, _downloadFile, value) {
+  return from_candid_record_n5(_uploadFile, _downloadFile, value);
+}
+function from_candid_opt_n100(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_RelationshipRequest_n101(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n104(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_SourceRecord_n105(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n107(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_Story_n24(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n108(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_Post_n109(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n136(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_ClaimPersistenceError_n137(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n164(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n216(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_ConversationView_n217(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n224(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n229(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_PersonProfile_n181(_uploadFile, _downloadFile, value[0]);
+}
+async function from_candid_opt_n231(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : await from_candid_Photo_n32(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n232(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_ReportedMessageView_n233(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n242(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n243(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n249(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_EvidenceLabel_n69(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n26(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n312(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_Mystery_n160(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n313(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_Notification_n287(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n335(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n356(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_MergeConflict_n319(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n357(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_MysteryContribution_n292(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n360(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_Report_n235(_uploadFile, _downloadFile, value[0]);
+}
+async function from_candid_opt_n47(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : await from_candid_ArchiveItem_n48(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n53(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_OralHistorySpeaker_n54(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n56(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n59(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n6(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n64(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_ProposedFinding_n65(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n7(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n77(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n78(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n81(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_NewPersonCandidate_n82(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n84(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_ProfileClaim_n85(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n88(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_ProfileRemovalRequest_n89(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n92(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_Recipe_n93(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n97(_uploadFile, _downloadFile, value) {
+  return value.length === 0 ? null : from_candid_RelationshipProposal_n98(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_record_n102(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
+    submittedDate: value.submittedDate,
+    status: from_candid_RelationshipRequestStatus_n103(_uploadFile, _downloadFile, value.status),
+    reviewedDate: record_opt_to_undefined(from_candid_opt_n77(_uploadFile, _downloadFile, value.reviewedDate)),
+    relatedPersonId: value.relatedPersonId,
+    requestingPersonId: value.requestingPersonId,
+    proposedRelationship: from_candid_RelationshipType_n43(_uploadFile, _downloadFile, value.proposedRelationship),
+    reviewer: record_opt_to_undefined(from_candid_opt_n78(_uploadFile, _downloadFile, value.reviewer))
+  };
+}
+function from_candid_record_n106(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
+    status: from_candid_ReviewStatus_n67(_uploadFile, _downloadFile, value.status),
+    title: value.title,
+    archiveItemId: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.archiveItemId)),
+    createdAt: value.createdAt,
+    description: value.description,
+    sourceType: from_candid_SourceType_n75(_uploadFile, _downloadFile, value.sourceType),
+    updatedAt: value.updatedAt,
+    contributor: value.contributor
+  };
+}
+function from_candid_record_n110(_uploadFile, _downloadFile, value) {
+  return {
+    status: from_candid_PostStatus_n111(_uploadFile, _downloadFile, value.status),
+    authorAccountId: value.authorAccountId,
+    postType: from_candid_PostType_n113(_uploadFile, _downloadFile, value.postType),
+    title: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.title)),
+    body: value.body,
+    createdAt: value.createdAt,
+    tags: value.tags,
+    linkedMediaIds: value.linkedMediaIds,
+    privacyScope: from_candid_PrivacyScope_n115(_uploadFile, _downloadFile, value.privacyScope),
+    authorPersonId: value.authorPersonId,
+    updatedAt: value.updatedAt,
+    relatedPersonIds: value.relatedPersonIds,
+    postId: value.postId
+  };
+}
+function from_candid_record_n128(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
+    createdAt: value.createdAt,
+    authMethods: from_candid_vec_n129(_uploadFile, _downloadFile, value.authMethods)
+  };
+}
+function from_candid_record_n135(_uploadFile, _downloadFile, value) {
+  return {
+    eligible: value.eligible,
+    reason: record_opt_to_undefined(from_candid_opt_n136(_uploadFile, _downloadFile, value.reason))
+  };
+}
+function from_candid_record_n15(_uploadFile, _downloadFile, value) {
+  return {
+    assignedAt: value.assignedAt,
+    assignedBy: value.assignedBy,
+    stewardAccountId: value.stewardAccountId,
+    successorPriority: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.successorPriority)),
+    roleStatus: from_candid_StewardRoleStatus_n16(_uploadFile, _downloadFile, value.roleStatus)
+  };
+}
+function from_candid_record_n161(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
+    status: from_candid_MysteryStatus_n162(_uploadFile, _downloadFile, value.status),
+    title: value.title,
+    relatedMemberIds: value.relatedMemberIds,
+    createdAt: value.createdAt,
+    relatedArchiveItemIds: value.relatedArchiveItemIds,
+    description: value.description,
+    resolution: record_opt_to_undefined(from_candid_opt_n164(_uploadFile, _downloadFile, value.resolution)),
+    updatedAt: value.updatedAt,
+    knownFacts: value.knownFacts,
+    possibilities: value.possibilities,
+    relatedBranchId: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.relatedBranchId)),
+    relatedSourceIds: value.relatedSourceIds,
+    contributor: value.contributor
+  };
+}
+function from_candid_record_n182(_uploadFile, _downloadFile, value) {
+  return {
+    occupation: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.occupation)),
+    privacySettings: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.privacySettings)),
+    nickname: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.nickname)),
+    claimedByUserId: record_opt_to_undefined(from_candid_opt_n78(_uploadFile, _downloadFile, value.claimedByUserId)),
+    birthDate: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.birthDate)),
+    birthInfo: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.birthInfo)),
+    claimStatus: from_candid_ClaimStatus_n183(_uploadFile, _downloadFile, value.claimStatus),
+    livingStatus: from_candid_LivingStatus_n185(_uploadFile, _downloadFile, value.livingStatus),
+    name: value.name,
+    longerStory: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.longerStory)),
+    personId: value.personId,
+    story: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.story)),
+    middleName: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.middleName)),
+    suffix: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.suffix)),
+    preferredName: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.preferredName)),
+    currentLocation: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.currentLocation)),
+    birthplace: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.birthplace)),
+    lastName: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.lastName)),
+    shortBio: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.shortBio)),
+    timeline: record_opt_to_undefined(from_candid_opt_n56(_uploadFile, _downloadFile, value.timeline)),
+    firstName: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.firstName))
+  };
+}
+async function from_candid_record_n199(_uploadFile, _downloadFile, value) {
+  return {
+    source: from_candid_SourceRecord_n105(_uploadFile, _downloadFile, value.source),
+    archiveItem: await from_candid_ArchiveItem_n48(_uploadFile, _downloadFile, value.archiveItem)
+  };
+}
+function from_candid_record_n203(_uploadFile, _downloadFile, value) {
+  return {
+    status: from_candid_SuccessorStatus_n204(_uploadFile, _downloadFile, value.status),
+    assignedAt: value.assignedAt,
+    assignedBy: value.assignedBy,
+    personId: value.personId,
+    priority: value.priority
+  };
+}
+function from_candid_record_n207(_uploadFile, _downloadFile, value) {
+  return {
+    hasMore: value.hasMore,
+    rows: from_candid_vec_n208(_uploadFile, _downloadFile, value.rows)
+  };
+}
+function from_candid_record_n211(_uploadFile, _downloadFile, value) {
+  return {
+    value: from_candid_Value_n212(_uploadFile, _downloadFile, value.value),
+    name: value.name
+  };
+}
+function from_candid_record_n218(_uploadFile, _downloadFile, value) {
+  return {
+    messages: from_candid_vec_n219(_uploadFile, _downloadFile, value.messages),
+    participantPersonIds: value.participantPersonIds,
+    conversationId: value.conversationId,
+    participantDisplayNames: value.participantDisplayNames
+  };
+}
+function from_candid_record_n221(_uploadFile, _downloadFile, value) {
+  return {
+    status: from_candid_MessageStatus_n222(_uploadFile, _downloadFile, value.status),
+    messageId: value.messageId,
+    body: value.body,
+    createdAt: value.createdAt,
+    conversationId: value.conversationId,
+    senderAccountId: value.senderAccountId,
+    senderPersonId: value.senderPersonId,
+    readAt: record_opt_to_undefined(from_candid_opt_n224(_uploadFile, _downloadFile, value.readAt))
+  };
+}
+function from_candid_record_n234(_uploadFile, _downloadFile, value) {
+  return {
+    report: from_candid_Report_n235(_uploadFile, _downloadFile, value.report),
+    message: from_candid_Message_n220(_uploadFile, _downloadFile, value.message)
+  };
+}
+function from_candid_record_n236(_uploadFile, _downloadFile, value) {
+  return {
+    status: from_candid_ReportStatus_n237(_uploadFile, _downloadFile, value.status),
+    reportedMessageId: value.reportedMessageId,
+    createdAt: value.createdAt,
+    reportingAccountId: value.reportingAccountId,
+    reportId: value.reportId,
+    reason: value.reason
+  };
+}
+function from_candid_record_n241(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
+    action: value.action,
+    findingId: record_opt_to_undefined(from_candid_opt_n242(_uploadFile, _downloadFile, value.findingId)),
+    sourceId: record_opt_to_undefined(from_candid_opt_n243(_uploadFile, _downloadFile, value.sourceId)),
+    actorId: value.actorId,
+    summary: value.summary,
+    timestamp: value.timestamp
+  };
+}
+function from_candid_record_n245(_uploadFile, _downloadFile, value) {
+  return {
+    pending: value.pending,
+    conflicting: value.conflicting,
+    approved: value.approved,
+    rejected: value.rejected,
+    needsResearch: value.needsResearch,
+    items: from_candid_vec_n246(_uploadFile, _downloadFile, value.items)
+  };
+}
+function from_candid_record_n248(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
+    provenance: value.provenance,
+    status: from_candid_ReviewStatus_n67(_uploadFile, _downloadFile, value.status),
+    title: value.title,
+    evidenceLabel: record_opt_to_undefined(from_candid_opt_n249(_uploadFile, _downloadFile, value.evidenceLabel)),
+    kind: from_candid_ReviewItemKind_n250(_uploadFile, _downloadFile, value.kind),
+    createdAt: value.createdAt,
+    actions: from_candid_vec_n252(_uploadFile, _downloadFile, value.actions),
+    summary: value.summary,
+    contributor: record_opt_to_undefined(from_candid_opt_n78(_uploadFile, _downloadFile, value.contributor))
+  };
+}
+function from_candid_record_n25(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
+    era: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.era)),
+    status: from_candid_StoryStatus_n27(_uploadFile, _downloadFile, value.status),
+    title: value.title,
+    relatedMemberIds: value.relatedMemberIds,
+    storyText: value.storyText,
+    createdAt: value.createdAt,
+    year: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.year)),
+    relatedArchiveItemIds: value.relatedArchiveItemIds,
+    updatedAt: value.updatedAt,
+    evidenceStatus: from_candid_EvidenceStatus_n29(_uploadFile, _downloadFile, value.evidenceStatus),
+    location: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.location)),
+    contributor: value.contributor
+  };
+}
+function from_candid_record_n257(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
+    field: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.field)),
+    affectedPersonIds: value.affectedPersonIds,
+    proposedValue: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.proposedValue)),
+    stewardNotes: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.stewardNotes)),
+    kind: from_candid_StewardAuditKind_n258(_uploadFile, _downloadFile, value.kind),
+    proposedSourceId: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.proposedSourceId)),
+    actionType: value.actionType,
+    resolution: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.resolution)),
+    existingValue: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.existingValue)),
+    summary: value.summary,
+    personId: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.personId)),
+    timestamp: value.timestamp,
+    actorAccountId: value.actorAccountId,
+    existingSourceId: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.existingSourceId))
+  };
+}
+function from_candid_record_n266(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
+    affectedPersonIds: value.affectedPersonIds,
+    actionType: from_candid_AuditActionType_n267(_uploadFile, _downloadFile, value.actionType),
+    summary: value.summary,
+    timestamp: value.timestamp,
+    actorAccountId: value.actorAccountId
+  };
+}
+function from_candid_record_n274(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
+    field: value.field,
+    status: from_candid_ReviewStatus_n67(_uploadFile, _downloadFile, value.status),
+    evidenceLabel: from_candid_EvidenceLabel_n69(_uploadFile, _downloadFile, value.evidenceLabel),
+    findingId: value.findingId,
+    proposedValue: value.proposedValue,
+    stewardNotes: value.stewardNotes,
+    proposedSourceId: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.proposedSourceId)),
+    personId: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.personId)),
+    canonicalValue: value.canonicalValue,
+    resolvedAt: record_opt_to_undefined(from_candid_opt_n77(_uploadFile, _downloadFile, value.resolvedAt)),
+    resolvedBy: record_opt_to_undefined(from_candid_opt_n78(_uploadFile, _downloadFile, value.resolvedBy)),
+    existingSourceId: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.existingSourceId))
+  };
+}
+function from_candid_record_n277(_uploadFile, _downloadFile, value) {
+  return {
+    field: value.field,
+    status: from_candid_ReviewStatus_n67(_uploadFile, _downloadFile, value.status),
+    proposedValue: value.proposedValue,
+    canonicalValue: value.canonicalValue
+  };
+}
+function from_candid_record_n280(_uploadFile, _downloadFile, value) {
+  return {
+    candidateA: from_candid_DuplicateCandidate_n281(_uploadFile, _downloadFile, value.candidateA),
+    candidateB: from_candid_DuplicateCandidate_n281(_uploadFile, _downloadFile, value.candidateB)
+  };
+}
+function from_candid_record_n282(_uploadFile, _downloadFile, value) {
+  return {
+    deathDate: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.deathDate)),
+    ownerAccount: record_opt_to_undefined(from_candid_opt_n78(_uploadFile, _downloadFile, value.ownerAccount)),
+    birthDate: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.birthDate)),
+    claimStatus: value.claimStatus,
+    name: value.name,
+    archiveLinks: value.archiveLinks,
+    children: value.children,
+    sourceCount: value.sourceCount,
+    personId: value.personId,
+    spouses: value.spouses,
+    photoCount: value.photoCount,
+    timelineCount: value.timelineCount,
+    parents: value.parents
+  };
+}
+function from_candid_record_n288(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
+    notificationType: from_candid_NotificationType_n289(_uploadFile, _downloadFile, value.notificationType),
+    createdAt: value.createdAt,
+    read: value.read,
+    recipient: value.recipient,
+    message: value.message
+  };
+}
+function from_candid_record_n293(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
+    status: from_candid_MysteryContributionStatus_n294(_uploadFile, _downloadFile, value.status),
+    createdAt: value.createdAt,
+    text: value.text,
+    mysteryId: value.mysteryId,
+    reviewedAt: record_opt_to_undefined(from_candid_opt_n77(_uploadFile, _downloadFile, value.reviewedAt)),
+    reviewedBy: record_opt_to_undefined(from_candid_opt_n78(_uploadFile, _downloadFile, value.reviewedBy)),
+    contributionType: from_candid_MysteryContributionType_n295(_uploadFile, _downloadFile, value.contributionType),
+    contributor: value.contributor
+  };
+}
+function from_candid_record_n307(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
+    era: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.era)),
+    title: value.title,
+    year: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.year)),
+    linkTarget: from_candid_TimelineLinkTarget_n308(_uploadFile, _downloadFile, value.linkTarget),
+    description: value.description,
+    evidenceStatus: from_candid_EvidenceStatus_n29(_uploadFile, _downloadFile, value.evidenceStatus),
+    eventType: from_candid_TimelineEventType_n310(_uploadFile, _downloadFile, value.eventType)
+  };
+}
+function from_candid_record_n317(_uploadFile, _downloadFile, value) {
+  return {
+    archivedPersonId: value.archivedPersonId,
+    conflicts: from_candid_vec_n318(_uploadFile, _downloadFile, value.conflicts),
+    canonicalPersonId: value.canonicalPersonId
+  };
+}
+function from_candid_record_n320(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
+    field: value.field,
+    status: from_candid_MergeConflictStatus_n321(_uploadFile, _downloadFile, value.status),
+    alternateValue: value.alternateValue,
+    canonicalValue: value.canonicalValue,
+    resolvedAt: record_opt_to_undefined(from_candid_opt_n77(_uploadFile, _downloadFile, value.resolvedAt)),
+    resolvedBy: record_opt_to_undefined(from_candid_opt_n78(_uploadFile, _downloadFile, value.resolvedBy))
+  };
+}
+async function from_candid_record_n33(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
+    blob: await from_candid_ExternalBlob_n34(_uploadFile, _downloadFile, value.blob),
+    mimeType: value.mimeType,
+    filename: value.filename,
+    uploadedAt: value.uploadedAt,
+    uploadedBy: value.uploadedBy
+  };
+}
+function from_candid_record_n40(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
+    status: from_candid_RelationshipStatus_n41(_uploadFile, _downloadFile, value.status),
+    fromPersonId: value.fromPersonId,
+    toPersonId: value.toPersonId,
+    relationshipType: from_candid_RelationshipType_n43(_uploadFile, _downloadFile, value.relationshipType)
+  };
+}
+async function from_candid_record_n49(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
+    era: value.era,
+    status: from_candid_ArchiveItemStatus_n50(_uploadFile, _downloadFile, value.status),
+    title: value.title,
+    relatedMemberIds: value.relatedMemberIds,
+    blob: await from_candid_ExternalBlob_n34(_uploadFile, _downloadFile, value.blob),
+    createdAt: value.createdAt,
+    tags: value.tags,
+    year: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.year)),
+    description: value.description,
+    privacyLevel: from_candid_PrivacyLevel_n51(_uploadFile, _downloadFile, value.privacyLevel),
+    primarySpeaker: record_opt_to_undefined(from_candid_opt_n53(_uploadFile, _downloadFile, value.primarySpeaker)),
+    extractedNames: record_opt_to_undefined(from_candid_opt_n56(_uploadFile, _downloadFile, value.extractedNames)),
+    itemType: from_candid_ArchiveItemType_n57(_uploadFile, _downloadFile, value.itemType),
+    aiSummary: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.aiSummary)),
+    searchableTranscript: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.searchableTranscript)),
+    relatedBranchId: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.relatedBranchId)),
+    transcript: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.transcript)),
+    chapterMarkers: record_opt_to_undefined(from_candid_opt_n59(_uploadFile, _downloadFile, value.chapterMarkers)),
+    sourceStatus: from_candid_SourceStatus_n60(_uploadFile, _downloadFile, value.sourceStatus),
+    classification: from_candid_ArchiveItemClassification_n62(_uploadFile, _downloadFile, value.classification),
+    contributor: value.contributor
+  };
+}
+function from_candid_record_n5(_uploadFile, _downloadFile, value) {
+  return {
+    success: record_opt_to_undefined(from_candid_opt_n6(_uploadFile, _downloadFile, value.success)),
+    topped_up_amount: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.topped_up_amount))
+  };
+}
+function from_candid_record_n55(_uploadFile, _downloadFile, value) {
+  return {
+    name: value.name,
+    personId: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.personId))
+  };
+}
+function from_candid_record_n66(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
+    status: from_candid_ReviewStatus_n67(_uploadFile, _downloadFile, value.status),
+    title: value.title,
+    evidenceLabel: from_candid_EvidenceLabel_n69(_uploadFile, _downloadFile, value.evidenceLabel),
+    newPersonCandidateId: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.newPersonCandidateId)),
+    content: from_candid_FindingContent_n71(_uploadFile, _downloadFile, value.content),
+    conflictReviewId: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.conflictReviewId)),
+    submittedAt: value.submittedAt,
+    submittedBy: value.submittedBy,
+    sourceId: value.sourceId,
+    reviewedAt: record_opt_to_undefined(from_candid_opt_n77(_uploadFile, _downloadFile, value.reviewedAt)),
+    reviewedBy: record_opt_to_undefined(from_candid_opt_n78(_uploadFile, _downloadFile, value.reviewedBy)),
+    updatedAt: value.updatedAt,
+    personId: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.personId)),
+    findingType: from_candid_FindingType_n79(_uploadFile, _downloadFile, value.findingType)
+  };
+}
+function from_candid_record_n73(_uploadFile, _downloadFile, value) {
+  return {
+    title: value.title,
+    date: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.date)),
+    description: value.description,
+    personId: value.personId
+  };
+}
+function from_candid_record_n74(_uploadFile, _downloadFile, value) {
+  return {
+    title: value.title,
+    archiveItemId: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.archiveItemId)),
+    description: value.description,
+    sourceType: from_candid_SourceType_n75(_uploadFile, _downloadFile, value.sourceType)
+  };
+}
+function from_candid_record_n83(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
+    status: from_candid_ReviewStatus_n67(_uploadFile, _downloadFile, value.status),
+    name: value.name,
+    submittedAt: value.submittedAt,
+    submittedBy: value.submittedBy,
+    sourceId: value.sourceId,
+    reviewedAt: record_opt_to_undefined(from_candid_opt_n77(_uploadFile, _downloadFile, value.reviewedAt)),
+    reviewedBy: record_opt_to_undefined(from_candid_opt_n78(_uploadFile, _downloadFile, value.reviewedBy)),
+    details: value.details
+  };
+}
+function from_candid_record_n86(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
+    submittedDate: value.submittedDate,
+    status: from_candid_ProfileClaimStatus_n87(_uploadFile, _downloadFile, value.status),
+    reviewedDate: record_opt_to_undefined(from_candid_opt_n77(_uploadFile, _downloadFile, value.reviewedDate)),
+    reviewedBy: record_opt_to_undefined(from_candid_opt_n78(_uploadFile, _downloadFile, value.reviewedBy)),
+    personId: value.personId,
+    requestingUserId: value.requestingUserId
+  };
+}
+function from_candid_record_n90(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
+    submittedDate: value.submittedDate,
+    status: from_candid_ProfileRemovalStatus_n91(_uploadFile, _downloadFile, value.status),
+    reviewedDate: record_opt_to_undefined(from_candid_opt_n77(_uploadFile, _downloadFile, value.reviewedDate)),
+    reviewedBy: record_opt_to_undefined(from_candid_opt_n78(_uploadFile, _downloadFile, value.reviewedBy)),
+    personId: value.personId,
+    requestingUserId: value.requestingUserId,
+    reason: value.reason
+  };
+}
+function from_candid_record_n94(_uploadFile, _downloadFile, value) {
+  return {
+    era: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.era)),
+    status: from_candid_RecipeStatus_n95(_uploadFile, _downloadFile, value.status),
+    title: value.title,
+    recipeId: value.recipeId,
+    aiDerivedText: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.aiDerivedText)),
+    createdAt: value.createdAt,
+    tags: value.tags,
+    year: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.year)),
+    contributorAccountId: value.contributorAccountId,
+    privacyLevel: from_candid_PrivacyLevel_n51(_uploadFile, _downloadFile, value.privacyLevel),
+    linkedMediaIds: value.linkedMediaIds,
+    instructions: value.instructions,
+    ocrText: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.ocrText)),
+    familyBranch: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.familyBranch)),
+    familyStory: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.familyStory)),
+    updatedAt: value.updatedAt,
+    evidenceStatus: from_candid_EvidenceStatus_n29(_uploadFile, _downloadFile, value.evidenceStatus),
+    shortDescription: value.shortDescription,
+    extractedIngredients: record_opt_to_undefined(from_candid_opt_n56(_uploadFile, _downloadFile, value.extractedIngredients)),
+    transcript: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.transcript)),
+    location: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.location)),
+    originatingPersonId: value.originatingPersonId,
+    ingredients: value.ingredients,
+    relatedPersonIds: value.relatedPersonIds
+  };
+}
+function from_candid_record_n99(_uploadFile, _downloadFile, value) {
+  return {
+    id: value.id,
+    status: from_candid_ReviewStatus_n67(_uploadFile, _downloadFile, value.status),
+    fromPersonId: value.fromPersonId,
+    submittedAt: value.submittedAt,
+    submittedBy: value.submittedBy,
+    sourceId: value.sourceId,
+    reviewedAt: record_opt_to_undefined(from_candid_opt_n77(_uploadFile, _downloadFile, value.reviewedAt)),
+    reviewedBy: record_opt_to_undefined(from_candid_opt_n78(_uploadFile, _downloadFile, value.reviewedBy)),
+    toPersonId: value.toPersonId,
+    relationshipType: value.relationshipType
+  };
+}
+function from_candid_variant_n11(_uploadFile, _downloadFile, value) {
+  return "FrontendOriginsNotConfigured" in value ? {
+    __kind__: "FrontendOriginsNotConfigured",
+    FrontendOriginsNotConfigured: value.FrontendOriginsNotConfigured
+  } : "MixedSsoSources" in value ? {
+    __kind__: "MixedSsoSources",
+    MixedSsoSources: value.MixedSsoSources
+  } : "Stale" in value ? {
+    __kind__: "Stale",
+    Stale: value.Stale
+  } : "MalformedCandid" in value ? {
+    __kind__: "MalformedCandid",
+    MalformedCandid: value.MalformedCandid
+  } : "AmbiguousAttribute" in value ? {
+    __kind__: "AmbiguousAttribute",
+    AmbiguousAttribute: value.AmbiguousAttribute
+  } : "NoAttributes" in value ? {
+    __kind__: "NoAttributes",
+    NoAttributes: value.NoAttributes
+  } : "UnknownNonce" in value ? {
+    __kind__: "UnknownNonce",
+    UnknownNonce: value.UnknownNonce
+  } : "UntrustedSsoSource" in value ? {
+    __kind__: "UntrustedSsoSource",
+    UntrustedSsoSource: value.UntrustedSsoSource
+  } : "MissingField" in value ? {
+    __kind__: "MissingField",
+    MissingField: value.MissingField
+  } : "FrontendOriginMismatch" in value ? {
+    __kind__: "FrontendOriginMismatch",
+    FrontendOriginMismatch: value.FrontendOriginMismatch
+  } : value;
+}
+function from_candid_variant_n112(_uploadFile, _downloadFile, value) {
+  return "Active" in value ? "Active" : "Archived" in value ? "Archived" : value;
+}
+function from_candid_variant_n114(_uploadFile, _downloadFile, value) {
+  return "Announcement" in value ? "Announcement" : "Recipe" in value ? "Recipe" : "ResearchHistory" in value ? "ResearchHistory" : "FamilyQuestion" in value ? "FamilyQuestion" : "Memorial" in value ? "Memorial" : "General" in value ? "General" : "Other" in value ? "Other" : "ReunionEvent" in value ? "ReunionEvent" : "PhotoIdentification" in value ? "PhotoIdentification" : value;
+}
+function from_candid_variant_n116(_uploadFile, _downloadFile, value) {
+  return "FamilyOnly" in value ? "FamilyOnly" : value;
+}
+function from_candid_variant_n118(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: value.ok
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_ArchiveError_n119(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n120(_uploadFile, _downloadFile, value) {
+  return "NotArchived" in value ? "NotArchived" : "ProfileNotFound" in value ? "ProfileNotFound" : "AlreadyArchived" in value ? "AlreadyArchived" : "NotSignedIn" in value ? "NotSignedIn" : value;
+}
+function from_candid_variant_n126(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: from_candid_Account_n127(_uploadFile, _downloadFile, value.ok)
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_AccountError_n132(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n13(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: from_candid_StewardRecord_n14(_uploadFile, _downloadFile, value.ok)
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_StewardError_n18(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n131(_uploadFile, _downloadFile, value) {
+  return "Google" in value ? "Google" : "Apple" in value ? "Apple" : value;
+}
+function from_candid_variant_n133(_uploadFile, _downloadFile, value) {
+  return "AccountNotFound" in value ? "AccountNotFound" : "NotSignedIn" in value ? "NotSignedIn" : value;
+}
+function from_candid_variant_n138(_uploadFile, _downloadFile, value) {
+  return "AlreadyOwned" in value ? "AlreadyOwned" : "AlreadyPending" in value ? "AlreadyPending" : "ProfileNotFound" in value ? "ProfileNotFound" : "NotSignedIn" in value ? "NotSignedIn" : "ApprovedOwnerExists" in value ? "ApprovedOwnerExists" : value;
+}
+function from_candid_variant_n140(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: value.ok
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_StewardClaimError_n141(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n142(_uploadFile, _downloadFile, value) {
+  return "StewardAlreadyExists" in value ? "StewardAlreadyExists" : "AlreadySteward" in value ? "AlreadySteward" : "NotSignedIn" in value ? "NotSignedIn" : value;
+}
+function from_candid_variant_n163(_uploadFile, _downloadFile, value) {
+  return "Researching" in value ? "Researching" : "Open" in value ? "Open" : "PartiallyResolved" in value ? "PartiallyResolved" : "Resolved" in value ? "Resolved" : value;
+}
+function from_candid_variant_n17(_uploadFile, _downloadFile, value) {
+  return "Active" in value ? "Active" : "Removed" in value ? "Removed" : value;
+}
+function from_candid_variant_n176(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: from_candid_ProposedFinding_n65(_uploadFile, _downloadFile, value.ok)
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_ResearchError_n177(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n178(_uploadFile, _downloadFile, value) {
+  return "invalidState" in value ? {
+    __kind__: "invalidState",
+    invalidState: value.invalidState
+  } : "notAuthorized" in value ? {
+    __kind__: "notAuthorized",
+    notAuthorized: value.notAuthorized
+  } : "notFound" in value ? {
+    __kind__: "notFound",
+    notFound: value.notFound
+  } : value;
+}
+function from_candid_variant_n180(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: from_candid_PersonProfile_n181(_uploadFile, _downloadFile, value.ok)
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_CreateError_n187(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n184(_uploadFile, _downloadFile, value) {
+  return "Unclaimed" in value ? "Unclaimed" : "Claimed" in value ? "Claimed" : value;
+}
+function from_candid_variant_n186(_uploadFile, _downloadFile, value) {
+  return "Living" in value ? "Living" : "Deceased" in value ? "Deceased" : value;
+}
+function from_candid_variant_n188(_uploadFile, _downloadFile, value) {
+  return "AlreadyOwned" in value ? "AlreadyOwned" : "NotSignedIn" in value ? "NotSignedIn" : value;
+}
+function from_candid_variant_n19(_uploadFile, _downloadFile, value) {
+  return "LastSteward" in value ? "LastSteward" : "NotSteward" in value ? "NotSteward" : "AlreadySteward" in value ? "AlreadySteward" : "NotSignedIn" in value ? "NotSignedIn" : "NotApprovedClaimedMember" in value ? "NotApprovedClaimedMember" : "NotDesignated" in value ? "NotDesignated" : value;
+}
+function from_candid_variant_n190(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: from_candid_NewPersonCandidate_n82(_uploadFile, _downloadFile, value.ok)
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_ResearchError_n177(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n192(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: from_candid_RelationshipProposal_n98(_uploadFile, _downloadFile, value.ok)
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_ResearchError_n177(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n194(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: from_candid_SourceRecord_n105(_uploadFile, _downloadFile, value.ok)
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_ResearchError_n177(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+async function from_candid_variant_n197(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: await from_candid_SourceUploadResult_n198(_uploadFile, _downloadFile, value.ok)
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_ResearchError_n177(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n201(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: from_candid_SuccessorDesignation_n202(_uploadFile, _downloadFile, value.ok)
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_StewardError_n18(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n205(_uploadFile, _downloadFile, value) {
+  return "Activated" in value ? "Activated" : "Removed" in value ? "Removed" : "Designated" in value ? "Designated" : value;
+}
+function from_candid_variant_n213(_uploadFile, _downloadFile, value) {
+  return "int" in value ? {
+    __kind__: "int",
+    int: value.int
+  } : "nat" in value ? {
+    __kind__: "nat",
+    nat: value.nat
+  } : "float" in value ? {
+    __kind__: "float",
+    float: value.float
+  } : "bool" in value ? {
+    __kind__: "bool",
+    bool: value.bool
+  } : "null" in value ? {
+    __kind__: "null",
+    null: value.null
+  } : "text" in value ? {
+    __kind__: "text",
+    text: value.text
+  } : value;
+}
+function from_candid_variant_n215(_uploadFile, _downloadFile, value) {
+  return "admin" in value ? "admin" : "user" in value ? "user" : "guest" in value ? "guest" : value;
+}
+function from_candid_variant_n223(_uploadFile, _downloadFile, value) {
+  return "Blocked" in value ? "Blocked" : "Sent" in value ? "Sent" : value;
+}
+function from_candid_variant_n226(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: value.ok
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_AccountError_n132(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n228(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: value.ok
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_AccountError_n132(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n238(_uploadFile, _downloadFile, value) {
+  return "Dismissed" in value ? "Dismissed" : "Reviewed" in value ? "Reviewed" : "Pending" in value ? "Pending" : value;
+}
+function from_candid_variant_n251(_uploadFile, _downloadFile, value) {
+  return "Source" in value ? "Source" : "RelationshipProposal" in value ? "RelationshipProposal" : "ConflictReview" in value ? "ConflictReview" : "NewPersonCandidate" in value ? "NewPersonCandidate" : "Finding" in value ? "Finding" : value;
+}
+function from_candid_variant_n254(_uploadFile, _downloadFile, value) {
+  return "NeedsResearch" in value ? "NeedsResearch" : "Approve" in value ? "Approve" : "Reject" in value ? "Reject" : value;
+}
+function from_candid_variant_n259(_uploadFile, _downloadFile, value) {
+  return "ConflictResolution" in value ? "ConflictResolution" : "Governance" in value ? "Governance" : value;
+}
+function from_candid_variant_n268(_uploadFile, _downloadFile, value) {
+  return "ProfileRemovalRequested" in value ? "ProfileRemovalRequested" : "ClaimRejected" in value ? "ClaimRejected" : "RelationshipTypeCorrected" in value ? "RelationshipTypeCorrected" : "RelationshipRequestPending" in value ? "RelationshipRequestPending" : "StewardPromoted" in value ? "StewardPromoted" : "BoardReplyRemoved" in value ? "BoardReplyRemoved" : "SuccessorActivated" in value ? "SuccessorActivated" : "StewardRemoved" in value ? "StewardRemoved" : "RelationshipRequestApproved" in value ? "RelationshipRequestApproved" : "DuplicateMerged" in value ? "DuplicateMerged" : "ProfilePermanentlyDeleted" in value ? "ProfilePermanentlyDeleted" : "RelationshipRequestRejected" in value ? "RelationshipRequestRejected" : "ProfileArchived" in value ? "ProfileArchived" : "ProfileRestored" in value ? "ProfileRestored" : "BoardPostArchived" in value ? "BoardPostArchived" : "BoardPostRestored" in value ? "BoardPostRestored" : "RelationshipAdded" in value ? "RelationshipAdded" : "RelationshipRemoved" in value ? "RelationshipRemoved" : "ProfileRemovalReviewed" in value ? "ProfileRemovalReviewed" : "ClaimApproved" in value ? "ClaimApproved" : "SuccessorDesignated" in value ? "SuccessorDesignated" : value;
+}
+function from_candid_variant_n28(_uploadFile, _downloadFile, value) {
+  return "Approved" in value ? "Approved" : "Rejected" in value ? "Rejected" : "Pending" in value ? "Pending" : value;
+}
+function from_candid_variant_n290(_uploadFile, _downloadFile, value) {
+  return "ResearchSubmission" in value ? "ResearchSubmission" : "ResearchApproved" in value ? "ResearchApproved" : "ResearchRejected" in value ? "ResearchRejected" : "RelationshipRequested" in value ? "RelationshipRequested" : "BoardMention" in value ? "BoardMention" : "RelationshipReviewed" in value ? "RelationshipReviewed" : "BoardReply" in value ? "BoardReply" : "NewMessage" in value ? "NewMessage" : "ProfileClaimReviewed" in value ? "ProfileClaimReviewed" : "ProfileClaimRequested" in value ? "ProfileClaimRequested" : value;
+}
+function from_candid_variant_n296(_uploadFile, _downloadFile, value) {
+  return "Lead" in value ? "Lead" : "Note" in value ? "Note" : "Memory" in value ? "Memory" : "Source" in value ? "Source" : value;
+}
+function from_candid_variant_n30(_uploadFile, _downloadFile, value) {
+  return "Unresolved" in value ? "Unresolved" : "Documented" in value ? "Documented" : "FamilyHistory" in value ? "FamilyHistory" : "PersonalMemory" in value ? "PersonalMemory" : value;
+}
+function from_candid_variant_n309(_uploadFile, _downloadFile, value) {
+  return "Story" in value ? {
+    __kind__: "Story",
+    Story: value.Story
+  } : "Mystery" in value ? {
+    __kind__: "Mystery",
+    Mystery: value.Mystery
+  } : "Person" in value ? {
+    __kind__: "Person",
+    Person: value.Person
+  } : "ArchiveItem" in value ? {
+    __kind__: "ArchiveItem",
+    ArchiveItem: value.ArchiveItem
+  } : value;
+}
+function from_candid_variant_n311(_uploadFile, _downloadFile, value) {
+  return "MilitaryService" in value ? "MilitaryService" : "Story" in value ? "Story" : "Birth" in value ? "Birth" : "FamilyEvent" in value ? "FamilyEvent" : "Migration" in value ? "Migration" : "Mystery" in value ? "Mystery" : "Death" in value ? "Death" : "PhotoDocument" in value ? "PhotoDocument" : "Marriage" in value ? "Marriage" : "CensusDocument" in value ? "CensusDocument" : "Location" in value ? "Location" : value;
+}
+function from_candid_variant_n315(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: from_candid_MergeResult_n316(_uploadFile, _downloadFile, value.ok)
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_MergeError_n323(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n322(_uploadFile, _downloadFile, value) {
+  return "Resolved" in value ? "Resolved" : "Pending" in value ? "Pending" : value;
+}
+function from_candid_variant_n324(_uploadFile, _downloadFile, value) {
+  return "NotDuplicate" in value ? "NotDuplicate" : "ProfileNotFound" in value ? "ProfileNotFound" : "NotSignedIn" in value ? "NotSignedIn" : "SameProfile" in value ? "SameProfile" : value;
+}
+function from_candid_variant_n326(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: value.ok
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_MergeError_n323(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n328(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: value.ok
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_DeleteError_n329(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n330(_uploadFile, _downloadFile, value) {
+  return "HasOwnershipHistory" in value ? "HasOwnershipHistory" : "ProfileNotFound" in value ? "ProfileNotFound" : "HasMedia" in value ? "HasMedia" : "HasArchiveItems" in value ? "HasArchiveItems" : "NotSignedIn" in value ? "NotSignedIn" : "ConfirmationRequired" in value ? "ConfirmationRequired" : "HasTimeline" in value ? "HasTimeline" : "HasApprovedRelationships" in value ? "HasApprovedRelationships" : value;
+}
+function from_candid_variant_n332(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: from_candid_RelationshipRequest_n101(_uploadFile, _downloadFile, value.ok)
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_RelationshipError_n333(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n334(_uploadFile, _downloadFile, value) {
+  return "DuplicateRequest" in value ? "DuplicateRequest" : "NotSignedIn" in value ? "NotSignedIn" : "PersonNotFound" in value ? "PersonNotFound" : value;
+}
+function from_candid_variant_n337(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: value.ok
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_RemoveError_n338(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n339(_uploadFile, _downloadFile, value) {
+  return "ProfileNotFound" in value ? "ProfileNotFound" : "NotSignedIn" in value ? "NotSignedIn" : value;
+}
+function from_candid_variant_n341(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: value.ok
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_RelationshipAdminError_n45(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n343(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: value.ok
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_StewardError_n18(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n345(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: from_candid_ProfileClaim_n85(_uploadFile, _downloadFile, value.ok)
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_ClaimError_n346(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n347(_uploadFile, _downloadFile, value) {
+  return "AlreadyPending" in value ? "AlreadyPending" : "ProfileNotFound" in value ? "ProfileNotFound" : "AlreadyClaimed" in value ? "AlreadyClaimed" : "NotSignedIn" in value ? "NotSignedIn" : "DeceasedProfile" in value ? "DeceasedProfile" : value;
+}
+function from_candid_variant_n349(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: from_candid_ProfileRemovalRequest_n89(_uploadFile, _downloadFile, value.ok)
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_RemovalError_n350(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n351(_uploadFile, _downloadFile, value) {
+  return "AlreadyPending" in value ? "AlreadyPending" : "ProfileNotFound" in value ? "ProfileNotFound" : "NotSignedIn" in value ? "NotSignedIn" : "NotOwner" in value ? "NotOwner" : "DeceasedProfile" in value ? "DeceasedProfile" : value;
+}
+function from_candid_variant_n355(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: from_candid_ConflictReviewItem_n273(_uploadFile, _downloadFile, value.ok)
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_ResearchError_n177(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n364(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: from_candid_Message_n220(_uploadFile, _downloadFile, value.ok)
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_MessageError_n365(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n366(_uploadFile, _downloadFile, value) {
+  return "ConversationNotFound" in value ? "ConversationNotFound" : "RecipientArchived" in value ? "RecipientArchived" : "NotApprovedMember" in value ? "NotApprovedMember" : "RecipientNotClaimed" in value ? "RecipientNotClaimed" : "NotSignedIn" in value ? "NotSignedIn" : "BlockedByRecipient" in value ? "BlockedByRecipient" : "NotParticipant" in value ? "NotParticipant" : "CannotMessageSelf" in value ? "CannotMessageSelf" : "RecipientNotFound" in value ? "RecipientNotFound" : value;
+}
+function from_candid_variant_n374(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: from_candid_PersonProfile_n181(_uploadFile, _downloadFile, value.ok)
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_EditError_n375(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n376(_uploadFile, _downloadFile, value) {
+  return "ProfileNotFound" in value ? "ProfileNotFound" : "NotSignedIn" in value ? "NotSignedIn" : "NotOwner" in value ? "NotOwner" : "DeceasedProfile" in value ? "DeceasedProfile" : value;
+}
+function from_candid_variant_n38(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: from_candid_Relationship_n39(_uploadFile, _downloadFile, value.ok)
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_RelationshipAdminError_n45(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n42(_uploadFile, _downloadFile, value) {
+  return "Disputed" in value ? "Disputed" : "Confirmed" in value ? "Confirmed" : "Pending" in value ? "Pending" : value;
+}
+function from_candid_variant_n44(_uploadFile, _downloadFile, value) {
+  return "Parent" in value ? "Parent" : "Sibling" in value ? "Sibling" : "SpousePartner" in value ? "SpousePartner" : "Child" in value ? "Child" : value;
+}
+function from_candid_variant_n46(_uploadFile, _downloadFile, value) {
+  return "RelationshipNotFound" in value ? "RelationshipNotFound" : "NotSignedIn" in value ? "NotSignedIn" : "DuplicateRelationship" in value ? "DuplicateRelationship" : "PersonNotFound" in value ? "PersonNotFound" : value;
+}
+function from_candid_variant_n52(_uploadFile, _downloadFile, value) {
+  return "Private" in value ? "Private" : "Public" in value ? "Public" : "FamilyOnly" in value ? "FamilyOnly" : value;
+}
+function from_candid_variant_n58(_uploadFile, _downloadFile, value) {
+  return "Research" in value ? "Research" : "Photo" in value ? "Photo" : "Document" in value ? "Document" : "WorkBusiness" in value ? "WorkBusiness" : "WrittenStoryNote" in value ? "WrittenStoryNote" : "Audio" in value ? "Audio" : "Other" in value ? "Other" : "Video" in value ? "Video" : value;
+}
+function from_candid_variant_n61(_uploadFile, _downloadFile, value) {
+  return "Copy" in value ? "Copy" : "Unverified" in value ? "Unverified" : "Transcribed" in value ? "Transcribed" : "Original" in value ? "Original" : value;
+}
+function from_candid_variant_n63(_uploadFile, _downloadFile, value) {
+  return "OralHistory" in value ? "OralHistory" : "Standard" in value ? "Standard" : value;
+}
+function from_candid_variant_n68(_uploadFile, _downloadFile, value) {
+  return "NeedsResearch" in value ? "NeedsResearch" : "Conflicting" in value ? "Conflicting" : "Approved" in value ? "Approved" : "Rejected" in value ? "Rejected" : "Pending" in value ? "Pending" : value;
+}
+function from_candid_variant_n70(_uploadFile, _downloadFile, value) {
+  return "NeedsResearch" in value ? "NeedsResearch" : "Conflicting" in value ? "Conflicting" : "Hypothesis" in value ? "Hypothesis" : "Documented" in value ? "Documented" : "FamilyHistoryOralHistory" in value ? "FamilyHistoryOralHistory" : "PersonalMemory" in value ? "PersonalMemory" : value;
+}
+function from_candid_variant_n72(_uploadFile, _downloadFile, value) {
+  return "Story" in value ? {
+    __kind__: "Story",
+    Story: value.Story
+  } : "TimelineEvent" in value ? {
+    __kind__: "TimelineEvent",
+    TimelineEvent: from_candid_record_n73(_uploadFile, _downloadFile, value.TimelineEvent)
+  } : "PersonFact" in value ? {
+    __kind__: "PersonFact",
+    PersonFact: value.PersonFact
+  } : "Source" in value ? {
+    __kind__: "Source",
+    Source: from_candid_record_n74(_uploadFile, _downloadFile, value.Source)
+  } : "Mystery" in value ? {
+    __kind__: "Mystery",
+    Mystery: value.Mystery
+  } : "Relationship" in value ? {
+    __kind__: "Relationship",
+    Relationship: value.Relationship
+  } : value;
+}
+function from_candid_variant_n76(_uploadFile, _downloadFile, value) {
+  return "CertificateHeadstoneReference" in value ? "CertificateHeadstoneReference" : "DeedPropertyReference" in value ? "DeedPropertyReference" : "ResearchNotes" in value ? "ResearchNotes" : "EmailThread" in value ? "EmailThread" : "UploadedDocumentImage" in value ? "UploadedDocumentImage" : "CensusCitation" in value ? "CensusCitation" : value;
+}
+function from_candid_variant_n80(_uploadFile, _downloadFile, value) {
+  return "Story" in value ? "Story" : "TimelineEvent" in value ? "TimelineEvent" : "PersonFact" in value ? "PersonFact" : "Source" in value ? "Source" : "Mystery" in value ? "Mystery" : "Relationship" in value ? "Relationship" : value;
+}
+function from_candid_variant_n9(_uploadFile, _downloadFile, value) {
+  return "ok" in value ? {
+    __kind__: "ok",
+    ok: value.ok
+  } : "err" in value ? {
+    __kind__: "err",
+    err: from_candid_Error_n10(_uploadFile, _downloadFile, value.err)
+  } : value;
+}
+function from_candid_variant_n96(_uploadFile, _downloadFile, value) {
+  return "Approved" in value ? "Approved" : "Rejected" in value ? "Rejected" : "Archived" in value ? "Archived" : "Pending" in value ? "Pending" : value;
+}
+function from_candid_vec_n129(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_AuthMethod_n130(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n208(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_vec_n209(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n209(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_Cell_n210(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n219(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_Message_n220(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n230(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_RelationshipRequest_n101(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n239(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_ResearchAuditEntry_n240(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n246(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_ReviewQueueItem_n247(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n252(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_ReviewAction_n253(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n255(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_StewardAuditEntry_n256(_uploadFile, _downloadFile, x2));
+}
+async function from_candid_vec_n260(_uploadFile, _downloadFile, value) {
+  return await Promise.all(value.map(async (x2) => await from_candid_ArchiveItem_n48(_uploadFile, _downloadFile, x2)));
+}
+function from_candid_vec_n261(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_Recipe_n93(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n262(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_Story_n24(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n263(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_PersonProfile_n181(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n264(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_AuditEntry_n265(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n270(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_Post_n109(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n271(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_Relationship_n39(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n272(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_ConflictReviewItem_n273(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n275(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_DisputedFact_n276(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n278(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_DuplicatePair_n279(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n283(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_ProposedFinding_n65(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n284(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_Mystery_n160(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n285(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_NewPersonCandidate_n82(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n286(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_Notification_n287(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n291(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_MysteryContribution_n292(_uploadFile, _downloadFile, x2));
+}
+async function from_candid_vec_n297(_uploadFile, _downloadFile, value) {
+  return await Promise.all(value.map(async (x2) => await from_candid_Photo_n32(_uploadFile, _downloadFile, x2)));
+}
+function from_candid_vec_n298(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_ProfileClaim_n85(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n299(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_ProfileRemovalRequest_n89(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n300(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_RelationshipProposal_n98(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n301(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_Report_n235(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n302(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_SourceRecord_n105(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n303(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_StewardRecord_n14(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n304(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_SuccessorDesignation_n202(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n305(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_TimelineEvent_n306(_uploadFile, _downloadFile, x2));
+}
+function from_candid_vec_n318(_uploadFile, _downloadFile, value) {
+  return value.map((x2) => from_candid_MergeConflict_n319(_uploadFile, _downloadFile, x2));
+}
+function to_candid_ArchiveItemClassification_n156(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n157(_uploadFile, _downloadFile, value);
+}
+function to_candid_ArchiveItemType_n152(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n153(_uploadFile, _downloadFile, value);
+}
+function to_candid_ArchiveSearchFilter_n361(_uploadFile, _downloadFile, value) {
+  return to_candid_record_n362(_uploadFile, _downloadFile, value);
+}
+function to_candid_AuthMethod_n123(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n124(_uploadFile, _downloadFile, value);
+}
+async function to_candid_BoardMediaUpload_n146(_uploadFile, _downloadFile, value) {
+  return await to_candid_record_n147(_uploadFile, _downloadFile, value);
+}
+function to_candid_ConflictResolutionAction_n352(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n353(_uploadFile, _downloadFile, value);
+}
+function to_candid_EvidenceLabel_n165(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n166(_uploadFile, _downloadFile, value);
+}
+function to_candid_EvidenceStatus_n22(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n23(_uploadFile, _downloadFile, value);
+}
+async function to_candid_ExternalBlob_n31(_uploadFile, _downloadFile, value) {
+  return await _uploadFile(value);
+}
+function to_candid_FindingContent_n169(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n170(_uploadFile, _downloadFile, value);
+}
+function to_candid_FindingType_n167(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n168(_uploadFile, _downloadFile, value);
+}
+function to_candid_LivingStatus_n371(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n372(_uploadFile, _downloadFile, value);
+}
+function to_candid_MysteryContributionType_n367(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n368(_uploadFile, _downloadFile, value);
+}
+function to_candid_MysteryStatus_n158(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n159(_uploadFile, _downloadFile, value);
+}
+function to_candid_OralHistorySpeaker_n150(_uploadFile, _downloadFile, value) {
+  return to_candid_record_n151(_uploadFile, _downloadFile, value);
+}
+function to_candid_PostType_n143(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n144(_uploadFile, _downloadFile, value);
+}
+function to_candid_PrivacyLevel_n148(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n149(_uploadFile, _downloadFile, value);
+}
+function to_candid_ProfileEdits_n369(_uploadFile, _downloadFile, value) {
+  return to_candid_record_n370(_uploadFile, _downloadFile, value);
+}
+function to_candid_RelationshipType_n35(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n36(_uploadFile, _downloadFile, value);
+}
+function to_candid_ReportStatus_n358(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n359(_uploadFile, _downloadFile, value);
+}
+function to_candid_SourceStatus_n154(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n155(_uploadFile, _downloadFile, value);
+}
+function to_candid_SourceType_n172(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n173(_uploadFile, _downloadFile, value);
+}
+function to_candid_UserRole_n121(_uploadFile, _downloadFile, value) {
+  return to_candid_variant_n122(_uploadFile, _downloadFile, value);
+}
+function to_candid__ImmutableObjectStorageRefillInformation_n2(_uploadFile, _downloadFile, value) {
+  return to_candid_record_n3(_uploadFile, _downloadFile, value);
+}
+function to_candid_opt_n1(_uploadFile, _downloadFile, value) {
+  return value === null ? candid_none() : candid_some(to_candid__ImmutableObjectStorageRefillInformation_n2(_uploadFile, _downloadFile, value));
+}
+function to_candid_opt_n195(_uploadFile, _downloadFile, value) {
+  return value === null ? candid_none() : candid_some(to_candid_OralHistorySpeaker_n150(_uploadFile, _downloadFile, value));
+}
+function to_candid_opt_n20(_uploadFile, _downloadFile, value) {
+  return value === null ? candid_none() : candid_some(value);
+}
+function to_candid_opt_n21(_uploadFile, _downloadFile, value) {
+  return value === null ? candid_none() : candid_some(value);
+}
+function to_candid_opt_n269(_uploadFile, _downloadFile, value) {
+  return value === null ? candid_none() : candid_some(to_candid_PostType_n143(_uploadFile, _downloadFile, value));
+}
+async function to_candid_record_n147(_uploadFile, _downloadFile, value) {
+  return {
+    era: value.era,
+    title: value.title,
+    relatedMemberIds: value.relatedMemberIds,
+    blob: await to_candid_ExternalBlob_n31(_uploadFile, _downloadFile, value.blob),
+    tags: value.tags,
+    year: value.year ? candid_some(value.year) : candid_none(),
+    description: value.description,
+    privacyLevel: to_candid_PrivacyLevel_n148(_uploadFile, _downloadFile, value.privacyLevel),
+    primarySpeaker: value.primarySpeaker ? candid_some(to_candid_OralHistorySpeaker_n150(_uploadFile, _downloadFile, value.primarySpeaker)) : candid_none(),
+    itemType: to_candid_ArchiveItemType_n152(_uploadFile, _downloadFile, value.itemType),
+    relatedBranchId: value.relatedBranchId ? candid_some(value.relatedBranchId) : candid_none(),
+    sourceStatus: to_candid_SourceStatus_n154(_uploadFile, _downloadFile, value.sourceStatus),
+    classification: to_candid_ArchiveItemClassification_n156(_uploadFile, _downloadFile, value.classification)
+  };
+}
+function to_candid_record_n151(_uploadFile, _downloadFile, value) {
+  return {
+    name: value.name,
+    personId: value.personId ? candid_some(value.personId) : candid_none()
+  };
+}
+function to_candid_record_n171(_uploadFile, _downloadFile, value) {
+  return {
+    title: value.title,
+    archiveItemId: value.archiveItemId ? candid_some(value.archiveItemId) : candid_none(),
+    description: value.description,
+    sourceType: to_candid_SourceType_n172(_uploadFile, _downloadFile, value.sourceType)
+  };
+}
+function to_candid_record_n174(_uploadFile, _downloadFile, value) {
+  return {
+    title: value.title,
+    date: value.date ? candid_some(value.date) : candid_none(),
+    description: value.description,
+    personId: value.personId
+  };
+}
+function to_candid_record_n3(_uploadFile, _downloadFile, value) {
+  return {
+    proposed_top_up_amount: value.proposed_top_up_amount ? candid_some(value.proposed_top_up_amount) : candid_none()
+  };
+}
+function to_candid_record_n362(_uploadFile, _downloadFile, value) {
+  return {
+    era: value.era ? candid_some(value.era) : candid_none(),
+    relatedMemberId: value.relatedMemberId ? candid_some(value.relatedMemberId) : candid_none(),
+    tags: value.tags,
+    searchTerm: value.searchTerm ? candid_some(value.searchTerm) : candid_none(),
+    itemType: value.itemType ? candid_some(to_candid_ArchiveItemType_n152(_uploadFile, _downloadFile, value.itemType)) : candid_none()
+  };
+}
+function to_candid_record_n370(_uploadFile, _downloadFile, value) {
+  return {
+    occupation: value.occupation ? candid_some(value.occupation) : candid_none(),
+    privacySettings: value.privacySettings ? candid_some(value.privacySettings) : candid_none(),
+    nickname: value.nickname ? candid_some(value.nickname) : candid_none(),
+    birthDate: value.birthDate ? candid_some(value.birthDate) : candid_none(),
+    birthInfo: value.birthInfo ? candid_some(value.birthInfo) : candid_none(),
+    livingStatus: value.livingStatus ? candid_some(to_candid_LivingStatus_n371(_uploadFile, _downloadFile, value.livingStatus)) : candid_none(),
+    longerStory: value.longerStory ? candid_some(value.longerStory) : candid_none(),
+    story: value.story ? candid_some(value.story) : candid_none(),
+    middleName: value.middleName ? candid_some(value.middleName) : candid_none(),
+    suffix: value.suffix ? candid_some(value.suffix) : candid_none(),
+    preferredName: value.preferredName ? candid_some(value.preferredName) : candid_none(),
+    currentLocation: value.currentLocation ? candid_some(value.currentLocation) : candid_none(),
+    birthplace: value.birthplace ? candid_some(value.birthplace) : candid_none(),
+    lastName: value.lastName ? candid_some(value.lastName) : candid_none(),
+    shortBio: value.shortBio ? candid_some(value.shortBio) : candid_none(),
+    timeline: value.timeline ? candid_some(value.timeline) : candid_none(),
+    firstName: value.firstName ? candid_some(value.firstName) : candid_none()
+  };
+}
+function to_candid_variant_n122(_uploadFile, _downloadFile, value) {
+  return value == "admin" ? {
+    admin: null
+  } : value == "user" ? {
+    user: null
+  } : value == "guest" ? {
+    guest: null
+  } : value;
+}
+function to_candid_variant_n124(_uploadFile, _downloadFile, value) {
+  return value == "Google" ? {
+    Google: null
+  } : value == "Apple" ? {
+    Apple: null
+  } : value;
+}
+function to_candid_variant_n144(_uploadFile, _downloadFile, value) {
+  return value == "Announcement" ? {
+    Announcement: null
+  } : value == "Recipe" ? {
+    Recipe: null
+  } : value == "ResearchHistory" ? {
+    ResearchHistory: null
+  } : value == "FamilyQuestion" ? {
+    FamilyQuestion: null
+  } : value == "Memorial" ? {
+    Memorial: null
+  } : value == "General" ? {
+    General: null
+  } : value == "Other" ? {
+    Other: null
+  } : value == "ReunionEvent" ? {
+    ReunionEvent: null
+  } : value == "PhotoIdentification" ? {
+    PhotoIdentification: null
+  } : value;
+}
+function to_candid_variant_n149(_uploadFile, _downloadFile, value) {
+  return value == "Private" ? {
+    Private: null
+  } : value == "Public" ? {
+    Public: null
+  } : value == "FamilyOnly" ? {
+    FamilyOnly: null
+  } : value;
+}
+function to_candid_variant_n153(_uploadFile, _downloadFile, value) {
+  return value == "Research" ? {
+    Research: null
+  } : value == "Photo" ? {
+    Photo: null
+  } : value == "Document" ? {
+    Document: null
+  } : value == "WorkBusiness" ? {
+    WorkBusiness: null
+  } : value == "WrittenStoryNote" ? {
+    WrittenStoryNote: null
+  } : value == "Audio" ? {
+    Audio: null
+  } : value == "Other" ? {
+    Other: null
+  } : value == "Video" ? {
+    Video: null
+  } : value;
+}
+function to_candid_variant_n155(_uploadFile, _downloadFile, value) {
+  return value == "Copy" ? {
+    Copy: null
+  } : value == "Unverified" ? {
+    Unverified: null
+  } : value == "Transcribed" ? {
+    Transcribed: null
+  } : value == "Original" ? {
+    Original: null
+  } : value;
+}
+function to_candid_variant_n157(_uploadFile, _downloadFile, value) {
+  return value == "OralHistory" ? {
+    OralHistory: null
+  } : value == "Standard" ? {
+    Standard: null
+  } : value;
+}
+function to_candid_variant_n159(_uploadFile, _downloadFile, value) {
+  return value == "Researching" ? {
+    Researching: null
+  } : value == "Open" ? {
+    Open: null
+  } : value == "PartiallyResolved" ? {
+    PartiallyResolved: null
+  } : value == "Resolved" ? {
+    Resolved: null
+  } : value;
+}
+function to_candid_variant_n166(_uploadFile, _downloadFile, value) {
+  return value == "NeedsResearch" ? {
+    NeedsResearch: null
+  } : value == "Conflicting" ? {
+    Conflicting: null
+  } : value == "Hypothesis" ? {
+    Hypothesis: null
+  } : value == "Documented" ? {
+    Documented: null
+  } : value == "FamilyHistoryOralHistory" ? {
+    FamilyHistoryOralHistory: null
+  } : value == "PersonalMemory" ? {
+    PersonalMemory: null
+  } : value;
+}
+function to_candid_variant_n168(_uploadFile, _downloadFile, value) {
+  return value == "Story" ? {
+    Story: null
+  } : value == "TimelineEvent" ? {
+    TimelineEvent: null
+  } : value == "PersonFact" ? {
+    PersonFact: null
+  } : value == "Source" ? {
+    Source: null
+  } : value == "Mystery" ? {
+    Mystery: null
+  } : value == "Relationship" ? {
+    Relationship: null
+  } : value;
+}
+function to_candid_variant_n170(_uploadFile, _downloadFile, value) {
+  return value.__kind__ === "Story" ? {
+    Story: value.Story
+  } : value.__kind__ === "TimelineEvent" ? {
+    TimelineEvent: to_candid_record_n174(_uploadFile, _downloadFile, value.TimelineEvent)
+  } : value.__kind__ === "PersonFact" ? {
+    PersonFact: value.PersonFact
+  } : value.__kind__ === "Source" ? {
+    Source: to_candid_record_n171(_uploadFile, _downloadFile, value.Source)
+  } : value.__kind__ === "Mystery" ? {
+    Mystery: value.Mystery
+  } : value.__kind__ === "Relationship" ? {
+    Relationship: value.Relationship
+  } : value;
+}
+function to_candid_variant_n173(_uploadFile, _downloadFile, value) {
+  return value == "CertificateHeadstoneReference" ? {
+    CertificateHeadstoneReference: null
+  } : value == "DeedPropertyReference" ? {
+    DeedPropertyReference: null
+  } : value == "ResearchNotes" ? {
+    ResearchNotes: null
+  } : value == "EmailThread" ? {
+    EmailThread: null
+  } : value == "UploadedDocumentImage" ? {
+    UploadedDocumentImage: null
+  } : value == "CensusCitation" ? {
+    CensusCitation: null
+  } : value;
+}
+function to_candid_variant_n23(_uploadFile, _downloadFile, value) {
+  return value == "Unresolved" ? {
+    Unresolved: null
+  } : value == "Documented" ? {
+    Documented: null
+  } : value == "FamilyHistory" ? {
+    FamilyHistory: null
+  } : value == "PersonalMemory" ? {
+    PersonalMemory: null
+  } : value;
+}
+function to_candid_variant_n353(_uploadFile, _downloadFile, value) {
+  return value == "NeedsResearch" ? {
+    NeedsResearch: null
+  } : value == "PreserveBoth" ? {
+    PreserveBoth: null
+  } : value == "ReplaceExisting" ? {
+    ReplaceExisting: null
+  } : value == "KeepExisting" ? {
+    KeepExisting: null
+  } : value;
+}
+function to_candid_variant_n359(_uploadFile, _downloadFile, value) {
+  return value == "Dismissed" ? {
+    Dismissed: null
+  } : value == "Reviewed" ? {
+    Reviewed: null
+  } : value == "Pending" ? {
+    Pending: null
+  } : value;
+}
+function to_candid_variant_n36(_uploadFile, _downloadFile, value) {
+  return value == "Parent" ? {
+    Parent: null
+  } : value == "Sibling" ? {
+    Sibling: null
+  } : value == "SpousePartner" ? {
+    SpousePartner: null
+  } : value == "Child" ? {
+    Child: null
+  } : value;
+}
+function to_candid_variant_n368(_uploadFile, _downloadFile, value) {
+  return value == "Lead" ? {
+    Lead: null
+  } : value == "Note" ? {
+    Note: null
+  } : value == "Memory" ? {
+    Memory: null
+  } : value == "Source" ? {
+    Source: null
+  } : value;
+}
+function to_candid_variant_n372(_uploadFile, _downloadFile, value) {
+  return value == "Living" ? {
+    Living: null
+  } : value == "Deceased" ? {
+    Deceased: null
+  } : value;
+}
+async function to_candid_vec_n145(_uploadFile, _downloadFile, value) {
+  return await Promise.all(value.map(async (x2) => await to_candid_BoardMediaUpload_n146(_uploadFile, _downloadFile, x2)));
+}
+function createActor(canisterId, _uploadFile, _downloadFile, options = {}) {
+  const agent = options.agent || HttpAgent.createSync({
+    ...options.agentOptions
+  });
+  if (options.agent && options.agentOptions) {
+    console.warn("Detected both agent and agentOptions passed to createActor. Ignoring agentOptions and proceeding with the provided agent.");
+  }
+  const actor = Actor.createActor(idlFactory, {
+    agent,
+    canisterId,
+    ...options.actorOptions
+  });
+  return new Backend(actor, _uploadFile, _downloadFile, options.processError);
+}
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const toKebabCase = (string) => string.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
+const toCamelCase = (string) => string.replace(
+  /^([A-Z])|[\s-_]+(\w)/g,
+  (match, p1, p2) => p2 ? p2.toUpperCase() : p1.toLowerCase()
+);
+const toPascalCase = (string) => {
+  const camelCase = toCamelCase(string);
+  return camelCase.charAt(0).toUpperCase() + camelCase.slice(1);
+};
+const mergeClasses = (...classes) => classes.filter((className, index2, array) => {
+  return Boolean(className) && className.trim() !== "" && array.indexOf(className) === index2;
+}).join(" ").trim();
+const hasA11yProp = (props) => {
+  for (const prop in props) {
+    if (prop.startsWith("aria-") || prop === "role" || prop === "title") {
+      return true;
+    }
+  }
+};
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+var defaultAttributes = {
+  xmlns: "http://www.w3.org/2000/svg",
+  width: 24,
+  height: 24,
+  viewBox: "0 0 24 24",
+  fill: "none",
+  stroke: "currentColor",
+  strokeWidth: 2,
+  strokeLinecap: "round",
+  strokeLinejoin: "round"
+};
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const Icon = reactExports.forwardRef(
+  ({
+    color: color2 = "currentColor",
+    size = 24,
+    strokeWidth = 2,
+    absoluteStrokeWidth,
+    className = "",
+    children,
+    iconNode,
+    ...rest
+  }, ref) => reactExports.createElement(
+    "svg",
+    {
+      ref,
+      ...defaultAttributes,
+      width: size,
+      height: size,
+      stroke: color2,
+      strokeWidth: absoluteStrokeWidth ? Number(strokeWidth) * 24 / Number(size) : strokeWidth,
+      className: mergeClasses("lucide", className),
+      ...!children && !hasA11yProp(rest) && { "aria-hidden": "true" },
+      ...rest
+    },
+    [
+      ...iconNode.map(([tag, attrs]) => reactExports.createElement(tag, attrs)),
+      ...Array.isArray(children) ? children : [children]
+    ]
+  )
+);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const createLucideIcon = (iconName, iconNode) => {
+  const Component2 = reactExports.forwardRef(
+    ({ className, ...props }, ref) => reactExports.createElement(Icon, {
+      ref,
+      iconNode,
+      className: mergeClasses(
+        `lucide-${toKebabCase(toPascalCase(iconName))}`,
+        `lucide-${iconName}`,
+        className
+      ),
+      ...props
+    })
+  );
+  Component2.displayName = toPascalCase(iconName);
+  return Component2;
+};
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$1k = [
+  ["rect", { width: "20", height: "5", x: "2", y: "3", rx: "1", key: "1wp1u1" }],
+  ["path", { d: "M4 8v11a2 2 0 0 0 2 2h2", key: "tvwodi" }],
+  ["path", { d: "M20 8v11a2 2 0 0 1-2 2h-2", key: "1gkqxj" }],
+  ["path", { d: "m9 15 3-3 3 3", key: "1pd0qc" }],
+  ["path", { d: "M12 12v9", key: "192myk" }]
+];
+const ArchiveRestore = createLucideIcon("archive-restore", __iconNode$1k);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$1j = [
+  ["rect", { width: "20", height: "5", x: "2", y: "3", rx: "1", key: "1wp1u1" }],
+  ["path", { d: "M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8", key: "1s80jp" }],
+  ["path", { d: "M10 12h4", key: "a56b0p" }]
+];
+const Archive = createLucideIcon("archive", __iconNode$1j);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$1i = [
+  ["path", { d: "m12 19-7-7 7-7", key: "1l729n" }],
+  ["path", { d: "M19 12H5", key: "x3x0zl" }]
+];
+const ArrowLeft = createLucideIcon("arrow-left", __iconNode$1i);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$1h = [
+  ["path", { d: "M5 12h14", key: "1ays0h" }],
+  ["path", { d: "m12 5 7 7-7 7", key: "xquz4c" }]
+];
+const ArrowRight = createLucideIcon("arrow-right", __iconNode$1h);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$1g = [
+  ["path", { d: "M2 10v3", key: "1fnikh" }],
+  ["path", { d: "M6 6v11", key: "11sgs0" }],
+  ["path", { d: "M10 3v18", key: "yhl04a" }],
+  ["path", { d: "M14 8v7", key: "3a1oy3" }],
+  ["path", { d: "M18 5v13", key: "123xd1" }],
+  ["path", { d: "M22 10v3", key: "154ddg" }]
+];
+const AudioLines = createLucideIcon("audio-lines", __iconNode$1g);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$1f = [
+  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
+  ["path", { d: "m4.9 4.9 14.2 14.2", key: "1m5liu" }]
+];
+const Ban = createLucideIcon("ban", __iconNode$1f);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$1e = [
+  ["path", { d: "M10.268 21a2 2 0 0 0 3.464 0", key: "vwvbt9" }],
+  [
+    "path",
+    {
+      d: "M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326",
+      key: "11g9vi"
+    }
+  ]
+];
+const Bell = createLucideIcon("bell", __iconNode$1e);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$1d = [
+  ["path", { d: "M12 7v14", key: "1akyts" }],
+  [
+    "path",
+    {
+      d: "M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z",
+      key: "ruj8y"
+    }
+  ]
+];
+const BookOpen = createLucideIcon("book-open", __iconNode$1d);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$1c = [
+  ["path", { d: "M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16", key: "jecpp" }],
+  ["rect", { width: "20", height: "14", x: "2", y: "6", rx: "2", key: "i6l2r4" }]
+];
+const Briefcase = createLucideIcon("briefcase", __iconNode$1c);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$1b = [
+  ["path", { d: "M8 2v4", key: "1cmpym" }],
+  ["path", { d: "M16 2v4", key: "4m81vk" }],
+  ["rect", { width: "18", height: "18", x: "3", y: "4", rx: "2", key: "1hopcy" }],
+  ["path", { d: "M3 10h18", key: "8toen8" }],
+  ["path", { d: "M8 14h.01", key: "6423bh" }],
+  ["path", { d: "M12 14h.01", key: "1etili" }],
+  ["path", { d: "M16 14h.01", key: "1gbofw" }],
+  ["path", { d: "M8 18h.01", key: "lrp35t" }],
+  ["path", { d: "M12 18h.01", key: "mhygvu" }],
+  ["path", { d: "M16 18h.01", key: "kzsmim" }]
+];
+const CalendarDays = createLucideIcon("calendar-days", __iconNode$1b);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$1a = [
+  [
+    "path",
+    {
+      d: "M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z",
+      key: "1tc9qg"
+    }
+  ],
+  ["circle", { cx: "12", cy: "13", r: "3", key: "1vg3eu" }]
+];
+const Camera = createLucideIcon("camera", __iconNode$1a);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$19 = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
+const Check = createLucideIcon("check", __iconNode$19);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$18 = [
+  [
+    "path",
+    {
+      d: "M17 21a1 1 0 0 0 1-1v-5.35c0-.457.316-.844.727-1.041a4 4 0 0 0-2.134-7.589 5 5 0 0 0-9.186 0 4 4 0 0 0-2.134 7.588c.411.198.727.585.727 1.041V20a1 1 0 0 0 1 1Z",
+      key: "1qvrer"
+    }
+  ],
+  ["path", { d: "M6 17h12", key: "1jwigz" }]
+];
+const ChefHat = createLucideIcon("chef-hat", __iconNode$18);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$17 = [["path", { d: "m6 9 6 6 6-6", key: "qrunsl" }]];
+const ChevronDown = createLucideIcon("chevron-down", __iconNode$17);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$16 = [["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]];
+const ChevronRight = createLucideIcon("chevron-right", __iconNode$16);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$15 = [
+  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
+  ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
+];
+const CircleCheck = createLucideIcon("circle-check", __iconNode$15);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$14 = [
+  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
+  ["circle", { cx: "12", cy: "10", r: "3", key: "ilqhr7" }],
+  ["path", { d: "M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662", key: "154egf" }]
+];
+const CircleUser = createLucideIcon("circle-user", __iconNode$14);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$13 = [["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }]];
+const Circle = createLucideIcon("circle", __iconNode$13);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$12 = [
+  [
+    "path",
+    { d: "M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3Z", key: "1tn4o7" }
+  ],
+  ["path", { d: "m6.2 5.3 3.1 3.9", key: "iuk76l" }],
+  ["path", { d: "m12.4 3.4 3.1 4", key: "6hsd6n" }],
+  ["path", { d: "M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z", key: "ltgou9" }]
+];
+const Clapperboard = createLucideIcon("clapperboard", __iconNode$12);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$11 = [
+  ["rect", { width: "8", height: "4", x: "8", y: "2", rx: "1", ry: "1", key: "tgr4d6" }],
+  [
+    "path",
+    {
+      d: "M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2",
+      key: "116196"
+    }
+  ],
+  ["path", { d: "m9 14 2 2 4-4", key: "df797q" }]
+];
+const ClipboardCheck = createLucideIcon("clipboard-check", __iconNode$11);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$10 = [
+  ["rect", { width: "8", height: "4", x: "8", y: "2", rx: "1", ry: "1", key: "tgr4d6" }],
+  [
+    "path",
+    {
+      d: "M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2",
+      key: "116196"
+    }
+  ],
+  ["path", { d: "M12 11h4", key: "1jrz19" }],
+  ["path", { d: "M12 16h4", key: "n85exb" }],
+  ["path", { d: "M8 11h.01", key: "1dfujw" }],
+  ["path", { d: "M8 16h.01", key: "18s6g9" }]
+];
+const ClipboardList = createLucideIcon("clipboard-list", __iconNode$10);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$$ = [
+  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
+  ["polyline", { points: "12 6 12 12 16.5 12", key: "1aq6pp" }]
+];
+const Clock3 = createLucideIcon("clock-3", __iconNode$$);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$_ = [
+  [
+    "path",
+    {
+      d: "M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z",
+      key: "1vdc57"
+    }
+  ],
+  ["path", { d: "M5 21h14", key: "11awu3" }]
+];
+const Crown = createLucideIcon("crown", __iconNode$_);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$Z = [
+  ["path", { d: "M12 15V3", key: "m9g1x1" }],
+  ["path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4", key: "ih7n3h" }],
+  ["path", { d: "m7 10 5 5 5-5", key: "brsn70" }]
+];
+const Download = createLucideIcon("download", __iconNode$Z);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$Y = [
+  ["circle", { cx: "12", cy: "12", r: "1", key: "41hilf" }],
+  ["circle", { cx: "19", cy: "12", r: "1", key: "1wjl8i" }],
+  ["circle", { cx: "5", cy: "12", r: "1", key: "1pcz8c" }]
+];
+const Ellipsis = createLucideIcon("ellipsis", __iconNode$Y);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$X = [
+  [
+    "path",
+    {
+      d: "M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49",
+      key: "ct8e1f"
+    }
+  ],
+  ["path", { d: "M14.084 14.158a3 3 0 0 1-4.242-4.242", key: "151rxh" }],
+  [
+    "path",
+    {
+      d: "M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143",
+      key: "13bj9a"
+    }
+  ],
+  ["path", { d: "m2 2 20 20", key: "1ooewy" }]
+];
+const EyeOff = createLucideIcon("eye-off", __iconNode$X);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$W = [
+  [
+    "path",
+    {
+      d: "M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0",
+      key: "1nclc0"
+    }
+  ],
+  ["circle", { cx: "12", cy: "12", r: "3", key: "1v7zrd" }]
+];
+const Eye = createLucideIcon("eye", __iconNode$W);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$V = [
+  ["path", { d: "M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z", key: "1rqfz7" }],
+  ["path", { d: "M14 2v4a2 2 0 0 0 2 2h4", key: "tnqrlb" }],
+  ["path", { d: "M10 9H8", key: "b1mrlr" }],
+  ["path", { d: "M16 13H8", key: "t4e002" }],
+  ["path", { d: "M16 17H8", key: "z1uh3a" }]
+];
+const FileText = createLucideIcon("file-text", __iconNode$V);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$U = [
+  ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }],
+  ["path", { d: "M7 3v18", key: "bbkbws" }],
+  ["path", { d: "M3 7.5h4", key: "zfgn84" }],
+  ["path", { d: "M3 12h18", key: "1i2n21" }],
+  ["path", { d: "M3 16.5h4", key: "1230mu" }],
+  ["path", { d: "M17 3v18", key: "in4fa5" }],
+  ["path", { d: "M17 7.5h4", key: "myr1c1" }],
+  ["path", { d: "M17 16.5h4", key: "go4c1d" }]
+];
+const Film = createLucideIcon("film", __iconNode$U);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$T = [
+  ["path", { d: "M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z", key: "i9b6wo" }],
+  ["line", { x1: "4", x2: "4", y1: "22", y2: "15", key: "1cm3nv" }]
+];
+const Flag = createLucideIcon("flag", __iconNode$T);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$S = [
+  ["circle", { cx: "15", cy: "19", r: "2", key: "u2pros" }],
+  [
+    "path",
+    {
+      d: "M20.9 19.8A2 2 0 0 0 22 18V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h5.1",
+      key: "1jj40k"
+    }
+  ],
+  ["path", { d: "M15 11v-1", key: "cntcp" }],
+  ["path", { d: "M15 17v-2", key: "1279jj" }]
+];
+const FolderArchive = createLucideIcon("folder-archive", __iconNode$S);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$R = [
+  ["line", { x1: "6", x2: "6", y1: "3", y2: "15", key: "17qcm7" }],
+  ["circle", { cx: "18", cy: "6", r: "3", key: "1h7g24" }],
+  ["circle", { cx: "6", cy: "18", r: "3", key: "fqmcym" }],
+  ["path", { d: "M18 9a9 9 0 0 1-9 9", key: "n2h4wq" }]
+];
+const GitBranch = createLucideIcon("git-branch", __iconNode$R);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$Q = [
+  ["circle", { cx: "18", cy: "18", r: "3", key: "1xkwt0" }],
+  ["circle", { cx: "6", cy: "6", r: "3", key: "1lh9wr" }],
+  ["path", { d: "M6 21V9a9 9 0 0 0 9 9", key: "7kw0sc" }]
+];
+const GitMerge = createLucideIcon("git-merge", __iconNode$Q);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$P = [
+  ["path", { d: "M16 5h6", key: "1vod17" }],
+  ["path", { d: "M19 2v6", key: "4bpg5p" }],
+  ["path", { d: "M21 11.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7.5", key: "1ue2ih" }],
+  ["path", { d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21", key: "1xmnt7" }],
+  ["circle", { cx: "9", cy: "9", r: "2", key: "af1f0g" }]
+];
+const ImagePlus = createLucideIcon("image-plus", __iconNode$P);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$O = [
+  ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", ry: "2", key: "1m3agn" }],
+  ["circle", { cx: "9", cy: "9", r: "2", key: "af1f0g" }],
+  ["path", { d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21", key: "1xmnt7" }]
+];
+const Image = createLucideIcon("image", __iconNode$O);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$N = [
+  ["polyline", { points: "22 12 16 12 14 15 10 15 8 12 2 12", key: "o97t9d" }],
+  [
+    "path",
+    {
+      d: "M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z",
+      key: "oot6mr"
+    }
+  ]
+];
+const Inbox = createLucideIcon("inbox", __iconNode$N);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$M = [
+  ["path", { d: "M10 18v-7", key: "wt116b" }],
+  [
+    "path",
+    {
+      d: "M11.12 2.198a2 2 0 0 1 1.76.006l7.866 3.847c.476.233.31.949-.22.949H3.474c-.53 0-.695-.716-.22-.949z",
+      key: "1m329m"
+    }
+  ],
+  ["path", { d: "M14 18v-7", key: "vav6t3" }],
+  ["path", { d: "M18 18v-7", key: "aexdmj" }],
+  ["path", { d: "M3 22h18", key: "8prr45" }],
+  ["path", { d: "M6 18v-7", key: "1ivflk" }]
+];
+const Landmark = createLucideIcon("landmark", __iconNode$M);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$L = [
+  ["rect", { width: "8", height: "18", x: "3", y: "3", rx: "1", key: "oynpb5" }],
+  ["path", { d: "M7 3v18", key: "bbkbws" }],
+  [
+    "path",
+    {
+      d: "M20.4 18.9c.2.5-.1 1.1-.6 1.3l-1.9.7c-.5.2-1.1-.1-1.3-.6L11.1 5.1c-.2-.5.1-1.1.6-1.3l1.9-.7c.5-.2 1.1.1 1.3.6Z",
+      key: "1qboyk"
+    }
+  ]
+];
+const LibraryBig = createLucideIcon("library-big", __iconNode$L);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$K = [
+  [
+    "path",
+    {
+      d: "M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5",
+      key: "1gvzjb"
+    }
+  ],
+  ["path", { d: "M9 18h6", key: "x1upvd" }],
+  ["path", { d: "M10 22h4", key: "ceow96" }]
+];
+const Lightbulb = createLucideIcon("lightbulb", __iconNode$K);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$J = [
+  ["path", { d: "M9 17H7A5 5 0 0 1 7 7h2", key: "8i5ue5" }],
+  ["path", { d: "M15 7h2a5 5 0 1 1 0 10h-2", key: "1b9ql8" }],
+  ["line", { x1: "8", x2: "16", y1: "12", y2: "12", key: "1jonct" }]
+];
+const Link2 = createLucideIcon("link-2", __iconNode$J);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$I = [["path", { d: "M21 12a9 9 0 1 1-6.219-8.56", key: "13zald" }]];
+const LoaderCircle = createLucideIcon("loader-circle", __iconNode$I);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$H = [
+  ["rect", { width: "18", height: "11", x: "3", y: "11", rx: "2", ry: "2", key: "1w4ew1" }],
+  ["path", { d: "M7 11V7a5 5 0 0 1 10 0v4", key: "fwvmzm" }]
+];
+const Lock = createLucideIcon("lock", __iconNode$H);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$G = [
+  ["path", { d: "m10 17 5-5-5-5", key: "1bsop3" }],
+  ["path", { d: "M15 12H3", key: "6jk70r" }],
+  ["path", { d: "M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4", key: "u53s6r" }]
+];
+const LogIn = createLucideIcon("log-in", __iconNode$G);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$F = [
+  ["path", { d: "m16 17 5-5-5-5", key: "1bji2h" }],
+  ["path", { d: "M21 12H9", key: "dn1m92" }],
+  ["path", { d: "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4", key: "1uf3rs" }]
+];
+const LogOut = createLucideIcon("log-out", __iconNode$F);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$E = [
+  ["path", { d: "m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7", key: "132q7q" }],
+  ["rect", { x: "2", y: "4", width: "20", height: "16", rx: "2", key: "izxlao" }]
+];
+const Mail = createLucideIcon("mail", __iconNode$E);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$D = [
+  [
+    "path",
+    {
+      d: "M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0",
+      key: "1r0f0z"
+    }
+  ],
+  ["circle", { cx: "12", cy: "10", r: "3", key: "ilqhr7" }]
+];
+const MapPin = createLucideIcon("map-pin", __iconNode$D);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$C = [
+  ["path", { d: "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z", key: "1lielz" }],
+  ["path", { d: "M12 7v6", key: "lw1j43" }],
+  ["path", { d: "M9 10h6", key: "9gxzsh" }]
+];
+const MessageSquarePlus = createLucideIcon("message-square-plus", __iconNode$C);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$B = [
+  ["path", { d: "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z", key: "1lielz" }],
+  ["path", { d: "M13 8H7", key: "14i4kc" }],
+  ["path", { d: "M17 12H7", key: "16if0g" }]
+];
+const MessageSquareText = createLucideIcon("message-square-text", __iconNode$B);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$A = [
+  ["path", { d: "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z", key: "1lielz" }]
+];
+const MessageSquare = createLucideIcon("message-square", __iconNode$A);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$z = [
+  ["path", { d: "M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z", key: "131961" }],
+  ["path", { d: "M19 10v2a7 7 0 0 1-14 0v-2", key: "1vc78b" }],
+  ["line", { x1: "12", x2: "12", y1: "19", y2: "22", key: "x3vr5v" }]
+];
+const Mic = createLucideIcon("mic", __iconNode$z);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$y = [
+  ["rect", { x: "16", y: "16", width: "6", height: "6", rx: "1", key: "4q2zg0" }],
+  ["rect", { x: "2", y: "16", width: "6", height: "6", rx: "1", key: "8cvhb9" }],
+  ["rect", { x: "9", y: "2", width: "6", height: "6", rx: "1", key: "1egb70" }],
+  ["path", { d: "M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3", key: "1jsf9p" }],
+  ["path", { d: "M12 12V8", key: "2874zd" }]
+];
+const Network = createLucideIcon("network", __iconNode$y);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$x = [
+  ["path", { d: "M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4", key: "re6nr2" }],
+  ["path", { d: "M2 6h4", key: "aawbzj" }],
+  ["path", { d: "M2 10h4", key: "l0bgd4" }],
+  ["path", { d: "M2 14h4", key: "1gsvsf" }],
+  ["path", { d: "M2 18h4", key: "1bu2t1" }],
+  [
+    "path",
+    {
+      d: "M21.378 5.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z",
+      key: "pqwjuv"
+    }
+  ]
+];
+const NotebookPen = createLucideIcon("notebook-pen", __iconNode$x);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$w = [
+  ["path", { d: "M13.234 20.252 21 12.3", key: "1cbrk9" }],
+  [
+    "path",
+    {
+      d: "m16 6-8.414 8.586a2 2 0 0 0 0 2.828 2 2 0 0 0 2.828 0l8.414-8.586a4 4 0 0 0 0-5.656 4 4 0 0 0-5.656 0l-8.415 8.585a6 6 0 1 0 8.486 8.486",
+      key: "1pkts6"
+    }
+  ]
+];
+const Paperclip = createLucideIcon("paperclip", __iconNode$w);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$v = [
+  ["path", { d: "M5.8 11.3 2 22l10.7-3.79", key: "gwxi1d" }],
+  ["path", { d: "M4 3h.01", key: "1vcuye" }],
+  ["path", { d: "M22 8h.01", key: "1mrtc2" }],
+  ["path", { d: "M15 2h.01", key: "1cjtqr" }],
+  ["path", { d: "M22 20h.01", key: "1mrys2" }],
+  [
+    "path",
+    {
+      d: "m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10",
+      key: "hbicv8"
+    }
+  ],
+  [
+    "path",
+    { d: "m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17", key: "1i94pl" }
+  ],
+  ["path", { d: "m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7", key: "1cofks" }],
+  [
+    "path",
+    {
+      d: "M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z",
+      key: "4kbmks"
+    }
+  ]
+];
+const PartyPopper = createLucideIcon("party-popper", __iconNode$v);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$u = [
+  [
+    "path",
+    {
+      d: "M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z",
+      key: "1a8usu"
+    }
+  ],
+  ["path", { d: "m15 5 4 4", key: "1mk7zo" }]
+];
+const Pencil = createLucideIcon("pencil", __iconNode$u);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$t = [["polygon", { points: "6 3 20 12 6 21 6 3", key: "1oa8hb" }]];
+const Play = createLucideIcon("play", __iconNode$t);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$s = [
+  ["path", { d: "M5 12h14", key: "1ays0h" }],
+  ["path", { d: "M12 5v14", key: "s699le" }]
+];
+const Plus = createLucideIcon("plus", __iconNode$s);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$r = [
+  ["path", { d: "M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8", key: "v9h5vc" }],
+  ["path", { d: "M21 3v5h-5", key: "1q7to0" }],
+  ["path", { d: "M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16", key: "3uifl3" }],
+  ["path", { d: "M8 16H3v5", key: "1cv678" }]
+];
+const RefreshCw = createLucideIcon("refresh-cw", __iconNode$r);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$q = [
+  ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
+  ["path", { d: "M3 3v5h5", key: "1xhq8a" }]
+];
+const RotateCcw = createLucideIcon("rotate-ccw", __iconNode$q);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$p = [
+  [
+    "path",
+    {
+      d: "M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z",
+      key: "1c8476"
+    }
+  ],
+  ["path", { d: "M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7", key: "1ydtos" }],
+  ["path", { d: "M7 3v4a1 1 0 0 0 1 1h7", key: "t51u73" }]
+];
+const Save = createLucideIcon("save", __iconNode$p);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$o = [
+  ["path", { d: "m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z", key: "7g6ntu" }],
+  ["path", { d: "m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z", key: "ijws7r" }],
+  ["path", { d: "M7 21h10", key: "1b0cd5" }],
+  ["path", { d: "M12 3v18", key: "108xh3" }],
+  ["path", { d: "M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2", key: "3gwbw2" }]
+];
+const Scale = createLucideIcon("scale", __iconNode$o);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$n = [
+  ["path", { d: "M15 12h-5", key: "r7krc0" }],
+  ["path", { d: "M15 8h-5", key: "1khuty" }],
+  ["path", { d: "M19 17V5a2 2 0 0 0-2-2H4", key: "zz82l3" }],
+  [
+    "path",
+    {
+      d: "M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3",
+      key: "1ph1d7"
+    }
+  ]
+];
+const ScrollText = createLucideIcon("scroll-text", __iconNode$n);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$m = [
+  ["path", { d: "m21 21-4.34-4.34", key: "14j7rj" }],
+  ["circle", { cx: "11", cy: "11", r: "8", key: "4ej97u" }]
+];
+const Search = createLucideIcon("search", __iconNode$m);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$l = [
+  [
+    "path",
+    {
+      d: "M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z",
+      key: "1ffxy3"
+    }
+  ],
+  ["path", { d: "m21.854 2.147-10.94 10.939", key: "12cjpa" }]
+];
+const Send = createLucideIcon("send", __iconNode$l);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$k = [
+  [
+    "path",
+    {
+      d: "M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z",
+      key: "oel41y"
+    }
+  ],
+  ["path", { d: "M12 8v4", key: "1got3b" }],
+  ["path", { d: "M12 16h.01", key: "1drbdi" }]
+];
+const ShieldAlert = createLucideIcon("shield-alert", __iconNode$k);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$j = [
+  [
+    "path",
+    {
+      d: "M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z",
+      key: "oel41y"
+    }
+  ],
+  ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
+];
+const ShieldCheck = createLucideIcon("shield-check", __iconNode$j);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$i = [
+  ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }]
+];
+const Square = createLucideIcon("square", __iconNode$i);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$h = [
+  [
+    "path",
+    {
+      d: "M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z",
+      key: "vktsd0"
+    }
+  ],
+  ["circle", { cx: "7.5", cy: "7.5", r: ".5", fill: "currentColor", key: "kqv944" }]
+];
+const Tag = createLucideIcon("tag", __iconNode$h);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$g = [
+  ["path", { d: "M3 6h18", key: "d0wm0j" }],
+  ["path", { d: "M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6", key: "4alrt4" }],
+  ["path", { d: "M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2", key: "v07s0e" }],
+  ["line", { x1: "10", x2: "10", y1: "11", y2: "17", key: "1uufr5" }],
+  ["line", { x1: "14", x2: "14", y1: "11", y2: "17", key: "xtxkd" }]
+];
+const Trash2 = createLucideIcon("trash-2", __iconNode$g);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$f = [
+  [
+    "path",
+    {
+      d: "m17 14 3 3.3a1 1 0 0 1-.7 1.7H4.7a1 1 0 0 1-.7-1.7L7 14h-.3a1 1 0 0 1-.7-1.7L9 9h-.2A1 1 0 0 1 8 7.3L12 3l4 4.3a1 1 0 0 1-.8 1.7H15l3 3.3a1 1 0 0 1-.7 1.7H17Z",
+      key: "cpyugq"
+    }
+  ],
+  ["path", { d: "M12 22v-3", key: "kmzjlo" }]
+];
+const TreePine = createLucideIcon("tree-pine", __iconNode$f);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$e = [
+  [
+    "path",
+    {
+      d: "m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3",
+      key: "wmoenq"
+    }
+  ],
+  ["path", { d: "M12 9v4", key: "juzpu7" }],
+  ["path", { d: "M12 17h.01", key: "p32p05" }]
+];
+const TriangleAlert = createLucideIcon("triangle-alert", __iconNode$e);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$d = [
+  ["path", { d: "M9 14 4 9l5-5", key: "102s5s" }],
+  ["path", { d: "M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11", key: "f3b9sd" }]
+];
+const Undo2 = createLucideIcon("undo-2", __iconNode$d);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$c = [
+  ["path", { d: "M12 3v12", key: "1x0j5s" }],
+  ["path", { d: "m17 8-5-5-5 5", key: "7q97r8" }],
+  ["path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4", key: "ih7n3h" }]
+];
+const Upload = createLucideIcon("upload", __iconNode$c);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$b = [
+  ["path", { d: "m16 11 2 2 4-4", key: "9rsbq5" }],
+  ["path", { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", key: "1yyitq" }],
+  ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }]
+];
+const UserCheck = createLucideIcon("user-check", __iconNode$b);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$a = [
+  ["path", { d: "M10 15H6a4 4 0 0 0-4 4v2", key: "1nfge6" }],
+  ["path", { d: "m14.305 16.53.923-.382", key: "1itpsq" }],
+  ["path", { d: "m15.228 13.852-.923-.383", key: "eplpkm" }],
+  ["path", { d: "m16.852 12.228-.383-.923", key: "13v3q0" }],
+  ["path", { d: "m16.852 17.772-.383.924", key: "1i8mnm" }],
+  ["path", { d: "m19.148 12.228.383-.923", key: "1q8j1v" }],
+  ["path", { d: "m19.53 18.696-.382-.924", key: "vk1qj3" }],
+  ["path", { d: "m20.772 13.852.924-.383", key: "n880s0" }],
+  ["path", { d: "m20.772 16.148.924.383", key: "1g6xey" }],
+  ["circle", { cx: "18", cy: "15", r: "3", key: "gjjjvw" }],
+  ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }]
+];
+const UserCog = createLucideIcon("user-cog", __iconNode$a);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$9 = [
+  ["path", { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", key: "1yyitq" }],
+  ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }],
+  ["line", { x1: "22", x2: "16", y1: "11", y2: "11", key: "1shjgl" }]
+];
+const UserMinus = createLucideIcon("user-minus", __iconNode$9);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$8 = [
+  ["path", { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", key: "1yyitq" }],
+  ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }],
+  ["line", { x1: "19", x2: "19", y1: "8", y2: "14", key: "1bvyxn" }],
+  ["line", { x1: "22", x2: "16", y1: "11", y2: "11", key: "1shjgl" }]
+];
+const UserPlus = createLucideIcon("user-plus", __iconNode$8);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$7 = [
+  ["circle", { cx: "12", cy: "8", r: "5", key: "1hypcn" }],
+  ["path", { d: "M20 21a8 8 0 0 0-16 0", key: "rfgkzh" }]
+];
+const UserRound = createLucideIcon("user-round", __iconNode$7);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$6 = [
+  ["path", { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", key: "1yyitq" }],
+  ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }],
+  ["line", { x1: "17", x2: "22", y1: "8", y2: "13", key: "3nzzx3" }],
+  ["line", { x1: "22", x2: "17", y1: "8", y2: "13", key: "1swrse" }]
+];
+const UserX = createLucideIcon("user-x", __iconNode$6);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$5 = [
+  ["path", { d: "M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2", key: "975kel" }],
+  ["circle", { cx: "12", cy: "7", r: "4", key: "17ys0d" }]
+];
+const User = createLucideIcon("user", __iconNode$5);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$4 = [
+  ["path", { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", key: "1yyitq" }],
+  ["path", { d: "M16 3.128a4 4 0 0 1 0 7.744", key: "16gr8j" }],
+  ["path", { d: "M22 21v-2a4 4 0 0 0-3-3.87", key: "kshegd" }],
+  ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }]
+];
+const Users = createLucideIcon("users", __iconNode$4);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$3 = [
+  ["path", { d: "m16 2-2.3 2.3a3 3 0 0 0 0 4.2l1.8 1.8a3 3 0 0 0 4.2 0L22 8", key: "n7qcjb" }],
+  [
+    "path",
+    { d: "M15 15 3.3 3.3a4.2 4.2 0 0 0 0 6l7.3 7.3c.7.7 2 .7 2.8 0L15 15Zm0 0 7 7", key: "d0u48b" }
+  ],
+  ["path", { d: "m2.1 21.8 6.4-6.3", key: "yn04lh" }],
+  ["path", { d: "m19 5-7 7", key: "194lzd" }]
+];
+const UtensilsCrossed = createLucideIcon("utensils-crossed", __iconNode$3);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$2 = [
+  [
+    "path",
+    {
+      d: "m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5",
+      key: "ftymec"
+    }
+  ],
+  ["rect", { x: "2", y: "6", width: "14", height: "12", rx: "2", key: "158x01" }]
+];
+const Video = createLucideIcon("video", __iconNode$2);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$1 = [
+  ["path", { d: "M18 6 6 18", key: "1bl5f8" }],
+  ["path", { d: "m6 6 12 12", key: "d8bk6v" }]
+];
+const X = createLucideIcon("x", __iconNode$1);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode = [
+  [
+    "path",
+    {
+      d: "M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z",
+      key: "1xq2db"
+    }
+  ]
+];
+const Zap = createLucideIcon("zap", __iconNode);
+function useProvidersPresent() {
+  return reactExports.useContext(QueryClientContext) !== void 0;
+}
+function usePhotos(personId) {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["photos", personId],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.listPhotos(personId);
+    },
+    enabled: !!actor && !isFetching
+  });
+}
+function useProfilePhoto(personId) {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["profilePhoto", personId],
+    queryFn: async () => {
+      if (!actor) return null;
+      return actor.getProfilePhoto(personId);
+    },
+    enabled: !!actor && !isFetching
+  });
+}
+function useAddPhoto() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      personId,
+      blob,
+      filename,
+      mimeType
+    }) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.addPhoto(personId, filename, mimeType, blob);
+    },
+    onSuccess: (_data, variables) => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["photos", variables.personId]
+      });
+      void queryClient2.invalidateQueries({
+        queryKey: ["profilePhoto", variables.personId]
+      });
+    }
+  });
+}
+function useRemovePhoto() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      personId,
+      photoId
+    }) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.removePhoto(personId, photoId);
+    },
+    onSuccess: (_data, variables) => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["photos", variables.personId]
+      });
+      void queryClient2.invalidateQueries({
+        queryKey: ["profilePhoto", variables.personId]
+      });
+    }
+  });
+}
+function useSetProfilePhoto() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      personId,
+      photoId
+    }) => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.setProfilePhoto(personId, photoId);
+    },
+    onSuccess: (_data, variables) => {
+      void queryClient2.invalidateQueries({
+        queryKey: ["photos", variables.personId]
+      });
+      void queryClient2.invalidateQueries({
+        queryKey: ["profilePhoto", variables.personId]
+      });
+    }
+  });
+}
+function useIsSteward() {
+  const providersPresent = useProvidersPresent();
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["isSteward"],
+    queryFn: async () => {
+      if (!actor) return false;
+      return actor.isCallerSteward();
+    },
+    enabled: providersPresent && !!actor && !isFetching
+  });
+}
+function useHasActiveSteward() {
+  const providersPresent = useProvidersPresent();
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["hasActiveSteward"],
+    queryFn: async () => {
+      if (!actor) return false;
+      return actor.hasActiveSteward();
+    },
+    enabled: providersPresent && !!actor && !isFetching
+  });
+}
+function useClaimSteward() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      if (!actor) throw new Error("Backend is not ready");
+      return actor.claimSteward();
+    },
+    onSuccess: () => {
+      void queryClient2.invalidateQueries({ queryKey: ["isSteward"] });
+      void queryClient2.invalidateQueries({ queryKey: ["hasActiveSteward"] });
+      void queryClient2.invalidateQueries({
+        queryKey: ["governance", "stewards"]
+      });
+      void queryClient2.invalidateQueries({
+        queryKey: ["governance", "stewardIdentities"]
+      });
+      void queryClient2.invalidateQueries({
+        queryKey: ["governance", "auditHistory"]
+      });
+    }
+  });
+}
+function claimErrorMessage(error) {
+  if (error instanceof Error && error.message === "Backend is not ready") {
+    return "The archive is still connecting. Please try again in a moment.";
+  }
+  if (error === StewardClaimError.StewardAlreadyExists) {
+    return "A Family Steward already exists, so this claim is no longer available.";
+  }
+  if (error === StewardClaimError.AlreadySteward) {
+    return "You are already an active Family Steward.";
+  }
+  if (error === StewardClaimError.NotSignedIn) {
+    return "Please sign in before claiming Family Steward.";
+  }
+  return "We could not complete the claim. Please try again.";
+}
+function ClaimStewardControl({
+  isAuthenticated,
+  isHydrating: isHydrating2 = false,
+  onClaimed
+}) {
+  const { data: hasActiveSteward, isLoading } = useHasActiveSteward();
+  const claim = useClaimSteward();
+  const [errorMessage, setErrorMessage] = reactExports.useState(null);
+  if (!isAuthenticated || isHydrating2 || isLoading || hasActiveSteward) {
+    return null;
+  }
+  const handleClaim = () => {
+    setErrorMessage(null);
+    claim.mutate(void 0, {
+      onSuccess: (result) => {
+        if (result.__kind__ === "ok") {
+          onClaimed();
+          return;
+        }
+        setErrorMessage(claimErrorMessage(result.err));
+      },
+      onError: (error) => {
+        setErrorMessage(claimErrorMessage(error));
+      }
+    });
+  };
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    "section",
+    {
+      "data-ocid": "steward_claim.panel",
+      "aria-labelledby": "steward-claim-heading",
+      className: "mx-auto w-full max-w-2xl px-4 pt-8",
+      children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "rounded-xl border border-accent/40 bg-accent/10 px-6 py-5", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-start gap-3", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent/20 text-accent-foreground", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+          ShieldCheck,
+          {
+            className: "h-5 w-5",
+            strokeWidth: 1.75,
+            "aria-hidden": "true"
+          }
+        ) }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "h2",
+            {
+              id: "steward-claim-heading",
+              className: "font-display text-lg font-semibold text-foreground",
+              children: "No Family Steward yet"
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-1 text-sm text-muted-foreground", children: "The Norwood family archive has no active Steward. Any signed-in family member may claim this role once to begin reviewing contributions and governing the archive." }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "button",
+            {
+              type: "button",
+              "data-ocid": "steward_claim.claim_button",
+              onClick: handleClaim,
+              disabled: claim.isPending,
+              className: "mt-4 inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-60",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  ShieldCheck,
+                  {
+                    className: "h-4 w-4",
+                    strokeWidth: 1.75,
+                    "aria-hidden": "true"
+                  }
+                ),
+                claim.isPending ? "Claiming…" : "Claim Family Steward"
+              ]
+            }
+          ),
+          errorMessage ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "p",
+            {
+              "data-ocid": "steward_claim.error_state",
+              role: "alert",
+              className: "mt-3 text-sm font-medium text-destructive",
+              children: errorMessage
+            }
+          ) : null
+        ] })
+      ] }) })
+    }
+  );
+}
 function r(e) {
   var t, f2, n = "";
   if ("string" == typeof e || "number" == typeof e) n += e;
@@ -35677,8957 +44966,6 @@ function Skeleton({ className, ...props }) {
     }
   );
 }
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const toKebabCase = (string) => string.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
-const toCamelCase = (string) => string.replace(
-  /^([A-Z])|[\s-_]+(\w)/g,
-  (match, p1, p2) => p2 ? p2.toUpperCase() : p1.toLowerCase()
-);
-const toPascalCase = (string) => {
-  const camelCase = toCamelCase(string);
-  return camelCase.charAt(0).toUpperCase() + camelCase.slice(1);
-};
-const mergeClasses = (...classes) => classes.filter((className, index2, array) => {
-  return Boolean(className) && className.trim() !== "" && array.indexOf(className) === index2;
-}).join(" ").trim();
-const hasA11yProp = (props) => {
-  for (const prop in props) {
-    if (prop.startsWith("aria-") || prop === "role" || prop === "title") {
-      return true;
-    }
-  }
-};
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-var defaultAttributes = {
-  xmlns: "http://www.w3.org/2000/svg",
-  width: 24,
-  height: 24,
-  viewBox: "0 0 24 24",
-  fill: "none",
-  stroke: "currentColor",
-  strokeWidth: 2,
-  strokeLinecap: "round",
-  strokeLinejoin: "round"
-};
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const Icon = reactExports.forwardRef(
-  ({
-    color: color2 = "currentColor",
-    size = 24,
-    strokeWidth = 2,
-    absoluteStrokeWidth,
-    className = "",
-    children,
-    iconNode,
-    ...rest
-  }, ref) => reactExports.createElement(
-    "svg",
-    {
-      ref,
-      ...defaultAttributes,
-      width: size,
-      height: size,
-      stroke: color2,
-      strokeWidth: absoluteStrokeWidth ? Number(strokeWidth) * 24 / Number(size) : strokeWidth,
-      className: mergeClasses("lucide", className),
-      ...!children && !hasA11yProp(rest) && { "aria-hidden": "true" },
-      ...rest
-    },
-    [
-      ...iconNode.map(([tag, attrs]) => reactExports.createElement(tag, attrs)),
-      ...Array.isArray(children) ? children : [children]
-    ]
-  )
-);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const createLucideIcon = (iconName, iconNode) => {
-  const Component2 = reactExports.forwardRef(
-    ({ className, ...props }, ref) => reactExports.createElement(Icon, {
-      ref,
-      iconNode,
-      className: mergeClasses(
-        `lucide-${toKebabCase(toPascalCase(iconName))}`,
-        `lucide-${iconName}`,
-        className
-      ),
-      ...props
-    })
-  );
-  Component2.displayName = toPascalCase(iconName);
-  return Component2;
-};
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$1k = [
-  ["rect", { width: "20", height: "5", x: "2", y: "3", rx: "1", key: "1wp1u1" }],
-  ["path", { d: "M4 8v11a2 2 0 0 0 2 2h2", key: "tvwodi" }],
-  ["path", { d: "M20 8v11a2 2 0 0 1-2 2h-2", key: "1gkqxj" }],
-  ["path", { d: "m9 15 3-3 3 3", key: "1pd0qc" }],
-  ["path", { d: "M12 12v9", key: "192myk" }]
-];
-const ArchiveRestore = createLucideIcon("archive-restore", __iconNode$1k);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$1j = [
-  ["rect", { width: "20", height: "5", x: "2", y: "3", rx: "1", key: "1wp1u1" }],
-  ["path", { d: "M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8", key: "1s80jp" }],
-  ["path", { d: "M10 12h4", key: "a56b0p" }]
-];
-const Archive = createLucideIcon("archive", __iconNode$1j);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$1i = [
-  ["path", { d: "m12 19-7-7 7-7", key: "1l729n" }],
-  ["path", { d: "M19 12H5", key: "x3x0zl" }]
-];
-const ArrowLeft = createLucideIcon("arrow-left", __iconNode$1i);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$1h = [
-  ["path", { d: "M5 12h14", key: "1ays0h" }],
-  ["path", { d: "m12 5 7 7-7 7", key: "xquz4c" }]
-];
-const ArrowRight = createLucideIcon("arrow-right", __iconNode$1h);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$1g = [
-  ["path", { d: "M2 10v3", key: "1fnikh" }],
-  ["path", { d: "M6 6v11", key: "11sgs0" }],
-  ["path", { d: "M10 3v18", key: "yhl04a" }],
-  ["path", { d: "M14 8v7", key: "3a1oy3" }],
-  ["path", { d: "M18 5v13", key: "123xd1" }],
-  ["path", { d: "M22 10v3", key: "154ddg" }]
-];
-const AudioLines = createLucideIcon("audio-lines", __iconNode$1g);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$1f = [
-  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["path", { d: "m4.9 4.9 14.2 14.2", key: "1m5liu" }]
-];
-const Ban = createLucideIcon("ban", __iconNode$1f);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$1e = [
-  ["path", { d: "M10.268 21a2 2 0 0 0 3.464 0", key: "vwvbt9" }],
-  [
-    "path",
-    {
-      d: "M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326",
-      key: "11g9vi"
-    }
-  ]
-];
-const Bell = createLucideIcon("bell", __iconNode$1e);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$1d = [
-  ["path", { d: "M12 7v14", key: "1akyts" }],
-  [
-    "path",
-    {
-      d: "M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z",
-      key: "ruj8y"
-    }
-  ]
-];
-const BookOpen = createLucideIcon("book-open", __iconNode$1d);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$1c = [
-  ["path", { d: "M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16", key: "jecpp" }],
-  ["rect", { width: "20", height: "14", x: "2", y: "6", rx: "2", key: "i6l2r4" }]
-];
-const Briefcase = createLucideIcon("briefcase", __iconNode$1c);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$1b = [
-  ["path", { d: "M8 2v4", key: "1cmpym" }],
-  ["path", { d: "M16 2v4", key: "4m81vk" }],
-  ["rect", { width: "18", height: "18", x: "3", y: "4", rx: "2", key: "1hopcy" }],
-  ["path", { d: "M3 10h18", key: "8toen8" }],
-  ["path", { d: "M8 14h.01", key: "6423bh" }],
-  ["path", { d: "M12 14h.01", key: "1etili" }],
-  ["path", { d: "M16 14h.01", key: "1gbofw" }],
-  ["path", { d: "M8 18h.01", key: "lrp35t" }],
-  ["path", { d: "M12 18h.01", key: "mhygvu" }],
-  ["path", { d: "M16 18h.01", key: "kzsmim" }]
-];
-const CalendarDays = createLucideIcon("calendar-days", __iconNode$1b);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$1a = [
-  [
-    "path",
-    {
-      d: "M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z",
-      key: "1tc9qg"
-    }
-  ],
-  ["circle", { cx: "12", cy: "13", r: "3", key: "1vg3eu" }]
-];
-const Camera = createLucideIcon("camera", __iconNode$1a);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$19 = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
-const Check = createLucideIcon("check", __iconNode$19);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$18 = [
-  [
-    "path",
-    {
-      d: "M17 21a1 1 0 0 0 1-1v-5.35c0-.457.316-.844.727-1.041a4 4 0 0 0-2.134-7.589 5 5 0 0 0-9.186 0 4 4 0 0 0-2.134 7.588c.411.198.727.585.727 1.041V20a1 1 0 0 0 1 1Z",
-      key: "1qvrer"
-    }
-  ],
-  ["path", { d: "M6 17h12", key: "1jwigz" }]
-];
-const ChefHat = createLucideIcon("chef-hat", __iconNode$18);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$17 = [["path", { d: "m6 9 6 6 6-6", key: "qrunsl" }]];
-const ChevronDown = createLucideIcon("chevron-down", __iconNode$17);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$16 = [["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]];
-const ChevronRight = createLucideIcon("chevron-right", __iconNode$16);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$15 = [
-  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
-];
-const CircleCheck = createLucideIcon("circle-check", __iconNode$15);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$14 = [
-  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["circle", { cx: "12", cy: "10", r: "3", key: "ilqhr7" }],
-  ["path", { d: "M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662", key: "154egf" }]
-];
-const CircleUser = createLucideIcon("circle-user", __iconNode$14);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$13 = [["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }]];
-const Circle = createLucideIcon("circle", __iconNode$13);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$12 = [
-  [
-    "path",
-    { d: "M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3Z", key: "1tn4o7" }
-  ],
-  ["path", { d: "m6.2 5.3 3.1 3.9", key: "iuk76l" }],
-  ["path", { d: "m12.4 3.4 3.1 4", key: "6hsd6n" }],
-  ["path", { d: "M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z", key: "ltgou9" }]
-];
-const Clapperboard = createLucideIcon("clapperboard", __iconNode$12);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$11 = [
-  ["rect", { width: "8", height: "4", x: "8", y: "2", rx: "1", ry: "1", key: "tgr4d6" }],
-  [
-    "path",
-    {
-      d: "M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2",
-      key: "116196"
-    }
-  ],
-  ["path", { d: "m9 14 2 2 4-4", key: "df797q" }]
-];
-const ClipboardCheck = createLucideIcon("clipboard-check", __iconNode$11);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$10 = [
-  ["rect", { width: "8", height: "4", x: "8", y: "2", rx: "1", ry: "1", key: "tgr4d6" }],
-  [
-    "path",
-    {
-      d: "M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2",
-      key: "116196"
-    }
-  ],
-  ["path", { d: "M12 11h4", key: "1jrz19" }],
-  ["path", { d: "M12 16h4", key: "n85exb" }],
-  ["path", { d: "M8 11h.01", key: "1dfujw" }],
-  ["path", { d: "M8 16h.01", key: "18s6g9" }]
-];
-const ClipboardList = createLucideIcon("clipboard-list", __iconNode$10);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$$ = [
-  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["polyline", { points: "12 6 12 12 16.5 12", key: "1aq6pp" }]
-];
-const Clock3 = createLucideIcon("clock-3", __iconNode$$);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$_ = [
-  [
-    "path",
-    {
-      d: "M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z",
-      key: "1vdc57"
-    }
-  ],
-  ["path", { d: "M5 21h14", key: "11awu3" }]
-];
-const Crown = createLucideIcon("crown", __iconNode$_);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$Z = [
-  ["path", { d: "M12 15V3", key: "m9g1x1" }],
-  ["path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4", key: "ih7n3h" }],
-  ["path", { d: "m7 10 5 5 5-5", key: "brsn70" }]
-];
-const Download = createLucideIcon("download", __iconNode$Z);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$Y = [
-  ["circle", { cx: "12", cy: "12", r: "1", key: "41hilf" }],
-  ["circle", { cx: "19", cy: "12", r: "1", key: "1wjl8i" }],
-  ["circle", { cx: "5", cy: "12", r: "1", key: "1pcz8c" }]
-];
-const Ellipsis = createLucideIcon("ellipsis", __iconNode$Y);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$X = [
-  [
-    "path",
-    {
-      d: "M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49",
-      key: "ct8e1f"
-    }
-  ],
-  ["path", { d: "M14.084 14.158a3 3 0 0 1-4.242-4.242", key: "151rxh" }],
-  [
-    "path",
-    {
-      d: "M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143",
-      key: "13bj9a"
-    }
-  ],
-  ["path", { d: "m2 2 20 20", key: "1ooewy" }]
-];
-const EyeOff = createLucideIcon("eye-off", __iconNode$X);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$W = [
-  [
-    "path",
-    {
-      d: "M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0",
-      key: "1nclc0"
-    }
-  ],
-  ["circle", { cx: "12", cy: "12", r: "3", key: "1v7zrd" }]
-];
-const Eye = createLucideIcon("eye", __iconNode$W);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$V = [
-  ["path", { d: "M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z", key: "1rqfz7" }],
-  ["path", { d: "M14 2v4a2 2 0 0 0 2 2h4", key: "tnqrlb" }],
-  ["path", { d: "M10 9H8", key: "b1mrlr" }],
-  ["path", { d: "M16 13H8", key: "t4e002" }],
-  ["path", { d: "M16 17H8", key: "z1uh3a" }]
-];
-const FileText = createLucideIcon("file-text", __iconNode$V);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$U = [
-  ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }],
-  ["path", { d: "M7 3v18", key: "bbkbws" }],
-  ["path", { d: "M3 7.5h4", key: "zfgn84" }],
-  ["path", { d: "M3 12h18", key: "1i2n21" }],
-  ["path", { d: "M3 16.5h4", key: "1230mu" }],
-  ["path", { d: "M17 3v18", key: "in4fa5" }],
-  ["path", { d: "M17 7.5h4", key: "myr1c1" }],
-  ["path", { d: "M17 16.5h4", key: "go4c1d" }]
-];
-const Film = createLucideIcon("film", __iconNode$U);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$T = [
-  ["path", { d: "M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z", key: "i9b6wo" }],
-  ["line", { x1: "4", x2: "4", y1: "22", y2: "15", key: "1cm3nv" }]
-];
-const Flag = createLucideIcon("flag", __iconNode$T);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$S = [
-  ["circle", { cx: "15", cy: "19", r: "2", key: "u2pros" }],
-  [
-    "path",
-    {
-      d: "M20.9 19.8A2 2 0 0 0 22 18V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h5.1",
-      key: "1jj40k"
-    }
-  ],
-  ["path", { d: "M15 11v-1", key: "cntcp" }],
-  ["path", { d: "M15 17v-2", key: "1279jj" }]
-];
-const FolderArchive = createLucideIcon("folder-archive", __iconNode$S);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$R = [
-  ["line", { x1: "6", x2: "6", y1: "3", y2: "15", key: "17qcm7" }],
-  ["circle", { cx: "18", cy: "6", r: "3", key: "1h7g24" }],
-  ["circle", { cx: "6", cy: "18", r: "3", key: "fqmcym" }],
-  ["path", { d: "M18 9a9 9 0 0 1-9 9", key: "n2h4wq" }]
-];
-const GitBranch = createLucideIcon("git-branch", __iconNode$R);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$Q = [
-  ["circle", { cx: "18", cy: "18", r: "3", key: "1xkwt0" }],
-  ["circle", { cx: "6", cy: "6", r: "3", key: "1lh9wr" }],
-  ["path", { d: "M6 21V9a9 9 0 0 0 9 9", key: "7kw0sc" }]
-];
-const GitMerge = createLucideIcon("git-merge", __iconNode$Q);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$P = [
-  ["path", { d: "M16 5h6", key: "1vod17" }],
-  ["path", { d: "M19 2v6", key: "4bpg5p" }],
-  ["path", { d: "M21 11.5V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7.5", key: "1ue2ih" }],
-  ["path", { d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21", key: "1xmnt7" }],
-  ["circle", { cx: "9", cy: "9", r: "2", key: "af1f0g" }]
-];
-const ImagePlus = createLucideIcon("image-plus", __iconNode$P);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$O = [
-  ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", ry: "2", key: "1m3agn" }],
-  ["circle", { cx: "9", cy: "9", r: "2", key: "af1f0g" }],
-  ["path", { d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21", key: "1xmnt7" }]
-];
-const Image = createLucideIcon("image", __iconNode$O);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$N = [
-  ["polyline", { points: "22 12 16 12 14 15 10 15 8 12 2 12", key: "o97t9d" }],
-  [
-    "path",
-    {
-      d: "M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z",
-      key: "oot6mr"
-    }
-  ]
-];
-const Inbox = createLucideIcon("inbox", __iconNode$N);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$M = [
-  ["path", { d: "M10 18v-7", key: "wt116b" }],
-  [
-    "path",
-    {
-      d: "M11.12 2.198a2 2 0 0 1 1.76.006l7.866 3.847c.476.233.31.949-.22.949H3.474c-.53 0-.695-.716-.22-.949z",
-      key: "1m329m"
-    }
-  ],
-  ["path", { d: "M14 18v-7", key: "vav6t3" }],
-  ["path", { d: "M18 18v-7", key: "aexdmj" }],
-  ["path", { d: "M3 22h18", key: "8prr45" }],
-  ["path", { d: "M6 18v-7", key: "1ivflk" }]
-];
-const Landmark = createLucideIcon("landmark", __iconNode$M);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$L = [
-  ["rect", { width: "8", height: "18", x: "3", y: "3", rx: "1", key: "oynpb5" }],
-  ["path", { d: "M7 3v18", key: "bbkbws" }],
-  [
-    "path",
-    {
-      d: "M20.4 18.9c.2.5-.1 1.1-.6 1.3l-1.9.7c-.5.2-1.1-.1-1.3-.6L11.1 5.1c-.2-.5.1-1.1.6-1.3l1.9-.7c.5-.2 1.1.1 1.3.6Z",
-      key: "1qboyk"
-    }
-  ]
-];
-const LibraryBig = createLucideIcon("library-big", __iconNode$L);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$K = [
-  [
-    "path",
-    {
-      d: "M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5",
-      key: "1gvzjb"
-    }
-  ],
-  ["path", { d: "M9 18h6", key: "x1upvd" }],
-  ["path", { d: "M10 22h4", key: "ceow96" }]
-];
-const Lightbulb = createLucideIcon("lightbulb", __iconNode$K);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$J = [
-  ["path", { d: "M9 17H7A5 5 0 0 1 7 7h2", key: "8i5ue5" }],
-  ["path", { d: "M15 7h2a5 5 0 1 1 0 10h-2", key: "1b9ql8" }],
-  ["line", { x1: "8", x2: "16", y1: "12", y2: "12", key: "1jonct" }]
-];
-const Link2 = createLucideIcon("link-2", __iconNode$J);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$I = [["path", { d: "M21 12a9 9 0 1 1-6.219-8.56", key: "13zald" }]];
-const LoaderCircle = createLucideIcon("loader-circle", __iconNode$I);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$H = [
-  ["rect", { width: "18", height: "11", x: "3", y: "11", rx: "2", ry: "2", key: "1w4ew1" }],
-  ["path", { d: "M7 11V7a5 5 0 0 1 10 0v4", key: "fwvmzm" }]
-];
-const Lock = createLucideIcon("lock", __iconNode$H);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$G = [
-  ["path", { d: "m10 17 5-5-5-5", key: "1bsop3" }],
-  ["path", { d: "M15 12H3", key: "6jk70r" }],
-  ["path", { d: "M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4", key: "u53s6r" }]
-];
-const LogIn = createLucideIcon("log-in", __iconNode$G);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$F = [
-  ["path", { d: "m16 17 5-5-5-5", key: "1bji2h" }],
-  ["path", { d: "M21 12H9", key: "dn1m92" }],
-  ["path", { d: "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4", key: "1uf3rs" }]
-];
-const LogOut = createLucideIcon("log-out", __iconNode$F);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$E = [
-  ["path", { d: "m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7", key: "132q7q" }],
-  ["rect", { x: "2", y: "4", width: "20", height: "16", rx: "2", key: "izxlao" }]
-];
-const Mail = createLucideIcon("mail", __iconNode$E);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$D = [
-  [
-    "path",
-    {
-      d: "M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0",
-      key: "1r0f0z"
-    }
-  ],
-  ["circle", { cx: "12", cy: "10", r: "3", key: "ilqhr7" }]
-];
-const MapPin = createLucideIcon("map-pin", __iconNode$D);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$C = [
-  ["path", { d: "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z", key: "1lielz" }],
-  ["path", { d: "M12 7v6", key: "lw1j43" }],
-  ["path", { d: "M9 10h6", key: "9gxzsh" }]
-];
-const MessageSquarePlus = createLucideIcon("message-square-plus", __iconNode$C);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$B = [
-  ["path", { d: "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z", key: "1lielz" }],
-  ["path", { d: "M13 8H7", key: "14i4kc" }],
-  ["path", { d: "M17 12H7", key: "16if0g" }]
-];
-const MessageSquareText = createLucideIcon("message-square-text", __iconNode$B);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$A = [
-  ["path", { d: "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z", key: "1lielz" }]
-];
-const MessageSquare = createLucideIcon("message-square", __iconNode$A);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$z = [
-  ["path", { d: "M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z", key: "131961" }],
-  ["path", { d: "M19 10v2a7 7 0 0 1-14 0v-2", key: "1vc78b" }],
-  ["line", { x1: "12", x2: "12", y1: "19", y2: "22", key: "x3vr5v" }]
-];
-const Mic = createLucideIcon("mic", __iconNode$z);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$y = [
-  ["rect", { x: "16", y: "16", width: "6", height: "6", rx: "1", key: "4q2zg0" }],
-  ["rect", { x: "2", y: "16", width: "6", height: "6", rx: "1", key: "8cvhb9" }],
-  ["rect", { x: "9", y: "2", width: "6", height: "6", rx: "1", key: "1egb70" }],
-  ["path", { d: "M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3", key: "1jsf9p" }],
-  ["path", { d: "M12 12V8", key: "2874zd" }]
-];
-const Network = createLucideIcon("network", __iconNode$y);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$x = [
-  ["path", { d: "M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4", key: "re6nr2" }],
-  ["path", { d: "M2 6h4", key: "aawbzj" }],
-  ["path", { d: "M2 10h4", key: "l0bgd4" }],
-  ["path", { d: "M2 14h4", key: "1gsvsf" }],
-  ["path", { d: "M2 18h4", key: "1bu2t1" }],
-  [
-    "path",
-    {
-      d: "M21.378 5.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z",
-      key: "pqwjuv"
-    }
-  ]
-];
-const NotebookPen = createLucideIcon("notebook-pen", __iconNode$x);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$w = [
-  ["path", { d: "M13.234 20.252 21 12.3", key: "1cbrk9" }],
-  [
-    "path",
-    {
-      d: "m16 6-8.414 8.586a2 2 0 0 0 0 2.828 2 2 0 0 0 2.828 0l8.414-8.586a4 4 0 0 0 0-5.656 4 4 0 0 0-5.656 0l-8.415 8.585a6 6 0 1 0 8.486 8.486",
-      key: "1pkts6"
-    }
-  ]
-];
-const Paperclip = createLucideIcon("paperclip", __iconNode$w);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$v = [
-  ["path", { d: "M5.8 11.3 2 22l10.7-3.79", key: "gwxi1d" }],
-  ["path", { d: "M4 3h.01", key: "1vcuye" }],
-  ["path", { d: "M22 8h.01", key: "1mrtc2" }],
-  ["path", { d: "M15 2h.01", key: "1cjtqr" }],
-  ["path", { d: "M22 20h.01", key: "1mrys2" }],
-  [
-    "path",
-    {
-      d: "m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10",
-      key: "hbicv8"
-    }
-  ],
-  [
-    "path",
-    { d: "m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17", key: "1i94pl" }
-  ],
-  ["path", { d: "m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7", key: "1cofks" }],
-  [
-    "path",
-    {
-      d: "M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z",
-      key: "4kbmks"
-    }
-  ]
-];
-const PartyPopper = createLucideIcon("party-popper", __iconNode$v);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$u = [
-  [
-    "path",
-    {
-      d: "M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z",
-      key: "1a8usu"
-    }
-  ],
-  ["path", { d: "m15 5 4 4", key: "1mk7zo" }]
-];
-const Pencil = createLucideIcon("pencil", __iconNode$u);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$t = [["polygon", { points: "6 3 20 12 6 21 6 3", key: "1oa8hb" }]];
-const Play = createLucideIcon("play", __iconNode$t);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$s = [
-  ["path", { d: "M5 12h14", key: "1ays0h" }],
-  ["path", { d: "M12 5v14", key: "s699le" }]
-];
-const Plus = createLucideIcon("plus", __iconNode$s);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$r = [
-  ["path", { d: "M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8", key: "v9h5vc" }],
-  ["path", { d: "M21 3v5h-5", key: "1q7to0" }],
-  ["path", { d: "M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16", key: "3uifl3" }],
-  ["path", { d: "M8 16H3v5", key: "1cv678" }]
-];
-const RefreshCw = createLucideIcon("refresh-cw", __iconNode$r);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$q = [
-  ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
-  ["path", { d: "M3 3v5h5", key: "1xhq8a" }]
-];
-const RotateCcw = createLucideIcon("rotate-ccw", __iconNode$q);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$p = [
-  [
-    "path",
-    {
-      d: "M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z",
-      key: "1c8476"
-    }
-  ],
-  ["path", { d: "M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7", key: "1ydtos" }],
-  ["path", { d: "M7 3v4a1 1 0 0 0 1 1h7", key: "t51u73" }]
-];
-const Save = createLucideIcon("save", __iconNode$p);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$o = [
-  ["path", { d: "m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z", key: "7g6ntu" }],
-  ["path", { d: "m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z", key: "ijws7r" }],
-  ["path", { d: "M7 21h10", key: "1b0cd5" }],
-  ["path", { d: "M12 3v18", key: "108xh3" }],
-  ["path", { d: "M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2", key: "3gwbw2" }]
-];
-const Scale = createLucideIcon("scale", __iconNode$o);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$n = [
-  ["path", { d: "M15 12h-5", key: "r7krc0" }],
-  ["path", { d: "M15 8h-5", key: "1khuty" }],
-  ["path", { d: "M19 17V5a2 2 0 0 0-2-2H4", key: "zz82l3" }],
-  [
-    "path",
-    {
-      d: "M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3",
-      key: "1ph1d7"
-    }
-  ]
-];
-const ScrollText = createLucideIcon("scroll-text", __iconNode$n);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$m = [
-  ["path", { d: "m21 21-4.34-4.34", key: "14j7rj" }],
-  ["circle", { cx: "11", cy: "11", r: "8", key: "4ej97u" }]
-];
-const Search = createLucideIcon("search", __iconNode$m);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$l = [
-  [
-    "path",
-    {
-      d: "M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z",
-      key: "1ffxy3"
-    }
-  ],
-  ["path", { d: "m21.854 2.147-10.94 10.939", key: "12cjpa" }]
-];
-const Send = createLucideIcon("send", __iconNode$l);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$k = [
-  [
-    "path",
-    {
-      d: "M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z",
-      key: "oel41y"
-    }
-  ],
-  ["path", { d: "M12 8v4", key: "1got3b" }],
-  ["path", { d: "M12 16h.01", key: "1drbdi" }]
-];
-const ShieldAlert = createLucideIcon("shield-alert", __iconNode$k);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$j = [
-  [
-    "path",
-    {
-      d: "M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z",
-      key: "oel41y"
-    }
-  ],
-  ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
-];
-const ShieldCheck = createLucideIcon("shield-check", __iconNode$j);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$i = [
-  ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }]
-];
-const Square = createLucideIcon("square", __iconNode$i);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$h = [
-  [
-    "path",
-    {
-      d: "M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z",
-      key: "vktsd0"
-    }
-  ],
-  ["circle", { cx: "7.5", cy: "7.5", r: ".5", fill: "currentColor", key: "kqv944" }]
-];
-const Tag = createLucideIcon("tag", __iconNode$h);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$g = [
-  ["path", { d: "M3 6h18", key: "d0wm0j" }],
-  ["path", { d: "M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6", key: "4alrt4" }],
-  ["path", { d: "M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2", key: "v07s0e" }],
-  ["line", { x1: "10", x2: "10", y1: "11", y2: "17", key: "1uufr5" }],
-  ["line", { x1: "14", x2: "14", y1: "11", y2: "17", key: "xtxkd" }]
-];
-const Trash2 = createLucideIcon("trash-2", __iconNode$g);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$f = [
-  [
-    "path",
-    {
-      d: "m17 14 3 3.3a1 1 0 0 1-.7 1.7H4.7a1 1 0 0 1-.7-1.7L7 14h-.3a1 1 0 0 1-.7-1.7L9 9h-.2A1 1 0 0 1 8 7.3L12 3l4 4.3a1 1 0 0 1-.8 1.7H15l3 3.3a1 1 0 0 1-.7 1.7H17Z",
-      key: "cpyugq"
-    }
-  ],
-  ["path", { d: "M12 22v-3", key: "kmzjlo" }]
-];
-const TreePine = createLucideIcon("tree-pine", __iconNode$f);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$e = [
-  [
-    "path",
-    {
-      d: "m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3",
-      key: "wmoenq"
-    }
-  ],
-  ["path", { d: "M12 9v4", key: "juzpu7" }],
-  ["path", { d: "M12 17h.01", key: "p32p05" }]
-];
-const TriangleAlert = createLucideIcon("triangle-alert", __iconNode$e);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$d = [
-  ["path", { d: "M9 14 4 9l5-5", key: "102s5s" }],
-  ["path", { d: "M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11", key: "f3b9sd" }]
-];
-const Undo2 = createLucideIcon("undo-2", __iconNode$d);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$c = [
-  ["path", { d: "M12 3v12", key: "1x0j5s" }],
-  ["path", { d: "m17 8-5-5-5 5", key: "7q97r8" }],
-  ["path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4", key: "ih7n3h" }]
-];
-const Upload = createLucideIcon("upload", __iconNode$c);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$b = [
-  ["path", { d: "m16 11 2 2 4-4", key: "9rsbq5" }],
-  ["path", { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", key: "1yyitq" }],
-  ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }]
-];
-const UserCheck = createLucideIcon("user-check", __iconNode$b);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$a = [
-  ["path", { d: "M10 15H6a4 4 0 0 0-4 4v2", key: "1nfge6" }],
-  ["path", { d: "m14.305 16.53.923-.382", key: "1itpsq" }],
-  ["path", { d: "m15.228 13.852-.923-.383", key: "eplpkm" }],
-  ["path", { d: "m16.852 12.228-.383-.923", key: "13v3q0" }],
-  ["path", { d: "m16.852 17.772-.383.924", key: "1i8mnm" }],
-  ["path", { d: "m19.148 12.228.383-.923", key: "1q8j1v" }],
-  ["path", { d: "m19.53 18.696-.382-.924", key: "vk1qj3" }],
-  ["path", { d: "m20.772 13.852.924-.383", key: "n880s0" }],
-  ["path", { d: "m20.772 16.148.924.383", key: "1g6xey" }],
-  ["circle", { cx: "18", cy: "15", r: "3", key: "gjjjvw" }],
-  ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }]
-];
-const UserCog = createLucideIcon("user-cog", __iconNode$a);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$9 = [
-  ["path", { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", key: "1yyitq" }],
-  ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }],
-  ["line", { x1: "22", x2: "16", y1: "11", y2: "11", key: "1shjgl" }]
-];
-const UserMinus = createLucideIcon("user-minus", __iconNode$9);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$8 = [
-  ["path", { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", key: "1yyitq" }],
-  ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }],
-  ["line", { x1: "19", x2: "19", y1: "8", y2: "14", key: "1bvyxn" }],
-  ["line", { x1: "22", x2: "16", y1: "11", y2: "11", key: "1shjgl" }]
-];
-const UserPlus = createLucideIcon("user-plus", __iconNode$8);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$7 = [
-  ["circle", { cx: "12", cy: "8", r: "5", key: "1hypcn" }],
-  ["path", { d: "M20 21a8 8 0 0 0-16 0", key: "rfgkzh" }]
-];
-const UserRound = createLucideIcon("user-round", __iconNode$7);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$6 = [
-  ["path", { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", key: "1yyitq" }],
-  ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }],
-  ["line", { x1: "17", x2: "22", y1: "8", y2: "13", key: "3nzzx3" }],
-  ["line", { x1: "22", x2: "17", y1: "8", y2: "13", key: "1swrse" }]
-];
-const UserX = createLucideIcon("user-x", __iconNode$6);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$5 = [
-  ["path", { d: "M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2", key: "975kel" }],
-  ["circle", { cx: "12", cy: "7", r: "4", key: "17ys0d" }]
-];
-const User = createLucideIcon("user", __iconNode$5);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$4 = [
-  ["path", { d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", key: "1yyitq" }],
-  ["path", { d: "M16 3.128a4 4 0 0 1 0 7.744", key: "16gr8j" }],
-  ["path", { d: "M22 21v-2a4 4 0 0 0-3-3.87", key: "kshegd" }],
-  ["circle", { cx: "9", cy: "7", r: "4", key: "nufk8" }]
-];
-const Users = createLucideIcon("users", __iconNode$4);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$3 = [
-  ["path", { d: "m16 2-2.3 2.3a3 3 0 0 0 0 4.2l1.8 1.8a3 3 0 0 0 4.2 0L22 8", key: "n7qcjb" }],
-  [
-    "path",
-    { d: "M15 15 3.3 3.3a4.2 4.2 0 0 0 0 6l7.3 7.3c.7.7 2 .7 2.8 0L15 15Zm0 0 7 7", key: "d0u48b" }
-  ],
-  ["path", { d: "m2.1 21.8 6.4-6.3", key: "yn04lh" }],
-  ["path", { d: "m19 5-7 7", key: "194lzd" }]
-];
-const UtensilsCrossed = createLucideIcon("utensils-crossed", __iconNode$3);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$2 = [
-  [
-    "path",
-    {
-      d: "m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5",
-      key: "ftymec"
-    }
-  ],
-  ["rect", { x: "2", y: "6", width: "14", height: "12", rx: "2", key: "158x01" }]
-];
-const Video = createLucideIcon("video", __iconNode$2);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$1 = [
-  ["path", { d: "M18 6 6 18", key: "1bl5f8" }],
-  ["path", { d: "m6 6 12 12", key: "d8bk6v" }]
-];
-const X = createLucideIcon("x", __iconNode$1);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode = [
-  [
-    "path",
-    {
-      d: "M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z",
-      key: "1xq2db"
-    }
-  ]
-];
-const Zap = createLucideIcon("zap", __iconNode);
-const _ImmutableObjectStorageCreateCertificateResult = Record({
-  "method": Text,
-  "blob_hash": Text
-});
-const _ImmutableObjectStorageRefillInformation = Record({
-  "proposed_top_up_amount": Opt(Nat)
-});
-const _ImmutableObjectStorageRefillResult = Record({
-  "success": Opt(Bool),
-  "topped_up_amount": Opt(Nat)
-});
-const Error$1 = Variant({
-  "FrontendOriginsNotConfigured": Null,
-  "MixedSsoSources": Record({
-    "otherKeys": Vec(Text),
-    "ssoKeys": Vec(Text)
-  }),
-  "Stale": Record({ "ageNs": Nat }),
-  "MalformedCandid": Null,
-  "AmbiguousAttribute": Record({
-    "field": Text,
-    "sources": Vec(Text)
-  }),
-  "NoAttributes": Null,
-  "UnknownNonce": Null,
-  "UntrustedSsoSource": Record({ "domain": Text }),
-  "MissingField": Text,
-  "FrontendOriginMismatch": Record({
-    "got": Text,
-    "expected": Vec(Text)
-  })
-});
-const Result_25 = Variant({ "ok": Null, "err": Error$1 });
-const PersonId = Text;
-const StewardRoleStatus$1 = Variant({
-  "Active": Null,
-  "Removed": Null
-});
-const StewardRecord = Record({
-  "assignedAt": Int,
-  "assignedBy": Principal2,
-  "stewardAccountId": Principal2,
-  "successorPriority": Opt(Nat),
-  "roleStatus": StewardRoleStatus$1
-});
-const StewardError = Variant({
-  "LastSteward": Null,
-  "NotSteward": Null,
-  "AlreadySteward": Null,
-  "NotSignedIn": Null,
-  "NotApprovedClaimedMember": Null,
-  "NotDesignated": Null
-});
-const Result_10 = Variant({
-  "ok": StewardRecord,
-  "err": StewardError
-});
-const PostId = Nat;
-const AccountId = Principal2;
-const Timestamp = Int;
-const ReplyId = Nat;
-const Reply = Record({
-  "authorAccountId": AccountId,
-  "body": Text,
-  "createdAt": Timestamp,
-  "authorPersonId": PersonId,
-  "replyId": ReplyId,
-  "postId": PostId
-});
-const EvidenceStatus$1 = Variant({
-  "Unresolved": Null,
-  "Documented": Null,
-  "FamilyHistory": Null,
-  "PersonalMemory": Null
-});
-const StoryId = Nat;
-const StoryStatus = Variant({
-  "Approved": Null,
-  "Rejected": Null,
-  "Pending": Null
-});
-const Story = Record({
-  "id": StoryId,
-  "era": Opt(Text),
-  "status": StoryStatus,
-  "title": Text,
-  "relatedMemberIds": Vec(Text),
-  "storyText": Text,
-  "createdAt": Int,
-  "year": Opt(Nat),
-  "relatedArchiveItemIds": Vec(Nat),
-  "updatedAt": Int,
-  "evidenceStatus": EvidenceStatus$1,
-  "location": Opt(Text),
-  "contributor": Principal2
-});
-const ExternalBlob2 = Vec(Nat8);
-const PhotoId = Nat;
-const Photo = Record({
-  "id": PhotoId,
-  "blob": ExternalBlob2,
-  "mimeType": Text,
-  "filename": Text,
-  "uploadedAt": Int,
-  "uploadedBy": Principal2
-});
-const RelationshipType$1 = Variant({
-  "Parent": Null,
-  "Sibling": Null,
-  "SpousePartner": Null,
-  "Child": Null
-});
-const RelationshipStatus$1 = Variant({
-  "Disputed": Null,
-  "Confirmed": Null,
-  "Pending": Null
-});
-const Relationship = Record({
-  "id": Nat,
-  "status": RelationshipStatus$1,
-  "fromPersonId": PersonId,
-  "toPersonId": PersonId,
-  "relationshipType": RelationshipType$1
-});
-const RelationshipAdminError = Variant({
-  "RelationshipNotFound": Null,
-  "NotSignedIn": Null,
-  "DuplicateRelationship": Null,
-  "PersonNotFound": Null
-});
-const Result_23 = Variant({
-  "ok": Relationship,
-  "err": RelationshipAdminError
-});
-const ArchiveItemId = Nat;
-const ArchiveItemStatus$1 = Variant({
-  "Approved": Null,
-  "Rejected": Null,
-  "Pending": Null
-});
-const PrivacyLevel$1 = Variant({
-  "Private": Null,
-  "Public": Null,
-  "FamilyOnly": Null
-});
-const OralHistorySpeaker = Record({
-  "name": Text,
-  "personId": Opt(Text)
-});
-const ArchiveItemType$1 = Variant({
-  "Research": Null,
-  "Photo": Null,
-  "Document": Null,
-  "WorkBusiness": Null,
-  "WrittenStoryNote": Null,
-  "Audio": Null,
-  "Other": Null,
-  "Video": Null
-});
-const ChapterMarker = Record({
-  "title": Text,
-  "timestamp": Nat
-});
-const SourceStatus$1 = Variant({
-  "Copy": Null,
-  "Unverified": Null,
-  "Transcribed": Null,
-  "Original": Null
-});
-const ArchiveItemClassification$1 = Variant({
-  "OralHistory": Null,
-  "Standard": Null
-});
-const ArchiveItem = Record({
-  "id": ArchiveItemId,
-  "era": Text,
-  "status": ArchiveItemStatus$1,
-  "title": Text,
-  "relatedMemberIds": Vec(Text),
-  "blob": ExternalBlob2,
-  "createdAt": Int,
-  "tags": Vec(Text),
-  "year": Opt(Nat),
-  "description": Text,
-  "privacyLevel": PrivacyLevel$1,
-  "primarySpeaker": Opt(OralHistorySpeaker),
-  "extractedNames": Opt(Vec(Text)),
-  "itemType": ArchiveItemType$1,
-  "aiSummary": Opt(Text),
-  "searchableTranscript": Opt(Text),
-  "relatedBranchId": Opt(Text),
-  "transcript": Opt(Text),
-  "chapterMarkers": Opt(Vec(ChapterMarker)),
-  "sourceStatus": SourceStatus$1,
-  "classification": ArchiveItemClassification$1,
-  "contributor": Principal2
-});
-const FindingId = Nat;
-const ReviewStatus$1 = Variant({
-  "NeedsResearch": Null,
-  "Conflicting": Null,
-  "Approved": Null,
-  "Rejected": Null,
-  "Pending": Null
-});
-const EvidenceLabel$1 = Variant({
-  "NeedsResearch": Null,
-  "Conflicting": Null,
-  "Hypothesis": Null,
-  "Documented": Null,
-  "FamilyHistoryOralHistory": Null,
-  "PersonalMemory": Null
-});
-const SourceType$1 = Variant({
-  "CertificateHeadstoneReference": Null,
-  "DeedPropertyReference": Null,
-  "ResearchNotes": Null,
-  "EmailThread": Null,
-  "UploadedDocumentImage": Null,
-  "CensusCitation": Null
-});
-const FindingContent = Variant({
-  "Story": Record({
-    "title": Text,
-    "storyText": Text,
-    "relatedPersonIds": Vec(Text)
-  }),
-  "TimelineEvent": Record({
-    "title": Text,
-    "date": Opt(Text),
-    "description": Text,
-    "personId": Text
-  }),
-  "PersonFact": Record({
-    "field": Text,
-    "value": Text,
-    "personId": Text
-  }),
-  "Source": Record({
-    "title": Text,
-    "archiveItemId": Opt(Nat),
-    "description": Text,
-    "sourceType": SourceType$1
-  }),
-  "Mystery": Record({
-    "title": Text,
-    "description": Text,
-    "relatedPersonIds": Vec(Text)
-  }),
-  "Relationship": Record({
-    "fromPersonId": Text,
-    "toPersonId": Text,
-    "relationshipType": Text
-  })
-});
-const SourceId = Nat;
-const FindingType$1 = Variant({
-  "Story": Null,
-  "TimelineEvent": Null,
-  "PersonFact": Null,
-  "Source": Null,
-  "Mystery": Null,
-  "Relationship": Null
-});
-const ProposedFinding = Record({
-  "id": FindingId,
-  "status": ReviewStatus$1,
-  "title": Text,
-  "evidenceLabel": EvidenceLabel$1,
-  "newPersonCandidateId": Opt(Nat),
-  "content": FindingContent,
-  "conflictReviewId": Opt(Nat),
-  "submittedAt": Int,
-  "submittedBy": Principal2,
-  "sourceId": SourceId,
-  "reviewedAt": Opt(Int),
-  "reviewedBy": Opt(Principal2),
-  "updatedAt": Int,
-  "personId": Opt(Text),
-  "findingType": FindingType$1
-});
-const NewPersonCandidate = Record({
-  "id": Nat,
-  "status": ReviewStatus$1,
-  "name": Text,
-  "submittedAt": Int,
-  "submittedBy": Principal2,
-  "sourceId": SourceId,
-  "reviewedAt": Opt(Int),
-  "reviewedBy": Opt(Principal2),
-  "details": Text
-});
-const ProfileClaimStatus = Variant({
-  "Approved": Null,
-  "Rejected": Null,
-  "Pending": Null
-});
-const ProfileClaim = Record({
-  "id": Nat,
-  "submittedDate": Int,
-  "status": ProfileClaimStatus,
-  "reviewedDate": Opt(Int),
-  "reviewedBy": Opt(Principal2),
-  "personId": PersonId,
-  "requestingUserId": Principal2
-});
-const ProfileRemovalStatus = Variant({
-  "Approved": Null,
-  "Rejected": Null,
-  "Pending": Null
-});
-const ProfileRemovalRequest = Record({
-  "id": Nat,
-  "submittedDate": Int,
-  "status": ProfileRemovalStatus,
-  "reviewedDate": Opt(Int),
-  "reviewedBy": Opt(Principal2),
-  "personId": PersonId,
-  "requestingUserId": Principal2,
-  "reason": Text
-});
-const RecipeId = Nat;
-const RecipeStatus$1 = Variant({
-  "Approved": Null,
-  "Rejected": Null,
-  "Archived": Null,
-  "Pending": Null
-});
-const Recipe = Record({
-  "era": Opt(Text),
-  "status": RecipeStatus$1,
-  "title": Text,
-  "recipeId": RecipeId,
-  "aiDerivedText": Opt(Text),
-  "createdAt": Int,
-  "tags": Vec(Text),
-  "year": Opt(Nat),
-  "contributorAccountId": Principal2,
-  "privacyLevel": PrivacyLevel$1,
-  "linkedMediaIds": Vec(Nat),
-  "instructions": Text,
-  "ocrText": Opt(Text),
-  "familyBranch": Opt(Text),
-  "familyStory": Opt(Text),
-  "updatedAt": Int,
-  "evidenceStatus": EvidenceStatus$1,
-  "shortDescription": Text,
-  "extractedIngredients": Opt(Vec(Text)),
-  "transcript": Opt(Text),
-  "location": Opt(Text),
-  "originatingPersonId": Text,
-  "ingredients": Vec(Text),
-  "relatedPersonIds": Vec(Text)
-});
-const RelationshipProposal = Record({
-  "id": Nat,
-  "status": ReviewStatus$1,
-  "fromPersonId": Text,
-  "submittedAt": Int,
-  "submittedBy": Principal2,
-  "sourceId": SourceId,
-  "reviewedAt": Opt(Int),
-  "reviewedBy": Opt(Principal2),
-  "toPersonId": Text,
-  "relationshipType": Text
-});
-const RelationshipRequestStatus = Variant({
-  "Approved": Null,
-  "Rejected": Null,
-  "Pending": Null
-});
-const RelationshipRequest = Record({
-  "id": Nat,
-  "submittedDate": Int,
-  "status": RelationshipRequestStatus,
-  "reviewedDate": Opt(Int),
-  "relatedPersonId": PersonId,
-  "requestingPersonId": PersonId,
-  "proposedRelationship": RelationshipType$1,
-  "reviewer": Opt(Principal2)
-});
-const SourceRecord = Record({
-  "id": SourceId,
-  "status": ReviewStatus$1,
-  "title": Text,
-  "archiveItemId": Opt(Nat),
-  "createdAt": Int,
-  "description": Text,
-  "sourceType": SourceType$1,
-  "updatedAt": Int,
-  "contributor": Principal2
-});
-const PostStatus$1 = Variant({
-  "Active": Null,
-  "Archived": Null
-});
-const PostType$1 = Variant({
-  "Announcement": Null,
-  "Recipe": Null,
-  "ResearchHistory": Null,
-  "FamilyQuestion": Null,
-  "Memorial": Null,
-  "General": Null,
-  "Other": Null,
-  "ReunionEvent": Null,
-  "PhotoIdentification": Null
-});
-const PrivacyScope = Variant({ "FamilyOnly": Null });
-const Post = Record({
-  "status": PostStatus$1,
-  "authorAccountId": AccountId,
-  "postType": PostType$1,
-  "title": Opt(Text),
-  "body": Text,
-  "createdAt": Timestamp,
-  "tags": Vec(Text),
-  "linkedMediaIds": Vec(Nat),
-  "privacyScope": PrivacyScope,
-  "authorPersonId": PersonId,
-  "updatedAt": Timestamp,
-  "relatedPersonIds": Vec(PersonId),
-  "postId": PostId
-});
-const ArchiveError = Variant({
-  "NotArchived": Null,
-  "ProfileNotFound": Null,
-  "AlreadyArchived": Null,
-  "NotSignedIn": Null
-});
-const Result_2 = Variant({ "ok": Null, "err": ArchiveError });
-const UserRole = Variant({
-  "admin": Null,
-  "user": Null,
-  "guest": Null
-});
-const AuthMethod = Variant({
-  "Google": Null,
-  "Apple": Null
-});
-const Account = Record({
-  "id": AccountId,
-  "createdAt": Int,
-  "authMethods": Vec(AuthMethod)
-});
-const AccountError = Variant({
-  "AccountNotFound": Null,
-  "NotSignedIn": Null
-});
-const Result_24 = Variant({ "ok": Account, "err": AccountError });
-const ClaimPersistenceError = Variant({
-  "AlreadyOwned": Null,
-  "AlreadyPending": Null,
-  "ProfileNotFound": Null,
-  "NotSignedIn": Null,
-  "ApprovedOwnerExists": Null
-});
-const ClaimEligibility = Record({
-  "eligible": Bool,
-  "reason": Opt(ClaimPersistenceError)
-});
-const BoardMediaUpload = Record({
-  "era": Text,
-  "title": Text,
-  "relatedMemberIds": Vec(Text),
-  "blob": ExternalBlob2,
-  "tags": Vec(Text),
-  "year": Opt(Nat),
-  "description": Text,
-  "privacyLevel": PrivacyLevel$1,
-  "primarySpeaker": Opt(OralHistorySpeaker),
-  "itemType": ArchiveItemType$1,
-  "relatedBranchId": Opt(Text),
-  "sourceStatus": SourceStatus$1,
-  "classification": ArchiveItemClassification$1
-});
-const MysteryStatus$1 = Variant({
-  "Researching": Null,
-  "Open": Null,
-  "PartiallyResolved": Null,
-  "Resolved": Null
-});
-const MysteryId = Nat;
-const Resolution = Record({
-  "supportingEvidence": Vec(Text),
-  "summary": Text,
-  "resolvedAt": Int,
-  "resolvedBy": Principal2
-});
-const Mystery = Record({
-  "id": MysteryId,
-  "status": MysteryStatus$1,
-  "title": Text,
-  "relatedMemberIds": Vec(Text),
-  "createdAt": Int,
-  "relatedArchiveItemIds": Vec(Nat),
-  "description": Text,
-  "resolution": Opt(Resolution),
-  "updatedAt": Int,
-  "knownFacts": Vec(Text),
-  "possibilities": Vec(Text),
-  "relatedBranchId": Opt(Text),
-  "relatedSourceIds": Vec(Nat),
-  "contributor": Principal2
-});
-const ResearchError = Variant({
-  "invalidState": Text,
-  "notAuthorized": Null,
-  "notFound": Nat
-});
-const Result_22 = Variant({
-  "ok": ProposedFinding,
-  "err": ResearchError
-});
-const ClaimStatus$1 = Variant({
-  "Unclaimed": Null,
-  "Claimed": Null
-});
-const LivingStatus$1 = Variant({
-  "Living": Null,
-  "Deceased": Null
-});
-const PersonProfile = Record({
-  "occupation": Opt(Text),
-  "privacySettings": Opt(Text),
-  "nickname": Opt(Text),
-  "claimedByUserId": Opt(Principal2),
-  "birthDate": Opt(Text),
-  "birthInfo": Opt(Text),
-  "claimStatus": ClaimStatus$1,
-  "livingStatus": LivingStatus$1,
-  "name": Text,
-  "longerStory": Opt(Text),
-  "personId": PersonId,
-  "story": Opt(Text),
-  "middleName": Opt(Text),
-  "suffix": Opt(Text),
-  "preferredName": Opt(Text),
-  "currentLocation": Opt(Text),
-  "birthplace": Opt(Text),
-  "lastName": Opt(Text),
-  "shortBio": Opt(Text),
-  "timeline": Opt(Vec(Text)),
-  "firstName": Opt(Text)
-});
-const CreateError$1 = Variant({
-  "AlreadyOwned": Null,
-  "NotSignedIn": Null
-});
-const Result_21 = Variant({
-  "ok": PersonProfile,
-  "err": CreateError$1
-});
-const Result_20 = Variant({
-  "ok": NewPersonCandidate,
-  "err": ResearchError
-});
-const Result_19 = Variant({
-  "ok": RelationshipProposal,
-  "err": ResearchError
-});
-const Result_18 = Variant({
-  "ok": SourceRecord,
-  "err": ResearchError
-});
-const SourceUploadResult = Record({
-  "source": SourceRecord,
-  "archiveItem": ArchiveItem
-});
-const Result_17 = Variant({
-  "ok": SourceUploadResult,
-  "err": ResearchError
-});
-const SuccessorStatus$1 = Variant({
-  "Activated": Null,
-  "Removed": Null,
-  "Designated": Null
-});
-const SuccessorDesignation = Record({
-  "status": SuccessorStatus$1,
-  "assignedAt": Int,
-  "assignedBy": Principal2,
-  "personId": PersonId,
-  "priority": Nat
-});
-const Result_16 = Variant({
-  "ok": SuccessorDesignation,
-  "err": StewardError
-});
-const Value = Variant({
-  "int": Int,
-  "nat": Nat,
-  "float": Float64,
-  "bool": Bool,
-  "null": Null,
-  "text": Text
-});
-const Cell = Record({ "value": Value, "name": Text });
-const Result__1 = Record({
-  "hasMore": Bool,
-  "rows": Vec(Vec(Cell))
-});
-const ConversationId = Nat;
-const MessageStatus$1 = Variant({
-  "Blocked": Null,
-  "Sent": Null
-});
-const MessageId = Nat;
-const Message = Record({
-  "status": MessageStatus$1,
-  "messageId": MessageId,
-  "body": Text,
-  "createdAt": Timestamp,
-  "conversationId": ConversationId,
-  "senderAccountId": AccountId,
-  "senderPersonId": PersonId,
-  "readAt": Opt(Timestamp)
-});
-const ConversationView = Record({
-  "messages": Vec(Message),
-  "participantPersonIds": Vec(PersonId),
-  "conversationId": ConversationId,
-  "participantDisplayNames": Vec(Text)
-});
-const Result_15 = Variant({
-  "ok": AccountId,
-  "err": AccountError
-});
-const AuthMethods = Record({
-  "apple": Bool,
-  "google": Bool
-});
-const Result_14 = Variant({
-  "ok": AuthMethods,
-  "err": AccountError
-});
-const ReportId = Nat;
-const ReportStatus$1 = Variant({
-  "Dismissed": Null,
-  "Reviewed": Null,
-  "Pending": Null
-});
-const Report = Record({
-  "status": ReportStatus$1,
-  "reportedMessageId": MessageId,
-  "createdAt": Timestamp,
-  "reportingAccountId": AccountId,
-  "reportId": ReportId,
-  "reason": Text
-});
-const ReportedMessageView = Record({
-  "report": Report,
-  "message": Message
-});
-const ResearchAuditEntry = Record({
-  "id": Nat,
-  "action": Text,
-  "findingId": Opt(FindingId),
-  "sourceId": Opt(SourceId),
-  "actorId": Principal2,
-  "summary": Text,
-  "timestamp": Int
-});
-const ReviewItemKind = Variant({
-  "Source": Null,
-  "RelationshipProposal": Null,
-  "ConflictReview": Null,
-  "NewPersonCandidate": Null,
-  "Finding": Null
-});
-const ReviewAction = Variant({
-  "NeedsResearch": Null,
-  "Approve": Null,
-  "Reject": Null
-});
-const ReviewQueueItem = Record({
-  "id": Nat,
-  "provenance": Text,
-  "status": ReviewStatus$1,
-  "title": Text,
-  "evidenceLabel": Opt(EvidenceLabel$1),
-  "kind": ReviewItemKind,
-  "createdAt": Int,
-  "actions": Vec(ReviewAction),
-  "summary": Text,
-  "contributor": Opt(Principal2)
-});
-const ReviewQueue = Record({
-  "pending": Nat,
-  "conflicting": Nat,
-  "approved": Nat,
-  "rejected": Nat,
-  "needsResearch": Nat,
-  "items": Vec(ReviewQueueItem)
-});
-const StewardAuditKind$1 = Variant({
-  "ConflictResolution": Null,
-  "Governance": Null
-});
-const StewardAuditEntry = Record({
-  "id": Nat,
-  "field": Opt(Text),
-  "affectedPersonIds": Vec(Text),
-  "proposedValue": Opt(Text),
-  "stewardNotes": Opt(Text),
-  "kind": StewardAuditKind$1,
-  "proposedSourceId": Opt(Nat),
-  "actionType": Text,
-  "resolution": Opt(Text),
-  "existingValue": Opt(Text),
-  "summary": Text,
-  "personId": Opt(Text),
-  "timestamp": Int,
-  "actorAccountId": Principal2,
-  "existingSourceId": Opt(Nat)
-});
-const AuditActionType$1 = Variant({
-  "ProfileRemovalRequested": Null,
-  "ClaimRejected": Null,
-  "RelationshipTypeCorrected": Null,
-  "RelationshipRequestPending": Null,
-  "StewardPromoted": Null,
-  "BoardReplyRemoved": Null,
-  "SuccessorActivated": Null,
-  "StewardRemoved": Null,
-  "RelationshipRequestApproved": Null,
-  "DuplicateMerged": Null,
-  "ProfilePermanentlyDeleted": Null,
-  "RelationshipRequestRejected": Null,
-  "ProfileArchived": Null,
-  "ProfileRestored": Null,
-  "BoardPostArchived": Null,
-  "BoardPostRestored": Null,
-  "RelationshipAdded": Null,
-  "RelationshipRemoved": Null,
-  "ProfileRemovalReviewed": Null,
-  "ClaimApproved": Null,
-  "SuccessorDesignated": Null
-});
-const AuditEntry = Record({
-  "id": Nat,
-  "affectedPersonIds": Vec(PersonId),
-  "actionType": AuditActionType$1,
-  "summary": Text,
-  "timestamp": Int,
-  "actorAccountId": Principal2
-});
-const ConflictReviewItem = Record({
-  "id": Nat,
-  "field": Text,
-  "status": ReviewStatus$1,
-  "evidenceLabel": EvidenceLabel$1,
-  "findingId": FindingId,
-  "proposedValue": Text,
-  "stewardNotes": Text,
-  "proposedSourceId": Opt(Nat),
-  "personId": Opt(Text),
-  "canonicalValue": Text,
-  "resolvedAt": Opt(Int),
-  "resolvedBy": Opt(Principal2),
-  "existingSourceId": Opt(Nat)
-});
-const ConversationSummary = Record({
-  "otherPersonId": PersonId,
-  "conversationId": ConversationId,
-  "unreadCount": Nat,
-  "otherDisplayName": Text,
-  "latestMessagePreview": Text,
-  "latestMessageAt": Timestamp
-});
-const DisputedFact = Record({
-  "field": Text,
-  "status": ReviewStatus$1,
-  "proposedValue": Text,
-  "canonicalValue": Text
-});
-const DuplicateCandidate = Record({
-  "deathDate": Opt(Text),
-  "ownerAccount": Opt(Principal2),
-  "birthDate": Opt(Text),
-  "claimStatus": Text,
-  "name": Text,
-  "archiveLinks": Vec(Text),
-  "children": Vec(Text),
-  "sourceCount": Nat,
-  "personId": PersonId,
-  "spouses": Vec(Text),
-  "photoCount": Nat,
-  "timelineCount": Nat,
-  "parents": Vec(Text)
-});
-const DuplicatePair = Record({
-  "candidateA": DuplicateCandidate,
-  "candidateB": DuplicateCandidate
-});
-const StewardIdentity = Record({
-  "accountId": Principal2,
-  "displayName": Text,
-  "personId": PersonId,
-  "canonicalName": Text
-});
-const NotificationType$1 = Variant({
-  "ResearchSubmission": Null,
-  "ResearchApproved": Null,
-  "ResearchRejected": Null,
-  "RelationshipRequested": Null,
-  "BoardMention": Null,
-  "RelationshipReviewed": Null,
-  "BoardReply": Null,
-  "NewMessage": Null,
-  "ProfileClaimReviewed": Null,
-  "ProfileClaimRequested": Null
-});
-const Notification = Record({
-  "id": Nat,
-  "notificationType": NotificationType$1,
-  "createdAt": Int,
-  "read": Bool,
-  "recipient": Principal2,
-  "message": Text
-});
-const MysteryContributionId = Nat;
-const MysteryContributionStatus = Variant({
-  "Approved": Null,
-  "Rejected": Null,
-  "Pending": Null
-});
-const MysteryContributionType$1 = Variant({
-  "Lead": Null,
-  "Note": Null,
-  "Memory": Null,
-  "Source": Null
-});
-const MysteryContribution = Record({
-  "id": MysteryContributionId,
-  "status": MysteryContributionStatus,
-  "createdAt": Int,
-  "text": Text,
-  "mysteryId": MysteryId,
-  "reviewedAt": Opt(Int),
-  "reviewedBy": Opt(Principal2),
-  "contributionType": MysteryContributionType$1,
-  "contributor": Principal2
-});
-const TimelineLinkTarget = Variant({
-  "Story": StoryId,
-  "Mystery": MysteryId,
-  "Person": Text,
-  "ArchiveItem": Nat
-});
-const TimelineEventType$1 = Variant({
-  "MilitaryService": Null,
-  "Story": Null,
-  "Birth": Null,
-  "FamilyEvent": Null,
-  "Migration": Null,
-  "Mystery": Null,
-  "Death": Null,
-  "PhotoDocument": Null,
-  "Marriage": Null,
-  "CensusDocument": Null,
-  "Location": Null
-});
-const TimelineEvent = Record({
-  "id": Text,
-  "era": Opt(Text),
-  "title": Text,
-  "year": Opt(Nat),
-  "linkTarget": TimelineLinkTarget,
-  "description": Text,
-  "evidenceStatus": EvidenceStatus$1,
-  "eventType": TimelineEventType$1
-});
-const NotificationId = Nat;
-const MergeConflictStatus$1 = Variant({
-  "Resolved": Null,
-  "Pending": Null
-});
-const MergeConflict = Record({
-  "id": Nat,
-  "field": Text,
-  "status": MergeConflictStatus$1,
-  "alternateValue": Text,
-  "canonicalValue": Text,
-  "resolvedAt": Opt(Int),
-  "resolvedBy": Opt(Principal2)
-});
-const MergeResult = Record({
-  "archivedPersonId": PersonId,
-  "conflicts": Vec(MergeConflict),
-  "canonicalPersonId": PersonId
-});
-const MergeError = Variant({
-  "NotDuplicate": Null,
-  "ProfileNotFound": Null,
-  "NotSignedIn": Null,
-  "SameProfile": Null
-});
-const Result_13 = Variant({
-  "ok": MergeResult,
-  "err": MergeError
-});
-const Result_12 = Variant({ "ok": Null, "err": MergeError });
-const DeleteError = Variant({
-  "HasOwnershipHistory": Null,
-  "ProfileNotFound": Null,
-  "HasMedia": Null,
-  "HasArchiveItems": Null,
-  "NotSignedIn": Null,
-  "ConfirmationRequired": Null,
-  "HasTimeline": Null,
-  "HasApprovedRelationships": Null
-});
-const Result_11 = Variant({ "ok": Null, "err": DeleteError });
-const RelationshipError = Variant({
-  "DuplicateRequest": Null,
-  "NotSignedIn": Null,
-  "PersonNotFound": Null
-});
-const Result_9 = Variant({
-  "ok": RelationshipRequest,
-  "err": RelationshipError
-});
-const RemoveError = Variant({
-  "ProfileNotFound": Null,
-  "NotSignedIn": Null
-});
-const Result_8 = Variant({ "ok": Null, "err": RemoveError });
-const Result_7 = Variant({
-  "ok": Null,
-  "err": RelationshipAdminError
-});
-const Result_6 = Variant({ "ok": Null, "err": StewardError });
-const ClaimError$1 = Variant({
-  "AlreadyPending": Null,
-  "ProfileNotFound": Null,
-  "AlreadyClaimed": Null,
-  "NotSignedIn": Null,
-  "DeceasedProfile": Null
-});
-const Result_5 = Variant({
-  "ok": ProfileClaim,
-  "err": ClaimError$1
-});
-const RemovalError$1 = Variant({
-  "AlreadyPending": Null,
-  "ProfileNotFound": Null,
-  "NotSignedIn": Null,
-  "NotOwner": Null,
-  "DeceasedProfile": Null
-});
-const Result_4 = Variant({
-  "ok": ProfileRemovalRequest,
-  "err": RemovalError$1
-});
-const ConflictResolutionAction$1 = Variant({
-  "NeedsResearch": Null,
-  "PreserveBoth": Null,
-  "ReplaceExisting": Null,
-  "KeepExisting": Null
-});
-const Result_3 = Variant({
-  "ok": ConflictReviewItem,
-  "err": ResearchError
-});
-const ArchiveSearchFilter = Record({
-  "era": Opt(Text),
-  "relatedMemberId": Opt(Text),
-  "tags": Vec(Text),
-  "searchTerm": Opt(Text),
-  "itemType": Opt(ArchiveItemType$1)
-});
-const PersonMatch = Record({
-  "name": Text,
-  "personId": PersonId,
-  "parents": Vec(Text)
-});
-const MessageError$1 = Variant({
-  "ConversationNotFound": Null,
-  "RecipientArchived": Null,
-  "NotApprovedMember": Null,
-  "RecipientNotClaimed": Null,
-  "NotSignedIn": Null,
-  "BlockedByRecipient": Null,
-  "NotParticipant": Null,
-  "CannotMessageSelf": Null,
-  "RecipientNotFound": Null
-});
-const Result_1 = Variant({ "ok": Message, "err": MessageError$1 });
-const ProfileEdits = Record({
-  "occupation": Opt(Text),
-  "privacySettings": Opt(Text),
-  "nickname": Opt(Text),
-  "birthDate": Opt(Text),
-  "birthInfo": Opt(Text),
-  "livingStatus": Opt(LivingStatus$1),
-  "longerStory": Opt(Text),
-  "story": Opt(Text),
-  "middleName": Opt(Text),
-  "suffix": Opt(Text),
-  "preferredName": Opt(Text),
-  "currentLocation": Opt(Text),
-  "birthplace": Opt(Text),
-  "lastName": Opt(Text),
-  "shortBio": Opt(Text),
-  "timeline": Opt(Vec(Text)),
-  "firstName": Opt(Text)
-});
-const EditError$1 = Variant({
-  "ProfileNotFound": Null,
-  "NotSignedIn": Null,
-  "NotOwner": Null,
-  "DeceasedProfile": Null
-});
-const Result = Variant({ "ok": PersonProfile, "err": EditError$1 });
-Service({
-  "_immutableObjectStorageBlobsAreLive": Func(
-    [Vec(Vec(Nat8))],
-    [Vec(Bool)],
-    ["query"]
-  ),
-  "_immutableObjectStorageBlobsToDelete": Func(
-    [],
-    [Vec(Vec(Nat8))],
-    ["query"]
-  ),
-  "_immutableObjectStorageConfirmBlobDeletion": Func(
-    [Vec(Vec(Nat8))],
-    [],
-    []
-  ),
-  "_immutableObjectStorageCreateCertificate": Func(
-    [Text],
-    [_ImmutableObjectStorageCreateCertificateResult],
-    []
-  ),
-  "_immutableObjectStorageRefillCashier": Func(
-    [Opt(_ImmutableObjectStorageRefillInformation)],
-    [_ImmutableObjectStorageRefillResult],
-    []
-  ),
-  "_immutableObjectStorageUpdateGatewayPrincipals": Func([], [], []),
-  "_initialize_access_control": Func([], [], []),
-  "_internet_identity_sign_in_finish": Func([], [Result_25], []),
-  "_internet_identity_sign_in_start": Func([], [Vec(Nat8)], []),
-  "activateSuccessor": Func([PersonId], [Result_10], []),
-  "addBoardReply": Func([PostId, Text], [Reply], []),
-  "addCanonicalStory": Func(
-    [
-      Text,
-      Text,
-      Vec(Text),
-      Opt(Text),
-      Opt(Nat),
-      Opt(Text),
-      EvidenceStatus$1,
-      Vec(Nat)
-    ],
-    [Story],
-    []
-  ),
-  "addPhoto": Func(
-    [PersonId, Text, Text, ExternalBlob2],
-    [Photo],
-    []
-  ),
-  "addRelationship": Func(
-    [PersonId, PersonId, RelationshipType$1],
-    [Result_23],
-    []
-  ),
-  "approveArchiveItem": Func([ArchiveItemId], [Opt(ArchiveItem)], []),
-  "approveFinding": Func([FindingId], [Opt(ProposedFinding)], []),
-  "approveNewPersonCandidate": Func(
-    [Nat],
-    [Opt(NewPersonCandidate)],
-    []
-  ),
-  "approveProfileClaim": Func([Nat], [Opt(ProfileClaim)], []),
-  "approveProfileRemoval": Func(
-    [Nat],
-    [Opt(ProfileRemovalRequest)],
-    []
-  ),
-  "approveRecipe": Func([RecipeId], [Opt(Recipe)], []),
-  "approveRelationshipProposal": Func(
-    [Nat],
-    [Opt(RelationshipProposal)],
-    []
-  ),
-  "approveRelationshipRequest": Func(
-    [Nat],
-    [Opt(RelationshipRequest)],
-    []
-  ),
-  "approveSource": Func([SourceId], [Opt(SourceRecord)], []),
-  "approveStory": Func([StoryId], [Opt(Story)], []),
-  "archiveBoardPost": Func([PostId], [Opt(Post)], []),
-  "archiveProfile": Func([PersonId], [Result_2], []),
-  "assignCallerUserRole": Func([Principal2, UserRole], [], []),
-  "bindAuthMethod": Func([AuthMethod], [Result_24], []),
-  "blockUser": Func([Principal2], [], []),
-  "canClaimProfile": Func([PersonId], [ClaimEligibility], ["query"]),
-  "canMessagePerson": Func([Text], [Bool], ["query"]),
-  "correctRelationshipType": Func(
-    [Nat, RelationshipType$1],
-    [Result_23],
-    []
-  ),
-  "createBoardPost": Func(
-    [
-      PostType$1,
-      Opt(Text),
-      Text,
-      Vec(Text),
-      Vec(Nat),
-      Vec(Text)
-    ],
-    [Post],
-    []
-  ),
-  "createBoardPostWithMedia": Func(
-    [
-      PostType$1,
-      Opt(Text),
-      Text,
-      Vec(Text),
-      Vec(Nat),
-      Vec(BoardMediaUpload),
-      Vec(Text)
-    ],
-    [Post],
-    []
-  ),
-  "createCanonicalMystery": Func(
-    [
-      Text,
-      Text,
-      Vec(Text),
-      Opt(Text),
-      Vec(Text),
-      Vec(Text),
-      Vec(Nat),
-      Vec(Nat),
-      MysteryStatus$1
-    ],
-    [Mystery],
-    []
-  ),
-  "createFinding": Func(
-    [
-      Text,
-      EvidenceLabel$1,
-      FindingType$1,
-      FindingContent,
-      SourceId,
-      Opt(Text),
-      Opt(Nat)
-    ],
-    [Result_22],
-    []
-  ),
-  "createMyself": Func([Text], [Result_21], []),
-  "createNewPersonCandidate": Func(
-    [Text, Text, SourceId],
-    [Result_20],
-    []
-  ),
-  "createRelationshipProposal": Func(
-    [Text, Text, Text, SourceId],
-    [Result_19],
-    []
-  ),
-  "createSource": Func(
-    [Text, SourceType$1, Text, Opt(Nat)],
-    [Result_18],
-    []
-  ),
-  "createSourceWithUpload": Func(
-    [
-      Text,
-      SourceType$1,
-      Text,
-      ExternalBlob2,
-      Vec(Text),
-      Text,
-      Opt(Nat),
-      Vec(Text),
-      PrivacyLevel$1,
-      ArchiveItemClassification$1,
-      Opt(OralHistorySpeaker)
-    ],
-    [Result_17],
-    []
-  ),
-  "designateSuccessor": Func([PersonId, Nat], [Result_16], []),
-  "execute": Func([Text], [Result__1], ["query"]),
-  "getApiDoc": Func([], [Text], ["query"]),
-  "getBoardPost": Func([PostId], [Opt(Post)], ["query"]),
-  "getCallerUserRole": Func([], [UserRole], ["query"]),
-  "getConversation": Func(
-    [ConversationId],
-    [Opt(ConversationView)],
-    ["query"]
-  ),
-  "getFinding": Func([FindingId], [Opt(ProposedFinding)], ["query"]),
-  "getMyAccountId": Func([], [Result_15], ["query"]),
-  "getMyAuthMethods": Func([], [Result_14], ["query"]),
-  "getMyProfile": Func([], [Opt(PersonProfile)], ["query"]),
-  "getMyProfileClaim": Func(
-    [PersonId],
-    [Opt(ProfileClaim)],
-    ["query"]
-  ),
-  "getMyRelationshipRequests": Func(
-    [],
-    [Vec(RelationshipRequest)],
-    ["query"]
-  ),
-  "getPendingContributionsCount": Func([], [Nat], ["query"]),
-  "getPersonProfile": Func(
-    [PersonId],
-    [Opt(PersonProfile)],
-    ["query"]
-  ),
-  "getProfilePhoto": Func([PersonId], [Opt(Photo)], ["query"]),
-  "getRecipe": Func([RecipeId], [Opt(Recipe)], ["query"]),
-  "getRelationshipRequest": Func(
-    [Nat],
-    [Opt(RelationshipRequest)],
-    ["query"]
-  ),
-  "getReportedMessage": Func(
-    [ReportId],
-    [Opt(ReportedMessageView)],
-    ["query"]
-  ),
-  "getResearchAuditLog": Func(
-    [],
-    [Vec(ResearchAuditEntry)],
-    ["query"]
-  ),
-  "getReviewQueue": Func([], [ReviewQueue], ["query"]),
-  "getSingleStewardWarning": Func([], [Opt(Text)], ["query"]),
-  "getSource": Func([SourceId], [Opt(SourceRecord)], ["query"]),
-  "getStewardAuditHistory": Func(
-    [],
-    [Vec(StewardAuditEntry)],
-    ["query"]
-  ),
-  "hasApprovedOwner": Func([PersonId], [Bool], ["query"]),
-  "isCallerAdmin": Func([], [Bool], ["query"]),
-  "listApprovedArchiveItems": Func([], [Vec(ArchiveItem)], ["query"]),
-  "listApprovedRecipes": Func([], [Vec(Recipe)], ["query"]),
-  "listApprovedStories": Func([], [Vec(Story)], ["query"]),
-  "listArchivedProfileIds": Func([], [Vec(PersonId)], ["query"]),
-  "listArchivedProfiles": Func([], [Vec(PersonProfile)], ["query"]),
-  "listAuditHistory": Func([], [Vec(AuditEntry)], ["query"]),
-  "listBlockedUsers": Func([], [Vec(Principal2)], ["query"]),
-  "listBoardPosts": Func([Opt(PostType$1)], [Vec(Post)], ["query"]),
-  "listBoardReplies": Func([PostId], [Vec(Reply)], ["query"]),
-  "listConfirmedRelationships": Func(
-    [],
-    [Vec(Relationship)],
-    ["query"]
-  ),
-  "listConflictReviewItems": Func(
-    [],
-    [Vec(ConflictReviewItem)],
-    ["query"]
-  ),
-  "listConflictsForPerson": Func(
-    [Text],
-    [Vec(ConflictReviewItem)],
-    ["query"]
-  ),
-  "listConversations": Func([], [Vec(ConversationSummary)], ["query"]),
-  "listDisputedFactsForPerson": Func(
-    [Text],
-    [Vec(DisputedFact)],
-    ["query"]
-  ),
-  "listDuplicateCandidates": Func([], [Vec(DuplicatePair)], ["query"]),
-  "listEligibleStewardCandidates": Func(
-    [],
-    [Vec(StewardIdentity)],
-    ["query"]
-  ),
-  "listFindings": Func([], [Vec(ProposedFinding)], ["query"]),
-  "listHiddenBoardPosts": Func([], [Vec(Post)], ["query"]),
-  "listMessageableMembers": Func([], [Vec(Text)], ["query"]),
-  "listMysteries": Func([], [Vec(Mystery)], ["query"]),
-  "listNewPersonCandidates": Func(
-    [],
-    [Vec(NewPersonCandidate)],
-    ["query"]
-  ),
-  "listNotifications": Func([], [Vec(Notification)], ["query"]),
-  "listPendingArchiveItems": Func([], [Vec(ArchiveItem)], ["query"]),
-  "listPendingMysteryContributions": Func(
-    [],
-    [Vec(MysteryContribution)],
-    ["query"]
-  ),
-  "listPendingRecipes": Func([], [Vec(Recipe)], ["query"]),
-  "listPendingStories": Func([], [Vec(Story)], ["query"]),
-  "listPersonRelationships": Func(
-    [PersonId],
-    [Vec(Relationship)],
-    ["query"]
-  ),
-  "listPhotos": Func([PersonId], [Vec(Photo)], ["query"]),
-  "listProfileClaims": Func([], [Vec(ProfileClaim)], ["query"]),
-  "listProfileRemovalRequests": Func(
-    [],
-    [Vec(ProfileRemovalRequest)],
-    ["query"]
-  ),
-  "listRecipesForPerson": Func([Text], [Vec(Recipe)], ["query"]),
-  "listRelationshipProposals": Func(
-    [],
-    [Vec(RelationshipProposal)],
-    ["query"]
-  ),
-  "listRelationshipRequests": Func(
-    [],
-    [Vec(RelationshipRequest)],
-    ["query"]
-  ),
-  "listReports": Func([], [Vec(Report)], ["query"]),
-  "listSources": Func([], [Vec(SourceRecord)], ["query"]),
-  "listStewardIdentities": Func([], [Vec(StewardIdentity)], ["query"]),
-  "listStewards": Func([], [Vec(StewardRecord)], ["query"]),
-  "listSuccessors": Func([], [Vec(SuccessorDesignation)], ["query"]),
-  "listTimelineEvents": Func([], [Vec(TimelineEvent)], ["query"]),
-  "markConversationRead": Func([ConversationId], [], []),
-  "markMysteryResolved": Func(
-    [MysteryId, Text, Vec(Text)],
-    [Opt(Mystery)],
-    []
-  ),
-  "markNotificationRead": Func(
-    [NotificationId],
-    [Opt(Notification)],
-    []
-  ),
-  "mergeProfiles": Func([PersonId, PersonId], [Result_13], []),
-  "needsResearchFinding": Func(
-    [FindingId],
-    [Opt(ProposedFinding)],
-    []
-  ),
-  "needsResearchNewPersonCandidate": Func(
-    [Nat],
-    [Opt(NewPersonCandidate)],
-    []
-  ),
-  "needsResearchRelationshipProposal": Func(
-    [Nat],
-    [Opt(RelationshipProposal)],
-    []
-  ),
-  "needsResearchSource": Func([SourceId], [Opt(SourceRecord)], []),
-  "notDuplicate": Func([PersonId, PersonId], [Result_12], []),
-  "permanentlyDeleteProfile": Func([PersonId, Bool], [Result_11], []),
-  "promoteToSteward": Func([PersonId], [Result_10], []),
-  "proposeRelationship": Func(
-    [PersonId, PersonId, RelationshipType$1],
-    [Result_9],
-    []
-  ),
-  "publishRecipe": Func(
-    [
-      Text,
-      Text,
-      Text,
-      Vec(Text),
-      Opt(Text),
-      Opt(Nat),
-      Opt(Text),
-      Opt(Text),
-      Vec(Text),
-      Text,
-      Opt(Text),
-      Vec(Text),
-      PrivacyLevel$1,
-      EvidenceStatus$1,
-      Vec(Nat)
-    ],
-    [Recipe],
-    []
-  ),
-  "reconcileClaimNotifications": Func([Nat], [Nat], []),
-  "rejectArchiveItem": Func([ArchiveItemId], [Opt(ArchiveItem)], []),
-  "rejectFinding": Func([FindingId], [Opt(ProposedFinding)], []),
-  "rejectNewPersonCandidate": Func(
-    [Nat],
-    [Opt(NewPersonCandidate)],
-    []
-  ),
-  "rejectProfileClaim": Func([Nat], [Opt(ProfileClaim)], []),
-  "rejectProfileRemoval": Func(
-    [Nat],
-    [Opt(ProfileRemovalRequest)],
-    []
-  ),
-  "rejectRecipe": Func([RecipeId], [Opt(Recipe)], []),
-  "rejectRelationshipProposal": Func(
-    [Nat],
-    [Opt(RelationshipProposal)],
-    []
-  ),
-  "rejectRelationshipRequest": Func(
-    [Nat],
-    [Opt(RelationshipRequest)],
-    []
-  ),
-  "rejectSource": Func([SourceId], [Opt(SourceRecord)], []),
-  "rejectStory": Func([StoryId], [Opt(Story)], []),
-  "removeBoardReply": Func([ReplyId], [Opt(Reply)], []),
-  "removeDuplicateProfile": Func([PersonId], [Result_8], []),
-  "removePhoto": Func([PersonId, PhotoId], [Bool], []),
-  "removeRelationship": Func([Nat], [Result_7], []),
-  "removeSteward": Func([Principal2], [Result_6], []),
-  "reportMessage": Func([MessageId, Text], [Report], []),
-  "requestProfileClaim": Func([PersonId], [Result_5], []),
-  "requestProfileRemoval": Func([PersonId, Text], [Result_4], []),
-  "resolveConflict": Func(
-    [Nat, ConflictResolutionAction$1, Text],
-    [Result_3],
-    []
-  ),
-  "resolveMergeConflict": Func(
-    [Nat, Text],
-    [Opt(MergeConflict)],
-    []
-  ),
-  "restoreBoardPost": Func([PostId], [Opt(Post)], []),
-  "restoreProfile": Func([PersonId], [Result_2], []),
-  "reviewMysteryContribution": Func(
-    [MysteryContributionId, Bool],
-    [Opt(MysteryContribution)],
-    []
-  ),
-  "reviewReport": Func([ReportId, ReportStatus$1], [Opt(Report)], []),
-  "schema": Func([], [Text], ["query"]),
-  "searchArchiveItems": Func(
-    [ArchiveSearchFilter],
-    [Vec(ArchiveItem)],
-    ["query"]
-  ),
-  "searchBoardPostsByTags": Func(
-    [Vec(Text)],
-    [Vec(Post)],
-    ["query"]
-  ),
-  "searchPossibleMatches": Func(
-    [Text],
-    [Vec(PersonMatch)],
-    ["query"]
-  ),
-  "sendMessage": Func([Text, Text], [Result_1], []),
-  "setProfilePhoto": Func([PersonId, PhotoId], [Opt(Photo)], []),
-  "setRelationshipRequestPending": Func(
-    [Nat],
-    [Opt(RelationshipRequest)],
-    []
-  ),
-  "submitArchiveItem": Func(
-    [
-      Text,
-      Text,
-      ArchiveItemType$1,
-      ExternalBlob2,
-      Text,
-      Opt(Nat),
-      Vec(Text),
-      Vec(Text),
-      Opt(Text),
-      SourceStatus$1,
-      PrivacyLevel$1,
-      ArchiveItemClassification$1,
-      Opt(OralHistorySpeaker)
-    ],
-    [ArchiveItem],
-    []
-  ),
-  "submitMysteryContribution": Func(
-    [MysteryId, MysteryContributionType$1, Text],
-    [MysteryContribution],
-    []
-  ),
-  "submitRecipe": Func(
-    [
-      Text,
-      Text,
-      Text,
-      Vec(Text),
-      Opt(Text),
-      Opt(Nat),
-      Opt(Text),
-      Opt(Text),
-      Vec(Text),
-      Text,
-      Opt(Text),
-      Vec(Text),
-      PrivacyLevel$1,
-      EvidenceStatus$1,
-      Vec(Nat)
-    ],
-    [Recipe],
-    []
-  ),
-  "submitStory": Func(
-    [
-      Text,
-      Text,
-      Vec(Text),
-      Opt(Text),
-      Opt(Nat),
-      Opt(Text),
-      EvidenceStatus$1,
-      Vec(Nat)
-    ],
-    [Story],
-    []
-  ),
-  "unblockUser": Func([Principal2], [], []),
-  "updateBoardPost": Func(
-    [
-      PostId,
-      PostType$1,
-      Opt(Text),
-      Text,
-      Vec(Text),
-      Vec(Nat),
-      Vec(Text)
-    ],
-    [Opt(Post)],
-    []
-  ),
-  "updateCanonicalMystery": Func(
-    [
-      MysteryId,
-      Text,
-      Text,
-      Vec(Text),
-      Opt(Text),
-      Vec(Text),
-      Vec(Text),
-      Vec(Nat),
-      Vec(Nat),
-      MysteryStatus$1
-    ],
-    [Opt(Mystery)],
-    []
-  ),
-  "updateCanonicalStory": Func(
-    [
-      StoryId,
-      Text,
-      Text,
-      Vec(Text),
-      Opt(Text),
-      Opt(Nat),
-      Opt(Text),
-      EvidenceStatus$1,
-      Vec(Nat)
-    ],
-    [Opt(Story)],
-    []
-  ),
-  "updateOwnProfile": Func([PersonId, ProfileEdits], [Result], [])
-});
-const idlFactory = ({ IDL: IDL2 }) => {
-  const _ImmutableObjectStorageCreateCertificateResult2 = IDL2.Record({
-    "method": IDL2.Text,
-    "blob_hash": IDL2.Text
-  });
-  const _ImmutableObjectStorageRefillInformation2 = IDL2.Record({
-    "proposed_top_up_amount": IDL2.Opt(IDL2.Nat)
-  });
-  const _ImmutableObjectStorageRefillResult2 = IDL2.Record({
-    "success": IDL2.Opt(IDL2.Bool),
-    "topped_up_amount": IDL2.Opt(IDL2.Nat)
-  });
-  const Error2 = IDL2.Variant({
-    "FrontendOriginsNotConfigured": IDL2.Null,
-    "MixedSsoSources": IDL2.Record({
-      "otherKeys": IDL2.Vec(IDL2.Text),
-      "ssoKeys": IDL2.Vec(IDL2.Text)
-    }),
-    "Stale": IDL2.Record({ "ageNs": IDL2.Nat }),
-    "MalformedCandid": IDL2.Null,
-    "AmbiguousAttribute": IDL2.Record({
-      "field": IDL2.Text,
-      "sources": IDL2.Vec(IDL2.Text)
-    }),
-    "NoAttributes": IDL2.Null,
-    "UnknownNonce": IDL2.Null,
-    "UntrustedSsoSource": IDL2.Record({ "domain": IDL2.Text }),
-    "MissingField": IDL2.Text,
-    "FrontendOriginMismatch": IDL2.Record({
-      "got": IDL2.Text,
-      "expected": IDL2.Vec(IDL2.Text)
-    })
-  });
-  const Result_252 = IDL2.Variant({ "ok": IDL2.Null, "err": Error2 });
-  const PersonId2 = IDL2.Text;
-  const StewardRoleStatus2 = IDL2.Variant({
-    "Active": IDL2.Null,
-    "Removed": IDL2.Null
-  });
-  const StewardRecord2 = IDL2.Record({
-    "assignedAt": IDL2.Int,
-    "assignedBy": IDL2.Principal,
-    "stewardAccountId": IDL2.Principal,
-    "successorPriority": IDL2.Opt(IDL2.Nat),
-    "roleStatus": StewardRoleStatus2
-  });
-  const StewardError2 = IDL2.Variant({
-    "LastSteward": IDL2.Null,
-    "NotSteward": IDL2.Null,
-    "AlreadySteward": IDL2.Null,
-    "NotSignedIn": IDL2.Null,
-    "NotApprovedClaimedMember": IDL2.Null,
-    "NotDesignated": IDL2.Null
-  });
-  const Result_102 = IDL2.Variant({ "ok": StewardRecord2, "err": StewardError2 });
-  const PostId2 = IDL2.Nat;
-  const AccountId2 = IDL2.Principal;
-  const Timestamp2 = IDL2.Int;
-  const ReplyId2 = IDL2.Nat;
-  const Reply2 = IDL2.Record({
-    "authorAccountId": AccountId2,
-    "body": IDL2.Text,
-    "createdAt": Timestamp2,
-    "authorPersonId": PersonId2,
-    "replyId": ReplyId2,
-    "postId": PostId2
-  });
-  const EvidenceStatus2 = IDL2.Variant({
-    "Unresolved": IDL2.Null,
-    "Documented": IDL2.Null,
-    "FamilyHistory": IDL2.Null,
-    "PersonalMemory": IDL2.Null
-  });
-  const StoryId2 = IDL2.Nat;
-  const StoryStatus2 = IDL2.Variant({
-    "Approved": IDL2.Null,
-    "Rejected": IDL2.Null,
-    "Pending": IDL2.Null
-  });
-  const Story2 = IDL2.Record({
-    "id": StoryId2,
-    "era": IDL2.Opt(IDL2.Text),
-    "status": StoryStatus2,
-    "title": IDL2.Text,
-    "relatedMemberIds": IDL2.Vec(IDL2.Text),
-    "storyText": IDL2.Text,
-    "createdAt": IDL2.Int,
-    "year": IDL2.Opt(IDL2.Nat),
-    "relatedArchiveItemIds": IDL2.Vec(IDL2.Nat),
-    "updatedAt": IDL2.Int,
-    "evidenceStatus": EvidenceStatus2,
-    "location": IDL2.Opt(IDL2.Text),
-    "contributor": IDL2.Principal
-  });
-  const ExternalBlob3 = IDL2.Vec(IDL2.Nat8);
-  const PhotoId2 = IDL2.Nat;
-  const Photo2 = IDL2.Record({
-    "id": PhotoId2,
-    "blob": ExternalBlob3,
-    "mimeType": IDL2.Text,
-    "filename": IDL2.Text,
-    "uploadedAt": IDL2.Int,
-    "uploadedBy": IDL2.Principal
-  });
-  const RelationshipType2 = IDL2.Variant({
-    "Parent": IDL2.Null,
-    "Sibling": IDL2.Null,
-    "SpousePartner": IDL2.Null,
-    "Child": IDL2.Null
-  });
-  const RelationshipStatus2 = IDL2.Variant({
-    "Disputed": IDL2.Null,
-    "Confirmed": IDL2.Null,
-    "Pending": IDL2.Null
-  });
-  const Relationship2 = IDL2.Record({
-    "id": IDL2.Nat,
-    "status": RelationshipStatus2,
-    "fromPersonId": PersonId2,
-    "toPersonId": PersonId2,
-    "relationshipType": RelationshipType2
-  });
-  const RelationshipAdminError2 = IDL2.Variant({
-    "RelationshipNotFound": IDL2.Null,
-    "NotSignedIn": IDL2.Null,
-    "DuplicateRelationship": IDL2.Null,
-    "PersonNotFound": IDL2.Null
-  });
-  const Result_232 = IDL2.Variant({
-    "ok": Relationship2,
-    "err": RelationshipAdminError2
-  });
-  const ArchiveItemId2 = IDL2.Nat;
-  const ArchiveItemStatus2 = IDL2.Variant({
-    "Approved": IDL2.Null,
-    "Rejected": IDL2.Null,
-    "Pending": IDL2.Null
-  });
-  const PrivacyLevel2 = IDL2.Variant({
-    "Private": IDL2.Null,
-    "Public": IDL2.Null,
-    "FamilyOnly": IDL2.Null
-  });
-  const OralHistorySpeaker2 = IDL2.Record({
-    "name": IDL2.Text,
-    "personId": IDL2.Opt(IDL2.Text)
-  });
-  const ArchiveItemType2 = IDL2.Variant({
-    "Research": IDL2.Null,
-    "Photo": IDL2.Null,
-    "Document": IDL2.Null,
-    "WorkBusiness": IDL2.Null,
-    "WrittenStoryNote": IDL2.Null,
-    "Audio": IDL2.Null,
-    "Other": IDL2.Null,
-    "Video": IDL2.Null
-  });
-  const ChapterMarker2 = IDL2.Record({
-    "title": IDL2.Text,
-    "timestamp": IDL2.Nat
-  });
-  const SourceStatus2 = IDL2.Variant({
-    "Copy": IDL2.Null,
-    "Unverified": IDL2.Null,
-    "Transcribed": IDL2.Null,
-    "Original": IDL2.Null
-  });
-  const ArchiveItemClassification2 = IDL2.Variant({
-    "OralHistory": IDL2.Null,
-    "Standard": IDL2.Null
-  });
-  const ArchiveItem2 = IDL2.Record({
-    "id": ArchiveItemId2,
-    "era": IDL2.Text,
-    "status": ArchiveItemStatus2,
-    "title": IDL2.Text,
-    "relatedMemberIds": IDL2.Vec(IDL2.Text),
-    "blob": ExternalBlob3,
-    "createdAt": IDL2.Int,
-    "tags": IDL2.Vec(IDL2.Text),
-    "year": IDL2.Opt(IDL2.Nat),
-    "description": IDL2.Text,
-    "privacyLevel": PrivacyLevel2,
-    "primarySpeaker": IDL2.Opt(OralHistorySpeaker2),
-    "extractedNames": IDL2.Opt(IDL2.Vec(IDL2.Text)),
-    "itemType": ArchiveItemType2,
-    "aiSummary": IDL2.Opt(IDL2.Text),
-    "searchableTranscript": IDL2.Opt(IDL2.Text),
-    "relatedBranchId": IDL2.Opt(IDL2.Text),
-    "transcript": IDL2.Opt(IDL2.Text),
-    "chapterMarkers": IDL2.Opt(IDL2.Vec(ChapterMarker2)),
-    "sourceStatus": SourceStatus2,
-    "classification": ArchiveItemClassification2,
-    "contributor": IDL2.Principal
-  });
-  const FindingId2 = IDL2.Nat;
-  const ReviewStatus2 = IDL2.Variant({
-    "NeedsResearch": IDL2.Null,
-    "Conflicting": IDL2.Null,
-    "Approved": IDL2.Null,
-    "Rejected": IDL2.Null,
-    "Pending": IDL2.Null
-  });
-  const EvidenceLabel2 = IDL2.Variant({
-    "NeedsResearch": IDL2.Null,
-    "Conflicting": IDL2.Null,
-    "Hypothesis": IDL2.Null,
-    "Documented": IDL2.Null,
-    "FamilyHistoryOralHistory": IDL2.Null,
-    "PersonalMemory": IDL2.Null
-  });
-  const SourceType2 = IDL2.Variant({
-    "CertificateHeadstoneReference": IDL2.Null,
-    "DeedPropertyReference": IDL2.Null,
-    "ResearchNotes": IDL2.Null,
-    "EmailThread": IDL2.Null,
-    "UploadedDocumentImage": IDL2.Null,
-    "CensusCitation": IDL2.Null
-  });
-  const FindingContent2 = IDL2.Variant({
-    "Story": IDL2.Record({
-      "title": IDL2.Text,
-      "storyText": IDL2.Text,
-      "relatedPersonIds": IDL2.Vec(IDL2.Text)
-    }),
-    "TimelineEvent": IDL2.Record({
-      "title": IDL2.Text,
-      "date": IDL2.Opt(IDL2.Text),
-      "description": IDL2.Text,
-      "personId": IDL2.Text
-    }),
-    "PersonFact": IDL2.Record({
-      "field": IDL2.Text,
-      "value": IDL2.Text,
-      "personId": IDL2.Text
-    }),
-    "Source": IDL2.Record({
-      "title": IDL2.Text,
-      "archiveItemId": IDL2.Opt(IDL2.Nat),
-      "description": IDL2.Text,
-      "sourceType": SourceType2
-    }),
-    "Mystery": IDL2.Record({
-      "title": IDL2.Text,
-      "description": IDL2.Text,
-      "relatedPersonIds": IDL2.Vec(IDL2.Text)
-    }),
-    "Relationship": IDL2.Record({
-      "fromPersonId": IDL2.Text,
-      "toPersonId": IDL2.Text,
-      "relationshipType": IDL2.Text
-    })
-  });
-  const SourceId2 = IDL2.Nat;
-  const FindingType2 = IDL2.Variant({
-    "Story": IDL2.Null,
-    "TimelineEvent": IDL2.Null,
-    "PersonFact": IDL2.Null,
-    "Source": IDL2.Null,
-    "Mystery": IDL2.Null,
-    "Relationship": IDL2.Null
-  });
-  const ProposedFinding2 = IDL2.Record({
-    "id": FindingId2,
-    "status": ReviewStatus2,
-    "title": IDL2.Text,
-    "evidenceLabel": EvidenceLabel2,
-    "newPersonCandidateId": IDL2.Opt(IDL2.Nat),
-    "content": FindingContent2,
-    "conflictReviewId": IDL2.Opt(IDL2.Nat),
-    "submittedAt": IDL2.Int,
-    "submittedBy": IDL2.Principal,
-    "sourceId": SourceId2,
-    "reviewedAt": IDL2.Opt(IDL2.Int),
-    "reviewedBy": IDL2.Opt(IDL2.Principal),
-    "updatedAt": IDL2.Int,
-    "personId": IDL2.Opt(IDL2.Text),
-    "findingType": FindingType2
-  });
-  const NewPersonCandidate2 = IDL2.Record({
-    "id": IDL2.Nat,
-    "status": ReviewStatus2,
-    "name": IDL2.Text,
-    "submittedAt": IDL2.Int,
-    "submittedBy": IDL2.Principal,
-    "sourceId": SourceId2,
-    "reviewedAt": IDL2.Opt(IDL2.Int),
-    "reviewedBy": IDL2.Opt(IDL2.Principal),
-    "details": IDL2.Text
-  });
-  const ProfileClaimStatus2 = IDL2.Variant({
-    "Approved": IDL2.Null,
-    "Rejected": IDL2.Null,
-    "Pending": IDL2.Null
-  });
-  const ProfileClaim2 = IDL2.Record({
-    "id": IDL2.Nat,
-    "submittedDate": IDL2.Int,
-    "status": ProfileClaimStatus2,
-    "reviewedDate": IDL2.Opt(IDL2.Int),
-    "reviewedBy": IDL2.Opt(IDL2.Principal),
-    "personId": PersonId2,
-    "requestingUserId": IDL2.Principal
-  });
-  const ProfileRemovalStatus2 = IDL2.Variant({
-    "Approved": IDL2.Null,
-    "Rejected": IDL2.Null,
-    "Pending": IDL2.Null
-  });
-  const ProfileRemovalRequest2 = IDL2.Record({
-    "id": IDL2.Nat,
-    "submittedDate": IDL2.Int,
-    "status": ProfileRemovalStatus2,
-    "reviewedDate": IDL2.Opt(IDL2.Int),
-    "reviewedBy": IDL2.Opt(IDL2.Principal),
-    "personId": PersonId2,
-    "requestingUserId": IDL2.Principal,
-    "reason": IDL2.Text
-  });
-  const RecipeId2 = IDL2.Nat;
-  const RecipeStatus2 = IDL2.Variant({
-    "Approved": IDL2.Null,
-    "Rejected": IDL2.Null,
-    "Archived": IDL2.Null,
-    "Pending": IDL2.Null
-  });
-  const Recipe2 = IDL2.Record({
-    "era": IDL2.Opt(IDL2.Text),
-    "status": RecipeStatus2,
-    "title": IDL2.Text,
-    "recipeId": RecipeId2,
-    "aiDerivedText": IDL2.Opt(IDL2.Text),
-    "createdAt": IDL2.Int,
-    "tags": IDL2.Vec(IDL2.Text),
-    "year": IDL2.Opt(IDL2.Nat),
-    "contributorAccountId": IDL2.Principal,
-    "privacyLevel": PrivacyLevel2,
-    "linkedMediaIds": IDL2.Vec(IDL2.Nat),
-    "instructions": IDL2.Text,
-    "ocrText": IDL2.Opt(IDL2.Text),
-    "familyBranch": IDL2.Opt(IDL2.Text),
-    "familyStory": IDL2.Opt(IDL2.Text),
-    "updatedAt": IDL2.Int,
-    "evidenceStatus": EvidenceStatus2,
-    "shortDescription": IDL2.Text,
-    "extractedIngredients": IDL2.Opt(IDL2.Vec(IDL2.Text)),
-    "transcript": IDL2.Opt(IDL2.Text),
-    "location": IDL2.Opt(IDL2.Text),
-    "originatingPersonId": IDL2.Text,
-    "ingredients": IDL2.Vec(IDL2.Text),
-    "relatedPersonIds": IDL2.Vec(IDL2.Text)
-  });
-  const RelationshipProposal2 = IDL2.Record({
-    "id": IDL2.Nat,
-    "status": ReviewStatus2,
-    "fromPersonId": IDL2.Text,
-    "submittedAt": IDL2.Int,
-    "submittedBy": IDL2.Principal,
-    "sourceId": SourceId2,
-    "reviewedAt": IDL2.Opt(IDL2.Int),
-    "reviewedBy": IDL2.Opt(IDL2.Principal),
-    "toPersonId": IDL2.Text,
-    "relationshipType": IDL2.Text
-  });
-  const RelationshipRequestStatus2 = IDL2.Variant({
-    "Approved": IDL2.Null,
-    "Rejected": IDL2.Null,
-    "Pending": IDL2.Null
-  });
-  const RelationshipRequest2 = IDL2.Record({
-    "id": IDL2.Nat,
-    "submittedDate": IDL2.Int,
-    "status": RelationshipRequestStatus2,
-    "reviewedDate": IDL2.Opt(IDL2.Int),
-    "relatedPersonId": PersonId2,
-    "requestingPersonId": PersonId2,
-    "proposedRelationship": RelationshipType2,
-    "reviewer": IDL2.Opt(IDL2.Principal)
-  });
-  const SourceRecord2 = IDL2.Record({
-    "id": SourceId2,
-    "status": ReviewStatus2,
-    "title": IDL2.Text,
-    "archiveItemId": IDL2.Opt(IDL2.Nat),
-    "createdAt": IDL2.Int,
-    "description": IDL2.Text,
-    "sourceType": SourceType2,
-    "updatedAt": IDL2.Int,
-    "contributor": IDL2.Principal
-  });
-  const PostStatus2 = IDL2.Variant({
-    "Active": IDL2.Null,
-    "Archived": IDL2.Null
-  });
-  const PostType2 = IDL2.Variant({
-    "Announcement": IDL2.Null,
-    "Recipe": IDL2.Null,
-    "ResearchHistory": IDL2.Null,
-    "FamilyQuestion": IDL2.Null,
-    "Memorial": IDL2.Null,
-    "General": IDL2.Null,
-    "Other": IDL2.Null,
-    "ReunionEvent": IDL2.Null,
-    "PhotoIdentification": IDL2.Null
-  });
-  const PrivacyScope2 = IDL2.Variant({ "FamilyOnly": IDL2.Null });
-  const Post2 = IDL2.Record({
-    "status": PostStatus2,
-    "authorAccountId": AccountId2,
-    "postType": PostType2,
-    "title": IDL2.Opt(IDL2.Text),
-    "body": IDL2.Text,
-    "createdAt": Timestamp2,
-    "tags": IDL2.Vec(IDL2.Text),
-    "linkedMediaIds": IDL2.Vec(IDL2.Nat),
-    "privacyScope": PrivacyScope2,
-    "authorPersonId": PersonId2,
-    "updatedAt": Timestamp2,
-    "relatedPersonIds": IDL2.Vec(PersonId2),
-    "postId": PostId2
-  });
-  const ArchiveError2 = IDL2.Variant({
-    "NotArchived": IDL2.Null,
-    "ProfileNotFound": IDL2.Null,
-    "AlreadyArchived": IDL2.Null,
-    "NotSignedIn": IDL2.Null
-  });
-  const Result_26 = IDL2.Variant({ "ok": IDL2.Null, "err": ArchiveError2 });
-  const UserRole2 = IDL2.Variant({
-    "admin": IDL2.Null,
-    "user": IDL2.Null,
-    "guest": IDL2.Null
-  });
-  const AuthMethod2 = IDL2.Variant({ "Google": IDL2.Null, "Apple": IDL2.Null });
-  const Account2 = IDL2.Record({
-    "id": AccountId2,
-    "createdAt": IDL2.Int,
-    "authMethods": IDL2.Vec(AuthMethod2)
-  });
-  const AccountError2 = IDL2.Variant({
-    "AccountNotFound": IDL2.Null,
-    "NotSignedIn": IDL2.Null
-  });
-  const Result_242 = IDL2.Variant({ "ok": Account2, "err": AccountError2 });
-  const ClaimPersistenceError2 = IDL2.Variant({
-    "AlreadyOwned": IDL2.Null,
-    "AlreadyPending": IDL2.Null,
-    "ProfileNotFound": IDL2.Null,
-    "NotSignedIn": IDL2.Null,
-    "ApprovedOwnerExists": IDL2.Null
-  });
-  const ClaimEligibility2 = IDL2.Record({
-    "eligible": IDL2.Bool,
-    "reason": IDL2.Opt(ClaimPersistenceError2)
-  });
-  const BoardMediaUpload2 = IDL2.Record({
-    "era": IDL2.Text,
-    "title": IDL2.Text,
-    "relatedMemberIds": IDL2.Vec(IDL2.Text),
-    "blob": ExternalBlob3,
-    "tags": IDL2.Vec(IDL2.Text),
-    "year": IDL2.Opt(IDL2.Nat),
-    "description": IDL2.Text,
-    "privacyLevel": PrivacyLevel2,
-    "primarySpeaker": IDL2.Opt(OralHistorySpeaker2),
-    "itemType": ArchiveItemType2,
-    "relatedBranchId": IDL2.Opt(IDL2.Text),
-    "sourceStatus": SourceStatus2,
-    "classification": ArchiveItemClassification2
-  });
-  const MysteryStatus2 = IDL2.Variant({
-    "Researching": IDL2.Null,
-    "Open": IDL2.Null,
-    "PartiallyResolved": IDL2.Null,
-    "Resolved": IDL2.Null
-  });
-  const MysteryId2 = IDL2.Nat;
-  const Resolution2 = IDL2.Record({
-    "supportingEvidence": IDL2.Vec(IDL2.Text),
-    "summary": IDL2.Text,
-    "resolvedAt": IDL2.Int,
-    "resolvedBy": IDL2.Principal
-  });
-  const Mystery2 = IDL2.Record({
-    "id": MysteryId2,
-    "status": MysteryStatus2,
-    "title": IDL2.Text,
-    "relatedMemberIds": IDL2.Vec(IDL2.Text),
-    "createdAt": IDL2.Int,
-    "relatedArchiveItemIds": IDL2.Vec(IDL2.Nat),
-    "description": IDL2.Text,
-    "resolution": IDL2.Opt(Resolution2),
-    "updatedAt": IDL2.Int,
-    "knownFacts": IDL2.Vec(IDL2.Text),
-    "possibilities": IDL2.Vec(IDL2.Text),
-    "relatedBranchId": IDL2.Opt(IDL2.Text),
-    "relatedSourceIds": IDL2.Vec(IDL2.Nat),
-    "contributor": IDL2.Principal
-  });
-  const ResearchError2 = IDL2.Variant({
-    "invalidState": IDL2.Text,
-    "notAuthorized": IDL2.Null,
-    "notFound": IDL2.Nat
-  });
-  const Result_222 = IDL2.Variant({
-    "ok": ProposedFinding2,
-    "err": ResearchError2
-  });
-  const ClaimStatus2 = IDL2.Variant({
-    "Unclaimed": IDL2.Null,
-    "Claimed": IDL2.Null
-  });
-  const LivingStatus2 = IDL2.Variant({
-    "Living": IDL2.Null,
-    "Deceased": IDL2.Null
-  });
-  const PersonProfile2 = IDL2.Record({
-    "occupation": IDL2.Opt(IDL2.Text),
-    "privacySettings": IDL2.Opt(IDL2.Text),
-    "nickname": IDL2.Opt(IDL2.Text),
-    "claimedByUserId": IDL2.Opt(IDL2.Principal),
-    "birthDate": IDL2.Opt(IDL2.Text),
-    "birthInfo": IDL2.Opt(IDL2.Text),
-    "claimStatus": ClaimStatus2,
-    "livingStatus": LivingStatus2,
-    "name": IDL2.Text,
-    "longerStory": IDL2.Opt(IDL2.Text),
-    "personId": PersonId2,
-    "story": IDL2.Opt(IDL2.Text),
-    "middleName": IDL2.Opt(IDL2.Text),
-    "suffix": IDL2.Opt(IDL2.Text),
-    "preferredName": IDL2.Opt(IDL2.Text),
-    "currentLocation": IDL2.Opt(IDL2.Text),
-    "birthplace": IDL2.Opt(IDL2.Text),
-    "lastName": IDL2.Opt(IDL2.Text),
-    "shortBio": IDL2.Opt(IDL2.Text),
-    "timeline": IDL2.Opt(IDL2.Vec(IDL2.Text)),
-    "firstName": IDL2.Opt(IDL2.Text)
-  });
-  const CreateError2 = IDL2.Variant({
-    "AlreadyOwned": IDL2.Null,
-    "NotSignedIn": IDL2.Null
-  });
-  const Result_212 = IDL2.Variant({ "ok": PersonProfile2, "err": CreateError2 });
-  const Result_202 = IDL2.Variant({
-    "ok": NewPersonCandidate2,
-    "err": ResearchError2
-  });
-  const Result_192 = IDL2.Variant({
-    "ok": RelationshipProposal2,
-    "err": ResearchError2
-  });
-  const Result_182 = IDL2.Variant({ "ok": SourceRecord2, "err": ResearchError2 });
-  const SourceUploadResult2 = IDL2.Record({
-    "source": SourceRecord2,
-    "archiveItem": ArchiveItem2
-  });
-  const Result_172 = IDL2.Variant({
-    "ok": SourceUploadResult2,
-    "err": ResearchError2
-  });
-  const SuccessorStatus2 = IDL2.Variant({
-    "Activated": IDL2.Null,
-    "Removed": IDL2.Null,
-    "Designated": IDL2.Null
-  });
-  const SuccessorDesignation2 = IDL2.Record({
-    "status": SuccessorStatus2,
-    "assignedAt": IDL2.Int,
-    "assignedBy": IDL2.Principal,
-    "personId": PersonId2,
-    "priority": IDL2.Nat
-  });
-  const Result_162 = IDL2.Variant({
-    "ok": SuccessorDesignation2,
-    "err": StewardError2
-  });
-  const Value2 = IDL2.Variant({
-    "int": IDL2.Int,
-    "nat": IDL2.Nat,
-    "float": IDL2.Float64,
-    "bool": IDL2.Bool,
-    "null": IDL2.Null,
-    "text": IDL2.Text
-  });
-  const Cell2 = IDL2.Record({ "value": Value2, "name": IDL2.Text });
-  const Result__12 = IDL2.Record({
-    "hasMore": IDL2.Bool,
-    "rows": IDL2.Vec(IDL2.Vec(Cell2))
-  });
-  const ConversationId2 = IDL2.Nat;
-  const MessageStatus2 = IDL2.Variant({
-    "Blocked": IDL2.Null,
-    "Sent": IDL2.Null
-  });
-  const MessageId2 = IDL2.Nat;
-  const Message2 = IDL2.Record({
-    "status": MessageStatus2,
-    "messageId": MessageId2,
-    "body": IDL2.Text,
-    "createdAt": Timestamp2,
-    "conversationId": ConversationId2,
-    "senderAccountId": AccountId2,
-    "senderPersonId": PersonId2,
-    "readAt": IDL2.Opt(Timestamp2)
-  });
-  const ConversationView2 = IDL2.Record({
-    "messages": IDL2.Vec(Message2),
-    "participantPersonIds": IDL2.Vec(PersonId2),
-    "conversationId": ConversationId2,
-    "participantDisplayNames": IDL2.Vec(IDL2.Text)
-  });
-  const Result_152 = IDL2.Variant({ "ok": AccountId2, "err": AccountError2 });
-  const AuthMethods2 = IDL2.Record({ "apple": IDL2.Bool, "google": IDL2.Bool });
-  const Result_142 = IDL2.Variant({ "ok": AuthMethods2, "err": AccountError2 });
-  const ReportId2 = IDL2.Nat;
-  const ReportStatus2 = IDL2.Variant({
-    "Dismissed": IDL2.Null,
-    "Reviewed": IDL2.Null,
-    "Pending": IDL2.Null
-  });
-  const Report2 = IDL2.Record({
-    "status": ReportStatus2,
-    "reportedMessageId": MessageId2,
-    "createdAt": Timestamp2,
-    "reportingAccountId": AccountId2,
-    "reportId": ReportId2,
-    "reason": IDL2.Text
-  });
-  const ReportedMessageView2 = IDL2.Record({
-    "report": Report2,
-    "message": Message2
-  });
-  const ResearchAuditEntry2 = IDL2.Record({
-    "id": IDL2.Nat,
-    "action": IDL2.Text,
-    "findingId": IDL2.Opt(FindingId2),
-    "sourceId": IDL2.Opt(SourceId2),
-    "actorId": IDL2.Principal,
-    "summary": IDL2.Text,
-    "timestamp": IDL2.Int
-  });
-  const ReviewItemKind2 = IDL2.Variant({
-    "Source": IDL2.Null,
-    "RelationshipProposal": IDL2.Null,
-    "ConflictReview": IDL2.Null,
-    "NewPersonCandidate": IDL2.Null,
-    "Finding": IDL2.Null
-  });
-  const ReviewAction2 = IDL2.Variant({
-    "NeedsResearch": IDL2.Null,
-    "Approve": IDL2.Null,
-    "Reject": IDL2.Null
-  });
-  const ReviewQueueItem2 = IDL2.Record({
-    "id": IDL2.Nat,
-    "provenance": IDL2.Text,
-    "status": ReviewStatus2,
-    "title": IDL2.Text,
-    "evidenceLabel": IDL2.Opt(EvidenceLabel2),
-    "kind": ReviewItemKind2,
-    "createdAt": IDL2.Int,
-    "actions": IDL2.Vec(ReviewAction2),
-    "summary": IDL2.Text,
-    "contributor": IDL2.Opt(IDL2.Principal)
-  });
-  const ReviewQueue2 = IDL2.Record({
-    "pending": IDL2.Nat,
-    "conflicting": IDL2.Nat,
-    "approved": IDL2.Nat,
-    "rejected": IDL2.Nat,
-    "needsResearch": IDL2.Nat,
-    "items": IDL2.Vec(ReviewQueueItem2)
-  });
-  const StewardAuditKind2 = IDL2.Variant({
-    "ConflictResolution": IDL2.Null,
-    "Governance": IDL2.Null
-  });
-  const StewardAuditEntry2 = IDL2.Record({
-    "id": IDL2.Nat,
-    "field": IDL2.Opt(IDL2.Text),
-    "affectedPersonIds": IDL2.Vec(IDL2.Text),
-    "proposedValue": IDL2.Opt(IDL2.Text),
-    "stewardNotes": IDL2.Opt(IDL2.Text),
-    "kind": StewardAuditKind2,
-    "proposedSourceId": IDL2.Opt(IDL2.Nat),
-    "actionType": IDL2.Text,
-    "resolution": IDL2.Opt(IDL2.Text),
-    "existingValue": IDL2.Opt(IDL2.Text),
-    "summary": IDL2.Text,
-    "personId": IDL2.Opt(IDL2.Text),
-    "timestamp": IDL2.Int,
-    "actorAccountId": IDL2.Principal,
-    "existingSourceId": IDL2.Opt(IDL2.Nat)
-  });
-  const AuditActionType2 = IDL2.Variant({
-    "ProfileRemovalRequested": IDL2.Null,
-    "ClaimRejected": IDL2.Null,
-    "RelationshipTypeCorrected": IDL2.Null,
-    "RelationshipRequestPending": IDL2.Null,
-    "StewardPromoted": IDL2.Null,
-    "BoardReplyRemoved": IDL2.Null,
-    "SuccessorActivated": IDL2.Null,
-    "StewardRemoved": IDL2.Null,
-    "RelationshipRequestApproved": IDL2.Null,
-    "DuplicateMerged": IDL2.Null,
-    "ProfilePermanentlyDeleted": IDL2.Null,
-    "RelationshipRequestRejected": IDL2.Null,
-    "ProfileArchived": IDL2.Null,
-    "ProfileRestored": IDL2.Null,
-    "BoardPostArchived": IDL2.Null,
-    "BoardPostRestored": IDL2.Null,
-    "RelationshipAdded": IDL2.Null,
-    "RelationshipRemoved": IDL2.Null,
-    "ProfileRemovalReviewed": IDL2.Null,
-    "ClaimApproved": IDL2.Null,
-    "SuccessorDesignated": IDL2.Null
-  });
-  const AuditEntry2 = IDL2.Record({
-    "id": IDL2.Nat,
-    "affectedPersonIds": IDL2.Vec(PersonId2),
-    "actionType": AuditActionType2,
-    "summary": IDL2.Text,
-    "timestamp": IDL2.Int,
-    "actorAccountId": IDL2.Principal
-  });
-  const ConflictReviewItem2 = IDL2.Record({
-    "id": IDL2.Nat,
-    "field": IDL2.Text,
-    "status": ReviewStatus2,
-    "evidenceLabel": EvidenceLabel2,
-    "findingId": FindingId2,
-    "proposedValue": IDL2.Text,
-    "stewardNotes": IDL2.Text,
-    "proposedSourceId": IDL2.Opt(IDL2.Nat),
-    "personId": IDL2.Opt(IDL2.Text),
-    "canonicalValue": IDL2.Text,
-    "resolvedAt": IDL2.Opt(IDL2.Int),
-    "resolvedBy": IDL2.Opt(IDL2.Principal),
-    "existingSourceId": IDL2.Opt(IDL2.Nat)
-  });
-  const ConversationSummary2 = IDL2.Record({
-    "otherPersonId": PersonId2,
-    "conversationId": ConversationId2,
-    "unreadCount": IDL2.Nat,
-    "otherDisplayName": IDL2.Text,
-    "latestMessagePreview": IDL2.Text,
-    "latestMessageAt": Timestamp2
-  });
-  const DisputedFact2 = IDL2.Record({
-    "field": IDL2.Text,
-    "status": ReviewStatus2,
-    "proposedValue": IDL2.Text,
-    "canonicalValue": IDL2.Text
-  });
-  const DuplicateCandidate2 = IDL2.Record({
-    "deathDate": IDL2.Opt(IDL2.Text),
-    "ownerAccount": IDL2.Opt(IDL2.Principal),
-    "birthDate": IDL2.Opt(IDL2.Text),
-    "claimStatus": IDL2.Text,
-    "name": IDL2.Text,
-    "archiveLinks": IDL2.Vec(IDL2.Text),
-    "children": IDL2.Vec(IDL2.Text),
-    "sourceCount": IDL2.Nat,
-    "personId": PersonId2,
-    "spouses": IDL2.Vec(IDL2.Text),
-    "photoCount": IDL2.Nat,
-    "timelineCount": IDL2.Nat,
-    "parents": IDL2.Vec(IDL2.Text)
-  });
-  const DuplicatePair2 = IDL2.Record({
-    "candidateA": DuplicateCandidate2,
-    "candidateB": DuplicateCandidate2
-  });
-  const StewardIdentity2 = IDL2.Record({
-    "accountId": IDL2.Principal,
-    "displayName": IDL2.Text,
-    "personId": PersonId2,
-    "canonicalName": IDL2.Text
-  });
-  const NotificationType2 = IDL2.Variant({
-    "ResearchSubmission": IDL2.Null,
-    "ResearchApproved": IDL2.Null,
-    "ResearchRejected": IDL2.Null,
-    "RelationshipRequested": IDL2.Null,
-    "BoardMention": IDL2.Null,
-    "RelationshipReviewed": IDL2.Null,
-    "BoardReply": IDL2.Null,
-    "NewMessage": IDL2.Null,
-    "ProfileClaimReviewed": IDL2.Null,
-    "ProfileClaimRequested": IDL2.Null
-  });
-  const Notification2 = IDL2.Record({
-    "id": IDL2.Nat,
-    "notificationType": NotificationType2,
-    "createdAt": IDL2.Int,
-    "read": IDL2.Bool,
-    "recipient": IDL2.Principal,
-    "message": IDL2.Text
-  });
-  const MysteryContributionId2 = IDL2.Nat;
-  const MysteryContributionStatus2 = IDL2.Variant({
-    "Approved": IDL2.Null,
-    "Rejected": IDL2.Null,
-    "Pending": IDL2.Null
-  });
-  const MysteryContributionType2 = IDL2.Variant({
-    "Lead": IDL2.Null,
-    "Note": IDL2.Null,
-    "Memory": IDL2.Null,
-    "Source": IDL2.Null
-  });
-  const MysteryContribution2 = IDL2.Record({
-    "id": MysteryContributionId2,
-    "status": MysteryContributionStatus2,
-    "createdAt": IDL2.Int,
-    "text": IDL2.Text,
-    "mysteryId": MysteryId2,
-    "reviewedAt": IDL2.Opt(IDL2.Int),
-    "reviewedBy": IDL2.Opt(IDL2.Principal),
-    "contributionType": MysteryContributionType2,
-    "contributor": IDL2.Principal
-  });
-  const TimelineLinkTarget2 = IDL2.Variant({
-    "Story": StoryId2,
-    "Mystery": MysteryId2,
-    "Person": IDL2.Text,
-    "ArchiveItem": IDL2.Nat
-  });
-  const TimelineEventType2 = IDL2.Variant({
-    "MilitaryService": IDL2.Null,
-    "Story": IDL2.Null,
-    "Birth": IDL2.Null,
-    "FamilyEvent": IDL2.Null,
-    "Migration": IDL2.Null,
-    "Mystery": IDL2.Null,
-    "Death": IDL2.Null,
-    "PhotoDocument": IDL2.Null,
-    "Marriage": IDL2.Null,
-    "CensusDocument": IDL2.Null,
-    "Location": IDL2.Null
-  });
-  const TimelineEvent2 = IDL2.Record({
-    "id": IDL2.Text,
-    "era": IDL2.Opt(IDL2.Text),
-    "title": IDL2.Text,
-    "year": IDL2.Opt(IDL2.Nat),
-    "linkTarget": TimelineLinkTarget2,
-    "description": IDL2.Text,
-    "evidenceStatus": EvidenceStatus2,
-    "eventType": TimelineEventType2
-  });
-  const NotificationId2 = IDL2.Nat;
-  const MergeConflictStatus2 = IDL2.Variant({
-    "Resolved": IDL2.Null,
-    "Pending": IDL2.Null
-  });
-  const MergeConflict2 = IDL2.Record({
-    "id": IDL2.Nat,
-    "field": IDL2.Text,
-    "status": MergeConflictStatus2,
-    "alternateValue": IDL2.Text,
-    "canonicalValue": IDL2.Text,
-    "resolvedAt": IDL2.Opt(IDL2.Int),
-    "resolvedBy": IDL2.Opt(IDL2.Principal)
-  });
-  const MergeResult2 = IDL2.Record({
-    "archivedPersonId": PersonId2,
-    "conflicts": IDL2.Vec(MergeConflict2),
-    "canonicalPersonId": PersonId2
-  });
-  const MergeError2 = IDL2.Variant({
-    "NotDuplicate": IDL2.Null,
-    "ProfileNotFound": IDL2.Null,
-    "NotSignedIn": IDL2.Null,
-    "SameProfile": IDL2.Null
-  });
-  const Result_132 = IDL2.Variant({ "ok": MergeResult2, "err": MergeError2 });
-  const Result_122 = IDL2.Variant({ "ok": IDL2.Null, "err": MergeError2 });
-  const DeleteError2 = IDL2.Variant({
-    "HasOwnershipHistory": IDL2.Null,
-    "ProfileNotFound": IDL2.Null,
-    "HasMedia": IDL2.Null,
-    "HasArchiveItems": IDL2.Null,
-    "NotSignedIn": IDL2.Null,
-    "ConfirmationRequired": IDL2.Null,
-    "HasTimeline": IDL2.Null,
-    "HasApprovedRelationships": IDL2.Null
-  });
-  const Result_112 = IDL2.Variant({ "ok": IDL2.Null, "err": DeleteError2 });
-  const RelationshipError2 = IDL2.Variant({
-    "DuplicateRequest": IDL2.Null,
-    "NotSignedIn": IDL2.Null,
-    "PersonNotFound": IDL2.Null
-  });
-  const Result_92 = IDL2.Variant({
-    "ok": RelationshipRequest2,
-    "err": RelationshipError2
-  });
-  const RemoveError2 = IDL2.Variant({
-    "ProfileNotFound": IDL2.Null,
-    "NotSignedIn": IDL2.Null
-  });
-  const Result_82 = IDL2.Variant({ "ok": IDL2.Null, "err": RemoveError2 });
-  const Result_72 = IDL2.Variant({
-    "ok": IDL2.Null,
-    "err": RelationshipAdminError2
-  });
-  const Result_62 = IDL2.Variant({ "ok": IDL2.Null, "err": StewardError2 });
-  const ClaimError2 = IDL2.Variant({
-    "AlreadyPending": IDL2.Null,
-    "ProfileNotFound": IDL2.Null,
-    "AlreadyClaimed": IDL2.Null,
-    "NotSignedIn": IDL2.Null,
-    "DeceasedProfile": IDL2.Null
-  });
-  const Result_52 = IDL2.Variant({ "ok": ProfileClaim2, "err": ClaimError2 });
-  const RemovalError2 = IDL2.Variant({
-    "AlreadyPending": IDL2.Null,
-    "ProfileNotFound": IDL2.Null,
-    "NotSignedIn": IDL2.Null,
-    "NotOwner": IDL2.Null,
-    "DeceasedProfile": IDL2.Null
-  });
-  const Result_42 = IDL2.Variant({
-    "ok": ProfileRemovalRequest2,
-    "err": RemovalError2
-  });
-  const ConflictResolutionAction2 = IDL2.Variant({
-    "NeedsResearch": IDL2.Null,
-    "PreserveBoth": IDL2.Null,
-    "ReplaceExisting": IDL2.Null,
-    "KeepExisting": IDL2.Null
-  });
-  const Result_32 = IDL2.Variant({
-    "ok": ConflictReviewItem2,
-    "err": ResearchError2
-  });
-  const ArchiveSearchFilter2 = IDL2.Record({
-    "era": IDL2.Opt(IDL2.Text),
-    "relatedMemberId": IDL2.Opt(IDL2.Text),
-    "tags": IDL2.Vec(IDL2.Text),
-    "searchTerm": IDL2.Opt(IDL2.Text),
-    "itemType": IDL2.Opt(ArchiveItemType2)
-  });
-  const PersonMatch2 = IDL2.Record({
-    "name": IDL2.Text,
-    "personId": PersonId2,
-    "parents": IDL2.Vec(IDL2.Text)
-  });
-  const MessageError2 = IDL2.Variant({
-    "ConversationNotFound": IDL2.Null,
-    "RecipientArchived": IDL2.Null,
-    "NotApprovedMember": IDL2.Null,
-    "RecipientNotClaimed": IDL2.Null,
-    "NotSignedIn": IDL2.Null,
-    "BlockedByRecipient": IDL2.Null,
-    "NotParticipant": IDL2.Null,
-    "CannotMessageSelf": IDL2.Null,
-    "RecipientNotFound": IDL2.Null
-  });
-  const Result_110 = IDL2.Variant({ "ok": Message2, "err": MessageError2 });
-  const ProfileEdits2 = IDL2.Record({
-    "occupation": IDL2.Opt(IDL2.Text),
-    "privacySettings": IDL2.Opt(IDL2.Text),
-    "nickname": IDL2.Opt(IDL2.Text),
-    "birthDate": IDL2.Opt(IDL2.Text),
-    "birthInfo": IDL2.Opt(IDL2.Text),
-    "livingStatus": IDL2.Opt(LivingStatus2),
-    "longerStory": IDL2.Opt(IDL2.Text),
-    "story": IDL2.Opt(IDL2.Text),
-    "middleName": IDL2.Opt(IDL2.Text),
-    "suffix": IDL2.Opt(IDL2.Text),
-    "preferredName": IDL2.Opt(IDL2.Text),
-    "currentLocation": IDL2.Opt(IDL2.Text),
-    "birthplace": IDL2.Opt(IDL2.Text),
-    "lastName": IDL2.Opt(IDL2.Text),
-    "shortBio": IDL2.Opt(IDL2.Text),
-    "timeline": IDL2.Opt(IDL2.Vec(IDL2.Text)),
-    "firstName": IDL2.Opt(IDL2.Text)
-  });
-  const EditError2 = IDL2.Variant({
-    "ProfileNotFound": IDL2.Null,
-    "NotSignedIn": IDL2.Null,
-    "NotOwner": IDL2.Null,
-    "DeceasedProfile": IDL2.Null
-  });
-  const Result2 = IDL2.Variant({ "ok": PersonProfile2, "err": EditError2 });
-  return IDL2.Service({
-    "_immutableObjectStorageBlobsAreLive": IDL2.Func(
-      [IDL2.Vec(IDL2.Vec(IDL2.Nat8))],
-      [IDL2.Vec(IDL2.Bool)],
-      ["query"]
-    ),
-    "_immutableObjectStorageBlobsToDelete": IDL2.Func(
-      [],
-      [IDL2.Vec(IDL2.Vec(IDL2.Nat8))],
-      ["query"]
-    ),
-    "_immutableObjectStorageConfirmBlobDeletion": IDL2.Func(
-      [IDL2.Vec(IDL2.Vec(IDL2.Nat8))],
-      [],
-      []
-    ),
-    "_immutableObjectStorageCreateCertificate": IDL2.Func(
-      [IDL2.Text],
-      [_ImmutableObjectStorageCreateCertificateResult2],
-      []
-    ),
-    "_immutableObjectStorageRefillCashier": IDL2.Func(
-      [IDL2.Opt(_ImmutableObjectStorageRefillInformation2)],
-      [_ImmutableObjectStorageRefillResult2],
-      []
-    ),
-    "_immutableObjectStorageUpdateGatewayPrincipals": IDL2.Func([], [], []),
-    "_initialize_access_control": IDL2.Func([], [], []),
-    "_internet_identity_sign_in_finish": IDL2.Func([], [Result_252], []),
-    "_internet_identity_sign_in_start": IDL2.Func([], [IDL2.Vec(IDL2.Nat8)], []),
-    "activateSuccessor": IDL2.Func([PersonId2], [Result_102], []),
-    "addBoardReply": IDL2.Func([PostId2, IDL2.Text], [Reply2], []),
-    "addCanonicalStory": IDL2.Func(
-      [
-        IDL2.Text,
-        IDL2.Text,
-        IDL2.Vec(IDL2.Text),
-        IDL2.Opt(IDL2.Text),
-        IDL2.Opt(IDL2.Nat),
-        IDL2.Opt(IDL2.Text),
-        EvidenceStatus2,
-        IDL2.Vec(IDL2.Nat)
-      ],
-      [Story2],
-      []
-    ),
-    "addPhoto": IDL2.Func(
-      [PersonId2, IDL2.Text, IDL2.Text, ExternalBlob3],
-      [Photo2],
-      []
-    ),
-    "addRelationship": IDL2.Func(
-      [PersonId2, PersonId2, RelationshipType2],
-      [Result_232],
-      []
-    ),
-    "approveArchiveItem": IDL2.Func(
-      [ArchiveItemId2],
-      [IDL2.Opt(ArchiveItem2)],
-      []
-    ),
-    "approveFinding": IDL2.Func([FindingId2], [IDL2.Opt(ProposedFinding2)], []),
-    "approveNewPersonCandidate": IDL2.Func(
-      [IDL2.Nat],
-      [IDL2.Opt(NewPersonCandidate2)],
-      []
-    ),
-    "approveProfileClaim": IDL2.Func([IDL2.Nat], [IDL2.Opt(ProfileClaim2)], []),
-    "approveProfileRemoval": IDL2.Func(
-      [IDL2.Nat],
-      [IDL2.Opt(ProfileRemovalRequest2)],
-      []
-    ),
-    "approveRecipe": IDL2.Func([RecipeId2], [IDL2.Opt(Recipe2)], []),
-    "approveRelationshipProposal": IDL2.Func(
-      [IDL2.Nat],
-      [IDL2.Opt(RelationshipProposal2)],
-      []
-    ),
-    "approveRelationshipRequest": IDL2.Func(
-      [IDL2.Nat],
-      [IDL2.Opt(RelationshipRequest2)],
-      []
-    ),
-    "approveSource": IDL2.Func([SourceId2], [IDL2.Opt(SourceRecord2)], []),
-    "approveStory": IDL2.Func([StoryId2], [IDL2.Opt(Story2)], []),
-    "archiveBoardPost": IDL2.Func([PostId2], [IDL2.Opt(Post2)], []),
-    "archiveProfile": IDL2.Func([PersonId2], [Result_26], []),
-    "assignCallerUserRole": IDL2.Func([IDL2.Principal, UserRole2], [], []),
-    "bindAuthMethod": IDL2.Func([AuthMethod2], [Result_242], []),
-    "blockUser": IDL2.Func([IDL2.Principal], [], []),
-    "canClaimProfile": IDL2.Func([PersonId2], [ClaimEligibility2], ["query"]),
-    "canMessagePerson": IDL2.Func([IDL2.Text], [IDL2.Bool], ["query"]),
-    "correctRelationshipType": IDL2.Func(
-      [IDL2.Nat, RelationshipType2],
-      [Result_232],
-      []
-    ),
-    "createBoardPost": IDL2.Func(
-      [
-        PostType2,
-        IDL2.Opt(IDL2.Text),
-        IDL2.Text,
-        IDL2.Vec(IDL2.Text),
-        IDL2.Vec(IDL2.Nat),
-        IDL2.Vec(IDL2.Text)
-      ],
-      [Post2],
-      []
-    ),
-    "createBoardPostWithMedia": IDL2.Func(
-      [
-        PostType2,
-        IDL2.Opt(IDL2.Text),
-        IDL2.Text,
-        IDL2.Vec(IDL2.Text),
-        IDL2.Vec(IDL2.Nat),
-        IDL2.Vec(BoardMediaUpload2),
-        IDL2.Vec(IDL2.Text)
-      ],
-      [Post2],
-      []
-    ),
-    "createCanonicalMystery": IDL2.Func(
-      [
-        IDL2.Text,
-        IDL2.Text,
-        IDL2.Vec(IDL2.Text),
-        IDL2.Opt(IDL2.Text),
-        IDL2.Vec(IDL2.Text),
-        IDL2.Vec(IDL2.Text),
-        IDL2.Vec(IDL2.Nat),
-        IDL2.Vec(IDL2.Nat),
-        MysteryStatus2
-      ],
-      [Mystery2],
-      []
-    ),
-    "createFinding": IDL2.Func(
-      [
-        IDL2.Text,
-        EvidenceLabel2,
-        FindingType2,
-        FindingContent2,
-        SourceId2,
-        IDL2.Opt(IDL2.Text),
-        IDL2.Opt(IDL2.Nat)
-      ],
-      [Result_222],
-      []
-    ),
-    "createMyself": IDL2.Func([IDL2.Text], [Result_212], []),
-    "createNewPersonCandidate": IDL2.Func(
-      [IDL2.Text, IDL2.Text, SourceId2],
-      [Result_202],
-      []
-    ),
-    "createRelationshipProposal": IDL2.Func(
-      [IDL2.Text, IDL2.Text, IDL2.Text, SourceId2],
-      [Result_192],
-      []
-    ),
-    "createSource": IDL2.Func(
-      [IDL2.Text, SourceType2, IDL2.Text, IDL2.Opt(IDL2.Nat)],
-      [Result_182],
-      []
-    ),
-    "createSourceWithUpload": IDL2.Func(
-      [
-        IDL2.Text,
-        SourceType2,
-        IDL2.Text,
-        ExternalBlob3,
-        IDL2.Vec(IDL2.Text),
-        IDL2.Text,
-        IDL2.Opt(IDL2.Nat),
-        IDL2.Vec(IDL2.Text),
-        PrivacyLevel2,
-        ArchiveItemClassification2,
-        IDL2.Opt(OralHistorySpeaker2)
-      ],
-      [Result_172],
-      []
-    ),
-    "designateSuccessor": IDL2.Func([PersonId2, IDL2.Nat], [Result_162], []),
-    "execute": IDL2.Func([IDL2.Text], [Result__12], ["query"]),
-    "getApiDoc": IDL2.Func([], [IDL2.Text], ["query"]),
-    "getBoardPost": IDL2.Func([PostId2], [IDL2.Opt(Post2)], ["query"]),
-    "getCallerUserRole": IDL2.Func([], [UserRole2], ["query"]),
-    "getConversation": IDL2.Func(
-      [ConversationId2],
-      [IDL2.Opt(ConversationView2)],
-      ["query"]
-    ),
-    "getFinding": IDL2.Func([FindingId2], [IDL2.Opt(ProposedFinding2)], ["query"]),
-    "getMyAccountId": IDL2.Func([], [Result_152], ["query"]),
-    "getMyAuthMethods": IDL2.Func([], [Result_142], ["query"]),
-    "getMyProfile": IDL2.Func([], [IDL2.Opt(PersonProfile2)], ["query"]),
-    "getMyProfileClaim": IDL2.Func(
-      [PersonId2],
-      [IDL2.Opt(ProfileClaim2)],
-      ["query"]
-    ),
-    "getMyRelationshipRequests": IDL2.Func(
-      [],
-      [IDL2.Vec(RelationshipRequest2)],
-      ["query"]
-    ),
-    "getPendingContributionsCount": IDL2.Func([], [IDL2.Nat], ["query"]),
-    "getPersonProfile": IDL2.Func(
-      [PersonId2],
-      [IDL2.Opt(PersonProfile2)],
-      ["query"]
-    ),
-    "getProfilePhoto": IDL2.Func([PersonId2], [IDL2.Opt(Photo2)], ["query"]),
-    "getRecipe": IDL2.Func([RecipeId2], [IDL2.Opt(Recipe2)], ["query"]),
-    "getRelationshipRequest": IDL2.Func(
-      [IDL2.Nat],
-      [IDL2.Opt(RelationshipRequest2)],
-      ["query"]
-    ),
-    "getReportedMessage": IDL2.Func(
-      [ReportId2],
-      [IDL2.Opt(ReportedMessageView2)],
-      ["query"]
-    ),
-    "getResearchAuditLog": IDL2.Func(
-      [],
-      [IDL2.Vec(ResearchAuditEntry2)],
-      ["query"]
-    ),
-    "getReviewQueue": IDL2.Func([], [ReviewQueue2], ["query"]),
-    "getSingleStewardWarning": IDL2.Func([], [IDL2.Opt(IDL2.Text)], ["query"]),
-    "getSource": IDL2.Func([SourceId2], [IDL2.Opt(SourceRecord2)], ["query"]),
-    "getStewardAuditHistory": IDL2.Func(
-      [],
-      [IDL2.Vec(StewardAuditEntry2)],
-      ["query"]
-    ),
-    "hasApprovedOwner": IDL2.Func([PersonId2], [IDL2.Bool], ["query"]),
-    "isCallerAdmin": IDL2.Func([], [IDL2.Bool], ["query"]),
-    "listApprovedArchiveItems": IDL2.Func(
-      [],
-      [IDL2.Vec(ArchiveItem2)],
-      ["query"]
-    ),
-    "listApprovedRecipes": IDL2.Func([], [IDL2.Vec(Recipe2)], ["query"]),
-    "listApprovedStories": IDL2.Func([], [IDL2.Vec(Story2)], ["query"]),
-    "listArchivedProfileIds": IDL2.Func([], [IDL2.Vec(PersonId2)], ["query"]),
-    "listArchivedProfiles": IDL2.Func([], [IDL2.Vec(PersonProfile2)], ["query"]),
-    "listAuditHistory": IDL2.Func([], [IDL2.Vec(AuditEntry2)], ["query"]),
-    "listBlockedUsers": IDL2.Func([], [IDL2.Vec(IDL2.Principal)], ["query"]),
-    "listBoardPosts": IDL2.Func(
-      [IDL2.Opt(PostType2)],
-      [IDL2.Vec(Post2)],
-      ["query"]
-    ),
-    "listBoardReplies": IDL2.Func([PostId2], [IDL2.Vec(Reply2)], ["query"]),
-    "listConfirmedRelationships": IDL2.Func(
-      [],
-      [IDL2.Vec(Relationship2)],
-      ["query"]
-    ),
-    "listConflictReviewItems": IDL2.Func(
-      [],
-      [IDL2.Vec(ConflictReviewItem2)],
-      ["query"]
-    ),
-    "listConflictsForPerson": IDL2.Func(
-      [IDL2.Text],
-      [IDL2.Vec(ConflictReviewItem2)],
-      ["query"]
-    ),
-    "listConversations": IDL2.Func(
-      [],
-      [IDL2.Vec(ConversationSummary2)],
-      ["query"]
-    ),
-    "listDisputedFactsForPerson": IDL2.Func(
-      [IDL2.Text],
-      [IDL2.Vec(DisputedFact2)],
-      ["query"]
-    ),
-    "listDuplicateCandidates": IDL2.Func(
-      [],
-      [IDL2.Vec(DuplicatePair2)],
-      ["query"]
-    ),
-    "listEligibleStewardCandidates": IDL2.Func(
-      [],
-      [IDL2.Vec(StewardIdentity2)],
-      ["query"]
-    ),
-    "listFindings": IDL2.Func([], [IDL2.Vec(ProposedFinding2)], ["query"]),
-    "listHiddenBoardPosts": IDL2.Func([], [IDL2.Vec(Post2)], ["query"]),
-    "listMessageableMembers": IDL2.Func([], [IDL2.Vec(IDL2.Text)], ["query"]),
-    "listMysteries": IDL2.Func([], [IDL2.Vec(Mystery2)], ["query"]),
-    "listNewPersonCandidates": IDL2.Func(
-      [],
-      [IDL2.Vec(NewPersonCandidate2)],
-      ["query"]
-    ),
-    "listNotifications": IDL2.Func([], [IDL2.Vec(Notification2)], ["query"]),
-    "listPendingArchiveItems": IDL2.Func([], [IDL2.Vec(ArchiveItem2)], ["query"]),
-    "listPendingMysteryContributions": IDL2.Func(
-      [],
-      [IDL2.Vec(MysteryContribution2)],
-      ["query"]
-    ),
-    "listPendingRecipes": IDL2.Func([], [IDL2.Vec(Recipe2)], ["query"]),
-    "listPendingStories": IDL2.Func([], [IDL2.Vec(Story2)], ["query"]),
-    "listPersonRelationships": IDL2.Func(
-      [PersonId2],
-      [IDL2.Vec(Relationship2)],
-      ["query"]
-    ),
-    "listPhotos": IDL2.Func([PersonId2], [IDL2.Vec(Photo2)], ["query"]),
-    "listProfileClaims": IDL2.Func([], [IDL2.Vec(ProfileClaim2)], ["query"]),
-    "listProfileRemovalRequests": IDL2.Func(
-      [],
-      [IDL2.Vec(ProfileRemovalRequest2)],
-      ["query"]
-    ),
-    "listRecipesForPerson": IDL2.Func([IDL2.Text], [IDL2.Vec(Recipe2)], ["query"]),
-    "listRelationshipProposals": IDL2.Func(
-      [],
-      [IDL2.Vec(RelationshipProposal2)],
-      ["query"]
-    ),
-    "listRelationshipRequests": IDL2.Func(
-      [],
-      [IDL2.Vec(RelationshipRequest2)],
-      ["query"]
-    ),
-    "listReports": IDL2.Func([], [IDL2.Vec(Report2)], ["query"]),
-    "listSources": IDL2.Func([], [IDL2.Vec(SourceRecord2)], ["query"]),
-    "listStewardIdentities": IDL2.Func(
-      [],
-      [IDL2.Vec(StewardIdentity2)],
-      ["query"]
-    ),
-    "listStewards": IDL2.Func([], [IDL2.Vec(StewardRecord2)], ["query"]),
-    "listSuccessors": IDL2.Func([], [IDL2.Vec(SuccessorDesignation2)], ["query"]),
-    "listTimelineEvents": IDL2.Func([], [IDL2.Vec(TimelineEvent2)], ["query"]),
-    "markConversationRead": IDL2.Func([ConversationId2], [], []),
-    "markMysteryResolved": IDL2.Func(
-      [MysteryId2, IDL2.Text, IDL2.Vec(IDL2.Text)],
-      [IDL2.Opt(Mystery2)],
-      []
-    ),
-    "markNotificationRead": IDL2.Func(
-      [NotificationId2],
-      [IDL2.Opt(Notification2)],
-      []
-    ),
-    "mergeProfiles": IDL2.Func([PersonId2, PersonId2], [Result_132], []),
-    "needsResearchFinding": IDL2.Func(
-      [FindingId2],
-      [IDL2.Opt(ProposedFinding2)],
-      []
-    ),
-    "needsResearchNewPersonCandidate": IDL2.Func(
-      [IDL2.Nat],
-      [IDL2.Opt(NewPersonCandidate2)],
-      []
-    ),
-    "needsResearchRelationshipProposal": IDL2.Func(
-      [IDL2.Nat],
-      [IDL2.Opt(RelationshipProposal2)],
-      []
-    ),
-    "needsResearchSource": IDL2.Func([SourceId2], [IDL2.Opt(SourceRecord2)], []),
-    "notDuplicate": IDL2.Func([PersonId2, PersonId2], [Result_122], []),
-    "permanentlyDeleteProfile": IDL2.Func(
-      [PersonId2, IDL2.Bool],
-      [Result_112],
-      []
-    ),
-    "promoteToSteward": IDL2.Func([PersonId2], [Result_102], []),
-    "proposeRelationship": IDL2.Func(
-      [PersonId2, PersonId2, RelationshipType2],
-      [Result_92],
-      []
-    ),
-    "publishRecipe": IDL2.Func(
-      [
-        IDL2.Text,
-        IDL2.Text,
-        IDL2.Text,
-        IDL2.Vec(IDL2.Text),
-        IDL2.Opt(IDL2.Text),
-        IDL2.Opt(IDL2.Nat),
-        IDL2.Opt(IDL2.Text),
-        IDL2.Opt(IDL2.Text),
-        IDL2.Vec(IDL2.Text),
-        IDL2.Text,
-        IDL2.Opt(IDL2.Text),
-        IDL2.Vec(IDL2.Text),
-        PrivacyLevel2,
-        EvidenceStatus2,
-        IDL2.Vec(IDL2.Nat)
-      ],
-      [Recipe2],
-      []
-    ),
-    "reconcileClaimNotifications": IDL2.Func([IDL2.Nat], [IDL2.Nat], []),
-    "rejectArchiveItem": IDL2.Func([ArchiveItemId2], [IDL2.Opt(ArchiveItem2)], []),
-    "rejectFinding": IDL2.Func([FindingId2], [IDL2.Opt(ProposedFinding2)], []),
-    "rejectNewPersonCandidate": IDL2.Func(
-      [IDL2.Nat],
-      [IDL2.Opt(NewPersonCandidate2)],
-      []
-    ),
-    "rejectProfileClaim": IDL2.Func([IDL2.Nat], [IDL2.Opt(ProfileClaim2)], []),
-    "rejectProfileRemoval": IDL2.Func(
-      [IDL2.Nat],
-      [IDL2.Opt(ProfileRemovalRequest2)],
-      []
-    ),
-    "rejectRecipe": IDL2.Func([RecipeId2], [IDL2.Opt(Recipe2)], []),
-    "rejectRelationshipProposal": IDL2.Func(
-      [IDL2.Nat],
-      [IDL2.Opt(RelationshipProposal2)],
-      []
-    ),
-    "rejectRelationshipRequest": IDL2.Func(
-      [IDL2.Nat],
-      [IDL2.Opt(RelationshipRequest2)],
-      []
-    ),
-    "rejectSource": IDL2.Func([SourceId2], [IDL2.Opt(SourceRecord2)], []),
-    "rejectStory": IDL2.Func([StoryId2], [IDL2.Opt(Story2)], []),
-    "removeBoardReply": IDL2.Func([ReplyId2], [IDL2.Opt(Reply2)], []),
-    "removeDuplicateProfile": IDL2.Func([PersonId2], [Result_82], []),
-    "removePhoto": IDL2.Func([PersonId2, PhotoId2], [IDL2.Bool], []),
-    "removeRelationship": IDL2.Func([IDL2.Nat], [Result_72], []),
-    "removeSteward": IDL2.Func([IDL2.Principal], [Result_62], []),
-    "reportMessage": IDL2.Func([MessageId2, IDL2.Text], [Report2], []),
-    "requestProfileClaim": IDL2.Func([PersonId2], [Result_52], []),
-    "requestProfileRemoval": IDL2.Func([PersonId2, IDL2.Text], [Result_42], []),
-    "resolveConflict": IDL2.Func(
-      [IDL2.Nat, ConflictResolutionAction2, IDL2.Text],
-      [Result_32],
-      []
-    ),
-    "resolveMergeConflict": IDL2.Func(
-      [IDL2.Nat, IDL2.Text],
-      [IDL2.Opt(MergeConflict2)],
-      []
-    ),
-    "restoreBoardPost": IDL2.Func([PostId2], [IDL2.Opt(Post2)], []),
-    "restoreProfile": IDL2.Func([PersonId2], [Result_26], []),
-    "reviewMysteryContribution": IDL2.Func(
-      [MysteryContributionId2, IDL2.Bool],
-      [IDL2.Opt(MysteryContribution2)],
-      []
-    ),
-    "reviewReport": IDL2.Func([ReportId2, ReportStatus2], [IDL2.Opt(Report2)], []),
-    "schema": IDL2.Func([], [IDL2.Text], ["query"]),
-    "searchArchiveItems": IDL2.Func(
-      [ArchiveSearchFilter2],
-      [IDL2.Vec(ArchiveItem2)],
-      ["query"]
-    ),
-    "searchBoardPostsByTags": IDL2.Func(
-      [IDL2.Vec(IDL2.Text)],
-      [IDL2.Vec(Post2)],
-      ["query"]
-    ),
-    "searchPossibleMatches": IDL2.Func(
-      [IDL2.Text],
-      [IDL2.Vec(PersonMatch2)],
-      ["query"]
-    ),
-    "sendMessage": IDL2.Func([IDL2.Text, IDL2.Text], [Result_110], []),
-    "setProfilePhoto": IDL2.Func([PersonId2, PhotoId2], [IDL2.Opt(Photo2)], []),
-    "setRelationshipRequestPending": IDL2.Func(
-      [IDL2.Nat],
-      [IDL2.Opt(RelationshipRequest2)],
-      []
-    ),
-    "submitArchiveItem": IDL2.Func(
-      [
-        IDL2.Text,
-        IDL2.Text,
-        ArchiveItemType2,
-        ExternalBlob3,
-        IDL2.Text,
-        IDL2.Opt(IDL2.Nat),
-        IDL2.Vec(IDL2.Text),
-        IDL2.Vec(IDL2.Text),
-        IDL2.Opt(IDL2.Text),
-        SourceStatus2,
-        PrivacyLevel2,
-        ArchiveItemClassification2,
-        IDL2.Opt(OralHistorySpeaker2)
-      ],
-      [ArchiveItem2],
-      []
-    ),
-    "submitMysteryContribution": IDL2.Func(
-      [MysteryId2, MysteryContributionType2, IDL2.Text],
-      [MysteryContribution2],
-      []
-    ),
-    "submitRecipe": IDL2.Func(
-      [
-        IDL2.Text,
-        IDL2.Text,
-        IDL2.Text,
-        IDL2.Vec(IDL2.Text),
-        IDL2.Opt(IDL2.Text),
-        IDL2.Opt(IDL2.Nat),
-        IDL2.Opt(IDL2.Text),
-        IDL2.Opt(IDL2.Text),
-        IDL2.Vec(IDL2.Text),
-        IDL2.Text,
-        IDL2.Opt(IDL2.Text),
-        IDL2.Vec(IDL2.Text),
-        PrivacyLevel2,
-        EvidenceStatus2,
-        IDL2.Vec(IDL2.Nat)
-      ],
-      [Recipe2],
-      []
-    ),
-    "submitStory": IDL2.Func(
-      [
-        IDL2.Text,
-        IDL2.Text,
-        IDL2.Vec(IDL2.Text),
-        IDL2.Opt(IDL2.Text),
-        IDL2.Opt(IDL2.Nat),
-        IDL2.Opt(IDL2.Text),
-        EvidenceStatus2,
-        IDL2.Vec(IDL2.Nat)
-      ],
-      [Story2],
-      []
-    ),
-    "unblockUser": IDL2.Func([IDL2.Principal], [], []),
-    "updateBoardPost": IDL2.Func(
-      [
-        PostId2,
-        PostType2,
-        IDL2.Opt(IDL2.Text),
-        IDL2.Text,
-        IDL2.Vec(IDL2.Text),
-        IDL2.Vec(IDL2.Nat),
-        IDL2.Vec(IDL2.Text)
-      ],
-      [IDL2.Opt(Post2)],
-      []
-    ),
-    "updateCanonicalMystery": IDL2.Func(
-      [
-        MysteryId2,
-        IDL2.Text,
-        IDL2.Text,
-        IDL2.Vec(IDL2.Text),
-        IDL2.Opt(IDL2.Text),
-        IDL2.Vec(IDL2.Text),
-        IDL2.Vec(IDL2.Text),
-        IDL2.Vec(IDL2.Nat),
-        IDL2.Vec(IDL2.Nat),
-        MysteryStatus2
-      ],
-      [IDL2.Opt(Mystery2)],
-      []
-    ),
-    "updateCanonicalStory": IDL2.Func(
-      [
-        StoryId2,
-        IDL2.Text,
-        IDL2.Text,
-        IDL2.Vec(IDL2.Text),
-        IDL2.Opt(IDL2.Text),
-        IDL2.Opt(IDL2.Nat),
-        IDL2.Opt(IDL2.Text),
-        EvidenceStatus2,
-        IDL2.Vec(IDL2.Nat)
-      ],
-      [IDL2.Opt(Story2)],
-      []
-    ),
-    "updateOwnProfile": IDL2.Func([PersonId2, ProfileEdits2], [Result2], [])
-  });
-};
-function candid_some(value) {
-  return [
-    value
-  ];
-}
-function candid_none() {
-  return [];
-}
-function record_opt_to_undefined(arg) {
-  return arg == null ? void 0 : arg;
-}
-var ArchiveItemClassification = /* @__PURE__ */ ((ArchiveItemClassification2) => {
-  ArchiveItemClassification2["OralHistory"] = "OralHistory";
-  ArchiveItemClassification2["Standard"] = "Standard";
-  return ArchiveItemClassification2;
-})(ArchiveItemClassification || {});
-var ArchiveItemStatus = /* @__PURE__ */ ((ArchiveItemStatus2) => {
-  ArchiveItemStatus2["Approved"] = "Approved";
-  ArchiveItemStatus2["Rejected"] = "Rejected";
-  ArchiveItemStatus2["Pending"] = "Pending";
-  return ArchiveItemStatus2;
-})(ArchiveItemStatus || {});
-var ArchiveItemType = /* @__PURE__ */ ((ArchiveItemType2) => {
-  ArchiveItemType2["Research"] = "Research";
-  ArchiveItemType2["Photo"] = "Photo";
-  ArchiveItemType2["Document"] = "Document";
-  ArchiveItemType2["WorkBusiness"] = "WorkBusiness";
-  ArchiveItemType2["WrittenStoryNote"] = "WrittenStoryNote";
-  ArchiveItemType2["Audio"] = "Audio";
-  ArchiveItemType2["Other"] = "Other";
-  ArchiveItemType2["Video"] = "Video";
-  return ArchiveItemType2;
-})(ArchiveItemType || {});
-var AuditActionType = /* @__PURE__ */ ((AuditActionType2) => {
-  AuditActionType2["ProfileRemovalRequested"] = "ProfileRemovalRequested";
-  AuditActionType2["ClaimRejected"] = "ClaimRejected";
-  AuditActionType2["RelationshipTypeCorrected"] = "RelationshipTypeCorrected";
-  AuditActionType2["RelationshipRequestPending"] = "RelationshipRequestPending";
-  AuditActionType2["StewardPromoted"] = "StewardPromoted";
-  AuditActionType2["BoardReplyRemoved"] = "BoardReplyRemoved";
-  AuditActionType2["SuccessorActivated"] = "SuccessorActivated";
-  AuditActionType2["StewardRemoved"] = "StewardRemoved";
-  AuditActionType2["RelationshipRequestApproved"] = "RelationshipRequestApproved";
-  AuditActionType2["DuplicateMerged"] = "DuplicateMerged";
-  AuditActionType2["ProfilePermanentlyDeleted"] = "ProfilePermanentlyDeleted";
-  AuditActionType2["RelationshipRequestRejected"] = "RelationshipRequestRejected";
-  AuditActionType2["ProfileArchived"] = "ProfileArchived";
-  AuditActionType2["ProfileRestored"] = "ProfileRestored";
-  AuditActionType2["BoardPostArchived"] = "BoardPostArchived";
-  AuditActionType2["BoardPostRestored"] = "BoardPostRestored";
-  AuditActionType2["RelationshipAdded"] = "RelationshipAdded";
-  AuditActionType2["RelationshipRemoved"] = "RelationshipRemoved";
-  AuditActionType2["ProfileRemovalReviewed"] = "ProfileRemovalReviewed";
-  AuditActionType2["ClaimApproved"] = "ClaimApproved";
-  AuditActionType2["SuccessorDesignated"] = "SuccessorDesignated";
-  return AuditActionType2;
-})(AuditActionType || {});
-var ClaimError = /* @__PURE__ */ ((ClaimError2) => {
-  ClaimError2["AlreadyPending"] = "AlreadyPending";
-  ClaimError2["ProfileNotFound"] = "ProfileNotFound";
-  ClaimError2["AlreadyClaimed"] = "AlreadyClaimed";
-  ClaimError2["NotSignedIn"] = "NotSignedIn";
-  ClaimError2["DeceasedProfile"] = "DeceasedProfile";
-  return ClaimError2;
-})(ClaimError || {});
-var ClaimStatus = /* @__PURE__ */ ((ClaimStatus2) => {
-  ClaimStatus2["Unclaimed"] = "Unclaimed";
-  ClaimStatus2["Claimed"] = "Claimed";
-  return ClaimStatus2;
-})(ClaimStatus || {});
-var ConflictResolutionAction = /* @__PURE__ */ ((ConflictResolutionAction2) => {
-  ConflictResolutionAction2["NeedsResearch"] = "NeedsResearch";
-  ConflictResolutionAction2["PreserveBoth"] = "PreserveBoth";
-  ConflictResolutionAction2["ReplaceExisting"] = "ReplaceExisting";
-  ConflictResolutionAction2["KeepExisting"] = "KeepExisting";
-  return ConflictResolutionAction2;
-})(ConflictResolutionAction || {});
-var CreateError = /* @__PURE__ */ ((CreateError2) => {
-  CreateError2["AlreadyOwned"] = "AlreadyOwned";
-  CreateError2["NotSignedIn"] = "NotSignedIn";
-  return CreateError2;
-})(CreateError || {});
-var EditError = /* @__PURE__ */ ((EditError2) => {
-  EditError2["ProfileNotFound"] = "ProfileNotFound";
-  EditError2["NotSignedIn"] = "NotSignedIn";
-  EditError2["NotOwner"] = "NotOwner";
-  EditError2["DeceasedProfile"] = "DeceasedProfile";
-  return EditError2;
-})(EditError || {});
-var EvidenceLabel = /* @__PURE__ */ ((EvidenceLabel2) => {
-  EvidenceLabel2["NeedsResearch"] = "NeedsResearch";
-  EvidenceLabel2["Conflicting"] = "Conflicting";
-  EvidenceLabel2["Hypothesis"] = "Hypothesis";
-  EvidenceLabel2["Documented"] = "Documented";
-  EvidenceLabel2["FamilyHistoryOralHistory"] = "FamilyHistoryOralHistory";
-  EvidenceLabel2["PersonalMemory"] = "PersonalMemory";
-  return EvidenceLabel2;
-})(EvidenceLabel || {});
-var EvidenceStatus = /* @__PURE__ */ ((EvidenceStatus2) => {
-  EvidenceStatus2["Unresolved"] = "Unresolved";
-  EvidenceStatus2["Documented"] = "Documented";
-  EvidenceStatus2["FamilyHistory"] = "FamilyHistory";
-  EvidenceStatus2["PersonalMemory"] = "PersonalMemory";
-  return EvidenceStatus2;
-})(EvidenceStatus || {});
-var FindingType = /* @__PURE__ */ ((FindingType2) => {
-  FindingType2["Story"] = "Story";
-  FindingType2["TimelineEvent"] = "TimelineEvent";
-  FindingType2["PersonFact"] = "PersonFact";
-  FindingType2["Source"] = "Source";
-  FindingType2["Mystery"] = "Mystery";
-  FindingType2["Relationship"] = "Relationship";
-  return FindingType2;
-})(FindingType || {});
-var LivingStatus = /* @__PURE__ */ ((LivingStatus2) => {
-  LivingStatus2["Living"] = "Living";
-  LivingStatus2["Deceased"] = "Deceased";
-  return LivingStatus2;
-})(LivingStatus || {});
-var MergeConflictStatus = /* @__PURE__ */ ((MergeConflictStatus2) => {
-  MergeConflictStatus2["Resolved"] = "Resolved";
-  MergeConflictStatus2["Pending"] = "Pending";
-  return MergeConflictStatus2;
-})(MergeConflictStatus || {});
-var MessageError = /* @__PURE__ */ ((MessageError2) => {
-  MessageError2["ConversationNotFound"] = "ConversationNotFound";
-  MessageError2["RecipientArchived"] = "RecipientArchived";
-  MessageError2["NotApprovedMember"] = "NotApprovedMember";
-  MessageError2["RecipientNotClaimed"] = "RecipientNotClaimed";
-  MessageError2["NotSignedIn"] = "NotSignedIn";
-  MessageError2["BlockedByRecipient"] = "BlockedByRecipient";
-  MessageError2["NotParticipant"] = "NotParticipant";
-  MessageError2["CannotMessageSelf"] = "CannotMessageSelf";
-  MessageError2["RecipientNotFound"] = "RecipientNotFound";
-  return MessageError2;
-})(MessageError || {});
-var MessageStatus = /* @__PURE__ */ ((MessageStatus2) => {
-  MessageStatus2["Blocked"] = "Blocked";
-  MessageStatus2["Sent"] = "Sent";
-  return MessageStatus2;
-})(MessageStatus || {});
-var MysteryContributionType = /* @__PURE__ */ ((MysteryContributionType2) => {
-  MysteryContributionType2["Lead"] = "Lead";
-  MysteryContributionType2["Note"] = "Note";
-  MysteryContributionType2["Memory"] = "Memory";
-  MysteryContributionType2["Source"] = "Source";
-  return MysteryContributionType2;
-})(MysteryContributionType || {});
-var MysteryStatus = /* @__PURE__ */ ((MysteryStatus2) => {
-  MysteryStatus2["Researching"] = "Researching";
-  MysteryStatus2["Open"] = "Open";
-  MysteryStatus2["PartiallyResolved"] = "PartiallyResolved";
-  MysteryStatus2["Resolved"] = "Resolved";
-  return MysteryStatus2;
-})(MysteryStatus || {});
-var NotificationType = /* @__PURE__ */ ((NotificationType2) => {
-  NotificationType2["ResearchSubmission"] = "ResearchSubmission";
-  NotificationType2["ResearchApproved"] = "ResearchApproved";
-  NotificationType2["ResearchRejected"] = "ResearchRejected";
-  NotificationType2["RelationshipRequested"] = "RelationshipRequested";
-  NotificationType2["BoardMention"] = "BoardMention";
-  NotificationType2["RelationshipReviewed"] = "RelationshipReviewed";
-  NotificationType2["BoardReply"] = "BoardReply";
-  NotificationType2["NewMessage"] = "NewMessage";
-  NotificationType2["ProfileClaimReviewed"] = "ProfileClaimReviewed";
-  NotificationType2["ProfileClaimRequested"] = "ProfileClaimRequested";
-  return NotificationType2;
-})(NotificationType || {});
-var PostStatus = /* @__PURE__ */ ((PostStatus2) => {
-  PostStatus2["Active"] = "Active";
-  PostStatus2["Archived"] = "Archived";
-  return PostStatus2;
-})(PostStatus || {});
-var PostType = /* @__PURE__ */ ((PostType2) => {
-  PostType2["Announcement"] = "Announcement";
-  PostType2["Recipe"] = "Recipe";
-  PostType2["ResearchHistory"] = "ResearchHistory";
-  PostType2["FamilyQuestion"] = "FamilyQuestion";
-  PostType2["Memorial"] = "Memorial";
-  PostType2["General"] = "General";
-  PostType2["Other"] = "Other";
-  PostType2["ReunionEvent"] = "ReunionEvent";
-  PostType2["PhotoIdentification"] = "PhotoIdentification";
-  return PostType2;
-})(PostType || {});
-var PrivacyLevel = /* @__PURE__ */ ((PrivacyLevel2) => {
-  PrivacyLevel2["Private"] = "Private";
-  PrivacyLevel2["Public"] = "Public";
-  PrivacyLevel2["FamilyOnly"] = "FamilyOnly";
-  return PrivacyLevel2;
-})(PrivacyLevel || {});
-var RecipeStatus = /* @__PURE__ */ ((RecipeStatus2) => {
-  RecipeStatus2["Approved"] = "Approved";
-  RecipeStatus2["Rejected"] = "Rejected";
-  RecipeStatus2["Archived"] = "Archived";
-  RecipeStatus2["Pending"] = "Pending";
-  return RecipeStatus2;
-})(RecipeStatus || {});
-var RelationshipStatus = /* @__PURE__ */ ((RelationshipStatus2) => {
-  RelationshipStatus2["Disputed"] = "Disputed";
-  RelationshipStatus2["Confirmed"] = "Confirmed";
-  RelationshipStatus2["Pending"] = "Pending";
-  return RelationshipStatus2;
-})(RelationshipStatus || {});
-var RelationshipType = /* @__PURE__ */ ((RelationshipType2) => {
-  RelationshipType2["Parent"] = "Parent";
-  RelationshipType2["Sibling"] = "Sibling";
-  RelationshipType2["SpousePartner"] = "SpousePartner";
-  RelationshipType2["Child"] = "Child";
-  return RelationshipType2;
-})(RelationshipType || {});
-var RemovalError = /* @__PURE__ */ ((RemovalError2) => {
-  RemovalError2["AlreadyPending"] = "AlreadyPending";
-  RemovalError2["ProfileNotFound"] = "ProfileNotFound";
-  RemovalError2["NotSignedIn"] = "NotSignedIn";
-  RemovalError2["NotOwner"] = "NotOwner";
-  RemovalError2["DeceasedProfile"] = "DeceasedProfile";
-  return RemovalError2;
-})(RemovalError || {});
-var ReportStatus = /* @__PURE__ */ ((ReportStatus2) => {
-  ReportStatus2["Dismissed"] = "Dismissed";
-  ReportStatus2["Reviewed"] = "Reviewed";
-  ReportStatus2["Pending"] = "Pending";
-  return ReportStatus2;
-})(ReportStatus || {});
-var ReviewStatus = /* @__PURE__ */ ((ReviewStatus2) => {
-  ReviewStatus2["NeedsResearch"] = "NeedsResearch";
-  ReviewStatus2["Conflicting"] = "Conflicting";
-  ReviewStatus2["Approved"] = "Approved";
-  ReviewStatus2["Rejected"] = "Rejected";
-  ReviewStatus2["Pending"] = "Pending";
-  return ReviewStatus2;
-})(ReviewStatus || {});
-var SourceStatus = /* @__PURE__ */ ((SourceStatus2) => {
-  SourceStatus2["Copy"] = "Copy";
-  SourceStatus2["Unverified"] = "Unverified";
-  SourceStatus2["Transcribed"] = "Transcribed";
-  SourceStatus2["Original"] = "Original";
-  return SourceStatus2;
-})(SourceStatus || {});
-var SourceType = /* @__PURE__ */ ((SourceType2) => {
-  SourceType2["CertificateHeadstoneReference"] = "CertificateHeadstoneReference";
-  SourceType2["DeedPropertyReference"] = "DeedPropertyReference";
-  SourceType2["ResearchNotes"] = "ResearchNotes";
-  SourceType2["EmailThread"] = "EmailThread";
-  SourceType2["UploadedDocumentImage"] = "UploadedDocumentImage";
-  SourceType2["CensusCitation"] = "CensusCitation";
-  return SourceType2;
-})(SourceType || {});
-var StewardAuditKind = /* @__PURE__ */ ((StewardAuditKind2) => {
-  StewardAuditKind2["ConflictResolution"] = "ConflictResolution";
-  StewardAuditKind2["Governance"] = "Governance";
-  return StewardAuditKind2;
-})(StewardAuditKind || {});
-var StewardRoleStatus = /* @__PURE__ */ ((StewardRoleStatus2) => {
-  StewardRoleStatus2["Active"] = "Active";
-  StewardRoleStatus2["Removed"] = "Removed";
-  return StewardRoleStatus2;
-})(StewardRoleStatus || {});
-var SuccessorStatus = /* @__PURE__ */ ((SuccessorStatus2) => {
-  SuccessorStatus2["Activated"] = "Activated";
-  SuccessorStatus2["Removed"] = "Removed";
-  SuccessorStatus2["Designated"] = "Designated";
-  return SuccessorStatus2;
-})(SuccessorStatus || {});
-var TimelineEventType = /* @__PURE__ */ ((TimelineEventType2) => {
-  TimelineEventType2["MilitaryService"] = "MilitaryService";
-  TimelineEventType2["Story"] = "Story";
-  TimelineEventType2["Birth"] = "Birth";
-  TimelineEventType2["FamilyEvent"] = "FamilyEvent";
-  TimelineEventType2["Migration"] = "Migration";
-  TimelineEventType2["Mystery"] = "Mystery";
-  TimelineEventType2["Death"] = "Death";
-  TimelineEventType2["PhotoDocument"] = "PhotoDocument";
-  TimelineEventType2["Marriage"] = "Marriage";
-  TimelineEventType2["CensusDocument"] = "CensusDocument";
-  TimelineEventType2["Location"] = "Location";
-  return TimelineEventType2;
-})(TimelineEventType || {});
-class Backend {
-  constructor(actor, _uploadFile, _downloadFile, processError2) {
-    this.actor = actor;
-    this._uploadFile = _uploadFile;
-    this._downloadFile = _downloadFile;
-    this.processError = processError2;
-  }
-  async _immutableObjectStorageBlobsAreLive(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor._immutableObjectStorageBlobsAreLive(arg0);
-        return result;
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor._immutableObjectStorageBlobsAreLive(arg0);
-      return result;
-    }
-  }
-  async _immutableObjectStorageBlobsToDelete() {
-    if (this.processError) {
-      try {
-        const result = await this.actor._immutableObjectStorageBlobsToDelete();
-        return result;
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor._immutableObjectStorageBlobsToDelete();
-      return result;
-    }
-  }
-  async _immutableObjectStorageConfirmBlobDeletion(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor._immutableObjectStorageConfirmBlobDeletion(arg0);
-        return result;
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor._immutableObjectStorageConfirmBlobDeletion(arg0);
-      return result;
-    }
-  }
-  async _immutableObjectStorageCreateCertificate(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor._immutableObjectStorageCreateCertificate(arg0);
-        return result;
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor._immutableObjectStorageCreateCertificate(arg0);
-      return result;
-    }
-  }
-  async _immutableObjectStorageRefillCashier(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor._immutableObjectStorageRefillCashier(to_candid_opt_n1(this._uploadFile, this._downloadFile, arg0));
-        return from_candid__ImmutableObjectStorageRefillResult_n4(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor._immutableObjectStorageRefillCashier(to_candid_opt_n1(this._uploadFile, this._downloadFile, arg0));
-      return from_candid__ImmutableObjectStorageRefillResult_n4(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async _immutableObjectStorageUpdateGatewayPrincipals() {
-    if (this.processError) {
-      try {
-        const result = await this.actor._immutableObjectStorageUpdateGatewayPrincipals();
-        return result;
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor._immutableObjectStorageUpdateGatewayPrincipals();
-      return result;
-    }
-  }
-  async _initialize_access_control() {
-    if (this.processError) {
-      try {
-        const result = await this.actor._initialize_access_control();
-        return result;
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor._initialize_access_control();
-      return result;
-    }
-  }
-  async _internet_identity_sign_in_finish() {
-    if (this.processError) {
-      try {
-        const result = await this.actor._internet_identity_sign_in_finish();
-        return from_candid_Result_25_n8(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor._internet_identity_sign_in_finish();
-      return from_candid_Result_25_n8(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async _internet_identity_sign_in_start() {
-    if (this.processError) {
-      try {
-        const result = await this.actor._internet_identity_sign_in_start();
-        return result;
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor._internet_identity_sign_in_start();
-      return result;
-    }
-  }
-  async activateSuccessor(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.activateSuccessor(arg0);
-        return from_candid_Result_10_n12(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.activateSuccessor(arg0);
-      return from_candid_Result_10_n12(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async addBoardReply(arg0, arg1) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.addBoardReply(arg0, arg1);
-        return result;
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.addBoardReply(arg0, arg1);
-      return result;
-    }
-  }
-  async addCanonicalStory(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.addCanonicalStory(arg0, arg1, arg2, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg3), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg5), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg6), arg7);
-        return from_candid_Story_n24(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.addCanonicalStory(arg0, arg1, arg2, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg3), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg5), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg6), arg7);
-      return from_candid_Story_n24(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async addPhoto(arg0, arg1, arg2, arg3) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.addPhoto(arg0, arg1, arg2, await to_candid_ExternalBlob_n31(this._uploadFile, this._downloadFile, arg3));
-        return from_candid_Photo_n32(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.addPhoto(arg0, arg1, arg2, await to_candid_ExternalBlob_n31(this._uploadFile, this._downloadFile, arg3));
-      return from_candid_Photo_n32(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async addRelationship(arg0, arg1, arg2) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.addRelationship(arg0, arg1, to_candid_RelationshipType_n35(this._uploadFile, this._downloadFile, arg2));
-        return from_candid_Result_23_n37(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.addRelationship(arg0, arg1, to_candid_RelationshipType_n35(this._uploadFile, this._downloadFile, arg2));
-      return from_candid_Result_23_n37(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async approveArchiveItem(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.approveArchiveItem(arg0);
-        return from_candid_opt_n47(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.approveArchiveItem(arg0);
-      return from_candid_opt_n47(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async approveFinding(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.approveFinding(arg0);
-        return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.approveFinding(arg0);
-      return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async approveNewPersonCandidate(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.approveNewPersonCandidate(arg0);
-        return from_candid_opt_n81(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.approveNewPersonCandidate(arg0);
-      return from_candid_opt_n81(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async approveProfileClaim(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.approveProfileClaim(arg0);
-        return from_candid_opt_n84(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.approveProfileClaim(arg0);
-      return from_candid_opt_n84(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async approveProfileRemoval(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.approveProfileRemoval(arg0);
-        return from_candid_opt_n88(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.approveProfileRemoval(arg0);
-      return from_candid_opt_n88(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async approveRecipe(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.approveRecipe(arg0);
-        return from_candid_opt_n92(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.approveRecipe(arg0);
-      return from_candid_opt_n92(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async approveRelationshipProposal(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.approveRelationshipProposal(arg0);
-        return from_candid_opt_n97(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.approveRelationshipProposal(arg0);
-      return from_candid_opt_n97(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async approveRelationshipRequest(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.approveRelationshipRequest(arg0);
-        return from_candid_opt_n100(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.approveRelationshipRequest(arg0);
-      return from_candid_opt_n100(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async approveSource(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.approveSource(arg0);
-        return from_candid_opt_n104(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.approveSource(arg0);
-      return from_candid_opt_n104(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async approveStory(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.approveStory(arg0);
-        return from_candid_opt_n107(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.approveStory(arg0);
-      return from_candid_opt_n107(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async archiveBoardPost(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.archiveBoardPost(arg0);
-        return from_candid_opt_n108(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.archiveBoardPost(arg0);
-      return from_candid_opt_n108(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async archiveProfile(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.archiveProfile(arg0);
-        return from_candid_Result_2_n117(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.archiveProfile(arg0);
-      return from_candid_Result_2_n117(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async assignCallerUserRole(arg0, arg1) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n121(this._uploadFile, this._downloadFile, arg1));
-        return result;
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n121(this._uploadFile, this._downloadFile, arg1));
-      return result;
-    }
-  }
-  async bindAuthMethod(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.bindAuthMethod(to_candid_AuthMethod_n123(this._uploadFile, this._downloadFile, arg0));
-        return from_candid_Result_24_n125(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.bindAuthMethod(to_candid_AuthMethod_n123(this._uploadFile, this._downloadFile, arg0));
-      return from_candid_Result_24_n125(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async blockUser(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.blockUser(arg0);
-        return result;
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.blockUser(arg0);
-      return result;
-    }
-  }
-  async canClaimProfile(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.canClaimProfile(arg0);
-        return from_candid_ClaimEligibility_n134(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.canClaimProfile(arg0);
-      return from_candid_ClaimEligibility_n134(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async canMessagePerson(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.canMessagePerson(arg0);
-        return result;
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.canMessagePerson(arg0);
-      return result;
-    }
-  }
-  async correctRelationshipType(arg0, arg1) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.correctRelationshipType(arg0, to_candid_RelationshipType_n35(this._uploadFile, this._downloadFile, arg1));
-        return from_candid_Result_23_n37(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.correctRelationshipType(arg0, to_candid_RelationshipType_n35(this._uploadFile, this._downloadFile, arg1));
-      return from_candid_Result_23_n37(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async createBoardPost(arg0, arg1, arg2, arg3, arg4, arg5) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.createBoardPost(to_candid_PostType_n139(this._uploadFile, this._downloadFile, arg0), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg1), arg2, arg3, arg4, arg5);
-        return from_candid_Post_n109(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.createBoardPost(to_candid_PostType_n139(this._uploadFile, this._downloadFile, arg0), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg1), arg2, arg3, arg4, arg5);
-      return from_candid_Post_n109(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async createBoardPostWithMedia(arg0, arg1, arg2, arg3, arg4, arg5, arg6) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.createBoardPostWithMedia(to_candid_PostType_n139(this._uploadFile, this._downloadFile, arg0), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg1), arg2, arg3, arg4, await to_candid_vec_n141(this._uploadFile, this._downloadFile, arg5), arg6);
-        return from_candid_Post_n109(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.createBoardPostWithMedia(to_candid_PostType_n139(this._uploadFile, this._downloadFile, arg0), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg1), arg2, arg3, arg4, await to_candid_vec_n141(this._uploadFile, this._downloadFile, arg5), arg6);
-      return from_candid_Post_n109(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async createCanonicalMystery(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.createCanonicalMystery(arg0, arg1, arg2, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg3), arg4, arg5, arg6, arg7, to_candid_MysteryStatus_n154(this._uploadFile, this._downloadFile, arg8));
-        return from_candid_Mystery_n156(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.createCanonicalMystery(arg0, arg1, arg2, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg3), arg4, arg5, arg6, arg7, to_candid_MysteryStatus_n154(this._uploadFile, this._downloadFile, arg8));
-      return from_candid_Mystery_n156(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async createFinding(arg0, arg1, arg2, arg3, arg4, arg5, arg6) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.createFinding(arg0, to_candid_EvidenceLabel_n161(this._uploadFile, this._downloadFile, arg1), to_candid_FindingType_n163(this._uploadFile, this._downloadFile, arg2), to_candid_FindingContent_n165(this._uploadFile, this._downloadFile, arg3), arg4, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg6));
-        return from_candid_Result_22_n171(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.createFinding(arg0, to_candid_EvidenceLabel_n161(this._uploadFile, this._downloadFile, arg1), to_candid_FindingType_n163(this._uploadFile, this._downloadFile, arg2), to_candid_FindingContent_n165(this._uploadFile, this._downloadFile, arg3), arg4, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg6));
-      return from_candid_Result_22_n171(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async createMyself(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.createMyself(arg0);
-        return from_candid_Result_21_n175(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.createMyself(arg0);
-      return from_candid_Result_21_n175(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async createNewPersonCandidate(arg0, arg1, arg2) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.createNewPersonCandidate(arg0, arg1, arg2);
-        return from_candid_Result_20_n185(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.createNewPersonCandidate(arg0, arg1, arg2);
-      return from_candid_Result_20_n185(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async createRelationshipProposal(arg0, arg1, arg2, arg3) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.createRelationshipProposal(arg0, arg1, arg2, arg3);
-        return from_candid_Result_19_n187(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.createRelationshipProposal(arg0, arg1, arg2, arg3);
-      return from_candid_Result_19_n187(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async createSource(arg0, arg1, arg2, arg3) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.createSource(arg0, to_candid_SourceType_n168(this._uploadFile, this._downloadFile, arg1), arg2, to_candid_opt_n21(this._uploadFile, this._downloadFile, arg3));
-        return from_candid_Result_18_n189(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.createSource(arg0, to_candid_SourceType_n168(this._uploadFile, this._downloadFile, arg1), arg2, to_candid_opt_n21(this._uploadFile, this._downloadFile, arg3));
-      return from_candid_Result_18_n189(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async createSourceWithUpload(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.createSourceWithUpload(arg0, to_candid_SourceType_n168(this._uploadFile, this._downloadFile, arg1), arg2, await to_candid_ExternalBlob_n31(this._uploadFile, this._downloadFile, arg3), arg4, arg5, to_candid_opt_n21(this._uploadFile, this._downloadFile, arg6), arg7, to_candid_PrivacyLevel_n144(this._uploadFile, this._downloadFile, arg8), to_candid_ArchiveItemClassification_n152(this._uploadFile, this._downloadFile, arg9), to_candid_opt_n191(this._uploadFile, this._downloadFile, arg10));
-        return from_candid_Result_17_n192(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.createSourceWithUpload(arg0, to_candid_SourceType_n168(this._uploadFile, this._downloadFile, arg1), arg2, await to_candid_ExternalBlob_n31(this._uploadFile, this._downloadFile, arg3), arg4, arg5, to_candid_opt_n21(this._uploadFile, this._downloadFile, arg6), arg7, to_candid_PrivacyLevel_n144(this._uploadFile, this._downloadFile, arg8), to_candid_ArchiveItemClassification_n152(this._uploadFile, this._downloadFile, arg9), to_candid_opt_n191(this._uploadFile, this._downloadFile, arg10));
-      return from_candid_Result_17_n192(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async designateSuccessor(arg0, arg1) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.designateSuccessor(arg0, arg1);
-        return from_candid_Result_16_n196(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.designateSuccessor(arg0, arg1);
-      return from_candid_Result_16_n196(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async execute(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.execute(arg0);
-        return from_candid_Result__1_n202(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.execute(arg0);
-      return from_candid_Result__1_n202(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async getApiDoc() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.getApiDoc();
-        return result;
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.getApiDoc();
-      return result;
-    }
-  }
-  async getBoardPost(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.getBoardPost(arg0);
-        return from_candid_opt_n108(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.getBoardPost(arg0);
-      return from_candid_opt_n108(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async getCallerUserRole() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.getCallerUserRole();
-        return from_candid_UserRole_n210(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.getCallerUserRole();
-      return from_candid_UserRole_n210(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async getConversation(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.getConversation(arg0);
-        return from_candid_opt_n212(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.getConversation(arg0);
-      return from_candid_opt_n212(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async getFinding(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.getFinding(arg0);
-        return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.getFinding(arg0);
-      return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async getMyAccountId() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.getMyAccountId();
-        return from_candid_Result_15_n221(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.getMyAccountId();
-      return from_candid_Result_15_n221(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async getMyAuthMethods() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.getMyAuthMethods();
-        return from_candid_Result_14_n223(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.getMyAuthMethods();
-      return from_candid_Result_14_n223(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async getMyProfile() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.getMyProfile();
-        return from_candid_opt_n225(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.getMyProfile();
-      return from_candid_opt_n225(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async getMyProfileClaim(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.getMyProfileClaim(arg0);
-        return from_candid_opt_n84(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.getMyProfileClaim(arg0);
-      return from_candid_opt_n84(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async getMyRelationshipRequests() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.getMyRelationshipRequests();
-        return from_candid_vec_n226(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.getMyRelationshipRequests();
-      return from_candid_vec_n226(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async getPendingContributionsCount() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.getPendingContributionsCount();
-        return result;
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.getPendingContributionsCount();
-      return result;
-    }
-  }
-  async getPersonProfile(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.getPersonProfile(arg0);
-        return from_candid_opt_n225(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.getPersonProfile(arg0);
-      return from_candid_opt_n225(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async getProfilePhoto(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.getProfilePhoto(arg0);
-        return from_candid_opt_n227(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.getProfilePhoto(arg0);
-      return from_candid_opt_n227(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async getRecipe(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.getRecipe(arg0);
-        return from_candid_opt_n92(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.getRecipe(arg0);
-      return from_candid_opt_n92(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async getRelationshipRequest(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.getRelationshipRequest(arg0);
-        return from_candid_opt_n100(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.getRelationshipRequest(arg0);
-      return from_candid_opt_n100(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async getReportedMessage(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.getReportedMessage(arg0);
-        return from_candid_opt_n228(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.getReportedMessage(arg0);
-      return from_candid_opt_n228(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async getResearchAuditLog() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.getResearchAuditLog();
-        return from_candid_vec_n235(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.getResearchAuditLog();
-      return from_candid_vec_n235(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async getReviewQueue() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.getReviewQueue();
-        return from_candid_ReviewQueue_n240(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.getReviewQueue();
-      return from_candid_ReviewQueue_n240(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async getSingleStewardWarning() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.getSingleStewardWarning();
-        return from_candid_opt_n26(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.getSingleStewardWarning();
-      return from_candid_opt_n26(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async getSource(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.getSource(arg0);
-        return from_candid_opt_n104(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.getSource(arg0);
-      return from_candid_opt_n104(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async getStewardAuditHistory() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.getStewardAuditHistory();
-        return from_candid_vec_n251(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.getStewardAuditHistory();
-      return from_candid_vec_n251(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async hasApprovedOwner(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.hasApprovedOwner(arg0);
-        return result;
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.hasApprovedOwner(arg0);
-      return result;
-    }
-  }
-  async isCallerAdmin() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.isCallerAdmin();
-        return result;
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.isCallerAdmin();
-      return result;
-    }
-  }
-  async listApprovedArchiveItems() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listApprovedArchiveItems();
-        return from_candid_vec_n256(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listApprovedArchiveItems();
-      return from_candid_vec_n256(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listApprovedRecipes() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listApprovedRecipes();
-        return from_candid_vec_n257(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listApprovedRecipes();
-      return from_candid_vec_n257(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listApprovedStories() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listApprovedStories();
-        return from_candid_vec_n258(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listApprovedStories();
-      return from_candid_vec_n258(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listArchivedProfileIds() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listArchivedProfileIds();
-        return result;
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listArchivedProfileIds();
-      return result;
-    }
-  }
-  async listArchivedProfiles() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listArchivedProfiles();
-        return from_candid_vec_n259(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listArchivedProfiles();
-      return from_candid_vec_n259(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listAuditHistory() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listAuditHistory();
-        return from_candid_vec_n260(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listAuditHistory();
-      return from_candid_vec_n260(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listBlockedUsers() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listBlockedUsers();
-        return result;
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listBlockedUsers();
-      return result;
-    }
-  }
-  async listBoardPosts(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listBoardPosts(to_candid_opt_n265(this._uploadFile, this._downloadFile, arg0));
-        return from_candid_vec_n266(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listBoardPosts(to_candid_opt_n265(this._uploadFile, this._downloadFile, arg0));
-      return from_candid_vec_n266(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listBoardReplies(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listBoardReplies(arg0);
-        return result;
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listBoardReplies(arg0);
-      return result;
-    }
-  }
-  async listConfirmedRelationships() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listConfirmedRelationships();
-        return from_candid_vec_n267(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listConfirmedRelationships();
-      return from_candid_vec_n267(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listConflictReviewItems() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listConflictReviewItems();
-        return from_candid_vec_n268(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listConflictReviewItems();
-      return from_candid_vec_n268(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listConflictsForPerson(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listConflictsForPerson(arg0);
-        return from_candid_vec_n268(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listConflictsForPerson(arg0);
-      return from_candid_vec_n268(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listConversations() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listConversations();
-        return result;
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listConversations();
-      return result;
-    }
-  }
-  async listDisputedFactsForPerson(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listDisputedFactsForPerson(arg0);
-        return from_candid_vec_n271(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listDisputedFactsForPerson(arg0);
-      return from_candid_vec_n271(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listDuplicateCandidates() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listDuplicateCandidates();
-        return from_candid_vec_n274(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listDuplicateCandidates();
-      return from_candid_vec_n274(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listEligibleStewardCandidates() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listEligibleStewardCandidates();
-        return result;
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listEligibleStewardCandidates();
-      return result;
-    }
-  }
-  async listFindings() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listFindings();
-        return from_candid_vec_n279(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listFindings();
-      return from_candid_vec_n279(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listHiddenBoardPosts() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listHiddenBoardPosts();
-        return from_candid_vec_n266(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listHiddenBoardPosts();
-      return from_candid_vec_n266(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listMessageableMembers() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listMessageableMembers();
-        return result;
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listMessageableMembers();
-      return result;
-    }
-  }
-  async listMysteries() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listMysteries();
-        return from_candid_vec_n280(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listMysteries();
-      return from_candid_vec_n280(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listNewPersonCandidates() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listNewPersonCandidates();
-        return from_candid_vec_n281(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listNewPersonCandidates();
-      return from_candid_vec_n281(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listNotifications() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listNotifications();
-        return from_candid_vec_n282(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listNotifications();
-      return from_candid_vec_n282(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listPendingArchiveItems() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listPendingArchiveItems();
-        return from_candid_vec_n256(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listPendingArchiveItems();
-      return from_candid_vec_n256(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listPendingMysteryContributions() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listPendingMysteryContributions();
-        return from_candid_vec_n287(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listPendingMysteryContributions();
-      return from_candid_vec_n287(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listPendingRecipes() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listPendingRecipes();
-        return from_candid_vec_n257(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listPendingRecipes();
-      return from_candid_vec_n257(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listPendingStories() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listPendingStories();
-        return from_candid_vec_n258(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listPendingStories();
-      return from_candid_vec_n258(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listPersonRelationships(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listPersonRelationships(arg0);
-        return from_candid_vec_n267(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listPersonRelationships(arg0);
-      return from_candid_vec_n267(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listPhotos(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listPhotos(arg0);
-        return from_candid_vec_n293(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listPhotos(arg0);
-      return from_candid_vec_n293(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listProfileClaims() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listProfileClaims();
-        return from_candid_vec_n294(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listProfileClaims();
-      return from_candid_vec_n294(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listProfileRemovalRequests() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listProfileRemovalRequests();
-        return from_candid_vec_n295(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listProfileRemovalRequests();
-      return from_candid_vec_n295(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listRecipesForPerson(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listRecipesForPerson(arg0);
-        return from_candid_vec_n257(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listRecipesForPerson(arg0);
-      return from_candid_vec_n257(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listRelationshipProposals() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listRelationshipProposals();
-        return from_candid_vec_n296(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listRelationshipProposals();
-      return from_candid_vec_n296(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listRelationshipRequests() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listRelationshipRequests();
-        return from_candid_vec_n226(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listRelationshipRequests();
-      return from_candid_vec_n226(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listReports() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listReports();
-        return from_candid_vec_n297(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listReports();
-      return from_candid_vec_n297(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listSources() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listSources();
-        return from_candid_vec_n298(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listSources();
-      return from_candid_vec_n298(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listStewardIdentities() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listStewardIdentities();
-        return result;
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listStewardIdentities();
-      return result;
-    }
-  }
-  async listStewards() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listStewards();
-        return from_candid_vec_n299(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listStewards();
-      return from_candid_vec_n299(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listSuccessors() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listSuccessors();
-        return from_candid_vec_n300(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listSuccessors();
-      return from_candid_vec_n300(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async listTimelineEvents() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.listTimelineEvents();
-        return from_candid_vec_n301(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.listTimelineEvents();
-      return from_candid_vec_n301(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async markConversationRead(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.markConversationRead(arg0);
-        return result;
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.markConversationRead(arg0);
-      return result;
-    }
-  }
-  async markMysteryResolved(arg0, arg1, arg2) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.markMysteryResolved(arg0, arg1, arg2);
-        return from_candid_opt_n308(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.markMysteryResolved(arg0, arg1, arg2);
-      return from_candid_opt_n308(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async markNotificationRead(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.markNotificationRead(arg0);
-        return from_candid_opt_n309(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.markNotificationRead(arg0);
-      return from_candid_opt_n309(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async mergeProfiles(arg0, arg1) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.mergeProfiles(arg0, arg1);
-        return from_candid_Result_13_n310(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.mergeProfiles(arg0, arg1);
-      return from_candid_Result_13_n310(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async needsResearchFinding(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.needsResearchFinding(arg0);
-        return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.needsResearchFinding(arg0);
-      return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async needsResearchNewPersonCandidate(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.needsResearchNewPersonCandidate(arg0);
-        return from_candid_opt_n81(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.needsResearchNewPersonCandidate(arg0);
-      return from_candid_opt_n81(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async needsResearchRelationshipProposal(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.needsResearchRelationshipProposal(arg0);
-        return from_candid_opt_n97(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.needsResearchRelationshipProposal(arg0);
-      return from_candid_opt_n97(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async needsResearchSource(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.needsResearchSource(arg0);
-        return from_candid_opt_n104(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.needsResearchSource(arg0);
-      return from_candid_opt_n104(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async notDuplicate(arg0, arg1) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.notDuplicate(arg0, arg1);
-        return from_candid_Result_12_n321(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.notDuplicate(arg0, arg1);
-      return from_candid_Result_12_n321(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async permanentlyDeleteProfile(arg0, arg1) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.permanentlyDeleteProfile(arg0, arg1);
-        return from_candid_Result_11_n323(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.permanentlyDeleteProfile(arg0, arg1);
-      return from_candid_Result_11_n323(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async promoteToSteward(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.promoteToSteward(arg0);
-        return from_candid_Result_10_n12(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.promoteToSteward(arg0);
-      return from_candid_Result_10_n12(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async proposeRelationship(arg0, arg1, arg2) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.proposeRelationship(arg0, arg1, to_candid_RelationshipType_n35(this._uploadFile, this._downloadFile, arg2));
-        return from_candid_Result_9_n327(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.proposeRelationship(arg0, arg1, to_candid_RelationshipType_n35(this._uploadFile, this._downloadFile, arg2));
-      return from_candid_Result_9_n327(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async publishRecipe(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.publishRecipe(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg6), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg7), arg8, arg9, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg10), arg11, to_candid_PrivacyLevel_n144(this._uploadFile, this._downloadFile, arg12), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg13), arg14);
-        return from_candid_Recipe_n93(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.publishRecipe(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg6), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg7), arg8, arg9, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg10), arg11, to_candid_PrivacyLevel_n144(this._uploadFile, this._downloadFile, arg12), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg13), arg14);
-      return from_candid_Recipe_n93(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async reconcileClaimNotifications(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.reconcileClaimNotifications(arg0);
-        return result;
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.reconcileClaimNotifications(arg0);
-      return result;
-    }
-  }
-  async rejectArchiveItem(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.rejectArchiveItem(arg0);
-        return from_candid_opt_n47(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.rejectArchiveItem(arg0);
-      return from_candid_opt_n47(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async rejectFinding(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.rejectFinding(arg0);
-        return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.rejectFinding(arg0);
-      return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async rejectNewPersonCandidate(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.rejectNewPersonCandidate(arg0);
-        return from_candid_opt_n81(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.rejectNewPersonCandidate(arg0);
-      return from_candid_opt_n81(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async rejectProfileClaim(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.rejectProfileClaim(arg0);
-        return from_candid_opt_n84(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.rejectProfileClaim(arg0);
-      return from_candid_opt_n84(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async rejectProfileRemoval(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.rejectProfileRemoval(arg0);
-        return from_candid_opt_n88(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.rejectProfileRemoval(arg0);
-      return from_candid_opt_n88(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async rejectRecipe(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.rejectRecipe(arg0);
-        return from_candid_opt_n92(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.rejectRecipe(arg0);
-      return from_candid_opt_n92(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async rejectRelationshipProposal(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.rejectRelationshipProposal(arg0);
-        return from_candid_opt_n97(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.rejectRelationshipProposal(arg0);
-      return from_candid_opt_n97(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async rejectRelationshipRequest(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.rejectRelationshipRequest(arg0);
-        return from_candid_opt_n100(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.rejectRelationshipRequest(arg0);
-      return from_candid_opt_n100(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async rejectSource(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.rejectSource(arg0);
-        return from_candid_opt_n104(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.rejectSource(arg0);
-      return from_candid_opt_n104(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async rejectStory(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.rejectStory(arg0);
-        return from_candid_opt_n107(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.rejectStory(arg0);
-      return from_candid_opt_n107(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async removeBoardReply(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.removeBoardReply(arg0);
-        return from_candid_opt_n331(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.removeBoardReply(arg0);
-      return from_candid_opt_n331(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async removeDuplicateProfile(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.removeDuplicateProfile(arg0);
-        return from_candid_Result_8_n332(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.removeDuplicateProfile(arg0);
-      return from_candid_Result_8_n332(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async removePhoto(arg0, arg1) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.removePhoto(arg0, arg1);
-        return result;
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.removePhoto(arg0, arg1);
-      return result;
-    }
-  }
-  async removeRelationship(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.removeRelationship(arg0);
-        return from_candid_Result_7_n336(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.removeRelationship(arg0);
-      return from_candid_Result_7_n336(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async removeSteward(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.removeSteward(arg0);
-        return from_candid_Result_6_n338(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.removeSteward(arg0);
-      return from_candid_Result_6_n338(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async reportMessage(arg0, arg1) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.reportMessage(arg0, arg1);
-        return from_candid_Report_n231(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.reportMessage(arg0, arg1);
-      return from_candid_Report_n231(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async requestProfileClaim(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.requestProfileClaim(arg0);
-        return from_candid_Result_5_n340(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.requestProfileClaim(arg0);
-      return from_candid_Result_5_n340(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async requestProfileRemoval(arg0, arg1) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.requestProfileRemoval(arg0, arg1);
-        return from_candid_Result_4_n344(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.requestProfileRemoval(arg0, arg1);
-      return from_candid_Result_4_n344(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async resolveConflict(arg0, arg1, arg2) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.resolveConflict(arg0, to_candid_ConflictResolutionAction_n348(this._uploadFile, this._downloadFile, arg1), arg2);
-        return from_candid_Result_3_n350(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.resolveConflict(arg0, to_candid_ConflictResolutionAction_n348(this._uploadFile, this._downloadFile, arg1), arg2);
-      return from_candid_Result_3_n350(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async resolveMergeConflict(arg0, arg1) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.resolveMergeConflict(arg0, arg1);
-        return from_candid_opt_n352(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.resolveMergeConflict(arg0, arg1);
-      return from_candid_opt_n352(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async restoreBoardPost(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.restoreBoardPost(arg0);
-        return from_candid_opt_n108(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.restoreBoardPost(arg0);
-      return from_candid_opt_n108(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async restoreProfile(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.restoreProfile(arg0);
-        return from_candid_Result_2_n117(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.restoreProfile(arg0);
-      return from_candid_Result_2_n117(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async reviewMysteryContribution(arg0, arg1) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.reviewMysteryContribution(arg0, arg1);
-        return from_candid_opt_n353(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.reviewMysteryContribution(arg0, arg1);
-      return from_candid_opt_n353(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async reviewReport(arg0, arg1) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.reviewReport(arg0, to_candid_ReportStatus_n354(this._uploadFile, this._downloadFile, arg1));
-        return from_candid_opt_n356(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.reviewReport(arg0, to_candid_ReportStatus_n354(this._uploadFile, this._downloadFile, arg1));
-      return from_candid_opt_n356(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async schema() {
-    if (this.processError) {
-      try {
-        const result = await this.actor.schema();
-        return result;
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.schema();
-      return result;
-    }
-  }
-  async searchArchiveItems(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.searchArchiveItems(to_candid_ArchiveSearchFilter_n357(this._uploadFile, this._downloadFile, arg0));
-        return from_candid_vec_n256(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.searchArchiveItems(to_candid_ArchiveSearchFilter_n357(this._uploadFile, this._downloadFile, arg0));
-      return from_candid_vec_n256(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async searchBoardPostsByTags(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.searchBoardPostsByTags(arg0);
-        return from_candid_vec_n266(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.searchBoardPostsByTags(arg0);
-      return from_candid_vec_n266(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async searchPossibleMatches(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.searchPossibleMatches(arg0);
-        return result;
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.searchPossibleMatches(arg0);
-      return result;
-    }
-  }
-  async sendMessage(arg0, arg1) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.sendMessage(arg0, arg1);
-        return from_candid_Result_1_n359(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.sendMessage(arg0, arg1);
-      return from_candid_Result_1_n359(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async setProfilePhoto(arg0, arg1) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.setProfilePhoto(arg0, arg1);
-        return from_candid_opt_n227(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.setProfilePhoto(arg0, arg1);
-      return from_candid_opt_n227(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async setRelationshipRequestPending(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.setRelationshipRequestPending(arg0);
-        return from_candid_opt_n100(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.setRelationshipRequestPending(arg0);
-      return from_candid_opt_n100(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async submitArchiveItem(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.submitArchiveItem(arg0, arg1, to_candid_ArchiveItemType_n148(this._uploadFile, this._downloadFile, arg2), await to_candid_ExternalBlob_n31(this._uploadFile, this._downloadFile, arg3), arg4, to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), arg6, arg7, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg8), to_candid_SourceStatus_n150(this._uploadFile, this._downloadFile, arg9), to_candid_PrivacyLevel_n144(this._uploadFile, this._downloadFile, arg10), to_candid_ArchiveItemClassification_n152(this._uploadFile, this._downloadFile, arg11), to_candid_opt_n191(this._uploadFile, this._downloadFile, arg12));
-        return from_candid_ArchiveItem_n48(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.submitArchiveItem(arg0, arg1, to_candid_ArchiveItemType_n148(this._uploadFile, this._downloadFile, arg2), await to_candid_ExternalBlob_n31(this._uploadFile, this._downloadFile, arg3), arg4, to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), arg6, arg7, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg8), to_candid_SourceStatus_n150(this._uploadFile, this._downloadFile, arg9), to_candid_PrivacyLevel_n144(this._uploadFile, this._downloadFile, arg10), to_candid_ArchiveItemClassification_n152(this._uploadFile, this._downloadFile, arg11), to_candid_opt_n191(this._uploadFile, this._downloadFile, arg12));
-      return from_candid_ArchiveItem_n48(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async submitMysteryContribution(arg0, arg1, arg2) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.submitMysteryContribution(arg0, to_candid_MysteryContributionType_n363(this._uploadFile, this._downloadFile, arg1), arg2);
-        return from_candid_MysteryContribution_n288(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.submitMysteryContribution(arg0, to_candid_MysteryContributionType_n363(this._uploadFile, this._downloadFile, arg1), arg2);
-      return from_candid_MysteryContribution_n288(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async submitRecipe(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.submitRecipe(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg6), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg7), arg8, arg9, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg10), arg11, to_candid_PrivacyLevel_n144(this._uploadFile, this._downloadFile, arg12), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg13), arg14);
-        return from_candid_Recipe_n93(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.submitRecipe(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg6), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg7), arg8, arg9, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg10), arg11, to_candid_PrivacyLevel_n144(this._uploadFile, this._downloadFile, arg12), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg13), arg14);
-      return from_candid_Recipe_n93(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async submitStory(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.submitStory(arg0, arg1, arg2, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg3), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg5), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg6), arg7);
-        return from_candid_Story_n24(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.submitStory(arg0, arg1, arg2, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg3), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg5), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg6), arg7);
-      return from_candid_Story_n24(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async unblockUser(arg0) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.unblockUser(arg0);
-        return result;
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.unblockUser(arg0);
-      return result;
-    }
-  }
-  async updateBoardPost(arg0, arg1, arg2, arg3, arg4, arg5, arg6) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.updateBoardPost(arg0, to_candid_PostType_n139(this._uploadFile, this._downloadFile, arg1), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg2), arg3, arg4, arg5, arg6);
-        return from_candid_opt_n108(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.updateBoardPost(arg0, to_candid_PostType_n139(this._uploadFile, this._downloadFile, arg1), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg2), arg3, arg4, arg5, arg6);
-      return from_candid_opt_n108(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async updateCanonicalMystery(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.updateCanonicalMystery(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), arg5, arg6, arg7, arg8, to_candid_MysteryStatus_n154(this._uploadFile, this._downloadFile, arg9));
-        return from_candid_opt_n308(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.updateCanonicalMystery(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), arg5, arg6, arg7, arg8, to_candid_MysteryStatus_n154(this._uploadFile, this._downloadFile, arg9));
-      return from_candid_opt_n308(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async updateCanonicalStory(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.updateCanonicalStory(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg6), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg7), arg8);
-        return from_candid_opt_n107(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.updateCanonicalStory(arg0, arg1, arg2, arg3, to_candid_opt_n20(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n21(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n20(this._uploadFile, this._downloadFile, arg6), to_candid_EvidenceStatus_n22(this._uploadFile, this._downloadFile, arg7), arg8);
-      return from_candid_opt_n107(this._uploadFile, this._downloadFile, result);
-    }
-  }
-  async updateOwnProfile(arg0, arg1) {
-    if (this.processError) {
-      try {
-        const result = await this.actor.updateOwnProfile(arg0, to_candid_ProfileEdits_n365(this._uploadFile, this._downloadFile, arg1));
-        return from_candid_Result_n369(this._uploadFile, this._downloadFile, result);
-      } catch (e) {
-        this.processError(e);
-        throw new Error("unreachable");
-      }
-    } else {
-      const result = await this.actor.updateOwnProfile(arg0, to_candid_ProfileEdits_n365(this._uploadFile, this._downloadFile, arg1));
-      return from_candid_Result_n369(this._uploadFile, this._downloadFile, result);
-    }
-  }
-}
-function from_candid_AccountError_n132(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n133(_uploadFile, _downloadFile, value);
-}
-function from_candid_Account_n127(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n128(_uploadFile, _downloadFile, value);
-}
-function from_candid_ArchiveError_n119(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n120(_uploadFile, _downloadFile, value);
-}
-function from_candid_ArchiveItemClassification_n62(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n63(_uploadFile, _downloadFile, value);
-}
-function from_candid_ArchiveItemStatus_n50(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n28(_uploadFile, _downloadFile, value);
-}
-function from_candid_ArchiveItemType_n57(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n58(_uploadFile, _downloadFile, value);
-}
-async function from_candid_ArchiveItem_n48(_uploadFile, _downloadFile, value) {
-  return await from_candid_record_n49(_uploadFile, _downloadFile, value);
-}
-function from_candid_AuditActionType_n263(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n264(_uploadFile, _downloadFile, value);
-}
-function from_candid_AuditEntry_n261(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n262(_uploadFile, _downloadFile, value);
-}
-function from_candid_AuthMethod_n130(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n131(_uploadFile, _downloadFile, value);
-}
-function from_candid_Cell_n206(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n207(_uploadFile, _downloadFile, value);
-}
-function from_candid_ClaimEligibility_n134(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n135(_uploadFile, _downloadFile, value);
-}
-function from_candid_ClaimError_n342(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n343(_uploadFile, _downloadFile, value);
-}
-function from_candid_ClaimPersistenceError_n137(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n138(_uploadFile, _downloadFile, value);
-}
-function from_candid_ClaimStatus_n179(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n180(_uploadFile, _downloadFile, value);
-}
-function from_candid_ConflictReviewItem_n269(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n270(_uploadFile, _downloadFile, value);
-}
-function from_candid_ConversationView_n213(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n214(_uploadFile, _downloadFile, value);
-}
-function from_candid_CreateError_n183(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n184(_uploadFile, _downloadFile, value);
-}
-function from_candid_DeleteError_n325(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n326(_uploadFile, _downloadFile, value);
-}
-function from_candid_DisputedFact_n272(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n273(_uploadFile, _downloadFile, value);
-}
-function from_candid_DuplicateCandidate_n277(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n278(_uploadFile, _downloadFile, value);
-}
-function from_candid_DuplicatePair_n275(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n276(_uploadFile, _downloadFile, value);
-}
-function from_candid_EditError_n371(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n372(_uploadFile, _downloadFile, value);
-}
-function from_candid_Error_n10(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n11(_uploadFile, _downloadFile, value);
-}
-function from_candid_EvidenceLabel_n69(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n70(_uploadFile, _downloadFile, value);
-}
-function from_candid_EvidenceStatus_n29(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n30(_uploadFile, _downloadFile, value);
-}
-async function from_candid_ExternalBlob_n34(_uploadFile, _downloadFile, value) {
-  return await _downloadFile(value);
-}
-function from_candid_FindingContent_n71(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n72(_uploadFile, _downloadFile, value);
-}
-function from_candid_FindingType_n79(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n80(_uploadFile, _downloadFile, value);
-}
-function from_candid_LivingStatus_n181(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n182(_uploadFile, _downloadFile, value);
-}
-function from_candid_MergeConflictStatus_n317(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n318(_uploadFile, _downloadFile, value);
-}
-function from_candid_MergeConflict_n315(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n316(_uploadFile, _downloadFile, value);
-}
-function from_candid_MergeError_n319(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n320(_uploadFile, _downloadFile, value);
-}
-function from_candid_MergeResult_n312(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n313(_uploadFile, _downloadFile, value);
-}
-function from_candid_MessageError_n361(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n362(_uploadFile, _downloadFile, value);
-}
-function from_candid_MessageStatus_n218(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n219(_uploadFile, _downloadFile, value);
-}
-function from_candid_Message_n216(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n217(_uploadFile, _downloadFile, value);
-}
-function from_candid_MysteryContributionStatus_n290(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n28(_uploadFile, _downloadFile, value);
-}
-function from_candid_MysteryContributionType_n291(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n292(_uploadFile, _downloadFile, value);
-}
-function from_candid_MysteryContribution_n288(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n289(_uploadFile, _downloadFile, value);
-}
-function from_candid_MysteryStatus_n158(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n159(_uploadFile, _downloadFile, value);
-}
-function from_candid_Mystery_n156(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n157(_uploadFile, _downloadFile, value);
-}
-function from_candid_NewPersonCandidate_n82(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n83(_uploadFile, _downloadFile, value);
-}
-function from_candid_NotificationType_n285(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n286(_uploadFile, _downloadFile, value);
-}
-function from_candid_Notification_n283(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n284(_uploadFile, _downloadFile, value);
-}
-function from_candid_OralHistorySpeaker_n54(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n55(_uploadFile, _downloadFile, value);
-}
-function from_candid_PersonProfile_n177(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n178(_uploadFile, _downloadFile, value);
-}
-async function from_candid_Photo_n32(_uploadFile, _downloadFile, value) {
-  return await from_candid_record_n33(_uploadFile, _downloadFile, value);
-}
-function from_candid_PostStatus_n111(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n112(_uploadFile, _downloadFile, value);
-}
-function from_candid_PostType_n113(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n114(_uploadFile, _downloadFile, value);
-}
-function from_candid_Post_n109(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n110(_uploadFile, _downloadFile, value);
-}
-function from_candid_PrivacyLevel_n51(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n52(_uploadFile, _downloadFile, value);
-}
-function from_candid_PrivacyScope_n115(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n116(_uploadFile, _downloadFile, value);
-}
-function from_candid_ProfileClaimStatus_n87(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n28(_uploadFile, _downloadFile, value);
-}
-function from_candid_ProfileClaim_n85(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n86(_uploadFile, _downloadFile, value);
-}
-function from_candid_ProfileRemovalRequest_n89(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n90(_uploadFile, _downloadFile, value);
-}
-function from_candid_ProfileRemovalStatus_n91(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n28(_uploadFile, _downloadFile, value);
-}
-function from_candid_ProposedFinding_n65(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n66(_uploadFile, _downloadFile, value);
-}
-function from_candid_RecipeStatus_n95(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n96(_uploadFile, _downloadFile, value);
-}
-function from_candid_Recipe_n93(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n94(_uploadFile, _downloadFile, value);
-}
-function from_candid_RelationshipAdminError_n45(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n46(_uploadFile, _downloadFile, value);
-}
-function from_candid_RelationshipError_n329(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n330(_uploadFile, _downloadFile, value);
-}
-function from_candid_RelationshipProposal_n98(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n99(_uploadFile, _downloadFile, value);
-}
-function from_candid_RelationshipRequestStatus_n103(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n28(_uploadFile, _downloadFile, value);
-}
-function from_candid_RelationshipRequest_n101(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n102(_uploadFile, _downloadFile, value);
-}
-function from_candid_RelationshipStatus_n41(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n42(_uploadFile, _downloadFile, value);
-}
-function from_candid_RelationshipType_n43(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n44(_uploadFile, _downloadFile, value);
-}
-function from_candid_Relationship_n39(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n40(_uploadFile, _downloadFile, value);
-}
-function from_candid_RemovalError_n346(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n347(_uploadFile, _downloadFile, value);
-}
-function from_candid_RemoveError_n334(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n335(_uploadFile, _downloadFile, value);
-}
-function from_candid_ReportStatus_n233(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n234(_uploadFile, _downloadFile, value);
-}
-function from_candid_Report_n231(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n232(_uploadFile, _downloadFile, value);
-}
-function from_candid_ReportedMessageView_n229(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n230(_uploadFile, _downloadFile, value);
-}
-function from_candid_ResearchAuditEntry_n236(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n237(_uploadFile, _downloadFile, value);
-}
-function from_candid_ResearchError_n173(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n174(_uploadFile, _downloadFile, value);
-}
-function from_candid_Result_10_n12(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n13(_uploadFile, _downloadFile, value);
-}
-function from_candid_Result_11_n323(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n324(_uploadFile, _downloadFile, value);
-}
-function from_candid_Result_12_n321(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n322(_uploadFile, _downloadFile, value);
-}
-function from_candid_Result_13_n310(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n311(_uploadFile, _downloadFile, value);
-}
-function from_candid_Result_14_n223(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n224(_uploadFile, _downloadFile, value);
-}
-function from_candid_Result_15_n221(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n222(_uploadFile, _downloadFile, value);
-}
-function from_candid_Result_16_n196(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n197(_uploadFile, _downloadFile, value);
-}
-async function from_candid_Result_17_n192(_uploadFile, _downloadFile, value) {
-  return await from_candid_variant_n193(_uploadFile, _downloadFile, value);
-}
-function from_candid_Result_18_n189(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n190(_uploadFile, _downloadFile, value);
-}
-function from_candid_Result_19_n187(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n188(_uploadFile, _downloadFile, value);
-}
-function from_candid_Result_1_n359(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n360(_uploadFile, _downloadFile, value);
-}
-function from_candid_Result_20_n185(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n186(_uploadFile, _downloadFile, value);
-}
-function from_candid_Result_21_n175(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n176(_uploadFile, _downloadFile, value);
-}
-function from_candid_Result_22_n171(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n172(_uploadFile, _downloadFile, value);
-}
-function from_candid_Result_23_n37(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n38(_uploadFile, _downloadFile, value);
-}
-function from_candid_Result_24_n125(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n126(_uploadFile, _downloadFile, value);
-}
-function from_candid_Result_25_n8(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n9(_uploadFile, _downloadFile, value);
-}
-function from_candid_Result_2_n117(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n118(_uploadFile, _downloadFile, value);
-}
-function from_candid_Result_3_n350(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n351(_uploadFile, _downloadFile, value);
-}
-function from_candid_Result_4_n344(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n345(_uploadFile, _downloadFile, value);
-}
-function from_candid_Result_5_n340(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n341(_uploadFile, _downloadFile, value);
-}
-function from_candid_Result_6_n338(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n339(_uploadFile, _downloadFile, value);
-}
-function from_candid_Result_7_n336(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n337(_uploadFile, _downloadFile, value);
-}
-function from_candid_Result_8_n332(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n333(_uploadFile, _downloadFile, value);
-}
-function from_candid_Result_9_n327(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n328(_uploadFile, _downloadFile, value);
-}
-function from_candid_Result__1_n202(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n203(_uploadFile, _downloadFile, value);
-}
-function from_candid_Result_n369(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n370(_uploadFile, _downloadFile, value);
-}
-function from_candid_ReviewAction_n249(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n250(_uploadFile, _downloadFile, value);
-}
-function from_candid_ReviewItemKind_n246(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n247(_uploadFile, _downloadFile, value);
-}
-function from_candid_ReviewQueueItem_n243(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n244(_uploadFile, _downloadFile, value);
-}
-function from_candid_ReviewQueue_n240(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n241(_uploadFile, _downloadFile, value);
-}
-function from_candid_ReviewStatus_n67(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n68(_uploadFile, _downloadFile, value);
-}
-function from_candid_SourceRecord_n105(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n106(_uploadFile, _downloadFile, value);
-}
-function from_candid_SourceStatus_n60(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n61(_uploadFile, _downloadFile, value);
-}
-function from_candid_SourceType_n75(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n76(_uploadFile, _downloadFile, value);
-}
-async function from_candid_SourceUploadResult_n194(_uploadFile, _downloadFile, value) {
-  return await from_candid_record_n195(_uploadFile, _downloadFile, value);
-}
-function from_candid_StewardAuditEntry_n252(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n253(_uploadFile, _downloadFile, value);
-}
-function from_candid_StewardAuditKind_n254(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n255(_uploadFile, _downloadFile, value);
-}
-function from_candid_StewardError_n18(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n19(_uploadFile, _downloadFile, value);
-}
-function from_candid_StewardRecord_n14(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n15(_uploadFile, _downloadFile, value);
-}
-function from_candid_StewardRoleStatus_n16(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n17(_uploadFile, _downloadFile, value);
-}
-function from_candid_StoryStatus_n27(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n28(_uploadFile, _downloadFile, value);
-}
-function from_candid_Story_n24(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n25(_uploadFile, _downloadFile, value);
-}
-function from_candid_SuccessorDesignation_n198(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n199(_uploadFile, _downloadFile, value);
-}
-function from_candid_SuccessorStatus_n200(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n201(_uploadFile, _downloadFile, value);
-}
-function from_candid_TimelineEventType_n306(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n307(_uploadFile, _downloadFile, value);
-}
-function from_candid_TimelineEvent_n302(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n303(_uploadFile, _downloadFile, value);
-}
-function from_candid_TimelineLinkTarget_n304(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n305(_uploadFile, _downloadFile, value);
-}
-function from_candid_UserRole_n210(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n211(_uploadFile, _downloadFile, value);
-}
-function from_candid_Value_n208(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n209(_uploadFile, _downloadFile, value);
-}
-function from_candid__ImmutableObjectStorageRefillResult_n4(_uploadFile, _downloadFile, value) {
-  return from_candid_record_n5(_uploadFile, _downloadFile, value);
-}
-function from_candid_opt_n100(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_RelationshipRequest_n101(_uploadFile, _downloadFile, value[0]);
-}
-function from_candid_opt_n104(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_SourceRecord_n105(_uploadFile, _downloadFile, value[0]);
-}
-function from_candid_opt_n107(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_Story_n24(_uploadFile, _downloadFile, value[0]);
-}
-function from_candid_opt_n108(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_Post_n109(_uploadFile, _downloadFile, value[0]);
-}
-function from_candid_opt_n136(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_ClaimPersistenceError_n137(_uploadFile, _downloadFile, value[0]);
-}
-function from_candid_opt_n160(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : value[0];
-}
-function from_candid_opt_n212(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_ConversationView_n213(_uploadFile, _downloadFile, value[0]);
-}
-function from_candid_opt_n220(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : value[0];
-}
-function from_candid_opt_n225(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_PersonProfile_n177(_uploadFile, _downloadFile, value[0]);
-}
-async function from_candid_opt_n227(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : await from_candid_Photo_n32(_uploadFile, _downloadFile, value[0]);
-}
-function from_candid_opt_n228(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_ReportedMessageView_n229(_uploadFile, _downloadFile, value[0]);
-}
-function from_candid_opt_n238(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : value[0];
-}
-function from_candid_opt_n239(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : value[0];
-}
-function from_candid_opt_n245(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_EvidenceLabel_n69(_uploadFile, _downloadFile, value[0]);
-}
-function from_candid_opt_n26(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : value[0];
-}
-function from_candid_opt_n308(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_Mystery_n156(_uploadFile, _downloadFile, value[0]);
-}
-function from_candid_opt_n309(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_Notification_n283(_uploadFile, _downloadFile, value[0]);
-}
-function from_candid_opt_n331(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : value[0];
-}
-function from_candid_opt_n352(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_MergeConflict_n315(_uploadFile, _downloadFile, value[0]);
-}
-function from_candid_opt_n353(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_MysteryContribution_n288(_uploadFile, _downloadFile, value[0]);
-}
-function from_candid_opt_n356(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_Report_n231(_uploadFile, _downloadFile, value[0]);
-}
-async function from_candid_opt_n47(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : await from_candid_ArchiveItem_n48(_uploadFile, _downloadFile, value[0]);
-}
-function from_candid_opt_n53(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_OralHistorySpeaker_n54(_uploadFile, _downloadFile, value[0]);
-}
-function from_candid_opt_n56(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : value[0];
-}
-function from_candid_opt_n59(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : value[0];
-}
-function from_candid_opt_n6(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : value[0];
-}
-function from_candid_opt_n64(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_ProposedFinding_n65(_uploadFile, _downloadFile, value[0]);
-}
-function from_candid_opt_n7(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : value[0];
-}
-function from_candid_opt_n77(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : value[0];
-}
-function from_candid_opt_n78(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : value[0];
-}
-function from_candid_opt_n81(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_NewPersonCandidate_n82(_uploadFile, _downloadFile, value[0]);
-}
-function from_candid_opt_n84(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_ProfileClaim_n85(_uploadFile, _downloadFile, value[0]);
-}
-function from_candid_opt_n88(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_ProfileRemovalRequest_n89(_uploadFile, _downloadFile, value[0]);
-}
-function from_candid_opt_n92(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_Recipe_n93(_uploadFile, _downloadFile, value[0]);
-}
-function from_candid_opt_n97(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : from_candid_RelationshipProposal_n98(_uploadFile, _downloadFile, value[0]);
-}
-function from_candid_record_n102(_uploadFile, _downloadFile, value) {
-  return {
-    id: value.id,
-    submittedDate: value.submittedDate,
-    status: from_candid_RelationshipRequestStatus_n103(_uploadFile, _downloadFile, value.status),
-    reviewedDate: record_opt_to_undefined(from_candid_opt_n77(_uploadFile, _downloadFile, value.reviewedDate)),
-    relatedPersonId: value.relatedPersonId,
-    requestingPersonId: value.requestingPersonId,
-    proposedRelationship: from_candid_RelationshipType_n43(_uploadFile, _downloadFile, value.proposedRelationship),
-    reviewer: record_opt_to_undefined(from_candid_opt_n78(_uploadFile, _downloadFile, value.reviewer))
-  };
-}
-function from_candid_record_n106(_uploadFile, _downloadFile, value) {
-  return {
-    id: value.id,
-    status: from_candid_ReviewStatus_n67(_uploadFile, _downloadFile, value.status),
-    title: value.title,
-    archiveItemId: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.archiveItemId)),
-    createdAt: value.createdAt,
-    description: value.description,
-    sourceType: from_candid_SourceType_n75(_uploadFile, _downloadFile, value.sourceType),
-    updatedAt: value.updatedAt,
-    contributor: value.contributor
-  };
-}
-function from_candid_record_n110(_uploadFile, _downloadFile, value) {
-  return {
-    status: from_candid_PostStatus_n111(_uploadFile, _downloadFile, value.status),
-    authorAccountId: value.authorAccountId,
-    postType: from_candid_PostType_n113(_uploadFile, _downloadFile, value.postType),
-    title: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.title)),
-    body: value.body,
-    createdAt: value.createdAt,
-    tags: value.tags,
-    linkedMediaIds: value.linkedMediaIds,
-    privacyScope: from_candid_PrivacyScope_n115(_uploadFile, _downloadFile, value.privacyScope),
-    authorPersonId: value.authorPersonId,
-    updatedAt: value.updatedAt,
-    relatedPersonIds: value.relatedPersonIds,
-    postId: value.postId
-  };
-}
-function from_candid_record_n128(_uploadFile, _downloadFile, value) {
-  return {
-    id: value.id,
-    createdAt: value.createdAt,
-    authMethods: from_candid_vec_n129(_uploadFile, _downloadFile, value.authMethods)
-  };
-}
-function from_candid_record_n135(_uploadFile, _downloadFile, value) {
-  return {
-    eligible: value.eligible,
-    reason: record_opt_to_undefined(from_candid_opt_n136(_uploadFile, _downloadFile, value.reason))
-  };
-}
-function from_candid_record_n15(_uploadFile, _downloadFile, value) {
-  return {
-    assignedAt: value.assignedAt,
-    assignedBy: value.assignedBy,
-    stewardAccountId: value.stewardAccountId,
-    successorPriority: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.successorPriority)),
-    roleStatus: from_candid_StewardRoleStatus_n16(_uploadFile, _downloadFile, value.roleStatus)
-  };
-}
-function from_candid_record_n157(_uploadFile, _downloadFile, value) {
-  return {
-    id: value.id,
-    status: from_candid_MysteryStatus_n158(_uploadFile, _downloadFile, value.status),
-    title: value.title,
-    relatedMemberIds: value.relatedMemberIds,
-    createdAt: value.createdAt,
-    relatedArchiveItemIds: value.relatedArchiveItemIds,
-    description: value.description,
-    resolution: record_opt_to_undefined(from_candid_opt_n160(_uploadFile, _downloadFile, value.resolution)),
-    updatedAt: value.updatedAt,
-    knownFacts: value.knownFacts,
-    possibilities: value.possibilities,
-    relatedBranchId: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.relatedBranchId)),
-    relatedSourceIds: value.relatedSourceIds,
-    contributor: value.contributor
-  };
-}
-function from_candid_record_n178(_uploadFile, _downloadFile, value) {
-  return {
-    occupation: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.occupation)),
-    privacySettings: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.privacySettings)),
-    nickname: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.nickname)),
-    claimedByUserId: record_opt_to_undefined(from_candid_opt_n78(_uploadFile, _downloadFile, value.claimedByUserId)),
-    birthDate: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.birthDate)),
-    birthInfo: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.birthInfo)),
-    claimStatus: from_candid_ClaimStatus_n179(_uploadFile, _downloadFile, value.claimStatus),
-    livingStatus: from_candid_LivingStatus_n181(_uploadFile, _downloadFile, value.livingStatus),
-    name: value.name,
-    longerStory: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.longerStory)),
-    personId: value.personId,
-    story: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.story)),
-    middleName: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.middleName)),
-    suffix: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.suffix)),
-    preferredName: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.preferredName)),
-    currentLocation: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.currentLocation)),
-    birthplace: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.birthplace)),
-    lastName: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.lastName)),
-    shortBio: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.shortBio)),
-    timeline: record_opt_to_undefined(from_candid_opt_n56(_uploadFile, _downloadFile, value.timeline)),
-    firstName: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.firstName))
-  };
-}
-async function from_candid_record_n195(_uploadFile, _downloadFile, value) {
-  return {
-    source: from_candid_SourceRecord_n105(_uploadFile, _downloadFile, value.source),
-    archiveItem: await from_candid_ArchiveItem_n48(_uploadFile, _downloadFile, value.archiveItem)
-  };
-}
-function from_candid_record_n199(_uploadFile, _downloadFile, value) {
-  return {
-    status: from_candid_SuccessorStatus_n200(_uploadFile, _downloadFile, value.status),
-    assignedAt: value.assignedAt,
-    assignedBy: value.assignedBy,
-    personId: value.personId,
-    priority: value.priority
-  };
-}
-function from_candid_record_n203(_uploadFile, _downloadFile, value) {
-  return {
-    hasMore: value.hasMore,
-    rows: from_candid_vec_n204(_uploadFile, _downloadFile, value.rows)
-  };
-}
-function from_candid_record_n207(_uploadFile, _downloadFile, value) {
-  return {
-    value: from_candid_Value_n208(_uploadFile, _downloadFile, value.value),
-    name: value.name
-  };
-}
-function from_candid_record_n214(_uploadFile, _downloadFile, value) {
-  return {
-    messages: from_candid_vec_n215(_uploadFile, _downloadFile, value.messages),
-    participantPersonIds: value.participantPersonIds,
-    conversationId: value.conversationId,
-    participantDisplayNames: value.participantDisplayNames
-  };
-}
-function from_candid_record_n217(_uploadFile, _downloadFile, value) {
-  return {
-    status: from_candid_MessageStatus_n218(_uploadFile, _downloadFile, value.status),
-    messageId: value.messageId,
-    body: value.body,
-    createdAt: value.createdAt,
-    conversationId: value.conversationId,
-    senderAccountId: value.senderAccountId,
-    senderPersonId: value.senderPersonId,
-    readAt: record_opt_to_undefined(from_candid_opt_n220(_uploadFile, _downloadFile, value.readAt))
-  };
-}
-function from_candid_record_n230(_uploadFile, _downloadFile, value) {
-  return {
-    report: from_candid_Report_n231(_uploadFile, _downloadFile, value.report),
-    message: from_candid_Message_n216(_uploadFile, _downloadFile, value.message)
-  };
-}
-function from_candid_record_n232(_uploadFile, _downloadFile, value) {
-  return {
-    status: from_candid_ReportStatus_n233(_uploadFile, _downloadFile, value.status),
-    reportedMessageId: value.reportedMessageId,
-    createdAt: value.createdAt,
-    reportingAccountId: value.reportingAccountId,
-    reportId: value.reportId,
-    reason: value.reason
-  };
-}
-function from_candid_record_n237(_uploadFile, _downloadFile, value) {
-  return {
-    id: value.id,
-    action: value.action,
-    findingId: record_opt_to_undefined(from_candid_opt_n238(_uploadFile, _downloadFile, value.findingId)),
-    sourceId: record_opt_to_undefined(from_candid_opt_n239(_uploadFile, _downloadFile, value.sourceId)),
-    actorId: value.actorId,
-    summary: value.summary,
-    timestamp: value.timestamp
-  };
-}
-function from_candid_record_n241(_uploadFile, _downloadFile, value) {
-  return {
-    pending: value.pending,
-    conflicting: value.conflicting,
-    approved: value.approved,
-    rejected: value.rejected,
-    needsResearch: value.needsResearch,
-    items: from_candid_vec_n242(_uploadFile, _downloadFile, value.items)
-  };
-}
-function from_candid_record_n244(_uploadFile, _downloadFile, value) {
-  return {
-    id: value.id,
-    provenance: value.provenance,
-    status: from_candid_ReviewStatus_n67(_uploadFile, _downloadFile, value.status),
-    title: value.title,
-    evidenceLabel: record_opt_to_undefined(from_candid_opt_n245(_uploadFile, _downloadFile, value.evidenceLabel)),
-    kind: from_candid_ReviewItemKind_n246(_uploadFile, _downloadFile, value.kind),
-    createdAt: value.createdAt,
-    actions: from_candid_vec_n248(_uploadFile, _downloadFile, value.actions),
-    summary: value.summary,
-    contributor: record_opt_to_undefined(from_candid_opt_n78(_uploadFile, _downloadFile, value.contributor))
-  };
-}
-function from_candid_record_n25(_uploadFile, _downloadFile, value) {
-  return {
-    id: value.id,
-    era: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.era)),
-    status: from_candid_StoryStatus_n27(_uploadFile, _downloadFile, value.status),
-    title: value.title,
-    relatedMemberIds: value.relatedMemberIds,
-    storyText: value.storyText,
-    createdAt: value.createdAt,
-    year: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.year)),
-    relatedArchiveItemIds: value.relatedArchiveItemIds,
-    updatedAt: value.updatedAt,
-    evidenceStatus: from_candid_EvidenceStatus_n29(_uploadFile, _downloadFile, value.evidenceStatus),
-    location: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.location)),
-    contributor: value.contributor
-  };
-}
-function from_candid_record_n253(_uploadFile, _downloadFile, value) {
-  return {
-    id: value.id,
-    field: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.field)),
-    affectedPersonIds: value.affectedPersonIds,
-    proposedValue: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.proposedValue)),
-    stewardNotes: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.stewardNotes)),
-    kind: from_candid_StewardAuditKind_n254(_uploadFile, _downloadFile, value.kind),
-    proposedSourceId: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.proposedSourceId)),
-    actionType: value.actionType,
-    resolution: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.resolution)),
-    existingValue: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.existingValue)),
-    summary: value.summary,
-    personId: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.personId)),
-    timestamp: value.timestamp,
-    actorAccountId: value.actorAccountId,
-    existingSourceId: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.existingSourceId))
-  };
-}
-function from_candid_record_n262(_uploadFile, _downloadFile, value) {
-  return {
-    id: value.id,
-    affectedPersonIds: value.affectedPersonIds,
-    actionType: from_candid_AuditActionType_n263(_uploadFile, _downloadFile, value.actionType),
-    summary: value.summary,
-    timestamp: value.timestamp,
-    actorAccountId: value.actorAccountId
-  };
-}
-function from_candid_record_n270(_uploadFile, _downloadFile, value) {
-  return {
-    id: value.id,
-    field: value.field,
-    status: from_candid_ReviewStatus_n67(_uploadFile, _downloadFile, value.status),
-    evidenceLabel: from_candid_EvidenceLabel_n69(_uploadFile, _downloadFile, value.evidenceLabel),
-    findingId: value.findingId,
-    proposedValue: value.proposedValue,
-    stewardNotes: value.stewardNotes,
-    proposedSourceId: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.proposedSourceId)),
-    personId: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.personId)),
-    canonicalValue: value.canonicalValue,
-    resolvedAt: record_opt_to_undefined(from_candid_opt_n77(_uploadFile, _downloadFile, value.resolvedAt)),
-    resolvedBy: record_opt_to_undefined(from_candid_opt_n78(_uploadFile, _downloadFile, value.resolvedBy)),
-    existingSourceId: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.existingSourceId))
-  };
-}
-function from_candid_record_n273(_uploadFile, _downloadFile, value) {
-  return {
-    field: value.field,
-    status: from_candid_ReviewStatus_n67(_uploadFile, _downloadFile, value.status),
-    proposedValue: value.proposedValue,
-    canonicalValue: value.canonicalValue
-  };
-}
-function from_candid_record_n276(_uploadFile, _downloadFile, value) {
-  return {
-    candidateA: from_candid_DuplicateCandidate_n277(_uploadFile, _downloadFile, value.candidateA),
-    candidateB: from_candid_DuplicateCandidate_n277(_uploadFile, _downloadFile, value.candidateB)
-  };
-}
-function from_candid_record_n278(_uploadFile, _downloadFile, value) {
-  return {
-    deathDate: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.deathDate)),
-    ownerAccount: record_opt_to_undefined(from_candid_opt_n78(_uploadFile, _downloadFile, value.ownerAccount)),
-    birthDate: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.birthDate)),
-    claimStatus: value.claimStatus,
-    name: value.name,
-    archiveLinks: value.archiveLinks,
-    children: value.children,
-    sourceCount: value.sourceCount,
-    personId: value.personId,
-    spouses: value.spouses,
-    photoCount: value.photoCount,
-    timelineCount: value.timelineCount,
-    parents: value.parents
-  };
-}
-function from_candid_record_n284(_uploadFile, _downloadFile, value) {
-  return {
-    id: value.id,
-    notificationType: from_candid_NotificationType_n285(_uploadFile, _downloadFile, value.notificationType),
-    createdAt: value.createdAt,
-    read: value.read,
-    recipient: value.recipient,
-    message: value.message
-  };
-}
-function from_candid_record_n289(_uploadFile, _downloadFile, value) {
-  return {
-    id: value.id,
-    status: from_candid_MysteryContributionStatus_n290(_uploadFile, _downloadFile, value.status),
-    createdAt: value.createdAt,
-    text: value.text,
-    mysteryId: value.mysteryId,
-    reviewedAt: record_opt_to_undefined(from_candid_opt_n77(_uploadFile, _downloadFile, value.reviewedAt)),
-    reviewedBy: record_opt_to_undefined(from_candid_opt_n78(_uploadFile, _downloadFile, value.reviewedBy)),
-    contributionType: from_candid_MysteryContributionType_n291(_uploadFile, _downloadFile, value.contributionType),
-    contributor: value.contributor
-  };
-}
-function from_candid_record_n303(_uploadFile, _downloadFile, value) {
-  return {
-    id: value.id,
-    era: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.era)),
-    title: value.title,
-    year: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.year)),
-    linkTarget: from_candid_TimelineLinkTarget_n304(_uploadFile, _downloadFile, value.linkTarget),
-    description: value.description,
-    evidenceStatus: from_candid_EvidenceStatus_n29(_uploadFile, _downloadFile, value.evidenceStatus),
-    eventType: from_candid_TimelineEventType_n306(_uploadFile, _downloadFile, value.eventType)
-  };
-}
-function from_candid_record_n313(_uploadFile, _downloadFile, value) {
-  return {
-    archivedPersonId: value.archivedPersonId,
-    conflicts: from_candid_vec_n314(_uploadFile, _downloadFile, value.conflicts),
-    canonicalPersonId: value.canonicalPersonId
-  };
-}
-function from_candid_record_n316(_uploadFile, _downloadFile, value) {
-  return {
-    id: value.id,
-    field: value.field,
-    status: from_candid_MergeConflictStatus_n317(_uploadFile, _downloadFile, value.status),
-    alternateValue: value.alternateValue,
-    canonicalValue: value.canonicalValue,
-    resolvedAt: record_opt_to_undefined(from_candid_opt_n77(_uploadFile, _downloadFile, value.resolvedAt)),
-    resolvedBy: record_opt_to_undefined(from_candid_opt_n78(_uploadFile, _downloadFile, value.resolvedBy))
-  };
-}
-async function from_candid_record_n33(_uploadFile, _downloadFile, value) {
-  return {
-    id: value.id,
-    blob: await from_candid_ExternalBlob_n34(_uploadFile, _downloadFile, value.blob),
-    mimeType: value.mimeType,
-    filename: value.filename,
-    uploadedAt: value.uploadedAt,
-    uploadedBy: value.uploadedBy
-  };
-}
-function from_candid_record_n40(_uploadFile, _downloadFile, value) {
-  return {
-    id: value.id,
-    status: from_candid_RelationshipStatus_n41(_uploadFile, _downloadFile, value.status),
-    fromPersonId: value.fromPersonId,
-    toPersonId: value.toPersonId,
-    relationshipType: from_candid_RelationshipType_n43(_uploadFile, _downloadFile, value.relationshipType)
-  };
-}
-async function from_candid_record_n49(_uploadFile, _downloadFile, value) {
-  return {
-    id: value.id,
-    era: value.era,
-    status: from_candid_ArchiveItemStatus_n50(_uploadFile, _downloadFile, value.status),
-    title: value.title,
-    relatedMemberIds: value.relatedMemberIds,
-    blob: await from_candid_ExternalBlob_n34(_uploadFile, _downloadFile, value.blob),
-    createdAt: value.createdAt,
-    tags: value.tags,
-    year: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.year)),
-    description: value.description,
-    privacyLevel: from_candid_PrivacyLevel_n51(_uploadFile, _downloadFile, value.privacyLevel),
-    primarySpeaker: record_opt_to_undefined(from_candid_opt_n53(_uploadFile, _downloadFile, value.primarySpeaker)),
-    extractedNames: record_opt_to_undefined(from_candid_opt_n56(_uploadFile, _downloadFile, value.extractedNames)),
-    itemType: from_candid_ArchiveItemType_n57(_uploadFile, _downloadFile, value.itemType),
-    aiSummary: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.aiSummary)),
-    searchableTranscript: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.searchableTranscript)),
-    relatedBranchId: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.relatedBranchId)),
-    transcript: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.transcript)),
-    chapterMarkers: record_opt_to_undefined(from_candid_opt_n59(_uploadFile, _downloadFile, value.chapterMarkers)),
-    sourceStatus: from_candid_SourceStatus_n60(_uploadFile, _downloadFile, value.sourceStatus),
-    classification: from_candid_ArchiveItemClassification_n62(_uploadFile, _downloadFile, value.classification),
-    contributor: value.contributor
-  };
-}
-function from_candid_record_n5(_uploadFile, _downloadFile, value) {
-  return {
-    success: record_opt_to_undefined(from_candid_opt_n6(_uploadFile, _downloadFile, value.success)),
-    topped_up_amount: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.topped_up_amount))
-  };
-}
-function from_candid_record_n55(_uploadFile, _downloadFile, value) {
-  return {
-    name: value.name,
-    personId: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.personId))
-  };
-}
-function from_candid_record_n66(_uploadFile, _downloadFile, value) {
-  return {
-    id: value.id,
-    status: from_candid_ReviewStatus_n67(_uploadFile, _downloadFile, value.status),
-    title: value.title,
-    evidenceLabel: from_candid_EvidenceLabel_n69(_uploadFile, _downloadFile, value.evidenceLabel),
-    newPersonCandidateId: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.newPersonCandidateId)),
-    content: from_candid_FindingContent_n71(_uploadFile, _downloadFile, value.content),
-    conflictReviewId: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.conflictReviewId)),
-    submittedAt: value.submittedAt,
-    submittedBy: value.submittedBy,
-    sourceId: value.sourceId,
-    reviewedAt: record_opt_to_undefined(from_candid_opt_n77(_uploadFile, _downloadFile, value.reviewedAt)),
-    reviewedBy: record_opt_to_undefined(from_candid_opt_n78(_uploadFile, _downloadFile, value.reviewedBy)),
-    updatedAt: value.updatedAt,
-    personId: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.personId)),
-    findingType: from_candid_FindingType_n79(_uploadFile, _downloadFile, value.findingType)
-  };
-}
-function from_candid_record_n73(_uploadFile, _downloadFile, value) {
-  return {
-    title: value.title,
-    date: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.date)),
-    description: value.description,
-    personId: value.personId
-  };
-}
-function from_candid_record_n74(_uploadFile, _downloadFile, value) {
-  return {
-    title: value.title,
-    archiveItemId: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.archiveItemId)),
-    description: value.description,
-    sourceType: from_candid_SourceType_n75(_uploadFile, _downloadFile, value.sourceType)
-  };
-}
-function from_candid_record_n83(_uploadFile, _downloadFile, value) {
-  return {
-    id: value.id,
-    status: from_candid_ReviewStatus_n67(_uploadFile, _downloadFile, value.status),
-    name: value.name,
-    submittedAt: value.submittedAt,
-    submittedBy: value.submittedBy,
-    sourceId: value.sourceId,
-    reviewedAt: record_opt_to_undefined(from_candid_opt_n77(_uploadFile, _downloadFile, value.reviewedAt)),
-    reviewedBy: record_opt_to_undefined(from_candid_opt_n78(_uploadFile, _downloadFile, value.reviewedBy)),
-    details: value.details
-  };
-}
-function from_candid_record_n86(_uploadFile, _downloadFile, value) {
-  return {
-    id: value.id,
-    submittedDate: value.submittedDate,
-    status: from_candid_ProfileClaimStatus_n87(_uploadFile, _downloadFile, value.status),
-    reviewedDate: record_opt_to_undefined(from_candid_opt_n77(_uploadFile, _downloadFile, value.reviewedDate)),
-    reviewedBy: record_opt_to_undefined(from_candid_opt_n78(_uploadFile, _downloadFile, value.reviewedBy)),
-    personId: value.personId,
-    requestingUserId: value.requestingUserId
-  };
-}
-function from_candid_record_n90(_uploadFile, _downloadFile, value) {
-  return {
-    id: value.id,
-    submittedDate: value.submittedDate,
-    status: from_candid_ProfileRemovalStatus_n91(_uploadFile, _downloadFile, value.status),
-    reviewedDate: record_opt_to_undefined(from_candid_opt_n77(_uploadFile, _downloadFile, value.reviewedDate)),
-    reviewedBy: record_opt_to_undefined(from_candid_opt_n78(_uploadFile, _downloadFile, value.reviewedBy)),
-    personId: value.personId,
-    requestingUserId: value.requestingUserId,
-    reason: value.reason
-  };
-}
-function from_candid_record_n94(_uploadFile, _downloadFile, value) {
-  return {
-    era: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.era)),
-    status: from_candid_RecipeStatus_n95(_uploadFile, _downloadFile, value.status),
-    title: value.title,
-    recipeId: value.recipeId,
-    aiDerivedText: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.aiDerivedText)),
-    createdAt: value.createdAt,
-    tags: value.tags,
-    year: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.year)),
-    contributorAccountId: value.contributorAccountId,
-    privacyLevel: from_candid_PrivacyLevel_n51(_uploadFile, _downloadFile, value.privacyLevel),
-    linkedMediaIds: value.linkedMediaIds,
-    instructions: value.instructions,
-    ocrText: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.ocrText)),
-    familyBranch: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.familyBranch)),
-    familyStory: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.familyStory)),
-    updatedAt: value.updatedAt,
-    evidenceStatus: from_candid_EvidenceStatus_n29(_uploadFile, _downloadFile, value.evidenceStatus),
-    shortDescription: value.shortDescription,
-    extractedIngredients: record_opt_to_undefined(from_candid_opt_n56(_uploadFile, _downloadFile, value.extractedIngredients)),
-    transcript: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.transcript)),
-    location: record_opt_to_undefined(from_candid_opt_n26(_uploadFile, _downloadFile, value.location)),
-    originatingPersonId: value.originatingPersonId,
-    ingredients: value.ingredients,
-    relatedPersonIds: value.relatedPersonIds
-  };
-}
-function from_candid_record_n99(_uploadFile, _downloadFile, value) {
-  return {
-    id: value.id,
-    status: from_candid_ReviewStatus_n67(_uploadFile, _downloadFile, value.status),
-    fromPersonId: value.fromPersonId,
-    submittedAt: value.submittedAt,
-    submittedBy: value.submittedBy,
-    sourceId: value.sourceId,
-    reviewedAt: record_opt_to_undefined(from_candid_opt_n77(_uploadFile, _downloadFile, value.reviewedAt)),
-    reviewedBy: record_opt_to_undefined(from_candid_opt_n78(_uploadFile, _downloadFile, value.reviewedBy)),
-    toPersonId: value.toPersonId,
-    relationshipType: value.relationshipType
-  };
-}
-function from_candid_variant_n11(_uploadFile, _downloadFile, value) {
-  return "FrontendOriginsNotConfigured" in value ? {
-    __kind__: "FrontendOriginsNotConfigured",
-    FrontendOriginsNotConfigured: value.FrontendOriginsNotConfigured
-  } : "MixedSsoSources" in value ? {
-    __kind__: "MixedSsoSources",
-    MixedSsoSources: value.MixedSsoSources
-  } : "Stale" in value ? {
-    __kind__: "Stale",
-    Stale: value.Stale
-  } : "MalformedCandid" in value ? {
-    __kind__: "MalformedCandid",
-    MalformedCandid: value.MalformedCandid
-  } : "AmbiguousAttribute" in value ? {
-    __kind__: "AmbiguousAttribute",
-    AmbiguousAttribute: value.AmbiguousAttribute
-  } : "NoAttributes" in value ? {
-    __kind__: "NoAttributes",
-    NoAttributes: value.NoAttributes
-  } : "UnknownNonce" in value ? {
-    __kind__: "UnknownNonce",
-    UnknownNonce: value.UnknownNonce
-  } : "UntrustedSsoSource" in value ? {
-    __kind__: "UntrustedSsoSource",
-    UntrustedSsoSource: value.UntrustedSsoSource
-  } : "MissingField" in value ? {
-    __kind__: "MissingField",
-    MissingField: value.MissingField
-  } : "FrontendOriginMismatch" in value ? {
-    __kind__: "FrontendOriginMismatch",
-    FrontendOriginMismatch: value.FrontendOriginMismatch
-  } : value;
-}
-function from_candid_variant_n112(_uploadFile, _downloadFile, value) {
-  return "Active" in value ? "Active" : "Archived" in value ? "Archived" : value;
-}
-function from_candid_variant_n114(_uploadFile, _downloadFile, value) {
-  return "Announcement" in value ? "Announcement" : "Recipe" in value ? "Recipe" : "ResearchHistory" in value ? "ResearchHistory" : "FamilyQuestion" in value ? "FamilyQuestion" : "Memorial" in value ? "Memorial" : "General" in value ? "General" : "Other" in value ? "Other" : "ReunionEvent" in value ? "ReunionEvent" : "PhotoIdentification" in value ? "PhotoIdentification" : value;
-}
-function from_candid_variant_n116(_uploadFile, _downloadFile, value) {
-  return "FamilyOnly" in value ? "FamilyOnly" : value;
-}
-function from_candid_variant_n118(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: value.ok
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_ArchiveError_n119(_uploadFile, _downloadFile, value.err)
-  } : value;
-}
-function from_candid_variant_n120(_uploadFile, _downloadFile, value) {
-  return "NotArchived" in value ? "NotArchived" : "ProfileNotFound" in value ? "ProfileNotFound" : "AlreadyArchived" in value ? "AlreadyArchived" : "NotSignedIn" in value ? "NotSignedIn" : value;
-}
-function from_candid_variant_n126(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: from_candid_Account_n127(_uploadFile, _downloadFile, value.ok)
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_AccountError_n132(_uploadFile, _downloadFile, value.err)
-  } : value;
-}
-function from_candid_variant_n13(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: from_candid_StewardRecord_n14(_uploadFile, _downloadFile, value.ok)
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_StewardError_n18(_uploadFile, _downloadFile, value.err)
-  } : value;
-}
-function from_candid_variant_n131(_uploadFile, _downloadFile, value) {
-  return "Google" in value ? "Google" : "Apple" in value ? "Apple" : value;
-}
-function from_candid_variant_n133(_uploadFile, _downloadFile, value) {
-  return "AccountNotFound" in value ? "AccountNotFound" : "NotSignedIn" in value ? "NotSignedIn" : value;
-}
-function from_candid_variant_n138(_uploadFile, _downloadFile, value) {
-  return "AlreadyOwned" in value ? "AlreadyOwned" : "AlreadyPending" in value ? "AlreadyPending" : "ProfileNotFound" in value ? "ProfileNotFound" : "NotSignedIn" in value ? "NotSignedIn" : "ApprovedOwnerExists" in value ? "ApprovedOwnerExists" : value;
-}
-function from_candid_variant_n159(_uploadFile, _downloadFile, value) {
-  return "Researching" in value ? "Researching" : "Open" in value ? "Open" : "PartiallyResolved" in value ? "PartiallyResolved" : "Resolved" in value ? "Resolved" : value;
-}
-function from_candid_variant_n17(_uploadFile, _downloadFile, value) {
-  return "Active" in value ? "Active" : "Removed" in value ? "Removed" : value;
-}
-function from_candid_variant_n172(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: from_candid_ProposedFinding_n65(_uploadFile, _downloadFile, value.ok)
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_ResearchError_n173(_uploadFile, _downloadFile, value.err)
-  } : value;
-}
-function from_candid_variant_n174(_uploadFile, _downloadFile, value) {
-  return "invalidState" in value ? {
-    __kind__: "invalidState",
-    invalidState: value.invalidState
-  } : "notAuthorized" in value ? {
-    __kind__: "notAuthorized",
-    notAuthorized: value.notAuthorized
-  } : "notFound" in value ? {
-    __kind__: "notFound",
-    notFound: value.notFound
-  } : value;
-}
-function from_candid_variant_n176(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: from_candid_PersonProfile_n177(_uploadFile, _downloadFile, value.ok)
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_CreateError_n183(_uploadFile, _downloadFile, value.err)
-  } : value;
-}
-function from_candid_variant_n180(_uploadFile, _downloadFile, value) {
-  return "Unclaimed" in value ? "Unclaimed" : "Claimed" in value ? "Claimed" : value;
-}
-function from_candid_variant_n182(_uploadFile, _downloadFile, value) {
-  return "Living" in value ? "Living" : "Deceased" in value ? "Deceased" : value;
-}
-function from_candid_variant_n184(_uploadFile, _downloadFile, value) {
-  return "AlreadyOwned" in value ? "AlreadyOwned" : "NotSignedIn" in value ? "NotSignedIn" : value;
-}
-function from_candid_variant_n186(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: from_candid_NewPersonCandidate_n82(_uploadFile, _downloadFile, value.ok)
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_ResearchError_n173(_uploadFile, _downloadFile, value.err)
-  } : value;
-}
-function from_candid_variant_n188(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: from_candid_RelationshipProposal_n98(_uploadFile, _downloadFile, value.ok)
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_ResearchError_n173(_uploadFile, _downloadFile, value.err)
-  } : value;
-}
-function from_candid_variant_n19(_uploadFile, _downloadFile, value) {
-  return "LastSteward" in value ? "LastSteward" : "NotSteward" in value ? "NotSteward" : "AlreadySteward" in value ? "AlreadySteward" : "NotSignedIn" in value ? "NotSignedIn" : "NotApprovedClaimedMember" in value ? "NotApprovedClaimedMember" : "NotDesignated" in value ? "NotDesignated" : value;
-}
-function from_candid_variant_n190(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: from_candid_SourceRecord_n105(_uploadFile, _downloadFile, value.ok)
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_ResearchError_n173(_uploadFile, _downloadFile, value.err)
-  } : value;
-}
-async function from_candid_variant_n193(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: await from_candid_SourceUploadResult_n194(_uploadFile, _downloadFile, value.ok)
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_ResearchError_n173(_uploadFile, _downloadFile, value.err)
-  } : value;
-}
-function from_candid_variant_n197(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: from_candid_SuccessorDesignation_n198(_uploadFile, _downloadFile, value.ok)
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_StewardError_n18(_uploadFile, _downloadFile, value.err)
-  } : value;
-}
-function from_candid_variant_n201(_uploadFile, _downloadFile, value) {
-  return "Activated" in value ? "Activated" : "Removed" in value ? "Removed" : "Designated" in value ? "Designated" : value;
-}
-function from_candid_variant_n209(_uploadFile, _downloadFile, value) {
-  return "int" in value ? {
-    __kind__: "int",
-    int: value.int
-  } : "nat" in value ? {
-    __kind__: "nat",
-    nat: value.nat
-  } : "float" in value ? {
-    __kind__: "float",
-    float: value.float
-  } : "bool" in value ? {
-    __kind__: "bool",
-    bool: value.bool
-  } : "null" in value ? {
-    __kind__: "null",
-    null: value.null
-  } : "text" in value ? {
-    __kind__: "text",
-    text: value.text
-  } : value;
-}
-function from_candid_variant_n211(_uploadFile, _downloadFile, value) {
-  return "admin" in value ? "admin" : "user" in value ? "user" : "guest" in value ? "guest" : value;
-}
-function from_candid_variant_n219(_uploadFile, _downloadFile, value) {
-  return "Blocked" in value ? "Blocked" : "Sent" in value ? "Sent" : value;
-}
-function from_candid_variant_n222(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: value.ok
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_AccountError_n132(_uploadFile, _downloadFile, value.err)
-  } : value;
-}
-function from_candid_variant_n224(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: value.ok
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_AccountError_n132(_uploadFile, _downloadFile, value.err)
-  } : value;
-}
-function from_candid_variant_n234(_uploadFile, _downloadFile, value) {
-  return "Dismissed" in value ? "Dismissed" : "Reviewed" in value ? "Reviewed" : "Pending" in value ? "Pending" : value;
-}
-function from_candid_variant_n247(_uploadFile, _downloadFile, value) {
-  return "Source" in value ? "Source" : "RelationshipProposal" in value ? "RelationshipProposal" : "ConflictReview" in value ? "ConflictReview" : "NewPersonCandidate" in value ? "NewPersonCandidate" : "Finding" in value ? "Finding" : value;
-}
-function from_candid_variant_n250(_uploadFile, _downloadFile, value) {
-  return "NeedsResearch" in value ? "NeedsResearch" : "Approve" in value ? "Approve" : "Reject" in value ? "Reject" : value;
-}
-function from_candid_variant_n255(_uploadFile, _downloadFile, value) {
-  return "ConflictResolution" in value ? "ConflictResolution" : "Governance" in value ? "Governance" : value;
-}
-function from_candid_variant_n264(_uploadFile, _downloadFile, value) {
-  return "ProfileRemovalRequested" in value ? "ProfileRemovalRequested" : "ClaimRejected" in value ? "ClaimRejected" : "RelationshipTypeCorrected" in value ? "RelationshipTypeCorrected" : "RelationshipRequestPending" in value ? "RelationshipRequestPending" : "StewardPromoted" in value ? "StewardPromoted" : "BoardReplyRemoved" in value ? "BoardReplyRemoved" : "SuccessorActivated" in value ? "SuccessorActivated" : "StewardRemoved" in value ? "StewardRemoved" : "RelationshipRequestApproved" in value ? "RelationshipRequestApproved" : "DuplicateMerged" in value ? "DuplicateMerged" : "ProfilePermanentlyDeleted" in value ? "ProfilePermanentlyDeleted" : "RelationshipRequestRejected" in value ? "RelationshipRequestRejected" : "ProfileArchived" in value ? "ProfileArchived" : "ProfileRestored" in value ? "ProfileRestored" : "BoardPostArchived" in value ? "BoardPostArchived" : "BoardPostRestored" in value ? "BoardPostRestored" : "RelationshipAdded" in value ? "RelationshipAdded" : "RelationshipRemoved" in value ? "RelationshipRemoved" : "ProfileRemovalReviewed" in value ? "ProfileRemovalReviewed" : "ClaimApproved" in value ? "ClaimApproved" : "SuccessorDesignated" in value ? "SuccessorDesignated" : value;
-}
-function from_candid_variant_n28(_uploadFile, _downloadFile, value) {
-  return "Approved" in value ? "Approved" : "Rejected" in value ? "Rejected" : "Pending" in value ? "Pending" : value;
-}
-function from_candid_variant_n286(_uploadFile, _downloadFile, value) {
-  return "ResearchSubmission" in value ? "ResearchSubmission" : "ResearchApproved" in value ? "ResearchApproved" : "ResearchRejected" in value ? "ResearchRejected" : "RelationshipRequested" in value ? "RelationshipRequested" : "BoardMention" in value ? "BoardMention" : "RelationshipReviewed" in value ? "RelationshipReviewed" : "BoardReply" in value ? "BoardReply" : "NewMessage" in value ? "NewMessage" : "ProfileClaimReviewed" in value ? "ProfileClaimReviewed" : "ProfileClaimRequested" in value ? "ProfileClaimRequested" : value;
-}
-function from_candid_variant_n292(_uploadFile, _downloadFile, value) {
-  return "Lead" in value ? "Lead" : "Note" in value ? "Note" : "Memory" in value ? "Memory" : "Source" in value ? "Source" : value;
-}
-function from_candid_variant_n30(_uploadFile, _downloadFile, value) {
-  return "Unresolved" in value ? "Unresolved" : "Documented" in value ? "Documented" : "FamilyHistory" in value ? "FamilyHistory" : "PersonalMemory" in value ? "PersonalMemory" : value;
-}
-function from_candid_variant_n305(_uploadFile, _downloadFile, value) {
-  return "Story" in value ? {
-    __kind__: "Story",
-    Story: value.Story
-  } : "Mystery" in value ? {
-    __kind__: "Mystery",
-    Mystery: value.Mystery
-  } : "Person" in value ? {
-    __kind__: "Person",
-    Person: value.Person
-  } : "ArchiveItem" in value ? {
-    __kind__: "ArchiveItem",
-    ArchiveItem: value.ArchiveItem
-  } : value;
-}
-function from_candid_variant_n307(_uploadFile, _downloadFile, value) {
-  return "MilitaryService" in value ? "MilitaryService" : "Story" in value ? "Story" : "Birth" in value ? "Birth" : "FamilyEvent" in value ? "FamilyEvent" : "Migration" in value ? "Migration" : "Mystery" in value ? "Mystery" : "Death" in value ? "Death" : "PhotoDocument" in value ? "PhotoDocument" : "Marriage" in value ? "Marriage" : "CensusDocument" in value ? "CensusDocument" : "Location" in value ? "Location" : value;
-}
-function from_candid_variant_n311(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: from_candid_MergeResult_n312(_uploadFile, _downloadFile, value.ok)
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_MergeError_n319(_uploadFile, _downloadFile, value.err)
-  } : value;
-}
-function from_candid_variant_n318(_uploadFile, _downloadFile, value) {
-  return "Resolved" in value ? "Resolved" : "Pending" in value ? "Pending" : value;
-}
-function from_candid_variant_n320(_uploadFile, _downloadFile, value) {
-  return "NotDuplicate" in value ? "NotDuplicate" : "ProfileNotFound" in value ? "ProfileNotFound" : "NotSignedIn" in value ? "NotSignedIn" : "SameProfile" in value ? "SameProfile" : value;
-}
-function from_candid_variant_n322(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: value.ok
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_MergeError_n319(_uploadFile, _downloadFile, value.err)
-  } : value;
-}
-function from_candid_variant_n324(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: value.ok
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_DeleteError_n325(_uploadFile, _downloadFile, value.err)
-  } : value;
-}
-function from_candid_variant_n326(_uploadFile, _downloadFile, value) {
-  return "HasOwnershipHistory" in value ? "HasOwnershipHistory" : "ProfileNotFound" in value ? "ProfileNotFound" : "HasMedia" in value ? "HasMedia" : "HasArchiveItems" in value ? "HasArchiveItems" : "NotSignedIn" in value ? "NotSignedIn" : "ConfirmationRequired" in value ? "ConfirmationRequired" : "HasTimeline" in value ? "HasTimeline" : "HasApprovedRelationships" in value ? "HasApprovedRelationships" : value;
-}
-function from_candid_variant_n328(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: from_candid_RelationshipRequest_n101(_uploadFile, _downloadFile, value.ok)
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_RelationshipError_n329(_uploadFile, _downloadFile, value.err)
-  } : value;
-}
-function from_candid_variant_n330(_uploadFile, _downloadFile, value) {
-  return "DuplicateRequest" in value ? "DuplicateRequest" : "NotSignedIn" in value ? "NotSignedIn" : "PersonNotFound" in value ? "PersonNotFound" : value;
-}
-function from_candid_variant_n333(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: value.ok
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_RemoveError_n334(_uploadFile, _downloadFile, value.err)
-  } : value;
-}
-function from_candid_variant_n335(_uploadFile, _downloadFile, value) {
-  return "ProfileNotFound" in value ? "ProfileNotFound" : "NotSignedIn" in value ? "NotSignedIn" : value;
-}
-function from_candid_variant_n337(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: value.ok
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_RelationshipAdminError_n45(_uploadFile, _downloadFile, value.err)
-  } : value;
-}
-function from_candid_variant_n339(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: value.ok
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_StewardError_n18(_uploadFile, _downloadFile, value.err)
-  } : value;
-}
-function from_candid_variant_n341(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: from_candid_ProfileClaim_n85(_uploadFile, _downloadFile, value.ok)
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_ClaimError_n342(_uploadFile, _downloadFile, value.err)
-  } : value;
-}
-function from_candid_variant_n343(_uploadFile, _downloadFile, value) {
-  return "AlreadyPending" in value ? "AlreadyPending" : "ProfileNotFound" in value ? "ProfileNotFound" : "AlreadyClaimed" in value ? "AlreadyClaimed" : "NotSignedIn" in value ? "NotSignedIn" : "DeceasedProfile" in value ? "DeceasedProfile" : value;
-}
-function from_candid_variant_n345(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: from_candid_ProfileRemovalRequest_n89(_uploadFile, _downloadFile, value.ok)
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_RemovalError_n346(_uploadFile, _downloadFile, value.err)
-  } : value;
-}
-function from_candid_variant_n347(_uploadFile, _downloadFile, value) {
-  return "AlreadyPending" in value ? "AlreadyPending" : "ProfileNotFound" in value ? "ProfileNotFound" : "NotSignedIn" in value ? "NotSignedIn" : "NotOwner" in value ? "NotOwner" : "DeceasedProfile" in value ? "DeceasedProfile" : value;
-}
-function from_candid_variant_n351(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: from_candid_ConflictReviewItem_n269(_uploadFile, _downloadFile, value.ok)
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_ResearchError_n173(_uploadFile, _downloadFile, value.err)
-  } : value;
-}
-function from_candid_variant_n360(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: from_candid_Message_n216(_uploadFile, _downloadFile, value.ok)
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_MessageError_n361(_uploadFile, _downloadFile, value.err)
-  } : value;
-}
-function from_candid_variant_n362(_uploadFile, _downloadFile, value) {
-  return "ConversationNotFound" in value ? "ConversationNotFound" : "RecipientArchived" in value ? "RecipientArchived" : "NotApprovedMember" in value ? "NotApprovedMember" : "RecipientNotClaimed" in value ? "RecipientNotClaimed" : "NotSignedIn" in value ? "NotSignedIn" : "BlockedByRecipient" in value ? "BlockedByRecipient" : "NotParticipant" in value ? "NotParticipant" : "CannotMessageSelf" in value ? "CannotMessageSelf" : "RecipientNotFound" in value ? "RecipientNotFound" : value;
-}
-function from_candid_variant_n370(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: from_candid_PersonProfile_n177(_uploadFile, _downloadFile, value.ok)
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_EditError_n371(_uploadFile, _downloadFile, value.err)
-  } : value;
-}
-function from_candid_variant_n372(_uploadFile, _downloadFile, value) {
-  return "ProfileNotFound" in value ? "ProfileNotFound" : "NotSignedIn" in value ? "NotSignedIn" : "NotOwner" in value ? "NotOwner" : "DeceasedProfile" in value ? "DeceasedProfile" : value;
-}
-function from_candid_variant_n38(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: from_candid_Relationship_n39(_uploadFile, _downloadFile, value.ok)
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_RelationshipAdminError_n45(_uploadFile, _downloadFile, value.err)
-  } : value;
-}
-function from_candid_variant_n42(_uploadFile, _downloadFile, value) {
-  return "Disputed" in value ? "Disputed" : "Confirmed" in value ? "Confirmed" : "Pending" in value ? "Pending" : value;
-}
-function from_candid_variant_n44(_uploadFile, _downloadFile, value) {
-  return "Parent" in value ? "Parent" : "Sibling" in value ? "Sibling" : "SpousePartner" in value ? "SpousePartner" : "Child" in value ? "Child" : value;
-}
-function from_candid_variant_n46(_uploadFile, _downloadFile, value) {
-  return "RelationshipNotFound" in value ? "RelationshipNotFound" : "NotSignedIn" in value ? "NotSignedIn" : "DuplicateRelationship" in value ? "DuplicateRelationship" : "PersonNotFound" in value ? "PersonNotFound" : value;
-}
-function from_candid_variant_n52(_uploadFile, _downloadFile, value) {
-  return "Private" in value ? "Private" : "Public" in value ? "Public" : "FamilyOnly" in value ? "FamilyOnly" : value;
-}
-function from_candid_variant_n58(_uploadFile, _downloadFile, value) {
-  return "Research" in value ? "Research" : "Photo" in value ? "Photo" : "Document" in value ? "Document" : "WorkBusiness" in value ? "WorkBusiness" : "WrittenStoryNote" in value ? "WrittenStoryNote" : "Audio" in value ? "Audio" : "Other" in value ? "Other" : "Video" in value ? "Video" : value;
-}
-function from_candid_variant_n61(_uploadFile, _downloadFile, value) {
-  return "Copy" in value ? "Copy" : "Unverified" in value ? "Unverified" : "Transcribed" in value ? "Transcribed" : "Original" in value ? "Original" : value;
-}
-function from_candid_variant_n63(_uploadFile, _downloadFile, value) {
-  return "OralHistory" in value ? "OralHistory" : "Standard" in value ? "Standard" : value;
-}
-function from_candid_variant_n68(_uploadFile, _downloadFile, value) {
-  return "NeedsResearch" in value ? "NeedsResearch" : "Conflicting" in value ? "Conflicting" : "Approved" in value ? "Approved" : "Rejected" in value ? "Rejected" : "Pending" in value ? "Pending" : value;
-}
-function from_candid_variant_n70(_uploadFile, _downloadFile, value) {
-  return "NeedsResearch" in value ? "NeedsResearch" : "Conflicting" in value ? "Conflicting" : "Hypothesis" in value ? "Hypothesis" : "Documented" in value ? "Documented" : "FamilyHistoryOralHistory" in value ? "FamilyHistoryOralHistory" : "PersonalMemory" in value ? "PersonalMemory" : value;
-}
-function from_candid_variant_n72(_uploadFile, _downloadFile, value) {
-  return "Story" in value ? {
-    __kind__: "Story",
-    Story: value.Story
-  } : "TimelineEvent" in value ? {
-    __kind__: "TimelineEvent",
-    TimelineEvent: from_candid_record_n73(_uploadFile, _downloadFile, value.TimelineEvent)
-  } : "PersonFact" in value ? {
-    __kind__: "PersonFact",
-    PersonFact: value.PersonFact
-  } : "Source" in value ? {
-    __kind__: "Source",
-    Source: from_candid_record_n74(_uploadFile, _downloadFile, value.Source)
-  } : "Mystery" in value ? {
-    __kind__: "Mystery",
-    Mystery: value.Mystery
-  } : "Relationship" in value ? {
-    __kind__: "Relationship",
-    Relationship: value.Relationship
-  } : value;
-}
-function from_candid_variant_n76(_uploadFile, _downloadFile, value) {
-  return "CertificateHeadstoneReference" in value ? "CertificateHeadstoneReference" : "DeedPropertyReference" in value ? "DeedPropertyReference" : "ResearchNotes" in value ? "ResearchNotes" : "EmailThread" in value ? "EmailThread" : "UploadedDocumentImage" in value ? "UploadedDocumentImage" : "CensusCitation" in value ? "CensusCitation" : value;
-}
-function from_candid_variant_n80(_uploadFile, _downloadFile, value) {
-  return "Story" in value ? "Story" : "TimelineEvent" in value ? "TimelineEvent" : "PersonFact" in value ? "PersonFact" : "Source" in value ? "Source" : "Mystery" in value ? "Mystery" : "Relationship" in value ? "Relationship" : value;
-}
-function from_candid_variant_n9(_uploadFile, _downloadFile, value) {
-  return "ok" in value ? {
-    __kind__: "ok",
-    ok: value.ok
-  } : "err" in value ? {
-    __kind__: "err",
-    err: from_candid_Error_n10(_uploadFile, _downloadFile, value.err)
-  } : value;
-}
-function from_candid_variant_n96(_uploadFile, _downloadFile, value) {
-  return "Approved" in value ? "Approved" : "Rejected" in value ? "Rejected" : "Archived" in value ? "Archived" : "Pending" in value ? "Pending" : value;
-}
-function from_candid_vec_n129(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_AuthMethod_n130(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n204(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_vec_n205(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n205(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_Cell_n206(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n215(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_Message_n216(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n226(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_RelationshipRequest_n101(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n235(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_ResearchAuditEntry_n236(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n242(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_ReviewQueueItem_n243(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n248(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_ReviewAction_n249(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n251(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_StewardAuditEntry_n252(_uploadFile, _downloadFile, x2));
-}
-async function from_candid_vec_n256(_uploadFile, _downloadFile, value) {
-  return await Promise.all(value.map(async (x2) => await from_candid_ArchiveItem_n48(_uploadFile, _downloadFile, x2)));
-}
-function from_candid_vec_n257(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_Recipe_n93(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n258(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_Story_n24(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n259(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_PersonProfile_n177(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n260(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_AuditEntry_n261(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n266(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_Post_n109(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n267(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_Relationship_n39(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n268(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_ConflictReviewItem_n269(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n271(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_DisputedFact_n272(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n274(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_DuplicatePair_n275(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n279(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_ProposedFinding_n65(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n280(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_Mystery_n156(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n281(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_NewPersonCandidate_n82(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n282(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_Notification_n283(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n287(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_MysteryContribution_n288(_uploadFile, _downloadFile, x2));
-}
-async function from_candid_vec_n293(_uploadFile, _downloadFile, value) {
-  return await Promise.all(value.map(async (x2) => await from_candid_Photo_n32(_uploadFile, _downloadFile, x2)));
-}
-function from_candid_vec_n294(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_ProfileClaim_n85(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n295(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_ProfileRemovalRequest_n89(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n296(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_RelationshipProposal_n98(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n297(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_Report_n231(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n298(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_SourceRecord_n105(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n299(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_StewardRecord_n14(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n300(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_SuccessorDesignation_n198(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n301(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_TimelineEvent_n302(_uploadFile, _downloadFile, x2));
-}
-function from_candid_vec_n314(_uploadFile, _downloadFile, value) {
-  return value.map((x2) => from_candid_MergeConflict_n315(_uploadFile, _downloadFile, x2));
-}
-function to_candid_ArchiveItemClassification_n152(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n153(_uploadFile, _downloadFile, value);
-}
-function to_candid_ArchiveItemType_n148(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n149(_uploadFile, _downloadFile, value);
-}
-function to_candid_ArchiveSearchFilter_n357(_uploadFile, _downloadFile, value) {
-  return to_candid_record_n358(_uploadFile, _downloadFile, value);
-}
-function to_candid_AuthMethod_n123(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n124(_uploadFile, _downloadFile, value);
-}
-async function to_candid_BoardMediaUpload_n142(_uploadFile, _downloadFile, value) {
-  return await to_candid_record_n143(_uploadFile, _downloadFile, value);
-}
-function to_candid_ConflictResolutionAction_n348(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n349(_uploadFile, _downloadFile, value);
-}
-function to_candid_EvidenceLabel_n161(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n162(_uploadFile, _downloadFile, value);
-}
-function to_candid_EvidenceStatus_n22(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n23(_uploadFile, _downloadFile, value);
-}
-async function to_candid_ExternalBlob_n31(_uploadFile, _downloadFile, value) {
-  return await _uploadFile(value);
-}
-function to_candid_FindingContent_n165(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n166(_uploadFile, _downloadFile, value);
-}
-function to_candid_FindingType_n163(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n164(_uploadFile, _downloadFile, value);
-}
-function to_candid_LivingStatus_n367(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n368(_uploadFile, _downloadFile, value);
-}
-function to_candid_MysteryContributionType_n363(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n364(_uploadFile, _downloadFile, value);
-}
-function to_candid_MysteryStatus_n154(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n155(_uploadFile, _downloadFile, value);
-}
-function to_candid_OralHistorySpeaker_n146(_uploadFile, _downloadFile, value) {
-  return to_candid_record_n147(_uploadFile, _downloadFile, value);
-}
-function to_candid_PostType_n139(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n140(_uploadFile, _downloadFile, value);
-}
-function to_candid_PrivacyLevel_n144(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n145(_uploadFile, _downloadFile, value);
-}
-function to_candid_ProfileEdits_n365(_uploadFile, _downloadFile, value) {
-  return to_candid_record_n366(_uploadFile, _downloadFile, value);
-}
-function to_candid_RelationshipType_n35(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n36(_uploadFile, _downloadFile, value);
-}
-function to_candid_ReportStatus_n354(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n355(_uploadFile, _downloadFile, value);
-}
-function to_candid_SourceStatus_n150(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n151(_uploadFile, _downloadFile, value);
-}
-function to_candid_SourceType_n168(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n169(_uploadFile, _downloadFile, value);
-}
-function to_candid_UserRole_n121(_uploadFile, _downloadFile, value) {
-  return to_candid_variant_n122(_uploadFile, _downloadFile, value);
-}
-function to_candid__ImmutableObjectStorageRefillInformation_n2(_uploadFile, _downloadFile, value) {
-  return to_candid_record_n3(_uploadFile, _downloadFile, value);
-}
-function to_candid_opt_n1(_uploadFile, _downloadFile, value) {
-  return value === null ? candid_none() : candid_some(to_candid__ImmutableObjectStorageRefillInformation_n2(_uploadFile, _downloadFile, value));
-}
-function to_candid_opt_n191(_uploadFile, _downloadFile, value) {
-  return value === null ? candid_none() : candid_some(to_candid_OralHistorySpeaker_n146(_uploadFile, _downloadFile, value));
-}
-function to_candid_opt_n20(_uploadFile, _downloadFile, value) {
-  return value === null ? candid_none() : candid_some(value);
-}
-function to_candid_opt_n21(_uploadFile, _downloadFile, value) {
-  return value === null ? candid_none() : candid_some(value);
-}
-function to_candid_opt_n265(_uploadFile, _downloadFile, value) {
-  return value === null ? candid_none() : candid_some(to_candid_PostType_n139(_uploadFile, _downloadFile, value));
-}
-async function to_candid_record_n143(_uploadFile, _downloadFile, value) {
-  return {
-    era: value.era,
-    title: value.title,
-    relatedMemberIds: value.relatedMemberIds,
-    blob: await to_candid_ExternalBlob_n31(_uploadFile, _downloadFile, value.blob),
-    tags: value.tags,
-    year: value.year ? candid_some(value.year) : candid_none(),
-    description: value.description,
-    privacyLevel: to_candid_PrivacyLevel_n144(_uploadFile, _downloadFile, value.privacyLevel),
-    primarySpeaker: value.primarySpeaker ? candid_some(to_candid_OralHistorySpeaker_n146(_uploadFile, _downloadFile, value.primarySpeaker)) : candid_none(),
-    itemType: to_candid_ArchiveItemType_n148(_uploadFile, _downloadFile, value.itemType),
-    relatedBranchId: value.relatedBranchId ? candid_some(value.relatedBranchId) : candid_none(),
-    sourceStatus: to_candid_SourceStatus_n150(_uploadFile, _downloadFile, value.sourceStatus),
-    classification: to_candid_ArchiveItemClassification_n152(_uploadFile, _downloadFile, value.classification)
-  };
-}
-function to_candid_record_n147(_uploadFile, _downloadFile, value) {
-  return {
-    name: value.name,
-    personId: value.personId ? candid_some(value.personId) : candid_none()
-  };
-}
-function to_candid_record_n167(_uploadFile, _downloadFile, value) {
-  return {
-    title: value.title,
-    archiveItemId: value.archiveItemId ? candid_some(value.archiveItemId) : candid_none(),
-    description: value.description,
-    sourceType: to_candid_SourceType_n168(_uploadFile, _downloadFile, value.sourceType)
-  };
-}
-function to_candid_record_n170(_uploadFile, _downloadFile, value) {
-  return {
-    title: value.title,
-    date: value.date ? candid_some(value.date) : candid_none(),
-    description: value.description,
-    personId: value.personId
-  };
-}
-function to_candid_record_n3(_uploadFile, _downloadFile, value) {
-  return {
-    proposed_top_up_amount: value.proposed_top_up_amount ? candid_some(value.proposed_top_up_amount) : candid_none()
-  };
-}
-function to_candid_record_n358(_uploadFile, _downloadFile, value) {
-  return {
-    era: value.era ? candid_some(value.era) : candid_none(),
-    relatedMemberId: value.relatedMemberId ? candid_some(value.relatedMemberId) : candid_none(),
-    tags: value.tags,
-    searchTerm: value.searchTerm ? candid_some(value.searchTerm) : candid_none(),
-    itemType: value.itemType ? candid_some(to_candid_ArchiveItemType_n148(_uploadFile, _downloadFile, value.itemType)) : candid_none()
-  };
-}
-function to_candid_record_n366(_uploadFile, _downloadFile, value) {
-  return {
-    occupation: value.occupation ? candid_some(value.occupation) : candid_none(),
-    privacySettings: value.privacySettings ? candid_some(value.privacySettings) : candid_none(),
-    nickname: value.nickname ? candid_some(value.nickname) : candid_none(),
-    birthDate: value.birthDate ? candid_some(value.birthDate) : candid_none(),
-    birthInfo: value.birthInfo ? candid_some(value.birthInfo) : candid_none(),
-    livingStatus: value.livingStatus ? candid_some(to_candid_LivingStatus_n367(_uploadFile, _downloadFile, value.livingStatus)) : candid_none(),
-    longerStory: value.longerStory ? candid_some(value.longerStory) : candid_none(),
-    story: value.story ? candid_some(value.story) : candid_none(),
-    middleName: value.middleName ? candid_some(value.middleName) : candid_none(),
-    suffix: value.suffix ? candid_some(value.suffix) : candid_none(),
-    preferredName: value.preferredName ? candid_some(value.preferredName) : candid_none(),
-    currentLocation: value.currentLocation ? candid_some(value.currentLocation) : candid_none(),
-    birthplace: value.birthplace ? candid_some(value.birthplace) : candid_none(),
-    lastName: value.lastName ? candid_some(value.lastName) : candid_none(),
-    shortBio: value.shortBio ? candid_some(value.shortBio) : candid_none(),
-    timeline: value.timeline ? candid_some(value.timeline) : candid_none(),
-    firstName: value.firstName ? candid_some(value.firstName) : candid_none()
-  };
-}
-function to_candid_variant_n122(_uploadFile, _downloadFile, value) {
-  return value == "admin" ? {
-    admin: null
-  } : value == "user" ? {
-    user: null
-  } : value == "guest" ? {
-    guest: null
-  } : value;
-}
-function to_candid_variant_n124(_uploadFile, _downloadFile, value) {
-  return value == "Google" ? {
-    Google: null
-  } : value == "Apple" ? {
-    Apple: null
-  } : value;
-}
-function to_candid_variant_n140(_uploadFile, _downloadFile, value) {
-  return value == "Announcement" ? {
-    Announcement: null
-  } : value == "Recipe" ? {
-    Recipe: null
-  } : value == "ResearchHistory" ? {
-    ResearchHistory: null
-  } : value == "FamilyQuestion" ? {
-    FamilyQuestion: null
-  } : value == "Memorial" ? {
-    Memorial: null
-  } : value == "General" ? {
-    General: null
-  } : value == "Other" ? {
-    Other: null
-  } : value == "ReunionEvent" ? {
-    ReunionEvent: null
-  } : value == "PhotoIdentification" ? {
-    PhotoIdentification: null
-  } : value;
-}
-function to_candid_variant_n145(_uploadFile, _downloadFile, value) {
-  return value == "Private" ? {
-    Private: null
-  } : value == "Public" ? {
-    Public: null
-  } : value == "FamilyOnly" ? {
-    FamilyOnly: null
-  } : value;
-}
-function to_candid_variant_n149(_uploadFile, _downloadFile, value) {
-  return value == "Research" ? {
-    Research: null
-  } : value == "Photo" ? {
-    Photo: null
-  } : value == "Document" ? {
-    Document: null
-  } : value == "WorkBusiness" ? {
-    WorkBusiness: null
-  } : value == "WrittenStoryNote" ? {
-    WrittenStoryNote: null
-  } : value == "Audio" ? {
-    Audio: null
-  } : value == "Other" ? {
-    Other: null
-  } : value == "Video" ? {
-    Video: null
-  } : value;
-}
-function to_candid_variant_n151(_uploadFile, _downloadFile, value) {
-  return value == "Copy" ? {
-    Copy: null
-  } : value == "Unverified" ? {
-    Unverified: null
-  } : value == "Transcribed" ? {
-    Transcribed: null
-  } : value == "Original" ? {
-    Original: null
-  } : value;
-}
-function to_candid_variant_n153(_uploadFile, _downloadFile, value) {
-  return value == "OralHistory" ? {
-    OralHistory: null
-  } : value == "Standard" ? {
-    Standard: null
-  } : value;
-}
-function to_candid_variant_n155(_uploadFile, _downloadFile, value) {
-  return value == "Researching" ? {
-    Researching: null
-  } : value == "Open" ? {
-    Open: null
-  } : value == "PartiallyResolved" ? {
-    PartiallyResolved: null
-  } : value == "Resolved" ? {
-    Resolved: null
-  } : value;
-}
-function to_candid_variant_n162(_uploadFile, _downloadFile, value) {
-  return value == "NeedsResearch" ? {
-    NeedsResearch: null
-  } : value == "Conflicting" ? {
-    Conflicting: null
-  } : value == "Hypothesis" ? {
-    Hypothesis: null
-  } : value == "Documented" ? {
-    Documented: null
-  } : value == "FamilyHistoryOralHistory" ? {
-    FamilyHistoryOralHistory: null
-  } : value == "PersonalMemory" ? {
-    PersonalMemory: null
-  } : value;
-}
-function to_candid_variant_n164(_uploadFile, _downloadFile, value) {
-  return value == "Story" ? {
-    Story: null
-  } : value == "TimelineEvent" ? {
-    TimelineEvent: null
-  } : value == "PersonFact" ? {
-    PersonFact: null
-  } : value == "Source" ? {
-    Source: null
-  } : value == "Mystery" ? {
-    Mystery: null
-  } : value == "Relationship" ? {
-    Relationship: null
-  } : value;
-}
-function to_candid_variant_n166(_uploadFile, _downloadFile, value) {
-  return value.__kind__ === "Story" ? {
-    Story: value.Story
-  } : value.__kind__ === "TimelineEvent" ? {
-    TimelineEvent: to_candid_record_n170(_uploadFile, _downloadFile, value.TimelineEvent)
-  } : value.__kind__ === "PersonFact" ? {
-    PersonFact: value.PersonFact
-  } : value.__kind__ === "Source" ? {
-    Source: to_candid_record_n167(_uploadFile, _downloadFile, value.Source)
-  } : value.__kind__ === "Mystery" ? {
-    Mystery: value.Mystery
-  } : value.__kind__ === "Relationship" ? {
-    Relationship: value.Relationship
-  } : value;
-}
-function to_candid_variant_n169(_uploadFile, _downloadFile, value) {
-  return value == "CertificateHeadstoneReference" ? {
-    CertificateHeadstoneReference: null
-  } : value == "DeedPropertyReference" ? {
-    DeedPropertyReference: null
-  } : value == "ResearchNotes" ? {
-    ResearchNotes: null
-  } : value == "EmailThread" ? {
-    EmailThread: null
-  } : value == "UploadedDocumentImage" ? {
-    UploadedDocumentImage: null
-  } : value == "CensusCitation" ? {
-    CensusCitation: null
-  } : value;
-}
-function to_candid_variant_n23(_uploadFile, _downloadFile, value) {
-  return value == "Unresolved" ? {
-    Unresolved: null
-  } : value == "Documented" ? {
-    Documented: null
-  } : value == "FamilyHistory" ? {
-    FamilyHistory: null
-  } : value == "PersonalMemory" ? {
-    PersonalMemory: null
-  } : value;
-}
-function to_candid_variant_n349(_uploadFile, _downloadFile, value) {
-  return value == "NeedsResearch" ? {
-    NeedsResearch: null
-  } : value == "PreserveBoth" ? {
-    PreserveBoth: null
-  } : value == "ReplaceExisting" ? {
-    ReplaceExisting: null
-  } : value == "KeepExisting" ? {
-    KeepExisting: null
-  } : value;
-}
-function to_candid_variant_n355(_uploadFile, _downloadFile, value) {
-  return value == "Dismissed" ? {
-    Dismissed: null
-  } : value == "Reviewed" ? {
-    Reviewed: null
-  } : value == "Pending" ? {
-    Pending: null
-  } : value;
-}
-function to_candid_variant_n36(_uploadFile, _downloadFile, value) {
-  return value == "Parent" ? {
-    Parent: null
-  } : value == "Sibling" ? {
-    Sibling: null
-  } : value == "SpousePartner" ? {
-    SpousePartner: null
-  } : value == "Child" ? {
-    Child: null
-  } : value;
-}
-function to_candid_variant_n364(_uploadFile, _downloadFile, value) {
-  return value == "Lead" ? {
-    Lead: null
-  } : value == "Note" ? {
-    Note: null
-  } : value == "Memory" ? {
-    Memory: null
-  } : value == "Source" ? {
-    Source: null
-  } : value;
-}
-function to_candid_variant_n368(_uploadFile, _downloadFile, value) {
-  return value == "Living" ? {
-    Living: null
-  } : value == "Deceased" ? {
-    Deceased: null
-  } : value;
-}
-async function to_candid_vec_n141(_uploadFile, _downloadFile, value) {
-  return await Promise.all(value.map(async (x2) => await to_candid_BoardMediaUpload_n142(_uploadFile, _downloadFile, x2)));
-}
-function createActor(canisterId, _uploadFile, _downloadFile, options = {}) {
-  const agent = options.agent || HttpAgent.createSync({
-    ...options.agentOptions
-  });
-  if (options.agent && options.agentOptions) {
-    console.warn("Detected both agent and agentOptions passed to createActor. Ignoring agentOptions and proceeding with the provided agent.");
-  }
-  const actor = Actor.createActor(idlFactory, {
-    agent,
-    canisterId,
-    ...options.actorOptions
-  });
-  return new Backend(actor, _uploadFile, _downloadFile, options.processError);
-}
 function useListNotifications() {
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
@@ -44782,108 +45120,6 @@ const MEDIA_KIND_FILTERS = [
   { value: "oral-history-video", label: "Oral History" },
   { value: "audio-only-oral-history", label: "Audio" }
 ];
-function useProvidersPresent() {
-  return reactExports.useContext(QueryClientContext) !== void 0;
-}
-function usePhotos(personId) {
-  const { actor, isFetching } = useActor(createActor);
-  return useQuery({
-    queryKey: ["photos", personId],
-    queryFn: async () => {
-      if (!actor) return [];
-      return actor.listPhotos(personId);
-    },
-    enabled: !!actor && !isFetching
-  });
-}
-function useProfilePhoto(personId) {
-  const { actor, isFetching } = useActor(createActor);
-  return useQuery({
-    queryKey: ["profilePhoto", personId],
-    queryFn: async () => {
-      if (!actor) return null;
-      return actor.getProfilePhoto(personId);
-    },
-    enabled: !!actor && !isFetching
-  });
-}
-function useAddPhoto() {
-  const { actor } = useActor(createActor);
-  const queryClient2 = useQueryClient();
-  return useMutation({
-    mutationFn: async ({
-      personId,
-      blob,
-      filename,
-      mimeType
-    }) => {
-      if (!actor) throw new Error("Backend is not ready");
-      return actor.addPhoto(personId, filename, mimeType, blob);
-    },
-    onSuccess: (_data, variables) => {
-      void queryClient2.invalidateQueries({
-        queryKey: ["photos", variables.personId]
-      });
-      void queryClient2.invalidateQueries({
-        queryKey: ["profilePhoto", variables.personId]
-      });
-    }
-  });
-}
-function useRemovePhoto() {
-  const { actor } = useActor(createActor);
-  const queryClient2 = useQueryClient();
-  return useMutation({
-    mutationFn: async ({
-      personId,
-      photoId
-    }) => {
-      if (!actor) throw new Error("Backend is not ready");
-      return actor.removePhoto(personId, photoId);
-    },
-    onSuccess: (_data, variables) => {
-      void queryClient2.invalidateQueries({
-        queryKey: ["photos", variables.personId]
-      });
-      void queryClient2.invalidateQueries({
-        queryKey: ["profilePhoto", variables.personId]
-      });
-    }
-  });
-}
-function useSetProfilePhoto() {
-  const { actor } = useActor(createActor);
-  const queryClient2 = useQueryClient();
-  return useMutation({
-    mutationFn: async ({
-      personId,
-      photoId
-    }) => {
-      if (!actor) throw new Error("Backend is not ready");
-      return actor.setProfilePhoto(personId, photoId);
-    },
-    onSuccess: (_data, variables) => {
-      void queryClient2.invalidateQueries({
-        queryKey: ["photos", variables.personId]
-      });
-      void queryClient2.invalidateQueries({
-        queryKey: ["profilePhoto", variables.personId]
-      });
-    }
-  });
-}
-function useIsAdmin() {
-  const providersPresent = useProvidersPresent();
-  const { actor, isFetching } = useActor(createActor);
-  return useQuery({
-    queryKey: ["isAdmin"],
-    queryFn: async () => {
-      if (!actor) return false;
-      return actor.isCallerAdmin();
-    },
-    enabled: providersPresent && !!actor && !isFetching
-  });
-}
 function usePendingArchiveItems() {
   const providersPresent = useProvidersPresent();
   const { actor, isFetching } = useActor(createActor);
@@ -45210,6 +45446,20 @@ function usePersonProfile(personId, options) {
       return actor.getPersonProfile(personId);
     },
     enabled: ((options == null ? void 0 : options.enabled) ?? true) && !!actor && !isFetching
+  });
+}
+function usePersonClaimStatus(personId) {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["personProfile", personId],
+    queryFn: async () => {
+      if (!actor) return null;
+      return actor.getPersonProfile(personId);
+    },
+    enabled: !!actor && !isFetching,
+    select: (profile) => ({
+      isClaimed: (profile == null ? void 0 : profile.claimStatus) === ClaimStatus.Claimed
+    })
   });
 }
 function useMyProfileClaim(personId) {
@@ -46047,13 +46297,13 @@ function useGetResearchAuditLog() {
   });
 }
 function StewardActionBadge() {
-  const { data: isAdmin = false } = useIsAdmin();
+  const { data: isSteward = false } = useIsSteward();
   const { data: claims = [] } = useListProfileClaims();
   const { data: requests = [] } = useListRelationshipRequests();
   const { data: reports = [] } = useListReports();
   const { data: pendingArchive = [] } = usePendingArchiveItems();
   const { data: reviewQueue } = useGetReviewQueue();
-  if (!isAdmin) return null;
+  if (!isSteward) return null;
   const researchPending = Number((reviewQueue == null ? void 0 : reviewQueue.pending) ?? 0n) + Number((reviewQueue == null ? void 0 : reviewQueue.needsResearch) ?? 0n) + Number((reviewQueue == null ? void 0 : reviewQueue.conflicting) ?? 0n);
   const count2 = claims.filter((claim) => claim.status === "Pending").length + requests.filter((request2) => request2.status === "Pending").length + reports.filter((report) => report.status === ReportStatus.Pending).length + pendingArchive.length + researchPending;
   if (count2 <= 0) return null;
@@ -46078,7 +46328,7 @@ function navIconClass(active) {
 }
 function Layout({
   children,
-  isAdmin,
+  isSteward,
   isAuthenticated,
   isApprovedMember,
   isHydrating: isHydrating2 = false,
@@ -46111,7 +46361,7 @@ function Layout({
   const isStewardActive = activeView === "steward-hub" || activeView === "steward-review" || activeView === "governance" || activeView === "admin-approval" || activeView === "hidden-posts";
   const isNotificationsActive = activeView === "notifications";
   const isMyProfileActive = activeView === "my-profile" || activeView === "profile-edit";
-  const showAdminControls = isAuthenticated && isAdmin;
+  const showStewardControls = isAuthenticated && isSteward;
   const showApprovedMemberControls = isAuthenticated && isApprovedMember;
   const addLabel = hasClaimedProfile ? "Add Family" : "Add Myself";
   const profileLabel = identityName || "My Profile";
@@ -46267,7 +46517,7 @@ function Layout({
               ]
             }
           ) : null,
-          showAdminControls ? /* @__PURE__ */ jsxRuntimeExports.jsx(jsxRuntimeExports.Fragment, { children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          showStewardControls ? /* @__PURE__ */ jsxRuntimeExports.jsx(jsxRuntimeExports.Fragment, { children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
             "button",
             {
               type: "button",
@@ -57935,7 +58185,8 @@ function usePromoteToSteward() {
       void queryClient2.invalidateQueries({
         queryKey: ["governance", "auditHistory"]
       });
-      void queryClient2.invalidateQueries({ queryKey: ["isAdmin"] });
+      void queryClient2.invalidateQueries({ queryKey: ["isSteward"] });
+      void queryClient2.invalidateQueries({ queryKey: ["hasActiveSteward"] });
     }
   });
 }
@@ -57954,7 +58205,8 @@ function useRemoveSteward() {
       void queryClient2.invalidateQueries({
         queryKey: ["governance", "auditHistory"]
       });
-      void queryClient2.invalidateQueries({ queryKey: ["isAdmin"] });
+      void queryClient2.invalidateQueries({ queryKey: ["isSteward"] });
+      void queryClient2.invalidateQueries({ queryKey: ["hasActiveSteward"] });
     }
   });
 }
@@ -57997,7 +58249,8 @@ function useActivateSuccessor() {
       void queryClient2.invalidateQueries({
         queryKey: ["governance", "auditHistory"]
       });
-      void queryClient2.invalidateQueries({ queryKey: ["isAdmin"] });
+      void queryClient2.invalidateQueries({ queryKey: ["isSteward"] });
+      void queryClient2.invalidateQueries({ queryKey: ["hasActiveSteward"] });
     }
   });
 }
@@ -61524,7 +61777,7 @@ function PersonProfilePage({
   const { identity, isAuthenticated } = useInternetIdentity();
   const { data: myClaim } = useMyProfileClaim(person.id);
   const { data: relationshipRequests = [] } = useMyRelationshipRequests();
-  const { data: isSteward = false } = useIsAdmin();
+  const { data: isSteward = false } = useIsSteward();
   const { data: archivedIds = [] } = useListArchivedProfileIds();
   const isArchived = archivedIds.includes(person.id);
   const requestRemoval = useRequestProfileRemoval();
@@ -62469,10 +62722,14 @@ function MatchCard({
   const { data: myClaim, isLoading: claimLoading } = useMyProfileClaim(
     match.personId
   );
+  const { data: claimStatus, isLoading: profileLoading } = usePersonClaimStatus(
+    match.personId
+  );
   const currentPrincipal = accountId;
   const ownedByCurrentUser = (myClaim == null ? void 0 : myClaim.personId) === match.personId && myClaim.status === "Approved" && myClaim.requestingUserId.toString() === currentPrincipal;
   const pendingByCurrentUser = (myClaim == null ? void 0 : myClaim.personId) === match.personId && myClaim.status === "Pending" && myClaim.requestingUserId.toString() === currentPrincipal;
-  const ownershipResolving = isInitializing || claimLoading;
+  const claimedByAnotherOwner = (claimStatus == null ? void 0 : claimStatus.isClaimed) === true;
+  const ownershipResolving = isInitializing || claimLoading || profileLoading;
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { "data-ocid": `add_myself.match.${index2}`, className: "match-card", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "match-card-portrait", "aria-hidden": "true", children: initials(match.name) }),
     /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "match-card-body", children: [
@@ -62490,7 +62747,7 @@ function MatchCard({
             "Checking…"
           ]
         }
-      ) : ownedByCurrentUser ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+      ) : ownedByCurrentUser || claimedByAnotherOwner ? /* @__PURE__ */ jsxRuntimeExports.jsx(
         "span",
         {
           "data-ocid": `add_myself.this_is_me.owned.${index2}`,
@@ -66117,7 +66374,7 @@ function BoardReplyThread({
   onRemoveReply,
   onOpenProfile
 }) {
-  const { data: isAdmin = false } = useIsAdmin();
+  const { data: isSteward = false } = useIsSteward();
   const [draft, setDraft] = reactExports.useState("");
   const canSend = draft.trim().length > 0 && !isSending;
   const handleSend = () => {
@@ -66137,7 +66394,7 @@ function BoardReplyThread({
       ReplyItem$1,
       {
         reply,
-        isAdmin,
+        isSteward,
         onRemoveReply,
         onOpenProfile
       },
@@ -66179,7 +66436,7 @@ function BoardReplyThread({
 }
 function ReplyItem$1({
   reply,
-  isAdmin,
+  isSteward,
   onRemoveReply,
   onOpenProfile
 }) {
@@ -66211,7 +66468,7 @@ function ReplyItem$1({
       ] }),
       /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "reply-text whitespace-pre-line", children: reply.body })
     ] }),
-    isAdmin ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+    isSteward ? /* @__PURE__ */ jsxRuntimeExports.jsx(
       "button",
       {
         type: "button",
@@ -66268,7 +66525,7 @@ function BoardPostPage({
   onEdit
 }) {
   const { personId: myPersonId } = useNavbarIdentity();
-  const { data: isAdmin = false } = useIsAdmin();
+  const { data: isSteward = false } = useIsSteward();
   const { data: post } = useGetBoardPost(postId);
   const { data: replies = [], isLoading: repliesLoading } = useListBoardReplies(postId);
   const { data: archiveItems = [] } = useApprovedArchiveItems();
@@ -66483,7 +66740,7 @@ function BoardPostPage({
                   ]
                 }
               ) : null,
-              isAdmin && !isArchived ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              isSteward && !isArchived ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
                 "button",
                 {
                   type: "button",
@@ -66503,7 +66760,7 @@ function BoardPostPage({
                   ]
                 }
               ) : null,
-              isAdmin && isArchived ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              isSteward && isArchived ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
                 "button",
                 {
                   type: "button",
@@ -69082,9 +69339,9 @@ const TABS$1 = [
 function FamilyStewardGovernancePage({
   onBack
 }) {
-  const { data: isAdmin = false, isLoading: adminLoading } = useIsAdmin();
+  const { data: isSteward = false, isLoading: stewardLoading } = useIsSteward();
   const [activeTab, setActiveTab] = reactExports.useState("review");
-  if (!adminLoading && !isAdmin) {
+  if (!stewardLoading && !isSteward) {
     return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto w-full max-w-3xl px-6 py-8", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsxs(
         "button",
@@ -69172,7 +69429,7 @@ function FamilyStewardGovernancePage({
   ] });
 }
 function usePendingCount() {
-  const { data: isAdmin = false } = useIsAdmin();
+  const { data: isSteward = false } = useIsSteward();
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
     queryKey: ["pendingContributionsCount"],
@@ -69181,7 +69438,7 @@ function usePendingCount() {
       const count2 = await actor.getPendingContributionsCount();
       return Number(count2);
     },
-    enabled: isAdmin && !!actor && !isFetching
+    enabled: isSteward && !!actor && !isFetching
   });
 }
 function PendingContributionsBadge() {
@@ -69217,7 +69474,7 @@ function FamilyStewardHubPage({
   onOpenResearchIntake,
   onOpenHiddenPosts
 }) {
-  const { data: isAdmin = false } = useIsAdmin();
+  const { data: isSteward = false } = useIsSteward();
   const { data: claims = [] } = useListProfileClaims();
   const { data: requests = [] } = useListRelationshipRequests();
   const { data: reports = [] } = useListReports();
@@ -69228,7 +69485,7 @@ function FamilyStewardHubPage({
   const pendingReports = reports.filter((r2) => r2.status === "Pending").length;
   const pendingArchiveCount = pendingArchiveItems.length;
   const pendingResearchCount = reviewQueue ? Number(reviewQueue.pending) + Number(reviewQueue.needsResearch) + Number(reviewQueue.conflicting) : 0;
-  if (!isAdmin) {
+  if (!isSteward) {
     return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto w-full max-w-2xl px-4 py-8", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsxs("header", { className: "hub-header mb-8", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -69733,7 +69990,7 @@ function personName$1(personId) {
 function FamilyStewardReviewPage({
   onBack
 }) {
-  const { data: isAdmin = false, isLoading: adminLoading } = useIsAdmin();
+  const { data: isSteward = false, isLoading: stewardLoading } = useIsSteward();
   const { data: claims = [], isLoading: claimsLoading } = useListProfileClaims();
   const { data: requests = [], isLoading: requestsLoading } = useListRelationshipRequests();
   const approveClaim = useApproveProfileClaim();
@@ -69743,8 +70000,8 @@ function FamilyStewardReviewPage({
   const setPending = useSetRelationshipRequestPending();
   const pendingClaims = claims.filter((c2) => c2.status === "Pending");
   const pendingRequests = requests.filter((r2) => r2.status === "Pending");
-  const isLoading = adminLoading || claimsLoading || requestsLoading;
-  if (!adminLoading && !isAdmin) {
+  const isLoading = stewardLoading || claimsLoading || requestsLoading;
+  if (!stewardLoading && !isSteward) {
     return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto w-full max-w-3xl px-6 py-8", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsxs(
         "button",
@@ -71441,7 +71698,7 @@ function BoardPostCard({
   onRestore
 }) {
   const { personId: myPersonId } = useNavbarIdentity();
-  const { data: isAdmin = false } = useIsAdmin();
+  const { data: isSteward = false } = useIsSteward();
   const { data: archiveItems = [] } = useApprovedArchiveItems();
   const { data: replies = [] } = useListBoardReplies(post.postId);
   const canonical = useCanonicalPerson(post.authorPersonId, "");
@@ -71585,7 +71842,7 @@ function BoardPostCard({
                 ]
               }
             ) : null,
-            isAdmin && !isArchived ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            isSteward && !isArchived ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
               "button",
               {
                 type: "button",
@@ -71598,7 +71855,7 @@ function BoardPostCard({
                 ]
               }
             ) : null,
-            isAdmin && isArchived ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            isSteward && isArchived ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
               "button",
               {
                 type: "button",
@@ -72696,7 +72953,7 @@ function MysteriesPage({
 }) {
   const { data: mysteries = [], isLoading } = useMysteries();
   const { isAuthenticated } = useAuth();
-  const { data: isAdmin = false } = useIsAdmin();
+  const { data: isSteward = false } = useIsSteward();
   const [filter2, setFilter] = reactExports.useState("All");
   const [selectedId, setSelectedId] = reactExports.useState(
     initialMysteryId ?? null
@@ -72724,7 +72981,7 @@ function MysteriesPage({
           },
           onOpenProfile,
           onContribute: () => setShowContribute(true),
-          isAdmin,
+          isAdmin: isSteward,
           isAuthenticated
         }
       ),
@@ -72755,7 +73012,7 @@ function MysteriesPage({
         }
       )
     ] }),
-    isAdmin && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    isSteward && /* @__PURE__ */ jsxRuntimeExports.jsxs(
       "div",
       {
         "data-ocid": "mysteries.steward_panel",
@@ -73635,7 +73892,7 @@ function ProfileEditPage({
   );
   const isLiving = (backendProfile == null ? void 0 : backendProfile.livingStatus) === LivingStatus.Living;
   const isClaimed = (backendProfile == null ? void 0 : backendProfile.claimStatus) === ClaimStatus.Claimed;
-  const { data: isSteward = false } = useIsAdmin();
+  const { data: isSteward = false } = useIsSteward();
   const isClaimedByAnother = Boolean(
     (backendProfile == null ? void 0 : backendProfile.claimedByUserId) && currentPrincipal && backendProfile.claimedByUserId.toString() !== currentPrincipal
   );
@@ -76022,7 +76279,7 @@ function ConflictCard$1({ item }) {
 function ResearchConflictReviewPage({
   onBack
 }) {
-  const { data: isAdmin = false } = useIsAdmin();
+  const { data: isSteward = false } = useIsSteward();
   const {
     data: conflicts = [],
     isLoading,
@@ -76041,7 +76298,7 @@ function ResearchConflictReviewPage({
       void refetch();
     }
   }, [guardActive, refetch]);
-  if (!isAdmin) {
+  if (!isSteward) {
     return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto w-full max-w-3xl px-4 py-8", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsxs("header", { className: "hub-header mb-8", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -77843,7 +78100,7 @@ function ResearchIntakePage({
   onOpenReviewQueue,
   onOpenConflictReview
 }) {
-  const { data: isAdmin = false, isLoading: adminLoading } = useIsAdmin();
+  const { data: isSteward = false, isLoading: stewardLoading } = useIsSteward();
   const { data: reviewQueue } = useGetReviewQueue();
   const { data: conflictItems = [] } = useListConflictReviewItems();
   const [tab, setTab] = reactExports.useState("sources");
@@ -77851,7 +78108,7 @@ function ResearchIntakePage({
   const reviewQueueConflicting = conflictItems.filter(
     (item) => item.status === ReviewStatus.Conflicting || item.status === ReviewStatus.NeedsResearch
   ).length;
-  if (!adminLoading && !isAdmin) {
+  if (!stewardLoading && !isSteward) {
     return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto w-full max-w-3xl px-6 py-8", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsxs(
         "button",
@@ -78616,7 +78873,7 @@ function ConflictCard({ item }) {
 function ResearchReviewQueuePage({
   onBack
 }) {
-  const { data: isAdmin = false, isLoading: adminLoading } = useIsAdmin();
+  const { data: isSteward = false, isLoading: stewardLoading } = useIsSteward();
   const { data: reviewQueue } = useGetReviewQueue();
   const { data: findings = [], isLoading: findingsLoading } = useListFindings();
   const { data: candidates = [], isLoading: candidatesLoading } = useListNewPersonCandidates();
@@ -78667,8 +78924,8 @@ function ResearchReviewQueuePage({
   const approvedCount = reviewQueue ? Number(reviewQueue.approved) : 0;
   const conflictingCount = reviewQueue ? Number(reviewQueue.conflicting) : 0;
   const needsResearchCount = reviewQueue ? Number(reviewQueue.needsResearch) : 0;
-  const isLoading = adminLoading || findingsLoading || candidatesLoading || proposalsLoading || conflictsLoading;
-  if (!adminLoading && !isAdmin) {
+  const isLoading = stewardLoading || findingsLoading || candidatesLoading || proposalsLoading || conflictsLoading;
+  if (!stewardLoading && !isSteward) {
     return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto w-full max-w-3xl px-6 py-8", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsxs(
         "button",
@@ -79677,7 +79934,7 @@ function StoriesPage({
   initialStoryId
 }) {
   const { data: stories = [], isLoading } = useApprovedStories();
-  const { data: isAdmin = false } = useIsAdmin();
+  const { data: isSteward = false } = useIsSteward();
   const { isAuthenticated } = useAuth();
   const { data: pendingStories = [] } = usePendingStories();
   const approveStory = useApproveStory();
@@ -79710,7 +79967,7 @@ function StoriesPage({
         story: selectedStory,
         onBack: () => setView("browse"),
         onOpenProfile,
-        isSteward: isAdmin,
+        isSteward,
         onEdit: openForm
       }
     );
@@ -79720,7 +79977,7 @@ function StoriesPage({
       StoryContributionForm,
       {
         onClose: () => setView("browse"),
-        isSteward: isAdmin,
+        isSteward,
         initialStory: editingStory ?? void 0
       }
     ) });
@@ -79757,7 +80014,7 @@ function StoriesPage({
         )
       ] })
     ] }),
-    isAdmin && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mb-6 rounded-xl border border-border/60 bg-card p-4", children: [
+    isSteward && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mb-6 rounded-xl border border-border/60 bg-card p-4", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mb-3 flex items-center justify-between gap-3", children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground", children: "Steward controls" }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs(
@@ -81614,6 +81871,23 @@ function ProfileLoadingState() {
     }
   );
 }
+function StewardOnly({
+  isSteward,
+  children
+}) {
+  if (isSteward) return /* @__PURE__ */ jsxRuntimeExports.jsx(jsxRuntimeExports.Fragment, { children });
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "div",
+    {
+      "data-ocid": "steward.unauthorized_state",
+      className: "mx-auto flex w-full max-w-2xl flex-col items-center justify-center gap-3 px-6 py-24 text-center",
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-display text-xl font-semibold text-foreground", children: "Steward access only" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "max-w-sm text-sm text-muted-foreground", children: "This area is reserved for authorized Norwood Family Stewards. If you believe this is a mistake, contact a current Steward." })
+      ]
+    }
+  );
+}
 function App() {
   const origin = loadOriginatingView();
   const [view, setView] = reactExports.useState(
@@ -81637,7 +81911,7 @@ function App() {
   const [selectedConversationId, setSelectedConversationId] = reactExports.useState(null);
   const [selectedConversationPersonId, setSelectedConversationPersonId] = reactExports.useState(null);
   const [recipeContributePreselect, setRecipeContributePreselect] = reactExports.useState(null);
-  const { data: isAdmin = false, isLoading: isAdminLoading } = useIsAdmin();
+  const { data: isSteward = false, isLoading: isStewardLoading } = useIsSteward();
   const { isAuthenticated, accountId, signOut } = useAuth();
   const {
     displayName,
@@ -81648,7 +81922,7 @@ function App() {
   } = useNavbarIdentity();
   const isApprovedMember = claimStatus === ClaimStatus.Claimed;
   const hasClaimedProfile = claimStatus === ClaimStatus.Claimed;
-  const isHydrating2 = isAuthenticated && (identityLoading || isAdminLoading);
+  const isHydrating2 = isAuthenticated && (identityLoading || isStewardLoading);
   const profile = profiles[profileId] ?? profiles.julia;
   const isStaticProfile = Boolean(profiles[profileId]);
   const { data: myBackendProfile } = usePersonProfile(profileId, {
@@ -81736,10 +82010,10 @@ function App() {
     }
     setView("add-myself");
   }, [claimStatus, myPersonId]);
-  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
     Layout,
     {
-      isAdmin,
+      isSteward,
       isAuthenticated,
       isApprovedMember,
       isHydrating: isHydrating2,
@@ -81762,347 +82036,362 @@ function App() {
       onMessageBoardClick: () => setView("message-board-hub"),
       onStewardClick: () => setView("steward-hub"),
       onNotificationsClick: () => setView("notifications"),
-      children: view === "home" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
-        HomePage,
-        {
-          onExplore: () => openExploreFamily(null),
-          onAddToHistory: () => setView("archive-contribute"),
-          onOpenBranch: () => setView("heritage-branch"),
-          onOpenStories: () => {
-            setPendingStoryId(null);
-            setView("stories");
-          },
-          onOpenMysteries: () => {
-            setPendingMysteryId(null);
-            setView("mysteries");
-          },
-          onOpenTimeline: () => setView("timeline"),
-          onOpenVideos: () => setView("videos"),
-          onOpenRecipes: openRecipes
-        }
-      ) : view === "family-tree" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
-        ExploreFamilyPage,
-        {
-          focusPersonId: exploreFocusId,
-          onSelectPerson: (id2) => setExploreFocusId(id2),
-          onOpenProfile: (id2) => {
-            setExploredPersonId(id2);
-            setProfileId(id2);
-            setView("profile");
-          },
-          onSignIn: () => {
-            saveOriginatingView({ view });
-            setView("sign-in");
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          ClaimStewardControl,
+          {
+            isAuthenticated,
+            isHydrating: isHydrating2,
+            onClaimed: () => setView("steward-hub")
           }
-        }
-      ) : view === "heritage-branch" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
-        HeritageBranchPage,
-        {
-          onOpenExploreFamily: openExploreFamily,
-          onSignIn: () => {
-            saveOriginatingView({ view });
-            setView("sign-in");
+        ),
+        view === "home" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          HomePage,
+          {
+            onExplore: () => openExploreFamily(null),
+            onAddToHistory: () => setView("archive-contribute"),
+            onOpenBranch: () => setView("heritage-branch"),
+            onOpenStories: () => {
+              setPendingStoryId(null);
+              setView("stories");
+            },
+            onOpenMysteries: () => {
+              setPendingMysteryId(null);
+              setView("mysteries");
+            },
+            onOpenTimeline: () => setView("timeline"),
+            onOpenVideos: () => setView("videos"),
+            onOpenRecipes: openRecipes
           }
-        }
-      ) : view === "profile" ? isStaticProfile || resolvedProfile ? /* @__PURE__ */ jsxRuntimeExports.jsx(
-        PersonProfilePage,
-        {
-          person: resolvedProfile ?? profile,
-          onBack: () => setView("family-tree"),
-          onProfilePhotoChange: () => {
-          },
-          onEditProfile: () => setView("profile-edit"),
-          onClaimApproved: openMyProfile,
-          onOpenMediaItem: openMediaItem,
-          onOpenRecipes: openRecipes,
-          onOpenRecipe: openRecipe,
-          onOpenConversation: (personId) => {
-            setSelectedConversationPersonId(personId);
-            setSelectedConversationId(null);
-            setView("conversation");
-          },
-          onOpenRecipeContribute: (preselect) => openRecipeContribute({
-            personId: preselect.personId,
-            role: "originating",
-            context: "profile"
-          }),
-          onOpenConflictReview: () => setView("research-conflict"),
-          onAddMedia: (action) => openMediaContribute({
-            personId: (resolvedProfile ?? profile).id,
-            kind: action === "video" ? "uploaded-video" : action === "oral-history" ? "oral-history-video" : "audio-only-oral-history",
-            speaker: action === "oral-history" ? (resolvedProfile ?? profile).id : null,
-            returnView: "profile"
-          })
-        }
-      ) : /* @__PURE__ */ jsxRuntimeExports.jsx(ProfileLoadingState, {}) : view === "my-profile" ? isStaticProfile || resolvedProfile ? /* @__PURE__ */ jsxRuntimeExports.jsx(
-        PersonProfilePage,
-        {
-          person: resolvedProfile ?? profile,
-          onBack: () => setView("home"),
-          onProfilePhotoChange: () => {
-          },
-          onEditProfile: () => setView("profile-edit"),
-          onClaimApproved: openMyProfile,
-          onOpenMediaItem: openMediaItem,
-          onOpenRecipes: openRecipes,
-          onOpenRecipe: openRecipe,
-          onOpenConversation: (personId) => {
-            setSelectedConversationPersonId(personId);
-            setSelectedConversationId(null);
-            setView("conversation");
-          },
-          onOpenRecipeContribute: (preselect) => openRecipeContribute({
-            personId: preselect.personId,
-            role: "originating",
-            context: "profile"
-          }),
-          onOpenConflictReview: () => setView("research-conflict"),
-          onAddMedia: (action) => openMediaContribute({
-            personId: (resolvedProfile ?? profile).id,
-            kind: action === "video" ? "uploaded-video" : action === "oral-history" ? "oral-history-video" : "audio-only-oral-history",
-            speaker: action === "oral-history" ? (resolvedProfile ?? profile).id : null,
-            returnView: "profile"
-          })
-        }
-      ) : (
-        // A createMyself / backend profile is still resolving. Show a loading
-        // state instead of falling back to another person's profile (e.g.
-        // julia) so a valid personId never flashes the wrong profile.
-        /* @__PURE__ */ jsxRuntimeExports.jsx(ProfileLoadingState, {})
-      ) : view === "archive-contribute" ? /* @__PURE__ */ jsxRuntimeExports.jsx(ArchiveContributionPage, { onBack: () => setView("home") }) : view === "admin-approval" ? /* @__PURE__ */ jsxRuntimeExports.jsx(AdminApprovalPage, { onBack: () => setView("home") }) : view === "steward-review" ? /* @__PURE__ */ jsxRuntimeExports.jsx(FamilyStewardReviewPage, { onBack: () => setView("home") }) : view === "governance" ? /* @__PURE__ */ jsxRuntimeExports.jsx(FamilyStewardGovernancePage, { onBack: () => setView("home") }) : view === "add-myself" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
-        AddMyselfPage,
-        {
-          onBack: () => setView("home"),
-          onOpenProfile: (id2) => {
-            setProfileId(id2);
-            setView("profile");
-          },
-          onClaimApproved: openMyProfile
-        }
-      ) : view === "profile-edit" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
-        ProfileEditPage,
-        {
-          personId: profileId,
-          onBack: () => setView("profile")
-        }
-      ) : view === "notifications" ? /* @__PURE__ */ jsxRuntimeExports.jsx(NotificationsPage, {}) : view === "sign-in" ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center px-6 py-12", children: /* @__PURE__ */ jsxRuntimeExports.jsx(LoginSurface, {}) }) : view === "stories" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
-        StoriesPage,
-        {
-          onBack: () => setView("home"),
-          onOpenProfile: openProfile,
-          initialStoryId: pendingStoryId
-        }
-      ) : view === "mysteries" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
-        MysteriesPage,
-        {
-          onBack: () => setView("home"),
-          onOpenProfile: openProfile,
-          initialMysteryId: pendingMysteryId
-        }
-      ) : view === "timeline" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
-        TimelinePage,
-        {
-          onBack: () => setView("home"),
-          onOpenProfile: openProfile,
-          onOpenStory: openStory,
-          onOpenArchiveItem: openArchiveItem,
-          onOpenMystery: openMystery
-        }
-      ) : view === "archive" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
-        ArchivePage,
-        {
-          onBack: () => setView("home"),
-          onOpenArchiveItem: openArchiveItem,
-          onOpenVideos: () => setView("videos"),
-          onOpenRecipes: openRecipes,
-          onAddToArchive: () => setView("archive-contribute")
-        }
-      ) : view === "videos" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
-        VideosPage,
-        {
-          onBack: () => setView("archive"),
-          onOpenMediaItem: openMediaItem,
-          onAddMedia: () => openMediaContribute({
-            personId: null,
-            kind: null,
-            speaker: null,
-            returnView: "videos"
-          })
-        }
-      ) : view === "video-detail" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
-        VideoDetailPage,
-        {
-          itemId: selectedMediaItemId ?? 0n,
-          onBack: () => setView("videos"),
-          onOpenProfile: (id2) => {
-            setProfileId(id2);
-            setView("profile");
+        ) : view === "family-tree" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          ExploreFamilyPage,
+          {
+            focusPersonId: exploreFocusId,
+            onSelectPerson: (id2) => setExploreFocusId(id2),
+            onOpenProfile: (id2) => {
+              setExploredPersonId(id2);
+              setProfileId(id2);
+              setView("profile");
+            },
+            onSignIn: () => {
+              saveOriginatingView({ view });
+              setView("sign-in");
+            }
           }
-        }
-      ) : view === "video-contribute" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
-        VideoContributePage,
-        {
-          onBack: () => (mediaContributePreselect == null ? void 0 : mediaContributePreselect.returnView) === "profile" ? setView("profile") : setView("videos"),
-          onViewPendingContributions: () => setView("admin-approval"),
-          initialKind: (mediaContributePreselect == null ? void 0 : mediaContributePreselect.kind) ?? void 0,
-          initialRelatedMemberIds: (mediaContributePreselect == null ? void 0 : mediaContributePreselect.personId) ? [mediaContributePreselect.personId] : void 0,
-          initialSpeakerId: (mediaContributePreselect == null ? void 0 : mediaContributePreselect.speaker) ?? void 0
-        }
-      ) : view === "recipes" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
-        RecipesPage,
-        {
-          onBack: () => setView("home"),
-          onOpenRecipe: openRecipe,
-          onAddRecipe: () => openRecipeContribute({
-            personId: null,
-            role: null,
-            context: "recipes"
-          })
-        }
-      ) : view === "recipe-detail" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
-        RecipeDetailPage,
-        {
-          recipeId: selectedRecipeId ?? 0n,
-          onBack: () => setView("recipes"),
-          onOpenProfile: (id2) => {
-            setProfileId(id2);
-            setView("profile");
+        ) : view === "heritage-branch" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          HeritageBranchPage,
+          {
+            onOpenExploreFamily: openExploreFamily,
+            onSignIn: () => {
+              saveOriginatingView({ view });
+              setView("sign-in");
+            }
           }
-        }
-      ) : view === "recipe-contribute" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
-        RecipeContributePage,
-        {
-          onBack: () => (recipeContributePreselect == null ? void 0 : recipeContributePreselect.context) === "profile" ? setView("profile") : setView("recipes"),
-          onOpenRecipes: openRecipes,
-          preselect: (recipeContributePreselect == null ? void 0 : recipeContributePreselect.personId) && recipeContributePreselect.role ? {
-            personId: recipeContributePreselect.personId,
-            role: recipeContributePreselect.role
-          } : void 0
-        }
-      ) : view === "board" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
-        MessageBoardPage,
-        {
-          onBack: () => setView("home"),
-          onOpenPost: (id2) => {
-            setSelectedPostId(id2);
-            setView("board-post");
-          },
-          onCompose: () => {
-            setComposePostId(null);
-            setView("board-compose");
-          },
-          onOpenProfile: (id2) => {
-            setProfileId(id2);
-            setView("profile");
+        ) : view === "profile" ? isStaticProfile || resolvedProfile ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          PersonProfilePage,
+          {
+            person: resolvedProfile ?? profile,
+            onBack: () => setView("family-tree"),
+            onProfilePhotoChange: () => {
+            },
+            onEditProfile: () => setView("profile-edit"),
+            onClaimApproved: openMyProfile,
+            onOpenMediaItem: openMediaItem,
+            onOpenRecipes: openRecipes,
+            onOpenRecipe: openRecipe,
+            onOpenConversation: (personId) => {
+              setSelectedConversationPersonId(personId);
+              setSelectedConversationId(null);
+              setView("conversation");
+            },
+            onOpenRecipeContribute: (preselect) => openRecipeContribute({
+              personId: preselect.personId,
+              role: "originating",
+              context: "profile"
+            }),
+            onOpenConflictReview: () => setView("research-conflict"),
+            onAddMedia: (action) => openMediaContribute({
+              personId: (resolvedProfile ?? profile).id,
+              kind: action === "video" ? "uploaded-video" : action === "oral-history" ? "oral-history-video" : "audio-only-oral-history",
+              speaker: action === "oral-history" ? (resolvedProfile ?? profile).id : null,
+              returnView: "profile"
+            })
           }
-        }
-      ) : view === "board-post" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
-        BoardPostPage,
-        {
-          postId: selectedPostId ?? 0n,
-          onBack: () => setView("board"),
-          onOpenProfile: (id2) => {
-            setProfileId(id2);
-            setView("profile");
-          },
-          onEdit: () => {
-            setComposePostId(selectedPostId);
-            setView("board-compose");
+        ) : /* @__PURE__ */ jsxRuntimeExports.jsx(ProfileLoadingState, {}) : view === "my-profile" ? isStaticProfile || resolvedProfile ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          PersonProfilePage,
+          {
+            person: resolvedProfile ?? profile,
+            onBack: () => setView("home"),
+            onProfilePhotoChange: () => {
+            },
+            onEditProfile: () => setView("profile-edit"),
+            onClaimApproved: openMyProfile,
+            onOpenMediaItem: openMediaItem,
+            onOpenRecipes: openRecipes,
+            onOpenRecipe: openRecipe,
+            onOpenConversation: (personId) => {
+              setSelectedConversationPersonId(personId);
+              setSelectedConversationId(null);
+              setView("conversation");
+            },
+            onOpenRecipeContribute: (preselect) => openRecipeContribute({
+              personId: preselect.personId,
+              role: "originating",
+              context: "profile"
+            }),
+            onOpenConflictReview: () => setView("research-conflict"),
+            onAddMedia: (action) => openMediaContribute({
+              personId: (resolvedProfile ?? profile).id,
+              kind: action === "video" ? "uploaded-video" : action === "oral-history" ? "oral-history-video" : "audio-only-oral-history",
+              speaker: action === "oral-history" ? (resolvedProfile ?? profile).id : null,
+              returnView: "profile"
+            })
           }
-        }
-      ) : view === "board-compose" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
-        BoardPostComposer,
-        {
-          postId: composePostId,
-          onBack: () => composePostId !== null ? setView("board-post") : setView("board"),
-          onOpenProfile: (id2) => {
-            setProfileId(id2);
-            setView("profile");
+        ) : (
+          // A createMyself / backend profile is still resolving. Show a loading
+          // state instead of falling back to another person's profile (e.g.
+          // julia) so a valid personId never flashes the wrong profile.
+          /* @__PURE__ */ jsxRuntimeExports.jsx(ProfileLoadingState, {})
+        ) : view === "archive-contribute" ? /* @__PURE__ */ jsxRuntimeExports.jsx(ArchiveContributionPage, { onBack: () => setView("home") }) : view === "admin-approval" ? /* @__PURE__ */ jsxRuntimeExports.jsx(StewardOnly, { isSteward, children: /* @__PURE__ */ jsxRuntimeExports.jsx(AdminApprovalPage, { onBack: () => setView("home") }) }) : view === "steward-review" ? /* @__PURE__ */ jsxRuntimeExports.jsx(StewardOnly, { isSteward, children: /* @__PURE__ */ jsxRuntimeExports.jsx(FamilyStewardReviewPage, { onBack: () => setView("home") }) }) : view === "governance" ? /* @__PURE__ */ jsxRuntimeExports.jsx(StewardOnly, { isSteward, children: /* @__PURE__ */ jsxRuntimeExports.jsx(FamilyStewardGovernancePage, { onBack: () => setView("home") }) }) : view === "add-myself" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          AddMyselfPage,
+          {
+            onBack: () => setView("home"),
+            onOpenProfile: (id2) => {
+              setProfileId(id2);
+              setView("profile");
+            },
+            onClaimApproved: openMyProfile
           }
-        }
-      ) : view === "inbox" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
-        InboxPage,
-        {
-          onBack: () => setView("home"),
-          onOpenConversation: (id2) => {
-            setSelectedConversationId(id2);
-            setSelectedConversationPersonId(null);
-            setView("conversation");
+        ) : view === "profile-edit" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          ProfileEditPage,
+          {
+            personId: profileId,
+            onBack: () => setView("profile")
           }
-        }
-      ) : view === "conversation" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
-        ConversationPage,
-        {
-          conversationId: selectedConversationId,
-          personId: selectedConversationPersonId,
-          onBack: () => setView("inbox"),
-          onOpenProfile: (id2) => {
-            setProfileId(id2);
-            setView("profile");
+        ) : view === "notifications" ? /* @__PURE__ */ jsxRuntimeExports.jsx(NotificationsPage, {}) : view === "sign-in" ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center px-6 py-12", children: /* @__PURE__ */ jsxRuntimeExports.jsx(LoginSurface, {}) }) : view === "stories" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          StoriesPage,
+          {
+            onBack: () => setView("home"),
+            onOpenProfile: openProfile,
+            initialStoryId: pendingStoryId
           }
-        }
-      ) : view === "family-history" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
-        FamilyHistoryHubPage,
-        {
-          onBack: () => setView("home"),
-          onOpenStories: () => {
-            setPendingStoryId(null);
-            setView("stories");
-          },
-          onOpenMysteries: () => {
-            setPendingMysteryId(null);
-            setView("mysteries");
-          },
-          onOpenTimeline: () => setView("timeline")
-        }
-      ) : view === "message-board-hub" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
-        MessageBoardHubPage,
-        {
-          onBack: () => setView("home"),
-          onOpenBoard: () => setView("board"),
-          onOpenInbox: () => setView("inbox")
-        }
-      ) : view === "steward-hub" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
-        FamilyStewardHubPage,
-        {
-          onBack: () => setView("home"),
-          onOpenReview: () => setView("steward-review"),
-          onOpenPendingContributions: () => setView("admin-approval"),
-          onOpenGovernance: () => setView("governance"),
-          onOpenResearchIntake: () => setView("research-intake"),
-          onOpenHiddenPosts: () => setView("hidden-posts")
-        }
-      ) : view === "hidden-posts" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
-        HiddenPostsPage,
-        {
-          onBack: () => setView("steward-hub"),
-          onOpenPost: (id2) => {
-            setSelectedPostId(id2);
-            setView("board-post");
-          },
-          onOpenProfile: (id2) => {
-            setProfileId(id2);
-            setView("profile");
+        ) : view === "mysteries" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          MysteriesPage,
+          {
+            onBack: () => setView("home"),
+            onOpenProfile: openProfile,
+            initialMysteryId: pendingMysteryId
           }
-        }
-      ) : view === "research-intake" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
-        ResearchIntakePage,
-        {
-          onBack: () => setView("steward-hub"),
-          onOpenReviewQueue: () => setView("research-queue"),
-          onOpenConflictReview: () => setView("research-conflict")
-        }
-      ) : view === "research-queue" ? /* @__PURE__ */ jsxRuntimeExports.jsx(ResearchReviewQueuePage, { onBack: () => setView("research-intake") }) : view === "research-conflict" ? /* @__PURE__ */ jsxRuntimeExports.jsx(ResearchConflictReviewPage, { onBack: () => setView("research-intake") }) : /* @__PURE__ */ jsxRuntimeExports.jsx(
-        ArchiveDetailPage,
-        {
-          itemId: selectedArchiveItemId ?? 0n,
-          onBack: () => setView("archive"),
-          onOpenProfile: (id2) => {
-            setProfileId(id2);
-            setView("profile");
+        ) : view === "timeline" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          TimelinePage,
+          {
+            onBack: () => setView("home"),
+            onOpenProfile: openProfile,
+            onOpenStory: openStory,
+            onOpenArchiveItem: openArchiveItem,
+            onOpenMystery: openMystery
           }
-        }
-      )
+        ) : view === "archive" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          ArchivePage,
+          {
+            onBack: () => setView("home"),
+            onOpenArchiveItem: openArchiveItem,
+            onOpenVideos: () => setView("videos"),
+            onOpenRecipes: openRecipes,
+            onAddToArchive: () => setView("archive-contribute")
+          }
+        ) : view === "videos" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          VideosPage,
+          {
+            onBack: () => setView("archive"),
+            onOpenMediaItem: openMediaItem,
+            onAddMedia: () => openMediaContribute({
+              personId: null,
+              kind: null,
+              speaker: null,
+              returnView: "videos"
+            })
+          }
+        ) : view === "video-detail" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          VideoDetailPage,
+          {
+            itemId: selectedMediaItemId ?? 0n,
+            onBack: () => setView("videos"),
+            onOpenProfile: (id2) => {
+              setProfileId(id2);
+              setView("profile");
+            }
+          }
+        ) : view === "video-contribute" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          VideoContributePage,
+          {
+            onBack: () => (mediaContributePreselect == null ? void 0 : mediaContributePreselect.returnView) === "profile" ? setView("profile") : setView("videos"),
+            onViewPendingContributions: () => setView("admin-approval"),
+            initialKind: (mediaContributePreselect == null ? void 0 : mediaContributePreselect.kind) ?? void 0,
+            initialRelatedMemberIds: (mediaContributePreselect == null ? void 0 : mediaContributePreselect.personId) ? [mediaContributePreselect.personId] : void 0,
+            initialSpeakerId: (mediaContributePreselect == null ? void 0 : mediaContributePreselect.speaker) ?? void 0
+          }
+        ) : view === "recipes" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          RecipesPage,
+          {
+            onBack: () => setView("home"),
+            onOpenRecipe: openRecipe,
+            onAddRecipe: () => openRecipeContribute({
+              personId: null,
+              role: null,
+              context: "recipes"
+            })
+          }
+        ) : view === "recipe-detail" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          RecipeDetailPage,
+          {
+            recipeId: selectedRecipeId ?? 0n,
+            onBack: () => setView("recipes"),
+            onOpenProfile: (id2) => {
+              setProfileId(id2);
+              setView("profile");
+            }
+          }
+        ) : view === "recipe-contribute" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          RecipeContributePage,
+          {
+            onBack: () => (recipeContributePreselect == null ? void 0 : recipeContributePreselect.context) === "profile" ? setView("profile") : setView("recipes"),
+            onOpenRecipes: openRecipes,
+            preselect: (recipeContributePreselect == null ? void 0 : recipeContributePreselect.personId) && recipeContributePreselect.role ? {
+              personId: recipeContributePreselect.personId,
+              role: recipeContributePreselect.role
+            } : void 0
+          }
+        ) : view === "board" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          MessageBoardPage,
+          {
+            onBack: () => setView("home"),
+            onOpenPost: (id2) => {
+              setSelectedPostId(id2);
+              setView("board-post");
+            },
+            onCompose: () => {
+              setComposePostId(null);
+              setView("board-compose");
+            },
+            onOpenProfile: (id2) => {
+              setProfileId(id2);
+              setView("profile");
+            }
+          }
+        ) : view === "board-post" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          BoardPostPage,
+          {
+            postId: selectedPostId ?? 0n,
+            onBack: () => setView("board"),
+            onOpenProfile: (id2) => {
+              setProfileId(id2);
+              setView("profile");
+            },
+            onEdit: () => {
+              setComposePostId(selectedPostId);
+              setView("board-compose");
+            }
+          }
+        ) : view === "board-compose" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          BoardPostComposer,
+          {
+            postId: composePostId,
+            onBack: () => composePostId !== null ? setView("board-post") : setView("board"),
+            onOpenProfile: (id2) => {
+              setProfileId(id2);
+              setView("profile");
+            }
+          }
+        ) : view === "inbox" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          InboxPage,
+          {
+            onBack: () => setView("home"),
+            onOpenConversation: (id2) => {
+              setSelectedConversationId(id2);
+              setSelectedConversationPersonId(null);
+              setView("conversation");
+            }
+          }
+        ) : view === "conversation" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          ConversationPage,
+          {
+            conversationId: selectedConversationId,
+            personId: selectedConversationPersonId,
+            onBack: () => setView("inbox"),
+            onOpenProfile: (id2) => {
+              setProfileId(id2);
+              setView("profile");
+            }
+          }
+        ) : view === "family-history" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          FamilyHistoryHubPage,
+          {
+            onBack: () => setView("home"),
+            onOpenStories: () => {
+              setPendingStoryId(null);
+              setView("stories");
+            },
+            onOpenMysteries: () => {
+              setPendingMysteryId(null);
+              setView("mysteries");
+            },
+            onOpenTimeline: () => setView("timeline")
+          }
+        ) : view === "message-board-hub" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          MessageBoardHubPage,
+          {
+            onBack: () => setView("home"),
+            onOpenBoard: () => setView("board"),
+            onOpenInbox: () => setView("inbox")
+          }
+        ) : view === "steward-hub" ? /* @__PURE__ */ jsxRuntimeExports.jsx(StewardOnly, { isSteward, children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+          FamilyStewardHubPage,
+          {
+            onBack: () => setView("home"),
+            onOpenReview: () => setView("steward-review"),
+            onOpenPendingContributions: () => setView("admin-approval"),
+            onOpenGovernance: () => setView("governance"),
+            onOpenResearchIntake: () => setView("research-intake"),
+            onOpenHiddenPosts: () => setView("hidden-posts")
+          }
+        ) }) : view === "hidden-posts" ? /* @__PURE__ */ jsxRuntimeExports.jsx(StewardOnly, { isSteward, children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+          HiddenPostsPage,
+          {
+            onBack: () => setView("steward-hub"),
+            onOpenPost: (id2) => {
+              setSelectedPostId(id2);
+              setView("board-post");
+            },
+            onOpenProfile: (id2) => {
+              setProfileId(id2);
+              setView("profile");
+            }
+          }
+        ) }) : view === "research-intake" ? /* @__PURE__ */ jsxRuntimeExports.jsx(StewardOnly, { isSteward, children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+          ResearchIntakePage,
+          {
+            onBack: () => setView("steward-hub"),
+            onOpenReviewQueue: () => setView("research-queue"),
+            onOpenConflictReview: () => setView("research-conflict")
+          }
+        ) }) : view === "research-queue" ? /* @__PURE__ */ jsxRuntimeExports.jsx(StewardOnly, { isSteward, children: /* @__PURE__ */ jsxRuntimeExports.jsx(ResearchReviewQueuePage, { onBack: () => setView("research-intake") }) }) : view === "research-conflict" ? /* @__PURE__ */ jsxRuntimeExports.jsx(StewardOnly, { isSteward, children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+          ResearchConflictReviewPage,
+          {
+            onBack: () => setView("research-intake")
+          }
+        ) }) : /* @__PURE__ */ jsxRuntimeExports.jsx(
+          ArchiveDetailPage,
+          {
+            itemId: selectedArchiveItemId ?? 0n,
+            onBack: () => setView("archive"),
+            onOpenProfile: (id2) => {
+              setProfileId(id2);
+              setView("profile");
+            }
+          }
+        )
+      ]
     }
   );
 }

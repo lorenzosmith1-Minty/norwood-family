@@ -1,4 +1,4 @@
-import { createActor } from "@/backend";
+import { ClaimStatus, createActor } from "@/backend";
 import type {
   PersonMatch,
   PersonProfile,
@@ -34,6 +34,31 @@ export function usePersonProfile(
       return actor.getPersonProfile(personId);
     },
     enabled: (options?.enabled ?? true) && !!actor && !isFetching,
+  });
+}
+
+/**
+ * Read-only view of a person profile's global claim state (whether the profile
+ * already has an approved owner), derived from the existing public
+ * getPersonProfile query. It exposes only the generic claimed/unclaimed signal
+ * — never the owner principal — so non-admin UI (the Add Myself match cards)
+ * can show an "Already claimed" state without leaking account identity.
+ *
+ * Reuses the same ["personProfile", personId] query key as usePersonProfile, so
+ * it shares the cache and adds no extra backend endpoint.
+ */
+export function usePersonClaimStatus(personId: string) {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["personProfile", personId],
+    queryFn: async () => {
+      if (!actor) return null;
+      return actor.getPersonProfile(personId);
+    },
+    enabled: !!actor && !isFetching,
+    select: (profile) => ({
+      isClaimed: profile?.claimStatus === ClaimStatus.Claimed,
+    }),
   });
 }
 

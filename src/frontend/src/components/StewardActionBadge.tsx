@@ -1,9 +1,10 @@
 import { ReportStatus } from "@/backend";
-import { useIsAdmin, usePendingArchiveItems } from "../hooks/useArchiveStorage";
+import { usePendingArchiveItems } from "../hooks/useArchiveStorage";
 import { useListReports } from "../hooks/useMessaging";
 import { useListProfileClaims } from "../hooks/useProfileClaims";
 import { useListRelationshipRequests } from "../hooks/useRelationshipRequests";
 import { useGetReviewQueue } from "../hooks/useResearchIntake";
+import { useIsSteward } from "../hooks/useStewardAuthority";
 
 /**
  * The aggregate action badge shown on the Family Steward nav pill. It sums the
@@ -20,14 +21,14 @@ import { useGetReviewQueue } from "../hooks/useResearchIntake";
  * a non-steward caller.
  */
 export function StewardActionBadge() {
-  const { data: isAdmin = false } = useIsAdmin();
+  const { data: isSteward = false } = useIsSteward();
   const { data: claims = [] } = useListProfileClaims();
   const { data: requests = [] } = useListRelationshipRequests();
   const { data: reports = [] } = useListReports();
   const { data: pendingArchive = [] } = usePendingArchiveItems();
   const { data: reviewQueue } = useGetReviewQueue();
 
-  if (!isAdmin) return null;
+  if (!isSteward) return null;
 
   const researchPending =
     Number(reviewQueue?.pending ?? 0n) +

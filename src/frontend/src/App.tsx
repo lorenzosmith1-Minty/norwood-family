@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
+import type { ReactNode } from "react";
+import { ClaimStewardControl } from "./components/ClaimStewardControl";
 import { Layout } from "./components/Layout";
 import { LoginSurface } from "./components/LoginSurface";
 import PendingContributionsBadge from "./components/PendingContributionsBadge";
-import { useIsAdmin } from "./hooks/useArchiveStorage";
 import { useAuth } from "./hooks/useAuth";
 import { resolveCanonicalPersonProfile } from "./hooks/useCanonicalPerson";
 import { useNavbarIdentity } from "./hooks/useNavbarIdentity";
 import { usePersonProfile } from "./hooks/useProfileClaims";
+import { useIsSteward } from "./hooks/useStewardAuthority";
 import {
   clearOriginatingView,
   loadOriginatingView,
@@ -155,6 +157,37 @@ function ProfileLoadingState() {
   );
 }
 
+/**
+ * Route-level guard for Steward-only views. The Family Steward navigation
+ * entry is hidden from non-Stewards, but a direct navigation to a Steward-only
+ * view must still render an unauthorized state rather than the Steward
+ * controls. The individual pages also gate themselves; this guard is the
+ * shared routing-level enforcement of the canonical Steward authority.
+ */
+function StewardOnly({
+  isSteward,
+  children,
+}: {
+  isSteward: boolean;
+  children: ReactNode;
+}) {
+  if (isSteward) return <>{children}</>;
+  return (
+    <div
+      data-ocid="steward.unauthorized_state"
+      className="mx-auto flex w-full max-w-2xl flex-col items-center justify-center gap-3 px-6 py-24 text-center"
+    >
+      <p className="font-display text-xl font-semibold text-foreground">
+        Steward access only
+      </p>
+      <p className="max-w-sm text-sm text-muted-foreground">
+        This area is reserved for authorized Norwood Family Stewards. If you
+        believe this is a mistake, contact a current Steward.
+      </p>
+    </div>
+  );
+}
+
 export default function App() {
   // Restore the originating view after a full-page Google/Apple auth redirect.
   // The view (and profile id, for a profile origin) is persisted to
@@ -231,7 +264,8 @@ export default function App() {
     role: "originating" | "related" | null;
     context: "recipes" | "profile";
   } | null>(null);
-  const { data: isAdmin = false, isLoading: isAdminLoading } = useIsAdmin();
+  const { data: isSteward = false, isLoading: isStewardLoading } =
+    useIsSteward();
   const { isAuthenticated, accountId, signOut } = useAuth();
   const {
     displayName,
@@ -256,7 +290,7 @@ export default function App() {
   // (Message Board, Family Steward) from incomplete state. So while any of
   // this state is still loading, the Layout shows a neutral skeleton in place
   // of the authenticated controls and only renders them once fully resolved.
-  const isHydrating = isAuthenticated && (identityLoading || isAdminLoading);
+  const isHydrating = isAuthenticated && (identityLoading || isStewardLoading);
 
   const profile = profiles[profileId] ?? profiles.julia;
 
@@ -417,7 +451,7 @@ export default function App() {
 
   return (
     <Layout
-      isAdmin={isAdmin}
+      isSteward={isSteward}
       isAuthenticated={isAuthenticated}
       isApprovedMember={isApprovedMember}
       isHydrating={isHydrating}
@@ -441,6 +475,11 @@ export default function App() {
       onStewardClick={() => setView("steward-hub")}
       onNotificationsClick={() => setView("notifications")}
     >
+      <ClaimStewardControl
+        isAuthenticated={isAuthenticated}
+        isHydrating={isHydrating}
+        onClaimed={() => setView("steward-hub")}
+      />
       {view === "home" ? (
         <HomePage
           onExplore={() => openExploreFamily(null)}
@@ -574,11 +613,17 @@ export default function App() {
       ) : view === "archive-contribute" ? (
         <ArchiveContributionPage onBack={() => setView("home")} />
       ) : view === "admin-approval" ? (
-        <AdminApprovalPage onBack={() => setView("home")} />
+        <StewardOnly isSteward={isSteward}>
+          <AdminApprovalPage onBack={() => setView("home")} />
+        </StewardOnly>
       ) : view === "steward-review" ? (
-        <FamilyStewardReviewPage onBack={() => setView("home")} />
+        <StewardOnly isSteward={isSteward}>
+          <FamilyStewardReviewPage onBack={() => setView("home")} />
+        </StewardOnly>
       ) : view === "governance" ? (
-        <FamilyStewardGovernancePage onBack={() => setView("home")} />
+        <StewardOnly isSteward={isSteward}>
+          <FamilyStewardGovernancePage onBack={() => setView("home")} />
+        </StewardOnly>
       ) : view === "add-myself" ? (
         <AddMyselfPage
           onBack={() => setView("home")}
@@ -783,36 +828,48 @@ export default function App() {
           onOpenInbox={() => setView("inbox")}
         />
       ) : view === "steward-hub" ? (
-        <FamilyStewardHubPage
-          onBack={() => setView("home")}
-          onOpenReview={() => setView("steward-review")}
-          onOpenPendingContributions={() => setView("admin-approval")}
-          onOpenGovernance={() => setView("governance")}
-          onOpenResearchIntake={() => setView("research-intake")}
-          onOpenHiddenPosts={() => setView("hidden-posts")}
-        />
+        <StewardOnly isSteward={isSteward}>
+          <FamilyStewardHubPage
+            onBack={() => setView("home")}
+            onOpenReview={() => setView("steward-review")}
+            onOpenPendingContributions={() => setView("admin-approval")}
+            onOpenGovernance={() => setView("governance")}
+            onOpenResearchIntake={() => setView("research-intake")}
+            onOpenHiddenPosts={() => setView("hidden-posts")}
+          />
+        </StewardOnly>
       ) : view === "hidden-posts" ? (
-        <HiddenPostsPage
-          onBack={() => setView("steward-hub")}
-          onOpenPost={(id) => {
-            setSelectedPostId(id);
-            setView("board-post");
-          }}
-          onOpenProfile={(id) => {
-            setProfileId(id);
-            setView("profile");
-          }}
-        />
+        <StewardOnly isSteward={isSteward}>
+          <HiddenPostsPage
+            onBack={() => setView("steward-hub")}
+            onOpenPost={(id) => {
+              setSelectedPostId(id);
+              setView("board-post");
+            }}
+            onOpenProfile={(id) => {
+              setProfileId(id);
+              setView("profile");
+            }}
+          />
+        </StewardOnly>
       ) : view === "research-intake" ? (
-        <ResearchIntakePage
-          onBack={() => setView("steward-hub")}
-          onOpenReviewQueue={() => setView("research-queue")}
-          onOpenConflictReview={() => setView("research-conflict")}
-        />
+        <StewardOnly isSteward={isSteward}>
+          <ResearchIntakePage
+            onBack={() => setView("steward-hub")}
+            onOpenReviewQueue={() => setView("research-queue")}
+            onOpenConflictReview={() => setView("research-conflict")}
+          />
+        </StewardOnly>
       ) : view === "research-queue" ? (
-        <ResearchReviewQueuePage onBack={() => setView("research-intake")} />
+        <StewardOnly isSteward={isSteward}>
+          <ResearchReviewQueuePage onBack={() => setView("research-intake")} />
+        </StewardOnly>
       ) : view === "research-conflict" ? (
-        <ResearchConflictReviewPage onBack={() => setView("research-intake")} />
+        <StewardOnly isSteward={isSteward}>
+          <ResearchConflictReviewPage
+            onBack={() => setView("research-intake")}
+          />
+        </StewardOnly>
       ) : (
         <ArchiveDetailPage
           itemId={selectedArchiveItemId ?? 0n}

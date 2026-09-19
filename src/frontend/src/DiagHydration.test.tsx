@@ -69,6 +69,17 @@ const {
         adminResolvers.push(resolve);
       });
     },
+    // Family Steward authority is the canonical gate; the platform admin role
+    // is a separate concern. Defer this the same way so hydration stays open
+    // until resolveAdmin() is called.
+    async isCallerSteward(): Promise<boolean> {
+      return new Promise<boolean>((resolve) => {
+        adminResolvers.push(resolve);
+      });
+    },
+    async hasActiveSteward(): Promise<boolean> {
+      return true;
+    },
     async getPersonProfile(personId: string): Promise<PersonProfile | null> {
       return profiles[personId] ?? null;
     },

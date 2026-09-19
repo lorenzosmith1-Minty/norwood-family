@@ -16,6 +16,7 @@ import { useAuth } from "../hooks/useAuth";
 import {
   useCreateMyself,
   useMyProfileClaim,
+  usePersonClaimStatus,
   useRequestProfileClaim,
   useSearchPossibleMatches,
 } from "../hooks/useProfileClaims";
@@ -203,8 +204,11 @@ function mergeMatches(
  * signed-in caller's own claim on this exact person so the "This is Me" action
  * is hidden when a pending or approved claim already exists for that person
  * (mirroring ClaimButton's hasActiveClaimByCurrentUser behavior) — the user is
- * never offered a duplicate claim. Each card queries its own claim because the
- * matches list is dynamic and hooks cannot be called in a loop.
+ * never offered a duplicate claim. It also reads the profile's global claim
+ * state (getPersonProfile) so a match whose profile already has an approved
+ * owner shows a non-interactive "Already claimed" state instead of an active
+ * "This is Me" action. Each card queries its own state because the matches list
+ * is dynamic and hooks cannot be called in a loop.
  */
 function MatchCard({
   match,
@@ -221,6 +225,11 @@ function MatchCard({
 }) {
   const { accountId, isInitializing } = useAuth();
   const { data: myClaim, isLoading: claimLoading } = useMyProfileClaim(
+    match.personId,
+  );
+  // The profile's global claim state: whether ANY approved owner exists. Only
+  // the generic claimed/unclaimed signal is exposed — never the owner identity.
+  const { data: claimStatus, isLoading: profileLoading } = usePersonClaimStatus(
     match.personId,
   );
 
@@ -241,12 +250,17 @@ function MatchCard({
     myClaim.status === "Pending" &&
     myClaim.requestingUserId.toString() === currentPrincipal;
 
-  // While the caller's own claim on this person is still resolving (or auth is
-  // still initializing), we cannot yet know whether they already own or have a
-  // pending claim on this profile. Do not render the "This is Me" claim control
-  // until that ownership state resolves — otherwise a signed-in owner would be
-  // offered a duplicate claim for a profile they already own or have pending.
-  const ownershipResolving = isInitializing || claimLoading;
+  // The profile already has an approved owner (possibly someone else). The
+  // match stays visible but offers no active claim action, so a second claim
+  // can never be started from this card.
+  const claimedByAnotherOwner = claimStatus?.isClaimed === true;
+
+  // While the caller's own claim or the profile's global claim state is still
+  // resolving (or auth is still initializing), we cannot yet know whether the
+  // profile is already owned. Do not render the "This is Me" claim control
+  // until both resolve — otherwise the card would flash an active claim button
+  // for a profile that is already claimed.
+  const ownershipResolving = isInitializing || claimLoading || profileLoading;
 
   return (
     <div data-ocid={`add_myself.match.${index}`} className="match-card">
@@ -270,7 +284,7 @@ function MatchCard({
             <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
             Checking…
           </span>
-        ) : ownedByCurrentUser ? (
+        ) : ownedByCurrentUser || claimedByAnotherOwner ? (
           <span
             data-ocid={`add_myself.this_is_me.owned.${index}`}
             className="claim-badge claim-badge-claimed"

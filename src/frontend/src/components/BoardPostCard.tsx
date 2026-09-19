@@ -1,9 +1,9 @@
 import { Archive, MessageSquare, Paperclip, Pencil, Undo2 } from "lucide-react";
 import { useApprovedArchiveItems } from "../hooks/useArchiveStorage";
-import { useIsAdmin } from "../hooks/useArchiveStorage";
 import { useListBoardReplies } from "../hooks/useBoard";
 import { useCanonicalPerson } from "../hooks/useCanonicalPerson";
 import { useNavbarIdentity } from "../hooks/useNavbarIdentity";
+import { useIsSteward } from "../hooks/useStewardAuthority";
 import { ARCHIVE_ITEM_TYPE_LABELS } from "../types/archive";
 import { POST_TYPE_LABELS, type Post, PostStatus } from "../types/board";
 
@@ -95,7 +95,7 @@ export function BoardPostCard({
   onRestore,
 }: BoardPostCardProps) {
   const { personId: myPersonId } = useNavbarIdentity();
-  const { data: isAdmin = false } = useIsAdmin();
+  const { data: isSteward = false } = useIsSteward();
   const { data: archiveItems = [] } = useApprovedArchiveItems();
   const { data: replies = [] } = useListBoardReplies(post.postId);
 
@@ -252,7 +252,7 @@ export function BoardPostCard({
             </button>
           ) : null}
 
-          {isAdmin && !isArchived ? (
+          {isSteward && !isArchived ? (
             <button
               type="button"
               data-ocid={`board.post.${index + 1}.steward_archive`}
@@ -264,7 +264,7 @@ export function BoardPostCard({
             </button>
           ) : null}
 
-          {isAdmin && isArchived ? (
+          {isSteward && isArchived ? (
             <button
               type="button"
               data-ocid={`board.post.${index + 1}.restore`}

@@ -9,9 +9,11 @@ import ArchiveTypes "../types/archive";
 import ResearchIntakeTypes "../types/research-intake";
 import BoardTypes "../types/board";
 import OwnershipTypes "../types/ownership";
+import GovernanceTypes "../types/governance";
 import Types "../types/archive-research-board-notifications";
 import Lib "../lib/archive-research-board-notifications";
 import FamilyAuthorizationLib "../lib/family-authorization";
+import StewardAuthorityLib "../lib/steward-authority";
 
 /// Public API for the cross-cutting archive / research-intake / board /
 /// notifications features: archive tag search, research source upload that
@@ -25,6 +27,7 @@ mixin (
   posts : List.List<BoardTypes.Post>,
   notifications : List.List<OwnershipTypes.Notification>,
   claims : List.List<OwnershipTypes.ProfileClaim>,
+  stewards : List.List<GovernanceTypes.StewardRecord>,
 ) {
   /// Traps unless the caller is a signed-in approved family member.
   func requireBoardMemberForMedia(caller : Principal) {
@@ -60,7 +63,7 @@ mixin (
   /// related family member, and era. Returns only `#Approved` items visible to
   /// the caller under the archive privacy rules.
   public query ({ caller }) func searchArchiveItems(filter : Types.ArchiveSearchFilter) : async [ArchiveTypes.ArchiveItem] {
-    let isAdmin = AccessControl.isAdmin(accessControlState, caller);
+    let isAdmin = StewardAuthorityLib.isActiveSteward(stewards, caller);
     let isApprovedFamilyMember = isAdmin or claims.toArray().any(func c = c.requestingUserId == caller and c.status == #Approved);
     Lib.searchArchiveItems(archiveItems, filter, caller, isAdmin, isApprovedFamilyMember);
   };
@@ -82,7 +85,7 @@ mixin (
     classification : ArchiveTypes.ArchiveItemClassification,
     primarySpeaker : ?ArchiveTypes.OralHistorySpeaker,
   ) : async Result.Result<Types.SourceUploadResult, ResearchIntakeTypes.ResearchError> {
-    if (not FamilyAuthorizationLib.isApprovedFamilyMember(accessControlState, claims, caller)) {
+    if (not FamilyAuthorizationLib.isApprovedFamilyMember(stewards, claims, caller)) {
       return #err(#notAuthorized);
     };
     if (classification == #OralHistory and primarySpeaker == null) {
@@ -161,7 +164,7 @@ mixin (
   /// the claimant as read/resolved. The profile status stays `#Claimed` and no
   /// new claim is created. Returns the number of notifications reconciled.
   public shared ({ caller }) func reconcileClaimNotifications(claimId : Nat) : async Nat {
-    FamilyAuthorizationLib.requireApprovedFamilyMember(accessControlState, claims, caller);
+    FamilyAuthorizationLib.requireApprovedFamilyMember(stewards, claims, caller);
     switch (claims.find(func c = c.id == claimId)) {
       case null { 0 };
       case (?claim) {

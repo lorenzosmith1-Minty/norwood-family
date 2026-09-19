@@ -10,7 +10,6 @@ import {
   StoryFilterBar,
   matchesStoryFilter,
 } from "../components/StoryFilterBar";
-import { useIsAdmin } from "../hooks/useArchiveStorage";
 import { useAuth } from "../hooks/useAuth";
 import {
   useApproveStory,
@@ -18,6 +17,7 @@ import {
   usePendingStories,
   useRejectStory,
 } from "../hooks/useFamilyHistory";
+import { useIsSteward } from "../hooks/useStewardAuthority";
 
 interface StoriesPageProps {
   /** Navigates back to the home screen. */
@@ -44,7 +44,7 @@ export function StoriesPage({
   initialStoryId,
 }: StoriesPageProps) {
   const { data: stories = [], isLoading } = useApprovedStories();
-  const { data: isAdmin = false } = useIsAdmin();
+  const { data: isSteward = false } = useIsSteward();
   const { isAuthenticated } = useAuth();
   const { data: pendingStories = [] } = usePendingStories();
   const approveStory = useApproveStory();
@@ -83,7 +83,7 @@ export function StoriesPage({
         story={selectedStory}
         onBack={() => setView("browse")}
         onOpenProfile={onOpenProfile}
-        isSteward={isAdmin}
+        isSteward={isSteward}
         onEdit={openForm}
       />
     );
@@ -94,7 +94,7 @@ export function StoriesPage({
       <div className="mx-auto w-full max-w-3xl px-6 py-10">
         <StoryContributionForm
           onClose={() => setView("browse")}
-          isSteward={isAdmin}
+          isSteward={isSteward}
           initialStory={editingStory ?? undefined}
         />
       </div>
@@ -135,7 +135,7 @@ export function StoriesPage({
         </div>
       </div>
 
-      {isAdmin && (
+      {isSteward && (
         <div className="mb-6 rounded-xl border border-border/60 bg-card p-4">
           <div className="mb-3 flex items-center justify-between gap-3">
             <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">

@@ -5,6 +5,7 @@ import GovernanceTypes "../types/governance";
 import ResearchIntakeTypes "../types/research-intake";
 import Types "../types/audit-and-workload";
 import AuditWorkloadLib "../lib/audit-and-workload";
+import StewardAuthorityLib "../lib/steward-authority";
 
 /// Public API for the merged Family Steward Audit History. The existing
 /// `listAuditHistory` (governance) is preserved unchanged; this mixin adds the
@@ -15,6 +16,7 @@ mixin (
   governanceLog : List.List<GovernanceTypes.AuditEntry>,
   researchLog : List.List<ResearchIntakeTypes.ResearchAuditEntry>,
   conflicts : List.List<ResearchIntakeTypes.ConflictReviewItem>,
+  stewards : List.List<GovernanceTypes.StewardRecord>,
 ) {
   /// Returns the merged Family Steward Audit History: every governance audit
   /// entry plus every conflict-resolution action (Keep Existing, Replace
@@ -27,7 +29,7 @@ mixin (
     if (caller.isAnonymous()) {
       Runtime.trap("Unauthorized: You must be signed in");
     };
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can view audit history");
     };
     AuditWorkloadLib.mergeAuditHistory(governanceLog, researchLog, conflicts);

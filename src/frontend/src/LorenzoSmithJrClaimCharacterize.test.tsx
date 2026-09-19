@@ -181,22 +181,12 @@ describe("Canonical Lorenzo Smith Jr. profile shows CLAIMED for the restored own
     const user = userEvent.setup();
     renderApp();
 
-    // Navigate to the canonical Lorenzo Smith Jr. profile via Add Myself's
-    // "This is Me" on the existing match. The profile is already CLAIMED by the
-    // signed-in account, so the backend reports AlreadyClaimed and the corrected
-    // claim flow routes to My Profile (the owned canonical profile) instead of
-    // creating a duplicate claim.
-    await user.click(
-      await screen.findByRole("button", { name: /Add (Myself|Family)/ }),
-    );
-    await user.type(
-      screen.getByTestId("add_myself.name_input"),
-      "Lorenzo Smith Jr",
-    );
-    await user.click(screen.getByTestId("add_myself.search_button"));
-    await user.click(
-      (await screen.findAllByRole("button", { name: "This is Me" }))[0],
-    );
+    // Navigate to the canonical Lorenzo Smith Jr. profile via My Profile. The
+    // profile is already CLAIMED by the signed-in account, so the Add Myself
+    // match card now shows a non-interactive "Already claimed" state and offers
+    // no "This is Me" action; My Profile opens the owned canonical profile
+    // directly without creating a duplicate claim.
+    await user.click(await screen.findByTestId("layout.my_profile_link"));
 
     // The canonical profile page renders (via My Profile routing).
     expect(await screen.findByRole("heading", { level: 1 })).toHaveTextContent(

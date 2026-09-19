@@ -1,4 +1,3 @@
-import AccessControl "mo:caffeineai-authorization/access-control";
 import List "mo:core/List";
 import Map "mo:core/Map";
 import Runtime "mo:core/Runtime";
@@ -6,17 +5,19 @@ import Time "mo:core/Time";
 import Types "../types/family-history";
 import OwnershipTypes "../types/ownership";
 import ArchiveTypes "../types/archive";
+import GovernanceTypes "../types/governance";
 import FamilyHistoryLib "../lib/family-history";
 import FamilyAuthorizationLib "../lib/family-authorization";
+import StewardAuthorityLib "../lib/steward-authority";
 
 mixin (
-  accessControlState : AccessControl.AccessControlState,
   stories : List.List<Types.Story>,
   mysteries : List.List<Types.Mystery>,
   mysteryContributions : List.List<Types.MysteryContribution>,
   profiles : Map.Map<OwnershipTypes.PersonId, OwnershipTypes.PersonProfile>,
   archiveItems : List.List<ArchiveTypes.ArchiveItem>,
   claims : List.List<OwnershipTypes.ProfileClaim>,
+  stewards : List.List<GovernanceTypes.StewardRecord>,
 ) {
   /// Computes the next story id: one greater than the largest existing id, or
   /// `0` when there are no stories.
@@ -55,7 +56,7 @@ mixin (
 
   /// Lists all stories in pending state (steward only).
   public query ({ caller }) func listPendingStories() : async [Types.Story] {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can list pending stories");
     };
     FamilyHistoryLib.listPending(stories);
@@ -74,7 +75,7 @@ mixin (
     evidenceStatus : Types.EvidenceStatus,
     relatedArchiveItemIds : [Nat],
   ) : async Types.Story {
-    FamilyAuthorizationLib.requireApprovedFamilyMember(accessControlState, claims, caller);
+    FamilyAuthorizationLib.requireApprovedFamilyMember(stewards, claims, caller);
     let story : Types.Story = {
       id = nextStoryId();
       title;
@@ -96,7 +97,7 @@ mixin (
   /// Approves a pending story (steward only). Returns the updated story, or
   /// `null` when the story does not exist or is not pending.
   public shared ({ caller }) func approveStory(id : Types.StoryId) : async ?Types.Story {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can approve stories");
     };
     FamilyHistoryLib.approve(stories, id);
@@ -105,7 +106,7 @@ mixin (
   /// Rejects a pending story (steward only). Returns the updated story, or
   /// `null` when the story does not exist or is not pending.
   public shared ({ caller }) func rejectStory(id : Types.StoryId) : async ?Types.Story {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can reject stories");
     };
     FamilyHistoryLib.reject(stories, id);
@@ -122,7 +123,7 @@ mixin (
     evidenceStatus : Types.EvidenceStatus,
     relatedArchiveItemIds : [Nat],
   ) : async Types.Story {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can add canonical stories");
     };
     let story : Types.Story = {
@@ -156,7 +157,7 @@ mixin (
     evidenceStatus : Types.EvidenceStatus,
     relatedArchiveItemIds : [Nat],
   ) : async ?Types.Story {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can edit canonical stories");
     };
     switch (stories.find(func s = s.id == id)) {
@@ -197,7 +198,7 @@ mixin (
     contributionType : Types.MysteryContributionType,
     text : Text,
   ) : async Types.MysteryContribution {
-    FamilyAuthorizationLib.requireApprovedFamilyMember(accessControlState, claims, caller);
+    FamilyAuthorizationLib.requireApprovedFamilyMember(stewards, claims, caller);
     let contribution : Types.MysteryContribution = {
       id = nextContributionId();
       mysteryId;
@@ -214,7 +215,7 @@ mixin (
 
   /// Lists all mystery contributions in pending state (steward only).
   public query ({ caller }) func listPendingMysteryContributions() : async [Types.MysteryContribution] {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can list pending mystery contributions");
     };
     FamilyHistoryLib.listPendingContributions(mysteryContributions);
@@ -224,7 +225,7 @@ mixin (
   /// the updated contribution, or `null` when it does not exist or is not
   /// pending.
   public shared ({ caller }) func reviewMysteryContribution(id : Types.MysteryContributionId, approve : Bool) : async ?Types.MysteryContribution {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can review mystery contributions");
     };
     FamilyHistoryLib.reviewContribution(mysteryContributions, id, approve, caller);
@@ -242,7 +243,7 @@ mixin (
     relatedArchiveItemIds : [Nat],
     status : Types.MysteryStatus,
   ) : async Types.Mystery {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can create canonical mysteries");
     };
     let mystery : Types.Mystery = {
@@ -278,7 +279,7 @@ mixin (
     relatedArchiveItemIds : [Nat],
     status : Types.MysteryStatus,
   ) : async ?Types.Mystery {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can edit canonical mysteries");
     };
     switch (mysteries.find(func m = m.id == id)) {
@@ -313,7 +314,7 @@ mixin (
     summary : Text,
     supportingEvidence : [Text],
   ) : async ?Types.Mystery {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can mark mysteries resolved");
     };
     let resolution : Types.Resolution = {

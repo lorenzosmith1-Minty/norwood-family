@@ -5,7 +5,9 @@ import AccessControl "mo:caffeineai-authorization/access-control";
 import ArchiveTypes "../types/archive";
 import RecipeTypes "../types/recipes";
 import FamilyHistoryTypes "../types/family-history";
+import GovernanceTypes "../types/governance";
 import PendingCountLib "../lib/pending-count";
+import StewardAuthorityLib "../lib/steward-authority";
 
 mixin (
   accessControlState : AccessControl.AccessControlState,
@@ -13,6 +15,7 @@ mixin (
   recipes : List.List<RecipeTypes.Recipe>,
   stories : List.List<FamilyHistoryTypes.Story>,
   mysteryContributions : List.List<FamilyHistoryTypes.MysteryContribution>,
+  stewards : List.List<GovernanceTypes.StewardRecord>,
 ) {
   /// Returns the count of all current pending review items (archive/media,
   /// video/audio, recipes, recipe media, stories, and mystery contributions)
@@ -25,7 +28,7 @@ mixin (
     if (caller.isAnonymous()) {
       Runtime.trap("Unauthorized: You must be signed in");
     };
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can view the pending contributions count");
     };
     PendingCountLib.countPending(

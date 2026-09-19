@@ -684,9 +684,11 @@ export type Result_22 = { 'ok' : ProposedFinding } |
   { 'err' : ResearchError };
 export type Result_23 = { 'ok' : Relationship } |
   { 'err' : RelationshipAdminError };
-export type Result_24 = { 'ok' : Account } |
+export type Result_24 = { 'ok' : StewardClaimResult } |
+  { 'err' : StewardClaimError };
+export type Result_25 = { 'ok' : Account } |
   { 'err' : AccountError };
-export type Result_25 = { 'ok' : null } |
+export type Result_26 = { 'ok' : null } |
   { 'err' : Error };
 export type Result_3 = { 'ok' : ConflictReviewItem } |
   { 'err' : ResearchError };
@@ -781,6 +783,14 @@ export interface StewardAuditEntry {
 }
 export type StewardAuditKind = { 'ConflictResolution' : null } |
   { 'Governance' : null };
+export type StewardClaimError = { 'StewardAlreadyExists' : null } |
+  { 'AlreadySteward' : null } |
+  { 'NotSignedIn' : null };
+export interface StewardClaimResult {
+  'stewardAccountId' : Principal,
+  'claimedAt' : bigint,
+  'claimedBy' : Principal,
+}
 export type StewardError = { 'LastSteward' : null } |
   { 'NotSteward' : null } |
   { 'AlreadySteward' : null } |
@@ -897,7 +907,7 @@ export interface _SERVICE {
   >,
   '_immutableObjectStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
   '_initialize_access_control' : ActorMethod<[], undefined>,
-  '_internet_identity_sign_in_finish' : ActorMethod<[], Result_25>,
+  '_internet_identity_sign_in_finish' : ActorMethod<[], Result_26>,
   '_internet_identity_sign_in_start' : ActorMethod<[], Uint8Array>,
   /**
    * / Activates/promotes a designated successor into the active steward role.
@@ -926,10 +936,10 @@ export interface _SERVICE {
     Story
   >,
   /**
-   * / Uploads a new photo to a person's gallery. Requires an approved family
-   * / member; the caller is recorded as the uploader. When the gallery has no
-   * / profile photo yet, the newly added photo is automatically set as the
-   * / profile photo. Returns the stored photo.
+   * / Uploads a new photo to a person's gallery. Requires the approved owner of
+   * / that claimed profile or a Family Steward; the caller is recorded as the
+   * / uploader. When the gallery has no profile photo yet, the newly added photo
+   * / is automatically set as the profile photo. Returns the stored photo.
    */
   'addPhoto' : ActorMethod<[PersonId, string, string, ExternalBlob], Photo>,
   /**
@@ -1032,7 +1042,7 @@ export interface _SERVICE {
    * / account. The account id is the caller's stable principal, so the same
    * / person profile stays intact if the provider changes.
    */
-  'bindAuthMethod' : ActorMethod<[AuthMethod], Result_24>,
+  'bindAuthMethod' : ActorMethod<[AuthMethod], Result_25>,
   /**
    * / Blocks another member, preventing them from sending new messages to the
    * / caller. Approved family members only.
@@ -1053,6 +1063,14 @@ export interface _SERVICE {
    * / living claimed Person Profile.
    */
   'canMessagePerson' : ActorMethod<[string], boolean>,
+  /**
+   * / One-time "Claim Family Steward" bootstrap. Any signed-in account may claim
+   * / while no active Steward exists; no approved family profile is required.
+   * / Succeeds only when no active Steward exists, creating an ACTIVE
+   * / `StewardRecord` for the claimer. Once any active Steward exists the claim
+   * / permanently refuses.
+   */
+  'claimSteward' : ActorMethod<[], Result_24>,
   /**
    * / Corrects the relationship type of an existing relationship. Family Steward
    * / only.
@@ -1249,6 +1267,9 @@ export interface _SERVICE {
   'getPersonProfile' : ActorMethod<[PersonId], [] | [PersonProfile]>,
   /**
    * / Returns the person's current profile photo, or `null` when none is set.
+   * / The single designated portrait of an unclaimed/historical profile stays
+   * / readable by guests so Add Myself / claim discovery works; for a claimed
+   * / profile only an approved family member or Family Steward may read it.
    */
   'getProfilePhoto' : ActorMethod<[PersonId], [] | [Photo]>,
   /**
@@ -1304,6 +1325,11 @@ export interface _SERVICE {
    */
   'getStewardAuditHistory' : ActorMethod<[], Array<StewardAuditEntry>>,
   /**
+   * / Whether any active Family Steward exists. Public so the frontend can show
+   * / or hide the one-time "Claim Family Steward" control.
+   */
+  'hasActiveSteward' : ActorMethod<[], boolean>,
+  /**
    * / Whether a profile already has an approved owner. Approved ownership is
    * / authoritative: once a profile claim is approved, the approved owner is the
    * / canonical owner and no other claim or Add Myself flow can override or
@@ -1312,6 +1338,13 @@ export interface _SERVICE {
    */
   'hasApprovedOwner' : ActorMethod<[PersonId], boolean>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
+  /**
+   * / Whether the caller is an active Norwood Family Steward. Public so the
+   * / frontend can ask "am I an active Norwood Family Steward?". Returns `false`
+   * / for an anonymous caller and for an account holding only the platform admin
+   * / role.
+   */
+  'isCallerSteward' : ActorMethod<[], boolean>,
   /**
    * / Lists all archive items in approved state visible to the caller. Privacy
    * / is enforced server-side: guests and non-approved members see only Public
@@ -1453,7 +1486,9 @@ export interface _SERVICE {
    */
   'listPersonRelationships' : ActorMethod<[PersonId], Array<Relationship>>,
   /**
-   * / Lists all uploaded photos for a person, in upload order.
+   * / Lists all uploaded photos for a person, in upload order. Requires an
+   * / approved family member or a Family Steward; the full gallery is never
+   * / public.
    */
   'listPhotos' : ActorMethod<[PersonId], Array<Photo>>,
   /**
@@ -1697,7 +1732,8 @@ export interface _SERVICE {
    */
   'removeDuplicateProfile' : ActorMethod<[PersonId], Result_8>,
   /**
-   * / Removes a photo from a person's gallery. Returns `true` when a photo was
+   * / Removes a photo from a person's gallery. Requires the approved owner of
+   * / that claimed profile or a Family Steward. Returns `true` when a photo was
    * / removed. If the removed photo was the profile photo, the profile photo is
    * / cleared.
    */
@@ -1797,7 +1833,8 @@ export interface _SERVICE {
    */
   'sendMessage' : ActorMethod<[string, string], Result_1>,
   /**
-   * / Marks the photo with `photoId` as the person's profile photo. Returns the
+   * / Marks the photo with `photoId` as the person's profile photo. Requires the
+   * / approved owner of that claimed profile or a Family Steward. Returns the
    * / newly selected photo, or `null` when the photo does not exist.
    */
   'setProfilePhoto' : ActorMethod<[PersonId, PhotoId], [] | [Photo]>,

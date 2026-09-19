@@ -125,6 +125,18 @@ type StewardError =
    NotSignedIn;
    NotSteward;
  };
+type StewardClaimResult = 
+ record {
+   claimedAt: int;
+   claimedBy: principal;
+   stewardAccountId: principal;
+ };
+type StewardClaimError = 
+ variant {
+   AlreadySteward;
+   NotSignedIn;
+   StewardAlreadyExists;
+ };
 type StewardAuditKind = 
  variant {
    ConflictResolution;
@@ -266,15 +278,20 @@ type Result_3 =
    err: ResearchError;
    ok: ConflictReviewItem;
  };
-type Result_25 = 
+type Result_26 = 
  variant {
    err: Error;
    ok;
  };
-type Result_24 = 
+type Result_25 = 
  variant {
    err: AccountError;
    ok: Account;
+ };
+type Result_24 = 
+ variant {
+   err: StewardClaimError;
+   ok: StewardClaimResult;
  };
 type Result_23 = 
  variant {
@@ -1193,7 +1210,7 @@ service : {
    (_ImmutableObjectStorageRefillResult);
   _immutableObjectStorageUpdateGatewayPrincipals: () -> ();
   _initialize_access_control: () -> ();
-  _internet_identity_sign_in_finish: () -> (Result_25);
+  _internet_identity_sign_in_finish: () -> (Result_26);
   _internet_identity_sign_in_start: () -> (blob);
   /// Activates/promotes a designated successor into the active steward role.
   /// Family Steward only.
@@ -1206,10 +1223,10 @@ service : {
    vec text, era: opt text, year: opt nat, location: opt text,
    evidenceStatus: EvidenceStatus, relatedArchiveItemIds: vec nat) -> (
    Story);
-  /// Uploads a new photo to a person's gallery. Requires an approved family
-  /// member; the caller is recorded as the uploader. When the gallery has no
-  /// profile photo yet, the newly added photo is automatically set as the
-  /// profile photo. Returns the stored photo.
+  /// Uploads a new photo to a person's gallery. Requires the approved owner of
+  /// that claimed profile or a Family Steward; the caller is recorded as the
+  /// uploader. When the gallery has no profile photo yet, the newly added photo
+  /// is automatically set as the profile photo. Returns the stored photo.
   addPhoto: (personId: PersonId, filename: text, mimeType: text, "blob":
    ExternalBlob) -> (Photo);
   /// Adds a missing relationship to the shared family graph. Family Steward
@@ -1273,7 +1290,7 @@ service : {
   /// Binds an authentication method (Google or Apple) to the signed-in caller's
   /// account. The account id is the caller's stable principal, so the same
   /// person profile stays intact if the provider changes.
-  bindAuthMethod: (method: AuthMethod) -> (Result_24);
+  bindAuthMethod: (method: AuthMethod) -> (Result_25);
   /// Blocks another member, preventing them from sending new messages to the
   /// caller. Approved family members only.
   blockUser: (blockedAccountId: principal) -> ();
@@ -1288,6 +1305,12 @@ service : {
   /// Unclaimed profiles are never messageable. Drives the Message button on a
   /// living claimed Person Profile.
   canMessagePerson: (personId: text) -> (bool) query;
+  /// One-time "Claim Family Steward" bootstrap. Any signed-in account may claim
+  /// while no active Steward exists; no approved family profile is required.
+  /// Succeeds only when no active Steward exists, creating an ACTIVE
+  /// `StewardRecord` for the claimer. Once any active Steward exists the claim
+  /// permanently refuses.
+  claimSteward: () -> (Result_24);
   /// Corrects the relationship type of an existing relationship. Family Steward
   /// only.
   correctRelationshipType: (relationshipId: nat, relationshipType:
@@ -1387,6 +1410,9 @@ service : {
   /// the person is not tracked.
   getPersonProfile: (personId: PersonId) -> (opt PersonProfile) query;
   /// Returns the person's current profile photo, or `null` when none is set.
+  /// The single designated portrait of an unclaimed/historical profile stays
+  /// readable by guests so Add Myself / claim discovery works; for a claimed
+  /// profile only an approved family member or Family Steward may read it.
   getProfilePhoto: (personId: PersonId) -> (opt Photo) query;
   /// Returns a single recipe by id, or `null` when it does not exist or is not
   /// visible to the caller. Private recipes are only visible to their
@@ -1424,6 +1450,9 @@ service : {
   /// value, resolution, steward notes, steward identity, timestamp, and
   /// provenance/source refs where available. Family Steward only.
   getStewardAuditHistory: () -> (vec StewardAuditEntry) query;
+  /// Whether any active Family Steward exists. Public so the frontend can show
+  /// or hide the one-time "Claim Family Steward" control.
+  hasActiveSteward: () -> (bool) query;
   /// Whether a profile already has an approved owner. Approved ownership is
   /// authoritative: once a profile claim is approved, the approved owner is the
   /// canonical owner and no other claim or Add Myself flow can override or
@@ -1431,6 +1460,11 @@ service : {
   /// ownership flow enforces.
   hasApprovedOwner: (personId: PersonId) -> (bool) query;
   isCallerAdmin: () -> (bool) query;
+  /// Whether the caller is an active Norwood Family Steward. Public so the
+  /// frontend can ask "am I an active Norwood Family Steward?". Returns `false`
+  /// for an anonymous caller and for an account holding only the platform admin
+  /// role.
+  isCallerSteward: () -> (bool) query;
   /// Lists all archive items in approved state visible to the caller. Privacy
   /// is enforced server-side: guests and non-approved members see only Public
   /// items; FamilyOnly items require approved family membership; Private items
@@ -1514,7 +1548,9 @@ service : {
   listPendingStories: () -> (vec Story) query;
   /// Returns the current relationships for a person. Family Steward only.
   listPersonRelationships: (personId: PersonId) -> (vec Relationship) query;
-  /// Lists all uploaded photos for a person, in upload order.
+  /// Lists all uploaded photos for a person, in upload order. Requires an
+  /// approved family member or a Family Steward; the full gallery is never
+  /// public.
   listPhotos: (personId: PersonId) -> (vec Photo) query;
   /// Lists all profile claim requests for the Family Steward review area.
   listProfileClaims: () -> (vec ProfileClaim) query;
@@ -1653,7 +1689,8 @@ service : {
   /// requests or claims tied only to it, preserving the original profile, the
   /// confirmed family graph, and the signed-in account. Family Steward only.
   removeDuplicateProfile: (personId: PersonId) -> (Result_8);
-  /// Removes a photo from a person's gallery. Returns `true` when a photo was
+  /// Removes a photo from a person's gallery. Requires the approved owner of
+  /// that claimed profile or a Family Steward. Returns `true` when a photo was
   /// removed. If the removed photo was the profile photo, the profile photo is
   /// cleared.
   removePhoto: (personId: PersonId, photoId: PhotoId) -> (bool);
@@ -1719,7 +1756,8 @@ service : {
   /// Creates a new-message notification for the recipient. Blocking prevents new
   /// messages from the blocked user.
   sendMessage: (recipientPersonId: text, body: text) -> (Result_1);
-  /// Marks the photo with `photoId` as the person's profile photo. Returns the
+  /// Marks the photo with `photoId` as the person's profile photo. Requires the
+  /// approved owner of that claimed profile or a Family Steward. Returns the
   /// newly selected photo, or `null` when the photo does not exist.
   setProfilePhoto: (personId: PersonId, photoId: PhotoId) -> (opt Photo);
   /// Returns a relationship request to pending state. Family Steward only.

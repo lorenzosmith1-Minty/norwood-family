@@ -11,6 +11,7 @@ import {
   contributorIdentity,
   createAndEditProfile,
   createSharedCanister,
+  initializeAsSteward,
   registerApprovedContributor,
   routeConflictingFindingToReview,
 } from "./lane-helpers";
@@ -231,8 +232,9 @@ it("flags a pair with meaningful name similarity and a corroborating signal as a
   const dupActor = await sharedDupActor();
 
   // ADMIN becomes the Family Steward (listDuplicateCandidates is steward-gated).
-  dupActor.setIdentity(adminIdentity);
-  await dupActor._initialize_access_control();
+  // Steward authority is the canonical active-Steward record, not the platform
+  // admin role, so the one-time `claimSteward` bootstrap is required.
+  await initializeAsSteward(dupActor, adminIdentity);
 
   // Two non-sparse profiles sharing the name tokens 'julia'/'norwood' and the
   // same currentLocation 'Mississippi' (a corroborating signal beyond name).
@@ -266,8 +268,7 @@ it("flags a pair with meaningful name similarity and a corroborating signal as a
 it("does not flag a pair sharing only emptiness (no name similarity, no corroborating signal)", async () => {
   const dupActor = await sharedDupActor();
 
-  dupActor.setIdentity(adminIdentity);
-  await dupActor._initialize_access_control();
+  await initializeAsSteward(dupActor, adminIdentity);
 
   // Two profiles with identical names but NO populated fields: no corroborating
   // signal beyond name, so shared emptiness is never used as duplicate evidence.
@@ -287,8 +288,7 @@ it("does not flag a pair sharing only emptiness (no name similarity, no corrobor
 it("does not flag a sparse pair with only one corroborating signal (requires stronger confidence)", async () => {
   const dupActor = await sharedDupActor();
 
-  dupActor.setIdentity(adminIdentity);
-  await dupActor._initialize_access_control();
+  await initializeAsSteward(dupActor, adminIdentity);
 
   // Two sparse profiles (only currentLocation populated -> 1 field each) sharing
   // the name token 'jane' and one corroborating signal (same location). Sparse

@@ -19,7 +19,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../components/ui/alert-dialog";
-import { useIsAdmin } from "../hooks/useArchiveStorage";
 import {
   useGetFinding,
   useGetReviewQueue,
@@ -27,6 +26,7 @@ import {
   useListConflictReviewItems,
   useResolveConflict,
 } from "../hooks/useResearchIntake";
+import { useIsSteward } from "../hooks/useStewardAuthority";
 import {
   CONFLICT_ACTION_LABELS,
   EVIDENCE_LABEL_LABELS,
@@ -380,7 +380,7 @@ function ConflictCard({ item }: { item: ConflictReviewItem }) {
 export function ResearchConflictReviewPage({
   onBack,
 }: ResearchConflictReviewPageProps) {
-  const { data: isAdmin = false } = useIsAdmin();
+  const { data: isSteward = false } = useIsSteward();
   const {
     data: conflicts = [],
     isLoading,
@@ -411,7 +411,7 @@ export function ResearchConflictReviewPage({
     }
   }, [guardActive, refetch]);
 
-  if (!isAdmin) {
+  if (!isSteward) {
     return (
       <div className="mx-auto w-full max-w-3xl px-4 py-8">
         <header className="hub-header mb-8">

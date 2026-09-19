@@ -60,8 +60,14 @@ it("enforces archive privacy levels server-side: a guest sees only Public approv
   // deliberately left UNAPPROVED so this test can assert what a signed-in
   // non-member sees. A separate approved submitter owns the three items, since
   // submitting archive items now requires approved-family membership.
+  //
+  // Steward authority is the canonical active-Steward record, not the platform
+  // admin role: registering the first caller via _initialize_access_control
+  // makes them #admin but no longer confers Steward powers, so ADMIN must claim
+  // the Steward role explicitly before the approvals below are authorized.
   privacyActor.setIdentity(adminIdentity);
   await privacyActor._initialize_access_control();
+  await privacyActor.claimSteward();
   privacyActor.setIdentity(contributorIdentity);
   await privacyActor._initialize_access_control();
 
@@ -231,9 +237,13 @@ it("lets a Family Steward edit an unclaimed living profile via updateOwnProfile"
   const stewardSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
   const stewardActor = stewardSetup.actor;
 
-  // STEWARD becomes the Family Steward (first caller to _initialize_access_control).
+  // STEWARD becomes the Family Steward. Steward authority is the canonical
+  // active-Steward record, not the platform admin role: the first caller to
+  // _initialize_access_control is #admin but must still claim the Steward role
+  // explicitly before the steward-authorized edit below is allowed.
   stewardActor.setIdentity(stewardIdentity);
   await stewardActor._initialize_access_control();
+  await stewardActor.claimSteward();
 
   // 'clayton' is a seeded living, unclaimed profile. A steward may edit it as
   // an existing profile — the update succeeds and the canonical record is
@@ -281,9 +291,11 @@ it("lets a Family Steward edit an unclaimed deceased profile (reordered guard)",
   const deceasedSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
   const deceasedActor = deceasedSetup.actor;
 
-  // STEWARD becomes the Family Steward.
+  // STEWARD becomes the Family Steward via the canonical one-time claim (the
+  // platform admin role alone no longer confers Steward powers).
   deceasedActor.setIdentity(stewardIdentity);
   await deceasedActor._initialize_access_control();
+  await deceasedActor.claimSteward();
 
   // 'julia' is a seeded deceased, unclaimed profile. The #DeceasedProfile guard
   // runs after the ownership check, so a steward editing an unclaimed deceased

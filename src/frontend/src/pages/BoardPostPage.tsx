@@ -19,7 +19,6 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { BoardReplyThread } from "../components/BoardReplyThread";
 import { useApprovedArchiveItems } from "../hooks/useArchiveStorage";
-import { useIsAdmin } from "../hooks/useArchiveStorage";
 import {
   useAddBoardReply,
   useArchiveBoardPost,
@@ -34,6 +33,7 @@ import {
   useListNotifications,
   useMarkNotificationRead,
 } from "../hooks/useNotifications";
+import { useIsSteward } from "../hooks/useStewardAuthority";
 import { ARCHIVE_ITEM_TYPE_LABELS } from "../types/archive";
 import { POST_TYPE_LABELS, type Post, PostStatus } from "../types/board";
 import { NotificationType } from "../types/ownership";
@@ -108,7 +108,7 @@ export function BoardPostPage({
   onEdit,
 }: BoardPostPageProps) {
   const { personId: myPersonId } = useNavbarIdentity();
-  const { data: isAdmin = false } = useIsAdmin();
+  const { data: isSteward = false } = useIsSteward();
   const { data: post } = useGetBoardPost(postId);
   const { data: replies = [], isLoading: repliesLoading } =
     useListBoardReplies(postId);
@@ -347,7 +347,7 @@ export function BoardPostPage({
                 Archive
               </button>
             ) : null}
-            {isAdmin && !isArchived ? (
+            {isSteward && !isArchived ? (
               <button
                 type="button"
                 data-ocid="board_post.steward_archive"
@@ -362,7 +362,7 @@ export function BoardPostPage({
                 Hide
               </button>
             ) : null}
-            {isAdmin && isArchived ? (
+            {isSteward && isArchived ? (
               <button
                 type="button"
                 data-ocid="board_post.restore"

@@ -59,6 +59,10 @@ async function setupRoles(): Promise<{ actor: _SERVICE; canisterId: CanisterId }
   const roleActor = setup.actor;
   roleActor.setIdentity(adminIdentity);
   await roleActor._initialize_access_control();
+  // Steward authority is a separate, explicit bootstrap: the first caller is
+  // #admin, but only `claimSteward` grants the canonical Steward powers that
+  // the review endpoints below require.
+  await roleActor.claimSteward();
   roleActor.setIdentity(unmemberIdentity);
   await roleActor._initialize_access_control();
   return { actor: roleActor, canisterId: setup.canisterId };
@@ -537,7 +541,10 @@ it("allows an approved family member to use the research-intake endpoints and ad
     }),
   });
 
-  // addPhoto succeeds for an approved member.
-  const photo = await memberActor.addPhoto("julia", "approved.png", "image/png", blob);
+  // addPhoto succeeds for an approved member on the profile they own. UNMEMBER
+  // is approved via the 'clayton' claim, so 'clayton' is the profile they own;
+  // 'julia' is seeded #Unclaimed and a non-steward approved member is now
+  // correctly rejected there (covered in the photo-authorization lane file).
+  const photo = await memberActor.addPhoto("clayton", "approved.png", "image/png", blob);
   expect(photo).toMatchObject({ filename: "approved.png", mimeType: "image/png" });
 });

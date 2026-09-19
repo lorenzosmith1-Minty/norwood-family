@@ -13,11 +13,12 @@ import {
   UserCog,
 } from "lucide-react";
 import PendingContributionsBadge from "../components/PendingContributionsBadge";
-import { useIsAdmin, usePendingArchiveItems } from "../hooks/useArchiveStorage";
+import { usePendingArchiveItems } from "../hooks/useArchiveStorage";
 import { useListReports } from "../hooks/useMessaging";
 import { useListProfileClaims } from "../hooks/useProfileClaims";
 import { useListRelationshipRequests } from "../hooks/useRelationshipRequests";
 import { useGetReviewQueue } from "../hooks/useResearchIntake";
+import { useIsSteward } from "../hooks/useStewardAuthority";
 
 interface FamilyStewardHubPageProps {
   onBack: () => void;
@@ -64,7 +65,7 @@ export function FamilyStewardHubPage({
   onOpenResearchIntake,
   onOpenHiddenPosts,
 }: FamilyStewardHubPageProps) {
-  const { data: isAdmin = false } = useIsAdmin();
+  const { data: isSteward = false } = useIsSteward();
   const { data: claims = [] } = useListProfileClaims();
   const { data: requests = [] } = useListRelationshipRequests();
   const { data: reports = [] } = useListReports();
@@ -88,8 +89,9 @@ export function FamilyStewardHubPage({
 
   // Normal family members must never see Steward controls. The nav link is
   // already gated to Stewards; this guard is defense-in-depth so a direct
-  // navigation to the hub still renders nothing for non-Stewards.
-  if (!isAdmin) {
+  // navigation to the hub still renders nothing for non-Stewards. Authority is
+  // the canonical active-Steward check, never the platform admin role.
+  if (!isSteward) {
     return (
       <div className="mx-auto w-full max-w-2xl px-4 py-8">
         <header className="hub-header mb-8">

@@ -10,7 +10,6 @@ import { DomainEmptyState } from "../components/DomainEmptyState";
 import { MysteryCard } from "../components/MysteryCard";
 import { MysteryContributionForm } from "../components/MysteryContributionForm";
 import { MysteryDetail } from "../components/MysteryDetail";
-import { useIsAdmin } from "../hooks/useArchiveStorage";
 import { useAuth } from "../hooks/useAuth";
 import {
   useCreateCanonicalMystery,
@@ -18,6 +17,7 @@ import {
   usePendingMysteryContributions,
   useReviewMysteryContribution,
 } from "../hooks/useFamilyHistory";
+import { useIsSteward } from "../hooks/useStewardAuthority";
 
 interface MysteriesPageProps {
   /** Navigates back to the home screen. */
@@ -58,7 +58,7 @@ export function MysteriesPage({
 }: MysteriesPageProps) {
   const { data: mysteries = [], isLoading } = useMysteries();
   const { isAuthenticated } = useAuth();
-  const { data: isAdmin = false } = useIsAdmin();
+  const { data: isSteward = false } = useIsSteward();
 
   const [filter, setFilter] = useState<StatusFilter>("All");
   const [selectedId, setSelectedId] = useState<bigint | null>(
@@ -92,7 +92,7 @@ export function MysteriesPage({
           }}
           onOpenProfile={onOpenProfile}
           onContribute={() => setShowContribute(true)}
-          isAdmin={isAdmin}
+          isAdmin={isSteward}
           isAuthenticated={isAuthenticated}
         />
         {showContribute && (
@@ -129,7 +129,7 @@ export function MysteriesPage({
         </button>
       </div>
 
-      {isAdmin && (
+      {isSteward && (
         <div
           data-ocid="mysteries.steward_panel"
           className="mb-6 flex flex-col gap-3 rounded-xl border border-border/60 bg-card p-4"

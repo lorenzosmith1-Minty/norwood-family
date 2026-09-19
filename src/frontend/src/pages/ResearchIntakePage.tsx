@@ -18,10 +18,7 @@ import {
   X,
 } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
-import {
-  useApprovedArchiveItems,
-  useIsAdmin,
-} from "../hooks/useArchiveStorage";
+import { useApprovedArchiveItems } from "../hooks/useArchiveStorage";
 import {
   useCreateFinding,
   useCreateNewPersonCandidate,
@@ -35,6 +32,7 @@ import {
   useListRelationshipProposals,
   useListSources,
 } from "../hooks/useResearchIntake";
+import { useIsSteward } from "../hooks/useStewardAuthority";
 import {
   ARCHIVE_ITEM_TYPE_BADGE,
   ARCHIVE_ITEM_TYPE_LABELS,
@@ -1775,7 +1773,7 @@ export function ResearchIntakePage({
   onOpenReviewQueue,
   onOpenConflictReview,
 }: ResearchIntakePageProps) {
-  const { data: isAdmin = false, isLoading: adminLoading } = useIsAdmin();
+  const { data: isSteward = false, isLoading: stewardLoading } = useIsSteward();
   const { data: reviewQueue } = useGetReviewQueue();
   const { data: conflictItems = [] } = useListConflictReviewItems();
   const [tab, setTab] = useState<Tab>("sources");
@@ -1791,7 +1789,7 @@ export function ResearchIntakePage({
       item.status === ReviewStatus.NeedsResearch,
   ).length;
 
-  if (!adminLoading && !isAdmin) {
+  if (!stewardLoading && !isSteward) {
     return (
       <div className="mx-auto w-full max-w-3xl px-6 py-8">
         <button

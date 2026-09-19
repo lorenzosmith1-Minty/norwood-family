@@ -38,8 +38,12 @@ function navIconClass(active: boolean): string {
 
 interface LayoutProps {
   children: ReactNode;
-  /** True when the signed-in caller is an admin; gates the steward nav link. */
-  isAdmin?: boolean;
+  /**
+   * True when the signed-in caller is an active Norwood Family Steward; gates
+   * the Family Steward nav link. This is the canonical Steward authority, not
+   * the platform admin role.
+   */
+  isSteward?: boolean;
   /** True when the caller holds a valid, non-anonymous identity. */
   isAuthenticated?: boolean;
   /**
@@ -95,7 +99,7 @@ interface LayoutProps {
   onAddMyselfClick?: () => void;
   /** Navigates to the Message Board hub (approved members only). */
   onMessageBoardClick?: () => void;
-  /** Navigates to the Family Steward hub (admin-gated). */
+  /** Navigates to the Family Steward hub (Steward-gated). */
   onStewardClick?: () => void;
   /** Navigates to the in-app notifications view. */
   onNotificationsClick?: () => void;
@@ -103,7 +107,7 @@ interface LayoutProps {
 
 export function Layout({
   children,
-  isAdmin,
+  isSteward,
   isAuthenticated,
   isApprovedMember,
   isHydrating = false,
@@ -168,10 +172,12 @@ export function Layout({
   const isMyProfileActive =
     activeView === "my-profile" || activeView === "profile-edit";
 
-  // Steward controls are owner-only. Gate on BOTH authentication and the
-  // admin role so they never leak to a signed-out caller (the admin query can
-  // be cached and survive a sign-out in some environments).
-  const showAdminControls = isAuthenticated && isAdmin;
+  // Family Steward controls are Steward-only. Gate on BOTH authentication and
+  // the canonical active-Steward authority so they never leak to a signed-out
+  // caller (the Steward query can be cached and survive a sign-out in some
+  // environments). The platform admin role is a separate concern and does not
+  // grant Family Steward navigation.
+  const showStewardControls = isAuthenticated && isSteward;
 
   // The Message Board hub (Family Message Board + Private Messages) is for
   // approved family members only. Guests and members without an approved
@@ -302,7 +308,7 @@ export function Layout({
                     Message Board
                   </button>
                 ) : null}
-                {showAdminControls ? (
+                {showStewardControls ? (
                   <>
                     <button
                       type="button"

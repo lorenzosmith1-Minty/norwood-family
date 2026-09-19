@@ -57,9 +57,13 @@ it("round-trips board posts, replies, archive/restore, messaging, block, report,
   const boardSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
   const boardActor = boardSetup.actor;
 
-  // ADMIN becomes the Family Steward (first caller to _initialize_access_control).
+  // ADMIN becomes the Family Steward. Steward authority is the canonical
+  // active-Steward record, not the platform admin role: the first caller to
+  // _initialize_access_control is #admin but must still claim the Steward role
+  // explicitly before the approvals below are authorized.
   boardActor.setIdentity(adminIdentity);
   await boardActor._initialize_access_control();
+  await boardActor.claimSteward();
   // MEMBER_A and MEMBER_B register as approved #user members and bind an auth
   // method so their accounts are active (linked to the accounts map), which the
   // messaging eligibility requires.
@@ -194,9 +198,11 @@ it("rejects self-messaging and lists only other eligible members", async () => {
 
   // ADMIN becomes the Family Steward; MEMBER_A and MEMBER_B register as users
   // and bind an auth method so their accounts are active (linked to the
-  // accounts map), which messaging eligibility requires.
+  // accounts map), which messaging eligibility requires. Steward authority is
+  // the canonical active-Steward record, so ADMIN must claim it explicitly.
   structActor.setIdentity(adminIdentity);
   await structActor._initialize_access_control();
+  await structActor.claimSteward();
   structActor.setIdentity(memberAIdentity);
   await structActor._initialize_access_control();
   await structActor.bindAuthMethod({ Google: null });
@@ -240,9 +246,11 @@ it("does not expose unreported private conversation content to a steward", async
 
   // ADMIN becomes the Family Steward; MEMBER_A and MEMBER_B register as users
   // and bind an auth method so their accounts are active (linked to the
-  // accounts map), which messaging eligibility requires.
+  // accounts map), which messaging eligibility requires. Steward authority is
+  // the canonical active-Steward record, so ADMIN must claim it explicitly.
   structActor.setIdentity(adminIdentity);
   await structActor._initialize_access_control();
+  await structActor.claimSteward();
   structActor.setIdentity(memberAIdentity);
   await structActor._initialize_access_control();
   await structActor.bindAuthMethod({ Google: null });
@@ -472,9 +480,11 @@ it("creates a board post attaching existing media and new uploads without duplic
   const mediaActor = mediaSetup.actor;
 
   // ADMIN becomes the Family Steward; MEMBER_A registers as an approved member
-  // and binds an auth method so their account is active.
+  // and binds an auth method so their account is active. Steward authority is
+  // the canonical active-Steward record, so ADMIN must claim it explicitly.
   mediaActor.setIdentity(adminIdentity);
   await mediaActor._initialize_access_control();
+  await mediaActor.claimSteward();
   mediaActor.setIdentity(memberAIdentity);
   await mediaActor._initialize_access_control();
   await mediaActor.bindAuthMethod({ Google: null });
@@ -565,9 +575,12 @@ it("reconciles the pending claim notification once the claim is approved", async
   const notifSetup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
   const notifActor = notifSetup.actor;
 
-  // ADMIN becomes the Family Steward; CLAIMANT registers as a user.
+  // ADMIN becomes the Family Steward; CLAIMANT registers as a user. Steward
+  // authority is the canonical active-Steward record, so ADMIN must claim it
+  // explicitly before the approval below is authorized.
   notifActor.setIdentity(adminIdentity);
   await notifActor._initialize_access_control();
+  await notifActor.claimSteward();
   notifActor.setIdentity(claimantIdentity);
   await notifActor._initialize_access_control();
 
@@ -587,8 +600,8 @@ it("reconciles the pending claim notification once the claim is approved", async
     read: false,
   });
 
-  // A steward approves the claim. ADMIN is the first caller to
-  // _initialize_access_control, so ADMIN is the Family Steward here.
+  // A steward approves the claim. ADMIN claimed the canonical Steward role
+  // above, so ADMIN is the Family Steward here.
   notifActor.setIdentity(adminIdentity);
   await notifActor.approveProfileClaim(claimId);
 

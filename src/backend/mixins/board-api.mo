@@ -9,6 +9,7 @@ import Types "../types/board";
 import OwnershipTypes "../types/ownership";
 import GovernanceTypes "../types/governance";
 import BoardLib "../lib/board";
+import StewardAuthorityLib "../lib/steward-authority";
 
 mixin (
   accessControlState : AccessControl.AccessControlState,
@@ -17,6 +18,7 @@ mixin (
   profiles : Map.Map<OwnershipTypes.PersonId, OwnershipTypes.PersonProfile>,
   notifications : List.List<OwnershipTypes.Notification>,
   auditLog : List.List<GovernanceTypes.AuditEntry>,
+  stewards : List.List<GovernanceTypes.StewardRecord>,
 ) {
   /// Lists active board posts, newest first, optionally filtered by post type.
   /// Approved family members only.
@@ -102,7 +104,7 @@ mixin (
     switch (posts.find(func p = p.postId == postId)) {
       case null { null };
       case (?post) {
-        if (post.authorAccountId != caller and not AccessControl.isAdmin(accessControlState, caller)) {
+        if (post.authorAccountId != caller and not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
           Runtime.trap("Unauthorized: Only the post author or a Family Steward can archive this post");
         };
         let updated = BoardLib.archivePost(posts, postId);
@@ -195,7 +197,7 @@ mixin (
     if (caller.isAnonymous()) {
       Runtime.trap("Unauthorized: You must be signed in");
     };
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can perform this action");
     };
   };

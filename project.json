@@ -1,18 +1,20 @@
 {
-  "overview": "A family connection app for the Norwood family with profiles, research intake, conflict review, and family steward governance.",
+  "overview": "A private family history app for the Norwood family to explore their tree, share stories, photos, and recipes, and preserve their heritage.",
   "features": [
-    "Family member profiles with stories and timelines",
-    "Historical research intake with source and finding review",
-    "Conflict review for disputed facts",
-    "Duplicate profile detection for steward review",
-    "Family steward governance and audit"
+    "Explore an interactive family tree",
+    "Claim and edit your own family profile",
+    "Contribute photos, videos, stories, and recipes to the family archive",
+    "Review and approve family contributions as a Family Steward",
+    "Message board and private messaging between family members",
+    "Research intake and conflict review for historical records"
   ],
-  "category": "family",
+  "category": "family-history",
   "tags": [
     "family",
     "genealogy",
-    "research",
-    "governance"
+    "archive",
+    "heritage",
+    "community"
   ],
-  "last_updated": "2026-09-15T19:18:16.240Z"
+  "last_updated": "2026-09-18T11:44:08.392Z"
 }

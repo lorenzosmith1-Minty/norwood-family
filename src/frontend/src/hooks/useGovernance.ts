@@ -107,7 +107,8 @@ export function usePromoteToSteward() {
       });
       // Promotion changes the caller's steward permission when they are the
       // promoted person, so the Family Steward nav pill must appear immediately.
-      void queryClient.invalidateQueries({ queryKey: ["isAdmin"] });
+      void queryClient.invalidateQueries({ queryKey: ["isSteward"] });
+      void queryClient.invalidateQueries({ queryKey: ["hasActiveSteward"] });
     },
   });
 }
@@ -131,7 +132,8 @@ export function useRemoveSteward() {
       // Removal changes the caller's steward permission when they are the
       // removed steward, so the Family Steward nav pill must disappear
       // immediately.
-      void queryClient.invalidateQueries({ queryKey: ["isAdmin"] });
+      void queryClient.invalidateQueries({ queryKey: ["isSteward"] });
+      void queryClient.invalidateQueries({ queryKey: ["hasActiveSteward"] });
     },
   });
 }
@@ -183,7 +185,8 @@ export function useActivateSuccessor() {
       });
       // Activating a successor grants them active steward permission, so the
       // Family Steward nav pill must appear immediately for that caller.
-      void queryClient.invalidateQueries({ queryKey: ["isAdmin"] });
+      void queryClient.invalidateQueries({ queryKey: ["isSteward"] });
+      void queryClient.invalidateQueries({ queryKey: ["hasActiveSteward"] });
     },
   });
 }

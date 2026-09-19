@@ -1,17 +1,18 @@
-import AccessControl "mo:caffeineai-authorization/access-control";
 import List "mo:core/List";
 import Runtime "mo:core/Runtime";
 import Storage "mo:caffeineai-object-storage/Storage";
 import Time "mo:core/Time";
 import Types "../types/archive";
 import OwnershipTypes "../types/ownership";
+import GovernanceTypes "../types/governance";
 import ArchiveLib "../lib/archive";
 import FamilyAuthorizationLib "../lib/family-authorization";
+import StewardAuthorityLib "../lib/steward-authority";
 
 mixin (
-  accessControlState : AccessControl.AccessControlState,
   items : List.List<Types.ArchiveItem>,
   claims : List.List<OwnershipTypes.ProfileClaim>,
+  stewards : List.List<GovernanceTypes.StewardRecord>,
 ) {
   /// Computes the next archive item id: one greater than the largest existing
   /// id, or `0` when the archive is empty.
@@ -41,7 +42,7 @@ mixin (
     classification : Types.ArchiveItemClassification,
     primarySpeaker : ?Types.OralHistorySpeaker,
   ) : async Types.ArchiveItem {
-    FamilyAuthorizationLib.requireApprovedFamilyMember(accessControlState, claims, caller);
+    FamilyAuthorizationLib.requireApprovedFamilyMember(stewards, claims, caller);
     if (classification == #OralHistory and primarySpeaker == null) {
       Runtime.trap("A primary speaker is required for Oral History items");
     };
@@ -77,7 +78,7 @@ mixin (
 
   /// Lists all archive items in pending state (admin only).
   public query ({ caller }) func listPendingArchiveItems() : async [Types.ArchiveItem] {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can perform this action");
     };
     ArchiveLib.listPending(items);
@@ -88,7 +89,7 @@ mixin (
   public shared ({ caller }) func approveArchiveItem(
     id : Types.ArchiveItemId,
   ) : async ?Types.ArchiveItem {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can perform this action");
     };
     ArchiveLib.approve(items, id);
@@ -99,7 +100,7 @@ mixin (
   public shared ({ caller }) func rejectArchiveItem(
     id : Types.ArchiveItemId,
   ) : async ?Types.ArchiveItem {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can perform this action");
     };
     ArchiveLib.reject(items, id);
@@ -113,8 +114,8 @@ mixin (
     ArchiveLib.listApproved(
       items,
       caller,
-      AccessControl.isAdmin(accessControlState, caller),
-      FamilyAuthorizationLib.isApprovedFamilyMember(accessControlState, claims, caller),
+      StewardAuthorityLib.isActiveSteward(stewards, caller),
+      FamilyAuthorizationLib.isApprovedFamilyMember(stewards, claims, caller),
     );
   };
 };

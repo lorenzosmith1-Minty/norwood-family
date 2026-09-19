@@ -92,11 +92,16 @@ it("seeds lorenzoSmithJr's preferredName as 'Waxx Minty'", async () => {
 // add -> list -> set profile -> get profile -> remove round-trip is frozen here
 // against the real canister.
 it("round-trips a photo through the real canister", async () => {
-  const personId = "julia";
+  // The photo mutation methods now require the approved OWNER of the claimed
+  // profile (or a Steward on an unclaimed one). CONTRIBUTOR is an approved
+  // family member via the 'clayton' claim, so the round-trip must target
+  // 'clayton' — the profile CONTRIBUTOR owns. 'julia' is seeded #Unclaimed, so
+  // a non-steward approved member is correctly rejected there.
+  const personId = "clayton";
   const photoBlob = new Uint8Array([1, 2, 3, 4]);
 
-  // addPhoto now requires an approved family member, so seed an approved
-  // contributor before exercising the photo round-trip.
+  // addPhoto requires the approved owner of the claimed profile, so seed an
+  // approved contributor (who owns 'clayton') before exercising the round-trip.
   await registerRoles();
   actor.setIdentity(contributorIdentity);
 
@@ -105,14 +110,14 @@ it("round-trips a photo through the real canister", async () => {
   await expect(actor.getProfilePhoto(personId)).resolves.toEqual([]);
 
   // Add a photo; the first photo becomes the profile photo automatically.
-  const photo = await actor.addPhoto(personId, "julia-1.png", "image/png", photoBlob);
-  expect(photo.filename).toBe("julia-1.png");
+  const photo = await actor.addPhoto(personId, "clayton-1.png", "image/png", photoBlob);
+  expect(photo.filename).toBe("clayton-1.png");
   expect(photo.mimeType).toBe("image/png");
   expect(photo.id).toBe(0n);
 
   const listed = await actor.listPhotos(personId);
   expect(listed).toHaveLength(1);
-  expect(listed[0]).toMatchObject({ id: 0n, filename: "julia-1.png" });
+  expect(listed[0]).toMatchObject({ id: 0n, filename: "clayton-1.png" });
 
   // The first uploaded photo is auto-set as the profile photo.
   const profile = await actor.getProfilePhoto(personId);
@@ -339,9 +344,14 @@ it("round-trips a profile claim: request -> approve -> claimed with owner, no ne
     }),
   ]);
 
-  // A Family Steward approves the claim.
+  // A Family Steward approves the claim. Steward authority is the canonical
+  // active-Steward record, not the platform admin role: registering the first
+  // caller via _initialize_access_control makes them #admin but no longer
+  // confers Steward powers, so the one-time `claimSteward` bootstrap is
+  // required before the approval is authorized.
   claimActor.setIdentity(stewardIdentity);
   await claimActor._initialize_access_control();
+  await claimActor.claimSteward();
   const approved = await claimActor.approveProfileClaim(claimId);
   expect(approved).toEqual([
     expect.objectContaining({ id: claimId, status: { Approved: null } }),
@@ -389,10 +399,11 @@ it("prevents duplicate claim submissions for the same person", async () => {
 it("updates the canonical record in place via updateOwnProfile, preserving claim ownership", async () => {
   // The claim-flow test left lorenzoSmithJr CLAIMED by CLAIMANT on claimActor.
   claimActor.setIdentity(claimantIdentity);
-  // updateOwnProfile now resolves the caller's steward status via isAdmin, which
-  // requires the caller to be registered (the real app registers every signed-in
-  // user through the Internet Identity sign-in flow). Register CLAIMANT as a
-  // #user so the owner-edit path is exercised as it is in the deployed app.
+  // updateOwnProfile resolves the caller's steward status via the canonical
+  // active-Steward check, which requires the caller to be registered (the real
+  // app registers every signed-in user through the Internet Identity sign-in
+  // flow). Register CLAIMANT as a #user so the owner-edit path is exercised as
+  // it is in the deployed app.
   await claimActor._initialize_access_control();
 
   const edits = {
@@ -466,6 +477,10 @@ it("rejects a non-owner from updateOwnProfile with NotOwner", async () => {
   )[0].id;
   nonOwnerActor.setIdentity(stewardIdentity);
   await nonOwnerActor._initialize_access_control();
+  // Steward authority comes from the canonical active-Steward record, so the
+  // first caller must claim it explicitly; the platform admin role alone no
+  // longer authorizes the approval.
+  await nonOwnerActor.claimSteward();
   await nonOwnerActor.approveProfileClaim(claimId);
 
   // STEWARD is signed in but is not the owner of the claimed profile.
@@ -517,21 +532,26 @@ it("rejects a non-owner from updateOwnProfile with NotOwner", async () => {
 
 it("lists steward identities without trapping, resolving the linked Person display name", async () => {
   // listStewardIdentities is Family-Steward-gated, so authenticate as a steward
-  // (the first caller to _initialize_access_control becomes the admin) before
-  // calling it. The shared `actor` canister has no stewards seeded, so the list
-  // is empty but must resolve (not trap) with the StewardIdentity shape.
+  // before calling it. Steward authority is the canonical active-Steward record,
+  // not the platform admin role: the first caller to _initialize_access_control
+  // is #admin but must still claim the Steward role explicitly. The shared
+  // `actor` canister has no stewards seeded, so the list is empty but must
+  // resolve (not trap) with the StewardIdentity shape.
   actor.setIdentity(adminIdentity);
   await actor._initialize_access_control();
+  await actor.claimSteward();
   const identities = await actor.listStewardIdentities();
   expect(Array.isArray(identities)).toBe(true);
 });
 
 it("lists eligible steward candidates without trapping", async () => {
   // listEligibleStewardCandidates is Family-Steward-gated, so authenticate as a
-  // steward first. No approved claimed living members are seeded, so the
-  // eligible list is empty but must resolve (not trap).
+  // steward first (claiming the canonical Steward role). No approved claimed
+  // living members are seeded, so the eligible list is empty but must resolve
+  // (not trap).
   actor.setIdentity(adminIdentity);
   await actor._initialize_access_control();
+  await actor.claimSteward();
   const candidates = await actor.listEligibleStewardCandidates();
   expect(Array.isArray(candidates)).toBe(true);
 });

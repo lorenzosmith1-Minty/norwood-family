@@ -52,6 +52,14 @@ const {
     async isCallerAdmin(): Promise<boolean> {
       return isAdmin;
     },
+    // Family Steward authority is the canonical gate; the platform admin role
+    // is a separate concern. This mock drives both from the same flag.
+    async isCallerSteward(): Promise<boolean> {
+      return isAdmin;
+    },
+    async hasActiveSteward(): Promise<boolean> {
+      return true;
+    },
     async submitArchiveItem(
       title: string,
       description: string,

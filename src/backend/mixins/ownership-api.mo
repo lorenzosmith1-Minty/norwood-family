@@ -6,6 +6,7 @@ import Runtime "mo:core/Runtime";
 import Types "../types/ownership";
 import GovernanceTypes "../types/governance";
 import OwnershipLib "../lib/ownership";
+import StewardAuthorityLib "../lib/steward-authority";
 
 mixin (
   accessControlState : AccessControl.AccessControlState,
@@ -15,6 +16,7 @@ mixin (
   relationshipRequests : List.List<Types.RelationshipRequest>,
   notifications : List.List<Types.Notification>,
   auditLog : List.List<GovernanceTypes.AuditEntry>,
+  stewards : List.List<GovernanceTypes.StewardRecord>,
 ) {
   /// Returns the ownership/lifecycle state of a person profile, or `null` when
   /// the person is not tracked.
@@ -30,7 +32,7 @@ mixin (
 
   /// Lists all profile claim requests for the Family Steward review area.
   public query ({ caller }) func listProfileClaims() : async [Types.ProfileClaim] {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can list profile claims");
     };
     OwnershipLib.listClaims(claims);
@@ -62,7 +64,7 @@ mixin (
   /// Approves a pending profile claim, marking the profile claimed and
   /// associating it with the requesting user. Family Steward only.
   public shared ({ caller }) func approveProfileClaim(claimId : Nat) : async ?Types.ProfileClaim {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can approve profile claims");
     };
     OwnershipLib.approveClaim(profiles, claims, notifications, auditLog, claimId, caller);
@@ -70,7 +72,7 @@ mixin (
 
   /// Rejects a pending profile claim. Family Steward only.
   public shared ({ caller }) func rejectProfileClaim(claimId : Nat) : async ?Types.ProfileClaim {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can reject profile claims");
     };
     OwnershipLib.rejectClaim(claims, notifications, auditLog, claimId, caller);
@@ -104,7 +106,7 @@ mixin (
 
   /// Lists all relationship requests for the Family Steward review area.
   public query ({ caller }) func listRelationshipRequests() : async [Types.RelationshipRequest] {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can list relationship requests");
     };
     OwnershipLib.listRelationshipRequests(relationshipRequests);
@@ -113,7 +115,7 @@ mixin (
   /// Approves a relationship request, adding/confirming the relationship in the
   /// shared family graph. Family Steward only.
   public shared ({ caller }) func approveRelationshipRequest(requestId : Nat) : async ?Types.RelationshipRequest {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can approve relationship requests");
     };
     OwnershipLib.approveRelationship(profiles, relationships, relationshipRequests, notifications, auditLog, requestId, caller);
@@ -121,7 +123,7 @@ mixin (
 
   /// Rejects a relationship request. Family Steward only.
   public shared ({ caller }) func rejectRelationshipRequest(requestId : Nat) : async ?Types.RelationshipRequest {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can reject relationship requests");
     };
     OwnershipLib.rejectRelationship(profiles, relationshipRequests, notifications, auditLog, requestId, caller);
@@ -129,7 +131,7 @@ mixin (
 
   /// Returns a relationship request to pending state. Family Steward only.
   public shared ({ caller }) func setRelationshipRequestPending(requestId : Nat) : async ?Types.RelationshipRequest {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can set relationship requests pending");
     };
     OwnershipLib.setRelationshipPending(relationshipRequests, auditLog, requestId, caller);
@@ -142,7 +144,7 @@ mixin (
     personId : Types.PersonId,
     edits : Types.ProfileEdits,
   ) : async Result.Result<Types.PersonProfile, Types.EditError> {
-    let isSteward = AccessControl.isAdmin(accessControlState, caller);
+    let isSteward = StewardAuthorityLib.isActiveSteward(stewards, caller);
     OwnershipLib.updateOwnProfile(profiles, personId, caller, isSteward, edits);
   };
 
@@ -155,7 +157,7 @@ mixin (
   /// requests or claims tied only to it, preserving the original profile, the
   /// confirmed family graph, and the signed-in account. Family Steward only.
   public shared ({ caller }) func removeDuplicateProfile(personId : Types.PersonId) : async Result.Result<(), Types.RemoveError> {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can remove duplicate profiles");
     };
     OwnershipLib.removeDuplicateProfile(profiles, claims, relationshipRequests, notifications, personId, caller);

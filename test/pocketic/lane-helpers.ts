@@ -66,6 +66,10 @@ export const blob = new Uint8Array([10, 20, 30]);
 export async function registerApprovedContributor(target: _SERVICE): Promise<void> {
   target.setIdentity(adminIdentity);
   await target._initialize_access_control();
+  // Family Steward authority is a separate, explicit bootstrap: registering the
+  // first caller as #admin no longer confers Steward powers. Claim the Steward
+  // role so the approvals below (and the callers' own steward actions) succeed.
+  await target.claimSteward();
   target.setIdentity(contributorIdentity);
   await target._initialize_access_control();
 
@@ -82,6 +86,30 @@ export async function registerApprovedContributor(target: _SERVICE): Promise<voi
   if ("ok" in requested) {
     target.setIdentity(adminIdentity);
     await target.approveProfileClaim(requested.ok.id);
+  }
+}
+
+/**
+ * Registers the given identity as the first caller (the first-admin rule makes
+ * it #admin) and then claims the Family Steward role for it.
+ *
+ * Steward authority is no longer implied by the platform-admin role: the
+ * canonical active-Steward check is the only source of Steward powers, and the
+ * one-time `claimSteward` bootstrap is how the first caller acquires them.
+ * Idempotent: a caller that already holds the Steward role is left as-is.
+ */
+export async function initializeAsSteward(
+  target: _SERVICE,
+  identity: ReturnType<typeof createIdentity>,
+): Promise<void> {
+  target.setIdentity(identity);
+  await target._initialize_access_control();
+  const claimed = await target.claimSteward();
+  if ("err" in claimed) {
+    const message = JSON.stringify(claimed.err);
+    if (!message.includes("AlreadySteward") && !message.includes("StewardAlreadyExists")) {
+      throw new Error(`claimSteward failed: ${message}`);
+    }
   }
 }
 

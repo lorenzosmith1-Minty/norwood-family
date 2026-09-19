@@ -9,7 +9,8 @@ items. Each person (identified by a `PersonId`, e.g. `\"julia\"`,
 `\"clayton\"`) has a gallery of uploaded photos, one of which may be selected as
 that person's profile photo. The Family Archive stores contributed items
 (photos, documents, audio, video, written stories/notes, research, work or
-business material, and other) that wait for admin approval before appearing in
+business material, and other) that wait for Family Steward approval before
+appearing in
 the archive. The file bytes themselves live off-chain in the platform's
 immutable object storage; the canister stores only an external reference plus
 display metadata.
@@ -34,14 +35,24 @@ member's identity inside the family graph. This keeps the same person profile
 intact if the account's email or authentication provider changes later.
 
 The backend also provides Family Governance & Safety Controls for real family
-use. Family Stewards (the `#admin` role) manage steward succession, safe profile
-removal/archive/restore, duplicate-profile review and merge, relationship
-administration, and a steward-only governance audit log. A successor steward is
-a designation only until a current steward explicitly activates them; there is
-no automatic stewardship transfer based on inactivity. Profile removal is never
-a simple destructive delete — it flows through a steward-reviewed request or an
-explicit archive, and permanent deletion is allowed only for empty error-created
-profiles with explicit confirmation.
+use. Family Steward authority is the Norwood Steward record: a caller is a
+Family Steward only when they match an ACTIVE persisted `StewardRecord` in the
+`stewards` list. It is explicitly distinct from the platform admin role
+(`AccessControl.isAdmin`), which carries zero family-governance power. Family
+Stewards manage steward succession, safe profile removal/archive/restore,
+duplicate-profile review and merge, relationship administration, and a
+steward-only governance audit log. A successor steward is a designation only
+until a current steward explicitly activates them; there is no automatic
+stewardship transfer based on inactivity. Profile removal is never a simple
+destructive delete — it flows through a steward-reviewed request or an explicit
+archive, and permanent deletion is allowed only for empty error-created profiles
+with explicit confirmation.
+
+Steward authority is bootstrapped once. While no active Steward exists, any
+signed-in account may claim the Family Steward role via `claimSteward`; no
+approved family profile is required. Once any active Steward exists the claim
+permanently refuses. The public Steward authority surface is
+`isCallerSteward`/`hasActiveSteward` (query) and `claimSteward` (update).
 
 The backend also provides a private family-wide Message Board and private 1:1
 messaging for approved family members. The Message Board lets approved members
@@ -64,29 +75,52 @@ Contributions badge.
 ### Photo gallery
 
 - `listPhotos(personId : Text) : async [Photo]` — query. Returns all uploaded
-  photos for a person, in upload order. Returns `[]` when the person has no
-  gallery.
+  photos for a person, in upload order. Requires an approved family member (a
+  caller holding at least one `#Approved` profile claim, or a Family Steward);
+  anonymous and signed-in but unapproved callers are rejected with a trap. Any
+  approved family member may view the full gallery of any person profile,
+  including other claimed people. Returns `[]` when the person has no gallery.
 - `getProfilePhoto(personId : Text) : async ?Photo` — query. Returns the
   person's current profile photo, or `null` when none is set (the frontend then
-  shows the initials placeholder).
+  shows the initials placeholder). For an unclaimed/historical profile the
+  single designated portrait remains readable by guests so Add Myself / claim
+  discovery works. For a claimed profile it requires an approved family member
+  or a Family Steward; anonymous and unapproved callers are rejected with a
+  trap. Guests never receive any gallery photo other than the single designated
+  portrait of an unclaimed/historical profile.
 - `addPhoto(personId : Text, filename : Text, mimeType : Text, blob : Blob) : async Photo` —
   update. Uploads a new photo to a person's gallery and returns the stored
-  photo. Requires an approved family member (a caller holding at least one
-  `#Approved` profile claim, or a Family Steward); anonymous and signed-in but
-  unapproved callers are rejected with a trap. The caller is recorded as
-  `uploadedBy`. Photo ids are
+  photo. Requires the approved owner of that claimed profile, or a Family
+  Steward acting on an unclaimed/historical profile; anonymous callers,
+  unapproved callers, approved family members who do not own the profile, and a
+  Family Steward attempting to modify a profile claimed by another user are all
+  rejected with a trap. For an
+  unclaimed/historical profile only a Family Steward may add photos. The caller
+  is recorded as `uploadedBy`. Photo ids are
   assigned per person as `max-existing-id + 1` (or `0` when the gallery is
   empty). The `blob` is the external storage reference (a `Blob`). When the
   person's gallery has no profile photo yet, the newly added photo is
   automatically set as the profile photo, so the completeness indicator updates
   immediately.
 - `setProfilePhoto(personId : Text, photoId : Nat) : async ?Photo` — update.
-  Marks the photo with `photoId` as the person's profile photo. Returns the
+  Marks the photo with `photoId` as the person's profile photo. Requires the
+  approved owner of that claimed profile, or a Family Steward acting on an
+  unclaimed/historical profile; anonymous
+  callers, unapproved callers, approved family members who do not own the
+  profile, and a Family Steward attempting to modify a profile claimed by
+  another user are all rejected with a trap. For an unclaimed/historical profile
+  only a Family Steward may set the portrait. Returns the
   newly selected photo, or `null` when no photo with that id exists in the
   person's gallery.
 - `removePhoto(personId : Text, photoId : Nat) : async Bool` — update. Removes
   a photo from the person's gallery and returns `true` when a photo was
-  removed. If the removed photo was the profile photo, the profile photo is
+  removed. Requires the approved owner of that claimed profile, or a Family
+  Steward acting on an unclaimed/historical profile; anonymous callers,
+  unapproved callers, approved family members who do not own the profile, and a
+  Family Steward attempting to modify a profile claimed by another user are all
+  rejected with a trap. For an
+  unclaimed/historical profile only a Family Steward may remove photos. If the
+  removed photo was the profile photo, the profile photo is
   cleared (the frontend falls back to the initials placeholder).
 
 ### Family Archive
@@ -97,7 +131,7 @@ Contributions badge.
   anonymous and signed-in but unapproved callers are rejected with a trap. The
   caller is recorded as the `contributor`. The item is stored in
   `#Pending` state, assigned a fresh id, and `createdAt` is set to the current
-  time. It does not appear in the archive until an admin approves it. The
+  time. It does not appear in the archive until a Family Steward approves it. The
   `blob` is the external storage reference (a `Blob`); the original file bytes
   live off-chain and are preserved as-is.
   `classification` marks the item as Oral History (distinct from `itemType`):
@@ -282,6 +316,27 @@ Contributions badge.
   caller's account, creating the account if it does not yet exist. The account id
   is the caller's stable principal, so the same person profile stays intact if
   the provider changes. Anonymous callers receive `#err(#NotSignedIn)`.
+
+### Family Steward authority
+
+- `isCallerSteward() : async Bool` — query. Returns `true` only when the caller
+  matches an ACTIVE persisted `StewardRecord` in the `stewards` list. Returns
+  `false` for an anonymous caller and for an account holding only the platform
+  admin role. This is the canonical Steward authority check; the platform admin
+  role is never consulted.
+- `hasActiveSteward() : async Bool` — query. Returns `true` when any active
+  Family Steward exists. Public so the frontend can show or hide the one-time
+  \"Claim Family Steward\" control. Not gated to admin — any caller may query it.
+- `claimSteward() : async Result<StewardClaimResult, StewardClaimError>` —
+  update. One-time \"Claim Family Steward\" bootstrap. Any signed-in account may
+  claim while no active Steward exists; no approved family profile is required.
+  Succeeds only when no active Steward exists, creating an ACTIVE
+  `StewardRecord` for the claimer and recording the assignment in the audit log.
+  Once any active Steward exists the claim permanently refuses. Returns
+  `#err(#NotSignedIn)` for an anonymous caller, `#err(#StewardAlreadyExists)`
+  when an active Steward already exists and the caller is not one, and
+  `#err(#AlreadySteward)` when the caller already holds an active Steward
+  record. On success returns `#ok(StewardClaimResult)`.
 
 ### Family Governance (Steward Management, Succession, Removal, Merge, Relationships, Audit)
 
@@ -806,7 +861,7 @@ Contributions badge.
   content, and provenance, it is gated to Family Stewards and traps with
   `\"Unauthorized: You must be signed in\"` for an anonymous caller and
   `\"Unauthorized: Only Family Stewards can perform this action\"` when the
-  caller is not an admin.
+  caller is not an active Family Steward (an ACTIVE persisted `StewardRecord`).
 - `approveSource(id : SourceId) : async ?SourceRecord` — update. Family Steward
   only. Approves a pending source, transitioning it to `#Approved` so it becomes
   usable by Proposed Findings. The linked Archive item remains canonical and
@@ -828,7 +883,8 @@ Contributions badge.
   log records provenance and approval actions, it is gated to Family Stewards
   and traps with `\"Unauthorized: You must be signed in\"` for an anonymous
   caller and `\"Unauthorized: Only Family Stewards can perform this action\"`
-  when the caller is not an admin.
+  when the caller is not an active Family Steward (an ACTIVE persisted
+  `StewardRecord`).
 
 ### Archive search, source upload, board media, and claim notification reconciliation
 
@@ -1114,10 +1170,19 @@ are not intended for application use.
 
 ## Authentication and authorization
 
-The photo mutation methods (`addPhoto`, `setProfilePhoto`, `removePhoto`) record
-the signed-in caller as the uploader but do not themselves gate on a role; they
-are callable by any caller. The photo query methods (`listPhotos`,
-`getProfilePhoto`) are readable by any caller. The access-control methods above
+The photo mutation methods (`addPhoto`, `setProfilePhoto`, `removePhoto`) are
+gated to the approved owner of the target claimed profile or a Family Steward.
+Anonymous callers trap with `\"Unauthorized: You must be signed in\"`; any other
+caller — including an approved family member who does not own the profile —
+traps with `\"Unauthorized: Only the profile owner or a Family Steward can manage this profile's photos\"`.
+For an unclaimed/historical profile only a Family Steward may mutate photos. The gallery read method `listPhotos` requires
+an approved family member or a Family Steward (anonymous callers trap with
+`\"Unauthorized: You must be signed in\"`, unapproved callers with
+`\"Unauthorized: Only approved family members can view a photo gallery\"`). The
+portrait read method `getProfilePhoto` stays public for an unclaimed/historical
+profile so Add Myself / claim discovery works, but for a claimed profile it
+requires an approved family member or a Family Steward under the same gallery
+read rule. The access-control methods above
 enforce the admin/user/guest model described in their entries.
 
 The OQL methods (`schema`, `execute`) enforce authorization per entity against
@@ -1157,9 +1222,10 @@ items\"` when `classification == #OralHistory` and `primarySpeaker` is `null`,
 and with `\"A primary speaker is only allowed on Oral History items\"` when
 `classification == #Standard` and `primarySpeaker` is not `null`.
 `listPendingArchiveItems`,
-`approveArchiveItem`, and `rejectArchiveItem` are admin-only and trap with
-`\"Unauthorized: Only Family Stewards can perform this action\"` when the caller
-is not an admin.
+`approveArchiveItem`, and `rejectArchiveItem` are Family Steward only and trap
+with `\"Unauthorized: Only Family Stewards can perform this action\"` when the
+caller is not an active Family Steward (an ACTIVE persisted `StewardRecord`).
+The platform admin role does not grant these powers.
 `listApprovedArchiveItems` and `searchArchiveItems` are readable by any caller,
 but enforce the archive privacy rules server-side: `#Public` items are returned
 to everyone; `#FamilyOnly` items are returned only to approved family members (a
@@ -1173,9 +1239,10 @@ The profile-claim and relationship-request methods gate on sign-in and role.
 Steward review methods — `listProfileClaims`, `approveProfileClaim`,
 `rejectProfileClaim`, `listRelationshipRequests`,
 `approveRelationshipRequest`, `rejectRelationshipRequest`,
-`setRelationshipRequestPending`, and `removeDuplicateProfile` — are admin-only
+`setRelationshipRequestPending`, and `removeDuplicateProfile` — are Family
+Steward only
 and trap with `\"Unauthorized: Only Family Stewards can ...\"` when the caller
-is not an admin. `getPersonProfile`, `searchPossibleMatches`,
+is not an active Family Steward (an ACTIVE persisted `StewardRecord`). `getPersonProfile`, `searchPossibleMatches`,
 `getMyProfileClaim`, `getMyProfile`, `getMyRelationshipRequests`, and
 `listNotifications` are readable by any caller (`getMyProfileClaim` returns only
 the caller's own claim on the requested profile, `getMyProfile` returns only the
@@ -1193,13 +1260,23 @@ The Family Governance methods are steward-only. `listStewards`,
 `resolveMergeConflict`, `listPersonRelationships`, `addRelationship`,
 `removeRelationship`, `correctRelationshipType`, and `listAuditHistory` all trap
 with `\"Unauthorized: Only Family Stewards can ...\"` when the caller is not an
-admin. `getStewardAuditHistory` is likewise Family Steward only: it traps with
+active Family Steward (an ACTIVE persisted `StewardRecord`). The platform admin
+role does not grant these powers. `getStewardAuditHistory` is likewise Family
+Steward only: it traps with
 `\"Unauthorized: You must be signed in\"` for an anonymous caller and
 `\"Unauthorized: Only Family Stewards can view audit history\"` when the caller
-is not an admin. `requestProfileRemoval` is the one governance method a normal family
+is not an active Family Steward. `requestProfileRemoval` is the one governance
+method a normal family
 member calls: it requires a signed-in (non-anonymous) caller and returns
 `#err(#NotSignedIn)` for an anonymous caller (it does not trap), and it only
 ever requests removal of the caller's own claimed living profile.
+
+The Family Steward authority methods are not gated to admin.
+`isCallerSteward` and `hasActiveSteward` are readable by any caller (they return
+`false` for an anonymous caller rather than trapping). `claimSteward` requires a
+signed-in (non-anonymous) caller and returns `#err(#NotSignedIn)` for an
+anonymous caller (it does not trap); it succeeds only while no active Steward
+exists and permanently refuses afterward.
 
 The Family Stories and Family Mysteries methods gate on sign-in and role.
 `submitStory` and `submitMysteryContribution` require a signed-in (non-anonymous)
@@ -1208,17 +1285,19 @@ required to contribute to a mystery\"` for an anonymous caller. The Family
 Steward methods — `listPendingStories`, `approveStory`, `rejectStory`,
 `addCanonicalStory`, `updateCanonicalStory`, `listPendingMysteryContributions`,
 `reviewMysteryContribution`, `createCanonicalMystery`,
-`updateCanonicalMystery`, and `markMysteryResolved` — are admin-only and trap
+`updateCanonicalMystery`, and `markMysteryResolved` — are Family Steward only
+and trap
 with `\"Unauthorized: Only Family Stewards can ...\"` when the caller is not an
-admin. `listApprovedStories`, `listMysteries`, and `listTimelineEvents` are
+active Family Steward (an ACTIVE persisted `StewardRecord`). `listApprovedStories`, `listMysteries`, and `listTimelineEvents` are
 readable by any caller (respecting the existing privacy conventions).
 
 The Family Recipes methods gate on sign-in and role. `submitRecipe` requires a
 signed-in (non-anonymous) caller and traps with `\"Sign-in required to submit a
 recipe\"` for an anonymous caller. The Family Steward methods —
 `listPendingRecipes`, `approveRecipe`, `rejectRecipe`, and `publishRecipe` — are
-admin-only and trap with `\"Unauthorized: Only Family Stewards can ...\"` when
-the caller is not an admin. `listApprovedRecipes`, `getRecipe`, and
+Family Steward only and trap with `\"Unauthorized: Only Family Stewards can ...\"`
+when
+the caller is not an active Family Steward (an ACTIVE persisted `StewardRecord`). `listApprovedRecipes`, `getRecipe`, and
 `listRecipesForPerson` are readable by any caller (respecting the existing
 privacy conventions).
 
@@ -1235,8 +1314,10 @@ post\"`), and `archiveBoardPost` requires the author or a Family Steward
 (trapping with `\"Unauthorized: Only the post author or a Family Steward can
 archive this post\"`). The steward methods — `listHiddenBoardPosts`,
 `restoreBoardPost` and
-`removeBoardReply` — are admin-only and trap with `\"Unauthorized: Only Family
-Stewards can perform this action\"` when the caller is not an admin. Board
+`removeBoardReply` — are Family Steward only and trap with `\"Unauthorized: Only
+Family
+Stewards can perform this action\"` when the caller is not an active Family
+Steward (an ACTIVE persisted `StewardRecord`). Board
 governance actions (`archiveBoardPost`, `restoreBoardPost`, `removeBoardReply`)
 record audit entries in the steward-only audit log.
 
@@ -1252,15 +1333,17 @@ with `\"Unauthorized: Only participants can mark a conversation read\"` when the
 caller is not a participant. `reportMessage` traps with `\"Unauthorized: Only
 conversation participants can report a message\"` when the caller is not a
 participant of the message's conversation. The steward methods — `listReports`,
-`reviewReport`, and `getReportedMessage` — are admin-only and trap with
+`reviewReport`, and `getReportedMessage` — are Family Steward only and trap with
 `\"Unauthorized: Only Family Stewards can perform this action\"` when the caller
-is not an admin. Stewards cannot browse arbitrary private conversations; they see
+is not an active Family Steward (an ACTIVE persisted `StewardRecord`). Stewards
+cannot browse arbitrary private conversations; they see
 reported message content only when a report is filed (via `getReportedMessage`).
 
 The Pending Contributions method `getPendingContributionsCount` is Family
 Steward only: it traps with `\"Unauthorized: You must be signed in\"` for an
 anonymous caller and `\"Unauthorized: Only Family Stewards can view the pending
-contributions count\"` when the caller is not an admin.
+contributions count\"` when the caller is not an active Family Steward (an
+ACTIVE persisted `StewardRecord`).
 
 The Historical Research Intake methods gate on sign-in and role. The creation
 methods — `createSource`, `createFinding`, `createNewPersonCandidate`, and
@@ -1276,9 +1359,10 @@ Family Steward review methods — `listSources`, `listFindings`,
 `rejectNewPersonCandidate`, `needsResearchNewPersonCandidate`,
 `approveRelationshipProposal`, `rejectRelationshipProposal`, and
 `needsResearchRelationshipProposal` —
-are admin-only and trap with `\"Unauthorized: You must be
+are Family Steward only and trap with `\"Unauthorized: You must be
 signed in\"` for an anonymous caller and `\"Unauthorized: Only Family Stewards
-can perform this action\"` when the caller is not an admin. The read methods
+can perform this action\"` when the caller is not an active Family Steward (an
+ACTIVE persisted `StewardRecord`). The read methods
 `getSource` and `getFinding` are readable by any caller (they are not gated to
 admin). `listConflictsForPerson` and `listDisputedFactsForPerson` require a
 signed-in (non-anonymous) caller and
@@ -1288,7 +1372,8 @@ unresolved conflicts / disputed facts for the requested Person. The review surfa
 are Family Steward only — they expose contributor principals, proposed findings
 content, and provenance, so they trap with `\"Unauthorized: You must be signed
 in\"` for an anonymous caller and `\"Unauthorized: Only Family Stewards can
-perform this action\"` when the caller is not an admin. The research-intake OQL
+perform this action\"` when the caller is not an active Family Steward (an
+ACTIVE persisted `StewardRecord`). The research-intake OQL
 entities (`researchSource`, `proposedFinding`, `newPersonCandidate`,
 `relationshipProposal`, `conflictReviewItem`, `researchAuditLog`) are all
 declared `.controllerOnly()`, so only the platform controller can read their
@@ -1434,7 +1519,17 @@ already reference the caller's stable principal (`requestingUserId`,
   account), `roleStatus` (`#Active`/`#Removed`), `successorPriority` (`?Nat`,
   the steward's own designated successor priority, `null` when none),
   `assignedBy` (`Principal`, the promoting steward), and `assignedAt` (`Int`,
+  nanoseconds since epoch). A caller is a Family Steward only when they match a
+  `StewardRecord` with `roleStatus == #Active`; the platform admin role is never
+  consulted.
+- `StewardClaimResult` fields: `stewardAccountId` (`Principal`, the account that
+  claimed the Family Steward role), `claimedBy` (`Principal`, the account that
+  performed the claim — the same as `stewardAccountId`), and `claimedAt` (`Int`,
   nanoseconds since epoch).
+- `StewardClaimError` is a variant: `#NotSignedIn` (the caller is anonymous),
+  `#StewardAlreadyExists` (an active Family Steward already exists, so the
+  one-time claim is permanently closed), or `#AlreadySteward` (the caller already
+  holds an active Family Steward record).
 - `SuccessorDesignation` fields: `personId` (`Text`), `priority` (`Nat`, the
   order in which the successor should be considered for activation),
   `assignedBy` (`Principal`), `assignedAt` (`Int`), and `status`
@@ -1706,10 +1801,11 @@ profile photo; a later photo becomes the profile photo only when the caller
 explicitly calls `setProfilePhoto`.
 
 Archive items follow a submit → approve/reject lifecycle. `submitArchiveItem`
-stores the item in `#Pending` state. An admin then calls `approveArchiveItem` or
+stores the item in `#Pending` state. A Family Steward then calls
+`approveArchiveItem` or
 `rejectArchiveItem` to move it to `#Approved` or `#Rejected`. Only `#Approved`
 items are returned by `listApprovedArchiveItems` (the archive view). There is no
-async job to poll; the frontend can call `listPendingArchiveItems` (admin) or
+async job to poll; the frontend can call `listPendingArchiveItems` (steward) or
 `listApprovedArchiveItems` to observe the current state. An Oral History item
 (`classification == #OralHistory`) must carry exactly one primary speaker at
 submission time; the speaker is fixed at submission and does not change through
@@ -1754,11 +1850,23 @@ relationship as `#Confirmed` to the shared family graph),
 `#Pending`). Because all family views read the shared graph, an approved
 relationship automatically appears in Explore Family, Family Tree, Heritage, and
 profiles without a manual insertion step. There is no async job to poll; the
-frontend can call `listProfileClaims` / `listRelationshipRequests` (admin) or
+frontend can call `listProfileClaims` / `listRelationshipRequests` (steward) or
 `listNotifications` to observe current state. A regular signed-in caller can
 observe their own pending relationship state at any time via
 `getMyRelationshipRequests` (returns only the caller's own pending requests)
 without needing Family Steward privileges.
+
+Family Steward authority is bootstrapped once and then permanent. While no
+active Steward exists, `hasActiveSteward` returns `false` and any signed-in
+account may call `claimSteward` to become the first active Steward; the claim
+creates an ACTIVE `StewardRecord` and records the assignment in the audit log.
+Once any active Steward exists, `hasActiveSteward` returns `true` and
+`claimSteward` permanently refuses (`#err(#StewardAlreadyExists)` for a
+non-steward caller, `#err(#AlreadySteward)` for an existing active steward).
+`isCallerSteward` reflects the caller's current authority at any time. There is
+no async job to poll; the frontend can call `hasActiveSteward` to decide whether
+to show the one-time \"Claim Family Steward\" control and `isCallerSteward` to
+gate Steward-only surfaces.
 
 Governance actions follow steward-driven lifecycles. Steward succession:
 `promoteToSteward` makes an approved claimed member an active steward directly;
@@ -1980,6 +2088,14 @@ no async job to poll; the frontend can call the list methods (steward) or
   already bound to the account is a no-op that returns the unchanged account.
   It never removes or replaces other bound methods, so a retry that actually
   succeeded does not duplicate a method.
+- `claimSteward` is not idempotent in effect but guards against duplicates: it
+  succeeds only while no active Steward exists, so a retry after a successful
+  claim returns `#err(#AlreadySteward)` (for the claimer) or
+  `#err(#StewardAlreadyExists)` (for anyone else) and creates no second steward
+  record. It is a one-time bootstrap and permanently refuses once any active
+  Steward exists.
+- `isCallerSteward` and `hasActiveSteward` are read-only queries with no side
+  effects; they are always idempotent.
 - `promoteToSteward` is not idempotent in effect but guards against duplicates:
   it returns `#err(#AlreadySteward)` when the member's account is already an
   active steward, so a retry that actually succeeded does not create a second
@@ -2165,7 +2281,8 @@ no async job to poll; the frontend can call the list methods (steward) or
 - The OQL `photo` entity's primary key is the composite `key` field, not `id`,
   because `id` is only unique within a person.
 - The Family Steward review methods trap with `\"Unauthorized: Only Family
-  Stewards can ...\"` when the caller is not an admin. The sign-in-gated
+  Stewards can ...\"` when the caller is not an active Family Steward (an ACTIVE
+  persisted `StewardRecord`). The sign-in-gated
   ownership methods (`requestProfileClaim`, `createMyself`,
   `proposeRelationship`, `updateOwnProfile`) return `#err(#NotSignedIn)` for an
   anonymous caller rather than trapping.
@@ -2181,14 +2298,23 @@ no async job to poll; the frontend can call the list methods (steward) or
 - `removeDuplicateProfile` returns `#err(#NotSignedIn)` for an anonymous caller
   and `#err(#ProfileNotFound)` when the person is not tracked. It is Family
   Steward only and traps with `\"Unauthorized: Only Family Stewards can remove
-  duplicate profiles\"` when the caller is not an admin. It removes the profile
+  duplicate profiles\"` when the caller is not an active Family Steward (an
+  ACTIVE persisted `StewardRecord`). It removes the profile
   plus any pending relationship request or pending claim tied only to it; it
   never removes the signed-in account and never alters confirmed relationships.
 - The Family Governance methods trap with `\"Unauthorized: Only Family Stewards
-  can ...\"` when the caller is not an admin. `requestProfileRemoval` is the one
+  can ...\"` when the caller is not an active Family Steward (an ACTIVE persisted
+  `StewardRecord`). The platform admin role does not grant these powers.
+  `requestProfileRemoval` is the one
   governance method a normal family member calls; it returns `#err(#NotSignedIn)`
   for an anonymous caller rather than trapping, and only ever requests removal
   of the caller's own claimed living profile.
+- `claimSteward` returns `#err(#NotSignedIn)` for an anonymous caller,
+  `#err(#StewardAlreadyExists)` when an active Steward already exists and the
+  caller is not one, and `#err(#AlreadySteward)` when the caller already holds
+  an active Steward record. It does not trap. `isCallerSteward` and
+  `hasActiveSteward` return `false` for an anonymous caller rather than
+  trapping.
 - `approveProfileRemoval`, `rejectProfileRemoval`, and `resolveMergeConflict`
   return `null` (they do not trap) when the target id does not exist or is not
   in the expected state.
@@ -2232,7 +2358,8 @@ no async job to poll; the frontend can call the list methods (steward) or
   anonymous caller, and `submitMysteryContribution` traps with `\"Sign-in
   required to contribute to a mystery\"` for an anonymous caller. The Family
   Steward family-history methods trap with `\"Unauthorized: Only Family Stewards
-  can ...\"` when the caller is not an admin.
+  can ...\"` when the caller is not an active Family Steward (an ACTIVE persisted
+  `StewardRecord`).
 - `approveStory`, `rejectStory`, `updateCanonicalStory`,
   `reviewMysteryContribution`, `updateCanonicalMystery`, and
   `markMysteryResolved` return `null` (they do not trap) when the target id does
@@ -2243,11 +2370,13 @@ no async job to poll; the frontend can call the list methods (steward) or
   anonymous caller, and with `\"Originating family member not found\"` when
   `originatingPersonId` does not reference a tracked canonical Person record.
   `publishRecipe` traps with `\"Unauthorized: Only Family Stewards can publish
-  recipes\"` when the caller is not an admin, and with `\"Originating family
+  recipes\"` when the caller is not an active Family Steward (an ACTIVE persisted
+  `StewardRecord`), and with `\"Originating family
   member not found\"` when the originating person is not tracked. The Family
   Steward recipe methods (`listPendingRecipes`, `approveRecipe`, `rejectRecipe`,
   `publishRecipe`) trap with `\"Unauthorized: Only Family Stewards can ...\"`
-  when the caller is not an admin.
+  when the caller is not an active Family Steward (an ACTIVE persisted
+  `StewardRecord`).
 - `approveRecipe`, `rejectRecipe`, and `getRecipe` return `null` (they do not
   trap) when the target id does not exist or is not in the expected state.
 - Recipes reference canonical Person records by `personId` only and canonical
@@ -2271,7 +2400,8 @@ no async job to poll; the frontend can call the list methods (steward) or
   board/messaging methods (`restoreBoardPost`, `removeBoardReply`, `listReports`,
   `reviewReport`, `getReportedMessage`) and `getPendingContributionsCount` trap
   with `\"Unauthorized: Only Family Stewards can perform this action\"` (or the
-  equivalent pending-count message) when the caller is not an admin.
+  equivalent pending-count message) when the caller is not an active Family
+  Steward (an ACTIVE persisted `StewardRecord`).
 - `getBoardPost` returns `null` (it does not trap) when the post does not exist
   or is archived. `updateBoardPost` returns `null` when the post does not exist
   and traps with `\"Unauthorized: Only the post author can edit this post\"` when
@@ -2326,7 +2456,8 @@ no async job to poll; the frontend can call the list methods (steward) or
   `needsResearchRelationshipProposal`) trap with `\"Unauthorized: You must
   be signed in\"` for an
   anonymous caller and `\"Unauthorized: Only Family Stewards can perform this
-  action\"` when the caller is not an admin.
+  action\"` when the caller is not an active Family Steward (an ACTIVE persisted
+  `StewardRecord`).
 - `approveFinding`, `rejectFinding`, `needsResearchFinding`, `resolveConflict`,
   `approveNewPersonCandidate`, `rejectNewPersonCandidate`,
   `needsResearchNewPersonCandidate`, `approveRelationshipProposal`,
@@ -2343,7 +2474,8 @@ no async job to poll; the frontend can call the list methods (steward) or
 - `getStewardAuditHistory` is Family Steward only and traps with
   `\"Unauthorized: You must be signed in\"` for an anonymous caller and
   `\"Unauthorized: Only Family Stewards can view audit history\"` when the
-  caller is not an admin. It is a computed read over existing records — it
+  caller is not an active Family Steward (an ACTIVE persisted `StewardRecord`).
+  It is a computed read over existing records — it
   never writes, duplicates, or deletes any audit entry, and it does not require
   a migration. A conflict-resolution entry's `resolution` field is derived from
   the research audit summary text (the parenthesized action), so it is `null`

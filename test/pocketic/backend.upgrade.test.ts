@@ -37,7 +37,14 @@ it("carries photos written by the previous version through the upgrade", async (
     wasm: PREVIOUS_WASM,
   });
 
-  // 2. Write data through the OLD public API, as the deployed app did.
+  // 2. Write data through the OLD public API, as the deployed app did. The
+  //    previous revision already gates addPhoto on approved-family membership,
+  //    so the writer must be authorized there too: the first caller to
+  //    _initialize_access_control becomes the platform admin, which the OLD
+  //    revision treated as Steward authority.
+  const steward = createIdentity("upgrade-photo-steward-seed");
+  previous.actor.setIdentity(steward);
+  await previous.actor._initialize_access_control();
   const blob = new Uint8Array([7, 8, 9]);
   await previous.actor.addPhoto("julia", "julia-old.png", "image/png", blob);
 
@@ -56,10 +63,19 @@ it("carries photos written by the previous version through the upgrade", async (
 
   // 4. Read through the NEW API and assert both survival and the new shape.
   const upgraded = pic!.createActor<_SERVICE>(idlFactory, previous.canisterId);
+  // listPhotos now requires an approved family member or a Family Steward. The
+  // new build's Steward authority is the canonical active-Steward record, not
+  // the platform admin role, and the previous revision never persisted a
+  // StewardRecord — so the same identity must perform the one-time
+  // `claimSteward` bootstrap after the upgrade before it can read the gallery.
+  // The photo itself must survive the upgrade regardless of who reads it back.
+  upgraded.setIdentity(steward);
+  await upgraded.claimSteward();
   const photos = await upgraded.listPhotos("julia");
   expect(photos).toHaveLength(1);
   expect(photos[0]).toMatchObject({ filename: "julia-old.png" });
-  // The first photo remains the profile photo after the upgrade.
+  // The first photo remains the profile photo after the upgrade. 'julia' is
+  // seeded #Unclaimed, so getProfilePhoto stays readable by guests too.
   const profile = await upgraded.getProfilePhoto("julia");
   expect(profile).toEqual([
     expect.objectContaining({ filename: "julia-old.png" }),

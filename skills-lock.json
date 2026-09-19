@@ -26,6 +26,16 @@
       "sourceType": "github",
       "computedHash": "f66ab619cc13f86cd8e66ac007df1257494abc75189f2ef18c5e1157e718c414"
     },
+    "connector-weatherapi": {
+      "source": "caffeinelabs/skills",
+      "sourceType": "github",
+      "computedHash": "a4508dceae76b760810ba2117f8088b7b1077a1e0784bbbb891b8ed03ff5731b"
+    },
+    "connector-x": {
+      "source": "caffeinelabs/skills",
+      "sourceType": "github",
+      "computedHash": "c3d5b3423a61e52cf4d4ccba10e8af779577cd3ba51506adc7f8ed9ad26dccf6"
+    },
     "extension-authorization": {
       "source": "caffeinelabs/skills",
       "sourceType": "github",
@@ -99,7 +109,7 @@
     "extension-posting-to-x": {
       "source": "caffeinelabs/skills",
       "sourceType": "github",
-      "computedHash": "8bde769052c2a7b78b5c89293cf42609c6d1f4cbaa0cd0a3cf238b2c1465bc6c"
+      "computedHash": "f1955c31086d98e8d30f0216ee7a5f0f292cf0c2979656001d99f765e568f9f5"
     },
     "extension-qr-code": {
       "source": "caffeinelabs/skills",

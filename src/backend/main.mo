@@ -25,6 +25,7 @@ import MessagingTypes "types/messaging";
 import ResearchIntakeTypes "types/research-intake";
 import ObjectStorageLib "lib/object-storage";
 import FamilyAuthorizationLib "lib/family-authorization";
+import StewardAuthorityLib "lib/steward-authority";
 import ArchiveLib "lib/archive";
 import OwnershipLib "lib/ownership";
 import AccountIdentityLib "lib/account-identity";
@@ -45,6 +46,7 @@ import PendingCountApi "mixins/pending-count-api";
 import ResearchIntakeApi "mixins/research-intake-api";
 import ArchiveResearchBoardNotificationsApi "mixins/archive-research-board-notifications-api";
 import AuditAndWorkloadApi "mixins/audit-and-workload-api";
+import StewardAuthorityApi "mixins/steward-authority-api";
 import ApiDocMixin "mixins/api-doc";
 
 actor {
@@ -237,7 +239,7 @@ actor {
   /// contributor or an admin. The owner column is the archive item's `id`, which
   /// lets the rule look up the item's privacy level and contributor.
   func canSeeArchiveItem(caller : Principal, owner : OQL.Value) : Bool {
-    if (AccessControl.isAdmin(accessControlState, caller)) {
+    if (StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       return true;
     };
     switch (owner) {
@@ -246,7 +248,7 @@ actor {
           case (?item) {
             switch (item.privacyLevel) {
               case (#Public) true;
-              case (#FamilyOnly) FamilyAuthorizationLib.isApprovedFamilyMember(accessControlState, claims, caller);
+              case (#FamilyOnly) FamilyAuthorizationLib.isApprovedFamilyMember(stewards, claims, caller);
               case (#Private) item.contributor == caller;
             };
           };
@@ -1043,21 +1045,22 @@ actor {
     ];
   });
   include MixinObjectStorage();
-  include ObjectStorageApi(accessControlState, galleries, claims);
-  include ArchiveApi(accessControlState, archiveItems, claims);
-  include OwnershipApi(accessControlState, profiles, claims, confirmedRelationships, relationshipRequests, notifications, auditLog);
+  include ObjectStorageApi(galleries, claims, profiles, stewards);
+  include ArchiveApi(archiveItems, claims, stewards);
+  include OwnershipApi(accessControlState, profiles, claims, confirmedRelationships, relationshipRequests, notifications, auditLog, stewards);
   include ClaimPersistenceApi(profiles, claims);
   include RelationshipsApi(relationshipRequests, confirmedRelationships);
   include NotificationsApi(notifications);
   include AccountIdentityApi(accounts);
   include GovernanceApi(accessControlState, profiles, confirmedRelationships, stewards, successors, removalRequests, auditLog, mergeConflicts, archivedProfiles, galleries, archiveItems, dismissedDuplicates);
-  include FamilyHistoryApi(accessControlState, stories, mysteries, mysteryContributions, profiles, archiveItems, claims);
-  include RecipesApi(accessControlState, recipes, profiles, claims);
-  include BoardApi(accessControlState, posts, replies, profiles, notifications, auditLog);
-  include MessagingApi(accessControlState, conversations, messages, blocks, reports, profiles, archivedProfiles, notifications, accounts);
-  include PendingCountApi(accessControlState, archiveItems, recipes, stories, mysteryContributions);
-  include ResearchIntakeApi(accessControlState, researchSources, proposedFindings, newPersonCandidates, relationshipProposals, conflictReviewItems, researchAuditLog, researchState, profiles, confirmedRelationships, stories, mysteries, archiveItems, notifications, claims);
-  include ArchiveResearchBoardNotificationsApi(accessControlState, archiveItems, researchSources, researchState, posts, notifications, claims);
-  include AuditAndWorkloadApi(accessControlState, auditLog, researchAuditLog, conflictReviewItems);
+  include FamilyHistoryApi(stories, mysteries, mysteryContributions, profiles, archiveItems, claims, stewards);
+  include RecipesApi(recipes, profiles, claims, stewards);
+  include BoardApi(accessControlState, posts, replies, profiles, notifications, auditLog, stewards);
+  include MessagingApi(accessControlState, conversations, messages, blocks, reports, profiles, archivedProfiles, notifications, accounts, stewards);
+  include PendingCountApi(accessControlState, archiveItems, recipes, stories, mysteryContributions, stewards);
+  include ResearchIntakeApi(researchSources, proposedFindings, newPersonCandidates, relationshipProposals, conflictReviewItems, researchAuditLog, researchState, profiles, confirmedRelationships, stories, mysteries, archiveItems, notifications, claims, stewards);
+  include ArchiveResearchBoardNotificationsApi(accessControlState, archiveItems, researchSources, researchState, posts, notifications, claims, stewards);
+  include AuditAndWorkloadApi(accessControlState, auditLog, researchAuditLog, conflictReviewItems, stewards);
+  include StewardAuthorityApi(accessControlState, stewards, auditLog);
   include ApiDocMixin();
 };

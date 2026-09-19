@@ -60,7 +60,6 @@ import {
 import {
   useApprovedArchiveItems,
   useApprovedMediaItems,
-  useIsAdmin,
 } from "../hooks/useArchiveStorage";
 import {
   resolveCanonicalPersonProfile,
@@ -86,6 +85,7 @@ import { useMyProfileClaim, usePersonProfile } from "../hooks/useProfileClaims";
 import { useRecipesForPerson } from "../hooks/useRecipes";
 import { useMyRelationshipRequests } from "../hooks/useRelationshipRequests";
 import { useListConflictsForPerson } from "../hooks/useResearchIntake";
+import { useIsSteward } from "../hooks/useStewardAuthority";
 import type { ArchiveItem } from "../types/archive";
 import { getMediaKind } from "../types/archive";
 import {
@@ -3649,7 +3649,7 @@ export function PersonProfilePage({
   const { identity, isAuthenticated } = useInternetIdentity();
   const { data: myClaim } = useMyProfileClaim(person.id);
   const { data: relationshipRequests = [] } = useMyRelationshipRequests();
-  const { data: isSteward = false } = useIsAdmin();
+  const { data: isSteward = false } = useIsSteward();
 
   // Family Governance & Safety controls. The archived ids list is guest-safe
   // (non-gated on the backend), so it can be queried by any caller to drive the

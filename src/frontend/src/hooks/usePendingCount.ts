@@ -1,12 +1,12 @@
 import { createActor } from "@/backend";
 import { useActor } from "@caffeineai/core-infrastructure";
 import { useQuery } from "@tanstack/react-query";
-import { useIsAdmin } from "./useArchiveStorage";
+import { useIsSteward } from "./useStewardAuthority";
 
 /**
  * React Query hook for the Family Steward Pending Contributions badge. It
  * reads the canonical pending-review count from the backend
- * (getPendingContributionsCount) and is gated to Family Stewards (admins) so
+ * (getPendingContributionsCount) and is gated to active Family Stewards so
  * guests and non-steward members never trigger the steward-only query.
  *
  * The backend returns a bigint; it is converted to a number here so the badge
@@ -15,7 +15,7 @@ import { useIsAdmin } from "./useArchiveStorage";
 
 /** The number of pending contributions awaiting steward review, or 0 for non-stewards. */
 export function usePendingCount() {
-  const { data: isAdmin = false } = useIsAdmin();
+  const { data: isSteward = false } = useIsSteward();
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
     queryKey: ["pendingContributionsCount"],
@@ -24,6 +24,6 @@ export function usePendingCount() {
       const count = await actor.getPendingContributionsCount();
       return Number(count);
     },
-    enabled: isAdmin && !!actor && !isFetching,
+    enabled: isSteward && !!actor && !isFetching,
   });
 }

@@ -84,6 +84,14 @@ const {
     async isCallerAdmin(): Promise<boolean> {
       return isAdmin;
     },
+    // Family Steward authority is the canonical gate; the platform admin role
+    // is a separate concern. This mock drives both from the same flag.
+    async isCallerSteward(): Promise<boolean> {
+      return isAdmin;
+    },
+    async hasActiveSteward(): Promise<boolean> {
+      return true;
+    },
     async getPersonProfile(personId: string): Promise<PersonProfile | null> {
       return profiles[personId] ?? null;
     },
@@ -300,7 +308,7 @@ describe("Add Myself 'This is Me' submits a claim and only navigates after backe
     expect(getRequestClaimCalls()).toBe(1);
   });
 
-  it("routes to My Profile when the backend reports AlreadyClaimed, without creating a duplicate claim", async () => {
+  it("shows 'Already claimed' on the match card and creates no duplicate claim when the profile is already owned", async () => {
     // The profile is already CLAIMED by the signed-in account.
     seedProfile({
       personId: "lorenzoSmithJr",
@@ -321,20 +329,16 @@ describe("Add Myself 'This is Me' submits a claim and only navigates after backe
     renderApp();
 
     await searchAddMyself(user, "Lorenzo Smith Jr");
-    await user.click(
-      (await screen.findAllByRole("button", { name: "This is Me" }))[0],
-    );
 
-    // AlreadyClaimed routes to My Profile (the owned canonical profile).
-    expect(await screen.findByRole("heading", { level: 1 })).toHaveTextContent(
-      "Lorenzo Smith Jr.",
-    );
-    const claimSection = screen.getByTestId("profile.claim_section");
+    // The already-claimed match shows the non-interactive "Already claimed"
+    // state instead of an active "This is Me" action, so a second claim can
+    // never be started from the match card.
+    expect(await screen.findByText("Already claimed")).toBeInTheDocument();
     expect(
-      await within(claimSection).findByText("Claimed"),
-    ).toBeInTheDocument();
+      screen.queryByRole("button", { name: "This is Me" }),
+    ).not.toBeInTheDocument();
     // No duplicate claim was created.
-    expect(getRequestClaimCalls()).toBe(1);
+    expect(getRequestClaimCalls()).toBe(0);
   });
 
   it("treats AlreadyPending as a successful reuse and navigates to the canonical profile", async () => {

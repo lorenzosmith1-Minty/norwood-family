@@ -100,8 +100,11 @@ mixin (
     sources.toArray();
   };
 
-  /// Returns a single source record by id.
-  public query func getSource(id : Types.SourceId) : async ?Types.SourceRecord {
+  /// Returns a single source record by id (Family Steward only). The source
+  /// record carries the contributor principal and description, so it is not
+  /// readable by anonymous or non-steward callers.
+  public query ({ caller }) func getSource(id : Types.SourceId) : async ?Types.SourceRecord {
+    requireSteward(caller);
     sources.find(func s = s.id == id);
   };
 
@@ -157,8 +160,11 @@ mixin (
     findings.toArray();
   };
 
-  /// Returns a single proposed finding by id.
-  public query func getFinding(id : Types.FindingId) : async ?Types.ProposedFinding {
+  /// Returns a single proposed finding by id (Family Steward only). The finding
+  /// carries its content, submitter principal, and review metadata, so it is not
+  /// readable by anonymous or non-steward callers.
+  public query ({ caller }) func getFinding(id : Types.FindingId) : async ?Types.ProposedFinding {
+    requireSteward(caller);
     findings.find(func f = f.id == id);
   };
 

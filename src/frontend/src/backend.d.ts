@@ -1409,7 +1409,9 @@ export interface backendInterface {
      */
     getConversation(conversationId: ConversationId): Promise<ConversationView | null>;
     /**
-     * / Returns a single proposed finding by id.
+     * / Returns a single proposed finding by id (Family Steward only). The finding
+     * / carries its content, submitter principal, and review metadata, so it is not
+     * / readable by anonymous or non-steward callers.
      */
     getFinding(id: FindingId): Promise<ProposedFinding | null>;
     /**
@@ -1502,7 +1504,9 @@ export interface backendInterface {
      */
     getSingleStewardWarning(): Promise<string | null>;
     /**
-     * / Returns a single source record by id.
+     * / Returns a single source record by id (Family Steward only). The source
+     * / record carries the contributor principal and description, so it is not
+     * / readable by anonymous or non-steward callers.
      */
     getSource(id: SourceId): Promise<SourceRecord | null>;
     /**

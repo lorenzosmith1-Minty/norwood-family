@@ -1377,7 +1377,9 @@ service : {
   /// read a conversation.
   getConversation: (conversationId: ConversationId) ->
    (opt ConversationView) query;
-  /// Returns a single proposed finding by id.
+  /// Returns a single proposed finding by id (Family Steward only). The finding
+  /// carries its content, submitter principal, and review metadata, so it is not
+  /// readable by anonymous or non-steward callers.
   getFinding: (id: FindingId) -> (opt ProposedFinding) query;
   /// Returns the stable account id of the signed-in caller. Anonymous callers
   /// receive #NotSignedIn.
@@ -1440,7 +1442,9 @@ service : {
   /// Returns a warning encouraging successor designation when only one steward
   /// exists, or `null` when there are multiple stewards. Family Steward only.
   getSingleStewardWarning: () -> (opt text) query;
-  /// Returns a single source record by id.
+  /// Returns a single source record by id (Family Steward only). The source
+  /// record carries the contributor principal and description, so it is not
+  /// readable by anonymous or non-steward callers.
   getSource: (id: SourceId) -> (opt SourceRecord) query;
   /// Returns the merged Family Steward Audit History: every governance audit
   /// entry plus every conflict-resolution action (Keep Existing, Replace

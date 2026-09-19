@@ -722,9 +722,10 @@ Contributions badge.
   optional — a source may link to an Archive item without requiring one.
 - `listSources() : async [SourceRecord]` — query. Family Steward only. Lists all
   source records.
-- `getSource(id : SourceId) : async ?SourceRecord` — query. Returns a single
-  source record by id, or `null` when it does not exist. Not gated to admin — any
-  caller may query a source by id.
+- `getSource(id : SourceId) : async ?SourceRecord` — query. Family Steward only.
+  Returns a single source record by id, or `null` when it does not exist. The
+  source record carries the contributor principal and description, so anonymous
+  and signed-in but non-steward callers are rejected with a trap.
 - `createFinding(title : Text, evidenceLabel : EvidenceLabel, findingType : FindingType, content : FindingContent, sourceId : SourceId, personId : ?Text, newPersonCandidateId : ?Nat) : async Result<ProposedFinding, ResearchError>` —
   update. Creates a proposed finding carrying exactly one evidence label and a
   required source link. Requires an approved family member (a caller holding at
@@ -737,9 +738,11 @@ Contributions badge.
   auto-approved.
 - `listFindings() : async [ProposedFinding]` — query. Family Steward only. Lists
   all proposed findings.
-- `getFinding(id : FindingId) : async ?ProposedFinding` — query. Returns a single
-  proposed finding by id, or `null` when it does not exist. Not gated to admin —
-  any caller may query a finding by id.
+- `getFinding(id : FindingId) : async ?ProposedFinding` — query. Family Steward
+  only. Returns a single proposed finding by id, or `null` when it does not
+  exist. The finding carries its content, submitter principal, and review
+  metadata, so anonymous and signed-in but non-steward callers are rejected with
+  a trap.
 - `approveFinding(id : FindingId) : async ?ProposedFinding` — update. Family
   Steward only. Approves a pending finding, routing it to its target surface
   (Profile, family graph, Timeline / Travel Through Time, Family Stories, Family

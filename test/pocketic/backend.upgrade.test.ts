@@ -39,12 +39,16 @@ it("carries photos written by the previous version through the upgrade", async (
 
   // 2. Write data through the OLD public API, as the deployed app did. The
   //    previous revision already gates addPhoto on approved-family membership,
-  //    so the writer must be authorized there too: the first caller to
-  //    _initialize_access_control becomes the platform admin, which the OLD
-  //    revision treated as Steward authority.
+  //    so the writer must be authorized there too. Its Steward authority is the
+  //    canonical active-Steward record over the persisted `stewards` list — the
+  //    platform admin role is never consulted — so the writer must perform the
+  //    one-time `claimSteward` bootstrap on the previous revision before it can
+  //    add a photo. (The previous revision's `isSteward` delegates to
+  //    `StewardAuthorityLib.isActiveSteward`, exactly as this build's does.)
   const steward = createIdentity("upgrade-photo-steward-seed");
   previous.actor.setIdentity(steward);
   await previous.actor._initialize_access_control();
+  await previous.actor.claimSteward();
   const blob = new Uint8Array([7, 8, 9]);
   await previous.actor.addPhoto("julia", "julia-old.png", "image/png", blob);
 
@@ -63,14 +67,12 @@ it("carries photos written by the previous version through the upgrade", async (
 
   // 4. Read through the NEW API and assert both survival and the new shape.
   const upgraded = pic!.createActor<_SERVICE>(idlFactory, previous.canisterId);
-  // listPhotos now requires an approved family member or a Family Steward. The
-  // new build's Steward authority is the canonical active-Steward record, not
-  // the platform admin role, and the previous revision never persisted a
-  // StewardRecord — so the same identity must perform the one-time
-  // `claimSteward` bootstrap after the upgrade before it can read the gallery.
-  // The photo itself must survive the upgrade regardless of who reads it back.
+  // listPhotos requires an approved family member or a Family Steward. The
+  // StewardRecord written by the previous revision's `claimSteward` bootstrap
+  // is stable state and survives the upgrade, so the same identity is still an
+  // active Steward here and can read the gallery without re-claiming. The photo
+  // itself must survive the upgrade regardless of who reads it back.
   upgraded.setIdentity(steward);
-  await upgraded.claimSteward();
   const photos = await upgraded.listPhotos("julia");
   expect(photos).toHaveLength(1);
   expect(photos[0]).toMatchObject({ filename: "julia-old.png" });

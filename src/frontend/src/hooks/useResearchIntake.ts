@@ -105,6 +105,12 @@ export interface CreateSourceWithUploadInput {
   /** The declared MIME type of the uploaded file. */
   mimeType: string;
   blob: ExternalBlob;
+  /**
+   * The sanitized original filename of the uploaded file, persisted on the
+   * created Archive item so its detail view can resolve the preview type and
+   * download name.
+   */
+  filename: string;
   tags: string[];
   era: string;
   year: bigint | null;
@@ -138,6 +144,7 @@ export function useCreateSourceWithUpload() {
         input.privacyLevel,
         input.classification,
         input.primarySpeaker,
+        input.filename,
       );
     },
     onSuccess: () => {

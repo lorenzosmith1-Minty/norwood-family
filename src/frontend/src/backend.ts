@@ -69,8 +69,10 @@ export interface ArchiveItem {
     createdAt: bigint;
     tags: Array<string>;
     year?: bigint;
+    mimeType?: string;
     description: string;
     privacyLevel: PrivacyLevel;
+    filename?: string;
     primarySpeaker?: OralHistorySpeaker;
     extractedNames?: Array<string>;
     itemType: ArchiveItemType;
@@ -113,6 +115,7 @@ export interface BoardMediaUpload {
     mimeType: string;
     description: string;
     privacyLevel: PrivacyLevel;
+    filename: string;
     primarySpeaker?: OralHistorySpeaker;
     itemType: ArchiveItemType;
     relatedBranchId?: string;
@@ -1078,7 +1081,9 @@ export enum MysteryStatus {
 export enum NotificationType {
     ResearchSubmission = "ResearchSubmission",
     ResearchApproved = "ResearchApproved",
+    ArchiveApproved = "ArchiveApproved",
     ResearchRejected = "ResearchRejected",
+    ArchiveRejected = "ArchiveRejected",
     RelationshipRequested = "RelationshipRequested",
     BoardMention = "BoardMention",
     RelationshipReviewed = "RelationshipReviewed",
@@ -1289,7 +1294,9 @@ export interface backendInterface {
     addRelationship(fromPersonId: PersonId, toPersonId: PersonId, relationshipType: RelationshipType): Promise<Result_23>;
     /**
      * / Approves a pending archive item (admin only). Returns the updated item, or
-     * / `null` when the item does not exist or is not pending.
+     * / `null` when the item does not exist or is not pending. On the actual
+     * / transition out of pending, notifies only the contributor; a repeated call
+     * / on an already-reviewed item returns `null` and creates no notification.
      */
     approveArchiveItem(id: ArchiveItemId): Promise<ArchiveItem | null>;
     /**
@@ -1454,7 +1461,7 @@ export interface backendInterface {
      * / typed Archive Item ID is required. Requires an approved family member; the
      * / caller is recorded as the contributor of both records.
      */
-    createSourceWithUpload(title: string, sourceType: SourceType, description: string, mimeType: string, blob: ExternalBlob, tags: Array<string>, era: string, year: bigint | null, relatedMemberIds: Array<string>, privacyLevel: PrivacyLevel, classification: ArchiveItemClassification, primarySpeaker: OralHistorySpeaker | null): Promise<Result_17>;
+    createSourceWithUpload(title: string, sourceType: SourceType, description: string, mimeType: string, blob: ExternalBlob, tags: Array<string>, era: string, year: bigint | null, relatedMemberIds: Array<string>, privacyLevel: PrivacyLevel, classification: ArchiveItemClassification, primarySpeaker: OralHistorySpeaker | null, filename: string): Promise<Result_17>;
     /**
      * / Designates an approved claimed family member as a successor steward with a
      * / priority/order. A successor is a designation only until activated.
@@ -1889,7 +1896,10 @@ export interface backendInterface {
     reconcileClaimNotifications(claimId: bigint): Promise<bigint>;
     /**
      * / Rejects a pending archive item (admin only). Returns the updated item, or
-     * / `null` when the item does not exist or is not pending.
+     * / `null` when the item does not exist or is not pending. The rejected record
+     * / is retained, not deleted. On the actual transition out of pending, notifies
+     * / only the contributor; a repeated call on an already-reviewed item returns
+     * / `null` and creates no notification.
      */
     rejectArchiveItem(id: ArchiveItemId): Promise<ArchiveItem | null>;
     /**
@@ -2061,7 +2071,7 @@ export interface backendInterface {
      * / is recorded as the contributor. The item is stored in pending state and
      * / waits for admin approval before appearing in the archive.
      */
-    submitArchiveItem(title: string, description: string, itemType: ArchiveItemType, mimeType: string, blob: ExternalBlob, era: string, year: bigint | null, tags: Array<string>, relatedMemberIds: Array<string>, relatedBranchId: string | null, sourceStatus: SourceStatus, privacyLevel: PrivacyLevel, classification: ArchiveItemClassification, primarySpeaker: OralHistorySpeaker | null): Promise<ArchiveItem>;
+    submitArchiveItem(title: string, description: string, itemType: ArchiveItemType, mimeType: string, blob: ExternalBlob, era: string, year: bigint | null, tags: Array<string>, relatedMemberIds: Array<string>, relatedBranchId: string | null, sourceStatus: SourceStatus, privacyLevel: PrivacyLevel, classification: ArchiveItemClassification, primarySpeaker: OralHistorySpeaker | null, filename: string): Promise<ArchiveItem>;
     /**
      * / Submits a mystery contribution (a note, memory, possible lead, or
      * / source/document reference). Requires an approved family member; the caller
@@ -2687,17 +2697,17 @@ export class Backend implements backendInterface {
             return from_candid_Result_18_n152(this._uploadFile, this._downloadFile, result);
         }
     }
-    async createSourceWithUpload(arg0: string, arg1: SourceType, arg2: string, arg3: string, arg4: ExternalBlob, arg5: Array<string>, arg6: string, arg7: bigint | null, arg8: Array<string>, arg9: PrivacyLevel, arg10: ArchiveItemClassification, arg11: OralHistorySpeaker | null): Promise<Result_17> {
+    async createSourceWithUpload(arg0: string, arg1: SourceType, arg2: string, arg3: string, arg4: ExternalBlob, arg5: Array<string>, arg6: string, arg7: bigint | null, arg8: Array<string>, arg9: PrivacyLevel, arg10: ArchiveItemClassification, arg11: OralHistorySpeaker | null, arg12: string): Promise<Result_17> {
         if (this.processError) {
             try {
-                const result = await this.actor.createSourceWithUpload(arg0, to_candid_SourceType_n135(this._uploadFile, this._downloadFile, arg1), arg2, arg3, await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg4), arg5, arg6, to_candid_opt_n19(this._uploadFile, this._downloadFile, arg7), arg8, to_candid_PrivacyLevel_n119(this._uploadFile, this._downloadFile, arg9), to_candid_ArchiveItemClassification_n124(this._uploadFile, this._downloadFile, arg10), to_candid_opt_n154(this._uploadFile, this._downloadFile, arg11));
+                const result = await this.actor.createSourceWithUpload(arg0, to_candid_SourceType_n135(this._uploadFile, this._downloadFile, arg1), arg2, arg3, await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg4), arg5, arg6, to_candid_opt_n19(this._uploadFile, this._downloadFile, arg7), arg8, to_candid_PrivacyLevel_n119(this._uploadFile, this._downloadFile, arg9), to_candid_ArchiveItemClassification_n124(this._uploadFile, this._downloadFile, arg10), to_candid_opt_n154(this._uploadFile, this._downloadFile, arg11), arg12);
                 return from_candid_Result_17_n155(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.createSourceWithUpload(arg0, to_candid_SourceType_n135(this._uploadFile, this._downloadFile, arg1), arg2, arg3, await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg4), arg5, arg6, to_candid_opt_n19(this._uploadFile, this._downloadFile, arg7), arg8, to_candid_PrivacyLevel_n119(this._uploadFile, this._downloadFile, arg9), to_candid_ArchiveItemClassification_n124(this._uploadFile, this._downloadFile, arg10), to_candid_opt_n154(this._uploadFile, this._downloadFile, arg11));
+            const result = await this.actor.createSourceWithUpload(arg0, to_candid_SourceType_n135(this._uploadFile, this._downloadFile, arg1), arg2, arg3, await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg4), arg5, arg6, to_candid_opt_n19(this._uploadFile, this._downloadFile, arg7), arg8, to_candid_PrivacyLevel_n119(this._uploadFile, this._downloadFile, arg9), to_candid_ArchiveItemClassification_n124(this._uploadFile, this._downloadFile, arg10), to_candid_opt_n154(this._uploadFile, this._downloadFile, arg11), arg12);
             return from_candid_Result_17_n155(this._uploadFile, this._downloadFile, result);
         }
     }
@@ -4255,17 +4265,17 @@ export class Backend implements backendInterface {
             return from_candid_opt_n82(this._uploadFile, this._downloadFile, result);
         }
     }
-    async submitArchiveItem(arg0: string, arg1: string, arg2: ArchiveItemType, arg3: string, arg4: ExternalBlob, arg5: string, arg6: bigint | null, arg7: Array<string>, arg8: Array<string>, arg9: string | null, arg10: SourceStatus, arg11: PrivacyLevel, arg12: ArchiveItemClassification, arg13: OralHistorySpeaker | null): Promise<ArchiveItem> {
+    async submitArchiveItem(arg0: string, arg1: string, arg2: ArchiveItemType, arg3: string, arg4: ExternalBlob, arg5: string, arg6: bigint | null, arg7: Array<string>, arg8: Array<string>, arg9: string | null, arg10: SourceStatus, arg11: PrivacyLevel, arg12: ArchiveItemClassification, arg13: OralHistorySpeaker | null, arg14: string): Promise<ArchiveItem> {
         if (this.processError) {
             try {
-                const result = await this.actor.submitArchiveItem(arg0, arg1, to_candid_ArchiveItemType_n122(this._uploadFile, this._downloadFile, arg2), arg3, await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg4), arg5, to_candid_opt_n19(this._uploadFile, this._downloadFile, arg6), arg7, arg8, to_candid_opt_n18(this._uploadFile, this._downloadFile, arg9), to_candid_SourceStatus_n123(this._uploadFile, this._downloadFile, arg10), to_candid_PrivacyLevel_n119(this._uploadFile, this._downloadFile, arg11), to_candid_ArchiveItemClassification_n124(this._uploadFile, this._downloadFile, arg12), to_candid_opt_n154(this._uploadFile, this._downloadFile, arg13));
+                const result = await this.actor.submitArchiveItem(arg0, arg1, to_candid_ArchiveItemType_n122(this._uploadFile, this._downloadFile, arg2), arg3, await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg4), arg5, to_candid_opt_n19(this._uploadFile, this._downloadFile, arg6), arg7, arg8, to_candid_opt_n18(this._uploadFile, this._downloadFile, arg9), to_candid_SourceStatus_n123(this._uploadFile, this._downloadFile, arg10), to_candid_PrivacyLevel_n119(this._uploadFile, this._downloadFile, arg11), to_candid_ArchiveItemClassification_n124(this._uploadFile, this._downloadFile, arg12), to_candid_opt_n154(this._uploadFile, this._downloadFile, arg13), arg14);
                 return from_candid_ArchiveItem_n39(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.submitArchiveItem(arg0, arg1, to_candid_ArchiveItemType_n122(this._uploadFile, this._downloadFile, arg2), arg3, await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg4), arg5, to_candid_opt_n19(this._uploadFile, this._downloadFile, arg6), arg7, arg8, to_candid_opt_n18(this._uploadFile, this._downloadFile, arg9), to_candid_SourceStatus_n123(this._uploadFile, this._downloadFile, arg10), to_candid_PrivacyLevel_n119(this._uploadFile, this._downloadFile, arg11), to_candid_ArchiveItemClassification_n124(this._uploadFile, this._downloadFile, arg12), to_candid_opt_n154(this._uploadFile, this._downloadFile, arg13));
+            const result = await this.actor.submitArchiveItem(arg0, arg1, to_candid_ArchiveItemType_n122(this._uploadFile, this._downloadFile, arg2), arg3, await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg4), arg5, to_candid_opt_n19(this._uploadFile, this._downloadFile, arg6), arg7, arg8, to_candid_opt_n18(this._uploadFile, this._downloadFile, arg9), to_candid_SourceStatus_n123(this._uploadFile, this._downloadFile, arg10), to_candid_PrivacyLevel_n119(this._uploadFile, this._downloadFile, arg11), to_candid_ArchiveItemClassification_n124(this._uploadFile, this._downloadFile, arg12), to_candid_opt_n154(this._uploadFile, this._downloadFile, arg13), arg14);
             return from_candid_ArchiveItem_n39(this._uploadFile, this._downloadFile, result);
         }
     }
@@ -4512,7 +4522,7 @@ function from_candid_NewPersonCandidate_n65(_uploadFile: (file: ExternalBlob) =>
     return from_candid_record_n66(_uploadFile, _downloadFile, value);
 }
 function from_candid_NotificationType_n240(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _NotificationType): NotificationType {
-    return "ResearchSubmission" in value ? NotificationType.ResearchSubmission : "ResearchApproved" in value ? NotificationType.ResearchApproved : "ResearchRejected" in value ? NotificationType.ResearchRejected : "RelationshipRequested" in value ? NotificationType.RelationshipRequested : "BoardMention" in value ? NotificationType.BoardMention : "RelationshipReviewed" in value ? NotificationType.RelationshipReviewed : "BoardReply" in value ? NotificationType.BoardReply : "NewMessage" in value ? NotificationType.NewMessage : "ProfileClaimReviewed" in value ? NotificationType.ProfileClaimReviewed : "ProfileClaimRequested" in value ? NotificationType.ProfileClaimRequested : value;
+    return "ResearchSubmission" in value ? NotificationType.ResearchSubmission : "ResearchApproved" in value ? NotificationType.ResearchApproved : "ArchiveApproved" in value ? NotificationType.ArchiveApproved : "ResearchRejected" in value ? NotificationType.ResearchRejected : "ArchiveRejected" in value ? NotificationType.ArchiveRejected : "RelationshipRequested" in value ? NotificationType.RelationshipRequested : "BoardMention" in value ? NotificationType.BoardMention : "RelationshipReviewed" in value ? NotificationType.RelationshipReviewed : "BoardReply" in value ? NotificationType.BoardReply : "NewMessage" in value ? NotificationType.NewMessage : "ProfileClaimReviewed" in value ? NotificationType.ProfileClaimReviewed : "ProfileClaimRequested" in value ? NotificationType.ProfileClaimRequested : value;
 }
 function from_candid_Notification_n238(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Notification): Notification {
     return from_candid_record_n239(_uploadFile, _downloadFile, value);
@@ -5688,8 +5698,10 @@ async function from_candid_record_n40(_uploadFile: (file: ExternalBlob) => Promi
     createdAt: bigint;
     tags: Array<string>;
     year: [] | [bigint];
+    mimeType: [] | [string];
     description: string;
     privacyLevel: _PrivacyLevel;
+    filename: [] | [string];
     primarySpeaker: [] | [_OralHistorySpeaker];
     extractedNames: [] | [Array<string>];
     itemType: _ArchiveItemType;
@@ -5711,8 +5723,10 @@ async function from_candid_record_n40(_uploadFile: (file: ExternalBlob) => Promi
     createdAt: bigint;
     tags: Array<string>;
     year?: bigint;
+    mimeType?: string;
     description: string;
     privacyLevel: PrivacyLevel;
+    filename?: string;
     primarySpeaker?: OralHistorySpeaker;
     extractedNames?: Array<string>;
     itemType: ArchiveItemType;
@@ -5735,8 +5749,10 @@ async function from_candid_record_n40(_uploadFile: (file: ExternalBlob) => Promi
         createdAt: value.createdAt,
         tags: value.tags,
         year: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.year)),
+        mimeType: record_opt_to_undefined(from_candid_opt_n23(_uploadFile, _downloadFile, value.mimeType)),
         description: value.description,
         privacyLevel: from_candid_PrivacyLevel_n42(_uploadFile, _downloadFile, value.privacyLevel),
+        filename: record_opt_to_undefined(from_candid_opt_n23(_uploadFile, _downloadFile, value.filename)),
         primarySpeaker: record_opt_to_undefined(from_candid_opt_n43(_uploadFile, _downloadFile, value.primarySpeaker)),
         extractedNames: record_opt_to_undefined(from_candid_opt_n46(_uploadFile, _downloadFile, value.extractedNames)),
         itemType: from_candid_ArchiveItemType_n47(_uploadFile, _downloadFile, value.itemType),
@@ -7358,6 +7374,7 @@ async function to_candid_record_n118(_uploadFile: (file: ExternalBlob) => Promis
     mimeType: string;
     description: string;
     privacyLevel: PrivacyLevel;
+    filename: string;
     primarySpeaker?: OralHistorySpeaker;
     itemType: ArchiveItemType;
     relatedBranchId?: string;
@@ -7373,6 +7390,7 @@ async function to_candid_record_n118(_uploadFile: (file: ExternalBlob) => Promis
     mimeType: string;
     description: string;
     privacyLevel: _PrivacyLevel;
+    filename: string;
     primarySpeaker: [] | [_OralHistorySpeaker];
     itemType: _ArchiveItemType;
     relatedBranchId: [] | [string];
@@ -7389,6 +7407,7 @@ async function to_candid_record_n118(_uploadFile: (file: ExternalBlob) => Promis
         mimeType: value.mimeType,
         description: value.description,
         privacyLevel: to_candid_PrivacyLevel_n119(_uploadFile, _downloadFile, value.privacyLevel),
+        filename: value.filename,
         primarySpeaker: value.primarySpeaker ? candid_some(to_candid_OralHistorySpeaker_n120(_uploadFile, _downloadFile, value.primarySpeaker)) : candid_none(),
         itemType: to_candid_ArchiveItemType_n122(_uploadFile, _downloadFile, value.itemType),
         relatedBranchId: value.relatedBranchId ? candid_some(value.relatedBranchId) : candid_none(),

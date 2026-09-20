@@ -33375,8 +33375,10 @@ const ArchiveItem = Record({
   "createdAt": Int,
   "tags": Vec(Text),
   "year": Opt(Nat),
+  "mimeType": Opt(Text),
   "description": Text,
   "privacyLevel": PrivacyLevel$1,
+  "filename": Opt(Text),
   "primarySpeaker": Opt(OralHistorySpeaker),
   "extractedNames": Opt(Vec(Text)),
   "itemType": ArchiveItemType$1,
@@ -33676,6 +33678,7 @@ const BoardMediaUpload = Record({
   "mimeType": Text,
   "description": Text,
   "privacyLevel": PrivacyLevel$1,
+  "filename": Text,
   "primarySpeaker": Opt(OralHistorySpeaker),
   "itemType": ArchiveItemType$1,
   "relatedBranchId": Opt(Text),
@@ -34010,7 +34013,9 @@ const StewardIdentity = Record({
 const NotificationType$1 = Variant({
   "ResearchSubmission": Null,
   "ResearchApproved": Null,
+  "ArchiveApproved": Null,
   "ResearchRejected": Null,
+  "ArchiveRejected": Null,
   "RelationshipRequested": Null,
   "BoardMention": Null,
   "RelationshipReviewed": Null,
@@ -34398,7 +34403,8 @@ Service({
       Vec(Text),
       PrivacyLevel$1,
       ArchiveItemClassification$1,
-      Opt(OralHistorySpeaker)
+      Opt(OralHistorySpeaker),
+      Text
     ],
     [Result_17],
     []
@@ -34693,7 +34699,8 @@ Service({
       SourceStatus$1,
       PrivacyLevel$1,
       ArchiveItemClassification$1,
-      Opt(OralHistorySpeaker)
+      Opt(OralHistorySpeaker),
+      Text
     ],
     [ArchiveItem],
     []
@@ -34966,8 +34973,10 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "createdAt": IDL2.Int,
     "tags": IDL2.Vec(IDL2.Text),
     "year": IDL2.Opt(IDL2.Nat),
+    "mimeType": IDL2.Opt(IDL2.Text),
     "description": IDL2.Text,
     "privacyLevel": PrivacyLevel2,
+    "filename": IDL2.Opt(IDL2.Text),
     "primarySpeaker": IDL2.Opt(OralHistorySpeaker2),
     "extractedNames": IDL2.Opt(IDL2.Vec(IDL2.Text)),
     "itemType": ArchiveItemType2,
@@ -35264,6 +35273,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "mimeType": IDL2.Text,
     "description": IDL2.Text,
     "privacyLevel": PrivacyLevel2,
+    "filename": IDL2.Text,
     "primarySpeaker": IDL2.Opt(OralHistorySpeaker2),
     "itemType": ArchiveItemType2,
     "relatedBranchId": IDL2.Opt(IDL2.Text),
@@ -35583,7 +35593,9 @@ const idlFactory = ({ IDL: IDL2 }) => {
   const NotificationType2 = IDL2.Variant({
     "ResearchSubmission": IDL2.Null,
     "ResearchApproved": IDL2.Null,
+    "ArchiveApproved": IDL2.Null,
     "ResearchRejected": IDL2.Null,
+    "ArchiveRejected": IDL2.Null,
     "RelationshipRequested": IDL2.Null,
     "BoardMention": IDL2.Null,
     "RelationshipReviewed": IDL2.Null,
@@ -35969,7 +35981,8 @@ const idlFactory = ({ IDL: IDL2 }) => {
         IDL2.Vec(IDL2.Text),
         PrivacyLevel2,
         ArchiveItemClassification2,
-        IDL2.Opt(OralHistorySpeaker2)
+        IDL2.Opt(OralHistorySpeaker2),
+        IDL2.Text
       ],
       [Result_172],
       []
@@ -36288,7 +36301,8 @@ const idlFactory = ({ IDL: IDL2 }) => {
         SourceStatus2,
         PrivacyLevel2,
         ArchiveItemClassification2,
-        IDL2.Opt(OralHistorySpeaker2)
+        IDL2.Opt(OralHistorySpeaker2),
+        IDL2.Text
       ],
       [ArchiveItem2],
       []
@@ -36539,7 +36553,9 @@ var MysteryStatus = /* @__PURE__ */ ((MysteryStatus2) => {
 var NotificationType = /* @__PURE__ */ ((NotificationType2) => {
   NotificationType2["ResearchSubmission"] = "ResearchSubmission";
   NotificationType2["ResearchApproved"] = "ResearchApproved";
+  NotificationType2["ArchiveApproved"] = "ArchiveApproved";
   NotificationType2["ResearchRejected"] = "ResearchRejected";
+  NotificationType2["ArchiveRejected"] = "ArchiveRejected";
   NotificationType2["RelationshipRequested"] = "RelationshipRequested";
   NotificationType2["BoardMention"] = "BoardMention";
   NotificationType2["RelationshipReviewed"] = "RelationshipReviewed";
@@ -37247,17 +37263,17 @@ class Backend {
       return from_candid_Result_18_n152(this._uploadFile, this._downloadFile, result);
     }
   }
-  async createSourceWithUpload(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11) {
+  async createSourceWithUpload(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12) {
     if (this.processError) {
       try {
-        const result = await this.actor.createSourceWithUpload(arg0, to_candid_SourceType_n135(this._uploadFile, this._downloadFile, arg1), arg2, arg3, await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg4), arg5, arg6, to_candid_opt_n19(this._uploadFile, this._downloadFile, arg7), arg8, to_candid_PrivacyLevel_n119(this._uploadFile, this._downloadFile, arg9), to_candid_ArchiveItemClassification_n124(this._uploadFile, this._downloadFile, arg10), to_candid_opt_n154(this._uploadFile, this._downloadFile, arg11));
+        const result = await this.actor.createSourceWithUpload(arg0, to_candid_SourceType_n135(this._uploadFile, this._downloadFile, arg1), arg2, arg3, await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg4), arg5, arg6, to_candid_opt_n19(this._uploadFile, this._downloadFile, arg7), arg8, to_candid_PrivacyLevel_n119(this._uploadFile, this._downloadFile, arg9), to_candid_ArchiveItemClassification_n124(this._uploadFile, this._downloadFile, arg10), to_candid_opt_n154(this._uploadFile, this._downloadFile, arg11), arg12);
         return from_candid_Result_17_n155(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.createSourceWithUpload(arg0, to_candid_SourceType_n135(this._uploadFile, this._downloadFile, arg1), arg2, arg3, await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg4), arg5, arg6, to_candid_opt_n19(this._uploadFile, this._downloadFile, arg7), arg8, to_candid_PrivacyLevel_n119(this._uploadFile, this._downloadFile, arg9), to_candid_ArchiveItemClassification_n124(this._uploadFile, this._downloadFile, arg10), to_candid_opt_n154(this._uploadFile, this._downloadFile, arg11));
+      const result = await this.actor.createSourceWithUpload(arg0, to_candid_SourceType_n135(this._uploadFile, this._downloadFile, arg1), arg2, arg3, await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg4), arg5, arg6, to_candid_opt_n19(this._uploadFile, this._downloadFile, arg7), arg8, to_candid_PrivacyLevel_n119(this._uploadFile, this._downloadFile, arg9), to_candid_ArchiveItemClassification_n124(this._uploadFile, this._downloadFile, arg10), to_candid_opt_n154(this._uploadFile, this._downloadFile, arg11), arg12);
       return from_candid_Result_17_n155(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -38815,17 +38831,17 @@ class Backend {
       return from_candid_opt_n82(this._uploadFile, this._downloadFile, result);
     }
   }
-  async submitArchiveItem(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13) {
+  async submitArchiveItem(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14) {
     if (this.processError) {
       try {
-        const result = await this.actor.submitArchiveItem(arg0, arg1, to_candid_ArchiveItemType_n122(this._uploadFile, this._downloadFile, arg2), arg3, await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg4), arg5, to_candid_opt_n19(this._uploadFile, this._downloadFile, arg6), arg7, arg8, to_candid_opt_n18(this._uploadFile, this._downloadFile, arg9), to_candid_SourceStatus_n123(this._uploadFile, this._downloadFile, arg10), to_candid_PrivacyLevel_n119(this._uploadFile, this._downloadFile, arg11), to_candid_ArchiveItemClassification_n124(this._uploadFile, this._downloadFile, arg12), to_candid_opt_n154(this._uploadFile, this._downloadFile, arg13));
+        const result = await this.actor.submitArchiveItem(arg0, arg1, to_candid_ArchiveItemType_n122(this._uploadFile, this._downloadFile, arg2), arg3, await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg4), arg5, to_candid_opt_n19(this._uploadFile, this._downloadFile, arg6), arg7, arg8, to_candid_opt_n18(this._uploadFile, this._downloadFile, arg9), to_candid_SourceStatus_n123(this._uploadFile, this._downloadFile, arg10), to_candid_PrivacyLevel_n119(this._uploadFile, this._downloadFile, arg11), to_candid_ArchiveItemClassification_n124(this._uploadFile, this._downloadFile, arg12), to_candid_opt_n154(this._uploadFile, this._downloadFile, arg13), arg14);
         return from_candid_ArchiveItem_n39(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.submitArchiveItem(arg0, arg1, to_candid_ArchiveItemType_n122(this._uploadFile, this._downloadFile, arg2), arg3, await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg4), arg5, to_candid_opt_n19(this._uploadFile, this._downloadFile, arg6), arg7, arg8, to_candid_opt_n18(this._uploadFile, this._downloadFile, arg9), to_candid_SourceStatus_n123(this._uploadFile, this._downloadFile, arg10), to_candid_PrivacyLevel_n119(this._uploadFile, this._downloadFile, arg11), to_candid_ArchiveItemClassification_n124(this._uploadFile, this._downloadFile, arg12), to_candid_opt_n154(this._uploadFile, this._downloadFile, arg13));
+      const result = await this.actor.submitArchiveItem(arg0, arg1, to_candid_ArchiveItemType_n122(this._uploadFile, this._downloadFile, arg2), arg3, await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg4), arg5, to_candid_opt_n19(this._uploadFile, this._downloadFile, arg6), arg7, arg8, to_candid_opt_n18(this._uploadFile, this._downloadFile, arg9), to_candid_SourceStatus_n123(this._uploadFile, this._downloadFile, arg10), to_candid_PrivacyLevel_n119(this._uploadFile, this._downloadFile, arg11), to_candid_ArchiveItemClassification_n124(this._uploadFile, this._downloadFile, arg12), to_candid_opt_n154(this._uploadFile, this._downloadFile, arg13), arg14);
       return from_candid_ArchiveItem_n39(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -39072,7 +39088,7 @@ function from_candid_NewPersonCandidate_n65(_uploadFile, _downloadFile, value) {
   return from_candid_record_n66(_uploadFile, _downloadFile, value);
 }
 function from_candid_NotificationType_n240(_uploadFile, _downloadFile, value) {
-  return "ResearchSubmission" in value ? "ResearchSubmission" : "ResearchApproved" in value ? "ResearchApproved" : "ResearchRejected" in value ? "ResearchRejected" : "RelationshipRequested" in value ? "RelationshipRequested" : "BoardMention" in value ? "BoardMention" : "RelationshipReviewed" in value ? "RelationshipReviewed" : "BoardReply" in value ? "BoardReply" : "NewMessage" in value ? "NewMessage" : "ProfileClaimReviewed" in value ? "ProfileClaimReviewed" : "ProfileClaimRequested" in value ? "ProfileClaimRequested" : value;
+  return "ResearchSubmission" in value ? "ResearchSubmission" : "ResearchApproved" in value ? "ResearchApproved" : "ArchiveApproved" in value ? "ArchiveApproved" : "ResearchRejected" in value ? "ResearchRejected" : "ArchiveRejected" in value ? "ArchiveRejected" : "RelationshipRequested" in value ? "RelationshipRequested" : "BoardMention" in value ? "BoardMention" : "RelationshipReviewed" in value ? "RelationshipReviewed" : "BoardReply" in value ? "BoardReply" : "NewMessage" in value ? "NewMessage" : "ProfileClaimReviewed" in value ? "ProfileClaimReviewed" : "ProfileClaimRequested" in value ? "ProfileClaimRequested" : value;
 }
 function from_candid_Notification_n238(_uploadFile, _downloadFile, value) {
   return from_candid_record_n239(_uploadFile, _downloadFile, value);
@@ -39771,8 +39787,10 @@ async function from_candid_record_n40(_uploadFile, _downloadFile, value) {
     createdAt: value.createdAt,
     tags: value.tags,
     year: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.year)),
+    mimeType: record_opt_to_undefined(from_candid_opt_n23(_uploadFile, _downloadFile, value.mimeType)),
     description: value.description,
     privacyLevel: from_candid_PrivacyLevel_n42(_uploadFile, _downloadFile, value.privacyLevel),
+    filename: record_opt_to_undefined(from_candid_opt_n23(_uploadFile, _downloadFile, value.filename)),
     primarySpeaker: record_opt_to_undefined(from_candid_opt_n43(_uploadFile, _downloadFile, value.primarySpeaker)),
     extractedNames: record_opt_to_undefined(from_candid_opt_n46(_uploadFile, _downloadFile, value.extractedNames)),
     itemType: from_candid_ArchiveItemType_n47(_uploadFile, _downloadFile, value.itemType),
@@ -40646,6 +40664,7 @@ async function to_candid_record_n118(_uploadFile, _downloadFile, value) {
     mimeType: value.mimeType,
     description: value.description,
     privacyLevel: to_candid_PrivacyLevel_n119(_uploadFile, _downloadFile, value.privacyLevel),
+    filename: value.filename,
     primarySpeaker: value.primarySpeaker ? candid_some(to_candid_OralHistorySpeaker_n120(_uploadFile, _downloadFile, value.primarySpeaker)) : candid_none(),
     itemType: to_candid_ArchiveItemType_n122(_uploadFile, _downloadFile, value.itemType),
     relatedBranchId: value.relatedBranchId ? candid_some(value.relatedBranchId) : candid_none(),
@@ -44833,6 +44852,19 @@ function NotificationBadge({ count: count2 }) {
     }
   );
 }
+function getArchiveItemMimeType(item) {
+  var _a2, _b2;
+  const persisted = (_a2 = item.mimeType) == null ? void 0 : _a2.trim();
+  if (persisted) return persisted.toLowerCase();
+  return ((_b2 = item.blob.contentType) == null ? void 0 : _b2.trim().toLowerCase()) ?? "";
+}
+function getArchiveItemFilename(item) {
+  var _a2, _b2;
+  const persisted = (_a2 = item.filename) == null ? void 0 : _a2.trim();
+  if (persisted) return persisted;
+  const blobName = (_b2 = item.blob.filename) == null ? void 0 : _b2.trim();
+  return blobName || void 0;
+}
 const ARCHIVE_ITEM_TYPE_LABELS = {
   [ArchiveItemType.Photo]: "Photo",
   [ArchiveItemType.Document]: "Document",
@@ -45015,7 +45047,8 @@ function useSubmitArchiveItem() {
         input.sourceStatus,
         input.privacyLevel,
         input.classification,
-        input.primarySpeaker
+        input.primarySpeaker,
+        input.filename
       );
     },
     onSuccess: () => {
@@ -45621,7 +45654,8 @@ function useCreateSourceWithUpload() {
         input.relatedMemberIds,
         input.privacyLevel,
         input.classification,
-        input.primarySpeaker
+        input.primarySpeaker,
+        input.filename
       );
     },
     onSuccess: () => {
@@ -47223,6 +47257,8 @@ const NOTIFICATION_TYPE_LABELS = {
   [NotificationType.ResearchSubmission]: "Research submitted",
   [NotificationType.ResearchApproved]: "Research approved",
   [NotificationType.ResearchRejected]: "Research rejected",
+  [NotificationType.ArchiveApproved]: "Archive contribution approved",
+  [NotificationType.ArchiveRejected]: "Archive contribution rejected",
   [NotificationType.ProfileClaimRequested]: "Profile claim requested",
   [NotificationType.ProfileClaimReviewed]: "Profile claim reviewed",
   [NotificationType.RelationshipRequested]: "Relationship requested",
@@ -47590,7 +47626,7 @@ const stepsOrder = [
 ];
 function createRenderStep(runNextFrame, stepName) {
   let thisFrame = /* @__PURE__ */ new Set();
-  let nextFrame = /* @__PURE__ */ new Set();
+  let nextFrame2 = /* @__PURE__ */ new Set();
   let isProcessing = false;
   let flushNextFrame = false;
   const toKeepAlive = /* @__PURE__ */ new WeakSet();
@@ -47612,7 +47648,7 @@ function createRenderStep(runNextFrame, stepName) {
      */
     schedule: (callback, keepAlive = false, immediate = false) => {
       const addToCurrentFrame = immediate && isProcessing;
-      const queue = addToCurrentFrame ? thisFrame : nextFrame;
+      const queue = addToCurrentFrame ? thisFrame : nextFrame2;
       if (keepAlive)
         toKeepAlive.add(callback);
       queue.add(callback);
@@ -47622,7 +47658,7 @@ function createRenderStep(runNextFrame, stepName) {
      * Cancel the provided callback from running on the next frame.
      */
     cancel: (callback) => {
-      nextFrame.delete(callback);
+      nextFrame2.delete(callback);
       toKeepAlive.delete(callback);
     },
     /**
@@ -47636,8 +47672,8 @@ function createRenderStep(runNextFrame, stepName) {
       }
       isProcessing = true;
       const prevFrame = thisFrame;
-      thisFrame = nextFrame;
-      nextFrame = prevFrame;
+      thisFrame = nextFrame2;
+      nextFrame2 = prevFrame;
       thisFrame.forEach(triggerCallback);
       thisFrame.clear();
       isProcessing = false;
@@ -58612,6 +58648,9 @@ function surfaceForArchiveItemType(itemType) {
     case "Photo":
       return "archiveImage";
     case "Document":
+    case "Research":
+    case "WorkBusiness":
+    case "Other":
       return "archiveDocument";
     case "Audio":
       return "archiveAudio";
@@ -58691,6 +58730,32 @@ function sanitizeFilename(filename) {
   if (trimmed.length <= MAX_FILENAME_CHARS) return trimmed;
   const capped = capFilenamePreservingExtension(trimmed);
   return capped.length === 0 ? null : capped;
+}
+const FAMILY_MEMBERSHIP_REQUIRED_MESSAGE = "Family membership required. Claim your family profile and wait for Family Steward approval before contributing family content.";
+const FAMILY_MEMBERSHIP_DENIAL_MARKERS = [
+  "family membership required. claim your family profile and wait for family steward approval before contributing family content.",
+  "only approved family members can contribute family content"
+];
+function isFamilyMembershipDenial(error) {
+  if (error === null || error === void 0) return false;
+  if (typeof error === "string") {
+    return isFamilyMembershipDenialText(error);
+  }
+  if (typeof error === "object") {
+    const record = error;
+    if ("notAuthorized" in record) return true;
+    if ("err" in record && isFamilyMembershipDenial(record.err)) return true;
+    if (typeof record.message === "string") {
+      return isFamilyMembershipDenialText(record.message);
+    }
+  }
+  return false;
+}
+function isFamilyMembershipDenialText(text) {
+  const normalized = text.toLowerCase();
+  return FAMILY_MEMBERSHIP_DENIAL_MARKERS.some(
+    (marker) => normalized.includes(marker)
+  );
 }
 const RECIPE_STATUS_LABELS = {
   [RecipeStatus.Pending]: "Pending",
@@ -62764,11 +62829,11 @@ function buildLocalMatches(name) {
   return matches;
 }
 function mergeMatches(local, backend) {
-  const seen = /* @__PURE__ */ new Set();
+  const seen2 = /* @__PURE__ */ new Set();
   const merged = [];
   for (const match of [...local, ...backend]) {
-    if (seen.has(match.personId)) continue;
-    seen.add(match.personId);
+    if (seen2.has(match.personId)) continue;
+    seen2.add(match.personId);
     merged.push(match);
   }
   return merged;
@@ -63619,7 +63684,7 @@ function AdminApprovalPage({ onBack }) {
             "aria-hidden": "true"
           }
         ),
-        "Admin Review"
+        "Family Steward Review"
       ] }),
       /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "font-display text-3xl font-semibold text-foreground", children: "Pending Contributions" }),
       /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-2 text-sm text-muted-foreground", children: "Review each contribution before it joins the family archive. Approve to publish it, or reject to keep it out." })
@@ -64024,7 +64089,8 @@ function parseYear$3(value) {
   return BigInt(trimmed);
 }
 function ArchiveContributionPage({
-  onBack
+  onBack,
+  onClaimProfile
 }) {
   const { isAuthenticated, login, isInitializing, isLoggingIn } = useInternetIdentity();
   const submit = useSubmitArchiveItem();
@@ -64056,6 +64122,7 @@ function ArchiveContributionPage({
   const [storyText, setStoryText] = reactExports.useState("");
   const [submitted, setSubmitted] = reactExports.useState(false);
   const [error, setError] = reactExports.useState(null);
+  const [membershipDenied, setMembershipDenied] = reactExports.useState(false);
   const isFileType = selectedType !== null && FILE_TYPES.includes(selectedType);
   const handleFile = async (file) => {
     if (!file) return;
@@ -64127,28 +64194,33 @@ function ArchiveContributionPage({
     setProgress(null);
     setStoryText("");
     setError(null);
+    setMembershipDenied(false);
   };
   const handleSubmit = (event) => {
     event.preventDefault();
     if (!selectedType) return;
     setError(null);
+    setMembershipDenied(false);
     let blob;
+    let filename;
     if (selectedType === ArchiveItemType.WrittenStoryNote) {
       const text = storyText.trim();
       if (!text) {
         setError("Please write your story or note before submitting.");
         return;
       }
+      filename = "story.txt";
       blob = ExternalBlob$1.fromBytes(
         new TextEncoder().encode(text),
         "text/plain",
-        "story.txt"
+        filename
       );
     } else {
       if (!fileBytes) {
         setError("Please choose a file to upload before submitting.");
         return;
       }
+      filename = fileName;
       blob = ExternalBlob$1.fromBytes(
         fileBytes,
         fileMime,
@@ -64162,6 +64234,7 @@ function ArchiveContributionPage({
         itemType: selectedType,
         mimeType: fileMime,
         blob,
+        filename,
         era: era.trim(),
         year: parseYear$3(year),
         tags,
@@ -64176,7 +64249,14 @@ function ArchiveContributionPage({
       },
       {
         onSuccess: () => setSubmitted(true),
-        onError: () => setError("Something went wrong while submitting. Please try again.")
+        onError: (mutationError) => {
+          if (isFamilyMembershipDenial(mutationError)) {
+            setMembershipDenied(true);
+            setError(FAMILY_MEMBERSHIP_REQUIRED_MESSAGE);
+            return;
+          }
+          setError("Something went wrong while submitting. Please try again.");
+        }
       }
     );
   };
@@ -64746,12 +64826,24 @@ function ArchiveContributionPage({
               )
             ] })
           ] }),
-          error && /* @__PURE__ */ jsxRuntimeExports.jsx(
-            "p",
+          error && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "div",
             {
               "data-ocid": "archive.form.error_state",
               className: "rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm font-medium text-destructive",
-              children: error
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("p", { children: error }),
+                membershipDenied && onClaimProfile ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  "button",
+                  {
+                    type: "button",
+                    "data-ocid": "archive.form.claim_profile_button",
+                    onClick: onClaimProfile,
+                    className: "mt-3 inline-flex items-center justify-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                    children: "Claim your family profile"
+                  }
+                ) : null
+              ]
             }
           ),
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between", children: [
@@ -64773,6 +64865,311 @@ function ArchiveContributionPage({
         ]
       }
     )
+  ] });
+}
+const scriptRel = "modulepreload";
+const assetsURL = function(dep) {
+  return "/" + dep;
+};
+const seen = {};
+const __vitePreload = function preload2(baseModule, deps, importerUrl) {
+  let promise = Promise.resolve();
+  if (deps && deps.length > 0) {
+    document.getElementsByTagName("link");
+    const cspNonceMeta = document.querySelector(
+      "meta[property=csp-nonce]"
+    );
+    const cspNonce = (cspNonceMeta == null ? void 0 : cspNonceMeta.nonce) || (cspNonceMeta == null ? void 0 : cspNonceMeta.getAttribute("nonce"));
+    promise = Promise.allSettled(
+      deps.map((dep) => {
+        dep = assetsURL(dep);
+        if (dep in seen) return;
+        seen[dep] = true;
+        const isCss = dep.endsWith(".css");
+        const cssSelector = isCss ? '[rel="stylesheet"]' : "";
+        if (document.querySelector(`link[href="${dep}"]${cssSelector}`)) {
+          return;
+        }
+        const link = document.createElement("link");
+        link.rel = isCss ? "stylesheet" : scriptRel;
+        if (!isCss) {
+          link.as = "script";
+        }
+        link.crossOrigin = "";
+        link.href = dep;
+        if (cspNonce) {
+          link.setAttribute("nonce", cspNonce);
+        }
+        document.head.appendChild(link);
+        if (isCss) {
+          return new Promise((res, rej) => {
+            link.addEventListener("load", res);
+            link.addEventListener(
+              "error",
+              () => rej(new Error(`Unable to preload CSS for ${dep}`))
+            );
+          });
+        }
+      })
+    );
+  }
+  function handlePreloadError(err) {
+    const e = new Event("vite:preloadError", {
+      cancelable: true
+    });
+    e.payload = err;
+    window.dispatchEvent(e);
+    if (!e.defaultPrevented) {
+      throw err;
+    }
+  }
+  return promise.then((res) => {
+    for (const item of res || []) {
+      if (item.status !== "rejected") continue;
+      handlePreloadError(item.reason);
+    }
+    return baseModule().catch(handlePreloadError);
+  });
+};
+const MAX_PREVIEW_PAGES = 100;
+const TARGET_PAGE_WIDTH = 760;
+const MAX_PIXEL_RATIO = 2;
+const PREVIEW_UNAVAILABLE_MESSAGE = "Preview unavailable. You can still download the original file.";
+const MAX_CANVAS_WAIT_FRAMES = 60;
+function nextFrame() {
+  return new Promise((resolve) => {
+    if (typeof requestAnimationFrame === "function") {
+      requestAnimationFrame(() => resolve());
+    } else {
+      setTimeout(resolve, 0);
+    }
+  });
+}
+function PdfPreview({ blob, filename, title }) {
+  const [status, setStatus] = reactExports.useState("loading");
+  const [pageCount, setPageCount] = reactExports.useState(0);
+  const [renderedCount, setRenderedCount] = reactExports.useState(0);
+  const [isTruncated, setIsTruncated] = reactExports.useState(false);
+  const [isDownloading, setIsDownloading] = reactExports.useState(false);
+  const canvasRefs = reactExports.useRef([]);
+  const documentRef = reactExports.useRef(null);
+  reactExports.useEffect(() => {
+    let cancelled = false;
+    let loadingTask = null;
+    canvasRefs.current = [];
+    documentRef.current = null;
+    setStatus("loading");
+    setPageCount(0);
+    setRenderedCount(0);
+    setIsTruncated(false);
+    async function loadDocument() {
+      try {
+        const pdfjs = await __vitePreload(() => import("./pdf-DVEL8cNy.js"), true ? [] : void 0);
+        pdfjs.GlobalWorkerOptions.workerSrc = new URL("/assets/pdf.worker.min-Dswkl-cV.mjs", import.meta.url).toString();
+        const bytes = await blob.getBytes();
+        if (cancelled) return;
+        const data = new Uint8Array(bytes).buffer;
+        const task = pdfjs.getDocument({
+          data,
+          // Never render XFA forms.
+          enableXfa: false,
+          // The bytes are already in memory; no range/stream fetching needed.
+          disableAutoFetch: true,
+          disableStream: true
+        });
+        loadingTask = task;
+        const document2 = await task.promise;
+        if (cancelled) return;
+        const total = document2.numPages;
+        documentRef.current = document2;
+        setPageCount(total);
+        setIsTruncated(total > MAX_PREVIEW_PAGES);
+        setStatus("rendering");
+      } catch {
+        if (cancelled) return;
+        setStatus("error");
+      }
+    }
+    void loadDocument();
+    return () => {
+      cancelled = true;
+      documentRef.current = null;
+      if (loadingTask) void loadingTask.destroy();
+    };
+  }, [blob]);
+  reactExports.useEffect(() => {
+    if (status !== "rendering") return;
+    let cancelled = false;
+    const loadedDocument = documentRef.current;
+    if (!loadedDocument) {
+      setStatus("error");
+      return;
+    }
+    const pdfDocument = loadedDocument;
+    const toRender = Math.min(pdfDocument.numPages, MAX_PREVIEW_PAGES);
+    const ratio = Math.min(window.devicePixelRatio || 1, MAX_PIXEL_RATIO);
+    async function renderPages() {
+      try {
+        for (let pageNumber = 1; pageNumber <= toRender; pageNumber += 1) {
+          if (cancelled) return;
+          let canvas = canvasRefs.current[pageNumber - 1] ?? null;
+          let waited = 0;
+          while (!canvas && waited < MAX_CANVAS_WAIT_FRAMES) {
+            await nextFrame();
+            if (cancelled) return;
+            canvas = canvasRefs.current[pageNumber - 1] ?? null;
+            waited += 1;
+          }
+          if (!canvas) throw new Error("Canvas is unavailable");
+          const page = await pdfDocument.getPage(pageNumber);
+          if (cancelled) return;
+          const baseViewport = page.getViewport({ scale: 1 });
+          const scale2 = TARGET_PAGE_WIDTH / baseViewport.width;
+          const viewport = page.getViewport({ scale: scale2 });
+          canvas.width = Math.floor(viewport.width * ratio);
+          canvas.height = Math.floor(viewport.height * ratio);
+          canvas.style.width = `${Math.floor(viewport.width)}px`;
+          canvas.style.height = `${Math.floor(viewport.height)}px`;
+          const context = canvas.getContext("2d");
+          if (!context) throw new Error("Canvas is unavailable");
+          await page.render({
+            canvas,
+            canvasContext: context,
+            viewport,
+            transform: ratio === 1 ? void 0 : [ratio, 0, 0, ratio, 0, 0]
+          }).promise;
+          if (cancelled) return;
+          setRenderedCount(pageNumber);
+        }
+        await pdfDocument.cleanup();
+        if (cancelled) return;
+        setStatus("ready");
+      } catch {
+        if (cancelled) return;
+        setStatus("error");
+      }
+    }
+    void renderPages();
+    return () => {
+      cancelled = true;
+    };
+  }, [status]);
+  async function handleDownload() {
+    setIsDownloading(true);
+    try {
+      const bytes = await blob.getBytes();
+      const url = URL.createObjectURL(new Blob([bytes]));
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = filename || "document";
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      URL.revokeObjectURL(url);
+    } finally {
+      setIsDownloading(false);
+    }
+  }
+  const downloadButton = /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "button",
+    {
+      type: "button",
+      "data-ocid": "archive_detail.preview_download_button",
+      onClick: () => void handleDownload(),
+      disabled: isDownloading,
+      className: "preview-download",
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(Download, { className: "h-4 w-4", "aria-hidden": "true" }),
+        isDownloading ? "Preparing download…" : "Download Original"
+      ]
+    }
+  );
+  if (status === "error") {
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "div",
+      {
+        "data-ocid": "archive_detail.preview_error_state",
+        className: "preview-stage-frame",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            TriangleAlert,
+            {
+              className: "h-10 w-10",
+              strokeWidth: 1.25,
+              "aria-hidden": "true"
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "frame-title", children: "Preview unavailable" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "frame-hint", children: PREVIEW_UNAVAILABLE_MESSAGE }),
+          downloadButton
+        ]
+      }
+    );
+  }
+  if (status === "loading") {
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "div",
+      {
+        "data-ocid": "archive_detail.preview_loading_state",
+        className: "preview-stage-frame",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            LoaderCircle,
+            {
+              className: "h-10 w-10 animate-spin",
+              strokeWidth: 1.25,
+              "aria-hidden": "true"
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "frame-title", children: "Preparing preview…" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "frame-hint", children: "Rendering the original document in your browser." }),
+          downloadButton
+        ]
+      }
+    );
+  }
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "pdf-preview", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "section",
+      {
+        "data-ocid": "archive_detail.preview_pages",
+        className: "pdf-preview-pages",
+        "aria-label": `${filename || title} — ${pageCount} page${pageCount === 1 ? "" : "s"}`,
+        children: Array.from({ length: pageCount }, (_2, index2) => index2 + 1).slice(0, MAX_PREVIEW_PAGES).map((pageNumber) => /* @__PURE__ */ jsxRuntimeExports.jsxs("figure", { className: "pdf-preview-page", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "canvas",
+            {
+              ref: (element) => {
+                canvasRefs.current[pageNumber - 1] = element;
+              },
+              "aria-label": `Page ${pageNumber} of ${pageCount}`,
+              className: pageNumber <= renderedCount ? "pdf-preview-canvas" : "pdf-preview-canvas pdf-preview-canvas-pending"
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("figcaption", { className: "pdf-preview-page-label", children: [
+            "Page ",
+            pageNumber,
+            " of ",
+            pageCount
+          ] })
+        ] }, pageNumber))
+      }
+    ),
+    isTruncated ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "p",
+      {
+        "data-ocid": "archive_detail.preview_truncated_notice",
+        className: "pdf-preview-notice",
+        children: [
+          "Showing the first ",
+          MAX_PREVIEW_PAGES,
+          " of ",
+          pageCount,
+          " pages. Download the original file to view the full document."
+        ]
+      }
+    ) : null,
+    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pdf-preview-actions", children: downloadButton })
   ] });
 }
 const TYPE_ICONS$1 = {
@@ -64811,10 +65208,11 @@ function formatContributor$5(contributor) {
   return text.length > 18 ? `${text.slice(0, 5)}…${text.slice(-4)}` : text;
 }
 function isPdfDocument(item) {
-  var _a2, _b2;
-  const mime = ((_a2 = item.blob.contentType) == null ? void 0 : _a2.toLowerCase()) ?? "";
-  const name = ((_b2 = item.blob.filename) == null ? void 0 : _b2.toLowerCase()) ?? "";
-  return mime === "application/pdf" || name.endsWith(".pdf");
+  var _a2;
+  const mime = getArchiveItemMimeType(item);
+  if (mime) return mime === "application/pdf";
+  const name = ((_a2 = getArchiveItemFilename(item)) == null ? void 0 : _a2.toLowerCase()) ?? "";
+  return name.endsWith(".pdf");
 }
 const SAFE_IMAGE_MIME_TYPES = /* @__PURE__ */ new Set([
   "image/jpeg",
@@ -64830,10 +65228,10 @@ const SAFE_IMAGE_MIME_TYPES = /* @__PURE__ */ new Set([
 ]);
 const SAFE_IMAGE_EXTENSIONS = /\.(jpe?g|png|gif|webp|bmp|ico|avif|tiff?)$/;
 function isRasterImageDocument(item) {
-  var _a2, _b2;
-  const mime = ((_a2 = item.blob.contentType) == null ? void 0 : _a2.toLowerCase()) ?? "";
+  var _a2;
+  const mime = getArchiveItemMimeType(item);
   if (mime) return SAFE_IMAGE_MIME_TYPES.has(mime);
-  const name = ((_b2 = item.blob.filename) == null ? void 0 : _b2.toLowerCase()) ?? "";
+  const name = ((_a2 = getArchiveItemFilename(item)) == null ? void 0 : _a2.toLowerCase()) ?? "";
   return SAFE_IMAGE_EXTENSIONS.test(name);
 }
 function isPreviewableDocument(item) {
@@ -64884,7 +65282,7 @@ function ArchiveDetailPage({
   const relatedMembers = item.relatedMemberIds.map((id2) => profiles[id2]).filter((profile) => Boolean(profile));
   const isTextType = TEXT_TYPES.includes(item.itemType);
   const artifactUrl = item.blob.getDirectURL();
-  const filename = item.blob.filename;
+  const filename = getArchiveItemFilename(item);
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto w-full max-w-5xl px-6 py-8", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsxs(
       "button",
@@ -65039,16 +65437,15 @@ function ArchiveDetailPage({
                 )
               ] }),
               /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "preview-stage-body", children: isPdfDocument(item) ? (
-                /* sandbox="" applies every restriction: no script execution,
-                   no forms, no top-level navigation, and no same-origin
-                   access. The PDF viewer needs no permission to render, so
-                   none is granted. */
+                /* PDFs are rasterized in-app by PDF.js: no embedded script
+                   runs, no document HTML is injected, and no navigation or
+                   form submission is possible. */
                 /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  "iframe",
+                  PdfPreview,
                   {
-                    src: artifactUrl,
-                    title: filename || item.title,
-                    sandbox: ""
+                    blob: item.blob,
+                    filename,
+                    title: item.title
                   }
                 )
               ) : /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: artifactUrl, alt: item.title }) })
@@ -65655,6 +66052,7 @@ function useCreateBoardPostWithMedia() {
           itemType: upload.itemType,
           mimeType: upload.mimeType,
           blob: upload.blob,
+          filename: upload.filename,
           era: upload.era,
           year: upload.year ?? void 0,
           tags: upload.tags,
@@ -65794,12 +66192,12 @@ const POST_TYPE_LABELS = {
   [PostStatus.Archived]: "Archived"
 });
 function normalizeTags(tags) {
-  const seen = /* @__PURE__ */ new Set();
+  const seen2 = /* @__PURE__ */ new Set();
   const result = [];
   for (const raw of tags) {
     const tag = raw.trim().toLowerCase();
-    if (tag === "" || seen.has(tag)) continue;
-    seen.add(tag);
+    if (tag === "" || seen2.has(tag)) continue;
+    seen2.add(tag);
     result.push(tag);
   }
   return result;
@@ -65876,13 +66274,13 @@ function BoardPostComposer({ postId, onBack }) {
     );
   };
   const existingTags = reactExports.useMemo(() => {
-    const seen = /* @__PURE__ */ new Set();
+    const seen2 = /* @__PURE__ */ new Set();
     const result = [];
     const collect = (rawTags) => {
       for (const raw of rawTags) {
         const tag = raw.trim().toLowerCase();
-        if (tag && !seen.has(tag)) {
-          seen.add(tag);
+        if (tag && !seen2.has(tag)) {
+          seen2.add(tag);
           result.push(tag);
         }
       }
@@ -65917,14 +66315,14 @@ function BoardPostComposer({ postId, onBack }) {
     }
   };
   const inheritableTags = reactExports.useMemo(() => {
-    const seen = /* @__PURE__ */ new Set();
+    const seen2 = /* @__PURE__ */ new Set();
     const result = [];
     for (const item of archiveItems) {
       if (!linkedMediaIds.includes(item.id)) continue;
       for (const raw of item.tags) {
         const tag = raw.trim().toLowerCase();
-        if (tag && !tags.includes(tag) && !seen.has(tag)) {
-          seen.add(tag);
+        if (tag && !tags.includes(tag) && !seen2.has(tag)) {
+          seen2.add(tag);
           result.push(tag);
         }
       }
@@ -65970,6 +66368,7 @@ function BoardPostComposer({ postId, onBack }) {
         itemType: detectItemType(file.type),
         mimeType: file.type,
         blob,
+        filename: safeName,
         size: bytes.byteLength,
         era: "",
         year: null,
@@ -66043,6 +66442,7 @@ function BoardPostComposer({ postId, onBack }) {
             itemType: upload.itemType,
             mimeType: upload.mimeType,
             blob: upload.blob,
+            filename: upload.filename,
             era: upload.era.trim(),
             year: upload.year,
             tags: upload.tags,
@@ -72055,11 +72455,11 @@ function MessageBoardPage({
   const posts = activeTag ? tagPosts : typePosts;
   const isLoading = activeTag ? tagLoading : typeLoading;
   const allTags = reactExports.useMemo(() => {
-    const seen = /* @__PURE__ */ new Set();
+    const seen2 = /* @__PURE__ */ new Set();
     for (const post of typePosts) {
-      for (const tag of post.tags) seen.add(tag);
+      for (const tag of post.tags) seen2.add(tag);
     }
-    return Array.from(seen).sort();
+    return Array.from(seen2).sort();
   }, [typePosts]);
   const isApprovedMember = claimStatus === ClaimStatus.Claimed;
   if (!isApprovedMember) {
@@ -74829,7 +75229,8 @@ function ResolvedProfileChip$1({
 function RecipeContributePage({
   onBack,
   onOpenRecipes,
-  preselect
+  preselect,
+  onClaimProfile
 }) {
   var _a2;
   const { isAuthenticated, login, isInitializing, isLoggingIn } = useInternetIdentity();
@@ -74869,6 +75270,7 @@ function RecipeContributePage({
   const fileInputRef = reactExports.useRef(null);
   const [submitted, setSubmitted] = reactExports.useState(false);
   const [error, setError] = reactExports.useState(null);
+  const [membershipDenied, setMembershipDenied] = reactExports.useState(false);
   const knownResolvedPeople = reactExports.useMemo(() => {
     const initial = /* @__PURE__ */ new Set();
     if ((preselect == null ? void 0 : preselect.personId) && !profiles[preselect.personId]) {
@@ -74945,10 +75347,12 @@ function RecipeContributePage({
     setFileMime("");
     setProgress(null);
     setError(null);
+    setMembershipDenied(false);
   };
   const handleSubmit = (event) => {
     event.preventDefault();
     setError(null);
+    setMembershipDenied(false);
     if (!title.trim()) {
       setError("Please give the recipe a title before submitting.");
       return;
@@ -74979,9 +75383,16 @@ function RecipeContributePage({
         },
         {
           onSuccess: () => setSubmitted(true),
-          onError: () => setError(
-            "Something went wrong while submitting. Please try again."
-          )
+          onError: (mutationError) => {
+            if (isFamilyMembershipDenial(mutationError)) {
+              setMembershipDenied(true);
+              setError(FAMILY_MEMBERSHIP_REQUIRED_MESSAGE);
+              return;
+            }
+            setError(
+              "Something went wrong while submitting. Please try again."
+            );
+          }
         }
       );
     };
@@ -74998,6 +75409,7 @@ function RecipeContributePage({
           itemType: ArchiveItemType.Photo,
           mimeType: fileMime,
           blob,
+          filename: fileName,
           era: era.trim(),
           year: parseYear$2(year),
           tags: [],
@@ -75013,9 +75425,16 @@ function RecipeContributePage({
             linkedMediaIds.push(created.id);
             finishSubmit();
           },
-          onError: () => setError(
-            "Something went wrong uploading your media. Please try again."
-          )
+          onError: (mutationError) => {
+            if (isFamilyMembershipDenial(mutationError)) {
+              setMembershipDenied(true);
+              setError(FAMILY_MEMBERSHIP_REQUIRED_MESSAGE);
+              return;
+            }
+            setError(
+              "Something went wrong uploading your media. Please try again."
+            );
+          }
         }
       );
       return;
@@ -75608,12 +76027,24 @@ function RecipeContributePage({
               }
             )
           ] }),
-          error && /* @__PURE__ */ jsxRuntimeExports.jsx(
-            "p",
+          error && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "div",
             {
               "data-ocid": "recipe.form.error_state",
               className: "rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm font-medium text-destructive",
-              children: error
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("p", { children: error }),
+                membershipDenied && onClaimProfile ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  "button",
+                  {
+                    type: "button",
+                    "data-ocid": "recipe.form.claim_profile_button",
+                    onClick: onClaimProfile,
+                    className: "mt-3 inline-flex items-center justify-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                    children: "Claim your family profile"
+                  }
+                ) : null
+              ]
             }
           ),
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between", children: [
@@ -76880,6 +77311,7 @@ function SourcesTab({
         fileMime,
         fileName
       ).withUploadProgress(setProgress);
+      const capturedFilename = fileName;
       resetForm();
       createSourceWithUpload.mutate(
         {
@@ -76888,6 +77320,7 @@ function SourcesTab({
           description: capturedDescription,
           mimeType: fileMime,
           blob,
+          filename: capturedFilename,
           tags: tags.split(",").map((tag) => tag.trim()).filter(Boolean),
           era: era.trim(),
           year: parseYear$1(year),
@@ -80798,7 +81231,8 @@ function VideoContributePage({
   onViewPendingContributions,
   initialKind,
   initialRelatedMemberIds,
-  initialSpeakerId
+  initialSpeakerId,
+  onClaimProfile
 }) {
   var _a2;
   const { isAuthenticated, login, isInitializing, isLoggingIn } = useInternetIdentity();
@@ -80848,6 +81282,7 @@ function VideoContributePage({
   const fileInputRef = reactExports.useRef(null);
   const [submitted, setSubmitted] = reactExports.useState(false);
   const [error, setError] = reactExports.useState(null);
+  const [membershipDenied, setMembershipDenied] = reactExports.useState(false);
   const isOralHistory = selectedKind !== null && isOralHistoryKind(selectedKind);
   const handleFile = async (file) => {
     if (!file) return;
@@ -80906,6 +81341,7 @@ function VideoContributePage({
     event.preventDefault();
     if (!selectedKind) return;
     setError(null);
+    setMembershipDenied(false);
     if (!fileBytes) {
       setError("Please choose a file to upload before submitting.");
       return;
@@ -80926,6 +81362,7 @@ function VideoContributePage({
         itemType: kindToItemType(selectedKind),
         mimeType: fileMime,
         blob,
+        filename: fileName,
         era: era.trim(),
         year: parseYear(year),
         tags: tags.split(",").map((tag) => tag.trim()).filter(Boolean),
@@ -80941,7 +81378,14 @@ function VideoContributePage({
       },
       {
         onSuccess: () => setSubmitted(true),
-        onError: () => setError("Something went wrong while submitting. Please try again.")
+        onError: (mutationError) => {
+          if (isFamilyMembershipDenial(mutationError)) {
+            setMembershipDenied(true);
+            setError(FAMILY_MEMBERSHIP_REQUIRED_MESSAGE);
+            return;
+          }
+          setError("Something went wrong while submitting. Please try again.");
+        }
       }
     );
   };
@@ -81534,12 +81978,24 @@ function VideoContributePage({
               )
             ] })
           ] }),
-          error && /* @__PURE__ */ jsxRuntimeExports.jsx(
-            "p",
+          error && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "div",
             {
               "data-ocid": "video_contribute.form.error_state",
               className: "rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm font-medium text-destructive",
-              children: error
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx("p", { children: error }),
+                membershipDenied && onClaimProfile ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  "button",
+                  {
+                    type: "button",
+                    "data-ocid": "video_contribute.form.claim_profile_button",
+                    onClick: onClaimProfile,
+                    className: "mt-3 inline-flex items-center justify-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                    children: "Claim your family profile"
+                  }
+                ) : null
+              ]
             }
           ),
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between", children: [
@@ -82396,7 +82852,13 @@ function App() {
           // state instead of falling back to another person's profile (e.g.
           // julia) so a valid personId never flashes the wrong profile.
           /* @__PURE__ */ jsxRuntimeExports.jsx(ProfileLoadingState, {})
-        ) : view === "archive-contribute" ? /* @__PURE__ */ jsxRuntimeExports.jsx(ArchiveContributionPage, { onBack: () => setView("home") }) : view === "admin-approval" ? /* @__PURE__ */ jsxRuntimeExports.jsx(StewardOnly, { isSteward, children: /* @__PURE__ */ jsxRuntimeExports.jsx(AdminApprovalPage, { onBack: () => setView("home") }) }) : view === "steward-review" ? /* @__PURE__ */ jsxRuntimeExports.jsx(StewardOnly, { isSteward, children: /* @__PURE__ */ jsxRuntimeExports.jsx(FamilyStewardReviewPage, { onBack: () => setView("home") }) }) : view === "governance" ? /* @__PURE__ */ jsxRuntimeExports.jsx(StewardOnly, { isSteward, children: /* @__PURE__ */ jsxRuntimeExports.jsx(FamilyStewardGovernancePage, { onBack: () => setView("home") }) }) : view === "add-myself" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+        ) : view === "archive-contribute" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          ArchiveContributionPage,
+          {
+            onBack: () => setView("home"),
+            onClaimProfile: () => setView("add-myself")
+          }
+        ) : view === "admin-approval" ? /* @__PURE__ */ jsxRuntimeExports.jsx(StewardOnly, { isSteward, children: /* @__PURE__ */ jsxRuntimeExports.jsx(AdminApprovalPage, { onBack: () => setView("home") }) }) : view === "steward-review" ? /* @__PURE__ */ jsxRuntimeExports.jsx(StewardOnly, { isSteward, children: /* @__PURE__ */ jsxRuntimeExports.jsx(FamilyStewardReviewPage, { onBack: () => setView("home") }) }) : view === "governance" ? /* @__PURE__ */ jsxRuntimeExports.jsx(StewardOnly, { isSteward, children: /* @__PURE__ */ jsxRuntimeExports.jsx(FamilyStewardGovernancePage, { onBack: () => setView("home") }) }) : view === "add-myself" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
           AddMyselfPage,
           {
             onBack: () => setView("home"),
@@ -82473,7 +82935,8 @@ function App() {
             onViewPendingContributions: () => setView("admin-approval"),
             initialKind: (mediaContributePreselect == null ? void 0 : mediaContributePreselect.kind) ?? void 0,
             initialRelatedMemberIds: (mediaContributePreselect == null ? void 0 : mediaContributePreselect.personId) ? [mediaContributePreselect.personId] : void 0,
-            initialSpeakerId: (mediaContributePreselect == null ? void 0 : mediaContributePreselect.speaker) ?? void 0
+            initialSpeakerId: (mediaContributePreselect == null ? void 0 : mediaContributePreselect.speaker) ?? void 0,
+            onClaimProfile: () => setView("add-myself")
           }
         ) : view === "recipes" ? /* @__PURE__ */ jsxRuntimeExports.jsx(
           RecipesPage,
@@ -82501,6 +82964,7 @@ function App() {
           {
             onBack: () => (recipeContributePreselect == null ? void 0 : recipeContributePreselect.context) === "profile" ? setView("profile") : setView("recipes"),
             onOpenRecipes: openRecipes,
+            onClaimProfile: () => setView("add-myself"),
             preselect: (recipeContributePreselect == null ? void 0 : recipeContributePreselect.personId) && recipeContributePreselect.role ? {
               personId: recipeContributePreselect.personId,
               role: recipeContributePreselect.role

@@ -141,6 +141,8 @@ module {
           case (?s) s.name;
           case null "";
         };
+        mimeType = it.mimeType ?? "";
+        filename = it.filename ?? "";
         tags = it.tags.values().join(", ");
       }
     ).values();

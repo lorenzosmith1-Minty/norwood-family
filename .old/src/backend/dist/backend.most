@@ -38,12 +38,14 @@ type ArchiveItemClassification__257202539 = {#OralHistory; #Standard};
 type ArchiveItemClassification__383954107 = {#OralHistory; #Standard};
 type ArchiveItemClassification__517238092 = {#OralHistory; #Standard};
 type ArchiveItemClassification__596308317 = {#OralHistory; #Standard};
+type ArchiveItemClassification__680977868 = {#OralHistory; #Standard};
 type ArchiveItemClassification__794406287 = {#OralHistory; #Standard};
 type ArchiveItemId__806701466 = Nat;
 type ArchiveItemStatus__153733651 = {#Approved; #Pending; #Rejected};
 type ArchiveItemStatus__209982260 = {#Approved; #Pending; #Rejected};
 type ArchiveItemStatus__249205974 = {#Approved; #Pending; #Rejected};
 type ArchiveItemStatus__279370547 = {#Approved; #Pending; #Rejected};
+type ArchiveItemStatus__290313664 = {#Approved; #Pending; #Rejected};
 type ArchiveItemStatus__340092924 = {#Approved; #Pending; #Rejected};
 type ArchiveItemStatus__432887814 = {#Approved; #Pending; #Rejected};
 type ArchiveItemStatus__460939503 = {#Approved; #Pending; #Rejected};
@@ -59,6 +61,17 @@ type ArchiveItemStatus__830573301 = {#Approved; #Pending; #Rejected};
 type ArchiveItemStatus__85775470 = {#Approved; #Pending; #Rejected};
 type ArchiveItemStatus__988483544 = {#Approved; #Pending; #Rejected};
 type ArchiveItemType__1013704161 =
+  {
+    #Audio;
+    #Document;
+    #Other;
+    #Photo;
+    #Research;
+    #Video;
+    #WorkBusiness;
+    #WrittenStoryNote
+  };
+type ArchiveItemType__1035138361 =
   {
     #Audio;
     #Document;
@@ -328,8 +341,10 @@ type ArchiveItem__425253936 =
     description : Text;
     era : Text;
     extractedNames : ?[Text];
+    filename : ?Text;
     id : ArchiveItemId__806701466;
     itemType : ArchiveItemType__197671339;
+    mimeType : ?Text;
     primarySpeaker : ?OralHistorySpeaker__575347483;
     privacyLevel : PrivacyLevel__764828888;
     relatedBranchId : ?Text;
@@ -810,6 +825,7 @@ type Block__187203820 =
     createdAt : Int
   };
 type ChapterMarker__240149678 = {timestamp : Nat; title : Text};
+type ChapterMarker__280489626 = {timestamp : Nat; title : Text};
 type ChapterMarker__327278920 = {timestamp : Nat; title : Text};
 type ChapterMarker__334012027 = {timestamp : Nat; title : Text};
 type ChapterMarker__361153121 = {timestamp : Nat; title : Text};
@@ -1488,6 +1504,11 @@ type NewActor__556041151 =
     stories : List__836382695<Story__138540882>;
     successors : List__836382695<SuccessorDesignation__152383176>
   };
+type NewActor__665018719 =
+  {
+    archiveItems : List__836382695<NewArchiveItem__1052374070>;
+    notifications : List__836382695<NewNotification__1019362983>
+  };
 type NewActor__679825786 =
   {
     accessControlState :
@@ -1645,6 +1666,33 @@ type NewActor__960473320 =
     profiles : Map__230067015<Text, PersonProfile__668376542>;
     relationshipRequests : List__836382695<RelationshipRequest__18150306>
   };
+type NewArchiveItem__1052374070 =
+  {
+    aiSummary : ?Text;
+    blob : Blob;
+    chapterMarkers : ?[ChapterMarker__280489626];
+    classification : ArchiveItemClassification__680977868;
+    contributor : Principal;
+    createdAt : Int;
+    description : Text;
+    era : Text;
+    extractedNames : ?[Text];
+    filename : ?Text;
+    id : Nat;
+    itemType : ArchiveItemType__1035138361;
+    mimeType : ?Text;
+    primarySpeaker : ?OralHistorySpeaker__711138985;
+    privacyLevel : PrivacyLevel__691527337;
+    relatedBranchId : ?Text;
+    relatedMemberIds : [Text];
+    searchableTranscript : ?Text;
+    sourceStatus : SourceStatus__1056450729;
+    status : ArchiveItemStatus__290313664;
+    tags : [Text];
+    title : Text;
+    transcript : ?Text;
+    year : ?Nat
+  };
 type NewArchiveItem__406273885 =
   {
     aiSummary : ?Text;
@@ -1709,6 +1757,21 @@ type NewNewPersonCandidate__515114504 =
     submittedAt : Int;
     submittedBy : Principal
   };
+type NewNotificationType__151150982 =
+  {
+    #ArchiveApproved;
+    #ArchiveRejected;
+    #BoardMention;
+    #BoardReply;
+    #NewMessage;
+    #ProfileClaimRequested;
+    #ProfileClaimReviewed;
+    #RelationshipRequested;
+    #RelationshipReviewed;
+    #ResearchApproved;
+    #ResearchRejected;
+    #ResearchSubmission
+  };
 type NewNotificationType__89360364 =
   {
     #BoardMention;
@@ -1721,6 +1784,15 @@ type NewNotificationType__89360364 =
     #ResearchApproved;
     #ResearchRejected;
     #ResearchSubmission
+  };
+type NewNotification__1019362983 =
+  {
+    createdAt : Int;
+    id : Nat;
+    message : Text;
+    notificationType : NewNotificationType__151150982;
+    read : Bool;
+    recipient : Principal
   };
 type NewNotification__281268636 =
   {
@@ -1945,6 +2017,8 @@ type NotificationType__73735027 =
   };
 type NotificationType__873564229 =
   {
+    #ArchiveApproved;
+    #ArchiveRejected;
     #BoardMention;
     #BoardReply;
     #NewMessage;
@@ -2163,6 +2237,11 @@ type OldActor__232881591 =
     profiles : Map__230067015<Text, PersonProfile__581465308>;
     relationshipRequests : List__836382695<RelationshipRequest__233308197>;
     stewards : List__836382695<StewardRecord__113048388>
+  };
+type OldActor__358288849 =
+  {
+    archiveItems : List__836382695<OldArchiveItem__6033014>;
+    notifications : List__836382695<OldNotification__501838132>
   };
 type OldActor__363696330 =
   {
@@ -2424,6 +2503,31 @@ type OldArchiveItem__554142984 =
     title : Text;
     year : ?Nat
   };
+type OldArchiveItem__6033014 =
+  {
+    aiSummary : ?Text;
+    blob : Blob;
+    chapterMarkers : ?[ChapterMarker__280489626];
+    classification : ArchiveItemClassification__680977868;
+    contributor : Principal;
+    createdAt : Int;
+    description : Text;
+    era : Text;
+    extractedNames : ?[Text];
+    id : Nat;
+    itemType : ArchiveItemType__1035138361;
+    primarySpeaker : ?OralHistorySpeaker__711138985;
+    privacyLevel : PrivacyLevel__691527337;
+    relatedBranchId : ?Text;
+    relatedMemberIds : [Text];
+    searchableTranscript : ?Text;
+    sourceStatus : SourceStatus__1056450729;
+    status : ArchiveItemStatus__290313664;
+    tags : [Text];
+    title : Text;
+    transcript : ?Text;
+    year : ?Nat
+  };
 type OldAuditActionType__284819524 =
   {
     #ClaimApproved;
@@ -2488,6 +2592,19 @@ type OldNewPersonCandidate__5766976 =
     submittedAt : Int;
     submittedBy : Principal
   };
+type OldNotificationType__216529677 =
+  {
+    #BoardMention;
+    #BoardReply;
+    #NewMessage;
+    #ProfileClaimRequested;
+    #ProfileClaimReviewed;
+    #RelationshipRequested;
+    #RelationshipReviewed;
+    #ResearchApproved;
+    #ResearchRejected;
+    #ResearchSubmission
+  };
 type OldNotificationType__255564461 =
   {
     #BoardMention;
@@ -2504,6 +2621,15 @@ type OldNotificationType__293054727 =
     #ProfileClaimReviewed;
     #RelationshipRequested;
     #RelationshipReviewed
+  };
+type OldNotification__501838132 =
+  {
+    createdAt : Int;
+    id : Nat;
+    message : Text;
+    notificationType : OldNotificationType__216529677;
+    read : Bool;
+    recipient : Principal
   };
 type OldNotification__719817552 =
   {
@@ -2601,6 +2727,7 @@ type OralHistorySpeaker__107404051 = {name : Text; personId : ?Text};
 type OralHistorySpeaker__297850193 = {name : Text; personId : ?Text};
 type OralHistorySpeaker__353922771 = {name : Text; personId : ?Text};
 type OralHistorySpeaker__575347483 = {name : Text; personId : ?Text};
+type OralHistorySpeaker__711138985 = {name : Text; personId : ?Text};
 type OralHistorySpeaker__926562536 = {name : Text; personId : ?Text};
 type OralHistorySpeaker__949974461 = {name : Text; personId : ?Text};
 type PersonId__1048869529 = PersonId__610106223;
@@ -3239,6 +3366,7 @@ type PrivacyLevel__378795588 = {#FamilyOnly; #Private; #Public};
 type PrivacyLevel__496877382 = {#FamilyOnly; #Private; #Public};
 type PrivacyLevel__528038811 = {#FamilyOnly; #Private; #Public};
 type PrivacyLevel__537672385 = {#FamilyOnly; #Private; #Public};
+type PrivacyLevel__691527337 = {#FamilyOnly; #Private; #Public};
 type PrivacyLevel__718845652 = {#FamilyOnly; #Private; #Public};
 type PrivacyLevel__748514053 = {#FamilyOnly; #Private; #Public};
 type PrivacyLevel__764828888 = {#FamilyOnly; #Private; #Public};
@@ -4155,6 +4283,7 @@ type SourceStatus__1002712082 = {#Copy; #Original; #Transcribed; #Unverified};
 type SourceStatus__1032055384 = {#Copy; #Original; #Transcribed; #Unverified};
 type SourceStatus__103998251 = {#Copy; #Original; #Transcribed; #Unverified};
 type SourceStatus__1040689336 = {#Copy; #Original; #Transcribed; #Unverified};
+type SourceStatus__1056450729 = {#Copy; #Original; #Transcribed; #Unverified};
 type SourceStatus__193324948 = {#Copy; #Original; #Transcribed; #Unverified};
 type SourceStatus__200219094 = {#Copy; #Original; #Transcribed; #Unverified};
 type SourceStatus__20581324 = {#Copy; #Original; #Transcribed; #Unverified};
@@ -4452,7 +4581,8 @@ type UserRole__968740559 = {#admin; #guest; #user};
   "20260913_000000" : (_old : OldActor__1007934830) -> NewActor__756013677;
   "20260914_000000" : (old : OldActor__402068192) -> NewActor__843027286;
   "20260915_000000" : (old : OldActor__606090735) -> NewActor__937507792;
-  "20260916_000000" : (old : OldActor__887486218) -> NewActor__772334770
+  "20260916_000000" : (old : OldActor__887486218) -> NewActor__772334770;
+  "20260917_000000" : (old : OldActor__358288849) -> NewActor__665018719
 }
 actor  {
   stable accessControlState :

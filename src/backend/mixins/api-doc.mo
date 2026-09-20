@@ -125,15 +125,32 @@ Contributions badge.
 
 ### Family Archive
 
-- `submitArchiveItem(title : Text, description : Text, itemType : ArchiveItemType, blob : Blob, era : Text, year : ?Nat, tags : [Text], relatedMemberIds : [Text], relatedBranchId : ?Text, sourceStatus : SourceStatus, privacyLevel : PrivacyLevel, classification : ArchiveItemClassification, primarySpeaker : ?OralHistorySpeaker) : async ArchiveItem` —
+- `submitArchiveItem(title : Text, description : Text, itemType : ArchiveItemType, mimeType : Text, blob : Blob, era : Text, year : ?Nat, tags : [Text], relatedMemberIds : [Text], relatedBranchId : ?Text, sourceStatus : SourceStatus, privacyLevel : PrivacyLevel, classification : ArchiveItemClassification, primarySpeaker : ?OralHistorySpeaker, filename : Text) : async ArchiveItem` —
   update. Submits a new archive item. Requires an approved family member (a
   caller holding at least one `#Approved` profile claim, or a Family Steward);
-  anonymous and signed-in but unapproved callers are rejected with a trap. The
+  an anonymous caller is rejected with a trap carrying
+  `\"Unauthorized: You must be signed in\"`, and a signed-in but unapproved
+  caller is rejected with a trap carrying the stable, non-technical
+  `\"Family membership required. Claim your family profile and wait for Family
+  Steward approval before contributing family content.\"` so the frontend can
+  present a definitive family-membership-required outcome rather than a generic
+  retry. The
   caller is recorded as the `contributor`. The item is stored in
   `#Pending` state, assigned a fresh id, and `createdAt` is set to the current
   time. It does not appear in the archive until a Family Steward approves it. The
   `blob` is the external storage reference (a `Blob`); the original file bytes
-  live off-chain and are preserved as-is.
+  live off-chain and are preserved as-is. The validated MIME type and the
+  sanitized `filename` are persisted on the item itself as `mimeType` and
+  `filename`, because `ExternalBlob` runtime metadata is not reliably available
+  after the blob has been stored and returned; the frontend uses these persisted
+  fields to decide whether a safe inline preview is offered. `filename` is
+  sanitized (path separators and control characters removed, length capped) and
+  the MIME type is normalized (trimmed and lower-cased) before it is stored; the
+  allowed MIME list is unchanged.
+  `title` and `description` are required. `era` is OPTIONAL: an empty or
+  whitespace-only value is accepted and stored as `\"\"`; a non-empty value is
+  trimmed and must be at most 150 characters, and an overlong value is rejected
+  (never silently truncated). `tags` and `relatedMemberIds` are bounded lists.
   `classification` marks the item as Oral History (distinct from `itemType`):
   `#Standard` for ordinary media, `#OralHistory` for oral-history video and
   audio-only oral history. When `classification == #OralHistory`, `primarySpeaker`
@@ -152,10 +169,19 @@ Contributions badge.
   all archive items currently in `#Pending` state.
 - `approveArchiveItem(id : Nat) : async ?ArchiveItem` — update. Admin only.
   Moves a pending item to `#Approved` state and returns the updated item, or
-  `null` when no pending item with that id exists.
+  `null` when no pending item with that id exists. On the actual transition out
+  of `#Pending`, records exactly one `#ArchiveApproved` notification addressed
+  only to the item's `contributor`, with the message
+  `Your archive contribution \"<title>\" was approved.` A repeated call on an
+  already-reviewed item returns `null` and creates no notification.
 - `rejectArchiveItem(id : Nat) : async ?ArchiveItem` — update. Admin only. Moves
   a pending item to `#Rejected` state and returns the updated item, or `null`
-  when no pending item with that id exists.
+  when no pending item with that id exists. The rejected record is retained, not
+  deleted. On the actual transition out of `#Pending`, records exactly one
+  `#ArchiveRejected` notification addressed only to the item's `contributor`,
+  with the message `Your archive contribution \"<title>\" was not approved.` A
+  repeated call on an already-reviewed item returns `null` and creates no
+  notification.
 - `listApprovedArchiveItems() : async [ArchiveItem]` — query. Returns the
   archive items in `#Approved` state visible to the caller under the archive
   privacy rules. Privacy is enforced server-side: `#Public` items are returned
@@ -906,16 +932,24 @@ Contributions badge.
   member, and era respectively. Every field is optional — a `null`/empty field
   does not constrain the result. Readable by any caller, subject to the privacy
   filter above.
-- `createSourceWithUpload(title : Text, sourceType : SourceType, description : Text, blob : Blob, tags : [Text], era : Text, year : ?Nat, relatedMemberIds : [Text], privacyLevel : PrivacyLevel, classification : ArchiveItemClassification, primarySpeaker : ?OralHistorySpeaker) : async Result<SourceUploadResult, ResearchError>` —
+- `createSourceWithUpload(title : Text, sourceType : SourceType, description : Text, mimeType : Text, blob : Blob, tags : [Text], era : Text, year : ?Nat, relatedMemberIds : [Text], privacyLevel : PrivacyLevel, classification : ArchiveItemClassification, primarySpeaker : ?OralHistorySpeaker, filename : Text) : async Result<SourceUploadResult, ResearchError>` —
   update. Uploads a research source file: creates exactly ONE canonical Archive
   item (in `#Pending` state) from the uploaded file and links a new Research
   Source record to it via `archiveItemId`, so no manually typed Archive Item ID
   is required. The Archive item's `itemType` is derived from the source type
   (`#ResearchNotes` becomes `#Research`; the other source types become
   `#Document`), and the caller is recorded as the `contributor` of both records
-  (provenance). Requires an approved family member (a caller holding at least one
+  (provenance). The validated MIME type and the sanitized `filename` are
+  persisted on the created Archive item as `mimeType` and `filename`, so the
+  frontend can offer a safe inline preview without relying on `ExternalBlob`
+  runtime metadata. Requires an approved family member (a caller holding at least one
   `#Approved` profile claim, or a Family Steward); returns
-  `#err(#notAuthorized)` for an anonymous or signed-in but unapproved caller. As
+  `#err(#notAuthorized)` for an anonymous or signed-in but unapproved caller —
+  a distinguishable, non-technical authorization outcome the frontend maps to a
+  definitive family-membership-required message. `title` and `description` are
+  required. `era` is OPTIONAL: an empty or whitespace-only value is accepted and
+  stored as `\"\"`; a non-empty value is trimmed and must be at most 150
+  characters, and an overlong value is rejected (never silently truncated). As
   with `submitArchiveItem`,
   `classification == #OralHistory` requires a `primarySpeaker` (returns
   `#err(#invalidState(\"A primary speaker is required for Oral History items\"))`
@@ -927,7 +961,9 @@ Contributions badge.
   update. Creates a board post that attaches existing Archive items (by id, no
   re-upload) and/or new uploads. Each `newUploads` entry creates exactly ONE
   canonical Archive item (in `#Pending` state) linked to the post; the
-  underlying file is never duplicated. Existing Archive items are attached by
+  underlying file is never duplicated. Each upload's validated MIME type and
+  sanitized `filename` are persisted on the created Archive item as `mimeType`
+  and `filename`. Existing Archive items are attached by
   id without re-uploading. The post's `linkedMediaIds` is the union of the
   existing ids that resolve to a real Archive item and the ids of the newly
   created items. Approved family members only: traps with `\"Unauthorized: You
@@ -943,9 +979,11 @@ Contributions badge.
   notifications reconciled (0 when the claim does not exist or is not
   `#Approved`). Requires an approved family member (a caller holding at least one
   `#Approved` profile claim, or a Family Steward); traps with
-  `\"Unauthorized: You must be signed in\"` for an anonymous caller and
-  `\"Unauthorized: Only approved family members can contribute family content\"`
-  for a signed-in but unapproved caller.
+  `\"Unauthorized: You must be signed in\"` for an anonymous caller and with the
+  stable, non-technical `\"Family membership required. Claim your family profile
+  and wait for Family Steward approval before contributing family content.\"`
+  for a signed-in but unapproved caller, so the frontend can present a
+  definitive family-membership-required outcome rather than a generic retry.
 
 ### Object Query Layer (OQL)
 
@@ -974,7 +1012,10 @@ photo metadata: `key` (globally-unique \"<personId>:<id>\", the primary key),
 when absent), `contributor` (the submitting principal, rendered as text),
 `sourceStatus`, `privacyLevel`, `status`, `createdAt` (nanoseconds since
 epoch, `Int`), `classification` (`\"Standard\"`/`\"OralHistory\"`), `primarySpeakerName` (the primary speaker's display name, `\"\"` when the item is
-not Oral History), and `tags` (the item's canonical tag list joined with
+not Oral History), `mimeType` (the persisted validated MIME type, `\"\"` when
+absent — e.g. for records created before the field existed), `filename` (the
+persisted sanitized filename, `\"\"` when absent), and `tags` (the item's
+canonical tag list joined with
 `\", \"`, `\"\"` when the item has no tags). The raw blob bytes are not exposed.
 
 The ownership entities are flattened views of the corresponding records.
@@ -1219,7 +1260,14 @@ content is steward-readable unless reported.
 
 The archive methods gate on sign-in and role. `submitArchiveItem` requires a
 signed-in (non-anonymous) caller and traps with `\"Unauthorized: You must be
-signed in\"` for an anonymous caller. It also validates the Oral History
+signed in\"` for an anonymous caller. A signed-in caller who is not an approved
+family member is denied with the stable, non-technical
+`\"Family membership required. Claim your family profile and wait for Family
+Steward approval before contributing family content.\"` — a distinguishable
+outcome the frontend maps to a definitive family-membership-required message
+(with the Add Myself / claim-profile action) instead of a generic retry. The
+message carries no principal or account detail, and the caller is still denied.
+It also validates the Oral History
 speaker: it traps with `\"A primary speaker is required for Oral History
 items\"` when `classification == #OralHistory` and `primarySpeaker` is `null`,
 and with `\"A primary speaker is only allowed on Oral History items\"` when
@@ -1294,9 +1342,14 @@ with `\"Unauthorized: Only Family Stewards can ...\"` when the caller is not an
 active Family Steward (an ACTIVE persisted `StewardRecord`). `listApprovedStories`, `listMysteries`, and `listTimelineEvents` are
 readable by any caller (respecting the existing privacy conventions).
 
-The Family Recipes methods gate on sign-in and role. `submitRecipe` requires a
-signed-in (non-anonymous) caller and traps with `\"Sign-in required to submit a
-recipe\"` for an anonymous caller. The Family Steward methods —
+The Family Recipes methods gate on sign-in and role. `submitRecipe` requires an
+approved family member (a caller holding at least one `#Approved` profile claim,
+or a Family Steward); it traps with `\"Unauthorized: You must be signed in\"` for
+an anonymous caller and with the stable, non-technical `\"Family membership
+required. Claim your family profile and wait for Family Steward approval before
+contributing family content.\"` for a signed-in but unapproved caller, so the
+frontend can present a definitive family-membership-required outcome rather than
+a generic retry. The Family Steward methods —
 `listPendingRecipes`, `approveRecipe`, `rejectRecipe`, and `publishRecipe` — are
 Family Steward only and trap with `\"Unauthorized: Only Family Stewards can ...\"`
 when
@@ -1450,6 +1503,17 @@ already reference the caller's stable principal (`requestingUserId`,
   live off-chain.
 - `UserRole` is a variant: `#admin`, `#user`, or `#guest`.
 - `ArchiveItemId` is a `Nat`, unique across the whole archive.
+- `ArchiveItem` fields: `id` (`ArchiveItemId`), `title` (`Text`), `description`
+  (`Text`), `itemType`, `blob` (the external storage reference), `mimeType`
+  (`?Text`, the persisted validated MIME type, `null` for records created before
+  the field existed), `filename` (`?Text`, the persisted sanitized filename,
+  `null` for records created before the field existed), `era` (`Text`), `year`
+  (`?Nat`), `tags` (`[Text]`), `contributor` (`Principal`), `relatedMemberIds`
+  (`[Text]`), `relatedBranchId` (`?Text`), `sourceStatus`, `privacyLevel`,
+  `status`, `createdAt` (`Int`), `classification`, `primarySpeaker`
+  (`?OralHistorySpeaker`), and the reserved future-ready fields `transcript`,
+  `searchableTranscript`, `chapterMarkers`, `aiSummary`, and `extractedNames`
+  (all `null` and not populated by any logic yet).
 - `ArchiveItemType` is a variant: `#Photo`, `#Document`, `#Audio`, `#Video`,
   `#WrittenStoryNote`, `#Research`, `#WorkBusiness`, or `#Other`.
 - `SourceStatus` is a variant: `#Original`, `#Copy`, `#Transcribed`, or
@@ -1481,7 +1545,8 @@ already reference the caller's stable principal (`requestingUserId`,
 - `NotificationType` is a variant: `#ProfileClaimRequested`,
   `#ProfileClaimReviewed`, `#RelationshipRequested`, `#RelationshipReviewed`,
   `#BoardReply`, `#BoardMention`, `#NewMessage`, `#ResearchSubmission`,
-  `#ResearchApproved`, or `#ResearchRejected`.
+  `#ResearchApproved`, `#ResearchRejected`, `#ArchiveApproved`, or
+  `#ArchiveRejected`.
 - `PersonProfile` fields: `personId` (`Text`), `name` (`Text`),
   `livingStatus`, `claimStatus`, `claimedByUserId` (`?Principal`, `null` when
   unclaimed), and the owner-editable optionals `preferredName`, `firstName`,
@@ -1791,6 +1856,17 @@ already reference the caller's stable principal (`requestingUserId`,
   (`Text`), `createdAt` (`Int`, nanoseconds since epoch), `evidenceLabel`
   (`?EvidenceLabel`, `null` when not applicable), `status` (`ReviewStatus`), and
   `actions` (`[ReviewAction]`: `#Approve`, `#Reject`, and/or `#NeedsResearch`).
+- `BoardMediaUpload` fields: `title` (`Text`), `description` (`Text`),
+  `itemType` (`ArchiveItemType`), `mimeType` (`Text`, the caller-declared MIME
+  type validated against the board attachment allowlist), `filename` (`Text`,
+  the caller-supplied filename, sanitized before it is persisted on the created
+  Archive item), `blob` (the external storage reference), `era` (`Text`), `year`
+  (`?Nat`), `tags` (`[Text]`), `relatedMemberIds` (`[Text]`), `relatedBranchId`
+  (`?Text`), `sourceStatus`, `privacyLevel`, `classification`, and
+  `primarySpeaker` (`?OralHistorySpeaker`).
+- `SourceUploadResult` fields: `source` (`SourceRecord`) and `archiveItem`
+  (`ArchiveItem`) — the created Source record plus the canonical Archive item it
+  links to.
 - `ResearchError` is a variant: `#notAuthorized`, `#notFound : Nat`, or
   `#invalidState : Text`.
 
@@ -1809,7 +1885,11 @@ stores the item in `#Pending` state. A Family Steward then calls
 `rejectArchiveItem` to move it to `#Approved` or `#Rejected`. Only `#Approved`
 items are returned by `listApprovedArchiveItems` (the archive view). There is no
 async job to poll; the frontend can call `listPendingArchiveItems` (steward) or
-`listApprovedArchiveItems` to observe the current state. An Oral History item
+`listApprovedArchiveItems` to observe the current state. Each successful
+transition out of `#Pending` records exactly one `#ArchiveApproved` /
+`#ArchiveRejected` notification to the item's contributor, readable via
+`listNotifications`; a repeated approve/reject call on an already-reviewed item
+returns `null` and creates no duplicate notification. An Oral History item
 (`classification == #OralHistory`) must carry exactly one primary speaker at
 submission time; the speaker is fixed at submission and does not change through
 the approval lifecycle.
@@ -2049,7 +2129,10 @@ no async job to poll; the frontend can call the list methods (steward) or
   rejecting an already-approved or already-rejected (or nonexistent) item
   returns `null` and changes nothing. They only transition items currently in
   `#Pending` state. Neither is destructive — the item and its original file
-  reference are preserved in either terminal state.
+  reference are preserved in either terminal state. Each successful transition
+  records exactly one `#ArchiveApproved`/`#ArchiveRejected` notification to the
+  item's contributor (never to any other user), and a repeated call on an
+  already-reviewed item creates no duplicate notification.
 - `requestProfileClaim` is not idempotent in effect but guards against
   duplicates: it returns `#err(#AlreadyPending)` when a pending claim already
   exists for the same person, so a retry that actually succeeded does not create
@@ -2278,7 +2361,14 @@ no async job to poll; the frontend can call the list methods (steward) or
   when `classification == #Standard` and `primarySpeaker` is not `null`. These
   traps store nothing, so a rejected submission leaves no partial item. The
   speaker field is hidden in the UI for media not classified as Oral History,
-  but the backend still enforces the invariant regardless of the client.
+  but the backend still enforces the invariant regardless of the client. It also
+  traps when the upload fails validation (unsupported/forbidden MIME type, empty
+  file, or over the surface byte ceiling) or when `filename` sanitizes to an
+  empty value; the allowed MIME list is unchanged.
+- `approveArchiveItem` and `rejectArchiveItem` notify only the item's
+  `contributor`; contributor identity is never exposed to other users, and
+  research-source notifications (`#ResearchSubmission`/`#ResearchApproved`/
+  `#ResearchRejected`) are unchanged.
 - Photo ids are per-person; the same numeric id can refer to different photos
   for different people.
 - The OQL `photo` entity's primary key is the composite `key` field, not `id`,
@@ -2369,8 +2459,13 @@ no async job to poll; the frontend can call the list methods (steward) or
   not exist or is not in the expected state.
 - Stories and Mysteries reference existing person ids and archive item ids; they
   never create duplicate Person records or duplicate source files.
-- `submitRecipe` traps with `\"Sign-in required to submit a recipe\"` for an
-  anonymous caller, and with `\"Originating family member not found\"` when
+- `submitRecipe` requires an approved family member (a caller holding at least
+  one `#Approved` profile claim, or a Family Steward); it traps with
+  `\"Unauthorized: You must be signed in\"` for an anonymous caller and with the
+  stable, non-technical `\"Family membership required. Claim your family profile
+  and wait for Family Steward approval before contributing family content.\"`
+  for a signed-in but unapproved caller. It also traps with `\"Originating family
+  member not found\"` when
   `originatingPersonId` does not reference a tracked canonical Person record.
   `publishRecipe` traps with `\"Unauthorized: Only Family Stewards can publish
   recipes\"` when the caller is not an active Family Steward (an ACTIVE persisted

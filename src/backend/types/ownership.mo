@@ -125,6 +125,8 @@ module {
     #ResearchSubmission;
     #ResearchApproved;
     #ResearchRejected;
+    #ArchiveApproved;
+    #ArchiveRejected;
   };
 
   /// An in-app notification record addressed to one user. Email is never used

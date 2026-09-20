@@ -611,7 +611,10 @@ export default function App() {
           <ProfileLoadingState />
         )
       ) : view === "archive-contribute" ? (
-        <ArchiveContributionPage onBack={() => setView("home")} />
+        <ArchiveContributionPage
+          onBack={() => setView("home")}
+          onClaimProfile={() => setView("add-myself")}
+        />
       ) : view === "admin-approval" ? (
         <StewardOnly isSteward={isSteward}>
           <AdminApprovalPage onBack={() => setView("home")} />
@@ -709,6 +712,7 @@ export default function App() {
               : undefined
           }
           initialSpeakerId={mediaContributePreselect?.speaker ?? undefined}
+          onClaimProfile={() => setView("add-myself")}
         />
       ) : view === "recipes" ? (
         <RecipesPage
@@ -739,6 +743,7 @@ export default function App() {
               : setView("recipes")
           }
           onOpenRecipes={openRecipes}
+          onClaimProfile={() => setView("add-myself")}
           preselect={
             recipeContributePreselect?.personId &&
             recipeContributePreselect.role

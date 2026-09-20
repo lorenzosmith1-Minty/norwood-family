@@ -297,14 +297,14 @@ describe("archive item type maps to the governing upload surface", () => {
     expect(surfaceForArchiveItemType("Video")).toBe("archiveVideo");
   });
 
+  it("maps file-bearing Research, WorkBusiness, and Other item types to the document surface", () => {
+    expect(surfaceForArchiveItemType("Research")).toBe("archiveDocument");
+    expect(surfaceForArchiveItemType("WorkBusiness")).toBe("archiveDocument");
+    expect(surfaceForArchiveItemType("Other")).toBe("archiveDocument");
+  });
+
   it("returns null for item types that carry no uploaded file", () => {
-    for (const itemType of [
-      "WrittenStoryNote",
-      "Research",
-      "WorkBusiness",
-      "Other",
-      "",
-    ]) {
+    for (const itemType of ["WrittenStoryNote", ""]) {
       expect(surfaceForArchiveItemType(itemType)).toBeNull();
     }
   });

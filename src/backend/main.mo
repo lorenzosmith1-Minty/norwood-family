@@ -300,6 +300,8 @@ actor {
         createdAt = 0;
         classification = "";
         primarySpeakerName = "";
+        mimeType = "";
+        filename = "";
         tags = "";
       })
       .payload("id", func r = r.id)
@@ -314,6 +316,8 @@ actor {
       .payload("createdAt", func r = r.createdAt)
       .payload("classification", func r = r.classification)
       .payload("primarySpeakerName", func r = r.primarySpeakerName)
+      .payload("mimeType", func r = r.mimeType)
+      .payload("filename", func r = r.filename)
       .payload("tags", func r = r.tags)
       .ownedByWith("id", canSeeArchiveItem)
       .controllerOrScoped()
@@ -1046,7 +1050,7 @@ actor {
   });
   include MixinObjectStorage();
   include ObjectStorageApi(galleries, claims, profiles, stewards);
-  include ArchiveApi(archiveItems, claims, stewards);
+  include ArchiveApi(archiveItems, claims, stewards, notifications);
   include OwnershipApi(accessControlState, profiles, claims, confirmedRelationships, relationshipRequests, notifications, auditLog, stewards);
   include ClaimPersistenceApi(profiles, claims);
   include RelationshipsApi(relationshipRequests, confirmedRelationships);

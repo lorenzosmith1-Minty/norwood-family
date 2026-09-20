@@ -18,6 +18,34 @@ import type {
  * directly.
  */
 export type ArchiveItem = BackendArchiveItem;
+
+/**
+ * Resolves the persisted MIME type of an archive item's uploaded artifact.
+ *
+ * The backend now persists `mimeType` on the ArchiveItem record itself, so the
+ * stored value is authoritative. Older records written before that field
+ * existed fall back to the ExternalBlob's own metadata, and finally to an empty
+ * string when neither is available.
+ */
+export function getArchiveItemMimeType(item: ArchiveItem): string {
+  const persisted = item.mimeType?.trim();
+  if (persisted) return persisted.toLowerCase();
+  return item.blob.contentType?.trim().toLowerCase() ?? "";
+}
+
+/**
+ * Resolves the persisted filename of an archive item's uploaded artifact.
+ *
+ * Prefers the ArchiveItem's own `filename` field (persisted at upload time),
+ * then the ExternalBlob's metadata for older records, and finally `undefined`
+ * when neither is available.
+ */
+export function getArchiveItemFilename(item: ArchiveItem): string | undefined {
+  const persisted = item.filename?.trim();
+  if (persisted) return persisted;
+  const blobName = item.blob.filename?.trim();
+  return blobName || undefined;
+}
 export {
   ArchiveItemClassification,
   ArchiveItemType,

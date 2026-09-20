@@ -1444,6 +1444,9 @@ video {
 .row-start-1 {
   grid-row-start: 1;
 }
+.m-0 {
+  margin: 0px;
+}
 .m-2 {
   margin: 0.5rem;
 }
@@ -1982,6 +1985,9 @@ video {
 .max-w-\[4\.5rem\] {
   max-width: 4.5rem;
 }
+.max-w-\[42rem\] {
+  max-width: 42rem;
+}
 .max-w-\[4rem\] {
   max-width: 4rem;
 }
@@ -1993,6 +1999,9 @@ video {
 }
 .max-w-\[6rem\] {
   max-width: 6rem;
+}
+.max-w-\[760px\] {
+  max-width: 760px;
 }
 .max-w-\[80\%\] {
   max-width: 80%;
@@ -11083,6 +11092,78 @@ video {
   max-width: 100%;
   -o-object-fit: contain;
      object-fit: contain;
+}
+/* PDF.js preview: pages stack vertically inside the stage body and scroll
+     as one continuous document. Each page is a paper-white sheet on the dark
+     stage so the rendered original reads like a scanned page. */
+.pdf-preview {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
+}
+.pdf-preview-pages {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+}
+.pdf-preview-page {
+  margin: 0px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+.pdf-preview-canvas {
+  display: block;
+  height: auto;
+  max-width: 100%;
+  border-radius: calc(var(--radius) - 4px);
+    background-color: oklch(1 0 0);
+    box-shadow: 0 8px 28px -10px oklch(0 0 0 / 0.55);
+}
+.pdf-preview-canvas-pending {
+  min-height: 16rem;
+  width: 100%;
+  max-width: 760px;
+    background-color: oklch(1 0 0 / 0.06);
+    box-shadow: none;
+}
+.pdf-preview-page-label {
+  font-size: 11px;
+  font-weight: 500;
+    color: oklch(var(--preview-stage-muted));
+}
+.pdf-preview-notice {
+  max-width: 42rem;
+  border-radius: var(--radius);
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
+  text-align: center;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 500;
+    background-color: oklch(1 0 0 / 0.06);
+    color: oklch(var(--preview-stage-foreground));
+}
+.pdf-preview-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding-top: 0.25rem;
 }
 .preview-stage-frame {
   display: flex;

@@ -32,21 +32,21 @@ import {
 import { ArchiveDetailPage } from "./pages/ArchiveDetailPage";
 
 // ---------------------------------------------------------------------------
-// Cover for the accepted document-preview safety behavior.
+// Characterization baseline for the Archive Detail document preview, updated
+// for the accepted PDF.js canvas renderer.
 //
-// The Archive Detail preview is safe by construction:
+// The sandboxed <iframe> PDF preview was replaced by an in-app PDF.js canvas
+// renderer, so the PDF-specific assertions below now describe the canvas
+// contract. The ADJACENT behavior this file protects is unchanged:
 //
-//   1. A PDF preview renders in-app through PDF.js into <canvas> elements —
-//      no embedded script runs, no document HTML is injected, and no
-//      navigation or form submission is possible — while keeping the filename
-//      as the stage heading. No iframe is used anywhere in the preview path.
-//   2. A raster image preview renders as an <img>, never an iframe.
-//   3. Scriptable / unknown document types (SVG, HTML, XML, Word) are never
-//      previewed inline: they offer Download Original only, with no Preview
-//      button and no preview stage.
+//   - the Preview button is offered for approved PDF documents;
+//   - Preview opens the preview stage panel;
+//   - raster images preview safely as an <img>, never an iframe;
+//   - scriptable and unknown document types stay download-only;
+//   - Download Original remains available for archive items.
 //
 // The frontend suite mocks the actor, so this asserts the rendered DOM contract
-// of the pages, not a deployed browser or a real gateway fetch.
+// of the page, not a deployed browser or a real gateway fetch.
 // ---------------------------------------------------------------------------
 
 configure({ testIdAttribute: "data-ocid" });
@@ -138,16 +138,46 @@ function renderDetail(item: ArchiveItem) {
   );
 }
 
-describe("PDF preview renders in-app without an iframe", () => {
-  it("mounts the PDF renderer and never introduces an iframe", async () => {
-    const user = userEvent.setup();
+function previewStage(): HTMLElement {
+  return document.querySelector(
+    '[data-ocid="archive_detail.preview_stage"]',
+  ) as HTMLElement;
+}
+
+// ---------------------------------------------------------------------------
+// 1. Accepted PDF preview contract: an in-app PDF.js canvas renderer, never an
+//    iframe. In jsdom the real PDF.js module cannot parse a document, so the
+//    renderer settles into its loading or error state; these assertions cover
+//    the stage mounting and the absence of any iframe, not a successful parse.
+// ---------------------------------------------------------------------------
+
+describe("PDF preview contract (in-app canvas renderer)", () => {
+  it("offers a Preview button for an approved PDF document", async () => {
     renderDetail(documentItem(1n, "Deed scan", "application/pdf", "deed.pdf"));
+
+    expect(
+      await screen.findByRole("button", { name: "Preview" }),
+    ).toBeInTheDocument();
+  });
+
+  it("opens the preview stage panel when Preview is selected", async () => {
+    const user = userEvent.setup();
+    renderDetail(documentItem(2n, "Deed scan", "application/pdf", "deed.pdf"));
+
+    expect(previewStage()).not.toBeInTheDocument();
 
     await user.click(await screen.findByRole("button", { name: "Preview" }));
 
-    const stage = document.querySelector(
-      '[data-ocid="archive_detail.preview_stage"]',
-    ) as HTMLElement;
+    expect(previewStage()).toBeInTheDocument();
+  });
+
+  it("mounts the PDF renderer without introducing an iframe", async () => {
+    const user = userEvent.setup();
+    renderDetail(documentItem(3n, "Deed scan", "application/pdf", "deed.pdf"));
+
+    await user.click(await screen.findByRole("button", { name: "Preview" }));
+
+    const stage = previewStage();
     expect(stage).toBeInTheDocument();
 
     // The renderer mounts its own loading or error state; either way no
@@ -163,64 +193,61 @@ describe("PDF preview renders in-app without an iframe", () => {
     expect(document.querySelector("iframe")).toBeNull();
   });
 
-  it("keeps the filename as the stage heading", async () => {
+  it("shows the filename as the preview stage heading", async () => {
     const user = userEvent.setup();
-    renderDetail(documentItem(2n, "Deed scan", "application/pdf", "deed.pdf"));
+    renderDetail(documentItem(4n, "Deed scan", "application/pdf", "deed.pdf"));
 
     await user.click(await screen.findByRole("button", { name: "Preview" }));
 
-    const stage = document.querySelector(
-      '[data-ocid="archive_detail.preview_stage"]',
-    ) as HTMLElement;
-    expect(within(stage).getByText("deed.pdf")).toBeInTheDocument();
+    expect(within(previewStage()).getByText("deed.pdf")).toBeInTheDocument();
   });
 
-  it("closes the preview stage without leaving the renderer mounted", async () => {
+  it("closes the preview stage when Close preview is selected", async () => {
     const user = userEvent.setup();
-    renderDetail(documentItem(3n, "Deed scan", "application/pdf", "deed.pdf"));
+    renderDetail(documentItem(5n, "Deed scan", "application/pdf", "deed.pdf"));
 
     await user.click(await screen.findByRole("button", { name: "Preview" }));
-    expect(
-      document.querySelector('[data-ocid="archive_detail.preview_stage"]'),
-    ).toBeInTheDocument();
+    expect(previewStage()).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Close preview" }));
-    expect(
-      document.querySelector('[data-ocid="archive_detail.preview_stage"]'),
-    ).not.toBeInTheDocument();
+    expect(previewStage()).not.toBeInTheDocument();
   });
 });
 
-describe("raster image preview renders as an <img>, never an iframe", () => {
+// ---------------------------------------------------------------------------
+// 2. Adjacent behavior that must survive the PDF.js change.
+// ---------------------------------------------------------------------------
+
+describe("raster image preview stays an <img>", () => {
   it("renders a PNG preview as an <img> with the item title as alt text", async () => {
     const user = userEvent.setup();
     renderDetail(
-      documentItem(4n, "Portrait scan", "image/png", "portrait.png"),
+      documentItem(10n, "Portrait scan", "image/png", "portrait.png"),
     );
 
     await user.click(await screen.findByRole("button", { name: "Preview" }));
 
-    const stage = document.querySelector(
-      '[data-ocid="archive_detail.preview_stage"]',
-    ) as HTMLElement;
+    const stage = previewStage();
     expect(
       within(stage).getByRole("img", { name: "Portrait scan" }),
     ).toBeInTheDocument();
+    // An image preview is never an iframe.
     expect(within(stage).queryByTitle("portrait.png")).not.toBeInTheDocument();
   });
 });
 
-describe("scriptable and unknown document types are download-only", () => {
+describe("scriptable and unknown document types stay download-only", () => {
   const downloadOnly: Array<[string, string, string]> = [
     ["SVG", "image/svg+xml", "logo.svg"],
     ["HTML", "text/html", "page.html"],
     ["XML", "application/xml", "data.xml"],
     ["Word", "application/msword", "notes.docx"],
+    ["unknown", "application/octet-stream", "blob.bin"],
   ];
 
   for (const [label, mime, filename] of downloadOnly) {
     it(`offers Download Original only for a ${label} document`, async () => {
-      renderDetail(documentItem(10n, `${label} document`, mime, filename));
+      renderDetail(documentItem(20n, `${label} document`, mime, filename));
 
       expect(
         await screen.findByRole("button", { name: "Download Original" }),
@@ -229,16 +256,36 @@ describe("scriptable and unknown document types are download-only", () => {
       expect(
         screen.queryByRole("button", { name: "Preview" }),
       ).not.toBeInTheDocument();
-      expect(
-        document.querySelector('[data-ocid="archive_detail.preview_stage"]'),
-      ).not.toBeInTheDocument();
+      expect(previewStage()).not.toBeInTheDocument();
     });
   }
 
   it("never renders an SVG as an inline <img>", async () => {
-    renderDetail(documentItem(20n, "Logo", "image/svg+xml", "logo.svg"));
+    renderDetail(documentItem(30n, "Logo", "image/svg+xml", "logo.svg"));
 
     await screen.findByRole("button", { name: "Download Original" });
     expect(screen.queryByRole("img", { name: "Logo" })).not.toBeInTheDocument();
+  });
+});
+
+describe("Download Original remains available for archive items", () => {
+  it("keeps Download Original alongside Preview for a PDF", async () => {
+    renderDetail(documentItem(40n, "Deed scan", "application/pdf", "deed.pdf"));
+
+    expect(
+      await screen.findByRole("button", { name: "Download Original" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Preview" })).toBeInTheDocument();
+  });
+
+  it("keeps Download Original alongside Preview for a raster image", async () => {
+    renderDetail(
+      documentItem(41n, "Portrait scan", "image/png", "portrait.png"),
+    );
+
+    expect(
+      await screen.findByRole("button", { name: "Download Original" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Preview" })).toBeInTheDocument();
   });
 });

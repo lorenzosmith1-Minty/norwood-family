@@ -18,7 +18,12 @@ import {
 } from "../hooks/useArchiveStorage";
 import { useCanonicalPerson } from "../hooks/useCanonicalPerson";
 import { useSubmitRecipe } from "../hooks/useRecipes";
-import { sanitizeFilename, validateRecipeMedia } from "../lib/fileValidation";
+import {
+  FAMILY_MEMBERSHIP_REQUIRED_MESSAGE,
+  isFamilyMembershipDenial,
+  sanitizeFilename,
+  validateRecipeMedia,
+} from "../lib/fileValidation";
 import {
   ArchiveItemClassification,
   ArchiveItemType,
@@ -41,6 +46,8 @@ interface RecipeContributePageProps {
    * member depending on `role`, visibly shown, and changeable before submit.
    */
   preselect?: { personId: string; role: "originating" | "related" };
+  /** Opens the Add Myself / claim-profile flow. */
+  onClaimProfile?: () => void;
 }
 
 /** Parses an optional year string into a bigint, or null when empty/invalid. */
@@ -93,6 +100,7 @@ export function RecipeContributePage({
   onBack,
   onOpenRecipes,
   preselect,
+  onClaimProfile,
 }: RecipeContributePageProps) {
   const { isAuthenticated, login, isInitializing, isLoggingIn } =
     useInternetIdentity();
@@ -142,6 +150,10 @@ export function RecipeContributePage({
 
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // True when the last submit was denied because the caller is signed in but is
+  // not an approved Norwood family member. Drives the definitive membership
+  // message plus the claim-profile action.
+  const [membershipDenied, setMembershipDenied] = useState(false);
 
   // Backend-resolved / graph-only people (e.g. Waxx Minty) have no static
   // profile chip. Track them so their chips render persistently in the member
@@ -234,11 +246,13 @@ export function RecipeContributePage({
     setFileMime("");
     setProgress(null);
     setError(null);
+    setMembershipDenied(false);
   };
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     setError(null);
+    setMembershipDenied(false);
 
     if (!title.trim()) {
       setError("Please give the recipe a title before submitting.");
@@ -281,10 +295,16 @@ export function RecipeContributePage({
         },
         {
           onSuccess: () => setSubmitted(true),
-          onError: () =>
+          onError: (mutationError) => {
+            if (isFamilyMembershipDenial(mutationError)) {
+              setMembershipDenied(true);
+              setError(FAMILY_MEMBERSHIP_REQUIRED_MESSAGE);
+              return;
+            }
             setError(
               "Something went wrong while submitting. Please try again.",
-            ),
+            );
+          },
         },
       );
     };
@@ -302,6 +322,7 @@ export function RecipeContributePage({
           itemType: ArchiveItemType.Photo,
           mimeType: fileMime,
           blob,
+          filename: fileName,
           era: era.trim(),
           year: parseYear(year),
           tags: [],
@@ -317,10 +338,16 @@ export function RecipeContributePage({
             linkedMediaIds.push(created.id);
             finishSubmit();
           },
-          onError: () =>
+          onError: (mutationError) => {
+            if (isFamilyMembershipDenial(mutationError)) {
+              setMembershipDenied(true);
+              setError(FAMILY_MEMBERSHIP_REQUIRED_MESSAGE);
+              return;
+            }
             setError(
               "Something went wrong uploading your media. Please try again.",
-            ),
+            );
+          },
         },
       );
       return;
@@ -937,12 +964,22 @@ export function RecipeContributePage({
         </div>
 
         {error && (
-          <p
+          <div
             data-ocid="recipe.form.error_state"
             className="rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm font-medium text-destructive"
           >
-            {error}
-          </p>
+            <p>{error}</p>
+            {membershipDenied && onClaimProfile ? (
+              <button
+                type="button"
+                data-ocid="recipe.form.claim_profile_button"
+                onClick={onClaimProfile}
+                className="mt-3 inline-flex items-center justify-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              >
+                Claim your family profile
+              </button>
+            ) : null}
+          </div>
         )}
 
         <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

@@ -122,6 +122,7 @@ export function useCreateBoardPostWithMedia() {
           itemType: upload.itemType,
           mimeType: upload.mimeType,
           blob: upload.blob,
+          filename: upload.filename,
           era: upload.era,
           year: upload.year ?? undefined,
           tags: upload.tags,

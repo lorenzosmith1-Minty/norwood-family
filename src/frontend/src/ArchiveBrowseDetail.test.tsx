@@ -10,7 +10,13 @@ import {
 import { ExternalBlob } from "@caffeineai/object-storage";
 import { Principal } from "@icp-sdk/core/principal";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { cleanup, render, screen, within } from "@testing-library/react";
+import {
+  cleanup,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {
   afterEach,
@@ -608,14 +614,22 @@ describe("Archive Detail page", () => {
       screen.getByRole("button", { name: "Download Original" }),
     ).toBeInTheDocument();
 
-    // Opening Preview renders the document in-app (an iframe of the original).
+    // Opening Preview renders the document in-app through PDF.js, with no
+    // iframe anywhere in the preview path.
     await user.click(screen.getByRole("button", { name: "Preview" }));
     const stage = document.querySelector(
       '[data-ocid="archive_detail.preview_stage"]',
     ) as HTMLElement;
     expect(stage).toBeInTheDocument();
-    const frame = within(stage).getByTitle("deed.pdf");
-    expect(frame).toBeInTheDocument();
+    await waitFor(() => {
+      expect(
+        stage.querySelector(
+          '[data-ocid="archive_detail.preview_loading_state"], [data-ocid="archive_detail.preview_error_state"], [data-ocid="archive_detail.preview_pages"]',
+        ),
+      ).not.toBeNull();
+    });
+    expect(stage.querySelector("iframe")).toBeNull();
+    expect(document.querySelector("iframe")).toBeNull();
   });
 
   it("offers both Preview and Download Original for an image document", async () => {

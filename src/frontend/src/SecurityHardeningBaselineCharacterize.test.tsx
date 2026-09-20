@@ -19,6 +19,7 @@ import {
   configure,
   render,
   screen,
+  waitFor,
   within,
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -55,8 +56,8 @@ import {
 //   2. Upload validation (backend): addPhoto, submitArchiveItem,
 //      createSourceWithUpload, and createBoardPostWithMedia gain size / MIME /
 //      filename / input-length validation.
-//   3. Document preview sandboxing (frontend): the Archive Detail PDF preview
-//      iframe gains a `sandbox` attribute.
+//   3. Document preview safety (frontend): the Archive Detail PDF preview is
+//      rendered in-app by PDF.js into canvases, with no iframe at all.
 //
 // This file deliberately does NOT freeze the behavior the pass removes (the
 // permissive membership gate, the absence of upload validation, the unsandboxed
@@ -222,14 +223,14 @@ function renderWithQueryClient(ui: React.ReactElement) {
 }
 
 // ---------------------------------------------------------------------------
-// A. Archive Detail document preview keeps working (sandboxing is additive).
+// A. Archive Detail document preview keeps working (now via PDF.js canvases).
 // ---------------------------------------------------------------------------
 
-describe("Archive Detail preview survives the sandboxing change", () => {
-  it("renders a PDF preview in-app through an iframe pointing at the original artifact", async () => {
+describe("Archive Detail preview survives the PDF renderer change", () => {
+  it("renders a PDF preview in-app without an iframe", async () => {
     // The preview stage is reached through the real Archive Detail page. The
-    // sandbox attribute is additive, so this asserts the preview still renders
-    // and still targets the original artifact URL — not that sandbox is absent.
+    // PDF is rasterized in-app by PDF.js, so this asserts the renderer mounts
+    // and no iframe is introduced anywhere in the preview path.
     const { ArchiveDetailPage } = await import("./pages/ArchiveDetailPage");
     const item: ArchiveItem = {
       id: 1n,
@@ -273,10 +274,17 @@ describe("Archive Detail preview survives the sandboxing change", () => {
       '[data-ocid="archive_detail.preview_stage"]',
     ) as HTMLElement;
     expect(stage).toBeInTheDocument();
-    const frame = within(stage).getByTitle("deed.pdf");
-    expect(frame).toBeInTheDocument();
-    // The preview still points at the original artifact's direct URL.
-    expect(frame.getAttribute("src")).toBeTruthy();
+    // The renderer mounts its own loading or error state; either way no
+    // iframe is used anywhere in the preview path.
+    await waitFor(() => {
+      expect(
+        stage.querySelector(
+          '[data-ocid="archive_detail.preview_loading_state"], [data-ocid="archive_detail.preview_error_state"], [data-ocid="archive_detail.preview_pages"]',
+        ),
+      ).not.toBeNull();
+    });
+    expect(stage.querySelector("iframe")).toBeNull();
+    expect(document.querySelector("iframe")).toBeNull();
   });
 
   it("renders an image preview as an <img> rather than an iframe", async () => {
@@ -400,6 +408,7 @@ describe("Upload hooks: backend call contract (characterization)", () => {
       itemType: ArchiveItemType.Photo,
       mimeType: "image/png",
       blob,
+      filename: "wedding.png",
       era: "circa 1920s",
       year: null,
       tags: ["wedding"],
@@ -427,6 +436,7 @@ describe("Upload hooks: backend call contract (characterization)", () => {
         PrivacyLevel.FamilyOnly,
         ArchiveItemClassification.Standard,
         null,
+        "wedding.png",
       ],
     ]);
   });
@@ -455,6 +465,7 @@ describe("Upload hooks: backend call contract (characterization)", () => {
       description: "Census record.",
       mimeType: "image/png",
       blob,
+      filename: "census.pdf",
       tags: ["census"],
       era: "1900",
       year: 1900n,
@@ -478,6 +489,7 @@ describe("Upload hooks: backend call contract (characterization)", () => {
         PrivacyLevel.FamilyOnly,
         ArchiveItemClassification.Standard,
         null,
+        "census.pdf",
       ],
     ]);
   });
@@ -494,6 +506,7 @@ describe("Upload hooks: backend call contract (characterization)", () => {
       itemType: ArchiveItemType.Photo,
       mimeType: "image/png",
       blob,
+      filename: "reunion.png",
       era: "2024",
       year: 2024n,
       tags: ["reunion"],
@@ -544,6 +557,7 @@ describe("Upload hooks: backend call contract (characterization)", () => {
             itemType: ArchiveItemType.Photo,
             mimeType: "image/png",
             blob,
+            filename: "reunion.png",
             era: "2024",
             year: 2024n,
             tags: ["reunion"],

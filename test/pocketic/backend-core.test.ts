@@ -97,6 +97,7 @@ it("enforces archive privacy levels server-side: a guest sees only Public approv
     { Public: null },
     { Standard: null },
     [],
+    "public-letter.pdf",
   );
   const familyItem = await privacyActor.submitArchiveItem(
     "Family letter",
@@ -113,6 +114,7 @@ it("enforces archive privacy levels server-side: a guest sees only Public approv
     { FamilyOnly: null },
     { Standard: null },
     [],
+    "family-letter.pdf",
   );
   const privateItem = await privacyActor.submitArchiveItem(
     "Private letter",
@@ -129,6 +131,7 @@ it("enforces archive privacy levels server-side: a guest sees only Public approv
     { Private: null },
     { Standard: null },
     [],
+    "private-letter.pdf",
   );
 
   // Approve all three so they enter the archive.
@@ -212,6 +215,7 @@ it("derives the pending contributions count from canonical pending archive recor
     { FamilyOnly: null },
     { Standard: null },
     [],
+    "count-letter.pdf",
   );
 
   // The count reflects the same canonical pending record listPendingArchiveItems

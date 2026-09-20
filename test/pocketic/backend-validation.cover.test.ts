@@ -215,6 +215,7 @@ it("rejects too many attachments on a board post instead of truncating the list"
     itemType: { Photo: null },
     mimeType: "image/png",
     blob,
+    filename: "attachment.png",
     era: "2024",
     year: [2024n],
     tags: [],
@@ -267,6 +268,7 @@ it("rejects an overlong archive item title instead of truncating it", async () =
       { FamilyOnly: null },
       { Standard: null },
       [],
+      "overlong-title.pdf",
     ),
   ).rejects.toThrow(/title/i);
 
@@ -297,6 +299,7 @@ it("rejects an overlong archive item description instead of truncating it", asyn
       { FamilyOnly: null },
       { Standard: null },
       [],
+      "overlong-description.pdf",
     ),
   ).rejects.toThrow(/description/i);
 
@@ -326,6 +329,7 @@ it("rejects too many tags on an archive item instead of truncating the list", as
       { FamilyOnly: null },
       { Standard: null },
       [],
+      "too-many-tags.pdf",
     ),
   ).rejects.toThrow(/tags/i);
 

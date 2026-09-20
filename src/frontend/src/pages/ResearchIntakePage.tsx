@@ -326,6 +326,7 @@ function SourcesTab({
         fileMime,
         fileName,
       ).withUploadProgress(setProgress);
+      const capturedFilename = fileName;
       resetForm();
       createSourceWithUpload.mutate(
         {
@@ -334,6 +335,7 @@ function SourcesTab({
           description: capturedDescription,
           mimeType: fileMime,
           blob,
+          filename: capturedFilename,
           tags: tags
             .split(",")
             .map((tag) => tag.trim())

@@ -327,9 +327,11 @@ export function validateBoardAttachment(file: File): FileValidationResult {
 
 /**
  * Maps an archive item type to the upload surface that governs its media, or
- * null when the item type carries no uploaded file (written story/note, other).
- * Research and work/business material are limited to the types supported by the
- * selected archive item type.
+ * null when the item type carries no uploaded file. Photo, Document, Audio, and
+ * Video map to their matching media surface; Research, WorkBusiness, and Other
+ * are document-style material and map to the archive document surface (PDF or
+ * plain text only). WrittenStoryNote keeps its text-entry behavior and returns
+ * null so the UI never offers it a file upload.
  */
 export function surfaceForArchiveItemType(
   itemType: string,
@@ -338,6 +340,9 @@ export function surfaceForArchiveItemType(
     case "Photo":
       return "archiveImage";
     case "Document":
+    case "Research":
+    case "WorkBusiness":
+    case "Other":
       return "archiveDocument";
     case "Audio":
       return "archiveAudio";
@@ -469,4 +474,63 @@ export function sanitizeFilename(filename: string): string | null {
 
   const capped = capFilenamePreservingExtension(trimmed);
   return capped.length === 0 ? null : capped;
+}
+
+// --- Family-membership denial handling ---
+
+/**
+ * The definitive message shown when a signed-in caller is not an approved
+ * Norwood family member and therefore cannot contribute family content.
+ */
+export const FAMILY_MEMBERSHIP_REQUIRED_MESSAGE =
+  "Family membership required. Claim your family profile and wait for Family Steward approval before contributing family content.";
+
+/**
+ * The backend trap messages raised by `submitArchiveItem` / `submitRecipe` via
+ * `requireApprovedFamilyMember`. Matched case-insensitively as a substring so
+ * the frontend never depends on the exact wrapper text. Both the current
+ * wording and the older wording are recognized so either trap variant is
+ * detected.
+ */
+const FAMILY_MEMBERSHIP_DENIAL_MARKERS = [
+  "family membership required. claim your family profile and wait for family steward approval before contributing family content.",
+  "only approved family members can contribute family content",
+] as const;
+
+/**
+ * True when a mutation error represents a family-membership denial. Handles
+ * both backend denial shapes:
+ *  - the trapped `Family membership required. Claim your family profile and
+ *    wait for Family Steward approval before contributing family content.`
+ *    message from `submitArchiveItem` / `submitRecipe` (and the older
+ *    `Unauthorized: Only approved family members can contribute family
+ *    content` wording), and
+ *  - the returned `#err(#notAuthorized)` variant from `createSourceWithUpload`.
+ */
+export function isFamilyMembershipDenial(error: unknown): boolean {
+  if (error === null || error === undefined) return false;
+
+  if (typeof error === "string") {
+    return isFamilyMembershipDenialText(error);
+  }
+
+  if (typeof error === "object") {
+    const record = error as Record<string, unknown>;
+    // Returned variant shape: { notAuthorized: null } (or a nested #err wrapper).
+    if ("notAuthorized" in record) return true;
+    if ("err" in record && isFamilyMembershipDenial(record.err)) return true;
+    if (typeof record.message === "string") {
+      return isFamilyMembershipDenialText(record.message);
+    }
+  }
+
+  return false;
+}
+
+/** Case-insensitive substring match for any backend denial marker. */
+function isFamilyMembershipDenialText(text: string): boolean {
+  const normalized = text.toLowerCase();
+  return FAMILY_MEMBERSHIP_DENIAL_MARKERS.some((marker) =>
+    normalized.includes(marker),
+  );
 }

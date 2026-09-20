@@ -69,7 +69,7 @@ export function AdminApprovalPage({ onBack }: AdminApprovalPageProps) {
             className="h-3.5 w-3.5 text-accent-foreground"
             aria-hidden="true"
           />
-          Admin Review
+          Family Steward Review
         </div>
         <h1 className="font-display text-3xl font-semibold text-foreground">
           Pending Contributions

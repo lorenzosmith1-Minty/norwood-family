@@ -704,6 +704,8 @@ type OralHistorySpeaker =
  };
 type NotificationType = 
  variant {
+   ArchiveApproved;
+   ArchiveRejected;
    BoardMention;
    BoardReply;
    NewMessage;
@@ -1071,6 +1073,7 @@ type BoardMediaUpload =
    classification: ArchiveItemClassification;
    description: text;
    era: text;
+   filename: text;
    itemType: ArchiveItemType;
    mimeType: text;
    primarySpeaker: opt OralHistorySpeaker;
@@ -1167,8 +1170,10 @@ type ArchiveItem =
    description: text;
    era: text;
    extractedNames: opt vec text;
+   filename: opt text;
    id: ArchiveItemId;
    itemType: ArchiveItemType;
+   mimeType: opt text;
    primarySpeaker: opt OralHistorySpeaker;
    privacyLevel: PrivacyLevel;
    relatedBranchId: opt text;
@@ -1235,7 +1240,9 @@ service : {
   addRelationship: (fromPersonId: PersonId, toPersonId: PersonId,
    relationshipType: RelationshipType) -> (Result_23);
   /// Approves a pending archive item (admin only). Returns the updated item, or
-  /// `null` when the item does not exist or is not pending.
+  /// `null` when the item does not exist or is not pending. On the actual
+  /// transition out of pending, notifies only the contributor; a repeated call
+  /// on an already-reviewed item returns `null` and creates no notification.
   approveArchiveItem: (id: ArchiveItemId) -> (opt ArchiveItem);
   /// Approves a pending finding (steward only), routing it to its target
   /// surface. A finding labelled `#Conflicting` is never approved directly —
@@ -1364,7 +1371,7 @@ service : {
    text, mimeType: text, "blob": ExternalBlob, tags: vec text, era: text,
    year: opt nat, relatedMemberIds: vec text, privacyLevel: PrivacyLevel,
    classification: ArchiveItemClassification, primarySpeaker:
-   opt OralHistorySpeaker) -> (Result_17);
+   opt OralHistorySpeaker, filename: text) -> (Result_17);
   /// Designates an approved claimed family member as a successor steward with a
   /// priority/order. A successor is a designation only until activated.
   /// Family Steward only.
@@ -1655,7 +1662,10 @@ service : {
   /// new claim is created. Returns the number of notifications reconciled.
   reconcileClaimNotifications: (claimId: nat) -> (nat);
   /// Rejects a pending archive item (admin only). Returns the updated item, or
-  /// `null` when the item does not exist or is not pending.
+  /// `null` when the item does not exist or is not pending. The rejected record
+  /// is retained, not deleted. On the actual transition out of pending, notifies
+  /// only the contributor; a repeated call on an already-reviewed item returns
+  /// `null` and creates no notification.
   rejectArchiveItem: (id: ArchiveItemId) -> (opt ArchiveItem);
   /// Rejects a pending finding (steward only). Returns the updated finding, or
   /// `null` when it does not exist or is not pending.
@@ -1776,7 +1786,7 @@ service : {
    opt nat, tags: vec text, relatedMemberIds: vec text, relatedBranchId:
    opt text, sourceStatus: SourceStatus, privacyLevel: PrivacyLevel,
    classification: ArchiveItemClassification, primarySpeaker:
-   opt OralHistorySpeaker) -> (ArchiveItem);
+   opt OralHistorySpeaker, filename: text) -> (ArchiveItem);
   /// Submits a mystery contribution (a note, memory, possible lead, or
   /// source/document reference). Requires an approved family member; the caller
   /// is recorded as the contributor. The contribution is stored in pending state

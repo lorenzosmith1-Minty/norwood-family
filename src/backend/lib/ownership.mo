@@ -866,6 +866,8 @@ module {
       case (#ResearchSubmission) "ResearchSubmission";
       case (#ResearchApproved) "ResearchApproved";
       case (#ResearchRejected) "ResearchRejected";
+      case (#ArchiveApproved) "ArchiveApproved";
+      case (#ArchiveRejected) "ArchiveRejected";
     };
   };
 };

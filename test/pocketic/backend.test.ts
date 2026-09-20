@@ -164,6 +164,7 @@ async function submitAsContributor(): Promise<bigint> {
     { FamilyOnly: null },
     { Standard: null },
     [],
+    "family-letter.pdf",
   );
   return item.id;
 }
@@ -187,6 +188,7 @@ it("rejects an anonymous submitArchiveItem call instead of trapping silently", a
       { Public: null },
       { Standard: null },
       [],
+      "anonymous.png",
     ),
   ).rejects.toThrow();
 });

@@ -7,6 +7,9 @@ import type { _SERVICE } from "../../src/frontend/src/declarations/backend.did";
 const PIC_URL = process.env.POCKET_IC_URL ?? "";
 const BACKEND_WASM = process.env.BACKEND_WASM ?? "";
 const PREVIOUS_WASM = process.env.BACKEND_WASM_PREVIOUS ?? "";
+// The runner sets this to the previous revision's generated declarations under
+// `.old/`. They are imported dynamically in the archive migration test below.
+const PREVIOUS_DECLARATIONS = process.env.BACKEND_DECLARATIONS_PREVIOUS ?? "";
 
 let pic: PocketIc | undefined;
 
@@ -150,6 +153,99 @@ it("keeps lorenzoSmithJr's preferredName as 'Waxx Minty' on upgrade", async () =
       preferredName: ["Waxx Minty"],
     }),
   ]);
+});
+
+// The archive collection must survive an upgrade: a record written through the
+// previous revision's public API is carried through the migration chain with
+// its original fields intact and is not reset.
+//
+// The previous revision (`.old/`) already carries the 20260917_000000.mo
+// migration that widened ArchiveItem with the optional persisted
+// `mimeType`/`filename` fields, and its `submitArchiveItem` already persists
+// them at submit time. A record written through the previous revision's API
+// therefore carries non-null upload metadata, and the migration does not
+// rewrite it (the migration only backfills records that predate it, and it is
+// already applied in `.old/`). This test installs the previous revision, writes
+// an archive item through its public API, upgrades to this build (replaying the
+// migration chain), and asserts the record survives with its original fields
+// and its persisted metadata intact.
+//
+// Both revisions' `submitArchiveItem` take 15 parameters (the trailing
+// `filename`), so the call below passes all 15. The previous revision's own
+// declarations under `.old/` are imported dynamically from the path the runner
+// supplies, so a resolution failure surfaces as a clear error here rather than
+// breaking the whole file at collection time.
+it("carries archive items written by the previous version through the upgrade", async () => {
+  const previousDeclarations = await import(
+    /* @vite-ignore */ PREVIOUS_DECLARATIONS
+  );
+  const previousIdlFactory = previousDeclarations.idlFactory;
+
+  // 1. Install the version the user is actually running.
+  const previous = await pic!.setupCanister({
+    idlFactory: previousIdlFactory,
+    wasm: PREVIOUS_WASM,
+  });
+
+  // 2. Write an archive item through the OLD public API. The writer must be an
+  //    approved family member on the previous revision, so it performs the
+  //    one-time Steward bootstrap and approves its own profile claim.
+  const contributor = createIdentity("upgrade-archive-contributor-seed");
+  previous.actor.setIdentity(contributor);
+  await previous.actor._initialize_access_control();
+  await previous.actor.claimSteward();
+  const requested = await previous.actor.requestProfileClaim("clayton");
+  if ("ok" in requested) {
+    await previous.actor.approveProfileClaim(requested.ok.id);
+  }
+  const written = await previous.actor.submitArchiveItem(
+    "Pre-upgrade letter",
+    "A letter written before the persisted-media migration.",
+    { Document: null },
+    "application/pdf",
+    new Uint8Array([4, 5, 6]),
+    "1924",
+    [1924n],
+    ["letters"],
+    ["julia"],
+    ["branch-1"],
+    { Original: null },
+    { FamilyOnly: null },
+    { Standard: null },
+    [],
+    "pre-upgrade-letter.pdf",
+  );
+
+  // 3. Upgrade to the version this build produces. The migration runs here.
+  await pic!.upgradeCanister({
+    canisterId: previous.canisterId,
+    wasm: BACKEND_WASM,
+    upgradeModeOptions: {
+      skip_pre_upgrade: [],
+      wasm_memory_persistence: [{ keep: null }],
+    },
+  });
+
+  // 4. Read through the NEW API. The record survives with its original fields
+  //    and the persisted upload metadata written by the previous revision is
+  //    intact (the migration did not reset the archive collection or drop the
+  //    metadata).
+  const upgraded = pic!.createActor<_SERVICE>(idlFactory, previous.canisterId);
+  upgraded.setIdentity(contributor);
+  const pending = await upgraded.listPendingArchiveItems();
+  const stored = pending.find((item) => item.id === written.id);
+  expect(stored).toBeDefined();
+  expect(stored).toMatchObject({
+    id: written.id,
+    title: "Pre-upgrade letter",
+    era: "1924",
+    tags: ["letters"],
+    status: { Pending: null },
+    mimeType: ["application/pdf"],
+    filename: ["pre-upgrade-letter.pdf"],
+  });
+  // The stored blob reference is unchanged: the original bytes are preserved.
+  expect(stored?.blob).toEqual(written.blob);
 });
 
 // The duplicate-consolidation migrations (20260908_000000.mo and

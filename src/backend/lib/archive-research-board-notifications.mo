@@ -73,6 +73,8 @@ module {
     privacyLevel : ArchiveTypes.PrivacyLevel,
     classification : ArchiveTypes.ArchiveItemClassification,
     primarySpeaker : ?ArchiveTypes.OralHistorySpeaker,
+    mimeType : Text,
+    filename : Text,
     contributor : Principal,
     now : Int,
   ) : Types.SourceUploadResult {
@@ -82,6 +84,8 @@ module {
       description;
       itemType = itemTypeForSource(sourceType);
       blob;
+      mimeType = ?mimeType;
+      filename = ?filename;
       era;
       year;
       tags;
@@ -142,7 +146,11 @@ module {
         description = upload.description;
         itemType = upload.itemType;
         blob = upload.blob;
-        era = upload.era;
+        mimeType = ?upload.mimeType;
+        filename = ?upload.filename;
+        // Era is optional: an empty/whitespace-only value is stored as "" and a
+        // non-empty value is trimmed, matching the archive contribution path.
+        era = upload.era.trim(#predicate (func ch = ch.isWhitespace()));
         year = upload.year;
         tags = upload.tags;
         contributor = post.authorAccountId;

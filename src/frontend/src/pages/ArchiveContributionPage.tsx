@@ -20,7 +20,12 @@ import { motion } from "motion/react";
 import { useRef, useState } from "react";
 import type { FormEvent, KeyboardEvent } from "react";
 import { useSubmitArchiveItem } from "../hooks/useArchiveStorage";
-import { sanitizeFilename, validateArchiveFile } from "../lib/fileValidation";
+import {
+  FAMILY_MEMBERSHIP_REQUIRED_MESSAGE,
+  isFamilyMembershipDenial,
+  sanitizeFilename,
+  validateArchiveFile,
+} from "../lib/fileValidation";
 import {
   ARCHIVE_ITEM_TYPE_BADGE,
   ARCHIVE_ITEM_TYPE_LABELS,
@@ -35,6 +40,8 @@ import { profiles } from "./PersonProfilePage";
 
 interface ArchiveContributionPageProps {
   onBack: () => void;
+  /** Opens the Add Myself / claim-profile flow. */
+  onClaimProfile?: () => void;
 }
 
 /** Per-type icon and helper copy for the eight contribution choices. */
@@ -123,6 +130,7 @@ function parseYear(value: string): bigint | null {
 
 export function ArchiveContributionPage({
   onBack,
+  onClaimProfile,
 }: ArchiveContributionPageProps) {
   const { isAuthenticated, login, isInitializing, isLoggingIn } =
     useInternetIdentity();
@@ -161,6 +169,10 @@ export function ArchiveContributionPage({
 
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // True when the last submit was denied because the caller is signed in but is
+  // not an approved Norwood family member. Drives the definitive membership
+  // message plus the claim-profile action.
+  const [membershipDenied, setMembershipDenied] = useState(false);
 
   const isFileType = selectedType !== null && FILE_TYPES.includes(selectedType);
 
@@ -248,30 +260,38 @@ export function ArchiveContributionPage({
     setProgress(null);
     setStoryText("");
     setError(null);
+    setMembershipDenied(false);
   };
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     if (!selectedType) return;
     setError(null);
+    setMembershipDenied(false);
 
     let blob: ExternalBlob;
+    // The sanitized filename persisted on the ArchiveItem record. For a written
+    // story/note the original content is the text itself, so it carries the
+    // fixed "story.txt" name; file types carry the sanitized upload name.
+    let filename: string;
     if (selectedType === ArchiveItemType.WrittenStoryNote) {
       const text = storyText.trim();
       if (!text) {
         setError("Please write your story or note before submitting.");
         return;
       }
+      filename = "story.txt";
       blob = ExternalBlob.fromBytes(
         new TextEncoder().encode(text),
         "text/plain",
-        "story.txt",
+        filename,
       );
     } else {
       if (!fileBytes) {
         setError("Please choose a file to upload before submitting.");
         return;
       }
+      filename = fileName;
       blob = ExternalBlob.fromBytes(
         fileBytes,
         fileMime,
@@ -286,6 +306,7 @@ export function ArchiveContributionPage({
         itemType: selectedType,
         mimeType: fileMime,
         blob,
+        filename,
         era: era.trim(),
         year: parseYear(year),
         tags,
@@ -300,8 +321,14 @@ export function ArchiveContributionPage({
       },
       {
         onSuccess: () => setSubmitted(true),
-        onError: () =>
-          setError("Something went wrong while submitting. Please try again."),
+        onError: (mutationError) => {
+          if (isFamilyMembershipDenial(mutationError)) {
+            setMembershipDenied(true);
+            setError(FAMILY_MEMBERSHIP_REQUIRED_MESSAGE);
+            return;
+          }
+          setError("Something went wrong while submitting. Please try again.");
+        },
       },
     );
   };
@@ -871,12 +898,22 @@ export function ArchiveContributionPage({
         </div>
 
         {error && (
-          <p
+          <div
             data-ocid="archive.form.error_state"
             className="rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm font-medium text-destructive"
           >
-            {error}
-          </p>
+            <p>{error}</p>
+            {membershipDenied && onClaimProfile ? (
+              <button
+                type="button"
+                data-ocid="archive.form.claim_profile_button"
+                onClick={onClaimProfile}
+                className="mt-3 inline-flex items-center justify-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              >
+                Claim your family profile
+              </button>
+            ) : null}
+          </div>
         )}
 
         <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

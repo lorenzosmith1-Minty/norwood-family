@@ -339,6 +339,7 @@ it("searches approved archive items by title and tags", async () => {
     { FamilyOnly: null },
     { Standard: null },
     [],
+    "family-letter.pdf",
   );
   const photo = await searchActor.submitArchiveItem(
     "Wedding portrait",
@@ -355,6 +356,7 @@ it("searches approved archive items by title and tags", async () => {
     { FamilyOnly: null },
     { Standard: null },
     [],
+    "wedding-portrait.png",
   );
 
   // Approve both items so they enter the searchable archive.
@@ -433,6 +435,7 @@ it("creates one canonical archive item and links a source via createSourceWithUp
     { FamilyOnly: null },
     { Standard: null },
     [],
+    "1900-census.pdf",
   );
   expect(result).toEqual({
     ok: expect.objectContaining({
@@ -517,6 +520,7 @@ it("creates a board post attaching existing media and new uploads without duplic
     { FamilyOnly: null },
     { Standard: null },
     [],
+    "existing-photo.png",
   );
   mediaActor.setIdentity(adminIdentity);
   await mediaActor.approveArchiveItem(existing.id);
@@ -536,6 +540,7 @@ it("creates a board post attaching existing media and new uploads without duplic
         itemType: { Photo: null },
         mimeType: "image/png",
         blob,
+        filename: "new-reunion-photo.png",
         era: "2024",
         year: [2024n],
         tags: ["reunion"],

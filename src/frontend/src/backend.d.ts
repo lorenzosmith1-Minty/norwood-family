@@ -25,8 +25,10 @@ export interface ArchiveItem {
     createdAt: bigint;
     tags: Array<string>;
     year?: bigint;
+    mimeType?: string;
     description: string;
     privacyLevel: PrivacyLevel;
+    filename?: string;
     primarySpeaker?: OralHistorySpeaker;
     extractedNames?: Array<string>;
     itemType: ArchiveItemType;
@@ -69,6 +71,7 @@ export interface BoardMediaUpload {
     mimeType: string;
     description: string;
     privacyLevel: PrivacyLevel;
+    filename: string;
     primarySpeaker?: OralHistorySpeaker;
     itemType: ArchiveItemType;
     relatedBranchId?: string;
@@ -1023,7 +1026,9 @@ export enum MysteryStatus {
 export enum NotificationType {
     ResearchSubmission = "ResearchSubmission",
     ResearchApproved = "ResearchApproved",
+    ArchiveApproved = "ArchiveApproved",
     ResearchRejected = "ResearchRejected",
+    ArchiveRejected = "ArchiveRejected",
     RelationshipRequested = "RelationshipRequested",
     BoardMention = "BoardMention",
     RelationshipReviewed = "RelationshipReviewed",
@@ -1225,7 +1230,9 @@ export interface backendInterface {
     addRelationship(fromPersonId: PersonId, toPersonId: PersonId, relationshipType: RelationshipType): Promise<Result_23>;
     /**
      * / Approves a pending archive item (admin only). Returns the updated item, or
-     * / `null` when the item does not exist or is not pending.
+     * / `null` when the item does not exist or is not pending. On the actual
+     * / transition out of pending, notifies only the contributor; a repeated call
+     * / on an already-reviewed item returns `null` and creates no notification.
      */
     approveArchiveItem(id: ArchiveItemId): Promise<ArchiveItem | null>;
     /**
@@ -1390,7 +1397,7 @@ export interface backendInterface {
      * / typed Archive Item ID is required. Requires an approved family member; the
      * / caller is recorded as the contributor of both records.
      */
-    createSourceWithUpload(title: string, sourceType: SourceType, description: string, mimeType: string, blob: ExternalBlob, tags: Array<string>, era: string, year: bigint | null, relatedMemberIds: Array<string>, privacyLevel: PrivacyLevel, classification: ArchiveItemClassification, primarySpeaker: OralHistorySpeaker | null): Promise<Result_17>;
+    createSourceWithUpload(title: string, sourceType: SourceType, description: string, mimeType: string, blob: ExternalBlob, tags: Array<string>, era: string, year: bigint | null, relatedMemberIds: Array<string>, privacyLevel: PrivacyLevel, classification: ArchiveItemClassification, primarySpeaker: OralHistorySpeaker | null, filename: string): Promise<Result_17>;
     /**
      * / Designates an approved claimed family member as a successor steward with a
      * / priority/order. A successor is a designation only until activated.
@@ -1825,7 +1832,10 @@ export interface backendInterface {
     reconcileClaimNotifications(claimId: bigint): Promise<bigint>;
     /**
      * / Rejects a pending archive item (admin only). Returns the updated item, or
-     * / `null` when the item does not exist or is not pending.
+     * / `null` when the item does not exist or is not pending. The rejected record
+     * / is retained, not deleted. On the actual transition out of pending, notifies
+     * / only the contributor; a repeated call on an already-reviewed item returns
+     * / `null` and creates no notification.
      */
     rejectArchiveItem(id: ArchiveItemId): Promise<ArchiveItem | null>;
     /**
@@ -1997,7 +2007,7 @@ export interface backendInterface {
      * / is recorded as the contributor. The item is stored in pending state and
      * / waits for admin approval before appearing in the archive.
      */
-    submitArchiveItem(title: string, description: string, itemType: ArchiveItemType, mimeType: string, blob: ExternalBlob, era: string, year: bigint | null, tags: Array<string>, relatedMemberIds: Array<string>, relatedBranchId: string | null, sourceStatus: SourceStatus, privacyLevel: PrivacyLevel, classification: ArchiveItemClassification, primarySpeaker: OralHistorySpeaker | null): Promise<ArchiveItem>;
+    submitArchiveItem(title: string, description: string, itemType: ArchiveItemType, mimeType: string, blob: ExternalBlob, era: string, year: bigint | null, tags: Array<string>, relatedMemberIds: Array<string>, relatedBranchId: string | null, sourceStatus: SourceStatus, privacyLevel: PrivacyLevel, classification: ArchiveItemClassification, primarySpeaker: OralHistorySpeaker | null, filename: string): Promise<ArchiveItem>;
     /**
      * / Submits a mystery contribution (a note, memory, possible lead, or
      * / source/document reference). Requires an approved family member; the caller

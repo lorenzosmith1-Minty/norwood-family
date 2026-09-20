@@ -25,7 +25,34 @@
 // of it from `app/test/` does not resolve — the same resolution asymmetry the
 // lane runner documents for `@dfinity/pic`. Vitest accepts a default-exported
 // config object without the helper, so importing it would only break the lane.
+//
+// `resolve.alias` exists for one reason: an upgrade test imports the previous
+// revision's generated declarations from `.old/`, and those declarations import
+// `@icp-sdk/core/candid` (and `@icp-sdk/core/agent`). `@icp-sdk/core` is a
+// frontend-package dependency, so a bare specifier from `.old/` — which sits
+// outside the workspace's `src/**/*` packages — does not resolve and the import
+// fails with "Cannot find package '@icp-sdk/core/candid'". Aliasing each
+// subpath the declarations use to the frontend's installed ESM entry lets the
+// previous revision's own idlFactory load, which is what makes a real old-API
+// write possible before the upgrade. The alias is scoped to the lane and
+// changes nothing about the app.
+//
+// The subpaths are aliased to their entry FILES rather than to the package
+// directory: a directory replacement bypasses the package's `exports` map, so
+// `@icp-sdk/core/candid` would resolve to a non-existent `<dir>/candid`.
+const frontendCore = new URL(
+  "../../src/frontend/node_modules/@icp-sdk/core/lib/esm",
+  import.meta.url,
+).pathname;
+
 export default {
+  resolve: {
+    alias: [
+      { find: "@icp-sdk/core/candid", replacement: `${frontendCore}/candid/index.js` },
+      { find: "@icp-sdk/core/agent", replacement: `${frontendCore}/agent/index.js` },
+      { find: "@icp-sdk/core/principal", replacement: `${frontendCore}/principal/index.js` },
+    ],
+  },
   test: {
     // Node environment: the lane drives the canister over HTTP and never
     // touches the DOM. The runner also passes `--environment node`, which

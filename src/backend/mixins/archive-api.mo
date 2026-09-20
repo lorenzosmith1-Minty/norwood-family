@@ -1,4 +1,5 @@
 import List "mo:core/List";
+import Principal "mo:core/Principal";
 import Runtime "mo:core/Runtime";
 import Storage "mo:caffeineai-object-storage/Storage";
 import Time "mo:core/Time";
@@ -15,6 +16,7 @@ mixin (
   items : List.List<Types.ArchiveItem>,
   claims : List.List<OwnershipTypes.ProfileClaim>,
   stewards : List.List<GovernanceTypes.StewardRecord>,
+  notifications : List.List<OwnershipTypes.Notification>,
 ) {
   /// Computes the next archive item id: one greater than the largest existing
   /// id, or `0` when the archive is empty.
@@ -24,6 +26,34 @@ mixin (
       if (item.id >= maxId) { maxId := item.id + 1 };
     };
     maxId;
+  };
+
+  /// Computes the next notification id: one greater than the largest existing
+  /// id, or `0` when there are no notifications.
+  func nextArchiveNotificationId() : Nat {
+    var maxId = 0;
+    for (n in notifications.toArray().values()) {
+      if (n.id >= maxId) { maxId := n.id + 1 };
+    };
+    maxId;
+  };
+
+  /// Appends an archive review notification for the given recipient, avoiding
+  /// duplicates. A notification is only added when no identical (same
+  /// recipient, type, and message) notification already exists, so a repeated
+  /// approve/reject call on an already-reviewed item never duplicates it.
+  func addArchiveNotification(recipient : Principal, notificationType : OwnershipTypes.NotificationType, message : Text) {
+    let exists = notifications.toArray().any(func n = n.recipient == recipient and n.notificationType == notificationType and n.message == message);
+    if (not exists) {
+      notifications.add({
+        id = nextArchiveNotificationId();
+        recipient;
+        notificationType;
+        message;
+        createdAt = Time.now();
+        read = false;
+      });
+    };
   };
 
   /// Maps an archive item type to the upload surface whose MIME allowlist and
@@ -63,6 +93,7 @@ mixin (
     privacyLevel : Types.PrivacyLevel,
     classification : Types.ArchiveItemClassification,
     primarySpeaker : ?Types.OralHistorySpeaker,
+    filename : Text,
   ) : async Types.ArchiveItem {
     FamilyAuthorizationLib.requireApprovedFamilyMember(stewards, claims, caller);
     if (classification == #OralHistory and primarySpeaker == null) {
@@ -78,16 +109,22 @@ mixin (
     InputValidation.requireUpload(archiveSurfaceFor(itemType), mimeType, blob);
     let cleanTitle = InputValidation.requireText("title", title, InputValidation.MAX_TITLE_CHARS);
     let cleanDescription = InputValidation.requireText("description", description, InputValidation.MAX_DESCRIPTION_CHARS);
-    let cleanEra = InputValidation.requireText("era", era, InputValidation.MAX_LOCATION_CHARS);
+    // Era is an optional field in the UI: an empty/whitespace-only value is
+    // allowed and stored as "", a non-empty value is trimmed and bounded, and an
+    // overlong value is rejected rather than silently truncated.
+    let cleanEra = InputValidation.requireOptionalOrEmptyText("era", era, InputValidation.MAX_LOCATION_CHARS);
     let cleanTags = InputValidation.requireTags(tags);
     let cleanRelated = InputValidation.requireRelatedPersonIds(relatedMemberIds);
     let cleanBranch = InputValidation.requireOptionalText("relatedBranchId", relatedBranchId, InputValidation.MAX_LOCATION_CHARS);
+    let cleanFilename = InputValidation.requireFilename(filename);
     let item : Types.ArchiveItem = {
       id = nextArchiveItemId();
       title = cleanTitle;
       description = cleanDescription;
       itemType;
       blob;
+      mimeType = ?InputValidation.normalizeMimeType(mimeType);
+      filename = ?cleanFilename;
       era = cleanEra;
       year;
       tags = cleanTags;
@@ -118,25 +155,50 @@ mixin (
   };
 
   /// Approves a pending archive item (admin only). Returns the updated item, or
-  /// `null` when the item does not exist or is not pending.
+  /// `null` when the item does not exist or is not pending. On the actual
+  /// transition out of pending, notifies only the contributor; a repeated call
+  /// on an already-reviewed item returns `null` and creates no notification.
   public shared ({ caller }) func approveArchiveItem(
     id : Types.ArchiveItemId,
   ) : async ?Types.ArchiveItem {
     if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can perform this action");
     };
-    ArchiveLib.approve(items, id);
+    switch (ArchiveLib.approve(items, id)) {
+      case (?updated) {
+        addArchiveNotification(
+          updated.contributor,
+          #ArchiveApproved,
+          "Your archive contribution \"" # updated.title # "\" was approved.",
+        );
+        ?updated;
+      };
+      case null { null };
+    };
   };
 
   /// Rejects a pending archive item (admin only). Returns the updated item, or
-  /// `null` when the item does not exist or is not pending.
+  /// `null` when the item does not exist or is not pending. The rejected record
+  /// is retained, not deleted. On the actual transition out of pending, notifies
+  /// only the contributor; a repeated call on an already-reviewed item returns
+  /// `null` and creates no notification.
   public shared ({ caller }) func rejectArchiveItem(
     id : Types.ArchiveItemId,
   ) : async ?Types.ArchiveItem {
     if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can perform this action");
     };
-    ArchiveLib.reject(items, id);
+    switch (ArchiveLib.reject(items, id)) {
+      case (?updated) {
+        addArchiveNotification(
+          updated.contributor,
+          #ArchiveRejected,
+          "Your archive contribution \"" # updated.title # "\" was not approved.",
+        );
+        ?updated;
+      };
+      case null { null };
+    };
   };
 
   /// Lists all archive items in approved state visible to the caller. Privacy

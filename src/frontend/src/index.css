@@ -5481,6 +5481,41 @@
   .preview-stage-body img {
     @apply h-auto max-w-full object-contain;
   }
+
+  /* PDF.js preview: pages stack vertically inside the stage body and scroll
+     as one continuous document. Each page is a paper-white sheet on the dark
+     stage so the rendered original reads like a scanned page. */
+  .pdf-preview {
+    @apply flex w-full flex-col items-center gap-4 px-4 py-5;
+  }
+  .pdf-preview-pages {
+    @apply flex w-full flex-col items-center gap-5;
+  }
+  .pdf-preview-page {
+    @apply m-0 flex flex-col items-center gap-2;
+  }
+  .pdf-preview-canvas {
+    @apply block h-auto max-w-full rounded-sm;
+    background-color: oklch(1 0 0);
+    box-shadow: 0 8px 28px -10px oklch(0 0 0 / 0.55);
+  }
+  .pdf-preview-canvas-pending {
+    @apply min-h-[16rem] w-full max-w-[760px];
+    background-color: oklch(1 0 0 / 0.06);
+    box-shadow: none;
+  }
+  .pdf-preview-page-label {
+    @apply text-[11px] font-medium;
+    color: oklch(var(--preview-stage-muted));
+  }
+  .pdf-preview-notice {
+    @apply max-w-[42rem] rounded-lg border border-border/60 px-4 py-2.5 text-center text-xs font-medium;
+    background-color: oklch(1 0 0 / 0.06);
+    color: oklch(var(--preview-stage-foreground));
+  }
+  .pdf-preview-actions {
+    @apply flex flex-wrap items-center justify-center gap-2 pt-1;
+  }
   .preview-stage-frame {
     @apply flex min-h-[16rem] w-full flex-col items-center justify-center gap-3 px-6 py-10 text-center;
     color: oklch(var(--preview-stage-muted));

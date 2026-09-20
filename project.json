@@ -1,21 +1,19 @@
 {
-  "overview": "A private family history platform for the Norwood family to preserve photos, stories, recipes, and research together.",
+  "overview": "A private family archive and research workspace where relatives contribute documents, photos, and stories, and Family Stewards review and approve contributions.",
   "features": [
-    "Family message board and private messaging for approved members",
-    "Photo galleries and profile pages for family members",
-    "Family Archive for documents, images, audio, and video",
-    "Family recipes collection with contributions",
-    "Historical research intake and steward review",
-    "Family stories, mysteries, and timeline",
-    "Steward governance and approval workflows"
+    "Contribute documents, photos, audio, and video to a shared family archive",
+    "Family Stewards review and approve or reject pending contributions",
+    "Contributors are notified when their contribution is approved or rejected",
+    "Safely preview approved PDFs and images inline before downloading the original",
+    "Research workflow for sources, findings, and relationship proposals"
   ],
-  "category": "family-history",
+  "category": "family-archive",
   "tags": [
     "family",
-    "genealogy",
     "archive",
-    "community",
-    "history"
+    "genealogy",
+    "research",
+    "collaboration"
   ],
-  "last_updated": "2026-09-19T04:18:29.094Z"
+  "last_updated": "2026-09-20T14:24:43.363Z"
 }

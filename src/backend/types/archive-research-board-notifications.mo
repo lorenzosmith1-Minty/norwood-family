@@ -15,6 +15,9 @@ module {
     /// Caller-declared MIME type of the uploaded bytes. Validated against the
     /// board attachment allowlist before the upload is stored.
     mimeType : Text;
+    /// Caller-supplied filename. Sanitized before it is persisted on the
+    /// canonical Archive item.
+    filename : Text;
     blob : Storage.ExternalBlob;
     era : Text;
     year : ?Nat;

@@ -87,6 +87,8 @@ interface NewUploadDraft {
   /** The declared MIME type of the uploaded file. */
   mimeType: string;
   blob: ExternalBlob;
+  /** The sanitized original filename, persisted on the created Archive item. */
+  filename: string;
   /** Byte length of the underlying file, for the size label. */
   size: number;
   era: string;
@@ -310,6 +312,7 @@ export function BoardPostComposer({ postId, onBack }: BoardPostComposerProps) {
         itemType: detectItemType(file.type),
         mimeType: file.type,
         blob,
+        filename: safeName,
         size: bytes.byteLength,
         era: "",
         year: null,
@@ -390,6 +393,7 @@ export function BoardPostComposer({ postId, onBack }: BoardPostComposerProps) {
             itemType: upload.itemType,
             mimeType: upload.mimeType,
             blob: upload.blob,
+            filename: upload.filename,
             era: upload.era.trim(),
             year: upload.year,
             tags: upload.tags,

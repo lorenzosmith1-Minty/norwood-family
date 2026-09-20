@@ -101,6 +101,7 @@ mixin (
     privacyLevel : ArchiveTypes.PrivacyLevel,
     classification : ArchiveTypes.ArchiveItemClassification,
     primarySpeaker : ?ArchiveTypes.OralHistorySpeaker,
+    filename : Text,
   ) : async Result.Result<Types.SourceUploadResult, ResearchIntakeTypes.ResearchError> {
     if (not FamilyAuthorizationLib.isApprovedFamilyMember(stewards, claims, caller)) {
       return #err(#notAuthorized);
@@ -117,24 +118,30 @@ mixin (
     InputValidation.requireUpload(#ArchiveDocument, mimeType, blob);
     let cleanTitle = InputValidation.requireText("title", title, InputValidation.MAX_TITLE_CHARS);
     let cleanDescription = InputValidation.requireText("description", description, InputValidation.MAX_DESCRIPTION_CHARS);
-    let cleanEra = InputValidation.requireText("era", era, InputValidation.MAX_LOCATION_CHARS);
+    // Era is an optional field in the UI: an empty/whitespace-only value is
+    // allowed and stored as "", a non-empty value is trimmed and bounded, and an
+    // overlong value is rejected rather than silently truncated.
+    let cleanEra = InputValidation.requireOptionalOrEmptyText("era", era, InputValidation.MAX_LOCATION_CHARS);
     let cleanTags = InputValidation.requireTags(tags);
     let cleanRelated = InputValidation.requireRelatedPersonIds(relatedMemberIds);
+    let cleanFilename = InputValidation.requireFilename(filename);
     let result = Lib.createSourceWithUpload(
       archiveItems,
       researchSources,
       researchState,
-      title,
+      cleanTitle,
       sourceType,
-      description,
+      cleanDescription,
       blob,
-      tags,
-      era,
+      cleanTags,
+      cleanEra,
       year,
-      relatedMemberIds,
+      cleanRelated,
       privacyLevel,
       classification,
       primarySpeaker,
+      InputValidation.normalizeMimeType(mimeType),
+      cleanFilename,
       caller,
       Time.now(),
     );
@@ -176,15 +183,32 @@ mixin (
     // Validate every new upload before any of them is stored. The itemType is
     // not trusted on its own: the declared MIME type must be allowed both for
     // the board attachment surface and for the surface the itemType selects, so
-    // an #Audio itemType carrying an image MIME is rejected.
+    // an #Audio itemType carrying an image MIME is rejected. The sanitized
+    // filename and normalized MIME type are captured here and persisted on the
+    // canonical Archive item, mirroring submitArchiveItem and
+    // createSourceWithUpload; the raw caller-supplied values are never stored.
+    let cleanUploads = List.empty<Types.BoardMediaUpload>();
     for (upload in newUploads.values()) {
       InputValidation.requireUpload(#BoardAttachment, upload.mimeType, upload.blob);
       InputValidation.requireMimeType(mediaArchiveSurfaceFor(upload.itemType), upload.mimeType);
-      ignore InputValidation.requireText("upload title", upload.title, InputValidation.MAX_TITLE_CHARS);
-      ignore InputValidation.requireText("upload description", upload.description, InputValidation.MAX_DESCRIPTION_CHARS);
-      ignore InputValidation.requireText("upload era", upload.era, InputValidation.MAX_LOCATION_CHARS);
-      ignore InputValidation.requireTags(upload.tags);
-      ignore InputValidation.requireRelatedPersonIds(upload.relatedMemberIds);
+      let cleanUploadTitle = InputValidation.requireText("upload title", upload.title, InputValidation.MAX_TITLE_CHARS);
+      let cleanUploadDescription = InputValidation.requireText("upload description", upload.description, InputValidation.MAX_DESCRIPTION_CHARS);
+      // Era is optional on a board media upload too: empty is allowed and
+      // normalized to "", a non-empty value is trimmed and bounded.
+      let cleanUploadEra = InputValidation.requireOptionalOrEmptyText("upload era", upload.era, InputValidation.MAX_LOCATION_CHARS);
+      let cleanUploadTags = InputValidation.requireTags(upload.tags);
+      let cleanUploadRelated = InputValidation.requireRelatedPersonIds(upload.relatedMemberIds);
+      let cleanUploadFilename = InputValidation.requireFilename(upload.filename);
+      cleanUploads.add({
+        upload with
+        title = cleanUploadTitle;
+        description = cleanUploadDescription;
+        mimeType = InputValidation.normalizeMimeType(upload.mimeType);
+        filename = cleanUploadFilename;
+        era = cleanUploadEra;
+        tags = cleanUploadTags;
+        relatedMemberIds = cleanUploadRelated;
+      });
     };
     let post : BoardTypes.Post = {
       postId = nextPostId();
@@ -201,7 +225,7 @@ mixin (
       status = #Active;
       privacyScope = #FamilyOnly;
     };
-    Lib.createBoardPostWithMedia(posts, archiveItems, post, existingArchiveItemIds, newUploads);
+    Lib.createBoardPostWithMedia(posts, archiveItems, post, existingArchiveItemIds, cleanUploads.toArray());
   };
 
   /// Reconciles stale claim notifications for a claim: when the claim is

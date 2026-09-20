@@ -77,6 +77,12 @@ module {
     description : Text;
     itemType : ArchiveItemType;
     blob : Storage.ExternalBlob;
+    /// Persisted upload metadata. `ExternalBlob` runtime metadata is not
+    /// reliably available after the blob has been stored and returned, so the
+    /// validated MIME type and the sanitized filename are persisted on the item
+    /// itself. Both are optional so existing records migrate without data loss.
+    mimeType : ?Text;
+    filename : ?Text;
     /// Approximate era as free text (e.g. "early 1900s"), plus an optional year.
     era : Text;
     year : ?Nat;
@@ -120,6 +126,8 @@ module {
     createdAt : Int;
     classification : Text;
     primarySpeakerName : Text;
+    mimeType : Text;
+    filename : Text;
     tags : Text;
   };
 };

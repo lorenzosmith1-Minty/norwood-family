@@ -454,6 +454,35 @@ module {
     };
   };
 
+  /// Validates a text field that is optional-or-empty: an empty or
+  /// whitespace-only value is allowed and normalizes to `""`; a non-empty value
+  /// is trimmed and must be within its character limit. An overlong value is
+  /// rejected — it is never silently truncated. Used for fields the UI treats as
+  /// optional but that are stored as plain `Text` (e.g. an archive item's era).
+  public func validateOptionalOrEmptyText(
+    field : Text,
+    value : Text,
+    maxChars : Nat,
+  ) : Result.Result<Text, Types.ValidationError> {
+    let trimmed = value.trim(#predicate (func ch = ch.isWhitespace()));
+    if (trimmed.size() == 0) {
+      return #ok("");
+    };
+    if (trimmed.size() > maxChars) {
+      return #err(#textTooLong({ field; max = maxChars; actual = trimmed.size() }));
+    };
+    #ok(trimmed);
+  };
+
+  /// Traps unless the optional-or-empty text field is valid, returning the
+  /// trimmed value (`""` when the field was empty or whitespace-only).
+  public func requireOptionalOrEmptyText(field : Text, value : Text, maxChars : Nat) : Text {
+    switch (validateOptionalOrEmptyText(field, value, maxChars)) {
+      case (#ok clean) { clean };
+      case (#err e) { Runtime.trap(describeError(e)) };
+    };
+  };
+
   // --- Array-size validation ---
 
   /// Validates that an array does not exceed its element limit.

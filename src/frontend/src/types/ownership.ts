@@ -213,6 +213,8 @@ export const NOTIFICATION_TYPE_LABELS: Record<NotificationType, string> = {
   [NotificationType.ResearchSubmission]: "Research submitted",
   [NotificationType.ResearchApproved]: "Research approved",
   [NotificationType.ResearchRejected]: "Research rejected",
+  [NotificationType.ArchiveApproved]: "Archive contribution approved",
+  [NotificationType.ArchiveRejected]: "Archive contribution rejected",
   [NotificationType.ProfileClaimRequested]: "Profile claim requested",
   [NotificationType.ProfileClaimReviewed]: "Profile claim reviewed",
   [NotificationType.RelationshipRequested]: "Relationship requested",

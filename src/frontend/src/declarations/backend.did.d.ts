@@ -32,8 +32,10 @@ export interface ArchiveItem {
   'createdAt' : bigint,
   'tags' : Array<string>,
   'year' : [] | [bigint],
+  'mimeType' : [] | [string],
   'description' : string,
   'privacyLevel' : PrivacyLevel,
+  'filename' : [] | [string],
   'primarySpeaker' : [] | [OralHistorySpeaker],
   'extractedNames' : [] | [Array<string>],
   'itemType' : ArchiveItemType,
@@ -109,6 +111,7 @@ export interface BoardMediaUpload {
   'mimeType' : string,
   'description' : string,
   'privacyLevel' : PrivacyLevel,
+  'filename' : string,
   'primarySpeaker' : [] | [OralHistorySpeaker],
   'itemType' : ArchiveItemType,
   'relatedBranchId' : [] | [string],
@@ -385,7 +388,9 @@ export interface Notification {
 export type NotificationId = bigint;
 export type NotificationType = { 'ResearchSubmission' : null } |
   { 'ResearchApproved' : null } |
+  { 'ArchiveApproved' : null } |
   { 'ResearchRejected' : null } |
+  { 'ArchiveRejected' : null } |
   { 'RelationshipRequested' : null } |
   { 'BoardMention' : null } |
   { 'RelationshipReviewed' : null } |
@@ -953,7 +958,9 @@ export interface _SERVICE {
   >,
   /**
    * / Approves a pending archive item (admin only). Returns the updated item, or
-   * / `null` when the item does not exist or is not pending.
+   * / `null` when the item does not exist or is not pending. On the actual
+   * / transition out of pending, notifies only the contributor; a repeated call
+   * / on an already-reviewed item returns `null` and creates no notification.
    */
   'approveArchiveItem' : ActorMethod<[ArchiveItemId], [] | [ArchiveItem]>,
   /**
@@ -1198,6 +1205,7 @@ export interface _SERVICE {
       PrivacyLevel,
       ArchiveItemClassification,
       [] | [OralHistorySpeaker],
+      string,
     ],
     Result_17
   >,
@@ -1669,7 +1677,10 @@ export interface _SERVICE {
   'reconcileClaimNotifications' : ActorMethod<[bigint], bigint>,
   /**
    * / Rejects a pending archive item (admin only). Returns the updated item, or
-   * / `null` when the item does not exist or is not pending.
+   * / `null` when the item does not exist or is not pending. The rejected record
+   * / is retained, not deleted. On the actual transition out of pending, notifies
+   * / only the contributor; a repeated call on an already-reviewed item returns
+   * / `null` and creates no notification.
    */
   'rejectArchiveItem' : ActorMethod<[ArchiveItemId], [] | [ArchiveItem]>,
   /**
@@ -1872,6 +1883,7 @@ export interface _SERVICE {
       PrivacyLevel,
       ArchiveItemClassification,
       [] | [OralHistorySpeaker],
+      string,
     ],
     ArchiveItem
   >,

@@ -132,6 +132,7 @@ it("rejects an anonymous caller from every family-content contribution endpoint"
       { Public: null },
       { Standard: null },
       [],
+      "anonymous-item.pdf",
     ),
   ).rejects.toThrow();
 
@@ -155,6 +156,7 @@ it("rejects an anonymous caller from every family-content contribution endpoint"
       { FamilyOnly: null },
       { Standard: null },
       [],
+      "anonymous-upload.pdf",
     ),
   ).resolves.toEqual({ err: { notAuthorized: null } });
 
@@ -249,6 +251,7 @@ it("rejects a signed-in unapproved caller from every family-content contribution
       { Public: null },
       { Standard: null },
       [],
+      "unapproved-item.pdf",
     ),
   ).rejects.toThrow();
 
@@ -276,6 +279,7 @@ it("rejects a signed-in unapproved caller from every family-content contribution
       { FamilyOnly: null },
       { Standard: null },
       [],
+      "unapproved-upload.pdf",
     ),
   ).resolves.toEqual({ err: { notAuthorized: null } });
 
@@ -405,6 +409,7 @@ it("keeps the steward able to approve a contribution submitted by an approved me
     { FamilyOnly: null },
     { Standard: null },
     [],
+    "approved-member-letter.pdf",
   );
   expect(item).toMatchObject({ title: "Approved member letter", status: { Pending: null } });
 
@@ -442,6 +447,7 @@ it("allows a Family Steward to contribute", async () => {
     { FamilyOnly: null },
     { Standard: null },
     [],
+    "steward-letter.pdf",
   );
   expect(item).toMatchObject({ title: "Steward letter", status: { Pending: null } });
 });
@@ -540,6 +546,7 @@ it("allows an approved family member to use the research-intake endpoints and ad
     { FamilyOnly: null },
     { Standard: null },
     [],
+    "approved-member-upload.pdf",
   );
   expect(upload).toEqual({
     ok: expect.objectContaining({

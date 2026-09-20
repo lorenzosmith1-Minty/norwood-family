@@ -17,6 +17,7 @@ import {
   X,
 } from "lucide-react";
 import { useState } from "react";
+import { PdfPreview } from "../components/archive/PdfPreview";
 import { useApprovedArchiveItems } from "../hooks/useArchiveStorage";
 import type { ArchiveItem } from "../types/archive";
 import {
@@ -27,6 +28,8 @@ import {
   PRIVACY_LEVEL_LABELS,
   SOURCE_STATUS_LABELS,
   SourceStatus,
+  getArchiveItemFilename,
+  getArchiveItemMimeType,
 } from "../types/archive";
 import { profiles } from "./PersonProfilePage";
 
@@ -74,11 +77,18 @@ function formatContributor(contributor: ArchiveItem["contributor"]): string {
   return text.length > 18 ? `${text.slice(0, 5)}…${text.slice(-4)}` : text;
 }
 
-/** True when the document is a PDF, judged from its MIME type or filename. */
+/**
+ * True when the document is a PDF. The persisted MIME type is authoritative:
+ * when one is available it decides the classification outright, so a non-PDF
+ * MIME type (e.g. text/html) is never routed to the PDF renderer merely
+ * because the filename ends in ".pdf". The filename extension is consulted
+ * only when no MIME type is available at all.
+ */
 function isPdfDocument(item: ArchiveItem): boolean {
-  const mime = item.blob.contentType?.toLowerCase() ?? "";
-  const name = item.blob.filename?.toLowerCase() ?? "";
-  return mime === "application/pdf" || name.endsWith(".pdf");
+  const mime = getArchiveItemMimeType(item);
+  if (mime) return mime === "application/pdf";
+  const name = getArchiveItemFilename(item)?.toLowerCase() ?? "";
+  return name.endsWith(".pdf");
 }
 
 /**
@@ -105,21 +115,22 @@ const SAFE_IMAGE_EXTENSIONS = /\.(jpe?g|png|gif|webp|bmp|ico|avif|tiff?)$/;
 
 /**
  * True when the document is a raster image that can be rendered inline as an
- * <img>. Judged from the stored MIME type, falling back to the filename
- * extension only when the MIME type is absent. SVG, HTML, XML, and every other
- * scriptable or unknown type are excluded and remain download-only.
+ * <img>. Judged from the persisted MIME type (falling back to the ExternalBlob
+ * metadata), and only when no MIME type is available at all from the filename
+ * extension. SVG, HTML, XML, and every other scriptable or unknown type are
+ * excluded and remain download-only.
  */
 function isRasterImageDocument(item: ArchiveItem): boolean {
-  const mime = item.blob.contentType?.toLowerCase() ?? "";
+  const mime = getArchiveItemMimeType(item);
   if (mime) return SAFE_IMAGE_MIME_TYPES.has(mime);
-  const name = item.blob.filename?.toLowerCase() ?? "";
+  const name = getArchiveItemFilename(item)?.toLowerCase() ?? "";
   return SAFE_IMAGE_EXTENSIONS.test(name);
 }
 
 /**
- * True when a document can be rendered in-app by the browser: PDFs (in a
- * sandboxed iframe) and raster images (as an <img>). HTML, SVG, XML, and any
- * other scriptable or unknown MIME type are never previewed inline and offer
+ * True when a document can be rendered in-app: PDFs (rasterized by PDF.js into
+ * canvases) and raster images (as an <img>). HTML, SVG, XML, and any other
+ * scriptable or unknown MIME type are never previewed inline and offer
  * Download Original only.
  */
 function isPreviewableDocument(item: ArchiveItem): boolean {
@@ -197,7 +208,7 @@ export function ArchiveDetailPage({
     .filter((profile) => Boolean(profile));
   const isTextType = TEXT_TYPES.includes(item.itemType);
   const artifactUrl = item.blob.getDirectURL();
-  const filename = item.blob.filename;
+  const filename = getArchiveItemFilename(item);
 
   return (
     <div className="mx-auto w-full max-w-5xl px-6 py-8">
@@ -362,14 +373,13 @@ export function ArchiveDetailPage({
               </div>
               <div className="preview-stage-body">
                 {isPdfDocument(item) ? (
-                  /* sandbox="" applies every restriction: no script execution,
-                     no forms, no top-level navigation, and no same-origin
-                     access. The PDF viewer needs no permission to render, so
-                     none is granted. */
-                  <iframe
-                    src={artifactUrl}
-                    title={filename || item.title}
-                    sandbox=""
+                  /* PDFs are rasterized in-app by PDF.js: no embedded script
+                     runs, no document HTML is injected, and no navigation or
+                     form submission is possible. */
+                  <PdfPreview
+                    blob={item.blob}
+                    filename={filename}
+                    title={item.title}
                   />
                 ) : (
                   <img src={artifactUrl} alt={item.title} />

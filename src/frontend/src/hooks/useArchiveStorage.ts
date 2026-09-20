@@ -116,6 +116,12 @@ export interface SubmitArchiveItemInput {
   /** The declared MIME type of the uploaded file. */
   mimeType: string;
   blob: ExternalBlob;
+  /**
+   * The sanitized original filename of the uploaded file. Persisted on the
+   * ArchiveItem record so the detail view can resolve the preview type and the
+   * download name without relying on ExternalBlob metadata.
+   */
+  filename: string;
   era: string;
   year: bigint | null;
   tags: string[];
@@ -151,6 +157,7 @@ export function useSubmitArchiveItem() {
         input.privacyLevel,
         input.classification,
         input.primarySpeaker,
+        input.filename,
       );
     },
     onSuccess: () => {

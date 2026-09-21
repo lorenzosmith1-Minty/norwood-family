@@ -138,6 +138,35 @@ function isPreviewableDocument(item: ArchiveItem): boolean {
 }
 
 /**
+ * Office document MIME types (Word, Excel) and CSV. These are accepted and
+ * stored, but are deliberately never rendered inline: no iframe, no HTML
+ * interpretation, no in-app renderer. They show a document card with the
+ * filename and a Download Original action only.
+ */
+const OFFICE_DOCUMENT_MIME_TYPES = new Set([
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "application/vnd.ms-excel",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  "text/csv",
+]);
+
+/** Office/CSV filename extensions, used only when the MIME type is absent. */
+const OFFICE_DOCUMENT_EXTENSIONS = /\.(docx?|xlsx?|csv)$/;
+
+/**
+ * True when the document is a Word, Excel, or CSV file. Judged from the
+ * persisted MIME type, falling back to the filename extension only when no MIME
+ * type is available at all. These documents are download-only.
+ */
+function isOfficeDocument(item: ArchiveItem): boolean {
+  const mime = getArchiveItemMimeType(item);
+  if (mime) return OFFICE_DOCUMENT_MIME_TYPES.has(mime);
+  const name = getArchiveItemFilename(item)?.toLowerCase() ?? "";
+  return OFFICE_DOCUMENT_EXTENSIONS.test(name);
+}
+
+/**
  * Downloads the original uploaded file with its original filename via the
  * object-storage gateway. The download reads a copy of the bytes and never
  * alters the stored original.
@@ -287,6 +316,41 @@ export function ArchiveDetailPage({
                   Your browser does not support the audio tag.
                 </audio>
               </div>
+            ) : isOfficeDocument(item) ? (
+              /* Office document card (Word, Excel, CSV): filename plus Download
+                 Original only. These formats are never rendered inline in an
+                 iframe and never interpreted as HTML. */
+              <div
+                data-ocid="archive_detail.document_card"
+                className="artifact-viewer-frame flex-col gap-3 p-6"
+              >
+                <Icon
+                  className="h-12 w-12 text-muted-foreground"
+                  strokeWidth={1.25}
+                  aria-hidden="true"
+                />
+                <p className="font-display text-lg font-semibold text-foreground">
+                  {ARCHIVE_ITEM_TYPE_LABELS[item.itemType]}
+                </p>
+                {filename ? (
+                  <p className="max-w-md truncate text-sm text-muted-foreground">
+                    {filename}
+                  </p>
+                ) : null}
+                <p className="max-w-md text-sm text-muted-foreground">
+                  This document is stored exactly as it was contributed.
+                  Download the original to open it in your own application.
+                </p>
+                <button
+                  type="button"
+                  data-ocid="archive_detail.download_button"
+                  onClick={() => void downloadOriginal(item.blob, filename)}
+                  className="preview-download"
+                >
+                  <Download className="h-4 w-4" aria-hidden="true" />
+                  Download Original
+                </button>
+              </div>
             ) : isTextType ? (
               <div className="artifact-viewer-frame flex-col gap-3 p-6">
                 <Icon
@@ -303,9 +367,6 @@ export function ArchiveDetailPage({
                 </p>
               </div>
             ) : (
-              /* Document view: icon + filename + Preview (browser-supported)
-                 formats) + Download Original. Unsupported formats (e.g. Word)
-                 offer Download Original only. */
               <div className="artifact-viewer-frame flex-col gap-3 p-6">
                 <Icon
                   className="h-12 w-12 text-muted-foreground"

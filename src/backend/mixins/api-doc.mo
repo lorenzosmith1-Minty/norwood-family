@@ -155,8 +155,14 @@ Contributions badge.
   after the blob has been stored and returned; the frontend uses these persisted
   fields to decide whether a safe inline preview is offered. `filename` is
   sanitized (path separators and control characters removed, length capped) and
-  the MIME type is normalized (trimmed and lower-cased) before it is stored; the
-  allowed MIME list is unchanged.
+  the MIME type is normalized (trimmed and lower-cased) before it is stored. The
+  allowed document MIME list is `application/pdf`, `text/plain`, `text/csv`,
+  `application/msword`,
+  `application/vnd.openxmlformats-officedocument.wordprocessingml.document`,
+  `application/vnd.ms-excel`, and
+  `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`. Word,
+  Excel, and CSV files are accepted and stored but are never rendered inline;
+  only PDF and plain text are previewed.
   `title` and `description` are required. `era` is OPTIONAL: an empty or
   whitespace-only value is accepted and stored as `\"\"`; a non-empty value is
   trimmed and must be at most 150 characters, and an overlong value is rejected
@@ -1882,7 +1888,13 @@ already reference the caller's stable principal (`requestingUserId`,
   `actions` (`[ReviewAction]`: `#Approve`, `#Reject`, and/or `#NeedsResearch`).
 - `BoardMediaUpload` fields: `title` (`Text`), `description` (`Text`),
   `itemType` (`ArchiveItemType`), `mimeType` (`Text`, the caller-declared MIME
-  type validated against the board attachment allowlist), `filename` (`Text`,
+  type validated against the board attachment allowlist — images, videos, and
+  documents: `application/pdf`, `text/plain`, `text/csv`,
+  `application/msword`,
+  `application/vnd.openxmlformats-officedocument.wordprocessingml.document`,
+  `application/vnd.ms-excel`, and
+  `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`),
+  `filename` (`Text`,
   the caller-supplied filename, sanitized before it is persisted on the created
   Archive item), `blob` (the external storage reference), `era` (`Text`), `year`
   (`?Nat`), `tags` (`[Text]`), `relatedMemberIds` (`[Text]`), `relatedBranchId`
@@ -2388,7 +2400,12 @@ no async job to poll; the frontend can call the list methods (steward) or
   but the backend still enforces the invariant regardless of the client. It also
   traps when the upload fails validation (unsupported/forbidden MIME type, empty
   file, or over the surface byte ceiling) or when `filename` sanitizes to an
-  empty value; the allowed MIME list is unchanged.
+  empty value. The allowed document MIME list is `application/pdf`,
+  `text/plain`, `text/csv`, `application/msword`,
+  `application/vnd.openxmlformats-officedocument.wordprocessingml.document`,
+  `application/vnd.ms-excel`, and
+  `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`; Word,
+  Excel, and CSV files are stored but never rendered inline.
 - `approveArchiveItem` and `rejectArchiveItem` notify only the item's
   `contributor`; contributor identity is never exposed to other users, and
   research-source notifications (`#ResearchSubmission`/`#ResearchApproved`/

@@ -320,30 +320,39 @@ it("rejects a JPEG on the Document and Research surfaces", async () => {
   }
 });
 
-it("rejects a Word document and an SVG on the document surface", async () => {
+it("accepts a Word document and rejects an SVG on the document surface", async () => {
   const { actor } = await setupRoles();
   actor.setIdentity(contributorIdentity);
 
-  await expect(
-    actor.submitArchiveItem(
-      "Word document",
-      "A Word document is not an allowed document type.",
-      { Research: null },
+  // The document allowlist was intentionally expanded to admit Word, Excel, and
+  // CSV. A .docx is accepted and stored with its validated MIME type preserved.
+  const word = await actor.submitArchiveItem(
+    "Word document",
+    "A Word document is now an allowed document type.",
+    { Research: null },
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    blob,
+    "",
+    [],
+    [],
+    [],
+    [],
+    { Original: null },
+    { FamilyOnly: null },
+    { Standard: null },
+    [],
+    "word-document.docx",
+  );
+  expect(word).toMatchObject({
+    title: "Word document",
+    // Candid optionals decode as `[] | [T]` in the declarations' shapes.
+    mimeType: [
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      blob,
-      "",
-      [],
-      [],
-      [],
-      [],
-      { Original: null },
-      { FamilyOnly: null },
-      { Standard: null },
-      [],
-      "word-document.docx",
-    ),
-  ).rejects.toThrow(/unsupported file type/i);
+    ],
+    filename: ["word-document.docx"],
+  });
 
+  // SVG remains forbidden on every surface.
   await expect(
     actor.submitArchiveItem(
       "SVG document",
@@ -363,6 +372,76 @@ it("rejects a Word document and an SVG on the document surface", async () => {
       "svg-document.svg",
     ),
   ).rejects.toThrow(/not permitted/i);
+});
+
+it("accepts all seven document MIME types on the document surface with the MIME and filename preserved", async () => {
+  const { actor } = await setupRoles();
+  actor.setIdentity(contributorIdentity);
+
+  const accepted: Array<[string, string]> = [
+    ["application/pdf", "deed.pdf"],
+    ["text/plain", "letter.txt"],
+    ["text/csv", "ledger.csv"],
+    ["application/msword", "notes.doc"],
+    [
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "notes.docx",
+    ],
+    ["application/vnd.ms-excel", "ledger.xls"],
+    [
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "ledger.xlsx",
+    ],
+  ];
+
+  for (const [mimeType, filename] of accepted) {
+    const item = await actor.submitArchiveItem(
+      `Document ${filename}`,
+      "An accepted document type.",
+      { Document: null },
+      mimeType,
+      blob,
+      "",
+      [],
+      [],
+      [],
+      [],
+      { Original: null },
+      { FamilyOnly: null },
+      { Standard: null },
+      [],
+      filename,
+    );
+    // The validated MIME type and the sanitized filename are preserved on the
+    // stored record. Both are Candid optionals, so they decode as `[] | [T]`.
+    expect(item.mimeType, `${mimeType} should be preserved`).toEqual([mimeType]);
+    expect(item.filename).toEqual([filename]);
+  }
+});
+
+it("sanitizes a path-traversal Office filename on the document surface", async () => {
+  const { actor } = await setupRoles();
+  actor.setIdentity(contributorIdentity);
+
+  const item = await actor.submitArchiveItem(
+    "Traversal Office document",
+    "A document with a traversal filename.",
+    { Document: null },
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    blob,
+    "",
+    [],
+    [],
+    [],
+    [],
+    { Original: null },
+    { FamilyOnly: null },
+    { Standard: null },
+    [],
+    "../../etc/ledger.xlsx",
+  );
+  // Path separators are stripped; the safe extension is preserved.
+  expect(item.filename).toEqual(["....etcledger.xlsx"]);
 });
 
 // ---------------------------------------------------------------------------

@@ -281,7 +281,9 @@ describe("archive item-type -> upload-surface mapping (new document types)", () 
     }
   });
 
-  it("still rejects a Word document on the document surface", () => {
+  it("now accepts a Word document on the document surface", () => {
+    // The document allowlist was intentionally expanded to admit Word, Excel,
+    // and CSV. A .docx is accepted and stored; it is never rendered inline.
     const result = validateArchiveFile(
       fileOfSize(
         "letter.docx",
@@ -290,8 +292,8 @@ describe("archive item-type -> upload-surface mapping (new document types)", () 
       ),
       "Research",
     );
-    expect(result.valid).toBe(false);
-    expect(result.error).toMatch(/unsupported file type/i);
+    expect(result.valid).toBe(true);
+    expect(result.error).toBeNull();
   });
 
   it("still rejects a scriptable SVG on the document surface", () => {

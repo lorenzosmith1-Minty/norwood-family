@@ -9,13 +9,14 @@ module {
     #RecipeImage;
     /// Family Archive image. Images only, max 15 MB.
     #ArchiveImage;
-    /// Family Archive PDF / plain-text document. Max 20 MB.
+    /// Family Archive document: PDF, plain text, CSV, or Word/Excel. Max 20 MB.
     #ArchiveDocument;
     /// Family Archive audio. Max 40 MB.
     #ArchiveAudio;
     /// Family Archive video. Max 75 MB.
     #ArchiveVideo;
-    /// Message Board attachment. Image, video, PDF, or plain text, max 20 MB.
+    /// Message Board attachment. Image, video, or document (PDF, plain text,
+    /// CSV, Word/Excel), max 20 MB.
     #BoardAttachment;
   };
 

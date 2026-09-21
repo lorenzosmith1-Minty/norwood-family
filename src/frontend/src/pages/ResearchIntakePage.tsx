@@ -564,8 +564,8 @@ function SourcesTab({
                     Choose a source file to upload
                   </span>
                   <span className="dropzone-hint">
-                    Drag and drop, or tap to browse. Documents, PDFs, images,
-                    video, and audio are supported.
+                    Drag and drop, or tap to browse. PDFs, plain text, CSV,
+                    Word, and Excel documents are supported.
                   </span>
                 </button>
               )}

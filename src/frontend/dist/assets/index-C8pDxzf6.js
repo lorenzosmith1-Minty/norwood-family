@@ -58612,7 +58612,15 @@ const IMAGE_MIME_TYPES = [
   "image/png",
   "image/webp"
 ];
-const DOCUMENT_MIME_TYPES = ["application/pdf", "text/plain"];
+const DOCUMENT_MIME_TYPES = [
+  "application/pdf",
+  "text/plain",
+  "text/csv",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "application/vnd.ms-excel",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+];
 const AUDIO_MIME_TYPES = [
   "audio/mpeg",
   "audio/mp4",
@@ -65313,6 +65321,21 @@ function isRasterImageDocument(item) {
 function isPreviewableDocument(item) {
   return isPdfDocument(item) || isRasterImageDocument(item);
 }
+const OFFICE_DOCUMENT_MIME_TYPES = /* @__PURE__ */ new Set([
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "application/vnd.ms-excel",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  "text/csv"
+]);
+const OFFICE_DOCUMENT_EXTENSIONS = /\.(docx?|xlsx?|csv)$/;
+function isOfficeDocument(item) {
+  var _a2;
+  const mime = getArchiveItemMimeType(item);
+  if (mime) return OFFICE_DOCUMENT_MIME_TYPES.has(mime);
+  const name = ((_a2 = getArchiveItemFilename(item)) == null ? void 0 : _a2.toLowerCase()) ?? "";
+  return OFFICE_DOCUMENT_EXTENSIONS.test(name);
+}
 async function downloadOriginal(blob, filename) {
   const bytes = await blob.getBytes();
   const url = URL.createObjectURL(new Blob([bytes]));
@@ -65433,7 +65456,44 @@ function ArchiveDetailPage({
             /* @__PURE__ */ jsxRuntimeExports.jsx("track", { kind: "captions" }),
             "Your browser does not support the audio tag."
           ] })
-        ] }) : isTextType ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "artifact-viewer-frame flex-col gap-3 p-6", children: [
+        ] }) : isOfficeDocument(item) ? (
+          /* Office document card (Word, Excel, CSV): filename plus Download
+             Original only. These formats are never rendered inline in an
+             iframe and never interpreted as HTML. */
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "div",
+            {
+              "data-ocid": "archive_detail.document_card",
+              className: "artifact-viewer-frame flex-col gap-3 p-6",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  Icon2,
+                  {
+                    className: "h-12 w-12 text-muted-foreground",
+                    strokeWidth: 1.25,
+                    "aria-hidden": "true"
+                  }
+                ),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-display text-lg font-semibold text-foreground", children: ARCHIVE_ITEM_TYPE_LABELS[item.itemType] }),
+                filename ? /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "max-w-md truncate text-sm text-muted-foreground", children: filename }) : null,
+                /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "max-w-md text-sm text-muted-foreground", children: "This document is stored exactly as it was contributed. Download the original to open it in your own application." }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                  "button",
+                  {
+                    type: "button",
+                    "data-ocid": "archive_detail.download_button",
+                    onClick: () => void downloadOriginal(item.blob, filename),
+                    className: "preview-download",
+                    children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsx(Download, { className: "h-4 w-4", "aria-hidden": "true" }),
+                      "Download Original"
+                    ]
+                  }
+                )
+              ]
+            }
+          )
+        ) : isTextType ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "artifact-viewer-frame flex-col gap-3 p-6", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx(
             Icon2,
             {
@@ -65444,51 +65504,46 @@ function ArchiveDetailPage({
           ),
           /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-display text-lg font-semibold text-foreground", children: ARCHIVE_ITEM_TYPE_LABELS[item.itemType] }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "max-w-md text-sm text-muted-foreground", children: "The original written content is preserved below, exactly as it was contributed." })
-        ] }) : (
-          /* Document view: icon + filename + Preview (browser-supported)
-             formats) + Download Original. Unsupported formats (e.g. Word)
-             offer Download Original only. */
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "artifact-viewer-frame flex-col gap-3 p-6", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx(
-              Icon2,
+        ] }) : /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "artifact-viewer-frame flex-col gap-3 p-6", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            Icon2,
+            {
+              className: "h-12 w-12 text-muted-foreground",
+              strokeWidth: 1.25,
+              "aria-hidden": "true"
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-display text-lg font-semibold text-foreground", children: ARCHIVE_ITEM_TYPE_LABELS[item.itemType] }),
+          filename ? /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "max-w-md truncate text-sm text-muted-foreground", children: filename }) : null,
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap items-center justify-center gap-2", children: [
+            isPreviewableDocument(item) ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "button",
               {
-                className: "h-12 w-12 text-muted-foreground",
-                strokeWidth: 1.25,
-                "aria-hidden": "true"
+                type: "button",
+                "data-ocid": "archive_detail.preview_button",
+                onClick: () => setPreviewOpen(true),
+                className: "preview-action",
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(Eye, { className: "h-4 w-4", "aria-hidden": "true" }),
+                  "Preview"
+                ]
               }
-            ),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-display text-lg font-semibold text-foreground", children: ARCHIVE_ITEM_TYPE_LABELS[item.itemType] }),
-            filename ? /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "max-w-md truncate text-sm text-muted-foreground", children: filename }) : null,
-            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap items-center justify-center gap-2", children: [
-              isPreviewableDocument(item) ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
-                "button",
-                {
-                  type: "button",
-                  "data-ocid": "archive_detail.preview_button",
-                  onClick: () => setPreviewOpen(true),
-                  className: "preview-action",
-                  children: [
-                    /* @__PURE__ */ jsxRuntimeExports.jsx(Eye, { className: "h-4 w-4", "aria-hidden": "true" }),
-                    "Preview"
-                  ]
-                }
-              ) : null,
-              /* @__PURE__ */ jsxRuntimeExports.jsxs(
-                "button",
-                {
-                  type: "button",
-                  "data-ocid": "archive_detail.download_button",
-                  onClick: () => void downloadOriginal(item.blob, filename),
-                  className: "preview-download",
-                  children: [
-                    /* @__PURE__ */ jsxRuntimeExports.jsx(Download, { className: "h-4 w-4", "aria-hidden": "true" }),
-                    "Download Original"
-                  ]
-                }
-              )
-            ] })
+            ) : null,
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "button",
+              {
+                type: "button",
+                "data-ocid": "archive_detail.download_button",
+                onClick: () => void downloadOriginal(item.blob, filename),
+                className: "preview-download",
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(Download, { className: "h-4 w-4", "aria-hidden": "true" }),
+                  "Download Original"
+                ]
+              }
+            )
           ] })
-        ) }),
+        ] }) }),
         previewOpen && isPreviewableDocument(item) ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
           "div",
           {
@@ -77629,7 +77684,7 @@ function SourcesTab({
                   }
                 ),
                 /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "dropzone-title", children: "Choose a source file to upload" }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "dropzone-hint", children: "Drag and drop, or tap to browse. Documents, PDFs, images, video, and audio are supported." })
+                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "dropzone-hint", children: "Drag and drop, or tap to browse. PDFs, plain text, CSV, Word, and Excel documents are supported." })
               ]
             }
           ),

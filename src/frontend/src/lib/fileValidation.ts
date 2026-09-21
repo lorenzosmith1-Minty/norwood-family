@@ -76,8 +76,22 @@ export const IMAGE_MIME_TYPES = [
   "image/webp",
 ] as const;
 
-/** Document MIME types accepted for archive documents and board attachments. */
-export const DOCUMENT_MIME_TYPES = ["application/pdf", "text/plain"] as const;
+/**
+ * Document MIME types accepted for archive documents and board attachments.
+ * This list must stay byte-for-byte identical to the backend
+ * `lib/input-validation.mo` document allowlist — never let the two drift.
+ * Word, Excel, and CSV are accepted and stored as-is; they are never rendered
+ * inline (no iframe, no HTML interpretation) and are download-only.
+ */
+export const DOCUMENT_MIME_TYPES = [
+  "application/pdf",
+  "text/plain",
+  "text/csv",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "application/vnd.ms-excel",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+] as const;
 
 /** Audio MIME types accepted for archive audio. */
 export const AUDIO_MIME_TYPES = [

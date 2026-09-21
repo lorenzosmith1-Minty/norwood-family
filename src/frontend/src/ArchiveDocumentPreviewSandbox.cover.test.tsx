@@ -216,7 +216,7 @@ describe("scriptable and unknown document types are download-only", () => {
     ["SVG", "image/svg+xml", "logo.svg"],
     ["HTML", "text/html", "page.html"],
     ["XML", "application/xml", "data.xml"],
-    ["Word", "application/msword", "notes.docx"],
+    ["Word", "application/msword", "notes.doc"],
   ];
 
   for (const [label, mime, filename] of downloadOnly) {

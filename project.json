@@ -1,18 +1,20 @@
 {
-  "overview": "A private family history and archive app for the Norwood family, with profiles, claims, relationships, steward governance, and a media archive.",
+  "overview": "A private family archive and research workspace for preserving documents, photos, stories, and family connections.",
   "features": [
-    "Family profiles and claims",
-    "Relationship requests and approvals",
-    "Steward governance and succession",
-    "Family archive with media",
-    "Research and board tools"
+    "Upload and preserve family documents, photos, audio, and video",
+    "Inline PDF preview with Download Original always available",
+    "Accept Word, Excel, and CSV files as archive and research sources",
+    "Research intake workflow for gathering and reviewing source material",
+    "Family member profiles, relationships, and stewardship",
+    "Board posts and notifications for family collaboration"
   ],
-  "category": "family-history",
+  "category": "family-archive",
   "tags": [
     "family",
-    "genealogy",
     "archive",
-    "community"
+    "research",
+    "documents",
+    "genealogy"
   ],
-  "last_updated": "2026-09-21T12:33:08.549Z"
+  "last_updated": "2026-09-21T16:56:55.892Z"
 }

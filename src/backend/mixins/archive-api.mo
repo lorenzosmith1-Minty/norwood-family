@@ -62,7 +62,7 @@ mixin (
   /// MIME type must be allowed for the surface the itemType selects, so a
   /// `#Photo` item cannot carry a video and a `#Video` item cannot carry an
   /// image. `#WrittenStoryNote`, `#Research`, `#WorkBusiness`, and `#Other`
-  /// accept documents (PDF / plain text).
+  /// accept documents (PDF, plain text, CSV, or Word/Excel).
   func archiveSurfaceFor(itemType : Types.ArchiveItemType) : InputValidationTypes.UploadSurface {
     switch (itemType) {
       case (#Photo) #ArchiveImage;

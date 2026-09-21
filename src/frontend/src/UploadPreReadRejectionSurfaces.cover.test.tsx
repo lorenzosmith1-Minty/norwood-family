@@ -18,6 +18,7 @@ import {
   vi,
 } from "vitest";
 
+import { ArchiveContributionPage } from "./pages/ArchiveContributionPage";
 import { BoardPostComposer } from "./pages/BoardPostComposer";
 import { ProfileEditPage } from "./pages/ProfileEditPage";
 import { RecipeContributePage } from "./pages/RecipeContributePage";
@@ -492,5 +493,108 @@ describe("research source rejects invalid files before reading bytes", () => {
     expect(
       screen.queryByTestId("research.form.error_state"),
     ).not.toBeInTheDocument();
+  });
+
+  it("accepts CSV, Word, and Excel source files and shows them as selected", async () => {
+    const accepted: Array<[string, string]> = [
+      ["ledger.csv", "text/csv"],
+      ["notes.doc", "application/msword"],
+      [
+        "notes.docx",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      ],
+      ["ledger.xls", "application/vnd.ms-excel"],
+      [
+        "ledger.xlsx",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      ],
+    ];
+
+    for (const [name, mime] of accepted) {
+      cleanup();
+      const user = userEvent.setup();
+      await openResearchUploadForm();
+
+      await user.upload(
+        fileInput("research.source.file_input"),
+        fileOfSize(name, mime, 1024),
+      );
+
+      expect(
+        await screen.findByTestId("research.source.file_selected"),
+        `${name} (${mime}) should be accepted`,
+      ).toHaveTextContent(name);
+      expect(
+        screen.queryByTestId("research.form.error_state"),
+      ).not.toBeInTheDocument();
+    }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Archive document: the expanded seven-type allowlist is accepted at the page
+// level, and the sanitized filename is what the form shows as selected.
+// ---------------------------------------------------------------------------
+
+describe("archive document accepts the expanded allowlist before reading bytes", () => {
+  async function openArchiveDocumentForm() {
+    const user = userEvent.setup();
+    renderWithQueryClient(<ArchiveContributionPage onBack={() => {}} />);
+    // Document is the second type choice (index 1 -> card.2).
+    await user.click(await screen.findByTestId("archive.type.card.2"));
+    await screen.findByTestId("archive.form.file_input");
+    return user;
+  }
+
+  it("accepts CSV, Word, and Excel files and shows the sanitized filename", async () => {
+    const accepted: Array<[string, string]> = [
+      ["ledger.csv", "text/csv"],
+      ["notes.doc", "application/msword"],
+      [
+        "notes.docx",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      ],
+      ["ledger.xls", "application/vnd.ms-excel"],
+      [
+        "ledger.xlsx",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      ],
+    ];
+
+    for (const [name, mime] of accepted) {
+      cleanup();
+      const user = await openArchiveDocumentForm();
+
+      await user.upload(
+        fileInput("archive.form.file_input"),
+        fileOfSize(name, mime, 1024),
+      );
+
+      expect(
+        await screen.findByTestId("archive.form.file_selected"),
+        `${name} (${mime}) should be accepted`,
+      ).toHaveTextContent(name);
+      expect(
+        screen.queryByTestId("archive.form.error_state"),
+      ).not.toBeInTheDocument();
+    }
+  });
+
+  it("stores the sanitized filename for a path-traversal Office upload", async () => {
+    const user = await openArchiveDocumentForm();
+
+    await user.upload(
+      fileInput("archive.form.file_input"),
+      fileOfSize(
+        "../../etc/ledger.xlsx",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        1024,
+      ),
+    );
+
+    // The path separators are stripped before the name is shown as selected.
+    expect(
+      await screen.findByTestId("archive.form.file_selected"),
+    ).toHaveTextContent("....etcledger.xlsx");
   });
 });

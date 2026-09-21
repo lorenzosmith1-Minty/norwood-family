@@ -84,10 +84,17 @@ module {
     "image/webp",
   ];
 
-  /// Document MIME types accepted for archive documents and board attachments.
+  /// Document MIME types accepted for archive documents and board attachments:
+  /// PDF, plain text, CSV, and Word/Excel documents. Word and Excel files are
+  /// accepted and stored but are never rendered inline.
   public let DOCUMENT_MIME_TYPES : [Text] = [
     "application/pdf",
     "text/plain",
+    "text/csv",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/vnd.ms-excel",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   ];
 
   /// Audio MIME types accepted for archive audio.

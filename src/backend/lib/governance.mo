@@ -4,6 +4,7 @@ import Principal "mo:core/Principal";
 import Result "mo:core/Result";
 import Time "mo:core/Time";
 import Types "../types/governance";
+import FamilyTypes "../types/family";
 import ObjectStorageTypes "../types/object-storage";
 import ArchiveTypes "../types/archive";
 
@@ -38,6 +39,7 @@ module {
               return #err(#AlreadySteward);
             };
             let record : Types.StewardRecord = {
+              familyId = FamilyTypes.DEFAULT_FAMILY_ID;
               stewardAccountId = ownerId;
               roleStatus = #Active;
               successorPriority = null;
@@ -140,6 +142,7 @@ module {
                   return #err(#AlreadySteward);
                 };
                 let record : Types.StewardRecord = {
+                  familyId = FamilyTypes.DEFAULT_FAMILY_ID;
                   stewardAccountId = ownerId;
                   roleStatus = #Active;
                   successorPriority = ?designation.priority;
@@ -694,6 +697,7 @@ module {
       return #err(#DuplicateRelationship);
     };
     let relationship : Types.Relationship = {
+      familyId = FamilyTypes.DEFAULT_FAMILY_ID;
       id = nextId(confirmedRelationships.toArray().map(func r = r.id));
       fromPersonId;
       toPersonId;

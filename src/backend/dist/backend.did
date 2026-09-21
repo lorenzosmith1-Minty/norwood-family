@@ -105,6 +105,7 @@ type StewardRecord =
  record {
    assignedAt: int;
    assignedBy: principal;
+   familyId: text;
    roleStatus: StewardRoleStatus;
    stewardAccountId: principal;
    successorPriority: opt nat;
@@ -466,6 +467,7 @@ type RelationshipRequestStatus =
  };
 type RelationshipRequest = 
  record {
+   familyId: text;
    id: nat;
    proposedRelationship: RelationshipType;
    relatedPersonId: PersonId;
@@ -503,6 +505,7 @@ type RelationshipAdminError =
  };
 type Relationship = 
  record {
+   familyId: text;
    fromPersonId: PersonId;
    id: nat;
    relationshipType: RelationshipType;
@@ -607,6 +610,7 @@ type ProfileClaimStatus =
  };
 type ProfileClaim = 
  record {
+   familyId: text;
    id: nat;
    personId: PersonId;
    requestingUserId: principal;
@@ -674,6 +678,7 @@ type PersonProfile =
    claimStatus: ClaimStatus;
    claimedByUserId: opt principal;
    currentLocation: opt text;
+   familyId: text;
    firstName: opt text;
    lastName: opt text;
    livingStatus: LivingStatus;
@@ -900,6 +905,20 @@ type FindingContent =
       personId: text;
       title: text;
     };
+ };
+type FamilyStatus = 
+ variant {
+   active;
+   archived;
+ };
+type FamilyId = text;
+type Family = 
+ record {
+   createdAt: int;
+   createdBy: principal;
+   displayName: text;
+   id: FamilyId;
+   status: FamilyStatus;
  };
 type ExternalBlob = blob;
 type EvidenceStatus = 
@@ -1170,6 +1189,7 @@ type ArchiveItem =
    description: text;
    era: text;
    extractedNames: opt vec text;
+   familyId: text;
    filename: opt text;
    id: ArchiveItemId;
    itemType: ArchiveItemType;
@@ -1385,6 +1405,9 @@ service : {
   /// read a conversation.
   getConversation: (conversationId: ConversationId) ->
    (opt ConversationView) query;
+  /// Returns the family with the given id, or `null` when it is not tracked.
+  /// Read-only: this never creates a family.
+  getFamily: (familyId: FamilyId) -> (opt Family) query;
   /// Returns a single proposed finding by id (Family Steward only). The finding
   /// carries its content, submitter principal, and review metadata, so it is not
   /// readable by anonymous or non-steward callers.

@@ -109,6 +109,7 @@ const {
       if (profile.claimStatus === ClaimStatus.Claimed)
         return { __kind__: "err", err: "AlreadyClaimed" };
       const claim: ProfileClaim = {
+        familyId: "norwood",
         id: nextClaimId++,
         personId,
         requestingUserId: principal(),
@@ -134,6 +135,7 @@ const {
       createdProfiles.push(name);
       const personId = `new-${nextProfileId++}`;
       const profile: PersonProfile = {
+        familyId: "norwood",
         personId,
         name,
         livingStatus: LivingStatus.Living,
@@ -238,6 +240,7 @@ function renderPage(node: React.ReactNode) {
 
 function seedLivingUnclaimed(personId: string, name: string): PersonProfile {
   const profile: PersonProfile = {
+    familyId: "norwood",
     personId,
     name,
     livingStatus: LivingStatus.Living,

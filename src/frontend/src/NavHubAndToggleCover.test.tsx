@@ -166,6 +166,7 @@ function renderApp() {
 
 function claimedProfile(personId: string, name: string): PersonProfile {
   return {
+    familyId: "norwood",
     personId,
     name,
     livingStatus: LivingStatus.Living,
@@ -182,6 +183,7 @@ function claimedProfile(personId: string, name: string): PersonProfile {
 
 function pendingClaim(id: bigint): ProfileClaim {
   return {
+    familyId: "norwood",
     id,
     submittedDate: 1_700_000_000_000_000_000n,
     status: ProfileClaimStatus.Pending,
@@ -192,6 +194,7 @@ function pendingClaim(id: bigint): ProfileClaim {
 
 function pendingRequest(id: bigint): RelationshipRequest {
   return {
+    familyId: "norwood",
     id,
     submittedDate: 1_700_000_000_000_000_000n,
     status: RelationshipRequestStatus.Pending,

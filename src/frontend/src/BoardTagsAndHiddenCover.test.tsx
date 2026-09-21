@@ -266,6 +266,7 @@ const {
     getAuthenticated: () => isAuthenticated,
     seedApprovedArchiveItem: (tags: string[]) => {
       const item: ArchiveItem = {
+        familyId: "norwood",
         id: nextArchiveId++,
         title: "An archive item",
         description: "Description",

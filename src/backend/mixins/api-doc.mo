@@ -72,6 +72,16 @@ Contributions badge.
 
 ## Public methods
 
+### Family tenancy
+
+- `getFamily(familyId : Text) : async ?Family` — query. Returns the family with
+  the given id, or `null` when it is not tracked. Read-only: it never creates a
+  family, and no family-creation surface is exposed. The single existing Norwood
+  family has id `\"norwood\"` and display name `\"Norwood\"`; it is created once
+  by the migration chain and is never duplicated or reset by later upgrades.
+  A `Family` carries `id`, `displayName`, `createdAt`, `createdBy`, and
+  `status` (`#active` or `#archived`).
+
 ### Photo gallery
 
 - `listPhotos(personId : Text) : async [Photo]` — query. Returns all uploaded
@@ -1214,6 +1224,20 @@ are not intended for application use.
 
 ## Authentication and authorization
 
+`getFamily` is a public read: any caller, including an anonymous one, may look
+up a family by id. It performs no authorization check and mutates nothing.
+
+**Temporary single-family authorization (Tenancy 1A).** Authorization is still
+single-family in this build. Every existing authorization rule — approved family
+membership, profile ownership, and Family Steward authority — is evaluated
+against the one default `\"norwood\"` family and is unchanged by the tenancy
+foundation. The `familyId` field now carried by `PersonProfile`, `ProfileClaim`,
+`Relationship`, `RelationshipRequest`, `StewardRecord`, and `ArchiveItem` is
+persisted and migrated, but no endpoint filters or scopes by it yet, and no
+family-creation or onboarding surface exists. Authorization is converted to
+family-scoped authorization in Tenancy 1B; until then, callers must not assume
+that a `familyId` value restricts what an authorized caller can read or write.
+
 The photo mutation methods (`addPhoto`, `setProfilePhoto`, `removePhoto`) are
 gated to the approved owner of the target claimed profile or a Family Steward.
 Anonymous callers trap with `\"Unauthorized: You must be signed in\"`; any other
@@ -1230,7 +1254,7 @@ read rule. The access-control methods above
 enforce the admin/user/guest model described in their entries.
 
 The OQL methods (`schema`, `execute`) enforce authorization per entity against
-the live caller. Most exposed entities — `photo`, `profile`,
+the live caller. Most exposed entities — `family`, `photo`, `profile`,
 `claim`, `relationshipRequest`, `confirmedRelationship`, `notification`,
 `account`, `steward`, `successor`, `removalRequest`, `auditLog`,
 `mergeConflict`, `archivedProfile`, `dismissedPair`, `story`, `mystery`,

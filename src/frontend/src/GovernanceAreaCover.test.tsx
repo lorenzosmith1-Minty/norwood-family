@@ -119,6 +119,7 @@ const {
     },
     async promoteToSteward(personId: string) {
       const record: StewardRecord = {
+        familyId: "norwood",
         stewardAccountId: Principal.fromText(OTHER_ACCOUNT),
         assignedAt: 1_700_000_000_000_000_000n,
         assignedBy: Principal.fromText(STEWARD_ACCOUNT),
@@ -167,6 +168,7 @@ const {
           : s,
       );
       const record: StewardRecord = {
+        familyId: "norwood",
         stewardAccountId: Principal.fromText(OTHER_ACCOUNT),
         assignedAt: 1_700_000_000_000_000_000n,
         assignedBy: Principal.fromText(STEWARD_ACCOUNT),
@@ -230,6 +232,7 @@ const {
       relationshipType: RelationshipType,
     ) {
       const relationship: Relationship = {
+        familyId: "norwood",
         id: 1n,
         fromPersonId,
         toPersonId,
@@ -476,6 +479,7 @@ async function openGovernance(user: ReturnType<typeof userEvent.setup>) {
 
 function stewardRecord(account: string): StewardRecord {
   return {
+    familyId: "norwood",
     stewardAccountId: Principal.fromText(account),
     assignedAt: 1_700_000_000_000_000_000n,
     assignedBy: Principal.fromText(STEWARD_ACCOUNT),
@@ -533,6 +537,7 @@ function duplicatePair(): DuplicatePair {
 
 function archivedProfile(personId: string): PersonProfile {
   return {
+    familyId: "norwood",
     personId,
     name: "Archived Person",
     claimStatus: ClaimStatus.Unclaimed,
@@ -919,6 +924,7 @@ describe("Relationship Management tab", () => {
     setAdmin(true);
     setRelationships([
       {
+        familyId: "norwood",
         id: 1n,
         fromPersonId: "julia",
         toPersonId: "isaiah",
@@ -950,6 +956,7 @@ describe("Relationship Management tab", () => {
     setAdmin(true);
     setRelationships([
       {
+        familyId: "norwood",
         id: 1n,
         fromPersonId: "julia",
         toPersonId: "isaiah",

@@ -80,6 +80,7 @@ const { mockActor, resetState, seedProfile } = vi.hoisted(() => {
     },
     async getMyProfile(): Promise<PersonProfile | null> {
       return {
+        familyId: "norwood",
         personId: "self",
         name: "Self Norwood",
         livingStatus: LivingStatus.Living,
@@ -173,6 +174,7 @@ function renderApp() {
 // exactly like a seeded profile whose owner changed the display name.
 function seedLulaMaeBackendProfile(preferredName?: string): PersonProfile {
   const profile: PersonProfile = {
+    familyId: "norwood",
     personId: "lula-mae",
     name: "Lula Mae Norwood",
     livingStatus: LivingStatus.Living,

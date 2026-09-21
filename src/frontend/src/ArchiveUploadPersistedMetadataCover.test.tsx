@@ -62,6 +62,7 @@ const { mockActor, submitCalls } = vi.hoisted(() => {
     async submitArchiveItem(...args: unknown[]): Promise<ArchiveItem> {
       submitCalls.push(args);
       return {
+        familyId: "norwood",
         id: 1n,
         title: String(args[0]),
         description: String(args[1]),

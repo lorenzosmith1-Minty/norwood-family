@@ -112,6 +112,7 @@ const {
       return {
         __kind__: "ok",
         ok: {
+          familyId: "norwood",
           id: 1n,
           requestingPersonId: _fromPersonId,
           relatedPersonId: _toPersonId,
@@ -182,6 +183,7 @@ function seedClaimedLivingProfile(
   owner: string,
 ): PersonProfile {
   const profile: PersonProfile = {
+    familyId: "norwood",
     personId,
     name,
     livingStatus: LivingStatus.Living,

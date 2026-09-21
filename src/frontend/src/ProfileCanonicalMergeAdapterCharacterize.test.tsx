@@ -48,6 +48,7 @@ const OWNER = "rrkah-fqaaa-aaaaa-aaaaq-cai";
 // timeline entry.
 function seedLulaMaeBackendProfile(): BackendPersonProfile {
   return {
+    familyId: "norwood",
     personId: "lula-mae",
     name: "Lula Mae Norwood",
     livingStatus: LivingStatus.Living,
@@ -147,6 +148,7 @@ describe("resolveCanonicalPersonProfile merge adapter", () => {
 describe("backendProfileToPersonProfile (backend-only path)", () => {
   it("builds a display record from the backend alone for a person with no canonical record", () => {
     const backend: BackendPersonProfile = {
+      familyId: "norwood",
       personId: "new-person",
       name: "New Person",
       livingStatus: LivingStatus.Living,
@@ -189,6 +191,7 @@ describe("backendProfileToPersonProfile (backend-only path)", () => {
 
   it("falls back to the raw name when no preferredName is set on a backend-only person", () => {
     const backend: BackendPersonProfile = {
+      familyId: "norwood",
       personId: "new-person",
       name: "New Person",
       livingStatus: LivingStatus.Living,

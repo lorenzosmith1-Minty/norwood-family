@@ -126,6 +126,7 @@ const {
       return {
         __kind__: "ok",
         ok: {
+          familyId: "norwood",
           id: 1n,
           requestingPersonId: fromPersonId,
           relatedPersonId: toPersonId,
@@ -197,6 +198,7 @@ function renderPage(node: React.ReactNode) {
 // 'lula-mae' has the display name 'Lula Mae Norwood' and no suffix.
 function seedLulaMaeBackendProfile(): PersonProfile {
   const profile: PersonProfile = {
+    familyId: "norwood",
     personId: "lula-mae",
     name: "Lula Mae Norwood",
     livingStatus: LivingStatus.Living,
@@ -269,6 +271,7 @@ describe("A backend-carried suffix remains populated in the edit form", () => {
     // The backend value wins, so the suffix stays populated in the edit form
     // rather than being blanked.
     seedProfile({
+      familyId: "norwood",
       personId: "lula-mae",
       name: "Lula Mae Norwood",
       livingStatus: LivingStatus.Living,

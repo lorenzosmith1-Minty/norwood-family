@@ -194,6 +194,7 @@ const { mockActor, setAuthenticated, getAuthenticated } = vi.hoisted(() => {
       // render the caller must hold an approved (Claimed) profile, so return a
       // backend-shaped profile carrying claimStatus: Claimed.
       return {
+        familyId: "norwood",
         personId: "me-person",
         name: "Me Person",
         claimStatus: ClaimStatus.Claimed,

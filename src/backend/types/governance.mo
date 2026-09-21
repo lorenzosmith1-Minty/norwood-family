@@ -20,6 +20,7 @@ module {
   /// Governance record for a Family Steward account. `successorPriority` is the
   /// priority/order of the steward's own designated successor, if any.
   public type StewardRecord = {
+    familyId : Text;
     stewardAccountId : Principal;
     roleStatus : StewardRoleStatus;
     successorPriority : ?Nat;

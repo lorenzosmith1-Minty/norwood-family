@@ -134,6 +134,7 @@ function legacyDocumentItem(
   filename: string,
 ): ArchiveItem {
   return {
+    familyId: "norwood",
     id,
     title,
     description: "A document.",

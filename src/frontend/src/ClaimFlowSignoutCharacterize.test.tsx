@@ -97,6 +97,7 @@ const {
       const profile = profiles[personId];
       if (!profile) return { __kind__: "err", err: "ProfileNotFound" };
       const claim: ProfileClaim = {
+        familyId: "norwood",
         id: 1n,
         personId,
         requestingUserId: principal(),
@@ -232,6 +233,7 @@ describe("Sign-out hides account/steward/private controls while keeping public f
 describe("My Profile routes by claim state", () => {
   function seedClaimedProfile(personId: string, name: string): PersonProfile {
     const profile: PersonProfile = {
+      familyId: "norwood",
       personId,
       name,
       livingStatus: LivingStatus.Living,
@@ -253,6 +255,7 @@ describe("My Profile routes by claim state", () => {
     setCurrentPrincipal(ACCOUNT);
     seedClaimedProfile("lorenzoSmithJr", "Lorenzo Smith Jr.");
     setMyProfile({
+      familyId: "norwood",
       personId: "lorenzoSmithJr",
       name: "Lorenzo Smith Jr.",
       livingStatus: LivingStatus.Living,
@@ -289,6 +292,7 @@ describe("My Profile routes by claim state", () => {
     setAuthenticated(true);
     setCurrentPrincipal(ACCOUNT);
     seedProfile({
+      familyId: "norwood",
       personId: "lorenzoSmithJr",
       name: "Lorenzo Smith Jr.",
       livingStatus: LivingStatus.Living,
@@ -304,6 +308,7 @@ describe("My Profile routes by claim state", () => {
     // The account has a pending claim on the canonical profile, so getMyProfile
     // resolves it as the caller's own pending profile.
     seedClaim({
+      familyId: "norwood",
       id: 1n,
       personId: "lorenzoSmithJr",
       requestingUserId: Principal.fromText(ACCOUNT),
@@ -311,6 +316,7 @@ describe("My Profile routes by claim state", () => {
       submittedDate: 1_700_000_000_000_000_000n,
     });
     setMyProfile({
+      familyId: "norwood",
       personId: "lorenzoSmithJr",
       name: "Lorenzo Smith Jr.",
       livingStatus: LivingStatus.Living,

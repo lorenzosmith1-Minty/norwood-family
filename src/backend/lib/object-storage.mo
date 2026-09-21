@@ -2,6 +2,7 @@ import Iter "mo:core/Iter";
 import List "mo:core/List";
 import Map "mo:core/Map";
 import Types "../types/object-storage";
+import FamilyTypes "../types/family";
 
 module {
   /// Returns all uploaded photos for a person, in upload order.
@@ -115,9 +116,10 @@ module {
   };
 
   /// Flattens every gallery into OQL-exposable photo rows. Each row carries
-  /// the photo's display metadata plus a globally-unique `key` (`personId:id`)
-  /// and whether it is the person's current profile photo. The raw blob bytes
-  /// are excluded — they live off-chain as external references.
+  /// the photo's display metadata plus a globally-unique `key`
+  /// (`familyId::personId:id`) and whether it is the person's current profile
+  /// photo. The raw blob bytes are excluded — they live off-chain as external
+  /// references.
   public func photoRows(
     galleries : Map.Map<Types.PersonId, Types.PhotoGallery>,
   ) : Iter.Iter<Types.PhotoRow> {
@@ -125,7 +127,7 @@ module {
     for ((personId, gallery) in galleries.entries()) {
       for (photo in gallery.photos.toArray().values()) {
         rows.add({
-          key = personId # ":" # photo.id.toText();
+          key = FamilyTypes.familyPersonKey(FamilyTypes.DEFAULT_FAMILY_ID, personId) # ":" # photo.id.toText();
           personId;
           id = photo.id;
           filename = photo.filename;

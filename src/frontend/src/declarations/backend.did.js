@@ -52,6 +52,7 @@ export const StewardRecord = IDL.Record({
   'stewardAccountId' : IDL.Principal,
   'successorPriority' : IDL.Opt(IDL.Nat),
   'roleStatus' : StewardRoleStatus,
+  'familyId' : IDL.Text,
 });
 export const StewardError = IDL.Variant({
   'LastSteward' : IDL.Null,
@@ -129,6 +130,7 @@ export const Relationship = IDL.Record({
   'id' : IDL.Nat,
   'status' : RelationshipStatus,
   'fromPersonId' : PersonId,
+  'familyId' : IDL.Text,
   'toPersonId' : PersonId,
   'relationshipType' : RelationshipType,
 });
@@ -201,6 +203,7 @@ export const ArchiveItem = IDL.Record({
   'aiSummary' : IDL.Opt(IDL.Text),
   'searchableTranscript' : IDL.Opt(IDL.Text),
   'relatedBranchId' : IDL.Opt(IDL.Text),
+  'familyId' : IDL.Text,
   'transcript' : IDL.Opt(IDL.Text),
   'chapterMarkers' : IDL.Opt(IDL.Vec(ChapterMarker)),
   'sourceStatus' : SourceStatus,
@@ -315,6 +318,7 @@ export const ProfileClaim = IDL.Record({
   'reviewedBy' : IDL.Opt(IDL.Principal),
   'personId' : PersonId,
   'requestingUserId' : IDL.Principal,
+  'familyId' : IDL.Text,
 });
 export const ProfileRemovalStatus = IDL.Variant({
   'Approved' : IDL.Null,
@@ -390,6 +394,7 @@ export const RelationshipRequest = IDL.Record({
   'requestingPersonId' : PersonId,
   'proposedRelationship' : RelationshipType,
   'reviewer' : IDL.Opt(IDL.Principal),
+  'familyId' : IDL.Text,
 });
 export const SourceRecord = IDL.Record({
   'id' : SourceId,
@@ -566,6 +571,7 @@ export const PersonProfile = IDL.Record({
   'currentLocation' : IDL.Opt(IDL.Text),
   'birthplace' : IDL.Opt(IDL.Text),
   'lastName' : IDL.Opt(IDL.Text),
+  'familyId' : IDL.Text,
   'shortBio' : IDL.Opt(IDL.Text),
   'timeline' : IDL.Opt(IDL.Vec(IDL.Text)),
   'firstName' : IDL.Opt(IDL.Text),
@@ -648,6 +654,18 @@ export const ConversationView = IDL.Record({
   'participantPersonIds' : IDL.Vec(PersonId),
   'conversationId' : ConversationId,
   'participantDisplayNames' : IDL.Vec(IDL.Text),
+});
+export const FamilyId = IDL.Text;
+export const FamilyStatus = IDL.Variant({
+  'active' : IDL.Null,
+  'archived' : IDL.Null,
+});
+export const Family = IDL.Record({
+  'id' : FamilyId,
+  'status' : FamilyStatus,
+  'displayName' : IDL.Text,
+  'createdAt' : IDL.Int,
+  'createdBy' : IDL.Principal,
 });
 export const Result_15 = IDL.Variant({
   'ok' : AccountId,
@@ -1236,6 +1254,7 @@ export const idlService = IDL.Service({
       [IDL.Opt(ConversationView)],
       ['query'],
     ),
+  'getFamily' : IDL.Func([FamilyId], [IDL.Opt(Family)], ['query']),
   'getFinding' : IDL.Func([FindingId], [IDL.Opt(ProposedFinding)], ['query']),
   'getMyAccountId' : IDL.Func([], [Result_15], ['query']),
   'getMyAuthMethods' : IDL.Func([], [Result_14], ['query']),
@@ -1657,6 +1676,7 @@ export const idlFactory = ({ IDL }) => {
     'stewardAccountId' : IDL.Principal,
     'successorPriority' : IDL.Opt(IDL.Nat),
     'roleStatus' : StewardRoleStatus,
+    'familyId' : IDL.Text,
   });
   const StewardError = IDL.Variant({
     'LastSteward' : IDL.Null,
@@ -1731,6 +1751,7 @@ export const idlFactory = ({ IDL }) => {
     'id' : IDL.Nat,
     'status' : RelationshipStatus,
     'fromPersonId' : PersonId,
+    'familyId' : IDL.Text,
     'toPersonId' : PersonId,
     'relationshipType' : RelationshipType,
   });
@@ -1803,6 +1824,7 @@ export const idlFactory = ({ IDL }) => {
     'aiSummary' : IDL.Opt(IDL.Text),
     'searchableTranscript' : IDL.Opt(IDL.Text),
     'relatedBranchId' : IDL.Opt(IDL.Text),
+    'familyId' : IDL.Text,
     'transcript' : IDL.Opt(IDL.Text),
     'chapterMarkers' : IDL.Opt(IDL.Vec(ChapterMarker)),
     'sourceStatus' : SourceStatus,
@@ -1917,6 +1939,7 @@ export const idlFactory = ({ IDL }) => {
     'reviewedBy' : IDL.Opt(IDL.Principal),
     'personId' : PersonId,
     'requestingUserId' : IDL.Principal,
+    'familyId' : IDL.Text,
   });
   const ProfileRemovalStatus = IDL.Variant({
     'Approved' : IDL.Null,
@@ -1992,6 +2015,7 @@ export const idlFactory = ({ IDL }) => {
     'requestingPersonId' : PersonId,
     'proposedRelationship' : RelationshipType,
     'reviewer' : IDL.Opt(IDL.Principal),
+    'familyId' : IDL.Text,
   });
   const SourceRecord = IDL.Record({
     'id' : SourceId,
@@ -2165,6 +2189,7 @@ export const idlFactory = ({ IDL }) => {
     'currentLocation' : IDL.Opt(IDL.Text),
     'birthplace' : IDL.Opt(IDL.Text),
     'lastName' : IDL.Opt(IDL.Text),
+    'familyId' : IDL.Text,
     'shortBio' : IDL.Opt(IDL.Text),
     'timeline' : IDL.Opt(IDL.Vec(IDL.Text)),
     'firstName' : IDL.Opt(IDL.Text),
@@ -2241,6 +2266,18 @@ export const idlFactory = ({ IDL }) => {
     'participantPersonIds' : IDL.Vec(PersonId),
     'conversationId' : ConversationId,
     'participantDisplayNames' : IDL.Vec(IDL.Text),
+  });
+  const FamilyId = IDL.Text;
+  const FamilyStatus = IDL.Variant({
+    'active' : IDL.Null,
+    'archived' : IDL.Null,
+  });
+  const Family = IDL.Record({
+    'id' : FamilyId,
+    'status' : FamilyStatus,
+    'displayName' : IDL.Text,
+    'createdAt' : IDL.Int,
+    'createdBy' : IDL.Principal,
   });
   const Result_15 = IDL.Variant({ 'ok' : AccountId, 'err' : AccountError });
   const AuthMethods = IDL.Record({ 'apple' : IDL.Bool, 'google' : IDL.Bool });
@@ -2818,6 +2855,7 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Opt(ConversationView)],
         ['query'],
       ),
+    'getFamily' : IDL.Func([FamilyId], [IDL.Opt(Family)], ['query']),
     'getFinding' : IDL.Func([FindingId], [IDL.Opt(ProposedFinding)], ['query']),
     'getMyAccountId' : IDL.Func([], [Result_15], ['query']),
     'getMyAuthMethods' : IDL.Func([], [Result_14], ['query']),

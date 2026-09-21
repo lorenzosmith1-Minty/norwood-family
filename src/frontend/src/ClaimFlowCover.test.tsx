@@ -134,6 +134,7 @@ const {
       if (profile.claimStatus === ClaimStatus.Claimed)
         return { __kind__: "err", err: ClaimError.AlreadyClaimed };
       const claim: ProfileClaim = {
+        familyId: "norwood",
         id: nextClaimId++,
         personId,
         requestingUserId: principal(),
@@ -255,6 +256,7 @@ function renderApp() {
 
 function seedLivingUnclaimed(personId: string, name: string): PersonProfile {
   const profile: PersonProfile = {
+    familyId: "norwood",
     personId,
     name,
     livingStatus: LivingStatus.Living,
@@ -311,6 +313,7 @@ describe("Add Myself 'This is Me' submits a claim and only navigates after backe
   it("shows 'Already claimed' on the match card and creates no duplicate claim when the profile is already owned", async () => {
     // The profile is already CLAIMED by the signed-in account.
     seedProfile({
+      familyId: "norwood",
       personId: "lorenzoSmithJr",
       name: "Lorenzo Smith Jr.",
       livingStatus: LivingStatus.Living,
@@ -427,6 +430,7 @@ describe("The canonical profile shows PENDING CLAIM and hides This is Me / UNCLA
   it("shows PENDING CLAIM and hides This is Me and UNCLAIMED once a pending claim exists", async () => {
     seedLivingUnclaimed("lorenzoSmithJr", "Lorenzo Smith Jr.");
     seedClaim({
+      familyId: "norwood",
       id: 1n,
       personId: "lorenzoSmithJr",
       requestingUserId: Principal.fromText(ACCOUNT),
@@ -470,6 +474,7 @@ describe("Family Steward queue shows the pending claim and approval persists own
   it("shows the pending claim with Approve/Reject and approving updates it to APPROVED and persists ownership", async () => {
     seedLivingUnclaimed("lorenzoSmithJr", "Lorenzo Smith Jr.");
     seedClaim({
+      familyId: "norwood",
       id: 1n,
       personId: "lorenzoSmithJr",
       requestingUserId: Principal.fromText(CLAIMANT),

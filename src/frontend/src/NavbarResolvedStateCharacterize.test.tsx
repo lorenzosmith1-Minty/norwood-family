@@ -150,6 +150,7 @@ function renderApp() {
 
 function seedClaimedWaxxMinty(): PersonProfile {
   const profile: PersonProfile = {
+    familyId: "norwood",
     personId: "lorenzoSmithJr",
     name: "Lorenzo Smith Jr.",
     livingStatus: LivingStatus.Living,

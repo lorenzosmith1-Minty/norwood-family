@@ -130,6 +130,11 @@
       "source": "caffeinelabs/skills",
       "sourceType": "github",
       "computedHash": "3b4a0f7fdea33367cdbad94172c0e196e94797b701b77a0a43e76d61456b2808"
+    },
+    "connector-spotify": {
+      "source": "caffeinelabs/skills",
+      "sourceType": "github",
+      "computedHash": "ee2f5704b3ac2c2fa7110364d470718c963d2e55729aa1583e3ec9a99107a419"
     }
   }
 }

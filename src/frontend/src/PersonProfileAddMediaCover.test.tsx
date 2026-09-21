@@ -103,6 +103,7 @@ const {
     createdAt: 1_700_000_000_000_000_000n,
     contributor: Principal.fromText("aaaaa-aa"),
     ...overrides,
+    familyId: overrides.familyId ?? "norwood",
   });
 
   const mockActor = {
@@ -179,6 +180,7 @@ const {
       primarySpeaker: OralHistorySpeaker | null,
     ): Promise<ArchiveItem> {
       const item: ArchiveItem = {
+        familyId: "norwood",
         id: nextId++,
         title,
         description,
@@ -288,6 +290,7 @@ function renderApp() {
 /** Seeds Waxx Minty (lorenzoSmithJr) as the caller's claimed living profile. */
 function seedWaxxMintyProfile() {
   const profile: PersonProfile = {
+    familyId: "norwood",
     personId: "lorenzoSmithJr",
     name: "Lorenzo Smith Jr.",
     livingStatus: LivingStatus.Living,

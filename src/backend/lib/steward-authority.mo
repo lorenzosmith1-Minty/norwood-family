@@ -3,6 +3,7 @@ import Principal "mo:core/Principal";
 import Result "mo:core/Result";
 import Time "mo:core/Time";
 import Types "../types/governance";
+import FamilyTypes "../types/family";
 import StewardAuthorityTypes "../types/steward-authority";
 
 /// Canonical Norwood Family Steward authority. The `stewards` stable list is
@@ -49,6 +50,7 @@ module {
     };
     let now = Time.now();
     let record : Types.StewardRecord = {
+      familyId = FamilyTypes.DEFAULT_FAMILY_ID;
       stewardAccountId = caller;
       roleStatus = #Active;
       successorPriority = null;

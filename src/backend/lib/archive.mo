@@ -102,6 +102,7 @@ module {
     items.toArray().map(
       func it : Types.ArchiveItemRow = {
         id = it.id;
+        familyId = it.familyId;
         title = it.title;
         itemType = switch (it.itemType) {
           case (#Photo) "Photo";

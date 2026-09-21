@@ -89,6 +89,7 @@ const {
     async getMyProfile(): Promise<PersonProfile | null> {
       if (!isAuthenticated) return null;
       return {
+        familyId: "norwood",
         personId: "self",
         name: "Self Norwood",
         livingStatus: LivingStatus.Living,
@@ -201,6 +202,7 @@ function renderPage(node: React.ReactNode) {
 
 function seedClaimedProfile(personId: string, name: string): PersonProfile {
   const profile: PersonProfile = {
+    familyId: "norwood",
     personId,
     name,
     livingStatus: LivingStatus.Living,
@@ -313,6 +315,7 @@ describe("Family Steward review shows the canonical Lorenzo Smith Jr. name", () 
     setCurrentPrincipal(STEWARD);
     setAdmin(true);
     seedClaim({
+      familyId: "norwood",
       id: 1n,
       personId: "lorenzoSmithJr",
       requestingUserId: Principal.fromText(ACCOUNT),

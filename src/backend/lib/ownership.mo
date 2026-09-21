@@ -7,6 +7,7 @@ import Result "mo:core/Result";
 import Text "mo:core/Text";
 import Time "mo:core/Time";
 import Types "../types/ownership";
+import FamilyTypes "../types/family";
 import GovernanceTypes "../types/governance";
 import ClaimPersistenceTypes "../types/claim-persistence";
 import ClaimPersistenceLib "../lib/claim-persistence";
@@ -48,6 +49,7 @@ module {
           return #err(#DeceasedProfile);
         };
         let claim : Types.ProfileClaim = {
+          familyId = FamilyTypes.DEFAULT_FAMILY_ID;
           id = nextId(claims.toArray().map(func c = c.id));
           personId;
           requestingUserId = caller;
@@ -288,6 +290,7 @@ module {
     };
     let personId = caller.toText();
     let profile : Types.PersonProfile = {
+      familyId = FamilyTypes.DEFAULT_FAMILY_ID;
       personId;
       name;
       livingStatus = #Living;
@@ -336,6 +339,7 @@ module {
       return #err(#DuplicateRequest);
     };
     let request : Types.RelationshipRequest = {
+      familyId = FamilyTypes.DEFAULT_FAMILY_ID;
       id = nextId(requests.toArray().map(func r = r.id));
       requestingPersonId = fromPersonId;
       relatedPersonId = toPersonId;
@@ -386,6 +390,7 @@ module {
         };
         replaceRelationshipRequest(requests, updated);
         relationships.add({
+          familyId = FamilyTypes.DEFAULT_FAMILY_ID;
           id = nextId(relationships.toArray().map(func r = r.id));
           fromPersonId = request.requestingPersonId;
           toPersonId = request.relatedPersonId;
@@ -591,6 +596,7 @@ module {
     let rows = List.empty<Types.ProfileRow>();
     for ((personId, profile) in profiles.entries()) {
       rows.add({
+        familyId = profile.familyId;
         personId;
         name = profile.name;
         livingStatus = livingStatusText(profile.livingStatus);
@@ -626,6 +632,7 @@ module {
     let rows = List.empty<Types.ClaimRow>();
     for (claim in claims.toArray().values()) {
       rows.add({
+        familyId = claim.familyId;
         id = claim.id;
         personId = claim.personId;
         requestingUserId = claim.requestingUserId.toText();
@@ -651,6 +658,7 @@ module {
     let rows = List.empty<Types.RelationshipRequestRow>();
     for (request in requests.toArray().values()) {
       rows.add({
+        familyId = request.familyId;
         id = request.id;
         requestingPersonId = request.requestingPersonId;
         relatedPersonId = request.relatedPersonId;
@@ -678,6 +686,7 @@ module {
     let rows = List.empty<Types.RelationshipRow>();
     for (rel in relationships.toArray().values()) {
       rows.add({
+        familyId = rel.familyId;
         id = rel.id;
         fromPersonId = rel.fromPersonId;
         toPersonId = rel.toPersonId;

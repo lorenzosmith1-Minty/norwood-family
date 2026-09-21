@@ -190,6 +190,7 @@ function renderApp() {
 // state: already CLAIMED by the signed-in owner, with a selected profile photo.
 function seedRestoredClaimedProfile(): PersonProfile {
   const profile: PersonProfile = {
+    familyId: "norwood",
     personId: "lorenzoSmithJr",
     name: "Lorenzo Smith Jr.",
     livingStatus: LivingStatus.Living,

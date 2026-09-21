@@ -295,6 +295,7 @@ function renderApp() {
 
 function claimedProfile(personId: string, name: string): PersonProfile {
   return {
+    familyId: "norwood",
     personId,
     name,
     livingStatus: "Living" as PersonProfile["livingStatus"],

@@ -42,6 +42,7 @@ export interface ArchiveItem {
   'aiSummary' : [] | [string],
   'searchableTranscript' : [] | [string],
   'relatedBranchId' : [] | [string],
+  'familyId' : string,
   'transcript' : [] | [string],
   'chapterMarkers' : [] | [Array<ChapterMarker>],
   'sourceStatus' : SourceStatus,
@@ -235,6 +236,16 @@ export type EvidenceStatus = { 'Unresolved' : null } |
   { 'FamilyHistory' : null } |
   { 'PersonalMemory' : null };
 export type ExternalBlob = Uint8Array;
+export interface Family {
+  'id' : FamilyId,
+  'status' : FamilyStatus,
+  'displayName' : string,
+  'createdAt' : bigint,
+  'createdBy' : Principal,
+}
+export type FamilyId = string;
+export type FamilyStatus = { 'active' : null } |
+  { 'archived' : null };
 export type FindingContent = {
     'Story' : {
       'title' : string,
@@ -427,6 +438,7 @@ export interface PersonProfile {
   'currentLocation' : [] | [string],
   'birthplace' : [] | [string],
   'lastName' : [] | [string],
+  'familyId' : string,
   'shortBio' : [] | [string],
   'timeline' : [] | [Array<string>],
   'firstName' : [] | [string],
@@ -479,6 +491,7 @@ export interface ProfileClaim {
   'reviewedBy' : [] | [Principal],
   'personId' : PersonId,
   'requestingUserId' : Principal,
+  'familyId' : string,
 }
 export type ProfileClaimStatus = { 'Approved' : null } |
   { 'Rejected' : null } |
@@ -567,6 +580,7 @@ export interface Relationship {
   'id' : bigint,
   'status' : RelationshipStatus,
   'fromPersonId' : PersonId,
+  'familyId' : string,
   'toPersonId' : PersonId,
   'relationshipType' : RelationshipType,
 }
@@ -598,6 +612,7 @@ export interface RelationshipRequest {
   'requestingPersonId' : PersonId,
   'proposedRelationship' : RelationshipType,
   'reviewer' : [] | [Principal],
+  'familyId' : string,
 }
 export type RelationshipRequestStatus = { 'Approved' : null } |
   { 'Rejected' : null } |
@@ -815,6 +830,7 @@ export interface StewardRecord {
   'stewardAccountId' : Principal,
   'successorPriority' : [] | [bigint],
   'roleStatus' : StewardRoleStatus,
+  'familyId' : string,
 }
 export type StewardRoleStatus = { 'Active' : null } |
   { 'Removed' : null };
@@ -1227,6 +1243,11 @@ export interface _SERVICE {
    * / read a conversation.
    */
   'getConversation' : ActorMethod<[ConversationId], [] | [ConversationView]>,
+  /**
+   * / Returns the family with the given id, or `null` when it is not tracked.
+   * / Read-only: this never creates a family.
+   */
+  'getFamily' : ActorMethod<[FamilyId], [] | [Family]>,
   /**
    * / Returns a single proposed finding by id (Family Steward only). The finding
    * / carries its content, submitter principal, and review metadata, so it is not

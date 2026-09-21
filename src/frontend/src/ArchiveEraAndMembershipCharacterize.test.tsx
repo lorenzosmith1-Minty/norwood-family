@@ -120,6 +120,7 @@ const {
     async submitArchiveItem(...args: unknown[]): Promise<ArchiveItem> {
       submittedArchiveItems = [...submittedArchiveItems, args];
       return {
+        familyId: "norwood",
         id: 1n,
         title: String(args[0] ?? ""),
         description: String(args[1] ?? ""),

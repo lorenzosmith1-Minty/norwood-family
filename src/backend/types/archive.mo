@@ -72,6 +72,7 @@ module {
   /// separate fields (reserved, not yet populated) so they never overwrite the
   /// original.
   public type ArchiveItem = {
+    familyId : Text;
     id : ArchiveItemId;
     title : Text;
     description : Text;
@@ -114,6 +115,7 @@ module {
   /// Flattened, OQL-exposable view of a single archive item. The raw blob bytes
   /// are excluded (they live off-chain as external references).
   public type ArchiveItemRow = {
+    familyId : Text;
     id : ArchiveItemId;
     title : Text;
     itemType : Text;

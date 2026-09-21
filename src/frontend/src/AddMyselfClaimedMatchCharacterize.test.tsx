@@ -87,6 +87,7 @@ const {
     > {
       requestClaimCalls += 1;
       const claim: ProfileClaim = {
+        familyId: "norwood",
         id: 1n,
         personId,
         requestingUserId: Principal.fromText(currentPrincipal),
@@ -167,6 +168,7 @@ function profile(
   claimedByUserId?: string,
 ): PersonProfile {
   return {
+    familyId: "norwood",
     personId,
     name,
     livingStatus: LivingStatus.Living,

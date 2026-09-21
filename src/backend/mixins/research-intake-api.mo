@@ -10,6 +10,7 @@ import Types "../types/research-intake";
 import OwnershipTypes "../types/ownership";
 import FamilyHistoryTypes "../types/family-history";
 import ArchiveTypes "../types/archive";
+import FamilyTypes "../types/family";
 import GovernanceTypes "../types/governance";
 import ResearchLib "../lib/research-intake";
 import FamilyAuthorizationLib "../lib/family-authorization";
@@ -959,6 +960,7 @@ mixin (
           case (?rt) {
             confirmedRelationships.add({
               id = nextRelationshipId();
+              familyId = FamilyTypes.DEFAULT_FAMILY_ID;
               fromPersonId = r.fromPersonId;
               toPersonId = r.toPersonId;
               relationshipType = rt;
@@ -1392,6 +1394,7 @@ mixin (
   func createCanonicalPerson(c : Types.NewPersonCandidate) {
     let personId = uniquePersonId(c.name);
     let profile : OwnershipTypes.PersonProfile = {
+      familyId = FamilyTypes.DEFAULT_FAMILY_ID;
       personId;
       name = c.name;
       livingStatus = #Living;
@@ -1425,6 +1428,7 @@ mixin (
     let exists = confirmedRelationships.toArray().any(func r = r.fromPersonId == fromPersonId and r.toPersonId == toPersonId and r.relationshipType == relationshipType);
     if (not exists) {
       confirmedRelationships.add({
+        familyId = FamilyTypes.DEFAULT_FAMILY_ID;
         id = nextRelationshipId();
         fromPersonId;
         toPersonId;

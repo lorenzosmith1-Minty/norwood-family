@@ -150,6 +150,7 @@ const {
       return {
         __kind__: "ok",
         ok: {
+          familyId: "norwood",
           id: 1n,
           requestingPersonId: fromPersonId,
           relatedPersonId: toPersonId,
@@ -237,6 +238,7 @@ function seedClaimedLivingProfile(
   owner: string,
 ): PersonProfile {
   const profile: PersonProfile = {
+    familyId: "norwood",
     personId,
     name,
     livingStatus: LivingStatus.Living,
@@ -460,6 +462,7 @@ describe("Profile Completeness data updates after editing", () => {
 describe("Family Steward gating on the edit page", () => {
   it("lets a steward edit an unclaimed living profile", async () => {
     const profile: PersonProfile = {
+      familyId: "norwood",
       personId: "clayton",
       name: "Clayton Norwood",
       livingStatus: LivingStatus.Living,

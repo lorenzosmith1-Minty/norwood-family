@@ -125,6 +125,7 @@ const {
       return {
         __kind__: "ok",
         ok: {
+          familyId: "norwood",
           id: 1n,
           requestingPersonId: fromPersonId,
           relatedPersonId: toPersonId,
@@ -199,6 +200,7 @@ function renderPage(node: React.ReactNode) {
 // 'New York / New Jersey'.
 function seedLulaMaeBackendProfile(): PersonProfile {
   const profile: PersonProfile = {
+    familyId: "norwood",
     personId: "lula-mae",
     name: "Lula Mae Norwood",
     livingStatus: LivingStatus.Living,

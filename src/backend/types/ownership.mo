@@ -55,6 +55,7 @@ module {
   /// All owner-editable fields are optional so existing records migrate without
   /// data loss.
   public type PersonProfile = {
+    familyId : Text;
     personId : PersonId;
     name : Text;
     livingStatus : LivingStatus;
@@ -81,6 +82,7 @@ module {
   /// A request by a user to claim an unclaimed living person profile. Selecting
   /// "This is Me" creates a pending claim without granting ownership.
   public type ProfileClaim = {
+    familyId : Text;
     id : Nat;
     personId : PersonId;
     requestingUserId : Principal;
@@ -93,6 +95,7 @@ module {
   /// A relationship between two people in the shared family graph, with its
   /// verification status.
   public type Relationship = {
+    familyId : Text;
     id : Nat;
     fromPersonId : PersonId;
     toPersonId : PersonId;
@@ -103,6 +106,7 @@ module {
   /// A proposal to add or change a relationship. Pending requests are never
   /// treated as confirmed until a Family Steward approves them.
   public type RelationshipRequest = {
+    familyId : Text;
     id : Nat;
     requestingPersonId : PersonId;
     relatedPersonId : PersonId;
@@ -215,6 +219,7 @@ module {
   /// absent. The array-valued `timeline` is not exposed (OQL has no array value
   /// type).
   public type ProfileRow = {
+    familyId : Text;
     personId : PersonId;
     name : Text;
     livingStatus : Text;
@@ -239,6 +244,7 @@ module {
 
   /// Flattened, OQL-exposable view of a profile claim.
   public type ClaimRow = {
+    familyId : Text;
     id : Nat;
     personId : PersonId;
     requestingUserId : Text;
@@ -250,6 +256,7 @@ module {
 
   /// Flattened, OQL-exposable view of a relationship request.
   public type RelationshipRequestRow = {
+    familyId : Text;
     id : Nat;
     requestingPersonId : PersonId;
     relatedPersonId : PersonId;
@@ -263,6 +270,7 @@ module {
   /// Flattened, OQL-exposable view of a confirmed relationship in the shared
   /// family graph.
   public type RelationshipRow = {
+    familyId : Text;
     id : Nat;
     fromPersonId : PersonId;
     toPersonId : PersonId;

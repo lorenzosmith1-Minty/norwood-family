@@ -72,6 +72,7 @@ const { mockActor, resetState, seedProfile, seedProfilePhoto, getProfile } =
       },
       async getMyProfile(): Promise<PersonProfile | null> {
         return {
+          familyId: "norwood",
           personId: "self",
           name: "Self Norwood",
           livingStatus: LivingStatus.Living,
@@ -174,6 +175,7 @@ function seedClaimedProfile(
   preferredName?: string,
 ): PersonProfile {
   const profile: PersonProfile = {
+    familyId: "norwood",
     personId,
     name,
     livingStatus: LivingStatus.Living,

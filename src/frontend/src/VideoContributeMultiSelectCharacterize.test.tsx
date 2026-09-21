@@ -69,6 +69,7 @@ const { mockActor, resetArchive, setAuthenticated, getAuthenticated } =
         primarySpeaker: OralHistorySpeaker | null,
       ): Promise<ArchiveItem> {
         const item: ArchiveItem = {
+          familyId: "norwood",
           id: nextId++,
           title,
           description,

@@ -111,18 +111,33 @@ it("carries photos written by the previous version through the upgrade", async (
 // installs the previous revision, upgrades to this build (replaying the
 // migration chain), and asserts the preferredName stays 'Waxx Minty' while the
 // `name` field is unchanged.
+//
+// The pre-upgrade read MUST go through the previous revision's own declarations
+// (`.old/`), not this build's `idlFactory`. This build adds a required
+// `familyId` field to PersonProfile, so the current codec cannot decode the
+// previous revision's pre-migration record: the call resolves to an empty
+// option (`[]`) rather than the seeded profile, which is a codec mismatch in the
+// test, not a missing seed. The previous declarations are imported dynamically
+// from the path the runner supplies, exactly as the archive migration test
+// below does, so a resolution failure surfaces as a clear error here rather than
+// breaking the whole file at collection time.
 it("keeps lorenzoSmithJr's preferredName as 'Waxx Minty' on upgrade", async () => {
+  const previousDeclarations = await import(
+    /* @vite-ignore */ PREVIOUS_DECLARATIONS
+  );
+  const previousIdlFactory = previousDeclarations.idlFactory;
+
   // 1. Install the version the user is actually running. The seed migration
   //    (20260905_080000.mo) and the canonical-display-name migration
   //    (20260907_000000.mo) run here, seeding lorenzoSmithJr with preferredName
   //    'Waxx Minty'.
-  const previous = await pic!.setupCanister<_SERVICE>({
-    idlFactory,
+  const previous = await pic!.setupCanister({
+    idlFactory: previousIdlFactory,
     wasm: PREVIOUS_WASM,
   });
 
   // 2. Confirm the previous revision seeded lorenzoSmithJr with the Waxx Minty
-  //    preferredName.
+  //    preferredName, read through the previous revision's own codec.
   const before = await previous.actor.getPersonProfile("lorenzoSmithJr");
   expect(before).toEqual([
     expect.objectContaining({
@@ -279,3 +294,161 @@ it("carries archive items written by the previous version through the upgrade", 
 // migrations, which this build's `.old/` does not provide. Those scenarios are
 // not applicable to this build's upgrade path and are intentionally not
 // asserted here.
+
+// ---------------------------------------------------------------------------
+// Family tenancy foundation (Tenancy 1A) across a real upgrade.
+//
+// This is the highest-value assertion for this phase and nothing else in the
+// build can see it. The previous revision has no `families` collection and no
+// `familyId` field on any core record; this build's 20260921_000000.mo migration
+// adds both and backfills every pre-existing record with familyId = "norwood".
+//
+// The test installs the previous revision, writes one record of each core kind
+// through its public API, upgrades to this build (running the migration), and
+// asserts:
+//   1. getFamily("norwood") returns exactly one default family — the migration
+//      seeds it once and does not duplicate it;
+//   2. every pre-existing record reads back with familyId = "norwood";
+//   3. the records' original fields, ownership, and blob/media references are
+//      unchanged — the migration backfills, it does not reset.
+//
+// The pre-upgrade writes go through the previous revision's own declarations
+// (`.old/`), because this build's codec requires the new `familyId` field and
+// cannot encode a call against the previous revision's pre-migration types.
+// ---------------------------------------------------------------------------
+it("seeds exactly one default family and backfills familyId on upgrade", async () => {
+  const previousDeclarations = await import(
+    /* @vite-ignore */ PREVIOUS_DECLARATIONS
+  );
+  const previousIdlFactory = previousDeclarations.idlFactory;
+
+  // 1. Install the version the user is actually running.
+  const previous = await pic!.setupCanister({
+    idlFactory: previousIdlFactory,
+    wasm: PREVIOUS_WASM,
+  });
+
+  // 2. Write one record of each core kind through the OLD public API. The
+  //    writer becomes the Family Steward (the one-time claimSteward bootstrap)
+  //    and approves its own claim on a seeded profile so the contribution
+  //    endpoints are authorized.
+  const steward = createIdentity("upgrade-family-steward-seed");
+  previous.actor.setIdentity(steward);
+  await previous.actor._initialize_access_control();
+  await previous.actor.claimSteward();
+  const requested = await previous.actor.requestProfileClaim("clayton");
+  if ("ok" in requested) {
+    await previous.actor.approveProfileClaim(requested.ok.id);
+  }
+
+  // A pending relationship request between two seeded profiles.
+  const proposed = await previous.actor.proposeRelationship(
+    "clayton",
+    "erma",
+    { SpousePartner: null },
+  );
+  expect("ok" in proposed).toBe(true);
+
+  // An archive item with a distinctive blob, so the media reference can be
+  // checked byte-for-byte after the upgrade.
+  const archiveBlob = new Uint8Array([21, 22, 23]);
+  const written = await previous.actor.submitArchiveItem(
+    "Pre-tenancy letter",
+    "A letter written before the family tenancy migration.",
+    { Document: null },
+    "application/pdf",
+    archiveBlob,
+    "1924",
+    [1924n],
+    ["letters"],
+    ["julia"],
+    ["branch-1"],
+    { Original: null },
+    { FamilyOnly: null },
+    { Standard: null },
+    [],
+    "pre-tenancy-letter.pdf",
+  );
+
+  // 3. Upgrade to the version this build produces. The 20260921_000000.mo
+  //    migration runs here.
+  await pic!.upgradeCanister({
+    canisterId: previous.canisterId,
+    wasm: BACKEND_WASM,
+    upgradeModeOptions: {
+      skip_pre_upgrade: [],
+      wasm_memory_persistence: [{ keep: null }],
+    },
+  });
+
+  // 4. Read through the NEW API.
+  const upgraded = pic!.createActor<_SERVICE>(idlFactory, previous.canisterId);
+  upgraded.setIdentity(steward);
+
+  // The migration seeds exactly one default family. A second read returns the
+  // same single record — the migration does not duplicate it.
+  const family = await upgraded.getFamily("norwood");
+  expect(family).toHaveLength(1);
+  expect(family[0]).toMatchObject({
+    id: "norwood",
+    displayName: "Norwood",
+    status: { active: null },
+  });
+  const familyAgain = await upgraded.getFamily("norwood");
+  expect(familyAgain).toHaveLength(1);
+  expect(familyAgain[0]).toEqual(family[0]);
+
+  // Every pre-existing core record reads back with familyId = "norwood".
+  const profile = await upgraded.getPersonProfile("clayton");
+  expect(profile).toHaveLength(1);
+  expect(profile[0]).toMatchObject({
+    personId: "clayton",
+    name: "Clayton Norwood",
+    familyId: "norwood",
+  });
+
+  const claims = await upgraded.listProfileClaims();
+  const claim = claims.find((c) => c.personId === "clayton");
+  expect(claim).toBeDefined();
+  expect(claim).toMatchObject({
+    personId: "clayton",
+    status: { Approved: null },
+    familyId: "norwood",
+  });
+
+  const requests = await upgraded.listRelationshipRequests();
+  const request = requests.find((r) => r.relatedPersonId === "erma");
+  expect(request).toBeDefined();
+  expect(request).toMatchObject({
+    requestingPersonId: "clayton",
+    relatedPersonId: "erma",
+    status: { Pending: null },
+    familyId: "norwood",
+  });
+
+  const stewards = await upgraded.listStewards();
+  const activeSteward = stewards.find((s) => "Active" in s.roleStatus);
+  expect(activeSteward).toBeDefined();
+  expect(activeSteward).toMatchObject({
+    roleStatus: { Active: null },
+    familyId: "norwood",
+  });
+
+  // The archive record survives with its original fields and its blob/media
+  // reference intact — the migration backfills familyId without resetting the
+  // collection or dropping the bytes.
+  const pending = await upgraded.listPendingArchiveItems();
+  const stored = pending.find((item) => item.id === written.id);
+  expect(stored).toBeDefined();
+  expect(stored).toMatchObject({
+    id: written.id,
+    title: "Pre-tenancy letter",
+    era: "1924",
+    tags: ["letters"],
+    status: { Pending: null },
+    mimeType: ["application/pdf"],
+    filename: ["pre-tenancy-letter.pdf"],
+    familyId: "norwood",
+  });
+  expect(stored?.blob).toEqual(archiveBlob);
+});

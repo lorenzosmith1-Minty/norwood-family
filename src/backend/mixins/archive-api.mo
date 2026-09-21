@@ -4,6 +4,7 @@ import Runtime "mo:core/Runtime";
 import Storage "mo:caffeineai-object-storage/Storage";
 import Time "mo:core/Time";
 import Types "../types/archive";
+import FamilyTypes "../types/family";
 import OwnershipTypes "../types/ownership";
 import GovernanceTypes "../types/governance";
 import ArchiveLib "../lib/archive";
@@ -118,6 +119,7 @@ mixin (
     let cleanBranch = InputValidation.requireOptionalText("relatedBranchId", relatedBranchId, InputValidation.MAX_LOCATION_CHARS);
     let cleanFilename = InputValidation.requireFilename(filename);
     let item : Types.ArchiveItem = {
+      familyId = FamilyTypes.DEFAULT_FAMILY_ID;
       id = nextArchiveItemId();
       title = cleanTitle;
       description = cleanDescription;

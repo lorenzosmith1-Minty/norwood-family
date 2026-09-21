@@ -97,6 +97,7 @@ const {
     createdAt: 1_700_000_000_000_000_000n,
     contributor: Principal.fromText("aaaaa-aa"),
     ...overrides,
+    familyId: overrides.familyId ?? "norwood",
   });
 
   const mockActor = {
@@ -113,6 +114,7 @@ const {
       );
       if (owned) return owned;
       return {
+        familyId: "norwood",
         personId: "self",
         name: "Self Norwood",
         livingStatus: LivingStatus.Living,
@@ -164,6 +166,7 @@ const {
       primarySpeaker: OralHistorySpeaker | null,
     ): Promise<ArchiveItem> {
       const item: ArchiveItem = {
+        familyId: "norwood",
         id: nextId++,
         title,
         description,
@@ -273,6 +276,7 @@ function renderApp() {
 /** Seeds Julia Norwood as a backend profile (the default Explore Family focus). */
 function seedJuliaProfile() {
   const profile: PersonProfile = {
+    familyId: "norwood",
     personId: "julia",
     name: "Julia Norwood",
     livingStatus: LivingStatus.Deceased,

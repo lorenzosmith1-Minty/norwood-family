@@ -132,6 +132,7 @@ const {
       return {
         __kind__: "ok",
         ok: {
+          familyId: "norwood",
           id: 1n,
           requestingPersonId: fromPersonId,
           relatedPersonId: toPersonId,
@@ -213,6 +214,7 @@ function seedClaimedLivingProfile(
   owner: string,
 ): PersonProfile {
   const profile: PersonProfile = {
+    familyId: "norwood",
     personId,
     name,
     livingStatus: LivingStatus.Living,
@@ -285,6 +287,7 @@ describe("Family relationships are never rewritten by the editor", () => {
     seedClaimedLivingProfile("clayton", "Clayton Norwood", OWNER);
     // Seed another family member so the relationship-person select has options.
     seedProfile({
+      familyId: "norwood",
       personId: "julia",
       name: "Julia “Julie” Norwood",
       livingStatus: LivingStatus.Deceased,
@@ -372,6 +375,7 @@ describe("Edit My Profile button gating on the profile page", () => {
 describe("Profile edit page gating states", () => {
   it("shows a not-editable state for a deceased profile", async () => {
     const profile: PersonProfile = {
+      familyId: "norwood",
       personId: "julia",
       name: "Julia “Julie” Norwood",
       livingStatus: LivingStatus.Deceased,
@@ -404,6 +408,7 @@ describe("Profile edit page gating states", () => {
 
   it("shows a not-claimed state for an unclaimed living profile", async () => {
     const profile: PersonProfile = {
+      familyId: "norwood",
       personId: "clayton",
       name: "Clayton Norwood",
       livingStatus: LivingStatus.Living,

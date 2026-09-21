@@ -132,6 +132,7 @@ const {
     },
     seedApprovedItem: (overrides: Partial<ArchiveItem> = {}) => {
       const item: ArchiveItem = {
+        familyId: "norwood",
         id: BigInt(approvedItems.length),
         title: "A family letter",
         description: "A letter from 1924.",
@@ -204,6 +205,7 @@ function renderApp() {
 // resolves an approved/owned profile — the approved-family-access signal.
 function seedApprovedMember(personId: string, name: string) {
   const profile: PersonProfile = {
+    familyId: "norwood",
     personId,
     name,
     livingStatus: LivingStatus.Living,

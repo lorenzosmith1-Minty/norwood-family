@@ -121,6 +121,7 @@ const juliaProfile: PagePersonProfile = {
 
 function seedCanonicalProfile() {
   seedProfile({
+    familyId: "norwood",
     personId: "julia",
     name: "Julia Norwood",
     livingStatus: LivingStatus.Living,

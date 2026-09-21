@@ -126,6 +126,7 @@ const {
       return {
         __kind__: "ok",
         ok: {
+          familyId: "norwood",
           id: 1n,
           requestingPersonId: fromPersonId,
           relatedPersonId: toPersonId,
@@ -200,6 +201,7 @@ function renderPage(node: React.ReactNode) {
 // Jersey' fact, a story, and a timeline — but no Birthplace or Occupation fact.
 function seedLulaMaeBackendProfile(): PersonProfile {
   const profile: PersonProfile = {
+    familyId: "norwood",
     personId: "lula-mae",
     name: "Lula Mae Norwood",
     livingStatus: LivingStatus.Living,
@@ -302,6 +304,7 @@ describe("Backend PersonProfile is the source of truth for hydration", () => {
     // The backend record carries a real currentLocation that differs from the
     // static canonical 'New York / New Jersey'. The backend value must win.
     seedProfile({
+      familyId: "norwood",
       personId: "lula-mae",
       name: "Lula Mae Norwood",
       livingStatus: LivingStatus.Living,

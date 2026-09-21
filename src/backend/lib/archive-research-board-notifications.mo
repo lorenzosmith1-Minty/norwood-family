@@ -2,6 +2,7 @@ import List "mo:core/List";
 import Principal "mo:core/Principal";
 import Storage "mo:caffeineai-object-storage/Storage";
 import ArchiveTypes "../types/archive";
+import FamilyTypes "../types/family";
 import ResearchIntakeTypes "../types/research-intake";
 import BoardTypes "../types/board";
 import OwnershipTypes "../types/ownership";
@@ -79,6 +80,7 @@ module {
     now : Int,
   ) : Types.SourceUploadResult {
     let archiveItem : ArchiveTypes.ArchiveItem = {
+      familyId = FamilyTypes.DEFAULT_FAMILY_ID;
       id = nextArchiveItemId(items);
       title;
       description;
@@ -141,6 +143,7 @@ module {
     };
     for (upload in newUploads.values()) {
       let item : ArchiveTypes.ArchiveItem = {
+        familyId = FamilyTypes.DEFAULT_FAMILY_ID;
         id = nextArchiveItemId(items);
         title = upload.title;
         description = upload.description;

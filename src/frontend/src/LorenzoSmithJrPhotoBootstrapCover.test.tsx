@@ -160,6 +160,7 @@ const waxxMintyProfile: PagePersonProfile = {
 
 function seedCanonicalProfile() {
   seedProfile({
+    familyId: "norwood",
     personId: "lorenzoSmithJr",
     name: "Lorenzo Smith Jr.",
     livingStatus: LivingStatus.Living,

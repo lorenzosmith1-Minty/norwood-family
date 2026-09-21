@@ -14,6 +14,7 @@ import List "mo:core/List";
 import Map "mo:core/Map";
 import Principal "mo:core/Principal";
 import Types "types/object-storage";
+import FamilyTypes "types/family";
 import ArchiveTypes "types/archive";
 import OwnershipTypes "types/ownership";
 import AccountIdentityTypes "types/account-identity";
@@ -24,6 +25,7 @@ import BoardTypes "types/board";
 import MessagingTypes "types/messaging";
 import ResearchIntakeTypes "types/research-intake";
 import ObjectStorageLib "lib/object-storage";
+import FamilyLib "lib/family";
 import FamilyAuthorizationLib "lib/family-authorization";
 import StewardAuthorityLib "lib/steward-authority";
 import ArchiveLib "lib/archive";
@@ -31,6 +33,7 @@ import OwnershipLib "lib/ownership";
 import AccountIdentityLib "lib/account-identity";
 import RecipesLib "lib/recipes";
 import ObjectStorageApi "mixins/object-storage-api";
+import FamilyApi "mixins/family-api";
 import ArchiveApi "mixins/archive-api";
 import OwnershipApi "mixins/ownership-api";
 import ClaimPersistenceApi "mixins/claim-persistence-api";
@@ -51,6 +54,7 @@ import ApiDocMixin "mixins/api-doc";
 
 actor {
   let accessControlState : AccessControl.AccessControlState;
+  let families : Map.Map<FamilyTypes.FamilyId, FamilyTypes.Family>;
   let galleries : Map.Map<Types.PersonId, Types.PhotoGallery>;
   let archiveItems : List.List<ArchiveTypes.ArchiveItem>;
   let profiles : Map.Map<OwnershipTypes.PersonId, OwnershipTypes.PersonProfile>;
@@ -262,6 +266,26 @@ actor {
   include MixinAuthorization(accessControlState, null);
   include Expose({
     entities = [
+      OQL.Entity.manual<FamilyTypes.Family>(
+        "family",
+        func() : Iter.Iter<FamilyTypes.Family> = FamilyLib.familyRows(families).values(),
+        "Family",
+        "id",
+      )
+      .sample({
+        id = "";
+        displayName = "";
+        createdAt = 0;
+        createdBy = Principal.fromText("aaaaa-aa");
+        status = #active;
+      })
+      .payload("id", func r = r.id)
+      .payload("displayName", func r = r.displayName)
+      .payload("createdAt", func r = r.createdAt)
+      .payload("createdBy", func r = r.createdBy.toText())
+      .payload("status", func r = switch (r.status) { case (#active) "active"; case (#archived) "archived" })
+      .controllerOnly()
+      .build(),
       OQL.Entity.build(
         OQL.Entity.new<Types.PhotoRow>(
           "photo",
@@ -288,6 +312,7 @@ actor {
         "id",
       )
       .sample({
+        familyId = "";
         id = 0;
         title = "";
         itemType = "";
@@ -304,6 +329,7 @@ actor {
         filename = "";
         tags = "";
       })
+      .payload("familyId", func r = r.familyId)
       .payload("id", func r = r.id)
       .payload("title", func r = r.title)
       .payload("itemType", func r = r.itemType)
@@ -329,6 +355,7 @@ actor {
         "personId",
       )
       .sample({
+        familyId = "";
         personId = "";
         name = "";
         livingStatus = "";
@@ -359,6 +386,7 @@ actor {
         "id",
       )
       .sample({
+        familyId = "";
         id = 0;
         personId = "";
         requestingUserId = "";
@@ -376,6 +404,7 @@ actor {
         "id",
       )
       .sample({
+        familyId = "";
         id = 0;
         requestingPersonId = "";
         relatedPersonId = "";
@@ -394,6 +423,7 @@ actor {
         "id",
       )
       .sample({
+        familyId = "";
         id = 0;
         fromPersonId = "";
         toPersonId = "";
@@ -439,12 +469,14 @@ actor {
         "stewardAccountId",
       )
       .sample({
+        familyId = "";
         stewardAccountId = Principal.fromText("aaaaa-aa");
         roleStatus = #Active;
         successorPriority = null;
         assignedBy = Principal.fromText("aaaaa-aa");
         assignedAt = 0;
       })
+      .payload("familyId", func r = r.familyId)
       .payload("stewardAccountId", func r = r.stewardAccountId.toText())
       .payload("roleStatus", func r = switch (r.roleStatus) { case (#Active) "Active"; case (#Removed) "Removed" })
       .payload("successorPriority", func r = r.successorPriority ?? 0)
@@ -1049,6 +1081,7 @@ actor {
     ];
   });
   include MixinObjectStorage();
+  include FamilyApi(families);
   include ObjectStorageApi(galleries, claims, profiles, stewards);
   include ArchiveApi(archiveItems, claims, stewards, notifications);
   include OwnershipApi(accessControlState, profiles, claims, confirmedRelationships, relationshipRequests, notifications, auditLog, stewards);

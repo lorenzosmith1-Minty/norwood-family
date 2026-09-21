@@ -174,6 +174,7 @@ function seedClaimedProfile(
   preferredName?: string,
 ): PersonProfile {
   const profile: PersonProfile = {
+    familyId: "norwood",
     personId,
     name,
     livingStatus: LivingStatus.Living,

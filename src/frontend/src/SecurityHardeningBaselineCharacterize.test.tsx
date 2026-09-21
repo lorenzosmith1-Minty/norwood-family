@@ -233,6 +233,7 @@ describe("Archive Detail preview survives the PDF renderer change", () => {
     // and no iframe is introduced anywhere in the preview path.
     const { ArchiveDetailPage } = await import("./pages/ArchiveDetailPage");
     const item: ArchiveItem = {
+      familyId: "norwood",
       id: 1n,
       title: "Deed scan",
       description: "A scanned deed.",
@@ -290,6 +291,7 @@ describe("Archive Detail preview survives the PDF renderer change", () => {
   it("renders an image preview as an <img> rather than an iframe", async () => {
     const { ArchiveDetailPage } = await import("./pages/ArchiveDetailPage");
     const item: ArchiveItem = {
+      familyId: "norwood",
       id: 2n,
       title: "Portrait scan",
       description: "A scanned portrait.",
@@ -338,6 +340,7 @@ describe("Archive Detail preview survives the PDF renderer change", () => {
   it("offers Download Original only for a non-previewable Word document", async () => {
     const { ArchiveDetailPage } = await import("./pages/ArchiveDetailPage");
     const item: ArchiveItem = {
+      familyId: "norwood",
       id: 3n,
       title: "Family notes",
       description: "Word notes.",

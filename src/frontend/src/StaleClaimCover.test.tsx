@@ -150,6 +150,7 @@ function renderPage(node: React.ReactNode) {
 
 function seedLivingUnclaimed(personId: string, name: string): PersonProfile {
   const profile: PersonProfile = {
+    familyId: "norwood",
     personId,
     name,
     livingStatus: LivingStatus.Living,
@@ -168,6 +169,7 @@ function seedLivingUnclaimed(personId: string, name: string): PersonProfile {
 
 function claimFor(personId: string, status: ProfileClaimStatus): ProfileClaim {
   return {
+    familyId: "norwood",
     id: 1n,
     personId,
     requestingUserId: Principal.fromText(ACCOUNT),

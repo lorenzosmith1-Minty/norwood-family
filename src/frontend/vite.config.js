@@ -17,9 +17,6 @@ export default defineConfig({
     sourcemap: false,
     minify: false,
   },
-  css: {
-    postcss: "./postcss.config.js",
-  },
   optimizeDeps: {
     esbuildOptions: {
       define: {

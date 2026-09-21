@@ -155,6 +155,7 @@ function renderApp() {
 
 function seedClaimedProfile(personId: string, name: string): PersonProfile {
   const profile: PersonProfile = {
+    familyId: "norwood",
     personId,
     name,
     livingStatus: LivingStatus.Living,

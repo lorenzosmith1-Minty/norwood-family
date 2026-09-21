@@ -66,6 +66,7 @@ const { mockActor, resetArchive, seedApproved, seedPending, seedRejected } =
       createdAt: 1_700_000_000_000_000_000n,
       contributor: Principal.fromText("aaaaa-aa"),
       ...overrides,
+      familyId: overrides.familyId ?? "norwood",
     });
 
     const mockActor = {

@@ -261,6 +261,7 @@ const {
       // Mirrors the backend contract: creates ONE canonical Archive item
       // (pending) and links a new Source record to it via archiveItemId.
       const archiveItem: ArchiveItem = {
+        familyId: "norwood",
         id: 1n,
         title,
         description,
@@ -599,6 +600,7 @@ function renderApp() {
 
 function claimedProfile(personId: string, name: string): PersonProfile {
   return {
+    familyId: "norwood",
     personId,
     name,
     livingStatus: LivingStatus.Living,
@@ -721,6 +723,7 @@ describe("Research Intake: record a source", () => {
     // Seed an approved archive item the source can link to.
     setApprovedItems([
       {
+        familyId: "norwood",
         id: 12n,
         title: "1900 census record",
         description: "Census record listing the Norwood family.",

@@ -114,6 +114,7 @@ describe("useNavbarIdentity display-name resolution", () => {
   it("resolves the canonical display name from a claimed profile", async () => {
     setAuthenticated(true);
     setProfile({
+      familyId: "norwood",
       personId: "lorenzoSmithJr",
       name: "Lorenzo Smith Jr.",
       preferredName: "Waxx Minty",
@@ -137,6 +138,7 @@ describe("useNavbarIdentity display-name resolution", () => {
   it("reports a pending claim as pending with the profile's display name", async () => {
     setAuthenticated(true);
     setProfile({
+      familyId: "norwood",
       personId: "lorenzoSmithJr",
       name: "Lorenzo Smith Jr.",
       preferredName: undefined,

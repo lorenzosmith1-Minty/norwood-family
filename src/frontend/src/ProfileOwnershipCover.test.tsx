@@ -127,6 +127,7 @@ const {
       if (profile.claimStatus === ClaimStatus.Claimed)
         return { __kind__: "err", err: "AlreadyClaimed" };
       const claim: ProfileClaim = {
+        familyId: "norwood",
         id: nextClaimId++,
         personId,
         requestingUserId: principal(),
@@ -223,6 +224,7 @@ const {
     > {
       const personId = currentPrincipal;
       const profile: PersonProfile = {
+        familyId: "norwood",
         personId,
         name,
         livingStatus: LivingStatus.Living,
@@ -247,6 +249,7 @@ const {
       | { __kind__: "err"; err: string }
     > {
       const request: RelationshipRequest = {
+        familyId: "norwood",
         id: nextRequestId++,
         requestingPersonId: fromPersonId,
         relatedPersonId: toPersonId,
@@ -295,6 +298,7 @@ const {
       confirmed = [
         ...confirmed,
         {
+          familyId: "norwood",
           id: nextRelId++,
           fromPersonId: request.requestingPersonId,
           toPersonId: request.relatedPersonId,
@@ -475,6 +479,7 @@ function renderPage(node: React.ReactNode) {
 // in the frontend profiles record.
 function seedLivingUnclaimed(personId: string, name: string) {
   const profile: PersonProfile = {
+    familyId: "norwood",
     personId,
     name,
     livingStatus: LivingStatus.Living,
@@ -498,6 +503,7 @@ function seedLivingUnclaimed(personId: string, name: string) {
 // see the family graph and reach a person's profile page through it.
 function seedApprovedMember(personId: string, name: string) {
   const profile: PersonProfile = {
+    familyId: "norwood",
     personId,
     name,
     livingStatus: LivingStatus.Living,
@@ -515,6 +521,7 @@ function seedApprovedMember(personId: string, name: string) {
 
 function seedDeceased(personId: string, name: string) {
   const profile: PersonProfile = {
+    familyId: "norwood",
     personId,
     name,
     livingStatus: LivingStatus.Deceased,
@@ -579,6 +586,7 @@ describe("Profile claim flow", () => {
   it("shows a pending state on the claim button when the user already has a pending claim", async () => {
     seedLivingUnclaimed("clayton", "Clayton Norwood");
     seedClaim({
+      familyId: "norwood",
       id: 1n,
       personId: "clayton",
       requestingUserId: Principal.fromText(USER_1),
@@ -643,6 +651,7 @@ describe("Profile claim flow", () => {
     mockActor.getPersonProfile = async (id: string) =>
       id === "clayton"
         ? {
+            familyId: "norwood",
             personId: "clayton",
             name: "Clayton Norwood",
             livingStatus: LivingStatus.Living,
@@ -750,6 +759,7 @@ describe("Family Steward review", () => {
     setAdmin(true);
     // Seed a pending claim from another user.
     seedClaim({
+      familyId: "norwood",
       id: 1n,
       personId: "clayton",
       requestingUserId: Principal.fromText(CLAIMANT),
@@ -776,6 +786,7 @@ describe("Family Steward review", () => {
     setCurrentPrincipal(STEWARD);
     setAdmin(true);
     seedRequest({
+      familyId: "norwood",
       id: 1n,
       requestingPersonId: NEW_USER,
       relatedPersonId: "clayton",
@@ -875,6 +886,7 @@ describe("Profile owner editing", () => {
     setAuthenticated(true);
     setCurrentPrincipal(OWNER);
     seedProfile({
+      familyId: "norwood",
       personId: "clayton",
       name: "Clayton Norwood",
       livingStatus: LivingStatus.Living,
@@ -909,6 +921,7 @@ describe("Profile owner editing", () => {
     setAuthenticated(true);
     setCurrentPrincipal(OTHER_USER);
     seedProfile({
+      familyId: "norwood",
       personId: "clayton",
       name: "Clayton Norwood",
       livingStatus: LivingStatus.Living,

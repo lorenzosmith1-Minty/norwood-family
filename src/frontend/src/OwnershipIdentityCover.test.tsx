@@ -105,6 +105,7 @@ const {
       if (profile.claimStatus === ClaimStatus.Claimed)
         return { __kind__: "err", err: "AlreadyClaimed" };
       const claim: ProfileClaim = {
+        familyId: "norwood",
         id: nextClaimId++,
         personId,
         requestingUserId: principal(),
@@ -209,6 +210,7 @@ function renderPage(node: React.ReactNode) {
 
 function seedLivingUnclaimed(personId: string, name: string): PersonProfile {
   const profile: PersonProfile = {
+    familyId: "norwood",
     personId,
     name,
     livingStatus: LivingStatus.Living,
@@ -305,6 +307,7 @@ describe("Navbar never renders the raw account ID as the visible name", () => {
     setCurrentPrincipal(ACCOUNT);
     // The account is linked to the approved Lorenzo Smith Jr. profile.
     setMyProfile({
+      familyId: "norwood",
       personId: "lorenzoSmithJr",
       name: "Lorenzo Smith Jr.",
       livingStatus: LivingStatus.Living,
@@ -335,6 +338,7 @@ describe("Navbar never renders the raw account ID as the visible name", () => {
     setCurrentPrincipal(ACCOUNT);
     // The account has a pending (unclaimed) profile awaiting steward review.
     setMyProfile({
+      familyId: "norwood",
       personId: "lorenzoSmithJr",
       name: "Lorenzo Smith Jr.",
       livingStatus: LivingStatus.Living,

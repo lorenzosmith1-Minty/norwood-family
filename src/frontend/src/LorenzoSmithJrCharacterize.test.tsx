@@ -68,6 +68,7 @@ const {
     async getMyProfile(): Promise<PersonProfile | null> {
       if (!isAuthenticated) return null;
       return {
+        familyId: "norwood",
         personId: "self",
         name: "Self Norwood",
         livingStatus: LivingStatus.Living,
@@ -155,6 +156,7 @@ function renderApp() {
 
 function seedLivingUnclaimed(personId: string, name: string): PersonProfile {
   const profile: PersonProfile = {
+    familyId: "norwood",
     personId,
     name,
     livingStatus: LivingStatus.Living,
@@ -218,6 +220,7 @@ describe("Explore Family renders the confirmed graph regardless of claim state",
     // signed-in account has a pending claim on it.
     seedLivingUnclaimed("lorenzoSmithJr", "Lorenzo Smith Jr.");
     seedClaim({
+      familyId: "norwood",
       id: 1n,
       personId: "lorenzoSmithJr",
       requestingUserId: Principal.fromText(ACCOUNT),

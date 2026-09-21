@@ -76,6 +76,7 @@ const { mockActor, resetState, seedProfile, seedProfilePhoto } = vi.hoisted(
       },
       async getMyProfile(): Promise<PersonProfile | null> {
         return {
+          familyId: "norwood",
           personId: "self",
           name: "Self Norwood",
           livingStatus: LivingStatus.Living,
@@ -190,6 +191,7 @@ function renderApp() {
 
 function seedWaxxMintyProfile(): PersonProfile {
   const profile: PersonProfile = {
+    familyId: "norwood",
     personId: "lorenzoSmithJr",
     name: "Lorenzo Smith Jr.",
     livingStatus: LivingStatus.Living,

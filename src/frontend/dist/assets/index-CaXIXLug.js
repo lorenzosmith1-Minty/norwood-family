@@ -34201,6 +34201,14 @@ const ArchiveSearchFilter = Record({
   "searchTerm": Opt(Text),
   "itemType": Opt(ArchiveItemType$1)
 });
+const ArchiveSearchQuery = Record({
+  "era": Opt(Text),
+  "relatedMemberId": Opt(Text),
+  "tags": Vec(Text),
+  "searchTerm": Opt(Text),
+  "itemType": Opt(ArchiveItemType$1),
+  "familyId": Text
+});
 const PersonMatch = Record({
   "name": Text,
   "personId": PersonId,
@@ -34306,6 +34314,11 @@ Service({
     []
   ),
   "approveArchiveItem": Func([ArchiveItemId], [Opt(ArchiveItem)], []),
+  "approveArchiveItemForFamily": Func(
+    [FamilyId, ArchiveItemId],
+    [Opt(ArchiveItem)],
+    []
+  ),
   "approveFinding": Func([FindingId], [Opt(ProposedFinding)], []),
   "approveNewPersonCandidate": Func(
     [Nat],
@@ -34384,6 +34397,20 @@ Service({
     [Post],
     []
   ),
+  "createBoardPostWithMediaForFamily": Func(
+    [
+      FamilyId,
+      PostType$1,
+      Opt(Text),
+      Text,
+      Vec(Text),
+      Vec(Nat),
+      Vec(BoardMediaUpload),
+      Vec(Text)
+    ],
+    [Post],
+    []
+  ),
   "createCanonicalMystery": Func(
     [
       Text,
@@ -34448,9 +34475,34 @@ Service({
     [Result_17],
     []
   ),
+  "createSourceWithUploadForFamily": Func(
+    [
+      FamilyId,
+      Text,
+      SourceType$1,
+      Text,
+      Text,
+      ExternalBlob2,
+      Vec(Text),
+      Text,
+      Opt(Nat),
+      Vec(Text),
+      PrivacyLevel$1,
+      ArchiveItemClassification$1,
+      Opt(OralHistorySpeaker),
+      Text
+    ],
+    [Result_17],
+    []
+  ),
   "designateSuccessor": Func([PersonId, Nat], [Result_16], []),
   "execute": Func([Text], [Result__1], ["query"]),
   "getApiDoc": Func([], [Text], ["query"]),
+  "getArchiveItemForFamily": Func(
+    [FamilyId, ArchiveItemId],
+    [Opt(ArchiveItem)],
+    ["query"]
+  ),
   "getBoardPost": Func([PostId], [Opt(Post)], ["query"]),
   "getCallerUserRole": Func([], [UserRole], ["query"]),
   "getConversation": Func(
@@ -34489,6 +34541,11 @@ Service({
     ["query"]
   ),
   "getPendingContributionsCount": Func([], [Nat], ["query"]),
+  "getPendingContributionsCountForFamily": Func(
+    [FamilyId],
+    [Nat],
+    ["query"]
+  ),
   "getPersonProfile": Func(
     [PersonId],
     [Opt(PersonProfile)],
@@ -34544,6 +34601,11 @@ Service({
   "isCallerAdmin": Func([], [Bool], ["query"]),
   "isCallerSteward": Func([], [Bool], ["query"]),
   "listApprovedArchiveItems": Func([], [Vec(ArchiveItem)], ["query"]),
+  "listApprovedArchiveItemsForFamily": Func(
+    [FamilyId],
+    [Vec(ArchiveItem)],
+    ["query"]
+  ),
   "listApprovedRecipes": Func([], [Vec(Recipe)], ["query"]),
   "listApprovedStories": Func([], [Vec(Story)], ["query"]),
   "listArchivedProfileIds": Func([], [Vec(PersonId)], ["query"]),
@@ -34600,6 +34662,11 @@ Service({
   ),
   "listNotifications": Func([], [Vec(Notification)], ["query"]),
   "listPendingArchiveItems": Func([], [Vec(ArchiveItem)], ["query"]),
+  "listPendingArchiveItemsForFamily": Func(
+    [FamilyId],
+    [Vec(ArchiveItem)],
+    ["query"]
+  ),
   "listPendingMysteryContributions": Func(
     [],
     [Vec(MysteryContribution)],
@@ -34720,6 +34787,11 @@ Service({
   ),
   "reconcileClaimNotifications": Func([Nat], [Nat], []),
   "rejectArchiveItem": Func([ArchiveItemId], [Opt(ArchiveItem)], []),
+  "rejectArchiveItemForFamily": Func(
+    [FamilyId, ArchiveItemId],
+    [Opt(ArchiveItem)],
+    []
+  ),
   "rejectFinding": Func([FindingId], [Opt(ProposedFinding)], []),
   "rejectNewPersonCandidate": Func(
     [Nat],
@@ -34802,6 +34874,11 @@ Service({
     [Vec(ArchiveItem)],
     ["query"]
   ),
+  "searchArchiveItemsForFamily": Func(
+    [FamilyId, ArchiveSearchQuery],
+    [Vec(ArchiveItem)],
+    ["query"]
+  ),
   "searchBoardPostsByTags": Func(
     [Vec(Text)],
     [Vec(Post)],
@@ -34836,6 +34913,28 @@ Service({
   ),
   "submitArchiveItem": Func(
     [
+      Text,
+      Text,
+      ArchiveItemType$1,
+      Text,
+      ExternalBlob2,
+      Text,
+      Opt(Nat),
+      Vec(Text),
+      Vec(Text),
+      Opt(Text),
+      SourceStatus$1,
+      PrivacyLevel$1,
+      ArchiveItemClassification$1,
+      Opt(OralHistorySpeaker),
+      Text
+    ],
+    [ArchiveItem],
+    []
+  ),
+  "submitArchiveItemForFamily": Func(
+    [
+      FamilyId,
       Text,
       Text,
       ArchiveItemType$1,
@@ -35930,6 +36029,14 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "searchTerm": IDL2.Opt(IDL2.Text),
     "itemType": IDL2.Opt(ArchiveItemType2)
   });
+  const ArchiveSearchQuery2 = IDL2.Record({
+    "era": IDL2.Opt(IDL2.Text),
+    "relatedMemberId": IDL2.Opt(IDL2.Text),
+    "tags": IDL2.Vec(IDL2.Text),
+    "searchTerm": IDL2.Opt(IDL2.Text),
+    "itemType": IDL2.Opt(ArchiveItemType2),
+    "familyId": IDL2.Text
+  });
   const PersonMatch2 = IDL2.Record({
     "name": IDL2.Text,
     "personId": PersonId2,
@@ -36039,6 +36146,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [IDL2.Opt(ArchiveItem2)],
       []
     ),
+    "approveArchiveItemForFamily": IDL2.Func(
+      [FamilyId2, ArchiveItemId2],
+      [IDL2.Opt(ArchiveItem2)],
+      []
+    ),
     "approveFinding": IDL2.Func([FindingId2], [IDL2.Opt(ProposedFinding2)], []),
     "approveNewPersonCandidate": IDL2.Func(
       [IDL2.Nat],
@@ -36117,6 +36229,20 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [Post2],
       []
     ),
+    "createBoardPostWithMediaForFamily": IDL2.Func(
+      [
+        FamilyId2,
+        PostType2,
+        IDL2.Opt(IDL2.Text),
+        IDL2.Text,
+        IDL2.Vec(IDL2.Text),
+        IDL2.Vec(IDL2.Nat),
+        IDL2.Vec(BoardMediaUpload2),
+        IDL2.Vec(IDL2.Text)
+      ],
+      [Post2],
+      []
+    ),
     "createCanonicalMystery": IDL2.Func(
       [
         IDL2.Text,
@@ -36181,9 +36307,34 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [Result_172],
       []
     ),
+    "createSourceWithUploadForFamily": IDL2.Func(
+      [
+        FamilyId2,
+        IDL2.Text,
+        SourceType2,
+        IDL2.Text,
+        IDL2.Text,
+        ExternalBlob3,
+        IDL2.Vec(IDL2.Text),
+        IDL2.Text,
+        IDL2.Opt(IDL2.Nat),
+        IDL2.Vec(IDL2.Text),
+        PrivacyLevel2,
+        ArchiveItemClassification2,
+        IDL2.Opt(OralHistorySpeaker2),
+        IDL2.Text
+      ],
+      [Result_172],
+      []
+    ),
     "designateSuccessor": IDL2.Func([PersonId2, IDL2.Nat], [Result_162], []),
     "execute": IDL2.Func([IDL2.Text], [Result__12], ["query"]),
     "getApiDoc": IDL2.Func([], [IDL2.Text], ["query"]),
+    "getArchiveItemForFamily": IDL2.Func(
+      [FamilyId2, ArchiveItemId2],
+      [IDL2.Opt(ArchiveItem2)],
+      ["query"]
+    ),
     "getBoardPost": IDL2.Func([PostId2], [IDL2.Opt(Post2)], ["query"]),
     "getCallerUserRole": IDL2.Func([], [UserRole2], ["query"]),
     "getConversation": IDL2.Func(
@@ -36222,6 +36373,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
       ["query"]
     ),
     "getPendingContributionsCount": IDL2.Func([], [IDL2.Nat], ["query"]),
+    "getPendingContributionsCountForFamily": IDL2.Func(
+      [FamilyId2],
+      [IDL2.Nat],
+      ["query"]
+    ),
     "getPersonProfile": IDL2.Func(
       [PersonId2],
       [IDL2.Opt(PersonProfile2)],
@@ -36278,6 +36434,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "isCallerSteward": IDL2.Func([], [IDL2.Bool], ["query"]),
     "listApprovedArchiveItems": IDL2.Func(
       [],
+      [IDL2.Vec(ArchiveItem2)],
+      ["query"]
+    ),
+    "listApprovedArchiveItemsForFamily": IDL2.Func(
+      [FamilyId2],
       [IDL2.Vec(ArchiveItem2)],
       ["query"]
     ),
@@ -36349,6 +36510,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
     ),
     "listNotifications": IDL2.Func([], [IDL2.Vec(Notification2)], ["query"]),
     "listPendingArchiveItems": IDL2.Func([], [IDL2.Vec(ArchiveItem2)], ["query"]),
+    "listPendingArchiveItemsForFamily": IDL2.Func(
+      [FamilyId2],
+      [IDL2.Vec(ArchiveItem2)],
+      ["query"]
+    ),
     "listPendingMysteryContributions": IDL2.Func(
       [],
       [IDL2.Vec(MysteryContribution2)],
@@ -36477,6 +36643,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
     ),
     "reconcileClaimNotifications": IDL2.Func([IDL2.Nat], [IDL2.Nat], []),
     "rejectArchiveItem": IDL2.Func([ArchiveItemId2], [IDL2.Opt(ArchiveItem2)], []),
+    "rejectArchiveItemForFamily": IDL2.Func(
+      [FamilyId2, ArchiveItemId2],
+      [IDL2.Opt(ArchiveItem2)],
+      []
+    ),
     "rejectFinding": IDL2.Func([FindingId2], [IDL2.Opt(ProposedFinding2)], []),
     "rejectNewPersonCandidate": IDL2.Func(
       [IDL2.Nat],
@@ -36559,6 +36730,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [IDL2.Vec(ArchiveItem2)],
       ["query"]
     ),
+    "searchArchiveItemsForFamily": IDL2.Func(
+      [FamilyId2, ArchiveSearchQuery2],
+      [IDL2.Vec(ArchiveItem2)],
+      ["query"]
+    ),
     "searchBoardPostsByTags": IDL2.Func(
       [IDL2.Vec(IDL2.Text)],
       [IDL2.Vec(Post2)],
@@ -36593,6 +36769,28 @@ const idlFactory = ({ IDL: IDL2 }) => {
     ),
     "submitArchiveItem": IDL2.Func(
       [
+        IDL2.Text,
+        IDL2.Text,
+        ArchiveItemType2,
+        IDL2.Text,
+        ExternalBlob3,
+        IDL2.Text,
+        IDL2.Opt(IDL2.Nat),
+        IDL2.Vec(IDL2.Text),
+        IDL2.Vec(IDL2.Text),
+        IDL2.Opt(IDL2.Text),
+        SourceStatus2,
+        PrivacyLevel2,
+        ArchiveItemClassification2,
+        IDL2.Opt(OralHistorySpeaker2),
+        IDL2.Text
+      ],
+      [ArchiveItem2],
+      []
+    ),
+    "submitArchiveItemForFamily": IDL2.Func(
+      [
+        FamilyId2,
         IDL2.Text,
         IDL2.Text,
         ArchiveItemType2,
@@ -37223,6 +37421,20 @@ class Backend {
       return from_candid_opt_n38(this._uploadFile, this._downloadFile, result);
     }
   }
+  async approveArchiveItemForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.approveArchiveItemForFamily(arg0, arg1);
+        return from_candid_opt_n38(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.approveArchiveItemForFamily(arg0, arg1);
+      return from_candid_opt_n38(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async approveFinding(arg0) {
     if (this.processError) {
       try {
@@ -37545,6 +37757,20 @@ class Backend {
       return from_candid_Post_n91(this._uploadFile, this._downloadFile, result);
     }
   }
+  async createBoardPostWithMediaForFamily(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.createBoardPostWithMediaForFamily(arg0, to_candid_PostType_n115(this._uploadFile, this._downloadFile, arg1), to_candid_opt_n18(this._uploadFile, this._downloadFile, arg2), arg3, arg4, arg5, await to_candid_vec_n116(this._uploadFile, this._downloadFile, arg6), arg7);
+        return from_candid_Post_n91(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.createBoardPostWithMediaForFamily(arg0, to_candid_PostType_n115(this._uploadFile, this._downloadFile, arg1), to_candid_opt_n18(this._uploadFile, this._downloadFile, arg2), arg3, arg4, arg5, await to_candid_vec_n116(this._uploadFile, this._downloadFile, arg6), arg7);
+      return from_candid_Post_n91(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async createCanonicalMystery(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) {
     if (this.processError) {
       try {
@@ -37657,6 +37883,20 @@ class Backend {
       return from_candid_Result_17_n155(this._uploadFile, this._downloadFile, result);
     }
   }
+  async createSourceWithUploadForFamily(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.createSourceWithUploadForFamily(arg0, arg1, to_candid_SourceType_n135(this._uploadFile, this._downloadFile, arg2), arg3, arg4, await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg5), arg6, arg7, to_candid_opt_n19(this._uploadFile, this._downloadFile, arg8), arg9, to_candid_PrivacyLevel_n119(this._uploadFile, this._downloadFile, arg10), to_candid_ArchiveItemClassification_n124(this._uploadFile, this._downloadFile, arg11), to_candid_opt_n154(this._uploadFile, this._downloadFile, arg12), arg13);
+        return from_candid_Result_17_n155(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.createSourceWithUploadForFamily(arg0, arg1, to_candid_SourceType_n135(this._uploadFile, this._downloadFile, arg2), arg3, arg4, await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg5), arg6, arg7, to_candid_opt_n19(this._uploadFile, this._downloadFile, arg8), arg9, to_candid_PrivacyLevel_n119(this._uploadFile, this._downloadFile, arg10), to_candid_ArchiveItemClassification_n124(this._uploadFile, this._downloadFile, arg11), to_candid_opt_n154(this._uploadFile, this._downloadFile, arg12), arg13);
+      return from_candid_Result_17_n155(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async designateSuccessor(arg0, arg1) {
     if (this.processError) {
       try {
@@ -37697,6 +37937,20 @@ class Backend {
     } else {
       const result = await this.actor.getApiDoc();
       return result;
+    }
+  }
+  async getArchiveItemForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getArchiveItemForFamily(arg0, arg1);
+        return from_candid_opt_n38(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getArchiveItemForFamily(arg0, arg1);
+      return from_candid_opt_n38(this._uploadFile, this._downloadFile, result);
     }
   }
   async getBoardPost(arg0) {
@@ -37892,6 +38146,20 @@ class Backend {
       }
     } else {
       const result = await this.actor.getPendingContributionsCount();
+      return result;
+    }
+  }
+  async getPendingContributionsCountForFamily(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getPendingContributionsCountForFamily(arg0);
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getPendingContributionsCountForFamily(arg0);
       return result;
     }
   }
@@ -38158,6 +38426,20 @@ class Backend {
       }
     } else {
       const result = await this.actor.listApprovedArchiveItems();
+      return from_candid_vec_n216(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listApprovedArchiveItemsForFamily(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listApprovedArchiveItemsForFamily(arg0);
+        return from_candid_vec_n216(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listApprovedArchiveItemsForFamily(arg0);
       return from_candid_vec_n216(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -38494,6 +38776,20 @@ class Backend {
       }
     } else {
       const result = await this.actor.listPendingArchiveItems();
+      return from_candid_vec_n216(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listPendingArchiveItemsForFamily(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listPendingArchiveItemsForFamily(arg0);
+        return from_candid_vec_n216(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listPendingArchiveItemsForFamily(arg0);
       return from_candid_vec_n216(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -39001,6 +39297,20 @@ class Backend {
       return from_candid_opt_n38(this._uploadFile, this._downloadFile, result);
     }
   }
+  async rejectArchiveItemForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.rejectArchiveItemForFamily(arg0, arg1);
+        return from_candid_opt_n38(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.rejectArchiveItemForFamily(arg0, arg1);
+      return from_candid_opt_n38(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async rejectFinding(arg0) {
     if (this.processError) {
       try {
@@ -39421,6 +39731,20 @@ class Backend {
       return from_candid_vec_n216(this._uploadFile, this._downloadFile, result);
     }
   }
+  async searchArchiveItemsForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.searchArchiveItemsForFamily(arg0, to_candid_ArchiveSearchQuery_n306(this._uploadFile, this._downloadFile, arg1));
+        return from_candid_vec_n216(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.searchArchiveItemsForFamily(arg0, to_candid_ArchiveSearchQuery_n306(this._uploadFile, this._downloadFile, arg1));
+      return from_candid_vec_n216(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async searchBoardPostsByTags(arg0) {
     if (this.processError) {
       try {
@@ -39467,14 +39791,14 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.sendMessage(arg0, arg1);
-        return from_candid_Result_1_n306(this._uploadFile, this._downloadFile, result);
+        return from_candid_Result_1_n308(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.sendMessage(arg0, arg1);
-      return from_candid_Result_1_n306(this._uploadFile, this._downloadFile, result);
+      return from_candid_Result_1_n308(this._uploadFile, this._downloadFile, result);
     }
   }
   async setProfilePhoto(arg0, arg1) {
@@ -39547,17 +39871,31 @@ class Backend {
       return from_candid_ArchiveItem_n39(this._uploadFile, this._downloadFile, result);
     }
   }
+  async submitArchiveItemForFamily(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.submitArchiveItemForFamily(arg0, arg1, arg2, to_candid_ArchiveItemType_n122(this._uploadFile, this._downloadFile, arg3), arg4, await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg5), arg6, to_candid_opt_n19(this._uploadFile, this._downloadFile, arg7), arg8, arg9, to_candid_opt_n18(this._uploadFile, this._downloadFile, arg10), to_candid_SourceStatus_n123(this._uploadFile, this._downloadFile, arg11), to_candid_PrivacyLevel_n119(this._uploadFile, this._downloadFile, arg12), to_candid_ArchiveItemClassification_n124(this._uploadFile, this._downloadFile, arg13), to_candid_opt_n154(this._uploadFile, this._downloadFile, arg14), arg15);
+        return from_candid_ArchiveItem_n39(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.submitArchiveItemForFamily(arg0, arg1, arg2, to_candid_ArchiveItemType_n122(this._uploadFile, this._downloadFile, arg3), arg4, await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg5), arg6, to_candid_opt_n19(this._uploadFile, this._downloadFile, arg7), arg8, arg9, to_candid_opt_n18(this._uploadFile, this._downloadFile, arg10), to_candid_SourceStatus_n123(this._uploadFile, this._downloadFile, arg11), to_candid_PrivacyLevel_n119(this._uploadFile, this._downloadFile, arg12), to_candid_ArchiveItemClassification_n124(this._uploadFile, this._downloadFile, arg13), to_candid_opt_n154(this._uploadFile, this._downloadFile, arg14), arg15);
+      return from_candid_ArchiveItem_n39(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async submitMysteryContribution(arg0, arg1, arg2) {
     if (this.processError) {
       try {
-        const result = await this.actor.submitMysteryContribution(arg0, to_candid_MysteryContributionType_n309(this._uploadFile, this._downloadFile, arg1), arg2);
+        const result = await this.actor.submitMysteryContribution(arg0, to_candid_MysteryContributionType_n311(this._uploadFile, this._downloadFile, arg1), arg2);
         return from_candid_MysteryContribution_n246(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.submitMysteryContribution(arg0, to_candid_MysteryContributionType_n309(this._uploadFile, this._downloadFile, arg1), arg2);
+      const result = await this.actor.submitMysteryContribution(arg0, to_candid_MysteryContributionType_n311(this._uploadFile, this._downloadFile, arg1), arg2);
       return from_candid_MysteryContribution_n246(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -39648,29 +39986,29 @@ class Backend {
   async updateOwnProfile(arg0, arg1) {
     if (this.processError) {
       try {
-        const result = await this.actor.updateOwnProfile(arg0, to_candid_ProfileEdits_n310(this._uploadFile, this._downloadFile, arg1));
-        return from_candid_Result_n313(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.updateOwnProfile(arg0, to_candid_ProfileEdits_n312(this._uploadFile, this._downloadFile, arg1));
+        return from_candid_Result_n315(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.updateOwnProfile(arg0, to_candid_ProfileEdits_n310(this._uploadFile, this._downloadFile, arg1));
-      return from_candid_Result_n313(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.updateOwnProfile(arg0, to_candid_ProfileEdits_n312(this._uploadFile, this._downloadFile, arg1));
+      return from_candid_Result_n315(this._uploadFile, this._downloadFile, result);
     }
   }
   async updateOwnProfileForFamily(arg0, arg1, arg2) {
     if (this.processError) {
       try {
-        const result = await this.actor.updateOwnProfileForFamily(arg0, arg1, to_candid_ProfileEdits_n310(this._uploadFile, this._downloadFile, arg2));
-        return from_candid_Result_n313(this._uploadFile, this._downloadFile, result);
+        const result = await this.actor.updateOwnProfileForFamily(arg0, arg1, to_candid_ProfileEdits_n312(this._uploadFile, this._downloadFile, arg2));
+        return from_candid_Result_n315(this._uploadFile, this._downloadFile, result);
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
-      const result = await this.actor.updateOwnProfileForFamily(arg0, arg1, to_candid_ProfileEdits_n310(this._uploadFile, this._downloadFile, arg2));
-      return from_candid_Result_n313(this._uploadFile, this._downloadFile, result);
+      const result = await this.actor.updateOwnProfileForFamily(arg0, arg1, to_candid_ProfileEdits_n312(this._uploadFile, this._downloadFile, arg2));
+      return from_candid_Result_n315(this._uploadFile, this._downloadFile, result);
     }
   }
 }
@@ -39740,7 +40078,7 @@ function from_candid_DuplicateCandidate_n236(_uploadFile, _downloadFile, value) 
 function from_candid_DuplicatePair_n234(_uploadFile, _downloadFile, value) {
   return from_candid_record_n235(_uploadFile, _downloadFile, value);
 }
-function from_candid_EditError_n315(_uploadFile, _downloadFile, value) {
+function from_candid_EditError_n317(_uploadFile, _downloadFile, value) {
   return "ProfileNotFound" in value ? "ProfileNotFound" : "NotSignedIn" in value ? "NotSignedIn" : "NotOwner" in value ? "NotOwner" : "DeceasedProfile" in value ? "DeceasedProfile" : value;
 }
 function from_candid_Error_n10(_uploadFile, _downloadFile, value) {
@@ -39782,7 +40120,7 @@ function from_candid_MergeError_n274(_uploadFile, _downloadFile, value) {
 function from_candid_MergeResult_n268(_uploadFile, _downloadFile, value) {
   return from_candid_record_n269(_uploadFile, _downloadFile, value);
 }
-function from_candid_MessageError_n308(_uploadFile, _downloadFile, value) {
+function from_candid_MessageError_n310(_uploadFile, _downloadFile, value) {
   return "ConversationNotFound" in value ? "ConversationNotFound" : "RecipientArchived" in value ? "RecipientArchived" : "NotApprovedMember" in value ? "NotApprovedMember" : "RecipientNotClaimed" in value ? "RecipientNotClaimed" : "NotSignedIn" in value ? "NotSignedIn" : "BlockedByRecipient" in value ? "BlockedByRecipient" : "NotParticipant" in value ? "NotParticipant" : "CannotMessageSelf" in value ? "CannotMessageSelf" : "RecipientNotFound" in value ? "RecipientNotFound" : value;
 }
 function from_candid_MessageStatus_n179(_uploadFile, _downloadFile, value) {
@@ -39935,8 +40273,8 @@ function from_candid_Result_18_n152(_uploadFile, _downloadFile, value) {
 function from_candid_Result_19_n150(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n151(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_1_n306(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n307(_uploadFile, _downloadFile, value);
+function from_candid_Result_1_n308(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n309(_uploadFile, _downloadFile, value);
 }
 function from_candid_Result_20_n148(_uploadFile, _downloadFile, value) {
   return from_candid_variant_n149(_uploadFile, _downloadFile, value);
@@ -39986,8 +40324,8 @@ function from_candid_Result_9_n280(_uploadFile, _downloadFile, value) {
 function from_candid_Result__1_n164(_uploadFile, _downloadFile, value) {
   return from_candid_record_n165(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_n313(_uploadFile, _downloadFile, value) {
-  return from_candid_variant_n314(_uploadFile, _downloadFile, value);
+function from_candid_Result_n315(_uploadFile, _downloadFile, value) {
+  return from_candid_variant_n316(_uploadFile, _downloadFile, value);
 }
 function from_candid_ReviewAction_n211(_uploadFile, _downloadFile, value) {
   return "NeedsResearch" in value ? "NeedsResearch" : "Approve" in value ? "Approve" : "Reject" in value ? "Reject" : value;
@@ -40990,22 +41328,22 @@ function from_candid_variant_n299(_uploadFile, _downloadFile, value) {
     err: from_candid_ResearchError_n139(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n307(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n309(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
     ok: from_candid_Message_n177(_uploadFile, _downloadFile, value.ok)
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_MessageError_n308(_uploadFile, _downloadFile, value.err)
+    err: from_candid_MessageError_n310(_uploadFile, _downloadFile, value.err)
   } : value;
 }
-function from_candid_variant_n314(_uploadFile, _downloadFile, value) {
+function from_candid_variant_n316(_uploadFile, _downloadFile, value) {
   return "ok" in value ? {
     __kind__: "ok",
     ok: from_candid_PersonProfile_n143(_uploadFile, _downloadFile, value.ok)
   } : "err" in value ? {
     __kind__: "err",
-    err: from_candid_EditError_n315(_uploadFile, _downloadFile, value.err)
+    err: from_candid_EditError_n317(_uploadFile, _downloadFile, value.err)
   } : value;
 }
 function from_candid_variant_n32(_uploadFile, _downloadFile, value) {
@@ -41187,6 +41525,9 @@ function to_candid_ArchiveItemType_n122(_uploadFile, _downloadFile, value) {
 function to_candid_ArchiveSearchFilter_n304(_uploadFile, _downloadFile, value) {
   return to_candid_record_n305(_uploadFile, _downloadFile, value);
 }
+function to_candid_ArchiveSearchQuery_n306(_uploadFile, _downloadFile, value) {
+  return to_candid_record_n307(_uploadFile, _downloadFile, value);
+}
 function to_candid_AuthMethod_n100(_uploadFile, _downloadFile, value) {
   return value == "Google" ? {
     Google: null
@@ -41255,14 +41596,14 @@ function to_candid_FindingType_n131(_uploadFile, _downloadFile, value) {
     Relationship: null
   } : value;
 }
-function to_candid_LivingStatus_n312(_uploadFile, _downloadFile, value) {
+function to_candid_LivingStatus_n314(_uploadFile, _downloadFile, value) {
   return value == "Living" ? {
     Living: null
   } : value == "Deceased" ? {
     Deceased: null
   } : value;
 }
-function to_candid_MysteryContributionType_n309(_uploadFile, _downloadFile, value) {
+function to_candid_MysteryContributionType_n311(_uploadFile, _downloadFile, value) {
   return value == "Lead" ? {
     Lead: null
   } : value == "Note" ? {
@@ -41317,8 +41658,8 @@ function to_candid_PrivacyLevel_n119(_uploadFile, _downloadFile, value) {
     FamilyOnly: null
   } : value;
 }
-function to_candid_ProfileEdits_n310(_uploadFile, _downloadFile, value) {
-  return to_candid_record_n311(_uploadFile, _downloadFile, value);
+function to_candid_ProfileEdits_n312(_uploadFile, _downloadFile, value) {
+  return to_candid_record_n313(_uploadFile, _downloadFile, value);
 }
 function to_candid_RelationshipType_n30(_uploadFile, _downloadFile, value) {
   return value == "Parent" ? {
@@ -41448,14 +41789,24 @@ function to_candid_record_n305(_uploadFile, _downloadFile, value) {
     itemType: value.itemType ? candid_some(to_candid_ArchiveItemType_n122(_uploadFile, _downloadFile, value.itemType)) : candid_none()
   };
 }
-function to_candid_record_n311(_uploadFile, _downloadFile, value) {
+function to_candid_record_n307(_uploadFile, _downloadFile, value) {
+  return {
+    era: value.era ? candid_some(value.era) : candid_none(),
+    relatedMemberId: value.relatedMemberId ? candid_some(value.relatedMemberId) : candid_none(),
+    tags: value.tags,
+    searchTerm: value.searchTerm ? candid_some(value.searchTerm) : candid_none(),
+    itemType: value.itemType ? candid_some(to_candid_ArchiveItemType_n122(_uploadFile, _downloadFile, value.itemType)) : candid_none(),
+    familyId: value.familyId
+  };
+}
+function to_candid_record_n313(_uploadFile, _downloadFile, value) {
   return {
     occupation: value.occupation ? candid_some(value.occupation) : candid_none(),
     privacySettings: value.privacySettings ? candid_some(value.privacySettings) : candid_none(),
     nickname: value.nickname ? candid_some(value.nickname) : candid_none(),
     birthDate: value.birthDate ? candid_some(value.birthDate) : candid_none(),
     birthInfo: value.birthInfo ? candid_some(value.birthInfo) : candid_none(),
-    livingStatus: value.livingStatus ? candid_some(to_candid_LivingStatus_n312(_uploadFile, _downloadFile, value.livingStatus)) : candid_none(),
+    livingStatus: value.livingStatus ? candid_some(to_candid_LivingStatus_n314(_uploadFile, _downloadFile, value.livingStatus)) : candid_none(),
     longerStory: value.longerStory ? candid_some(value.longerStory) : candid_none(),
     story: value.story ? candid_some(value.story) : candid_none(),
     middleName: value.middleName ? candid_some(value.middleName) : candid_none(),
@@ -45595,6 +45946,28 @@ function NotificationBadge({ count: count2 }) {
     }
   );
 }
+const DEFAULT_FAMILY_ID = "norwood";
+const FamilyContext = reactExports.createContext(null);
+function FamilyProvider({
+  familyId = DEFAULT_FAMILY_ID,
+  children
+}) {
+  const value = reactExports.useMemo(
+    () => ({
+      familyId,
+      familyScopedId: familyId === DEFAULT_FAMILY_ID ? void 0 : familyId
+    }),
+    [familyId]
+  );
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(FamilyContext.Provider, { value, children });
+}
+function useActiveFamily() {
+  const context = reactExports.useContext(FamilyContext);
+  return context ?? { familyId: DEFAULT_FAMILY_ID, familyScopedId: void 0 };
+}
+function useFamilyScopedId() {
+  return useActiveFamily().familyScopedId;
+}
 function getArchiveItemMimeType(item) {
   var _a2, _b2;
   const persisted = (_a2 = item.mimeType) == null ? void 0 : _a2.trim();
@@ -45709,36 +46082,39 @@ const MEDIA_KIND_FILTERS = [
 ];
 function usePendingArchiveItems() {
   const providersPresent = useProvidersPresent();
+  const familyScopedId = useFamilyScopedId();
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["archive", "pending"],
+    queryKey: ["archive", "pending", familyScopedId ?? ""],
     queryFn: async () => {
       if (!actor) return [];
-      return actor.listPendingArchiveItems();
+      return familyScopedId === void 0 ? actor.listPendingArchiveItems() : actor.listPendingArchiveItemsForFamily(familyScopedId);
     },
     enabled: providersPresent && !!actor && !isFetching
   });
 }
 function useApprovedArchiveItems() {
   const providersPresent = useProvidersPresent();
+  const familyScopedId = useFamilyScopedId();
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["archive", "approved"],
+    queryKey: ["archive", "approved", familyScopedId ?? ""],
     queryFn: async () => {
       if (!actor) return [];
-      return actor.listApprovedArchiveItems();
+      return familyScopedId === void 0 ? actor.listApprovedArchiveItems() : actor.listApprovedArchiveItemsForFamily(familyScopedId);
     },
     enabled: providersPresent && !!actor && !isFetching
   });
 }
 function useApprovedMediaItems() {
   const providersPresent = useProvidersPresent();
+  const familyScopedId = useFamilyScopedId();
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["archive", "approved", "media"],
+    queryKey: ["archive", "approved", "media", familyScopedId ?? ""],
     queryFn: async () => {
       if (!actor) return [];
-      const items = await actor.listApprovedArchiveItems();
+      const items = familyScopedId === void 0 ? await actor.listApprovedArchiveItems() : await actor.listApprovedArchiveItemsForFamily(familyScopedId);
       return items.filter((item) => getMediaKind(item) !== null);
     },
     enabled: providersPresent && !!actor && !isFetching
@@ -45746,11 +46122,13 @@ function useApprovedMediaItems() {
 }
 function useSearchArchiveItems(filter2) {
   const providersPresent = useProvidersPresent();
+  const familyScopedId = useFamilyScopedId();
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
     queryKey: [
       "archive",
       "search",
+      familyScopedId ?? "",
       filter2.query ?? "",
       filter2.tags.join(","),
       "",
@@ -45759,7 +46137,17 @@ function useSearchArchiveItems(filter2) {
     ],
     queryFn: async () => {
       if (!actor) return [];
-      return actor.searchArchiveItems({
+      if (familyScopedId === void 0) {
+        return actor.searchArchiveItems({
+          searchTerm: filter2.query ?? void 0,
+          tags: filter2.tags,
+          itemType: void 0,
+          relatedMemberId: void 0,
+          era: void 0
+        });
+      }
+      return actor.searchArchiveItemsForFamily(familyScopedId, {
+        familyId: familyScopedId,
         searchTerm: filter2.query ?? void 0,
         tags: filter2.tags,
         itemType: void 0,
@@ -45771,12 +46159,33 @@ function useSearchArchiveItems(filter2) {
   });
 }
 function useSubmitArchiveItem() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
     mutationFn: async (input) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.submitArchiveItem(
+      if (familyScopedId === void 0) {
+        return actor.submitArchiveItem(
+          input.title,
+          input.description,
+          input.itemType,
+          input.mimeType,
+          input.blob,
+          input.era,
+          input.year,
+          input.tags,
+          input.relatedMemberIds,
+          input.relatedBranchId,
+          input.sourceStatus,
+          input.privacyLevel,
+          input.classification,
+          input.primarySpeaker,
+          input.filename
+        );
+      }
+      return actor.submitArchiveItemForFamily(
+        familyScopedId,
         input.title,
         input.description,
         input.itemType,
@@ -45807,12 +46216,13 @@ function useSubmitArchiveItem() {
   });
 }
 function useApproveArchiveItem() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
     mutationFn: async (id2) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.approveArchiveItem(id2);
+      return familyScopedId === void 0 ? actor.approveArchiveItem(id2) : actor.approveArchiveItemForFamily(familyScopedId, id2);
     },
     onSuccess: () => {
       void queryClient2.invalidateQueries({ queryKey: ["archive", "pending"] });
@@ -45830,12 +46240,13 @@ function useApproveArchiveItem() {
   });
 }
 function useRejectArchiveItem() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
     mutationFn: async (id2) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.rejectArchiveItem(id2);
+      return familyScopedId === void 0 ? actor.rejectArchiveItem(id2) : actor.rejectArchiveItemForFamily(familyScopedId, id2);
     },
     onSuccess: () => {
       void queryClient2.invalidateQueries({ queryKey: ["archive", "pending"] });
@@ -47385,28 +47796,6 @@ function LoginSurface() {
       }
     ) : /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "signin-footnote", children: "Your account is private and secure. We never post to your Google or Apple account, and your identity stays yours." })
   ] });
-}
-const DEFAULT_FAMILY_ID = "norwood";
-const FamilyContext = reactExports.createContext(null);
-function FamilyProvider({
-  familyId = DEFAULT_FAMILY_ID,
-  children
-}) {
-  const value = reactExports.useMemo(
-    () => ({
-      familyId,
-      familyScopedId: familyId === DEFAULT_FAMILY_ID ? void 0 : familyId
-    }),
-    [familyId]
-  );
-  return /* @__PURE__ */ jsxRuntimeExports.jsx(FamilyContext.Provider, { value, children });
-}
-function useActiveFamily() {
-  const context = reactExports.useContext(FamilyContext);
-  return context ?? { familyId: DEFAULT_FAMILY_ID, familyScopedId: void 0 };
-}
-function useFamilyScopedId() {
-  return useActiveFamily().familyScopedId;
 }
 const CANONICAL_DISPLAY_NAMES = {
   lorenzoSmithJr: "Lorenzo Smith Jr."
@@ -70797,12 +71186,13 @@ function FamilyStewardGovernancePage({
 }
 function usePendingCount() {
   const { data: isSteward = false } = useIsSteward();
+  const familyScopedId = useFamilyScopedId();
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["pendingContributionsCount"],
+    queryKey: ["pendingContributionsCount", familyScopedId ?? ""],
     queryFn: async () => {
       if (!actor) return 0;
-      const count2 = await actor.getPendingContributionsCount();
+      const count2 = familyScopedId === void 0 ? await actor.getPendingContributionsCount() : await actor.getPendingContributionsCountForFamily(familyScopedId);
       return Number(count2);
     },
     enabled: isSteward && !!actor && !isFetching

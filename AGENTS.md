@@ -19,14 +19,6 @@
 
 ## Learnings
 
-- ArchiveDetailPage routes documents through isPreviewableDocument (PDF || raster image); Office/CSV types fall through to a download-only document card with filename and Download Original and are never rendered inline.
-- The local-deploy autonomous tester has no document file fixtures (only a PNG), so document upload acceptance and PDF preview flows cannot be exercised in local preflight and remain manual tests.
-- ArchiveDetailPage branch order is load-bearing: isOfficeDocument must be evaluated before isTextType, because TEXT_TYPES includes Research, WorkBusiness, and Other, which the backend maps to the archive-document surface.
-- The local-deploy autonomous tester has no document file fixtures (only a PNG), so document upload acceptance, PDF preview, and the Office download card cannot be exercised in local preflight and remain manual tests.
-- The Pending Contributions badge (getPendingContributionsCount) and listPendingArchiveItems must share the same Research-linked id set, both built from researchSources' archiveItemId values, or the badge and the list disagree.
-- ArchiveLib.listPending and PendingCountLib.countPending both take a Set.Set<ArchiveItemId> of Research-linked ids; the steward-gated mixins build that set from researchSources.
-- ArchiveLib.transitionStatus(items, id, status) is a notification-free, #Pending-only status transition; approveSource/rejectSource use it to cascade to the linked Archive item so one Steward decision resolves both records.
-- ArchiveApi and PendingCountApi mixins receive researchSources as an extra parameter; main.mo passes researchSources to ArchiveApi, ResearchIntakeApi, and PendingCountApi.
 - api-doc.mo describes getPendingContributionsCount in two places (method reference ~line 749 and prose ~line 2100); a behavior change must update both.
 - The PocketIC backend lane executes when the compiled wasm is present; the full root gate is `pnpm test` and it runs both the frontend and backend lanes.
 - Tenancy 1B made the family-scoped authorization helpers canonical (isActiveStewardForFamily, hasActiveStewardForFamily, isApprovedFamilyMemberForFamily, requireApprovedFamilyMemberForFamily, requireActiveStewardForFamily, canManagePersonPhotosForFamily, requirePhotoMutationAuthorityForFamily, requireGalleryReadAuthorityForFamily, claimStewardForFamily) in lib/steward-authority.mo and lib/family-authorization.mo; the legacy single-family helpers are thin temporary wrappers delegating with FamilyTypes.DEFAULT_FAMILY_ID.
@@ -44,3 +36,11 @@
 - The backend exposes no family-scoped Steward-authority endpoints, so useStewardAuthority keeps calling isCallerSteward/hasActiveSteward/claimSteward with no arguments.
 - The PocketIC backend lane can fail with pocketic_sidecar_unreachable; that is shared-sidecar instability, not a product regression — rerun the lane.
 - governance.mo still reads/writes profiles by bare personId (lines 435, 617); that is the excluded, not a regression, and belongs to a later Tenancy 1C build
+- Tenancy 1C-B1 moved the Archive endpoints onto explicit familyId scoping: the canonical endpoints are the *ForFamily variants (submitArchiveItemForFamily, listPendingArchiveItemsForFamily, approveArchiveItemForFamily, rejectArchiveItemForFamily, listApprovedArchiveItemsForFamily, getArchiveItemForFamily, searchArchiveItemsForFamily, getPendingContributionsCountForFamily); the legacy no-argument endpoints remain as TEMPORARY wrappers delegating with DEFAULT_FAMILY_ID.
+- In Motoko, a public shared function must never call another public shared function in the same actor for caller-based authorization: the callee's { caller } becomes the canister's own principal and denies the real user. Legacy wrappers must delegate to an internal (non-shared) function that takes caller explicitly, as submitArchiveItemForFamilyInternal does.
+- isApprovedFamilyMemberForFamily accepts an approved claim by the caller when c.familyId == familyId, or when familyId == DEFAULT_FAMILY_ID and c.familyId == '' (pre-tenancy records); non-default families stay strictly scoped.
+- isPersonInFamily accepts a person tracked in the requested family via TenancyLib.getProfileForFamily in addition to an approved claim, so seeded Norwood profiles with no claim (e.g. 'julia') still pass related-person validation while genuinely foreign people are rejected.
+- The archive mixins now take profiles as a parameter (ArchiveApi and ArchiveResearchBoardNotificationsApi) so the related-person family check can resolve family-qualified profiles; main.mo passes it.
+- The PocketIC sidecar at POCKETIC_SIDECAR_URL is intermittently wedged (/healthz empty or http=000 while the raw server at 127.0.0.1:8001 stays healthy); the lane skips with pocketic_sidecar_unreachable and must be retried.
+- The static predicate evaluator in test/pocketic/family-scoped-authorization.behavior.test.ts is now a recursive-descent parser handling or/and precedence, parentheses, and FamilyTypes.DEFAULT_FAMILY_ID.
+- The local-deploy autonomous tester cannot complete an Archive contribution because the platform storage mutation at /v1/blob-tree/ is blocked in preflight, so Archive submit/review and cross-family isolation remain manual tests.

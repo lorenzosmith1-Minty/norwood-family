@@ -3,6 +3,7 @@ import Set "mo:core/Set";
 import ArchiveTypes "../types/archive";
 import RecipeTypes "../types/recipes";
 import FamilyHistoryTypes "../types/family-history";
+import FamilyTypes "../types/family";
 
 module {
   /// Counts all current pending review items across the contribution types the
@@ -19,7 +20,17 @@ module {
   /// Contributions, so counting it would disagree with the Pending Contributions
   /// list. This is the canonical aggregate backing the Steward-facing Pending
   /// Contributions badge.
-  public func countPending(
+  ///
+  /// Tenancy 1C-B1: `familyId` is explicit and canonical. A pending Archive item
+  /// is counted only when `item.familyId == familyId`, so Family A's pending
+  /// Archive never appears in Family B's count. `ArchiveItem` is the only
+  /// contribution type that currently carries a `familyId` field; recipes,
+  /// stories, and mystery contributions are not yet family-scoped and keep their
+  /// existing counting semantics unchanged (their family scoping belongs to a
+  /// later Tenancy 1C build). The Research-linked exclusion (`linkedIds`) is
+  /// applied after the family filter and is unchanged.
+  public func countPendingForFamily(
+    familyId : FamilyTypes.FamilyId,
     archiveItems : List.List<ArchiveTypes.ArchiveItem>,
     recipes : List.List<RecipeTypes.Recipe>,
     stories : List.List<FamilyHistoryTypes.Story>,
@@ -28,7 +39,9 @@ module {
   ) : Nat {
     var count = 0;
     for (a in archiveItems.toArray().values()) {
-      if (a.status == #Pending and not linkedIds.contains(a.id)) { count += 1 };
+      if (a.familyId == familyId and a.status == #Pending and not linkedIds.contains(a.id)) {
+        count += 1;
+      };
     };
     for (r in recipes.toArray().values()) {
       if (r.status == #Pending) { count += 1 };
@@ -40,5 +53,25 @@ module {
       if (m.status == #Pending) { count += 1 };
     };
     count;
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+  /// delegates to `countPendingForFamily` with the default family id so current
+  /// Norwood behavior is unchanged. Contains no duplicated business logic.
+  public func countPending(
+    archiveItems : List.List<ArchiveTypes.ArchiveItem>,
+    recipes : List.List<RecipeTypes.Recipe>,
+    stories : List.List<FamilyHistoryTypes.Story>,
+    mysteryContributions : List.List<FamilyHistoryTypes.MysteryContribution>,
+    linkedIds : Set.Set<ArchiveTypes.ArchiveItemId>,
+  ) : Nat {
+    countPendingForFamily(
+      FamilyTypes.DEFAULT_FAMILY_ID,
+      archiveItems,
+      recipes,
+      stories,
+      mysteryContributions,
+      linkedIds,
+    );
   };
 };

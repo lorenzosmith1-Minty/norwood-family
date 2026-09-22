@@ -81,6 +81,14 @@ interface PersonProfile {
   claimedByUserId: { principal: string } | null;
 }
 
+/**
+ * The default-family constant the real predicate compares against. The source
+ * writes it as the qualified `FamilyTypes.DEFAULT_FAMILY_ID`; the evaluator
+ * binds it to the same literal the Motoko module defines so the default-family
+ * compatibility clause can be executed rather than skipped.
+ */
+const DEFAULT_FAMILY_ID = "norwood";
+
 /** Resolves a bare identifier or literal in a predicate expression. */
 function resolveOperand(token: string, scope: Record<string, Scalar>): Scalar {
   const trimmed = token.trim();
@@ -98,6 +106,9 @@ function resolveOperand(token: string, scope: Record<string, Scalar>): Scalar {
   if (trimmed.startsWith('"') && trimmed.endsWith('"')) {
     return trimmed.slice(1, -1);
   }
+  if (trimmed === "FamilyTypes.DEFAULT_FAMILY_ID") {
+    return DEFAULT_FAMILY_ID;
+  }
   if (Object.prototype.hasOwnProperty.call(scope, trimmed)) {
     return scope[trimmed];
   }
@@ -110,7 +121,13 @@ function resolveFieldAccess(
   scope: Record<string, Scalar>,
   records: Record<string, Record<string, Scalar>>,
 ): Scalar {
-  const match = /^(\w+)\.(\w+)$/u.exec(token.trim());
+  const trimmed = token.trim();
+  // A qualified module constant (`FamilyTypes.DEFAULT_FAMILY_ID`) is not a
+  // record field access; resolve it as a literal before the field-access path.
+  if (trimmed === "FamilyTypes.DEFAULT_FAMILY_ID") {
+    return DEFAULT_FAMILY_ID;
+  }
+  const match = /^(\w+)\.(\w+)$/u.exec(trimmed);
   if (match === null) {
     return resolveOperand(token, scope);
   }
@@ -139,26 +156,144 @@ function scalarsEqual(left: Scalar, right: Scalar): boolean {
 }
 
 /**
- * Evaluates one `and`-joined comparison chain, e.g.
- * `s.stewardAccountId == caller and s.roleStatus == #Active and s.familyId == familyId`.
+ * Evaluates a boolean predicate expression over the forms the canonical
+ * helpers use: `and`-chains, `or`-chains, parenthesized groups, and the
+ * `==`/`!=` comparisons between field accesses, literals, and free variables.
+ *
+ * The grammar is deliberately small and strict:
+ *
+ *   orExpr   := andExpr ("or" andExpr)*
+ *   andExpr  := primary ("and" primary)*
+ *   primary  := "(" orExpr ")" | comparison
+ *   comparison := operand ("==" | "!=") operand
+ *
+ * `and` binds tighter than `or`, matching Motoko. Anything the grammar does
+ * not recognize throws rather than silently returning a default, so a refactor
+ * into an unsupported form fails loudly instead of passing vacuously.
  */
-function evaluateAndChain(
+function evaluatePredicate(
   expression: string,
   scope: Record<string, Scalar>,
   records: Record<string, Record<string, Scalar>>,
 ): boolean {
-  const clauses = expression.split(/\s+and\s+/u);
-  return clauses.every((clause) => {
-    const comparison = /^(.+?)\s*(==|!=)\s*(.+)$/u.exec(clause.trim());
-    if (comparison === null) {
-      throw new Error(`unrecognized predicate clause: ${clause}`);
+  const tokens = tokenizePredicate(expression);
+  const state = { index: 0 };
+  const result = parseOr(tokens, state, scope, records);
+  if (state.index !== tokens.length) {
+    throw new Error(`unrecognized predicate clause: ${tokens[state.index]}`);
+  }
+  return result;
+}
+
+/**
+ * Splits a predicate into tokens: parentheses, the `and`/`or` keywords, the
+ * `==`/`!=` operators, and everything else as an operand run. Operands are
+ * kept whole (including `v.field`, `#Tag`, `"literal"`, and qualified
+ * constants) so the resolver sees the exact source text.
+ */
+function tokenizePredicate(expression: string): string[] {
+  const tokens: string[] = [];
+  let index = 0;
+  while (index < expression.length) {
+    const character = expression[index];
+    if (/\s/u.test(character)) {
+      index += 1;
+      continue;
     }
-    const [, rawLeft, operator, rawRight] = comparison;
-    const left = resolveFieldAccess(rawLeft, scope, records);
-    const right = resolveFieldAccess(rawRight, scope, records);
-    const equal = scalarsEqual(left, right);
-    return operator === "==" ? equal : !equal;
-  });
+    if (character === "(" || character === ")") {
+      tokens.push(character);
+      index += 1;
+      continue;
+    }
+    if (expression.startsWith("==", index) || expression.startsWith("!=", index)) {
+      tokens.push(expression.slice(index, index + 2));
+      index += 2;
+      continue;
+    }
+    const keyword = /^(and|or)\b/u.exec(expression.slice(index));
+    if (keyword !== null) {
+      tokens.push(keyword[1]);
+      index += keyword[1].length;
+      continue;
+    }
+    // An operand run: everything up to the next operator, parenthesis, or
+    // whitespace-delimited keyword. A quoted string is consumed whole so a
+    // space inside it is not mistaken for a token boundary.
+    if (character === '"') {
+      const end = expression.indexOf('"', index + 1);
+      if (end === -1) {
+        throw new Error(`unterminated string literal in predicate: ${expression.slice(index)}`);
+      }
+      tokens.push(expression.slice(index, end + 1));
+      index = end + 1;
+      continue;
+    }
+    const operand = /^[^\s()=!]+/u.exec(expression.slice(index));
+    if (operand === null) {
+      throw new Error(`unrecognized predicate token at: ${expression.slice(index)}`);
+    }
+    tokens.push(operand[0]);
+    index += operand[0].length;
+  }
+  return tokens;
+}
+
+function parseOr(
+  tokens: string[],
+  state: { index: number },
+  scope: Record<string, Scalar>,
+  records: Record<string, Record<string, Scalar>>,
+): boolean {
+  let value = parseAnd(tokens, state, scope, records);
+  while (tokens[state.index] === "or") {
+    state.index += 1;
+    const right = parseAnd(tokens, state, scope, records);
+    value = value || right;
+  }
+  return value;
+}
+
+function parseAnd(
+  tokens: string[],
+  state: { index: number },
+  scope: Record<string, Scalar>,
+  records: Record<string, Record<string, Scalar>>,
+): boolean {
+  let value = parsePrimary(tokens, state, scope, records);
+  while (tokens[state.index] === "and") {
+    state.index += 1;
+    const right = parsePrimary(tokens, state, scope, records);
+    value = value && right;
+  }
+  return value;
+}
+
+function parsePrimary(
+  tokens: string[],
+  state: { index: number },
+  scope: Record<string, Scalar>,
+  records: Record<string, Record<string, Scalar>>,
+): boolean {
+  if (tokens[state.index] === "(") {
+    state.index += 1;
+    const value = parseOr(tokens, state, scope, records);
+    if (tokens[state.index] !== ")") {
+      throw new Error("unbalanced parentheses in predicate");
+    }
+    state.index += 1;
+    return value;
+  }
+  const left = tokens[state.index];
+  const operator = tokens[state.index + 1];
+  const right = tokens[state.index + 2];
+  if (left === undefined || (operator !== "==" && operator !== "!=") || right === undefined) {
+    throw new Error(`unrecognized predicate clause: ${tokens.slice(state.index).join(" ")}`);
+  }
+  state.index += 3;
+  const leftValue = resolveFieldAccess(left, scope, records);
+  const rightValue = resolveFieldAccess(right, scope, records);
+  const equal = scalarsEqual(leftValue, rightValue);
+  return operator === "==" ? equal : !equal;
 }
 
 /**
@@ -181,7 +316,7 @@ function evaluateAnyScan(
     throw new Error(`no ${listName}.toArray().any(func ${variable} = ...) scan found`);
   }
   const condition = match[1];
-  return items.some((item) => evaluateAndChain(condition, scope, { [variable]: item }));
+  return items.some((item) => evaluatePredicate(condition, scope, { [variable]: item }));
 }
 
 // ---------------------------------------------------------------------------
@@ -481,19 +616,54 @@ describe("behavioral evaluator is not vacuous", () => {
     ).toThrow(/no stewards\.toArray\(\)\.any/u);
   });
 
-  it("throws rather than silently accepting an or-joined predicate", () => {
-    // The evaluator only understands `and`-chains. An `or` must not be treated
-    // as an `and` (which would make the predicate stricter than the source) nor
-    // silently ignored; it must fail loudly so a refactor to `or` is caught.
-    expect(() =>
+  it("evaluates an or-joined predicate with the correct precedence", () => {
+    // The evaluator understands `or`, and `and` binds tighter than `or`. An
+    // `or` must not be treated as an `and` (which would make the predicate
+    // stricter than the source) nor silently ignored.
+    const scan = (familyId: string): boolean =>
       evaluateAnyScan(
         "stewards.toArray().any(func s = s.roleStatus == #Active or s.familyId == familyId);",
         "stewards",
         "s",
         [activeSteward(ALICE, FAMILY_A)],
-        { caller: ALICE, familyId: FAMILY_A },
-      ),
-    ).toThrow();
+        { caller: ALICE, familyId },
+      );
+    // The record is Active, so the `or` is satisfied regardless of family.
+    expect(scan(FAMILY_A)).toBe(true);
+    expect(scan(FAMILY_B)).toBe(true);
+
+    // A revoked record in the matching family satisfies only the family arm.
+    const revokedScan = (familyId: string): boolean =>
+      evaluateAnyScan(
+        "stewards.toArray().any(func s = s.roleStatus == #Active or s.familyId == familyId);",
+        "stewards",
+        "s",
+        [revokedSteward(ALICE, FAMILY_A)],
+        { caller: ALICE, familyId },
+      );
+    expect(revokedScan(FAMILY_A)).toBe(true);
+    expect(revokedScan(FAMILY_B)).toBe(false);
+  });
+
+  it("evaluates a parenthesized or-group inside an and-chain", () => {
+    // The exact shape the default-family compatibility clause uses:
+    // `a and b and (c or (d and e))`. `and` binds tighter than `or`, so the
+    // group is true when either arm holds.
+    const scan = (familyId: string, claimFamilyId: string): boolean =>
+      evaluateAnyScan(
+        'claims.toArray().any(func c = c.status == #Approved and (c.familyId == familyId or (familyId == FamilyTypes.DEFAULT_FAMILY_ID and c.familyId == "")));',
+        "claims",
+        "c",
+        [{ requestingUserId: ALICE, status: { tag: "Approved" }, familyId: claimFamilyId }],
+        { caller: ALICE, familyId },
+      );
+    // A claim in the requested family matches the first arm.
+    expect(scan(FAMILY_A, FAMILY_A)).toBe(true);
+    // A claim in another family does not match either arm.
+    expect(scan(FAMILY_A, FAMILY_B)).toBe(false);
+    // A legacy empty-family claim matches only under the default family.
+    expect(scan(NORWOOD, "")).toBe(true);
+    expect(scan(FAMILY_A, "")).toBe(false);
   });
 
   it("throws on a clause with no comparison operator", () => {

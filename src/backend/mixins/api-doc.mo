@@ -195,20 +195,141 @@ family id (`\"norwood\"`), so current Norwood behavior is unchanged.
   unclaimed/historical profile only a Family Steward may remove photos. If the
   removed photo was the profile photo, the profile photo is
   cleared (the frontend falls back to the initials placeholder).
-
 ### Family Archive
 
+Every archive endpoint is family-scoped: it takes the requested `familyId` and
+evaluates authority and data access against that family. An `archiveItemId`
+alone is never a tenant boundary — a lookup that finds a record belonging to
+another family behaves exactly like a lookup that found nothing, so Family A can
+never read, submit to, review, approve, reject, or mutate Family B Archive data.
+The single-family endpoints listed after the family-scoped ones are TEMPORARY
+Tenancy 1C compatibility wrappers that delegate with the default family id
+(`\"norwood\"`); they are deprecated and will be removed once every caller passes
+an explicit `familyId`.
+
+- `submitArchiveItemForFamily(familyId : Text, title : Text, description : Text, itemType : ArchiveItemType, mimeType : Text, blob : Blob, era : Text, year : ?Nat, tags : [Text], relatedMemberIds : [Text], relatedBranchId : ?Text, sourceStatus : SourceStatus, privacyLevel : PrivacyLevel, classification : ArchiveItemClassification, primarySpeaker : ?OralHistorySpeaker, filename : Text) : async ArchiveItem` —
+  update. Submits a new archive item into `familyId`. Requires an approved
+  member or active Steward of `familyId`; an anonymous caller is rejected with a
+  trap carrying `\"Unauthorized: You must be signed in\"`, and a signed-in but
+  unapproved caller is rejected with a trap carrying the stable, non-technical
+  `\"Family membership required. Claim your family profile and wait for Family
+  Steward approval before contributing family content.\"` so the frontend can
+  present a definitive family-membership-required outcome rather than a generic
+  retry. The caller is recorded as the `contributor`. The stored item's
+  `familyId` is the requested `familyId`, and every `relatedMemberIds` entry must
+  belong to that same family — Family A may never reference Family B people; a
+  related member that does not belong to `familyId` traps with
+  `\"Unauthorized: Related family members must belong to the same family\"` and
+  stores nothing. The item is stored in `#Pending` state, assigned a fresh id,
+  and `createdAt` is set to the current time. It does not appear in the archive
+  until a Steward of `familyId` approves it. The `blob` is the external storage
+  reference (a `Blob`); the original file bytes live off-chain and are preserved
+  as-is. The validated MIME type and the sanitized `filename` are persisted on
+  the item itself as `mimeType` and `filename`, because `ExternalBlob` runtime
+  metadata is not reliably available after the blob has been stored and returned;
+  the frontend uses these persisted fields to decide whether a safe inline
+  preview is offered. `filename` is sanitized (path separators and control
+  characters removed, length capped) and the MIME type is normalized (trimmed and
+  lower-cased) before it is stored. The allowed document MIME list is
+  `application/pdf`, `text/plain`, `text/csv`, `application/msword`,
+  `application/vnd.openxmlformats-officedocument.wordprocessingml.document`,
+  `application/vnd.ms-excel`, and
+  `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`. Word,
+  Excel, and CSV files are accepted and stored but are never rendered inline;
+  only PDF and plain text are previewed.
+  `title` and `description` are required. `era` is OPTIONAL: an empty or
+  whitespace-only value is accepted and stored as `\"\"`; a non-empty value is
+  trimmed and must be at most 150 characters, and an overlong value is rejected
+  (never silently truncated). `tags` and `relatedMemberIds` are bounded lists.
+  `classification` marks the item as Oral History (distinct from `itemType`):
+  `#Standard` for ordinary media, `#OralHistory` for oral-history video and
+  audio-only oral history. When `classification == #OralHistory`, `primarySpeaker`
+  is REQUIRED — exactly one primary speaker — and the call traps with
+  `\"A primary speaker is required for Oral History items\"` when it is `null`.
+  When `classification == #Standard`, `primarySpeaker` must be `null` and the
+  call traps with
+  `\"A primary speaker is only allowed on Oral History items\"`
+  when it is not. `primarySpeaker` links to a canonical Person record via its
+  optional `personId` when that person exists, and always carries a display
+  `name`. Related Family Members (`relatedMemberIds`) may still contain multiple
+  people; only the single primary speaker is constrained. The reserved
+  future-ready fields (transcript, searchable transcript, chapter markers, AI
+  summary, extracted names) are initialized to `null` and are not populated by
+  any logic yet.
+- `listPendingArchiveItemsForFamily(familyId : Text) : async [ArchiveItem]` —
+  query. Active Steward of `familyId` only. Returns all archive items in
+  `familyId` currently in `#Pending` state **except** those whose id is
+  referenced by a Research Source's `archiveItemId`. A Research-linked item is
+  reviewed through the Research Intake queue (approving or rejecting the Source
+  cascades to the linked item), so it is not actionable here. Ordinary archive
+  contributions with no linked Research Source are listed unchanged. Only items
+  whose `familyId` equals `familyId` are returned, so pending Archive A never
+  appears in Family B.
+- `approveArchiveItemForFamily(familyId : Text, id : Nat) : async ?ArchiveItem` —
+  update. Active Steward of `familyId` only; a Steward of another family cannot
+  approve the item. Moves a pending item in `familyId` to `#Approved` state and
+  returns the updated item, or `null` when no pending item with that id belongs
+  to `familyId`. On the actual transition out of `#Pending`, records exactly one
+  `#ArchiveApproved` notification addressed only to the item's `contributor`,
+  with the message `Your archive contribution \"<title>\" was approved.` A
+  repeated call on an already-reviewed item returns `null` and creates no
+  notification.
+- `rejectArchiveItemForFamily(familyId : Text, id : Nat) : async ?ArchiveItem` —
+  update. Active Steward of `familyId` only; a Steward of another family cannot
+  reject the item. Moves a pending item in `familyId` to `#Rejected` state and
+  returns the updated item, or `null` when no pending item with that id belongs
+  to `familyId`. The rejected record is retained, not deleted. On the actual
+  transition out of `#Pending`, records exactly one `#ArchiveRejected`
+  notification addressed only to the item's `contributor`, with the message
+  `Your archive contribution \"<title>\" was not approved.` A repeated call on an
+  already-reviewed item returns `null` and creates no notification.
+- `listApprovedArchiveItemsForFamily(familyId : Text) : async [ArchiveItem]` —
+  query. Returns the archive items in `familyId` in `#Approved` state visible to
+  the caller under the archive privacy rules. Privacy is enforced server-side:
+  `#Public` items are returned to everyone; `#FamilyOnly` items are returned only
+  to approved members of `familyId` (a caller holding at least one `#Approved`
+  profile claim in that family) or active Stewards of `familyId`; `#Private`
+  items are returned only to their contributor or an active Steward of
+  `familyId`. Guests and non-approved members see only `#Public` items. Only
+  items whose `familyId` equals `familyId` are returned, so approved Archive A
+  never appears in Family B.
+- `getArchiveItemForFamily(familyId : Text, id : Nat) : async ?ArchiveItem` —
+  query. Requires an approved member or active Steward of `familyId`. Returns the
+  archive item with `id` when it belongs to `familyId` and is visible to the
+  caller under the archive privacy rules, or `null` otherwise. A record that
+  exists under another family is never returned, so an `archiveItemId` alone
+  cannot cross the family boundary.
+- `searchArchiveItemsForFamily(familyId : Text, filter : ArchiveSearchFilter) : async [ArchiveItem]` —
+  query. Requires an approved member or active Steward of `familyId`.
+  Searches/filters approved archive items in `familyId` by title query, tags,
+  item type, related family member, and era. Returns only `#Approved` items whose
+  `familyId` equals `familyId` and that are visible to the caller under the
+  archive privacy rules (same server-side enforcement as
+  `listApprovedArchiveItemsForFamily`). `filter.searchTerm` matches the item
+  title case-insensitively and by substring; `filter.tags` matches items carrying
+  ALL of the given tags, each matched case-insensitively and by substring against
+  the item's canonical `tags` list; `filter.itemType`, `filter.relatedMemberId`,
+  and `filter.era` filter by category, linked family member, and era
+  respectively. Every field is optional — a `null`/empty field does not constrain
+  the result.
+
+The following single-family endpoints are TEMPORARY Tenancy 1C compatibility
+wrappers. Each delegates to its family-scoped counterpart with the default
+family id (`\"norwood\"`), so current Norwood behavior is unchanged. They contain
+no business logic of their own.
+
 - `submitArchiveItem(title : Text, description : Text, itemType : ArchiveItemType, mimeType : Text, blob : Blob, era : Text, year : ?Nat, tags : [Text], relatedMemberIds : [Text], relatedBranchId : ?Text, sourceStatus : SourceStatus, privacyLevel : PrivacyLevel, classification : ArchiveItemClassification, primarySpeaker : ?OralHistorySpeaker, filename : Text) : async ArchiveItem` —
-  update. Submits a new archive item. Requires an approved family member (a
-  caller holding at least one `#Approved` profile claim, or a Family Steward);
+  update. TEMPORARY Tenancy 1C compatibility wrapper for
+  `submitArchiveItemForFamily`, delegating with the default family id
+  (`\"norwood\"`). Submits a new archive item. Requires an approved family member
+  (a caller holding at least one `#Approved` profile claim, or a Family Steward);
   an anonymous caller is rejected with a trap carrying
   `\"Unauthorized: You must be signed in\"`, and a signed-in but unapproved
   caller is rejected with a trap carrying the stable, non-technical
   `\"Family membership required. Claim your family profile and wait for Family
   Steward approval before contributing family content.\"` so the frontend can
   present a definitive family-membership-required outcome rather than a generic
-  retry. The
-  caller is recorded as the `contributor`. The item is stored in
+  retry. The caller is recorded as the `contributor`. The item is stored in
   `#Pending` state, assigned a fresh id, and `createdAt` is set to the current
   time. It does not appear in the archive until a Family Steward approves it. The
   `blob` is the external storage reference (a `Blob`); the original file bytes
@@ -236,7 +357,8 @@ family id (`\"norwood\"`), so current Norwood behavior is unchanged.
   is REQUIRED — exactly one primary speaker — and the call traps with
   `\"A primary speaker is required for Oral History items\"` when it is `null`.
   When `classification == #Standard`, `primarySpeaker` must be `null` and the
-  call traps with `\"A primary speaker is only allowed on Oral History items\"`
+  call traps with
+  `\"A primary speaker is only allowed on Oral History items\"`
   when it is not. `primarySpeaker` links to a canonical Person record via its
   optional `personId` when that person exists, and always carries a display
   `name`. Related Family Members (`relatedMemberIds`) may still contain multiple
@@ -244,34 +366,41 @@ family id (`\"norwood\"`), so current Norwood behavior is unchanged.
   future-ready fields (transcript, searchable transcript, chapter markers, AI
   summary, extracted names) are initialized to `null` and are not populated by
   any logic yet.
-- `listPendingArchiveItems() : async [ArchiveItem]` — query. Admin only. Returns
-  all archive items currently in `#Pending` state **except** those whose id is
-  referenced by a Research Source's `archiveItemId`. A Research-linked item is
-  reviewed through the Research Intake queue (approving or rejecting the Source
-  cascades to the linked item), so it is not actionable here. Ordinary archive
-  contributions with no linked Research Source are listed unchanged.
-- `approveArchiveItem(id : Nat) : async ?ArchiveItem` — update. Admin only.
-  Moves a pending item to `#Approved` state and returns the updated item, or
-  `null` when no pending item with that id exists. On the actual transition out
-  of `#Pending`, records exactly one `#ArchiveApproved` notification addressed
-  only to the item's `contributor`, with the message
+- `listPendingArchiveItems() : async [ArchiveItem]` — query. TEMPORARY Tenancy 1C
+  compatibility wrapper for `listPendingArchiveItemsForFamily`, delegating with
+  the default family id (`\"norwood\"`). Family Steward only. Returns all archive
+  items currently in `#Pending` state **except** those whose id is referenced by
+  a Research Source's `archiveItemId`. A Research-linked item is reviewed through
+  the Research Intake queue (approving or rejecting the Source cascades to the
+  linked item), so it is not actionable here. Ordinary archive contributions with
+  no linked Research Source are listed unchanged.
+- `approveArchiveItem(id : Nat) : async ?ArchiveItem` — update. TEMPORARY
+  Tenancy 1C compatibility wrapper for `approveArchiveItemForFamily`, delegating
+  with the default family id (`\"norwood\"`). Family Steward only. Moves a pending
+  item to `#Approved` state and returns the updated item, or `null` when no
+  pending item with that id exists. On the actual transition out of `#Pending`,
+  records exactly one `#ArchiveApproved` notification addressed only to the
+  item's `contributor`, with the message
   `Your archive contribution \"<title>\" was approved.` A repeated call on an
   already-reviewed item returns `null` and creates no notification.
-- `rejectArchiveItem(id : Nat) : async ?ArchiveItem` — update. Admin only. Moves
-  a pending item to `#Rejected` state and returns the updated item, or `null`
-  when no pending item with that id exists. The rejected record is retained, not
-  deleted. On the actual transition out of `#Pending`, records exactly one
-  `#ArchiveRejected` notification addressed only to the item's `contributor`,
-  with the message `Your archive contribution \"<title>\" was not approved.` A
-  repeated call on an already-reviewed item returns `null` and creates no
-  notification.
-- `listApprovedArchiveItems() : async [ArchiveItem]` — query. Returns the
-  archive items in `#Approved` state visible to the caller under the archive
-  privacy rules. Privacy is enforced server-side: `#Public` items are returned
-  to everyone; `#FamilyOnly` items are returned only to approved family members
-  (a caller holding at least one `#Approved` profile claim) or Family Stewards;
-  `#Private` items are returned only to their contributor or a Family Steward.
-  Guests and non-approved members see only `#Public` items.
+- `rejectArchiveItem(id : Nat) : async ?ArchiveItem` — update. TEMPORARY Tenancy
+  1C compatibility wrapper for `rejectArchiveItemForFamily`, delegating with the
+  default family id (`\"norwood\"`). Family Steward only. Moves a pending item to
+  `#Rejected` state and returns the updated item, or `null` when no pending item
+  with that id exists. The rejected record is retained, not deleted. On the
+  actual transition out of `#Pending`, records exactly one `#ArchiveRejected`
+  notification addressed only to the item's `contributor`, with the message
+  `Your archive contribution \"<title>\" was not approved.` A repeated call on an
+  already-reviewed item returns `null` and creates no notification.
+- `listApprovedArchiveItems() : async [ArchiveItem]` — query. TEMPORARY Tenancy
+  1C compatibility wrapper for `listApprovedArchiveItemsForFamily`, delegating
+  with the default family id (`\"norwood\"`). Returns the archive items in
+  `#Approved` state visible to the caller under the archive privacy rules.
+  Privacy is enforced server-side: `#Public` items are returned to everyone;
+  `#FamilyOnly` items are returned only to approved family members (a caller
+  holding at least one `#Approved` profile claim) or Family Stewards; `#Private`
+  items are returned only to their contributor or a Family Steward. Guests and
+  non-approved members see only `#Public` items.
 
 ### Profile ownership and relationship verification
 
@@ -892,15 +1021,30 @@ stays readable.
 
 ### Pending Contributions
 
-- `getPendingContributionsCount() : async Nat` — query. Family Steward only.
-  Returns the count of all current pending review items (archive/media, video/
-  audio, recipes, recipe media, stories, and mystery contributions) for the
-  Steward-facing Pending Contributions badge. Research Intake review items
-  (Sources, Proposed Findings, New Person Candidates, Relationship Proposals,
-  and Conflict Review items) are NOT counted here — they resolve exclusively
-  through the Research Review Queue (`getReviewQueue`). The count is derived
-  from canonical pending data, so it increments on new pending items and
-  decrements on Approve/Reject automatically.
+- `getPendingContributionsCountForFamily(familyId : Text) : async Nat` — query.
+  Active Steward of `familyId` only; a Steward of one family cannot read another
+  family's pending count. Returns the count of all current pending review items
+  (archive/media, video/audio, recipes, recipe media, stories, and mystery
+  contributions) in `familyId` for the Steward-facing Pending Contributions
+  badge. Research Intake review items (Sources, Proposed Findings, New Person
+  Candidates, Relationship Proposals, and Conflict Review items) are NOT counted
+  here — they resolve exclusively through the Research Review Queue
+  (`getReviewQueue`) — and neither is a pending Archive item linked to a Research
+  Source, which is reviewed through that same queue. The count is derived from
+  canonical pending data, so it increments on new pending items and decrements on
+  Approve/Reject automatically, and it always agrees with the Pending
+  Contributions list (`listPendingArchiveItemsForFamily`).
+- `getPendingContributionsCount() : async Nat` — query. TEMPORARY Tenancy 1C
+  compatibility wrapper for `getPendingContributionsCountForFamily`, delegating
+  with the default family id (`\"norwood\"`). Family Steward only. Returns the
+  count of all current pending review items (archive/media, video/audio, recipes,
+  recipe media, stories, and mystery contributions) for the Steward-facing
+  Pending Contributions badge. Research Intake review items (Sources, Proposed
+  Findings, New Person Candidates, Relationship Proposals, and Conflict Review
+  items) are NOT counted here — they resolve exclusively through the Research
+  Review Queue (`getReviewQueue`). The count is derived from canonical pending
+  data, so it increments on new pending items and decrements on Approve/Reject
+  automatically.
 
 ### Historical Research Intake
 
@@ -1089,21 +1233,24 @@ stays readable.
 
 ### Archive search, source upload, board media, and claim notification reconciliation
 
-- `searchArchiveItems(filter : ArchiveSearchFilter) : async [ArchiveItem]` — query.
-  Searches/filters approved archive items by title query, tags, item type,
-  related family member, and era. Returns only `#Approved` items visible to the
-  caller under the archive privacy rules (same server-side enforcement as
-  `listApprovedArchiveItems`: `#Public` to everyone, `#FamilyOnly` to approved
-  family members or Family Stewards, `#Private` to their contributor or a Family
-  Steward).
+- `searchArchiveItemsForFamily(familyId : Text, filter : ArchiveSearchFilter) : async [ArchiveItem]` —
+  query. Requires an approved member or active Steward of `familyId`.
+  Searches/filters approved archive items in `familyId` by title query, tags,
+  item type, related family member, and era. Returns only `#Approved` items whose
+  `familyId` equals `familyId` and that are visible to the caller under the
+  archive privacy rules (same server-side enforcement as
+  `listApprovedArchiveItemsForFamily`: `#Public` to everyone, `#FamilyOnly` to
+  approved members of `familyId` or active Stewards of `familyId`, `#Private` to
+  their contributor or an active Steward of `familyId`).
   `filter.searchTerm` matches the item title case-insensitively and by
   substring; `filter.tags`
   matches items carrying ALL of the given tags, each matched case-insensitively
   and by substring against the item's canonical `tags` list; `filter.itemType`,
   `filter.relatedMemberId`, and `filter.era` filter by category, linked family
   member, and era respectively. Every field is optional — a `null`/empty field
-  does not constrain the result. Readable by any caller, subject to the privacy
-  filter above.
+  does not constrain the result. The single-family `searchArchiveItems` is a
+  TEMPORARY Tenancy 1C compatibility wrapper delegating with the default family
+  id (`\"norwood\"`).
 - `createSourceWithUpload(title : Text, sourceType : SourceType, description : Text, mimeType : Text, blob : Blob, tags : [Text], era : Text, year : ?Nat, relatedMemberIds : [Text], privacyLevel : PrivacyLevel, classification : ArchiveItemClassification, primarySpeaker : ?OralHistorySpeaker, filename : Text) : async Result<SourceUploadResult, ResearchError>` —
   update. Uploads a research source file: creates exactly ONE canonical Archive
   item (in `#Pending` state) from the uploaded file and links a new Research
@@ -1164,7 +1311,7 @@ stays readable.
 - `execute(qJson : Text) : async Result` — query. Runs a JSON-encoded OQL query
   and returns matching rows.
 
-The exposed entities are `photo`, `archiveItem`, `profile`, `claim`,
+The exposed entities are `family`, `photo`, `archiveItem`, `profile`, `claim`,
 `relationshipRequest`, `confirmedRelationship`, `notification`, `account`,
 `steward`, `successor`, `removalRequest`, `auditLog`, `mergeConflict`,
 `archivedProfile`, `dismissedPair`, `story`, `mystery`, `mysteryContribution`,
@@ -1175,12 +1322,16 @@ Most are declared `.controllerOnly()` (see the authorization section); the
 `archiveItem` and `conversation` entities are `.controllerOrScoped()` and the
 `message` entity is `.scopedPerUser()`. `archiveItem` uses a privacy-reflecting
 row-visibility rule (see the authorization section); `conversation` and
-`message` use a participant-only visibility rule. `photo` rows are flattened
+`message` use a participant-only visibility rule. `family` rows (primary key
+`id`) carry `displayName`, `createdAt` (nanoseconds since epoch, `Int`),
+`createdBy` (the creating principal, rendered as text), and `status`
+(`\"active\"`/`\"archived\"`). `photo` rows are flattened
 photo metadata: `key` (globally-unique \"<personId>:<id>\", the primary key),
 `personId`, `id`, `filename`, `mimeType`, `uploadedAt` (nanoseconds since epoch,
 `Int`), `uploadedBy` (the uploading principal, rendered as text), and
 `isProfilePhoto` (`Bool`). `archiveItem` rows are flattened archive metadata:
-`id` (the primary key), `title`, `itemType`, `era`, `year` (optional year, `0`
+`familyId` (the owning family id, the tenant boundary), `id` (the primary key),
+`title`, `itemType`, `era`, `year` (optional year, `0`
 when absent), `contributor` (the submitting principal, rendered as text),
 `sourceStatus`, `privacyLevel`, `status`, `createdAt` (nanoseconds since
 epoch, `Int`), `classification` (`\"Standard\"`/`\"OralHistory\"`), `primarySpeakerName` (the primary speaker's display name, `\"\"` when the item is
@@ -1444,10 +1595,11 @@ content. This preserves private-messaging privacy — no user can read another
 user's private conversations or messages through OQL, and no private message
 content is steward-readable unless reported.
 
-The archive methods gate on sign-in and role. `submitArchiveItem` requires a
-signed-in (non-anonymous) caller and traps with `\"Unauthorized: You must be
-signed in\"` for an anonymous caller. A signed-in caller who is not an approved
-family member is denied with the stable, non-technical
+The archive methods gate on sign-in and role, and every one of them is
+family-scoped. `submitArchiveItemForFamily` requires a signed-in (non-anonymous)
+caller and traps with `\"Unauthorized: You must be signed in\"` for an anonymous
+caller. A signed-in caller who is not an approved member of the requested
+`familyId` is denied with the stable, non-technical
 `\"Family membership required. Claim your family profile and wait for Family
 Steward approval before contributing family content.\"` — a distinguishable
 outcome the frontend maps to a definitive family-membership-required message
@@ -1457,17 +1609,34 @@ It also validates the Oral History
 speaker: it traps with `\"A primary speaker is required for Oral History
 items\"` when `classification == #OralHistory` and `primarySpeaker` is `null`,
 and with `\"A primary speaker is only allowed on Oral History items\"` when
-`classification == #Standard` and `primarySpeaker` is not `null`.
-`listPendingArchiveItems`,
-`approveArchiveItem`, and `rejectArchiveItem` are Family Steward only and trap
-with `\"Unauthorized: Only Family Stewards can perform this action\"` when the
-caller is not an active Family Steward (an ACTIVE persisted `StewardRecord`).
-The platform admin role does not grant these powers.
-`listApprovedArchiveItems` and `searchArchiveItems` are readable by any caller,
-but enforce the archive privacy rules server-side: `#Public` items are returned
-to everyone; `#FamilyOnly` items are returned only to approved family members (a
-caller holding at least one `#Approved` profile claim) or Family Stewards;
-`#Private` items are returned only to their contributor or a Family Steward.
+`classification == #Standard` and `primarySpeaker` is not `null`. It also traps
+with `\"Unauthorized: Related family members must belong to the same family\"`
+when a `relatedMemberIds` entry does not belong to the requested `familyId`, so
+Family A can never reference Family B people.
+`listPendingArchiveItemsForFamily`,
+`approveArchiveItemForFamily`, and `rejectArchiveItemForFamily` are active
+Steward of `familyId` only and trap with
+`\"Unauthorized: Only Family Stewards can perform this action\"` when the caller
+is not an active Steward of that family (an ACTIVE persisted `StewardRecord`
+whose `familyId` is the requested family). A Steward of one family cannot review
+another family's items. The platform admin role does not grant these powers.
+`listApprovedArchiveItemsForFamily`, `getArchiveItemForFamily`, and
+`searchArchiveItemsForFamily` require an approved member or active Steward of
+`familyId`, and enforce the archive privacy rules server-side: `#Public` items
+are returned to everyone; `#FamilyOnly` items are returned only to approved
+members of `familyId` (a caller holding at least one `#Approved` profile claim in
+that family) or active Stewards of `familyId`; `#Private` items are returned only
+to their contributor or an active Steward of `familyId`. Every returned record
+must carry `ArchiveItem.familyId == familyId`, so an `archiveItemId` alone never
+crosses the family boundary.
+
+The single-family archive endpoints (`submitArchiveItem`,
+`listPendingArchiveItems`, `approveArchiveItem`, `rejectArchiveItem`,
+`listApprovedArchiveItems`) are TEMPORARY Tenancy 1C compatibility wrappers:
+each delegates to its family-scoped counterpart with the default family id
+(`\"norwood\"`), so current Norwood behavior is unchanged. They contain no
+business logic of their own and will be removed once every caller passes an
+explicit `familyId`.
 
 The profile-claim and relationship-request methods gate on sign-in and role.
 `requestProfileClaim`, `createMyself`, `proposeRelationship`, and
@@ -1581,11 +1750,17 @@ is not an active Family Steward (an ACTIVE persisted `StewardRecord`). Stewards
 cannot browse arbitrary private conversations; they see
 reported message content only when a report is filed (via `getReportedMessage`).
 
-The Pending Contributions method `getPendingContributionsCount` is Family
-Steward only: it traps with `\"Unauthorized: You must be signed in\"` for an
-anonymous caller and `\"Unauthorized: Only Family Stewards can view the pending
-contributions count\"` when the caller is not an active Family Steward (an
-ACTIVE persisted `StewardRecord`).
+The Pending Contributions methods are family-scoped and Steward-only.
+`getPendingContributionsCountForFamily` requires an active Steward of the
+requested `familyId` and traps with `\"Unauthorized: You must be signed in\"` for
+an anonymous caller and `\"Unauthorized: Only Family Stewards can perform this
+action\"` when the caller is not an active Steward of that family.
+`getPendingContributionsCount` is the TEMPORARY Tenancy 1C compatibility wrapper
+delegating with the default family id (`\"norwood\"`); it traps with
+`\"Unauthorized: You must be signed in\"` for an anonymous caller and
+`\"Unauthorized: Only Family Stewards can view the pending contributions count\"`
+when the caller is not an active Family Steward (an ACTIVE persisted
+`StewardRecord`).
 
 The Historical Research Intake methods gate on sign-in and role. The creation
 methods — `createSource`, `createFinding`, `createNewPersonCandidate`, and
@@ -2071,20 +2246,26 @@ first photo uploaded to a person's gallery is automatically selected as the
 profile photo; a later photo becomes the profile photo only when the caller
 explicitly calls `setProfilePhoto`.
 
-Archive items follow a submit → approve/reject lifecycle. `submitArchiveItem`
-stores the item in `#Pending` state. A Family Steward then calls
-`approveArchiveItem` or
-`rejectArchiveItem` to move it to `#Approved` or `#Rejected`. Only `#Approved`
-items are returned by `listApprovedArchiveItems` (the archive view). There is no
-async job to poll; the frontend can call `listPendingArchiveItems` (steward) or
-`listApprovedArchiveItems` to observe the current state. Each successful
+Archive items follow a submit → approve/reject lifecycle, scoped to a family.
+`submitArchiveItemForFamily` stores the item in `#Pending` state with
+`familyId` set to the requested family. A Steward of that family then calls
+`approveArchiveItemForFamily` or
+`rejectArchiveItemForFamily` to move it to `#Approved` or `#Rejected`. Only
+`#Approved` items are returned by `listApprovedArchiveItemsForFamily` (the
+archive view). There is no
+async job to poll; the frontend can call `listPendingArchiveItemsForFamily`
+(steward) or `listApprovedArchiveItemsForFamily` to observe the current state.
+Each successful
 transition out of `#Pending` records exactly one `#ArchiveApproved` /
 `#ArchiveRejected` notification to the item's contributor, readable via
 `listNotifications`; a repeated approve/reject call on an already-reviewed item
 returns `null` and creates no duplicate notification. An Oral History item
 (`classification == #OralHistory`) must carry exactly one primary speaker at
 submission time; the speaker is fixed at submission and does not change through
-the approval lifecycle.
+the approval lifecycle. The single-family endpoints (`submitArchiveItem`,
+`listPendingArchiveItems`, `approveArchiveItem`, `rejectArchiveItem`,
+`listApprovedArchiveItems`) are TEMPORARY Tenancy 1C compatibility wrappers that
+delegate with the default family id (`\"norwood\"`).
 
 Profile claims follow a request → approve/reject lifecycle. `requestProfileClaim`
 creates a `#Pending` claim without granting ownership. A Family Steward then
@@ -2243,9 +2424,11 @@ reported message content via `getReportedMessage`. There is no async job to
 poll; the frontend can call `listConversations`, `getConversation`,
 `listBlockedUsers`, or `listReports` (steward) to observe the current state.
 
-The Pending Contributions count is derived on demand. `getPendingContributionsCount`
+The Pending Contributions count is derived on demand and family-scoped.
+`getPendingContributionsCountForFamily`
 counts all current pending review items (pending archive/media, pending recipes,
-pending stories, and pending mystery contributions) from canonical pending data.
+pending stories, and pending mystery contributions) in the requested `familyId`
+from canonical pending data.
 Research Intake review items (Sources, Proposed Findings, New Person Candidates,
 Relationship Proposals, and Conflict Review items) are deliberately excluded —
 they resolve exclusively through the Research Review Queue (`getReviewQueue`),
@@ -2253,11 +2436,13 @@ so they never inflate the Pending Contributions badge. A pending Archive item
 whose id is referenced by a Research Source's `archiveItemId` is excluded as
 well, because it is reviewed through that same queue rather than in Pending
 Contributions; the count therefore always agrees with the Pending Contributions
-list (`listPendingArchiveItems`).
+list (`listPendingArchiveItemsForFamily`).
 It increments when a new pending item is submitted and decrements when an item is
 approved or rejected, automatically — there is no separate counter to maintain.
 The frontend calls it to render the Steward-facing Pending Contributions badge
-and hides the badge when the count is `0`.
+and hides the badge when the count is `0`. The single-family
+`getPendingContributionsCount` is a TEMPORARY Tenancy 1C compatibility wrapper
+delegating with the default family id (`\"norwood\"`).
 
 Historical Research Intake follows a submit → review lifecycle. A signed-in
 caller creates a source (`createSource`) and then proposed findings
@@ -2317,20 +2502,25 @@ no async job to poll; the frontend can call the list methods (steward) or
   clears the profile photo selection.
 - `removePhoto` is destructive and irreversible: the photo's metadata is
   removed from the gallery. The off-chain blob is not deleted by this call.
-- `submitArchiveItem` is not idempotent: each call stores a new item with a
-  fresh id. Retrying a submission that actually succeeded creates a duplicate
-  item. For an Oral History item the `primarySpeaker` is validated at
+- `submitArchiveItemForFamily` is not idempotent: each call stores a new item
+  with a fresh id. Retrying a submission that actually succeeded creates a
+  duplicate item. For an Oral History item the `primarySpeaker` is validated at
   submission: it must be present (exactly one) when `classification ==
   #OralHistory` and must be `null` when `classification == #Standard`; a
-  violation traps and stores nothing.
-- `approveArchiveItem` and `rejectArchiveItem` are idempotent: approving or
-  rejecting an already-approved or already-rejected (or nonexistent) item
-  returns `null` and changes nothing. They only transition items currently in
-  `#Pending` state. Neither is destructive — the item and its original file
+  violation traps and stores nothing. A `relatedMemberIds` entry that does not
+  belong to the requested `familyId` also traps and stores nothing.
+- `approveArchiveItemForFamily` and `rejectArchiveItemForFamily` are idempotent:
+  approving or rejecting an already-approved or already-rejected (or
+  nonexistent, or other-family) item returns `null` and changes nothing. They
+  only transition items currently in `#Pending` state that belong to the
+  requested `familyId`. Neither is destructive — the item and its original file
   reference are preserved in either terminal state. Each successful transition
   records exactly one `#ArchiveApproved`/`#ArchiveRejected` notification to the
   item's contributor (never to any other user), and a repeated call on an
   already-reviewed item creates no duplicate notification.
+- The single-family archive wrappers (`submitArchiveItem`, `approveArchiveItem`,
+  `rejectArchiveItem`) have the same retry semantics as their family-scoped
+  counterparts, applied to the default family (`\"norwood\"`).
 - `requestProfileClaim` is not idempotent in effect but guards against
   duplicates: it returns `#err(#AlreadyPending)` when a pending claim already
   exists for the same person, so a retry that actually succeeded does not create
@@ -2484,8 +2674,9 @@ no async job to poll; the frontend can call the list methods (steward) or
   id. Retrying a report that actually succeeded creates a duplicate report.
 - `reviewReport` is idempotent: reviewing an already-reviewed (or nonexistent)
   report returns `null` and changes nothing.
-- `getPendingContributionsCount` is a read-only query with no side effects; it is
-  always idempotent.
+- `getPendingContributionsCountForFamily` and its TEMPORARY Tenancy 1C
+  compatibility wrapper `getPendingContributionsCount` are read-only queries with
+  no side effects; they are always idempotent.
 - `createSource`, `createFinding`, `createNewPersonCandidate`, and
   `createRelationshipProposal` are not idempotent: each call stores a new record
   with a fresh id. Retrying a submission that actually succeeded creates a
@@ -2557,11 +2748,14 @@ no async job to poll; the frontend can call the list methods (steward) or
   user roles\"` when the caller is not an admin.
 - `setProfilePhoto` returns `null` (it does not trap) when the photo id does
   not exist in the person's gallery.
-- `submitArchiveItem` traps with `\"A primary speaker is required for Oral
-  History items\"` when `classification == #OralHistory` and `primarySpeaker` is
-  `null`, and with `\"A primary speaker is only allowed on Oral History items\"`
-  when `classification == #Standard` and `primarySpeaker` is not `null`. These
-  traps store nothing, so a rejected submission leaves no partial item. The
+- `submitArchiveItemForFamily` traps with `\"A primary speaker is required for
+  Oral History items\"` when `classification == #OralHistory` and
+  `primarySpeaker` is `null`, and with `\"A primary speaker is only allowed on
+  Oral History items\"` when `classification == #Standard` and `primarySpeaker`
+  is not `null`. These traps store nothing, so a rejected submission leaves no
+  partial item. It also traps with `\"Unauthorized: Related family members must
+  belong to the same family\"` when a `relatedMemberIds` entry does not belong to
+  the requested `familyId`. The
   speaker field is hidden in the UI for media not classified as Oral History,
   but the backend still enforces the invariant regardless of the client. It also
   traps when the upload fails validation (unsupported/forbidden MIME type, empty
@@ -2572,10 +2766,15 @@ no async job to poll; the frontend can call the list methods (steward) or
   `application/vnd.ms-excel`, and
   `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`; Word,
   Excel, and CSV files are stored but never rendered inline.
-- `approveArchiveItem` and `rejectArchiveItem` notify only the item's
-  `contributor`; contributor identity is never exposed to other users, and
+- `approveArchiveItemForFamily` and `rejectArchiveItemForFamily` notify only the
+  item's `contributor`; contributor identity is never exposed to other users, and
   research-source notifications (`#ResearchSubmission`/`#ResearchApproved`/
-  `#ResearchRejected`) are unchanged.
+  `#ResearchRejected`) are unchanged. An item that belongs to another family is
+  treated exactly like a nonexistent item: the call returns `null` and changes
+  nothing, so an `archiveItemId` alone never crosses the family boundary.
+- The single-family archive wrappers (`submitArchiveItem`, `approveArchiveItem`,
+  `rejectArchiveItem`) trap and return exactly as their family-scoped
+  counterparts do, applied to the default family (`\"norwood\"`).
 - Photo ids are per-person; the same numeric id can refer to different photos
   for different people.
 - The OQL `photo` entity's primary key is the composite `key` field, not `id`,
@@ -2703,7 +2902,9 @@ no async job to poll; the frontend can call the list methods (steward) or
   anonymous caller and `\"Unauthorized: Only approved family members can use
   private messaging\"` when the caller is not an approved member. The steward
   board/messaging methods (`restoreBoardPost`, `removeBoardReply`, `listReports`,
-  `reviewReport`, `getReportedMessage`) and `getPendingContributionsCount` trap
+  `reviewReport`, `getReportedMessage`) and the Pending Contributions methods
+  (`getPendingContributionsCountForFamily` and its TEMPORARY Tenancy 1C wrapper
+  `getPendingContributionsCount`) trap
   with `\"Unauthorized: Only Family Stewards can perform this action\"` (or the
   equivalent pending-count message) when the caller is not an active Family
   Steward (an ACTIVE persisted `StewardRecord`).

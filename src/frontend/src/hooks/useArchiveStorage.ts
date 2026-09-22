@@ -1,4 +1,5 @@
 import { createActor } from "@/backend";
+import { useFamilyScopedId } from "@/context/FamilyContext";
 import type {
   ArchiveItem,
   ArchiveItemClassification,
@@ -15,6 +16,16 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useProvidersPresent } from "./usePhotoStorage";
 
 export { useProvidersPresent };
+
+/**
+ * The active family is read from the centralized FamilyContext. `familyScopedId`
+ * is `undefined` for the default family, which the backend's legacy endpoints
+ * already resolve, and the explicit family id otherwise. Every Archive hook
+ * passes this value straight through: the default family keeps the exact legacy
+ * no-argument call shape and React Query key, while a non-default family routes
+ * to the canonical `*ForFamily` endpoint with the familyId included in the key
+ * so caches never collide across families.
+ */
 
 /** True when the signed-in caller is an admin (used to gate the admin nav link). */
 export function useIsAdmin() {
@@ -33,12 +44,15 @@ export function useIsAdmin() {
 /** Lists pending contributions awaiting admin approval. */
 export function usePendingArchiveItems() {
   const providersPresent = useProvidersPresent();
+  const familyScopedId = useFamilyScopedId();
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["archive", "pending"],
+    queryKey: ["archive", "pending", familyScopedId ?? ""],
     queryFn: async () => {
       if (!actor) return [];
-      return actor.listPendingArchiveItems();
+      return familyScopedId === undefined
+        ? actor.listPendingArchiveItems()
+        : actor.listPendingArchiveItemsForFamily(familyScopedId);
     },
     enabled: providersPresent && !!actor && !isFetching,
   });
@@ -47,12 +61,15 @@ export function usePendingArchiveItems() {
 /** Lists approved archive items that are part of the archive. */
 export function useApprovedArchiveItems() {
   const providersPresent = useProvidersPresent();
+  const familyScopedId = useFamilyScopedId();
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["archive", "approved"],
+    queryKey: ["archive", "approved", familyScopedId ?? ""],
     queryFn: async () => {
       if (!actor) return [];
-      return actor.listApprovedArchiveItems();
+      return familyScopedId === undefined
+        ? actor.listApprovedArchiveItems()
+        : actor.listApprovedArchiveItemsForFamily(familyScopedId);
     },
     enabled: providersPresent && !!actor && !isFetching,
   });
@@ -65,12 +82,16 @@ export function useApprovedArchiveItems() {
  */
 export function useApprovedMediaItems() {
   const providersPresent = useProvidersPresent();
+  const familyScopedId = useFamilyScopedId();
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["archive", "approved", "media"],
+    queryKey: ["archive", "approved", "media", familyScopedId ?? ""],
     queryFn: async () => {
       if (!actor) return [];
-      const items = await actor.listApprovedArchiveItems();
+      const items =
+        familyScopedId === undefined
+          ? await actor.listApprovedArchiveItems()
+          : await actor.listApprovedArchiveItemsForFamily(familyScopedId);
       return items.filter((item) => getMediaKind(item) !== null);
     },
     enabled: providersPresent && !!actor && !isFetching,
@@ -84,11 +105,13 @@ export function useApprovedMediaItems() {
  */
 export function useSearchArchiveItems(filter: ArchiveSearchFilter) {
   const providersPresent = useProvidersPresent();
+  const familyScopedId = useFamilyScopedId();
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
     queryKey: [
       "archive",
       "search",
+      familyScopedId ?? "",
       filter.query ?? "",
       filter.tags.join(","),
       filter.itemType ?? "",
@@ -97,7 +120,17 @@ export function useSearchArchiveItems(filter: ArchiveSearchFilter) {
     ],
     queryFn: async () => {
       if (!actor) return [] as ArchiveItem[];
-      return actor.searchArchiveItems({
+      if (familyScopedId === undefined) {
+        return actor.searchArchiveItems({
+          searchTerm: filter.query ?? undefined,
+          tags: filter.tags,
+          itemType: filter.itemType ?? undefined,
+          relatedMemberId: filter.relatedMemberId ?? undefined,
+          era: filter.era ?? undefined,
+        });
+      }
+      return actor.searchArchiveItemsForFamily(familyScopedId, {
+        familyId: familyScopedId,
         searchTerm: filter.query ?? undefined,
         tags: filter.tags,
         itemType: filter.itemType ?? undefined,
@@ -137,12 +170,33 @@ export interface SubmitArchiveItemInput {
 
 /** Submits a new contribution in a pending state awaiting admin approval. */
 export function useSubmitArchiveItem() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (input: SubmitArchiveItemInput) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.submitArchiveItem(
+      if (familyScopedId === undefined) {
+        return actor.submitArchiveItem(
+          input.title,
+          input.description,
+          input.itemType,
+          input.mimeType,
+          input.blob,
+          input.era,
+          input.year,
+          input.tags,
+          input.relatedMemberIds,
+          input.relatedBranchId,
+          input.sourceStatus,
+          input.privacyLevel,
+          input.classification,
+          input.primarySpeaker,
+          input.filename,
+        );
+      }
+      return actor.submitArchiveItemForFamily(
+        familyScopedId,
         input.title,
         input.description,
         input.itemType,
@@ -175,12 +229,15 @@ export function useSubmitArchiveItem() {
 
 /** Approves a pending contribution, moving it into the archive. */
 export function useApproveArchiveItem() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: bigint) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.approveArchiveItem(id);
+      return familyScopedId === undefined
+        ? actor.approveArchiveItem(id)
+        : actor.approveArchiveItemForFamily(familyScopedId, id);
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["archive", "pending"] });
@@ -206,12 +263,15 @@ export function useApproveArchiveItem() {
 
 /** Rejects a pending contribution, excluding it from the archive. */
 export function useRejectArchiveItem() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: bigint) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.rejectArchiveItem(id);
+      return familyScopedId === undefined
+        ? actor.rejectArchiveItem(id)
+        : actor.rejectArchiveItemForFamily(familyScopedId, id);
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["archive", "pending"] });

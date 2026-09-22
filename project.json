@@ -1,19 +1,19 @@
 {
-  "overview": "A multi-family heritage app for the Norwood family to explore their family tree, claim profiles, manage relationships, and share photos.",
+  "overview": "A private family archive for the Norwood family to preserve photos, documents, and oral histories, with Steward-reviewed contributions.",
   "features": [
-    "Explore the family tree and person profiles",
-    "Claim your own profile",
-    "Propose and approve family relationships",
-    "Share and manage profile photos",
-    "Family-scoped privacy and Steward authority"
+    "Browse and search the family archive",
+    "Contribute photos, documents, and stories",
+    "Steward review of pending contributions",
+    "PDF and image previews with download for other document types",
+    "Family-scoped access so each family's archive stays private"
   ],
-  "category": "family-heritage",
+  "category": "family-archive",
   "tags": [
-    "family-tree",
+    "family",
+    "archive",
     "genealogy",
-    "heritage",
-    "multi-family",
-    "tenancy"
+    "documents",
+    "photos"
   ],
-  "last_updated": "2026-09-22T08:47:40.456Z"
+  "last_updated": "2026-09-22T19:31:26.045Z"
 }

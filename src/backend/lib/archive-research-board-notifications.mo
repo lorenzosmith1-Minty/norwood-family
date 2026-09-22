@@ -30,13 +30,16 @@ module {
     };
   };
 
-  /// Searches/filters approved archive items by title query, tags, item type,
-  /// related family member, and era. Returns only `#Approved` items visible to
-  /// the given caller under the archive privacy rules. The title
-  /// query and tags match case-insensitively and by substring; an item must
-  /// carry ALL of the given tags.
-  public func searchArchiveItems(
+  /// Searches/filters approved archive items in `familyId` by title query,
+  /// tags, item type, related family member, and era. Only items whose
+  /// `familyId` equals `familyId` are considered, and only `#Approved` items
+  /// visible to the given caller under the archive privacy rules are returned.
+  /// The title query and tags match case-insensitively and by substring; an
+  /// item must carry ALL of the given tags. An `archiveItemId` alone is never a
+  /// tenant boundary: a record belonging to another family is never returned.
+  public func searchArchiveItemsForFamily(
     items : List.List<ArchiveTypes.ArchiveItem>,
+    familyId : FamilyTypes.FamilyId,
     filter : Types.ArchiveSearchFilter,
     caller : Principal,
     isAdmin : Bool,
@@ -46,7 +49,7 @@ module {
     let tags = filter.tags.map(func t = t.toLower());
     items.toArray().filter(func it =
       it.status == #Approved and
-      ArchiveLib.isVisible(it, caller, isAdmin, isApprovedFamilyMember) and
+      ArchiveLib.isVisibleForFamily(it, familyId, caller, isAdmin, isApprovedFamilyMember) and
       (queryText == "" or it.title.toLower().contains(#text queryText)) and
       (tags.size() == 0 or tags.all(func t = it.tags.any(func tag = tag.toLower().contains(#text t)))) and
       (switch (filter.itemType) { case (?t) it.itemType == t; case null true }) and
@@ -55,14 +58,31 @@ module {
     );
   };
 
-  /// Creates one canonical Archive item (pending) from an uploaded source file
-  /// and links a new Research Source record to it via `archiveItemId`. The
-  /// caller is recorded as the contributor of both records. No manually typed
-  /// Archive Item ID is required.
-  public func createSourceWithUpload(
+  /// TEMPORARY Tenancy 1C compatibility wrapper for
+  /// `searchArchiveItemsForFamily`. Deprecated single-family form: delegates to
+  /// the canonical family-scoped implementation with
+  /// `FamilyTypes.DEFAULT_FAMILY_ID`, so current Norwood behavior is unchanged.
+  public func searchArchiveItems(
+    items : List.List<ArchiveTypes.ArchiveItem>,
+    filter : Types.ArchiveSearchFilter,
+    caller : Principal,
+    isAdmin : Bool,
+    isApprovedFamilyMember : Bool,
+  ) : [ArchiveTypes.ArchiveItem] {
+    searchArchiveItemsForFamily(items, FamilyTypes.DEFAULT_FAMILY_ID, filter, caller, isAdmin, isApprovedFamilyMember);
+  };
+
+  /// Creates one canonical Archive item (pending) in `familyId` from an
+  /// uploaded source file and links a new Research Source record to it via
+  /// `archiveItemId`. The caller is recorded as the contributor of both
+  /// records. No manually typed Archive Item ID is required. The stored item's
+  /// `familyId` is the requested `familyId`, and every `relatedMemberIds` entry
+  /// must belong to that same family.
+  public func createSourceWithUploadForFamily(
     items : List.List<ArchiveTypes.ArchiveItem>,
     sources : List.List<ResearchIntakeTypes.SourceRecord>,
     state : { var nextSourceId : Nat },
+    familyId : FamilyTypes.FamilyId,
     title : Text,
     sourceType : ResearchIntakeTypes.SourceType,
     description : Text,
@@ -80,7 +100,7 @@ module {
     now : Int,
   ) : Types.SourceUploadResult {
     let archiveItem : ArchiveTypes.ArchiveItem = {
-      familyId = FamilyTypes.DEFAULT_FAMILY_ID;
+      familyId;
       id = nextArchiveItemId(items);
       title;
       description;
@@ -124,26 +144,77 @@ module {
     { source; archiveItem };
   };
 
+  /// TEMPORARY Tenancy 1C compatibility wrapper for
+  /// `createSourceWithUploadForFamily`. Deprecated single-family form:
+  /// delegates to the canonical family-scoped implementation with
+  /// `FamilyTypes.DEFAULT_FAMILY_ID`, so current Norwood behavior is unchanged.
+  public func createSourceWithUpload(
+    items : List.List<ArchiveTypes.ArchiveItem>,
+    sources : List.List<ResearchIntakeTypes.SourceRecord>,
+    state : { var nextSourceId : Nat },
+    title : Text,
+    sourceType : ResearchIntakeTypes.SourceType,
+    description : Text,
+    blob : Storage.ExternalBlob,
+    tags : [Text],
+    era : Text,
+    year : ?Nat,
+    relatedMemberIds : [Text],
+    privacyLevel : ArchiveTypes.PrivacyLevel,
+    classification : ArchiveTypes.ArchiveItemClassification,
+    primarySpeaker : ?ArchiveTypes.OralHistorySpeaker,
+    mimeType : Text,
+    filename : Text,
+    contributor : Principal,
+    now : Int,
+  ) : Types.SourceUploadResult {
+    createSourceWithUploadForFamily(
+      items,
+      sources,
+      state,
+      FamilyTypes.DEFAULT_FAMILY_ID,
+      title,
+      sourceType,
+      description,
+      blob,
+      tags,
+      era,
+      year,
+      relatedMemberIds,
+      privacyLevel,
+      classification,
+      primarySpeaker,
+      mimeType,
+      filename,
+      contributor,
+      now,
+    );
+  };
+
   /// Creates a board post that attaches existing Archive items (by id) and/or
-  /// new uploads. Each new upload creates one canonical Archive item (pending)
-  /// linked to the post; the underlying file is never duplicated. Existing
-  /// Archive items are attached by id without re-uploading.
-  public func createBoardPostWithMedia(
+  /// new uploads, all scoped to `familyId`. Each new upload creates one
+  /// canonical Archive item (pending) in `familyId` linked to the post; the
+  /// underlying file is never duplicated. Existing Archive items are attached
+  /// by id without re-uploading, and only when they belong to `familyId` — an
+  /// id from another family is never attached. Every new upload's
+  /// `relatedMemberIds` must belong to `familyId`.
+  public func createBoardPostWithMediaForFamily(
     posts : List.List<BoardTypes.Post>,
     items : List.List<ArchiveTypes.ArchiveItem>,
+    familyId : FamilyTypes.FamilyId,
     post : BoardTypes.Post,
     existingArchiveItemIds : [Nat],
     newUploads : [Types.BoardMediaUpload],
   ) : BoardTypes.Post {
     let linked = List.empty<Nat>();
     for (id in existingArchiveItemIds.values()) {
-      if (items.find(func it = it.id == id) != null) {
+      if (items.find(func it = it.id == id and ArchiveLib.belongsToFamily(it, familyId)) != null) {
         linked.add(id);
       };
     };
     for (upload in newUploads.values()) {
       let item : ArchiveTypes.ArchiveItem = {
-        familyId = FamilyTypes.DEFAULT_FAMILY_ID;
+        familyId;
         id = nextArchiveItemId(items);
         title = upload.title;
         description = upload.description;
@@ -177,6 +248,27 @@ module {
     let updated : BoardTypes.Post = { post with linkedMediaIds = linked.toArray() };
     posts.add(updated);
     updated;
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper for
+  /// `createBoardPostWithMediaForFamily`. Deprecated single-family form:
+  /// delegates to the canonical family-scoped implementation with
+  /// `FamilyTypes.DEFAULT_FAMILY_ID`, so current Norwood behavior is unchanged.
+  public func createBoardPostWithMedia(
+    posts : List.List<BoardTypes.Post>,
+    items : List.List<ArchiveTypes.ArchiveItem>,
+    post : BoardTypes.Post,
+    existingArchiveItemIds : [Nat],
+    newUploads : [Types.BoardMediaUpload],
+  ) : BoardTypes.Post {
+    createBoardPostWithMediaForFamily(
+      posts,
+      items,
+      FamilyTypes.DEFAULT_FAMILY_ID,
+      post,
+      existingArchiveItemIds,
+      newUploads,
+    );
   };
 
   /// Reconciles stale claim notifications for a claim: marks the pending

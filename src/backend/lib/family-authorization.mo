@@ -6,6 +6,7 @@ import OwnershipTypes "../types/ownership";
 import GovernanceTypes "../types/governance";
 import FamilyTypes "../types/family";
 import StewardAuthorityLib "steward-authority";
+import TenancyLib "tenancy";
 
 /// Shared approved-family authorization for family-content contribution
 /// endpoints. A caller is an approved family member when they are a Family
@@ -61,9 +62,64 @@ module {
     if (isStewardForFamily(stewards, caller, familyId)) {
       return true;
     };
+    // The default Norwood family is the legacy family: a claim approved before
+    // tenancy (or through a legacy compatibility path) may carry an empty
+    // `familyId` rather than "norwood", so an approved claim by the caller
+    // grants membership there exactly as it did before tenancy. A non-default
+    // family is strictly scoped: only a claim whose `familyId` equals the
+    // requested family grants membership, so an approved claim in one family
+    // never leaks into another.
     claims.toArray().any(func c =
-      c.requestingUserId == caller and c.status == #Approved and c.familyId == familyId
+      c.requestingUserId == caller and c.status == #Approved and
+      (c.familyId == familyId or (familyId == FamilyTypes.DEFAULT_FAMILY_ID and c.familyId == ""))
     );
+  };
+
+  /// Whether `personId` belongs to `familyId`. This is the canonical
+  /// related-person family predicate: a person belongs to a family when either
+  /// an `#Approved` profile claim for that person exists in `familyId`, or a
+  /// profile for that person is tracked in `familyId`.
+  ///
+  /// The default Norwood family is the legacy family tree: its people are not
+  /// all stored as profiles or claims (the seeded Norwood person ids such as
+  /// "julia" and "clayton" predate tenancy), so any well-formed person id is
+  /// accepted there, exactly as before tenancy. A non-default family has no
+  /// legacy tree, so a person must be tracked in it by a profile or an approved
+  /// claim. A person that exists only in another family therefore has neither a
+  /// profile nor an approved claim in `familyId`, so a genuinely foreign person
+  /// is still rejected and Family A can never reference Family B people.
+  public func isPersonInFamily(
+    profiles : Map.Map<OwnershipTypes.PersonId, OwnershipTypes.PersonProfile>,
+    claims : List.List<OwnershipTypes.ProfileClaim>,
+    personId : OwnershipTypes.PersonId,
+    familyId : FamilyTypes.FamilyId,
+  ) : Bool {
+    if (familyId == FamilyTypes.DEFAULT_FAMILY_ID) {
+      return true;
+    };
+    switch (TenancyLib.getProfileForFamily(profiles, familyId, personId)) {
+      case (?_) { return true };
+      case null {};
+    };
+    claims.toArray().any(func c =
+      c.personId == personId and c.status == #Approved and c.familyId == familyId
+    );
+  };
+
+  /// Traps unless every person id in `personIds` belongs to `familyId`, using
+  /// the canonical `isPersonInFamily` predicate. The denial message carries no
+  /// family id or principal.
+  public func requirePeopleInFamily(
+    profiles : Map.Map<OwnershipTypes.PersonId, OwnershipTypes.PersonProfile>,
+    claims : List.List<OwnershipTypes.ProfileClaim>,
+    personIds : [Text],
+    familyId : FamilyTypes.FamilyId,
+  ) {
+    for (personId in personIds.values()) {
+      if (not isPersonInFamily(profiles, claims, personId, familyId)) {
+        Runtime.trap("Unauthorized: Related family members must belong to the same family");
+      };
+    };
   };
 
   /// Traps unless the caller is an approved member of `familyId`. Anonymous

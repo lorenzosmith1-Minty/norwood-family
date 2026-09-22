@@ -1017,6 +1017,14 @@ export const ArchiveSearchFilter = IDL.Record({
   'searchTerm' : IDL.Opt(IDL.Text),
   'itemType' : IDL.Opt(ArchiveItemType),
 });
+export const ArchiveSearchQuery = IDL.Record({
+  'era' : IDL.Opt(IDL.Text),
+  'relatedMemberId' : IDL.Opt(IDL.Text),
+  'tags' : IDL.Vec(IDL.Text),
+  'searchTerm' : IDL.Opt(IDL.Text),
+  'itemType' : IDL.Opt(ArchiveItemType),
+  'familyId' : IDL.Text,
+});
 export const PersonMatch = IDL.Record({
   'name' : IDL.Text,
   'personId' : PersonId,
@@ -1123,6 +1131,11 @@ export const idlService = IDL.Service({
       [],
     ),
   'approveArchiveItem' : IDL.Func([ArchiveItemId], [IDL.Opt(ArchiveItem)], []),
+  'approveArchiveItemForFamily' : IDL.Func(
+      [FamilyId, ArchiveItemId],
+      [IDL.Opt(ArchiveItem)],
+      [],
+    ),
   'approveFinding' : IDL.Func([FindingId], [IDL.Opt(ProposedFinding)], []),
   'approveNewPersonCandidate' : IDL.Func(
       [IDL.Nat],
@@ -1201,6 +1214,20 @@ export const idlService = IDL.Service({
       [Post],
       [],
     ),
+  'createBoardPostWithMediaForFamily' : IDL.Func(
+      [
+        FamilyId,
+        PostType,
+        IDL.Opt(IDL.Text),
+        IDL.Text,
+        IDL.Vec(IDL.Text),
+        IDL.Vec(IDL.Nat),
+        IDL.Vec(BoardMediaUpload),
+        IDL.Vec(IDL.Text),
+      ],
+      [Post],
+      [],
+    ),
   'createCanonicalMystery' : IDL.Func(
       [
         IDL.Text,
@@ -1265,9 +1292,34 @@ export const idlService = IDL.Service({
       [Result_17],
       [],
     ),
+  'createSourceWithUploadForFamily' : IDL.Func(
+      [
+        FamilyId,
+        IDL.Text,
+        SourceType,
+        IDL.Text,
+        IDL.Text,
+        ExternalBlob,
+        IDL.Vec(IDL.Text),
+        IDL.Text,
+        IDL.Opt(IDL.Nat),
+        IDL.Vec(IDL.Text),
+        PrivacyLevel,
+        ArchiveItemClassification,
+        IDL.Opt(OralHistorySpeaker),
+        IDL.Text,
+      ],
+      [Result_17],
+      [],
+    ),
   'designateSuccessor' : IDL.Func([PersonId, IDL.Nat], [Result_16], []),
   'execute' : IDL.Func([IDL.Text], [Result__1], ['query']),
   'getApiDoc' : IDL.Func([], [IDL.Text], ['query']),
+  'getArchiveItemForFamily' : IDL.Func(
+      [FamilyId, ArchiveItemId],
+      [IDL.Opt(ArchiveItem)],
+      ['query'],
+    ),
   'getBoardPost' : IDL.Func([PostId], [IDL.Opt(Post)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
   'getConversation' : IDL.Func(
@@ -1306,6 +1358,11 @@ export const idlService = IDL.Service({
       ['query'],
     ),
   'getPendingContributionsCount' : IDL.Func([], [IDL.Nat], ['query']),
+  'getPendingContributionsCountForFamily' : IDL.Func(
+      [FamilyId],
+      [IDL.Nat],
+      ['query'],
+    ),
   'getPersonProfile' : IDL.Func(
       [PersonId],
       [IDL.Opt(PersonProfile)],
@@ -1361,6 +1418,11 @@ export const idlService = IDL.Service({
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
   'isCallerSteward' : IDL.Func([], [IDL.Bool], ['query']),
   'listApprovedArchiveItems' : IDL.Func([], [IDL.Vec(ArchiveItem)], ['query']),
+  'listApprovedArchiveItemsForFamily' : IDL.Func(
+      [FamilyId],
+      [IDL.Vec(ArchiveItem)],
+      ['query'],
+    ),
   'listApprovedRecipes' : IDL.Func([], [IDL.Vec(Recipe)], ['query']),
   'listApprovedStories' : IDL.Func([], [IDL.Vec(Story)], ['query']),
   'listArchivedProfileIds' : IDL.Func([], [IDL.Vec(PersonId)], ['query']),
@@ -1417,6 +1479,11 @@ export const idlService = IDL.Service({
     ),
   'listNotifications' : IDL.Func([], [IDL.Vec(Notification)], ['query']),
   'listPendingArchiveItems' : IDL.Func([], [IDL.Vec(ArchiveItem)], ['query']),
+  'listPendingArchiveItemsForFamily' : IDL.Func(
+      [FamilyId],
+      [IDL.Vec(ArchiveItem)],
+      ['query'],
+    ),
   'listPendingMysteryContributions' : IDL.Func(
       [],
       [IDL.Vec(MysteryContribution)],
@@ -1537,6 +1604,11 @@ export const idlService = IDL.Service({
     ),
   'reconcileClaimNotifications' : IDL.Func([IDL.Nat], [IDL.Nat], []),
   'rejectArchiveItem' : IDL.Func([ArchiveItemId], [IDL.Opt(ArchiveItem)], []),
+  'rejectArchiveItemForFamily' : IDL.Func(
+      [FamilyId, ArchiveItemId],
+      [IDL.Opt(ArchiveItem)],
+      [],
+    ),
   'rejectFinding' : IDL.Func([FindingId], [IDL.Opt(ProposedFinding)], []),
   'rejectNewPersonCandidate' : IDL.Func(
       [IDL.Nat],
@@ -1619,6 +1691,11 @@ export const idlService = IDL.Service({
       [IDL.Vec(ArchiveItem)],
       ['query'],
     ),
+  'searchArchiveItemsForFamily' : IDL.Func(
+      [FamilyId, ArchiveSearchQuery],
+      [IDL.Vec(ArchiveItem)],
+      ['query'],
+    ),
   'searchBoardPostsByTags' : IDL.Func(
       [IDL.Vec(IDL.Text)],
       [IDL.Vec(Post)],
@@ -1653,6 +1730,28 @@ export const idlService = IDL.Service({
     ),
   'submitArchiveItem' : IDL.Func(
       [
+        IDL.Text,
+        IDL.Text,
+        ArchiveItemType,
+        IDL.Text,
+        ExternalBlob,
+        IDL.Text,
+        IDL.Opt(IDL.Nat),
+        IDL.Vec(IDL.Text),
+        IDL.Vec(IDL.Text),
+        IDL.Opt(IDL.Text),
+        SourceStatus,
+        PrivacyLevel,
+        ArchiveItemClassification,
+        IDL.Opt(OralHistorySpeaker),
+        IDL.Text,
+      ],
+      [ArchiveItem],
+      [],
+    ),
+  'submitArchiveItemForFamily' : IDL.Func(
+      [
+        FamilyId,
         IDL.Text,
         IDL.Text,
         ArchiveItemType,
@@ -2750,6 +2849,14 @@ export const idlFactory = ({ IDL }) => {
     'searchTerm' : IDL.Opt(IDL.Text),
     'itemType' : IDL.Opt(ArchiveItemType),
   });
+  const ArchiveSearchQuery = IDL.Record({
+    'era' : IDL.Opt(IDL.Text),
+    'relatedMemberId' : IDL.Opt(IDL.Text),
+    'tags' : IDL.Vec(IDL.Text),
+    'searchTerm' : IDL.Opt(IDL.Text),
+    'itemType' : IDL.Opt(ArchiveItemType),
+    'familyId' : IDL.Text,
+  });
   const PersonMatch = IDL.Record({
     'name' : IDL.Text,
     'personId' : PersonId,
@@ -2860,6 +2967,11 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Opt(ArchiveItem)],
         [],
       ),
+    'approveArchiveItemForFamily' : IDL.Func(
+        [FamilyId, ArchiveItemId],
+        [IDL.Opt(ArchiveItem)],
+        [],
+      ),
     'approveFinding' : IDL.Func([FindingId], [IDL.Opt(ProposedFinding)], []),
     'approveNewPersonCandidate' : IDL.Func(
         [IDL.Nat],
@@ -2938,6 +3050,20 @@ export const idlFactory = ({ IDL }) => {
         [Post],
         [],
       ),
+    'createBoardPostWithMediaForFamily' : IDL.Func(
+        [
+          FamilyId,
+          PostType,
+          IDL.Opt(IDL.Text),
+          IDL.Text,
+          IDL.Vec(IDL.Text),
+          IDL.Vec(IDL.Nat),
+          IDL.Vec(BoardMediaUpload),
+          IDL.Vec(IDL.Text),
+        ],
+        [Post],
+        [],
+      ),
     'createCanonicalMystery' : IDL.Func(
         [
           IDL.Text,
@@ -3002,9 +3128,34 @@ export const idlFactory = ({ IDL }) => {
         [Result_17],
         [],
       ),
+    'createSourceWithUploadForFamily' : IDL.Func(
+        [
+          FamilyId,
+          IDL.Text,
+          SourceType,
+          IDL.Text,
+          IDL.Text,
+          ExternalBlob,
+          IDL.Vec(IDL.Text),
+          IDL.Text,
+          IDL.Opt(IDL.Nat),
+          IDL.Vec(IDL.Text),
+          PrivacyLevel,
+          ArchiveItemClassification,
+          IDL.Opt(OralHistorySpeaker),
+          IDL.Text,
+        ],
+        [Result_17],
+        [],
+      ),
     'designateSuccessor' : IDL.Func([PersonId, IDL.Nat], [Result_16], []),
     'execute' : IDL.Func([IDL.Text], [Result__1], ['query']),
     'getApiDoc' : IDL.Func([], [IDL.Text], ['query']),
+    'getArchiveItemForFamily' : IDL.Func(
+        [FamilyId, ArchiveItemId],
+        [IDL.Opt(ArchiveItem)],
+        ['query'],
+      ),
     'getBoardPost' : IDL.Func([PostId], [IDL.Opt(Post)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
     'getConversation' : IDL.Func(
@@ -3043,6 +3194,11 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'getPendingContributionsCount' : IDL.Func([], [IDL.Nat], ['query']),
+    'getPendingContributionsCountForFamily' : IDL.Func(
+        [FamilyId],
+        [IDL.Nat],
+        ['query'],
+      ),
     'getPersonProfile' : IDL.Func(
         [PersonId],
         [IDL.Opt(PersonProfile)],
@@ -3099,6 +3255,11 @@ export const idlFactory = ({ IDL }) => {
     'isCallerSteward' : IDL.Func([], [IDL.Bool], ['query']),
     'listApprovedArchiveItems' : IDL.Func(
         [],
+        [IDL.Vec(ArchiveItem)],
+        ['query'],
+      ),
+    'listApprovedArchiveItemsForFamily' : IDL.Func(
+        [FamilyId],
         [IDL.Vec(ArchiveItem)],
         ['query'],
       ),
@@ -3170,6 +3331,11 @@ export const idlFactory = ({ IDL }) => {
       ),
     'listNotifications' : IDL.Func([], [IDL.Vec(Notification)], ['query']),
     'listPendingArchiveItems' : IDL.Func([], [IDL.Vec(ArchiveItem)], ['query']),
+    'listPendingArchiveItemsForFamily' : IDL.Func(
+        [FamilyId],
+        [IDL.Vec(ArchiveItem)],
+        ['query'],
+      ),
     'listPendingMysteryContributions' : IDL.Func(
         [],
         [IDL.Vec(MysteryContribution)],
@@ -3298,6 +3464,11 @@ export const idlFactory = ({ IDL }) => {
       ),
     'reconcileClaimNotifications' : IDL.Func([IDL.Nat], [IDL.Nat], []),
     'rejectArchiveItem' : IDL.Func([ArchiveItemId], [IDL.Opt(ArchiveItem)], []),
+    'rejectArchiveItemForFamily' : IDL.Func(
+        [FamilyId, ArchiveItemId],
+        [IDL.Opt(ArchiveItem)],
+        [],
+      ),
     'rejectFinding' : IDL.Func([FindingId], [IDL.Opt(ProposedFinding)], []),
     'rejectNewPersonCandidate' : IDL.Func(
         [IDL.Nat],
@@ -3380,6 +3551,11 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(ArchiveItem)],
         ['query'],
       ),
+    'searchArchiveItemsForFamily' : IDL.Func(
+        [FamilyId, ArchiveSearchQuery],
+        [IDL.Vec(ArchiveItem)],
+        ['query'],
+      ),
     'searchBoardPostsByTags' : IDL.Func(
         [IDL.Vec(IDL.Text)],
         [IDL.Vec(Post)],
@@ -3414,6 +3590,28 @@ export const idlFactory = ({ IDL }) => {
       ),
     'submitArchiveItem' : IDL.Func(
         [
+          IDL.Text,
+          IDL.Text,
+          ArchiveItemType,
+          IDL.Text,
+          ExternalBlob,
+          IDL.Text,
+          IDL.Opt(IDL.Nat),
+          IDL.Vec(IDL.Text),
+          IDL.Vec(IDL.Text),
+          IDL.Opt(IDL.Text),
+          SourceStatus,
+          PrivacyLevel,
+          ArchiveItemClassification,
+          IDL.Opt(OralHistorySpeaker),
+          IDL.Text,
+        ],
+        [ArchiveItem],
+        [],
+      ),
+    'submitArchiveItemForFamily' : IDL.Func(
+        [
+          FamilyId,
           IDL.Text,
           IDL.Text,
           ArchiveItemType,

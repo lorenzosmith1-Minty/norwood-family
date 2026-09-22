@@ -112,6 +112,43 @@ module {
     extractedNames : ?[Text];
   };
 
+  /// Family-scoped archive submission input. Tenancy 1C-B1: every archive
+  /// submission carries an explicit `familyId`, and every `relatedMemberIds`
+  /// entry must belong to that same family. The remaining fields mirror the
+  /// legacy `submitArchiveItem` parameters exactly, so MIME, size, filename,
+  /// and text validation are unchanged.
+  public type ArchiveSubmission = {
+    familyId : Text;
+    title : Text;
+    description : Text;
+    itemType : ArchiveItemType;
+    mimeType : Text;
+    blob : Storage.ExternalBlob;
+    era : Text;
+    year : ?Nat;
+    tags : [Text];
+    relatedMemberIds : [Text];
+    relatedBranchId : ?Text;
+    sourceStatus : SourceStatus;
+    privacyLevel : PrivacyLevel;
+    classification : ArchiveItemClassification;
+    primarySpeaker : ?OralHistorySpeaker;
+    filename : Text;
+  };
+
+  /// Family-scoped archive search/filter input. Tenancy 1C-B1: the requested
+  /// `familyId` is explicit and every returned item must carry that same
+  /// `familyId`. The filter fields mirror the legacy `ArchiveSearchFilter`
+  /// exactly.
+  public type ArchiveSearchQuery = {
+    familyId : Text;
+    searchTerm : ?Text;
+    tags : [Text];
+    itemType : ?ArchiveItemType;
+    relatedMemberId : ?Text;
+    era : ?Text;
+  };
+
   /// Flattened, OQL-exposable view of a single archive item. The raw blob bytes
   /// are excluded (they live off-chain as external references).
   public type ArchiveItemRow = {

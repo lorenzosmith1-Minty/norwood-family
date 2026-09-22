@@ -70,6 +70,14 @@ export interface ArchiveSearchFilter {
   'searchTerm' : [] | [string],
   'itemType' : [] | [ArchiveItemType],
 }
+export interface ArchiveSearchQuery {
+  'era' : [] | [string],
+  'relatedMemberId' : [] | [string],
+  'tags' : Array<string>,
+  'searchTerm' : [] | [string],
+  'itemType' : [] | [ArchiveItemType],
+  'familyId' : string,
+}
 export type AuditActionType = { 'ProfileRemovalRequested' : null } |
   { 'ClaimRejected' : null } |
   { 'RelationshipTypeCorrected' : null } |
@@ -979,12 +987,22 @@ export interface _SERVICE {
     Result_23
   >,
   /**
-   * / Approves a pending archive item (admin only). Returns the updated item, or
-   * / `null` when the item does not exist or is not pending. On the actual
-   * / transition out of pending, notifies only the contributor; a repeated call
-   * / on an already-reviewed item returns `null` and creates no notification.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `approveArchiveItemForFamily`.
    */
   'approveArchiveItem' : ActorMethod<[ArchiveItemId], [] | [ArchiveItem]>,
+  /**
+   * / Approves the pending archive item with `id` in `familyId`. Requires an
+   * / active Steward of `familyId`; a Steward of another family cannot approve
+   * / it. Returns the updated item, or `null` when no pending item with that id
+   * / belongs to `familyId`. On the actual transition out of pending, notifies
+   * / only the contributor; a repeated call on an already-reviewed item returns
+   * / `null` and creates no notification.
+   */
+  'approveArchiveItemForFamily' : ActorMethod<
+    [FamilyId, ArchiveItemId],
+    [] | [ArchiveItem]
+  >,
   /**
    * / Approves a pending finding (steward only), routing it to its target
    * / surface. A finding labelled `#Conflicting` is never approved directly —
@@ -1153,13 +1171,34 @@ export interface _SERVICE {
     Post
   >,
   /**
-   * / Creates a board post that attaches existing Archive items (by id) and/or
-   * / new uploads. Each new upload creates one canonical Archive item (pending)
-   * / linked to the post; the underlying file is never duplicated. Approved
-   * / family members only.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `createBoardPostWithMediaForFamily`. Deprecated single-family form:
+   * / delegates to the canonical family-scoped endpoint with
+   * / `FamilyTypes.DEFAULT_FAMILY_ID`, so current Norwood behavior is unchanged.
    */
   'createBoardPostWithMedia' : ActorMethod<
     [
+      PostType,
+      [] | [string],
+      string,
+      Array<string>,
+      Array<bigint>,
+      Array<BoardMediaUpload>,
+      Array<string>,
+    ],
+    Post
+  >,
+  /**
+   * / Creates a board post that attaches existing Archive items (by id) and/or
+   * / new uploads, all scoped to `familyId`. Each new upload creates one
+   * / canonical Archive item (pending) in `familyId` linked to the post; the
+   * / underlying file is never duplicated. Existing Archive items are attached
+   * / by id without re-uploading, and only when they belong to `familyId`.
+   * / Approved members or Stewards of `familyId` only.
+   */
+  'createBoardPostWithMediaForFamily' : ActorMethod<
+    [
+      FamilyId,
       PostType,
       [] | [string],
       string,
@@ -1237,13 +1276,40 @@ export interface _SERVICE {
     Result_18
   >,
   /**
-   * / Uploads a research source file: creates one canonical Archive item
-   * / (pending) and links a new Research Source record to it, so no manually
-   * / typed Archive Item ID is required. Requires an approved family member; the
-   * / caller is recorded as the contributor of both records.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `createSourceWithUploadForFamily`. Deprecated single-family form:
+   * / delegates to the canonical family-scoped endpoint with
+   * / `FamilyTypes.DEFAULT_FAMILY_ID`, so current Norwood behavior is unchanged.
    */
   'createSourceWithUpload' : ActorMethod<
     [
+      string,
+      SourceType,
+      string,
+      string,
+      ExternalBlob,
+      Array<string>,
+      string,
+      [] | [bigint],
+      Array<string>,
+      PrivacyLevel,
+      ArchiveItemClassification,
+      [] | [OralHistorySpeaker],
+      string,
+    ],
+    Result_17
+  >,
+  /**
+   * / Uploads a research source file into `familyId`: creates one canonical
+   * / Archive item (pending) in that family and links a new Research Source
+   * / record to it, so no manually typed Archive Item ID is required. Requires
+   * / an approved member or Steward of `familyId`; the caller is recorded as the
+   * / contributor of both records. Every `relatedMemberIds` entry must belong to
+   * / `familyId`.
+   */
+  'createSourceWithUploadForFamily' : ActorMethod<
+    [
+      FamilyId,
       string,
       SourceType,
       string,
@@ -1268,6 +1334,17 @@ export interface _SERVICE {
   'designateSuccessor' : ActorMethod<[PersonId, bigint], Result_16>,
   'execute' : ActorMethod<[string], Result__1>,
   'getApiDoc' : ActorMethod<[], string>,
+  /**
+   * / Returns the archive item with `id` when it belongs to `familyId` and is
+   * / visible to the caller under the archive privacy rules, or `null`
+   * / otherwise. Requires an approved member or active Steward of `familyId`. A
+   * / record that exists under another family is never returned, so an
+   * / `archiveItemId` alone cannot cross the family boundary.
+   */
+  'getArchiveItemForFamily' : ActorMethod<
+    [FamilyId, ArchiveItemId],
+    [] | [ArchiveItem]
+  >,
   /**
    * / Returns a single active board post by id. Approved family members only.
    */
@@ -1337,17 +1414,26 @@ export interface _SERVICE {
     Array<RelationshipRequest>
   >,
   /**
-   * / Returns the count of all current pending review items (archive/media,
-   * / video/audio, recipes, recipe media, stories, and mystery contributions)
-   * / for the Steward-facing Pending Contributions badge. Research Intake review
-   * / items are NOT included — they resolve exclusively through the Research
-   * / Review Queue (getReviewQueue) — and neither is a pending Archive item
-   * / linked to a Research Source, which is reviewed through that same queue.
-   * / Family Steward only. The count is derived from canonical pending data, so
-   * / it increments on new pending items and decrements on Approve/Reject
-   * / automatically, and it always agrees with the Pending Contributions list.
+   * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+   * / delegates to the canonical family-scoped implementation with the default
+   * / family id so current Norwood behavior is unchanged. Contains no duplicated
+   * / business logic.
    */
   'getPendingContributionsCount' : ActorMethod<[], bigint>,
+  /**
+   * / Returns the count of all current pending review items (archive/media,
+   * / video/audio, recipes, recipe media, stories, and mystery contributions)
+   * / for the Steward-facing Pending Contributions badge, scoped to `familyId`.
+   * / Research Intake review items are NOT included — they resolve exclusively
+   * / through the Research Review Queue (getReviewQueue) — and neither is a
+   * / pending Archive item linked to a Research Source, which is reviewed through
+   * / that same queue. Family Steward of `familyId` only: a Steward of one family
+   * / cannot read another family's pending count. The count is derived from
+   * / canonical pending data, so it increments on new pending items and
+   * / decrements on Approve/Reject automatically, and it always agrees with the
+   * / Pending Contributions list.
+   */
+  'getPendingContributionsCountForFamily' : ActorMethod<[FamilyId], bigint>,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for
    * / `getPersonProfileForFamily`.
@@ -1464,12 +1550,22 @@ export interface _SERVICE {
    */
   'isCallerSteward' : ActorMethod<[], boolean>,
   /**
-   * / Lists all archive items in approved state visible to the caller. Privacy
-   * / is enforced server-side: guests and non-approved members see only Public
-   * / items; FamilyOnly items require approved family membership; Private items
-   * / are visible only to their contributor or an admin.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `listApprovedArchiveItemsForFamily`.
    */
   'listApprovedArchiveItems' : ActorMethod<[], Array<ArchiveItem>>,
+  /**
+   * / Lists all archive items in `familyId` in approved state visible to the
+   * / caller. Privacy is enforced server-side: guests and non-approved members
+   * / see only Public items; FamilyOnly items require approved family membership
+   * / in `familyId`; Private items are visible only to their contributor or an
+   * / active Steward of `familyId`. Only items whose `familyId` equals
+   * / `familyId` are returned.
+   */
+  'listApprovedArchiveItemsForFamily' : ActorMethod<
+    [FamilyId],
+    Array<ArchiveItem>
+  >,
   /**
    * / Lists all approved recipes visible to the caller. Private recipes are only
    * / visible to their contributor or a Family Steward.
@@ -1599,13 +1695,22 @@ export interface _SERVICE {
    */
   'listNotifications' : ActorMethod<[], Array<Notification>>,
   /**
-   * / Lists all archive items in pending state (admin only). Pending items whose
-   * / id is referenced by a Research Source are excluded: those are reviewed
-   * / through the Research Intake queue, so approving or rejecting the Source
-   * / cascades to the linked Archive item and the item is never actionable here.
-   * / Ordinary archive contributions remain listed unchanged.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `listPendingArchiveItemsForFamily`.
    */
   'listPendingArchiveItems' : ActorMethod<[], Array<ArchiveItem>>,
+  /**
+   * / Lists all archive items in `familyId` in pending state. Requires an active
+   * / Steward of `familyId`. Pending items whose id is referenced by a Research
+   * / Source are excluded: those are reviewed through the Research Intake queue,
+   * / so approving or rejecting the Source cascades to the linked Archive item
+   * / and the item is never actionable here. Only items whose `familyId` equals
+   * / `familyId` are returned.
+   */
+  'listPendingArchiveItemsForFamily' : ActorMethod<
+    [FamilyId],
+    Array<ArchiveItem>
+  >,
   /**
    * / Lists all mystery contributions in pending state (steward only).
    */
@@ -1834,13 +1939,23 @@ export interface _SERVICE {
    */
   'reconcileClaimNotifications' : ActorMethod<[bigint], bigint>,
   /**
-   * / Rejects a pending archive item (admin only). Returns the updated item, or
-   * / `null` when the item does not exist or is not pending. The rejected record
-   * / is retained, not deleted. On the actual transition out of pending, notifies
-   * / only the contributor; a repeated call on an already-reviewed item returns
-   * / `null` and creates no notification.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `rejectArchiveItemForFamily`.
    */
   'rejectArchiveItem' : ActorMethod<[ArchiveItemId], [] | [ArchiveItem]>,
+  /**
+   * / Rejects the pending archive item with `id` in `familyId`. Requires an
+   * / active Steward of `familyId`; a Steward of another family cannot reject
+   * / it. Returns the updated item, or `null` when no pending item with that id
+   * / belongs to `familyId`. The rejected record is retained, not deleted. On the
+   * / actual transition out of pending, notifies only the contributor; a repeated
+   * / call on an already-reviewed item returns `null` and creates no
+   * / notification.
+   */
+  'rejectArchiveItemForFamily' : ActorMethod<
+    [FamilyId, ArchiveItemId],
+    [] | [ArchiveItem]
+  >,
   /**
    * / Rejects a pending finding (steward only). Returns the updated finding, or
    * / `null` when it does not exist or is not pending.
@@ -2017,11 +2132,24 @@ export interface _SERVICE {
   'reviewReport' : ActorMethod<[ReportId, ReportStatus], [] | [Report]>,
   'schema' : ActorMethod<[], string>,
   /**
-   * / Searches/filters approved archive items by title query, tags, item type,
-   * / related family member, and era. Returns only `#Approved` items visible to
-   * / the caller under the archive privacy rules.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for the canonical
+   * / `searchArchiveItemsForFamily` endpoint (owned by the Archive API). This
+   * / deprecated single-family form delegates to the canonical family-scoped
+   * / implementation with `FamilyTypes.DEFAULT_FAMILY_ID`, so current Norwood
+   * / behavior is unchanged.
    */
   'searchArchiveItems' : ActorMethod<[ArchiveSearchFilter], Array<ArchiveItem>>,
+  /**
+   * / Searches/filters approved archive items in `familyId` by title query, tags,
+   * / item type, related family member, and era. Requires an approved member or
+   * / active Steward of `familyId`. Returns only `#Approved` items whose
+   * / `familyId` equals `familyId` and that are visible to the caller under the
+   * / archive privacy rules.
+   */
+  'searchArchiveItemsForFamily' : ActorMethod<
+    [FamilyId, ArchiveSearchQuery],
+    Array<ArchiveItem>
+  >,
   /**
    * / Lists active board posts that carry ANY of the given tags. Approved family
    * / members only.
@@ -2079,12 +2207,40 @@ export interface _SERVICE {
     [] | [RelationshipRequest]
   >,
   /**
-   * / Submits a new archive item. Requires an approved family member; the caller
-   * / is recorded as the contributor. The item is stored in pending state and
-   * / waits for admin approval before appearing in the archive.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `submitArchiveItemForFamily`.
    */
   'submitArchiveItem' : ActorMethod<
     [
+      string,
+      string,
+      ArchiveItemType,
+      string,
+      ExternalBlob,
+      string,
+      [] | [bigint],
+      Array<string>,
+      Array<string>,
+      [] | [string],
+      SourceStatus,
+      PrivacyLevel,
+      ArchiveItemClassification,
+      [] | [OralHistorySpeaker],
+      string,
+    ],
+    ArchiveItem
+  >,
+  /**
+   * / Submits a new archive item into `familyId`. Requires an approved member or
+   * / active Steward of `familyId`; the caller is recorded as the contributor.
+   * / The stored item's `familyId` is the requested `familyId`, and every
+   * / `relatedMemberIds` entry must belong to that same family — Family A may
+   * / never reference Family B people. The item is stored in pending state and
+   * / waits for Steward approval before appearing in the archive.
+   */
+  'submitArchiveItemForFamily' : ActorMethod<
+    [
+      FamilyId,
       string,
       string,
       ArchiveItemType,

@@ -94,6 +94,14 @@ export interface ArchiveSearchFilter {
     searchTerm?: string;
     itemType?: ArchiveItemType;
 }
+export interface ArchiveSearchQuery {
+    era?: string;
+    relatedMemberId?: string;
+    tags: Array<string>;
+    searchTerm?: string;
+    itemType?: ArchiveItemType;
+    familyId: string;
+}
 export interface AuditEntry {
     id: bigint;
     affectedPersonIds: Array<PersonId>;
@@ -1314,12 +1322,19 @@ export interface backendInterface {
      */
     addRelationship(fromPersonId: PersonId, toPersonId: PersonId, relationshipType: RelationshipType): Promise<Result_23>;
     /**
-     * / Approves a pending archive item (admin only). Returns the updated item, or
-     * / `null` when the item does not exist or is not pending. On the actual
-     * / transition out of pending, notifies only the contributor; a repeated call
-     * / on an already-reviewed item returns `null` and creates no notification.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `approveArchiveItemForFamily`.
      */
     approveArchiveItem(id: ArchiveItemId): Promise<ArchiveItem | null>;
+    /**
+     * / Approves the pending archive item with `id` in `familyId`. Requires an
+     * / active Steward of `familyId`; a Steward of another family cannot approve
+     * / it. Returns the updated item, or `null` when no pending item with that id
+     * / belongs to `familyId`. On the actual transition out of pending, notifies
+     * / only the contributor; a repeated call on an already-reviewed item returns
+     * / `null` and creates no notification.
+     */
+    approveArchiveItemForFamily(familyId: FamilyId, id: ArchiveItemId): Promise<ArchiveItem | null>;
     /**
      * / Approves a pending finding (steward only), routing it to its target
      * / surface. A finding labelled `#Conflicting` is never approved directly —
@@ -1457,12 +1472,21 @@ export interface backendInterface {
      */
     createBoardPost(postType: PostType, title: string | null, body: string, relatedPersonIds: Array<string>, linkedMediaIds: Array<bigint>, tags: Array<string>): Promise<Post>;
     /**
-     * / Creates a board post that attaches existing Archive items (by id) and/or
-     * / new uploads. Each new upload creates one canonical Archive item (pending)
-     * / linked to the post; the underlying file is never duplicated. Approved
-     * / family members only.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `createBoardPostWithMediaForFamily`. Deprecated single-family form:
+     * / delegates to the canonical family-scoped endpoint with
+     * / `FamilyTypes.DEFAULT_FAMILY_ID`, so current Norwood behavior is unchanged.
      */
     createBoardPostWithMedia(postType: PostType, title: string | null, body: string, relatedPersonIds: Array<string>, existingArchiveItemIds: Array<bigint>, newUploads: Array<BoardMediaUpload>, tags: Array<string>): Promise<Post>;
+    /**
+     * / Creates a board post that attaches existing Archive items (by id) and/or
+     * / new uploads, all scoped to `familyId`. Each new upload creates one
+     * / canonical Archive item (pending) in `familyId` linked to the post; the
+     * / underlying file is never duplicated. Existing Archive items are attached
+     * / by id without re-uploading, and only when they belong to `familyId`.
+     * / Approved members or Stewards of `familyId` only.
+     */
+    createBoardPostWithMediaForFamily(familyId: FamilyId, postType: PostType, title: string | null, body: string, relatedPersonIds: Array<string>, existingArchiveItemIds: Array<bigint>, newUploads: Array<BoardMediaUpload>, tags: Array<string>): Promise<Post>;
     /**
      * / Creates a canonical mystery directly (steward only).
      */
@@ -1497,12 +1521,21 @@ export interface backendInterface {
      */
     createSource(title: string, sourceType: SourceType, description: string, archiveItemId: bigint | null): Promise<Result_18>;
     /**
-     * / Uploads a research source file: creates one canonical Archive item
-     * / (pending) and links a new Research Source record to it, so no manually
-     * / typed Archive Item ID is required. Requires an approved family member; the
-     * / caller is recorded as the contributor of both records.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `createSourceWithUploadForFamily`. Deprecated single-family form:
+     * / delegates to the canonical family-scoped endpoint with
+     * / `FamilyTypes.DEFAULT_FAMILY_ID`, so current Norwood behavior is unchanged.
      */
     createSourceWithUpload(title: string, sourceType: SourceType, description: string, mimeType: string, blob: ExternalBlob, tags: Array<string>, era: string, year: bigint | null, relatedMemberIds: Array<string>, privacyLevel: PrivacyLevel, classification: ArchiveItemClassification, primarySpeaker: OralHistorySpeaker | null, filename: string): Promise<Result_17>;
+    /**
+     * / Uploads a research source file into `familyId`: creates one canonical
+     * / Archive item (pending) in that family and links a new Research Source
+     * / record to it, so no manually typed Archive Item ID is required. Requires
+     * / an approved member or Steward of `familyId`; the caller is recorded as the
+     * / contributor of both records. Every `relatedMemberIds` entry must belong to
+     * / `familyId`.
+     */
+    createSourceWithUploadForFamily(familyId: FamilyId, title: string, sourceType: SourceType, description: string, mimeType: string, blob: ExternalBlob, tags: Array<string>, era: string, year: bigint | null, relatedMemberIds: Array<string>, privacyLevel: PrivacyLevel, classification: ArchiveItemClassification, primarySpeaker: OralHistorySpeaker | null, filename: string): Promise<Result_17>;
     /**
      * / Designates an approved claimed family member as a successor steward with a
      * / priority/order. A successor is a designation only until activated.
@@ -1511,6 +1544,14 @@ export interface backendInterface {
     designateSuccessor(personId: PersonId, priority: bigint): Promise<Result_16>;
     execute(qJson: string): Promise<Result__1>;
     getApiDoc(): Promise<string>;
+    /**
+     * / Returns the archive item with `id` when it belongs to `familyId` and is
+     * / visible to the caller under the archive privacy rules, or `null`
+     * / otherwise. Requires an approved member or active Steward of `familyId`. A
+     * / record that exists under another family is never returned, so an
+     * / `archiveItemId` alone cannot cross the family boundary.
+     */
+    getArchiveItemForFamily(familyId: FamilyId, id: ArchiveItemId): Promise<ArchiveItem | null>;
     /**
      * / Returns a single active board post by id. Approved family members only.
      */
@@ -1574,17 +1615,26 @@ export interface backendInterface {
      */
     getMyRelationshipRequestsForFamily(familyId: FamilyId): Promise<Array<RelationshipRequest>>;
     /**
-     * / Returns the count of all current pending review items (archive/media,
-     * / video/audio, recipes, recipe media, stories, and mystery contributions)
-     * / for the Steward-facing Pending Contributions badge. Research Intake review
-     * / items are NOT included — they resolve exclusively through the Research
-     * / Review Queue (getReviewQueue) — and neither is a pending Archive item
-     * / linked to a Research Source, which is reviewed through that same queue.
-     * / Family Steward only. The count is derived from canonical pending data, so
-     * / it increments on new pending items and decrements on Approve/Reject
-     * / automatically, and it always agrees with the Pending Contributions list.
+     * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+     * / delegates to the canonical family-scoped implementation with the default
+     * / family id so current Norwood behavior is unchanged. Contains no duplicated
+     * / business logic.
      */
     getPendingContributionsCount(): Promise<bigint>;
+    /**
+     * / Returns the count of all current pending review items (archive/media,
+     * / video/audio, recipes, recipe media, stories, and mystery contributions)
+     * / for the Steward-facing Pending Contributions badge, scoped to `familyId`.
+     * / Research Intake review items are NOT included — they resolve exclusively
+     * / through the Research Review Queue (getReviewQueue) — and neither is a
+     * / pending Archive item linked to a Research Source, which is reviewed through
+     * / that same queue. Family Steward of `familyId` only: a Steward of one family
+     * / cannot read another family's pending count. The count is derived from
+     * / canonical pending data, so it increments on new pending items and
+     * / decrements on Approve/Reject automatically, and it always agrees with the
+     * / Pending Contributions list.
+     */
+    getPendingContributionsCountForFamily(familyId: FamilyId): Promise<bigint>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `getPersonProfileForFamily`.
@@ -1695,12 +1745,19 @@ export interface backendInterface {
      */
     isCallerSteward(): Promise<boolean>;
     /**
-     * / Lists all archive items in approved state visible to the caller. Privacy
-     * / is enforced server-side: guests and non-approved members see only Public
-     * / items; FamilyOnly items require approved family membership; Private items
-     * / are visible only to their contributor or an admin.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `listApprovedArchiveItemsForFamily`.
      */
     listApprovedArchiveItems(): Promise<Array<ArchiveItem>>;
+    /**
+     * / Lists all archive items in `familyId` in approved state visible to the
+     * / caller. Privacy is enforced server-side: guests and non-approved members
+     * / see only Public items; FamilyOnly items require approved family membership
+     * / in `familyId`; Private items are visible only to their contributor or an
+     * / active Steward of `familyId`. Only items whose `familyId` equals
+     * / `familyId` are returned.
+     */
+    listApprovedArchiveItemsForFamily(familyId: FamilyId): Promise<Array<ArchiveItem>>;
     /**
      * / Lists all approved recipes visible to the caller. Private recipes are only
      * / visible to their contributor or a Family Steward.
@@ -1824,13 +1881,19 @@ export interface backendInterface {
      */
     listNotifications(): Promise<Array<Notification>>;
     /**
-     * / Lists all archive items in pending state (admin only). Pending items whose
-     * / id is referenced by a Research Source are excluded: those are reviewed
-     * / through the Research Intake queue, so approving or rejecting the Source
-     * / cascades to the linked Archive item and the item is never actionable here.
-     * / Ordinary archive contributions remain listed unchanged.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `listPendingArchiveItemsForFamily`.
      */
     listPendingArchiveItems(): Promise<Array<ArchiveItem>>;
+    /**
+     * / Lists all archive items in `familyId` in pending state. Requires an active
+     * / Steward of `familyId`. Pending items whose id is referenced by a Research
+     * / Source are excluded: those are reviewed through the Research Intake queue,
+     * / so approving or rejecting the Source cascades to the linked Archive item
+     * / and the item is never actionable here. Only items whose `familyId` equals
+     * / `familyId` are returned.
+     */
+    listPendingArchiveItemsForFamily(familyId: FamilyId): Promise<Array<ArchiveItem>>;
     /**
      * / Lists all mystery contributions in pending state (steward only).
      */
@@ -2019,13 +2082,20 @@ export interface backendInterface {
      */
     reconcileClaimNotifications(claimId: bigint): Promise<bigint>;
     /**
-     * / Rejects a pending archive item (admin only). Returns the updated item, or
-     * / `null` when the item does not exist or is not pending. The rejected record
-     * / is retained, not deleted. On the actual transition out of pending, notifies
-     * / only the contributor; a repeated call on an already-reviewed item returns
-     * / `null` and creates no notification.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `rejectArchiveItemForFamily`.
      */
     rejectArchiveItem(id: ArchiveItemId): Promise<ArchiveItem | null>;
+    /**
+     * / Rejects the pending archive item with `id` in `familyId`. Requires an
+     * / active Steward of `familyId`; a Steward of another family cannot reject
+     * / it. Returns the updated item, or `null` when no pending item with that id
+     * / belongs to `familyId`. The rejected record is retained, not deleted. On the
+     * / actual transition out of pending, notifies only the contributor; a repeated
+     * / call on an already-reviewed item returns `null` and creates no
+     * / notification.
+     */
+    rejectArchiveItemForFamily(familyId: FamilyId, id: ArchiveItemId): Promise<ArchiveItem | null>;
     /**
      * / Rejects a pending finding (steward only). Returns the updated finding, or
      * / `null` when it does not exist or is not pending.
@@ -2181,11 +2251,21 @@ export interface backendInterface {
     reviewReport(reportId: ReportId, status: ReportStatus): Promise<Report | null>;
     schema(): Promise<string>;
     /**
-     * / Searches/filters approved archive items by title query, tags, item type,
-     * / related family member, and era. Returns only `#Approved` items visible to
-     * / the caller under the archive privacy rules.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for the canonical
+     * / `searchArchiveItemsForFamily` endpoint (owned by the Archive API). This
+     * / deprecated single-family form delegates to the canonical family-scoped
+     * / implementation with `FamilyTypes.DEFAULT_FAMILY_ID`, so current Norwood
+     * / behavior is unchanged.
      */
     searchArchiveItems(filter: ArchiveSearchFilter): Promise<Array<ArchiveItem>>;
+    /**
+     * / Searches/filters approved archive items in `familyId` by title query, tags,
+     * / item type, related family member, and era. Requires an approved member or
+     * / active Steward of `familyId`. Returns only `#Approved` items whose
+     * / `familyId` equals `familyId` and that are visible to the caller under the
+     * / archive privacy rules.
+     */
+    searchArchiveItemsForFamily(familyId: FamilyId, filter: ArchiveSearchQuery): Promise<Array<ArchiveItem>>;
     /**
      * / Lists active board posts that carry ANY of the given tags. Approved family
      * / members only.
@@ -2231,11 +2311,19 @@ export interface backendInterface {
      */
     setRelationshipRequestPendingForFamily(familyId: FamilyId, requestId: bigint): Promise<RelationshipRequest | null>;
     /**
-     * / Submits a new archive item. Requires an approved family member; the caller
-     * / is recorded as the contributor. The item is stored in pending state and
-     * / waits for admin approval before appearing in the archive.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `submitArchiveItemForFamily`.
      */
     submitArchiveItem(title: string, description: string, itemType: ArchiveItemType, mimeType: string, blob: ExternalBlob, era: string, year: bigint | null, tags: Array<string>, relatedMemberIds: Array<string>, relatedBranchId: string | null, sourceStatus: SourceStatus, privacyLevel: PrivacyLevel, classification: ArchiveItemClassification, primarySpeaker: OralHistorySpeaker | null, filename: string): Promise<ArchiveItem>;
+    /**
+     * / Submits a new archive item into `familyId`. Requires an approved member or
+     * / active Steward of `familyId`; the caller is recorded as the contributor.
+     * / The stored item's `familyId` is the requested `familyId`, and every
+     * / `relatedMemberIds` entry must belong to that same family — Family A may
+     * / never reference Family B people. The item is stored in pending state and
+     * / waits for Steward approval before appearing in the archive.
+     */
+    submitArchiveItemForFamily(familyId: FamilyId, title: string, description: string, itemType: ArchiveItemType, mimeType: string, blob: ExternalBlob, era: string, year: bigint | null, tags: Array<string>, relatedMemberIds: Array<string>, relatedBranchId: string | null, sourceStatus: SourceStatus, privacyLevel: PrivacyLevel, classification: ArchiveItemClassification, primarySpeaker: OralHistorySpeaker | null, filename: string): Promise<ArchiveItem>;
     /**
      * / Submits a mystery contribution (a note, memory, possible lead, or
      * / source/document reference). Requires an approved family member; the caller
@@ -2289,7 +2377,7 @@ export interface backendInterface {
      */
     updateOwnProfileForFamily(familyId: FamilyId, personId: PersonId, edits: ProfileEdits): Promise<Result>;
 }
-import type { Account as _Account, AccountError as _AccountError, AccountId as _AccountId, ArchiveError as _ArchiveError, ArchiveItem as _ArchiveItem, ArchiveItemClassification as _ArchiveItemClassification, ArchiveItemId as _ArchiveItemId, ArchiveItemStatus as _ArchiveItemStatus, ArchiveItemType as _ArchiveItemType, ArchiveSearchFilter as _ArchiveSearchFilter, AuditActionType as _AuditActionType, AuditEntry as _AuditEntry, AuthMethod as _AuthMethod, AuthMethods as _AuthMethods, BoardMediaUpload as _BoardMediaUpload, Cell as _Cell, ChapterMarker as _ChapterMarker, ClaimEligibility as _ClaimEligibility, ClaimError as _ClaimError, ClaimPersistenceError as _ClaimPersistenceError, ClaimStatus as _ClaimStatus, ConflictResolutionAction as _ConflictResolutionAction, ConflictReviewItem as _ConflictReviewItem, ConversationId as _ConversationId, ConversationView as _ConversationView, CreateError as _CreateError, DeleteError as _DeleteError, DisputedFact as _DisputedFact, DuplicateCandidate as _DuplicateCandidate, DuplicatePair as _DuplicatePair, EditError as _EditError, Error as _Error, EvidenceLabel as _EvidenceLabel, EvidenceStatus as _EvidenceStatus, ExternalBlob as _ExternalBlob, Family as _Family, FamilyId as _FamilyId, FamilyStatus as _FamilyStatus, FindingContent as _FindingContent, FindingId as _FindingId, FindingType as _FindingType, LivingStatus as _LivingStatus, MergeConflict as _MergeConflict, MergeConflictStatus as _MergeConflictStatus, MergeError as _MergeError, MergeResult as _MergeResult, Message as _Message, MessageError as _MessageError, MessageId as _MessageId, MessageStatus as _MessageStatus, Mystery as _Mystery, MysteryContribution as _MysteryContribution, MysteryContributionId as _MysteryContributionId, MysteryContributionStatus as _MysteryContributionStatus, MysteryContributionType as _MysteryContributionType, MysteryId as _MysteryId, MysteryStatus as _MysteryStatus, NewPersonCandidate as _NewPersonCandidate, Notification as _Notification, NotificationType as _NotificationType, OralHistorySpeaker as _OralHistorySpeaker, PersonId as _PersonId, PersonProfile as _PersonProfile, Photo as _Photo, PhotoId as _PhotoId, Post as _Post, PostId as _PostId, PostStatus as _PostStatus, PostType as _PostType, PrivacyLevel as _PrivacyLevel, PrivacyScope as _PrivacyScope, ProfileClaim as _ProfileClaim, ProfileClaimStatus as _ProfileClaimStatus, ProfileEdits as _ProfileEdits, ProfileRemovalRequest as _ProfileRemovalRequest, ProfileRemovalStatus as _ProfileRemovalStatus, ProposedFinding as _ProposedFinding, Recipe as _Recipe, RecipeId as _RecipeId, RecipeStatus as _RecipeStatus, Relationship as _Relationship, RelationshipAdminError as _RelationshipAdminError, RelationshipError as _RelationshipError, RelationshipProposal as _RelationshipProposal, RelationshipRequest as _RelationshipRequest, RelationshipRequestStatus as _RelationshipRequestStatus, RelationshipStatus as _RelationshipStatus, RelationshipType as _RelationshipType, RemovalError as _RemovalError, RemoveError as _RemoveError, Reply as _Reply, Report as _Report, ReportId as _ReportId, ReportStatus as _ReportStatus, ReportedMessageView as _ReportedMessageView, ResearchAuditEntry as _ResearchAuditEntry, ResearchError as _ResearchError, Resolution as _Resolution, Result as _Result, Result_1 as _Result_1, Result_10 as _Result_10, Result_11 as _Result_11, Result_12 as _Result_12, Result_13 as _Result_13, Result_14 as _Result_14, Result_15 as _Result_15, Result_16 as _Result_16, Result_17 as _Result_17, Result_18 as _Result_18, Result_19 as _Result_19, Result_2 as _Result_2, Result_20 as _Result_20, Result_21 as _Result_21, Result_22 as _Result_22, Result_23 as _Result_23, Result_24 as _Result_24, Result_25 as _Result_25, Result_26 as _Result_26, Result_3 as _Result_3, Result_4 as _Result_4, Result_5 as _Result_5, Result_6 as _Result_6, Result_7 as _Result_7, Result_8 as _Result_8, Result_9 as _Result_9, Result__1 as _Result__1, ReviewAction as _ReviewAction, ReviewItemKind as _ReviewItemKind, ReviewQueue as _ReviewQueue, ReviewQueueItem as _ReviewQueueItem, ReviewStatus as _ReviewStatus, SourceId as _SourceId, SourceRecord as _SourceRecord, SourceStatus as _SourceStatus, SourceType as _SourceType, SourceUploadResult as _SourceUploadResult, StewardAuditEntry as _StewardAuditEntry, StewardAuditKind as _StewardAuditKind, StewardClaimError as _StewardClaimError, StewardClaimResult as _StewardClaimResult, StewardError as _StewardError, StewardRecord as _StewardRecord, StewardRoleStatus as _StewardRoleStatus, Story as _Story, StoryId as _StoryId, StoryStatus as _StoryStatus, SuccessorDesignation as _SuccessorDesignation, SuccessorStatus as _SuccessorStatus, TimelineEvent as _TimelineEvent, TimelineEventType as _TimelineEventType, TimelineLinkTarget as _TimelineLinkTarget, Timestamp as _Timestamp, UserRole as _UserRole, Value as _Value, _ImmutableObjectStorageRefillInformation as __ImmutableObjectStorageRefillInformation, _ImmutableObjectStorageRefillResult as __ImmutableObjectStorageRefillResult } from "./declarations/backend.did.d.ts";
+import type { Account as _Account, AccountError as _AccountError, AccountId as _AccountId, ArchiveError as _ArchiveError, ArchiveItem as _ArchiveItem, ArchiveItemClassification as _ArchiveItemClassification, ArchiveItemId as _ArchiveItemId, ArchiveItemStatus as _ArchiveItemStatus, ArchiveItemType as _ArchiveItemType, ArchiveSearchFilter as _ArchiveSearchFilter, ArchiveSearchQuery as _ArchiveSearchQuery, AuditActionType as _AuditActionType, AuditEntry as _AuditEntry, AuthMethod as _AuthMethod, AuthMethods as _AuthMethods, BoardMediaUpload as _BoardMediaUpload, Cell as _Cell, ChapterMarker as _ChapterMarker, ClaimEligibility as _ClaimEligibility, ClaimError as _ClaimError, ClaimPersistenceError as _ClaimPersistenceError, ClaimStatus as _ClaimStatus, ConflictResolutionAction as _ConflictResolutionAction, ConflictReviewItem as _ConflictReviewItem, ConversationId as _ConversationId, ConversationView as _ConversationView, CreateError as _CreateError, DeleteError as _DeleteError, DisputedFact as _DisputedFact, DuplicateCandidate as _DuplicateCandidate, DuplicatePair as _DuplicatePair, EditError as _EditError, Error as _Error, EvidenceLabel as _EvidenceLabel, EvidenceStatus as _EvidenceStatus, ExternalBlob as _ExternalBlob, Family as _Family, FamilyId as _FamilyId, FamilyStatus as _FamilyStatus, FindingContent as _FindingContent, FindingId as _FindingId, FindingType as _FindingType, LivingStatus as _LivingStatus, MergeConflict as _MergeConflict, MergeConflictStatus as _MergeConflictStatus, MergeError as _MergeError, MergeResult as _MergeResult, Message as _Message, MessageError as _MessageError, MessageId as _MessageId, MessageStatus as _MessageStatus, Mystery as _Mystery, MysteryContribution as _MysteryContribution, MysteryContributionId as _MysteryContributionId, MysteryContributionStatus as _MysteryContributionStatus, MysteryContributionType as _MysteryContributionType, MysteryId as _MysteryId, MysteryStatus as _MysteryStatus, NewPersonCandidate as _NewPersonCandidate, Notification as _Notification, NotificationType as _NotificationType, OralHistorySpeaker as _OralHistorySpeaker, PersonId as _PersonId, PersonProfile as _PersonProfile, Photo as _Photo, PhotoId as _PhotoId, Post as _Post, PostId as _PostId, PostStatus as _PostStatus, PostType as _PostType, PrivacyLevel as _PrivacyLevel, PrivacyScope as _PrivacyScope, ProfileClaim as _ProfileClaim, ProfileClaimStatus as _ProfileClaimStatus, ProfileEdits as _ProfileEdits, ProfileRemovalRequest as _ProfileRemovalRequest, ProfileRemovalStatus as _ProfileRemovalStatus, ProposedFinding as _ProposedFinding, Recipe as _Recipe, RecipeId as _RecipeId, RecipeStatus as _RecipeStatus, Relationship as _Relationship, RelationshipAdminError as _RelationshipAdminError, RelationshipError as _RelationshipError, RelationshipProposal as _RelationshipProposal, RelationshipRequest as _RelationshipRequest, RelationshipRequestStatus as _RelationshipRequestStatus, RelationshipStatus as _RelationshipStatus, RelationshipType as _RelationshipType, RemovalError as _RemovalError, RemoveError as _RemoveError, Reply as _Reply, Report as _Report, ReportId as _ReportId, ReportStatus as _ReportStatus, ReportedMessageView as _ReportedMessageView, ResearchAuditEntry as _ResearchAuditEntry, ResearchError as _ResearchError, Resolution as _Resolution, Result as _Result, Result_1 as _Result_1, Result_10 as _Result_10, Result_11 as _Result_11, Result_12 as _Result_12, Result_13 as _Result_13, Result_14 as _Result_14, Result_15 as _Result_15, Result_16 as _Result_16, Result_17 as _Result_17, Result_18 as _Result_18, Result_19 as _Result_19, Result_2 as _Result_2, Result_20 as _Result_20, Result_21 as _Result_21, Result_22 as _Result_22, Result_23 as _Result_23, Result_24 as _Result_24, Result_25 as _Result_25, Result_26 as _Result_26, Result_3 as _Result_3, Result_4 as _Result_4, Result_5 as _Result_5, Result_6 as _Result_6, Result_7 as _Result_7, Result_8 as _Result_8, Result_9 as _Result_9, Result__1 as _Result__1, ReviewAction as _ReviewAction, ReviewItemKind as _ReviewItemKind, ReviewQueue as _ReviewQueue, ReviewQueueItem as _ReviewQueueItem, ReviewStatus as _ReviewStatus, SourceId as _SourceId, SourceRecord as _SourceRecord, SourceStatus as _SourceStatus, SourceType as _SourceType, SourceUploadResult as _SourceUploadResult, StewardAuditEntry as _StewardAuditEntry, StewardAuditKind as _StewardAuditKind, StewardClaimError as _StewardClaimError, StewardClaimResult as _StewardClaimResult, StewardError as _StewardError, StewardRecord as _StewardRecord, StewardRoleStatus as _StewardRoleStatus, Story as _Story, StoryId as _StoryId, StoryStatus as _StoryStatus, SuccessorDesignation as _SuccessorDesignation, SuccessorStatus as _SuccessorStatus, TimelineEvent as _TimelineEvent, TimelineEventType as _TimelineEventType, TimelineLinkTarget as _TimelineLinkTarget, Timestamp as _Timestamp, UserRole as _UserRole, Value as _Value, _ImmutableObjectStorageRefillInformation as __ImmutableObjectStorageRefillInformation, _ImmutableObjectStorageRefillResult as __ImmutableObjectStorageRefillResult } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
     async _immutableObjectStorageBlobsAreLive(arg0: Array<Uint8Array>): Promise<Array<boolean>> {
@@ -2513,6 +2601,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.approveArchiveItem(arg0);
+            return from_candid_opt_n38(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async approveArchiveItemForFamily(arg0: FamilyId, arg1: ArchiveItemId): Promise<ArchiveItem | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.approveArchiveItemForFamily(arg0, arg1);
+                return from_candid_opt_n38(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.approveArchiveItemForFamily(arg0, arg1);
             return from_candid_opt_n38(this._uploadFile, this._downloadFile, result);
         }
     }
@@ -2838,6 +2940,20 @@ export class Backend implements backendInterface {
             return from_candid_Post_n91(this._uploadFile, this._downloadFile, result);
         }
     }
+    async createBoardPostWithMediaForFamily(arg0: FamilyId, arg1: PostType, arg2: string | null, arg3: string, arg4: Array<string>, arg5: Array<bigint>, arg6: Array<BoardMediaUpload>, arg7: Array<string>): Promise<Post> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.createBoardPostWithMediaForFamily(arg0, to_candid_PostType_n115(this._uploadFile, this._downloadFile, arg1), to_candid_opt_n18(this._uploadFile, this._downloadFile, arg2), arg3, arg4, arg5, await to_candid_vec_n116(this._uploadFile, this._downloadFile, arg6), arg7);
+                return from_candid_Post_n91(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.createBoardPostWithMediaForFamily(arg0, to_candid_PostType_n115(this._uploadFile, this._downloadFile, arg1), to_candid_opt_n18(this._uploadFile, this._downloadFile, arg2), arg3, arg4, arg5, await to_candid_vec_n116(this._uploadFile, this._downloadFile, arg6), arg7);
+            return from_candid_Post_n91(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async createCanonicalMystery(arg0: string, arg1: string, arg2: Array<string>, arg3: string | null, arg4: Array<string>, arg5: Array<string>, arg6: Array<bigint>, arg7: Array<bigint>, arg8: MysteryStatus): Promise<Mystery> {
         if (this.processError) {
             try {
@@ -2950,6 +3066,20 @@ export class Backend implements backendInterface {
             return from_candid_Result_17_n155(this._uploadFile, this._downloadFile, result);
         }
     }
+    async createSourceWithUploadForFamily(arg0: FamilyId, arg1: string, arg2: SourceType, arg3: string, arg4: string, arg5: ExternalBlob, arg6: Array<string>, arg7: string, arg8: bigint | null, arg9: Array<string>, arg10: PrivacyLevel, arg11: ArchiveItemClassification, arg12: OralHistorySpeaker | null, arg13: string): Promise<Result_17> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.createSourceWithUploadForFamily(arg0, arg1, to_candid_SourceType_n135(this._uploadFile, this._downloadFile, arg2), arg3, arg4, await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg5), arg6, arg7, to_candid_opt_n19(this._uploadFile, this._downloadFile, arg8), arg9, to_candid_PrivacyLevel_n119(this._uploadFile, this._downloadFile, arg10), to_candid_ArchiveItemClassification_n124(this._uploadFile, this._downloadFile, arg11), to_candid_opt_n154(this._uploadFile, this._downloadFile, arg12), arg13);
+                return from_candid_Result_17_n155(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.createSourceWithUploadForFamily(arg0, arg1, to_candid_SourceType_n135(this._uploadFile, this._downloadFile, arg2), arg3, arg4, await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg5), arg6, arg7, to_candid_opt_n19(this._uploadFile, this._downloadFile, arg8), arg9, to_candid_PrivacyLevel_n119(this._uploadFile, this._downloadFile, arg10), to_candid_ArchiveItemClassification_n124(this._uploadFile, this._downloadFile, arg11), to_candid_opt_n154(this._uploadFile, this._downloadFile, arg12), arg13);
+            return from_candid_Result_17_n155(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async designateSuccessor(arg0: PersonId, arg1: bigint): Promise<Result_16> {
         if (this.processError) {
             try {
@@ -2990,6 +3120,20 @@ export class Backend implements backendInterface {
         } else {
             const result = await this.actor.getApiDoc();
             return result;
+        }
+    }
+    async getArchiveItemForFamily(arg0: FamilyId, arg1: ArchiveItemId): Promise<ArchiveItem | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getArchiveItemForFamily(arg0, arg1);
+                return from_candid_opt_n38(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getArchiveItemForFamily(arg0, arg1);
+            return from_candid_opt_n38(this._uploadFile, this._downloadFile, result);
         }
     }
     async getBoardPost(arg0: PostId): Promise<Post | null> {
@@ -3185,6 +3329,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.getPendingContributionsCount();
+            return result;
+        }
+    }
+    async getPendingContributionsCountForFamily(arg0: FamilyId): Promise<bigint> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getPendingContributionsCountForFamily(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getPendingContributionsCountForFamily(arg0);
             return result;
         }
     }
@@ -3451,6 +3609,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.listApprovedArchiveItems();
+            return from_candid_vec_n216(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async listApprovedArchiveItemsForFamily(arg0: FamilyId): Promise<Array<ArchiveItem>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.listApprovedArchiveItemsForFamily(arg0);
+                return from_candid_vec_n216(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.listApprovedArchiveItemsForFamily(arg0);
             return from_candid_vec_n216(this._uploadFile, this._downloadFile, result);
         }
     }
@@ -3787,6 +3959,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.listPendingArchiveItems();
+            return from_candid_vec_n216(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async listPendingArchiveItemsForFamily(arg0: FamilyId): Promise<Array<ArchiveItem>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.listPendingArchiveItemsForFamily(arg0);
+                return from_candid_vec_n216(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.listPendingArchiveItemsForFamily(arg0);
             return from_candid_vec_n216(this._uploadFile, this._downloadFile, result);
         }
     }
@@ -4294,6 +4480,20 @@ export class Backend implements backendInterface {
             return from_candid_opt_n38(this._uploadFile, this._downloadFile, result);
         }
     }
+    async rejectArchiveItemForFamily(arg0: FamilyId, arg1: ArchiveItemId): Promise<ArchiveItem | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.rejectArchiveItemForFamily(arg0, arg1);
+                return from_candid_opt_n38(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.rejectArchiveItemForFamily(arg0, arg1);
+            return from_candid_opt_n38(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async rejectFinding(arg0: FindingId): Promise<ProposedFinding | null> {
         if (this.processError) {
             try {
@@ -4714,6 +4914,20 @@ export class Backend implements backendInterface {
             return from_candid_vec_n216(this._uploadFile, this._downloadFile, result);
         }
     }
+    async searchArchiveItemsForFamily(arg0: FamilyId, arg1: ArchiveSearchQuery): Promise<Array<ArchiveItem>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.searchArchiveItemsForFamily(arg0, to_candid_ArchiveSearchQuery_n306(this._uploadFile, this._downloadFile, arg1));
+                return from_candid_vec_n216(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.searchArchiveItemsForFamily(arg0, to_candid_ArchiveSearchQuery_n306(this._uploadFile, this._downloadFile, arg1));
+            return from_candid_vec_n216(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async searchBoardPostsByTags(arg0: Array<string>): Promise<Array<Post>> {
         if (this.processError) {
             try {
@@ -4760,14 +4974,14 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.sendMessage(arg0, arg1);
-                return from_candid_Result_1_n306(this._uploadFile, this._downloadFile, result);
+                return from_candid_Result_1_n308(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.sendMessage(arg0, arg1);
-            return from_candid_Result_1_n306(this._uploadFile, this._downloadFile, result);
+            return from_candid_Result_1_n308(this._uploadFile, this._downloadFile, result);
         }
     }
     async setProfilePhoto(arg0: PersonId, arg1: PhotoId): Promise<Photo | null> {
@@ -4840,17 +5054,31 @@ export class Backend implements backendInterface {
             return from_candid_ArchiveItem_n39(this._uploadFile, this._downloadFile, result);
         }
     }
+    async submitArchiveItemForFamily(arg0: FamilyId, arg1: string, arg2: string, arg3: ArchiveItemType, arg4: string, arg5: ExternalBlob, arg6: string, arg7: bigint | null, arg8: Array<string>, arg9: Array<string>, arg10: string | null, arg11: SourceStatus, arg12: PrivacyLevel, arg13: ArchiveItemClassification, arg14: OralHistorySpeaker | null, arg15: string): Promise<ArchiveItem> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.submitArchiveItemForFamily(arg0, arg1, arg2, to_candid_ArchiveItemType_n122(this._uploadFile, this._downloadFile, arg3), arg4, await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg5), arg6, to_candid_opt_n19(this._uploadFile, this._downloadFile, arg7), arg8, arg9, to_candid_opt_n18(this._uploadFile, this._downloadFile, arg10), to_candid_SourceStatus_n123(this._uploadFile, this._downloadFile, arg11), to_candid_PrivacyLevel_n119(this._uploadFile, this._downloadFile, arg12), to_candid_ArchiveItemClassification_n124(this._uploadFile, this._downloadFile, arg13), to_candid_opt_n154(this._uploadFile, this._downloadFile, arg14), arg15);
+                return from_candid_ArchiveItem_n39(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.submitArchiveItemForFamily(arg0, arg1, arg2, to_candid_ArchiveItemType_n122(this._uploadFile, this._downloadFile, arg3), arg4, await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg5), arg6, to_candid_opt_n19(this._uploadFile, this._downloadFile, arg7), arg8, arg9, to_candid_opt_n18(this._uploadFile, this._downloadFile, arg10), to_candid_SourceStatus_n123(this._uploadFile, this._downloadFile, arg11), to_candid_PrivacyLevel_n119(this._uploadFile, this._downloadFile, arg12), to_candid_ArchiveItemClassification_n124(this._uploadFile, this._downloadFile, arg13), to_candid_opt_n154(this._uploadFile, this._downloadFile, arg14), arg15);
+            return from_candid_ArchiveItem_n39(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async submitMysteryContribution(arg0: MysteryId, arg1: MysteryContributionType, arg2: string): Promise<MysteryContribution> {
         if (this.processError) {
             try {
-                const result = await this.actor.submitMysteryContribution(arg0, to_candid_MysteryContributionType_n309(this._uploadFile, this._downloadFile, arg1), arg2);
+                const result = await this.actor.submitMysteryContribution(arg0, to_candid_MysteryContributionType_n311(this._uploadFile, this._downloadFile, arg1), arg2);
                 return from_candid_MysteryContribution_n246(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.submitMysteryContribution(arg0, to_candid_MysteryContributionType_n309(this._uploadFile, this._downloadFile, arg1), arg2);
+            const result = await this.actor.submitMysteryContribution(arg0, to_candid_MysteryContributionType_n311(this._uploadFile, this._downloadFile, arg1), arg2);
             return from_candid_MysteryContribution_n246(this._uploadFile, this._downloadFile, result);
         }
     }
@@ -4941,29 +5169,29 @@ export class Backend implements backendInterface {
     async updateOwnProfile(arg0: PersonId, arg1: ProfileEdits): Promise<Result> {
         if (this.processError) {
             try {
-                const result = await this.actor.updateOwnProfile(arg0, to_candid_ProfileEdits_n310(this._uploadFile, this._downloadFile, arg1));
-                return from_candid_Result_n313(this._uploadFile, this._downloadFile, result);
+                const result = await this.actor.updateOwnProfile(arg0, to_candid_ProfileEdits_n312(this._uploadFile, this._downloadFile, arg1));
+                return from_candid_Result_n315(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.updateOwnProfile(arg0, to_candid_ProfileEdits_n310(this._uploadFile, this._downloadFile, arg1));
-            return from_candid_Result_n313(this._uploadFile, this._downloadFile, result);
+            const result = await this.actor.updateOwnProfile(arg0, to_candid_ProfileEdits_n312(this._uploadFile, this._downloadFile, arg1));
+            return from_candid_Result_n315(this._uploadFile, this._downloadFile, result);
         }
     }
     async updateOwnProfileForFamily(arg0: FamilyId, arg1: PersonId, arg2: ProfileEdits): Promise<Result> {
         if (this.processError) {
             try {
-                const result = await this.actor.updateOwnProfileForFamily(arg0, arg1, to_candid_ProfileEdits_n310(this._uploadFile, this._downloadFile, arg2));
-                return from_candid_Result_n313(this._uploadFile, this._downloadFile, result);
+                const result = await this.actor.updateOwnProfileForFamily(arg0, arg1, to_candid_ProfileEdits_n312(this._uploadFile, this._downloadFile, arg2));
+                return from_candid_Result_n315(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.updateOwnProfileForFamily(arg0, arg1, to_candid_ProfileEdits_n310(this._uploadFile, this._downloadFile, arg2));
-            return from_candid_Result_n313(this._uploadFile, this._downloadFile, result);
+            const result = await this.actor.updateOwnProfileForFamily(arg0, arg1, to_candid_ProfileEdits_n312(this._uploadFile, this._downloadFile, arg2));
+            return from_candid_Result_n315(this._uploadFile, this._downloadFile, result);
         }
     }
 }
@@ -5033,7 +5261,7 @@ function from_candid_DuplicateCandidate_n236(_uploadFile: (file: ExternalBlob) =
 function from_candid_DuplicatePair_n234(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _DuplicatePair): DuplicatePair {
     return from_candid_record_n235(_uploadFile, _downloadFile, value);
 }
-function from_candid_EditError_n315(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _EditError): EditError {
+function from_candid_EditError_n317(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _EditError): EditError {
     return "ProfileNotFound" in value ? EditError.ProfileNotFound : "NotSignedIn" in value ? EditError.NotSignedIn : "NotOwner" in value ? EditError.NotOwner : "DeceasedProfile" in value ? EditError.DeceasedProfile : value;
 }
 function from_candid_Error_n10(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Error): Error_ {
@@ -5075,7 +5303,7 @@ function from_candid_MergeError_n274(_uploadFile: (file: ExternalBlob) => Promis
 function from_candid_MergeResult_n268(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _MergeResult): MergeResult {
     return from_candid_record_n269(_uploadFile, _downloadFile, value);
 }
-function from_candid_MessageError_n308(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _MessageError): MessageError {
+function from_candid_MessageError_n310(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _MessageError): MessageError {
     return "ConversationNotFound" in value ? MessageError.ConversationNotFound : "RecipientArchived" in value ? MessageError.RecipientArchived : "NotApprovedMember" in value ? MessageError.NotApprovedMember : "RecipientNotClaimed" in value ? MessageError.RecipientNotClaimed : "NotSignedIn" in value ? MessageError.NotSignedIn : "BlockedByRecipient" in value ? MessageError.BlockedByRecipient : "NotParticipant" in value ? MessageError.NotParticipant : "CannotMessageSelf" in value ? MessageError.CannotMessageSelf : "RecipientNotFound" in value ? MessageError.RecipientNotFound : value;
 }
 function from_candid_MessageStatus_n179(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _MessageStatus): MessageStatus {
@@ -5228,8 +5456,8 @@ function from_candid_Result_18_n152(_uploadFile: (file: ExternalBlob) => Promise
 function from_candid_Result_19_n150(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Result_19): Result_19 {
     return from_candid_variant_n151(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_1_n306(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Result_1): Result_1 {
-    return from_candid_variant_n307(_uploadFile, _downloadFile, value);
+function from_candid_Result_1_n308(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Result_1): Result_1 {
+    return from_candid_variant_n309(_uploadFile, _downloadFile, value);
 }
 function from_candid_Result_20_n148(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Result_20): Result_20 {
     return from_candid_variant_n149(_uploadFile, _downloadFile, value);
@@ -5279,8 +5507,8 @@ function from_candid_Result_9_n280(_uploadFile: (file: ExternalBlob) => Promise<
 function from_candid_Result__1_n164(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Result__1): Result__1 {
     return from_candid_record_n165(_uploadFile, _downloadFile, value);
 }
-function from_candid_Result_n313(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Result): Result {
-    return from_candid_variant_n314(_uploadFile, _downloadFile, value);
+function from_candid_Result_n315(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Result): Result {
+    return from_candid_variant_n316(_uploadFile, _downloadFile, value);
 }
 function from_candid_ReviewAction_n211(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _ReviewAction): ReviewAction {
     return "NeedsResearch" in value ? ReviewAction.NeedsResearch : "Approve" in value ? ReviewAction.Approve : "Reject" in value ? ReviewAction.Reject : value;
@@ -7452,7 +7680,7 @@ function from_candid_variant_n299(_uploadFile: (file: ExternalBlob) => Promise<U
         err: from_candid_ResearchError_n139(_uploadFile, _downloadFile, value.err)
     } : value;
 }
-function from_candid_variant_n307(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function from_candid_variant_n309(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     ok: _Message;
 } | {
     err: _MessageError;
@@ -7468,10 +7696,10 @@ function from_candid_variant_n307(_uploadFile: (file: ExternalBlob) => Promise<U
         ok: from_candid_Message_n177(_uploadFile, _downloadFile, value.ok)
     } : "err" in value ? {
         __kind__: "err",
-        err: from_candid_MessageError_n308(_uploadFile, _downloadFile, value.err)
+        err: from_candid_MessageError_n310(_uploadFile, _downloadFile, value.err)
     } : value;
 }
-function from_candid_variant_n314(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function from_candid_variant_n316(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     ok: _PersonProfile;
 } | {
     err: _EditError;
@@ -7487,7 +7715,7 @@ function from_candid_variant_n314(_uploadFile: (file: ExternalBlob) => Promise<U
         ok: from_candid_PersonProfile_n143(_uploadFile, _downloadFile, value.ok)
     } : "err" in value ? {
         __kind__: "err",
-        err: from_candid_EditError_n315(_uploadFile, _downloadFile, value.err)
+        err: from_candid_EditError_n317(_uploadFile, _downloadFile, value.err)
     } : value;
 }
 function from_candid_variant_n32(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
@@ -7781,6 +8009,9 @@ function to_candid_ArchiveItemType_n122(_uploadFile: (file: ExternalBlob) => Pro
 function to_candid_ArchiveSearchFilter_n304(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ArchiveSearchFilter): _ArchiveSearchFilter {
     return to_candid_record_n305(_uploadFile, _downloadFile, value);
 }
+function to_candid_ArchiveSearchQuery_n306(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ArchiveSearchQuery): _ArchiveSearchQuery {
+    return to_candid_record_n307(_uploadFile, _downloadFile, value);
+}
 function to_candid_AuthMethod_n100(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: AuthMethod): _AuthMethod {
     return value == AuthMethod.Google ? {
         Google: null
@@ -7849,14 +8080,14 @@ function to_candid_FindingType_n131(_uploadFile: (file: ExternalBlob) => Promise
         Relationship: null
     } : value;
 }
-function to_candid_LivingStatus_n312(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: LivingStatus): _LivingStatus {
+function to_candid_LivingStatus_n314(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: LivingStatus): _LivingStatus {
     return value == LivingStatus.Living ? {
         Living: null
     } : value == LivingStatus.Deceased ? {
         Deceased: null
     } : value;
 }
-function to_candid_MysteryContributionType_n309(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: MysteryContributionType): _MysteryContributionType {
+function to_candid_MysteryContributionType_n311(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: MysteryContributionType): _MysteryContributionType {
     return value == MysteryContributionType.Lead ? {
         Lead: null
     } : value == MysteryContributionType.Note ? {
@@ -7911,8 +8142,8 @@ function to_candid_PrivacyLevel_n119(_uploadFile: (file: ExternalBlob) => Promis
         FamilyOnly: null
     } : value;
 }
-function to_candid_ProfileEdits_n310(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ProfileEdits): _ProfileEdits {
-    return to_candid_record_n311(_uploadFile, _downloadFile, value);
+function to_candid_ProfileEdits_n312(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ProfileEdits): _ProfileEdits {
+    return to_candid_record_n313(_uploadFile, _downloadFile, value);
 }
 function to_candid_RelationshipType_n30(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: RelationshipType): _RelationshipType {
     return value == RelationshipType.Parent ? {
@@ -8116,7 +8347,31 @@ function to_candid_record_n305(_uploadFile: (file: ExternalBlob) => Promise<Uint
         itemType: value.itemType ? candid_some(to_candid_ArchiveItemType_n122(_uploadFile, _downloadFile, value.itemType)) : candid_none()
     };
 }
-function to_candid_record_n311(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function to_candid_record_n307(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    era?: string;
+    relatedMemberId?: string;
+    tags: Array<string>;
+    searchTerm?: string;
+    itemType?: ArchiveItemType;
+    familyId: string;
+}): {
+    era: [] | [string];
+    relatedMemberId: [] | [string];
+    tags: Array<string>;
+    searchTerm: [] | [string];
+    itemType: [] | [_ArchiveItemType];
+    familyId: string;
+} {
+    return {
+        era: value.era ? candid_some(value.era) : candid_none(),
+        relatedMemberId: value.relatedMemberId ? candid_some(value.relatedMemberId) : candid_none(),
+        tags: value.tags,
+        searchTerm: value.searchTerm ? candid_some(value.searchTerm) : candid_none(),
+        itemType: value.itemType ? candid_some(to_candid_ArchiveItemType_n122(_uploadFile, _downloadFile, value.itemType)) : candid_none(),
+        familyId: value.familyId
+    };
+}
+function to_candid_record_n313(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     occupation?: string;
     privacySettings?: string;
     nickname?: string;
@@ -8159,7 +8414,7 @@ function to_candid_record_n311(_uploadFile: (file: ExternalBlob) => Promise<Uint
         nickname: value.nickname ? candid_some(value.nickname) : candid_none(),
         birthDate: value.birthDate ? candid_some(value.birthDate) : candid_none(),
         birthInfo: value.birthInfo ? candid_some(value.birthInfo) : candid_none(),
-        livingStatus: value.livingStatus ? candid_some(to_candid_LivingStatus_n312(_uploadFile, _downloadFile, value.livingStatus)) : candid_none(),
+        livingStatus: value.livingStatus ? candid_some(to_candid_LivingStatus_n314(_uploadFile, _downloadFile, value.livingStatus)) : candid_none(),
         longerStory: value.longerStory ? candid_some(value.longerStory) : candid_none(),
         story: value.story ? candid_some(value.story) : candid_none(),
         middleName: value.middleName ? candid_some(value.middleName) : candid_none(),

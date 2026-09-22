@@ -1,10 +1,12 @@
 import Result "mo:core/Result";
 import List "mo:core/List";
+import Map "mo:core/Map";
 import Principal "mo:core/Principal";
 import Runtime "mo:core/Runtime";
 import Time "mo:core/Time";
 import Storage "mo:caffeineai-object-storage/Storage";
 import ArchiveTypes "../types/archive";
+import FamilyTypes "../types/family";
 import ResearchIntakeTypes "../types/research-intake";
 import BoardTypes "../types/board";
 import OwnershipTypes "../types/ownership";
@@ -27,16 +29,38 @@ mixin (
   posts : List.List<BoardTypes.Post>,
   notifications : List.List<OwnershipTypes.Notification>,
   claims : List.List<OwnershipTypes.ProfileClaim>,
+  profiles : Map.Map<OwnershipTypes.PersonId, OwnershipTypes.PersonProfile>,
   stewards : List.List<GovernanceTypes.StewardRecord>,
 ) {
-  /// Traps unless the caller is a signed-in approved family member.
-  func requireBoardMemberForMedia(caller : Principal) {
+  /// Traps unless the caller is a signed-in approved member or Steward of
+  /// `familyId`. Anonymous callers and signed-in but unapproved callers are
+  /// both denied with the stable, non-technical family-membership message.
+  func requireBoardMemberForMediaForFamily(caller : Principal, familyId : FamilyTypes.FamilyId) {
     if (caller.isAnonymous()) {
       Runtime.trap("Unauthorized: You must be signed in");
     };
-    if (not FamilyAuthorizationLib.isApprovedFamilyMember(stewards, claims, caller)) {
+    if (not FamilyAuthorizationLib.isApprovedFamilyMemberForFamily(stewards, claims, caller, familyId)) {
       Runtime.trap("Unauthorized: Only approved family members can access the message board");
     };
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper for
+  /// `requireBoardMemberForMediaForFamily`. Deprecated single-family form:
+  /// delegates to the canonical family-scoped check with
+  /// `FamilyTypes.DEFAULT_FAMILY_ID`, so current Norwood behavior is unchanged.
+  func requireBoardMemberForMedia(caller : Principal) {
+    requireBoardMemberForMediaForFamily(caller, FamilyTypes.DEFAULT_FAMILY_ID);
+  };
+
+  /// Traps unless every person id in `personIds` belongs to `familyId`, using
+  /// the canonical `FamilyAuthorizationLib.requirePeopleInFamily` predicate. A
+  /// person tracked in `familyId` (including a seeded Norwood profile with no
+  /// claim) or one with an approved claim in `familyId` is accepted; a person
+  /// that exists only in another family is rejected, so Family A may never
+  /// reference Family B people. The denial message carries no family id or
+  /// principal.
+  func requireRelatedPeopleInFamily(personIds : [Text], familyId : FamilyTypes.FamilyId) {
+    FamilyAuthorizationLib.requirePeopleInFamily(profiles, claims, personIds, familyId);
   };
 
   /// Maps an archive item type to the upload surface whose MIME allowlist and
@@ -75,20 +99,26 @@ mixin (
     maxId;
   };
 
-  /// Searches/filters approved archive items by title query, tags, item type,
-  /// related family member, and era. Returns only `#Approved` items visible to
-  /// the caller under the archive privacy rules.
+  /// TEMPORARY Tenancy 1C compatibility wrapper for the canonical
+  /// `searchArchiveItemsForFamily` endpoint (owned by the Archive API). This
+  /// deprecated single-family form delegates to the canonical family-scoped
+  /// implementation with `FamilyTypes.DEFAULT_FAMILY_ID`, so current Norwood
+  /// behavior is unchanged.
   public query ({ caller }) func searchArchiveItems(filter : Types.ArchiveSearchFilter) : async [ArchiveTypes.ArchiveItem] {
-    let isAdmin = StewardAuthorityLib.isActiveSteward(stewards, caller);
-    let isApprovedFamilyMember = isAdmin or claims.toArray().any(func c = c.requestingUserId == caller and c.status == #Approved);
-    Lib.searchArchiveItems(archiveItems, filter, caller, isAdmin, isApprovedFamilyMember);
+    let familyId = FamilyTypes.DEFAULT_FAMILY_ID;
+    let isAdmin = StewardAuthorityLib.isActiveStewardForFamily(stewards, caller, familyId);
+    let isApprovedFamilyMember = FamilyAuthorizationLib.isApprovedFamilyMemberForFamily(stewards, claims, caller, familyId);
+    Lib.searchArchiveItemsForFamily(archiveItems, familyId, filter, caller, isAdmin, isApprovedFamilyMember);
   };
 
-  /// Uploads a research source file: creates one canonical Archive item
-  /// (pending) and links a new Research Source record to it, so no manually
-  /// typed Archive Item ID is required. Requires an approved family member; the
-  /// caller is recorded as the contributor of both records.
-  public shared ({ caller }) func createSourceWithUpload(
+  /// Uploads a research source file into `familyId`: creates one canonical
+  /// Archive item (pending) in that family and links a new Research Source
+  /// record to it, so no manually typed Archive Item ID is required. Requires
+  /// an approved member or Steward of `familyId`; the caller is recorded as the
+  /// contributor of both records. Every `relatedMemberIds` entry must belong to
+  /// `familyId`.
+  public shared ({ caller }) func createSourceWithUploadForFamily(
+    familyId : FamilyTypes.FamilyId,
     title : Text,
     sourceType : ResearchIntakeTypes.SourceType,
     description : Text,
@@ -103,7 +133,48 @@ mixin (
     primarySpeaker : ?ArchiveTypes.OralHistorySpeaker,
     filename : Text,
   ) : async Result.Result<Types.SourceUploadResult, ResearchIntakeTypes.ResearchError> {
-    if (not FamilyAuthorizationLib.isApprovedFamilyMember(stewards, claims, caller)) {
+    createSourceWithUploadForFamilyInternal(
+      familyId,
+      title,
+      sourceType,
+      description,
+      mimeType,
+      blob,
+      tags,
+      era,
+      year,
+      relatedMemberIds,
+      privacyLevel,
+      classification,
+      primarySpeaker,
+      filename,
+      caller,
+    );
+  };
+
+  /// Internal implementation of `createSourceWithUploadForFamily` that takes the
+  /// caller explicitly. The public family-scoped endpoint and the temporary
+  /// single-family compatibility wrapper both delegate here, so the membership
+  /// gate always evaluates the real caller rather than the canister principal a
+  /// shared-to-shared call would otherwise present.
+  func createSourceWithUploadForFamilyInternal(
+    familyId : FamilyTypes.FamilyId,
+    title : Text,
+    sourceType : ResearchIntakeTypes.SourceType,
+    description : Text,
+    mimeType : Text,
+    blob : Storage.ExternalBlob,
+    tags : [Text],
+    era : Text,
+    year : ?Nat,
+    relatedMemberIds : [Text],
+    privacyLevel : ArchiveTypes.PrivacyLevel,
+    classification : ArchiveTypes.ArchiveItemClassification,
+    primarySpeaker : ?ArchiveTypes.OralHistorySpeaker,
+    filename : Text,
+    caller : Principal,
+  ) : Result.Result<Types.SourceUploadResult, ResearchIntakeTypes.ResearchError> {
+    if (not FamilyAuthorizationLib.isApprovedFamilyMemberForFamily(stewards, claims, caller, familyId)) {
       return #err(#notAuthorized);
     };
     if (classification == #OralHistory and primarySpeaker == null) {
@@ -125,10 +196,14 @@ mixin (
     let cleanTags = InputValidation.requireTags(tags);
     let cleanRelated = InputValidation.requireRelatedPersonIds(relatedMemberIds);
     let cleanFilename = InputValidation.requireFilename(filename);
-    let result = Lib.createSourceWithUpload(
+    // Every related person must belong to the requested family: Family A may
+    // never reference Family B people.
+    requireRelatedPeopleInFamily(cleanRelated, familyId);
+    let result = Lib.createSourceWithUploadForFamily(
       archiveItems,
       researchSources,
       researchState,
+      familyId,
       cleanTitle,
       sourceType,
       cleanDescription,
@@ -160,11 +235,52 @@ mixin (
     #ok(result);
   };
 
+  /// TEMPORARY Tenancy 1C compatibility wrapper for
+  /// `createSourceWithUploadForFamily`. Deprecated single-family form:
+  /// delegates to the canonical family-scoped endpoint with
+  /// `FamilyTypes.DEFAULT_FAMILY_ID`, so current Norwood behavior is unchanged.
+  public shared ({ caller }) func createSourceWithUpload(
+    title : Text,
+    sourceType : ResearchIntakeTypes.SourceType,
+    description : Text,
+    mimeType : Text,
+    blob : Storage.ExternalBlob,
+    tags : [Text],
+    era : Text,
+    year : ?Nat,
+    relatedMemberIds : [Text],
+    privacyLevel : ArchiveTypes.PrivacyLevel,
+    classification : ArchiveTypes.ArchiveItemClassification,
+    primarySpeaker : ?ArchiveTypes.OralHistorySpeaker,
+    filename : Text,
+  ) : async Result.Result<Types.SourceUploadResult, ResearchIntakeTypes.ResearchError> {
+    createSourceWithUploadForFamilyInternal(
+      FamilyTypes.DEFAULT_FAMILY_ID,
+      title,
+      sourceType,
+      description,
+      mimeType,
+      blob,
+      tags,
+      era,
+      year,
+      relatedMemberIds,
+      privacyLevel,
+      classification,
+      primarySpeaker,
+      filename,
+      caller,
+    );
+  };
+
   /// Creates a board post that attaches existing Archive items (by id) and/or
-  /// new uploads. Each new upload creates one canonical Archive item (pending)
-  /// linked to the post; the underlying file is never duplicated. Approved
-  /// family members only.
-  public shared ({ caller }) func createBoardPostWithMedia(
+  /// new uploads, all scoped to `familyId`. Each new upload creates one
+  /// canonical Archive item (pending) in `familyId` linked to the post; the
+  /// underlying file is never duplicated. Existing Archive items are attached
+  /// by id without re-uploading, and only when they belong to `familyId`.
+  /// Approved members or Stewards of `familyId` only.
+  public shared ({ caller }) func createBoardPostWithMediaForFamily(
+    familyId : FamilyTypes.FamilyId,
     postType : BoardTypes.PostType,
     title : ?Text,
     body : Text,
@@ -173,11 +289,43 @@ mixin (
     newUploads : [Types.BoardMediaUpload],
     tags : [Text],
   ) : async BoardTypes.Post {
-    requireBoardMemberForMedia(caller);
+    createBoardPostWithMediaForFamilyInternal(
+      familyId,
+      postType,
+      title,
+      body,
+      relatedPersonIds,
+      existingArchiveItemIds,
+      newUploads,
+      tags,
+      caller,
+    );
+  };
+
+  /// Internal implementation of `createBoardPostWithMediaForFamily` that takes
+  /// the caller explicitly. The public family-scoped endpoint and the temporary
+  /// single-family compatibility wrapper both delegate here, so the membership
+  /// gate always evaluates the real caller rather than the canister principal a
+  /// shared-to-shared call would otherwise present.
+  func createBoardPostWithMediaForFamilyInternal(
+    familyId : FamilyTypes.FamilyId,
+    postType : BoardTypes.PostType,
+    title : ?Text,
+    body : Text,
+    relatedPersonIds : [Text],
+    existingArchiveItemIds : [Nat],
+    newUploads : [Types.BoardMediaUpload],
+    tags : [Text],
+    caller : Principal,
+  ) : BoardTypes.Post {
+    requireBoardMemberForMediaForFamily(caller, familyId);
     let cleanTitle = InputValidation.requireOptionalText("title", title, InputValidation.MAX_TITLE_CHARS);
     let cleanBody = InputValidation.requireText("body", body, InputValidation.MAX_BOARD_POST_CHARS);
     let cleanRelated = InputValidation.requireRelatedPersonIds(relatedPersonIds);
     let cleanTags = InputValidation.requireTags(tags);
+    // Every related person must belong to the requested family: Family A may
+    // never reference Family B people.
+    requireRelatedPeopleInFamily(cleanRelated, familyId);
     InputValidation.requireArraySize("newUploads", newUploads.size(), InputValidation.MAX_BOARD_ATTACHMENTS);
     InputValidation.requireArraySize("existingArchiveItemIds", existingArchiveItemIds.size(), InputValidation.MAX_MEDIA_ITEMS_PER_CALL);
     // Validate every new upload before any of them is stored. The itemType is
@@ -199,6 +347,8 @@ mixin (
       let cleanUploadTags = InputValidation.requireTags(upload.tags);
       let cleanUploadRelated = InputValidation.requireRelatedPersonIds(upload.relatedMemberIds);
       let cleanUploadFilename = InputValidation.requireFilename(upload.filename);
+      // A new upload's related people must belong to the same family too.
+      requireRelatedPeopleInFamily(cleanUploadRelated, familyId);
       cleanUploads.add({
         upload with
         title = cleanUploadTitle;
@@ -225,7 +375,33 @@ mixin (
       status = #Active;
       privacyScope = #FamilyOnly;
     };
-    Lib.createBoardPostWithMedia(posts, archiveItems, post, existingArchiveItemIds, cleanUploads.toArray());
+    Lib.createBoardPostWithMediaForFamily(posts, archiveItems, familyId, post, existingArchiveItemIds, cleanUploads.toArray());
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper for
+  /// `createBoardPostWithMediaForFamily`. Deprecated single-family form:
+  /// delegates to the canonical family-scoped endpoint with
+  /// `FamilyTypes.DEFAULT_FAMILY_ID`, so current Norwood behavior is unchanged.
+  public shared ({ caller }) func createBoardPostWithMedia(
+    postType : BoardTypes.PostType,
+    title : ?Text,
+    body : Text,
+    relatedPersonIds : [Text],
+    existingArchiveItemIds : [Nat],
+    newUploads : [Types.BoardMediaUpload],
+    tags : [Text],
+  ) : async BoardTypes.Post {
+    createBoardPostWithMediaForFamilyInternal(
+      FamilyTypes.DEFAULT_FAMILY_ID,
+      postType,
+      title,
+      body,
+      relatedPersonIds,
+      existingArchiveItemIds,
+      newUploads,
+      tags,
+      caller,
+    );
   };
 
   /// Reconciles stale claim notifications for a claim: when the claim is

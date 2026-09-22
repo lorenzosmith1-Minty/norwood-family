@@ -456,14 +456,17 @@ it("creates one canonical archive item and links a source via createSourceWithUp
     }),
   });
 
-  // Exactly one canonical archive item was created (pending), and the source
-  // links to it by id — no manually typed Archive Item ID was required.
-  // listPendingArchiveItems is admin-gated, so switch to the admin caller.
+  // Exactly one canonical archive item was created (pending) and the source
+  // links to it by id — no manually typed Archive Item ID was required. The
+  // linked item is NOT listed in Pending Contributions: a Research-linked
+  // pending item is reviewed through the Research Intake queue, so
+  // listPendingArchiveItems excludes it. listPendingArchiveItems is
+  // steward-gated, so switch to the admin caller.
   uploadActor.setIdentity(adminIdentity);
   const pending = await uploadActor.listPendingArchiveItems();
-  expect(pending).toHaveLength(1);
   const archiveItemId = (result as { ok: { archiveItem: { id: bigint } } }).ok.archiveItem.id;
-  expect(pending[0].id).toBe(archiveItemId);
+  expect(pending.find((i) => i.id === archiveItemId)).toBeUndefined();
+  expect(pending).toHaveLength(0);
 
   // The source record is readable and carries the linked archive item id.
   const sources = await uploadActor.listSources();

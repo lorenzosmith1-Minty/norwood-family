@@ -1367,10 +1367,14 @@ export interface backendInterface {
     approveRelationshipRequest(requestId: bigint): Promise<RelationshipRequest | null>;
     /**
      * / Approves a pending source (Family Steward only), transitioning it to
-     * / `#Approved` so it becomes usable by Proposed Findings. The linked Archive
-     * / item remains canonical and provenance stays intact. Records a
-     * / `#ResearchApproved` notification to the contributor. Returns the updated
-     * / source, or `null` when it does not exist or is not pending.
+     * / `#Approved` so it becomes usable by Proposed Findings. When the source
+     * / links an Archive item (`archiveItemId`), that item is transitioned from
+     * / `#Pending` to `#Approved` in the same action — the single approval covers
+     * / both records, so the item is never reviewed twice. The linked item keeps
+     * / its metadata, blob, and ids, no second Archive item is created, and no
+     * / Archive notification is emitted. Records exactly one `#ResearchApproved`
+     * / notification to the contributor. Returns the updated source, or `null`
+     * / when it does not exist or is not pending.
      */
     approveSource(id: SourceId): Promise<SourceRecord | null>;
     /**
@@ -1543,9 +1547,11 @@ export interface backendInterface {
      * / video/audio, recipes, recipe media, stories, and mystery contributions)
      * / for the Steward-facing Pending Contributions badge. Research Intake review
      * / items are NOT included — they resolve exclusively through the Research
-     * / Review Queue (getReviewQueue). Family Steward only. The count is derived
-     * / from canonical pending data, so it increments on new pending items and
-     * / decrements on Approve/Reject automatically.
+     * / Review Queue (getReviewQueue) — and neither is a pending Archive item
+     * / linked to a Research Source, which is reviewed through that same queue.
+     * / Family Steward only. The count is derived from canonical pending data, so
+     * / it increments on new pending items and decrements on Approve/Reject
+     * / automatically, and it always agrees with the Pending Contributions list.
      */
     getPendingContributionsCount(): Promise<bigint>;
     /**
@@ -1753,7 +1759,11 @@ export interface backendInterface {
      */
     listNotifications(): Promise<Array<Notification>>;
     /**
-     * / Lists all archive items in pending state (admin only).
+     * / Lists all archive items in pending state (admin only). Pending items whose
+     * / id is referenced by a Research Source are excluded: those are reviewed
+     * / through the Research Intake queue, so approving or rejecting the Source
+     * / cascades to the linked Archive item and the item is never actionable here.
+     * / Ordinary archive contributions remain listed unchanged.
      */
     listPendingArchiveItems(): Promise<Array<ArchiveItem>>;
     /**
@@ -1963,9 +1973,13 @@ export interface backendInterface {
     rejectRelationshipRequest(requestId: bigint): Promise<RelationshipRequest | null>;
     /**
      * / Rejects a pending source (Family Steward only), transitioning it to
-     * / `#Rejected`. The original Archive item is not deleted. Records a
-     * / `#ResearchRejected` notification to the contributor. Returns the updated
-     * / source, or `null` when it does not exist or is not pending.
+     * / `#Rejected`. When the source links an Archive item (`archiveItemId`), that
+     * / item is transitioned from `#Pending` to `#Rejected` in the same action —
+     * / the single rejection covers both records, so the item is never reviewed
+     * / twice. The linked item's record and provenance are preserved, no second
+     * / Archive item is created, and no Archive notification is emitted. Records
+     * / exactly one `#ResearchRejected` notification to the contributor. Returns
+     * / the updated source, or `null` when it does not exist or is not pending.
      */
     rejectSource(id: SourceId): Promise<SourceRecord | null>;
     /**

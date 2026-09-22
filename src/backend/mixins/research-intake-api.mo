@@ -13,6 +13,7 @@ import ArchiveTypes "../types/archive";
 import FamilyTypes "../types/family";
 import GovernanceTypes "../types/governance";
 import ResearchLib "../lib/research-intake";
+import ArchiveLib "../lib/archive";
 import FamilyAuthorizationLib "../lib/family-authorization";
 import StewardAuthorityLib "../lib/steward-authority";
 import InputValidation "../lib/input-validation";
@@ -523,10 +524,14 @@ mixin (
   };
 
   /// Approves a pending source (Family Steward only), transitioning it to
-  /// `#Approved` so it becomes usable by Proposed Findings. The linked Archive
-  /// item remains canonical and provenance stays intact. Records a
-  /// `#ResearchApproved` notification to the contributor. Returns the updated
-  /// source, or `null` when it does not exist or is not pending.
+  /// `#Approved` so it becomes usable by Proposed Findings. When the source
+  /// links an Archive item (`archiveItemId`), that item is transitioned from
+  /// `#Pending` to `#Approved` in the same action — the single approval covers
+  /// both records, so the item is never reviewed twice. The linked item keeps
+  /// its metadata, blob, and ids, no second Archive item is created, and no
+  /// Archive notification is emitted. Records exactly one `#ResearchApproved`
+  /// notification to the contributor. Returns the updated source, or `null`
+  /// when it does not exist or is not pending.
   public shared ({ caller }) func approveSource(id : Types.SourceId) : async ?Types.SourceRecord {
     requireSteward(caller);
     let now = Time.now();
@@ -537,6 +542,12 @@ mixin (
           null;
         } else {
           let updated = ResearchLib.approveSource(sources, id, caller, now);
+          switch (s.archiveItemId) {
+            case (?archiveItemId) {
+              ignore ArchiveLib.transitionStatus(archiveItems, archiveItemId, #Approved);
+            };
+            case null {};
+          };
           ignore ResearchLib.appendAudit(
             auditLog,
             { var next = state.nextAuditId },
@@ -556,9 +567,13 @@ mixin (
   };
 
   /// Rejects a pending source (Family Steward only), transitioning it to
-  /// `#Rejected`. The original Archive item is not deleted. Records a
-  /// `#ResearchRejected` notification to the contributor. Returns the updated
-  /// source, or `null` when it does not exist or is not pending.
+  /// `#Rejected`. When the source links an Archive item (`archiveItemId`), that
+  /// item is transitioned from `#Pending` to `#Rejected` in the same action —
+  /// the single rejection covers both records, so the item is never reviewed
+  /// twice. The linked item's record and provenance are preserved, no second
+  /// Archive item is created, and no Archive notification is emitted. Records
+  /// exactly one `#ResearchRejected` notification to the contributor. Returns
+  /// the updated source, or `null` when it does not exist or is not pending.
   public shared ({ caller }) func rejectSource(id : Types.SourceId) : async ?Types.SourceRecord {
     requireSteward(caller);
     let now = Time.now();
@@ -569,6 +584,12 @@ mixin (
           null;
         } else {
           let updated = ResearchLib.rejectSource(sources, id, caller, now);
+          switch (s.archiveItemId) {
+            case (?archiveItemId) {
+              ignore ArchiveLib.transitionStatus(archiveItems, archiveItemId, #Rejected);
+            };
+            case null {};
+          };
           ignore ResearchLib.appendAudit(
             auditLog,
             { var next = state.nextAuditId },

@@ -1,6 +1,7 @@
 import Iter "mo:core/Iter";
 import List "mo:core/List";
 import Principal "mo:core/Principal";
+import Set "mo:core/Set";
 import Types "../types/archive";
 
 module {
@@ -31,11 +32,43 @@ module {
     item;
   };
 
-  /// Lists all archive items currently in pending state (admin only).
+  /// Lists all archive items currently in pending state (admin only). Items
+  /// whose id is referenced by a Research Source (`linkedIds`) are excluded:
+  /// those are reviewed through the Research Intake queue, so they are not
+  /// actionable in Pending Contributions. Ordinary archive contributions with
+  /// no linked Research Source remain listed unchanged.
   public func listPending(
     items : List.List<Types.ArchiveItem>,
+    linkedIds : Set.Set<Types.ArchiveItemId>,
   ) : [Types.ArchiveItem] {
-    items.toArray().filter(func it = it.status == #Pending);
+    items.toArray().filter(
+      func it = it.status == #Pending and not linkedIds.contains(it.id)
+    );
+  };
+
+  /// Transitions a pending archive item to the given status without emitting any
+  /// notification. Used when a Research Source approval/rejection cascades to
+  /// its linked Archive item, so the item is not double-reviewed and no Archive
+  /// notification is sent. Every other field — metadata, blob, and ids — is
+  /// preserved. Returns the updated item, or `null` when the item does not exist
+  /// or is not pending.
+  public func transitionStatus(
+    items : List.List<Types.ArchiveItem>,
+    id : Types.ArchiveItemId,
+    status : Types.ArchiveItemStatus,
+  ) : ?Types.ArchiveItem {
+    switch (items.find(func it = it.id == id and it.status == #Pending)) {
+      case (?it) {
+        let updated : Types.ArchiveItem = { it with status };
+        let snapshot = items.toArray();
+        items.clear();
+        for (item in snapshot.values()) {
+          if (item.id == id) { items.add(updated) } else { items.add(item) };
+        };
+        ?updated;
+      };
+      case null { null };
+    };
   };
 
   /// Approves a pending item, moving it to approved state. Returns the updated

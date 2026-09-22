@@ -1,9 +1,11 @@
 import List "mo:core/List";
 import Principal "mo:core/Principal";
 import Runtime "mo:core/Runtime";
+import Set "mo:core/Set";
 import Storage "mo:caffeineai-object-storage/Storage";
 import Time "mo:core/Time";
 import Types "../types/archive";
+import ResearchTypes "../types/research-intake";
 import FamilyTypes "../types/family";
 import OwnershipTypes "../types/ownership";
 import GovernanceTypes "../types/governance";
@@ -18,6 +20,7 @@ mixin (
   claims : List.List<OwnershipTypes.ProfileClaim>,
   stewards : List.List<GovernanceTypes.StewardRecord>,
   notifications : List.List<OwnershipTypes.Notification>,
+  sources : List.List<ResearchTypes.SourceRecord>,
 ) {
   /// Computes the next archive item id: one greater than the largest existing
   /// id, or `0` when the archive is empty.
@@ -148,12 +151,23 @@ mixin (
     ArchiveLib.submit(items, item);
   };
 
-  /// Lists all archive items in pending state (admin only).
+  /// Lists all archive items in pending state (admin only). Pending items whose
+  /// id is referenced by a Research Source are excluded: those are reviewed
+  /// through the Research Intake queue, so approving or rejecting the Source
+  /// cascades to the linked Archive item and the item is never actionable here.
+  /// Ordinary archive contributions remain listed unchanged.
   public query ({ caller }) func listPendingArchiveItems() : async [Types.ArchiveItem] {
     if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can perform this action");
     };
-    ArchiveLib.listPending(items);
+    let linkedIds = Set.empty<Types.ArchiveItemId>();
+    for (s in sources.toArray().values()) {
+      switch (s.archiveItemId) {
+        case (?archiveItemId) { linkedIds.add(archiveItemId) };
+        case null {};
+      };
+    };
+    ArchiveLib.listPending(items, linkedIds);
   };
 
   /// Approves a pending archive item (admin only). Returns the updated item, or

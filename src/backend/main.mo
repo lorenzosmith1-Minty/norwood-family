@@ -1083,7 +1083,7 @@ actor {
   include MixinObjectStorage();
   include FamilyApi(families);
   include ObjectStorageApi(galleries, claims, profiles, stewards);
-  include ArchiveApi(archiveItems, claims, stewards, notifications);
+  include ArchiveApi(archiveItems, claims, stewards, notifications, researchSources);
   include OwnershipApi(accessControlState, profiles, claims, confirmedRelationships, relationshipRequests, notifications, auditLog, stewards);
   include ClaimPersistenceApi(profiles, claims);
   include RelationshipsApi(relationshipRequests, confirmedRelationships);
@@ -1094,7 +1094,7 @@ actor {
   include RecipesApi(recipes, profiles, claims, stewards);
   include BoardApi(posts, replies, profiles, notifications, auditLog, stewards, claims);
   include MessagingApi(conversations, messages, blocks, reports, profiles, archivedProfiles, notifications, accounts, stewards, claims);
-  include PendingCountApi(accessControlState, archiveItems, recipes, stories, mysteryContributions, stewards);
+  include PendingCountApi(accessControlState, archiveItems, recipes, stories, mysteryContributions, stewards, researchSources);
   include ResearchIntakeApi(researchSources, proposedFindings, newPersonCandidates, relationshipProposals, conflictReviewItems, researchAuditLog, researchState, profiles, confirmedRelationships, stories, mysteries, archiveItems, notifications, claims, stewards);
   include ArchiveResearchBoardNotificationsApi(archiveItems, researchSources, researchState, posts, notifications, claims, stewards);
   include AuditAndWorkloadApi(accessControlState, auditLog, researchAuditLog, conflictReviewItems, stewards);

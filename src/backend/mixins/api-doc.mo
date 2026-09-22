@@ -182,7 +182,11 @@ Contributions badge.
   summary, extracted names) are initialized to `null` and are not populated by
   any logic yet.
 - `listPendingArchiveItems() : async [ArchiveItem]` — query. Admin only. Returns
-  all archive items currently in `#Pending` state.
+  all archive items currently in `#Pending` state **except** those whose id is
+  referenced by a Research Source's `archiveItemId`. A Research-linked item is
+  reviewed through the Research Intake queue (approving or rejecting the Source
+  cascades to the linked item), so it is not actionable here. Ordinary archive
+  contributions with no linked Research Source are listed unchanged.
 - `approveArchiveItem(id : Nat) : async ?ArchiveItem` — update. Admin only.
   Moves a pending item to `#Approved` state and returns the updated item, or
   `null` when no pending item with that id exists. On the actual transition out
@@ -909,15 +913,21 @@ Contributions badge.
   caller is not an active Family Steward (an ACTIVE persisted `StewardRecord`).
 - `approveSource(id : SourceId) : async ?SourceRecord` — update. Family Steward
   only. Approves a pending source, transitioning it to `#Approved` so it becomes
-  usable by Proposed Findings. The linked Archive item remains canonical and
-  provenance stays intact. Records a `#ResearchApproved` notification to the
-  contributor. Returns the updated source, or `null` when it does not exist or is
-  not pending.
+  usable by Proposed Findings. When the source links an Archive item
+  (`archiveItemId`), that item is transitioned from `#Pending` to `#Approved` in
+  the same action — the single approval covers both records. The linked item
+  keeps its metadata, blob, and ids, no second Archive item is created, and no
+  `#ArchiveApproved` notification is emitted. Records exactly one
+  `#ResearchApproved` notification to the contributor. Returns the updated
+  source, or `null` when it does not exist or is not pending.
 - `rejectSource(id : SourceId) : async ?SourceRecord` — update. Family Steward
-  only. Rejects a pending source, transitioning it to `#Rejected`. The original
-  Archive item is not deleted. Records a `#ResearchRejected` notification to the
-  contributor. Returns the updated source, or `null` when it does not exist or is
-  not pending.
+  only. Rejects a pending source, transitioning it to `#Rejected`. When the
+  source links an Archive item (`archiveItemId`), that item is transitioned from
+  `#Pending` to `#Rejected` in the same action — the single rejection covers both
+  records. The linked item's record and provenance are preserved, no second
+  Archive item is created, and no `#ArchiveRejected` notification is emitted.
+  Records exactly one `#ResearchRejected` notification to the contributor.
+  Returns the updated source, or `null` when it does not exist or is not pending.
 - `needsResearchSource(id : SourceId) : async ?SourceRecord` — update. Family
   Steward only. Marks a pending source as needing research, transitioning it to
   `#NeedsResearch` while preserving the source and its notes. Returns the updated
@@ -2093,7 +2103,11 @@ pending stories, and pending mystery contributions) from canonical pending data.
 Research Intake review items (Sources, Proposed Findings, New Person Candidates,
 Relationship Proposals, and Conflict Review items) are deliberately excluded —
 they resolve exclusively through the Research Review Queue (`getReviewQueue`),
-so they never inflate the Pending Contributions badge.
+so they never inflate the Pending Contributions badge. A pending Archive item
+whose id is referenced by a Research Source's `archiveItemId` is excluded as
+well, because it is reviewed through that same queue rather than in Pending
+Contributions; the count therefore always agrees with the Pending Contributions
+list (`listPendingArchiveItems`).
 It increments when a new pending item is submitted and decrements when an item is
 approved or rejected, automatically — there is no separate counter to maintain.
 The frontend calls it to render the Steward-facing Pending Contributions badge
@@ -2105,9 +2119,11 @@ caller creates a source (`createSource`) and then proposed findings
 relationship proposals (`createRelationshipProposal`), each referencing a source
 for provenance. Everything enters as `#Pending` and is never auto-approved. A
 Family Steward then reviews each item: `approveSource` approves a pending source
-(transitioning it to `#Approved` so it becomes usable by Proposed Findings),
-`rejectSource` rejects it (transitioning to `#Rejected`, without deleting the
-original Archive item), and `needsResearchSource` marks it as needing research
+(transitioning it to `#Approved` so it becomes usable by Proposed Findings, and
+cascading the same transition to its linked Archive item when one exists),
+`rejectSource` rejects it (transitioning to `#Rejected`, and cascading to its
+linked Archive item when one exists, without deleting the original Archive item),
+and `needsResearchSource` marks it as needing research
 (transitioning to `#NeedsResearch` while preserving the source and its notes).
 `approveFinding` routes an approved finding to its target surface (Profile,
 family graph, Timeline / Travel Through Time, Family Stories, Family Mysteries,
@@ -2357,8 +2373,12 @@ no async job to poll; the frontend can call the list methods (steward) or
 - `approveSource`, `rejectSource`, and `needsResearchSource` are idempotent:
   acting on an already-reviewed (or nonexistent) source returns `null` and
   changes nothing. They only transition sources currently in `#Pending` state.
+  `approveSource` and `rejectSource` also transition the source's linked Archive
+  item (when `archiveItemId` is set) from `#Pending` to the matching status, so a
+  Research upload needs only one Steward decision; the linked item keeps its
+  metadata, blob, and ids and no Archive notification is emitted for it.
   `rejectSource` never deletes the original Archive item; `needsResearchSource`
-  preserves the source and its notes. Each successful review records a
+  preserves the source and its notes. Each successful review records exactly one
   `#ResearchApproved`/`#ResearchRejected` notification to the contributor
   (approve/reject) without duplicates.
 - `approveNewPersonCandidate`, `rejectNewPersonCandidate`, and

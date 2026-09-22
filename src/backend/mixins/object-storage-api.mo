@@ -5,6 +5,7 @@ import Time "mo:core/Time";
 import Types "../types/object-storage";
 import OwnershipTypes "../types/ownership";
 import GovernanceTypes "../types/governance";
+import FamilyTypes "../types/family";
 import ObjectStorageLib "../lib/object-storage";
 import FamilyAuthorizationLib "../lib/family-authorization";
 import InputValidation "../lib/input-validation";
@@ -46,9 +47,9 @@ mixin (
 
   /// Lists all uploaded photos for a person, in upload order. Requires an
   /// approved family member or a Family Steward; the full gallery is never
-  /// public.
+  /// public. Tenancy 1B: authority is checked for the default family id.
   public shared query ({ caller }) func listPhotos(personId : Types.PersonId) : async [Types.Photo] {
-    FamilyAuthorizationLib.requireGalleryReadAuthority(stewards, claims, caller);
+    FamilyAuthorizationLib.requireGalleryReadAuthorityForFamily(stewards, claims, caller, FamilyTypes.DEFAULT_FAMILY_ID);
     ObjectStorageLib.listPhotos(galleries, personId);
   };
 
@@ -56,13 +57,14 @@ mixin (
   /// that claimed profile or a Family Steward; the caller is recorded as the
   /// uploader. When the gallery has no profile photo yet, the newly added photo
   /// is automatically set as the profile photo. Returns the stored photo.
+  /// Tenancy 1B: authority is checked for the default family id.
   public shared ({ caller }) func addPhoto(
     personId : Types.PersonId,
     filename : Text,
     mimeType : Text,
     blob : Storage.ExternalBlob,
   ) : async Types.Photo {
-    FamilyAuthorizationLib.requirePhotoMutationAuthority(stewards, profiles, claims, caller, personId);
+    FamilyAuthorizationLib.requirePhotoMutationAuthorityForFamily(stewards, profiles, claims, caller, personId, FamilyTypes.DEFAULT_FAMILY_ID);
     InputValidation.requireUpload(#ProfileImage, mimeType, blob);
     let cleanFilename = InputValidation.requireFilename(filename);
     let photo : Types.Photo = {
@@ -79,11 +81,12 @@ mixin (
   /// Marks the photo with `photoId` as the person's profile photo. Requires the
   /// approved owner of that claimed profile or a Family Steward. Returns the
   /// newly selected photo, or `null` when the photo does not exist.
+  /// Tenancy 1B: authority is checked for the default family id.
   public shared ({ caller }) func setProfilePhoto(
     personId : Types.PersonId,
     photoId : Types.PhotoId,
   ) : async ?Types.Photo {
-    FamilyAuthorizationLib.requirePhotoMutationAuthority(stewards, profiles, claims, caller, personId);
+    FamilyAuthorizationLib.requirePhotoMutationAuthorityForFamily(stewards, profiles, claims, caller, personId, FamilyTypes.DEFAULT_FAMILY_ID);
     ObjectStorageLib.setProfilePhoto(galleries, personId, photoId);
   };
 
@@ -91,9 +94,10 @@ mixin (
   /// The single designated portrait of an unclaimed/historical profile stays
   /// readable by guests so Add Myself / claim discovery works; for a claimed
   /// profile only an approved family member or Family Steward may read it.
+  /// Tenancy 1B: authority is checked for the default family id.
   public shared query ({ caller }) func getProfilePhoto(personId : Types.PersonId) : async ?Types.Photo {
     if (not isUnclaimedProfile(personId)) {
-      FamilyAuthorizationLib.requireGalleryReadAuthority(stewards, claims, caller);
+      FamilyAuthorizationLib.requireGalleryReadAuthorityForFamily(stewards, claims, caller, FamilyTypes.DEFAULT_FAMILY_ID);
     };
     ObjectStorageLib.getProfilePhoto(galleries, personId);
   };
@@ -101,12 +105,12 @@ mixin (
   /// Removes a photo from a person's gallery. Requires the approved owner of
   /// that claimed profile or a Family Steward. Returns `true` when a photo was
   /// removed. If the removed photo was the profile photo, the profile photo is
-  /// cleared.
+  /// cleared. Tenancy 1B: authority is checked for the default family id.
   public shared ({ caller }) func removePhoto(
     personId : Types.PersonId,
     photoId : Types.PhotoId,
   ) : async Bool {
-    FamilyAuthorizationLib.requirePhotoMutationAuthority(stewards, profiles, claims, caller, personId);
+    FamilyAuthorizationLib.requirePhotoMutationAuthorityForFamily(stewards, profiles, claims, caller, personId, FamilyTypes.DEFAULT_FAMILY_ID);
     ObjectStorageLib.removePhoto(galleries, personId, photoId);
   };
 };

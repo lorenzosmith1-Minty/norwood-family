@@ -243,7 +243,7 @@ actor {
   /// contributor or an admin. The owner column is the archive item's `id`, which
   /// lets the rule look up the item's privacy level and contributor.
   func canSeeArchiveItem(caller : Principal, owner : OQL.Value) : Bool {
-    if (StewardAuthorityLib.isActiveSteward(stewards, caller)) {
+    if (StewardAuthorityLib.isActiveStewardForFamily(stewards, caller, FamilyTypes.DEFAULT_FAMILY_ID)) {
       return true;
     };
     switch (owner) {
@@ -252,7 +252,7 @@ actor {
           case (?item) {
             switch (item.privacyLevel) {
               case (#Public) true;
-              case (#FamilyOnly) FamilyAuthorizationLib.isApprovedFamilyMember(stewards, claims, caller);
+              case (#FamilyOnly) FamilyAuthorizationLib.isApprovedFamilyMemberForFamily(stewards, claims, caller, FamilyTypes.DEFAULT_FAMILY_ID);
               case (#Private) item.contributor == caller;
             };
           };

@@ -1,21 +1,19 @@
 {
-  "overview": "A private family heritage archive where relatives contribute photos, documents, stories, and research, and Stewards review and approve contributions.",
+  "overview": "A private family history and connection app for the Norwood family, with profiles, relationships, archive, research, board, messaging, recipes, and stories.",
   "features": [
-    "Browse and search the family archive",
-    "Contribute photos, documents, audio, video, and written stories",
-    "Submit research sources with document uploads",
-    "Steward review queue for pending contributions",
-    "Single-approval resolution for research uploads",
-    "Notifications when contributions are approved or rejected",
-    "Family profiles, relationships, and conflict review"
+    "Family profiles and relationship records",
+    "Archive of family documents and contributions",
+    "Research intake with Steward approval",
+    "Family board and messaging",
+    "Recipes and family stories",
+    "Steward-governed family membership"
   ],
-  "category": "family-archive",
+  "category": "family-history",
   "tags": [
-    "heritage",
     "family",
+    "genealogy",
     "archive",
-    "research",
-    "collaboration"
+    "community"
   ],
-  "last_updated": "2026-09-21T22:22:20.713Z"
+  "last_updated": "2026-09-22T01:40:12.732Z"
 }

@@ -2,15 +2,14 @@
 
 ## User Preferences
 
-- Apply the exact same document MIME allowlist in backend and frontend — never inconsistent lists
-- Keep existing PDF.js inline preview for PDFs
-- Preserve existing safe behavior for plain text
-- Word/Excel/CSV: accept upload and storage, preserve sanitized filename and validated MIME type, Download Original available
-- Word and Excel must never be rendered inline in an iframe or interpreted as HTML
-- Show a document card with filename and Download Original for Office documents
-- Keep archive-document maximum size at 20 MB
-- Do not change Tenancy 1A, authorization, Steward behavior, Archive approval, Research workflow, PDF preview, onboarding, or UI layout
-- No OAuth or Internet Identity browser testing; report authenticated upload checks as manual tests
+- Deliberately narrow tenancy builds: change only the named authorization layer, never refactor endpoints in the same session
+- Do not change current Norwood behavior for familyId = "norwood"
+- Preserve the protected baseline: Tenancy 1A family model and migration, existing claims, Steward records, Archive, Research, Board, Messaging, Recipes, Stories, notifications, Security Pass 1 and Pass 2 behavior, Research single-approval behavior, document format support
+- The family-scoped helpers must be the canonical source of truth; never leave two independent authorization implementations
+- Temporary compatibility wrappers must be clearly marked as temporary
+- Never expose family IDs or principals in user-facing errors
+- Never use the Caffeine admin role for Steward authority
+- No OAuth or Internet Identity browser testing; report authenticated browser checks as manual tests
 
 ## Verified Commands
 
@@ -33,3 +32,8 @@
 - ArchiveApi and PendingCountApi mixins receive researchSources as an extra parameter; main.mo passes researchSources to ArchiveApi, ResearchIntakeApi, and PendingCountApi.
 - api-doc.mo describes getPendingContributionsCount in two places (method reference ~line 749 and prose ~line 2100); a behavior change must update both.
 - The PocketIC backend lane executes when the compiled wasm is present; the full root gate is `pnpm test` and it runs both the frontend and backend lanes.
+- Tenancy 1B made the family-scoped authorization helpers canonical (isActiveStewardForFamily, hasActiveStewardForFamily, isApprovedFamilyMemberForFamily, requireApprovedFamilyMemberForFamily, requireActiveStewardForFamily, canManagePersonPhotosForFamily, requirePhotoMutationAuthorityForFamily, requireGalleryReadAuthorityForFamily, claimStewardForFamily) in lib/steward-authority.mo and lib/family-authorization.mo; the legacy single-family helpers are thin temporary wrappers delegating with FamilyTypes.DEFAULT_FAMILY_ID.
+- The family-scoped helpers are internal Motoko functions not reachable through Candid, so they are covered by static/behavioral source tests in test/pocketic/ rather than PocketIC public-API calls; Tenancy 1C will move endpoints onto them.
+- The Steward-access denial message is 'Unauthorized: Only Family Stewards can perform this action'; requireActiveStewardForFamily reuses it so denial behavior is unchanged.
+- The PocketIC backend lane can fail with fetch failed / ECONNREFUSED / Server busy / pocketic_sidecar_unreachable; that is shared-sidecar instability, not a product regression — rerun the lane.
+- The only authentication path is Google/Apple OAuth, so signed-in Steward, membership, photo-ownership, and bootstrap outcomes cannot be exercised in local preflight and remain manual tests.

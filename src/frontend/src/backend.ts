@@ -1303,6 +1303,7 @@ export interface backendInterface {
      * / that claimed profile or a Family Steward; the caller is recorded as the
      * / uploader. When the gallery has no profile photo yet, the newly added photo
      * / is automatically set as the profile photo. Returns the stored photo.
+     * / Tenancy 1B: authority is checked for the default family id.
      */
     addPhoto(personId: PersonId, filename: string, mimeType: string, blob: ExternalBlob): Promise<Photo>;
     /**
@@ -1425,7 +1426,8 @@ export interface backendInterface {
      * / while no active Steward exists; no approved family profile is required.
      * / Succeeds only when no active Steward exists, creating an ACTIVE
      * / `StewardRecord` for the claimer. Once any active Steward exists the claim
-     * / permanently refuses.
+     * / permanently refuses. Tenancy 1B: delegates to the canonical family-scoped
+     * / helper with the default family id.
      */
     claimSteward(): Promise<Result_24>;
     /**
@@ -1564,6 +1566,7 @@ export interface backendInterface {
      * / The single designated portrait of an unclaimed/historical profile stays
      * / readable by guests so Add Myself / claim discovery works; for a claimed
      * / profile only an approved family member or Family Steward may read it.
+     * / Tenancy 1B: authority is checked for the default family id.
      */
     getProfilePhoto(personId: PersonId): Promise<Photo | null>;
     /**
@@ -1622,7 +1625,8 @@ export interface backendInterface {
     getStewardAuditHistory(): Promise<Array<StewardAuditEntry>>;
     /**
      * / Whether any active Family Steward exists. Public so the frontend can show
-     * / or hide the one-time "Claim Family Steward" control.
+     * / or hide the one-time "Claim Family Steward" control. Tenancy 1B: delegates
+     * / to the canonical family-scoped helper with the default family id.
      */
     hasActiveSteward(): Promise<boolean>;
     /**
@@ -1638,7 +1642,8 @@ export interface backendInterface {
      * / Whether the caller is an active Norwood Family Steward. Public so the
      * / frontend can ask "am I an active Norwood Family Steward?". Returns `false`
      * / for an anonymous caller and for an account holding only the platform admin
-     * / role.
+     * / role. Tenancy 1B: delegates to the canonical family-scoped helper with the
+     * / default family id; multi-family bootstrap UI is not exposed yet.
      */
     isCallerSteward(): Promise<boolean>;
     /**
@@ -1785,7 +1790,7 @@ export interface backendInterface {
     /**
      * / Lists all uploaded photos for a person, in upload order. Requires an
      * / approved family member or a Family Steward; the full gallery is never
-     * / public.
+     * / public. Tenancy 1B: authority is checked for the default family id.
      */
     listPhotos(personId: PersonId): Promise<Array<Photo>>;
     /**
@@ -2002,7 +2007,7 @@ export interface backendInterface {
      * / Removes a photo from a person's gallery. Requires the approved owner of
      * / that claimed profile or a Family Steward. Returns `true` when a photo was
      * / removed. If the removed photo was the profile photo, the profile photo is
-     * / cleared.
+     * / cleared. Tenancy 1B: authority is checked for the default family id.
      */
     removePhoto(personId: PersonId, photoId: PhotoId): Promise<boolean>;
     /**
@@ -2097,6 +2102,7 @@ export interface backendInterface {
      * / Marks the photo with `photoId` as the person's profile photo. Requires the
      * / approved owner of that claimed profile or a Family Steward. Returns the
      * / newly selected photo, or `null` when the photo does not exist.
+     * / Tenancy 1B: authority is checked for the default family id.
      */
     setProfilePhoto(personId: PersonId, photoId: PhotoId): Promise<Photo | null>;
     /**

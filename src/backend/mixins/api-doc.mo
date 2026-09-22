@@ -37,22 +37,23 @@ intact if the account's email or authentication provider changes later.
 The backend also provides Family Governance & Safety Controls for real family
 use. Family Steward authority is the Norwood Steward record: a caller is a
 Family Steward only when they match an ACTIVE persisted `StewardRecord` in the
-`stewards` list. It is explicitly distinct from the platform admin role
-(`AccessControl.isAdmin`), which carries zero family-governance power. Family
-Stewards manage steward succession, safe profile removal/archive/restore,
-duplicate-profile review and merge, relationship administration, and a
-steward-only governance audit log. A successor steward is a designation only
-until a current steward explicitly activates them; there is no automatic
-stewardship transfer based on inactivity. Profile removal is never a simple
-destructive delete — it flows through a steward-reviewed request or an explicit
-archive, and permanent deletion is allowed only for empty error-created profiles
-with explicit confirmation.
+`stewards` list whose `familyId` is the family being checked. It is explicitly
+distinct from the platform admin role (`AccessControl.isAdmin`), which carries
+zero family-governance power. Family Stewards manage steward succession, safe
+profile removal/archive/restore, duplicate-profile review and merge,
+relationship administration, and a steward-only governance audit log. A
+successor steward is a designation only until a current steward explicitly
+activates them; there is no automatic stewardship transfer based on inactivity.
+Profile removal is never a simple destructive delete — it flows through a
+steward-reviewed request or an explicit archive, and permanent deletion is
+allowed only for empty error-created profiles with explicit confirmation.
 
-Steward authority is bootstrapped once. While no active Steward exists, any
-signed-in account may claim the Family Steward role via `claimSteward`; no
-approved family profile is required. Once any active Steward exists the claim
-permanently refuses. The public Steward authority surface is
-`isCallerSteward`/`hasActiveSteward` (query) and `claimSteward` (update).
+Steward authority is bootstrapped once per family. While a family has no active
+Steward, any signed-in account may claim that family's Steward role via
+`claimSteward`; no approved family profile is required. Once that family has any
+active Steward the claim permanently refuses. The public Steward authority
+surface is `isCallerSteward`/`hasActiveSteward` (query) and `claimSteward`
+(update); these operate on the default family (`\"norwood\"`).
 
 The backend also provides a private family-wide Message Board and private 1:1
 messaging for approved family members. The Message Board lets approved members
@@ -366,23 +367,25 @@ Contributions badge.
 ### Family Steward authority
 
 - `isCallerSteward() : async Bool` — query. Returns `true` only when the caller
-  matches an ACTIVE persisted `StewardRecord` in the `stewards` list. Returns
-  `false` for an anonymous caller and for an account holding only the platform
-  admin role. This is the canonical Steward authority check; the platform admin
-  role is never consulted.
-- `hasActiveSteward() : async Bool` — query. Returns `true` when any active
-  Family Steward exists. Public so the frontend can show or hide the one-time
-  \"Claim Family Steward\" control. Not gated to admin — any caller may query it.
+  matches an ACTIVE persisted `StewardRecord` in the `stewards` list for the
+  default family (`\"norwood\"`). Returns `false` for an anonymous caller and for
+  an account holding only the platform admin role. This is the canonical Steward
+  authority check; the platform admin role is never consulted.
+- `hasActiveSteward() : async Bool` — query. Returns `true` when the default
+  family has any active Family Steward. Public so the frontend can show or hide
+  the one-time \"Claim Family Steward\" control. Not gated to admin — any caller
+  may query it.
 - `claimSteward() : async Result<StewardClaimResult, StewardClaimError>` —
-  update. One-time \"Claim Family Steward\" bootstrap. Any signed-in account may
-  claim while no active Steward exists; no approved family profile is required.
-  Succeeds only when no active Steward exists, creating an ACTIVE
-  `StewardRecord` for the claimer and recording the assignment in the audit log.
-  Once any active Steward exists the claim permanently refuses. Returns
-  `#err(#NotSignedIn)` for an anonymous caller, `#err(#StewardAlreadyExists)`
-  when an active Steward already exists and the caller is not one, and
-  `#err(#AlreadySteward)` when the caller already holds an active Steward
-  record. On success returns `#ok(StewardClaimResult)`.
+  update. One-time \"Claim Family Steward\" bootstrap for the default family.
+  Any signed-in account may claim while that family has no active Steward; no
+  approved family profile is required. Succeeds only when the family has no
+  active Steward, creating an ACTIVE `StewardRecord` for the claimer and
+  recording the assignment in the audit log. Once the family has any active
+  Steward the claim permanently refuses. Returns `#err(#NotSignedIn)` for an
+  anonymous caller, `#err(#StewardAlreadyExists)` when an active Steward already
+  exists and the caller is not one, and `#err(#AlreadySteward)` when the caller
+  already holds an active Steward record. On success returns
+  `#ok(StewardClaimResult)`.
 
 ### Family Governance (Steward Management, Succession, Removal, Merge, Relationships, Audit)
 

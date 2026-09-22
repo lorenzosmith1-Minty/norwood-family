@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useFamilyScopedId } from "../context/FamilyContext";
 import {
   type PersonProfile,
   backendProfileToPersonProfile,
@@ -80,12 +81,13 @@ export function useExploreFamily(
   focusPersonId: string | null,
   profiles: Record<string, PersonProfile>,
 ): ExploreFamilyState {
-  const { data: confirmed = [] } = useListConfirmedRelationships();
+  const familyId = useFamilyScopedId();
+  const { data: confirmed = [] } = useListConfirmedRelationships(familyId);
   const resolvedId = focusPersonId ?? resolveDefaultFocus(profiles);
   // Resolve the focus person's canonical backend profile. This query is
   // invalidated by useUpdateOwnProfile on save, so the memo below recomputes
   // with the fresh canonical data immediately after a profile edit.
-  const { data: backendProfile } = usePersonProfile(resolvedId);
+  const { data: backendProfile } = usePersonProfile(resolvedId, { familyId });
   return useMemo(() => {
     const graph = overlayConfirmedRelationships(FAMILY_GRAPH, confirmed);
     const staticProfile = profiles[resolvedId];

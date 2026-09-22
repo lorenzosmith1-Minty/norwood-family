@@ -57,6 +57,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../components/ui/dialog";
+import { useFamilyScopedId } from "../context/FamilyContext";
 import {
   useApprovedArchiveItems,
   useApprovedMediaItems,
@@ -2905,12 +2906,13 @@ function PhotoGallery({
   personName,
   onProfilePhotoChange,
 }: PhotoGalleryProps) {
-  const { data: photos = [], isLoading } = usePhotos(personId);
+  const familyId = useFamilyScopedId();
+  const { data: photos = [], isLoading } = usePhotos(personId, familyId);
   const { data: profilePhoto, isLoading: profilePhotoLoading } =
-    useProfilePhoto(personId);
-  const addPhoto = useAddPhoto();
-  const setProfilePhoto = useSetProfilePhoto();
-  const removePhoto = useRemovePhoto();
+    useProfilePhoto(personId, familyId);
+  const addPhoto = useAddPhoto(familyId);
+  const setProfilePhoto = useSetProfilePhoto(familyId);
+  const removePhoto = useRemovePhoto(familyId);
   const [progress, setProgress] = useState<number | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -3646,6 +3648,7 @@ export function PersonProfilePage({
   onOpenConversation,
   onOpenConflictReview,
 }: PersonProfilePageProps) {
+  const familyId = useFamilyScopedId();
   const storyLabel =
     person.id === "julia" ||
     person.id === "erma" ||
@@ -3673,11 +3676,13 @@ export function PersonProfilePage({
   // action (deceased profiles are never claimable).
   const { data: backendProfile, isLoading: profileLoading } = usePersonProfile(
     person.id,
+    { familyId },
   );
 
   const { identity, isAuthenticated } = useInternetIdentity();
-  const { data: myClaim } = useMyProfileClaim(person.id);
-  const { data: relationshipRequests = [] } = useMyRelationshipRequests();
+  const { data: myClaim } = useMyProfileClaim(person.id, familyId);
+  const { data: relationshipRequests = [] } =
+    useMyRelationshipRequests(familyId);
   const { data: isSteward = false } = useIsSteward();
 
   // Family Governance & Safety controls. The archived ids list is guest-safe

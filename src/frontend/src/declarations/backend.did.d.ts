@@ -958,13 +958,18 @@ export interface _SERVICE {
     Story
   >,
   /**
-   * / Uploads a new photo to a person's gallery. Requires the approved owner of
-   * / that claimed profile or a Family Steward; the caller is recorded as the
-   * / uploader. When the gallery has no profile photo yet, the newly added photo
-   * / is automatically set as the profile photo. Returns the stored photo.
-   * / Tenancy 1B: authority is checked for the default family id.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `addPhotoForFamily`.
    */
   'addPhoto' : ActorMethod<[PersonId, string, string, ExternalBlob], Photo>,
+  /**
+   * / Uploads a new photo to a person's gallery in `familyId`. Requires the
+   * / approved owner of that claimed profile or a Steward of `familyId`; the
+   * / caller is recorded as the uploader.
+   */
+  'addPhotoForFamily' : ActorMethod<
+    [FamilyId, PersonId, string, string, ExternalBlob],
+    Photo
+  >,
   /**
    * / Adds a missing relationship to the shared family graph. Family Steward
    * / only.
@@ -1002,10 +1007,18 @@ export interface _SERVICE {
     [] | [NewPersonCandidate]
   >,
   /**
-   * / Approves a pending profile claim, marking the profile claimed and
-   * / associating it with the requesting user. Family Steward only.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `approveProfileClaimForFamily`.
    */
   'approveProfileClaim' : ActorMethod<[bigint], [] | [ProfileClaim]>,
+  /**
+   * / Approves a pending profile claim in `familyId`. Steward of `familyId`
+   * / only.
+   */
+  'approveProfileClaimForFamily' : ActorMethod<
+    [FamilyId, bigint],
+    [] | [ProfileClaim]
+  >,
   /**
    * / Approves a profile removal request, archiving the profile. Family Steward
    * / only.
@@ -1030,11 +1043,18 @@ export interface _SERVICE {
     [] | [RelationshipProposal]
   >,
   /**
-   * / Approves a relationship request, adding/confirming the relationship in the
-   * / shared family graph. Family Steward only.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `approveRelationshipRequestForFamily`.
    */
   'approveRelationshipRequest' : ActorMethod<
     [bigint],
+    [] | [RelationshipRequest]
+  >,
+  /**
+   * / Approves a relationship request in `familyId`. Steward of `familyId` only.
+   */
+  'approveRelationshipRequestForFamily' : ActorMethod<
+    [FamilyId, bigint],
     [] | [RelationshipRequest]
   >,
   /**
@@ -1078,12 +1098,18 @@ export interface _SERVICE {
    */
   'blockUser' : ActorMethod<[Principal], undefined>,
   /**
-   * / Whether the caller may claim a profile, enforcing approved ownership
-   * / authority and the no-duplicate-claims rule. Returns an eligibility result
-   * / the caller can act on. Read-only view over the same authoritative state
-   * / the ownership flow enforces.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `canClaimProfileForFamily`.
    */
   'canClaimProfile' : ActorMethod<[PersonId], ClaimEligibility>,
+  /**
+   * / Whether the caller may claim a profile in `familyId`, enforcing approved
+   * / ownership authority and the no-duplicate-claims rule within that family.
+   */
+  'canClaimProfileForFamily' : ActorMethod<
+    [FamilyId, PersonId],
+    ClaimEligibility
+  >,
   /**
    * / Returns whether the signed-in caller may message the person identified by
    * / `personId`: the viewer is signed in, the target has an active linked
@@ -1178,11 +1204,14 @@ export interface _SERVICE {
     Result_22
   >,
   /**
-   * / "Add Myself to This Family": creates a minimal person profile for a user
-   * / who does not already exist. The user must then connect to an existing
-   * / family member via a relationship request.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `createMyselfForFamily`.
    */
   'createMyself' : ActorMethod<[string], Result_21>,
+  /**
+   * / "Add Myself to This Family": creates a minimal person profile in
+   * / `familyId` for a user who does not already exist there.
+   */
+  'createMyselfForFamily' : ActorMethod<[FamilyId, string], Result_21>,
   /**
    * / Creates a new Person candidate. Requires an approved family member; the
    * / caller is recorded as the submitter. The candidate enters as `#Pending`.
@@ -1270,25 +1299,43 @@ export interface _SERVICE {
    */
   'getMyAuthMethods' : ActorMethod<[], Result_14>,
   /**
-   * / Returns the signed-in caller's own linked/claimed Person Profile, or, when
-   * / none is linked, the caller's pending profile (created via `createMyself` or
-   * / with a pending claim by the caller). Returns `null` when the caller has no
-   * / profile. Not gated to admin — any signed-in caller may query their own
-   * / profile.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `getMyProfileForFamily`.
    */
   'getMyProfile' : ActorMethod<[], [] | [PersonProfile]>,
   /**
-   * / Returns the current caller's own claim on a specific profile, or `null`
-   * / when the caller has no claim on that profile. Not gated to admin — any
-   * / signed-in caller may query their own claim.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `getMyProfileClaimForFamily`.
    */
   'getMyProfileClaim' : ActorMethod<[PersonId], [] | [ProfileClaim]>,
   /**
-   * / Returns the signed-in caller's own pending relationship requests (requests
-   * / involving a profile the caller owns or created). Not gated to admin — any
-   * / signed-in caller may query their own pending relationship state.
+   * / Returns the caller's own claim on a specific profile in `familyId`, or
+   * / `null` when the caller has no claim on that profile in that family. No
+   * / cross-family claim lookup by personId alone.
+   */
+  'getMyProfileClaimForFamily' : ActorMethod<
+    [FamilyId, PersonId],
+    [] | [ProfileClaim]
+  >,
+  /**
+   * / Returns the signed-in caller's own linked/claimed Person Profile in
+   * / `familyId`, or their pending profile in that family, or `null` when the
+   * / caller has no profile in `familyId`.
+   */
+  'getMyProfileForFamily' : ActorMethod<[FamilyId], [] | [PersonProfile]>,
+  /**
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `getMyRelationshipRequestsForFamily`.
    */
   'getMyRelationshipRequests' : ActorMethod<[], Array<RelationshipRequest>>,
+  /**
+   * / Returns the signed-in caller's own pending relationship requests in
+   * / `familyId` — those involving a profile the caller owns or created in that
+   * / family.
+   */
+  'getMyRelationshipRequestsForFamily' : ActorMethod<
+    [FamilyId],
+    Array<RelationshipRequest>
+  >,
   /**
    * / Returns the count of all current pending review items (archive/media,
    * / video/audio, recipes, recipe media, stories, and mystery contributions)
@@ -1302,18 +1349,32 @@ export interface _SERVICE {
    */
   'getPendingContributionsCount' : ActorMethod<[], bigint>,
   /**
-   * / Returns the ownership/lifecycle state of a person profile, or `null` when
-   * / the person is not tracked.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `getPersonProfileForFamily`.
    */
   'getPersonProfile' : ActorMethod<[PersonId], [] | [PersonProfile]>,
   /**
-   * / Returns the person's current profile photo, or `null` when none is set.
-   * / The single designated portrait of an unclaimed/historical profile stays
-   * / readable by guests so Add Myself / claim discovery works; for a claimed
-   * / profile only an approved family member or Family Steward may read it.
-   * / Tenancy 1B: authority is checked for the default family id.
+   * / Returns the ownership/lifecycle state of a person profile in `familyId`,
+   * / or `null` when the person is not tracked in that family. A personId in
+   * / Family A never returns a profile from Family B.
+   */
+  'getPersonProfileForFamily' : ActorMethod<
+    [FamilyId, PersonId],
+    [] | [PersonProfile]
+  >,
+  /**
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `getProfilePhotoForFamily`.
    */
   'getProfilePhoto' : ActorMethod<[PersonId], [] | [Photo]>,
+  /**
+   * / Returns the person's current profile photo in `familyId`, or `null` when
+   * / none is set. The single designated portrait of an unclaimed/historical
+   * / profile in `familyId` stays readable by guests so claim discovery works;
+   * / for a claimed profile only an approved member or Steward of `familyId` may
+   * / read it. The lookup confirms the profile belongs to `familyId`.
+   */
+  'getProfilePhotoForFamily' : ActorMethod<[FamilyId, PersonId], [] | [Photo]>,
   /**
    * / Returns a single recipe by id, or `null` when it does not exist or is not
    * / visible to the caller. Private recipes are only visible to their
@@ -1322,9 +1383,18 @@ export interface _SERVICE {
    */
   'getRecipe' : ActorMethod<[RecipeId], [] | [Recipe]>,
   /**
-   * / Returns a single relationship request by id.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `getRelationshipRequestForFamily`.
    */
   'getRelationshipRequest' : ActorMethod<[bigint], [] | [RelationshipRequest]>,
+  /**
+   * / Returns a single relationship request by id within `familyId`, or `null`
+   * / when absent or when the request belongs to another family.
+   */
+  'getRelationshipRequestForFamily' : ActorMethod<
+    [FamilyId, bigint],
+    [] | [RelationshipRequest]
+  >,
   /**
    * / Returns the reported message content for a report. Family Steward only;
    * / reported message content is visible only when a report is filed. Stewards
@@ -1375,13 +1445,15 @@ export interface _SERVICE {
    */
   'hasActiveSteward' : ActorMethod<[], boolean>,
   /**
-   * / Whether a profile already has an approved owner. Approved ownership is
-   * / authoritative: once a profile claim is approved, the approved owner is the
-   * / canonical owner and no other claim or Add Myself flow can override or
-   * / duplicate it. Read-only view over the same authoritative state the
-   * / ownership flow enforces.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `hasApprovedOwnerForFamily`.
    */
   'hasApprovedOwner' : ActorMethod<[PersonId], boolean>,
+  /**
+   * / Whether a profile in `familyId` already has an approved owner. Approved
+   * / ownership is authoritative within that family only.
+   */
+  'hasApprovedOwnerForFamily' : ActorMethod<[FamilyId, PersonId], boolean>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
   /**
    * / Whether the caller is an active Norwood Family Steward. Public so the
@@ -1435,10 +1507,27 @@ export interface _SERVICE {
    */
   'listBoardReplies' : ActorMethod<[PostId], Array<Reply>>,
   /**
-   * / Lists all confirmed relationships for the frontend to merge into the
-   * / shared family graph.
+   * / Public claim-discovery read: minimal profile data for `familyId` only,
+   * / preserving the existing minimal-data behavior.
+   */
+  'listClaimDiscoveryProfilesForFamily' : ActorMethod<
+    [FamilyId],
+    Array<PersonProfile>
+  >,
+  /**
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `listConfirmedRelationshipsForFamily`.
    */
   'listConfirmedRelationships' : ActorMethod<[], Array<Relationship>>,
+  /**
+   * / Lists the confirmed relationships of `familyId` for the frontend to merge
+   * / into the shared family graph. Relationships from other families are never
+   * / included.
+   */
+  'listConfirmedRelationshipsForFamily' : ActorMethod<
+    [FamilyId],
+    Array<Relationship>
+  >,
   /**
    * / Lists all conflict review items (steward only).
    */
@@ -1505,7 +1594,8 @@ export interface _SERVICE {
    */
   'listNewPersonCandidates' : ActorMethod<[], Array<NewPersonCandidate>>,
   /**
-   * / Lists in-app notification records for the signed-in caller.
+   * / Lists in-app notification records for the signed-in caller. Notifications
+   * / are recipient-addressed and are not family-scoped.
    */
   'listNotifications' : ActorMethod<[], Array<Notification>>,
   /**
@@ -1536,19 +1626,34 @@ export interface _SERVICE {
    */
   'listPersonRelationships' : ActorMethod<[PersonId], Array<Relationship>>,
   /**
-   * / Lists all uploaded photos for a person, in upload order. Requires an
-   * / approved family member or a Family Steward; the full gallery is never
-   * / public. Tenancy 1B: authority is checked for the default family id.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `listPhotosForFamily`.
    */
   'listPhotos' : ActorMethod<[PersonId], Array<Photo>>,
   /**
-   * / Lists all profile claim requests for the Family Steward review area.
+   * / Lists all uploaded photos for a person in `familyId`, in upload order.
+   * / Requires an approved member or active Steward of `familyId`; the full
+   * / gallery is never public.
+   */
+  'listPhotosForFamily' : ActorMethod<[FamilyId, PersonId], Array<Photo>>,
+  /**
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `listProfileClaimsForFamily`.
    */
   'listProfileClaims' : ActorMethod<[], Array<ProfileClaim>>,
+  /**
+   * / Lists the profile claim requests of `familyId` for the Steward review
+   * / area. Steward of `familyId` only.
+   */
+  'listProfileClaimsForFamily' : ActorMethod<[FamilyId], Array<ProfileClaim>>,
   /**
    * / Lists all profile removal requests for steward review. Family Steward only.
    */
   'listProfileRemovalRequests' : ActorMethod<[], Array<ProfileRemovalRequest>>,
+  /**
+   * / Lists the profiles of `familyId` for Explore Family / Person Profile
+   * / hydration. Requires an approved member or active Steward of `familyId`.
+   */
+  'listProfilesForFamily' : ActorMethod<[FamilyId], Array<PersonProfile>>,
   /**
    * / Lists recipes linked to a person, whether as the originating member or a
    * / related member. Returns only approved recipes visible to the caller;
@@ -1560,9 +1665,18 @@ export interface _SERVICE {
    */
   'listRelationshipProposals' : ActorMethod<[], Array<RelationshipProposal>>,
   /**
-   * / Lists all relationship requests for the Family Steward review area.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `listRelationshipRequestsForFamily`.
    */
   'listRelationshipRequests' : ActorMethod<[], Array<RelationshipRequest>>,
+  /**
+   * / Lists the relationship requests of `familyId` for the Steward review area.
+   * / Steward of `familyId` only.
+   */
+  'listRelationshipRequestsForFamily' : ActorMethod<
+    [FamilyId],
+    Array<RelationshipRequest>
+  >,
   /**
    * / Lists all reports. Family Steward only.
    */
@@ -1672,11 +1786,19 @@ export interface _SERVICE {
    */
   'promoteToSteward' : ActorMethod<[PersonId], Result_10>,
   /**
-   * / Proposes a new relationship between two people. The request starts pending
-   * / and is never treated as confirmed until a Family Steward approves it.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `proposeRelationshipForFamily`.
    */
   'proposeRelationship' : ActorMethod<
     [PersonId, PersonId, RelationshipType],
+    Result_9
+  >,
+  /**
+   * / Proposes a new relationship between two people in `familyId`. Both
+   * / referenced people must belong to `familyId`.
+   */
+  'proposeRelationshipForFamily' : ActorMethod<
+    [FamilyId, PersonId, PersonId, RelationshipType],
     Result_9
   >,
   /**
@@ -1732,9 +1854,17 @@ export interface _SERVICE {
    */
   'rejectNewPersonCandidate' : ActorMethod<[bigint], [] | [NewPersonCandidate]>,
   /**
-   * / Rejects a pending profile claim. Family Steward only.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `rejectProfileClaimForFamily`.
    */
   'rejectProfileClaim' : ActorMethod<[bigint], [] | [ProfileClaim]>,
+  /**
+   * / Rejects a pending profile claim in `familyId`. Steward of `familyId` only.
+   */
+  'rejectProfileClaimForFamily' : ActorMethod<
+    [FamilyId, bigint],
+    [] | [ProfileClaim]
+  >,
   /**
    * / Rejects a profile removal request. Family Steward only.
    */
@@ -1755,10 +1885,18 @@ export interface _SERVICE {
     [] | [RelationshipProposal]
   >,
   /**
-   * / Rejects a relationship request. Family Steward only.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `rejectRelationshipRequestForFamily`.
    */
   'rejectRelationshipRequest' : ActorMethod<
     [bigint],
+    [] | [RelationshipRequest]
+  >,
+  /**
+   * / Rejects a relationship request in `familyId`. Steward of `familyId` only.
+   */
+  'rejectRelationshipRequestForFamily' : ActorMethod<
+    [FamilyId, bigint],
     [] | [RelationshipRequest]
   >,
   /**
@@ -1783,18 +1921,27 @@ export interface _SERVICE {
    */
   'removeBoardReply' : ActorMethod<[ReplyId], [] | [Reply]>,
   /**
-   * / Removes a duplicate test-created profile and any pending relationship
-   * / requests or claims tied only to it, preserving the original profile, the
-   * / confirmed family graph, and the signed-in account. Family Steward only.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `removeDuplicateProfileForFamily`.
    */
   'removeDuplicateProfile' : ActorMethod<[PersonId], Result_8>,
   /**
-   * / Removes a photo from a person's gallery. Requires the approved owner of
-   * / that claimed profile or a Family Steward. Returns `true` when a photo was
-   * / removed. If the removed photo was the profile photo, the profile photo is
-   * / cleared. Tenancy 1B: authority is checked for the default family id.
+   * / Removes a duplicate test-created profile in `familyId`. Steward of
+   * / `familyId` only.
+   */
+  'removeDuplicateProfileForFamily' : ActorMethod<
+    [FamilyId, PersonId],
+    Result_8
+  >,
+  /**
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `removePhotoForFamily`.
    */
   'removePhoto' : ActorMethod<[PersonId, PhotoId], boolean>,
+  /**
+   * / Removes a photo from a person's gallery in `familyId`. Requires the
+   * / approved owner of that claimed profile or a Steward of `familyId`.
+   */
+  'removePhotoForFamily' : ActorMethod<[FamilyId, PersonId, PhotoId], boolean>,
   /**
    * / Removes an incorrect relationship from the shared family graph. Family
    * / Steward only.
@@ -1810,10 +1957,16 @@ export interface _SERVICE {
    */
   'reportMessage' : ActorMethod<[MessageId, string], Report>,
   /**
-   * / "This is Me": creates a pending profile claim for an unclaimed living
-   * / profile. Requires sign-in; does not grant ownership until approved.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `requestProfileClaimForFamily`.
    */
   'requestProfileClaim' : ActorMethod<[PersonId], Result_5>,
+  /**
+   * / "This is Me": creates a pending profile claim for an unclaimed living
+   * / profile in `familyId`. Requires sign-in; does not grant ownership until
+   * / approved. The claim belongs to exactly `familyId`.
+   */
+  'requestProfileClaimForFamily' : ActorMethod<[FamilyId, PersonId], Result_5>,
   /**
    * / A claimed living profile owner requests removal of their own profile.
    * / A Family Steward reviews the request.
@@ -1875,13 +2028,19 @@ export interface _SERVICE {
    */
   'searchBoardPostsByTags' : ActorMethod<[Array<string>], Array<Post>>,
   /**
-   * / Searches the authoritative shared profile data for possible duplicate
-   * / matches by name, returning name plus parents when known. Names are
-   * / normalized before matching (case-insensitive, punctuation ignored, periods
-   * / normalized, extra spaces collapsed, suffix variants recognized, partial/
-   * / fuzzy allowed).
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `searchPossibleMatchesForFamily`.
    */
   'searchPossibleMatches' : ActorMethod<[string], Array<PersonMatch>>,
+  /**
+   * / Searches the authoritative shared profile data of `familyId` for possible
+   * / duplicate matches by name. Only profiles belonging to `familyId` are
+   * / considered.
+   */
+  'searchPossibleMatchesForFamily' : ActorMethod<
+    [FamilyId, string],
+    Array<PersonMatch>
+  >,
   /**
    * / Sends a private message to the person identified by `personId`, reusing the
    * / existing 1:1 conversation when one exists. Approved family members only.
@@ -1890,17 +2049,33 @@ export interface _SERVICE {
    */
   'sendMessage' : ActorMethod<[string, string], Result_1>,
   /**
-   * / Marks the photo with `photoId` as the person's profile photo. Requires the
-   * / approved owner of that claimed profile or a Family Steward. Returns the
-   * / newly selected photo, or `null` when the photo does not exist.
-   * / Tenancy 1B: authority is checked for the default family id.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `setProfilePhotoForFamily`.
    */
   'setProfilePhoto' : ActorMethod<[PersonId, PhotoId], [] | [Photo]>,
   /**
-   * / Returns a relationship request to pending state. Family Steward only.
+   * / Marks the photo with `photoId` as the person's profile photo in `familyId`.
+   * / Requires the approved owner of that claimed profile or a Steward of
+   * / `familyId`.
+   */
+  'setProfilePhotoForFamily' : ActorMethod<
+    [FamilyId, PersonId, PhotoId],
+    [] | [Photo]
+  >,
+  /**
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `setRelationshipRequestPendingForFamily`.
    */
   'setRelationshipRequestPending' : ActorMethod<
     [bigint],
+    [] | [RelationshipRequest]
+  >,
+  /**
+   * / Returns a relationship request in `familyId` to pending state. Steward of
+   * / `familyId` only.
+   */
+  'setRelationshipRequestPendingForFamily' : ActorMethod<
+    [FamilyId, bigint],
     [] | [RelationshipRequest]
   >,
   /**
@@ -2042,11 +2217,19 @@ export interface _SERVICE {
     [] | [Story]
   >,
   /**
-   * / Updates an approved owner's own living profile fields, or, for a Family
-   * / Steward, the fields of an unclaimed/historical profile. Never rewrites
-   * / family relationships directly.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `updateOwnProfileForFamily`.
    */
   'updateOwnProfile' : ActorMethod<[PersonId, ProfileEdits], Result>,
+  /**
+   * / Updates an approved owner's own living profile fields in `familyId`, or,
+   * / for a Steward of `familyId`, the fields of an unclaimed/historical profile
+   * / in that family.
+   */
+  'updateOwnProfileForFamily' : ActorMethod<
+    [FamilyId, PersonId, ProfileEdits],
+    Result
+  >,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

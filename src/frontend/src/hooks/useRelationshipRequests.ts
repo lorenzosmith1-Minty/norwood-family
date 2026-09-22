@@ -8,6 +8,12 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
  * existing useActor(createActor) + useQuery/useMutation pattern. Relationship
  * requests start Pending and are never treated as confirmed until a Family
  * Steward approves them, which updates the shared family graph.
+ *
+ * Tenancy 1C-A: each hook accepts an optional `familyId`. When supplied it
+ * routes to the family-scoped backend endpoint (`*ForFamily`); when omitted it
+ * calls the legacy default-family endpoint unchanged, so existing default-family
+ * behavior is preserved exactly. Callers pass the active family from
+ * `useActiveFamilyId()`.
  */
 
 /**
@@ -16,39 +22,48 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
  * to call from non-admin UI (PersonProfilePage) to detect a pending connection
  * for the caller's own profile without trapping for regular users.
  */
-export function useMyRelationshipRequests() {
+export function useMyRelationshipRequests(familyId?: string) {
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["myRelationshipRequests"],
+    queryKey: ["myRelationshipRequests", familyId ?? null],
     queryFn: async () => {
       if (!actor) return [] as RelationshipRequest[];
-      return actor.getMyRelationshipRequests();
+      return familyId
+        ? actor.getMyRelationshipRequestsForFamily(familyId)
+        : actor.getMyRelationshipRequests();
     },
     enabled: !!actor && !isFetching,
   });
 }
 
 /** Lists every relationship request (used by the Family Steward review area). */
-export function useListRelationshipRequests() {
+export function useListRelationshipRequests(familyId?: string) {
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["relationshipRequests"],
+    queryKey: ["relationshipRequests", familyId ?? null],
     queryFn: async () => {
       if (!actor) return [] as RelationshipRequest[];
-      return actor.listRelationshipRequests();
+      return familyId
+        ? actor.listRelationshipRequestsForFamily(familyId)
+        : actor.listRelationshipRequests();
     },
     enabled: !!actor && !isFetching,
   });
 }
 
 /** Fetches a single relationship request by id. */
-export function useGetRelationshipRequest(requestId: bigint) {
+export function useGetRelationshipRequest(
+  requestId: bigint,
+  familyId?: string,
+) {
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["relationshipRequests", requestId.toString()],
+    queryKey: ["relationshipRequests", familyId ?? null, requestId.toString()],
     queryFn: async () => {
       if (!actor) return null;
-      return actor.getRelationshipRequest(requestId);
+      return familyId
+        ? actor.getRelationshipRequestForFamily(familyId, requestId)
+        : actor.getRelationshipRequest(requestId);
     },
     enabled: !!actor && !isFetching,
   });
@@ -58,7 +73,7 @@ export function useGetRelationshipRequest(requestId: bigint) {
  * Proposes a new or changed relationship between two people. The request
  * starts Pending and is never treated as confirmed until approved.
  */
-export function useProposeRelationship() {
+export function useProposeRelationship(familyId?: string) {
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
@@ -72,11 +87,14 @@ export function useProposeRelationship() {
       relationshipType: import("@/backend").RelationshipType;
     }) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.proposeRelationship(
-        fromPersonId,
-        toPersonId,
-        relationshipType,
-      );
+      return familyId
+        ? actor.proposeRelationshipForFamily(
+            familyId,
+            fromPersonId,
+            toPersonId,
+            relationshipType,
+          )
+        : actor.proposeRelationship(fromPersonId, toPersonId, relationshipType);
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({
@@ -92,13 +110,15 @@ export function useProposeRelationship() {
 }
 
 /** Approves a relationship request, confirming it in the shared family graph. */
-export function useApproveRelationshipRequest() {
+export function useApproveRelationshipRequest(familyId?: string) {
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (requestId: bigint) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.approveRelationshipRequest(requestId);
+      return familyId
+        ? actor.approveRelationshipRequestForFamily(familyId, requestId)
+        : actor.approveRelationshipRequest(requestId);
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({
@@ -121,13 +141,15 @@ export function useApproveRelationshipRequest() {
 }
 
 /** Rejects a relationship request, recording the reviewer and reviewed date. */
-export function useRejectRelationshipRequest() {
+export function useRejectRelationshipRequest(familyId?: string) {
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (requestId: bigint) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.rejectRelationshipRequest(requestId);
+      return familyId
+        ? actor.rejectRelationshipRequestForFamily(familyId, requestId)
+        : actor.rejectRelationshipRequest(requestId);
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({
@@ -147,13 +169,15 @@ export function useRejectRelationshipRequest() {
 }
 
 /** Returns a relationship request to the Pending state (e.g. after a dispute). */
-export function useSetRelationshipRequestPending() {
+export function useSetRelationshipRequestPending(familyId?: string) {
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (requestId: bigint) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.setRelationshipRequestPending(requestId);
+      return familyId
+        ? actor.setRelationshipRequestPendingForFamily(familyId, requestId)
+        : actor.setRelationshipRequestPending(requestId);
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({
@@ -173,13 +197,15 @@ export function useSetRelationshipRequestPending() {
 }
 
 /** Lists confirmed relationships in the shared family graph. */
-export function useListConfirmedRelationships() {
+export function useListConfirmedRelationships(familyId?: string) {
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["confirmedRelationships"],
+    queryKey: ["confirmedRelationships", familyId ?? null],
     queryFn: async () => {
       if (!actor) return [] as Relationship[];
-      return actor.listConfirmedRelationships();
+      return familyId
+        ? actor.listConfirmedRelationshipsForFamily(familyId)
+        : actor.listConfirmedRelationships();
     },
     enabled: !!actor && !isFetching,
   });

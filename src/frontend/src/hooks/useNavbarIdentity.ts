@@ -1,4 +1,5 @@
 import { ClaimStatus } from "@/backend";
+import { useFamilyScopedId } from "../context/FamilyContext";
 import { resolveBackendDisplayName } from "../types/family";
 import { useAuth } from "./useAuth";
 import { useMyProfile } from "./useProfileClaims";
@@ -49,7 +50,8 @@ export interface NavbarIdentity {
 
 export function useNavbarIdentity(): NavbarIdentity {
   const { isAuthenticated } = useAuth();
-  const { data: profile, isLoading } = useMyProfile();
+  const familyId = useFamilyScopedId();
+  const { data: profile, isLoading } = useMyProfile(familyId);
 
   // A signed-out caller needs no hydration — the public navbar is authoritative.
   if (!isAuthenticated) {

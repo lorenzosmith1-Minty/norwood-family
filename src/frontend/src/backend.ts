@@ -1299,13 +1299,15 @@ export interface backendInterface {
      */
     addCanonicalStory(title: string, storyText: string, relatedMemberIds: Array<string>, era: string | null, year: bigint | null, location: string | null, evidenceStatus: EvidenceStatus, relatedArchiveItemIds: Array<bigint>): Promise<Story>;
     /**
-     * / Uploads a new photo to a person's gallery. Requires the approved owner of
-     * / that claimed profile or a Family Steward; the caller is recorded as the
-     * / uploader. When the gallery has no profile photo yet, the newly added photo
-     * / is automatically set as the profile photo. Returns the stored photo.
-     * / Tenancy 1B: authority is checked for the default family id.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for `addPhotoForFamily`.
      */
     addPhoto(personId: PersonId, filename: string, mimeType: string, blob: ExternalBlob): Promise<Photo>;
+    /**
+     * / Uploads a new photo to a person's gallery in `familyId`. Requires the
+     * / approved owner of that claimed profile or a Steward of `familyId`; the
+     * / caller is recorded as the uploader.
+     */
+    addPhotoForFamily(familyId: FamilyId, personId: PersonId, filename: string, mimeType: string, blob: ExternalBlob): Promise<Photo>;
     /**
      * / Adds a missing relationship to the shared family graph. Family Steward
      * / only.
@@ -1337,10 +1339,15 @@ export interface backendInterface {
      */
     approveNewPersonCandidate(id: bigint): Promise<NewPersonCandidate | null>;
     /**
-     * / Approves a pending profile claim, marking the profile claimed and
-     * / associating it with the requesting user. Family Steward only.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `approveProfileClaimForFamily`.
      */
     approveProfileClaim(claimId: bigint): Promise<ProfileClaim | null>;
+    /**
+     * / Approves a pending profile claim in `familyId`. Steward of `familyId`
+     * / only.
+     */
+    approveProfileClaimForFamily(familyId: FamilyId, claimId: bigint): Promise<ProfileClaim | null>;
     /**
      * / Approves a profile removal request, archiving the profile. Family Steward
      * / only.
@@ -1362,10 +1369,14 @@ export interface backendInterface {
      */
     approveRelationshipProposal(id: bigint): Promise<RelationshipProposal | null>;
     /**
-     * / Approves a relationship request, adding/confirming the relationship in the
-     * / shared family graph. Family Steward only.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `approveRelationshipRequestForFamily`.
      */
     approveRelationshipRequest(requestId: bigint): Promise<RelationshipRequest | null>;
+    /**
+     * / Approves a relationship request in `familyId`. Steward of `familyId` only.
+     */
+    approveRelationshipRequestForFamily(familyId: FamilyId, requestId: bigint): Promise<RelationshipRequest | null>;
     /**
      * / Approves a pending source (Family Steward only), transitioning it to
      * / `#Approved` so it becomes usable by Proposed Findings. When the source
@@ -1407,12 +1418,15 @@ export interface backendInterface {
      */
     blockUser(blockedAccountId: Principal): Promise<void>;
     /**
-     * / Whether the caller may claim a profile, enforcing approved ownership
-     * / authority and the no-duplicate-claims rule. Returns an eligibility result
-     * / the caller can act on. Read-only view over the same authoritative state
-     * / the ownership flow enforces.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `canClaimProfileForFamily`.
      */
     canClaimProfile(personId: PersonId): Promise<ClaimEligibility>;
+    /**
+     * / Whether the caller may claim a profile in `familyId`, enforcing approved
+     * / ownership authority and the no-duplicate-claims rule within that family.
+     */
+    canClaimProfileForFamily(familyId: FamilyId, personId: PersonId): Promise<ClaimEligibility>;
     /**
      * / Returns whether the signed-in caller may message the person identified by
      * / `personId`: the viewer is signed in, the target has an active linked
@@ -1459,11 +1473,14 @@ export interface backendInterface {
      */
     createFinding(title: string, evidenceLabel: EvidenceLabel, findingType: FindingType, content: FindingContent, sourceId: SourceId, personId: string | null, newPersonCandidateId: bigint | null): Promise<Result_22>;
     /**
-     * / "Add Myself to This Family": creates a minimal person profile for a user
-     * / who does not already exist. The user must then connect to an existing
-     * / family member via a relationship request.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for `createMyselfForFamily`.
      */
     createMyself(name: string): Promise<Result_21>;
+    /**
+     * / "Add Myself to This Family": creates a minimal person profile in
+     * / `familyId` for a user who does not already exist there.
+     */
+    createMyselfForFamily(familyId: FamilyId, name: string): Promise<Result_21>;
     /**
      * / Creates a new Person candidate. Requires an approved family member; the
      * / caller is recorded as the submitter. The candidate enters as `#Pending`.
@@ -1525,25 +1542,37 @@ export interface backendInterface {
      */
     getMyAuthMethods(): Promise<Result_14>;
     /**
-     * / Returns the signed-in caller's own linked/claimed Person Profile, or, when
-     * / none is linked, the caller's pending profile (created via `createMyself` or
-     * / with a pending claim by the caller). Returns `null` when the caller has no
-     * / profile. Not gated to admin — any signed-in caller may query their own
-     * / profile.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for `getMyProfileForFamily`.
      */
     getMyProfile(): Promise<PersonProfile | null>;
     /**
-     * / Returns the current caller's own claim on a specific profile, or `null`
-     * / when the caller has no claim on that profile. Not gated to admin — any
-     * / signed-in caller may query their own claim.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `getMyProfileClaimForFamily`.
      */
     getMyProfileClaim(personId: PersonId): Promise<ProfileClaim | null>;
     /**
-     * / Returns the signed-in caller's own pending relationship requests (requests
-     * / involving a profile the caller owns or created). Not gated to admin — any
-     * / signed-in caller may query their own pending relationship state.
+     * / Returns the caller's own claim on a specific profile in `familyId`, or
+     * / `null` when the caller has no claim on that profile in that family. No
+     * / cross-family claim lookup by personId alone.
+     */
+    getMyProfileClaimForFamily(familyId: FamilyId, personId: PersonId): Promise<ProfileClaim | null>;
+    /**
+     * / Returns the signed-in caller's own linked/claimed Person Profile in
+     * / `familyId`, or their pending profile in that family, or `null` when the
+     * / caller has no profile in `familyId`.
+     */
+    getMyProfileForFamily(familyId: FamilyId): Promise<PersonProfile | null>;
+    /**
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `getMyRelationshipRequestsForFamily`.
      */
     getMyRelationshipRequests(): Promise<Array<RelationshipRequest>>;
+    /**
+     * / Returns the signed-in caller's own pending relationship requests in
+     * / `familyId` — those involving a profile the caller owns or created in that
+     * / family.
+     */
+    getMyRelationshipRequestsForFamily(familyId: FamilyId): Promise<Array<RelationshipRequest>>;
     /**
      * / Returns the count of all current pending review items (archive/media,
      * / video/audio, recipes, recipe media, stories, and mystery contributions)
@@ -1557,18 +1586,29 @@ export interface backendInterface {
      */
     getPendingContributionsCount(): Promise<bigint>;
     /**
-     * / Returns the ownership/lifecycle state of a person profile, or `null` when
-     * / the person is not tracked.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `getPersonProfileForFamily`.
      */
     getPersonProfile(personId: PersonId): Promise<PersonProfile | null>;
     /**
-     * / Returns the person's current profile photo, or `null` when none is set.
-     * / The single designated portrait of an unclaimed/historical profile stays
-     * / readable by guests so Add Myself / claim discovery works; for a claimed
-     * / profile only an approved family member or Family Steward may read it.
-     * / Tenancy 1B: authority is checked for the default family id.
+     * / Returns the ownership/lifecycle state of a person profile in `familyId`,
+     * / or `null` when the person is not tracked in that family. A personId in
+     * / Family A never returns a profile from Family B.
+     */
+    getPersonProfileForFamily(familyId: FamilyId, personId: PersonId): Promise<PersonProfile | null>;
+    /**
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `getProfilePhotoForFamily`.
      */
     getProfilePhoto(personId: PersonId): Promise<Photo | null>;
+    /**
+     * / Returns the person's current profile photo in `familyId`, or `null` when
+     * / none is set. The single designated portrait of an unclaimed/historical
+     * / profile in `familyId` stays readable by guests so claim discovery works;
+     * / for a claimed profile only an approved member or Steward of `familyId` may
+     * / read it. The lookup confirms the profile belongs to `familyId`.
+     */
+    getProfilePhotoForFamily(familyId: FamilyId, personId: PersonId): Promise<Photo | null>;
     /**
      * / Returns a single recipe by id, or `null` when it does not exist or is not
      * / visible to the caller. Private recipes are only visible to their
@@ -1577,9 +1617,15 @@ export interface backendInterface {
      */
     getRecipe(id: RecipeId): Promise<Recipe | null>;
     /**
-     * / Returns a single relationship request by id.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `getRelationshipRequestForFamily`.
      */
     getRelationshipRequest(id: bigint): Promise<RelationshipRequest | null>;
+    /**
+     * / Returns a single relationship request by id within `familyId`, or `null`
+     * / when absent or when the request belongs to another family.
+     */
+    getRelationshipRequestForFamily(familyId: FamilyId, id: bigint): Promise<RelationshipRequest | null>;
     /**
      * / Returns the reported message content for a report. Family Steward only;
      * / reported message content is visible only when a report is filed. Stewards
@@ -1630,13 +1676,15 @@ export interface backendInterface {
      */
     hasActiveSteward(): Promise<boolean>;
     /**
-     * / Whether a profile already has an approved owner. Approved ownership is
-     * / authoritative: once a profile claim is approved, the approved owner is the
-     * / canonical owner and no other claim or Add Myself flow can override or
-     * / duplicate it. Read-only view over the same authoritative state the
-     * / ownership flow enforces.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `hasApprovedOwnerForFamily`.
      */
     hasApprovedOwner(personId: PersonId): Promise<boolean>;
+    /**
+     * / Whether a profile in `familyId` already has an approved owner. Approved
+     * / ownership is authoritative within that family only.
+     */
+    hasApprovedOwnerForFamily(familyId: FamilyId, personId: PersonId): Promise<boolean>;
     isCallerAdmin(): Promise<boolean>;
     /**
      * / Whether the caller is an active Norwood Family Steward. Public so the
@@ -1690,10 +1738,21 @@ export interface backendInterface {
      */
     listBoardReplies(postId: PostId): Promise<Array<Reply>>;
     /**
-     * / Lists all confirmed relationships for the frontend to merge into the
-     * / shared family graph.
+     * / Public claim-discovery read: minimal profile data for `familyId` only,
+     * / preserving the existing minimal-data behavior.
+     */
+    listClaimDiscoveryProfilesForFamily(familyId: FamilyId): Promise<Array<PersonProfile>>;
+    /**
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `listConfirmedRelationshipsForFamily`.
      */
     listConfirmedRelationships(): Promise<Array<Relationship>>;
+    /**
+     * / Lists the confirmed relationships of `familyId` for the frontend to merge
+     * / into the shared family graph. Relationships from other families are never
+     * / included.
+     */
+    listConfirmedRelationshipsForFamily(familyId: FamilyId): Promise<Array<Relationship>>;
     /**
      * / Lists all conflict review items (steward only).
      */
@@ -1760,7 +1819,8 @@ export interface backendInterface {
      */
     listNewPersonCandidates(): Promise<Array<NewPersonCandidate>>;
     /**
-     * / Lists in-app notification records for the signed-in caller.
+     * / Lists in-app notification records for the signed-in caller. Notifications
+     * / are recipient-addressed and are not family-scoped.
      */
     listNotifications(): Promise<Array<Notification>>;
     /**
@@ -1788,19 +1848,34 @@ export interface backendInterface {
      */
     listPersonRelationships(personId: PersonId): Promise<Array<Relationship>>;
     /**
-     * / Lists all uploaded photos for a person, in upload order. Requires an
-     * / approved family member or a Family Steward; the full gallery is never
-     * / public. Tenancy 1B: authority is checked for the default family id.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for `listPhotosForFamily`.
      */
     listPhotos(personId: PersonId): Promise<Array<Photo>>;
     /**
-     * / Lists all profile claim requests for the Family Steward review area.
+     * / Lists all uploaded photos for a person in `familyId`, in upload order.
+     * / Requires an approved member or active Steward of `familyId`; the full
+     * / gallery is never public.
+     */
+    listPhotosForFamily(familyId: FamilyId, personId: PersonId): Promise<Array<Photo>>;
+    /**
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `listProfileClaimsForFamily`.
      */
     listProfileClaims(): Promise<Array<ProfileClaim>>;
+    /**
+     * / Lists the profile claim requests of `familyId` for the Steward review
+     * / area. Steward of `familyId` only.
+     */
+    listProfileClaimsForFamily(familyId: FamilyId): Promise<Array<ProfileClaim>>;
     /**
      * / Lists all profile removal requests for steward review. Family Steward only.
      */
     listProfileRemovalRequests(): Promise<Array<ProfileRemovalRequest>>;
+    /**
+     * / Lists the profiles of `familyId` for Explore Family / Person Profile
+     * / hydration. Requires an approved member or active Steward of `familyId`.
+     */
+    listProfilesForFamily(familyId: FamilyId): Promise<Array<PersonProfile>>;
     /**
      * / Lists recipes linked to a person, whether as the originating member or a
      * / related member. Returns only approved recipes visible to the caller;
@@ -1812,9 +1887,15 @@ export interface backendInterface {
      */
     listRelationshipProposals(): Promise<Array<RelationshipProposal>>;
     /**
-     * / Lists all relationship requests for the Family Steward review area.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `listRelationshipRequestsForFamily`.
      */
     listRelationshipRequests(): Promise<Array<RelationshipRequest>>;
+    /**
+     * / Lists the relationship requests of `familyId` for the Steward review area.
+     * / Steward of `familyId` only.
+     */
+    listRelationshipRequestsForFamily(familyId: FamilyId): Promise<Array<RelationshipRequest>>;
     /**
      * / Lists all reports. Family Steward only.
      */
@@ -1915,10 +1996,15 @@ export interface backendInterface {
      */
     promoteToSteward(personId: PersonId): Promise<Result_10>;
     /**
-     * / Proposes a new relationship between two people. The request starts pending
-     * / and is never treated as confirmed until a Family Steward approves it.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `proposeRelationshipForFamily`.
      */
     proposeRelationship(fromPersonId: PersonId, toPersonId: PersonId, relationshipType: RelationshipType): Promise<Result_9>;
+    /**
+     * / Proposes a new relationship between two people in `familyId`. Both
+     * / referenced people must belong to `familyId`.
+     */
+    proposeRelationshipForFamily(familyId: FamilyId, fromPersonId: PersonId, toPersonId: PersonId, relationshipType: RelationshipType): Promise<Result_9>;
     /**
      * / Publishes a canonical recipe directly (steward only), already approved.
      * / This is the steward-only add flow; it does not create a second Recipe on
@@ -1953,9 +2039,14 @@ export interface backendInterface {
      */
     rejectNewPersonCandidate(id: bigint): Promise<NewPersonCandidate | null>;
     /**
-     * / Rejects a pending profile claim. Family Steward only.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `rejectProfileClaimForFamily`.
      */
     rejectProfileClaim(claimId: bigint): Promise<ProfileClaim | null>;
+    /**
+     * / Rejects a pending profile claim in `familyId`. Steward of `familyId` only.
+     */
+    rejectProfileClaimForFamily(familyId: FamilyId, claimId: bigint): Promise<ProfileClaim | null>;
     /**
      * / Rejects a profile removal request. Family Steward only.
      */
@@ -1973,9 +2064,14 @@ export interface backendInterface {
      */
     rejectRelationshipProposal(id: bigint): Promise<RelationshipProposal | null>;
     /**
-     * / Rejects a relationship request. Family Steward only.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `rejectRelationshipRequestForFamily`.
      */
     rejectRelationshipRequest(requestId: bigint): Promise<RelationshipRequest | null>;
+    /**
+     * / Rejects a relationship request in `familyId`. Steward of `familyId` only.
+     */
+    rejectRelationshipRequestForFamily(familyId: FamilyId, requestId: bigint): Promise<RelationshipRequest | null>;
     /**
      * / Rejects a pending source (Family Steward only), transitioning it to
      * / `#Rejected`. When the source links an Archive item (`archiveItemId`), that
@@ -1998,18 +2094,24 @@ export interface backendInterface {
      */
     removeBoardReply(replyId: ReplyId): Promise<Reply | null>;
     /**
-     * / Removes a duplicate test-created profile and any pending relationship
-     * / requests or claims tied only to it, preserving the original profile, the
-     * / confirmed family graph, and the signed-in account. Family Steward only.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `removeDuplicateProfileForFamily`.
      */
     removeDuplicateProfile(personId: PersonId): Promise<Result_8>;
     /**
-     * / Removes a photo from a person's gallery. Requires the approved owner of
-     * / that claimed profile or a Family Steward. Returns `true` when a photo was
-     * / removed. If the removed photo was the profile photo, the profile photo is
-     * / cleared. Tenancy 1B: authority is checked for the default family id.
+     * / Removes a duplicate test-created profile in `familyId`. Steward of
+     * / `familyId` only.
+     */
+    removeDuplicateProfileForFamily(familyId: FamilyId, personId: PersonId): Promise<Result_8>;
+    /**
+     * / TEMPORARY Tenancy 1C compatibility wrapper for `removePhotoForFamily`.
      */
     removePhoto(personId: PersonId, photoId: PhotoId): Promise<boolean>;
+    /**
+     * / Removes a photo from a person's gallery in `familyId`. Requires the
+     * / approved owner of that claimed profile or a Steward of `familyId`.
+     */
+    removePhotoForFamily(familyId: FamilyId, personId: PersonId, photoId: PhotoId): Promise<boolean>;
     /**
      * / Removes an incorrect relationship from the shared family graph. Family
      * / Steward only.
@@ -2025,10 +2127,16 @@ export interface backendInterface {
      */
     reportMessage(messageId: MessageId, reason: string): Promise<Report>;
     /**
-     * / "This is Me": creates a pending profile claim for an unclaimed living
-     * / profile. Requires sign-in; does not grant ownership until approved.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `requestProfileClaimForFamily`.
      */
     requestProfileClaim(personId: PersonId): Promise<Result_5>;
+    /**
+     * / "This is Me": creates a pending profile claim for an unclaimed living
+     * / profile in `familyId`. Requires sign-in; does not grant ownership until
+     * / approved. The claim belongs to exactly `familyId`.
+     */
+    requestProfileClaimForFamily(familyId: FamilyId, personId: PersonId): Promise<Result_5>;
     /**
      * / A claimed living profile owner requests removal of their own profile.
      * / A Family Steward reviews the request.
@@ -2084,13 +2192,16 @@ export interface backendInterface {
      */
     searchBoardPostsByTags(tags: Array<string>): Promise<Array<Post>>;
     /**
-     * / Searches the authoritative shared profile data for possible duplicate
-     * / matches by name, returning name plus parents when known. Names are
-     * / normalized before matching (case-insensitive, punctuation ignored, periods
-     * / normalized, extra spaces collapsed, suffix variants recognized, partial/
-     * / fuzzy allowed).
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `searchPossibleMatchesForFamily`.
      */
     searchPossibleMatches(name: string): Promise<Array<PersonMatch>>;
+    /**
+     * / Searches the authoritative shared profile data of `familyId` for possible
+     * / duplicate matches by name. Only profiles belonging to `familyId` are
+     * / considered.
+     */
+    searchPossibleMatchesForFamily(familyId: FamilyId, name: string): Promise<Array<PersonMatch>>;
     /**
      * / Sends a private message to the person identified by `personId`, reusing the
      * / existing 1:1 conversation when one exists. Approved family members only.
@@ -2099,16 +2210,26 @@ export interface backendInterface {
      */
     sendMessage(recipientPersonId: string, body: string): Promise<Result_1>;
     /**
-     * / Marks the photo with `photoId` as the person's profile photo. Requires the
-     * / approved owner of that claimed profile or a Family Steward. Returns the
-     * / newly selected photo, or `null` when the photo does not exist.
-     * / Tenancy 1B: authority is checked for the default family id.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `setProfilePhotoForFamily`.
      */
     setProfilePhoto(personId: PersonId, photoId: PhotoId): Promise<Photo | null>;
     /**
-     * / Returns a relationship request to pending state. Family Steward only.
+     * / Marks the photo with `photoId` as the person's profile photo in `familyId`.
+     * / Requires the approved owner of that claimed profile or a Steward of
+     * / `familyId`.
+     */
+    setProfilePhotoForFamily(familyId: FamilyId, personId: PersonId, photoId: PhotoId): Promise<Photo | null>;
+    /**
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `setRelationshipRequestPendingForFamily`.
      */
     setRelationshipRequestPending(requestId: bigint): Promise<RelationshipRequest | null>;
+    /**
+     * / Returns a relationship request in `familyId` to pending state. Steward of
+     * / `familyId` only.
+     */
+    setRelationshipRequestPendingForFamily(familyId: FamilyId, requestId: bigint): Promise<RelationshipRequest | null>;
     /**
      * / Submits a new archive item. Requires an approved family member; the caller
      * / is recorded as the contributor. The item is stored in pending state and
@@ -2157,11 +2278,16 @@ export interface backendInterface {
      */
     updateCanonicalStory(id: StoryId, title: string, storyText: string, relatedMemberIds: Array<string>, era: string | null, year: bigint | null, location: string | null, evidenceStatus: EvidenceStatus, relatedArchiveItemIds: Array<bigint>): Promise<Story | null>;
     /**
-     * / Updates an approved owner's own living profile fields, or, for a Family
-     * / Steward, the fields of an unclaimed/historical profile. Never rewrites
-     * / family relationships directly.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `updateOwnProfileForFamily`.
      */
     updateOwnProfile(personId: PersonId, edits: ProfileEdits): Promise<Result>;
+    /**
+     * / Updates an approved owner's own living profile fields in `familyId`, or,
+     * / for a Steward of `familyId`, the fields of an unclaimed/historical profile
+     * / in that family.
+     */
+    updateOwnProfileForFamily(familyId: FamilyId, personId: PersonId, edits: ProfileEdits): Promise<Result>;
 }
 import type { Account as _Account, AccountError as _AccountError, AccountId as _AccountId, ArchiveError as _ArchiveError, ArchiveItem as _ArchiveItem, ArchiveItemClassification as _ArchiveItemClassification, ArchiveItemId as _ArchiveItemId, ArchiveItemStatus as _ArchiveItemStatus, ArchiveItemType as _ArchiveItemType, ArchiveSearchFilter as _ArchiveSearchFilter, AuditActionType as _AuditActionType, AuditEntry as _AuditEntry, AuthMethod as _AuthMethod, AuthMethods as _AuthMethods, BoardMediaUpload as _BoardMediaUpload, Cell as _Cell, ChapterMarker as _ChapterMarker, ClaimEligibility as _ClaimEligibility, ClaimError as _ClaimError, ClaimPersistenceError as _ClaimPersistenceError, ClaimStatus as _ClaimStatus, ConflictResolutionAction as _ConflictResolutionAction, ConflictReviewItem as _ConflictReviewItem, ConversationId as _ConversationId, ConversationView as _ConversationView, CreateError as _CreateError, DeleteError as _DeleteError, DisputedFact as _DisputedFact, DuplicateCandidate as _DuplicateCandidate, DuplicatePair as _DuplicatePair, EditError as _EditError, Error as _Error, EvidenceLabel as _EvidenceLabel, EvidenceStatus as _EvidenceStatus, ExternalBlob as _ExternalBlob, Family as _Family, FamilyId as _FamilyId, FamilyStatus as _FamilyStatus, FindingContent as _FindingContent, FindingId as _FindingId, FindingType as _FindingType, LivingStatus as _LivingStatus, MergeConflict as _MergeConflict, MergeConflictStatus as _MergeConflictStatus, MergeError as _MergeError, MergeResult as _MergeResult, Message as _Message, MessageError as _MessageError, MessageId as _MessageId, MessageStatus as _MessageStatus, Mystery as _Mystery, MysteryContribution as _MysteryContribution, MysteryContributionId as _MysteryContributionId, MysteryContributionStatus as _MysteryContributionStatus, MysteryContributionType as _MysteryContributionType, MysteryId as _MysteryId, MysteryStatus as _MysteryStatus, NewPersonCandidate as _NewPersonCandidate, Notification as _Notification, NotificationType as _NotificationType, OralHistorySpeaker as _OralHistorySpeaker, PersonId as _PersonId, PersonProfile as _PersonProfile, Photo as _Photo, PhotoId as _PhotoId, Post as _Post, PostId as _PostId, PostStatus as _PostStatus, PostType as _PostType, PrivacyLevel as _PrivacyLevel, PrivacyScope as _PrivacyScope, ProfileClaim as _ProfileClaim, ProfileClaimStatus as _ProfileClaimStatus, ProfileEdits as _ProfileEdits, ProfileRemovalRequest as _ProfileRemovalRequest, ProfileRemovalStatus as _ProfileRemovalStatus, ProposedFinding as _ProposedFinding, Recipe as _Recipe, RecipeId as _RecipeId, RecipeStatus as _RecipeStatus, Relationship as _Relationship, RelationshipAdminError as _RelationshipAdminError, RelationshipError as _RelationshipError, RelationshipProposal as _RelationshipProposal, RelationshipRequest as _RelationshipRequest, RelationshipRequestStatus as _RelationshipRequestStatus, RelationshipStatus as _RelationshipStatus, RelationshipType as _RelationshipType, RemovalError as _RemovalError, RemoveError as _RemoveError, Reply as _Reply, Report as _Report, ReportId as _ReportId, ReportStatus as _ReportStatus, ReportedMessageView as _ReportedMessageView, ResearchAuditEntry as _ResearchAuditEntry, ResearchError as _ResearchError, Resolution as _Resolution, Result as _Result, Result_1 as _Result_1, Result_10 as _Result_10, Result_11 as _Result_11, Result_12 as _Result_12, Result_13 as _Result_13, Result_14 as _Result_14, Result_15 as _Result_15, Result_16 as _Result_16, Result_17 as _Result_17, Result_18 as _Result_18, Result_19 as _Result_19, Result_2 as _Result_2, Result_20 as _Result_20, Result_21 as _Result_21, Result_22 as _Result_22, Result_23 as _Result_23, Result_24 as _Result_24, Result_25 as _Result_25, Result_26 as _Result_26, Result_3 as _Result_3, Result_4 as _Result_4, Result_5 as _Result_5, Result_6 as _Result_6, Result_7 as _Result_7, Result_8 as _Result_8, Result_9 as _Result_9, Result__1 as _Result__1, ReviewAction as _ReviewAction, ReviewItemKind as _ReviewItemKind, ReviewQueue as _ReviewQueue, ReviewQueueItem as _ReviewQueueItem, ReviewStatus as _ReviewStatus, SourceId as _SourceId, SourceRecord as _SourceRecord, SourceStatus as _SourceStatus, SourceType as _SourceType, SourceUploadResult as _SourceUploadResult, StewardAuditEntry as _StewardAuditEntry, StewardAuditKind as _StewardAuditKind, StewardClaimError as _StewardClaimError, StewardClaimResult as _StewardClaimResult, StewardError as _StewardError, StewardRecord as _StewardRecord, StewardRoleStatus as _StewardRoleStatus, Story as _Story, StoryId as _StoryId, StoryStatus as _StoryStatus, SuccessorDesignation as _SuccessorDesignation, SuccessorStatus as _SuccessorStatus, TimelineEvent as _TimelineEvent, TimelineEventType as _TimelineEventType, TimelineLinkTarget as _TimelineLinkTarget, Timestamp as _Timestamp, UserRole as _UserRole, Value as _Value, _ImmutableObjectStorageRefillInformation as __ImmutableObjectStorageRefillInformation, _ImmutableObjectStorageRefillResult as __ImmutableObjectStorageRefillResult } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
@@ -2348,6 +2474,20 @@ export class Backend implements backendInterface {
             return from_candid_Photo_n27(this._uploadFile, this._downloadFile, result);
         }
     }
+    async addPhotoForFamily(arg0: FamilyId, arg1: PersonId, arg2: string, arg3: string, arg4: ExternalBlob): Promise<Photo> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.addPhotoForFamily(arg0, arg1, arg2, arg3, await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg4));
+                return from_candid_Photo_n27(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.addPhotoForFamily(arg0, arg1, arg2, arg3, await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg4));
+            return from_candid_Photo_n27(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async addRelationship(arg0: PersonId, arg1: PersonId, arg2: RelationshipType): Promise<Result_23> {
         if (this.processError) {
             try {
@@ -2418,6 +2558,20 @@ export class Backend implements backendInterface {
             return from_candid_opt_n67(this._uploadFile, this._downloadFile, result);
         }
     }
+    async approveProfileClaimForFamily(arg0: FamilyId, arg1: bigint): Promise<ProfileClaim | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.approveProfileClaimForFamily(arg0, arg1);
+                return from_candid_opt_n67(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.approveProfileClaimForFamily(arg0, arg1);
+            return from_candid_opt_n67(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async approveProfileRemoval(arg0: bigint): Promise<ProfileRemovalRequest | null> {
         if (this.processError) {
             try {
@@ -2471,6 +2625,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.approveRelationshipRequest(arg0);
+            return from_candid_opt_n82(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async approveRelationshipRequestForFamily(arg0: FamilyId, arg1: bigint): Promise<RelationshipRequest | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.approveRelationshipRequestForFamily(arg0, arg1);
+                return from_candid_opt_n82(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.approveRelationshipRequestForFamily(arg0, arg1);
             return from_candid_opt_n82(this._uploadFile, this._downloadFile, result);
         }
     }
@@ -2586,6 +2754,20 @@ export class Backend implements backendInterface {
             return from_candid_ClaimEligibility_n108(this._uploadFile, this._downloadFile, result);
         }
     }
+    async canClaimProfileForFamily(arg0: FamilyId, arg1: PersonId): Promise<ClaimEligibility> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.canClaimProfileForFamily(arg0, arg1);
+                return from_candid_ClaimEligibility_n108(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.canClaimProfileForFamily(arg0, arg1);
+            return from_candid_ClaimEligibility_n108(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async canMessagePerson(arg0: string): Promise<boolean> {
         if (this.processError) {
             try {
@@ -2695,6 +2877,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.createMyself(arg0);
+            return from_candid_Result_21_n141(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async createMyselfForFamily(arg0: FamilyId, arg1: string): Promise<Result_21> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.createMyselfForFamily(arg0, arg1);
+                return from_candid_Result_21_n141(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.createMyselfForFamily(arg0, arg1);
             return from_candid_Result_21_n141(this._uploadFile, this._downloadFile, result);
         }
     }
@@ -2922,6 +3118,34 @@ export class Backend implements backendInterface {
             return from_candid_opt_n67(this._uploadFile, this._downloadFile, result);
         }
     }
+    async getMyProfileClaimForFamily(arg0: FamilyId, arg1: PersonId): Promise<ProfileClaim | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getMyProfileClaimForFamily(arg0, arg1);
+                return from_candid_opt_n67(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getMyProfileClaimForFamily(arg0, arg1);
+            return from_candid_opt_n67(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getMyProfileForFamily(arg0: FamilyId): Promise<PersonProfile | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getMyProfileForFamily(arg0);
+                return from_candid_opt_n189(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getMyProfileForFamily(arg0);
+            return from_candid_opt_n189(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async getMyRelationshipRequests(): Promise<Array<RelationshipRequest>> {
         if (this.processError) {
             try {
@@ -2933,6 +3157,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.getMyRelationshipRequests();
+            return from_candid_vec_n190(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getMyRelationshipRequestsForFamily(arg0: FamilyId): Promise<Array<RelationshipRequest>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getMyRelationshipRequestsForFamily(arg0);
+                return from_candid_vec_n190(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getMyRelationshipRequestsForFamily(arg0);
             return from_candid_vec_n190(this._uploadFile, this._downloadFile, result);
         }
     }
@@ -2964,6 +3202,20 @@ export class Backend implements backendInterface {
             return from_candid_opt_n189(this._uploadFile, this._downloadFile, result);
         }
     }
+    async getPersonProfileForFamily(arg0: FamilyId, arg1: PersonId): Promise<PersonProfile | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getPersonProfileForFamily(arg0, arg1);
+                return from_candid_opt_n189(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getPersonProfileForFamily(arg0, arg1);
+            return from_candid_opt_n189(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async getProfilePhoto(arg0: PersonId): Promise<Photo | null> {
         if (this.processError) {
             try {
@@ -2975,6 +3227,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.getProfilePhoto(arg0);
+            return from_candid_opt_n191(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getProfilePhotoForFamily(arg0: FamilyId, arg1: PersonId): Promise<Photo | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getProfilePhotoForFamily(arg0, arg1);
+                return from_candid_opt_n191(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getProfilePhotoForFamily(arg0, arg1);
             return from_candid_opt_n191(this._uploadFile, this._downloadFile, result);
         }
     }
@@ -3003,6 +3269,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.getRelationshipRequest(arg0);
+            return from_candid_opt_n82(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getRelationshipRequestForFamily(arg0: FamilyId, arg1: bigint): Promise<RelationshipRequest | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getRelationshipRequestForFamily(arg0, arg1);
+                return from_candid_opt_n82(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getRelationshipRequestForFamily(arg0, arg1);
             return from_candid_opt_n82(this._uploadFile, this._downloadFile, result);
         }
     }
@@ -3115,6 +3395,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.hasApprovedOwner(arg0);
+            return result;
+        }
+    }
+    async hasApprovedOwnerForFamily(arg0: FamilyId, arg1: PersonId): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.hasApprovedOwnerForFamily(arg0, arg1);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.hasApprovedOwnerForFamily(arg0, arg1);
             return result;
         }
     }
@@ -3272,6 +3566,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async listClaimDiscoveryProfilesForFamily(arg0: FamilyId): Promise<Array<PersonProfile>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.listClaimDiscoveryProfilesForFamily(arg0);
+                return from_candid_vec_n219(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.listClaimDiscoveryProfilesForFamily(arg0);
+            return from_candid_vec_n219(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async listConfirmedRelationships(): Promise<Array<Relationship>> {
         if (this.processError) {
             try {
@@ -3283,6 +3591,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.listConfirmedRelationships();
+            return from_candid_vec_n226(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async listConfirmedRelationshipsForFamily(arg0: FamilyId): Promise<Array<Relationship>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.listConfirmedRelationshipsForFamily(arg0);
+                return from_candid_vec_n226(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.listConfirmedRelationshipsForFamily(arg0);
             return from_candid_vec_n226(this._uploadFile, this._downloadFile, result);
         }
     }
@@ -3538,6 +3860,20 @@ export class Backend implements backendInterface {
             return from_candid_vec_n250(this._uploadFile, this._downloadFile, result);
         }
     }
+    async listPhotosForFamily(arg0: FamilyId, arg1: PersonId): Promise<Array<Photo>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.listPhotosForFamily(arg0, arg1);
+                return from_candid_vec_n250(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.listPhotosForFamily(arg0, arg1);
+            return from_candid_vec_n250(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async listProfileClaims(): Promise<Array<ProfileClaim>> {
         if (this.processError) {
             try {
@@ -3549,6 +3885,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.listProfileClaims();
+            return from_candid_vec_n251(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async listProfileClaimsForFamily(arg0: FamilyId): Promise<Array<ProfileClaim>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.listProfileClaimsForFamily(arg0);
+                return from_candid_vec_n251(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.listProfileClaimsForFamily(arg0);
             return from_candid_vec_n251(this._uploadFile, this._downloadFile, result);
         }
     }
@@ -3564,6 +3914,20 @@ export class Backend implements backendInterface {
         } else {
             const result = await this.actor.listProfileRemovalRequests();
             return from_candid_vec_n252(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async listProfilesForFamily(arg0: FamilyId): Promise<Array<PersonProfile>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.listProfilesForFamily(arg0);
+                return from_candid_vec_n219(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.listProfilesForFamily(arg0);
+            return from_candid_vec_n219(this._uploadFile, this._downloadFile, result);
         }
     }
     async listRecipesForPerson(arg0: string): Promise<Array<Recipe>> {
@@ -3605,6 +3969,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.listRelationshipRequests();
+            return from_candid_vec_n190(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async listRelationshipRequestsForFamily(arg0: FamilyId): Promise<Array<RelationshipRequest>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.listRelationshipRequestsForFamily(arg0);
+                return from_candid_vec_n190(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.listRelationshipRequestsForFamily(arg0);
             return from_candid_vec_n190(this._uploadFile, this._downloadFile, result);
         }
     }
@@ -3860,6 +4238,20 @@ export class Backend implements backendInterface {
             return from_candid_Result_9_n280(this._uploadFile, this._downloadFile, result);
         }
     }
+    async proposeRelationshipForFamily(arg0: FamilyId, arg1: PersonId, arg2: PersonId, arg3: RelationshipType): Promise<Result_9> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.proposeRelationshipForFamily(arg0, arg1, arg2, to_candid_RelationshipType_n30(this._uploadFile, this._downloadFile, arg3));
+                return from_candid_Result_9_n280(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.proposeRelationshipForFamily(arg0, arg1, arg2, to_candid_RelationshipType_n30(this._uploadFile, this._downloadFile, arg3));
+            return from_candid_Result_9_n280(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async publishRecipe(arg0: string, arg1: string, arg2: string, arg3: Array<string>, arg4: string | null, arg5: bigint | null, arg6: string | null, arg7: string | null, arg8: Array<string>, arg9: string, arg10: string | null, arg11: Array<string>, arg12: PrivacyLevel, arg13: EvidenceStatus, arg14: Array<bigint>): Promise<Recipe> {
         if (this.processError) {
             try {
@@ -3944,6 +4336,20 @@ export class Backend implements backendInterface {
             return from_candid_opt_n67(this._uploadFile, this._downloadFile, result);
         }
     }
+    async rejectProfileClaimForFamily(arg0: FamilyId, arg1: bigint): Promise<ProfileClaim | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.rejectProfileClaimForFamily(arg0, arg1);
+                return from_candid_opt_n67(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.rejectProfileClaimForFamily(arg0, arg1);
+            return from_candid_opt_n67(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async rejectProfileRemoval(arg0: bigint): Promise<ProfileRemovalRequest | null> {
         if (this.processError) {
             try {
@@ -3997,6 +4403,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.rejectRelationshipRequest(arg0);
+            return from_candid_opt_n82(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async rejectRelationshipRequestForFamily(arg0: FamilyId, arg1: bigint): Promise<RelationshipRequest | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.rejectRelationshipRequestForFamily(arg0, arg1);
+                return from_candid_opt_n82(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.rejectRelationshipRequestForFamily(arg0, arg1);
             return from_candid_opt_n82(this._uploadFile, this._downloadFile, result);
         }
     }
@@ -4056,6 +4476,20 @@ export class Backend implements backendInterface {
             return from_candid_Result_8_n284(this._uploadFile, this._downloadFile, result);
         }
     }
+    async removeDuplicateProfileForFamily(arg0: FamilyId, arg1: PersonId): Promise<Result_8> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.removeDuplicateProfileForFamily(arg0, arg1);
+                return from_candid_Result_8_n284(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.removeDuplicateProfileForFamily(arg0, arg1);
+            return from_candid_Result_8_n284(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async removePhoto(arg0: PersonId, arg1: PhotoId): Promise<boolean> {
         if (this.processError) {
             try {
@@ -4067,6 +4501,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.removePhoto(arg0, arg1);
+            return result;
+        }
+    }
+    async removePhotoForFamily(arg0: FamilyId, arg1: PersonId, arg2: PhotoId): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.removePhotoForFamily(arg0, arg1, arg2);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.removePhotoForFamily(arg0, arg1, arg2);
             return result;
         }
     }
@@ -4123,6 +4571,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.requestProfileClaim(arg0);
+            return from_candid_Result_5_n291(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async requestProfileClaimForFamily(arg0: FamilyId, arg1: PersonId): Promise<Result_5> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.requestProfileClaimForFamily(arg0, arg1);
+                return from_candid_Result_5_n291(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.requestProfileClaimForFamily(arg0, arg1);
             return from_candid_Result_5_n291(this._uploadFile, this._downloadFile, result);
         }
     }
@@ -4280,6 +4742,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async searchPossibleMatchesForFamily(arg0: FamilyId, arg1: string): Promise<Array<PersonMatch>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.searchPossibleMatchesForFamily(arg0, arg1);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.searchPossibleMatchesForFamily(arg0, arg1);
+            return result;
+        }
+    }
     async sendMessage(arg0: string, arg1: string): Promise<Result_1> {
         if (this.processError) {
             try {
@@ -4308,6 +4784,20 @@ export class Backend implements backendInterface {
             return from_candid_opt_n191(this._uploadFile, this._downloadFile, result);
         }
     }
+    async setProfilePhotoForFamily(arg0: FamilyId, arg1: PersonId, arg2: PhotoId): Promise<Photo | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.setProfilePhotoForFamily(arg0, arg1, arg2);
+                return from_candid_opt_n191(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.setProfilePhotoForFamily(arg0, arg1, arg2);
+            return from_candid_opt_n191(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async setRelationshipRequestPending(arg0: bigint): Promise<RelationshipRequest | null> {
         if (this.processError) {
             try {
@@ -4319,6 +4809,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.setRelationshipRequestPending(arg0);
+            return from_candid_opt_n82(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async setRelationshipRequestPendingForFamily(arg0: FamilyId, arg1: bigint): Promise<RelationshipRequest | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.setRelationshipRequestPendingForFamily(arg0, arg1);
+                return from_candid_opt_n82(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.setRelationshipRequestPendingForFamily(arg0, arg1);
             return from_candid_opt_n82(this._uploadFile, this._downloadFile, result);
         }
     }
@@ -4445,6 +4949,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.updateOwnProfile(arg0, to_candid_ProfileEdits_n310(this._uploadFile, this._downloadFile, arg1));
+            return from_candid_Result_n313(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async updateOwnProfileForFamily(arg0: FamilyId, arg1: PersonId, arg2: ProfileEdits): Promise<Result> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateOwnProfileForFamily(arg0, arg1, to_candid_ProfileEdits_n310(this._uploadFile, this._downloadFile, arg2));
+                return from_candid_Result_n313(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateOwnProfileForFamily(arg0, arg1, to_candid_ProfileEdits_n310(this._uploadFile, this._downloadFile, arg2));
             return from_candid_Result_n313(this._uploadFile, this._downloadFile, result);
         }
     }

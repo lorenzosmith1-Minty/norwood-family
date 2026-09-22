@@ -1,5 +1,6 @@
 import { Loader2, UserCheck } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useFamilyScopedId } from "../context/FamilyContext";
 import { useAuth } from "../hooks/useAuth";
 import {
   useMyProfileClaim,
@@ -113,8 +114,9 @@ export function ClaimButton({
     isLoginError,
     loginError,
   } = useAuth();
-  const { data: myClaim } = useMyProfileClaim(personId);
-  const claim = useRequestProfileClaim();
+  const familyId = useFamilyScopedId();
+  const { data: myClaim } = useMyProfileClaim(personId, familyId);
+  const claim = useRequestProfileClaim(familyId);
 
   const [activeProvider, setActiveProvider] = useState<
     "google" | "apple" | null

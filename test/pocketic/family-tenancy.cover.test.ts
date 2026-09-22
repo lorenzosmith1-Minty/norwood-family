@@ -257,8 +257,10 @@ it("exposes no family-creation surface and never duplicates the default family",
   const setup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
   const actor = setup.actor;
 
-  // The only family-related method on the real Candid interface is the
-  // read-only getFamily lookup; there is no createFamily/onboardFamily surface.
+  // The family-related methods on the real Candid interface are the read-only
+  // getFamily lookup plus the Tenancy 1C-A family-scoped endpoints (the
+  // `*ForFamily` surface). There is still no createFamily/onboardFamily
+  // surface: the accepted change adds scoped reads/writes, not family creation.
   // The service class's `_fields` is the authoritative method list the canister
   // actually exposes, so this reads the deployed interface rather than the
   // actor object's own enumerable keys.
@@ -268,7 +270,19 @@ it("exposes no family-creation surface and never duplicates the default family",
   const familyMethods = service._fields
     .map(([name]) => name)
     .filter((name) => name.toLowerCase().includes("family"));
-  expect(familyMethods).toEqual(["getFamily"]);
+  expect(familyMethods).toContain("getFamily");
+  // The family-scoped surface is present (Tenancy 1C-A).
+  expect(familyMethods).toContain("getPersonProfileForFamily");
+  expect(familyMethods).toContain("listProfilesForFamily");
+  expect(familyMethods).toContain("createMyselfForFamily");
+  expect(familyMethods).toContain("listPhotosForFamily");
+  // No family-creation endpoint is exposed. `createMyselfForFamily` creates a
+  // person profile within a family, not a family, so it is not a family-creation
+  // surface; the check is for methods that would create/onboard a family.
+  const familyCreationMethods = familyMethods.filter((name) =>
+    /^(create|onboard|register)Family/i.test(name),
+  );
+  expect(familyCreationMethods).toEqual([]);
 
   // Repeated reads of the default family return the same single record.
   const first = await actor.getFamily("norwood");

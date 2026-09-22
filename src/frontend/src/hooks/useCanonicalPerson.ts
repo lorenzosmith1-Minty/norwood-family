@@ -1,4 +1,5 @@
 import type { PersonProfile as BackendPersonProfile } from "@/backend";
+import { useFamilyScopedId } from "../context/FamilyContext";
 import type { PersonProfile } from "../types/family";
 import { resolveBackendDisplayName } from "../types/family";
 import { ClaimStatus } from "../types/ownership";
@@ -134,11 +135,14 @@ export function useCanonicalPerson(
   personId: string | undefined,
   fallbackName: string,
 ): CanonicalPerson {
+  const familyId = useFamilyScopedId();
   const { data: backendProfile } = usePersonProfile(personId ?? "", {
     enabled: Boolean(personId),
+    familyId,
   });
   const { data: profilePhoto, isLoading: photoLoading } = useProfilePhoto(
     personId ?? "",
+    familyId,
   );
 
   const hasCanonicalProfile = Boolean(backendProfile);

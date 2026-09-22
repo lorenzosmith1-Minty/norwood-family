@@ -14,6 +14,12 @@ import { useReconcileClaimNotifications } from "./useNotifications";
  * following the existing useActor(createActor) + useQuery/useMutation pattern
  * used by usePhotoStorage and useArchiveStorage. Every operation goes through
  * the real backend actor; no local persistence is used.
+ *
+ * Tenancy 1C-A: each hook accepts an optional `familyId`. When supplied it
+ * routes to the family-scoped backend endpoint (`*ForFamily`); when omitted it
+ * calls the legacy default-family endpoint unchanged, so existing default-family
+ * behavior is preserved exactly. Callers pass the active family from
+ * `useActiveFamilyId()`.
  */
 
 /**
@@ -24,14 +30,17 @@ import { useReconcileClaimNotifications } from "./useNotifications";
  */
 export function usePersonProfile(
   personId: string,
-  options?: { enabled?: boolean },
+  options?: { enabled?: boolean; familyId?: string },
 ) {
   const { actor, isFetching } = useActor(createActor);
+  const familyId = options?.familyId;
   return useQuery({
-    queryKey: ["personProfile", personId],
+    queryKey: ["personProfile", familyId ?? null, personId],
     queryFn: async () => {
       if (!actor) return null;
-      return actor.getPersonProfile(personId);
+      return familyId
+        ? actor.getPersonProfileForFamily(familyId, personId)
+        : actor.getPersonProfile(personId);
     },
     enabled: (options?.enabled ?? true) && !!actor && !isFetching,
   });
@@ -44,16 +53,18 @@ export function usePersonProfile(
  * — never the owner principal — so non-admin UI (the Add Myself match cards)
  * can show an "Already claimed" state without leaking account identity.
  *
- * Reuses the same ["personProfile", personId] query key as usePersonProfile, so
- * it shares the cache and adds no extra backend endpoint.
+ * Reuses the same ["personProfile", familyId, personId] query key as
+ * usePersonProfile, so it shares the cache and adds no extra backend endpoint.
  */
-export function usePersonClaimStatus(personId: string) {
+export function usePersonClaimStatus(personId: string, familyId?: string) {
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["personProfile", personId],
+    queryKey: ["personProfile", familyId ?? null, personId],
     queryFn: async () => {
       if (!actor) return null;
-      return actor.getPersonProfile(personId);
+      return familyId
+        ? actor.getPersonProfileForFamily(familyId, personId)
+        : actor.getPersonProfile(personId);
     },
     enabled: !!actor && !isFetching,
     select: (profile) => ({
@@ -68,13 +79,15 @@ export function usePersonClaimStatus(personId: string) {
  * is safe to call from non-admin UI (ClaimButton, PersonProfilePage) to detect
  * a pending claim by the current user without trapping for regular users.
  */
-export function useMyProfileClaim(personId: string) {
+export function useMyProfileClaim(personId: string, familyId?: string) {
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["myProfileClaim", personId],
+    queryKey: ["myProfileClaim", familyId ?? null, personId],
     queryFn: async () => {
       if (!actor) return null;
-      return actor.getMyProfileClaim(personId);
+      return familyId
+        ? actor.getMyProfileClaimForFamily(familyId, personId)
+        : actor.getMyProfileClaim(personId);
     },
     enabled: !!actor && !isFetching,
   });
@@ -87,26 +100,30 @@ export function useMyProfileClaim(personId: string) {
  * from non-admin UI (the navbar identity hook) to resolve the caller's own
  * display name without trapping for regular users.
  */
-export function useMyProfile() {
+export function useMyProfile(familyId?: string) {
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["myProfile"],
+    queryKey: ["myProfile", familyId ?? null],
     queryFn: async () => {
       if (!actor) return null;
-      return actor.getMyProfile();
+      return familyId
+        ? actor.getMyProfileForFamily(familyId)
+        : actor.getMyProfile();
     },
     enabled: !!actor && !isFetching,
   });
 }
 
 /** Lists every profile claim record (used by the Family Steward review area). */
-export function useListProfileClaims() {
+export function useListProfileClaims(familyId?: string) {
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["profileClaims"],
+    queryKey: ["profileClaims", familyId ?? null],
     queryFn: async () => {
       if (!actor) return [] as ProfileClaim[];
-      return actor.listProfileClaims();
+      return familyId
+        ? actor.listProfileClaimsForFamily(familyId)
+        : actor.listProfileClaims();
     },
     enabled: !!actor && !isFetching,
   });
@@ -116,13 +133,15 @@ export function useListProfileClaims() {
  * Submits a pending profile claim for a person. Requires sign-in; the claim
  * does not grant ownership until approved by a Family Steward.
  */
-export function useRequestProfileClaim() {
+export function useRequestProfileClaim(familyId?: string) {
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (personId: string) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.requestProfileClaim(personId);
+      return familyId
+        ? actor.requestProfileClaimForFamily(familyId, personId)
+        : actor.requestProfileClaim(personId);
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["profileClaims"] });
@@ -144,14 +163,16 @@ export function useRequestProfileClaim() {
 }
 
 /** Approves a pending profile claim, granting the user ownership. */
-export function useApproveProfileClaim() {
+export function useApproveProfileClaim(familyId?: string) {
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   const reconcile = useReconcileClaimNotifications();
   return useMutation({
     mutationFn: async (claimId: bigint) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.approveProfileClaim(claimId);
+      return familyId
+        ? actor.approveProfileClaimForFamily(familyId, claimId)
+        : actor.approveProfileClaim(claimId);
     },
     onSuccess: (_data, claimId) => {
       // Reconcile stale claim notifications so the pending ProfileClaimRequested
@@ -176,13 +197,15 @@ export function useApproveProfileClaim() {
 }
 
 /** Rejects a pending profile claim, recording the reviewer and reviewed date. */
-export function useRejectProfileClaim() {
+export function useRejectProfileClaim(familyId?: string) {
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (claimId: bigint) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.rejectProfileClaim(claimId);
+      return familyId
+        ? actor.rejectProfileClaimForFamily(familyId, claimId)
+        : actor.rejectProfileClaim(claimId);
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["profileClaims"] });
@@ -203,12 +226,14 @@ export function useRejectProfileClaim() {
  * Searches existing family data for possible matches to a name, returning
  * each match's name, id, and parents when known. Used by the Add Myself flow.
  */
-export function useSearchPossibleMatches() {
+export function useSearchPossibleMatches(familyId?: string) {
   const { actor } = useActor(createActor);
   return useMutation({
     mutationFn: async (name: string) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.searchPossibleMatches(name);
+      return familyId
+        ? actor.searchPossibleMatchesForFamily(familyId, name)
+        : actor.searchPossibleMatches(name);
     },
   });
 }
@@ -218,13 +243,15 @@ export function useSearchPossibleMatches() {
  * match exists. The new profile is not inserted into the shared graph until a
  * proposed connection is confirmed.
  */
-export function useCreateMyself() {
+export function useCreateMyself(familyId?: string) {
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (name: string) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.createMyself(name);
+      return familyId
+        ? actor.createMyselfForFamily(familyId, name)
+        : actor.createMyself(name);
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["personProfile"] });
@@ -243,7 +270,7 @@ export function useCreateMyself() {
  * (confirmedRelationships / myRelationshipRequests), and the photo gallery
  * (photos / profilePhoto).
  */
-export function useUpdateOwnProfile() {
+export function useUpdateOwnProfile(familyId?: string) {
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
@@ -255,11 +282,13 @@ export function useUpdateOwnProfile() {
       edits: ProfileEdits;
     }) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.updateOwnProfile(personId, edits);
+      return familyId
+        ? actor.updateOwnProfileForFamily(familyId, personId, edits)
+        : actor.updateOwnProfile(personId, edits);
     },
     onSuccess: (_data, variables) => {
       void queryClient.invalidateQueries({
-        queryKey: ["personProfile", variables.personId],
+        queryKey: ["personProfile"],
       });
       // The navbar identity resolves from myProfile (preferredName || name),
       // so a display-name edit must refresh it immediately.
@@ -274,11 +303,19 @@ export function useUpdateOwnProfile() {
       void queryClient.invalidateQueries({
         queryKey: ["myRelationshipRequests"],
       });
+      // Invalidate the exact scoped photo keys for the edited person so the
+      // gallery and profile-photo surfaces refresh without over-invalidating
+      // every family/person entry. The default family keeps the legacy
+      // two-element key shape.
       void queryClient.invalidateQueries({
-        queryKey: ["photos", variables.personId],
+        queryKey: familyId
+          ? ["photos", familyId, variables.personId]
+          : ["photos", variables.personId],
       });
       void queryClient.invalidateQueries({
-        queryKey: ["profilePhoto", variables.personId],
+        queryKey: familyId
+          ? ["profilePhoto", familyId, variables.personId]
+          : ["profilePhoto", variables.personId],
       });
     },
   });

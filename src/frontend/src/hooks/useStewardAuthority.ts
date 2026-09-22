@@ -15,6 +15,13 @@ import { useProvidersPresent } from "./usePhotoStorage";
  * `useIsSteward` answers "am I an active Steward?" and `useHasActiveSteward`
  * answers "does any active Steward exist yet?" (which drives the one-time
  * bootstrap claim control).
+ *
+ * Tenancy 1C-A: the backend exposes no family-scoped Steward-authority
+ * endpoints — `isCallerSteward`, `hasActiveSteward`, and `claimSteward` remain
+ * the public contract and resolve the default family internally. These hooks
+ * therefore keep calling those methods with no familyId argument; the active
+ * family is not threaded here because there is no family-scoped endpoint to
+ * receive it.
  */
 
 /** True when the signed-in caller is an active Norwood Family Steward. */

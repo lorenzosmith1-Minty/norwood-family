@@ -20,6 +20,7 @@ import {
 import { useEffect, useMemo, useRef, useState } from "react";
 import { RelationshipRequestForm } from "../components/RelationshipRequestForm";
 import { StatusBadge } from "../components/StatusBadge";
+import { useFamilyScopedId } from "../context/FamilyContext";
 import { resolveCanonicalPersonProfile } from "../hooks/useCanonicalPerson";
 import {
   useAddPhoto,
@@ -412,15 +413,17 @@ function getInitials(name: string): string {
 function EditPhotoSection({
   personId,
   displayName,
+  familyId,
 }: {
   personId: string;
   displayName: string;
+  familyId?: string;
 }) {
-  const { data: photos = [], isLoading } = usePhotos(personId);
-  const { data: profilePhoto } = useProfilePhoto(personId);
-  const addPhoto = useAddPhoto();
-  const setProfilePhoto = useSetProfilePhoto();
-  const removePhoto = useRemovePhoto();
+  const { data: photos = [], isLoading } = usePhotos(personId, familyId);
+  const { data: profilePhoto } = useProfilePhoto(personId, familyId);
+  const addPhoto = useAddPhoto(familyId);
+  const setProfilePhoto = useSetProfilePhoto(familyId);
+  const removePhoto = useRemovePhoto(familyId);
   const [progress, setProgress] = useState<number | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -657,9 +660,12 @@ export function ProfileEditPage({
   personId: string;
   onBack: () => void;
 }) {
-  const { data: backendProfile, isLoading } = usePersonProfile(personId);
+  const familyId = useFamilyScopedId();
+  const { data: backendProfile, isLoading } = usePersonProfile(personId, {
+    familyId,
+  });
   const { isAuthenticated, login, identity } = useInternetIdentity();
-  const update = useUpdateOwnProfile();
+  const update = useUpdateOwnProfile(familyId);
   const providersPresent = useProvidersPresent();
 
   const currentPrincipal = identity?.getPrincipal().toString();
@@ -1291,6 +1297,7 @@ export function ProfileEditPage({
                 <EditPhotoSection
                   personId={personId}
                   displayName={displayName}
+                  familyId={familyId}
                 />
               ) : (
                 <p className="text-sm text-muted-foreground">

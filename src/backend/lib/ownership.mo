@@ -1,296 +1,349 @@
-import Char "mo:core/Char";
 import Iter "mo:core/Iter";
 import List "mo:core/List";
 import Map "mo:core/Map";
 import Principal "mo:core/Principal";
 import Result "mo:core/Result";
-import Text "mo:core/Text";
 import Time "mo:core/Time";
 import Types "../types/ownership";
 import FamilyTypes "../types/family";
 import GovernanceTypes "../types/governance";
-import ClaimPersistenceTypes "../types/claim-persistence";
-import ClaimPersistenceLib "../lib/claim-persistence";
+import TenancyLib "tenancy";
 
+/// Tenancy 1C-A family-scoped profile / claim / relationship domain logic.
+///
+/// Every function below takes the requested `familyId` explicitly and evaluates
+/// authority and data access against it. The legacy single-family signatures
+/// are retained only as TEMPORARY Tenancy 1C compatibility wrappers that
+/// delegate here with `FamilyTypes.DEFAULT_FAMILY_ID`; they contain no logic of
+/// their own.
 module {
-  /// Returns the ownership/lifecycle state of a person profile, or `null` when
-  /// the person is not tracked.
-  public func getProfile(
-    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
-    personId : Types.PersonId,
-  ) : ?Types.PersonProfile {
-    profiles.get(personId);
+  /// Returns the edited optional value when the edit was supplied, otherwise
+  /// the profile's current optional value. Used to merge `ProfileEdits` into an
+  /// existing profile without discarding fields the caller left `null`.
+  func pickEdit<T>(edit : ?T, current : ?T) : ?T {
+    switch (edit) {
+      case (?value) { ?value };
+      case null { current };
+    };
   };
 
-  /// Creates a pending profile claim for an unclaimed living profile without
-  /// granting ownership. Requires sign-in.
-  public func requestClaim(
+  // ---------------------------------------------------------------------------
+  // Family-scoped profile reads
+  // ---------------------------------------------------------------------------
+
+  /// Returns the ownership/lifecycle state of a person profile in `familyId`,
+  /// or `null` when the person is not tracked in that family. A personId in
+  /// Family A never returns a profile from Family B.
+  public func getProfileForFamily(
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    familyId : FamilyTypes.FamilyId,
+    personId : Types.PersonId,
+  ) : ?Types.PersonProfile {
+    TenancyLib.getProfileForFamily(profiles, familyId, personId);
+  };
+
+  /// Returns the signed-in caller's own linked/claimed Person Profile in
+  /// `familyId`, or their pending profile in that family, or `null` when the
+  /// caller has no profile in `familyId`. Ownership in one family never
+  /// surfaces a profile from another.
+  public func getMyProfileForFamily(
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    claims : List.List<Types.ProfileClaim>,
+    caller : Principal.Principal,
+    familyId : FamilyTypes.FamilyId,
+  ) : ?Types.PersonProfile {
+    let owned = profiles.entries().find(func ((_, profile)) =
+      profile.familyId == familyId and profile.claimedByUserId == ?caller
+    );
+    switch (owned) {
+      case (?(_, profile)) { return ?profile };
+      case null {};
+    };
+    let pending = claims.toArray().find(func c =
+      c.familyId == familyId and c.requestingUserId == caller and c.status == #Pending
+    );
+    switch (pending) {
+      case (?claim) { getProfileForFamily(profiles, familyId, claim.personId) };
+      case null { null };
+    };
+  };
+
+  /// Lists the profiles of `familyId` for Explore Family / Person Profile
+  /// hydration. Requires the caller to be an approved member of `familyId` or
+  /// an active Steward of `familyId`; profiles from other families are never
+  /// included.
+  public func listProfilesForFamily(
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    familyId : FamilyTypes.FamilyId,
+  ) : [Types.PersonProfile] {
+    profiles.entries().filter(func ((_, profile)) =
+      profile.familyId == familyId
+    ).map(func ((_, profile)) = profile).toArray();
+  };
+
+  /// Public claim-discovery read: returns the minimal profile data for
+  /// `familyId` only, preserving the existing minimal-data behavior. Results
+  /// are scoped to the requested family.
+  public func listClaimDiscoveryProfilesForFamily(
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    familyId : FamilyTypes.FamilyId,
+  ) : [Types.PersonProfile] {
+    listProfilesForFamily(profiles, familyId);
+  };
+
+  // ---------------------------------------------------------------------------
+  // Family-scoped profile claims
+  // ---------------------------------------------------------------------------
+
+  /// Creates a pending profile claim for an unclaimed living profile in
+  /// `familyId` without granting ownership. The claim belongs to exactly
+  /// `familyId`. Requires sign-in.
+  public func requestClaimForFamily(
     profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
     claims : List.List<Types.ProfileClaim>,
     notifications : List.List<Types.Notification>,
+    familyId : FamilyTypes.FamilyId,
     personId : Types.PersonId,
     caller : Principal.Principal,
   ) : Result.Result<Types.ProfileClaim, Types.ClaimError> {
     if (caller.isAnonymous()) {
       return #err(#NotSignedIn);
     };
-    // Enforce authoritative ownership and no-duplicate-claims rules via the
-    // claim-persistence checks: a user cannot claim a profile they already own
-    // or have a pending claim on, and a profile with an approved owner cannot be
-    // claimed by anyone else.
-    let eligibility = ClaimPersistenceLib.checkClaimEligibility(profiles, claims, personId, caller);
-    if (not eligibility.eligible) {
-      return #err(claimErrorFromEligibility(eligibility.reason));
+    let profile = switch (getProfileForFamily(profiles, familyId, personId)) {
+      case (?p) { p };
+      case null { return #err(#ProfileNotFound) };
     };
-    switch (profiles.get(personId)) {
-      case null { #err(#ProfileNotFound) };
-      case (?profile) {
-        if (profile.livingStatus == #Deceased) {
-          return #err(#DeceasedProfile);
-        };
-        let claim : Types.ProfileClaim = {
-          familyId = FamilyTypes.DEFAULT_FAMILY_ID;
-          id = nextId(claims.toArray().map(func c = c.id));
-          personId;
-          requestingUserId = caller;
-          status = #Pending;
-          submittedDate = Time.now();
-          reviewedBy = null;
-          reviewedDate = null;
-        };
-        claims.add(claim);
-        notifications.add({
-          id = nextId(notifications.toArray().map(func n = n.id));
-          recipient = caller;
-          notificationType = #ProfileClaimRequested;
-          message = "Your profile claim for " # profile.name # " is pending review.";
-          createdAt = Time.now();
-          read = false;
-        });
-        #ok(claim);
-      };
+    switch (profile.livingStatus) {
+      case (#Deceased) { return #err(#DeceasedProfile) };
+      case (#Living) {};
     };
+    switch (profile.claimedByUserId) {
+      case (?_) { return #err(#AlreadyClaimed) };
+      case null {};
+    };
+    let alreadyPending = claims.toArray().any(func c =
+      c.familyId == familyId and c.personId == personId and c.requestingUserId == caller and c.status == #Pending
+    );
+    if (alreadyPending) {
+      return #err(#AlreadyPending);
+    };
+    let claim : Types.ProfileClaim = {
+      familyId;
+      id = nextClaimId(claims);
+      personId;
+      requestingUserId = caller;
+      status = #Pending;
+      submittedDate = Time.now();
+      reviewedBy = null;
+      reviewedDate = null;
+    };
+    claims.add(claim);
+    notifications.add({
+      id = nextNotificationId(notifications);
+      recipient = caller;
+      notificationType = #ProfileClaimRequested;
+      message = "Your profile claim request was submitted for review.";
+      createdAt = Time.now();
+      read = false;
+    });
+    #ok(claim);
   };
 
-  /// Approves a pending profile claim, marking the profile claimed and
-  /// associating it with the requesting user. Family Steward only.
-  public func approveClaim(
+  /// Approves a pending profile claim in `familyId`, marking the profile
+  /// claimed and associating it with the requesting user. The claim must belong
+  /// to `familyId`; approval authority is the Steward authority for that family.
+  public func approveClaimForFamily(
     profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
     claims : List.List<Types.ProfileClaim>,
     notifications : List.List<Types.Notification>,
     auditLog : List.List<GovernanceTypes.AuditEntry>,
+    familyId : FamilyTypes.FamilyId,
     claimId : Nat,
     reviewer : Principal.Principal,
   ) : ?Types.ProfileClaim {
-    switch (claims.find(func c = c.id == claimId and c.status == #Pending)) {
-      case null { null };
-      case (?claim) {
-        let updated : Types.ProfileClaim = {
-          claim with
-          status = #Approved;
-          reviewedBy = ?reviewer;
-          reviewedDate = ?Time.now();
-        };
-        replaceClaim(claims, updated);
-        switch (profiles.get(claim.personId)) {
-          case (?profile) {
-            let claimedProfile : Types.PersonProfile = {
-              profile with
-              claimStatus = #Claimed;
-              claimedByUserId = ?claim.requestingUserId;
-            };
-            profiles.add(claim.personId, claimedProfile);
-          };
-          case null {};
-        };
-        notifications.add({
-          id = nextId(notifications.toArray().map(func n = n.id));
-          recipient = claim.requestingUserId;
-          notificationType = #ProfileClaimReviewed;
-          message = "Your profile claim was approved.";
-          createdAt = Time.now();
-          read = false;
-        });
-        appendAudit(auditLog, #ClaimApproved, reviewer, [claim.personId], "Approved profile claim for " # claim.personId);
-        ?updated;
-      };
+    let claim = switch (claims.toArray().find(func c = c.id == claimId and c.familyId == familyId)) {
+      case (?c) { c };
+      case null { return null };
     };
+    if (claim.status != #Pending) {
+      return null;
+    };
+    let profile = switch (getProfileForFamily(profiles, familyId, claim.personId)) {
+      case (?p) { p };
+      case null { return null };
+    };
+    let updatedProfile : Types.PersonProfile = {
+      familyId = profile.familyId;
+      personId = profile.personId;
+      name = profile.name;
+      livingStatus = profile.livingStatus;
+      claimStatus = #Claimed;
+      claimedByUserId = ?claim.requestingUserId;
+      preferredName = profile.preferredName;
+      firstName = profile.firstName;
+      middleName = profile.middleName;
+      lastName = profile.lastName;
+      suffix = profile.suffix;
+      nickname = profile.nickname;
+      story = profile.story;
+      shortBio = profile.shortBio;
+      longerStory = profile.longerStory;
+      occupation = profile.occupation;
+      birthInfo = profile.birthInfo;
+      birthDate = profile.birthDate;
+      birthplace = profile.birthplace;
+      currentLocation = profile.currentLocation;
+      timeline = profile.timeline;
+      privacySettings = profile.privacySettings;
+    };
+    TenancyLib.putProfileForFamily(profiles, familyId, updatedProfile);
+    let now = Time.now();
+    let updatedClaim : Types.ProfileClaim = {
+      familyId = claim.familyId;
+      id = claim.id;
+      personId = claim.personId;
+      requestingUserId = claim.requestingUserId;
+      status = #Approved;
+      submittedDate = claim.submittedDate;
+      reviewedBy = ?reviewer;
+      reviewedDate = ?now;
+    };
+    replaceClaim(claims, updatedClaim);
+    notifications.add({
+      id = nextNotificationId(notifications);
+      recipient = claim.requestingUserId;
+      notificationType = #ProfileClaimReviewed;
+      message = "Your profile claim was approved.";
+      createdAt = now;
+      read = false;
+    });
+    auditLog.add({
+      id = nextAuditId(auditLog);
+      actionType = #ClaimApproved;
+      actorAccountId = reviewer;
+      affectedPersonIds = [claim.personId];
+      timestamp = now;
+      summary = "Approved a profile claim for " # claim.personId;
+    });
+    ?updatedClaim;
   };
 
-  /// Rejects a pending profile claim. Family Steward only.
-  public func rejectClaim(
+  /// Rejects a pending profile claim in `familyId`. The claim must belong to
+  /// `familyId`; rejection authority is the Steward authority for that family.
+  public func rejectClaimForFamily(
     claims : List.List<Types.ProfileClaim>,
     notifications : List.List<Types.Notification>,
     auditLog : List.List<GovernanceTypes.AuditEntry>,
+    familyId : FamilyTypes.FamilyId,
     claimId : Nat,
     reviewer : Principal.Principal,
   ) : ?Types.ProfileClaim {
-    switch (claims.find(func c = c.id == claimId and c.status == #Pending)) {
-      case null { null };
-      case (?claim) {
-        let updated : Types.ProfileClaim = {
-          claim with
-          status = #Rejected;
-          reviewedBy = ?reviewer;
-          reviewedDate = ?Time.now();
-        };
-        replaceClaim(claims, updated);
-        notifications.add({
-          id = nextId(notifications.toArray().map(func n = n.id));
-          recipient = claim.requestingUserId;
-          notificationType = #ProfileClaimReviewed;
-          message = "Your profile claim was not approved.";
-          createdAt = Time.now();
-          read = false;
-        });
-        appendAudit(auditLog, #ClaimRejected, reviewer, [claim.personId], "Rejected profile claim for " # claim.personId);
-        ?updated;
-      };
+    let claim = switch (claims.toArray().find(func c = c.id == claimId and c.familyId == familyId)) {
+      case (?c) { c };
+      case null { return null };
     };
+    if (claim.status != #Pending) {
+      return null;
+    };
+    let now = Time.now();
+    let updatedClaim : Types.ProfileClaim = {
+      familyId = claim.familyId;
+      id = claim.id;
+      personId = claim.personId;
+      requestingUserId = claim.requestingUserId;
+      status = #Rejected;
+      submittedDate = claim.submittedDate;
+      reviewedBy = ?reviewer;
+      reviewedDate = ?now;
+    };
+    replaceClaim(claims, updatedClaim);
+    notifications.add({
+      id = nextNotificationId(notifications);
+      recipient = claim.requestingUserId;
+      notificationType = #ProfileClaimReviewed;
+      message = "Your profile claim was rejected.";
+      createdAt = now;
+      read = false;
+    });
+    auditLog.add({
+      id = nextAuditId(auditLog);
+      actionType = #ClaimRejected;
+      actorAccountId = reviewer;
+      affectedPersonIds = [claim.personId];
+      timestamp = now;
+      summary = "Rejected a profile claim";
+    });
+    ?updatedClaim;
   };
 
-  /// Lists all profile claim requests for the Family Steward review area.
-  public func listClaims(
+  /// Lists the profile claim requests of `familyId` for the Steward review
+  /// area. Claims from other families are never included.
+  public func listClaimsForFamily(
     claims : List.List<Types.ProfileClaim>,
+    familyId : FamilyTypes.FamilyId,
   ) : [Types.ProfileClaim] {
-    claims.toArray();
+    claims.toArray().filter(func c = c.familyId == familyId);
   };
 
-  /// Returns the current caller's own claim on a specific profile, or `null`
-  /// when the caller has no claim on that profile. Not gated to admin — any
-  /// signed-in caller may query their own claim.
-  public func getMyClaim(
+  /// Returns the caller's own claim on a specific profile in `familyId`, or
+  /// `null` when the caller has no claim on that profile in that family. There
+  /// is no cross-family claim lookup by personId alone.
+  public func getMyClaimForFamily(
     claims : List.List<Types.ProfileClaim>,
+    familyId : FamilyTypes.FamilyId,
     personId : Types.PersonId,
     caller : Principal.Principal,
   ) : ?Types.ProfileClaim {
-    claims.find(func c = c.personId == personId and c.requestingUserId == caller);
-  };
-
-  /// Returns the signed-in caller's own linked/claimed Person Profile, or, when
-  /// none is linked, the caller's pending profile (a profile created via
-  /// `createMyself` keyed by the caller's principal, or a profile with a pending
-  /// claim by the caller). Returns `null` when the caller has no profile. Not
-  /// gated to admin — any signed-in caller may query their own profile.
-  public func getMyProfile(
-    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
-    claims : List.List<Types.ProfileClaim>,
-    caller : Principal.Principal,
-  ) : ?Types.PersonProfile {
-    // 1. Linked/claimed profile owned by the caller.
-    for ((_, profile) in profiles.entries()) {
-      if (profile.claimedByUserId == ?caller) {
-        return ?profile;
-      };
-    };
-    // 2. Pending profile created via createMyself (keyed by the caller's
-    //    principal).
-    switch (profiles.get(caller.toText())) {
-      case (?p) { return ?p };
-      case null {};
-    };
-    // 3. Profile with a pending claim by the caller.
-    for (claim in claims.toArray().values()) {
-      if (claim.requestingUserId == caller and claim.status == #Pending) {
-        switch (profiles.get(claim.personId)) {
-          case (?p) { return ?p };
-          case null {};
-        };
-      };
-    };
-    null;
-  };
-
-  /// Returns the signed-in caller's own pending relationship requests — those
-  /// involving a profile the caller owns or created. Not gated to admin — any
-  /// signed-in caller may query their own pending relationship state.
-  public func getMyRelationshipRequests(
-    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
-    requests : List.List<Types.RelationshipRequest>,
-    caller : Principal.Principal,
-  ) : [Types.RelationshipRequest] {
-    let ownIds = List.empty<Types.PersonId>();
-    for ((personId, profile) in profiles.entries()) {
-      if (profile.claimedByUserId == ?caller or personId == caller.toText()) {
-        ownIds.add(personId);
-      };
-    };
-    let own = ownIds.toArray();
-    requests.toArray().filter(func r =
-      r.status == #Pending and
-      (own.any(func id = id == r.requestingPersonId) or own.any(func id = id == r.relatedPersonId))
+    claims.toArray().find(func c =
+      c.familyId == familyId and c.personId == personId and c.requestingUserId == caller
     );
   };
 
-  /// Searches the authoritative shared profile data for possible duplicate
-  /// matches by name. Names are normalized before matching (case-insensitive,
-  /// punctuation ignored, periods normalized, extra spaces collapsed, suffix
-  /// variants Jr/Jr./Sr/Sr./II/III/IV recognized, partial/fuzzy allowed). Each
-  /// match carries the person's name and their parents when known, derived from
-  /// the confirmed relationship graph.
-  public func searchMatches(
+  /// Searches the authoritative shared profile data of `familyId` for possible
+  /// duplicate matches by name. Only profiles belonging to `familyId` are
+  /// considered; parents are derived from `familyId`'s confirmed graph.
+  public func searchMatchesForFamily(
     profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
     relationships : List.List<Types.Relationship>,
+    familyId : FamilyTypes.FamilyId,
     name : Text,
   ) : [Types.PersonMatch] {
-    let normalized = normalizeName(name);
-    if (normalized.size() == 0) {
+    let term = name.toLower();
+    if (term == "") {
       return [];
     };
-    let matches = List.empty<Types.PersonMatch>();
-    for ((personId, profile) in profiles.entries()) {
-      let candidate = normalizeName(profile.name);
-      if (candidate.size() > 0 and isMatch(normalized, candidate)) {
-        matches.add({
-          personId;
-          name = profile.name;
-          parents = parentsOf(profiles, relationships, personId);
-        });
-      };
-    };
-    matches.toArray();
-  };
-
-  /// Normalizes a person name for duplicate matching: lower-cases, strips
-  /// punctuation, normalizes periods and whitespace, and canonicalizes common
-  /// suffix variants (Jr/Jr., Sr/Sr., II/III/IV).
-  public func normalizeName(name : Text) : Text {
-    let words = List.empty<Text>();
-    for (word in name.toLower().tokens(#predicate (func ch = ch.isWhitespace()))) {
-      var clean = "";
-      for (ch in word.chars()) {
-        if (ch.isAlphabetic() or ch.isDigit()) {
-          clean := clean # ch.toText();
-        };
-      };
-      if (clean.size() > 0) {
-        words.add(clean);
-      };
-    };
-    words.toArray().values().join(" ");
+    listProfilesForFamily(profiles, familyId).filter(func profile =
+      profile.name.toLower().contains(#text term)
+    ).map(func profile = {
+      personId = profile.personId;
+      name = profile.name;
+      parents = parentNamesForFamily(relationships, familyId, profile.personId);
+    });
   };
 
   /// Creates a minimal person profile for a user who does not already exist in
-  /// the family. The user must then connect to an existing family member via a
-  /// relationship request. The creator owns the new profile.
-  public func createMyself(
+  /// `familyId`. The created profile belongs to `familyId`; the creator owns
+  /// it. Ownership in another family does not block creation here.
+  public func createMyselfForFamily(
     profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
     claims : List.List<Types.ProfileClaim>,
     notifications : List.List<Types.Notification>,
+    familyId : FamilyTypes.FamilyId,
     name : Text,
     caller : Principal.Principal,
   ) : Result.Result<Types.PersonProfile, Types.CreateError> {
     if (caller.isAnonymous()) {
       return #err(#NotSignedIn);
     };
-    // Do not create a duplicate when the caller already owns a profile (approved
-    // claim) or has a pending claim on one.
-    if (ClaimPersistenceLib.callerHasActiveOwnership(profiles, claims, caller)) {
+    let alreadyOwned = profiles.entries().any(func ((_, profile)) =
+      profile.familyId == familyId and profile.claimedByUserId == ?caller
+    );
+    if (alreadyOwned) {
       return #err(#AlreadyOwned);
     };
-    let personId = caller.toText();
+    let personId = nextPersonId(profiles, familyId, name);
     let profile : Types.PersonProfile = {
-      familyId = FamilyTypes.DEFAULT_FAMILY_ID;
+      familyId;
       personId;
       name;
       livingStatus = #Living;
@@ -313,17 +366,42 @@ module {
       timeline = null;
       privacySettings = null;
     };
-    profiles.add(personId, profile);
+    TenancyLib.putProfileForFamily(profiles, familyId, profile);
+    let now = Time.now();
+    claims.add({
+      familyId;
+      id = nextClaimId(claims);
+      personId;
+      requestingUserId = caller;
+      status = #Approved;
+      submittedDate = now;
+      reviewedBy = ?caller;
+      reviewedDate = ?now;
+    });
+    notifications.add({
+      id = nextNotificationId(notifications);
+      recipient = caller;
+      notificationType = #ProfileClaimReviewed;
+      message = "Your profile was created and linked to your account.";
+      createdAt = now;
+      read = false;
+    });
     #ok(profile);
   };
 
-  /// Proposes a new relationship between two people. The request starts pending
-  /// and is never treated as confirmed until a Family Steward approves it.
-  public func proposeRelationship(
+  // ---------------------------------------------------------------------------
+  // Family-scoped relationships
+  // ---------------------------------------------------------------------------
+
+  /// Proposes a new relationship between two people in `familyId`. Both
+  /// referenced people must belong to `familyId`; the request belongs to
+  /// `familyId` and starts pending.
+  public func proposeRelationshipForFamily(
     profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
     relationships : List.List<Types.Relationship>,
     requests : List.List<Types.RelationshipRequest>,
     notifications : List.List<Types.Notification>,
+    familyId : FamilyTypes.FamilyId,
     fromPersonId : Types.PersonId,
     toPersonId : Types.PersonId,
     relationshipType : Types.RelationshipType,
@@ -332,15 +410,23 @@ module {
     if (caller.isAnonymous()) {
       return #err(#NotSignedIn);
     };
-    if (profiles.get(fromPersonId) == null or profiles.get(toPersonId) == null) {
-      return #err(#PersonNotFound);
+    switch (getProfileForFamily(profiles, familyId, fromPersonId)) {
+      case null { return #err(#PersonNotFound) };
+      case (?_) {};
     };
-    if (requests.toArray().any(func r = r.status == #Pending and r.requestingPersonId == fromPersonId and r.relatedPersonId == toPersonId)) {
+    switch (getProfileForFamily(profiles, familyId, toPersonId)) {
+      case null { return #err(#PersonNotFound) };
+      case (?_) {};
+    };
+    let duplicate = requests.toArray().any(func r =
+      r.familyId == familyId and r.requestingPersonId == fromPersonId and r.relatedPersonId == toPersonId and r.status == #Pending
+    );
+    if (duplicate) {
       return #err(#DuplicateRequest);
     };
     let request : Types.RelationshipRequest = {
-      familyId = FamilyTypes.DEFAULT_FAMILY_ID;
-      id = nextId(requests.toArray().map(func r = r.id));
+      familyId;
+      id = nextRelationshipRequestId(requests);
       requestingPersonId = fromPersonId;
       relatedPersonId = toPersonId;
       proposedRelationship = relationshipType;
@@ -351,7 +437,7 @@ module {
     };
     requests.add(request);
     notifications.add({
-      id = nextId(notifications.toArray().map(func n = n.id));
+      id = nextNotificationId(notifications);
       recipient = caller;
       notificationType = #RelationshipRequested;
       message = "Your relationship request is pending review.";
@@ -361,15 +447,406 @@ module {
     #ok(request);
   };
 
-  /// Lists all relationship requests for the Family Steward review area.
+  /// Lists the relationship requests of `familyId` for the Steward review area.
+  /// Requests from other families are never included.
+  public func listRelationshipRequestsForFamily(
+    requests : List.List<Types.RelationshipRequest>,
+    familyId : FamilyTypes.FamilyId,
+  ) : [Types.RelationshipRequest] {
+    requests.toArray().filter(func r = r.familyId == familyId);
+  };
+
+  /// Approves a relationship request in `familyId`, adding/confirming the
+  /// relationship in that family's graph. The request must belong to
+  /// `familyId`; approval authority is the Steward authority for that family.
+  public func approveRelationshipForFamily(
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    relationships : List.List<Types.Relationship>,
+    requests : List.List<Types.RelationshipRequest>,
+    notifications : List.List<Types.Notification>,
+    auditLog : List.List<GovernanceTypes.AuditEntry>,
+    familyId : FamilyTypes.FamilyId,
+    requestId : Nat,
+    reviewer : Principal.Principal,
+  ) : ?Types.RelationshipRequest {
+    let request = switch (requests.toArray().find(func r = r.id == requestId and r.familyId == familyId)) {
+      case (?r) { r };
+      case null { return null };
+    };
+    if (request.status != #Pending) {
+      return null;
+    };
+    switch (getProfileForFamily(profiles, familyId, request.requestingPersonId)) {
+      case null { return null };
+      case (?_) {};
+    };
+    switch (getProfileForFamily(profiles, familyId, request.relatedPersonId)) {
+      case null { return null };
+      case (?_) {};
+    };
+    let now = Time.now();
+    relationships.add({
+      familyId;
+      id = nextRelationshipId(relationships);
+      fromPersonId = request.requestingPersonId;
+      toPersonId = request.relatedPersonId;
+      relationshipType = request.proposedRelationship;
+      status = #Confirmed;
+    });
+    let updatedRequest : Types.RelationshipRequest = {
+      familyId = request.familyId;
+      id = request.id;
+      requestingPersonId = request.requestingPersonId;
+      relatedPersonId = request.relatedPersonId;
+      proposedRelationship = request.proposedRelationship;
+      status = #Approved;
+      submittedDate = request.submittedDate;
+      reviewer = ?reviewer;
+      reviewedDate = ?now;
+    };
+    replaceRelationshipRequest(requests, updatedRequest);
+    notifications.add({
+      id = nextNotificationId(notifications);
+      recipient = reviewer;
+      notificationType = #RelationshipReviewed;
+      message = "A relationship request was approved.";
+      createdAt = now;
+      read = false;
+    });
+    auditLog.add({
+      id = nextAuditId(auditLog);
+      actionType = #RelationshipRequestApproved;
+      actorAccountId = reviewer;
+      affectedPersonIds = [request.requestingPersonId, request.relatedPersonId];
+      timestamp = now;
+      summary = "Approved a relationship request";
+    });
+    ?updatedRequest;
+  };
+
+  /// Rejects a relationship request in `familyId`. The request must belong to
+  /// `familyId`; rejection authority is the Steward authority for that family.
+  public func rejectRelationshipForFamily(
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    requests : List.List<Types.RelationshipRequest>,
+    notifications : List.List<Types.Notification>,
+    auditLog : List.List<GovernanceTypes.AuditEntry>,
+    familyId : FamilyTypes.FamilyId,
+    requestId : Nat,
+    reviewer : Principal.Principal,
+  ) : ?Types.RelationshipRequest {
+    let request = switch (requests.toArray().find(func r = r.id == requestId and r.familyId == familyId)) {
+      case (?r) { r };
+      case null { return null };
+    };
+    if (request.status != #Pending) {
+      return null;
+    };
+    let now = Time.now();
+    let updatedRequest : Types.RelationshipRequest = {
+      familyId = request.familyId;
+      id = request.id;
+      requestingPersonId = request.requestingPersonId;
+      relatedPersonId = request.relatedPersonId;
+      proposedRelationship = request.proposedRelationship;
+      status = #Rejected;
+      submittedDate = request.submittedDate;
+      reviewer = ?reviewer;
+      reviewedDate = ?now;
+    };
+    replaceRelationshipRequest(requests, updatedRequest);
+    notifications.add({
+      id = nextNotificationId(notifications);
+      recipient = reviewer;
+      notificationType = #RelationshipReviewed;
+      message = "A relationship request was rejected.";
+      createdAt = now;
+      read = false;
+    });
+    auditLog.add({
+      id = nextAuditId(auditLog);
+      actionType = #RelationshipRequestRejected;
+      actorAccountId = reviewer;
+      affectedPersonIds = [request.requestingPersonId, request.relatedPersonId];
+      timestamp = now;
+      summary = "Rejected a relationship request";
+    });
+    ?updatedRequest;
+  };
+
+  /// Returns a relationship request in `familyId` to pending state. The request
+  /// must belong to `familyId`; authority is the Steward authority for that
+  /// family.
+  public func setRelationshipPendingForFamily(
+    requests : List.List<Types.RelationshipRequest>,
+    auditLog : List.List<GovernanceTypes.AuditEntry>,
+    familyId : FamilyTypes.FamilyId,
+    requestId : Nat,
+    reviewer : Principal.Principal,
+  ) : ?Types.RelationshipRequest {
+    let request = switch (requests.toArray().find(func r = r.id == requestId and r.familyId == familyId)) {
+      case (?r) { r };
+      case null { return null };
+    };
+    let now = Time.now();
+    let updatedRequest : Types.RelationshipRequest = {
+      familyId = request.familyId;
+      id = request.id;
+      requestingPersonId = request.requestingPersonId;
+      relatedPersonId = request.relatedPersonId;
+      proposedRelationship = request.proposedRelationship;
+      status = #Pending;
+      submittedDate = request.submittedDate;
+      reviewer = ?reviewer;
+      reviewedDate = ?now;
+    };
+    replaceRelationshipRequest(requests, updatedRequest);
+    auditLog.add({
+      id = nextAuditId(auditLog);
+      actionType = #RelationshipRequestPending;
+      actorAccountId = reviewer;
+      affectedPersonIds = [request.requestingPersonId, request.relatedPersonId];
+      timestamp = now;
+      summary = "Returned a relationship request to pending";
+    });
+    ?updatedRequest;
+  };
+
+  /// Returns the caller's own pending relationship requests in `familyId` —
+  /// those involving a profile the caller owns or created in that family.
+  public func getMyRelationshipRequestsForFamily(
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    requests : List.List<Types.RelationshipRequest>,
+    caller : Principal.Principal,
+    familyId : FamilyTypes.FamilyId,
+  ) : [Types.RelationshipRequest] {
+    let ownedPersonIds = profiles.entries().filter(func ((personId, profile)) =
+      profile.familyId == familyId and (profile.claimedByUserId == ?caller or personId == caller.toText())
+    ).map(func ((personId, _)) = personId).toArray();
+    requests.toArray().filter(func r =
+      r.familyId == familyId and r.status == #Pending and (
+        ownedPersonIds.contains(r.requestingPersonId) or ownedPersonIds.contains(r.relatedPersonId)
+      )
+    );
+  };
+
+  /// Updates an approved owner's own living profile fields in `familyId`, or,
+  /// for a Steward of `familyId`, the fields of an unclaimed/historical profile
+  /// in that family. Never rewrites family relationships directly.
+  public func updateOwnProfileForFamily(
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    familyId : FamilyTypes.FamilyId,
+    personId : Types.PersonId,
+    caller : Principal.Principal,
+    isSteward : Bool,
+    edits : Types.ProfileEdits,
+  ) : Result.Result<Types.PersonProfile, Types.EditError> {
+    if (caller.isAnonymous()) {
+      return #err(#NotSignedIn);
+    };
+    let profile = switch (getProfileForFamily(profiles, familyId, personId)) {
+      case (?p) { p };
+      case null { return #err(#ProfileNotFound) };
+    };
+    let isOwner = profile.claimedByUserId == ?caller;
+    if (not isOwner) {
+      // A Steward may only edit an unclaimed/historical profile in this family;
+      // a claimed profile is editable by its owner alone.
+      if (not isSteward or profile.claimStatus == #Claimed) {
+        return #err(#NotOwner);
+      };
+    } else {
+      switch (profile.livingStatus) {
+        case (#Deceased) { return #err(#DeceasedProfile) };
+        case (#Living) {};
+      };
+    };
+    let updated : Types.PersonProfile = {
+      familyId = profile.familyId;
+      personId = profile.personId;
+      name = profile.name;
+      livingStatus = edits.livingStatus ?? profile.livingStatus;
+      claimStatus = profile.claimStatus;
+      claimedByUserId = profile.claimedByUserId;
+      preferredName = pickEdit(edits.preferredName, profile.preferredName);
+      firstName = pickEdit(edits.firstName, profile.firstName);
+      middleName = pickEdit(edits.middleName, profile.middleName);
+      lastName = pickEdit(edits.lastName, profile.lastName);
+      suffix = pickEdit(edits.suffix, profile.suffix);
+      nickname = pickEdit(edits.nickname, profile.nickname);
+      story = pickEdit(edits.story, profile.story);
+      shortBio = pickEdit(edits.shortBio, profile.shortBio);
+      longerStory = pickEdit(edits.longerStory, profile.longerStory);
+      occupation = pickEdit(edits.occupation, profile.occupation);
+      birthInfo = pickEdit(edits.birthInfo, profile.birthInfo);
+      birthDate = pickEdit(edits.birthDate, profile.birthDate);
+      birthplace = pickEdit(edits.birthplace, profile.birthplace);
+      currentLocation = pickEdit(edits.currentLocation, profile.currentLocation);
+      timeline = pickEdit(edits.timeline, profile.timeline);
+      privacySettings = pickEdit(edits.privacySettings, profile.privacySettings);
+    };
+    TenancyLib.putProfileForFamily(profiles, familyId, updated);
+    #ok(updated);
+  };
+
+  /// Removes a duplicate test-created profile in `familyId` and any pending
+  /// relationship requests or claims tied only to it. The profile must belong
+  /// to `familyId`; authority is the Steward authority for that family.
+  public func removeDuplicateProfileForFamily(
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    claims : List.List<Types.ProfileClaim>,
+    relationshipRequests : List.List<Types.RelationshipRequest>,
+    notifications : List.List<Types.Notification>,
+    familyId : FamilyTypes.FamilyId,
+    personId : Types.PersonId,
+    caller : Principal.Principal,
+  ) : Result.Result<(), Types.RemoveError> {
+    if (caller.isAnonymous()) {
+      return #err(#NotSignedIn);
+    };
+    switch (getProfileForFamily(profiles, familyId, personId)) {
+      case null { return #err(#ProfileNotFound) };
+      case (?_) {};
+    };
+    TenancyLib.removeProfileForFamily(profiles, familyId, personId);
+    removeClaimsForPerson(claims, familyId, personId);
+    removeRelationshipRequestsForPerson(relationshipRequests, familyId, personId);
+    ignore notifications;
+    #ok(());
+  };
+
+  // ---------------------------------------------------------------------------
+  // TEMPORARY Tenancy 1C compatibility wrappers.
+  //
+  // Deprecated single-family forms: each delegates to its family-scoped
+  // counterpart with `FamilyTypes.DEFAULT_FAMILY_ID`, so current Norwood
+  // behavior for familyId "norwood" is unchanged. They contain no logic of
+  // their own and will be removed once the frontend passes an explicit
+  // familyId everywhere.
+  // ---------------------------------------------------------------------------
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper for `getProfileForFamily`.
+  public func getProfile(
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    personId : Types.PersonId,
+  ) : ?Types.PersonProfile {
+    getProfileForFamily(profiles, FamilyTypes.DEFAULT_FAMILY_ID, personId);
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper for `requestClaimForFamily`.
+  public func requestClaim(
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    claims : List.List<Types.ProfileClaim>,
+    notifications : List.List<Types.Notification>,
+    personId : Types.PersonId,
+    caller : Principal.Principal,
+  ) : Result.Result<Types.ProfileClaim, Types.ClaimError> {
+    requestClaimForFamily(profiles, claims, notifications, FamilyTypes.DEFAULT_FAMILY_ID, personId, caller);
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper for `approveClaimForFamily`.
+  public func approveClaim(
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    claims : List.List<Types.ProfileClaim>,
+    notifications : List.List<Types.Notification>,
+    auditLog : List.List<GovernanceTypes.AuditEntry>,
+    claimId : Nat,
+    reviewer : Principal.Principal,
+  ) : ?Types.ProfileClaim {
+    approveClaimForFamily(profiles, claims, notifications, auditLog, FamilyTypes.DEFAULT_FAMILY_ID, claimId, reviewer);
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper for `rejectClaimForFamily`.
+  public func rejectClaim(
+    claims : List.List<Types.ProfileClaim>,
+    notifications : List.List<Types.Notification>,
+    auditLog : List.List<GovernanceTypes.AuditEntry>,
+    claimId : Nat,
+    reviewer : Principal.Principal,
+  ) : ?Types.ProfileClaim {
+    rejectClaimForFamily(claims, notifications, auditLog, FamilyTypes.DEFAULT_FAMILY_ID, claimId, reviewer);
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper for `listClaimsForFamily`.
+  public func listClaims(
+    claims : List.List<Types.ProfileClaim>,
+  ) : [Types.ProfileClaim] {
+    listClaimsForFamily(claims, FamilyTypes.DEFAULT_FAMILY_ID);
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper for `getMyClaimForFamily`.
+  public func getMyClaim(
+    claims : List.List<Types.ProfileClaim>,
+    personId : Types.PersonId,
+    caller : Principal.Principal,
+  ) : ?Types.ProfileClaim {
+    getMyClaimForFamily(claims, FamilyTypes.DEFAULT_FAMILY_ID, personId, caller);
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper for `getMyProfileForFamily`.
+  public func getMyProfile(
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    claims : List.List<Types.ProfileClaim>,
+    caller : Principal.Principal,
+  ) : ?Types.PersonProfile {
+    getMyProfileForFamily(profiles, claims, caller, FamilyTypes.DEFAULT_FAMILY_ID);
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper for
+  /// `getMyRelationshipRequestsForFamily`.
+  public func getMyRelationshipRequests(
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    requests : List.List<Types.RelationshipRequest>,
+    caller : Principal.Principal,
+  ) : [Types.RelationshipRequest] {
+    getMyRelationshipRequestsForFamily(profiles, requests, caller, FamilyTypes.DEFAULT_FAMILY_ID);
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper for `searchMatchesForFamily`.
+  public func searchMatches(
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    relationships : List.List<Types.Relationship>,
+    name : Text,
+  ) : [Types.PersonMatch] {
+    searchMatchesForFamily(profiles, relationships, FamilyTypes.DEFAULT_FAMILY_ID, name);
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper for `createMyselfForFamily`.
+  public func createMyself(
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    claims : List.List<Types.ProfileClaim>,
+    notifications : List.List<Types.Notification>,
+    name : Text,
+    caller : Principal.Principal,
+  ) : Result.Result<Types.PersonProfile, Types.CreateError> {
+    createMyselfForFamily(profiles, claims, notifications, FamilyTypes.DEFAULT_FAMILY_ID, name, caller);
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper for
+  /// `proposeRelationshipForFamily`.
+  public func proposeRelationship(
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    relationships : List.List<Types.Relationship>,
+    requests : List.List<Types.RelationshipRequest>,
+    notifications : List.List<Types.Notification>,
+    fromPersonId : Types.PersonId,
+    toPersonId : Types.PersonId,
+    relationshipType : Types.RelationshipType,
+    caller : Principal.Principal,
+  ) : Result.Result<Types.RelationshipRequest, Types.RelationshipError> {
+    proposeRelationshipForFamily(profiles, relationships, requests, notifications, FamilyTypes.DEFAULT_FAMILY_ID, fromPersonId, toPersonId, relationshipType, caller);
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper for
+  /// `listRelationshipRequestsForFamily`.
   public func listRelationshipRequests(
     requests : List.List<Types.RelationshipRequest>,
   ) : [Types.RelationshipRequest] {
-    requests.toArray();
+    listRelationshipRequestsForFamily(requests, FamilyTypes.DEFAULT_FAMILY_ID);
   };
 
-  /// Approves a relationship request, adding/confirming the relationship in the
-  /// shared family graph. Family Steward only.
+  /// TEMPORARY Tenancy 1C compatibility wrapper for
+  /// `approveRelationshipForFamily`.
   public func approveRelationship(
     profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
     relationships : List.List<Types.Relationship>,
@@ -379,39 +856,11 @@ module {
     requestId : Nat,
     reviewer : Principal.Principal,
   ) : ?Types.RelationshipRequest {
-    switch (requests.find(func r = r.id == requestId and r.status == #Pending)) {
-      case null { null };
-      case (?request) {
-        let updated : Types.RelationshipRequest = {
-          request with
-          status = #Approved;
-          reviewer = ?reviewer;
-          reviewedDate = ?Time.now();
-        };
-        replaceRelationshipRequest(requests, updated);
-        relationships.add({
-          familyId = FamilyTypes.DEFAULT_FAMILY_ID;
-          id = nextId(relationships.toArray().map(func r = r.id));
-          fromPersonId = request.requestingPersonId;
-          toPersonId = request.relatedPersonId;
-          relationshipType = request.proposedRelationship;
-          status = #Confirmed;
-        });
-        notifications.add({
-          id = nextId(notifications.toArray().map(func n = n.id));
-          recipient = reviewer;
-          notificationType = #RelationshipReviewed;
-          message = "A relationship request was approved.";
-          createdAt = Time.now();
-          read = false;
-        });
-        appendAudit(auditLog, #RelationshipRequestApproved, reviewer, [request.requestingPersonId, request.relatedPersonId], "Approved relationship request between " # request.requestingPersonId # " and " # request.relatedPersonId);
-        ?updated;
-      };
-    };
+    approveRelationshipForFamily(profiles, relationships, requests, notifications, auditLog, FamilyTypes.DEFAULT_FAMILY_ID, requestId, reviewer);
   };
 
-  /// Rejects a relationship request. Family Steward only.
+  /// TEMPORARY Tenancy 1C compatibility wrapper for
+  /// `rejectRelationshipForFamily`.
   public func rejectRelationship(
     profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
     requests : List.List<Types.RelationshipRequest>,
@@ -420,62 +869,22 @@ module {
     requestId : Nat,
     reviewer : Principal.Principal,
   ) : ?Types.RelationshipRequest {
-    switch (requests.find(func r = r.id == requestId and r.status == #Pending)) {
-      case null { null };
-      case (?request) {
-        let updated : Types.RelationshipRequest = {
-          request with
-          status = #Rejected;
-          reviewer = ?reviewer;
-          reviewedDate = ?Time.now();
-        };
-        replaceRelationshipRequest(requests, updated);
-        notifications.add({
-          id = nextId(notifications.toArray().map(func n = n.id));
-          recipient = reviewer;
-          notificationType = #RelationshipReviewed;
-          message = "A relationship request was rejected.";
-          createdAt = Time.now();
-          read = false;
-        });
-        appendAudit(auditLog, #RelationshipRequestRejected, reviewer, [request.requestingPersonId, request.relatedPersonId], "Rejected relationship request between " # request.requestingPersonId # " and " # request.relatedPersonId);
-        ?updated;
-      };
-    };
+    rejectRelationshipForFamily(profiles, requests, notifications, auditLog, FamilyTypes.DEFAULT_FAMILY_ID, requestId, reviewer);
   };
 
-  /// Returns a relationship request to pending state. Family Steward only.
+  /// TEMPORARY Tenancy 1C compatibility wrapper for
+  /// `setRelationshipPendingForFamily`.
   public func setRelationshipPending(
     requests : List.List<Types.RelationshipRequest>,
     auditLog : List.List<GovernanceTypes.AuditEntry>,
     requestId : Nat,
     reviewer : Principal.Principal,
   ) : ?Types.RelationshipRequest {
-    switch (requests.find(func r = r.id == requestId)) {
-      case null { null };
-      case (?request) {
-        let updated : Types.RelationshipRequest = {
-          request with
-          status = #Pending;
-          reviewer = ?reviewer;
-          reviewedDate = ?Time.now();
-        };
-        replaceRelationshipRequest(requests, updated);
-        appendAudit(auditLog, #RelationshipRequestPending, reviewer, [request.requestingPersonId, request.relatedPersonId], "Returned relationship request between " # request.requestingPersonId # " and " # request.relatedPersonId # " to pending");
-        ?updated;
-      };
-    };
+    setRelationshipPendingForFamily(requests, auditLog, FamilyTypes.DEFAULT_FAMILY_ID, requestId, reviewer);
   };
 
-  /// Updates an approved owner's own living profile fields. Never rewrites
-  /// family relationships directly.
-  func pick<T>(edit : ?T, existing : ?T) : ?T {
-    switch (edit) {
-      case (?v) ?v;
-      case null existing;
-    };
-  };
-
+  /// TEMPORARY Tenancy 1C compatibility wrapper for
+  /// `updateOwnProfileForFamily`.
   public func updateOwnProfile(
     profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
     personId : Types.PersonId,
@@ -483,69 +892,11 @@ module {
     isSteward : Bool,
     edits : Types.ProfileEdits,
   ) : Result.Result<Types.PersonProfile, Types.EditError> {
-    if (caller.isAnonymous()) {
-      return #err(#NotSignedIn);
-    };
-    switch (profiles.get(personId)) {
-      case null { #err(#ProfileNotFound) };
-      case (?profile) {
-        // The caller may edit the profile when they are its owner, or when they
-        // are a Family Steward editing an unclaimed/historical profile. A
-        // steward must never edit a profile claimed by another user.
-        let isOwner = profile.claimedByUserId == ?caller;
-        let isStewardEditable = isSteward and profile.claimedByUserId == null;
-        if (not isOwner and not isStewardEditable) {
-          return #err(#NotOwner);
-        };
-        // A deceased profile is non-editable for everyone except a Family
-        // Steward editing an unclaimed/historical profile (isStewardEditable).
-        // This guard runs after the ownership check so a steward editing an
-        // unclaimed deceased profile is allowed, while an owner (or a steward
-        // editing a claimed deceased profile, which already returned #NotOwner)
-        // is still blocked.
-        if (profile.livingStatus == #Deceased and not isStewardEditable) {
-          return #err(#DeceasedProfile);
-        };
-        let updated : Types.PersonProfile = {
-          profile with
-          livingStatus = switch (edits.livingStatus) {
-            case (?v) v;
-            case null profile.livingStatus;
-          };
-          preferredName = pick(edits.preferredName, profile.preferredName);
-          firstName = pick(edits.firstName, profile.firstName);
-          middleName = pick(edits.middleName, profile.middleName);
-          lastName = pick(edits.lastName, profile.lastName);
-          suffix = pick(edits.suffix, profile.suffix);
-          nickname = pick(edits.nickname, profile.nickname);
-          story = pick(edits.story, profile.story);
-          shortBio = pick(edits.shortBio, profile.shortBio);
-          longerStory = pick(edits.longerStory, profile.longerStory);
-          occupation = pick(edits.occupation, profile.occupation);
-          birthInfo = pick(edits.birthInfo, profile.birthInfo);
-          birthDate = pick(edits.birthDate, profile.birthDate);
-          birthplace = pick(edits.birthplace, profile.birthplace);
-          currentLocation = pick(edits.currentLocation, profile.currentLocation);
-          timeline = pick(edits.timeline, profile.timeline);
-          privacySettings = pick(edits.privacySettings, profile.privacySettings);
-        };
-        profiles.add(personId, updated);
-        #ok(updated);
-      };
-    };
+    updateOwnProfileForFamily(profiles, FamilyTypes.DEFAULT_FAMILY_ID, personId, caller, isSteward, edits);
   };
 
-  /// Lists in-app notification records for the signed-in caller.
-  public func listNotifications(
-    notifications : List.List<Types.Notification>,
-    caller : Principal.Principal,
-  ) : [Types.Notification] {
-    notifications.toArray().filter(func n = n.recipient == caller);
-  };
-
-  /// Removes a duplicate test-created profile and any pending relationship
-  /// requests or claims tied only to it, preserving the original profile, the
-  /// confirmed family graph, and the signed-in account. Family Steward only.
+  /// TEMPORARY Tenancy 1C compatibility wrapper for
+  /// `removeDuplicateProfileForFamily`.
   public func removeDuplicateProfile(
     profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
     claims : List.List<Types.ProfileClaim>,
@@ -554,292 +905,116 @@ module {
     personId : Types.PersonId,
     caller : Principal.Principal,
   ) : Result.Result<(), Types.RemoveError> {
-    if (caller.isAnonymous()) {
-      return #err(#NotSignedIn);
-    };
-    switch (profiles.get(personId)) {
-      case null { #err(#ProfileNotFound) };
-      case (?_) {
-        profiles.remove(personId);
-        // Cancel any pending relationship request tied only to this profile.
-        let reqSnapshot = relationshipRequests.toArray();
-        relationshipRequests.clear();
-        for (req in reqSnapshot.values()) {
-          if (req.status == #Pending and (req.requestingPersonId == personId or req.relatedPersonId == personId)) {
-            // dropped
-          } else {
-            relationshipRequests.add(req);
-          };
-        };
-        // Cancel any pending claim tied only to this profile.
-        let claimSnapshot = claims.toArray();
-        claims.clear();
-        for (c in claimSnapshot.values()) {
-          if (c.status == #Pending and c.personId == personId) {
-            // dropped
-          } else {
-            claims.add(c);
-          };
-        };
-        #ok(());
-      };
-    };
+    removeDuplicateProfileForFamily(profiles, claims, relationshipRequests, notifications, FamilyTypes.DEFAULT_FAMILY_ID, personId, caller);
   };
 
-  /// Flattens every person profile into OQL-exposable rows. Enumerated variants
-  /// are rendered as their tag text; optional fields render as empty text when
-  /// absent. The array-valued `timeline` is not exposed (OQL has no array value
-  /// type).
+  /// Lists in-app notification records for the signed-in caller. Notifications
+  /// are recipient-addressed and are not family-scoped.
+  public func listNotifications(
+    notifications : List.List<Types.Notification>,
+    caller : Principal.Principal,
+  ) : [Types.Notification] {
+    notifications.toArray().filter(func n = n.recipient == caller);
+  };
+
+  /// Flattens every person profile into OQL-exposable rows. The row already
+  /// carries `familyId`, so no signature change is required.
   public func profileRows(
     profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
   ) : Iter.Iter<Types.ProfileRow> {
-    let rows = List.empty<Types.ProfileRow>();
-    for ((personId, profile) in profiles.entries()) {
-      rows.add({
-        familyId = profile.familyId;
-        personId;
-        name = profile.name;
-        livingStatus = livingStatusText(profile.livingStatus);
-        claimStatus = claimStatusText(profile.claimStatus);
-        claimedByUserId = switch (profile.claimedByUserId) {
-          case (?p) p.toText();
-          case null "";
-        };
-        preferredName = profile.preferredName ?? "";
-        firstName = profile.firstName ?? "";
-        middleName = profile.middleName ?? "";
-        lastName = profile.lastName ?? "";
-        suffix = profile.suffix ?? "";
-        nickname = profile.nickname ?? "";
-        story = profile.story ?? "";
-        shortBio = profile.shortBio ?? "";
-        longerStory = profile.longerStory ?? "";
-        occupation = profile.occupation ?? "";
-        birthInfo = profile.birthInfo ?? "";
-        birthDate = profile.birthDate ?? "";
-        birthplace = profile.birthplace ?? "";
-        currentLocation = profile.currentLocation ?? "";
-        privacySettings = profile.privacySettings ?? "";
-      });
-    };
-    rows.toArray().values();
+    profiles.entries().map(func ((_, profile)) = {
+      familyId = profile.familyId;
+      personId = profile.personId;
+      name = profile.name;
+      livingStatus = switch (profile.livingStatus) { case (#Living) "Living"; case (#Deceased) "Deceased" };
+      claimStatus = switch (profile.claimStatus) { case (#Unclaimed) "Unclaimed"; case (#Claimed) "Claimed" };
+      claimedByUserId = switch (profile.claimedByUserId) { case (?p) p.toText(); case null "" };
+      preferredName = profile.preferredName ?? "";
+      firstName = profile.firstName ?? "";
+      middleName = profile.middleName ?? "";
+      lastName = profile.lastName ?? "";
+      suffix = profile.suffix ?? "";
+      nickname = profile.nickname ?? "";
+      story = profile.story ?? "";
+      shortBio = profile.shortBio ?? "";
+      longerStory = profile.longerStory ?? "";
+      occupation = profile.occupation ?? "";
+      birthInfo = profile.birthInfo ?? "";
+      birthDate = profile.birthDate ?? "";
+      birthplace = profile.birthplace ?? "";
+      currentLocation = profile.currentLocation ?? "";
+      privacySettings = profile.privacySettings ?? "";
+    });
   };
 
   /// Flattens every profile claim into OQL-exposable rows.
   public func claimRows(
     claims : List.List<Types.ProfileClaim>,
   ) : Iter.Iter<Types.ClaimRow> {
-    let rows = List.empty<Types.ClaimRow>();
-    for (claim in claims.toArray().values()) {
-      rows.add({
-        familyId = claim.familyId;
-        id = claim.id;
-        personId = claim.personId;
-        requestingUserId = claim.requestingUserId.toText();
-        status = profileClaimStatusText(claim.status);
-        submittedDate = claim.submittedDate;
-        reviewedBy = switch (claim.reviewedBy) {
-          case (?p) p.toText();
-          case null "";
-        };
-        reviewedDate = switch (claim.reviewedDate) {
-          case (?d) d;
-          case null 0;
-        };
-      });
-    };
-    rows.toArray().values();
+    claims.toArray().values().map(func claim = {
+      familyId = claim.familyId;
+      id = claim.id;
+      personId = claim.personId;
+      requestingUserId = claim.requestingUserId.toText();
+      status = switch (claim.status) { case (#Pending) "Pending"; case (#Approved) "Approved"; case (#Rejected) "Rejected" };
+      submittedDate = claim.submittedDate;
+      reviewedBy = switch (claim.reviewedBy) { case (?p) p.toText(); case null "" };
+      reviewedDate = claim.reviewedDate ?? 0;
+    });
   };
 
   /// Flattens every relationship request into OQL-exposable rows.
   public func relationshipRequestRows(
     requests : List.List<Types.RelationshipRequest>,
   ) : Iter.Iter<Types.RelationshipRequestRow> {
-    let rows = List.empty<Types.RelationshipRequestRow>();
-    for (request in requests.toArray().values()) {
-      rows.add({
-        familyId = request.familyId;
-        id = request.id;
-        requestingPersonId = request.requestingPersonId;
-        relatedPersonId = request.relatedPersonId;
-        proposedRelationship = relationshipTypeText(request.proposedRelationship);
-        status = relationshipRequestStatusText(request.status);
-        submittedDate = request.submittedDate;
-        reviewer = switch (request.reviewer) {
-          case (?p) p.toText();
-          case null "";
-        };
-        reviewedDate = switch (request.reviewedDate) {
-          case (?d) d;
-          case null 0;
-        };
-      });
-    };
-    rows.toArray().values();
+    requests.toArray().values().map(func request = {
+      familyId = request.familyId;
+      id = request.id;
+      requestingPersonId = request.requestingPersonId;
+      relatedPersonId = request.relatedPersonId;
+      proposedRelationship = relationshipTypeText(request.proposedRelationship);
+      status = switch (request.status) { case (#Pending) "Pending"; case (#Approved) "Approved"; case (#Rejected) "Rejected" };
+      submittedDate = request.submittedDate;
+      reviewer = switch (request.reviewer) { case (?p) p.toText(); case null "" };
+      reviewedDate = request.reviewedDate ?? 0;
+    });
   };
 
-  /// Flattens every confirmed relationship in the shared family graph into
-  /// OQL-exposable rows.
+  /// Flattens every confirmed relationship into OQL-exposable rows.
   public func relationshipRows(
     relationships : List.List<Types.Relationship>,
   ) : Iter.Iter<Types.RelationshipRow> {
-    let rows = List.empty<Types.RelationshipRow>();
-    for (rel in relationships.toArray().values()) {
-      rows.add({
-        familyId = rel.familyId;
-        id = rel.id;
-        fromPersonId = rel.fromPersonId;
-        toPersonId = rel.toPersonId;
-        relationshipType = relationshipTypeText(rel.relationshipType);
-        status = relationshipStatusText(rel.status);
-      });
-    };
-    rows.toArray().values();
+    relationships.toArray().values().map(func relationship = {
+      familyId = relationship.familyId;
+      id = relationship.id;
+      fromPersonId = relationship.fromPersonId;
+      toPersonId = relationship.toPersonId;
+      relationshipType = relationshipTypeText(relationship.relationshipType);
+      status = switch (relationship.status) { case (#Confirmed) "Confirmed"; case (#Pending) "Pending"; case (#Disputed) "Disputed" };
+    });
   };
 
   /// Flattens every in-app notification record into OQL-exposable rows.
   public func notificationRows(
     notifications : List.List<Types.Notification>,
   ) : Iter.Iter<Types.NotificationRow> {
-    let rows = List.empty<Types.NotificationRow>();
-    for (n in notifications.toArray().values()) {
-      rows.add({
-        id = n.id;
-        recipient = n.recipient.toText();
-        notificationType = notificationTypeText(n.notificationType);
-        message = n.message;
-        createdAt = n.createdAt;
-        read = n.read;
-      });
-    };
-    rows.toArray().values();
-  };
-
-  // --- helpers ---
-
-  /// Maps a claim-persistence eligibility reason onto the public `ClaimError`
-  /// variants. Both "already owned by the caller" and "an approved owner exists"
-  /// surface as `#AlreadyClaimed` in the existing public API.
-  func claimErrorFromEligibility(reason : ?ClaimPersistenceTypes.ClaimPersistenceError) : Types.ClaimError {
-    switch (reason) {
-      case (?r) {
-        switch (r) {
-          case (#NotSignedIn) #NotSignedIn;
-          case (#ProfileNotFound) #ProfileNotFound;
-          case (#AlreadyOwned) #AlreadyClaimed;
-          case (#ApprovedOwnerExists) #AlreadyClaimed;
-          case (#AlreadyPending) #AlreadyPending;
-        };
-      };
-      case null #AlreadyClaimed;
-    };
-  };
-
-  /// Computes the next id: one greater than the largest existing id, or `0`
-  /// when the collection is empty.
-  func nextId(ids : [Nat]) : Nat {
-    var maxId = 0;
-    for (id in ids.values()) {
-      if (id >= maxId) { maxId := id + 1 };
-    };
-    maxId;
-  };
-
-  /// Appends a governance audit entry.
-  func appendAudit(
-    auditLog : List.List<GovernanceTypes.AuditEntry>,
-    actionType : GovernanceTypes.AuditActionType,
-    actorId : Principal.Principal,
-    affectedPersonIds : [Types.PersonId],
-    summary : Text,
-  ) {
-    auditLog.add({
-      id = nextId(auditLog.toArray().map(func e = e.id));
-      actionType;
-      actorAccountId = actorId;
-      affectedPersonIds;
-      timestamp = Time.now();
-      summary;
+    notifications.toArray().values().map(func notification = {
+      id = notification.id;
+      recipient = notification.recipient.toText();
+      notificationType = notificationTypeText(notification.notificationType);
+      message = notification.message;
+      createdAt = notification.createdAt;
+      read = notification.read;
     });
   };
 
-  func replaceClaim(claims : List.List<Types.ProfileClaim>, updated : Types.ProfileClaim) {
-    let snapshot = claims.toArray();
-    claims.clear();
-    for (c in snapshot.values()) {
-      if (c.id == updated.id) { claims.add(updated) } else { claims.add(c) };
-    };
-  };
+  // ---------------------------------------------------------------------------
+  // Internal helpers
+  // ---------------------------------------------------------------------------
 
-  func replaceRelationshipRequest(requests : List.List<Types.RelationshipRequest>, updated : Types.RelationshipRequest) {
-    let snapshot = requests.toArray();
-    requests.clear();
-    for (r in snapshot.values()) {
-      if (r.id == updated.id) { requests.add(updated) } else { requests.add(r) };
-    };
-  };
-
-  /// Whether a normalized query matches a normalized candidate. Exact match,
-  /// substring containment, or full token overlap all count as a match.
-  func isMatch(q : Text, candidate : Text) : Bool {
-    if (q == candidate) {
-      return true;
-    };
-    if (candidate.contains(#text q) or q.contains(#text candidate)) {
-      return true;
-    };
-    let qTokens = q.split(#predicate (func ch = ch == ' ')).toArray();
-    let cTokens = candidate.split(#predicate (func ch = ch == ' ')).toArray();
-    var matched = 0;
-    for (qt in qTokens.values()) {
-      if (cTokens.any(func ct = ct == qt)) { matched += 1 };
-    };
-    matched == qTokens.size();
-  };
-
-  /// Resolves the confirmed parents of a person to their display names, falling
-  /// back to the parent's person id when the parent profile is not tracked.
-  func parentsOf(
-    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
-    relationships : List.List<Types.Relationship>,
-    personId : Types.PersonId,
-  ) : [Text] {
-    let parents = List.empty<Text>();
-    for (rel in relationships.toArray().values()) {
-      if (rel.status == #Confirmed and rel.relationshipType == #Parent and rel.toPersonId == personId) {
-        switch (profiles.get(rel.fromPersonId)) {
-          case (?p) parents.add(p.name);
-          case null parents.add(rel.fromPersonId);
-        };
-      };
-    };
-    parents.toArray();
-  };
-
-  func livingStatusText(status : Types.LivingStatus) : Text {
-    switch (status) {
-      case (#Living) "Living";
-      case (#Deceased) "Deceased";
-    };
-  };
-
-  func claimStatusText(status : Types.ClaimStatus) : Text {
-    switch (status) {
-      case (#Unclaimed) "Unclaimed";
-      case (#Claimed) "Claimed";
-    };
-  };
-
-  func profileClaimStatusText(status : Types.ProfileClaimStatus) : Text {
-    switch (status) {
-      case (#Pending) "Pending";
-      case (#Approved) "Approved";
-      case (#Rejected) "Rejected";
-    };
-  };
-
-  func relationshipTypeText(status : Types.RelationshipType) : Text {
-    switch (status) {
+  /// Renders a relationship type as its tag text for OQL rows.
+  func relationshipTypeText(relationshipType : Types.RelationshipType) : Text {
+    switch (relationshipType) {
       case (#Parent) "Parent";
       case (#Child) "Child";
       case (#SpousePartner) "SpousePartner";
@@ -847,24 +1022,9 @@ module {
     };
   };
 
-  func relationshipStatusText(status : Types.RelationshipStatus) : Text {
-    switch (status) {
-      case (#Confirmed) "Confirmed";
-      case (#Pending) "Pending";
-      case (#Disputed) "Disputed";
-    };
-  };
-
-  func relationshipRequestStatusText(status : Types.RelationshipRequestStatus) : Text {
-    switch (status) {
-      case (#Pending) "Pending";
-      case (#Approved) "Approved";
-      case (#Rejected) "Rejected";
-    };
-  };
-
-  func notificationTypeText(status : Types.NotificationType) : Text {
-    switch (status) {
+  /// Renders a notification type as its tag text for OQL rows.
+  func notificationTypeText(notificationType : Types.NotificationType) : Text {
+    switch (notificationType) {
       case (#ProfileClaimRequested) "ProfileClaimRequested";
       case (#ProfileClaimReviewed) "ProfileClaimReviewed";
       case (#RelationshipRequested) "RelationshipRequested";
@@ -878,5 +1038,140 @@ module {
       case (#ArchiveApproved) "ArchiveApproved";
       case (#ArchiveRejected) "ArchiveRejected";
     };
+  };
+
+  /// The next claim id: one greater than the largest existing id, or `0` when
+  /// there are no claims.
+  func nextClaimId(claims : List.List<Types.ProfileClaim>) : Nat {
+    var maxId = 0;
+    for (claim in claims.toArray().values()) {
+      if (claim.id >= maxId) { maxId := claim.id + 1 };
+    };
+    maxId;
+  };
+
+  /// The next notification id: one greater than the largest existing id, or
+  /// `0` when there are no notifications.
+  func nextNotificationId(notifications : List.List<Types.Notification>) : Nat {
+    var maxId = 0;
+    for (notification in notifications.toArray().values()) {
+      if (notification.id >= maxId) { maxId := notification.id + 1 };
+    };
+    maxId;
+  };
+
+  /// The next relationship id: one greater than the largest existing id, or
+  /// `0` when there are no relationships.
+  func nextRelationshipId(relationships : List.List<Types.Relationship>) : Nat {
+    var maxId = 0;
+    for (relationship in relationships.toArray().values()) {
+      if (relationship.id >= maxId) { maxId := relationship.id + 1 };
+    };
+    maxId;
+  };
+
+  /// The next relationship-request id: one greater than the largest existing
+  /// id, or `0` when there are no requests.
+  func nextRelationshipRequestId(requests : List.List<Types.RelationshipRequest>) : Nat {
+    var maxId = 0;
+    for (request in requests.toArray().values()) {
+      if (request.id >= maxId) { maxId := request.id + 1 };
+    };
+    maxId;
+  };
+
+  /// The next audit entry id: one greater than the largest existing id, or `0`
+  /// when the log is empty.
+  func nextAuditId(auditLog : List.List<GovernanceTypes.AuditEntry>) : Nat {
+    var maxId = 0;
+    for (entry in auditLog.toArray().values()) {
+      if (entry.id >= maxId) { maxId := entry.id + 1 };
+    };
+    maxId;
+  };
+
+  /// Builds a family-unique person id from a display name. The id is derived
+  /// from the name and suffixed until it is unused within `familyId`, so the
+  /// same name in two families never collides.
+  func nextPersonId(
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    familyId : FamilyTypes.FamilyId,
+    name : Text,
+  ) : Types.PersonId {
+    let base = name.toLower().map(func c = if (c == ' ') { '_' } else { c });
+    let candidate = if (base == "") { "person" } else { base };
+    var suffix = 0;
+    var id = candidate;
+    while (getProfileForFamily(profiles, familyId, id) != null) {
+      suffix += 1;
+      id := candidate # "_" # suffix.toText();
+    };
+    id;
+  };
+
+  /// Replaces the stored claim with the same id, preserving list order.
+  func replaceClaim(claims : List.List<Types.ProfileClaim>, updated : Types.ProfileClaim) {
+    let snapshot = claims.toArray();
+    claims.clear();
+    for (claim in snapshot.values()) {
+      if (claim.id == updated.id) { claims.add(updated) } else { claims.add(claim) };
+    };
+  };
+
+  /// Replaces the stored relationship request with the same id, preserving
+  /// list order.
+  func replaceRelationshipRequest(requests : List.List<Types.RelationshipRequest>, updated : Types.RelationshipRequest) {
+    let snapshot = requests.toArray();
+    requests.clear();
+    for (request in snapshot.values()) {
+      if (request.id == updated.id) { requests.add(updated) } else { requests.add(request) };
+    };
+  };
+
+  /// Removes every claim in `familyId` on `personId`.
+  func removeClaimsForPerson(
+    claims : List.List<Types.ProfileClaim>,
+    familyId : FamilyTypes.FamilyId,
+    personId : Types.PersonId,
+  ) {
+    let snapshot = claims.toArray();
+    claims.clear();
+    for (claim in snapshot.values()) {
+      if (claim.familyId == familyId and claim.personId == personId) {
+        // dropped
+      } else {
+        claims.add(claim);
+      };
+    };
+  };
+
+  /// Removes every relationship request in `familyId` that references
+  /// `personId`.
+  func removeRelationshipRequestsForPerson(
+    requests : List.List<Types.RelationshipRequest>,
+    familyId : FamilyTypes.FamilyId,
+    personId : Types.PersonId,
+  ) {
+    let snapshot = requests.toArray();
+    requests.clear();
+    for (request in snapshot.values()) {
+      if (request.familyId == familyId and (request.requestingPersonId == personId or request.relatedPersonId == personId)) {
+        // dropped
+      } else {
+        requests.add(request);
+      };
+    };
+  };
+
+  /// The names of the confirmed parents of `personId` in `familyId`, derived
+  /// from that family's confirmed graph only.
+  func parentNamesForFamily(
+    relationships : List.List<Types.Relationship>,
+    familyId : FamilyTypes.FamilyId,
+    personId : Types.PersonId,
+  ) : [Text] {
+    relationships.toArray().filter(func r =
+      r.familyId == familyId and r.status == #Confirmed and r.relationshipType == #Parent and r.toPersonId == personId
+    ).map(func r = r.fromPersonId);
   };
 };

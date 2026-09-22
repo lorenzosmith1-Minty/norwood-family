@@ -85,6 +85,68 @@ Contributions badge.
 
 ### Photo gallery
 
+Every photo endpoint is family-scoped: it takes the requested `familyId` and
+evaluates authority and data access against that family. A person id in one
+family never returns or mutates a gallery in another family, and the same
+`personId` text may safely exist in two families with independent galleries.
+The single-family endpoints listed after the family-scoped ones are TEMPORARY
+Tenancy 1C compatibility wrappers that delegate with the default family id
+(`\"norwood\"`); they are deprecated and will be removed once every caller passes
+an explicit `familyId`.
+
+- `listPhotosForFamily(familyId : Text, personId : Text) : async [Photo]` —
+  query. Returns all uploaded photos for a person in `familyId`, in upload
+  order. Requires an approved member or active Steward of `familyId`; anonymous
+  and signed-in but unapproved callers are rejected with a trap. Any approved
+  member of `familyId` may view the full gallery of any person profile in that
+  family, including other claimed people. Returns `[]` when the person has no
+  gallery in `familyId`.
+- `getProfilePhotoForFamily(familyId : Text, personId : Text) : async ?Photo` —
+  query. Returns the person's current profile photo in `familyId`, or `null`
+  when none is set (the frontend then shows the initials placeholder). The
+  lookup confirms the profile belongs to `familyId`. For an unclaimed/historical
+  profile in `familyId` the single designated portrait remains readable by
+  guests so Add Myself / claim discovery works. For a claimed profile it
+  requires an approved member or Steward of `familyId`; anonymous and unapproved
+  callers are rejected with a trap. Guests never receive any gallery photo other
+  than the single designated portrait of an unclaimed/historical profile.
+- `addPhotoForFamily(familyId : Text, personId : Text, filename : Text, mimeType : Text, blob : Blob) : async Photo` —
+  update. Uploads a new photo to a person's gallery in `familyId` and returns
+  the stored photo. Requires the approved owner of that claimed profile, or a
+  Steward of `familyId` acting on an unclaimed/historical profile; anonymous
+  callers, unapproved callers, approved members who do not own the profile, and
+  a Steward attempting to modify a profile claimed by another user are all
+  rejected with a trap. For an unclaimed/historical profile only a Steward of
+  `familyId` may add photos. The caller is recorded as `uploadedBy`. Photo ids
+  are assigned per person per family as `max-existing-id + 1` (or `0` when the
+  gallery is empty). The `blob` is the external storage reference (a `Blob`).
+  When the person's gallery has no profile photo yet, the newly added photo is
+  automatically set as the profile photo, so the completeness indicator updates
+  immediately.
+- `setProfilePhotoForFamily(familyId : Text, personId : Text, photoId : Nat) : async ?Photo` —
+  update. Marks the photo with `photoId` as the person's profile photo in
+  `familyId`. Requires the approved owner of that claimed profile, or a Steward
+  of `familyId` acting on an unclaimed/historical profile; anonymous callers,
+  unapproved callers, approved members who do not own the profile, and a Steward
+  attempting to modify a profile claimed by another user are all rejected with a
+  trap. For an unclaimed/historical profile only a Steward of `familyId` may set
+  the portrait. Returns the newly selected photo, or `null` when no photo with
+  that id exists in the person's gallery in `familyId`.
+- `removePhotoForFamily(familyId : Text, personId : Text, photoId : Nat) : async Bool` —
+  update. Removes a photo from the person's gallery in `familyId` and returns
+  `true` when a photo was removed. Requires the approved owner of that claimed
+  profile, or a Steward of `familyId` acting on an unclaimed/historical profile;
+  anonymous callers, unapproved callers, approved members who do not own the
+  profile, and a Steward attempting to modify a profile claimed by another user
+  are all rejected with a trap. For an unclaimed/historical profile only a
+  Steward of `familyId` may remove photos. If the removed photo was the profile
+  photo, the profile photo is cleared (the frontend falls back to the initials
+  placeholder).
+
+The following single-family endpoints are TEMPORARY Tenancy 1C compatibility
+wrappers. Each delegates to its family-scoped counterpart with the default
+family id (`\"norwood\"`), so current Norwood behavior is unchanged.
+
 - `listPhotos(personId : Text) : async [Photo]` — query. Returns all uploaded
   photos for a person, in upload order. Requires an approved family member (a
   caller holding at least one `#Approved` profile claim, or a Family Steward);
@@ -348,6 +410,87 @@ Contributions badge.
   Returns `#err(#NotSignedIn)` for an anonymous caller and
   `#err(#ProfileNotFound)` when the person is not tracked. It never removes the
   signed-in account itself and never alters confirmed relationships.
+
+#### Family-scoped profile, claim, and relationship methods (canonical)
+
+The methods above are TEMPORARY Tenancy 1C compatibility wrappers: each delegates
+to its family-scoped counterpart with the default family (`\"norwood\"`). The
+family-scoped forms below are the canonical API and take an explicit
+`familyId : Text` as their first argument. Authority and data access are
+evaluated against the requested `familyId`, and a `personId` in one family never
+returns or mutates a record in another family. Profile storage is keyed by the
+family-qualified key (`familyId::personId`) for every non-default family, while
+the default family keeps the legacy bare `personId` key so existing Norwood data
+stays readable.
+
+- `getPersonProfileForFamily(familyId : Text, personId : Text) : async ?PersonProfile` —
+  query. Family-scoped form of `getPersonProfile`. Returns the profile only when
+  it belongs to `familyId`; a `personId` in Family A never returns a profile from
+  Family B.
+- `getMyProfileForFamily(familyId : Text) : async ?PersonProfile` — query.
+  Family-scoped form of `getMyProfile`. Returns the signed-in caller's own
+  linked/claimed profile in `familyId`, or their pending profile in that family,
+  or `null` when the caller has no profile there. Ownership in one family never
+  surfaces a profile from another.
+- `listProfilesForFamily(familyId : Text) : async [PersonProfile]` — query.
+  Lists the profiles of `familyId` for Explore Family / Person Profile
+  hydration. Requires the caller to be an approved member of `familyId` or an
+  active Steward of `familyId`; profiles from other families are never included.
+- `listClaimDiscoveryProfilesForFamily(familyId : Text) : async [PersonProfile]` —
+  query. Public claim-discovery read preserving the existing minimal-data
+  behavior, scoped to `familyId`.
+- `requestProfileClaimForFamily(familyId : Text, personId : Text) : async Result<ProfileClaim, ClaimError>` —
+  update. Family-scoped form of `requestProfileClaim`. The claim belongs to
+  exactly `familyId`; approved ownership in another family does not block an
+  independent claim here. Same error variants as `requestProfileClaim`.
+- `listProfileClaimsForFamily(familyId : Text) : async [ProfileClaim]` — query.
+  Family Steward of `familyId` only. Lists the claim requests of `familyId`;
+  claims from other families are never included.
+- `getMyProfileClaimForFamily(familyId : Text, personId : Text) : async ?ProfileClaim` —
+  query. Returns the caller's own claim on a specific profile in `familyId`, or
+  `null`. There is no cross-family claim lookup by `personId` alone.
+- `approveProfileClaimForFamily(familyId : Text, claimId : Nat) : async ?ProfileClaim` —
+  update. Family Steward of `familyId` only. Approves a pending claim in
+  `familyId`; the claim must belong to that family.
+- `rejectProfileClaimForFamily(familyId : Text, claimId : Nat) : async ?ProfileClaim` —
+  update. Family Steward of `familyId` only. Rejects a pending claim in
+  `familyId`.
+- `searchPossibleMatchesForFamily(familyId : Text, name : Text) : async [PersonMatch]` —
+  query. Family-scoped form of `searchPossibleMatches`; only profiles belonging
+  to `familyId` are considered.
+- `createMyselfForFamily(familyId : Text, name : Text) : async Result<PersonProfile, CreateError>` —
+  update. Family-scoped form of `createMyself`. The created profile belongs to
+  `familyId`; ownership in another family does not block creation here.
+- `proposeRelationshipForFamily(familyId : Text, fromPersonId : Text, toPersonId : Text, relationshipType : RelationshipType) : async Result<RelationshipRequest, RelationshipError>` —
+  update. Family-scoped form of `proposeRelationship`. Both referenced people
+  must belong to `familyId`; the request belongs to `familyId` and starts
+  `#Pending`.
+- `listRelationshipRequestsForFamily(familyId : Text) : async [RelationshipRequest]` —
+  query. Family Steward of `familyId` only. Lists the relationship requests of
+  `familyId`; requests from other families are never included.
+- `approveRelationshipRequestForFamily(familyId : Text, requestId : Nat) : async ?RelationshipRequest` —
+  update. Family Steward of `familyId` only. Approves a pending request in
+  `familyId`, adding the relationship to that family's graph.
+- `rejectRelationshipRequestForFamily(familyId : Text, requestId : Nat) : async ?RelationshipRequest` —
+  update. Family Steward of `familyId` only. Rejects a pending request in
+  `familyId`.
+- `setRelationshipRequestPendingForFamily(familyId : Text, requestId : Nat) : async ?RelationshipRequest` —
+  update. Family Steward of `familyId` only. Returns a request in `familyId` to
+  `#Pending`.
+- `getMyRelationshipRequestsForFamily(familyId : Text) : async [RelationshipRequest]` —
+  query. Returns the caller's own pending relationship requests in `familyId`.
+- `updateOwnProfileForFamily(familyId : Text, personId : Text, edits : ProfileEdits) : async Result<PersonProfile, EditError>` —
+  update. Family-scoped form of `updateOwnProfile`. Updates an approved owner's
+  own living profile fields in `familyId`, or, for a Steward of `familyId`, the
+  fields of an unclaimed/historical profile in that family.
+- `removeDuplicateProfileForFamily(familyId : Text, personId : Text) : async Result<(), RemoveError>` —
+  update. Family Steward of `familyId` only. Removes a duplicate profile in
+  `familyId` and any pending relationship requests or claims tied only to it.
+- `listConfirmedRelationshipsForFamily(familyId : Text) : async [Relationship]` —
+  query. Lists the confirmed relationships of `familyId`; relationships from
+  other families are never included.
+- `getRelationshipRequestForFamily(familyId : Text, id : Nat) : async ?RelationshipRequest` —
+  query. Returns a relationship request in `familyId`, or `null`.
 
 ### Account identity
 

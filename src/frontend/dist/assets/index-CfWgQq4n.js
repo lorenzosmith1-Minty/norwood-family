@@ -33299,6 +33299,7 @@ const Photo = Record({
   "uploadedAt": Int,
   "uploadedBy": Principal2
 });
+const FamilyId = Text;
 const RelationshipType$1 = Variant({
   "Parent": Null,
   "Sibling": Null,
@@ -33839,7 +33840,6 @@ const ConversationView = Record({
   "conversationId": ConversationId,
   "participantDisplayNames": Vec(Text)
 });
-const FamilyId = Text;
 const FamilyStatus = Variant({
   "active": Null,
   "archived": Null
@@ -34295,6 +34295,11 @@ Service({
     [Photo],
     []
   ),
+  "addPhotoForFamily": Func(
+    [FamilyId, PersonId, Text, Text, ExternalBlob2],
+    [Photo],
+    []
+  ),
   "addRelationship": Func(
     [PersonId, PersonId, RelationshipType$1],
     [Result_23],
@@ -34308,6 +34313,11 @@ Service({
     []
   ),
   "approveProfileClaim": Func([Nat], [Opt(ProfileClaim)], []),
+  "approveProfileClaimForFamily": Func(
+    [FamilyId, Nat],
+    [Opt(ProfileClaim)],
+    []
+  ),
   "approveProfileRemoval": Func(
     [Nat],
     [Opt(ProfileRemovalRequest)],
@@ -34324,6 +34334,11 @@ Service({
     [Opt(RelationshipRequest)],
     []
   ),
+  "approveRelationshipRequestForFamily": Func(
+    [FamilyId, Nat],
+    [Opt(RelationshipRequest)],
+    []
+  ),
   "approveSource": Func([SourceId], [Opt(SourceRecord)], []),
   "approveStory": Func([StoryId], [Opt(Story)], []),
   "archiveBoardPost": Func([PostId], [Opt(Post)], []),
@@ -34332,6 +34347,11 @@ Service({
   "bindAuthMethod": Func([AuthMethod], [Result_25], []),
   "blockUser": Func([Principal2], [], []),
   "canClaimProfile": Func([PersonId], [ClaimEligibility], ["query"]),
+  "canClaimProfileForFamily": Func(
+    [FamilyId, PersonId],
+    [ClaimEligibility],
+    ["query"]
+  ),
   "canMessagePerson": Func([Text], [Bool], ["query"]),
   "claimSteward": Func([], [Result_24], []),
   "correctRelationshipType": Func(
@@ -34393,6 +34413,7 @@ Service({
     []
   ),
   "createMyself": Func([Text], [Result_21], []),
+  "createMyselfForFamily": Func([FamilyId, Text], [Result_21], []),
   "createNewPersonCandidate": Func(
     [Text, Text, SourceId],
     [Result_20],
@@ -34447,8 +34468,23 @@ Service({
     [Opt(ProfileClaim)],
     ["query"]
   ),
+  "getMyProfileClaimForFamily": Func(
+    [FamilyId, PersonId],
+    [Opt(ProfileClaim)],
+    ["query"]
+  ),
+  "getMyProfileForFamily": Func(
+    [FamilyId],
+    [Opt(PersonProfile)],
+    ["query"]
+  ),
   "getMyRelationshipRequests": Func(
     [],
+    [Vec(RelationshipRequest)],
+    ["query"]
+  ),
+  "getMyRelationshipRequestsForFamily": Func(
+    [FamilyId],
     [Vec(RelationshipRequest)],
     ["query"]
   ),
@@ -34458,10 +34494,25 @@ Service({
     [Opt(PersonProfile)],
     ["query"]
   ),
+  "getPersonProfileForFamily": Func(
+    [FamilyId, PersonId],
+    [Opt(PersonProfile)],
+    ["query"]
+  ),
   "getProfilePhoto": Func([PersonId], [Opt(Photo)], ["query"]),
+  "getProfilePhotoForFamily": Func(
+    [FamilyId, PersonId],
+    [Opt(Photo)],
+    ["query"]
+  ),
   "getRecipe": Func([RecipeId], [Opt(Recipe)], ["query"]),
   "getRelationshipRequest": Func(
     [Nat],
+    [Opt(RelationshipRequest)],
+    ["query"]
+  ),
+  "getRelationshipRequestForFamily": Func(
+    [FamilyId, Nat],
     [Opt(RelationshipRequest)],
     ["query"]
   ),
@@ -34485,6 +34536,11 @@ Service({
   ),
   "hasActiveSteward": Func([], [Bool], ["query"]),
   "hasApprovedOwner": Func([PersonId], [Bool], ["query"]),
+  "hasApprovedOwnerForFamily": Func(
+    [FamilyId, PersonId],
+    [Bool],
+    ["query"]
+  ),
   "isCallerAdmin": Func([], [Bool], ["query"]),
   "isCallerSteward": Func([], [Bool], ["query"]),
   "listApprovedArchiveItems": Func([], [Vec(ArchiveItem)], ["query"]),
@@ -34496,8 +34552,18 @@ Service({
   "listBlockedUsers": Func([], [Vec(Principal2)], ["query"]),
   "listBoardPosts": Func([Opt(PostType$1)], [Vec(Post)], ["query"]),
   "listBoardReplies": Func([PostId], [Vec(Reply)], ["query"]),
+  "listClaimDiscoveryProfilesForFamily": Func(
+    [FamilyId],
+    [Vec(PersonProfile)],
+    ["query"]
+  ),
   "listConfirmedRelationships": Func(
     [],
+    [Vec(Relationship)],
+    ["query"]
+  ),
+  "listConfirmedRelationshipsForFamily": Func(
+    [FamilyId],
     [Vec(Relationship)],
     ["query"]
   ),
@@ -34547,10 +34613,25 @@ Service({
     ["query"]
   ),
   "listPhotos": Func([PersonId], [Vec(Photo)], ["query"]),
+  "listPhotosForFamily": Func(
+    [FamilyId, PersonId],
+    [Vec(Photo)],
+    ["query"]
+  ),
   "listProfileClaims": Func([], [Vec(ProfileClaim)], ["query"]),
+  "listProfileClaimsForFamily": Func(
+    [FamilyId],
+    [Vec(ProfileClaim)],
+    ["query"]
+  ),
   "listProfileRemovalRequests": Func(
     [],
     [Vec(ProfileRemovalRequest)],
+    ["query"]
+  ),
+  "listProfilesForFamily": Func(
+    [FamilyId],
+    [Vec(PersonProfile)],
     ["query"]
   ),
   "listRecipesForPerson": Func([Text], [Vec(Recipe)], ["query"]),
@@ -34561,6 +34642,11 @@ Service({
   ),
   "listRelationshipRequests": Func(
     [],
+    [Vec(RelationshipRequest)],
+    ["query"]
+  ),
+  "listRelationshipRequestsForFamily": Func(
+    [FamilyId],
     [Vec(RelationshipRequest)],
     ["query"]
   ),
@@ -34606,6 +34692,11 @@ Service({
     [Result_9],
     []
   ),
+  "proposeRelationshipForFamily": Func(
+    [FamilyId, PersonId, PersonId, RelationshipType$1],
+    [Result_9],
+    []
+  ),
   "publishRecipe": Func(
     [
       Text,
@@ -34636,6 +34727,11 @@ Service({
     []
   ),
   "rejectProfileClaim": Func([Nat], [Opt(ProfileClaim)], []),
+  "rejectProfileClaimForFamily": Func(
+    [FamilyId, Nat],
+    [Opt(ProfileClaim)],
+    []
+  ),
   "rejectProfileRemoval": Func(
     [Nat],
     [Opt(ProfileRemovalRequest)],
@@ -34652,15 +34748,35 @@ Service({
     [Opt(RelationshipRequest)],
     []
   ),
+  "rejectRelationshipRequestForFamily": Func(
+    [FamilyId, Nat],
+    [Opt(RelationshipRequest)],
+    []
+  ),
   "rejectSource": Func([SourceId], [Opt(SourceRecord)], []),
   "rejectStory": Func([StoryId], [Opt(Story)], []),
   "removeBoardReply": Func([ReplyId], [Opt(Reply)], []),
   "removeDuplicateProfile": Func([PersonId], [Result_8], []),
+  "removeDuplicateProfileForFamily": Func(
+    [FamilyId, PersonId],
+    [Result_8],
+    []
+  ),
   "removePhoto": Func([PersonId, PhotoId], [Bool], []),
+  "removePhotoForFamily": Func(
+    [FamilyId, PersonId, PhotoId],
+    [Bool],
+    []
+  ),
   "removeRelationship": Func([Nat], [Result_7], []),
   "removeSteward": Func([Principal2], [Result_6], []),
   "reportMessage": Func([MessageId, Text], [Report], []),
   "requestProfileClaim": Func([PersonId], [Result_5], []),
+  "requestProfileClaimForFamily": Func(
+    [FamilyId, PersonId],
+    [Result_5],
+    []
+  ),
   "requestProfileRemoval": Func([PersonId, Text], [Result_4], []),
   "resolveConflict": Func(
     [Nat, ConflictResolutionAction$1, Text],
@@ -34696,10 +34812,25 @@ Service({
     [Vec(PersonMatch)],
     ["query"]
   ),
+  "searchPossibleMatchesForFamily": Func(
+    [FamilyId, Text],
+    [Vec(PersonMatch)],
+    ["query"]
+  ),
   "sendMessage": Func([Text, Text], [Result_1], []),
   "setProfilePhoto": Func([PersonId, PhotoId], [Opt(Photo)], []),
+  "setProfilePhotoForFamily": Func(
+    [FamilyId, PersonId, PhotoId],
+    [Opt(Photo)],
+    []
+  ),
   "setRelationshipRequestPending": Func(
     [Nat],
+    [Opt(RelationshipRequest)],
+    []
+  ),
+  "setRelationshipRequestPendingForFamily": Func(
+    [FamilyId, Nat],
     [Opt(RelationshipRequest)],
     []
   ),
@@ -34809,7 +34940,12 @@ Service({
     [Opt(Story)],
     []
   ),
-  "updateOwnProfile": Func([PersonId, ProfileEdits], [Result], [])
+  "updateOwnProfile": Func([PersonId, ProfileEdits], [Result], []),
+  "updateOwnProfileForFamily": Func(
+    [FamilyId, PersonId, ProfileEdits],
+    [Result],
+    []
+  )
 });
 const idlFactory = ({ IDL: IDL2 }) => {
   const _ImmutableObjectStorageCreateCertificateResult2 = IDL2.Record({
@@ -34916,6 +35052,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "uploadedAt": IDL2.Int,
     "uploadedBy": IDL2.Principal
   });
+  const FamilyId2 = IDL2.Text;
   const RelationshipType2 = IDL2.Variant({
     "Parent": IDL2.Null,
     "Sibling": IDL2.Null,
@@ -35447,7 +35584,6 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "conversationId": ConversationId2,
     "participantDisplayNames": IDL2.Vec(IDL2.Text)
   });
-  const FamilyId2 = IDL2.Text;
   const FamilyStatus2 = IDL2.Variant({
     "active": IDL2.Null,
     "archived": IDL2.Null
@@ -35888,6 +36024,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [Photo2],
       []
     ),
+    "addPhotoForFamily": IDL2.Func(
+      [FamilyId2, PersonId2, IDL2.Text, IDL2.Text, ExternalBlob3],
+      [Photo2],
+      []
+    ),
     "addRelationship": IDL2.Func(
       [PersonId2, PersonId2, RelationshipType2],
       [Result_232],
@@ -35905,6 +36046,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
       []
     ),
     "approveProfileClaim": IDL2.Func([IDL2.Nat], [IDL2.Opt(ProfileClaim2)], []),
+    "approveProfileClaimForFamily": IDL2.Func(
+      [FamilyId2, IDL2.Nat],
+      [IDL2.Opt(ProfileClaim2)],
+      []
+    ),
     "approveProfileRemoval": IDL2.Func(
       [IDL2.Nat],
       [IDL2.Opt(ProfileRemovalRequest2)],
@@ -35921,6 +36067,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [IDL2.Opt(RelationshipRequest2)],
       []
     ),
+    "approveRelationshipRequestForFamily": IDL2.Func(
+      [FamilyId2, IDL2.Nat],
+      [IDL2.Opt(RelationshipRequest2)],
+      []
+    ),
     "approveSource": IDL2.Func([SourceId2], [IDL2.Opt(SourceRecord2)], []),
     "approveStory": IDL2.Func([StoryId2], [IDL2.Opt(Story2)], []),
     "archiveBoardPost": IDL2.Func([PostId2], [IDL2.Opt(Post2)], []),
@@ -35929,6 +36080,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "bindAuthMethod": IDL2.Func([AuthMethod2], [Result_252], []),
     "blockUser": IDL2.Func([IDL2.Principal], [], []),
     "canClaimProfile": IDL2.Func([PersonId2], [ClaimEligibility2], ["query"]),
+    "canClaimProfileForFamily": IDL2.Func(
+      [FamilyId2, PersonId2],
+      [ClaimEligibility2],
+      ["query"]
+    ),
     "canMessagePerson": IDL2.Func([IDL2.Text], [IDL2.Bool], ["query"]),
     "claimSteward": IDL2.Func([], [Result_242], []),
     "correctRelationshipType": IDL2.Func(
@@ -35990,6 +36146,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
       []
     ),
     "createMyself": IDL2.Func([IDL2.Text], [Result_212], []),
+    "createMyselfForFamily": IDL2.Func([FamilyId2, IDL2.Text], [Result_212], []),
     "createNewPersonCandidate": IDL2.Func(
       [IDL2.Text, IDL2.Text, SourceId2],
       [Result_202],
@@ -36044,8 +36201,23 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [IDL2.Opt(ProfileClaim2)],
       ["query"]
     ),
+    "getMyProfileClaimForFamily": IDL2.Func(
+      [FamilyId2, PersonId2],
+      [IDL2.Opt(ProfileClaim2)],
+      ["query"]
+    ),
+    "getMyProfileForFamily": IDL2.Func(
+      [FamilyId2],
+      [IDL2.Opt(PersonProfile2)],
+      ["query"]
+    ),
     "getMyRelationshipRequests": IDL2.Func(
       [],
+      [IDL2.Vec(RelationshipRequest2)],
+      ["query"]
+    ),
+    "getMyRelationshipRequestsForFamily": IDL2.Func(
+      [FamilyId2],
       [IDL2.Vec(RelationshipRequest2)],
       ["query"]
     ),
@@ -36055,10 +36227,25 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [IDL2.Opt(PersonProfile2)],
       ["query"]
     ),
+    "getPersonProfileForFamily": IDL2.Func(
+      [FamilyId2, PersonId2],
+      [IDL2.Opt(PersonProfile2)],
+      ["query"]
+    ),
     "getProfilePhoto": IDL2.Func([PersonId2], [IDL2.Opt(Photo2)], ["query"]),
+    "getProfilePhotoForFamily": IDL2.Func(
+      [FamilyId2, PersonId2],
+      [IDL2.Opt(Photo2)],
+      ["query"]
+    ),
     "getRecipe": IDL2.Func([RecipeId2], [IDL2.Opt(Recipe2)], ["query"]),
     "getRelationshipRequest": IDL2.Func(
       [IDL2.Nat],
+      [IDL2.Opt(RelationshipRequest2)],
+      ["query"]
+    ),
+    "getRelationshipRequestForFamily": IDL2.Func(
+      [FamilyId2, IDL2.Nat],
       [IDL2.Opt(RelationshipRequest2)],
       ["query"]
     ),
@@ -36082,6 +36269,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
     ),
     "hasActiveSteward": IDL2.Func([], [IDL2.Bool], ["query"]),
     "hasApprovedOwner": IDL2.Func([PersonId2], [IDL2.Bool], ["query"]),
+    "hasApprovedOwnerForFamily": IDL2.Func(
+      [FamilyId2, PersonId2],
+      [IDL2.Bool],
+      ["query"]
+    ),
     "isCallerAdmin": IDL2.Func([], [IDL2.Bool], ["query"]),
     "isCallerSteward": IDL2.Func([], [IDL2.Bool], ["query"]),
     "listApprovedArchiveItems": IDL2.Func(
@@ -36101,8 +36293,18 @@ const idlFactory = ({ IDL: IDL2 }) => {
       ["query"]
     ),
     "listBoardReplies": IDL2.Func([PostId2], [IDL2.Vec(Reply2)], ["query"]),
+    "listClaimDiscoveryProfilesForFamily": IDL2.Func(
+      [FamilyId2],
+      [IDL2.Vec(PersonProfile2)],
+      ["query"]
+    ),
     "listConfirmedRelationships": IDL2.Func(
       [],
+      [IDL2.Vec(Relationship2)],
+      ["query"]
+    ),
+    "listConfirmedRelationshipsForFamily": IDL2.Func(
+      [FamilyId2],
       [IDL2.Vec(Relationship2)],
       ["query"]
     ),
@@ -36160,10 +36362,25 @@ const idlFactory = ({ IDL: IDL2 }) => {
       ["query"]
     ),
     "listPhotos": IDL2.Func([PersonId2], [IDL2.Vec(Photo2)], ["query"]),
+    "listPhotosForFamily": IDL2.Func(
+      [FamilyId2, PersonId2],
+      [IDL2.Vec(Photo2)],
+      ["query"]
+    ),
     "listProfileClaims": IDL2.Func([], [IDL2.Vec(ProfileClaim2)], ["query"]),
+    "listProfileClaimsForFamily": IDL2.Func(
+      [FamilyId2],
+      [IDL2.Vec(ProfileClaim2)],
+      ["query"]
+    ),
     "listProfileRemovalRequests": IDL2.Func(
       [],
       [IDL2.Vec(ProfileRemovalRequest2)],
+      ["query"]
+    ),
+    "listProfilesForFamily": IDL2.Func(
+      [FamilyId2],
+      [IDL2.Vec(PersonProfile2)],
       ["query"]
     ),
     "listRecipesForPerson": IDL2.Func([IDL2.Text], [IDL2.Vec(Recipe2)], ["query"]),
@@ -36174,6 +36391,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
     ),
     "listRelationshipRequests": IDL2.Func(
       [],
+      [IDL2.Vec(RelationshipRequest2)],
+      ["query"]
+    ),
+    "listRelationshipRequestsForFamily": IDL2.Func(
+      [FamilyId2],
       [IDL2.Vec(RelationshipRequest2)],
       ["query"]
     ),
@@ -36227,6 +36449,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [Result_92],
       []
     ),
+    "proposeRelationshipForFamily": IDL2.Func(
+      [FamilyId2, PersonId2, PersonId2, RelationshipType2],
+      [Result_92],
+      []
+    ),
     "publishRecipe": IDL2.Func(
       [
         IDL2.Text,
@@ -36257,6 +36484,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
       []
     ),
     "rejectProfileClaim": IDL2.Func([IDL2.Nat], [IDL2.Opt(ProfileClaim2)], []),
+    "rejectProfileClaimForFamily": IDL2.Func(
+      [FamilyId2, IDL2.Nat],
+      [IDL2.Opt(ProfileClaim2)],
+      []
+    ),
     "rejectProfileRemoval": IDL2.Func(
       [IDL2.Nat],
       [IDL2.Opt(ProfileRemovalRequest2)],
@@ -36273,15 +36505,35 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [IDL2.Opt(RelationshipRequest2)],
       []
     ),
+    "rejectRelationshipRequestForFamily": IDL2.Func(
+      [FamilyId2, IDL2.Nat],
+      [IDL2.Opt(RelationshipRequest2)],
+      []
+    ),
     "rejectSource": IDL2.Func([SourceId2], [IDL2.Opt(SourceRecord2)], []),
     "rejectStory": IDL2.Func([StoryId2], [IDL2.Opt(Story2)], []),
     "removeBoardReply": IDL2.Func([ReplyId2], [IDL2.Opt(Reply2)], []),
     "removeDuplicateProfile": IDL2.Func([PersonId2], [Result_82], []),
+    "removeDuplicateProfileForFamily": IDL2.Func(
+      [FamilyId2, PersonId2],
+      [Result_82],
+      []
+    ),
     "removePhoto": IDL2.Func([PersonId2, PhotoId2], [IDL2.Bool], []),
+    "removePhotoForFamily": IDL2.Func(
+      [FamilyId2, PersonId2, PhotoId2],
+      [IDL2.Bool],
+      []
+    ),
     "removeRelationship": IDL2.Func([IDL2.Nat], [Result_72], []),
     "removeSteward": IDL2.Func([IDL2.Principal], [Result_62], []),
     "reportMessage": IDL2.Func([MessageId2, IDL2.Text], [Report2], []),
     "requestProfileClaim": IDL2.Func([PersonId2], [Result_52], []),
+    "requestProfileClaimForFamily": IDL2.Func(
+      [FamilyId2, PersonId2],
+      [Result_52],
+      []
+    ),
     "requestProfileRemoval": IDL2.Func([PersonId2, IDL2.Text], [Result_42], []),
     "resolveConflict": IDL2.Func(
       [IDL2.Nat, ConflictResolutionAction2, IDL2.Text],
@@ -36317,10 +36569,25 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [IDL2.Vec(PersonMatch2)],
       ["query"]
     ),
+    "searchPossibleMatchesForFamily": IDL2.Func(
+      [FamilyId2, IDL2.Text],
+      [IDL2.Vec(PersonMatch2)],
+      ["query"]
+    ),
     "sendMessage": IDL2.Func([IDL2.Text, IDL2.Text], [Result_110], []),
     "setProfilePhoto": IDL2.Func([PersonId2, PhotoId2], [IDL2.Opt(Photo2)], []),
+    "setProfilePhotoForFamily": IDL2.Func(
+      [FamilyId2, PersonId2, PhotoId2],
+      [IDL2.Opt(Photo2)],
+      []
+    ),
     "setRelationshipRequestPending": IDL2.Func(
       [IDL2.Nat],
+      [IDL2.Opt(RelationshipRequest2)],
+      []
+    ),
+    "setRelationshipRequestPendingForFamily": IDL2.Func(
+      [FamilyId2, IDL2.Nat],
       [IDL2.Opt(RelationshipRequest2)],
       []
     ),
@@ -36430,7 +36697,12 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [IDL2.Opt(Story2)],
       []
     ),
-    "updateOwnProfile": IDL2.Func([PersonId2, ProfileEdits2], [Result2], [])
+    "updateOwnProfile": IDL2.Func([PersonId2, ProfileEdits2], [Result2], []),
+    "updateOwnProfileForFamily": IDL2.Func(
+      [FamilyId2, PersonId2, ProfileEdits2],
+      [Result2],
+      []
+    )
   });
 };
 function candid_some(value) {
@@ -36909,6 +37181,20 @@ class Backend {
       return from_candid_Photo_n27(this._uploadFile, this._downloadFile, result);
     }
   }
+  async addPhotoForFamily(arg0, arg1, arg2, arg3, arg4) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.addPhotoForFamily(arg0, arg1, arg2, arg3, await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg4));
+        return from_candid_Photo_n27(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.addPhotoForFamily(arg0, arg1, arg2, arg3, await to_candid_ExternalBlob_n26(this._uploadFile, this._downloadFile, arg4));
+      return from_candid_Photo_n27(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async addRelationship(arg0, arg1, arg2) {
     if (this.processError) {
       try {
@@ -36979,6 +37265,20 @@ class Backend {
       return from_candid_opt_n67(this._uploadFile, this._downloadFile, result);
     }
   }
+  async approveProfileClaimForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.approveProfileClaimForFamily(arg0, arg1);
+        return from_candid_opt_n67(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.approveProfileClaimForFamily(arg0, arg1);
+      return from_candid_opt_n67(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async approveProfileRemoval(arg0) {
     if (this.processError) {
       try {
@@ -37032,6 +37332,20 @@ class Backend {
       }
     } else {
       const result = await this.actor.approveRelationshipRequest(arg0);
+      return from_candid_opt_n82(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async approveRelationshipRequestForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.approveRelationshipRequestForFamily(arg0, arg1);
+        return from_candid_opt_n82(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.approveRelationshipRequestForFamily(arg0, arg1);
       return from_candid_opt_n82(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -37147,6 +37461,20 @@ class Backend {
       return from_candid_ClaimEligibility_n108(this._uploadFile, this._downloadFile, result);
     }
   }
+  async canClaimProfileForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.canClaimProfileForFamily(arg0, arg1);
+        return from_candid_ClaimEligibility_n108(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.canClaimProfileForFamily(arg0, arg1);
+      return from_candid_ClaimEligibility_n108(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async canMessagePerson(arg0) {
     if (this.processError) {
       try {
@@ -37256,6 +37584,20 @@ class Backend {
       }
     } else {
       const result = await this.actor.createMyself(arg0);
+      return from_candid_Result_21_n141(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async createMyselfForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.createMyselfForFamily(arg0, arg1);
+        return from_candid_Result_21_n141(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.createMyselfForFamily(arg0, arg1);
       return from_candid_Result_21_n141(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -37483,6 +37825,34 @@ class Backend {
       return from_candid_opt_n67(this._uploadFile, this._downloadFile, result);
     }
   }
+  async getMyProfileClaimForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getMyProfileClaimForFamily(arg0, arg1);
+        return from_candid_opt_n67(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getMyProfileClaimForFamily(arg0, arg1);
+      return from_candid_opt_n67(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async getMyProfileForFamily(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getMyProfileForFamily(arg0);
+        return from_candid_opt_n189(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getMyProfileForFamily(arg0);
+      return from_candid_opt_n189(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async getMyRelationshipRequests() {
     if (this.processError) {
       try {
@@ -37494,6 +37864,20 @@ class Backend {
       }
     } else {
       const result = await this.actor.getMyRelationshipRequests();
+      return from_candid_vec_n190(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async getMyRelationshipRequestsForFamily(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getMyRelationshipRequestsForFamily(arg0);
+        return from_candid_vec_n190(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getMyRelationshipRequestsForFamily(arg0);
       return from_candid_vec_n190(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -37525,6 +37909,20 @@ class Backend {
       return from_candid_opt_n189(this._uploadFile, this._downloadFile, result);
     }
   }
+  async getPersonProfileForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getPersonProfileForFamily(arg0, arg1);
+        return from_candid_opt_n189(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getPersonProfileForFamily(arg0, arg1);
+      return from_candid_opt_n189(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async getProfilePhoto(arg0) {
     if (this.processError) {
       try {
@@ -37536,6 +37934,20 @@ class Backend {
       }
     } else {
       const result = await this.actor.getProfilePhoto(arg0);
+      return from_candid_opt_n191(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async getProfilePhotoForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getProfilePhotoForFamily(arg0, arg1);
+        return from_candid_opt_n191(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getProfilePhotoForFamily(arg0, arg1);
       return from_candid_opt_n191(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -37564,6 +37976,20 @@ class Backend {
       }
     } else {
       const result = await this.actor.getRelationshipRequest(arg0);
+      return from_candid_opt_n82(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async getRelationshipRequestForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getRelationshipRequestForFamily(arg0, arg1);
+        return from_candid_opt_n82(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getRelationshipRequestForFamily(arg0, arg1);
       return from_candid_opt_n82(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -37676,6 +38102,20 @@ class Backend {
       }
     } else {
       const result = await this.actor.hasApprovedOwner(arg0);
+      return result;
+    }
+  }
+  async hasApprovedOwnerForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.hasApprovedOwnerForFamily(arg0, arg1);
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.hasApprovedOwnerForFamily(arg0, arg1);
       return result;
     }
   }
@@ -37833,6 +38273,20 @@ class Backend {
       return result;
     }
   }
+  async listClaimDiscoveryProfilesForFamily(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listClaimDiscoveryProfilesForFamily(arg0);
+        return from_candid_vec_n219(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listClaimDiscoveryProfilesForFamily(arg0);
+      return from_candid_vec_n219(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async listConfirmedRelationships() {
     if (this.processError) {
       try {
@@ -37844,6 +38298,20 @@ class Backend {
       }
     } else {
       const result = await this.actor.listConfirmedRelationships();
+      return from_candid_vec_n226(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listConfirmedRelationshipsForFamily(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listConfirmedRelationshipsForFamily(arg0);
+        return from_candid_vec_n226(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listConfirmedRelationshipsForFamily(arg0);
       return from_candid_vec_n226(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -38099,6 +38567,20 @@ class Backend {
       return from_candid_vec_n250(this._uploadFile, this._downloadFile, result);
     }
   }
+  async listPhotosForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listPhotosForFamily(arg0, arg1);
+        return from_candid_vec_n250(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listPhotosForFamily(arg0, arg1);
+      return from_candid_vec_n250(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async listProfileClaims() {
     if (this.processError) {
       try {
@@ -38110,6 +38592,20 @@ class Backend {
       }
     } else {
       const result = await this.actor.listProfileClaims();
+      return from_candid_vec_n251(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listProfileClaimsForFamily(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listProfileClaimsForFamily(arg0);
+        return from_candid_vec_n251(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listProfileClaimsForFamily(arg0);
       return from_candid_vec_n251(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -38125,6 +38621,20 @@ class Backend {
     } else {
       const result = await this.actor.listProfileRemovalRequests();
       return from_candid_vec_n252(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listProfilesForFamily(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listProfilesForFamily(arg0);
+        return from_candid_vec_n219(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listProfilesForFamily(arg0);
+      return from_candid_vec_n219(this._uploadFile, this._downloadFile, result);
     }
   }
   async listRecipesForPerson(arg0) {
@@ -38166,6 +38676,20 @@ class Backend {
       }
     } else {
       const result = await this.actor.listRelationshipRequests();
+      return from_candid_vec_n190(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listRelationshipRequestsForFamily(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listRelationshipRequestsForFamily(arg0);
+        return from_candid_vec_n190(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listRelationshipRequestsForFamily(arg0);
       return from_candid_vec_n190(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -38421,6 +38945,20 @@ class Backend {
       return from_candid_Result_9_n280(this._uploadFile, this._downloadFile, result);
     }
   }
+  async proposeRelationshipForFamily(arg0, arg1, arg2, arg3) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.proposeRelationshipForFamily(arg0, arg1, arg2, to_candid_RelationshipType_n30(this._uploadFile, this._downloadFile, arg3));
+        return from_candid_Result_9_n280(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.proposeRelationshipForFamily(arg0, arg1, arg2, to_candid_RelationshipType_n30(this._uploadFile, this._downloadFile, arg3));
+      return from_candid_Result_9_n280(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async publishRecipe(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14) {
     if (this.processError) {
       try {
@@ -38505,6 +39043,20 @@ class Backend {
       return from_candid_opt_n67(this._uploadFile, this._downloadFile, result);
     }
   }
+  async rejectProfileClaimForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.rejectProfileClaimForFamily(arg0, arg1);
+        return from_candid_opt_n67(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.rejectProfileClaimForFamily(arg0, arg1);
+      return from_candid_opt_n67(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async rejectProfileRemoval(arg0) {
     if (this.processError) {
       try {
@@ -38558,6 +39110,20 @@ class Backend {
       }
     } else {
       const result = await this.actor.rejectRelationshipRequest(arg0);
+      return from_candid_opt_n82(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async rejectRelationshipRequestForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.rejectRelationshipRequestForFamily(arg0, arg1);
+        return from_candid_opt_n82(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.rejectRelationshipRequestForFamily(arg0, arg1);
       return from_candid_opt_n82(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -38617,6 +39183,20 @@ class Backend {
       return from_candid_Result_8_n284(this._uploadFile, this._downloadFile, result);
     }
   }
+  async removeDuplicateProfileForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.removeDuplicateProfileForFamily(arg0, arg1);
+        return from_candid_Result_8_n284(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.removeDuplicateProfileForFamily(arg0, arg1);
+      return from_candid_Result_8_n284(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async removePhoto(arg0, arg1) {
     if (this.processError) {
       try {
@@ -38628,6 +39208,20 @@ class Backend {
       }
     } else {
       const result = await this.actor.removePhoto(arg0, arg1);
+      return result;
+    }
+  }
+  async removePhotoForFamily(arg0, arg1, arg2) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.removePhotoForFamily(arg0, arg1, arg2);
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.removePhotoForFamily(arg0, arg1, arg2);
       return result;
     }
   }
@@ -38684,6 +39278,20 @@ class Backend {
       }
     } else {
       const result = await this.actor.requestProfileClaim(arg0);
+      return from_candid_Result_5_n291(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async requestProfileClaimForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.requestProfileClaimForFamily(arg0, arg1);
+        return from_candid_Result_5_n291(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.requestProfileClaimForFamily(arg0, arg1);
       return from_candid_Result_5_n291(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -38841,6 +39449,20 @@ class Backend {
       return result;
     }
   }
+  async searchPossibleMatchesForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.searchPossibleMatchesForFamily(arg0, arg1);
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.searchPossibleMatchesForFamily(arg0, arg1);
+      return result;
+    }
+  }
   async sendMessage(arg0, arg1) {
     if (this.processError) {
       try {
@@ -38869,6 +39491,20 @@ class Backend {
       return from_candid_opt_n191(this._uploadFile, this._downloadFile, result);
     }
   }
+  async setProfilePhotoForFamily(arg0, arg1, arg2) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.setProfilePhotoForFamily(arg0, arg1, arg2);
+        return from_candid_opt_n191(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.setProfilePhotoForFamily(arg0, arg1, arg2);
+      return from_candid_opt_n191(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async setRelationshipRequestPending(arg0) {
     if (this.processError) {
       try {
@@ -38880,6 +39516,20 @@ class Backend {
       }
     } else {
       const result = await this.actor.setRelationshipRequestPending(arg0);
+      return from_candid_opt_n82(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async setRelationshipRequestPendingForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.setRelationshipRequestPendingForFamily(arg0, arg1);
+        return from_candid_opt_n82(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.setRelationshipRequestPendingForFamily(arg0, arg1);
       return from_candid_opt_n82(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -39006,6 +39656,20 @@ class Backend {
       }
     } else {
       const result = await this.actor.updateOwnProfile(arg0, to_candid_ProfileEdits_n310(this._uploadFile, this._downloadFile, arg1));
+      return from_candid_Result_n313(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async updateOwnProfileForFamily(arg0, arg1, arg2) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.updateOwnProfileForFamily(arg0, arg1, to_candid_ProfileEdits_n310(this._uploadFile, this._downloadFile, arg2));
+        return from_candid_Result_n313(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.updateOwnProfileForFamily(arg0, arg1, to_candid_ProfileEdits_n310(this._uploadFile, this._downloadFile, arg2));
       return from_candid_Result_n313(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -42153,29 +42817,32 @@ const Zap = createLucideIcon("zap", __iconNode);
 function useProvidersPresent() {
   return reactExports.useContext(QueryClientContext) !== void 0;
 }
-function usePhotos(personId) {
+function photoQueryKey(prefix2, familyId, personId) {
+  return familyId ? [prefix2, familyId, personId] : [prefix2, personId];
+}
+function usePhotos(personId, familyId) {
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["photos", personId],
+    queryKey: photoQueryKey("photos", familyId, personId),
     queryFn: async () => {
       if (!actor) return [];
-      return actor.listPhotos(personId);
+      return familyId ? actor.listPhotosForFamily(familyId, personId) : actor.listPhotos(personId);
     },
     enabled: !!actor && !isFetching
   });
 }
-function useProfilePhoto(personId) {
+function useProfilePhoto(personId, familyId) {
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["profilePhoto", personId],
+    queryKey: photoQueryKey("profilePhoto", familyId, personId),
     queryFn: async () => {
       if (!actor) return null;
-      return actor.getProfilePhoto(personId);
+      return familyId ? actor.getProfilePhotoForFamily(familyId, personId) : actor.getProfilePhoto(personId);
     },
     enabled: !!actor && !isFetching
   });
 }
-function useAddPhoto() {
+function useAddPhoto(familyId) {
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
@@ -42186,19 +42853,19 @@ function useAddPhoto() {
       mimeType
     }) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.addPhoto(personId, filename, mimeType, blob);
+      return familyId ? actor.addPhotoForFamily(familyId, personId, filename, mimeType, blob) : actor.addPhoto(personId, filename, mimeType, blob);
     },
     onSuccess: (_data, variables) => {
       void queryClient2.invalidateQueries({
-        queryKey: ["photos", variables.personId]
+        queryKey: photoQueryKey("photos", familyId, variables.personId)
       });
       void queryClient2.invalidateQueries({
-        queryKey: ["profilePhoto", variables.personId]
+        queryKey: photoQueryKey("profilePhoto", familyId, variables.personId)
       });
     }
   });
 }
-function useRemovePhoto() {
+function useRemovePhoto(familyId) {
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
@@ -42207,19 +42874,19 @@ function useRemovePhoto() {
       photoId
     }) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.removePhoto(personId, photoId);
+      return familyId ? actor.removePhotoForFamily(familyId, personId, photoId) : actor.removePhoto(personId, photoId);
     },
     onSuccess: (_data, variables) => {
       void queryClient2.invalidateQueries({
-        queryKey: ["photos", variables.personId]
+        queryKey: photoQueryKey("photos", familyId, variables.personId)
       });
       void queryClient2.invalidateQueries({
-        queryKey: ["profilePhoto", variables.personId]
+        queryKey: photoQueryKey("profilePhoto", familyId, variables.personId)
       });
     }
   });
 }
-function useSetProfilePhoto() {
+function useSetProfilePhoto(familyId) {
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
@@ -42228,14 +42895,14 @@ function useSetProfilePhoto() {
       photoId
     }) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.setProfilePhoto(personId, photoId);
+      return familyId ? actor.setProfilePhotoForFamily(familyId, personId, photoId) : actor.setProfilePhoto(personId, photoId);
     },
     onSuccess: (_data, variables) => {
       void queryClient2.invalidateQueries({
-        queryKey: ["photos", variables.personId]
+        queryKey: photoQueryKey("photos", familyId, variables.personId)
       });
       void queryClient2.invalidateQueries({
-        queryKey: ["profilePhoto", variables.personId]
+        queryKey: photoQueryKey("profilePhoto", familyId, variables.personId)
       });
     }
   });
@@ -45361,19 +46028,20 @@ function useReviewReport() {
 }
 function usePersonProfile(personId, options) {
   const { actor, isFetching } = useActor(createActor);
+  const familyId = options == null ? void 0 : options.familyId;
   return useQuery({
-    queryKey: ["personProfile", personId],
+    queryKey: ["personProfile", familyId ?? null, personId],
     queryFn: async () => {
       if (!actor) return null;
-      return actor.getPersonProfile(personId);
+      return familyId ? actor.getPersonProfileForFamily(familyId, personId) : actor.getPersonProfile(personId);
     },
     enabled: ((options == null ? void 0 : options.enabled) ?? true) && !!actor && !isFetching
   });
 }
-function usePersonClaimStatus(personId) {
+function usePersonClaimStatus(personId, familyId) {
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["personProfile", personId],
+    queryKey: ["personProfile", null, personId],
     queryFn: async () => {
       if (!actor) return null;
       return actor.getPersonProfile(personId);
@@ -45384,32 +46052,32 @@ function usePersonClaimStatus(personId) {
     })
   });
 }
-function useMyProfileClaim(personId) {
+function useMyProfileClaim(personId, familyId) {
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["myProfileClaim", personId],
+    queryKey: ["myProfileClaim", familyId ?? null, personId],
     queryFn: async () => {
       if (!actor) return null;
-      return actor.getMyProfileClaim(personId);
+      return familyId ? actor.getMyProfileClaimForFamily(familyId, personId) : actor.getMyProfileClaim(personId);
     },
     enabled: !!actor && !isFetching
   });
 }
-function useMyProfile() {
+function useMyProfile(familyId) {
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["myProfile"],
+    queryKey: ["myProfile", familyId ?? null],
     queryFn: async () => {
       if (!actor) return null;
-      return actor.getMyProfile();
+      return familyId ? actor.getMyProfileForFamily(familyId) : actor.getMyProfile();
     },
     enabled: !!actor && !isFetching
   });
 }
-function useListProfileClaims() {
+function useListProfileClaims(familyId) {
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["profileClaims"],
+    queryKey: ["profileClaims", null],
     queryFn: async () => {
       if (!actor) return [];
       return actor.listProfileClaims();
@@ -45417,13 +46085,13 @@ function useListProfileClaims() {
     enabled: !!actor && !isFetching
   });
 }
-function useRequestProfileClaim() {
+function useRequestProfileClaim(familyId) {
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
     mutationFn: async (personId) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.requestProfileClaim(personId);
+      return familyId ? actor.requestProfileClaimForFamily(familyId, personId) : actor.requestProfileClaim(personId);
     },
     onSuccess: () => {
       void queryClient2.invalidateQueries({ queryKey: ["profileClaims"] });
@@ -45437,7 +46105,7 @@ function useRequestProfileClaim() {
     }
   });
 }
-function useApproveProfileClaim() {
+function useApproveProfileClaim(familyId) {
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   const reconcile = useReconcileClaimNotifications();
@@ -45460,7 +46128,7 @@ function useApproveProfileClaim() {
     }
   });
 }
-function useRejectProfileClaim() {
+function useRejectProfileClaim(familyId) {
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
@@ -45480,7 +46148,7 @@ function useRejectProfileClaim() {
     }
   });
 }
-function useSearchPossibleMatches() {
+function useSearchPossibleMatches(familyId) {
   const { actor } = useActor(createActor);
   return useMutation({
     mutationFn: async (name) => {
@@ -45489,7 +46157,7 @@ function useSearchPossibleMatches() {
     }
   });
 }
-function useCreateMyself() {
+function useCreateMyself(familyId) {
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
@@ -45502,7 +46170,7 @@ function useCreateMyself() {
     }
   });
 }
-function useUpdateOwnProfile() {
+function useUpdateOwnProfile(familyId) {
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
@@ -45511,11 +46179,11 @@ function useUpdateOwnProfile() {
       edits
     }) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.updateOwnProfile(personId, edits);
+      return familyId ? actor.updateOwnProfileForFamily(familyId, personId, edits) : actor.updateOwnProfile(personId, edits);
     },
     onSuccess: (_data, variables) => {
       void queryClient2.invalidateQueries({
-        queryKey: ["personProfile", variables.personId]
+        queryKey: ["personProfile"]
       });
       void queryClient2.invalidateQueries({ queryKey: ["myProfile"] });
       void queryClient2.invalidateQueries({ queryKey: ["myProfileClaim"] });
@@ -45527,29 +46195,29 @@ function useUpdateOwnProfile() {
         queryKey: ["myRelationshipRequests"]
       });
       void queryClient2.invalidateQueries({
-        queryKey: ["photos", variables.personId]
+        queryKey: familyId ? ["photos", familyId, variables.personId] : ["photos", variables.personId]
       });
       void queryClient2.invalidateQueries({
-        queryKey: ["profilePhoto", variables.personId]
+        queryKey: familyId ? ["profilePhoto", familyId, variables.personId] : ["profilePhoto", variables.personId]
       });
     }
   });
 }
-function useMyRelationshipRequests() {
+function useMyRelationshipRequests(familyId) {
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["myRelationshipRequests"],
+    queryKey: ["myRelationshipRequests", familyId ?? null],
     queryFn: async () => {
       if (!actor) return [];
-      return actor.getMyRelationshipRequests();
+      return familyId ? actor.getMyRelationshipRequestsForFamily(familyId) : actor.getMyRelationshipRequests();
     },
     enabled: !!actor && !isFetching
   });
 }
-function useListRelationshipRequests() {
+function useListRelationshipRequests(familyId) {
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["relationshipRequests"],
+    queryKey: ["relationshipRequests", null],
     queryFn: async () => {
       if (!actor) return [];
       return actor.listRelationshipRequests();
@@ -45557,7 +46225,7 @@ function useListRelationshipRequests() {
     enabled: !!actor && !isFetching
   });
 }
-function useProposeRelationship() {
+function useProposeRelationship(familyId) {
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
@@ -45567,11 +46235,7 @@ function useProposeRelationship() {
       relationshipType
     }) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.proposeRelationship(
-        fromPersonId,
-        toPersonId,
-        relationshipType
-      );
+      return actor.proposeRelationship(fromPersonId, toPersonId, relationshipType);
     },
     onSuccess: () => {
       void queryClient2.invalidateQueries({
@@ -45584,7 +46248,7 @@ function useProposeRelationship() {
     }
   });
 }
-function useApproveRelationshipRequest() {
+function useApproveRelationshipRequest(familyId) {
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
@@ -45609,7 +46273,7 @@ function useApproveRelationshipRequest() {
     }
   });
 }
-function useRejectRelationshipRequest() {
+function useRejectRelationshipRequest(familyId) {
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
@@ -45631,7 +46295,7 @@ function useRejectRelationshipRequest() {
     }
   });
 }
-function useSetRelationshipRequestPending() {
+function useSetRelationshipRequestPending(familyId) {
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
@@ -45653,13 +46317,13 @@ function useSetRelationshipRequestPending() {
     }
   });
 }
-function useListConfirmedRelationships() {
+function useListConfirmedRelationships(familyId) {
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["confirmedRelationships"],
+    queryKey: ["confirmedRelationships", familyId ?? null],
     queryFn: async () => {
       if (!actor) return [];
-      return actor.listConfirmedRelationships();
+      return familyId ? actor.listConfirmedRelationshipsForFamily(familyId) : actor.listConfirmedRelationships();
     },
     enabled: !!actor && !isFetching
   });
@@ -46722,6 +47386,28 @@ function LoginSurface() {
     ) : /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "signin-footnote", children: "Your account is private and secure. We never post to your Google or Apple account, and your identity stays yours." })
   ] });
 }
+const DEFAULT_FAMILY_ID = "norwood";
+const FamilyContext = reactExports.createContext(null);
+function FamilyProvider({
+  familyId = DEFAULT_FAMILY_ID,
+  children
+}) {
+  const value = reactExports.useMemo(
+    () => ({
+      familyId,
+      familyScopedId: familyId === DEFAULT_FAMILY_ID ? void 0 : familyId
+    }),
+    [familyId]
+  );
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(FamilyContext.Provider, { value, children });
+}
+function useActiveFamily() {
+  const context = reactExports.useContext(FamilyContext);
+  return context ?? { familyId: DEFAULT_FAMILY_ID, familyScopedId: void 0 };
+}
+function useFamilyScopedId() {
+  return useActiveFamily().familyScopedId;
+}
 const CANONICAL_DISPLAY_NAMES = {
   lorenzoSmithJr: "Lorenzo Smith Jr."
 };
@@ -47452,11 +48138,14 @@ function resolveCanonicalPersonProfile(backend, canonical) {
   };
 }
 function useCanonicalPerson(personId, fallbackName) {
+  const familyId = useFamilyScopedId();
   const { data: backendProfile } = usePersonProfile(personId ?? "", {
-    enabled: Boolean(personId)
+    enabled: Boolean(personId),
+    familyId
   });
   const { data: profilePhoto, isLoading: photoLoading } = useProfilePhoto(
-    personId ?? ""
+    personId ?? "",
+    familyId
   );
   const hasCanonicalProfile = Boolean(backendProfile);
   const displayName = backendProfile ? resolveBackendDisplayName(personId ?? "", backendProfile) : fallbackName;
@@ -47471,7 +48160,8 @@ function useCanonicalPerson(personId, fallbackName) {
 }
 function useNavbarIdentity() {
   const { isAuthenticated } = useAuth();
-  const { data: profile, isLoading } = useMyProfile();
+  const familyId = useFamilyScopedId();
+  const { data: profile, isLoading } = useMyProfile(familyId);
   if (!isAuthenticated) {
     return { displayName: "", status: "none", isLoading: false };
   }
@@ -55438,8 +56128,9 @@ function ClaimButton({
     isLoginError,
     loginError
   } = useAuth();
-  const { data: myClaim } = useMyProfileClaim(personId);
-  const claim = useRequestProfileClaim();
+  const familyId = useFamilyScopedId();
+  const { data: myClaim } = useMyProfileClaim(personId, familyId);
+  const claim = useRequestProfileClaim(familyId);
   const [activeProvider, setActiveProvider] = reactExports.useState(null);
   const [pendingClaim, setPendingClaim] = reactExports.useState(loadPendingClaim);
   const [claimError, setClaimError] = reactExports.useState(null);
@@ -61293,11 +61984,12 @@ function PhotoGallery({
   personName: personName2,
   onProfilePhotoChange
 }) {
-  const { data: photos = [], isLoading } = usePhotos(personId);
-  const { data: profilePhoto, isLoading: profilePhotoLoading } = useProfilePhoto(personId);
-  const addPhoto = useAddPhoto();
-  const setProfilePhoto = useSetProfilePhoto();
-  const removePhoto = useRemovePhoto();
+  const familyId = useFamilyScopedId();
+  const { data: photos = [], isLoading } = usePhotos(personId, familyId);
+  const { data: profilePhoto, isLoading: profilePhotoLoading } = useProfilePhoto(personId, familyId);
+  const addPhoto = useAddPhoto(familyId);
+  const setProfilePhoto = useSetProfilePhoto(familyId);
+  const removePhoto = useRemovePhoto(familyId);
   const [progress2, setProgress] = reactExports.useState(null);
   const [fileError, setFileError] = reactExports.useState(null);
   const fileInputRef = reactExports.useRef(null);
@@ -61981,13 +62673,15 @@ function PersonProfilePage({
   onOpenConflictReview
 }) {
   var _a2, _b2, _c2, _d2;
+  const familyId = useFamilyScopedId();
   const storyLabel = person.id === "julia" || person.id === "erma" || person.id === "hudson" || person.id === "gertrude-adams-hill" || person.id === "mary-louise-sims" || person.id === "mary-jane-johnson" || person.id === "mildred-adams" || person.id === "christine-adams" || person.id === "tammy" || person.id === "punchy" || person.id === "patricia-rollins" || person.id === "fannie-adams" || person.id === "christine-adams-tucker" || person.id === "ella-mae-adams" || person.id === "eula-lee-adams" || person.id === "sherriSmith" || person.id === "beatriceSmith" ? "Her Story" : "His Story";
   const { data: backendProfile, isLoading: profileLoading } = usePersonProfile(
-    person.id
+    person.id,
+    { familyId }
   );
   const { identity, isAuthenticated } = useInternetIdentity();
-  const { data: myClaim } = useMyProfileClaim(person.id);
-  const { data: relationshipRequests = [] } = useMyRelationshipRequests();
+  const { data: myClaim } = useMyProfileClaim(person.id, familyId);
+  const { data: relationshipRequests = [] } = useMyRelationshipRequests(familyId);
   const { data: isSteward = false } = useIsSteward();
   const { data: archivedIds = [] } = useListArchivedProfileIds();
   const isArchived = archivedIds.includes(person.id);
@@ -68232,9 +68926,10 @@ function mergeCanonicalProfile(staticProfile, canonical) {
   };
 }
 function useExploreFamily(focusPersonId, profiles2) {
-  const { data: confirmed = [] } = useListConfirmedRelationships();
+  const familyId = useFamilyScopedId();
+  const { data: confirmed = [] } = useListConfirmedRelationships(familyId);
   const resolvedId = focusPersonId ?? resolveDefaultFocus(profiles2);
-  const { data: backendProfile } = usePersonProfile(resolvedId);
+  const { data: backendProfile } = usePersonProfile(resolvedId, { familyId });
   return reactExports.useMemo(() => {
     const graph = overlayConfirmedRelationships(FAMILY_GRAPH, confirmed);
     const staticProfile = profiles2[resolvedId];
@@ -74341,13 +75036,14 @@ function getInitials$1(name) {
 }
 function EditPhotoSection({
   personId,
-  displayName
+  displayName,
+  familyId
 }) {
-  const { data: photos = [], isLoading } = usePhotos(personId);
-  const { data: profilePhoto } = useProfilePhoto(personId);
-  const addPhoto = useAddPhoto();
-  const setProfilePhoto = useSetProfilePhoto();
-  const removePhoto = useRemovePhoto();
+  const { data: photos = [], isLoading } = usePhotos(personId, familyId);
+  const { data: profilePhoto } = useProfilePhoto(personId, familyId);
+  const addPhoto = useAddPhoto(familyId);
+  const setProfilePhoto = useSetProfilePhoto(familyId);
+  const removePhoto = useRemovePhoto(familyId);
   const [progress2, setProgress] = reactExports.useState(null);
   const [fileError, setFileError] = reactExports.useState(null);
   const fileInputRef = reactExports.useRef(null);
@@ -74579,9 +75275,12 @@ function ProfileEditPage({
   personId,
   onBack
 }) {
-  const { data: backendProfile, isLoading } = usePersonProfile(personId);
+  const familyId = useFamilyScopedId();
+  const { data: backendProfile, isLoading } = usePersonProfile(personId, {
+    familyId
+  });
   const { isAuthenticated, login, identity } = useInternetIdentity();
-  const update = useUpdateOwnProfile();
+  const update = useUpdateOwnProfile(familyId);
   const providersPresent = useProvidersPresent();
   const currentPrincipal = identity == null ? void 0 : identity.getPrincipal().toString();
   const isOwner = Boolean(
@@ -75082,7 +75781,8 @@ function ProfileEditPage({
                 EditPhotoSection,
                 {
                   personId,
-                  displayName
+                  displayName,
+                  familyId
                 }
               ) : /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: "Photo management is unavailable right now." })
             ] }),
@@ -83239,5 +83939,5 @@ BigInt.prototype.toJSON = function() {
 };
 const queryClient = new QueryClient();
 ReactDOM.createRoot(document.getElementById("root")).render(
-  /* @__PURE__ */ jsxRuntimeExports.jsx(QueryClientProvider, { client: queryClient, children: /* @__PURE__ */ jsxRuntimeExports.jsx(InternetIdentityProvider, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(App, {}) }) })
+  /* @__PURE__ */ jsxRuntimeExports.jsx(QueryClientProvider, { client: queryClient, children: /* @__PURE__ */ jsxRuntimeExports.jsx(InternetIdentityProvider, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(FamilyProvider, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(App, {}) }) }) })
 );

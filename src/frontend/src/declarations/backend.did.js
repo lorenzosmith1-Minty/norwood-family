@@ -294,6 +294,7 @@ export const ProposedFinding = IDL.Record({
   'updatedAt' : IDL.Int,
   'personId' : IDL.Opt(IDL.Text),
   'findingType' : FindingType,
+  'familyId' : IDL.Text,
 });
 export const NewPersonCandidate = IDL.Record({
   'id' : IDL.Nat,
@@ -802,6 +803,7 @@ export const ConflictReviewItem = IDL.Record({
   'proposedSourceId' : IDL.Opt(IDL.Nat),
   'personId' : IDL.Opt(IDL.Text),
   'canonicalValue' : IDL.Text,
+  'familyId' : IDL.Text,
   'resolvedAt' : IDL.Opt(IDL.Int),
   'resolvedBy' : IDL.Opt(IDL.Principal),
   'existingSourceId' : IDL.Opt(IDL.Nat),
@@ -1138,6 +1140,11 @@ export const idlService = IDL.Service({
       [],
     ),
   'approveFinding' : IDL.Func([FindingId], [IDL.Opt(ProposedFinding)], []),
+  'approveFindingForFamily' : IDL.Func(
+      [FamilyId, FindingId],
+      [IDL.Opt(ProposedFinding)],
+      [],
+    ),
   'approveNewPersonCandidate' : IDL.Func(
       [IDL.Nat],
       [IDL.Opt(NewPersonCandidate)],
@@ -1262,6 +1269,20 @@ export const idlService = IDL.Service({
       [Result_22],
       [],
     ),
+  'createFindingForFamily' : IDL.Func(
+      [
+        FamilyId,
+        IDL.Text,
+        EvidenceLabel,
+        FindingType,
+        FindingContent,
+        SourceId,
+        IDL.Opt(IDL.Text),
+        IDL.Opt(IDL.Nat),
+      ],
+      [Result_22],
+      [],
+    ),
   'createMyself' : IDL.Func([IDL.Text], [Result_21], []),
   'createMyselfForFamily' : IDL.Func([FamilyId, IDL.Text], [Result_21], []),
   'createNewPersonCandidate' : IDL.Func(
@@ -1335,6 +1356,11 @@ export const idlService = IDL.Service({
     ),
   'getFamily' : IDL.Func([FamilyId], [IDL.Opt(Family)], ['query']),
   'getFinding' : IDL.Func([FindingId], [IDL.Opt(ProposedFinding)], ['query']),
+  'getFindingForFamily' : IDL.Func(
+      [FamilyId, FindingId],
+      [IDL.Opt(ProposedFinding)],
+      ['query'],
+    ),
   'getMyAccountId' : IDL.Func([], [Result_15], ['query']),
   'getMyAuthMethods' : IDL.Func([], [Result_14], ['query']),
   'getMyProfile' : IDL.Func([], [IDL.Opt(PersonProfile)], ['query']),
@@ -1481,6 +1507,11 @@ export const idlService = IDL.Service({
       ['query'],
     ),
   'listFindings' : IDL.Func([], [IDL.Vec(ProposedFinding)], ['query']),
+  'listFindingsForFamily' : IDL.Func(
+      [FamilyId],
+      [IDL.Vec(ProposedFinding)],
+      ['query'],
+    ),
   'listHiddenBoardPosts' : IDL.Func([], [IDL.Vec(Post)], ['query']),
   'listMessageableMembers' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
   'listMysteries' : IDL.Func([], [IDL.Vec(Mystery)], ['query']),
@@ -1574,6 +1605,11 @@ export const idlService = IDL.Service({
       [IDL.Opt(ProposedFinding)],
       [],
     ),
+  'needsResearchFindingForFamily' : IDL.Func(
+      [FamilyId, FindingId],
+      [IDL.Opt(ProposedFinding)],
+      [],
+    ),
   'needsResearchNewPersonCandidate' : IDL.Func(
       [IDL.Nat],
       [IDL.Opt(NewPersonCandidate)],
@@ -1632,6 +1668,11 @@ export const idlService = IDL.Service({
       [],
     ),
   'rejectFinding' : IDL.Func([FindingId], [IDL.Opt(ProposedFinding)], []),
+  'rejectFindingForFamily' : IDL.Func(
+      [FamilyId, FindingId],
+      [IDL.Opt(ProposedFinding)],
+      [],
+    ),
   'rejectNewPersonCandidate' : IDL.Func(
       [IDL.Nat],
       [IDL.Opt(NewPersonCandidate)],
@@ -2177,6 +2218,7 @@ export const idlFactory = ({ IDL }) => {
     'updatedAt' : IDL.Int,
     'personId' : IDL.Opt(IDL.Text),
     'findingType' : FindingType,
+    'familyId' : IDL.Text,
   });
   const NewPersonCandidate = IDL.Record({
     'id' : IDL.Nat,
@@ -2667,6 +2709,7 @@ export const idlFactory = ({ IDL }) => {
     'proposedSourceId' : IDL.Opt(IDL.Nat),
     'personId' : IDL.Opt(IDL.Text),
     'canonicalValue' : IDL.Text,
+    'familyId' : IDL.Text,
     'resolvedAt' : IDL.Opt(IDL.Int),
     'resolvedBy' : IDL.Opt(IDL.Principal),
     'existingSourceId' : IDL.Opt(IDL.Nat),
@@ -3001,6 +3044,11 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'approveFinding' : IDL.Func([FindingId], [IDL.Opt(ProposedFinding)], []),
+    'approveFindingForFamily' : IDL.Func(
+        [FamilyId, FindingId],
+        [IDL.Opt(ProposedFinding)],
+        [],
+      ),
     'approveNewPersonCandidate' : IDL.Func(
         [IDL.Nat],
         [IDL.Opt(NewPersonCandidate)],
@@ -3125,6 +3173,20 @@ export const idlFactory = ({ IDL }) => {
         [Result_22],
         [],
       ),
+    'createFindingForFamily' : IDL.Func(
+        [
+          FamilyId,
+          IDL.Text,
+          EvidenceLabel,
+          FindingType,
+          FindingContent,
+          SourceId,
+          IDL.Opt(IDL.Text),
+          IDL.Opt(IDL.Nat),
+        ],
+        [Result_22],
+        [],
+      ),
     'createMyself' : IDL.Func([IDL.Text], [Result_21], []),
     'createMyselfForFamily' : IDL.Func([FamilyId, IDL.Text], [Result_21], []),
     'createNewPersonCandidate' : IDL.Func(
@@ -3198,6 +3260,11 @@ export const idlFactory = ({ IDL }) => {
       ),
     'getFamily' : IDL.Func([FamilyId], [IDL.Opt(Family)], ['query']),
     'getFinding' : IDL.Func([FindingId], [IDL.Opt(ProposedFinding)], ['query']),
+    'getFindingForFamily' : IDL.Func(
+        [FamilyId, FindingId],
+        [IDL.Opt(ProposedFinding)],
+        ['query'],
+      ),
     'getMyAccountId' : IDL.Func([], [Result_15], ['query']),
     'getMyAuthMethods' : IDL.Func([], [Result_14], ['query']),
     'getMyProfile' : IDL.Func([], [IDL.Opt(PersonProfile)], ['query']),
@@ -3360,6 +3427,11 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'listFindings' : IDL.Func([], [IDL.Vec(ProposedFinding)], ['query']),
+    'listFindingsForFamily' : IDL.Func(
+        [FamilyId],
+        [IDL.Vec(ProposedFinding)],
+        ['query'],
+      ),
     'listHiddenBoardPosts' : IDL.Func([], [IDL.Vec(Post)], ['query']),
     'listMessageableMembers' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
     'listMysteries' : IDL.Func([], [IDL.Vec(Mystery)], ['query']),
@@ -3457,6 +3529,11 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Opt(ProposedFinding)],
         [],
       ),
+    'needsResearchFindingForFamily' : IDL.Func(
+        [FamilyId, FindingId],
+        [IDL.Opt(ProposedFinding)],
+        [],
+      ),
     'needsResearchNewPersonCandidate' : IDL.Func(
         [IDL.Nat],
         [IDL.Opt(NewPersonCandidate)],
@@ -3519,6 +3596,11 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'rejectFinding' : IDL.Func([FindingId], [IDL.Opt(ProposedFinding)], []),
+    'rejectFindingForFamily' : IDL.Func(
+        [FamilyId, FindingId],
+        [IDL.Opt(ProposedFinding)],
+        [],
+      ),
     'rejectNewPersonCandidate' : IDL.Func(
         [IDL.Nat],
         [IDL.Opt(NewPersonCandidate)],

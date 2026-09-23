@@ -48,6 +48,7 @@ import MessagingApi "mixins/messaging-api";
 import PendingCountApi "mixins/pending-count-api";
 import ResearchIntakeApi "mixins/research-intake-api";
 import ResearchSourceScopeApi "mixins/research-source-scope-api";
+import FindingScopeApi "mixins/finding-scope-api";
 import ArchiveResearchBoardNotificationsApi "mixins/archive-research-board-notifications-api";
 import AuditAndWorkloadApi "mixins/audit-and-workload-api";
 import StewardAuthorityApi "mixins/steward-authority-api";
@@ -946,6 +947,7 @@ actor {
         "id",
       )
       .sample({
+        familyId = FamilyTypes.DEFAULT_FAMILY_ID;
         id = 0;
         title = "";
         evidenceLabel = #Documented;
@@ -962,6 +964,7 @@ actor {
         reviewedAt = null;
         updatedAt = 0;
       })
+      .payload("familyId", func r = r.familyId)
       .payload("id", func r = r.id)
       .payload("title", func r = r.title)
       .payload("evidenceLabel", func r = evidenceLabelText(r.evidenceLabel))
@@ -1043,6 +1046,7 @@ actor {
         "id",
       )
       .sample({
+        familyId = "";
         id = 0;
         findingId = 0;
         personId = null;
@@ -1115,6 +1119,7 @@ actor {
   include PendingCountApi(accessControlState, archiveItems, recipes, stories, mysteryContributions, stewards, researchSources);
   include ResearchIntakeApi(researchSources, proposedFindings, newPersonCandidates, relationshipProposals, conflictReviewItems, researchAuditLog, researchState, profiles, confirmedRelationships, stories, mysteries, archiveItems, notifications, claims, stewards);
   include ResearchSourceScopeApi(researchSources, proposedFindings, newPersonCandidates, relationshipProposals, conflictReviewItems, researchAuditLog, researchState, archiveItems, notifications, claims, stewards);
+  include FindingScopeApi(proposedFindings, researchSources, newPersonCandidates, relationshipProposals, conflictReviewItems, researchAuditLog, researchState, profiles, claims, stewards, notifications);
   include ArchiveResearchBoardNotificationsApi(archiveItems, researchSources, researchState, posts, notifications, claims, profiles, stewards);
   include AuditAndWorkloadApi(accessControlState, auditLog, researchAuditLog, conflictReviewItems, stewards);
   include StewardAuthorityApi(accessControlState, stewards, auditLog);

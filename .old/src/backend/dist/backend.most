@@ -869,6 +869,7 @@ type ConflictReviewItem__205302016 =
     canonicalValue : Text;
     evidenceLabel : EvidenceLabel__606174571;
     existingSourceId : ?Nat;
+    familyId : Text;
     field : Text;
     findingId : FindingId__838572545;
     id : Nat;
@@ -925,6 +926,15 @@ type EvidenceLabel__1039778530 =
     #NeedsResearch;
     #PersonalMemory
   };
+type EvidenceLabel__276646896 =
+  {
+    #Conflicting;
+    #Documented;
+    #FamilyHistoryOralHistory;
+    #Hypothesis;
+    #NeedsResearch;
+    #PersonalMemory
+  };
 type EvidenceLabel__315308987 =
   {
     #Conflicting;
@@ -964,6 +974,7 @@ type EvidenceStatus__824382737 = EvidenceStatus__563034664;
 type EvidenceStatus__952143850 =
   {#Documented; #FamilyHistory; #PersonalMemory; #Unresolved};
 type ExternalBlob__220559234 = Blob;
+type FamilyId__284510423 = Text;
 type FamilyId__357998493 = Text;
 type FamilyId__635793600 = Text;
 type FamilyId__649884009 = Text;
@@ -1019,6 +1030,23 @@ type FindingContent__480214975 =
     #TimelineEvent :
       {date : ?Text; description : Text; personId : Text; title : Text}
   };
+type FindingContent__54974495 =
+  {
+    #Mystery : {description : Text; relatedPersonIds : [Text]; title : Text};
+    #PersonFact : {field : Text; personId : Text; value : Text};
+    #Relationship :
+      {fromPersonId : Text; relationshipType : Text; toPersonId : Text};
+    #Source :
+      {
+        archiveItemId : ?Nat;
+        description : Text;
+        sourceType : SourceType__173659579;
+        title : Text
+      };
+    #Story : {relatedPersonIds : [Text]; storyText : Text; title : Text};
+    #TimelineEvent :
+      {date : ?Text; description : Text; personId : Text; title : Text}
+  };
 type FindingContent__873708705 =
   {
     #Mystery : {description : Text; relatedPersonIds : [Text]; title : Text};
@@ -1037,6 +1065,8 @@ type FindingContent__873708705 =
       {date : ?Text; description : Text; personId : Text; title : Text}
   };
 type FindingId__838572545 = Nat;
+type FindingType__209948468 =
+  {#Mystery; #PersonFact; #Relationship; #Source; #Story; #TimelineEvent};
 type FindingType__224929741 =
   {#Mystery; #PersonFact; #Relationship; #Source; #Story; #TimelineEvent};
 type FindingType__738643381 =
@@ -1410,6 +1440,11 @@ type NewActor__251972276 =
     stewards : List__836382695<StewardRecord__223571186>;
     stories : List__836382695<Story__271674494>;
     successors : List__836382695<SuccessorDesignation__303563642>
+  };
+type NewActor__327868545 =
+  {
+    conflictReviewItems : List__836382695<NewConflictReviewItem__190236234>;
+    proposedFindings : List__836382695<NewProposedFinding__512461137>
   };
 type NewActor__386112082 =
   {
@@ -1797,6 +1832,23 @@ type NewArchiveItem__756289652 =
     transcript : ?Text;
     year : ?Nat
   };
+type NewConflictReviewItem__190236234 =
+  {
+    canonicalValue : Text;
+    evidenceLabel : EvidenceLabel__276646896;
+    existingSourceId : ?Nat;
+    familyId : FamilyId__284510423;
+    field : Text;
+    findingId : Nat;
+    id : Nat;
+    personId : ?Text;
+    proposedSourceId : ?Nat;
+    proposedValue : Text;
+    resolvedAt : ?Int;
+    resolvedBy : ?Principal;
+    status : ReviewStatus__756840534;
+    stewardNotes : Text
+  };
 type NewConflictReviewItem__41475181 =
   {
     canonicalValue : Text;
@@ -1995,6 +2047,25 @@ type NewProposedFinding__46231331 =
     reviewedBy : ?Principal;
     sourceId : Nat;
     status : NewReviewStatus__830937128;
+    submittedAt : Int;
+    submittedBy : Principal;
+    title : Text;
+    updatedAt : Int
+  };
+type NewProposedFinding__512461137 =
+  {
+    conflictReviewId : ?Nat;
+    content : FindingContent__54974495;
+    evidenceLabel : EvidenceLabel__276646896;
+    familyId : FamilyId__284510423;
+    findingType : FindingType__209948468;
+    id : Nat;
+    newPersonCandidateId : ?Nat;
+    personId : ?Text;
+    reviewedAt : ?Int;
+    reviewedBy : ?Principal;
+    sourceId : Nat;
+    status : ReviewStatus__756840534;
     submittedAt : Int;
     submittedBy : Principal;
     title : Text;
@@ -2604,6 +2675,11 @@ type OldActor__842609836 =
     profiles : Map__230067015<Text, PersonProfile__770856528>;
     relationshipRequests : List__836382695<RelationshipRequest__771673919>
   };
+type OldActor__860584657 =
+  {
+    conflictReviewItems : List__836382695<OldConflictReviewItem__474632668>;
+    proposedFindings : List__836382695<OldProposedFinding__1068966754>
+  };
 type OldActor__887486218 =
   {conflictReviewItems : List__836382695<OldConflictReviewItem__636748176>};
 type OldActor__916314435 =
@@ -2753,6 +2829,22 @@ type OldAuditEntry__364127483 =
     id : Nat;
     summary : Text;
     timestamp : Int
+  };
+type OldConflictReviewItem__474632668 =
+  {
+    canonicalValue : Text;
+    evidenceLabel : EvidenceLabel__276646896;
+    existingSourceId : ?Nat;
+    field : Text;
+    findingId : Nat;
+    id : Nat;
+    personId : ?Text;
+    proposedSourceId : ?Nat;
+    proposedValue : Text;
+    resolvedAt : ?Int;
+    resolvedBy : ?Principal;
+    status : ReviewStatus__756840534;
+    stewardNotes : Text
   };
 type OldConflictReviewItem__636748176 =
   {
@@ -2907,6 +2999,24 @@ type OldProfileClaim__274575170 =
     reviewedDate : ?Int;
     status : ProfileClaimStatus__547003711;
     submittedDate : Int
+  };
+type OldProposedFinding__1068966754 =
+  {
+    conflictReviewId : ?Nat;
+    content : FindingContent__54974495;
+    evidenceLabel : EvidenceLabel__276646896;
+    findingType : FindingType__209948468;
+    id : Nat;
+    newPersonCandidateId : ?Nat;
+    personId : ?Text;
+    reviewedAt : ?Int;
+    reviewedBy : ?Principal;
+    sourceId : Nat;
+    status : ReviewStatus__756840534;
+    submittedAt : Int;
+    submittedBy : Principal;
+    title : Text;
+    updatedAt : Int
   };
 type OldProposedFinding__854663539 =
   {
@@ -3913,6 +4023,7 @@ type ProposedFinding__51718788 =
     conflictReviewId : ?Nat;
     content : FindingContent__873708705;
     evidenceLabel : EvidenceLabel__606174571;
+    familyId : Text;
     findingType : FindingType__224929741;
     id : FindingId__838572545;
     newPersonCandidateId : ?Nat;
@@ -4534,6 +4645,8 @@ type ReviewStatus__488310263 =
 type ReviewStatus__654012580 = {#Approved; #Conflicting; #Pending; #Rejected};
 type ReviewStatus__724723279 =
   {#Approved; #Conflicting; #NeedsResearch; #Pending; #Rejected};
+type ReviewStatus__756840534 =
+  {#Approved; #Conflicting; #NeedsResearch; #Pending; #Rejected};
 type ReviewStatus__96206077 =
   {#Approved; #Conflicting; #NeedsResearch; #Pending; #Rejected};
 type SourceId__430694605 = Nat;
@@ -4583,6 +4696,15 @@ type SourceStatus__732068429 = {#Copy; #Original; #Transcribed; #Unverified};
 type SourceStatus__749020176 = {#Copy; #Original; #Transcribed; #Unverified};
 type SourceStatus__930855418 = {#Copy; #Original; #Transcribed; #Unverified};
 type SourceStatus__983723365 = {#Copy; #Original; #Transcribed; #Unverified};
+type SourceType__173659579 =
+  {
+    #CensusCitation;
+    #CertificateHeadstoneReference;
+    #DeedPropertyReference;
+    #EmailThread;
+    #ResearchNotes;
+    #UploadedDocumentImage
+  };
 type SourceType__189135088 =
   {
     #CensusCitation;
@@ -4880,7 +5002,8 @@ type UserRole__968740559 = {#admin; #guest; #user};
   "20260916_000000" : (old : OldActor__887486218) -> NewActor__772334770;
   "20260917_000000" : (old : OldActor__358288849) -> NewActor__665018719;
   "20260921_000000" : (old : OldActor__241283283) -> NewActor__426998186;
-  "20260923_000837" : (old : OldActor__233056753) -> NewActor__703993856
+  "20260923_000837" : (old : OldActor__233056753) -> NewActor__703993856;
+  "20260923_120000" : (old : OldActor__860584657) -> NewActor__327868545
 }
 actor  {
   stable accessControlState :

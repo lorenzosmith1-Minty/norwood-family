@@ -1,19 +1,19 @@
 {
-  "overview": "A private family history platform for preserving archives, research sources, and shared family stories.",
+  "overview": "A private family history research workspace where relatives propose, review, and confirm findings about their family tree.",
   "features": [
-    "Family-scoped Research sources with isolated reads and review",
-    "Steward-only source approval and rejection",
-    "Single-approval workflow linking sources to archive items",
-    "Family-correct review queue source counts",
-    "Pending contributions filtering per family"
+    "Propose research findings from family sources",
+    "Steward review queue for approving or rejecting findings",
+    "Family-scoped access so each family's research stays private",
+    "Canonical profile updates from approved findings",
+    "Archive contributions and research source management"
   ],
-  "category": "family-history",
+  "category": "family-history-research",
   "tags": [
-    "family",
-    "archive",
+    "genealogy",
+    "family-tree",
     "research",
-    "multi-tenancy",
-    "genealogy"
+    "collaboration",
+    "privacy"
   ],
-  "last_updated": "2026-09-22T23:56:58.335Z"
+  "last_updated": "2026-09-23T09:50:13.976Z"
 }

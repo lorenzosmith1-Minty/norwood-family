@@ -191,6 +191,7 @@ describe("Person Profile conflict surfacing: no duplicate card when a canonical 
         personId: "julia",
         existingSourceId: 1n,
         proposedSourceId: 2n,
+        familyId: "norwood",
       },
     ]);
     renderProfile();
@@ -223,6 +224,7 @@ describe("Person Profile conflict surfacing: no duplicate card when a canonical 
         personId: "julia",
         existingSourceId: 1n,
         proposedSourceId: 2n,
+        familyId: "norwood",
       },
     ]);
     renderProfile();

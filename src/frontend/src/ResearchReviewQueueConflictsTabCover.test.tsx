@@ -337,6 +337,7 @@ function conflictItem(
     personId: "julia",
     existingSourceId: 1n,
     proposedSourceId: 2n,
+    familyId: "norwood",
     ...overrides,
   };
 }

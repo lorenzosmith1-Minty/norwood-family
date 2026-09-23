@@ -66,11 +66,13 @@ module {
     );
   };
 
-  /// Creates a new proposed finding and appends it to the collection. The
-  /// finding enters as `#Pending` and is never auto-approved.
+  /// Creates a new proposed finding in `familyId` and appends it to the
+  /// collection. The finding enters as `#Pending` and is never auto-approved.
+  /// The stored record's `familyId` is the requested `familyId`.
   public func createFinding(
     findings : List.List<Types.ProposedFinding>,
     nextId : { var next : Nat },
+    familyId : Text,
     title : Text,
     evidenceLabel : Types.EvidenceLabel,
     findingType : Types.FindingType,
@@ -84,6 +86,7 @@ module {
     let id = nextId.next;
     nextId.next += 1;
     let finding : Types.ProposedFinding = {
+      familyId;
       id;
       title;
       evidenceLabel;
@@ -232,6 +235,7 @@ module {
   public func createConflictReviewItem(
     conflicts : List.List<Types.ConflictReviewItem>,
     nextId : { var next : Nat },
+    familyId : Text,
     findingId : Types.FindingId,
     personId : ?Text,
     field : Text,
@@ -244,6 +248,7 @@ module {
     let id = nextId.next;
     nextId.next += 1;
     let item : Types.ConflictReviewItem = {
+      familyId;
       id;
       findingId;
       personId;

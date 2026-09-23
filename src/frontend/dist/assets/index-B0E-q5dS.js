@@ -33477,7 +33477,8 @@ const ProposedFinding = Record({
   "reviewedBy": Opt(Principal2),
   "updatedAt": Int,
   "personId": Opt(Text),
-  "findingType": FindingType$1
+  "findingType": FindingType$1,
+  "familyId": Text
 });
 const NewPersonCandidate = Record({
   "id": Nat,
@@ -33986,6 +33987,7 @@ const ConflictReviewItem = Record({
   "proposedSourceId": Opt(Nat),
   "personId": Opt(Text),
   "canonicalValue": Text,
+  "familyId": Text,
   "resolvedAt": Opt(Int),
   "resolvedBy": Opt(Principal2),
   "existingSourceId": Opt(Nat)
@@ -34321,6 +34323,11 @@ Service({
     []
   ),
   "approveFinding": Func([FindingId], [Opt(ProposedFinding)], []),
+  "approveFindingForFamily": Func(
+    [FamilyId, FindingId],
+    [Opt(ProposedFinding)],
+    []
+  ),
   "approveNewPersonCandidate": Func(
     [Nat],
     [Opt(NewPersonCandidate)],
@@ -34445,6 +34452,20 @@ Service({
     [Result_22],
     []
   ),
+  "createFindingForFamily": Func(
+    [
+      FamilyId,
+      Text,
+      EvidenceLabel$1,
+      FindingType$1,
+      FindingContent,
+      SourceId,
+      Opt(Text),
+      Opt(Nat)
+    ],
+    [Result_22],
+    []
+  ),
   "createMyself": Func([Text], [Result_21], []),
   "createMyselfForFamily": Func([FamilyId, Text], [Result_21], []),
   "createNewPersonCandidate": Func(
@@ -34518,6 +34539,11 @@ Service({
   ),
   "getFamily": Func([FamilyId], [Opt(Family)], ["query"]),
   "getFinding": Func([FindingId], [Opt(ProposedFinding)], ["query"]),
+  "getFindingForFamily": Func(
+    [FamilyId, FindingId],
+    [Opt(ProposedFinding)],
+    ["query"]
+  ),
   "getMyAccountId": Func([], [Result_15], ["query"]),
   "getMyAuthMethods": Func([], [Result_14], ["query"]),
   "getMyProfile": Func([], [Opt(PersonProfile)], ["query"]),
@@ -34664,6 +34690,11 @@ Service({
     ["query"]
   ),
   "listFindings": Func([], [Vec(ProposedFinding)], ["query"]),
+  "listFindingsForFamily": Func(
+    [FamilyId],
+    [Vec(ProposedFinding)],
+    ["query"]
+  ),
   "listHiddenBoardPosts": Func([], [Vec(Post)], ["query"]),
   "listMessageableMembers": Func([], [Vec(Text)], ["query"]),
   "listMysteries": Func([], [Vec(Mystery)], ["query"]),
@@ -34757,6 +34788,11 @@ Service({
     [Opt(ProposedFinding)],
     []
   ),
+  "needsResearchFindingForFamily": Func(
+    [FamilyId, FindingId],
+    [Opt(ProposedFinding)],
+    []
+  ),
   "needsResearchNewPersonCandidate": Func(
     [Nat],
     [Opt(NewPersonCandidate)],
@@ -34815,6 +34851,11 @@ Service({
     []
   ),
   "rejectFinding": Func([FindingId], [Opt(ProposedFinding)], []),
+  "rejectFindingForFamily": Func(
+    [FamilyId, FindingId],
+    [Opt(ProposedFinding)],
+    []
+  ),
   "rejectNewPersonCandidate": Func(
     [Nat],
     [Opt(NewPersonCandidate)],
@@ -35356,7 +35397,8 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "reviewedBy": IDL2.Opt(IDL2.Principal),
     "updatedAt": IDL2.Int,
     "personId": IDL2.Opt(IDL2.Text),
-    "findingType": FindingType2
+    "findingType": FindingType2,
+    "familyId": IDL2.Text
   });
   const NewPersonCandidate2 = IDL2.Record({
     "id": IDL2.Nat,
@@ -35847,6 +35889,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "proposedSourceId": IDL2.Opt(IDL2.Nat),
     "personId": IDL2.Opt(IDL2.Text),
     "canonicalValue": IDL2.Text,
+    "familyId": IDL2.Text,
     "resolvedAt": IDL2.Opt(IDL2.Int),
     "resolvedBy": IDL2.Opt(IDL2.Principal),
     "existingSourceId": IDL2.Opt(IDL2.Nat)
@@ -36180,6 +36223,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
       []
     ),
     "approveFinding": IDL2.Func([FindingId2], [IDL2.Opt(ProposedFinding2)], []),
+    "approveFindingForFamily": IDL2.Func(
+      [FamilyId2, FindingId2],
+      [IDL2.Opt(ProposedFinding2)],
+      []
+    ),
     "approveNewPersonCandidate": IDL2.Func(
       [IDL2.Nat],
       [IDL2.Opt(NewPersonCandidate2)],
@@ -36304,6 +36352,20 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [Result_222],
       []
     ),
+    "createFindingForFamily": IDL2.Func(
+      [
+        FamilyId2,
+        IDL2.Text,
+        EvidenceLabel2,
+        FindingType2,
+        FindingContent2,
+        SourceId2,
+        IDL2.Opt(IDL2.Text),
+        IDL2.Opt(IDL2.Nat)
+      ],
+      [Result_222],
+      []
+    ),
     "createMyself": IDL2.Func([IDL2.Text], [Result_212], []),
     "createMyselfForFamily": IDL2.Func([FamilyId2, IDL2.Text], [Result_212], []),
     "createNewPersonCandidate": IDL2.Func(
@@ -36377,6 +36439,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
     ),
     "getFamily": IDL2.Func([FamilyId2], [IDL2.Opt(Family2)], ["query"]),
     "getFinding": IDL2.Func([FindingId2], [IDL2.Opt(ProposedFinding2)], ["query"]),
+    "getFindingForFamily": IDL2.Func(
+      [FamilyId2, FindingId2],
+      [IDL2.Opt(ProposedFinding2)],
+      ["query"]
+    ),
     "getMyAccountId": IDL2.Func([], [Result_152], ["query"]),
     "getMyAuthMethods": IDL2.Func([], [Result_142], ["query"]),
     "getMyProfile": IDL2.Func([], [IDL2.Opt(PersonProfile2)], ["query"]),
@@ -36539,6 +36606,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
       ["query"]
     ),
     "listFindings": IDL2.Func([], [IDL2.Vec(ProposedFinding2)], ["query"]),
+    "listFindingsForFamily": IDL2.Func(
+      [FamilyId2],
+      [IDL2.Vec(ProposedFinding2)],
+      ["query"]
+    ),
     "listHiddenBoardPosts": IDL2.Func([], [IDL2.Vec(Post2)], ["query"]),
     "listMessageableMembers": IDL2.Func([], [IDL2.Vec(IDL2.Text)], ["query"]),
     "listMysteries": IDL2.Func([], [IDL2.Vec(Mystery2)], ["query"]),
@@ -36636,6 +36708,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [IDL2.Opt(ProposedFinding2)],
       []
     ),
+    "needsResearchFindingForFamily": IDL2.Func(
+      [FamilyId2, FindingId2],
+      [IDL2.Opt(ProposedFinding2)],
+      []
+    ),
     "needsResearchNewPersonCandidate": IDL2.Func(
       [IDL2.Nat],
       [IDL2.Opt(NewPersonCandidate2)],
@@ -36698,6 +36775,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
       []
     ),
     "rejectFinding": IDL2.Func([FindingId2], [IDL2.Opt(ProposedFinding2)], []),
+    "rejectFindingForFamily": IDL2.Func(
+      [FamilyId2, FindingId2],
+      [IDL2.Opt(ProposedFinding2)],
+      []
+    ),
     "rejectNewPersonCandidate": IDL2.Func(
       [IDL2.Nat],
       [IDL2.Opt(NewPersonCandidate2)],
@@ -37503,6 +37585,20 @@ class Backend {
       return from_candid_opt_n51(this._uploadFile, this._downloadFile, result);
     }
   }
+  async approveFindingForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.approveFindingForFamily(arg0, arg1);
+        return from_candid_opt_n51(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.approveFindingForFamily(arg0, arg1);
+      return from_candid_opt_n51(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async approveNewPersonCandidate(arg0) {
     if (this.processError) {
       try {
@@ -37867,6 +37963,20 @@ class Backend {
       return from_candid_Result_22_n137(this._uploadFile, this._downloadFile, result);
     }
   }
+  async createFindingForFamily(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.createFindingForFamily(arg0, arg1, to_candid_EvidenceLabel_n130(this._uploadFile, this._downloadFile, arg2), to_candid_FindingType_n131(this._uploadFile, this._downloadFile, arg3), to_candid_FindingContent_n132(this._uploadFile, this._downloadFile, arg4), arg5, to_candid_opt_n18(this._uploadFile, this._downloadFile, arg6), to_candid_opt_n19(this._uploadFile, this._downloadFile, arg7));
+        return from_candid_Result_22_n137(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.createFindingForFamily(arg0, arg1, to_candid_EvidenceLabel_n130(this._uploadFile, this._downloadFile, arg2), to_candid_FindingType_n131(this._uploadFile, this._downloadFile, arg3), to_candid_FindingContent_n132(this._uploadFile, this._downloadFile, arg4), arg5, to_candid_opt_n18(this._uploadFile, this._downloadFile, arg6), to_candid_opt_n19(this._uploadFile, this._downloadFile, arg7));
+      return from_candid_Result_22_n137(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async createMyself(arg0) {
     if (this.processError) {
       try {
@@ -38088,6 +38198,20 @@ class Backend {
       }
     } else {
       const result = await this.actor.getFinding(arg0);
+      return from_candid_opt_n51(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async getFindingForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getFindingForFamily(arg0, arg1);
+        return from_candid_opt_n51(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getFindingForFamily(arg0, arg1);
       return from_candid_opt_n51(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -38791,6 +38915,20 @@ class Backend {
       return from_candid_vec_n238(this._uploadFile, this._downloadFile, result);
     }
   }
+  async listFindingsForFamily(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listFindingsForFamily(arg0);
+        return from_candid_vec_n238(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listFindingsForFamily(arg0);
+      return from_candid_vec_n238(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async listHiddenBoardPosts() {
     if (this.processError) {
       try {
@@ -39253,6 +39391,20 @@ class Backend {
       return from_candid_opt_n51(this._uploadFile, this._downloadFile, result);
     }
   }
+  async needsResearchFindingForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.needsResearchFindingForFamily(arg0, arg1);
+        return from_candid_opt_n51(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.needsResearchFindingForFamily(arg0, arg1);
+      return from_candid_opt_n51(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async needsResearchNewPersonCandidate(arg0) {
     if (this.processError) {
       try {
@@ -39446,6 +39598,20 @@ class Backend {
       }
     } else {
       const result = await this.actor.rejectFinding(arg0);
+      return from_candid_opt_n51(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async rejectFindingForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.rejectFindingForFamily(arg0, arg1);
+        return from_candid_opt_n51(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.rejectFindingForFamily(arg0, arg1);
       return from_candid_opt_n51(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -40880,6 +41046,7 @@ function from_candid_record_n229(_uploadFile, _downloadFile, value) {
     proposedSourceId: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.proposedSourceId)),
     personId: record_opt_to_undefined(from_candid_opt_n23(_uploadFile, _downloadFile, value.personId)),
     canonicalValue: value.canonicalValue,
+    familyId: value.familyId,
     resolvedAt: record_opt_to_undefined(from_candid_opt_n61(_uploadFile, _downloadFile, value.resolvedAt)),
     resolvedBy: record_opt_to_undefined(from_candid_opt_n62(_uploadFile, _downloadFile, value.resolvedBy)),
     existingSourceId: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.existingSourceId))
@@ -41046,7 +41213,8 @@ function from_candid_record_n53(_uploadFile, _downloadFile, value) {
     reviewedBy: record_opt_to_undefined(from_candid_opt_n62(_uploadFile, _downloadFile, value.reviewedBy)),
     updatedAt: value.updatedAt,
     personId: record_opt_to_undefined(from_candid_opt_n23(_uploadFile, _downloadFile, value.personId)),
-    findingType: from_candid_FindingType_n63(_uploadFile, _downloadFile, value.findingType)
+    findingType: from_candid_FindingType_n63(_uploadFile, _downloadFile, value.findingType),
+    familyId: value.familyId
   };
 }
 function from_candid_record_n58(_uploadFile, _downloadFile, value) {
@@ -47044,29 +47212,32 @@ function useNeedsResearchSource() {
 }
 function useListFindings() {
   const providersPresent = useProvidersPresent();
+  const familyScopedId = useFamilyScopedId();
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["research", "findings"],
+    queryKey: familyScopedId === void 0 ? ["research", "findings"] : ["research", "findings", familyScopedId],
     queryFn: async () => {
       if (!actor) return [];
-      return actor.listFindings();
+      return familyScopedId === void 0 ? actor.listFindings() : actor.listFindingsForFamily(familyScopedId);
     },
     enabled: providersPresent && !!actor && !isFetching
   });
 }
 function useGetFinding(findingId) {
   const providersPresent = useProvidersPresent();
+  const familyScopedId = useFamilyScopedId();
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["research", "findings", findingId.toString()],
+    queryKey: familyScopedId === void 0 ? ["research", "findings", findingId.toString()] : ["research", "findings", familyScopedId, findingId.toString()],
     queryFn: async () => {
       if (!actor) return null;
-      return actor.getFinding(findingId);
+      return familyScopedId === void 0 ? actor.getFinding(findingId) : actor.getFindingForFamily(familyScopedId, findingId);
     },
     enabled: providersPresent && !!actor && !isFetching
   });
 }
 function useCreateFinding() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
@@ -47080,7 +47251,16 @@ function useCreateFinding() {
       newPersonCandidateId
     }) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.createFinding(
+      return familyScopedId === void 0 ? actor.createFinding(
+        title,
+        evidenceLabel,
+        findingType,
+        content,
+        sourceId,
+        personId,
+        newPersonCandidateId
+      ) : actor.createFindingForFamily(
+        familyScopedId,
         title,
         evidenceLabel,
         findingType,
@@ -47104,12 +47284,13 @@ function useCreateFinding() {
   });
 }
 function useApproveFinding() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
     mutationFn: async (findingId) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.approveFinding(findingId);
+      return familyScopedId === void 0 ? actor.approveFinding(findingId) : actor.approveFindingForFamily(familyScopedId, findingId);
     },
     onSuccess: () => {
       void queryClient2.invalidateQueries({
@@ -47129,12 +47310,13 @@ function useApproveFinding() {
   });
 }
 function useRejectFinding() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
     mutationFn: async (findingId) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.rejectFinding(findingId);
+      return familyScopedId === void 0 ? actor.rejectFinding(findingId) : actor.rejectFindingForFamily(familyScopedId, findingId);
     },
     onSuccess: () => {
       void queryClient2.invalidateQueries({
@@ -47151,12 +47333,13 @@ function useRejectFinding() {
   });
 }
 function useNeedsResearchFinding() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
     mutationFn: async (findingId) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.needsResearchFinding(findingId);
+      return familyScopedId === void 0 ? actor.needsResearchFinding(findingId) : actor.needsResearchFindingForFamily(familyScopedId, findingId);
     },
     onSuccess: () => {
       void queryClient2.invalidateQueries({

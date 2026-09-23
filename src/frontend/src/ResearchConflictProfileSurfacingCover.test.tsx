@@ -173,6 +173,7 @@ describe("Conflict Review surfacing on the person profile", () => {
         personId: "julia",
         existingSourceId: 1n,
         proposedSourceId: 1n,
+        familyId: "norwood",
       },
     ]);
     renderProfile();
@@ -221,6 +222,7 @@ describe("Conflict Review surfacing on the person profile", () => {
         personId: "julia",
         existingSourceId: 1n,
         proposedSourceId: 2n,
+        familyId: "norwood",
       },
     ]);
     renderProfile();
@@ -251,6 +253,7 @@ describe("Conflict Review surfacing on the person profile", () => {
         personId: "julia",
         existingSourceId: 1n,
         proposedSourceId: 1n,
+        familyId: "norwood",
       },
     ]);
     renderProfile();

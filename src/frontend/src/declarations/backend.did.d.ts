@@ -160,6 +160,7 @@ export interface ConflictReviewItem {
   'proposedSourceId' : [] | [bigint],
   'personId' : [] | [string],
   'canonicalValue' : string,
+  'familyId' : string,
   'resolvedAt' : [] | [bigint],
   'resolvedBy' : [] | [Principal],
   'existingSourceId' : [] | [bigint],
@@ -552,6 +553,7 @@ export interface ProposedFinding {
   'updatedAt' : bigint,
   'personId' : [] | [string],
   'findingType' : FindingType,
+  'familyId' : string,
 }
 export interface Recipe {
   'era' : [] | [string],
@@ -1005,13 +1007,24 @@ export interface _SERVICE {
     [] | [ArchiveItem]
   >,
   /**
-   * / Approves a pending finding (steward only), routing it to its target
-   * / surface. A finding labelled `#Conflicting` is never approved directly —
-   * / it is routed to a Conflict Review item instead of silently overwriting
-   * / canonical data. Returns the updated finding, or `null` when it does not
-   * / exist or is not pending.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `approveFindingForFamily`.
    */
   'approveFinding' : ActorMethod<[FindingId], [] | [ProposedFinding]>,
+  /**
+   * / Approves the pending finding with `findingId` in `familyId`. Requires an
+   * / active Steward of `familyId`. The linked Source and referenced
+   * / PersonProfile must both belong to `familyId`. A finding labelled
+   * / `#Conflicting` is routed to a Conflict Review item carrying the same
+   * / `familyId` instead of silently overwriting canonical data. An approved
+   * / finding promotes into the canonical profile through the family-qualified
+   * / profile lookup, verifying `profile.familyId == familyId` and updating only
+   * / that family's profile. Returns the updated finding, or `null` when no
+   * / pending finding with that id belongs to `familyId`.
+   */
+  'approveFindingForFamily' : ActorMethod<
+    [FamilyId, FindingId],
+    [] | [ProposedFinding]
+  >,
   /**
    * / Approves a pending New Person candidate (Family Steward only), creating
    * / exactly one canonical Person record (PersonProfile) that preserves the
@@ -1233,11 +1246,31 @@ export interface _SERVICE {
     Mystery
   >,
   /**
-   * / Creates a new proposed finding. Requires an approved family member; the
-   * / caller is recorded as the submitter. The finding enters as `#Pending`.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `createFindingForFamily`.
    */
   'createFinding' : ActorMethod<
     [
+      string,
+      EvidenceLabel,
+      FindingType,
+      FindingContent,
+      SourceId,
+      [] | [string],
+      [] | [bigint],
+    ],
+    Result_22
+  >,
+  /**
+   * / Creates a new proposed finding in `familyId`. Requires an approved member
+   * / of `familyId`; the caller is recorded as the submitter. The linked
+   * / SourceRecord must belong to `familyId` and the referenced PersonProfile must
+   * / belong to `familyId`, so a Source in Family A can never create a Finding
+   * / against a profile in Family B. The finding enters as `#Pending` and its
+   * / `familyId` is the requested `familyId`.
+   */
+  'createFindingForFamily' : ActorMethod<
+    [
+      FamilyId,
       string,
       EvidenceLabel,
       FindingType,
@@ -1367,11 +1400,20 @@ export interface _SERVICE {
    */
   'getFamily' : ActorMethod<[FamilyId], [] | [Family]>,
   /**
-   * / Returns a single proposed finding by id (Family Steward only). The finding
-   * / carries its content, submitter principal, and review metadata, so it is not
-   * / readable by anonymous or non-steward callers.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `getFindingForFamily`.
    */
   'getFinding' : ActorMethod<[FindingId], [] | [ProposedFinding]>,
+  /**
+   * / Returns the finding with `findingId` when it belongs to `familyId`, or
+   * / `null` otherwise. Requires an active Steward of `familyId`, matching the
+   * / pre-tenancy Steward-only finding-read behavior. A record that exists under
+   * / another family is never returned, so a `findingId` alone cannot cross the
+   * / family boundary.
+   */
+  'getFindingForFamily' : ActorMethod<
+    [FamilyId, FindingId],
+    [] | [ProposedFinding]
+  >,
   /**
    * / Returns the stable account id of the signed-in caller. Anonymous callers
    * / receive #NotSignedIn.
@@ -1506,10 +1548,12 @@ export interface _SERVICE {
   /**
    * / Returns the review queue for `familyId`. Requires an active Steward of
    * / `familyId`. The Sources section and every source-derived count are
-   * / restricted to sources whose `familyId` equals `familyId`; the non-source
-   * / categories (Findings, Candidates, Relationships, Conflicts) keep their
-   * / existing behavior unchanged in this build, so the returned queue never
-   * / mixes source counts across families.
+   * / restricted to sources whose `familyId` equals `familyId` (byte-identical to
+   * / Tenancy 1C-B2-A), and the Findings section and every finding-derived count
+   * / are restricted to findings whose `familyId` equals `familyId`, so the
+   * / returned queue never mixes source or finding counts across families. The
+   * / non-source, non-finding categories (Candidates, Relationships, Conflicts)
+   * / keep their existing behavior unchanged in this build.
    */
   'getReviewQueueForFamily' : ActorMethod<[FamilyId], ReviewQueue>,
   /**
@@ -1678,9 +1722,16 @@ export interface _SERVICE {
    */
   'listEligibleStewardCandidates' : ActorMethod<[], Array<StewardIdentity>>,
   /**
-   * / Lists all proposed findings (steward only).
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `listFindingsForFamily`.
    */
   'listFindings' : ActorMethod<[], Array<ProposedFinding>>,
+  /**
+   * / Lists every proposed finding in `familyId`. Requires an active Steward of
+   * / `familyId`, matching the pre-tenancy Steward-only finding-read behavior. A
+   * / finding whose `familyId` differs is never returned, so Family A findings
+   * / never appear in a Family B call.
+   */
+  'listFindingsForFamily' : ActorMethod<[FamilyId], Array<ProposedFinding>>,
   /**
    * / Lists all hidden (moderated) board posts for the Steward-only Hidden /
    * / Moderated Posts view. Family Steward only. Hidden posts are preserved with
@@ -1864,12 +1915,20 @@ export interface _SERVICE {
    */
   'mergeProfiles' : ActorMethod<[PersonId, PersonId], Result_13>,
   /**
-   * / Approves a pending finding (steward only), routing it to its target
-   * / transitioning it to `#NeedsResearch` while preserving the finding and its
-   * / content. Records a `FindingNeedsResearch` audit entry. Returns the updated
-   * / finding, or `null` when it does not exist or is not pending.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `needsResearchFindingForFamily`.
    */
   'needsResearchFinding' : ActorMethod<[FindingId], [] | [ProposedFinding]>,
+  /**
+   * / Marks the pending finding with `findingId` in `familyId` as needing
+   * / research. Requires an active Steward of `familyId`. Returns the updated
+   * / finding, or `null` when no pending finding with that id belongs to
+   * / `familyId`.
+   */
+  'needsResearchFindingForFamily' : ActorMethod<
+    [FamilyId, FindingId],
+    [] | [ProposedFinding]
+  >,
   /**
    * / Marks a pending New Person candidate as needing research (Family Steward
    * / only), transitioning it to `#NeedsResearch` while preserving the candidate.
@@ -1986,10 +2045,18 @@ export interface _SERVICE {
     [] | [ArchiveItem]
   >,
   /**
-   * / Rejects a pending finding (steward only). Returns the updated finding, or
-   * / `null` when it does not exist or is not pending.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `rejectFindingForFamily`.
    */
   'rejectFinding' : ActorMethod<[FindingId], [] | [ProposedFinding]>,
+  /**
+   * / Rejects the pending finding with `findingId` in `familyId`. Requires an
+   * / active Steward of `familyId`. Returns the updated finding, or `null` when
+   * / no pending finding with that id belongs to `familyId`.
+   */
+  'rejectFindingForFamily' : ActorMethod<
+    [FamilyId, FindingId],
+    [] | [ProposedFinding]
+  >,
   /**
    * / Rejects a pending New Person candidate (Family Steward only), marking it
    * / `#Rejected`. No canonical Person is created; the candidate and its audit

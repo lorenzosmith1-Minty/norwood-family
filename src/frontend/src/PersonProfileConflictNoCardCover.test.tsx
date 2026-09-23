@@ -189,6 +189,7 @@ describe("Person Profile: unresolved conflict with no canonical fact card render
         personId: "julia",
         existingSourceId: 1n,
         proposedSourceId: 2n,
+        familyId: "norwood",
       },
     ]);
     renderProfile();
@@ -218,6 +219,7 @@ describe("Person Profile: unresolved conflict with no canonical fact card render
         personId: "julia",
         existingSourceId: 1n,
         proposedSourceId: 2n,
+        familyId: "norwood",
       },
     ]);
     const onOpenConflictReview = vi.fn();
@@ -247,6 +249,7 @@ describe("Person Profile: unresolved conflict with no canonical fact card render
         personId: "julia",
         existingSourceId: 1n,
         proposedSourceId: 2n,
+        familyId: "norwood",
       },
     ]);
     renderProfile();
@@ -280,6 +283,7 @@ describe("Person Profile: unresolved conflict with no canonical fact card render
         personId: "julia",
         existingSourceId: 1n,
         proposedSourceId: 2n,
+        familyId: "norwood",
       },
     ]);
     renderProfile();

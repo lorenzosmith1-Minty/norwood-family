@@ -7,6 +7,7 @@ import OwnershipTypes "../types/ownership";
 import GovernanceTypes "../types/governance";
 import FamilyTypes "../types/family";
 import ResearchSourceScopeLib "../lib/research-source-scope";
+import FindingScopeLib "../lib/finding-scope";
 import ArchiveLib "../lib/archive";
 import FamilyAuthorizationLib "../lib/family-authorization";
 
@@ -210,15 +211,17 @@ mixin (
 
   /// Returns the review queue for `familyId`. Requires an active Steward of
   /// `familyId`. The Sources section and every source-derived count are
-  /// restricted to sources whose `familyId` equals `familyId`; the non-source
-  /// categories (Findings, Candidates, Relationships, Conflicts) keep their
-  /// existing behavior unchanged in this build, so the returned queue never
-  /// mixes source counts across families.
+  /// restricted to sources whose `familyId` equals `familyId` (byte-identical to
+  /// Tenancy 1C-B2-A), and the Findings section and every finding-derived count
+  /// are restricted to findings whose `familyId` equals `familyId`, so the
+  /// returned queue never mixes source or finding counts across families. The
+  /// non-source, non-finding categories (Candidates, Relationships, Conflicts)
+  /// keep their existing behavior unchanged in this build.
   public query ({ caller }) func getReviewQueueForFamily(
     familyId : FamilyTypes.FamilyId,
   ) : async Types.ReviewQueue {
     requireSourceStewardForFamily(caller, familyId);
-    ResearchSourceScopeLib.computeQueueForFamily(sources, findings, candidates, proposals, conflicts, familyId);
+    FindingScopeLib.computeQueueForFamily(sources, findings, candidates, proposals, conflicts, familyId);
   };
 
   // ---------------------------------------------------------------------------
@@ -262,6 +265,6 @@ mixin (
   /// TEMPORARY Tenancy 1C compatibility wrapper for `getReviewQueueForFamily`.
   public query ({ caller }) func getReviewQueue() : async Types.ReviewQueue {
     requireSourceStewardForFamily(caller, FamilyTypes.DEFAULT_FAMILY_ID);
-    ResearchSourceScopeLib.computeQueueForFamily(sources, findings, candidates, proposals, conflicts, FamilyTypes.DEFAULT_FAMILY_ID);
+    FindingScopeLib.computeQueueForFamily(sources, findings, candidates, proposals, conflicts, FamilyTypes.DEFAULT_FAMILY_ID);
   };
 };

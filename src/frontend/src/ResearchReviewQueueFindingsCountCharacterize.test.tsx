@@ -1,16 +1,18 @@
 import "@testing-library/jest-dom/vitest";
 import {
   ClaimStatus,
-  type ConflictReviewItem,
   EvidenceLabel,
   type FindingContent,
   FindingType,
   LivingStatus,
+  type NewPersonCandidate,
   type PersonProfile,
   type ProfileClaim,
   type ProposedFinding,
+  type RelationshipProposal,
   type RelationshipRequest,
   type Report,
+  type ResearchAuditEntry,
   type ReviewQueue,
   ReviewStatus,
   type SourceRecord,
@@ -29,32 +31,37 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
 
-// Characterization baseline for the Conflict Review badge change.
+// ---------------------------------------------------------------------------
+// Characterization baseline for the family-scoped Proposed Findings change:
+// the Review Queue Findings count and the default-family finding read path.
 //
-// The upcoming build changes the Conflict Review badge computation in
-// ResearchIntakePage so it counts only actual unresolved ConflictReviewItems
-// (status Conflicting or NeedsResearch), not ordinary research items that carry
-// a NeedsResearch status. Today the badge is `reviewQueue.conflicting +
-// reviewQueue.needsResearch`, which over-counts because `needsResearch` also
-// includes ordinary findings marked Needs Research that never became a conflict.
+// The requested change makes the Review Queue Findings count family-scoped and
+// moves the finding endpoints onto explicit familyId scoping. The DEFAULT-family
+// (Norwood) behavior must not change: the Findings tab count and the
+// "Proposed Findings (N)" section title are derived from the legacy
+// `listFindings()` result, and the default family keeps routing through the
+// legacy no-argument finding endpoints.
 //
-// This baseline deliberately does NOT assert the current over-counting behavior
-// (that is the bug the change intentionally fixes). Instead it freezes the
-// adjacent working behavior the change must not break:
+// This file freezes the adjacent working behavior the change must not break:
 //
-//  1. A normal finding marked Needs Research remains visible in the Review
-//     Queue's Findings tab with its Needs Research status pill — the badge fix
-//     must not remove Needs Research findings from the Review Queue.
-//  2. A ConflictReviewItem with status Conflicting renders a conflict card with
-//     all four resolution actions on the Conflict Review page — the badge fix
-//     must not disturb conflict-card rendering.
-//  3. The Conflict Review page shows the empty state when there are no
-//     ConflictReviewItems — the badge fix must not make the page show a card
-//     when no conflict item exists.
+//   1. The Review Queue Findings tab count equals the number of findings the
+//      legacy `listFindings()` returns, and the section title reports the same
+//      number.
+//   2. The default-family Review Queue reads findings through the legacy
+//      `listFindings()` endpoint (no familyId argument), not a `*ForFamily`
+//      variant.
+//   3. The Findings tab count reflects the status filter, so a filtered view
+//      reports the filtered count.
+//
+// It deliberately does NOT freeze the absence of a familyId argument as a
+// permanent property of the API — adding one is exactly the change under way.
+// What it freezes is that the DEFAULT-family read the page makes today keeps
+// its current shape and count.
 //
 // The backend is a typed in-memory actor mock, so this is component/integration
 // coverage of the frontend consumer contract — it does not exercise the real
 // canister (see coverageLimits).
+// ---------------------------------------------------------------------------
 configure({ testIdAttribute: "data-ocid" });
 
 const ACCOUNT = "2vxsx-fae";
@@ -69,15 +76,14 @@ const {
   setMyProfile,
   setSources,
   setFindings,
-  setConflicts,
-  setReviewQueue,
+  getListFindingsCalls,
+  getListFindingsForFamilyCalls,
 } = vi.hoisted(() => {
   let isAuthenticated = false;
   let isAdmin = false;
   let myProfile: PersonProfile | null = null;
   let sources: SourceRecord[] = [];
   let findings: ProposedFinding[] = [];
-  let conflicts: ConflictReviewItem[] = [];
   let reviewQueue: ReviewQueue = {
     pending: 0n,
     approved: 0n,
@@ -86,6 +92,11 @@ const {
     needsResearch: 0n,
     items: [],
   };
+  // Records the exact argument shapes the page passes to the finding read
+  // endpoints, so the default-family consumer contract is asserted, not just
+  // the rendered count.
+  let listFindingsCalls: unknown[][] = [];
+  let listFindingsForFamilyCalls: unknown[][] = [];
 
   const mockActor = {
     async isCallerAdmin(): Promise<boolean> {
@@ -129,36 +140,36 @@ const {
     async getSource(id: bigint): Promise<SourceRecord | null> {
       return sources.find((s) => s.id === id) ?? null;
     },
-    async listFindings(): Promise<ProposedFinding[]> {
+    async listFindings(...args: unknown[]): Promise<ProposedFinding[]> {
+      listFindingsCalls = [...listFindingsCalls, args];
+      return findings;
+    },
+    // The canonical family-scoped variant must NOT be reached for the default
+    // family; it is recorded so a regression that routes Norwood through it is
+    // visible.
+    async listFindingsForFamily(
+      ...args: unknown[]
+    ): Promise<ProposedFinding[]> {
+      listFindingsForFamilyCalls = [...listFindingsForFamilyCalls, args];
       return findings;
     },
     async getFinding(id: bigint): Promise<ProposedFinding | null> {
       return findings.find((f) => f.id === id) ?? null;
     },
-    async listNewPersonCandidates(): Promise<unknown[]> {
+    async listNewPersonCandidates(): Promise<NewPersonCandidate[]> {
       return [];
     },
-    async listRelationshipProposals(): Promise<unknown[]> {
+    async listRelationshipProposals(): Promise<RelationshipProposal[]> {
       return [];
     },
-    async listConflictReviewItems(): Promise<ConflictReviewItem[]> {
-      return conflicts;
-    },
-    async listConflictsForPerson(
-      personId: string,
-    ): Promise<ConflictReviewItem[]> {
-      return conflicts.filter(
-        (c) =>
-          c.personId === personId &&
-          (c.status === ReviewStatus.Conflicting ||
-            c.status === ReviewStatus.NeedsResearch),
-      );
-    },
-    async getResearchAuditLog(): Promise<unknown[]> {
+    async listConflictReviewItems(): Promise<unknown[]> {
       return [];
     },
     async getReviewQueue(): Promise<ReviewQueue> {
       return reviewQueue;
+    },
+    async getResearchAuditLog(): Promise<ResearchAuditEntry[]> {
+      return [];
     },
   };
 
@@ -170,7 +181,6 @@ const {
       myProfile = null;
       sources = [];
       findings = [];
-      conflicts = [];
       reviewQueue = {
         pending: 0n,
         approved: 0n,
@@ -179,6 +189,8 @@ const {
         needsResearch: 0n,
         items: [],
       };
+      listFindingsCalls = [];
+      listFindingsForFamilyCalls = [];
     },
     getAuthenticated: () => isAuthenticated,
     setAuthenticated: (v: boolean) => {
@@ -196,12 +208,11 @@ const {
     setFindings: (v: ProposedFinding[]) => {
       findings = v;
     },
-    setConflicts: (v: ConflictReviewItem[]) => {
-      conflicts = v;
-    },
     setReviewQueue: (v: ReviewQueue) => {
       reviewQueue = v;
     },
+    getListFindingsCalls: () => listFindingsCalls,
+    getListFindingsForFamilyCalls: () => listFindingsForFamilyCalls,
   };
 });
 
@@ -259,23 +270,28 @@ function sourceRecord(id: bigint, title: string): SourceRecord {
   };
 }
 
-function needsResearchFinding(id: bigint, title: string): ProposedFinding {
+function finding(
+  id: bigint,
+  title: string,
+  status: ReviewStatus,
+): ProposedFinding {
+  const content: FindingContent = {
+    __kind__: "PersonFact",
+    PersonFact: {
+      field: "Birth date",
+      value: "12 March 1898",
+      personId: "julia",
+    },
+  };
   return {
     id,
     title,
     evidenceLabel: EvidenceLabel.Documented,
     findingType: FindingType.PersonFact,
-    content: {
-      __kind__: "PersonFact",
-      PersonFact: {
-        field: "Birth date",
-        value: "12 March 1898",
-        personId: "julia",
-      },
-    },
+    content,
     sourceId: 1n,
     personId: "julia",
-    status: ReviewStatus.NeedsResearch,
+    status,
     submittedBy: STEWARD,
     submittedAt: 1_700_000_000_000_000_000n,
     updatedAt: 1_700_000_000_000_000_000n,
@@ -283,29 +299,7 @@ function needsResearchFinding(id: bigint, title: string): ProposedFinding {
   };
 }
 
-function conflictItem(
-  id: bigint,
-  findingId: bigint,
-  overrides: Partial<ConflictReviewItem> = {},
-): ConflictReviewItem {
-  return {
-    id,
-    findingId,
-    field: "Birth date",
-    canonicalValue: "1899",
-    proposedValue: "1898",
-    status: ReviewStatus.Conflicting,
-    evidenceLabel: EvidenceLabel.Documented,
-    stewardNotes: "",
-    personId: "julia",
-    existingSourceId: 1n,
-    proposedSourceId: 1n,
-    familyId: "norwood",
-    ...overrides,
-  };
-}
-
-async function openResearchIntake(user: ReturnType<typeof userEvent.setup>) {
+async function openReviewQueue(user: ReturnType<typeof userEvent.setup>) {
   await user.click(
     await screen.findByRole("button", { name: /Family Steward/ }),
   );
@@ -313,122 +307,75 @@ async function openResearchIntake(user: ReturnType<typeof userEvent.setup>) {
     await screen.findByRole("button", { name: /Research Intake/ }),
   );
   await screen.findByRole("heading", { name: "Research Intake" });
-}
-
-async function openReviewQueue(user: ReturnType<typeof userEvent.setup>) {
-  await openResearchIntake(user);
   await user.click(screen.getByTestId("research_intake.open_review_queue"));
   await screen.findByRole("heading", { name: "Review Queue" });
 }
 
-async function openConflictReview(user: ReturnType<typeof userEvent.setup>) {
-  await openResearchIntake(user);
-  await user.click(screen.getByTestId("research_intake.open_conflict_review"));
-  await screen.findByRole("heading", { name: "Conflict Review" });
-}
-
-describe("Conflict Review badge change: adjacent working behavior (characterization)", () => {
-  it("keeps a normal finding marked Needs Research visible in the Review Queue", async () => {
+describe("Review Queue Findings count: default-family legacy read (characterization)", () => {
+  it("counts the findings the legacy listFindings() returns on the Findings tab", async () => {
     setAuthenticated(true);
     setAdmin(true);
     setMyProfile(claimedProfile("lorenzoSmithJr", "Lorenzo Smith Jr."));
     setSources([sourceRecord(1n, "1900 census")]);
-    // An ordinary finding marked Needs Research — it never became a conflict.
-    setFindings([needsResearchFinding(1n, "Birth date of Julia Norwood")]);
-    setConflicts([]);
-    setReviewQueue({
-      pending: 0n,
-      approved: 0n,
-      rejected: 0n,
-      conflicting: 0n,
-      needsResearch: 1n,
-      items: [],
-    });
+    setFindings([
+      finding(1n, "Pending birth date", ReviewStatus.Pending),
+      finding(2n, "Approved birth date", ReviewStatus.Approved),
+      finding(3n, "Rejected birth date", ReviewStatus.Rejected),
+    ]);
     const user = userEvent.setup();
     renderApp();
     await openReviewQueue(user);
 
-    // The Needs Research finding remains listed in the Findings tab with its
-    // status pill. The badge fix must not remove it from the Review Queue.
-    const card = screen.getByTestId("research_queue.finding.0");
-    expect(
-      within(card).getByText("Birth date of Julia Norwood"),
-    ).toBeInTheDocument();
-    // The Needs Research status pill is rendered (label is lowercase 'research').
-    // An exact match targets the status pill, not the "Needs Research" action
-    // button that now also appears on an actionable Needs Research finding.
-    expect(within(card).getByText("Needs research")).toBeInTheDocument();
+    // The Findings tab count equals the number of findings the legacy endpoint
+    // returned (3), independent of status.
+    const findingsTab = screen.getByTestId("research_queue.tab.findings");
+    expect(within(findingsTab).getByText("3")).toBeInTheDocument();
+
+    // The section title reports the same count.
+    expect(screen.getByText("Proposed Findings (3)")).toBeInTheDocument();
   });
 
-  it("renders a conflict card with all four resolution actions for a Conflicting ConflictReviewItem", async () => {
+  it("reads findings through the legacy listFindings() endpoint with no familyId for the default family", async () => {
     setAuthenticated(true);
     setAdmin(true);
     setMyProfile(claimedProfile("lorenzoSmithJr", "Lorenzo Smith Jr."));
     setSources([sourceRecord(1n, "1900 census")]);
-    setFindings([needsResearchFinding(1n, "Birth date of Julia Norwood")]);
-    setConflicts([conflictItem(1n, 1n)]);
-    setReviewQueue({
-      pending: 0n,
-      approved: 0n,
-      rejected: 0n,
-      conflicting: 1n,
-      needsResearch: 0n,
-      items: [],
-    });
+    setFindings([finding(1n, "Pending birth date", ReviewStatus.Pending)]);
     const user = userEvent.setup();
     renderApp();
-    await openConflictReview(user);
+    await openReviewQueue(user);
 
-    // The conflict card shows the disputed values side by side.
-    const card = await screen.findByTestId("research_conflict.card.1");
-    expect(within(card).getByText("Existing · canonical")).toBeInTheDocument();
-    expect(within(card).getByText("1899")).toBeInTheDocument();
-    expect(within(card).getByText("Proposed")).toBeInTheDocument();
-    expect(within(card).getByText("1898")).toBeInTheDocument();
-
-    // All four resolution actions are present on the unresolved conflict.
-    for (const label of [
-      "Keep Existing",
-      "Replace Existing",
-      "Preserve Both / Unresolved",
-      "Needs Research",
-    ]) {
-      expect(
-        within(card).getByRole("button", { name: label }),
-      ).toBeInTheDocument();
-    }
+    // The default family routes through the legacy no-argument endpoint.
+    expect(getListFindingsCalls()).toEqual([[]]);
+    // The canonical family-scoped variant is never reached for Norwood.
+    expect(getListFindingsForFamilyCalls()).toEqual([]);
   });
 
-  it("shows the empty state on the Conflict Review page when there are no ConflictReviewItems", async () => {
+  it("reports the filtered count when a status filter narrows the Findings tab", async () => {
     setAuthenticated(true);
     setAdmin(true);
     setMyProfile(claimedProfile("lorenzoSmithJr", "Lorenzo Smith Jr."));
     setSources([sourceRecord(1n, "1900 census")]);
-    // No ConflictReviewItem and a clean queue (no conflicting/needs-research
-    // counts) — the genuine empty case the badge fix must preserve.
-    setFindings([]);
-    setConflicts([]);
-    setReviewQueue({
-      pending: 0n,
-      approved: 0n,
-      rejected: 0n,
-      conflicting: 0n,
-      needsResearch: 0n,
-      items: [],
-    });
+    setFindings([
+      finding(1n, "Pending birth date", ReviewStatus.Pending),
+      finding(2n, "Needs research birth date", ReviewStatus.NeedsResearch),
+    ]);
     const user = userEvent.setup();
     renderApp();
-    await openConflictReview(user);
+    await openReviewQueue(user);
 
-    // With no conflict review items, the page shows the empty state rather than
-    // a card. The badge fix must not make the page render a conflict card when
-    // no conflict item exists.
-    const empty = await screen.findByTestId("research_conflict.empty_state");
-    expect(
-      within(empty).getByText("No conflicts to review"),
-    ).toBeInTheDocument();
-    expect(
-      screen.queryByTestId("research_conflict.card.1"),
-    ).not.toBeInTheDocument();
+    // Unfiltered: both findings are counted in the section title.
+    expect(screen.getByText("Proposed Findings (2)")).toBeInTheDocument();
+
+    // Filter to Needs Research: the section title reports only the one matching
+    // finding, while the tab count stays the unfiltered total (2).
+    await user.click(
+      screen.getByTestId("research_queue.status_filter.NeedsResearch"),
+    );
+    expect(screen.getByText("Proposed Findings (1)")).toBeInTheDocument();
+    const findingsTab = screen.getByTestId("research_queue.tab.findings");
+    expect(within(findingsTab).getByText("2")).toBeInTheDocument();
+    expect(screen.getByText("Needs research birth date")).toBeInTheDocument();
+    expect(screen.queryByText("Pending birth date")).not.toBeInTheDocument();
   });
 });

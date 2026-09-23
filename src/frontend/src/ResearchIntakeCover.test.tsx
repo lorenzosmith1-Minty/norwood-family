@@ -334,6 +334,7 @@ const {
         submittedBy: STEWARD,
         submittedAt: 1_700_000_000_000_000_000n,
         updatedAt: 1_700_000_000_000_000_000n,
+        familyId: "norwood",
       };
       findings = [...findings, record];
       createdFindings = [
@@ -645,6 +646,7 @@ function pendingFinding(id: bigint, title: string): ProposedFinding {
     submittedBy: STEWARD,
     submittedAt: 1_700_000_000_000_000_000n,
     updatedAt: 1_700_000_000_000_000_000n,
+    familyId: "norwood",
   };
 }
 
@@ -665,6 +667,7 @@ function conflictItem(
     personId: "julia",
     existingSourceId: 1n,
     proposedSourceId: 1n,
+    familyId: "norwood",
     ...overrides,
   };
 }

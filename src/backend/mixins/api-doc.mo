@@ -1078,7 +1078,9 @@ stays readable.
   carries the contributor principal and description, so anonymous and signed-in
   but non-member callers are rejected with a trap.
 - `createFinding(title : Text, evidenceLabel : EvidenceLabel, findingType : FindingType, content : FindingContent, sourceId : SourceId, personId : ?Text, newPersonCandidateId : ?Nat) : async Result<ProposedFinding, ResearchError>` —
-  update. Creates a proposed finding carrying exactly one evidence label and a
+  update. TEMPORARY Tenancy 1C compatibility wrapper for
+  `createFindingForFamily`, delegating with the default family id (`\"norwood\"`).
+  Creates a proposed finding carrying exactly one evidence label and a
   required source link. Requires an approved family member (a caller holding at
   least one `#Approved` profile claim, or a Family Steward); returns
   `#err(#notAuthorized)` for an anonymous or signed-in but unapproved caller and
@@ -1087,30 +1089,90 @@ stays readable.
   canonical Person (`personId`) or reference a New Person Candidate
   (`newPersonCandidateId`). The finding enters as `#Pending` and is never
   auto-approved.
-- `listFindings() : async [ProposedFinding]` — query. Family Steward only. Lists
-  all proposed findings.
-- `getFinding(id : FindingId) : async ?ProposedFinding` — query. Family Steward
-  only. Returns a single proposed finding by id, or `null` when it does not
-  exist. The finding carries its content, submitter principal, and review
-  metadata, so anonymous and signed-in but non-steward callers are rejected with
-  a trap.
-- `approveFinding(id : FindingId) : async ?ProposedFinding` — update. Family
-  Steward only. Approves a pending finding, routing it to its target surface
+- `listFindings() : async [ProposedFinding]` — query. TEMPORARY Tenancy 1C
+  compatibility wrapper for `listFindingsForFamily`, delegating with the default
+  family id (`\"norwood\"`). Family Steward only. Lists all proposed findings in
+  the default family.
+- `getFinding(id : FindingId) : async ?ProposedFinding` — query. TEMPORARY
+  Tenancy 1C compatibility wrapper for `getFindingForFamily`, delegating with the
+  default family id (`\"norwood\"`). Family Steward only. Returns a single
+  proposed finding by id, or `null` when it does not exist. The finding carries
+  its content, submitter principal, and review metadata, so anonymous and
+  signed-in but non-steward callers are rejected with a trap.
+- `approveFinding(id : FindingId) : async ?ProposedFinding` — update. TEMPORARY
+  Tenancy 1C compatibility wrapper for `approveFindingForFamily`, delegating with
+  the default family id (`\"norwood\"`). Family Steward only. Approves a pending
+  finding, routing it to its target surface
   (Profile, family graph, Timeline / Travel Through Time, Family Stories, Family
   Mysteries, or Profile Sources / Archive). A finding labelled `#Conflicting` is
   never approved directly — it is routed to a Conflict Review item instead of
   silently overwriting canonical data, and the finding is marked `#Conflicting`
   with a `conflictReviewId` link. Returns the updated finding, or `null` when it
   does not exist or is not pending.
-- `rejectFinding(id : FindingId) : async ?ProposedFinding` — update. Family
-  Steward only. Rejects a pending finding. Returns the updated finding, or `null`
-  when it does not exist or is not pending.
+- `rejectFinding(id : FindingId) : async ?ProposedFinding` — update. TEMPORARY
+  Tenancy 1C compatibility wrapper for `rejectFindingForFamily`, delegating with
+  the default family id (`\"norwood\"`). Family Steward only. Rejects a pending
+  finding. Returns the updated finding, or `null` when it does not exist or is
+  not pending.
 - `needsResearchFinding(id : FindingId) : async ?ProposedFinding` — update.
-  Family Steward only. Marks a pending finding as needing research,
-  transitioning it to `#NeedsResearch` while preserving the finding and its
-  content. The finding remains in the Research Review Queue with status
+  TEMPORARY Tenancy 1C compatibility wrapper for
+  `needsResearchFindingForFamily`, delegating with the default family id
+  (`\"norwood\"`). Family Steward only. Marks a pending finding as needing
+  research, transitioning it to `#NeedsResearch` while preserving the finding and
+  its content. The finding remains in the Research Review Queue with status
   `NEEDS_RESEARCH` and a `FindingNeedsResearch` audit entry is recorded. Returns
   the updated finding, or `null` when it does not exist or is not pending.
+
+#### Family-scoped Proposed Finding methods (canonical)
+
+Every proposed finding is family-scoped: it carries a required `familyId`, and
+every family-scoped read and review requires `ProposedFinding.familyId` to equal
+the requested `familyId`. A `findingId` alone is never a tenant boundary — a
+lookup that finds a finding belonging to another family behaves exactly like a
+lookup that found nothing, so Family A findings can never be read, reviewed,
+resolved, or promoted into Family B. The single-family finding endpoints above
+are TEMPORARY Tenancy 1C compatibility wrappers that delegate with the default
+family id (`\"norwood\"`); they are deprecated and will be removed once every
+caller passes an explicit `familyId`.
+
+- `createFindingForFamily(familyId : Text, title : Text, evidenceLabel : EvidenceLabel, findingType : FindingType, content : FindingContent, sourceId : SourceId, personId : ?Text, newPersonCandidateId : ?Nat) : async Result<ProposedFinding, ResearchError>` —
+  update. Creates a proposed finding in `familyId`. Requires an approved member
+  of `familyId`; returns `#err(#notAuthorized)` for an anonymous or signed-in but
+  unapproved caller and `#err(#notFound(sourceId))` when the referenced source
+  does not exist in `familyId`. The linked SourceRecord must belong to `familyId`
+  and the referenced PersonProfile must belong to `familyId`, so a Source in
+  Family A can never create a Finding against a profile in Family B. The stored
+  finding's `familyId` is the requested `familyId`, and it enters as `#Pending`.
+- `listFindingsForFamily(familyId : Text) : async [ProposedFinding]` — query.
+  Requires an active Steward of `familyId`. Lists every proposed finding whose
+  `familyId` equals `familyId`; a finding belonging to another family is never
+  returned.
+- `getFindingForFamily(familyId : Text, findingId : FindingId) : async ?ProposedFinding` —
+  query. Requires an active Steward of `familyId`. Returns the finding with
+  `findingId` when it belongs to `familyId`, or `null` otherwise. A record that
+  exists under another family is never returned, so a `findingId` alone cannot
+  cross the family boundary.
+- `approveFindingForFamily(familyId : Text, findingId : FindingId) : async ?ProposedFinding` —
+  update. Requires an active Steward of `familyId`; a Steward of another family
+  cannot approve the finding. The linked Source and referenced PersonProfile must
+  both belong to `familyId`. A finding labelled `#Conflicting` is routed to a
+  Conflict Review item carrying the same `familyId` instead of silently
+  overwriting canonical data. An approved finding promotes into the canonical
+  profile through the family-qualified profile lookup, verifying
+  `profile.familyId == familyId` and updating only that family's profile, so a
+  Family A finding never mutates a same-personId profile in Family B. Returns the
+  updated finding, or `null` when no pending finding with that id belongs to
+  `familyId`.
+- `rejectFindingForFamily(familyId : Text, findingId : FindingId) : async ?ProposedFinding` —
+  update. Requires an active Steward of `familyId`. Rejects the pending finding
+  with `findingId` in `familyId`. Returns the updated finding, or `null` when no
+  pending finding with that id belongs to `familyId`.
+- `needsResearchFindingForFamily(familyId : Text, findingId : FindingId) : async ?ProposedFinding` —
+  update. Requires an active Steward of `familyId`. Marks the pending finding
+  with `findingId` in `familyId` as needing research, transitioning it to
+  `#NeedsResearch` while preserving the finding and its content. Returns the
+  updated finding, or `null` when no pending finding with that id belongs to
+  `familyId`.
 - `approveNewPersonCandidate(id : Nat) : async ?NewPersonCandidate` — update.
   Family Steward only. Approves a pending New Person candidate, creating exactly
   one canonical Person record (PersonProfile) that preserves the candidate's
@@ -1210,8 +1272,10 @@ stays readable.
   (`pending`, `approved`, `rejected`, `conflicting`, `needsResearch`) and the
   full list of reviewable items (`items`). The Sources section and every
   source-derived count are restricted to sources whose `familyId` equals
-  `familyId`, so the queue never mixes source counts across families; the
-  non-source categories (Findings, Candidates, Relationships, Conflicts) keep
+  `familyId`, and the Findings section and every finding-derived count are
+  restricted to findings whose `familyId` equals `familyId`, so the queue never
+  mixes source or finding counts across families; the
+  remaining categories (Candidates, Relationships, Conflicts) keep
   their existing aggregation behavior. Every pending item appears with its type,
   title/summary, contributor, provenance, created date, evidence label, and
   available steward actions. Because the queue exposes contributor principals,
@@ -1546,7 +1610,8 @@ the platform controller reads all rows, while a signed-in caller reads only the
 sources whose `familyId` is a family they are an approved member or active
 Steward of, so a caller can never read another family's sources through OQL.
 `proposedFinding`
-rows (primary key `id`, a `Nat`) carry `title`, `evidenceLabel`
+rows (primary key `id`, a `Nat`) carry `familyId` (the owning family id, the
+tenant boundary), `title`, `evidenceLabel`
 (`\"Documented\"`/`\"FamilyHistoryOralHistory\"`/`\"PersonalMemory\"`/`\"Hypothesis\"`/`\"Conflicting\"`/`\"NeedsResearch\"`),
 `findingType` (`\"PersonFact\"`/`\"Relationship\"`/`\"TimelineEvent\"`/`\"Story\"`/`\"Mystery\"`/`\"Source\"`),
 `sourceId` (`Nat`), `personId` (`\"\"` when the finding matches no canonical
@@ -1841,15 +1906,16 @@ when the caller is not an active Family Steward (an ACTIVE persisted
 `StewardRecord`).
 
 The Historical Research Intake methods gate on sign-in and role. The creation
-methods — `createSource`, `createFinding`, `createNewPersonCandidate`, and
-`createRelationshipProposal` — require an approved family member (a caller
+methods — `createSource`, `createFindingForFamily`, `createNewPersonCandidate`,
+and `createRelationshipProposal` — require an approved family member (a caller
 holding at least one `#Approved` profile claim, or a Family Steward) and
 return `#err(#notAuthorized)` for an anonymous or signed-in but unapproved
 caller (they do not trap). The
-Family Steward review methods — `listSourcesForFamily`, `listFindings`,
+Family Steward review methods — `listSourcesForFamily`,
+`listFindingsForFamily`, `getFindingForFamily`, `approveFindingForFamily`,
+`rejectFindingForFamily`, `needsResearchFindingForFamily`,
 `listNewPersonCandidates`, `listRelationshipProposals`,
-`listConflictReviewItems`, `approveFinding`, `rejectFinding`,
-`needsResearchFinding`, `resolveConflict`, `approveSourceForFamily`,
+`listConflictReviewItems`, `resolveConflict`, `approveSourceForFamily`,
 `rejectSourceForFamily`, `needsResearchSourceForFamily`,
 `approveNewPersonCandidate`, `rejectNewPersonCandidate`,
 `needsResearchNewPersonCandidate`, `approveRelationshipProposal`,
@@ -1857,7 +1923,11 @@ Family Steward review methods — `listSourcesForFamily`, `listFindings`,
 are Family Steward only and trap with `\"Unauthorized: You must be
 signed in\"` for an anonymous caller and `\"Unauthorized: Only Family Stewards
 can perform this action\"` when the caller is not an active Family Steward (an
-ACTIVE persisted `StewardRecord`). The family-scoped source reads
+ACTIVE persisted `StewardRecord`). A Steward of one family can never review
+another family's finding: the family-scoped finding review methods evaluate
+Steward authority against the requested `familyId`, and every returned or
+mutated finding must carry `ProposedFinding.familyId == familyId`. The
+family-scoped source reads
 `listSourcesForFamily` and `getSourceForFamily` require an approved member or
 active Steward of the requested `familyId` and trap with the stable
 family-membership message for a signed-in but unapproved caller. The read methods

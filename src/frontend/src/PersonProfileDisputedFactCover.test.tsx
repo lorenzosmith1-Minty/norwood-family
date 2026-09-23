@@ -180,6 +180,7 @@ describe("Fact-level disputed indicator on the Person Profile", () => {
         personId: "julia",
         existingSourceId: 1n,
         proposedSourceId: 2n,
+        familyId: "norwood",
       },
     ]);
     renderProfile();
@@ -213,6 +214,7 @@ describe("Fact-level disputed indicator on the Person Profile", () => {
         personId: "julia",
         existingSourceId: 1n,
         proposedSourceId: 2n,
+        familyId: "norwood",
       },
     ]);
     renderProfile();
@@ -241,6 +243,7 @@ describe("Fact-level disputed indicator on the Person Profile", () => {
         personId: "julia",
         existingSourceId: 1n,
         proposedSourceId: 2n,
+        familyId: "norwood",
       },
     ]);
     const onOpenConflictReview = vi.fn();

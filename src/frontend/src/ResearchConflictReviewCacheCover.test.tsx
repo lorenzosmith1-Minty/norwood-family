@@ -171,6 +171,7 @@ const {
             personId: fact.personId,
             existingSourceId: found.sourceId,
             proposedSourceId: found.sourceId,
+            familyId: found.familyId,
           },
         ];
       }
@@ -315,6 +316,7 @@ function pendingFinding(id: bigint, title: string): ProposedFinding {
     submittedBy: STEWARD,
     submittedAt: 1_700_000_000_000_000_000n,
     updatedAt: 1_700_000_000_000_000_000n,
+    familyId: "norwood",
   };
 }
 

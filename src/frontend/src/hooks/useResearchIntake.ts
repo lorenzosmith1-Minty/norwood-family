@@ -39,14 +39,14 @@ import { useProvidersPresent } from "./usePhotoStorage";
  * invalidate the shared lists (sources, findings, candidates, relationship
  * proposals, conflicts, review queue, audit log) that the other surfaces read.
  *
- * The SOURCE hooks are family-aware, following the useArchiveStorage pattern:
- * the active family is read from the centralized FamilyContext and
- * `familyScopedId` is `undefined` for the default family. The default family
- * keeps the exact legacy no-argument call shape and React Query key, while a
- * non-default family routes to the canonical `*ForFamily` endpoint with the
- * familyId included in the key so caches never collide across families.
- * Findings/candidates/proposals/conflicts/audit hooks are intentionally NOT
- * family-scoped in this build.
+ * The SOURCE and FINDING hooks are family-aware, following the
+ * useArchiveStorage pattern: the active family is read from the centralized
+ * FamilyContext and `familyScopedId` is `undefined` for the default family.
+ * The default family keeps the exact legacy no-argument call shape and React
+ * Query key, while a non-default family routes to the canonical `*ForFamily`
+ * endpoint with the familyId included in the key so caches never collide
+ * across families. Candidates/proposals/conflicts/audit hooks are intentionally
+ * NOT family-scoped in this build.
  */
 
 /** Lists all source records (steward only). */
@@ -293,12 +293,18 @@ export function useNeedsResearchSource() {
 /** Lists all proposed findings (steward only). */
 export function useListFindings() {
   const providersPresent = useProvidersPresent();
+  const familyScopedId = useFamilyScopedId();
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["research", "findings"],
+    queryKey:
+      familyScopedId === undefined
+        ? ["research", "findings"]
+        : ["research", "findings", familyScopedId],
     queryFn: async () => {
       if (!actor) return [] as ProposedFinding[];
-      return actor.listFindings();
+      return familyScopedId === undefined
+        ? actor.listFindings()
+        : actor.listFindingsForFamily(familyScopedId);
     },
     enabled: providersPresent && !!actor && !isFetching,
   });
@@ -307,12 +313,18 @@ export function useListFindings() {
 /** Returns a single proposed finding by id. */
 export function useGetFinding(findingId: FindingId) {
   const providersPresent = useProvidersPresent();
+  const familyScopedId = useFamilyScopedId();
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["research", "findings", findingId.toString()],
+    queryKey:
+      familyScopedId === undefined
+        ? ["research", "findings", findingId.toString()]
+        : ["research", "findings", familyScopedId, findingId.toString()],
     queryFn: async () => {
       if (!actor) return null;
-      return actor.getFinding(findingId);
+      return familyScopedId === undefined
+        ? actor.getFinding(findingId)
+        : actor.getFindingForFamily(familyScopedId, findingId);
     },
     enabled: providersPresent && !!actor && !isFetching,
   });
@@ -320,6 +332,7 @@ export function useGetFinding(findingId: FindingId) {
 
 /** Creates a new proposed finding. */
 export function useCreateFinding() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
@@ -341,15 +354,26 @@ export function useCreateFinding() {
       newPersonCandidateId: bigint | null;
     }): Promise<Result_22> => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.createFinding(
-        title,
-        evidenceLabel,
-        findingType,
-        content,
-        sourceId,
-        personId,
-        newPersonCandidateId,
-      );
+      return familyScopedId === undefined
+        ? actor.createFinding(
+            title,
+            evidenceLabel,
+            findingType,
+            content,
+            sourceId,
+            personId,
+            newPersonCandidateId,
+          )
+        : actor.createFindingForFamily(
+            familyScopedId,
+            title,
+            evidenceLabel,
+            findingType,
+            content,
+            sourceId,
+            personId,
+            newPersonCandidateId,
+          );
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({
@@ -367,6 +391,7 @@ export function useCreateFinding() {
 
 /** Approves a pending finding, routing it to its target surface. */
 export function useApproveFinding() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
@@ -374,7 +399,9 @@ export function useApproveFinding() {
       findingId: FindingId,
     ): Promise<ProposedFinding | null> => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.approveFinding(findingId);
+      return familyScopedId === undefined
+        ? actor.approveFinding(findingId)
+        : actor.approveFindingForFamily(familyScopedId, findingId);
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({
@@ -398,6 +425,7 @@ export function useApproveFinding() {
 
 /** Rejects a pending finding. */
 export function useRejectFinding() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
@@ -405,7 +433,9 @@ export function useRejectFinding() {
       findingId: FindingId,
     ): Promise<ProposedFinding | null> => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.rejectFinding(findingId);
+      return familyScopedId === undefined
+        ? actor.rejectFinding(findingId)
+        : actor.rejectFindingForFamily(familyScopedId, findingId);
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({
@@ -428,6 +458,7 @@ export function useRejectFinding() {
  * Records a `FindingNeedsResearch` audit entry.
  */
 export function useNeedsResearchFinding() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
@@ -435,7 +466,9 @@ export function useNeedsResearchFinding() {
       findingId: FindingId,
     ): Promise<ProposedFinding | null> => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.needsResearchFinding(findingId);
+      return familyScopedId === undefined
+        ? actor.needsResearchFinding(findingId)
+        : actor.needsResearchFindingForFamily(familyScopedId, findingId);
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({

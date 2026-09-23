@@ -154,6 +154,7 @@ export interface ConflictReviewItem {
     proposedSourceId?: bigint;
     personId?: string;
     canonicalValue: string;
+    familyId: string;
     resolvedAt?: bigint;
     resolvedBy?: Principal;
     existingSourceId?: bigint;
@@ -484,6 +485,7 @@ export interface ProposedFinding {
     updatedAt: bigint;
     personId?: string;
     findingType: FindingType;
+    familyId: string;
 }
 export interface Recipe {
     era?: string;
@@ -1337,13 +1339,21 @@ export interface backendInterface {
      */
     approveArchiveItemForFamily(familyId: FamilyId, id: ArchiveItemId): Promise<ArchiveItem | null>;
     /**
-     * / Approves a pending finding (steward only), routing it to its target
-     * / surface. A finding labelled `#Conflicting` is never approved directly —
-     * / it is routed to a Conflict Review item instead of silently overwriting
-     * / canonical data. Returns the updated finding, or `null` when it does not
-     * / exist or is not pending.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for `approveFindingForFamily`.
      */
     approveFinding(id: FindingId): Promise<ProposedFinding | null>;
+    /**
+     * / Approves the pending finding with `findingId` in `familyId`. Requires an
+     * / active Steward of `familyId`. The linked Source and referenced
+     * / PersonProfile must both belong to `familyId`. A finding labelled
+     * / `#Conflicting` is routed to a Conflict Review item carrying the same
+     * / `familyId` instead of silently overwriting canonical data. An approved
+     * / finding promotes into the canonical profile through the family-qualified
+     * / profile lookup, verifying `profile.familyId == familyId` and updating only
+     * / that family's profile. Returns the updated finding, or `null` when no
+     * / pending finding with that id belongs to `familyId`.
+     */
+    approveFindingForFamily(familyId: FamilyId, findingId: FindingId): Promise<ProposedFinding | null>;
     /**
      * / Approves a pending New Person candidate (Family Steward only), creating
      * / exactly one canonical Person record (PersonProfile) that preserves the
@@ -1495,10 +1505,18 @@ export interface backendInterface {
      */
     createCanonicalMystery(title: string, description: string, relatedMemberIds: Array<string>, relatedBranchId: string | null, knownFacts: Array<string>, possibilities: Array<string>, relatedSourceIds: Array<bigint>, relatedArchiveItemIds: Array<bigint>, status: MysteryStatus): Promise<Mystery>;
     /**
-     * / Creates a new proposed finding. Requires an approved family member; the
-     * / caller is recorded as the submitter. The finding enters as `#Pending`.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for `createFindingForFamily`.
      */
     createFinding(title: string, evidenceLabel: EvidenceLabel, findingType: FindingType, content: FindingContent, sourceId: SourceId, personId: string | null, newPersonCandidateId: bigint | null): Promise<Result_22>;
+    /**
+     * / Creates a new proposed finding in `familyId`. Requires an approved member
+     * / of `familyId`; the caller is recorded as the submitter. The linked
+     * / SourceRecord must belong to `familyId` and the referenced PersonProfile must
+     * / belong to `familyId`, so a Source in Family A can never create a Finding
+     * / against a profile in Family B. The finding enters as `#Pending` and its
+     * / `familyId` is the requested `familyId`.
+     */
+    createFindingForFamily(familyId: FamilyId, title: string, evidenceLabel: EvidenceLabel, findingType: FindingType, content: FindingContent, sourceId: SourceId, personId: string | null, newPersonCandidateId: bigint | null): Promise<Result_22>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for `createMyselfForFamily`.
      */
@@ -1571,11 +1589,17 @@ export interface backendInterface {
      */
     getFamily(familyId: FamilyId): Promise<Family | null>;
     /**
-     * / Returns a single proposed finding by id (Family Steward only). The finding
-     * / carries its content, submitter principal, and review metadata, so it is not
-     * / readable by anonymous or non-steward callers.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for `getFindingForFamily`.
      */
     getFinding(id: FindingId): Promise<ProposedFinding | null>;
+    /**
+     * / Returns the finding with `findingId` when it belongs to `familyId`, or
+     * / `null` otherwise. Requires an active Steward of `familyId`, matching the
+     * / pre-tenancy Steward-only finding-read behavior. A record that exists under
+     * / another family is never returned, so a `findingId` alone cannot cross the
+     * / family boundary.
+     */
+    getFindingForFamily(familyId: FamilyId, findingId: FindingId): Promise<ProposedFinding | null>;
     /**
      * / Returns the stable account id of the signed-in caller. Anonymous callers
      * / receive #NotSignedIn.
@@ -1698,10 +1722,12 @@ export interface backendInterface {
     /**
      * / Returns the review queue for `familyId`. Requires an active Steward of
      * / `familyId`. The Sources section and every source-derived count are
-     * / restricted to sources whose `familyId` equals `familyId`; the non-source
-     * / categories (Findings, Candidates, Relationships, Conflicts) keep their
-     * / existing behavior unchanged in this build, so the returned queue never
-     * / mixes source counts across families.
+     * / restricted to sources whose `familyId` equals `familyId` (byte-identical to
+     * / Tenancy 1C-B2-A), and the Findings section and every finding-derived count
+     * / are restricted to findings whose `familyId` equals `familyId`, so the
+     * / returned queue never mixes source or finding counts across families. The
+     * / non-source, non-finding categories (Candidates, Relationships, Conflicts)
+     * / keep their existing behavior unchanged in this build.
      */
     getReviewQueueForFamily(familyId: FamilyId): Promise<ReviewQueue>;
     /**
@@ -1861,9 +1887,16 @@ export interface backendInterface {
      */
     listEligibleStewardCandidates(): Promise<Array<StewardIdentity>>;
     /**
-     * / Lists all proposed findings (steward only).
+     * / TEMPORARY Tenancy 1C compatibility wrapper for `listFindingsForFamily`.
      */
     listFindings(): Promise<Array<ProposedFinding>>;
+    /**
+     * / Lists every proposed finding in `familyId`. Requires an active Steward of
+     * / `familyId`, matching the pre-tenancy Steward-only finding-read behavior. A
+     * / finding whose `familyId` differs is never returned, so Family A findings
+     * / never appear in a Family B call.
+     */
+    listFindingsForFamily(familyId: FamilyId): Promise<Array<ProposedFinding>>;
     /**
      * / Lists all hidden (moderated) board posts for the Steward-only Hidden /
      * / Moderated Posts view. Family Steward only. Hidden posts are preserved with
@@ -2035,12 +2068,17 @@ export interface backendInterface {
      */
     mergeProfiles(canonicalPersonId: PersonId, mergedAwayPersonId: PersonId): Promise<Result_13>;
     /**
-     * / Approves a pending finding (steward only), routing it to its target
-     * / transitioning it to `#NeedsResearch` while preserving the finding and its
-     * / content. Records a `FindingNeedsResearch` audit entry. Returns the updated
-     * / finding, or `null` when it does not exist or is not pending.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `needsResearchFindingForFamily`.
      */
     needsResearchFinding(id: FindingId): Promise<ProposedFinding | null>;
+    /**
+     * / Marks the pending finding with `findingId` in `familyId` as needing
+     * / research. Requires an active Steward of `familyId`. Returns the updated
+     * / finding, or `null` when no pending finding with that id belongs to
+     * / `familyId`.
+     */
+    needsResearchFindingForFamily(familyId: FamilyId, findingId: FindingId): Promise<ProposedFinding | null>;
     /**
      * / Marks a pending New Person candidate as needing research (Family Steward
      * / only), transitioning it to `#NeedsResearch` while preserving the candidate.
@@ -2120,10 +2158,15 @@ export interface backendInterface {
      */
     rejectArchiveItemForFamily(familyId: FamilyId, id: ArchiveItemId): Promise<ArchiveItem | null>;
     /**
-     * / Rejects a pending finding (steward only). Returns the updated finding, or
-     * / `null` when it does not exist or is not pending.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for `rejectFindingForFamily`.
      */
     rejectFinding(id: FindingId): Promise<ProposedFinding | null>;
+    /**
+     * / Rejects the pending finding with `findingId` in `familyId`. Requires an
+     * / active Steward of `familyId`. Returns the updated finding, or `null` when
+     * / no pending finding with that id belongs to `familyId`.
+     */
+    rejectFindingForFamily(familyId: FamilyId, findingId: FindingId): Promise<ProposedFinding | null>;
     /**
      * / Rejects a pending New Person candidate (Family Steward only), marking it
      * / `#Rejected`. No canonical Person is created; the candidate and its audit
@@ -2658,6 +2701,20 @@ export class Backend implements backendInterface {
             return from_candid_opt_n51(this._uploadFile, this._downloadFile, result);
         }
     }
+    async approveFindingForFamily(arg0: FamilyId, arg1: FindingId): Promise<ProposedFinding | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.approveFindingForFamily(arg0, arg1);
+                return from_candid_opt_n51(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.approveFindingForFamily(arg0, arg1);
+            return from_candid_opt_n51(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async approveNewPersonCandidate(arg0: bigint): Promise<NewPersonCandidate | null> {
         if (this.processError) {
             try {
@@ -3022,6 +3079,20 @@ export class Backend implements backendInterface {
             return from_candid_Result_22_n137(this._uploadFile, this._downloadFile, result);
         }
     }
+    async createFindingForFamily(arg0: FamilyId, arg1: string, arg2: EvidenceLabel, arg3: FindingType, arg4: FindingContent, arg5: SourceId, arg6: string | null, arg7: bigint | null): Promise<Result_22> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.createFindingForFamily(arg0, arg1, to_candid_EvidenceLabel_n130(this._uploadFile, this._downloadFile, arg2), to_candid_FindingType_n131(this._uploadFile, this._downloadFile, arg3), to_candid_FindingContent_n132(this._uploadFile, this._downloadFile, arg4), arg5, to_candid_opt_n18(this._uploadFile, this._downloadFile, arg6), to_candid_opt_n19(this._uploadFile, this._downloadFile, arg7));
+                return from_candid_Result_22_n137(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.createFindingForFamily(arg0, arg1, to_candid_EvidenceLabel_n130(this._uploadFile, this._downloadFile, arg2), to_candid_FindingType_n131(this._uploadFile, this._downloadFile, arg3), to_candid_FindingContent_n132(this._uploadFile, this._downloadFile, arg4), arg5, to_candid_opt_n18(this._uploadFile, this._downloadFile, arg6), to_candid_opt_n19(this._uploadFile, this._downloadFile, arg7));
+            return from_candid_Result_22_n137(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async createMyself(arg0: string): Promise<Result_21> {
         if (this.processError) {
             try {
@@ -3243,6 +3314,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.getFinding(arg0);
+            return from_candid_opt_n51(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getFindingForFamily(arg0: FamilyId, arg1: FindingId): Promise<ProposedFinding | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getFindingForFamily(arg0, arg1);
+                return from_candid_opt_n51(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getFindingForFamily(arg0, arg1);
             return from_candid_opt_n51(this._uploadFile, this._downloadFile, result);
         }
     }
@@ -3946,6 +4031,20 @@ export class Backend implements backendInterface {
             return from_candid_vec_n238(this._uploadFile, this._downloadFile, result);
         }
     }
+    async listFindingsForFamily(arg0: FamilyId): Promise<Array<ProposedFinding>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.listFindingsForFamily(arg0);
+                return from_candid_vec_n238(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.listFindingsForFamily(arg0);
+            return from_candid_vec_n238(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async listHiddenBoardPosts(): Promise<Array<Post>> {
         if (this.processError) {
             try {
@@ -4408,6 +4507,20 @@ export class Backend implements backendInterface {
             return from_candid_opt_n51(this._uploadFile, this._downloadFile, result);
         }
     }
+    async needsResearchFindingForFamily(arg0: FamilyId, arg1: FindingId): Promise<ProposedFinding | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.needsResearchFindingForFamily(arg0, arg1);
+                return from_candid_opt_n51(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.needsResearchFindingForFamily(arg0, arg1);
+            return from_candid_opt_n51(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async needsResearchNewPersonCandidate(arg0: bigint): Promise<NewPersonCandidate | null> {
         if (this.processError) {
             try {
@@ -4601,6 +4714,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.rejectFinding(arg0);
+            return from_candid_opt_n51(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async rejectFindingForFamily(arg0: FamilyId, arg1: FindingId): Promise<ProposedFinding | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.rejectFindingForFamily(arg0, arg1);
+                return from_candid_opt_n51(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.rejectFindingForFamily(arg0, arg1);
             return from_candid_opt_n51(this._uploadFile, this._downloadFile, result);
         }
     }
@@ -6354,6 +6481,7 @@ function from_candid_record_n229(_uploadFile: (file: ExternalBlob) => Promise<Ui
     proposedSourceId: [] | [bigint];
     personId: [] | [string];
     canonicalValue: string;
+    familyId: string;
     resolvedAt: [] | [bigint];
     resolvedBy: [] | [Principal];
     existingSourceId: [] | [bigint];
@@ -6368,6 +6496,7 @@ function from_candid_record_n229(_uploadFile: (file: ExternalBlob) => Promise<Ui
     proposedSourceId?: bigint;
     personId?: string;
     canonicalValue: string;
+    familyId: string;
     resolvedAt?: bigint;
     resolvedBy?: Principal;
     existingSourceId?: bigint;
@@ -6383,6 +6512,7 @@ function from_candid_record_n229(_uploadFile: (file: ExternalBlob) => Promise<Ui
         proposedSourceId: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.proposedSourceId)),
         personId: record_opt_to_undefined(from_candid_opt_n23(_uploadFile, _downloadFile, value.personId)),
         canonicalValue: value.canonicalValue,
+        familyId: value.familyId,
         resolvedAt: record_opt_to_undefined(from_candid_opt_n61(_uploadFile, _downloadFile, value.resolvedAt)),
         resolvedBy: record_opt_to_undefined(from_candid_opt_n62(_uploadFile, _downloadFile, value.resolvedBy)),
         existingSourceId: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.existingSourceId))
@@ -6761,6 +6891,7 @@ function from_candid_record_n53(_uploadFile: (file: ExternalBlob) => Promise<Uin
     updatedAt: bigint;
     personId: [] | [string];
     findingType: _FindingType;
+    familyId: string;
 }): {
     id: FindingId;
     status: ReviewStatus;
@@ -6777,6 +6908,7 @@ function from_candid_record_n53(_uploadFile: (file: ExternalBlob) => Promise<Uin
     updatedAt: bigint;
     personId?: string;
     findingType: FindingType;
+    familyId: string;
 } {
     return {
         id: value.id,
@@ -6793,7 +6925,8 @@ function from_candid_record_n53(_uploadFile: (file: ExternalBlob) => Promise<Uin
         reviewedBy: record_opt_to_undefined(from_candid_opt_n62(_uploadFile, _downloadFile, value.reviewedBy)),
         updatedAt: value.updatedAt,
         personId: record_opt_to_undefined(from_candid_opt_n23(_uploadFile, _downloadFile, value.personId)),
-        findingType: from_candid_FindingType_n63(_uploadFile, _downloadFile, value.findingType)
+        findingType: from_candid_FindingType_n63(_uploadFile, _downloadFile, value.findingType),
+        familyId: value.familyId
     };
 }
 function from_candid_record_n58(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {

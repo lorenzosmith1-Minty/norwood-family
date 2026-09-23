@@ -291,6 +291,7 @@ function pendingFinding(id: bigint, title: string): ProposedFinding {
     submittedBy: STEWARD,
     submittedAt: 1_700_000_000_000_000_000n,
     updatedAt: 1_700_000_000_000_000_000n,
+    familyId: "norwood",
   };
 }
 
@@ -314,6 +315,7 @@ function approvedFinding(id: bigint, title: string): ProposedFinding {
     submittedBy: STEWARD,
     submittedAt: 1_700_000_000_000_000_000n,
     updatedAt: 1_700_000_000_000_000_000n,
+    familyId: "norwood",
   };
 }
 

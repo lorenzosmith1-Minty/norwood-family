@@ -249,6 +249,7 @@ function candidate(id: bigint, name: string): NewPersonCandidate {
 
 function proposal(id: bigint): RelationshipProposal {
   return {
+    familyId: "norwood",
     id,
     fromPersonId: "clayton",
     toPersonId: "julia",

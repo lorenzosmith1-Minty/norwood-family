@@ -415,6 +415,7 @@ const {
       | { __kind__: "err"; err: unknown }
     > {
       const record: RelationshipProposal = {
+        familyId: "norwood",
         id: 1n,
         fromPersonId,
         toPersonId,

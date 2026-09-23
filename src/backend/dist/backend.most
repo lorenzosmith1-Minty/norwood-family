@@ -974,6 +974,7 @@ type EvidenceStatus__824382737 = EvidenceStatus__563034664;
 type EvidenceStatus__952143850 =
   {#Documented; #FamilyHistory; #PersonalMemory; #Unresolved};
 type ExternalBlob__220559234 = Blob;
+type FamilyId__145942548 = Text;
 type FamilyId__228780613 = Text;
 type FamilyId__284510423 = Text;
 type FamilyId__357998493 = Text;
@@ -1366,6 +1367,8 @@ type Mystery__893497268 =
   };
 type Nat__227979830 = Nat__920180692;
 type Nat__920180692 = Nat;
+type NewActor__1044084074 =
+  {relationshipProposals : List__836382695<NewRelationshipProposal__2634370>};
 type NewActor__1048145655 =
   {
     accessControlState :
@@ -2088,6 +2091,20 @@ type NewProposedFinding__512461137 =
     title : Text;
     updatedAt : Int
   };
+type NewRelationshipProposal__2634370 =
+  {
+    familyId : FamilyId__145942548;
+    fromPersonId : Text;
+    id : Nat;
+    relationshipType : Text;
+    reviewedAt : ?Int;
+    reviewedBy : ?Principal;
+    sourceId : Nat;
+    status : ReviewStatus__928129326;
+    submittedAt : Int;
+    submittedBy : Principal;
+    toPersonId : Text
+  };
 type NewRelationshipProposal__340140100 =
   {
     fromPersonId : Text;
@@ -2609,6 +2626,11 @@ type OldActor__650257485 =
     profiles : Map__230067015<Text, PersonProfile__673369583>;
     relationshipRequests : List__836382695<RelationshipRequest__848638231>
   };
+type OldActor__66325736 =
+  {
+    relationshipProposals :
+      List__836382695<OldRelationshipProposal__634598119>
+  };
 type OldActor__764284879 =
   {
     accessControlState :
@@ -3066,6 +3088,19 @@ type OldProposedFinding__854663539 =
     submittedBy : Principal;
     title : Text;
     updatedAt : Int
+  };
+type OldRelationshipProposal__634598119 =
+  {
+    fromPersonId : Text;
+    id : Nat;
+    relationshipType : Text;
+    reviewedAt : ?Int;
+    reviewedBy : ?Principal;
+    sourceId : Nat;
+    status : ReviewStatus__928129326;
+    submittedAt : Int;
+    submittedBy : Principal;
+    toPersonId : Text
   };
 type OldRelationshipProposal__728580113 =
   {
@@ -4186,6 +4221,7 @@ type RelationshipProposal__180360831 =
   };
 type RelationshipProposal__486620264 =
   {
+    familyId : Text;
     fromPersonId : Text;
     id : Nat;
     relationshipType : Text;
@@ -4680,6 +4716,8 @@ type ReviewStatus__724723279 =
   {#Approved; #Conflicting; #NeedsResearch; #Pending; #Rejected};
 type ReviewStatus__756840534 =
   {#Approved; #Conflicting; #NeedsResearch; #Pending; #Rejected};
+type ReviewStatus__928129326 =
+  {#Approved; #Conflicting; #NeedsResearch; #Pending; #Rejected};
 type ReviewStatus__96206077 =
   {#Approved; #Conflicting; #NeedsResearch; #Pending; #Rejected};
 type SourceId__430694605 = Nat;
@@ -5037,7 +5075,8 @@ type UserRole__968740559 = {#admin; #guest; #user};
   "20260921_000000" : (old : OldActor__241283283) -> NewActor__426998186;
   "20260923_000837" : (old : OldActor__233056753) -> NewActor__703993856;
   "20260923_120000" : (old : OldActor__860584657) -> NewActor__327868545;
-  "20260923_130000" : (old : OldActor__971630431) -> NewActor__540330458
+  "20260923_130000" : (old : OldActor__971630431) -> NewActor__540330458;
+  "20260923_140000" : (old : OldActor__66325736) -> NewActor__1044084074
 }
 actor  {
   stable accessControlState :

@@ -532,6 +532,7 @@ export interface RelationshipProposal {
     sourceId: SourceId;
     reviewedAt?: bigint;
     reviewedBy?: Principal;
+    familyId: string;
     toPersonId: string;
     relationshipType: string;
 }
@@ -1547,10 +1548,20 @@ export interface backendInterface {
      */
     createNewPersonCandidateForFamily(familyId: FamilyId, name: string, details: string, sourceId: SourceId): Promise<Result_20>;
     /**
-     * / Creates a new relationship proposal. Requires an approved family member;
-     * / the caller is recorded as the submitter. The proposal enters as `#Pending`.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `createRelationshipProposalForFamily`.
      */
     createRelationshipProposal(fromPersonId: string, toPersonId: string, relationshipType: string, sourceId: SourceId): Promise<Result_19>;
+    /**
+     * / Creates a new relationship proposal in `familyId`. Requires an approved
+     * / member of `familyId`; the caller is recorded as the submitter. Both
+     * / referenced people must belong to `familyId` and the linked SourceRecord must
+     * / belong to `familyId`, so a Source or person in Family A can never create a
+     * / Proposal in Family B. The proposal enters as `#Pending` and its `familyId`
+     * / is the requested `familyId`. No approval or confirmed relationship is
+     * / created by this flow.
+     */
+    createRelationshipProposalForFamily(familyId: FamilyId, fromPersonId: string, toPersonId: string, relationshipType: string, sourceId: SourceId): Promise<Result_19>;
     /**
      * / Creates a new source record. Requires an approved family member; the caller
      * / is recorded as the contributor. The source enters as `#Pending`.
@@ -1716,6 +1727,14 @@ export interface backendInterface {
      * / a Family Steward.
      */
     getRecipe(id: RecipeId): Promise<Recipe | null>;
+    /**
+     * / Returns the proposal with `proposalId` when it belongs to `familyId`, or
+     * / `null` otherwise. Requires an active Steward of `familyId`, matching the
+     * / pre-tenancy Steward-only proposal-read behavior. A record that exists under
+     * / another family is never returned, so a `proposalId` alone cannot cross the
+     * / family boundary.
+     */
+    getRelationshipProposalForFamily(familyId: FamilyId, proposalId: bigint): Promise<RelationshipProposal | null>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `getRelationshipRequestForFamily`.
@@ -2024,9 +2043,17 @@ export interface backendInterface {
      */
     listRecipesForPerson(personId: string): Promise<Array<Recipe>>;
     /**
-     * / Lists all relationship proposals (steward only).
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `listRelationshipProposalsForFamily`.
      */
     listRelationshipProposals(): Promise<Array<RelationshipProposal>>;
+    /**
+     * / Lists every relationship proposal in `familyId`. Requires an active Steward
+     * / of `familyId`, matching the pre-tenancy Steward-only proposal-read
+     * / behavior. A proposal whose `familyId` differs is never returned, so Family A
+     * / proposals never appear in a Family B call.
+     */
+    listRelationshipProposalsForFamily(familyId: FamilyId): Promise<Array<RelationshipProposal>>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `listRelationshipRequestsForFamily`.
@@ -3220,6 +3247,20 @@ export class Backend implements backendInterface {
             return from_candid_Result_19_n150(this._uploadFile, this._downloadFile, result);
         }
     }
+    async createRelationshipProposalForFamily(arg0: FamilyId, arg1: string, arg2: string, arg3: string, arg4: SourceId): Promise<Result_19> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.createRelationshipProposalForFamily(arg0, arg1, arg2, arg3, arg4);
+                return from_candid_Result_19_n150(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.createRelationshipProposalForFamily(arg0, arg1, arg2, arg3, arg4);
+            return from_candid_Result_19_n150(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async createSource(arg0: string, arg1: SourceType, arg2: string, arg3: bigint | null): Promise<Result_18> {
         if (this.processError) {
             try {
@@ -3624,6 +3665,20 @@ export class Backend implements backendInterface {
         } else {
             const result = await this.actor.getRecipe(arg0);
             return from_candid_opt_n75(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getRelationshipProposalForFamily(arg0: FamilyId, arg1: bigint): Promise<RelationshipProposal | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getRelationshipProposalForFamily(arg0, arg1);
+                return from_candid_opt_n79(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getRelationshipProposalForFamily(arg0, arg1);
+            return from_candid_opt_n79(this._uploadFile, this._downloadFile, result);
         }
     }
     async getRelationshipRequest(arg0: bigint): Promise<RelationshipRequest | null> {
@@ -4407,6 +4462,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.listRelationshipProposals();
+            return from_candid_vec_n253(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async listRelationshipProposalsForFamily(arg0: FamilyId): Promise<Array<RelationshipProposal>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.listRelationshipProposalsForFamily(arg0);
+                return from_candid_vec_n253(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.listRelationshipProposalsForFamily(arg0);
             return from_candid_vec_n253(this._uploadFile, this._downloadFile, result);
         }
     }
@@ -7275,6 +7344,7 @@ function from_candid_record_n81(_uploadFile: (file: ExternalBlob) => Promise<Uin
     sourceId: _SourceId;
     reviewedAt: [] | [bigint];
     reviewedBy: [] | [Principal];
+    familyId: string;
     toPersonId: string;
     relationshipType: string;
 }): {
@@ -7286,6 +7356,7 @@ function from_candid_record_n81(_uploadFile: (file: ExternalBlob) => Promise<Uin
     sourceId: SourceId;
     reviewedAt?: bigint;
     reviewedBy?: Principal;
+    familyId: string;
     toPersonId: string;
     relationshipType: string;
 } {
@@ -7298,6 +7369,7 @@ function from_candid_record_n81(_uploadFile: (file: ExternalBlob) => Promise<Uin
         sourceId: value.sourceId,
         reviewedAt: record_opt_to_undefined(from_candid_opt_n61(_uploadFile, _downloadFile, value.reviewedAt)),
         reviewedBy: record_opt_to_undefined(from_candid_opt_n62(_uploadFile, _downloadFile, value.reviewedBy)),
+        familyId: value.familyId,
         toPersonId: value.toPersonId,
         relationshipType: value.relationshipType
     };

@@ -50,6 +50,7 @@ import ResearchIntakeApi "mixins/research-intake-api";
 import ResearchSourceScopeApi "mixins/research-source-scope-api";
 import FindingScopeApi "mixins/finding-scope-api";
 import CandidateScopeApi "mixins/candidate-scope-api";
+import RelationshipProposalScopeApi "mixins/relationship-proposal-scope-api";
 import ArchiveResearchBoardNotificationsApi "mixins/archive-research-board-notifications-api";
 import AuditAndWorkloadApi "mixins/audit-and-workload-api";
 import StewardAuthorityApi "mixins/steward-authority-api";
@@ -1019,6 +1020,7 @@ actor {
         "id",
       )
       .sample({
+        familyId = "";
         id = 0;
         fromPersonId = "";
         toPersonId = "";
@@ -1030,6 +1032,7 @@ actor {
         reviewedBy = null;
         reviewedAt = null;
       })
+      .payload("familyId", func r = r.familyId)
       .payload("id", func r = r.id)
       .payload("fromPersonId", func r = r.fromPersonId)
       .payload("toPersonId", func r = r.toPersonId)
@@ -1124,6 +1127,7 @@ actor {
   include ResearchSourceScopeApi(researchSources, proposedFindings, newPersonCandidates, relationshipProposals, conflictReviewItems, researchAuditLog, researchState, archiveItems, notifications, claims, stewards);
   include FindingScopeApi(proposedFindings, researchSources, newPersonCandidates, relationshipProposals, conflictReviewItems, researchAuditLog, researchState, profiles, claims, stewards, notifications);
   include CandidateScopeApi(newPersonCandidates, researchSources, proposedFindings, relationshipProposals, conflictReviewItems, researchAuditLog, researchState, profiles, claims, stewards, notifications);
+  include RelationshipProposalScopeApi(relationshipProposals, researchSources, researchAuditLog, researchState, profiles, claims, stewards, notifications);
   include ArchiveResearchBoardNotificationsApi(archiveItems, researchSources, researchState, posts, notifications, claims, profiles, stewards);
   include AuditAndWorkloadApi(accessControlState, auditLog, researchAuditLog, conflictReviewItems, stewards);
   include StewardAuthorityApi(accessControlState, stewards, auditLog);

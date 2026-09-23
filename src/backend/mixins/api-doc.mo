@@ -2975,6 +2975,21 @@ no async job to poll; the frontend can call the list methods (steward) or
   when an identical confirmed relationship already exists, no second
   relationship is added — and records a `#ResearchApproved` notification to the
   contributor. Rejecting and needs-research leave the family graph unchanged.
+- `createRelationshipProposalForFamily` requires an approved member of the
+  requested `familyId` and returns `#err(#notAuthorized)` for an anonymous or
+  signed-in but unapproved caller rather than trapping. Both referenced people
+  must belong to `familyId` and the linked Source must belong to `familyId`;
+  otherwise the call returns `#err(#notAuthorized)` (foreign person) or
+  `#err(#notFound(sourceId))` (foreign or missing source) and stores nothing.
+  The created proposal carries `familyId` equal to the requested family and
+  enters as `#Pending`; no approval or confirmed relationship is created.
+- `listRelationshipProposalsForFamily` and `getRelationshipProposalForFamily`
+  are Steward-only reads of the requested `familyId`, preserving the
+  pre-tenancy Steward-only proposal-read gate. A proposal whose `familyId`
+  differs is never returned, so a `proposalId` alone cannot cross a family
+  boundary. The single-family `createRelationshipProposal` and
+  `listRelationshipProposals` are TEMPORARY Tenancy 1C compatibility wrappers
+  delegating with the default family id (`\"norwood\"`).
 - `getSource`, `getFinding`, `getReviewQueue`, and `getResearchAuditLog` are
   read-only queries with no side effects; they are always idempotent.- `getStewardAuditHistory` is a read-only query with no side effects; it is
   always idempotent and never mutates or duplicates any audit record.

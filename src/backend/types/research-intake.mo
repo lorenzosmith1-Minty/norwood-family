@@ -159,7 +159,14 @@ module {
 
   /// A proposed relationship between two Persons. Approved proposals route to
   /// the family graph.
+  ///
+  /// Tenancy 1C-B2-B3: `familyId` is the tenant boundary for a proposal. Every
+  /// family-scoped read and review requires `RelationshipProposal.familyId` to
+  /// equal the requested `familyId`; a `proposalId` alone never crosses a family
+  /// boundary. Records created before this field existed are migrated to
+  /// `FamilyTypes.DEFAULT_FAMILY_ID` ("norwood").
   public type RelationshipProposal = {
+    familyId : Text;
     id : Nat;
     fromPersonId : Text;
     toPersonId : Text;

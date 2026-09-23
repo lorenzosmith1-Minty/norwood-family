@@ -106,36 +106,6 @@ module {
     finding;
   };
 
-  /// Creates a new relationship proposal and appends it to the collection. The
-  /// proposal enters as `#Pending`.
-  public func createRelationshipProposal(
-    proposals : List.List<Types.RelationshipProposal>,
-    nextId : { var next : Nat },
-    fromPersonId : Text,
-    toPersonId : Text,
-    relationshipType : Text,
-    sourceId : Types.SourceId,
-    submittedBy : Principal,
-    now : Int,
-  ) : Types.RelationshipProposal {
-    let id = nextId.next;
-    nextId.next += 1;
-    let proposal : Types.RelationshipProposal = {
-      id;
-      fromPersonId;
-      toPersonId;
-      relationshipType;
-      sourceId;
-      status = #Pending;
-      submittedBy;
-      submittedAt = now;
-      reviewedBy = null;
-      reviewedAt = null;
-    };
-    proposals.add(proposal);
-    proposal;
-  };
-
   /// Approves a pending finding, routing it to its target surface. Returns the
   /// updated finding, or `null` when it does not exist or is not pending.
   public func approveFinding(

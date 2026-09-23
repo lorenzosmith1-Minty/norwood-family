@@ -140,6 +140,11 @@
       "source": "caffeinelabs/skills",
       "sourceType": "github",
       "computedHash": "9756473c4d7da25ef313e93f4508a11717863a8e1e615b6c853ccdf2e0a83eb3"
+    },
+    "connector-quickbooks": {
+      "source": "caffeinelabs/skills",
+      "sourceType": "github",
+      "computedHash": "b523b0d27d69776bb6c54f208b49a8c74e78f9d7694f08df96283708df1bacf2"
     }
   }
 }

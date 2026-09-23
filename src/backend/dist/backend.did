@@ -480,6 +480,7 @@ type RelationshipRequest =
  };
 type RelationshipProposal = 
  record {
+   familyId: text;
    fromPersonId: text;
    id: nat;
    relationshipType: text;
@@ -1450,10 +1451,20 @@ service : {
   /// is the requested `familyId`.
   createNewPersonCandidateForFamily: (familyId: FamilyId, name: text,
    details: text, sourceId: SourceId) -> (Result_20);
-  /// Creates a new relationship proposal. Requires an approved family member;
-  /// the caller is recorded as the submitter. The proposal enters as `#Pending`.
+  /// TEMPORARY Tenancy 1C compatibility wrapper for
+  /// `createRelationshipProposalForFamily`.
   createRelationshipProposal: (fromPersonId: text, toPersonId: text,
    relationshipType: text, sourceId: SourceId) -> (Result_19);
+  /// Creates a new relationship proposal in `familyId`. Requires an approved
+  /// member of `familyId`; the caller is recorded as the submitter. Both
+  /// referenced people must belong to `familyId` and the linked SourceRecord must
+  /// belong to `familyId`, so a Source or person in Family A can never create a
+  /// Proposal in Family B. The proposal enters as `#Pending` and its `familyId`
+  /// is the requested `familyId`. No approval or confirmed relationship is
+  /// created by this flow.
+  createRelationshipProposalForFamily: (familyId: FamilyId, fromPersonId:
+   text, toPersonId: text, relationshipType: text, sourceId: SourceId) ->
+   (Result_19);
   /// Creates a new source record. Requires an approved family member; the caller
   /// is recorded as the contributor. The source enters as `#Pending`.
   createSource: (title: text, sourceType: SourceType, description: text,
@@ -1585,6 +1596,13 @@ service : {
   /// contributor or a Family Steward; non-approved recipes are only visible to
   /// a Family Steward.
   getRecipe: (id: RecipeId) -> (opt Recipe) query;
+  /// Returns the proposal with `proposalId` when it belongs to `familyId`, or
+  /// `null` otherwise. Requires an active Steward of `familyId`, matching the
+  /// pre-tenancy Steward-only proposal-read behavior. A record that exists under
+  /// another family is never returned, so a `proposalId` alone cannot cross the
+  /// family boundary.
+  getRelationshipProposalForFamily: (familyId: FamilyId, proposalId: 
+   nat) -> (opt RelationshipProposal) query;
   /// TEMPORARY Tenancy 1C compatibility wrapper for
   /// `getRelationshipRequestForFamily`.
   getRelationshipRequest: (id: nat) -> (opt RelationshipRequest) query;
@@ -1794,8 +1812,15 @@ service : {
   /// related member. Returns only approved recipes visible to the caller;
   /// private recipes are only visible to their contributor or a Family Steward.
   listRecipesForPerson: (personId: text) -> (vec Recipe) query;
-  /// Lists all relationship proposals (steward only).
+  /// TEMPORARY Tenancy 1C compatibility wrapper for
+  /// `listRelationshipProposalsForFamily`.
   listRelationshipProposals: () -> (vec RelationshipProposal) query;
+  /// Lists every relationship proposal in `familyId`. Requires an active Steward
+  /// of `familyId`, matching the pre-tenancy Steward-only proposal-read
+  /// behavior. A proposal whose `familyId` differs is never returned, so Family A
+  /// proposals never appear in a Family B call.
+  listRelationshipProposalsForFamily: (familyId: FamilyId) ->
+   (vec RelationshipProposal) query;
   /// TEMPORARY Tenancy 1C compatibility wrapper for
   /// `listRelationshipRequestsForFamily`.
   listRelationshipRequests: () -> (vec RelationshipRequest) query;

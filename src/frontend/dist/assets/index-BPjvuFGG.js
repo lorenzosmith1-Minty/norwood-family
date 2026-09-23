@@ -33564,6 +33564,7 @@ const RelationshipProposal = Record({
   "sourceId": SourceId,
   "reviewedAt": Opt(Int),
   "reviewedBy": Opt(Principal2),
+  "familyId": Text,
   "toPersonId": Text,
   "relationshipType": Text
 });
@@ -34489,6 +34490,11 @@ Service({
     [Result_19],
     []
   ),
+  "createRelationshipProposalForFamily": Func(
+    [FamilyId, Text, Text, Text, SourceId],
+    [Result_19],
+    []
+  ),
   "createSource": Func(
     [Text, SourceType$1, Text, Opt(Nat)],
     [Result_18],
@@ -34611,6 +34617,11 @@ Service({
     ["query"]
   ),
   "getRecipe": Func([RecipeId], [Opt(Recipe)], ["query"]),
+  "getRelationshipProposalForFamily": Func(
+    [FamilyId, Nat],
+    [Opt(RelationshipProposal)],
+    ["query"]
+  ),
   "getRelationshipRequest": Func(
     [Nat],
     [Opt(RelationshipRequest)],
@@ -34768,6 +34779,11 @@ Service({
   "listRecipesForPerson": Func([Text], [Vec(Recipe)], ["query"]),
   "listRelationshipProposals": Func(
     [],
+    [Vec(RelationshipProposal)],
+    ["query"]
+  ),
+  "listRelationshipProposalsForFamily": Func(
+    [FamilyId],
     [Vec(RelationshipProposal)],
     ["query"]
   ),
@@ -35515,6 +35531,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "sourceId": SourceId2,
     "reviewedAt": IDL2.Opt(IDL2.Int),
     "reviewedBy": IDL2.Opt(IDL2.Principal),
+    "familyId": IDL2.Text,
     "toPersonId": IDL2.Text,
     "relationshipType": IDL2.Text
   });
@@ -36420,6 +36437,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [Result_192],
       []
     ),
+    "createRelationshipProposalForFamily": IDL2.Func(
+      [FamilyId2, IDL2.Text, IDL2.Text, IDL2.Text, SourceId2],
+      [Result_192],
+      []
+    ),
     "createSource": IDL2.Func(
       [IDL2.Text, SourceType2, IDL2.Text, IDL2.Opt(IDL2.Nat)],
       [Result_182],
@@ -36542,6 +36564,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
       ["query"]
     ),
     "getRecipe": IDL2.Func([RecipeId2], [IDL2.Opt(Recipe2)], ["query"]),
+    "getRelationshipProposalForFamily": IDL2.Func(
+      [FamilyId2, IDL2.Nat],
+      [IDL2.Opt(RelationshipProposal2)],
+      ["query"]
+    ),
     "getRelationshipRequest": IDL2.Func(
       [IDL2.Nat],
       [IDL2.Opt(RelationshipRequest2)],
@@ -36715,6 +36742,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "listRecipesForPerson": IDL2.Func([IDL2.Text], [IDL2.Vec(Recipe2)], ["query"]),
     "listRelationshipProposals": IDL2.Func(
       [],
+      [IDL2.Vec(RelationshipProposal2)],
+      ["query"]
+    ),
+    "listRelationshipProposalsForFamily": IDL2.Func(
+      [FamilyId2],
       [IDL2.Vec(RelationshipProposal2)],
       ["query"]
     ),
@@ -38123,6 +38155,20 @@ class Backend {
       return from_candid_Result_19_n150(this._uploadFile, this._downloadFile, result);
     }
   }
+  async createRelationshipProposalForFamily(arg0, arg1, arg2, arg3, arg4) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.createRelationshipProposalForFamily(arg0, arg1, arg2, arg3, arg4);
+        return from_candid_Result_19_n150(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.createRelationshipProposalForFamily(arg0, arg1, arg2, arg3, arg4);
+      return from_candid_Result_19_n150(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async createSource(arg0, arg1, arg2, arg3) {
     if (this.processError) {
       try {
@@ -38527,6 +38573,20 @@ class Backend {
     } else {
       const result = await this.actor.getRecipe(arg0);
       return from_candid_opt_n75(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async getRelationshipProposalForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getRelationshipProposalForFamily(arg0, arg1);
+        return from_candid_opt_n79(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getRelationshipProposalForFamily(arg0, arg1);
+      return from_candid_opt_n79(this._uploadFile, this._downloadFile, result);
     }
   }
   async getRelationshipRequest(arg0) {
@@ -39310,6 +39370,20 @@ class Backend {
       }
     } else {
       const result = await this.actor.listRelationshipProposals();
+      return from_candid_vec_n253(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listRelationshipProposalsForFamily(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listRelationshipProposalsForFamily(arg0);
+        return from_candid_vec_n253(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listRelationshipProposalsForFamily(arg0);
       return from_candid_vec_n253(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -41455,6 +41529,7 @@ function from_candid_record_n81(_uploadFile, _downloadFile, value) {
     sourceId: value.sourceId,
     reviewedAt: record_opt_to_undefined(from_candid_opt_n61(_uploadFile, _downloadFile, value.reviewedAt)),
     reviewedBy: record_opt_to_undefined(from_candid_opt_n62(_uploadFile, _downloadFile, value.reviewedBy)),
+    familyId: value.familyId,
     toPersonId: value.toPersonId,
     relationshipType: value.relationshipType
   };

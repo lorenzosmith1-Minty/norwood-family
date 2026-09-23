@@ -611,6 +611,7 @@ export interface RelationshipProposal {
   'sourceId' : SourceId,
   'reviewedAt' : [] | [bigint],
   'reviewedBy' : [] | [Principal],
+  'familyId' : string,
   'toPersonId' : string,
   'relationshipType' : string,
 }
@@ -1320,11 +1321,24 @@ export interface _SERVICE {
     Result_20
   >,
   /**
-   * / Creates a new relationship proposal. Requires an approved family member;
-   * / the caller is recorded as the submitter. The proposal enters as `#Pending`.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `createRelationshipProposalForFamily`.
    */
   'createRelationshipProposal' : ActorMethod<
     [string, string, string, SourceId],
+    Result_19
+  >,
+  /**
+   * / Creates a new relationship proposal in `familyId`. Requires an approved
+   * / member of `familyId`; the caller is recorded as the submitter. Both
+   * / referenced people must belong to `familyId` and the linked SourceRecord must
+   * / belong to `familyId`, so a Source or person in Family A can never create a
+   * / Proposal in Family B. The proposal enters as `#Pending` and its `familyId`
+   * / is the requested `familyId`. No approval or confirmed relationship is
+   * / created by this flow.
+   */
+  'createRelationshipProposalForFamily' : ActorMethod<
+    [FamilyId, string, string, string, SourceId],
     Result_19
   >,
   /**
@@ -1548,6 +1562,17 @@ export interface _SERVICE {
    * / a Family Steward.
    */
   'getRecipe' : ActorMethod<[RecipeId], [] | [Recipe]>,
+  /**
+   * / Returns the proposal with `proposalId` when it belongs to `familyId`, or
+   * / `null` otherwise. Requires an active Steward of `familyId`, matching the
+   * / pre-tenancy Steward-only proposal-read behavior. A record that exists under
+   * / another family is never returned, so a `proposalId` alone cannot cross the
+   * / family boundary.
+   */
+  'getRelationshipProposalForFamily' : ActorMethod<
+    [FamilyId, bigint],
+    [] | [RelationshipProposal]
+  >,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for
    * / `getRelationshipRequestForFamily`.
@@ -1877,9 +1902,20 @@ export interface _SERVICE {
    */
   'listRecipesForPerson' : ActorMethod<[string], Array<Recipe>>,
   /**
-   * / Lists all relationship proposals (steward only).
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `listRelationshipProposalsForFamily`.
    */
   'listRelationshipProposals' : ActorMethod<[], Array<RelationshipProposal>>,
+  /**
+   * / Lists every relationship proposal in `familyId`. Requires an active Steward
+   * / of `familyId`, matching the pre-tenancy Steward-only proposal-read
+   * / behavior. A proposal whose `familyId` differs is never returned, so Family A
+   * / proposals never appear in a Family B call.
+   */
+  'listRelationshipProposalsForFamily' : ActorMethod<
+    [FamilyId],
+    Array<RelationshipProposal>
+  >,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for
    * / `listRelationshipRequestsForFamily`.

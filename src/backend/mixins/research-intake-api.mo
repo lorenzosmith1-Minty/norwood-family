@@ -98,54 +98,10 @@ mixin (
     #ok(source);
   };
 
-  /// Creates a new relationship proposal. Requires an approved family member;
-  /// the caller is recorded as the submitter. The proposal enters as `#Pending`.
-  public shared ({ caller }) func createRelationshipProposal(
-    fromPersonId : Text,
-    toPersonId : Text,
-    relationshipType : Text,
-    sourceId : Types.SourceId,
-  ) : async Result.Result<Types.RelationshipProposal, Types.ResearchError> {
-    if (not FamilyAuthorizationLib.isApprovedFamilyMember(stewards, claims, caller)) {
-      return #err(#notAuthorized);
-    };
-    if (not sourceExists(sourceId)) {
-      return #err(#notFound(sourceId));
-    };
-    let cleanFrom = InputValidation.requireText("fromPersonId", fromPersonId, InputValidation.MAX_LOCATION_CHARS);
-    let cleanTo = InputValidation.requireText("toPersonId", toPersonId, InputValidation.MAX_LOCATION_CHARS);
-    let cleanType = InputValidation.requireText("relationshipType", relationshipType, InputValidation.MAX_LOCATION_CHARS);
-    let proposal = ResearchLib.createRelationshipProposal(
-      proposals,
-      { var next = state.nextProposalId },
-      cleanFrom,
-      cleanTo,
-      cleanType,
-      sourceId,
-      caller,
-      Time.now(),
-    );
-    state.nextProposalId := state.nextProposalId + 1;
-    ignore ResearchLib.appendAudit(
-      auditLog,
-      { var next = state.nextAuditId },
-      "RelationshipProposalSubmitted",
-      null,
-      ?sourceId,
-      caller,
-      Time.now(),
-      "Relationship proposal '" # cleanFrom # " - " # cleanType # " - " # cleanTo # "' submitted",
-    );
-    state.nextAuditId := state.nextAuditId + 1;
-    addResearchNotification(caller, #ResearchSubmission, "Your research submission is awaiting Family Steward review.");
-    #ok(proposal);
-  };
-
-  /// Lists all relationship proposals (steward only).
-  public query ({ caller }) func listRelationshipProposals() : async [Types.RelationshipProposal] {
-    requireSteward(caller);
-    proposals.toArray();
-  };
+  // NOTE: `createRelationshipProposal` and `listRelationshipProposals` moved to
+  // `mixins/relationship-proposal-scope-api.mo` as TEMPORARY Tenancy 1C
+  // compatibility wrappers delegating to the canonical family-scoped endpoints
+  // with `FamilyTypes.DEFAULT_FAMILY_ID`. Exactly one implementation exists.
 
   /// Lists all conflict review items (steward only).
   public query ({ caller }) func listConflictReviewItems() : async [Types.ConflictReviewItem] {

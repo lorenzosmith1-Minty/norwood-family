@@ -380,6 +380,7 @@ export const RelationshipProposal = IDL.Record({
   'sourceId' : SourceId,
   'reviewedAt' : IDL.Opt(IDL.Int),
   'reviewedBy' : IDL.Opt(IDL.Principal),
+  'familyId' : IDL.Text,
   'toPersonId' : IDL.Text,
   'relationshipType' : IDL.Text,
 });
@@ -1306,6 +1307,11 @@ export const idlService = IDL.Service({
       [Result_19],
       [],
     ),
+  'createRelationshipProposalForFamily' : IDL.Func(
+      [FamilyId, IDL.Text, IDL.Text, IDL.Text, SourceId],
+      [Result_19],
+      [],
+    ),
   'createSource' : IDL.Func(
       [IDL.Text, SourceType, IDL.Text, IDL.Opt(IDL.Nat)],
       [Result_18],
@@ -1428,6 +1434,11 @@ export const idlService = IDL.Service({
       ['query'],
     ),
   'getRecipe' : IDL.Func([RecipeId], [IDL.Opt(Recipe)], ['query']),
+  'getRelationshipProposalForFamily' : IDL.Func(
+      [FamilyId, IDL.Nat],
+      [IDL.Opt(RelationshipProposal)],
+      ['query'],
+    ),
   'getRelationshipRequest' : IDL.Func(
       [IDL.Nat],
       [IDL.Opt(RelationshipRequest)],
@@ -1585,6 +1596,11 @@ export const idlService = IDL.Service({
   'listRecipesForPerson' : IDL.Func([IDL.Text], [IDL.Vec(Recipe)], ['query']),
   'listRelationshipProposals' : IDL.Func(
       [],
+      [IDL.Vec(RelationshipProposal)],
+      ['query'],
+    ),
+  'listRelationshipProposalsForFamily' : IDL.Func(
+      [FamilyId],
       [IDL.Vec(RelationshipProposal)],
       ['query'],
     ),
@@ -2335,6 +2351,7 @@ export const idlFactory = ({ IDL }) => {
     'sourceId' : SourceId,
     'reviewedAt' : IDL.Opt(IDL.Int),
     'reviewedBy' : IDL.Opt(IDL.Principal),
+    'familyId' : IDL.Text,
     'toPersonId' : IDL.Text,
     'relationshipType' : IDL.Text,
   });
@@ -3241,6 +3258,11 @@ export const idlFactory = ({ IDL }) => {
         [Result_19],
         [],
       ),
+    'createRelationshipProposalForFamily' : IDL.Func(
+        [FamilyId, IDL.Text, IDL.Text, IDL.Text, SourceId],
+        [Result_19],
+        [],
+      ),
     'createSource' : IDL.Func(
         [IDL.Text, SourceType, IDL.Text, IDL.Opt(IDL.Nat)],
         [Result_18],
@@ -3363,6 +3385,11 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'getRecipe' : IDL.Func([RecipeId], [IDL.Opt(Recipe)], ['query']),
+    'getRelationshipProposalForFamily' : IDL.Func(
+        [FamilyId, IDL.Nat],
+        [IDL.Opt(RelationshipProposal)],
+        ['query'],
+      ),
     'getRelationshipRequest' : IDL.Func(
         [IDL.Nat],
         [IDL.Opt(RelationshipRequest)],
@@ -3536,6 +3563,11 @@ export const idlFactory = ({ IDL }) => {
     'listRecipesForPerson' : IDL.Func([IDL.Text], [IDL.Vec(Recipe)], ['query']),
     'listRelationshipProposals' : IDL.Func(
         [],
+        [IDL.Vec(RelationshipProposal)],
+        ['query'],
+      ),
+    'listRelationshipProposalsForFamily' : IDL.Func(
+        [FamilyId],
         [IDL.Vec(RelationshipProposal)],
         ['query'],
       ),

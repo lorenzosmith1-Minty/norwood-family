@@ -452,3 +452,95 @@ it("seeds exactly one default family and backfills familyId on upgrade", async (
   });
   expect(stored?.blob).toEqual(archiveBlob);
 });
+
+// ---------------------------------------------------------------------------
+// Tenancy 1C-B2-B3: RelationshipProposal familyId across a real upgrade.
+//
+// The previous revision's RelationshipProposal has no `familyId` field; this
+// build's 20260923_140000.mo migration adds one and backfills every pre-existing
+// proposal with familyId = "norwood". This test installs the previous revision,
+// writes a proposal through its public API, upgrades to this build (running the
+// migration), and asserts the proposal survives with its id and submitted fields
+// unchanged and familyId = "norwood". It then re-reads to confirm the migration
+// is a no-op on a second read (the record is not duplicated or rewritten).
+//
+// The pre-upgrade write goes through the previous revision's own declarations
+// (`.old/`), because this build's codec requires the new `familyId` field and
+// cannot encode a call against the previous revision's pre-migration types.
+// ---------------------------------------------------------------------------
+it("defaults a pre-existing relationship proposal to norwood on upgrade, preserving its id and data", async () => {
+  const previousDeclarations = await import(
+    /* @vite-ignore */ PREVIOUS_DECLARATIONS
+  );
+  const previousIdlFactory = previousDeclarations.idlFactory;
+
+  // 1. Install the version the user is actually running.
+  const previous = await pic!.setupCanister({
+    idlFactory: previousIdlFactory,
+    wasm: PREVIOUS_WASM,
+  });
+
+  // 2. Write a proposal through the OLD public API. The writer becomes the
+  //    Family Steward (the one-time claimSteward bootstrap) and approves its own
+  //    claim on a seeded profile so the contribution endpoints are authorized.
+  const steward = createIdentity("upgrade-proposal-steward-seed");
+  previous.actor.setIdentity(steward);
+  await previous.actor._initialize_access_control();
+  await previous.actor.claimSteward();
+  const requested = await previous.actor.requestProfileClaim("clayton");
+  if ("ok" in requested) {
+    await previous.actor.approveProfileClaim(requested.ok.id);
+  }
+
+  const createdSource = await previous.actor.createSource(
+    "Pre-tenancy proposal source",
+    { CensusCitation: null },
+    "A source written before the proposal familyId migration.",
+    [],
+  );
+  expect("ok" in createdSource).toBe(true);
+  const sourceId = (createdSource as { ok: { id: bigint } }).ok.id;
+
+  const createdProposal = await previous.actor.createRelationshipProposal(
+    "clayton",
+    "julia",
+    "Father",
+    sourceId,
+  );
+  expect("ok" in createdProposal).toBe(true);
+  const proposalId = (createdProposal as { ok: { id: bigint } }).ok.id;
+
+  // 3. Upgrade to the version this build produces. The 20260923_140000.mo
+  //    migration runs here.
+  await pic!.upgradeCanister({
+    canisterId: previous.canisterId,
+    wasm: BACKEND_WASM,
+    upgradeModeOptions: {
+      skip_pre_upgrade: [],
+      wasm_memory_persistence: [{ keep: null }],
+    },
+  });
+
+  // 4. Read through the NEW API. The proposal survives with its id and submitted
+  //    fields unchanged and familyId = "norwood".
+  const upgraded = pic!.createActor<_SERVICE>(idlFactory, previous.canisterId);
+  upgraded.setIdentity(steward);
+  const listed = await upgraded.listRelationshipProposals();
+  const stored = listed.find((p) => p.id === proposalId);
+  expect(stored).toBeDefined();
+  expect(stored).toMatchObject({
+    id: proposalId,
+    familyId: "norwood",
+    fromPersonId: "clayton",
+    toPersonId: "julia",
+    relationshipType: "Father",
+    sourceId,
+    status: { Pending: null },
+  });
+
+  // Re-reading is a no-op: the migration does not duplicate or rewrite the
+  // record, so the same single proposal is returned.
+  const listedAgain = await upgraded.listRelationshipProposals();
+  expect(listedAgain.filter((p) => p.id === proposalId)).toHaveLength(1);
+  expect(listedAgain.find((p) => p.id === proposalId)).toEqual(stored);
+});

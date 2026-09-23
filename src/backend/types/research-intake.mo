@@ -52,7 +52,14 @@ module {
 
   /// A lightweight source record so every fact retains provenance. Optionally
   /// links to an Archive item (`archiveItemId`) without requiring one.
+  ///
+  /// Tenancy 1C-B2: `familyId` is the tenant boundary for a source. Every
+  /// family-scoped read and review requires `SourceRecord.familyId` to equal the
+  /// requested `familyId`; a `sourceId` alone never crosses a family boundary.
+  /// Records created before this field existed are migrated to
+  /// `FamilyTypes.DEFAULT_FAMILY_ID` ("norwood").
   public type SourceRecord = {
+    familyId : Text;
     id : SourceId;
     title : Text;
     sourceType : SourceType;

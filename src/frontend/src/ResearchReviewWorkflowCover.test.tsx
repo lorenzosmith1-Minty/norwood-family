@@ -161,6 +161,7 @@ const {
       { __kind__: "ok"; ok: SourceRecord } | { __kind__: "err"; err: unknown }
     > {
       const record: SourceRecord = {
+        familyId: "norwood",
         id: nextSourceId++,
         title,
         sourceType,
@@ -399,6 +400,7 @@ function claimedProfile(personId: string, name: string): PersonProfile {
 
 function sourceRecord(id: bigint, title: string): SourceRecord {
   return {
+    familyId: "norwood",
     id,
     title,
     sourceType: SourceType.CensusCitation,

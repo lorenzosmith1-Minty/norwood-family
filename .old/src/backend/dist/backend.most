@@ -966,6 +966,7 @@ type EvidenceStatus__952143850 =
 type ExternalBlob__220559234 = Blob;
 type FamilyId__357998493 = Text;
 type FamilyId__635793600 = Text;
+type FamilyId__649884009 = Text;
 type FamilyStatus__298658265 = {#active; #archived};
 type FamilyStatus__662165415 = {#active; #archived};
 type Family__188663423 =
@@ -1587,6 +1588,8 @@ type NewActor__681552274 =
     profiles : Map__230067015<Text, PersonProfile__630094272>;
     relationshipRequests : List__836382695<RelationshipRequest__174897287>
   };
+type NewActor__703993856 =
+  {researchSources : List__836382695<NewSourceRecord__912464744>};
 type NewActor__756013677 =
   {
     conflictReviewItems : List__836382695<ConflictReviewItem__670731780>;
@@ -2045,6 +2048,19 @@ type NewSourceRecord__864208503 =
     title : Text;
     updatedAt : Int
   };
+type NewSourceRecord__912464744 =
+  {
+    archiveItemId : ?Nat;
+    contributor : Principal;
+    createdAt : Int;
+    description : Text;
+    familyId : FamilyId__649884009;
+    id : SourceId__761560610;
+    sourceType : SourceType__189135088;
+    status : ReviewStatus__488310263;
+    title : Text;
+    updatedAt : Int
+  };
 type NewStewardRecord__158406795 =
   {
     assignedAt : Int;
@@ -2380,6 +2396,8 @@ type OldActor__232881591 =
     relationshipRequests : List__836382695<RelationshipRequest__233308197>;
     stewards : List__836382695<StewardRecord__113048388>
   };
+type OldActor__233056753 =
+  {researchSources : List__836382695<OldSourceRecord__638514156>};
 type OldActor__241283283 =
   {
     archiveItems : List__836382695<OldArchiveItem__675723596>;
@@ -2951,6 +2969,18 @@ type OldSourceRecord__1066294631 =
     id : Nat;
     sourceType : SourceType__953197572;
     status : OldReviewStatus__969786594;
+    title : Text;
+    updatedAt : Int
+  };
+type OldSourceRecord__638514156 =
+  {
+    archiveItemId : ?Nat;
+    contributor : Principal;
+    createdAt : Int;
+    description : Text;
+    id : SourceId__761560610;
+    sourceType : SourceType__189135088;
+    status : ReviewStatus__488310263;
     title : Text;
     updatedAt : Int
   };
@@ -4499,18 +4529,22 @@ type Resolution__85140939 =
     summary : Text;
     supportingEvidence : [Text]
   };
+type ReviewStatus__488310263 =
+  {#Approved; #Conflicting; #NeedsResearch; #Pending; #Rejected};
 type ReviewStatus__654012580 = {#Approved; #Conflicting; #Pending; #Rejected};
 type ReviewStatus__724723279 =
   {#Approved; #Conflicting; #NeedsResearch; #Pending; #Rejected};
 type ReviewStatus__96206077 =
   {#Approved; #Conflicting; #NeedsResearch; #Pending; #Rejected};
 type SourceId__430694605 = Nat;
+type SourceId__761560610 = Nat;
 type SourceRecord__6933722 =
   {
     archiveItemId : ?Nat;
     contributor : Principal;
     createdAt : Int;
     description : Text;
+    familyId : Text;
     id : SourceId__430694605;
     sourceType : SourceType__755340115;
     status : ReviewStatus__96206077;
@@ -4549,6 +4583,15 @@ type SourceStatus__732068429 = {#Copy; #Original; #Transcribed; #Unverified};
 type SourceStatus__749020176 = {#Copy; #Original; #Transcribed; #Unverified};
 type SourceStatus__930855418 = {#Copy; #Original; #Transcribed; #Unverified};
 type SourceStatus__983723365 = {#Copy; #Original; #Transcribed; #Unverified};
+type SourceType__189135088 =
+  {
+    #CensusCitation;
+    #CertificateHeadstoneReference;
+    #DeedPropertyReference;
+    #EmailThread;
+    #ResearchNotes;
+    #UploadedDocumentImage
+  };
 type SourceType__27579838 =
   {
     #CensusCitation;
@@ -4836,7 +4879,8 @@ type UserRole__968740559 = {#admin; #guest; #user};
   "20260915_000000" : (old : OldActor__606090735) -> NewActor__937507792;
   "20260916_000000" : (old : OldActor__887486218) -> NewActor__772334770;
   "20260917_000000" : (old : OldActor__358288849) -> NewActor__665018719;
-  "20260921_000000" : (old : OldActor__241283283) -> NewActor__426998186
+  "20260921_000000" : (old : OldActor__241283283) -> NewActor__426998186;
+  "20260923_000837" : (old : OldActor__233056753) -> NewActor__703993856
 }
 actor  {
   stable accessControlState :

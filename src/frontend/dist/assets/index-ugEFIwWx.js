@@ -33590,6 +33590,7 @@ const SourceRecord = Record({
   "description": Text,
   "sourceType": SourceType$1,
   "updatedAt": Int,
+  "familyId": Text,
   "contributor": Principal2
 });
 const PostStatus$1 = Variant({
@@ -34353,6 +34354,11 @@ Service({
     []
   ),
   "approveSource": Func([SourceId], [Opt(SourceRecord)], []),
+  "approveSourceForFamily": Func(
+    [FamilyId, SourceId],
+    [Opt(SourceRecord)],
+    []
+  ),
   "approveStory": Func([StoryId], [Opt(Story)], []),
   "archiveBoardPost": Func([PostId], [Opt(Post)], []),
   "archiveProfile": Func([PersonId], [Result_2], []),
@@ -34584,8 +34590,14 @@ Service({
     ["query"]
   ),
   "getReviewQueue": Func([], [ReviewQueue], ["query"]),
+  "getReviewQueueForFamily": Func([FamilyId], [ReviewQueue], ["query"]),
   "getSingleStewardWarning": Func([], [Opt(Text)], ["query"]),
   "getSource": Func([SourceId], [Opt(SourceRecord)], ["query"]),
+  "getSourceForFamily": Func(
+    [FamilyId, SourceId],
+    [Opt(SourceRecord)],
+    ["query"]
+  ),
   "getStewardAuditHistory": Func(
     [],
     [Vec(StewardAuditEntry)],
@@ -34719,6 +34731,11 @@ Service({
   ),
   "listReports": Func([], [Vec(Report)], ["query"]),
   "listSources": Func([], [Vec(SourceRecord)], ["query"]),
+  "listSourcesForFamily": Func(
+    [FamilyId],
+    [Vec(SourceRecord)],
+    ["query"]
+  ),
   "listStewardIdentities": Func([], [Vec(StewardIdentity)], ["query"]),
   "listStewards": Func([], [Vec(StewardRecord)], ["query"]),
   "listSuccessors": Func([], [Vec(SuccessorDesignation)], ["query"]),
@@ -34751,6 +34768,11 @@ Service({
     []
   ),
   "needsResearchSource": Func([SourceId], [Opt(SourceRecord)], []),
+  "needsResearchSourceForFamily": Func(
+    [FamilyId, SourceId],
+    [Opt(SourceRecord)],
+    []
+  ),
   "notDuplicate": Func([PersonId, PersonId], [Result_12], []),
   "permanentlyDeleteProfile": Func([PersonId, Bool], [Result_11], []),
   "promoteToSteward": Func([PersonId], [Result_10], []),
@@ -34826,6 +34848,11 @@ Service({
     []
   ),
   "rejectSource": Func([SourceId], [Opt(SourceRecord)], []),
+  "rejectSourceForFamily": Func(
+    [FamilyId, SourceId],
+    [Opt(SourceRecord)],
+    []
+  ),
   "rejectStory": Func([StoryId], [Opt(Story)], []),
   "removeBoardReply": Func([ReplyId], [Opt(Reply)], []),
   "removeDuplicateProfile": Func([PersonId], [Result_8], []),
@@ -35442,6 +35469,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "description": IDL2.Text,
     "sourceType": SourceType2,
     "updatedAt": IDL2.Int,
+    "familyId": IDL2.Text,
     "contributor": IDL2.Principal
   });
   const PostStatus2 = IDL2.Variant({
@@ -36185,6 +36213,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
       []
     ),
     "approveSource": IDL2.Func([SourceId2], [IDL2.Opt(SourceRecord2)], []),
+    "approveSourceForFamily": IDL2.Func(
+      [FamilyId2, SourceId2],
+      [IDL2.Opt(SourceRecord2)],
+      []
+    ),
     "approveStory": IDL2.Func([StoryId2], [IDL2.Opt(Story2)], []),
     "archiveBoardPost": IDL2.Func([PostId2], [IDL2.Opt(Post2)], []),
     "archiveProfile": IDL2.Func([PersonId2], [Result_27], []),
@@ -36416,8 +36449,14 @@ const idlFactory = ({ IDL: IDL2 }) => {
       ["query"]
     ),
     "getReviewQueue": IDL2.Func([], [ReviewQueue2], ["query"]),
+    "getReviewQueueForFamily": IDL2.Func([FamilyId2], [ReviewQueue2], ["query"]),
     "getSingleStewardWarning": IDL2.Func([], [IDL2.Opt(IDL2.Text)], ["query"]),
     "getSource": IDL2.Func([SourceId2], [IDL2.Opt(SourceRecord2)], ["query"]),
+    "getSourceForFamily": IDL2.Func(
+      [FamilyId2, SourceId2],
+      [IDL2.Opt(SourceRecord2)],
+      ["query"]
+    ),
     "getStewardAuditHistory": IDL2.Func(
       [],
       [IDL2.Vec(StewardAuditEntry2)],
@@ -36567,6 +36606,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
     ),
     "listReports": IDL2.Func([], [IDL2.Vec(Report2)], ["query"]),
     "listSources": IDL2.Func([], [IDL2.Vec(SourceRecord2)], ["query"]),
+    "listSourcesForFamily": IDL2.Func(
+      [FamilyId2],
+      [IDL2.Vec(SourceRecord2)],
+      ["query"]
+    ),
     "listStewardIdentities": IDL2.Func(
       [],
       [IDL2.Vec(StewardIdentity2)],
@@ -36603,6 +36647,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
       []
     ),
     "needsResearchSource": IDL2.Func([SourceId2], [IDL2.Opt(SourceRecord2)], []),
+    "needsResearchSourceForFamily": IDL2.Func(
+      [FamilyId2, SourceId2],
+      [IDL2.Opt(SourceRecord2)],
+      []
+    ),
     "notDuplicate": IDL2.Func([PersonId2, PersonId2], [Result_122], []),
     "permanentlyDeleteProfile": IDL2.Func(
       [PersonId2, IDL2.Bool],
@@ -36682,6 +36731,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
       []
     ),
     "rejectSource": IDL2.Func([SourceId2], [IDL2.Opt(SourceRecord2)], []),
+    "rejectSourceForFamily": IDL2.Func(
+      [FamilyId2, SourceId2],
+      [IDL2.Opt(SourceRecord2)],
+      []
+    ),
     "rejectStory": IDL2.Func([StoryId2], [IDL2.Opt(Story2)], []),
     "removeBoardReply": IDL2.Func([ReplyId2], [IDL2.Opt(Reply2)], []),
     "removeDuplicateProfile": IDL2.Func([PersonId2], [Result_82], []),
@@ -37575,6 +37629,20 @@ class Backend {
       return from_candid_opt_n86(this._uploadFile, this._downloadFile, result);
     }
   }
+  async approveSourceForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.approveSourceForFamily(arg0, arg1);
+        return from_candid_opt_n86(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.approveSourceForFamily(arg0, arg1);
+      return from_candid_opt_n86(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async approveStory(arg0) {
     if (this.processError) {
       try {
@@ -38303,6 +38371,20 @@ class Backend {
       return from_candid_ReviewQueue_n203(this._uploadFile, this._downloadFile, result);
     }
   }
+  async getReviewQueueForFamily(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getReviewQueueForFamily(arg0);
+        return from_candid_ReviewQueue_n203(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getReviewQueueForFamily(arg0);
+      return from_candid_ReviewQueue_n203(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async getSingleStewardWarning() {
     if (this.processError) {
       try {
@@ -38328,6 +38410,20 @@ class Backend {
       }
     } else {
       const result = await this.actor.getSource(arg0);
+      return from_candid_opt_n86(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async getSourceForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getSourceForFamily(arg0, arg1);
+        return from_candid_opt_n86(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getSourceForFamily(arg0, arg1);
       return from_candid_opt_n86(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -39017,6 +39113,20 @@ class Backend {
       return from_candid_vec_n255(this._uploadFile, this._downloadFile, result);
     }
   }
+  async listSourcesForFamily(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listSourcesForFamily(arg0);
+        return from_candid_vec_n255(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listSourcesForFamily(arg0);
+      return from_candid_vec_n255(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async listStewardIdentities() {
     if (this.processError) {
       try {
@@ -39182,6 +39292,20 @@ class Backend {
       }
     } else {
       const result = await this.actor.needsResearchSource(arg0);
+      return from_candid_opt_n86(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async needsResearchSourceForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.needsResearchSourceForFamily(arg0, arg1);
+        return from_candid_opt_n86(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.needsResearchSourceForFamily(arg0, arg1);
       return from_candid_opt_n86(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -39448,6 +39572,20 @@ class Backend {
       }
     } else {
       const result = await this.actor.rejectSource(arg0);
+      return from_candid_opt_n86(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async rejectSourceForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.rejectSourceForFamily(arg0, arg1);
+        return from_candid_opt_n86(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.rejectSourceForFamily(arg0, arg1);
       return from_candid_opt_n86(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -41029,6 +41167,7 @@ function from_candid_record_n88(_uploadFile, _downloadFile, value) {
     description: value.description,
     sourceType: from_candid_SourceType_n60(_uploadFile, _downloadFile, value.sourceType),
     updatedAt: value.updatedAt,
+    familyId: value.familyId,
     contributor: value.contributor
   };
 }
@@ -46741,24 +46880,26 @@ function useListConfirmedRelationships(familyId) {
 }
 function useListSources() {
   const providersPresent = useProvidersPresent();
+  const familyScopedId = useFamilyScopedId();
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["research", "sources"],
+    queryKey: familyScopedId === void 0 ? ["research", "sources"] : ["research", "sources", familyScopedId],
     queryFn: async () => {
       if (!actor) return [];
-      return actor.listSources();
+      return familyScopedId === void 0 ? actor.listSources() : actor.listSourcesForFamily(familyScopedId);
     },
     enabled: providersPresent && !!actor && !isFetching
   });
 }
 function useGetSource(sourceId) {
   const providersPresent = useProvidersPresent();
+  const familyScopedId = useFamilyScopedId();
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["research", "sources", sourceId.toString()],
+    queryKey: familyScopedId === void 0 ? ["research", "sources", sourceId.toString()] : ["research", "sources", familyScopedId, sourceId.toString()],
     queryFn: async () => {
       if (!actor) return null;
-      return actor.getSource(sourceId);
+      return familyScopedId === void 0 ? actor.getSource(sourceId) : actor.getSourceForFamily(familyScopedId, sourceId);
     },
     enabled: providersPresent && !!actor && !isFetching
   });
@@ -46788,12 +46929,31 @@ function useCreateSource() {
   });
 }
 function useCreateSourceWithUpload() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
     mutationFn: async (input) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.createSourceWithUpload(
+      if (familyScopedId === void 0) {
+        return actor.createSourceWithUpload(
+          input.title,
+          input.sourceType,
+          input.description,
+          input.mimeType,
+          input.blob,
+          input.tags,
+          input.era,
+          input.year,
+          input.relatedMemberIds,
+          input.privacyLevel,
+          input.classification,
+          input.primarySpeaker,
+          input.filename
+        );
+      }
+      return actor.createSourceWithUploadForFamily(
+        familyScopedId,
         input.title,
         input.sourceType,
         input.description,
@@ -46823,12 +46983,13 @@ function useCreateSourceWithUpload() {
   });
 }
 function useApproveSource() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
     mutationFn: async (sourceId) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.approveSource(sourceId);
+      return familyScopedId === void 0 ? actor.approveSource(sourceId) : actor.approveSourceForFamily(familyScopedId, sourceId);
     },
     onSuccess: () => {
       void queryClient2.invalidateQueries({ queryKey: ["research", "sources"] });
@@ -46842,12 +47003,13 @@ function useApproveSource() {
   });
 }
 function useRejectSource() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
     mutationFn: async (sourceId) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.rejectSource(sourceId);
+      return familyScopedId === void 0 ? actor.rejectSource(sourceId) : actor.rejectSourceForFamily(familyScopedId, sourceId);
     },
     onSuccess: () => {
       void queryClient2.invalidateQueries({ queryKey: ["research", "sources"] });
@@ -46861,12 +47023,13 @@ function useRejectSource() {
   });
 }
 function useNeedsResearchSource() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
     mutationFn: async (sourceId) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.needsResearchSource(sourceId);
+      return familyScopedId === void 0 ? actor.needsResearchSource(sourceId) : actor.needsResearchSourceForFamily(familyScopedId, sourceId);
     },
     onSuccess: () => {
       void queryClient2.invalidateQueries({ queryKey: ["research", "sources"] });
@@ -47273,12 +47436,13 @@ function useListConflictsForPerson(personId) {
 }
 function useGetReviewQueue() {
   const providersPresent = useProvidersPresent();
+  const familyScopedId = useFamilyScopedId();
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["research", "queue"],
+    queryKey: familyScopedId === void 0 ? ["research", "queue"] : ["research", "queue", familyScopedId],
     queryFn: async () => {
       if (!actor) return null;
-      return actor.getReviewQueue();
+      return familyScopedId === void 0 ? actor.getReviewQueue() : actor.getReviewQueueForFamily(familyScopedId);
     },
     enabled: providersPresent && !!actor && !isFetching
   });

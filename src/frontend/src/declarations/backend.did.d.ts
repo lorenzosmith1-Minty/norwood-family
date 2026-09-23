@@ -777,6 +777,7 @@ export interface SourceRecord {
   'description' : string,
   'sourceType' : SourceType,
   'updatedAt' : bigint,
+  'familyId' : string,
   'contributor' : Principal,
 }
 export type SourceStatus = { 'Copy' : null } |
@@ -1076,17 +1077,22 @@ export interface _SERVICE {
     [] | [RelationshipRequest]
   >,
   /**
-   * / Approves a pending source (Family Steward only), transitioning it to
-   * / `#Approved` so it becomes usable by Proposed Findings. When the source
-   * / links an Archive item (`archiveItemId`), that item is transitioned from
-   * / `#Pending` to `#Approved` in the same action — the single approval covers
-   * / both records, so the item is never reviewed twice. The linked item keeps
-   * / its metadata, blob, and ids, no second Archive item is created, and no
-   * / Archive notification is emitted. Records exactly one `#ResearchApproved`
-   * / notification to the contributor. Returns the updated source, or `null`
-   * / when it does not exist or is not pending.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `approveSourceForFamily`.
    */
   'approveSource' : ActorMethod<[SourceId], [] | [SourceRecord]>,
+  /**
+   * / Approves the pending source with `sourceId` in `familyId`. Requires an
+   * / active Steward of `familyId`. When the source links an Archive item that
+   * / belongs to the same family, that item is transitioned from `#Pending` to
+   * / `#Approved` in the same action with no Archive notification; exactly one
+   * / `#ResearchApproved` notification is recorded to the contributor. Returns
+   * / the updated source, or `null` when no pending source with that id belongs
+   * / to `familyId`.
+   */
+  'approveSourceForFamily' : ActorMethod<
+    [FamilyId, SourceId],
+    [] | [SourceRecord]
+  >,
   /**
    * / Approves a pending story (steward only). Returns the updated story, or
    * / `null` when the story does not exist or is not pending.
@@ -1494,26 +1500,35 @@ export interface _SERVICE {
    */
   'getResearchAuditLog' : ActorMethod<[], Array<ResearchAuditEntry>>,
   /**
-   * / Returns the review queue badge counts (pending, approved, rejected,
-   * / conflicting, needs-research) and the full list of reviewable items across
-   * / all research intake records, including pending Sources. Every pending item
-   * / appears with its type, title/summary, contributor, provenance, created
-   * / date, evidence label, and available steward actions. Family Steward only —
-   * / the queue exposes contributor principals, proposed findings content, and
-   * / provenance, so it is not readable by anonymous or non-steward callers.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `getReviewQueueForFamily`.
    */
   'getReviewQueue' : ActorMethod<[], ReviewQueue>,
+  /**
+   * / Returns the review queue for `familyId`. Requires an active Steward of
+   * / `familyId`. The Sources section and every source-derived count are
+   * / restricted to sources whose `familyId` equals `familyId`; the non-source
+   * / categories (Findings, Candidates, Relationships, Conflicts) keep their
+   * / existing behavior unchanged in this build, so the returned queue never
+   * / mixes source counts across families.
+   */
+  'getReviewQueueForFamily' : ActorMethod<[FamilyId], ReviewQueue>,
   /**
    * / Returns a warning encouraging successor designation when only one steward
    * / exists, or `null` when there are multiple stewards. Family Steward only.
    */
   'getSingleStewardWarning' : ActorMethod<[], [] | [string]>,
   /**
-   * / Returns a single source record by id (Family Steward only). The source
-   * / record carries the contributor principal and description, so it is not
-   * / readable by anonymous or non-steward callers.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `getSourceForFamily`.
    */
   'getSource' : ActorMethod<[SourceId], [] | [SourceRecord]>,
+  /**
+   * / Returns the source with `sourceId` when it belongs to `familyId`, or `null`
+   * / otherwise. Requires an active Steward of `familyId`, matching the
+   * / pre-tenancy Steward-only source-read behavior. A record that exists under
+   * / another family is never returned, so a `sourceId` alone cannot cross the
+   * / family boundary.
+   */
+  'getSourceForFamily' : ActorMethod<[FamilyId, SourceId], [] | [SourceRecord]>,
   /**
    * / Returns the merged Family Steward Audit History: every governance audit
    * / entry plus every conflict-resolution action (Keep Existing, Replace
@@ -1787,9 +1802,16 @@ export interface _SERVICE {
    */
   'listReports' : ActorMethod<[], Array<Report>>,
   /**
-   * / Lists all source records (steward only).
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `listSourcesForFamily`.
    */
   'listSources' : ActorMethod<[], Array<SourceRecord>>,
+  /**
+   * / Lists every source record in `familyId`. Requires an active Steward of
+   * / `familyId`, matching the pre-tenancy Steward-only source-read behavior. A
+   * / source whose `familyId` differs is never returned, so Family A sources
+   * / never appear in a Family B call.
+   */
+  'listSourcesForFamily' : ActorMethod<[FamilyId], Array<SourceRecord>>,
   /**
    * / Returns each current Steward and designated Successor enriched with the
    * / linked approved Person identity (personId, preferred/display name, and
@@ -1842,7 +1864,7 @@ export interface _SERVICE {
    */
   'mergeProfiles' : ActorMethod<[PersonId, PersonId], Result_13>,
   /**
-   * / Marks a pending finding as needing research (Family Steward only),
+   * / Approves a pending finding (steward only), routing it to its target
    * / transitioning it to `#NeedsResearch` while preserving the finding and its
    * / content. Records a `FindingNeedsResearch` audit entry. Returns the updated
    * / finding, or `null` when it does not exist or is not pending.
@@ -1869,12 +1891,19 @@ export interface _SERVICE {
     [] | [RelationshipProposal]
   >,
   /**
-   * / Marks a pending source as needing research (Family Steward only),
-   * / transitioning it to `#NeedsResearch` while preserving the source and its
-   * / notes. Returns the updated source, or `null` when it does not exist or is
-   * / not pending.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `needsResearchSourceForFamily`.
    */
   'needsResearchSource' : ActorMethod<[SourceId], [] | [SourceRecord]>,
+  /**
+   * / Marks the pending source with `sourceId` in `familyId` as needing research.
+   * / Requires an active Steward of `familyId`. Returns the updated source, or
+   * / `null` when no pending source with that id belongs to `familyId`.
+   */
+  'needsResearchSourceForFamily' : ActorMethod<
+    [FamilyId, SourceId],
+    [] | [SourceRecord]
+  >,
   /**
    * / Marks two suspected duplicates as not a duplicate. Family Steward only.
    */
@@ -2015,16 +2044,22 @@ export interface _SERVICE {
     [] | [RelationshipRequest]
   >,
   /**
-   * / Rejects a pending source (Family Steward only), transitioning it to
-   * / `#Rejected`. When the source links an Archive item (`archiveItemId`), that
-   * / item is transitioned from `#Pending` to `#Rejected` in the same action —
-   * / the single rejection covers both records, so the item is never reviewed
-   * / twice. The linked item's record and provenance are preserved, no second
-   * / Archive item is created, and no Archive notification is emitted. Records
-   * / exactly one `#ResearchRejected` notification to the contributor. Returns
-   * / the updated source, or `null` when it does not exist or is not pending.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `rejectSourceForFamily`.
    */
   'rejectSource' : ActorMethod<[SourceId], [] | [SourceRecord]>,
+  /**
+   * / Rejects the pending source with `sourceId` in `familyId`. Requires an
+   * / active Steward of `familyId`. When the source links an Archive item that
+   * / belongs to the same family, that item is transitioned from `#Pending` to
+   * / `#Rejected` in the same action with no Archive notification; exactly one
+   * / `#ResearchRejected` notification is recorded to the contributor. Returns
+   * / the updated source, or `null` when no pending source with that id belongs
+   * / to `familyId`.
+   */
+  'rejectSourceForFamily' : ActorMethod<
+    [FamilyId, SourceId],
+    [] | [SourceRecord]
+  >,
   /**
    * / Rejects a pending story (steward only). Returns the updated story, or
    * / `null` when the story does not exist or is not pending.

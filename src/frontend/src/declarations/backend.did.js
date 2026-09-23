@@ -406,6 +406,7 @@ export const SourceRecord = IDL.Record({
   'description' : IDL.Text,
   'sourceType' : SourceType,
   'updatedAt' : IDL.Int,
+  'familyId' : IDL.Text,
   'contributor' : IDL.Principal,
 });
 export const PostStatus = IDL.Variant({
@@ -1170,6 +1171,11 @@ export const idlService = IDL.Service({
       [],
     ),
   'approveSource' : IDL.Func([SourceId], [IDL.Opt(SourceRecord)], []),
+  'approveSourceForFamily' : IDL.Func(
+      [FamilyId, SourceId],
+      [IDL.Opt(SourceRecord)],
+      [],
+    ),
   'approveStory' : IDL.Func([StoryId], [IDL.Opt(Story)], []),
   'archiveBoardPost' : IDL.Func([PostId], [IDL.Opt(Post)], []),
   'archiveProfile' : IDL.Func([PersonId], [Result_2], []),
@@ -1401,8 +1407,14 @@ export const idlService = IDL.Service({
       ['query'],
     ),
   'getReviewQueue' : IDL.Func([], [ReviewQueue], ['query']),
+  'getReviewQueueForFamily' : IDL.Func([FamilyId], [ReviewQueue], ['query']),
   'getSingleStewardWarning' : IDL.Func([], [IDL.Opt(IDL.Text)], ['query']),
   'getSource' : IDL.Func([SourceId], [IDL.Opt(SourceRecord)], ['query']),
+  'getSourceForFamily' : IDL.Func(
+      [FamilyId, SourceId],
+      [IDL.Opt(SourceRecord)],
+      ['query'],
+    ),
   'getStewardAuditHistory' : IDL.Func(
       [],
       [IDL.Vec(StewardAuditEntry)],
@@ -1536,6 +1548,11 @@ export const idlService = IDL.Service({
     ),
   'listReports' : IDL.Func([], [IDL.Vec(Report)], ['query']),
   'listSources' : IDL.Func([], [IDL.Vec(SourceRecord)], ['query']),
+  'listSourcesForFamily' : IDL.Func(
+      [FamilyId],
+      [IDL.Vec(SourceRecord)],
+      ['query'],
+    ),
   'listStewardIdentities' : IDL.Func([], [IDL.Vec(StewardIdentity)], ['query']),
   'listStewards' : IDL.Func([], [IDL.Vec(StewardRecord)], ['query']),
   'listSuccessors' : IDL.Func([], [IDL.Vec(SuccessorDesignation)], ['query']),
@@ -1568,6 +1585,11 @@ export const idlService = IDL.Service({
       [],
     ),
   'needsResearchSource' : IDL.Func([SourceId], [IDL.Opt(SourceRecord)], []),
+  'needsResearchSourceForFamily' : IDL.Func(
+      [FamilyId, SourceId],
+      [IDL.Opt(SourceRecord)],
+      [],
+    ),
   'notDuplicate' : IDL.Func([PersonId, PersonId], [Result_12], []),
   'permanentlyDeleteProfile' : IDL.Func([PersonId, IDL.Bool], [Result_11], []),
   'promoteToSteward' : IDL.Func([PersonId], [Result_10], []),
@@ -1643,6 +1665,11 @@ export const idlService = IDL.Service({
       [],
     ),
   'rejectSource' : IDL.Func([SourceId], [IDL.Opt(SourceRecord)], []),
+  'rejectSourceForFamily' : IDL.Func(
+      [FamilyId, SourceId],
+      [IDL.Opt(SourceRecord)],
+      [],
+    ),
   'rejectStory' : IDL.Func([StoryId], [IDL.Opt(Story)], []),
   'removeBoardReply' : IDL.Func([ReplyId], [IDL.Opt(Reply)], []),
   'removeDuplicateProfile' : IDL.Func([PersonId], [Result_8], []),
@@ -2262,6 +2289,7 @@ export const idlFactory = ({ IDL }) => {
     'description' : IDL.Text,
     'sourceType' : SourceType,
     'updatedAt' : IDL.Int,
+    'familyId' : IDL.Text,
     'contributor' : IDL.Principal,
   });
   const PostStatus = IDL.Variant({
@@ -3006,6 +3034,11 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'approveSource' : IDL.Func([SourceId], [IDL.Opt(SourceRecord)], []),
+    'approveSourceForFamily' : IDL.Func(
+        [FamilyId, SourceId],
+        [IDL.Opt(SourceRecord)],
+        [],
+      ),
     'approveStory' : IDL.Func([StoryId], [IDL.Opt(Story)], []),
     'archiveBoardPost' : IDL.Func([PostId], [IDL.Opt(Post)], []),
     'archiveProfile' : IDL.Func([PersonId], [Result_2], []),
@@ -3237,8 +3270,14 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'getReviewQueue' : IDL.Func([], [ReviewQueue], ['query']),
+    'getReviewQueueForFamily' : IDL.Func([FamilyId], [ReviewQueue], ['query']),
     'getSingleStewardWarning' : IDL.Func([], [IDL.Opt(IDL.Text)], ['query']),
     'getSource' : IDL.Func([SourceId], [IDL.Opt(SourceRecord)], ['query']),
+    'getSourceForFamily' : IDL.Func(
+        [FamilyId, SourceId],
+        [IDL.Opt(SourceRecord)],
+        ['query'],
+      ),
     'getStewardAuditHistory' : IDL.Func(
         [],
         [IDL.Vec(StewardAuditEntry)],
@@ -3388,6 +3427,11 @@ export const idlFactory = ({ IDL }) => {
       ),
     'listReports' : IDL.Func([], [IDL.Vec(Report)], ['query']),
     'listSources' : IDL.Func([], [IDL.Vec(SourceRecord)], ['query']),
+    'listSourcesForFamily' : IDL.Func(
+        [FamilyId],
+        [IDL.Vec(SourceRecord)],
+        ['query'],
+      ),
     'listStewardIdentities' : IDL.Func(
         [],
         [IDL.Vec(StewardIdentity)],
@@ -3424,6 +3468,11 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'needsResearchSource' : IDL.Func([SourceId], [IDL.Opt(SourceRecord)], []),
+    'needsResearchSourceForFamily' : IDL.Func(
+        [FamilyId, SourceId],
+        [IDL.Opt(SourceRecord)],
+        [],
+      ),
     'notDuplicate' : IDL.Func([PersonId, PersonId], [Result_12], []),
     'permanentlyDeleteProfile' : IDL.Func(
         [PersonId, IDL.Bool],
@@ -3503,6 +3552,11 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'rejectSource' : IDL.Func([SourceId], [IDL.Opt(SourceRecord)], []),
+    'rejectSourceForFamily' : IDL.Func(
+        [FamilyId, SourceId],
+        [IDL.Opt(SourceRecord)],
+        [],
+      ),
     'rejectStory' : IDL.Func([StoryId], [IDL.Opt(Story)], []),
     'removeBoardReply' : IDL.Func([ReplyId], [IDL.Opt(Reply)], []),
     'removeDuplicateProfile' : IDL.Func([PersonId], [Result_8], []),

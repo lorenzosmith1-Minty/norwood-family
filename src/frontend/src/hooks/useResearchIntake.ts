@@ -17,6 +17,7 @@ import type {
   SourceId,
   SourceRecord,
 } from "@/backend";
+import { useFamilyScopedId } from "@/context/FamilyContext";
 import type {
   ArchiveItemClassification,
   ArchiveItemType,
@@ -37,17 +38,32 @@ import { useProvidersPresent } from "./usePhotoStorage";
  * Query keys are namespaced under "research" so a mutation in one surface can
  * invalidate the shared lists (sources, findings, candidates, relationship
  * proposals, conflicts, review queue, audit log) that the other surfaces read.
+ *
+ * The SOURCE hooks are family-aware, following the useArchiveStorage pattern:
+ * the active family is read from the centralized FamilyContext and
+ * `familyScopedId` is `undefined` for the default family. The default family
+ * keeps the exact legacy no-argument call shape and React Query key, while a
+ * non-default family routes to the canonical `*ForFamily` endpoint with the
+ * familyId included in the key so caches never collide across families.
+ * Findings/candidates/proposals/conflicts/audit hooks are intentionally NOT
+ * family-scoped in this build.
  */
 
 /** Lists all source records (steward only). */
 export function useListSources() {
   const providersPresent = useProvidersPresent();
+  const familyScopedId = useFamilyScopedId();
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["research", "sources"],
+    queryKey:
+      familyScopedId === undefined
+        ? ["research", "sources"]
+        : ["research", "sources", familyScopedId],
     queryFn: async () => {
       if (!actor) return [] as SourceRecord[];
-      return actor.listSources();
+      return familyScopedId === undefined
+        ? actor.listSources()
+        : actor.listSourcesForFamily(familyScopedId);
     },
     enabled: providersPresent && !!actor && !isFetching,
   });
@@ -56,12 +72,18 @@ export function useListSources() {
 /** Returns a single source record by id. */
 export function useGetSource(sourceId: SourceId) {
   const providersPresent = useProvidersPresent();
+  const familyScopedId = useFamilyScopedId();
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["research", "sources", sourceId.toString()],
+    queryKey:
+      familyScopedId === undefined
+        ? ["research", "sources", sourceId.toString()]
+        : ["research", "sources", familyScopedId, sourceId.toString()],
     queryFn: async () => {
       if (!actor) return null;
-      return actor.getSource(sourceId);
+      return familyScopedId === undefined
+        ? actor.getSource(sourceId)
+        : actor.getSourceForFamily(familyScopedId, sourceId);
     },
     enabled: providersPresent && !!actor && !isFetching,
   });
@@ -84,6 +106,8 @@ export function useCreateSource() {
       archiveItemId: bigint | null;
     }): Promise<Result_18> => {
       if (!actor) throw new Error("Backend is not ready");
+      // The backend exposes no family-scoped createSource endpoint: createSource
+      // sets the familyId itself, so the legacy call is used for every family.
       return actor.createSource(title, sourceType, description, archiveItemId);
     },
     onSuccess: () => {
@@ -126,12 +150,31 @@ export interface CreateSourceWithUploadInput {
  * Item ID is required. Returns the created Source record plus the Archive item.
  */
 export function useCreateSourceWithUpload() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (input: CreateSourceWithUploadInput) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.createSourceWithUpload(
+      if (familyScopedId === undefined) {
+        return actor.createSourceWithUpload(
+          input.title,
+          input.sourceType,
+          input.description,
+          input.mimeType,
+          input.blob,
+          input.tags,
+          input.era,
+          input.year,
+          input.relatedMemberIds,
+          input.privacyLevel,
+          input.classification,
+          input.primarySpeaker,
+          input.filename,
+        );
+      }
+      return actor.createSourceWithUploadForFamily(
+        familyScopedId,
         input.title,
         input.sourceType,
         input.description,
@@ -169,12 +212,15 @@ export function useCreateSourceWithUpload() {
  * `ResearchApproved` notification to the contributor.
  */
 export function useApproveSource() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (sourceId: SourceId): Promise<SourceRecord | null> => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.approveSource(sourceId);
+      return familyScopedId === undefined
+        ? actor.approveSource(sourceId)
+        : actor.approveSourceForFamily(familyScopedId, sourceId);
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["research", "sources"] });
@@ -194,12 +240,15 @@ export function useApproveSource() {
  * `ResearchRejected` notification to the contributor.
  */
 export function useRejectSource() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (sourceId: SourceId): Promise<SourceRecord | null> => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.rejectSource(sourceId);
+      return familyScopedId === undefined
+        ? actor.rejectSource(sourceId)
+        : actor.rejectSourceForFamily(familyScopedId, sourceId);
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["research", "sources"] });
@@ -219,12 +268,15 @@ export function useRejectSource() {
  * notes.
  */
 export function useNeedsResearchSource() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (sourceId: SourceId): Promise<SourceRecord | null> => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.needsResearchSource(sourceId);
+      return familyScopedId === undefined
+        ? actor.needsResearchSource(sourceId)
+        : actor.needsResearchSourceForFamily(familyScopedId, sourceId);
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["research", "sources"] });
@@ -750,12 +802,18 @@ export function useListConflictsForPerson(personId: string) {
 /** Returns the review queue badge counts across all reviewable items. */
 export function useGetReviewQueue() {
   const providersPresent = useProvidersPresent();
+  const familyScopedId = useFamilyScopedId();
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["research", "queue"],
+    queryKey:
+      familyScopedId === undefined
+        ? ["research", "queue"]
+        : ["research", "queue", familyScopedId],
     queryFn: async () => {
       if (!actor) return null;
-      return actor.getReviewQueue();
+      return familyScopedId === undefined
+        ? actor.getReviewQueue()
+        : actor.getReviewQueueForFamily(familyScopedId);
     },
     enabled: providersPresent && !!actor && !isFetching,
   });

@@ -254,6 +254,7 @@ function sourceRecord(
   description: string,
 ): SourceRecord {
   return {
+    familyId: "norwood",
     id,
     title,
     sourceType: SourceType.CensusCitation,

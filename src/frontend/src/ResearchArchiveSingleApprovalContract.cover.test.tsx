@@ -238,6 +238,7 @@ function sourceRecord(
   archiveItemId: bigint,
 ): SourceRecord {
   return {
+    familyId: "norwood",
     id,
     title,
     sourceType: SourceType.CensusCitation,

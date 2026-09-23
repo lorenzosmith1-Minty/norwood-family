@@ -11,6 +11,7 @@ import FamilyTypes "../types/family";
 import OwnershipTypes "../types/ownership";
 import GovernanceTypes "../types/governance";
 import ArchiveLib "../lib/archive";
+import ResearchSourceScopeLib "../lib/research-source-scope";
 import FamilyAuthorizationLib "../lib/family-authorization";
 import InputValidation "../lib/input-validation";
 import InputValidationTypes "../types/input-validation";
@@ -91,19 +92,15 @@ mixin (
     };
   };
 
-  /// Builds the set of archive item ids referenced by a Research Source. Those
-  /// items are reviewed through the Research Intake queue, so they are excluded
-  /// from ordinary Pending Contributions. Shared by the family-scoped pending
-  /// list and its temporary compatibility wrapper so the two never diverge.
-  func researchLinkedArchiveIds() : Set.Set<Types.ArchiveItemId> {
-    let linkedIds = Set.empty<Types.ArchiveItemId>();
-    for (s in sources.toArray().values()) {
-      switch (s.archiveItemId) {
-        case (?archiveItemId) { linkedIds.add(archiveItemId) };
-        case null {};
-      };
-    };
-    linkedIds;
+  /// Builds the set of archive item ids referenced by a Research Source **in
+  /// `familyId`**. Those items are reviewed through the Research Intake queue,
+  /// so they are excluded from ordinary Pending Contributions. Only a source
+  /// whose `familyId` equals `familyId` contributes its `archiveItemId`, so a
+  /// Research Source in Family A suppresses only its linked Archive A item and
+  /// leaves Family B items unaffected. Shared by the family-scoped pending list
+  /// and its temporary compatibility wrapper so the two never diverge.
+  func researchLinkedArchiveIds(familyId : FamilyTypes.FamilyId) : Set.Set<Types.ArchiveItemId> {
+    ResearchSourceScopeLib.researchLinkedArchiveIdsForFamily(sources, familyId);
   };
 
   /// Validates and normalizes a family-scoped archive submission, then stores
@@ -237,7 +234,7 @@ mixin (
     familyId : FamilyTypes.FamilyId,
   ) : async [Types.ArchiveItem] {
     FamilyAuthorizationLib.requireActiveStewardForFamily(stewards, caller, familyId);
-    ArchiveLib.listPendingForFamily(items, familyId, researchLinkedArchiveIds());
+    ArchiveLib.listPendingForFamily(items, familyId, researchLinkedArchiveIds(familyId));
   };
 
   /// Approves the pending archive item with `id` in `familyId`. Requires an
@@ -394,7 +391,7 @@ mixin (
   /// `listPendingArchiveItemsForFamily`.
   public query ({ caller }) func listPendingArchiveItems() : async [Types.ArchiveItem] {
     FamilyAuthorizationLib.requireActiveStewardForFamily(stewards, caller, FamilyTypes.DEFAULT_FAMILY_ID);
-    ArchiveLib.listPendingForFamily(items, FamilyTypes.DEFAULT_FAMILY_ID, researchLinkedArchiveIds());
+    ArchiveLib.listPendingForFamily(items, FamilyTypes.DEFAULT_FAMILY_ID, researchLinkedArchiveIds(FamilyTypes.DEFAULT_FAMILY_ID));
   };
 
   /// TEMPORARY Tenancy 1C compatibility wrapper for

@@ -1056,12 +1056,27 @@ stays readable.
   `contributor`. The
   source enters as `#Pending` and is never auto-approved. `archiveItemId` is
   optional — a source may link to an Archive item without requiring one.
-- `listSources() : async [SourceRecord]` — query. Family Steward only. Lists all
-  source records.
-- `getSource(id : SourceId) : async ?SourceRecord` — query. Family Steward only.
-  Returns a single source record by id, or `null` when it does not exist. The
-  source record carries the contributor principal and description, so anonymous
-  and signed-in but non-steward callers are rejected with a trap.
+- `listSourcesForFamily(familyId : Text) : async [SourceRecord]` — query.
+  Requires an approved member or active Steward of `familyId`. Lists every source
+  record whose `familyId` equals `familyId`; a source belonging to another family
+  is never returned.
+- `getSourceForFamily(familyId : Text, sourceId : SourceId) : async ?SourceRecord` —
+  query. Requires an approved member or active Steward of `familyId`. Returns the
+  source with `sourceId` when it belongs to `familyId`, or `null` otherwise. A
+  record that exists under another family is never returned, so a `sourceId`
+  alone cannot cross the family boundary. The source record carries the
+  contributor principal and description, so anonymous and signed-in but
+  non-member callers are rejected with a trap.
+- `listSources() : async [SourceRecord]` — query. TEMPORARY Tenancy 1C
+  compatibility wrapper for `listSourcesForFamily`, delegating with the default
+  family id (`\"norwood\"`). Family Steward or approved member only. Lists all
+  source records in the default family.
+- `getSource(id : SourceId) : async ?SourceRecord` — query. TEMPORARY Tenancy 1C
+  compatibility wrapper for `getSourceForFamily`, delegating with the default
+  family id (`\"norwood\"`). Family Steward or approved member only. Returns a
+  single source record by id, or `null` when it does not exist. The source record
+  carries the contributor principal and description, so anonymous and signed-in
+  but non-member callers are rejected with a trap.
 - `createFinding(title : Text, evidenceLabel : EvidenceLabel, findingType : FindingType, content : FindingContent, sourceId : SourceId, personId : ?Text, newPersonCandidateId : ?Nat) : async Result<ProposedFinding, ResearchError>` —
   update. Creates a proposed finding carrying exactly one evidence label and a
   required source link. Requires an approved family member (a caller holding at
@@ -1190,38 +1205,87 @@ stays readable.
   targets a Person Fact whose field cannot be mapped to a canonical Person field
   — in that case the conflict is left unresolved and canonical data is not
   altered.
-- `getReviewQueue() : async ReviewQueue` — query. Family Steward only. Returns
-  the review queue badge counts (`pending`, `approved`, `rejected`,
-  `conflicting`, `needsResearch`) and the full list of reviewable items
-  (`items`) aggregated across all reviewable research intake records, including
-  pending Sources. Every pending item appears with its type, title/summary,
-  contributor, provenance, created date, evidence label, and available steward
-  actions. Because the queue exposes contributor principals, proposed findings
-  content, and provenance, it is gated to Family Stewards and traps with
-  `\"Unauthorized: You must be signed in\"` for an anonymous caller and
-  `\"Unauthorized: Only Family Stewards can perform this action\"` when the
+- `getReviewQueueForFamily(familyId : Text) : async ReviewQueue` — query.
+  Requires an active Steward of `familyId`. Returns the review queue badge counts
+  (`pending`, `approved`, `rejected`, `conflicting`, `needsResearch`) and the
+  full list of reviewable items (`items`). The Sources section and every
+  source-derived count are restricted to sources whose `familyId` equals
+  `familyId`, so the queue never mixes source counts across families; the
+  non-source categories (Findings, Candidates, Relationships, Conflicts) keep
+  their existing aggregation behavior. Every pending item appears with its type,
+  title/summary, contributor, provenance, created date, evidence label, and
+  available steward actions. Because the queue exposes contributor principals,
+  proposed findings content, and provenance, it is gated to Family Stewards and
+  traps with `\"Unauthorized: You must be signed in\"` for an anonymous caller
+  and `\"Unauthorized: Only Family Stewards can perform this action\"` when the
   caller is not an active Family Steward (an ACTIVE persisted `StewardRecord`).
-- `approveSource(id : SourceId) : async ?SourceRecord` — update. Family Steward
-  only. Approves a pending source, transitioning it to `#Approved` so it becomes
+- `getReviewQueue() : async ReviewQueue` — query. TEMPORARY Tenancy 1C
+  compatibility wrapper for `getReviewQueueForFamily`, delegating with the
+  default family id (`\"norwood\"`). Family Steward only. Returns the review
+  queue badge counts and the full list of reviewable items aggregated across all
+  reviewable research intake records, including pending Sources. Every pending
+  item appears with its type, title/summary, contributor, provenance, created
+  date, evidence label, and available steward actions. Because the queue exposes
+  contributor principals, proposed findings content, and provenance, it is gated
+  to Family Stewards and traps with `\"Unauthorized: You must be signed in\"` for
+  an anonymous caller and `\"Unauthorized: Only Family Stewards can perform this
+  action\"` when the caller is not an active Family Steward (an ACTIVE persisted
+  `StewardRecord`).
+- `approveSourceForFamily(familyId : Text, sourceId : SourceId) : async ?SourceRecord` —
+  update. Requires an active Steward of `familyId`. Approves the pending source
+  with `sourceId` in `familyId`, transitioning it to `#Approved` so it becomes
   usable by Proposed Findings. When the source links an Archive item
-  (`archiveItemId`), that item is transitioned from `#Pending` to `#Approved` in
-  the same action — the single approval covers both records. The linked item
-  keeps its metadata, blob, and ids, no second Archive item is created, and no
-  `#ArchiveApproved` notification is emitted. Records exactly one
-  `#ResearchApproved` notification to the contributor. Returns the updated
-  source, or `null` when it does not exist or is not pending.
-- `rejectSource(id : SourceId) : async ?SourceRecord` — update. Family Steward
-  only. Rejects a pending source, transitioning it to `#Rejected`. When the
-  source links an Archive item (`archiveItemId`), that item is transitioned from
-  `#Pending` to `#Rejected` in the same action — the single rejection covers both
-  records. The linked item's record and provenance are preserved, no second
-  Archive item is created, and no `#ArchiveRejected` notification is emitted.
-  Records exactly one `#ResearchRejected` notification to the contributor.
-  Returns the updated source, or `null` when it does not exist or is not pending.
-- `needsResearchSource(id : SourceId) : async ?SourceRecord` — update. Family
-  Steward only. Marks a pending source as needing research, transitioning it to
+  (`archiveItemId`) that belongs to the SAME family, that item is transitioned
+  from `#Pending` to `#Approved` in the same action — the single approval covers
+  both records. The linked item keeps its metadata, blob, and ids, no second
+  Archive item is created, and no `#ArchiveApproved` notification is emitted.
+  Records exactly one `#ResearchApproved` notification to the contributor. An
+  `archiveItemId` pointing at another family's item is never followed. Returns
+  the updated source, or `null` when no pending source with that id belongs to
+  `familyId`.
+- `rejectSourceForFamily(familyId : Text, sourceId : SourceId) : async ?SourceRecord` —
+  update. Requires an active Steward of `familyId`. Rejects the pending source
+  with `sourceId` in `familyId`, transitioning it to `#Rejected`. When the source
+  links an Archive item (`archiveItemId`) that belongs to the SAME family, that
+  item is transitioned from `#Pending` to `#Rejected` in the same action — the
+  single rejection covers both records. The linked item's record and provenance
+  are preserved, no second Archive item is created, and no `#ArchiveRejected`
+  notification is emitted. Records exactly one `#ResearchRejected` notification
+  to the contributor. An `archiveItemId` pointing at another family's item is
+  never followed. Returns the updated source, or `null` when no pending source
+  with that id belongs to `familyId`.
+- `needsResearchSourceForFamily(familyId : Text, sourceId : SourceId) : async ?SourceRecord` —
+  update. Requires an active Steward of `familyId`. Marks the pending source with
+  `sourceId` in `familyId` as needing research, transitioning it to
   `#NeedsResearch` while preserving the source and its notes. Returns the updated
+  source, or `null` when no pending source with that id belongs to `familyId`.
+- `approveSource(id : SourceId) : async ?SourceRecord` — update. TEMPORARY
+  Tenancy 1C compatibility wrapper for `approveSourceForFamily`, delegating with
+  the default family id (`\"norwood\"`). Family Steward only. Approves a pending
+  source, transitioning it to `#Approved` so it becomes usable by Proposed
+  Findings. When the source links an Archive item (`archiveItemId`), that item is
+  transitioned from `#Pending` to `#Approved` in the same action — the single
+  approval covers both records. The linked item keeps its metadata, blob, and
+  ids, no second Archive item is created, and no `#ArchiveApproved` notification
+  is emitted. Records exactly one `#ResearchApproved` notification to the
+  contributor. Returns the updated source, or `null` when it does not exist or is
+  not pending.
+- `rejectSource(id : SourceId) : async ?SourceRecord` — update. TEMPORARY Tenancy
+  1C compatibility wrapper for `rejectSourceForFamily`, delegating with the
+  default family id (`\"norwood\"`). Family Steward only. Rejects a pending
+  source, transitioning it to `#Rejected`. When the source links an Archive item
+  (`archiveItemId`), that item is transitioned from `#Pending` to `#Rejected` in
+  the same action — the single rejection covers both records. The linked item's
+  record and provenance are preserved, no second Archive item is created, and no
+  `#ArchiveRejected` notification is emitted. Records exactly one
+  `#ResearchRejected` notification to the contributor. Returns the updated
   source, or `null` when it does not exist or is not pending.
+- `needsResearchSource(id : SourceId) : async ?SourceRecord` — update. TEMPORARY
+  Tenancy 1C compatibility wrapper for `needsResearchSourceForFamily`, delegating
+  with the default family id (`\"norwood\"`). Family Steward only. Marks a pending
+  source as needing research, transitioning it to `#NeedsResearch` while
+  preserving the source and its notes. Returns the updated source, or `null` when
+  it does not exist or is not pending.
 - `getResearchAuditLog() : async [ResearchAuditEntry]` — query. Family Steward
   only. Returns the full research intake audit history recording provenance and
   approval actions for every finding and its review lifecycle. Because the audit
@@ -1319,10 +1383,12 @@ The exposed entities are `family`, `photo`, `archiveItem`, `profile`, `claim`,
 `report`, `researchSource`, `proposedFinding`, `newPersonCandidate`,
 `relationshipProposal`, `conflictReviewItem`, and `researchAuditLog`.
 Most are declared `.controllerOnly()` (see the authorization section); the
-`archiveItem` and `conversation` entities are `.controllerOrScoped()` and the
-`message` entity is `.scopedPerUser()`. `archiveItem` uses a privacy-reflecting
-row-visibility rule (see the authorization section); `conversation` and
-`message` use a participant-only visibility rule. `family` rows (primary key
+`archiveItem`, `conversation`, and `researchSource` entities are
+`.controllerOrScoped()` and the `message` entity is `.scopedPerUser()`.
+`archiveItem` uses a privacy-reflecting row-visibility rule (see the
+authorization section); `researchSource` uses a family-membership
+row-visibility rule; `conversation` and `message` use a participant-only
+visibility rule. `family` rows (primary key
 `id`) carry `displayName`, `createdAt` (nanoseconds since epoch, `Int`),
 `createdBy` (the creating principal, rendered as text), and `status`
 (`\"active\"`/`\"archived\"`). `photo` rows are flattened
@@ -1468,12 +1534,18 @@ text), `reportedMessageId` (`Nat`), `reason`, `createdAt` (`Int`), and `status`
 (`\"Pending\"`/`\"Reviewed\"`/`\"Dismissed\"`).
 
 The research-intake entities are flattened views of the corresponding records.
-`researchSource` rows (primary key `id`, a `Nat`) carry `title`, `sourceType`
+`researchSource` rows (primary key `id`, a `Nat`) carry `familyId` (the owning
+family id, the tenant boundary), `title`, `sourceType`
 (`\"CensusCitation\"`/`\"DeedPropertyReference\"`/`\"EmailThread\"`/`\"ResearchNotes\"`/`\"CertificateHeadstoneReference\"`/`\"UploadedDocumentImage\"`),
 `description`, `archiveItemId` (`Nat`, `0` when the source links to no Archive
 item), `contributor` (principal text), `status`
 (`\"Pending\"`/`\"Approved\"`/`\"Rejected\"`/`\"Conflicting\"`), `createdAt`
-(`Int`, nanoseconds since epoch), and `updatedAt` (`Int`). `proposedFinding`
+(`Int`, nanoseconds since epoch), and `updatedAt` (`Int`). The `researchSource`
+entity is `.controllerOrScoped()` with a family-membership row-visibility rule:
+the platform controller reads all rows, while a signed-in caller reads only the
+sources whose `familyId` is a family they are an approved member or active
+Steward of, so a caller can never read another family's sources through OQL.
+`proposedFinding`
 rows (primary key `id`, a `Nat`) carry `title`, `evidenceLabel`
 (`\"Documented\"`/`\"FamilyHistoryOralHistory\"`/`\"PersonalMemory\"`/`\"Hypothesis\"`/`\"Conflicting\"`/`\"NeedsResearch\"`),
 `findingType` (`\"PersonFact\"`/`\"Relationship\"`/`\"TimelineEvent\"`/`\"Story\"`/`\"Mystery\"`/`\"Source\"`),
@@ -1585,7 +1657,13 @@ approved family members (a caller holding at least one `#Approved` profile
 claim) or Family Stewards, and `#Private` items to their contributor or a
 Family Steward. This keeps the archive privacy enforcement consistent between
 the direct API methods (`listApprovedArchiveItems`, `searchArchiveItems`) and
-OQL. The `conversation` entity is declared `.controllerOrScoped()` with a
+OQL. The `researchSource` entity is declared `.controllerOrScoped()` with a
+family-membership row-visibility rule: the platform controller reads all rows,
+while a signed-in caller reads only the sources whose `familyId` is a family
+they are an approved member or active Steward of. A caller therefore can never
+read another family's sources through OQL, matching the family-scoped source
+reads (`listSourcesForFamily`, `getSourceForFamily`). The `conversation` entity
+is declared `.controllerOrScoped()` with a
 participant-only visibility rule: the platform controller reads all rows, while
 a signed-in caller reads only the conversations they participate in. The
 `message` entity is declared `.scopedPerUser()` with a participant-only
@@ -1768,33 +1846,40 @@ methods — `createSource`, `createFinding`, `createNewPersonCandidate`, and
 holding at least one `#Approved` profile claim, or a Family Steward) and
 return `#err(#notAuthorized)` for an anonymous or signed-in but unapproved
 caller (they do not trap). The
-Family Steward review methods — `listSources`, `listFindings`,
+Family Steward review methods — `listSourcesForFamily`, `listFindings`,
 `listNewPersonCandidates`, `listRelationshipProposals`,
 `listConflictReviewItems`, `approveFinding`, `rejectFinding`,
-`needsResearchFinding`, `resolveConflict`, `approveSource`, `rejectSource`,
-`needsResearchSource`, `approveNewPersonCandidate`,
-`rejectNewPersonCandidate`, `needsResearchNewPersonCandidate`,
-`approveRelationshipProposal`, `rejectRelationshipProposal`, and
-`needsResearchRelationshipProposal` —
+`needsResearchFinding`, `resolveConflict`, `approveSourceForFamily`,
+`rejectSourceForFamily`, `needsResearchSourceForFamily`,
+`approveNewPersonCandidate`, `rejectNewPersonCandidate`,
+`needsResearchNewPersonCandidate`, `approveRelationshipProposal`,
+`rejectRelationshipProposal`, and `needsResearchRelationshipProposal` —
 are Family Steward only and trap with `\"Unauthorized: You must be
 signed in\"` for an anonymous caller and `\"Unauthorized: Only Family Stewards
 can perform this action\"` when the caller is not an active Family Steward (an
-ACTIVE persisted `StewardRecord`). The read methods
+ACTIVE persisted `StewardRecord`). The family-scoped source reads
+`listSourcesForFamily` and `getSourceForFamily` require an approved member or
+active Steward of the requested `familyId` and trap with the stable
+family-membership message for a signed-in but unapproved caller. The read methods
 `getSource` and `getFinding` are readable by any caller (they are not gated to
 admin). `listConflictsForPerson` and `listDisputedFactsForPerson` require a
 signed-in (non-anonymous) caller and
 return `[]` for an anonymous caller (they do not trap); they return only the
 unresolved conflicts / disputed facts for the requested Person. The review surface methods
-`getReviewQueue` and `getResearchAuditLog`
+`getReviewQueueForFamily` and `getResearchAuditLog`
 are Family Steward only — they expose contributor principals, proposed findings
 content, and provenance, so they trap with `\"Unauthorized: You must be signed
 in\"` for an anonymous caller and `\"Unauthorized: Only Family Stewards can
 perform this action\"` when the caller is not an active Family Steward (an
 ACTIVE persisted `StewardRecord`). The research-intake OQL
-entities (`researchSource`, `proposedFinding`, `newPersonCandidate`,
+entities (`proposedFinding`, `newPersonCandidate`,
 `relationshipProposal`, `conflictReviewItem`, `researchAuditLog`) are all
 declared `.controllerOnly()`, so only the platform controller can read their
-rows through `schema()`/`execute()`; end users do not read them directly. This
+rows through `schema()`/`execute()`; end users do not read them directly. The
+`researchSource` entity is `.controllerOrScoped()` with a family-membership
+row-visibility rule, so a signed-in caller reads only the sources of a family
+they are an approved member or active Steward of and can never read another
+family's sources through OQL. This
 keeps the research intake data private to the platform while still letting the
 Data Intelligence agent answer over it.
 
@@ -2148,7 +2233,10 @@ already reference the caller's stable principal (`requestingUserId`,
 - `FindingType` is a variant: `#PersonFact`, `#Relationship`, `#TimelineEvent`,
   `#Story`, `#Mystery`, or `#Source`. It determines where an approved finding
   routes.
-- `SourceRecord` fields: `id` (`SourceId`), `title` (`Text`), `sourceType`,
+- `SourceRecord` fields: `familyId` (`Text`, the tenant boundary — every
+  family-scoped read and review requires it to equal the requested `familyId`;
+  records created before this field existed are migrated to the default family
+  id `\"norwood\"`), `id` (`SourceId`), `title` (`Text`), `sourceType`,
   `description` (`Text`), `archiveItemId` (`?Nat`, `null` when the source links
   to no Archive item — a source may optionally link to an Archive item without
   requiring one), `contributor` (`Principal`), `status` (`ReviewStatus`),
@@ -2449,13 +2537,17 @@ caller creates a source (`createSource`) and then proposed findings
 (`createFinding`), New Person candidates (`createNewPersonCandidate`), and
 relationship proposals (`createRelationshipProposal`), each referencing a source
 for provenance. Everything enters as `#Pending` and is never auto-approved. A
-Family Steward then reviews each item: `approveSource` approves a pending source
-(transitioning it to `#Approved` so it becomes usable by Proposed Findings, and
-cascading the same transition to its linked Archive item when one exists),
-`rejectSource` rejects it (transitioning to `#Rejected`, and cascading to its
-linked Archive item when one exists, without deleting the original Archive item),
-and `needsResearchSource` marks it as needing research
+Family Steward then reviews each item: `approveSourceForFamily` approves a
+pending source (transitioning it to `#Approved` so it becomes usable by Proposed
+Findings, and cascading the same transition to its linked Archive item when one
+exists in the same family), `rejectSourceForFamily` rejects it (transitioning to
+`#Rejected`, and cascading to its linked Archive item when one exists in the same
+family, without deleting the original Archive item), and
+`needsResearchSourceForFamily` marks it as needing research
 (transitioning to `#NeedsResearch` while preserving the source and its notes).
+The single-family `approveSource`, `rejectSource`, and `needsResearchSource` are
+TEMPORARY Tenancy 1C compatibility wrappers delegating with the default family id
+(`\"norwood\"`).
 `approveFinding` routes an approved finding to its target surface (Profile,
 family graph, Timeline / Travel Through Time, Family Stories, Family Mysteries,
 or Profile Sources / Archive), `rejectFinding` rejects it, and `resolveConflict`
@@ -2707,17 +2799,22 @@ no async job to poll; the frontend can call the list methods (steward) or
   field cannot be mapped to a canonical Person field returns
   `#err(#invalidState(...))`, leaves the conflict unresolved, and does not alter
   canonical data. Every resolution records an audit entry.
-- `approveSource`, `rejectSource`, and `needsResearchSource` are idempotent:
-  acting on an already-reviewed (or nonexistent) source returns `null` and
-  changes nothing. They only transition sources currently in `#Pending` state.
-  `approveSource` and `rejectSource` also transition the source's linked Archive
-  item (when `archiveItemId` is set) from `#Pending` to the matching status, so a
-  Research upload needs only one Steward decision; the linked item keeps its
-  metadata, blob, and ids and no Archive notification is emitted for it.
-  `rejectSource` never deletes the original Archive item; `needsResearchSource`
-  preserves the source and its notes. Each successful review records exactly one
-  `#ResearchApproved`/`#ResearchRejected` notification to the contributor
-  (approve/reject) without duplicates.
+- `approveSourceForFamily`, `rejectSourceForFamily`, and
+  `needsResearchSourceForFamily` are idempotent: acting on an already-reviewed
+  (or nonexistent) source returns `null` and changes nothing. They only
+  transition sources currently in `#Pending` state. `approveSourceForFamily` and
+  `rejectSourceForFamily` also transition the source's linked Archive item (when
+  `archiveItemId` is set and the item belongs to the same family) from `#Pending`
+  to the matching status, so a Research upload needs only one Steward decision;
+  the linked item keeps its metadata, blob, and ids and no Archive notification
+  is emitted for it. An `archiveItemId` pointing at another family's item is
+  never followed. `rejectSourceForFamily` never deletes the original Archive
+  item; `needsResearchSourceForFamily` preserves the source and its notes. Each
+  successful review records exactly one `#ResearchApproved`/`#ResearchRejected`
+  notification to the contributor (approve/reject) without duplicates. The
+  single-family `approveSource`, `rejectSource`, and `needsResearchSource` are
+  TEMPORARY Tenancy 1C compatibility wrappers delegating with the default family
+  id (`\"norwood\"`).
 - `approveNewPersonCandidate`, `rejectNewPersonCandidate`, and
   `needsResearchNewPersonCandidate` are idempotent: acting on an already-reviewed
   (or nonexistent) candidate returns `null` and changes nothing. They only
@@ -2736,8 +2833,7 @@ no async job to poll; the frontend can call the list methods (steward) or
   relationship is added — and records a `#ResearchApproved` notification to the
   contributor. Rejecting and needs-research leave the family graph unchanged.
 - `getSource`, `getFinding`, `getReviewQueue`, and `getResearchAuditLog` are
-  read-only queries with no side effects; they are always idempotent.
-- `getStewardAuditHistory` is a read-only query with no side effects; it is
+  read-only queries with no side effects; they are always idempotent.- `getStewardAuditHistory` is a read-only query with no side effects; it is
   always idempotent and never mutates or duplicates any audit record.
 
 ## Errors, traps, limits, and gotchas
@@ -2953,7 +3049,7 @@ no async job to poll; the frontend can call the list methods (steward) or
   `createFinding`, `createNewPersonCandidate`, and
   `createRelationshipProposal` return `#err(#notFound(sourceId))` when the
   referenced source does not exist.
-- The Family Steward research-intake review methods (`listSources`,
+- The Family Steward research-intake review methods (`listSourcesForFamily`,
   `listFindings`, `listNewPersonCandidates`, `listRelationshipProposals`,
   `listConflictReviewItems`, `approveFinding`, `rejectFinding`,
   `needsResearchFinding`, `resolveConflict`, `approveNewPersonCandidate`,
@@ -2963,7 +3059,10 @@ no async job to poll; the frontend can call the list methods (steward) or
   be signed in\"` for an
   anonymous caller and `\"Unauthorized: Only Family Stewards can perform this
   action\"` when the caller is not an active Family Steward (an ACTIVE persisted
-  `StewardRecord`).
+  `StewardRecord`). The family-scoped source reads `listSourcesForFamily` and
+  `getSourceForFamily` require an approved member or active Steward of the
+  requested `familyId` and trap with the stable family-membership message for a
+  signed-in but unapproved caller.
 - `approveFinding`, `rejectFinding`, `needsResearchFinding`, `resolveConflict`,
   `approveNewPersonCandidate`, `rejectNewPersonCandidate`,
   `needsResearchNewPersonCandidate`, `approveRelationshipProposal`,
@@ -2976,7 +3075,11 @@ no async job to poll; the frontend can call the list methods (steward) or
   `researchAuditLog`) are flattened views: enumerated variants render as their
   tag text, optional fields render as empty text or `0`, and the nested
   `content` variant on a proposed finding is not exposed (OQL has no variant
-  value type) — the `findingType` column carries the routing target.
+  value type) — the `findingType` column carries the routing target. The
+  `researchSource` entity is `.controllerOrScoped()` with a family-membership
+  row-visibility rule (its `familyId` column is the owner column), so a
+  signed-in caller reads only their own family's sources through OQL; the other
+  research-intake entities remain `.controllerOnly()`.
 - `getStewardAuditHistory` is Family Steward only and traps with
   `\"Unauthorized: You must be signed in\"` for an anonymous caller and
   `\"Unauthorized: Only Family Stewards can view audit history\"` when the

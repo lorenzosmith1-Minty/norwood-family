@@ -47,6 +47,7 @@ import BoardApi "mixins/board-api";
 import MessagingApi "mixins/messaging-api";
 import PendingCountApi "mixins/pending-count-api";
 import ResearchIntakeApi "mixins/research-intake-api";
+import ResearchSourceScopeApi "mixins/research-source-scope-api";
 import ArchiveResearchBoardNotificationsApi "mixins/archive-research-board-notifications-api";
 import AuditAndWorkloadApi "mixins/audit-and-workload-api";
 import StewardAuthorityApi "mixins/steward-authority-api";
@@ -232,6 +233,20 @@ actor {
   func canSeeMessage(caller : Principal, owner : OQL.Value) : Bool {
     switch (owner) {
       case (#nat conversationId) isConversationParticipant(caller, conversationId);
+      case _ false;
+    };
+  };
+
+  /// OQL row-visibility rule for research sources: a scoped caller sees only the
+  /// sources of a family they are an approved member or active Steward of. The
+  /// owner column is the source's `familyId`, so a caller can never read another
+  /// family's sources through OQL. The platform controller still reads all rows.
+  func canSeeResearchSource(caller : Principal, owner : OQL.Value) : Bool {
+    switch (owner) {
+      case (#text familyId) {
+        StewardAuthorityLib.isActiveStewardForFamily(stewards, caller, familyId)
+          or FamilyAuthorizationLib.isApprovedFamilyMemberForFamily(stewards, claims, caller, familyId);
+      };
       case _ false;
     };
   };
@@ -907,9 +922,11 @@ actor {
         archiveItemId = null;
         contributor = Principal.fromText("aaaaa-aa");
         status = #Pending;
+        familyId = FamilyTypes.DEFAULT_FAMILY_ID;
         createdAt = 0;
         updatedAt = 0;
       })
+      .payload("familyId", func r = r.familyId)
       .payload("id", func r = r.id)
       .payload("title", func r = r.title)
       .payload("sourceType", func r = sourceTypeText(r.sourceType))
@@ -919,7 +936,8 @@ actor {
       .payload("status", func r = reviewStatusText(r.status))
       .payload("createdAt", func r = r.createdAt)
       .payload("updatedAt", func r = r.updatedAt)
-      .controllerOnly()
+      .ownedByWith("familyId", canSeeResearchSource)
+      .controllerOrScoped()
       .build(),
       OQL.Entity.manual<ResearchIntakeTypes.ProposedFinding>(
         "proposedFinding",
@@ -1096,6 +1114,7 @@ actor {
   include MessagingApi(conversations, messages, blocks, reports, profiles, archivedProfiles, notifications, accounts, stewards, claims);
   include PendingCountApi(accessControlState, archiveItems, recipes, stories, mysteryContributions, stewards, researchSources);
   include ResearchIntakeApi(researchSources, proposedFindings, newPersonCandidates, relationshipProposals, conflictReviewItems, researchAuditLog, researchState, profiles, confirmedRelationships, stories, mysteries, archiveItems, notifications, claims, stewards);
+  include ResearchSourceScopeApi(researchSources, proposedFindings, newPersonCandidates, relationshipProposals, conflictReviewItems, researchAuditLog, researchState, archiveItems, notifications, claims, stewards);
   include ArchiveResearchBoardNotificationsApi(archiveItems, researchSources, researchState, posts, notifications, claims, profiles, stewards);
   include AuditAndWorkloadApi(accessControlState, auditLog, researchAuditLog, conflictReviewItems, stewards);
   include StewardAuthorityApi(accessControlState, stewards, auditLog);

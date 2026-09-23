@@ -2,16 +2,19 @@ import List "mo:core/List";
 import Nat "mo:core/Nat";
 import Principal "mo:core/Principal";
 import Types "../types/research-intake";
+import FamilyTypes "../types/family";
 
 /// Domain logic for the Historical Research Intake feature. All functions are
 /// pure helpers over the injected collections; the API mixin owns authorization
 /// and state wiring.
 module {
-  /// Creates a new source record and appends it to the collection. The source
-  /// enters as `#Pending` and is never auto-approved.
+  /// Creates a new source record in `familyId` and appends it to the collection.
+  /// The source enters as `#Pending` and is never auto-approved. The stored
+  /// record's `familyId` is the requested `familyId`.
   public func createSource(
     sources : List.List<Types.SourceRecord>,
     nextId : { var next : Nat },
+    familyId : Text,
     title : Text,
     sourceType : Types.SourceType,
     description : Text,
@@ -22,6 +25,7 @@ module {
     let id = nextId.next;
     nextId.next += 1;
     let source : Types.SourceRecord = {
+      familyId;
       id;
       title;
       sourceType;
@@ -34,6 +38,32 @@ module {
     };
     sources.add(source);
     source;
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper for `createSource`. Deprecated
+  /// single-family form: delegates with `FamilyTypes.DEFAULT_FAMILY_ID` so
+  /// current Norwood behavior is unchanged. Contains no duplicated logic.
+  public func createSourceLegacy(
+    sources : List.List<Types.SourceRecord>,
+    nextId : { var next : Nat },
+    title : Text,
+    sourceType : Types.SourceType,
+    description : Text,
+    archiveItemId : ?Nat,
+    contributor : Principal,
+    now : Int,
+  ) : Types.SourceRecord {
+    createSource(
+      sources,
+      nextId,
+      FamilyTypes.DEFAULT_FAMILY_ID,
+      title,
+      sourceType,
+      description,
+      archiveItemId,
+      contributor,
+      now,
+    );
   };
 
   /// Creates a new proposed finding and appends it to the collection. The

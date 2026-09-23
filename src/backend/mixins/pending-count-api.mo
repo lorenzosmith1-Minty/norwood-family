@@ -1,6 +1,5 @@
 import List "mo:core/List";
 import Principal "mo:core/Principal";
-import Set "mo:core/Set";
 import AccessControl "mo:caffeineai-authorization/access-control";
 import ArchiveTypes "../types/archive";
 import RecipeTypes "../types/recipes";
@@ -9,6 +8,7 @@ import FamilyTypes "../types/family";
 import GovernanceTypes "../types/governance";
 import ResearchTypes "../types/research-intake";
 import PendingCountLib "../lib/pending-count";
+import ResearchSourceScopeLib "../lib/research-source-scope";
 import FamilyAuthorizationLib "../lib/family-authorization";
 
 mixin (
@@ -22,16 +22,13 @@ mixin (
 ) {
   /// Canonical family-scoped pending-contributions count. Shared by the
   /// family-scoped endpoint and its temporary compatibility wrapper so the
-  /// authorization sequence and the Research-linked id set never diverge.
+  /// authorization sequence and the Research-linked id set never diverge. The
+  /// Research-linked exclusion is family-correct: only a Research Source in
+  /// `familyId` suppresses its linked Archive item, so a Family A source never
+  /// affects a Family B pending count.
   func pendingContributionsCountForFamily(caller : Principal, familyId : FamilyTypes.FamilyId) : Nat {
     FamilyAuthorizationLib.requireActiveStewardForFamily(stewards, caller, familyId);
-    let linkedIds = Set.empty<ArchiveTypes.ArchiveItemId>();
-    for (s in sources.toArray().values()) {
-      switch (s.archiveItemId) {
-        case (?archiveItemId) { linkedIds.add(archiveItemId) };
-        case null {};
-      };
-    };
+    let linkedIds = ResearchSourceScopeLib.researchLinkedArchiveIdsForFamily(sources, familyId);
     PendingCountLib.countPendingForFamily(
       familyId,
       archiveItems,

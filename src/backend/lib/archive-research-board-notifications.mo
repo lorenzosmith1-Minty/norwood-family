@@ -130,6 +130,7 @@ module {
     let sourceId = state.nextSourceId;
     state.nextSourceId += 1;
     let source : ResearchIntakeTypes.SourceRecord = {
+      familyId;
       id = sourceId;
       title;
       sourceType;

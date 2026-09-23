@@ -13,7 +13,6 @@ import ArchiveTypes "../types/archive";
 import FamilyTypes "../types/family";
 import GovernanceTypes "../types/governance";
 import ResearchLib "../lib/research-intake";
-import ArchiveLib "../lib/archive";
 import FamilyAuthorizationLib "../lib/family-authorization";
 import StewardAuthorityLib "../lib/steward-authority";
 import InputValidation "../lib/input-validation";
@@ -115,6 +114,7 @@ mixin (
     let source = ResearchLib.createSource(
       sources,
       { var next = state.nextSourceId },
+      FamilyTypes.DEFAULT_FAMILY_ID,
       cleanTitle,
       sourceType,
       cleanDescription,
@@ -136,20 +136,6 @@ mixin (
     state.nextAuditId := state.nextAuditId + 1;
     addResearchNotification(caller, #ResearchSubmission, "Your research submission is awaiting Family Steward review.");
     #ok(source);
-  };
-
-  /// Lists all source records (steward only).
-  public query ({ caller }) func listSources() : async [Types.SourceRecord] {
-    requireSteward(caller);
-    sources.toArray();
-  };
-
-  /// Returns a single source record by id (Family Steward only). The source
-  /// record carries the contributor principal and description, so it is not
-  /// readable by anonymous or non-steward callers.
-  public query ({ caller }) func getSource(id : Types.SourceId) : async ?Types.SourceRecord {
-    requireSteward(caller);
-    sources.find(func s = s.id == id);
   };
 
   /// Creates a new proposed finding. Requires an approved family member; the
@@ -511,135 +497,7 @@ mixin (
     };
   };
 
-  /// Returns the review queue badge counts (pending, approved, rejected,
-  /// conflicting, needs-research) and the full list of reviewable items across
-  /// all research intake records, including pending Sources. Every pending item
-  /// appears with its type, title/summary, contributor, provenance, created
-  /// date, evidence label, and available steward actions. Family Steward only —
-  /// the queue exposes contributor principals, proposed findings content, and
-  /// provenance, so it is not readable by anonymous or non-steward callers.
-  public query ({ caller }) func getReviewQueue() : async Types.ReviewQueue {
-    requireSteward(caller);
-    ResearchLib.computeQueue(sources, findings, candidates, proposals, conflicts);
-  };
-
-  /// Approves a pending source (Family Steward only), transitioning it to
-  /// `#Approved` so it becomes usable by Proposed Findings. When the source
-  /// links an Archive item (`archiveItemId`), that item is transitioned from
-  /// `#Pending` to `#Approved` in the same action — the single approval covers
-  /// both records, so the item is never reviewed twice. The linked item keeps
-  /// its metadata, blob, and ids, no second Archive item is created, and no
-  /// Archive notification is emitted. Records exactly one `#ResearchApproved`
-  /// notification to the contributor. Returns the updated source, or `null`
-  /// when it does not exist or is not pending.
-  public shared ({ caller }) func approveSource(id : Types.SourceId) : async ?Types.SourceRecord {
-    requireSteward(caller);
-    let now = Time.now();
-    switch (sources.find(func s = s.id == id)) {
-      case null { null };
-      case (?s) {
-        if (s.status != #Pending) {
-          null;
-        } else {
-          let updated = ResearchLib.approveSource(sources, id, caller, now);
-          switch (s.archiveItemId) {
-            case (?archiveItemId) {
-              ignore ArchiveLib.transitionStatus(archiveItems, archiveItemId, #Approved);
-            };
-            case null {};
-          };
-          ignore ResearchLib.appendAudit(
-            auditLog,
-            { var next = state.nextAuditId },
-            "SourceApproved",
-            null,
-            ?id,
-            caller,
-            now,
-            "Source '" # s.title # "' approved",
-          );
-          state.nextAuditId := state.nextAuditId + 1;
-          addResearchNotification(s.contributor, #ResearchApproved, "Your research submission was approved.");
-          updated;
-        };
-      };
-    };
-  };
-
-  /// Rejects a pending source (Family Steward only), transitioning it to
-  /// `#Rejected`. When the source links an Archive item (`archiveItemId`), that
-  /// item is transitioned from `#Pending` to `#Rejected` in the same action —
-  /// the single rejection covers both records, so the item is never reviewed
-  /// twice. The linked item's record and provenance are preserved, no second
-  /// Archive item is created, and no Archive notification is emitted. Records
-  /// exactly one `#ResearchRejected` notification to the contributor. Returns
-  /// the updated source, or `null` when it does not exist or is not pending.
-  public shared ({ caller }) func rejectSource(id : Types.SourceId) : async ?Types.SourceRecord {
-    requireSteward(caller);
-    let now = Time.now();
-    switch (sources.find(func s = s.id == id)) {
-      case null { null };
-      case (?s) {
-        if (s.status != #Pending) {
-          null;
-        } else {
-          let updated = ResearchLib.rejectSource(sources, id, caller, now);
-          switch (s.archiveItemId) {
-            case (?archiveItemId) {
-              ignore ArchiveLib.transitionStatus(archiveItems, archiveItemId, #Rejected);
-            };
-            case null {};
-          };
-          ignore ResearchLib.appendAudit(
-            auditLog,
-            { var next = state.nextAuditId },
-            "SourceRejected",
-            null,
-            ?id,
-            caller,
-            now,
-            "Source '" # s.title # "' rejected",
-          );
-          state.nextAuditId := state.nextAuditId + 1;
-          addResearchNotification(s.contributor, #ResearchRejected, "Your research submission was not approved.");
-          updated;
-        };
-      };
-    };
-  };
-
-  /// Marks a pending source as needing research (Family Steward only),
-  /// transitioning it to `#NeedsResearch` while preserving the source and its
-  /// notes. Returns the updated source, or `null` when it does not exist or is
-  /// not pending.
-  public shared ({ caller }) func needsResearchSource(id : Types.SourceId) : async ?Types.SourceRecord {
-    requireSteward(caller);
-    let now = Time.now();
-    switch (sources.find(func s = s.id == id)) {
-      case null { null };
-      case (?s) {
-        if (s.status != #Pending) {
-          null;
-        } else {
-          let updated = ResearchLib.needsResearchSource(sources, id, caller, now);
-          ignore ResearchLib.appendAudit(
-            auditLog,
-            { var next = state.nextAuditId },
-            "SourceNeedsResearch",
-            null,
-            ?id,
-            caller,
-            now,
-            "Source '" # s.title # "' marked as needing research",
-          );
-          state.nextAuditId := state.nextAuditId + 1;
-          updated;
-        };
-      };
-    };
-  };
-
-  /// Marks a pending finding as needing research (Family Steward only),
+  /// Approves a pending finding (steward only), routing it to its target
   /// transitioning it to `#NeedsResearch` while preserving the finding and its
   /// content. Records a `FindingNeedsResearch` audit entry. Returns the updated
   /// finding, or `null` when it does not exist or is not pending.
@@ -1248,6 +1106,7 @@ mixin (
     let id = state.nextSourceId;
     state.nextSourceId += 1;
     let source : Types.SourceRecord = {
+      familyId = FamilyTypes.DEFAULT_FAMILY_ID;
       id;
       title;
       sourceType;

@@ -518,7 +518,7 @@ it("approves a Relationship proposal, updating the family graph exactly once wit
     audit.some(
       (e) =>
         e.action === "RelationshipProposalApproved" &&
-        e.summary === "Relationship proposal 'clayton - Father - julia' approved and added to the family graph",
+        e.summary === "Relationship proposal 'clayton - Father - julia' approved",
     ),
   ).toBe(true);
 });

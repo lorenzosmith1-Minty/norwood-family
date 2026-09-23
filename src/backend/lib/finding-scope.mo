@@ -5,6 +5,7 @@ import Types "../types/research-intake";
 import OwnershipTypes "../types/ownership";
 import FamilyTypes "../types/family";
 import TenancyLib "tenancy";
+import RelationshipProposalScopeLib "relationship-proposal-scope";
 
 /// Tenancy 1C-B2-B1 canonical family-scoped Proposed Finding domain logic.
 ///
@@ -225,11 +226,13 @@ module {
   /// Computes the family-scoped Review Queue: the Findings section and every
   /// finding-derived count are restricted to findings whose `familyId` equals
   /// `familyId`, the Sources section keeps the Tenancy 1C-B2-A family-scoped
-  /// behavior, and the New Person Candidates section is restricted to candidates
-  /// whose `familyId` equals `familyId` (Tenancy 1C-B2-B2). The Relationships
-  /// and Conflicts categories keep their existing behavior unchanged in this
-  /// build. The returned `ReviewQueue` therefore never mixes finding, source, or
-  /// candidate counts across families.
+  /// behavior, the New Person Candidates section is restricted to candidates
+  /// whose `familyId` equals `familyId` (Tenancy 1C-B2-B2), and the
+  /// Relationships section is restricted to proposals whose `familyId` equals
+  /// `familyId` (Tenancy 1C-B2-B3-B). The Conflicts category keeps its existing
+  /// behavior unchanged in this build. The returned `ReviewQueue` therefore
+  /// never mixes source, finding, candidate, or relationship-proposal counts
+  /// across families.
   public func computeQueueForFamily(
     sources : List.List<Types.SourceRecord>,
     findings : List.List<Types.ProposedFinding>,
@@ -298,7 +301,13 @@ module {
         });
       };
     };
-    for (p in proposals.toArray().values()) {
+    // Relationships: family-scoped (Tenancy 1C-B2-B3-B). Only a proposal whose
+    // `familyId` equals `familyId` contributes to the Relationships section or
+    // to any relationship-derived count. The filter is the canonical
+    // `RelationshipProposalScopeLib.listForFamily` helper — the same
+    // family-boundary predicate the family-scoped proposal endpoints use — so
+    // there is exactly one family-filter implementation.
+    for (p in RelationshipProposalScopeLib.listForFamily(proposals, familyId).values()) {
       items.add({
         id = p.id;
         kind = #RelationshipProposal;

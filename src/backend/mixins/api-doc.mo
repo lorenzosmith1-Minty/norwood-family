@@ -1257,19 +1257,33 @@ default family id (`\"norwood\"`), so current Norwood behavior is unchanged.
   research, transitioning it to `#NeedsResearch` while preserving the candidate.
   No canonical Person is created. Returns the updated candidate, or `null` when
   it does not exist or is not pending.
+- `approveRelationshipProposalForFamily(familyId : Text, proposalId : Nat) : async ?RelationshipProposal` —
+  update. Family Steward of `familyId` only. Approves a pending Relationship
+  proposal that belongs to `familyId`, creating exactly one confirmed
+  relationship inside `familyId` only (reusing the Tenancy 1C-A family-scoped
+  relationship implementation; no cross-family graph edge is ever created),
+  recording the approval in Audit History, and marking the proposal `#Approved`
+  with `reviewedBy`/`reviewedAt`. Denied — returning `null`, the existing safe
+  not-found behavior — when the proposal belongs to another family, when the
+  caller is not an active Steward of `familyId`, when either referenced person
+  no longer belongs to `familyId`, or when the linked Source does not belong to
+  `familyId`. Duplicate canonical relationships are prevented: when an identical
+  confirmed relationship already exists in `familyId`, no second relationship is
+  added.
+- `rejectRelationshipProposalForFamily(familyId : Text, proposalId : Nat) : async ?RelationshipProposal` —
+  update. Family Steward of `familyId` only. Rejects a pending Relationship
+  proposal that belongs to `familyId`, transitioning only that proposal to
+  `#Rejected` with `reviewedBy`/`reviewedAt`. No confirmed relationship is
+  created and the family graph is left unchanged. Denied — returning `null` —
+  for a proposal belonging to another family or for a non-Steward caller.
 - `approveRelationshipProposal(id : Nat) : async ?RelationshipProposal` —
-  update. Family Steward only. Approves a pending Relationship proposal,
-  creating or updating the canonical relationship exactly once, preserving
-  Source/provenance, updating the family graph, recording the approval in Audit
-  History, and marking the proposal `#Approved`. Duplicate canonical
-  relationships are prevented: when an identical confirmed relationship already
-  exists, no second relationship is added. Returns the updated proposal, or
-  `null` when it does not exist or is not pending.
+  update. TEMPORARY Tenancy 1C compatibility wrapper for
+  `approveRelationshipProposalForFamily`; delegates with the default family id
+  (`\"norwood\"`). Family Steward only. Contains no business logic of its own.
 - `rejectRelationshipProposal(id : Nat) : async ?RelationshipProposal` — update.
-  Family Steward only. Rejects a pending Relationship proposal, marking it
-  `#Rejected`. The family graph is left unchanged; the proposal and its audit
-  trail are preserved. Returns the updated proposal, or `null` when it does not
-  exist or is not pending.
+  TEMPORARY Tenancy 1C compatibility wrapper for
+  `rejectRelationshipProposalForFamily`; delegates with the default family id
+  (`\"norwood\"`). Family Steward only. Contains no business logic of its own.
 - `needsResearchRelationshipProposal(id : Nat) : async ?RelationshipProposal` —
   update. Family Steward only. Marks a pending Relationship proposal as needing
   research, transitioning it to `#NeedsResearch` while preserving the proposal.
@@ -2990,6 +3004,16 @@ no async job to poll; the frontend can call the list methods (steward) or
   boundary. The single-family `createRelationshipProposal` and
   `listRelationshipProposals` are TEMPORARY Tenancy 1C compatibility wrappers
   delegating with the default family id (`\"norwood\"`).
+- `approveRelationshipProposalForFamily` and `rejectRelationshipProposalForFamily`
+  are the canonical family-scoped review actions: a Steward of one family can
+  never approve or reject another family's proposal, and a proposal whose
+  `familyId` differs from the requested family is treated as not found
+  (`null`). Approval additionally re-checks that both referenced people still
+  belong to the family and that the linked Source belongs to the family, and
+  creates the confirmed relationship inside the requested family only. The
+  single-family `approveRelationshipProposal` and `rejectRelationshipProposal`
+  are TEMPORARY Tenancy 1C compatibility wrappers delegating with the default
+  family id (`\"norwood\"`).
 - `getSource`, `getFinding`, `getReviewQueue`, and `getResearchAuditLog` are
   read-only queries with no side effects; they are always idempotent.- `getStewardAuditHistory` is a read-only query with no side effects; it is
   always idempotent and never mutates or duplicates any audit record.

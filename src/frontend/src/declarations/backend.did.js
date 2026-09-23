@@ -1174,6 +1174,11 @@ export const idlService = IDL.Service({
       [IDL.Opt(RelationshipProposal)],
       [],
     ),
+  'approveRelationshipProposalForFamily' : IDL.Func(
+      [FamilyId, IDL.Nat],
+      [IDL.Opt(RelationshipProposal)],
+      [],
+    ),
   'approveRelationshipRequest' : IDL.Func(
       [IDL.Nat],
       [IDL.Opt(RelationshipRequest)],
@@ -1739,6 +1744,11 @@ export const idlService = IDL.Service({
   'rejectRecipe' : IDL.Func([RecipeId], [IDL.Opt(Recipe)], []),
   'rejectRelationshipProposal' : IDL.Func(
       [IDL.Nat],
+      [IDL.Opt(RelationshipProposal)],
+      [],
+    ),
+  'rejectRelationshipProposalForFamily' : IDL.Func(
+      [FamilyId, IDL.Nat],
       [IDL.Opt(RelationshipProposal)],
       [],
     ),
@@ -3125,6 +3135,11 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Opt(RelationshipProposal)],
         [],
       ),
+    'approveRelationshipProposalForFamily' : IDL.Func(
+        [FamilyId, IDL.Nat],
+        [IDL.Opt(RelationshipProposal)],
+        [],
+      ),
     'approveRelationshipRequest' : IDL.Func(
         [IDL.Nat],
         [IDL.Opt(RelationshipRequest)],
@@ -3714,6 +3729,11 @@ export const idlFactory = ({ IDL }) => {
     'rejectRecipe' : IDL.Func([RecipeId], [IDL.Opt(Recipe)], []),
     'rejectRelationshipProposal' : IDL.Func(
         [IDL.Nat],
+        [IDL.Opt(RelationshipProposal)],
+        [],
+      ),
+    'rejectRelationshipProposalForFamily' : IDL.Func(
+        [FamilyId, IDL.Nat],
         [IDL.Opt(RelationshipProposal)],
         [],
       ),

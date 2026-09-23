@@ -1392,15 +1392,26 @@ export interface backendInterface {
      */
     approveRecipe(id: RecipeId): Promise<Recipe | null>;
     /**
-     * / Approves a pending Relationship proposal (Family Steward only), creating or
-     * / updating the canonical relationship exactly once, preserving
-     * / Source/provenance, updating the family graph, recording the approval in
-     * / Audit History, and marking the proposal `#Approved`. Duplicate canonical
-     * / relationships are prevented: when an identical confirmed relationship
-     * / already exists, no second relationship is added. Returns the updated
-     * / proposal, or `null` when it does not exist or is not pending.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `approveRelationshipProposalForFamily`. Deprecated single-family form:
+     * / delegates with `FamilyTypes.DEFAULT_FAMILY_ID`. Contains no duplicated
+     * / business logic.
      */
     approveRelationshipProposal(id: bigint): Promise<RelationshipProposal | null>;
+    /**
+     * / Approves the pending relationship proposal with `proposalId` in `familyId`.
+     * / Requires an active Steward of `familyId`; a Steward of one family can never
+     * / approve another family's proposal. The proposal must belong to `familyId`,
+     * / both referenced people must still belong to `familyId` at approval time,
+     * / and the linked Source, when present, must belong to `familyId`. On success
+     * / the proposal transitions to `#Approved` with `reviewedBy`/`reviewedAt` and
+     * / exactly one confirmed relationship is created inside `familyId` only, using
+     * / the existing Tenancy 1C-A family-scoped relationship implementation; no
+     * / cross-family graph edge is ever created. Returns the updated proposal, or
+     * / `null` when no pending proposal with that id belongs to `familyId` or a
+     * / family-boundary check fails.
+     */
+    approveRelationshipProposalForFamily(familyId: FamilyId, proposalId: bigint): Promise<RelationshipProposal | null>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `approveRelationshipRequestForFamily`.
@@ -2263,12 +2274,22 @@ export interface backendInterface {
      */
     rejectRecipe(id: RecipeId): Promise<Recipe | null>;
     /**
-     * / Rejects a pending Relationship proposal (Family Steward only), marking it
-     * / `#Rejected`. The family graph is left unchanged; the proposal and its audit
-     * / trail are preserved. Returns the updated proposal, or `null` when it does
-     * / not exist or is not pending.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `rejectRelationshipProposalForFamily`. Deprecated single-family form:
+     * / delegates with `FamilyTypes.DEFAULT_FAMILY_ID`. Contains no duplicated
+     * / business logic.
      */
     rejectRelationshipProposal(id: bigint): Promise<RelationshipProposal | null>;
+    /**
+     * / Rejects the pending relationship proposal with `proposalId` in `familyId`.
+     * / Requires an active Steward of `familyId`. The proposal must belong to
+     * / `familyId`; a proposal whose `familyId` differs is treated as not found.
+     * / Only that proposal is transitioned to `#Rejected` with
+     * / `reviewedBy`/`reviewedAt`; no confirmed relationship is created. Returns
+     * / the updated proposal, or `null` when no pending proposal with that id
+     * / belongs to `familyId`.
+     */
+    rejectRelationshipProposalForFamily(familyId: FamilyId, proposalId: bigint): Promise<RelationshipProposal | null>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `rejectRelationshipRequestForFamily`.
@@ -2880,6 +2901,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.approveRelationshipProposal(arg0);
+            return from_candid_opt_n79(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async approveRelationshipProposalForFamily(arg0: FamilyId, arg1: bigint): Promise<RelationshipProposal | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.approveRelationshipProposalForFamily(arg0, arg1);
+                return from_candid_opt_n79(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.approveRelationshipProposalForFamily(arg0, arg1);
             return from_candid_opt_n79(this._uploadFile, this._downloadFile, result);
         }
     }
@@ -5008,6 +5043,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.rejectRelationshipProposal(arg0);
+            return from_candid_opt_n79(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async rejectRelationshipProposalForFamily(arg0: FamilyId, arg1: bigint): Promise<RelationshipProposal | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.rejectRelationshipProposalForFamily(arg0, arg1);
+                return from_candid_opt_n79(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.rejectRelationshipProposalForFamily(arg0, arg1);
             return from_candid_opt_n79(this._uploadFile, this._downloadFile, result);
         }
     }

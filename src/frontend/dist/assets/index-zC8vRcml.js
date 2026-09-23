@@ -34357,6 +34357,11 @@ Service({
     [Opt(RelationshipProposal)],
     []
   ),
+  "approveRelationshipProposalForFamily": Func(
+    [FamilyId, Nat],
+    [Opt(RelationshipProposal)],
+    []
+  ),
   "approveRelationshipRequest": Func(
     [Nat],
     [Opt(RelationshipRequest)],
@@ -34922,6 +34927,11 @@ Service({
   "rejectRecipe": Func([RecipeId], [Opt(Recipe)], []),
   "rejectRelationshipProposal": Func(
     [Nat],
+    [Opt(RelationshipProposal)],
+    []
+  ),
+  "rejectRelationshipProposalForFamily": Func(
+    [FamilyId, Nat],
     [Opt(RelationshipProposal)],
     []
   ),
@@ -36304,6 +36314,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [IDL2.Opt(RelationshipProposal2)],
       []
     ),
+    "approveRelationshipProposalForFamily": IDL2.Func(
+      [FamilyId2, IDL2.Nat],
+      [IDL2.Opt(RelationshipProposal2)],
+      []
+    ),
     "approveRelationshipRequest": IDL2.Func(
       [IDL2.Nat],
       [IDL2.Opt(RelationshipRequest2)],
@@ -36893,6 +36908,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "rejectRecipe": IDL2.Func([RecipeId2], [IDL2.Opt(Recipe2)], []),
     "rejectRelationshipProposal": IDL2.Func(
       [IDL2.Nat],
+      [IDL2.Opt(RelationshipProposal2)],
+      []
+    ),
+    "rejectRelationshipProposalForFamily": IDL2.Func(
+      [FamilyId2, IDL2.Nat],
       [IDL2.Opt(RelationshipProposal2)],
       []
     ),
@@ -37788,6 +37808,20 @@ class Backend {
       }
     } else {
       const result = await this.actor.approveRelationshipProposal(arg0);
+      return from_candid_opt_n79(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async approveRelationshipProposalForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.approveRelationshipProposalForFamily(arg0, arg1);
+        return from_candid_opt_n79(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.approveRelationshipProposalForFamily(arg0, arg1);
       return from_candid_opt_n79(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -39916,6 +39950,20 @@ class Backend {
       }
     } else {
       const result = await this.actor.rejectRelationshipProposal(arg0);
+      return from_candid_opt_n79(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async rejectRelationshipProposalForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.rejectRelationshipProposalForFamily(arg0, arg1);
+        return from_candid_opt_n79(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.rejectRelationshipProposalForFamily(arg0, arg1);
       return from_candid_opt_n79(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -47742,12 +47790,16 @@ function useCreateRelationshipProposal() {
   });
 }
 function useApproveRelationshipProposal() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
     mutationFn: async (proposalId) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.approveRelationshipProposal(proposalId);
+      return familyScopedId === void 0 ? actor.approveRelationshipProposal(proposalId) : actor.approveRelationshipProposalForFamily(
+        familyScopedId,
+        proposalId
+      );
     },
     onSuccess: () => {
       void queryClient2.invalidateQueries({
@@ -47763,12 +47815,13 @@ function useApproveRelationshipProposal() {
   });
 }
 function useRejectRelationshipProposal() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
     mutationFn: async (proposalId) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.rejectRelationshipProposal(proposalId);
+      return familyScopedId === void 0 ? actor.rejectRelationshipProposal(proposalId) : actor.rejectRelationshipProposalForFamily(familyScopedId, proposalId);
     },
     onSuccess: () => {
       void queryClient2.invalidateQueries({

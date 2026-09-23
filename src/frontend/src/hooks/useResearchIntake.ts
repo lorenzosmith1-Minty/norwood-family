@@ -719,6 +719,7 @@ export function useCreateRelationshipProposal() {
  * relationships are prevented. Pending counts decrement immediately.
  */
 export function useApproveRelationshipProposal() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
@@ -726,7 +727,12 @@ export function useApproveRelationshipProposal() {
       proposalId: bigint,
     ): Promise<RelationshipProposal | null> => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.approveRelationshipProposal(proposalId);
+      return familyScopedId === undefined
+        ? actor.approveRelationshipProposal(proposalId)
+        : actor.approveRelationshipProposalForFamily(
+            familyScopedId,
+            proposalId,
+          );
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({
@@ -748,6 +754,7 @@ export function useApproveRelationshipProposal() {
  * with status `Rejected`.
  */
 export function useRejectRelationshipProposal() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
@@ -755,7 +762,9 @@ export function useRejectRelationshipProposal() {
       proposalId: bigint,
     ): Promise<RelationshipProposal | null> => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.rejectRelationshipProposal(proposalId);
+      return familyScopedId === undefined
+        ? actor.rejectRelationshipProposal(proposalId)
+        : actor.rejectRelationshipProposalForFamily(familyScopedId, proposalId);
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({

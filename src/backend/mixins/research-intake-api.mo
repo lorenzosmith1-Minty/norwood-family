@@ -35,7 +35,6 @@ mixin (
     var nextAuditId : Nat;
   },
   profiles : Map.Map<OwnershipTypes.PersonId, OwnershipTypes.PersonProfile>,
-  confirmedRelationships : List.List<OwnershipTypes.Relationship>,
   stories : List.List<FamilyHistoryTypes.Story>,
   mysteries : List.List<FamilyHistoryTypes.Mystery>,
   archiveItems : List.List<ArchiveTypes.ArchiveItem>,
@@ -219,76 +218,11 @@ mixin (
     };
   };
 
-  /// Approves a pending Relationship proposal (Family Steward only), creating or
-  /// updating the canonical relationship exactly once, preserving
-  /// Source/provenance, updating the family graph, recording the approval in
-  /// Audit History, and marking the proposal `#Approved`. Duplicate canonical
-  /// relationships are prevented: when an identical confirmed relationship
-  /// already exists, no second relationship is added. Returns the updated
-  /// proposal, or `null` when it does not exist or is not pending.
-  public shared ({ caller }) func approveRelationshipProposal(id : Nat) : async ?Types.RelationshipProposal {
-    requireSteward(caller);
-    let now = Time.now();
-    switch (proposals.find(func p = p.id == id)) {
-      case null { null };
-      case (?p) {
-        if (p.status != #Pending) {
-          null;
-        } else {
-          switch (relationshipTypeFromText(p.relationshipType)) {
-            case (?rt) { addConfirmedRelationship(p.fromPersonId, p.toPersonId, rt) };
-            case null {};
-          };
-          let updated = ResearchLib.approveRelationshipProposal(proposals, id, caller, now);
-          ignore ResearchLib.appendAudit(
-            auditLog,
-            { var next = state.nextAuditId },
-            "RelationshipProposalApproved",
-            null,
-            ?p.sourceId,
-            caller,
-            now,
-            "Relationship proposal '" # p.fromPersonId # " - " # p.relationshipType # " - " # p.toPersonId # "' approved and added to the family graph",
-          );
-          state.nextAuditId := state.nextAuditId + 1;
-          addResearchNotification(p.submittedBy, #ResearchApproved, "Your research submission was approved.");
-          updated;
-        };
-      };
-    };
-  };
-
-  /// Rejects a pending Relationship proposal (Family Steward only), marking it
-  /// `#Rejected`. The family graph is left unchanged; the proposal and its audit
-  /// trail are preserved. Returns the updated proposal, or `null` when it does
-  /// not exist or is not pending.
-  public shared ({ caller }) func rejectRelationshipProposal(id : Nat) : async ?Types.RelationshipProposal {
-    requireSteward(caller);
-    let now = Time.now();
-    switch (proposals.find(func p = p.id == id)) {
-      case null { null };
-      case (?p) {
-        if (p.status != #Pending) {
-          null;
-        } else {
-          let updated = ResearchLib.rejectRelationshipProposal(proposals, id, caller, now);
-          ignore ResearchLib.appendAudit(
-            auditLog,
-            { var next = state.nextAuditId },
-            "RelationshipProposalRejected",
-            null,
-            ?p.sourceId,
-            caller,
-            now,
-            "Relationship proposal '" # p.fromPersonId # " - " # p.relationshipType # " - " # p.toPersonId # "' rejected",
-          );
-          state.nextAuditId := state.nextAuditId + 1;
-          addResearchNotification(p.submittedBy, #ResearchRejected, "Your research submission was not approved.");
-          updated;
-        };
-      };
-    };
-  };
+  // NOTE: `approveRelationshipProposal` and `rejectRelationshipProposal` moved
+  // to `mixins/relationship-proposal-scope-api.mo` as TEMPORARY Tenancy 1C
+  // compatibility wrappers delegating to the canonical family-scoped endpoints
+  // with `FamilyTypes.DEFAULT_FAMILY_ID`. Exactly one implementation exists;
+  // declaring them here too would be a duplicate definition (M0051).
 
   /// Marks a pending Relationship proposal as needing research (Family Steward
   /// only), transitioning it to `#NeedsResearch` while preserving the proposal.
@@ -340,49 +274,6 @@ mixin (
     };
   };
 
-  /// Maps a free-text relationship type to the canonical relationship variant.
-  /// The UI relationship form accepts common free-text labels (Daughter, Son,
-  /// Aunt, Uncle, Cousin, Grandparent, etc.), so this normalizes case and maps
-  /// each to one of the four canonical graph relationship types. A recognized
-  /// type is written into the family graph on approval; unrecognized text
-  /// returns `null` and is left out of the graph rather than guessed.
-  func relationshipTypeFromText(t : Text) : ?OwnershipTypes.RelationshipType {
-    switch (t.toLower()) {
-      case "parent" { ?#Parent };
-      case "mother" { ?#Parent };
-      case "father" { ?#Parent };
-      case "grandparent" { ?#Parent };
-      case "grandmother" { ?#Parent };
-      case "grandfather" { ?#Parent };
-      case "child" { ?#Child };
-      case "daughter" { ?#Child };
-      case "son" { ?#Child };
-      case "granddaughter" { ?#Child };
-      case "grandson" { ?#Child };
-      case "spousepartner" { ?#SpousePartner };
-      case "spouse" { ?#SpousePartner };
-      case "partner" { ?#SpousePartner };
-      case "husband" { ?#SpousePartner };
-      case "wife" { ?#SpousePartner };
-      case "sibling" { ?#Sibling };
-      case "brother" { ?#Sibling };
-      case "sister" { ?#Sibling };
-      case "aunt" { ?#Sibling };
-      case "uncle" { ?#Sibling };
-      case "cousin" { ?#Sibling };
-      case _ { null };
-    };
-  };
-
-  /// Computes the next confirmed relationship id.
-  func nextRelationshipId() : Nat {
-    var maxId = 0;
-    for (r in confirmedRelationships.toArray().values()) {
-      if (r.id >= maxId) { maxId := r.id + 1 };
-    };
-    maxId;
-  };
-
   /// Computes the next notification id: one greater than the largest existing
   /// id, or `0` when there are no notifications.
   func researchNextNotificationId() : Nat {
@@ -407,24 +298,6 @@ mixin (
         message;
         createdAt = Time.now();
         read = false;
-      });
-    };
-  };
-
-  /// Adds a confirmed relationship to the shared family graph exactly once,
-  /// preventing duplicate canonical relationships. When an identical confirmed
-  /// relationship (same fromPersonId, toPersonId, and relationshipType) already
-  /// exists, no second relationship is added.
-  func addConfirmedRelationship(fromPersonId : Text, toPersonId : Text, relationshipType : OwnershipTypes.RelationshipType) {
-    let exists = confirmedRelationships.toArray().any(func r = r.fromPersonId == fromPersonId and r.toPersonId == toPersonId and r.relationshipType == relationshipType);
-    if (not exists) {
-      confirmedRelationships.add({
-        familyId = FamilyTypes.DEFAULT_FAMILY_ID;
-        id = nextRelationshipId();
-        fromPersonId;
-        toPersonId;
-        relationshipType;
-        status = #Confirmed;
       });
     };
   };

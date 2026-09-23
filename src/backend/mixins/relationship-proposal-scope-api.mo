@@ -40,6 +40,7 @@ mixin (
   claims : List.List<OwnershipTypes.ProfileClaim>,
   stewards : List.List<GovernanceTypes.StewardRecord>,
   notifications : List.List<OwnershipTypes.Notification>,
+  confirmedRelationships : List.List<OwnershipTypes.Relationship>,
 ) {
   /// Traps unless the caller is a signed-in active Steward of `familyId`, using
   /// the existing Steward-access denial behavior. A Steward of one family can
@@ -159,6 +160,144 @@ mixin (
   };
 
   // ---------------------------------------------------------------------------
+  // Family-scoped review actions.
+  // ---------------------------------------------------------------------------
+
+  /// Internal implementation of `approveRelationshipProposalForFamily` that
+  /// takes the caller explicitly. The public family-scoped endpoint and the
+  /// temporary single-family compatibility wrapper both delegate here, so the
+  /// Steward gate always evaluates the real caller rather than the canister
+  /// principal a shared-to-shared call would otherwise present.
+  ///
+  /// Denies (returns `null`, the existing safe not-found behavior) when the
+  /// proposal does not belong to `familyId`, when it is not `#Pending`, when
+  /// either referenced person no longer belongs to `familyId`, or when the
+  /// linked Source does not belong to `familyId`. On success it transitions the
+  /// proposal to `#Approved` with `reviewedBy`/`reviewedAt` and creates exactly
+  /// one confirmed relationship inside `familyId` only.
+  func approveRelationshipProposalForFamilyInternal(
+    familyId : FamilyTypes.FamilyId,
+    proposalId : Nat,
+    caller : Principal,
+  ) : ?Types.RelationshipProposal {
+    requireRelationshipProposalStewardForFamily(caller, familyId);
+    // A proposal whose `familyId` differs from the requested family is treated
+    // exactly like a missing proposal, so a `proposalId` alone never bypasses
+    // the family boundary.
+    let proposal = RelationshipProposalScopeLib.getForFamily(proposals, familyId, proposalId)
+      ?? return null;
+    if (proposal.status != #Pending) {
+      return null;
+    };
+    // Both referenced people must still belong to `familyId` at approval time,
+    // so a person who has since left the family (or a cross-family reference)
+    // is rejected and no graph edge is created.
+    if (not relationshipProposalPersonInFamily(proposal.fromPersonId, familyId)) {
+      return null;
+    };
+    if (not relationshipProposalPersonInFamily(proposal.toPersonId, familyId)) {
+      return null;
+    };
+    // The linked Source, when present, must belong to `familyId`.
+    if (relationshipProposalSourceInFamily(proposal.sourceId, familyId) == null) {
+      return null;
+    };
+    let now = Time.now();
+    let updated = RelationshipProposalScopeLib.approveForFamily(proposals, familyId, proposalId, caller, now)
+      ?? return null;
+    // Create exactly one confirmed relationship inside `familyId` only, reusing
+    // the existing Tenancy 1C-A family-scoped relationship implementation. An
+    // unrecognized free-text relationship type is left out of the graph rather
+    // than guessed.
+    switch (RelationshipProposalScopeLib.relationshipTypeFromText(proposal.relationshipType)) {
+      case (?relationshipType) {
+        ignore RelationshipProposalScopeLib.addConfirmedRelationshipForFamily(
+          confirmedRelationships,
+          familyId,
+          proposal.fromPersonId,
+          proposal.toPersonId,
+          relationshipType,
+        );
+      };
+      case null {};
+    };
+    ignore appendRelationshipProposalAudit(
+      "RelationshipProposalApproved",
+      ?proposal.sourceId,
+      caller,
+      now,
+      "Relationship proposal '" # proposal.fromPersonId # " - " # proposal.relationshipType # " - " # proposal.toPersonId # "' approved",
+    );
+    addRelationshipProposalNotification(proposal.submittedBy, #ResearchApproved, "Your relationship proposal was approved.");
+    ?updated;
+  };
+
+  /// Internal implementation of `rejectRelationshipProposalForFamily` that
+  /// takes the caller explicitly. See
+  /// `approveRelationshipProposalForFamilyInternal`.
+  func rejectRelationshipProposalForFamilyInternal(
+    familyId : FamilyTypes.FamilyId,
+    proposalId : Nat,
+    caller : Principal,
+  ) : ?Types.RelationshipProposal {
+    requireRelationshipProposalStewardForFamily(caller, familyId);
+    // A proposal whose `familyId` differs from the requested family is treated
+    // exactly like a missing proposal, so a `proposalId` alone never bypasses
+    // the family boundary.
+    let proposal = RelationshipProposalScopeLib.getForFamily(proposals, familyId, proposalId)
+      ?? return null;
+    if (proposal.status != #Pending) {
+      return null;
+    };
+    let now = Time.now();
+    let updated = RelationshipProposalScopeLib.rejectForFamily(proposals, familyId, proposalId, caller, now)
+      ?? return null;
+    // Rejection transitions only that proposal; no confirmed relationship is
+    // created.
+    ignore appendRelationshipProposalAudit(
+      "RelationshipProposalRejected",
+      ?proposal.sourceId,
+      caller,
+      now,
+      "Relationship proposal '" # proposal.fromPersonId # " - " # proposal.relationshipType # " - " # proposal.toPersonId # "' rejected",
+    );
+    addRelationshipProposalNotification(proposal.submittedBy, #ResearchRejected, "Your relationship proposal was not approved.");
+    ?updated;
+  };
+
+  /// Approves the pending relationship proposal with `proposalId` in `familyId`.
+  /// Requires an active Steward of `familyId`; a Steward of one family can never
+  /// approve another family's proposal. The proposal must belong to `familyId`,
+  /// both referenced people must still belong to `familyId` at approval time,
+  /// and the linked Source, when present, must belong to `familyId`. On success
+  /// the proposal transitions to `#Approved` with `reviewedBy`/`reviewedAt` and
+  /// exactly one confirmed relationship is created inside `familyId` only, using
+  /// the existing Tenancy 1C-A family-scoped relationship implementation; no
+  /// cross-family graph edge is ever created. Returns the updated proposal, or
+  /// `null` when no pending proposal with that id belongs to `familyId` or a
+  /// family-boundary check fails.
+  public shared ({ caller }) func approveRelationshipProposalForFamily(
+    familyId : FamilyTypes.FamilyId,
+    proposalId : Nat,
+  ) : async ?Types.RelationshipProposal {
+    approveRelationshipProposalForFamilyInternal(familyId, proposalId, caller);
+  };
+
+  /// Rejects the pending relationship proposal with `proposalId` in `familyId`.
+  /// Requires an active Steward of `familyId`. The proposal must belong to
+  /// `familyId`; a proposal whose `familyId` differs is treated as not found.
+  /// Only that proposal is transitioned to `#Rejected` with
+  /// `reviewedBy`/`reviewedAt`; no confirmed relationship is created. Returns
+  /// the updated proposal, or `null` when no pending proposal with that id
+  /// belongs to `familyId`.
+  public shared ({ caller }) func rejectRelationshipProposalForFamily(
+    familyId : FamilyTypes.FamilyId,
+    proposalId : Nat,
+  ) : async ?Types.RelationshipProposal {
+    rejectRelationshipProposalForFamilyInternal(familyId, proposalId, caller);
+  };
+
+  // ---------------------------------------------------------------------------
   // TEMPORARY Tenancy 1C compatibility wrappers.
   //
   // Deprecated single-family endpoints: each delegates to its family-scoped
@@ -184,6 +323,22 @@ mixin (
   public query ({ caller }) func listRelationshipProposals() : async [Types.RelationshipProposal] {
     requireRelationshipProposalStewardForFamily(caller, FamilyTypes.DEFAULT_FAMILY_ID);
     RelationshipProposalScopeLib.listForFamily(proposals, FamilyTypes.DEFAULT_FAMILY_ID);
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper for
+  /// `approveRelationshipProposalForFamily`. Deprecated single-family form:
+  /// delegates with `FamilyTypes.DEFAULT_FAMILY_ID`. Contains no duplicated
+  /// business logic.
+  public shared ({ caller }) func approveRelationshipProposal(id : Nat) : async ?Types.RelationshipProposal {
+    approveRelationshipProposalForFamilyInternal(FamilyTypes.DEFAULT_FAMILY_ID, id, caller);
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper for
+  /// `rejectRelationshipProposalForFamily`. Deprecated single-family form:
+  /// delegates with `FamilyTypes.DEFAULT_FAMILY_ID`. Contains no duplicated
+  /// business logic.
+  public shared ({ caller }) func rejectRelationshipProposal(id : Nat) : async ?Types.RelationshipProposal {
+    rejectRelationshipProposalForFamilyInternal(FamilyTypes.DEFAULT_FAMILY_ID, id, caller);
   };
 
   // ---------------------------------------------------------------------------

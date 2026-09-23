@@ -11,8 +11,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useQueryClient } from "@tanstack/react-query";
 
 import {
+  useApproveRelationshipProposal,
   useCreateRelationshipProposal,
   useListRelationshipProposals,
+  useRejectRelationshipProposal,
 } from "./hooks/useResearchIntake";
 
 // ---------------------------------------------------------------------------
@@ -43,16 +45,24 @@ const { mockActor, calls, resetCalls } = vi.hoisted(() => {
     listRelationshipProposalsForFamily: unknown[][];
     createRelationshipProposalForFamily: unknown[][];
     getRelationshipProposalForFamily: unknown[][];
+    approveRelationshipProposalForFamily: unknown[][];
+    rejectRelationshipProposalForFamily: unknown[][];
     listRelationshipProposals: unknown[][];
     createRelationshipProposal: unknown[][];
     getRelationshipProposal: unknown[][];
+    approveRelationshipProposal: unknown[][];
+    rejectRelationshipProposal: unknown[][];
   } = {
     listRelationshipProposalsForFamily: [],
     createRelationshipProposalForFamily: [],
     getRelationshipProposalForFamily: [],
+    approveRelationshipProposalForFamily: [],
+    rejectRelationshipProposalForFamily: [],
     listRelationshipProposals: [],
     createRelationshipProposal: [],
     getRelationshipProposal: [],
+    approveRelationshipProposal: [],
+    rejectRelationshipProposal: [],
   };
 
   const mockActor = {
@@ -74,6 +84,18 @@ const { mockActor, calls, resetCalls } = vi.hoisted(() => {
       calls.getRelationshipProposalForFamily.push(args);
       return null;
     },
+    async approveRelationshipProposalForFamily(
+      ...args: unknown[]
+    ): Promise<RelationshipProposal | null> {
+      calls.approveRelationshipProposalForFamily.push(args);
+      return null;
+    },
+    async rejectRelationshipProposalForFamily(
+      ...args: unknown[]
+    ): Promise<RelationshipProposal | null> {
+      calls.rejectRelationshipProposalForFamily.push(args);
+      return null;
+    },
     // The legacy endpoints must NOT be reached for a non-default family; they
     // are recorded so a regression that falls back to them is visible.
     async listRelationshipProposals(
@@ -90,6 +112,18 @@ const { mockActor, calls, resetCalls } = vi.hoisted(() => {
       ...args: unknown[]
     ): Promise<RelationshipProposal | null> {
       calls.getRelationshipProposal.push(args);
+      return null;
+    },
+    async approveRelationshipProposal(
+      ...args: unknown[]
+    ): Promise<RelationshipProposal | null> {
+      calls.approveRelationshipProposal.push(args);
+      return null;
+    },
+    async rejectRelationshipProposal(
+      ...args: unknown[]
+    ): Promise<RelationshipProposal | null> {
+      calls.rejectRelationshipProposal.push(args);
       return null;
     },
     async isCallerSteward(): Promise<boolean> {
@@ -165,6 +199,34 @@ describe("Research relationship-proposal create hook: non-default family routes 
       [FAMILY_A, "clayton", "julia", "Father", 1n],
     ]);
     expect(calls.createRelationshipProposal).toEqual([]);
+  });
+});
+
+describe("Research relationship-proposal review hooks: non-default family routes to *ForFamily (cover)", () => {
+  it("useApproveRelationshipProposal calls approveRelationshipProposalForFamily(familyId, proposalId) and not the legacy approve", async () => {
+    const { result } = renderHook(() => useApproveRelationshipProposal(), {
+      wrapper,
+    });
+
+    await result.current.mutateAsync(7n);
+
+    // The active familyId is the first positional argument, followed by the
+    // proposal id; the legacy single-argument endpoint is never reached.
+    expect(calls.approveRelationshipProposalForFamily).toEqual([
+      [FAMILY_A, 7n],
+    ]);
+    expect(calls.approveRelationshipProposal).toEqual([]);
+  });
+
+  it("useRejectRelationshipProposal calls rejectRelationshipProposalForFamily(familyId, proposalId) and not the legacy reject", async () => {
+    const { result } = renderHook(() => useRejectRelationshipProposal(), {
+      wrapper,
+    });
+
+    await result.current.mutateAsync(9n);
+
+    expect(calls.rejectRelationshipProposalForFamily).toEqual([[FAMILY_A, 9n]]);
+    expect(calls.rejectRelationshipProposal).toEqual([]);
   });
 });
 

@@ -1123,11 +1123,11 @@ actor {
   include BoardApi(posts, replies, profiles, notifications, auditLog, stewards, claims);
   include MessagingApi(conversations, messages, blocks, reports, profiles, archivedProfiles, notifications, accounts, stewards, claims);
   include PendingCountApi(accessControlState, archiveItems, recipes, stories, mysteryContributions, stewards, researchSources);
-  include ResearchIntakeApi(researchSources, proposedFindings, newPersonCandidates, relationshipProposals, conflictReviewItems, researchAuditLog, researchState, profiles, confirmedRelationships, stories, mysteries, archiveItems, notifications, claims, stewards);
+  include ResearchIntakeApi(researchSources, proposedFindings, newPersonCandidates, relationshipProposals, conflictReviewItems, researchAuditLog, researchState, profiles, stories, mysteries, archiveItems, notifications, claims, stewards);
   include ResearchSourceScopeApi(researchSources, proposedFindings, newPersonCandidates, relationshipProposals, conflictReviewItems, researchAuditLog, researchState, archiveItems, notifications, claims, stewards);
   include FindingScopeApi(proposedFindings, researchSources, newPersonCandidates, relationshipProposals, conflictReviewItems, researchAuditLog, researchState, profiles, claims, stewards, notifications);
   include CandidateScopeApi(newPersonCandidates, researchSources, proposedFindings, relationshipProposals, conflictReviewItems, researchAuditLog, researchState, profiles, claims, stewards, notifications);
-  include RelationshipProposalScopeApi(relationshipProposals, researchSources, researchAuditLog, researchState, profiles, claims, stewards, notifications);
+  include RelationshipProposalScopeApi(relationshipProposals, researchSources, researchAuditLog, researchState, profiles, claims, stewards, notifications, confirmedRelationships);
   include ArchiveResearchBoardNotificationsApi(archiveItems, researchSources, researchState, posts, notifications, claims, profiles, stewards);
   include AuditAndWorkloadApi(accessControlState, auditLog, researchAuditLog, conflictReviewItems, stewards);
   include StewardAuthorityApi(accessControlState, stewards, auditLog);

@@ -47692,17 +47692,19 @@ function useNeedsResearchNewPersonCandidate() {
 }
 function useListRelationshipProposals() {
   const providersPresent = useProvidersPresent();
+  const familyScopedId = useFamilyScopedId();
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["research", "relationshipProposals"],
+    queryKey: familyScopedId === void 0 ? ["research", "relationshipProposals"] : ["research", "relationshipProposals", familyScopedId],
     queryFn: async () => {
       if (!actor) return [];
-      return actor.listRelationshipProposals();
+      return familyScopedId === void 0 ? actor.listRelationshipProposals() : actor.listRelationshipProposalsForFamily(familyScopedId);
     },
     enabled: providersPresent && !!actor && !isFetching
   });
 }
 function useCreateRelationshipProposal() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
@@ -47713,7 +47715,13 @@ function useCreateRelationshipProposal() {
       sourceId
     }) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.createRelationshipProposal(
+      return familyScopedId === void 0 ? actor.createRelationshipProposal(
+        fromPersonId,
+        toPersonId,
+        relationshipType,
+        sourceId
+      ) : actor.createRelationshipProposalForFamily(
+        familyScopedId,
         fromPersonId,
         toPersonId,
         relationshipType,

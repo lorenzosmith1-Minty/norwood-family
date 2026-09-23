@@ -39,14 +39,14 @@ import { useProvidersPresent } from "./usePhotoStorage";
  * invalidate the shared lists (sources, findings, candidates, relationship
  * proposals, conflicts, review queue, audit log) that the other surfaces read.
  *
- * The SOURCE, FINDING, and CANDIDATE hooks are family-aware, following the
- * useArchiveStorage pattern: the active family is read from the centralized
- * FamilyContext and `familyScopedId` is `undefined` for the default family.
- * The default family keeps the exact legacy no-argument call shape and React
- * Query key, while a non-default family routes to the canonical `*ForFamily`
- * endpoint with the familyId included in the key so caches never collide
- * across families. Proposals/conflicts/audit hooks are intentionally NOT
- * family-scoped in this build.
+ * The SOURCE, FINDING, CANDIDATE, and RELATIONSHIP PROPOSAL hooks are
+ * family-aware, following the useArchiveStorage pattern: the active family is
+ * read from the centralized FamilyContext and `familyScopedId` is `undefined`
+ * for the default family. The default family keeps the exact legacy
+ * no-argument call shape and React Query key, while a non-default family
+ * routes to the canonical `*ForFamily` endpoint with the familyId included in
+ * the key so caches never collide across families. Conflicts/audit hooks are
+ * intentionally NOT family-scoped in this build.
  */
 
 /** Lists all source records (steward only). */
@@ -647,12 +647,18 @@ export function useNeedsResearchNewPersonCandidate() {
 /** Lists all relationship proposals (steward only). */
 export function useListRelationshipProposals() {
   const providersPresent = useProvidersPresent();
+  const familyScopedId = useFamilyScopedId();
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["research", "relationshipProposals"],
+    queryKey:
+      familyScopedId === undefined
+        ? ["research", "relationshipProposals"]
+        : ["research", "relationshipProposals", familyScopedId],
     queryFn: async () => {
       if (!actor) return [] as RelationshipProposal[];
-      return actor.listRelationshipProposals();
+      return familyScopedId === undefined
+        ? actor.listRelationshipProposals()
+        : actor.listRelationshipProposalsForFamily(familyScopedId);
     },
     enabled: providersPresent && !!actor && !isFetching,
   });
@@ -660,6 +666,7 @@ export function useListRelationshipProposals() {
 
 /** Creates a new relationship proposal. */
 export function useCreateRelationshipProposal() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
@@ -675,12 +682,20 @@ export function useCreateRelationshipProposal() {
       sourceId: SourceId;
     }): Promise<Result_19> => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.createRelationshipProposal(
-        fromPersonId,
-        toPersonId,
-        relationshipType,
-        sourceId,
-      );
+      return familyScopedId === undefined
+        ? actor.createRelationshipProposal(
+            fromPersonId,
+            toPersonId,
+            relationshipType,
+            sourceId,
+          )
+        : actor.createRelationshipProposalForFamily(
+            familyScopedId,
+            fromPersonId,
+            toPersonId,
+            relationshipType,
+            sourceId,
+          );
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({

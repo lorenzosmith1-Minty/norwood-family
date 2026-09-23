@@ -737,6 +737,7 @@ type Notification =
 type NewPersonCandidate = 
  record {
    details: text;
+   familyId: text;
    id: nat;
    name: text;
    reviewedAt: opt int;
@@ -1297,14 +1298,18 @@ service : {
   /// pending finding with that id belongs to `familyId`.
   approveFindingForFamily: (familyId: FamilyId, findingId: FindingId) ->
    (opt ProposedFinding);
-  /// Approves a pending New Person candidate (Family Steward only), creating
-  /// exactly one canonical Person record (PersonProfile) that preserves the
-  /// candidate's Source/provenance, recording the approval in Audit History,
-  /// and marking the candidate `#Approved`. Approving a candidate never
-  /// auto-creates relationships — a relationship is only added when a separately
-  /// approved Relationship Proposal exists. Returns the updated candidate, or
-  /// `null` when it does not exist or is not pending.
+  /// TEMPORARY Tenancy 1C compatibility wrapper for
+  /// `approveNewPersonCandidateForFamily`.
   approveNewPersonCandidate: (id: nat) -> (opt NewPersonCandidate);
+  /// Approves the pending candidate with `candidateId` in `familyId`. Requires
+  /// an active Steward of `familyId`. The linked Source must belong to
+  /// `familyId`. Approval creates exactly one canonical Person record
+  /// (PersonProfile) in the candidate's own `familyId` through the
+  /// family-qualified profile storage, so a Family A candidate never creates or
+  /// alters a Family B profile. Returns the updated candidate, or `null` when no
+  /// pending candidate with that id belongs to `familyId`.
+  approveNewPersonCandidateForFamily: (familyId: FamilyId, candidateId:
+   nat) -> (opt NewPersonCandidate);
   /// TEMPORARY Tenancy 1C compatibility wrapper for
   /// `approveProfileClaimForFamily`.
   approveProfileClaim: (claimId: nat) -> (opt ProfileClaim);
@@ -1433,10 +1438,18 @@ service : {
   /// "Add Myself to This Family": creates a minimal person profile in
   /// `familyId` for a user who does not already exist there.
   createMyselfForFamily: (familyId: FamilyId, name: text) -> (Result_21);
-  /// Creates a new Person candidate. Requires an approved family member; the
-  /// caller is recorded as the submitter. The candidate enters as `#Pending`.
+  /// TEMPORARY Tenancy 1C compatibility wrapper for
+  /// `createNewPersonCandidateForFamily`.
   createNewPersonCandidate: (name: text, details: text, sourceId:
    SourceId) -> (Result_20);
+  /// Creates a new New Person candidate in `familyId`. Requires an approved
+  /// member of `familyId`; the caller is recorded as the submitter. The linked
+  /// SourceRecord must belong to `familyId` and any referenced people must belong
+  /// to `familyId`, so a Source or person in Family A can never create a
+  /// Candidate in Family B. The candidate enters as `#Pending` and its `familyId`
+  /// is the requested `familyId`.
+  createNewPersonCandidateForFamily: (familyId: FamilyId, name: text,
+   details: text, sourceId: SourceId) -> (Result_20);
   /// Creates a new relationship proposal. Requires an approved family member;
   /// the caller is recorded as the submitter. The proposal enters as `#Pending`.
   createRelationshipProposal: (fromPersonId: text, toPersonId: text,
@@ -1525,6 +1538,13 @@ service : {
   /// family.
   getMyRelationshipRequestsForFamily: (familyId: FamilyId) ->
    (vec RelationshipRequest) query;
+  /// Returns the candidate with `candidateId` when it belongs to `familyId`, or
+  /// `null` otherwise. Requires an active Steward of `familyId`, matching the
+  /// pre-tenancy Steward-only candidate-read behavior. A record that exists
+  /// under another family is never returned, so a `candidateId` alone cannot
+  /// cross the family boundary.
+  getNewPersonCandidateForFamily: (familyId: FamilyId, candidateId: nat) ->
+   (opt NewPersonCandidate) query;
   /// TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
   /// delegates to the canonical family-scoped implementation with the default
   /// family id so current Norwood behavior is unchanged. Contains no duplicated
@@ -1585,11 +1605,13 @@ service : {
   /// Returns the review queue for `familyId`. Requires an active Steward of
   /// `familyId`. The Sources section and every source-derived count are
   /// restricted to sources whose `familyId` equals `familyId` (byte-identical to
-  /// Tenancy 1C-B2-A), and the Findings section and every finding-derived count
-  /// are restricted to findings whose `familyId` equals `familyId`, so the
-  /// returned queue never mixes source or finding counts across families. The
-  /// non-source, non-finding categories (Candidates, Relationships, Conflicts)
-  /// keep their existing behavior unchanged in this build.
+  /// Tenancy 1C-B2-A), the Findings section and every finding-derived count are
+  /// restricted to findings whose `familyId` equals `familyId`, and the New
+  /// Person Candidates section and every candidate-derived count are restricted
+  /// to candidates whose `familyId` equals `familyId` (Tenancy 1C-B2-B2), so the
+  /// returned queue never mixes source, finding, or candidate counts across
+  /// families. The Relationships and Conflicts categories keep their existing
+  /// behavior unchanged in this build.
   getReviewQueueForFamily: (familyId: FamilyId) -> (ReviewQueue) query;
   /// Returns a warning encouraging successor designation when only one steward
   /// exists, or `null` when there are multiple stewards. Family Steward only.
@@ -1718,8 +1740,15 @@ service : {
   listMessageableMembers: () -> (vec text) query;
   /// Lists all mysteries (visible to viewers).
   listMysteries: () -> (vec Mystery) query;
-  /// Lists all New Person candidates (steward only).
+  /// TEMPORARY Tenancy 1C compatibility wrapper for
+  /// `listNewPersonCandidatesForFamily`.
   listNewPersonCandidates: () -> (vec NewPersonCandidate) query;
+  /// Lists every New Person candidate in `familyId`. Requires an active Steward
+  /// of `familyId`, matching the pre-tenancy Steward-only candidate-read
+  /// behavior. A candidate whose `familyId` differs is never returned, so Family
+  /// A candidates never appear in a Family B call.
+  listNewPersonCandidatesForFamily: (familyId: FamilyId) ->
+   (vec NewPersonCandidate) query;
   /// Lists in-app notification records for the signed-in caller. Notifications
   /// are recipient-addressed and are not family-scoped.
   listNotifications: () -> (vec Notification) query;
@@ -1826,11 +1855,15 @@ service : {
   /// `familyId`.
   needsResearchFindingForFamily: (familyId: FamilyId, findingId:
    FindingId) -> (opt ProposedFinding);
-  /// Marks a pending New Person candidate as needing research (Family Steward
-  /// only), transitioning it to `#NeedsResearch` while preserving the candidate.
-  /// No canonical Person is created. Returns the updated candidate, or `null`
-  /// when it does not exist or is not pending.
+  /// TEMPORARY Tenancy 1C compatibility wrapper for
+  /// `needsResearchNewPersonCandidateForFamily`.
   needsResearchNewPersonCandidate: (id: nat) -> (opt NewPersonCandidate);
+  /// Marks the pending candidate with `candidateId` in `familyId` as needing
+  /// research. Requires an active Steward of `familyId`. No canonical Person is
+  /// created. Returns the updated candidate, or `null` when no pending candidate
+  /// with that id belongs to `familyId`.
+  needsResearchNewPersonCandidateForFamily: (familyId: FamilyId, candidateId:
+   nat) -> (opt NewPersonCandidate);
   /// Marks a pending Relationship proposal as needing research (Family Steward
   /// only), transitioning it to `#NeedsResearch` while preserving the proposal.
   /// The canonical graph is left unchanged. Returns the updated proposal, or
@@ -1894,11 +1927,15 @@ service : {
   /// no pending finding with that id belongs to `familyId`.
   rejectFindingForFamily: (familyId: FamilyId, findingId: FindingId) ->
    (opt ProposedFinding);
-  /// Rejects a pending New Person candidate (Family Steward only), marking it
-  /// `#Rejected`. No canonical Person is created; the candidate and its audit
-  /// trail are preserved. Returns the updated candidate, or `null` when it does
-  /// not exist or is not pending.
+  /// TEMPORARY Tenancy 1C compatibility wrapper for
+  /// `rejectNewPersonCandidateForFamily`.
   rejectNewPersonCandidate: (id: nat) -> (opt NewPersonCandidate);
+  /// Rejects the pending candidate with `candidateId` in `familyId`. Requires an
+  /// active Steward of `familyId`. No canonical Person is created. Returns the
+  /// updated candidate, or `null` when no pending candidate with that id belongs
+  /// to `familyId`.
+  rejectNewPersonCandidateForFamily: (familyId: FamilyId, candidateId:
+   nat) -> (opt NewPersonCandidate);
   /// TEMPORARY Tenancy 1C compatibility wrapper for
   /// `rejectProfileClaimForFamily`.
   rejectProfileClaim: (claimId: nat) -> (opt ProfileClaim);

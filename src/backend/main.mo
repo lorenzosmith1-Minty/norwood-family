@@ -49,6 +49,7 @@ import PendingCountApi "mixins/pending-count-api";
 import ResearchIntakeApi "mixins/research-intake-api";
 import ResearchSourceScopeApi "mixins/research-source-scope-api";
 import FindingScopeApi "mixins/finding-scope-api";
+import CandidateScopeApi "mixins/candidate-scope-api";
 import ArchiveResearchBoardNotificationsApi "mixins/archive-research-board-notifications-api";
 import AuditAndWorkloadApi "mixins/audit-and-workload-api";
 import StewardAuthorityApi "mixins/steward-authority-api";
@@ -988,6 +989,7 @@ actor {
         "id",
       )
       .sample({
+        familyId = FamilyTypes.DEFAULT_FAMILY_ID;
         id = 0;
         name = "";
         details = "";
@@ -998,6 +1000,7 @@ actor {
         reviewedBy = null;
         reviewedAt = null;
       })
+      .payload("familyId", func r = r.familyId)
       .payload("id", func r = r.id)
       .payload("name", func r = r.name)
       .payload("details", func r = r.details)
@@ -1120,6 +1123,7 @@ actor {
   include ResearchIntakeApi(researchSources, proposedFindings, newPersonCandidates, relationshipProposals, conflictReviewItems, researchAuditLog, researchState, profiles, confirmedRelationships, stories, mysteries, archiveItems, notifications, claims, stewards);
   include ResearchSourceScopeApi(researchSources, proposedFindings, newPersonCandidates, relationshipProposals, conflictReviewItems, researchAuditLog, researchState, archiveItems, notifications, claims, stewards);
   include FindingScopeApi(proposedFindings, researchSources, newPersonCandidates, relationshipProposals, conflictReviewItems, researchAuditLog, researchState, profiles, claims, stewards, notifications);
+  include CandidateScopeApi(newPersonCandidates, researchSources, proposedFindings, relationshipProposals, conflictReviewItems, researchAuditLog, researchState, profiles, claims, stewards, notifications);
   include ArchiveResearchBoardNotificationsApi(archiveItems, researchSources, researchState, posts, notifications, claims, profiles, stewards);
   include AuditAndWorkloadApi(accessControlState, auditLog, researchAuditLog, conflictReviewItems, stewards);
   include StewardAuthorityApi(accessControlState, stewards, auditLog);

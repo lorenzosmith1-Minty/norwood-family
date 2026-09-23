@@ -390,6 +390,7 @@ const {
       | { __kind__: "err"; err: unknown }
     > {
       const record: NewPersonCandidate = {
+        familyId: "norwood",
         id: 1n,
         name,
         details,

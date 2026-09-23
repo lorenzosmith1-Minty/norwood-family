@@ -320,6 +320,7 @@ function sourceRecord(id: bigint, title: string): SourceRecord {
 
 function candidate(id: bigint, name: string): NewPersonCandidate {
   return {
+    familyId: "norwood",
     id,
     name,
     details: "A previously unrecorded family member.",

@@ -224,11 +224,12 @@ module {
 
   /// Computes the family-scoped Review Queue: the Findings section and every
   /// finding-derived count are restricted to findings whose `familyId` equals
-  /// `familyId`, while the Sources section keeps the Tenancy 1C-B2-A
-  /// family-scoped behavior and the non-source, non-finding categories
-  /// (Candidates, Relationships, Conflicts) keep their existing behavior
-  /// unchanged in this build. The returned `ReviewQueue` therefore never mixes
-  /// finding counts across families.
+  /// `familyId`, the Sources section keeps the Tenancy 1C-B2-A family-scoped
+  /// behavior, and the New Person Candidates section is restricted to candidates
+  /// whose `familyId` equals `familyId` (Tenancy 1C-B2-B2). The Relationships
+  /// and Conflicts categories keep their existing behavior unchanged in this
+  /// build. The returned `ReviewQueue` therefore never mixes finding, source, or
+  /// candidate counts across families.
   public func computeQueueForFamily(
     sources : List.List<Types.SourceRecord>,
     findings : List.List<Types.ProposedFinding>,
@@ -278,21 +279,24 @@ module {
         });
       };
     };
-    // Non-source, non-finding categories: unchanged aggregation behavior in
-    // this build.
+    // New Person Candidates: family-scoped, matching Tenancy 1C-B2-B2. Only a
+    // candidate whose `familyId` equals `familyId` contributes to the
+    // Candidates section or to any candidate-derived count.
     for (c in candidates.toArray().values()) {
-      items.add({
-        id = c.id;
-        kind = #NewPersonCandidate;
-        title = c.name;
-        summary = c.details;
-        contributor = ?c.submittedBy;
-        provenance = "Source #" # c.sourceId.toText();
-        createdAt = c.submittedAt;
-        evidenceLabel = null;
-        status = c.status;
-        actions = actionsFor(c.status);
-      });
+      if (c.familyId == familyId) {
+        items.add({
+          id = c.id;
+          kind = #NewPersonCandidate;
+          title = c.name;
+          summary = c.details;
+          contributor = ?c.submittedBy;
+          provenance = "Source #" # c.sourceId.toText();
+          createdAt = c.submittedAt;
+          evidenceLabel = null;
+          status = c.status;
+          actions = actionsFor(c.status);
+        });
+      };
     };
     for (p in proposals.toArray().values()) {
       items.add({

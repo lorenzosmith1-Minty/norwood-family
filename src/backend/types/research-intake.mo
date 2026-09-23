@@ -138,7 +138,14 @@ module {
 
   /// A candidate for a Person not yet in the canonical set. Approved candidates
   /// become canonical Person records.
+  ///
+  /// Tenancy 1C-B2-B2: `familyId` is the tenant boundary for a candidate. Every
+  /// family-scoped read and review requires `NewPersonCandidate.familyId` to
+  /// equal the requested `familyId`; a `candidateId` alone never crosses a
+  /// family boundary. Records created before this field existed are migrated to
+  /// `FamilyTypes.DEFAULT_FAMILY_ID` ("norwood").
   public type NewPersonCandidate = {
+    familyId : Text;
     id : Nat;
     name : Text;
     details : Text;

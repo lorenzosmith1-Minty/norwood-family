@@ -1,10 +1,8 @@
 import Result "mo:core/Result";
 import List "mo:core/List";
 import Map "mo:core/Map";
-import Nat "mo:core/Nat";
 import Principal "mo:core/Principal";
 import Runtime "mo:core/Runtime";
-import Text "mo:core/Text";
 import Time "mo:core/Time";
 import Types "../types/research-intake";
 import OwnershipTypes "../types/ownership";
@@ -98,52 +96,6 @@ mixin (
     state.nextAuditId := state.nextAuditId + 1;
     addResearchNotification(caller, #ResearchSubmission, "Your research submission is awaiting Family Steward review.");
     #ok(source);
-  };
-
-  /// Creates a new Person candidate. Requires an approved family member; the
-  /// caller is recorded as the submitter. The candidate enters as `#Pending`.
-  public shared ({ caller }) func createNewPersonCandidate(
-    name : Text,
-    details : Text,
-    sourceId : Types.SourceId,
-  ) : async Result.Result<Types.NewPersonCandidate, Types.ResearchError> {
-    if (not FamilyAuthorizationLib.isApprovedFamilyMember(stewards, claims, caller)) {
-      return #err(#notAuthorized);
-    };
-    if (not sourceExists(sourceId)) {
-      return #err(#notFound(sourceId));
-    };
-    let cleanName = InputValidation.requireText("name", name, InputValidation.MAX_TITLE_CHARS);
-    let cleanDetails = InputValidation.requireText("details", details, InputValidation.MAX_DESCRIPTION_CHARS);
-    let candidate = ResearchLib.createNewPersonCandidate(
-      candidates,
-      { var next = state.nextCandidateId },
-      cleanName,
-      cleanDetails,
-      sourceId,
-      caller,
-      Time.now(),
-    );
-    state.nextCandidateId := state.nextCandidateId + 1;
-    ignore ResearchLib.appendAudit(
-      auditLog,
-      { var next = state.nextAuditId },
-      "NewPersonCandidateSubmitted",
-      null,
-      ?sourceId,
-      caller,
-      Time.now(),
-      "New Person Candidate '" # cleanName # "' submitted",
-    );
-    state.nextAuditId := state.nextAuditId + 1;
-    addResearchNotification(caller, #ResearchSubmission, "Your research submission is awaiting Family Steward review.");
-    #ok(candidate);
-  };
-
-  /// Lists all New Person candidates (steward only).
-  public query ({ caller }) func listNewPersonCandidates() : async [Types.NewPersonCandidate] {
-    requireSteward(caller);
-    candidates.toArray();
   };
 
   /// Creates a new relationship proposal. Requires an approved family member;
@@ -307,105 +259,6 @@ mixin (
         );
         state.nextAuditId := state.nextAuditId + 1;
         #ok(updated);
-      };
-    };
-  };
-
-  /// Approves a pending New Person candidate (Family Steward only), creating
-  /// exactly one canonical Person record (PersonProfile) that preserves the
-  /// candidate's Source/provenance, recording the approval in Audit History,
-  /// and marking the candidate `#Approved`. Approving a candidate never
-  /// auto-creates relationships — a relationship is only added when a separately
-  /// approved Relationship Proposal exists. Returns the updated candidate, or
-  /// `null` when it does not exist or is not pending.
-  public shared ({ caller }) func approveNewPersonCandidate(id : Nat) : async ?Types.NewPersonCandidate {
-    requireSteward(caller);
-    let now = Time.now();
-    switch (candidates.find(func c = c.id == id)) {
-      case null { null };
-      case (?c) {
-        if (c.status != #Pending) {
-          null;
-        } else {
-          createCanonicalPerson(c);
-          let updated = ResearchLib.approveNewPersonCandidate(candidates, id, caller, now);
-          ignore ResearchLib.appendAudit(
-            auditLog,
-            { var next = state.nextAuditId },
-            "NewPersonCandidateApproved",
-            null,
-            ?c.sourceId,
-            caller,
-            now,
-            "New Person Candidate '" # c.name # "' approved and created as a canonical Person",
-          );
-          state.nextAuditId := state.nextAuditId + 1;
-          addResearchNotification(c.submittedBy, #ResearchApproved, "Your research submission was approved.");
-          updated;
-        };
-      };
-    };
-  };
-
-  /// Rejects a pending New Person candidate (Family Steward only), marking it
-  /// `#Rejected`. No canonical Person is created; the candidate and its audit
-  /// trail are preserved. Returns the updated candidate, or `null` when it does
-  /// not exist or is not pending.
-  public shared ({ caller }) func rejectNewPersonCandidate(id : Nat) : async ?Types.NewPersonCandidate {
-    requireSteward(caller);
-    let now = Time.now();
-    switch (candidates.find(func c = c.id == id)) {
-      case null { null };
-      case (?c) {
-        if (c.status != #Pending) {
-          null;
-        } else {
-          let updated = ResearchLib.rejectNewPersonCandidate(candidates, id, caller, now);
-          ignore ResearchLib.appendAudit(
-            auditLog,
-            { var next = state.nextAuditId },
-            "NewPersonCandidateRejected",
-            null,
-            ?c.sourceId,
-            caller,
-            now,
-            "New Person Candidate '" # c.name # "' rejected",
-          );
-          state.nextAuditId := state.nextAuditId + 1;
-          addResearchNotification(c.submittedBy, #ResearchRejected, "Your research submission was not approved.");
-          updated;
-        };
-      };
-    };
-  };
-
-  /// Marks a pending New Person candidate as needing research (Family Steward
-  /// only), transitioning it to `#NeedsResearch` while preserving the candidate.
-  /// No canonical Person is created. Returns the updated candidate, or `null`
-  /// when it does not exist or is not pending.
-  public shared ({ caller }) func needsResearchNewPersonCandidate(id : Nat) : async ?Types.NewPersonCandidate {
-    requireSteward(caller);
-    let now = Time.now();
-    switch (candidates.find(func c = c.id == id)) {
-      case null { null };
-      case (?c) {
-        if (c.status != #Pending) {
-          null;
-        } else {
-          let updated = ResearchLib.needsResearchNewPersonCandidate(candidates, id, caller, now);
-          ignore ResearchLib.appendAudit(
-            auditLog,
-            { var next = state.nextAuditId },
-            "NewPersonCandidateNeedsResearch",
-            null,
-            ?c.sourceId,
-            caller,
-            now,
-            "New Person Candidate '" # c.name # "' marked as needing research",
-          );
-          state.nextAuditId := state.nextAuditId + 1;
-          updated;
-        };
       };
     };
   };
@@ -600,74 +453,6 @@ mixin (
         read = false;
       });
     };
-  };
-
-  /// Derives a deterministic personId from a candidate's name: lower-cases,
-  /// keeps only alphanumeric characters, and concatenates the words (e.g.
-  /// "Lorenzo Smith Jr." -> "lorenzosmithjr").
-  func personIdFromName(name : Text) : Text {
-    let words = List.empty<Text>();
-    for (word in name.toLower().tokens(#predicate (func ch = ch.isWhitespace()))) {
-      var clean = "";
-      for (ch in word.chars()) {
-        if (ch.isAlphabetic() or ch.isDigit()) {
-          clean := clean # ch.toText();
-        };
-      };
-      if (clean.size() > 0) {
-        words.add(clean);
-      };
-    };
-    words.toArray().values().join("");
-  };
-
-  /// Returns a personId derived from the candidate's name that is guaranteed not
-  /// to collide with an existing canonical Person record. When the base slug
-  /// already exists, a numeric suffix is appended until a free id is found.
-  func uniquePersonId(name : Text) : Text {
-    let base = personIdFromName(name);
-    var candidate = base;
-    var suffix = 1;
-    while (profiles.get(candidate) != null) {
-      candidate := base # suffix.toText();
-      suffix += 1;
-    };
-    candidate;
-  };
-
-  /// Creates exactly one canonical Person record (PersonProfile) from an
-  /// approved New Person candidate. The candidate's Source/provenance is
-  /// preserved on the candidate record (`sourceId`) and recorded in the audit
-  /// entry. The new profile is unclaimed and living by default. Approving a
-  /// candidate never auto-creates relationships — a relationship is only added
-  /// when a separately approved Relationship Proposal exists.
-  func createCanonicalPerson(c : Types.NewPersonCandidate) {
-    let personId = uniquePersonId(c.name);
-    let profile : OwnershipTypes.PersonProfile = {
-      familyId = FamilyTypes.DEFAULT_FAMILY_ID;
-      personId;
-      name = c.name;
-      livingStatus = #Living;
-      claimStatus = #Unclaimed;
-      claimedByUserId = null;
-      preferredName = null;
-      firstName = null;
-      middleName = null;
-      lastName = null;
-      suffix = null;
-      nickname = null;
-      story = null;
-      shortBio = null;
-      longerStory = null;
-      occupation = null;
-      birthInfo = null;
-      birthDate = null;
-      birthplace = null;
-      currentLocation = null;
-      timeline = null;
-      privacySettings = null;
-    };
-    profiles.add(personId, profile);
   };
 
   /// Adds a confirmed relationship to the shared family graph exactly once,

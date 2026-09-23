@@ -39,14 +39,14 @@ import { useProvidersPresent } from "./usePhotoStorage";
  * invalidate the shared lists (sources, findings, candidates, relationship
  * proposals, conflicts, review queue, audit log) that the other surfaces read.
  *
- * The SOURCE and FINDING hooks are family-aware, following the
+ * The SOURCE, FINDING, and CANDIDATE hooks are family-aware, following the
  * useArchiveStorage pattern: the active family is read from the centralized
  * FamilyContext and `familyScopedId` is `undefined` for the default family.
  * The default family keeps the exact legacy no-argument call shape and React
  * Query key, while a non-default family routes to the canonical `*ForFamily`
  * endpoint with the familyId included in the key so caches never collide
- * across families. Candidates/proposals/conflicts/audit hooks are intentionally
- * NOT family-scoped in this build.
+ * across families. Proposals/conflicts/audit hooks are intentionally NOT
+ * family-scoped in this build.
  */
 
 /** Lists all source records (steward only). */
@@ -488,12 +488,18 @@ export function useNeedsResearchFinding() {
 /** Lists all New Person candidates (steward only). */
 export function useListNewPersonCandidates() {
   const providersPresent = useProvidersPresent();
+  const familyScopedId = useFamilyScopedId();
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["research", "candidates"],
+    queryKey:
+      familyScopedId === undefined
+        ? ["research", "candidates"]
+        : ["research", "candidates", familyScopedId],
     queryFn: async () => {
       if (!actor) return [] as NewPersonCandidate[];
-      return actor.listNewPersonCandidates();
+      return familyScopedId === undefined
+        ? actor.listNewPersonCandidates()
+        : actor.listNewPersonCandidatesForFamily(familyScopedId);
     },
     enabled: providersPresent && !!actor && !isFetching,
   });
@@ -501,6 +507,7 @@ export function useListNewPersonCandidates() {
 
 /** Creates a new Person candidate. */
 export function useCreateNewPersonCandidate() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
@@ -514,7 +521,14 @@ export function useCreateNewPersonCandidate() {
       sourceId: SourceId;
     }): Promise<Result_20> => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.createNewPersonCandidate(name, details, sourceId);
+      return familyScopedId === undefined
+        ? actor.createNewPersonCandidate(name, details, sourceId)
+        : actor.createNewPersonCandidateForFamily(
+            familyScopedId,
+            name,
+            details,
+            sourceId,
+          );
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({
@@ -537,6 +551,7 @@ export function useCreateNewPersonCandidate() {
  * `Approved` and is removed from the pending count immediately.
  */
 export function useApproveNewPersonCandidate() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
@@ -544,7 +559,9 @@ export function useApproveNewPersonCandidate() {
       candidateId: bigint,
     ): Promise<NewPersonCandidate | null> => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.approveNewPersonCandidate(candidateId);
+      return familyScopedId === undefined
+        ? actor.approveNewPersonCandidate(candidateId)
+        : actor.approveNewPersonCandidateForFamily(familyScopedId, candidateId);
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({
@@ -566,6 +583,7 @@ export function useApproveNewPersonCandidate() {
  * `Rejected`.
  */
 export function useRejectNewPersonCandidate() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
@@ -573,7 +591,9 @@ export function useRejectNewPersonCandidate() {
       candidateId: bigint,
     ): Promise<NewPersonCandidate | null> => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.rejectNewPersonCandidate(candidateId);
+      return familyScopedId === undefined
+        ? actor.rejectNewPersonCandidate(candidateId)
+        : actor.rejectNewPersonCandidateForFamily(familyScopedId, candidateId);
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({
@@ -595,6 +615,7 @@ export function useRejectNewPersonCandidate() {
  * Person.
  */
 export function useNeedsResearchNewPersonCandidate() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
@@ -602,7 +623,12 @@ export function useNeedsResearchNewPersonCandidate() {
       candidateId: bigint,
     ): Promise<NewPersonCandidate | null> => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.needsResearchNewPersonCandidate(candidateId);
+      return familyScopedId === undefined
+        ? actor.needsResearchNewPersonCandidate(candidateId)
+        : actor.needsResearchNewPersonCandidateForFamily(
+            familyScopedId,
+            candidateId,
+          );
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({

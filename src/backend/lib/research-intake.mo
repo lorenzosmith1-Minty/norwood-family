@@ -1,5 +1,4 @@
 import List "mo:core/List";
-import Nat "mo:core/Nat";
 import Principal "mo:core/Principal";
 import Types "../types/research-intake";
 import FamilyTypes "../types/family";
@@ -105,34 +104,6 @@ module {
     };
     findings.add(finding);
     finding;
-  };
-
-  /// Creates a new Person candidate and appends it to the collection. The
-  /// candidate enters as `#Pending`.
-  public func createNewPersonCandidate(
-    candidates : List.List<Types.NewPersonCandidate>,
-    nextId : { var next : Nat },
-    name : Text,
-    details : Text,
-    sourceId : Types.SourceId,
-    submittedBy : Principal,
-    now : Int,
-  ) : Types.NewPersonCandidate {
-    let id = nextId.next;
-    nextId.next += 1;
-    let candidate : Types.NewPersonCandidate = {
-      id;
-      name;
-      details;
-      sourceId;
-      status = #Pending;
-      submittedBy;
-      submittedAt = now;
-      reviewedBy = null;
-      reviewedAt = null;
-    };
-    candidates.add(candidate);
-    candidate;
   };
 
   /// Creates a new relationship proposal and appends it to the collection. The
@@ -624,98 +595,6 @@ module {
         updated := ?needsResearch;
       } else {
         findings.add(f);
-      };
-    };
-    updated;
-  };
-
-  /// Approves a pending New Person candidate (steward action), transitioning it
-  /// to `#Approved`. The canonical Person record is created by the API mixin;
-  /// this helper only transitions the candidate's status. Returns the updated
-  /// candidate, or `null` when it does not exist or is not pending.
-  public func approveNewPersonCandidate(
-    candidates : List.List<Types.NewPersonCandidate>,
-    id : Nat,
-    reviewer : Principal,
-    now : Int,
-  ) : ?Types.NewPersonCandidate {
-    ignore reviewer;
-    var updated : ?Types.NewPersonCandidate = null;
-    let snapshot = candidates.toArray();
-    candidates.clear();
-    for (c in snapshot.values()) {
-      if (c.id == id and c.status == #Pending) {
-        let approved : Types.NewPersonCandidate = {
-          c with
-          status = #Approved;
-          reviewedBy = ?reviewer;
-          reviewedAt = ?now;
-        };
-        candidates.add(approved);
-        updated := ?approved;
-      } else {
-        candidates.add(c);
-      };
-    };
-    updated;
-  };
-
-  /// Rejects a pending New Person candidate (steward action), transitioning it
-  /// to `#Rejected`. No canonical Person is created. Returns the updated
-  /// candidate, or `null` when it does not exist or is not pending.
-  public func rejectNewPersonCandidate(
-    candidates : List.List<Types.NewPersonCandidate>,
-    id : Nat,
-    reviewer : Principal,
-    now : Int,
-  ) : ?Types.NewPersonCandidate {
-    ignore reviewer;
-    var updated : ?Types.NewPersonCandidate = null;
-    let snapshot = candidates.toArray();
-    candidates.clear();
-    for (c in snapshot.values()) {
-      if (c.id == id and c.status == #Pending) {
-        let rejected : Types.NewPersonCandidate = {
-          c with
-          status = #Rejected;
-          reviewedBy = ?reviewer;
-          reviewedAt = ?now;
-        };
-        candidates.add(rejected);
-        updated := ?rejected;
-      } else {
-        candidates.add(c);
-      };
-    };
-    updated;
-  };
-
-  /// Marks a pending New Person candidate as needing research (steward action),
-  /// transitioning it to `#NeedsResearch` while preserving the candidate. No
-  /// canonical Person is created. Returns the updated candidate, or `null` when
-  /// it does not exist or is not pending.
-  public func needsResearchNewPersonCandidate(
-    candidates : List.List<Types.NewPersonCandidate>,
-    id : Nat,
-    reviewer : Principal,
-    now : Int,
-  ) : ?Types.NewPersonCandidate {
-    ignore reviewer;
-    var updated : ?Types.NewPersonCandidate = null;
-    let snapshot = candidates.toArray();
-    candidates.clear();
-    for (c in snapshot.values()) {
-      if (c.id == id and c.status == #Pending) {
-        let needsResearch : Types.NewPersonCandidate = {
-          c with
-          status = #NeedsResearch;
-          reviewedBy = ?reviewer;
-          reviewedAt = ?now;
-        };
-        candidates.add(needsResearch);
-        updated := ?needsResearch;
-      } else {
-        candidates.add(c);
       };
     };
     updated;

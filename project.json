@@ -1,19 +1,17 @@
 {
-  "overview": "A private family history research workspace where relatives propose, review, and confirm findings about their family tree.",
+  "overview": "A private family history workspace for the Norwood family, with research intake, review queues, archive, and multi-family tenancy.",
   "features": [
-    "Propose research findings from family sources",
-    "Steward review queue for approving or rejecting findings",
-    "Family-scoped access so each family's research stays private",
-    "Canonical profile updates from approved findings",
-    "Archive contributions and research source management"
+    "Family-scoped New Person Candidates",
+    "Create and review candidate profiles",
+    "Family-correct review queue counts",
+    "Preserved Norwood default-family behavior"
   ],
-  "category": "family-history-research",
+  "category": "family-history",
   "tags": [
+    "family",
     "genealogy",
-    "family-tree",
     "research",
-    "collaboration",
-    "privacy"
+    "multi-tenancy"
   ],
-  "last_updated": "2026-09-23T09:50:13.976Z"
+  "last_updated": "2026-09-23T14:23:07.768Z"
 }

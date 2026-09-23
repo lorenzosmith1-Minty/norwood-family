@@ -361,6 +361,7 @@ export interface NewPersonCandidate {
     reviewedAt?: bigint;
     reviewedBy?: Principal;
     details: string;
+    familyId: string;
 }
 export interface Notification {
     id: bigint;
@@ -1355,15 +1356,20 @@ export interface backendInterface {
      */
     approveFindingForFamily(familyId: FamilyId, findingId: FindingId): Promise<ProposedFinding | null>;
     /**
-     * / Approves a pending New Person candidate (Family Steward only), creating
-     * / exactly one canonical Person record (PersonProfile) that preserves the
-     * / candidate's Source/provenance, recording the approval in Audit History,
-     * / and marking the candidate `#Approved`. Approving a candidate never
-     * / auto-creates relationships — a relationship is only added when a separately
-     * / approved Relationship Proposal exists. Returns the updated candidate, or
-     * / `null` when it does not exist or is not pending.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `approveNewPersonCandidateForFamily`.
      */
     approveNewPersonCandidate(id: bigint): Promise<NewPersonCandidate | null>;
+    /**
+     * / Approves the pending candidate with `candidateId` in `familyId`. Requires
+     * / an active Steward of `familyId`. The linked Source must belong to
+     * / `familyId`. Approval creates exactly one canonical Person record
+     * / (PersonProfile) in the candidate's own `familyId` through the
+     * / family-qualified profile storage, so a Family A candidate never creates or
+     * / alters a Family B profile. Returns the updated candidate, or `null` when no
+     * / pending candidate with that id belongs to `familyId`.
+     */
+    approveNewPersonCandidateForFamily(familyId: FamilyId, candidateId: bigint): Promise<NewPersonCandidate | null>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `approveProfileClaimForFamily`.
@@ -1527,10 +1533,19 @@ export interface backendInterface {
      */
     createMyselfForFamily(familyId: FamilyId, name: string): Promise<Result_21>;
     /**
-     * / Creates a new Person candidate. Requires an approved family member; the
-     * / caller is recorded as the submitter. The candidate enters as `#Pending`.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `createNewPersonCandidateForFamily`.
      */
     createNewPersonCandidate(name: string, details: string, sourceId: SourceId): Promise<Result_20>;
+    /**
+     * / Creates a new New Person candidate in `familyId`. Requires an approved
+     * / member of `familyId`; the caller is recorded as the submitter. The linked
+     * / SourceRecord must belong to `familyId` and any referenced people must belong
+     * / to `familyId`, so a Source or person in Family A can never create a
+     * / Candidate in Family B. The candidate enters as `#Pending` and its `familyId`
+     * / is the requested `familyId`.
+     */
+    createNewPersonCandidateForFamily(familyId: FamilyId, name: string, details: string, sourceId: SourceId): Promise<Result_20>;
     /**
      * / Creates a new relationship proposal. Requires an approved family member;
      * / the caller is recorded as the submitter. The proposal enters as `#Pending`.
@@ -1642,6 +1657,14 @@ export interface backendInterface {
      */
     getMyRelationshipRequestsForFamily(familyId: FamilyId): Promise<Array<RelationshipRequest>>;
     /**
+     * / Returns the candidate with `candidateId` when it belongs to `familyId`, or
+     * / `null` otherwise. Requires an active Steward of `familyId`, matching the
+     * / pre-tenancy Steward-only candidate-read behavior. A record that exists
+     * / under another family is never returned, so a `candidateId` alone cannot
+     * / cross the family boundary.
+     */
+    getNewPersonCandidateForFamily(familyId: FamilyId, candidateId: bigint): Promise<NewPersonCandidate | null>;
+    /**
      * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
      * / delegates to the canonical family-scoped implementation with the default
      * / family id so current Norwood behavior is unchanged. Contains no duplicated
@@ -1723,11 +1746,13 @@ export interface backendInterface {
      * / Returns the review queue for `familyId`. Requires an active Steward of
      * / `familyId`. The Sources section and every source-derived count are
      * / restricted to sources whose `familyId` equals `familyId` (byte-identical to
-     * / Tenancy 1C-B2-A), and the Findings section and every finding-derived count
-     * / are restricted to findings whose `familyId` equals `familyId`, so the
-     * / returned queue never mixes source or finding counts across families. The
-     * / non-source, non-finding categories (Candidates, Relationships, Conflicts)
-     * / keep their existing behavior unchanged in this build.
+     * / Tenancy 1C-B2-A), the Findings section and every finding-derived count are
+     * / restricted to findings whose `familyId` equals `familyId`, and the New
+     * / Person Candidates section and every candidate-derived count are restricted
+     * / to candidates whose `familyId` equals `familyId` (Tenancy 1C-B2-B2), so the
+     * / returned queue never mixes source, finding, or candidate counts across
+     * / families. The Relationships and Conflicts categories keep their existing
+     * / behavior unchanged in this build.
      */
     getReviewQueueForFamily(familyId: FamilyId): Promise<ReviewQueue>;
     /**
@@ -1917,9 +1942,17 @@ export interface backendInterface {
      */
     listMysteries(): Promise<Array<Mystery>>;
     /**
-     * / Lists all New Person candidates (steward only).
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `listNewPersonCandidatesForFamily`.
      */
     listNewPersonCandidates(): Promise<Array<NewPersonCandidate>>;
+    /**
+     * / Lists every New Person candidate in `familyId`. Requires an active Steward
+     * / of `familyId`, matching the pre-tenancy Steward-only candidate-read
+     * / behavior. A candidate whose `familyId` differs is never returned, so Family
+     * / A candidates never appear in a Family B call.
+     */
+    listNewPersonCandidatesForFamily(familyId: FamilyId): Promise<Array<NewPersonCandidate>>;
     /**
      * / Lists in-app notification records for the signed-in caller. Notifications
      * / are recipient-addressed and are not family-scoped.
@@ -2080,12 +2113,17 @@ export interface backendInterface {
      */
     needsResearchFindingForFamily(familyId: FamilyId, findingId: FindingId): Promise<ProposedFinding | null>;
     /**
-     * / Marks a pending New Person candidate as needing research (Family Steward
-     * / only), transitioning it to `#NeedsResearch` while preserving the candidate.
-     * / No canonical Person is created. Returns the updated candidate, or `null`
-     * / when it does not exist or is not pending.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `needsResearchNewPersonCandidateForFamily`.
      */
     needsResearchNewPersonCandidate(id: bigint): Promise<NewPersonCandidate | null>;
+    /**
+     * / Marks the pending candidate with `candidateId` in `familyId` as needing
+     * / research. Requires an active Steward of `familyId`. No canonical Person is
+     * / created. Returns the updated candidate, or `null` when no pending candidate
+     * / with that id belongs to `familyId`.
+     */
+    needsResearchNewPersonCandidateForFamily(familyId: FamilyId, candidateId: bigint): Promise<NewPersonCandidate | null>;
     /**
      * / Marks a pending Relationship proposal as needing research (Family Steward
      * / only), transitioning it to `#NeedsResearch` while preserving the proposal.
@@ -2168,12 +2206,17 @@ export interface backendInterface {
      */
     rejectFindingForFamily(familyId: FamilyId, findingId: FindingId): Promise<ProposedFinding | null>;
     /**
-     * / Rejects a pending New Person candidate (Family Steward only), marking it
-     * / `#Rejected`. No canonical Person is created; the candidate and its audit
-     * / trail are preserved. Returns the updated candidate, or `null` when it does
-     * / not exist or is not pending.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `rejectNewPersonCandidateForFamily`.
      */
     rejectNewPersonCandidate(id: bigint): Promise<NewPersonCandidate | null>;
+    /**
+     * / Rejects the pending candidate with `candidateId` in `familyId`. Requires an
+     * / active Steward of `familyId`. No canonical Person is created. Returns the
+     * / updated candidate, or `null` when no pending candidate with that id belongs
+     * / to `familyId`.
+     */
+    rejectNewPersonCandidateForFamily(familyId: FamilyId, candidateId: bigint): Promise<NewPersonCandidate | null>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `rejectProfileClaimForFamily`.
@@ -2729,6 +2772,20 @@ export class Backend implements backendInterface {
             return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
         }
     }
+    async approveNewPersonCandidateForFamily(arg0: FamilyId, arg1: bigint): Promise<NewPersonCandidate | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.approveNewPersonCandidateForFamily(arg0, arg1);
+                return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.approveNewPersonCandidateForFamily(arg0, arg1);
+            return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async approveProfileClaim(arg0: bigint): Promise<ProfileClaim | null> {
         if (this.processError) {
             try {
@@ -3135,6 +3192,20 @@ export class Backend implements backendInterface {
             return from_candid_Result_20_n148(this._uploadFile, this._downloadFile, result);
         }
     }
+    async createNewPersonCandidateForFamily(arg0: FamilyId, arg1: string, arg2: string, arg3: SourceId): Promise<Result_20> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.createNewPersonCandidateForFamily(arg0, arg1, arg2, arg3);
+                return from_candid_Result_20_n148(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.createNewPersonCandidateForFamily(arg0, arg1, arg2, arg3);
+            return from_candid_Result_20_n148(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async createRelationshipProposal(arg0: string, arg1: string, arg2: string, arg3: SourceId): Promise<Result_19> {
         if (this.processError) {
             try {
@@ -3441,6 +3512,20 @@ export class Backend implements backendInterface {
         } else {
             const result = await this.actor.getMyRelationshipRequestsForFamily(arg0);
             return from_candid_vec_n190(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getNewPersonCandidateForFamily(arg0: FamilyId, arg1: bigint): Promise<NewPersonCandidate | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getNewPersonCandidateForFamily(arg0, arg1);
+                return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getNewPersonCandidateForFamily(arg0, arg1);
+            return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
         }
     }
     async getPendingContributionsCount(): Promise<bigint> {
@@ -4101,6 +4186,20 @@ export class Backend implements backendInterface {
             return from_candid_vec_n240(this._uploadFile, this._downloadFile, result);
         }
     }
+    async listNewPersonCandidatesForFamily(arg0: FamilyId): Promise<Array<NewPersonCandidate>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.listNewPersonCandidatesForFamily(arg0);
+                return from_candid_vec_n240(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.listNewPersonCandidatesForFamily(arg0);
+            return from_candid_vec_n240(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async listNotifications(): Promise<Array<Notification>> {
         if (this.processError) {
             try {
@@ -4535,6 +4634,20 @@ export class Backend implements backendInterface {
             return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
         }
     }
+    async needsResearchNewPersonCandidateForFamily(arg0: FamilyId, arg1: bigint): Promise<NewPersonCandidate | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.needsResearchNewPersonCandidateForFamily(arg0, arg1);
+                return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.needsResearchNewPersonCandidateForFamily(arg0, arg1);
+            return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async needsResearchRelationshipProposal(arg0: bigint): Promise<RelationshipProposal | null> {
         if (this.processError) {
             try {
@@ -4742,6 +4855,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.rejectNewPersonCandidate(arg0);
+            return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async rejectNewPersonCandidateForFamily(arg0: FamilyId, arg1: bigint): Promise<NewPersonCandidate | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.rejectNewPersonCandidateForFamily(arg0, arg1);
+                return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.rejectNewPersonCandidateForFamily(arg0, arg1);
             return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
         }
     }
@@ -6975,6 +7102,7 @@ function from_candid_record_n66(_uploadFile: (file: ExternalBlob) => Promise<Uin
     reviewedAt: [] | [bigint];
     reviewedBy: [] | [Principal];
     details: string;
+    familyId: string;
 }): {
     id: bigint;
     status: ReviewStatus;
@@ -6985,6 +7113,7 @@ function from_candid_record_n66(_uploadFile: (file: ExternalBlob) => Promise<Uin
     reviewedAt?: bigint;
     reviewedBy?: Principal;
     details: string;
+    familyId: string;
 } {
     return {
         id: value.id,
@@ -6995,7 +7124,8 @@ function from_candid_record_n66(_uploadFile: (file: ExternalBlob) => Promise<Uin
         sourceId: value.sourceId,
         reviewedAt: record_opt_to_undefined(from_candid_opt_n61(_uploadFile, _downloadFile, value.reviewedAt)),
         reviewedBy: record_opt_to_undefined(from_candid_opt_n62(_uploadFile, _downloadFile, value.reviewedBy)),
-        details: value.details
+        details: value.details,
+        familyId: value.familyId
     };
 }
 function from_candid_record_n69(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {

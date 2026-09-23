@@ -306,6 +306,7 @@ export const NewPersonCandidate = IDL.Record({
   'reviewedAt' : IDL.Opt(IDL.Int),
   'reviewedBy' : IDL.Opt(IDL.Principal),
   'details' : IDL.Text,
+  'familyId' : IDL.Text,
 });
 export const ProfileClaimStatus = IDL.Variant({
   'Approved' : IDL.Null,
@@ -1150,6 +1151,11 @@ export const idlService = IDL.Service({
       [IDL.Opt(NewPersonCandidate)],
       [],
     ),
+  'approveNewPersonCandidateForFamily' : IDL.Func(
+      [FamilyId, IDL.Nat],
+      [IDL.Opt(NewPersonCandidate)],
+      [],
+    ),
   'approveProfileClaim' : IDL.Func([IDL.Nat], [IDL.Opt(ProfileClaim)], []),
   'approveProfileClaimForFamily' : IDL.Func(
       [FamilyId, IDL.Nat],
@@ -1290,6 +1296,11 @@ export const idlService = IDL.Service({
       [Result_20],
       [],
     ),
+  'createNewPersonCandidateForFamily' : IDL.Func(
+      [FamilyId, IDL.Text, IDL.Text, SourceId],
+      [Result_20],
+      [],
+    ),
   'createRelationshipProposal' : IDL.Func(
       [IDL.Text, IDL.Text, IDL.Text, SourceId],
       [Result_19],
@@ -1387,6 +1398,11 @@ export const idlService = IDL.Service({
   'getMyRelationshipRequestsForFamily' : IDL.Func(
       [FamilyId],
       [IDL.Vec(RelationshipRequest)],
+      ['query'],
+    ),
+  'getNewPersonCandidateForFamily' : IDL.Func(
+      [FamilyId, IDL.Nat],
+      [IDL.Opt(NewPersonCandidate)],
       ['query'],
     ),
   'getPendingContributionsCount' : IDL.Func([], [IDL.Nat], ['query']),
@@ -1520,6 +1536,11 @@ export const idlService = IDL.Service({
       [IDL.Vec(NewPersonCandidate)],
       ['query'],
     ),
+  'listNewPersonCandidatesForFamily' : IDL.Func(
+      [FamilyId],
+      [IDL.Vec(NewPersonCandidate)],
+      ['query'],
+    ),
   'listNotifications' : IDL.Func([], [IDL.Vec(Notification)], ['query']),
   'listPendingArchiveItems' : IDL.Func([], [IDL.Vec(ArchiveItem)], ['query']),
   'listPendingArchiveItemsForFamily' : IDL.Func(
@@ -1615,6 +1636,11 @@ export const idlService = IDL.Service({
       [IDL.Opt(NewPersonCandidate)],
       [],
     ),
+  'needsResearchNewPersonCandidateForFamily' : IDL.Func(
+      [FamilyId, IDL.Nat],
+      [IDL.Opt(NewPersonCandidate)],
+      [],
+    ),
   'needsResearchRelationshipProposal' : IDL.Func(
       [IDL.Nat],
       [IDL.Opt(RelationshipProposal)],
@@ -1675,6 +1701,11 @@ export const idlService = IDL.Service({
     ),
   'rejectNewPersonCandidate' : IDL.Func(
       [IDL.Nat],
+      [IDL.Opt(NewPersonCandidate)],
+      [],
+    ),
+  'rejectNewPersonCandidateForFamily' : IDL.Func(
+      [FamilyId, IDL.Nat],
       [IDL.Opt(NewPersonCandidate)],
       [],
     ),
@@ -2230,6 +2261,7 @@ export const idlFactory = ({ IDL }) => {
     'reviewedAt' : IDL.Opt(IDL.Int),
     'reviewedBy' : IDL.Opt(IDL.Principal),
     'details' : IDL.Text,
+    'familyId' : IDL.Text,
   });
   const ProfileClaimStatus = IDL.Variant({
     'Approved' : IDL.Null,
@@ -3054,6 +3086,11 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Opt(NewPersonCandidate)],
         [],
       ),
+    'approveNewPersonCandidateForFamily' : IDL.Func(
+        [FamilyId, IDL.Nat],
+        [IDL.Opt(NewPersonCandidate)],
+        [],
+      ),
     'approveProfileClaim' : IDL.Func([IDL.Nat], [IDL.Opt(ProfileClaim)], []),
     'approveProfileClaimForFamily' : IDL.Func(
         [FamilyId, IDL.Nat],
@@ -3194,6 +3231,11 @@ export const idlFactory = ({ IDL }) => {
         [Result_20],
         [],
       ),
+    'createNewPersonCandidateForFamily' : IDL.Func(
+        [FamilyId, IDL.Text, IDL.Text, SourceId],
+        [Result_20],
+        [],
+      ),
     'createRelationshipProposal' : IDL.Func(
         [IDL.Text, IDL.Text, IDL.Text, SourceId],
         [Result_19],
@@ -3291,6 +3333,11 @@ export const idlFactory = ({ IDL }) => {
     'getMyRelationshipRequestsForFamily' : IDL.Func(
         [FamilyId],
         [IDL.Vec(RelationshipRequest)],
+        ['query'],
+      ),
+    'getNewPersonCandidateForFamily' : IDL.Func(
+        [FamilyId, IDL.Nat],
+        [IDL.Opt(NewPersonCandidate)],
         ['query'],
       ),
     'getPendingContributionsCount' : IDL.Func([], [IDL.Nat], ['query']),
@@ -3440,6 +3487,11 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(NewPersonCandidate)],
         ['query'],
       ),
+    'listNewPersonCandidatesForFamily' : IDL.Func(
+        [FamilyId],
+        [IDL.Vec(NewPersonCandidate)],
+        ['query'],
+      ),
     'listNotifications' : IDL.Func([], [IDL.Vec(Notification)], ['query']),
     'listPendingArchiveItems' : IDL.Func([], [IDL.Vec(ArchiveItem)], ['query']),
     'listPendingArchiveItemsForFamily' : IDL.Func(
@@ -3539,6 +3591,11 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Opt(NewPersonCandidate)],
         [],
       ),
+    'needsResearchNewPersonCandidateForFamily' : IDL.Func(
+        [FamilyId, IDL.Nat],
+        [IDL.Opt(NewPersonCandidate)],
+        [],
+      ),
     'needsResearchRelationshipProposal' : IDL.Func(
         [IDL.Nat],
         [IDL.Opt(RelationshipProposal)],
@@ -3603,6 +3660,11 @@ export const idlFactory = ({ IDL }) => {
       ),
     'rejectNewPersonCandidate' : IDL.Func(
         [IDL.Nat],
+        [IDL.Opt(NewPersonCandidate)],
+        [],
+      ),
+    'rejectNewPersonCandidateForFamily' : IDL.Func(
+        [FamilyId, IDL.Nat],
         [IDL.Opt(NewPersonCandidate)],
         [],
       ),

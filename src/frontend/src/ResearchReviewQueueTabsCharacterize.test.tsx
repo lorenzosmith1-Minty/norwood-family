@@ -321,6 +321,7 @@ function approvedFinding(id: bigint, title: string): ProposedFinding {
 
 function candidate(id: bigint, name: string): NewPersonCandidate {
   return {
+    familyId: "norwood",
     id,
     name,
     details: "A previously unrecorded family member.",

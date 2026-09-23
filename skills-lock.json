@@ -135,6 +135,11 @@
       "source": "caffeinelabs/skills",
       "sourceType": "github",
       "computedHash": "ee2f5704b3ac2c2fa7110364d470718c963d2e55729aa1583e3ec9a99107a419"
+    },
+    "connector-tmdb": {
+      "source": "caffeinelabs/skills",
+      "sourceType": "github",
+      "computedHash": "9756473c4d7da25ef313e93f4508a11717863a8e1e615b6c853ccdf2e0a83eb3"
     }
   }
 }

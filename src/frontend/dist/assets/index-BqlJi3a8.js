@@ -33489,7 +33489,8 @@ const NewPersonCandidate = Record({
   "sourceId": SourceId,
   "reviewedAt": Opt(Int),
   "reviewedBy": Opt(Principal2),
-  "details": Text
+  "details": Text,
+  "familyId": Text
 });
 const ProfileClaimStatus = Variant({
   "Approved": Null,
@@ -34333,6 +34334,11 @@ Service({
     [Opt(NewPersonCandidate)],
     []
   ),
+  "approveNewPersonCandidateForFamily": Func(
+    [FamilyId, Nat],
+    [Opt(NewPersonCandidate)],
+    []
+  ),
   "approveProfileClaim": Func([Nat], [Opt(ProfileClaim)], []),
   "approveProfileClaimForFamily": Func(
     [FamilyId, Nat],
@@ -34473,6 +34479,11 @@ Service({
     [Result_20],
     []
   ),
+  "createNewPersonCandidateForFamily": Func(
+    [FamilyId, Text, Text, SourceId],
+    [Result_20],
+    []
+  ),
   "createRelationshipProposal": Func(
     [Text, Text, Text, SourceId],
     [Result_19],
@@ -34570,6 +34581,11 @@ Service({
   "getMyRelationshipRequestsForFamily": Func(
     [FamilyId],
     [Vec(RelationshipRequest)],
+    ["query"]
+  ),
+  "getNewPersonCandidateForFamily": Func(
+    [FamilyId, Nat],
+    [Opt(NewPersonCandidate)],
     ["query"]
   ),
   "getPendingContributionsCount": Func([], [Nat], ["query"]),
@@ -34703,6 +34719,11 @@ Service({
     [Vec(NewPersonCandidate)],
     ["query"]
   ),
+  "listNewPersonCandidatesForFamily": Func(
+    [FamilyId],
+    [Vec(NewPersonCandidate)],
+    ["query"]
+  ),
   "listNotifications": Func([], [Vec(Notification)], ["query"]),
   "listPendingArchiveItems": Func([], [Vec(ArchiveItem)], ["query"]),
   "listPendingArchiveItemsForFamily": Func(
@@ -34798,6 +34819,11 @@ Service({
     [Opt(NewPersonCandidate)],
     []
   ),
+  "needsResearchNewPersonCandidateForFamily": Func(
+    [FamilyId, Nat],
+    [Opt(NewPersonCandidate)],
+    []
+  ),
   "needsResearchRelationshipProposal": Func(
     [Nat],
     [Opt(RelationshipProposal)],
@@ -34858,6 +34884,11 @@ Service({
   ),
   "rejectNewPersonCandidate": Func(
     [Nat],
+    [Opt(NewPersonCandidate)],
+    []
+  ),
+  "rejectNewPersonCandidateForFamily": Func(
+    [FamilyId, Nat],
     [Opt(NewPersonCandidate)],
     []
   ),
@@ -35409,7 +35440,8 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "sourceId": SourceId2,
     "reviewedAt": IDL2.Opt(IDL2.Int),
     "reviewedBy": IDL2.Opt(IDL2.Principal),
-    "details": IDL2.Text
+    "details": IDL2.Text,
+    "familyId": IDL2.Text
   });
   const ProfileClaimStatus2 = IDL2.Variant({
     "Approved": IDL2.Null,
@@ -36233,6 +36265,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [IDL2.Opt(NewPersonCandidate2)],
       []
     ),
+    "approveNewPersonCandidateForFamily": IDL2.Func(
+      [FamilyId2, IDL2.Nat],
+      [IDL2.Opt(NewPersonCandidate2)],
+      []
+    ),
     "approveProfileClaim": IDL2.Func([IDL2.Nat], [IDL2.Opt(ProfileClaim2)], []),
     "approveProfileClaimForFamily": IDL2.Func(
       [FamilyId2, IDL2.Nat],
@@ -36373,6 +36410,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [Result_202],
       []
     ),
+    "createNewPersonCandidateForFamily": IDL2.Func(
+      [FamilyId2, IDL2.Text, IDL2.Text, SourceId2],
+      [Result_202],
+      []
+    ),
     "createRelationshipProposal": IDL2.Func(
       [IDL2.Text, IDL2.Text, IDL2.Text, SourceId2],
       [Result_192],
@@ -36470,6 +36512,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "getMyRelationshipRequestsForFamily": IDL2.Func(
       [FamilyId2],
       [IDL2.Vec(RelationshipRequest2)],
+      ["query"]
+    ),
+    "getNewPersonCandidateForFamily": IDL2.Func(
+      [FamilyId2, IDL2.Nat],
+      [IDL2.Opt(NewPersonCandidate2)],
       ["query"]
     ),
     "getPendingContributionsCount": IDL2.Func([], [IDL2.Nat], ["query"]),
@@ -36619,6 +36666,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [IDL2.Vec(NewPersonCandidate2)],
       ["query"]
     ),
+    "listNewPersonCandidatesForFamily": IDL2.Func(
+      [FamilyId2],
+      [IDL2.Vec(NewPersonCandidate2)],
+      ["query"]
+    ),
     "listNotifications": IDL2.Func([], [IDL2.Vec(Notification2)], ["query"]),
     "listPendingArchiveItems": IDL2.Func([], [IDL2.Vec(ArchiveItem2)], ["query"]),
     "listPendingArchiveItemsForFamily": IDL2.Func(
@@ -36718,6 +36770,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [IDL2.Opt(NewPersonCandidate2)],
       []
     ),
+    "needsResearchNewPersonCandidateForFamily": IDL2.Func(
+      [FamilyId2, IDL2.Nat],
+      [IDL2.Opt(NewPersonCandidate2)],
+      []
+    ),
     "needsResearchRelationshipProposal": IDL2.Func(
       [IDL2.Nat],
       [IDL2.Opt(RelationshipProposal2)],
@@ -36782,6 +36839,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
     ),
     "rejectNewPersonCandidate": IDL2.Func(
       [IDL2.Nat],
+      [IDL2.Opt(NewPersonCandidate2)],
+      []
+    ),
+    "rejectNewPersonCandidateForFamily": IDL2.Func(
+      [FamilyId2, IDL2.Nat],
       [IDL2.Opt(NewPersonCandidate2)],
       []
     ),
@@ -37613,6 +37675,20 @@ class Backend {
       return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
     }
   }
+  async approveNewPersonCandidateForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.approveNewPersonCandidateForFamily(arg0, arg1);
+        return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.approveNewPersonCandidateForFamily(arg0, arg1);
+      return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async approveProfileClaim(arg0) {
     if (this.processError) {
       try {
@@ -38019,6 +38095,20 @@ class Backend {
       return from_candid_Result_20_n148(this._uploadFile, this._downloadFile, result);
     }
   }
+  async createNewPersonCandidateForFamily(arg0, arg1, arg2, arg3) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.createNewPersonCandidateForFamily(arg0, arg1, arg2, arg3);
+        return from_candid_Result_20_n148(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.createNewPersonCandidateForFamily(arg0, arg1, arg2, arg3);
+      return from_candid_Result_20_n148(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async createRelationshipProposal(arg0, arg1, arg2, arg3) {
     if (this.processError) {
       try {
@@ -38325,6 +38415,20 @@ class Backend {
     } else {
       const result = await this.actor.getMyRelationshipRequestsForFamily(arg0);
       return from_candid_vec_n190(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async getNewPersonCandidateForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getNewPersonCandidateForFamily(arg0, arg1);
+        return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getNewPersonCandidateForFamily(arg0, arg1);
+      return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
     }
   }
   async getPendingContributionsCount() {
@@ -38985,6 +39089,20 @@ class Backend {
       return from_candid_vec_n240(this._uploadFile, this._downloadFile, result);
     }
   }
+  async listNewPersonCandidatesForFamily(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listNewPersonCandidatesForFamily(arg0);
+        return from_candid_vec_n240(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listNewPersonCandidatesForFamily(arg0);
+      return from_candid_vec_n240(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async listNotifications() {
     if (this.processError) {
       try {
@@ -39419,6 +39537,20 @@ class Backend {
       return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
     }
   }
+  async needsResearchNewPersonCandidateForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.needsResearchNewPersonCandidateForFamily(arg0, arg1);
+        return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.needsResearchNewPersonCandidateForFamily(arg0, arg1);
+      return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async needsResearchRelationshipProposal(arg0) {
     if (this.processError) {
       try {
@@ -39626,6 +39758,20 @@ class Backend {
       }
     } else {
       const result = await this.actor.rejectNewPersonCandidate(arg0);
+      return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async rejectNewPersonCandidateForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.rejectNewPersonCandidateForFamily(arg0, arg1);
+        return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.rejectNewPersonCandidateForFamily(arg0, arg1);
       return from_candid_opt_n64(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -41243,7 +41389,8 @@ function from_candid_record_n66(_uploadFile, _downloadFile, value) {
     sourceId: value.sourceId,
     reviewedAt: record_opt_to_undefined(from_candid_opt_n61(_uploadFile, _downloadFile, value.reviewedAt)),
     reviewedBy: record_opt_to_undefined(from_candid_opt_n62(_uploadFile, _downloadFile, value.reviewedBy)),
-    details: value.details
+    details: value.details,
+    familyId: value.familyId
   };
 }
 function from_candid_record_n69(_uploadFile, _downloadFile, value) {
@@ -47357,17 +47504,19 @@ function useNeedsResearchFinding() {
 }
 function useListNewPersonCandidates() {
   const providersPresent = useProvidersPresent();
+  const familyScopedId = useFamilyScopedId();
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["research", "candidates"],
+    queryKey: familyScopedId === void 0 ? ["research", "candidates"] : ["research", "candidates", familyScopedId],
     queryFn: async () => {
       if (!actor) return [];
-      return actor.listNewPersonCandidates();
+      return familyScopedId === void 0 ? actor.listNewPersonCandidates() : actor.listNewPersonCandidatesForFamily(familyScopedId);
     },
     enabled: providersPresent && !!actor && !isFetching
   });
 }
 function useCreateNewPersonCandidate() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
@@ -47377,7 +47526,12 @@ function useCreateNewPersonCandidate() {
       sourceId
     }) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.createNewPersonCandidate(name, details, sourceId);
+      return familyScopedId === void 0 ? actor.createNewPersonCandidate(name, details, sourceId) : actor.createNewPersonCandidateForFamily(
+        familyScopedId,
+        name,
+        details,
+        sourceId
+      );
     },
     onSuccess: () => {
       void queryClient2.invalidateQueries({
@@ -47393,12 +47547,13 @@ function useCreateNewPersonCandidate() {
   });
 }
 function useApproveNewPersonCandidate() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
     mutationFn: async (candidateId) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.approveNewPersonCandidate(candidateId);
+      return familyScopedId === void 0 ? actor.approveNewPersonCandidate(candidateId) : actor.approveNewPersonCandidateForFamily(familyScopedId, candidateId);
     },
     onSuccess: () => {
       void queryClient2.invalidateQueries({
@@ -47414,12 +47569,13 @@ function useApproveNewPersonCandidate() {
   });
 }
 function useRejectNewPersonCandidate() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
     mutationFn: async (candidateId) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.rejectNewPersonCandidate(candidateId);
+      return familyScopedId === void 0 ? actor.rejectNewPersonCandidate(candidateId) : actor.rejectNewPersonCandidateForFamily(familyScopedId, candidateId);
     },
     onSuccess: () => {
       void queryClient2.invalidateQueries({
@@ -47435,12 +47591,16 @@ function useRejectNewPersonCandidate() {
   });
 }
 function useNeedsResearchNewPersonCandidate() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
     mutationFn: async (candidateId) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.needsResearchNewPersonCandidate(candidateId);
+      return familyScopedId === void 0 ? actor.needsResearchNewPersonCandidate(candidateId) : actor.needsResearchNewPersonCandidateForFamily(
+        familyScopedId,
+        candidateId
+      );
     },
     onSuccess: () => {
       void queryClient2.invalidateQueries({

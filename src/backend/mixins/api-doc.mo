@@ -1173,6 +1173,72 @@ caller passes an explicit `familyId`.
   `#NeedsResearch` while preserving the finding and its content. Returns the
   updated finding, or `null` when no pending finding with that id belongs to
   `familyId`.
+
+#### Family-scoped New Person Candidate methods (canonical)
+
+Every canonical candidate endpoint takes the requested `familyId` explicitly.
+Authority and data access are evaluated against that family, and a
+`candidateId` alone is never a tenant boundary — a lookup that finds a candidate
+belonging to another family behaves exactly like a lookup that found nothing, so
+Family A candidates can never be read, reviewed, or converted into profiles in
+Family B. The single-family candidate endpoints listed after these are
+TEMPORARY Tenancy 1C compatibility wrappers that delegate with the default
+family id (`\"norwood\"`); they are deprecated and will be removed once every
+caller passes an explicit `familyId`.
+
+- `createNewPersonCandidateForFamily(familyId : Text, name : Text, details : Text, sourceId : SourceId) : async Result<NewPersonCandidate, ResearchError>` —
+  update. Creates a candidate for a Person not yet in the canonical set, in
+  `familyId`. Requires an approved member of `familyId` (a caller holding at
+  least one `#Approved` profile claim in that family, or an active Steward of
+  it); returns `#err(#notAuthorized)` for an anonymous or unapproved caller and
+  `#err(#notFound(sourceId))` when the referenced source does not belong to
+  `familyId`. The candidate enters as `#Pending` and its stored `familyId` is
+  the requested `familyId`; approved candidates become canonical Person records
+  in that same family.
+- `listNewPersonCandidatesForFamily(familyId : Text) : async [NewPersonCandidate]` —
+  query. Active Steward of `familyId` only. Lists the New Person candidates of
+  `familyId`; candidates from other families are never included.
+- `getNewPersonCandidateForFamily(familyId : Text, candidateId : Nat) : async ?NewPersonCandidate` —
+  query. Active Steward of `familyId` only. Returns the candidate with
+  `candidateId` when it belongs to `familyId`, or `null` otherwise. A record
+  that exists under another family is never returned, so a `candidateId` alone
+  cannot cross the family boundary.
+- `approveNewPersonCandidateForFamily(familyId : Text, candidateId : Nat) : async ?NewPersonCandidate` —
+  update. Active Steward of `familyId` only; a Steward of another family cannot
+  approve the candidate. Approves a pending candidate in `familyId`, creating
+  exactly one canonical Person record (PersonProfile) in that same family
+  through the family-qualified profile storage, preserving the candidate's
+  Source/provenance, recording the approval in Audit History, and marking the
+  candidate `#Approved`. The new profile is unclaimed and living by default, and
+  its personId is generated so it never collides with a same-personId profile in
+  another family. Approving a candidate never auto-creates relationships.
+  Returns the updated candidate, or `null` when no pending candidate with that
+  id belongs to `familyId`.
+- `rejectNewPersonCandidateForFamily(familyId : Text, candidateId : Nat) : async ?NewPersonCandidate` —
+  update. Active Steward of `familyId` only. Rejects a pending candidate in
+  `familyId`, marking it `#Rejected`. No canonical Person is created; the
+  candidate and its audit trail are preserved. Returns the updated candidate, or
+  `null` when no pending candidate with that id belongs to `familyId`.
+- `needsResearchNewPersonCandidateForFamily(familyId : Text, candidateId : Nat) : async ?NewPersonCandidate` —
+  update. Active Steward of `familyId` only. Marks a pending candidate in
+  `familyId` as needing research, transitioning it to `#NeedsResearch` while
+  preserving the candidate. No canonical Person is created. Returns the updated
+  candidate, or `null` when no pending candidate with that id belongs to
+  `familyId`.
+
+Candidate duplicate detection is family-scoped. A candidate is compared only
+against canonical Person profiles whose `familyId` equals the candidate's own
+`familyId`, so a same name/person details in another family never blocks
+approval of a candidate in this family. Empty/missing comparison fields continue
+to follow the existing duplicate-profile rules: an empty candidate name never
+matches, and an empty candidate `details` constrains the match by name alone
+rather than matching every profile. The broader Duplicate Profiles Steward tool
+is unchanged by this scoping.
+
+The following single-family candidate endpoints are TEMPORARY Tenancy 1C
+compatibility wrappers. Each delegates to its family-scoped counterpart with the
+default family id (`\"norwood\"`), so current Norwood behavior is unchanged.
+
 - `approveNewPersonCandidate(id : Nat) : async ?NewPersonCandidate` — update.
   Family Steward only. Approves a pending New Person candidate, creating exactly
   one canonical Person record (PersonProfile) that preserves the candidate's
@@ -1272,10 +1338,12 @@ caller passes an explicit `familyId`.
   (`pending`, `approved`, `rejected`, `conflicting`, `needsResearch`) and the
   full list of reviewable items (`items`). The Sources section and every
   source-derived count are restricted to sources whose `familyId` equals
-  `familyId`, and the Findings section and every finding-derived count are
-  restricted to findings whose `familyId` equals `familyId`, so the queue never
-  mixes source or finding counts across families; the
-  remaining categories (Candidates, Relationships, Conflicts) keep
+  `familyId`, the Findings section and every finding-derived count are
+  restricted to findings whose `familyId` equals `familyId`, and the New Person
+  Candidates section and every candidate-derived count are restricted to
+  candidates whose `familyId` equals `familyId`, so the queue never mixes
+  source, finding, or candidate counts across families; the
+  remaining categories (Relationships, Conflicts) keep
   their existing aggregation behavior. Every pending item appears with its type,
   title/summary, contributor, provenance, created date, evidence label, and
   available steward actions. Because the queue exposes contributor principals,
@@ -1621,7 +1689,8 @@ Person), `newPersonCandidateId` (`Nat`, `0` when none), `status`, `conflictRevie
 text, `\"\"` when unreviewed), `reviewedAt` (`Int`, `0` when unreviewed), and
 `updatedAt` (`Int`). The nested `content` variant is not exposed (OQL has no
 variant value type); the `findingType` column carries the routing target.
-`newPersonCandidate` rows (primary key `id`, a `Nat`) carry `name`, `details`,
+`newPersonCandidate` rows (primary key `id`, a `Nat`) carry `familyId` (the
+owning family id, the tenant boundary), `name`, `details`,
 `sourceId`, `status`, `submittedBy` (principal text), `submittedAt` (`Int`),
 `reviewedBy` (principal text, `\"\"` when unreviewed), and `reviewedAt` (`Int`,
 `0` when unreviewed). `relationshipProposal` rows (primary key `id`, a `Nat`)
@@ -2327,10 +2396,14 @@ already reference the caller's stable principal (`requestingUserId`,
   Review item), `submittedBy` (`Principal`), `submittedAt` (`Int`), `reviewedBy`
   (`?Principal`, `null` when unreviewed), `reviewedAt` (`?Int`, `null` when
   unreviewed), and `updatedAt` (`Int`).
-- `NewPersonCandidate` fields: `id` (`Nat`), `name` (`Text`), `details` (`Text`),
+- `NewPersonCandidate` fields: `familyId` (`Text`, the tenant boundary — every
+  family-scoped read and review requires it to equal the requested `familyId`;
+  records created before this field existed are migrated to the default family
+  id `\"norwood\"`), `id` (`Nat`), `name` (`Text`), `details` (`Text`),
   `sourceId` (`SourceId`), `status` (`ReviewStatus`), `submittedBy`
   (`Principal`), `submittedAt` (`Int`), `reviewedBy` (`?Principal`), and
-  `reviewedAt` (`?Int`). Approved candidates become canonical Person records.
+  `reviewedAt` (`?Int`). Approved candidates become canonical Person records in
+  the candidate's own `familyId`.
 - `RelationshipProposal` fields: `id` (`Nat`), `fromPersonId` (`Text`),
   `toPersonId` (`Text`), `relationshipType` (`Text`), `sourceId` (`SourceId`),
   `status` (`ReviewStatus`), `submittedBy` (`Principal`), `submittedAt` (`Int`),

@@ -2,6 +2,7 @@ import Storage "mo:caffeineai-object-storage/Storage";
 import ArchiveTypes "../types/archive";
 import ResearchIntakeTypes "../types/research-intake";
 import BoardTypes "../types/board";
+import FamilyTypes "../types/family";
 
 module {
   /// A single new media upload attached to a board post. Uploading creates one
@@ -9,6 +10,7 @@ module {
   /// never duplicated. Existing Archive items are attached by id instead of
   /// re-uploading.
   public type BoardMediaUpload = {
+    familyId : FamilyTypes.FamilyId;
     title : Text;
     description : Text;
     itemType : ArchiveTypes.ArchiveItemType;

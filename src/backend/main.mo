@@ -43,7 +43,7 @@ import AccountIdentityApi "mixins/account-identity-api";
 import GovernanceApi "mixins/governance-api";
 import FamilyHistoryApi "mixins/family-history-api";
 import RecipesApi "mixins/recipes-api";
-import BoardApi "mixins/board-api";
+import BoardScopeApi "mixins/board-scope-api";
 import MessagingApi "mixins/messaging-api";
 import PendingCountApi "mixins/pending-count-api";
 import ResearchIntakeApi "mixins/research-intake-api";
@@ -775,6 +775,7 @@ actor {
         "postId",
       )
       .sample({
+        familyId = "norwood";
         postId = 0;
         authorAccountId = Principal.fromText("aaaaa-aa");
         authorPersonId = "";
@@ -789,6 +790,7 @@ actor {
         status = #Active;
         privacyScope = #FamilyOnly;
       })
+      .payload("familyId", func r = r.familyId)
       .payload("postId", func r = r.postId)
       .payload("authorAccountId", func r = r.authorAccountId.toText())
       .payload("authorPersonId", func r = r.authorPersonId)
@@ -811,6 +813,7 @@ actor {
         "replyId",
       )
       .sample({
+        familyId = "norwood";
         replyId = 0;
         postId = 0;
         authorAccountId = Principal.fromText("aaaaa-aa");
@@ -818,6 +821,7 @@ actor {
         body = "";
         createdAt = 0;
       })
+      .payload("familyId", func r = r.familyId)
       .payload("replyId", func r = r.replyId)
       .payload("postId", func r = r.postId)
       .payload("authorAccountId", func r = r.authorAccountId.toText())
@@ -1123,7 +1127,7 @@ actor {
   include GovernanceApi(accessControlState, profiles, confirmedRelationships, stewards, successors, removalRequests, auditLog, mergeConflicts, archivedProfiles, galleries, archiveItems, dismissedDuplicates);
   include FamilyHistoryApi(stories, mysteries, mysteryContributions, profiles, archiveItems, claims, stewards);
   include RecipesApi(recipes, profiles, claims, stewards);
-  include BoardApi(posts, replies, profiles, notifications, auditLog, stewards, claims);
+  include BoardScopeApi(posts, replies, profiles, notifications, auditLog, stewards, claims, archiveItems);
   include MessagingApi(conversations, messages, blocks, reports, profiles, archivedProfiles, notifications, accounts, stewards, claims);
   include PendingCountApi(accessControlState, archiveItems, recipes, stories, mysteryContributions, stewards, researchSources);
   include ResearchIntakeApi(researchSources, proposedFindings, newPersonCandidates, relationshipProposals, conflictReviewItems, researchAuditLog, researchState, profiles, stories, mysteries, archiveItems, notifications, claims, stewards);

@@ -13,6 +13,7 @@ import OwnershipTypes "../types/ownership";
 import GovernanceTypes "../types/governance";
 import Types "../types/archive-research-board-notifications";
 import Lib "../lib/archive-research-board-notifications";
+import ArchiveLib "../lib/archive";
 import FamilyAuthorizationLib "../lib/family-authorization";
 import StewardAuthorityLib "../lib/steward-authority";
 import InputValidation "../lib/input-validation";
@@ -328,6 +329,14 @@ mixin (
     requireRelatedPeopleInFamily(cleanRelated, familyId);
     InputValidation.requireArraySize("newUploads", newUploads.size(), InputValidation.MAX_BOARD_ATTACHMENTS);
     InputValidation.requireArraySize("existingArchiveItemIds", existingArchiveItemIds.size(), InputValidation.MAX_MEDIA_ITEMS_PER_CALL);
+    // Every existing Archive item attached by id must belong to the requested
+    // family: Family A may never attach Family B media. The denial message
+    // carries no family id or principal.
+    for (archiveItemId in existingArchiveItemIds.values()) {
+      if (archiveItems.find(func it = it.id == archiveItemId and ArchiveLib.belongsToFamily(it, familyId)) == null) {
+        Runtime.trap("Unauthorized: Linked media must belong to the same family");
+      };
+    };
     // Validate every new upload before any of them is stored. The itemType is
     // not trusted on its own: the declared MIME type must be allowed both for
     // the board attachment surface and for the surface the itemType selects, so
@@ -361,6 +370,7 @@ mixin (
       });
     };
     let post : BoardTypes.Post = {
+      familyId = familyId;
       postId = nextPostId();
       authorAccountId = caller;
       authorPersonId = caller.toText();

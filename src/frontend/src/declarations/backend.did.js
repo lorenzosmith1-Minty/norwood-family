@@ -70,12 +70,14 @@ export const PostId = IDL.Nat;
 export const AccountId = IDL.Principal;
 export const Timestamp = IDL.Int;
 export const ReplyId = IDL.Nat;
+export const FamilyId = IDL.Text;
 export const Reply = IDL.Record({
   'authorAccountId' : AccountId,
   'body' : IDL.Text,
   'createdAt' : Timestamp,
   'authorPersonId' : PersonId,
   'replyId' : ReplyId,
+  'familyId' : FamilyId,
   'postId' : PostId,
 });
 export const EvidenceStatus = IDL.Variant({
@@ -115,7 +117,6 @@ export const Photo = IDL.Record({
   'uploadedAt' : IDL.Int,
   'uploadedBy' : IDL.Principal,
 });
-export const FamilyId = IDL.Text;
 export const RelationshipType = IDL.Variant({
   'Parent' : IDL.Null,
   'Sibling' : IDL.Null,
@@ -440,6 +441,7 @@ export const Post = IDL.Record({
   'privacyScope' : PrivacyScope,
   'authorPersonId' : PersonId,
   'updatedAt' : Timestamp,
+  'familyId' : FamilyId,
   'relatedPersonIds' : IDL.Vec(PersonId),
   'postId' : PostId,
 });
@@ -508,6 +510,7 @@ export const BoardMediaUpload = IDL.Record({
   'primarySpeaker' : IDL.Opt(OralHistorySpeaker),
   'itemType' : ArchiveItemType,
   'relatedBranchId' : IDL.Opt(IDL.Text),
+  'familyId' : FamilyId,
   'sourceStatus' : SourceStatus,
   'classification' : ArchiveItemClassification,
 });
@@ -1107,6 +1110,11 @@ export const idlService = IDL.Service({
   '_internet_identity_sign_in_start' : IDL.Func([], [IDL.Vec(IDL.Nat8)], []),
   'activateSuccessor' : IDL.Func([PersonId], [Result_10], []),
   'addBoardReply' : IDL.Func([PostId, IDL.Text], [Reply], []),
+  'addBoardReplyForFamily' : IDL.Func(
+      [FamilyId, PostId, IDL.Text],
+      [Reply],
+      [],
+    ),
   'addCanonicalStory' : IDL.Func(
       [
         IDL.Text,
@@ -1198,6 +1206,11 @@ export const idlService = IDL.Service({
     ),
   'approveStory' : IDL.Func([StoryId], [IDL.Opt(Story)], []),
   'archiveBoardPost' : IDL.Func([PostId], [IDL.Opt(Post)], []),
+  'archiveBoardPostForFamily' : IDL.Func(
+      [FamilyId, PostId],
+      [IDL.Opt(Post)],
+      [],
+    ),
   'archiveProfile' : IDL.Func([PersonId], [Result_2], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
   'bindAuthMethod' : IDL.Func([AuthMethod], [Result_25], []),
@@ -1217,6 +1230,19 @@ export const idlService = IDL.Service({
     ),
   'createBoardPost' : IDL.Func(
       [
+        PostType,
+        IDL.Opt(IDL.Text),
+        IDL.Text,
+        IDL.Vec(IDL.Text),
+        IDL.Vec(IDL.Nat),
+        IDL.Vec(IDL.Text),
+      ],
+      [Post],
+      [],
+    ),
+  'createBoardPostForFamily' : IDL.Func(
+      [
+        FamilyId,
         PostType,
         IDL.Opt(IDL.Text),
         IDL.Text,
@@ -1371,6 +1397,11 @@ export const idlService = IDL.Service({
       ['query'],
     ),
   'getBoardPost' : IDL.Func([PostId], [IDL.Opt(Post)], ['query']),
+  'getBoardPostForFamily' : IDL.Func(
+      [FamilyId, PostId],
+      [IDL.Opt(Post)],
+      ['query'],
+    ),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
   'getConflictReviewItemForFamily' : IDL.Func(
       [FamilyId, IDL.Nat],
@@ -1511,7 +1542,17 @@ export const idlService = IDL.Service({
   'listAuditHistory' : IDL.Func([], [IDL.Vec(AuditEntry)], ['query']),
   'listBlockedUsers' : IDL.Func([], [IDL.Vec(IDL.Principal)], ['query']),
   'listBoardPosts' : IDL.Func([IDL.Opt(PostType)], [IDL.Vec(Post)], ['query']),
+  'listBoardPostsForFamily' : IDL.Func(
+      [FamilyId, IDL.Opt(PostType)],
+      [IDL.Vec(Post)],
+      ['query'],
+    ),
   'listBoardReplies' : IDL.Func([PostId], [IDL.Vec(Reply)], ['query']),
+  'listBoardRepliesForFamily' : IDL.Func(
+      [FamilyId, PostId],
+      [IDL.Vec(Reply)],
+      ['query'],
+    ),
   'listClaimDiscoveryProfilesForFamily' : IDL.Func(
       [FamilyId],
       [IDL.Vec(PersonProfile)],
@@ -1571,6 +1612,11 @@ export const idlService = IDL.Service({
       ['query'],
     ),
   'listHiddenBoardPosts' : IDL.Func([], [IDL.Vec(Post)], ['query']),
+  'listHiddenBoardPostsForFamily' : IDL.Func(
+      [FamilyId],
+      [IDL.Vec(Post)],
+      ['query'],
+    ),
   'listMessageableMembers' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
   'listMysteries' : IDL.Func([], [IDL.Vec(Mystery)], ['query']),
   'listNewPersonCandidates' : IDL.Func(
@@ -1796,6 +1842,11 @@ export const idlService = IDL.Service({
     ),
   'rejectStory' : IDL.Func([StoryId], [IDL.Opt(Story)], []),
   'removeBoardReply' : IDL.Func([ReplyId], [IDL.Opt(Reply)], []),
+  'removeBoardReplyForFamily' : IDL.Func(
+      [FamilyId, ReplyId],
+      [IDL.Opt(Reply)],
+      [],
+    ),
   'removeDuplicateProfile' : IDL.Func([PersonId], [Result_8], []),
   'removeDuplicateProfileForFamily' : IDL.Func(
       [FamilyId, PersonId],
@@ -1834,6 +1885,11 @@ export const idlService = IDL.Service({
       [],
     ),
   'restoreBoardPost' : IDL.Func([PostId], [IDL.Opt(Post)], []),
+  'restoreBoardPostForFamily' : IDL.Func(
+      [FamilyId, PostId],
+      [IDL.Opt(Post)],
+      [],
+    ),
   'restoreProfile' : IDL.Func([PersonId], [Result_2], []),
   'reviewMysteryContribution' : IDL.Func(
       [MysteryContributionId, IDL.Bool],
@@ -1854,6 +1910,11 @@ export const idlService = IDL.Service({
     ),
   'searchBoardPostsByTags' : IDL.Func(
       [IDL.Vec(IDL.Text)],
+      [IDL.Vec(Post)],
+      ['query'],
+    ),
+  'searchBoardPostsByTagsForFamily' : IDL.Func(
+      [FamilyId, IDL.Vec(IDL.Text)],
       [IDL.Vec(Post)],
       ['query'],
     ),
@@ -1981,6 +2042,20 @@ export const idlService = IDL.Service({
       [IDL.Opt(Post)],
       [],
     ),
+  'updateBoardPostForFamily' : IDL.Func(
+      [
+        FamilyId,
+        PostId,
+        PostType,
+        IDL.Opt(IDL.Text),
+        IDL.Text,
+        IDL.Vec(IDL.Text),
+        IDL.Vec(IDL.Nat),
+        IDL.Vec(IDL.Text),
+      ],
+      [IDL.Opt(Post)],
+      [],
+    ),
   'updateCanonicalMystery' : IDL.Func(
       [
         MysteryId,
@@ -2082,12 +2157,14 @@ export const idlFactory = ({ IDL }) => {
   const AccountId = IDL.Principal;
   const Timestamp = IDL.Int;
   const ReplyId = IDL.Nat;
+  const FamilyId = IDL.Text;
   const Reply = IDL.Record({
     'authorAccountId' : AccountId,
     'body' : IDL.Text,
     'createdAt' : Timestamp,
     'authorPersonId' : PersonId,
     'replyId' : ReplyId,
+    'familyId' : FamilyId,
     'postId' : PostId,
   });
   const EvidenceStatus = IDL.Variant({
@@ -2127,7 +2204,6 @@ export const idlFactory = ({ IDL }) => {
     'uploadedAt' : IDL.Int,
     'uploadedBy' : IDL.Principal,
   });
-  const FamilyId = IDL.Text;
   const RelationshipType = IDL.Variant({
     'Parent' : IDL.Null,
     'Sibling' : IDL.Null,
@@ -2452,6 +2528,7 @@ export const idlFactory = ({ IDL }) => {
     'privacyScope' : PrivacyScope,
     'authorPersonId' : PersonId,
     'updatedAt' : Timestamp,
+    'familyId' : FamilyId,
     'relatedPersonIds' : IDL.Vec(PersonId),
     'postId' : PostId,
   });
@@ -2517,6 +2594,7 @@ export const idlFactory = ({ IDL }) => {
     'primarySpeaker' : IDL.Opt(OralHistorySpeaker),
     'itemType' : ArchiveItemType,
     'relatedBranchId' : IDL.Opt(IDL.Text),
+    'familyId' : FamilyId,
     'sourceStatus' : SourceStatus,
     'classification' : ArchiveItemClassification,
   });
@@ -3095,6 +3173,11 @@ export const idlFactory = ({ IDL }) => {
     '_internet_identity_sign_in_start' : IDL.Func([], [IDL.Vec(IDL.Nat8)], []),
     'activateSuccessor' : IDL.Func([PersonId], [Result_10], []),
     'addBoardReply' : IDL.Func([PostId, IDL.Text], [Reply], []),
+    'addBoardReplyForFamily' : IDL.Func(
+        [FamilyId, PostId, IDL.Text],
+        [Reply],
+        [],
+      ),
     'addCanonicalStory' : IDL.Func(
         [
           IDL.Text,
@@ -3190,6 +3273,11 @@ export const idlFactory = ({ IDL }) => {
       ),
     'approveStory' : IDL.Func([StoryId], [IDL.Opt(Story)], []),
     'archiveBoardPost' : IDL.Func([PostId], [IDL.Opt(Post)], []),
+    'archiveBoardPostForFamily' : IDL.Func(
+        [FamilyId, PostId],
+        [IDL.Opt(Post)],
+        [],
+      ),
     'archiveProfile' : IDL.Func([PersonId], [Result_2], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
     'bindAuthMethod' : IDL.Func([AuthMethod], [Result_25], []),
@@ -3209,6 +3297,19 @@ export const idlFactory = ({ IDL }) => {
       ),
     'createBoardPost' : IDL.Func(
         [
+          PostType,
+          IDL.Opt(IDL.Text),
+          IDL.Text,
+          IDL.Vec(IDL.Text),
+          IDL.Vec(IDL.Nat),
+          IDL.Vec(IDL.Text),
+        ],
+        [Post],
+        [],
+      ),
+    'createBoardPostForFamily' : IDL.Func(
+        [
+          FamilyId,
           PostType,
           IDL.Opt(IDL.Text),
           IDL.Text,
@@ -3363,6 +3464,11 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'getBoardPost' : IDL.Func([PostId], [IDL.Opt(Post)], ['query']),
+    'getBoardPostForFamily' : IDL.Func(
+        [FamilyId, PostId],
+        [IDL.Opt(Post)],
+        ['query'],
+      ),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
     'getConflictReviewItemForFamily' : IDL.Func(
         [FamilyId, IDL.Nat],
@@ -3511,7 +3617,17 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(Post)],
         ['query'],
       ),
+    'listBoardPostsForFamily' : IDL.Func(
+        [FamilyId, IDL.Opt(PostType)],
+        [IDL.Vec(Post)],
+        ['query'],
+      ),
     'listBoardReplies' : IDL.Func([PostId], [IDL.Vec(Reply)], ['query']),
+    'listBoardRepliesForFamily' : IDL.Func(
+        [FamilyId, PostId],
+        [IDL.Vec(Reply)],
+        ['query'],
+      ),
     'listClaimDiscoveryProfilesForFamily' : IDL.Func(
         [FamilyId],
         [IDL.Vec(PersonProfile)],
@@ -3579,6 +3695,11 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'listHiddenBoardPosts' : IDL.Func([], [IDL.Vec(Post)], ['query']),
+    'listHiddenBoardPostsForFamily' : IDL.Func(
+        [FamilyId],
+        [IDL.Vec(Post)],
+        ['query'],
+      ),
     'listMessageableMembers' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
     'listMysteries' : IDL.Func([], [IDL.Vec(Mystery)], ['query']),
     'listNewPersonCandidates' : IDL.Func(
@@ -3812,6 +3933,11 @@ export const idlFactory = ({ IDL }) => {
       ),
     'rejectStory' : IDL.Func([StoryId], [IDL.Opt(Story)], []),
     'removeBoardReply' : IDL.Func([ReplyId], [IDL.Opt(Reply)], []),
+    'removeBoardReplyForFamily' : IDL.Func(
+        [FamilyId, ReplyId],
+        [IDL.Opt(Reply)],
+        [],
+      ),
     'removeDuplicateProfile' : IDL.Func([PersonId], [Result_8], []),
     'removeDuplicateProfileForFamily' : IDL.Func(
         [FamilyId, PersonId],
@@ -3850,6 +3976,11 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'restoreBoardPost' : IDL.Func([PostId], [IDL.Opt(Post)], []),
+    'restoreBoardPostForFamily' : IDL.Func(
+        [FamilyId, PostId],
+        [IDL.Opt(Post)],
+        [],
+      ),
     'restoreProfile' : IDL.Func([PersonId], [Result_2], []),
     'reviewMysteryContribution' : IDL.Func(
         [MysteryContributionId, IDL.Bool],
@@ -3870,6 +4001,11 @@ export const idlFactory = ({ IDL }) => {
       ),
     'searchBoardPostsByTags' : IDL.Func(
         [IDL.Vec(IDL.Text)],
+        [IDL.Vec(Post)],
+        ['query'],
+      ),
+    'searchBoardPostsByTagsForFamily' : IDL.Func(
+        [FamilyId, IDL.Vec(IDL.Text)],
         [IDL.Vec(Post)],
         ['query'],
       ),
@@ -3986,6 +4122,20 @@ export const idlFactory = ({ IDL }) => {
     'unblockUser' : IDL.Func([IDL.Principal], [], []),
     'updateBoardPost' : IDL.Func(
         [
+          PostId,
+          PostType,
+          IDL.Opt(IDL.Text),
+          IDL.Text,
+          IDL.Vec(IDL.Text),
+          IDL.Vec(IDL.Nat),
+          IDL.Vec(IDL.Text),
+        ],
+        [IDL.Opt(Post)],
+        [],
+      ),
+    'updateBoardPostForFamily' : IDL.Func(
+        [
+          FamilyId,
           PostId,
           PostType,
           IDL.Opt(IDL.Text),

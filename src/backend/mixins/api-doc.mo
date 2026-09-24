@@ -903,6 +903,82 @@ stays readable.
 
 ### Family Message Board
 
+The board is family-scoped. Every canonical endpoint takes an explicit
+`familyId` as its first argument and only ever reads or mutates a post or reply
+whose `familyId` equals it, so a `postId` or `replyId` alone never crosses a
+family boundary: a foreign-family id behaves exactly like a not-found id. The
+legacy no-`familyId` endpoints listed after the canonical ones are TEMPORARY
+Tenancy 1C compatibility wrappers that delegate with the default Norwood family
+(`\"norwood\"`); they contain no logic of their own and will be removed in a
+later build once every caller passes an explicit `familyId`.
+
+Authorization model: reads and creation require an approved member of `familyId`
+(a caller holding at least one `#Approved` profile claim in that family) or an
+active Steward of `familyId`; Steward-only actions are `listHiddenBoardPostsForFamily`,
+`restoreBoardPostForFamily`, and `removeBoardReplyForFamily`; `updateBoardPostForFamily`
+is author-only (the caller must be the post's `authorAccountId`); and
+`archiveBoardPostForFamily` is allowed for the post author or an active Steward
+of `familyId`. A Steward of one family can never moderate another family's
+board.
+
+Board gotchas:
+
+- The family boundary is enforced by `record.familyId`, never by `postId` or
+  `replyId` alone. A lookup that finds a record belonging to another family
+  behaves exactly like a lookup that found nothing: the single-record reads
+  (`getBoardPostForFamily`) return the existing safe not-found `?null` rather
+  than a distinct error, and the mutations return `null` (or, for
+  `addBoardReplyForFamily`, trap with `\"Post not found\"`) without touching the
+  foreign record.
+- Every related person reference (`relatedPersonIds`) and every linked media id
+  (`linkedMediaIds`, `existingArchiveItemIds`, and each new upload's
+  `relatedMemberIds`) must belong to the same `familyId`; a foreign-family
+  reference traps with `\"Unauthorized: Related family members must belong to the
+  same family\"` or `\"Unauthorized: Linked media must belong to the same family\"`
+  and stores nothing.
+- Family ids and principals are never exposed in user-facing errors. The
+  membership and media denials carry only the stable, non-technical messages
+  above, with no family id or principal detail.
+
+Canonical family-scoped endpoints:
+
+- `listBoardPostsForFamily(familyId : FamilyId, filter : ?PostType) : async [Post]` —
+  query. Approved members of `familyId` only. Returns active posts in `familyId`,
+  newest first, optionally filtered by post type.
+- `searchBoardPostsByTagsForFamily(familyId : FamilyId, tags : [Text]) : async [Post]` —
+  query. Approved members of `familyId` only. Returns active posts in `familyId`
+  carrying ANY of the given tags.
+- `getBoardPostForFamily(familyId : FamilyId, postId : PostId) : async ?Post` —
+  query. Approved members of `familyId` only. Returns the active post when it
+  belongs to `familyId`, or `null` otherwise (including when it exists under
+  another family).
+- `listHiddenBoardPostsForFamily(familyId : FamilyId) : async [Post]` — query.
+  Active Steward of `familyId` only. Returns hidden (moderated) posts in
+  `familyId`.
+- `listBoardRepliesForFamily(familyId : FamilyId, postId : PostId) : async [Reply]` —
+  query. Approved members of `familyId` only. Returns the replies to a post in
+  `familyId`, chronologically; `[]` when the parent post does not belong to
+  `familyId`.
+- `createBoardPostForFamily(familyId : FamilyId, postType : PostType, title : ?Text, body : Text, relatedPersonIds : [Text], linkedMediaIds : [Nat], tags : [Text]) : async Post` —
+  update. Approved members or Stewards of `familyId` only. Creates a post whose
+  `familyId` is `familyId`; every related person and every linked media id must
+  belong to `familyId`. Creates mention notifications as before.
+- `updateBoardPostForFamily(familyId : FamilyId, postId : PostId, postType : PostType, title : ?Text, body : Text, relatedPersonIds : [Text], linkedMediaIds : [Nat], tags : [Text]) : async ?Post` —
+  update. Approved members of `familyId` only; the caller must be the post
+  author. Returns the updated post, or `null` when no post with that id belongs
+  to `familyId`.
+- `archiveBoardPostForFamily(familyId : FamilyId, postId : PostId) : async ?Post` —
+  update. The post author or an active Steward of `familyId` may archive.
+- `restoreBoardPostForFamily(familyId : FamilyId, postId : PostId) : async ?Post` —
+  update. Active Steward of `familyId` only.
+- `addBoardReplyForFamily(familyId : FamilyId, postId : PostId, body : Text) : async Reply` —
+  update. Approved members of `familyId` only. The parent post must belong to
+  `familyId`; the new reply's `familyId` is `familyId`.
+- `removeBoardReplyForFamily(familyId : FamilyId, replyId : ReplyId) : async ?Reply` —
+  update. Active Steward of `familyId` only.
+
+TEMPORARY Tenancy 1C compatibility wrappers (default Norwood family only):
+
 - `listBoardPosts(filter : ?PostType) : async [Post]` — query. Approved family
   members only. Returns all active board posts, newest first, optionally filtered
   by post type. Archived posts are never returned.
@@ -1553,10 +1629,20 @@ no business logic of their own.
   `#err(#invalidState(\"A primary speaker is only allowed on Oral History items\"))`
   when present). The result carries both the created `source` and the
   canonical `archiveItem`.
+- `createBoardPostWithMediaForFamily(familyId : FamilyId, postType : PostType, title : ?Text, body : Text, relatedPersonIds : [Text], existingArchiveItemIds : [Nat], newUploads : [BoardMediaUpload], tags : [Text]) : async Post` —
+  update. Canonical family-scoped form of `createBoardPostWithMedia`. Creates a
+  board post whose `familyId` is `familyId`, attaching existing Archive items (by
+  id, no re-upload) and/or new uploads, all scoped to `familyId`. Every related
+  person, every existing Archive item id, and every new upload's related people
+  must belong to `familyId`; a foreign-family id traps with `\"Unauthorized:
+  Linked media must belong to the same family\"`. Approved members or Stewards of
+  `familyId` only.
 - `createBoardPostWithMedia(postType : PostType, title : ?Text, body : Text, relatedPersonIds : [Text], existingArchiveItemIds : [Nat], newUploads : [BoardMediaUpload]) : async Post` —
-  update. Creates a board post that attaches existing Archive items (by id, no
-  re-upload) and/or new uploads. Each `newUploads` entry creates exactly ONE
-  canonical Archive item (in `#Pending` state) linked to the post; the
+  update. TEMPORARY Tenancy 1C compatibility wrapper for
+  `createBoardPostWithMediaForFamily`; delegates with the default Norwood family
+  (`\"norwood\"`). Creates a board post that attaches existing Archive items (by
+  id, no re-upload) and/or new uploads. Each `newUploads` entry creates exactly
+  ONE canonical Archive item (in `#Pending` state) linked to the post; the
   underlying file is never duplicated. Each upload's validated MIME type and
   sanitized `filename` are persisted on the created Archive item as `mimeType`
   and `filename`. Existing Archive items are attached by
@@ -1716,7 +1802,8 @@ as counts since OQL has no array value type. The reserved future-ready fields
 exposed.
 
 The board entities are flattened views of the corresponding records.
-`boardPost` rows (primary key `postId`, a `Nat`) carry `authorAccountId` (the
+`boardPost` rows (primary key `postId`, a `Nat`) carry `familyId` (the owning
+family id, the tenant boundary), `authorAccountId` (the
 author's account principal rendered as text), `authorPersonId` (the canonical
 Person id of the author), `title` (`\"\"` when absent), `body`, `postType`
 (`\"General\"`/`\"Announcement\"`/`\"FamilyQuestion\"`/`\"ResearchHistory\"`/`\"PhotoIdentification\"`/`\"Recipe\"`/`\"ReunionEvent\"`/`\"Memorial\"`/`\"Other\"`),
@@ -1728,8 +1815,15 @@ tags), `createdAt`
 (`\"Active\"`/`\"Archived\"`), and `privacyScope` (`\"FamilyOnly\"`). The
 array-valued fields (`relatedPersonIds`, `linkedMediaIds`) are exposed as counts
 since OQL has no array value type. `boardReply` rows (primary key `replyId`, a
-`Nat`) carry `postId`, `authorAccountId` (principal text), `authorPersonId`,
-`body`, and `createdAt` (`Int`).
+`Nat`) carry `familyId` (the owning family id, the tenant boundary), `postId`,
+`authorAccountId` (principal text), `authorPersonId`,
+`body`, and `createdAt` (`Int`). Both board entities are `.controllerOnly()`, so
+only the platform controller reads their rows through `schema()`/`execute()`.
+Board media/attachments are not a separate collection: a board post's
+attachments are canonical Archive items referenced by `linkedMediaIds`, exposed
+through the `archiveItem` entity (which carries `familyId`). Board moderation
+actions (archive/restore post, remove reply) are recorded in the shared
+governance `auditLog` entity, not a separate board-owned collection.
 
 The messaging entities are flattened views of the corresponding records.
 `conversation` rows (primary key `conversationId`, a `Nat`) carry

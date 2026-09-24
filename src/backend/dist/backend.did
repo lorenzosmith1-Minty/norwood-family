@@ -432,6 +432,7 @@ type Reply =
    authorPersonId: PersonId;
    body: text;
    createdAt: Timestamp;
+   familyId: FamilyId;
    postId: PostId;
    replyId: ReplyId;
  };
@@ -654,6 +655,7 @@ type Post =
    authorPersonId: PersonId;
    body: text;
    createdAt: Timestamp;
+   familyId: FamilyId;
    linkedMediaIds: vec nat;
    postId: PostId;
    postType: PostType;
@@ -1098,6 +1100,7 @@ type BoardMediaUpload =
    classification: ArchiveItemClassification;
    description: text;
    era: text;
+   familyId: FamilyId;
    filename: text;
    itemType: ArchiveItemType;
    mimeType: text;
@@ -1256,9 +1259,15 @@ service : {
   /// Activates/promotes a designated successor into the active steward role.
   /// Family Steward only.
   activateSuccessor: (personId: PersonId) -> (Result_10);
-  /// Adds a one-level reply to a board post. Approved family members only.
-  /// Creates a reply notification for the post author.
+  /// TEMPORARY Tenancy 1C compatibility wrapper for `addBoardReplyForFamily`.
   addBoardReply: (postId: PostId, body: text) -> (Reply);
+  /// Adds a one-level reply to a board post in `familyId`. Approved members of
+  /// `familyId` only. The parent post must belong to `familyId` and the new
+  /// reply's `familyId` is the requested `familyId`, so a Family B post can
+  /// never be replied to through a Family A context. Creates a reply
+  /// notification for the post author.
+  addBoardReplyForFamily: (familyId: FamilyId, postId: PostId, body: 
+   text) -> (Reply);
   /// Adds a canonical story directly (steward only), already approved.
   addCanonicalStory: (title: text, storyText: text, relatedMemberIds:
    vec text, era: opt text, year: opt nat, location: opt text,
@@ -1363,9 +1372,13 @@ service : {
   /// Approves a pending story (steward only). Returns the updated story, or
   /// `null` when the story does not exist or is not pending.
   approveStory: (id: StoryId) -> (opt Story);
-  /// Archives (hides) a board post. The author or a Family Steward may archive.
-  /// Governance actions create audit entries.
+  /// TEMPORARY Tenancy 1C compatibility wrapper for `archiveBoardPostForFamily`.
   archiveBoardPost: (postId: PostId) -> (opt Post);
+  /// Archives (hides) a board post in `familyId`. The author or an active
+  /// Steward of `familyId` may archive. A post in another family is never
+  /// touched. Governance actions create audit entries.
+  archiveBoardPostForFamily: (familyId: FamilyId, postId: PostId) ->
+   (opt Post);
   /// Archives a profile, removing it from normal family browsing while
   /// preserving relationships, media, timeline, sources, and ownership history.
   /// Family Steward only.
@@ -1402,13 +1415,19 @@ service : {
   /// only.
   correctRelationshipType: (relationshipId: nat, relationshipType:
    RelationshipType) -> (Result_23);
-  /// Creates a board post with a type, optional title, body, related family
-  /// members, optional linked existing Archive/media ids, and free-form tags.
-  /// Approved family members only. Creates a mention notification for related
-  /// members where appropriate.
+  /// TEMPORARY Tenancy 1C compatibility wrapper for `createBoardPostForFamily`.
   createBoardPost: (postType: PostType, title: opt text, body: text,
    relatedPersonIds: vec text, linkedMediaIds: vec nat, tags: vec text) ->
    (Post);
+  /// Creates a board post in `familyId` with a type, optional title, body,
+  /// related family members, optional linked existing Archive/media ids, and
+  /// free-form tags. Approved members or Stewards of `familyId` only. The new
+  /// post's `familyId` is the requested `familyId`; every related person and
+  /// every linked media id must belong to `familyId`. Creates a mention
+  /// notification for related members where appropriate.
+  createBoardPostForFamily: (familyId: FamilyId, postType: PostType, title:
+   opt text, body: text, relatedPersonIds: vec text, linkedMediaIds: 
+   vec nat, tags: vec text) -> (Post);
   /// TEMPORARY Tenancy 1C compatibility wrapper for
   /// `createBoardPostWithMediaForFamily`. Deprecated single-family form:
   /// delegates to the canonical family-scoped endpoint with
@@ -1514,8 +1533,14 @@ service : {
   /// `archiveItemId` alone cannot cross the family boundary.
   getArchiveItemForFamily: (familyId: FamilyId, id: ArchiveItemId) ->
    (opt ArchiveItem) query;
-  /// Returns a single active board post by id. Approved family members only.
+  /// TEMPORARY Tenancy 1C compatibility wrapper for `getBoardPostForFamily`.
   getBoardPost: (postId: PostId) -> (opt Post) query;
+  /// Returns a single active board post by id when it belongs to `familyId`.
+  /// Approved members of `familyId` only. A post that exists under another
+  /// family is never returned, so a `postId` alone cannot cross the family
+  /// boundary.
+  getBoardPostForFamily: (familyId: FamilyId, postId: PostId) ->
+   (opt Post) query;
   getCallerUserRole: () -> (UserRole) query;
   /// Returns the conflict with `conflictId` when it belongs to `familyId`, or
   /// `null` otherwise. Requires an active Steward of `familyId`, matching the
@@ -1721,12 +1746,23 @@ service : {
   listAuditHistory: () -> (vec AuditEntry) query;
   /// Lists the account ids the caller has blocked. Approved family members only.
   listBlockedUsers: () -> (vec principal) query;
-  /// Lists active board posts, newest first, optionally filtered by post type.
-  /// Approved family members only.
+  /// TEMPORARY Tenancy 1C compatibility wrapper for `listBoardPostsForFamily`.
   listBoardPosts: (filter: opt PostType) -> (vec Post) query;
-  /// Lists the replies to a board post, chronologically. Approved family members
-  /// only.
+  /// Lists active board posts in `familyId`, newest first, optionally filtered
+  /// by post type. Approved members of `familyId` only. A post whose `familyId`
+  /// differs is never returned, so Family A posts never appear in a Family B
+  /// call.
+  listBoardPostsForFamily: (familyId: FamilyId, filter: opt PostType) ->
+   (vec Post) query;
+  /// TEMPORARY Tenancy 1C compatibility wrapper for
+  /// `listBoardRepliesForFamily`.
   listBoardReplies: (postId: PostId) -> (vec Reply) query;
+  /// Lists the replies to a board post in `familyId`, chronologically. Approved
+  /// members of `familyId` only. The parent post must belong to `familyId` and
+  /// every returned reply must carry `familyId` too, so a `postId` alone cannot
+  /// cross the family boundary.
+  listBoardRepliesForFamily: (familyId: FamilyId, postId: PostId) ->
+   (vec Reply) query;
   /// Public claim-discovery read: minimal profile data for `familyId` only,
   /// preserving the existing minimal-data behavior.
   listClaimDiscoveryProfilesForFamily: (familyId: FamilyId) ->
@@ -1790,10 +1826,13 @@ service : {
   /// finding whose `familyId` differs is never returned, so Family A findings
   /// never appear in a Family B call.
   listFindingsForFamily: (familyId: FamilyId) -> (vec ProposedFinding) query;
-  /// Lists all hidden (moderated) board posts for the Steward-only Hidden /
-  /// Moderated Posts view. Family Steward only. Hidden posts are preserved with
-  /// their replies and attachments and are never permanently deleted.
+  /// TEMPORARY Tenancy 1C compatibility wrapper for
+  /// `listHiddenBoardPostsForFamily`.
   listHiddenBoardPosts: () -> (vec Post) query;
+  /// Lists all hidden (moderated) board posts in `familyId` for the Steward-only
+  /// Hidden/Moderated Posts view. Active Steward of `familyId` only. A post
+  /// whose `familyId` differs is never returned.
+  listHiddenBoardPostsForFamily: (familyId: FamilyId) -> (vec Post) query;
   /// Returns the person ids of every other member the signed-in caller may
   /// message: living, claimed, linked to an active account, not archived, and
   /// not the caller. Not gated to stewards — any approved member may read it, so
@@ -2051,9 +2090,14 @@ service : {
   /// Rejects a pending story (steward only). Returns the updated story, or
   /// `null` when the story does not exist or is not pending.
   rejectStory: (id: StoryId) -> (opt Story);
-  /// Removes a reply. Family Steward only. Governance actions create audit
-  /// entries.
+  /// TEMPORARY Tenancy 1C compatibility wrapper for
+  /// `removeBoardReplyForFamily`.
   removeBoardReply: (replyId: ReplyId) -> (opt Reply);
+  /// Removes a reply in `familyId`. Active Steward of `familyId` only. A reply
+  /// in another family is never touched, so a `replyId` alone cannot cross the
+  /// family boundary. Governance actions create audit entries.
+  removeBoardReplyForFamily: (familyId: FamilyId, replyId: ReplyId) ->
+   (opt Reply);
   /// TEMPORARY Tenancy 1C compatibility wrapper for
   /// `removeDuplicateProfileForFamily`.
   removeDuplicateProfile: (personId: PersonId) -> (Result_8);
@@ -2108,9 +2152,13 @@ service : {
   /// Steward only.
   resolveMergeConflict: (conflictId: nat, canonicalValue: text) ->
    (opt MergeConflict);
-  /// Restores an archived board post. Family Steward only. Governance actions
-  /// create audit entries.
+  /// TEMPORARY Tenancy 1C compatibility wrapper for `restoreBoardPostForFamily`.
   restoreBoardPost: (postId: PostId) -> (opt Post);
+  /// Restores an archived board post in `familyId`. Active Steward of `familyId`
+  /// only. A post in another family is never touched. Governance actions create
+  /// audit entries.
+  restoreBoardPostForFamily: (familyId: FamilyId, postId: PostId) ->
+   (opt Post);
   /// Restores an archived profile to normal family browsing. Family Steward
   /// only.
   restoreProfile: (personId: PersonId) -> (Result_2);
@@ -2136,9 +2184,14 @@ service : {
   /// archive privacy rules.
   searchArchiveItemsForFamily: (familyId: FamilyId, filter:
    ArchiveSearchQuery) -> (vec ArchiveItem) query;
-  /// Lists active board posts that carry ANY of the given tags. Approved family
-  /// members only.
+  /// TEMPORARY Tenancy 1C compatibility wrapper for
+  /// `searchBoardPostsByTagsForFamily`.
   searchBoardPostsByTags: (tags: vec text) -> (vec Post) query;
+  /// Lists active board posts in `familyId` that carry ANY of the given tags.
+  /// Approved members of `familyId` only. Only posts whose `familyId` equals
+  /// `familyId` are considered.
+  searchBoardPostsByTagsForFamily: (familyId: FamilyId, tags: vec text) ->
+   (vec Post) query;
   /// TEMPORARY Tenancy 1C compatibility wrapper for
   /// `searchPossibleMatchesForFamily`.
   searchPossibleMatches: (name: text) -> (vec PersonMatch) query;
@@ -2213,11 +2266,17 @@ service : {
   /// Unblocks another member, allowing them to message the caller again.
   /// Approved family members only.
   unblockUser: (blockedAccountId: principal) -> ();
-  /// Updates the caller's own board post. Approved family members only; the
-  /// caller must be the post author.
+  /// TEMPORARY Tenancy 1C compatibility wrapper for `updateBoardPostForFamily`.
   updateBoardPost: (postId: PostId, postType: PostType, title: opt text,
    body: text, relatedPersonIds: vec text, linkedMediaIds: vec nat, tags:
    vec text) -> (opt Post);
+  /// Updates the caller's own board post in `familyId`. Approved members of
+  /// `familyId` only; the caller must be the post author. A post in another
+  /// family is never touched, so a `postId` alone cannot cross the family
+  /// boundary.
+  updateBoardPostForFamily: (familyId: FamilyId, postId: PostId, postType:
+   PostType, title: opt text, body: text, relatedPersonIds: vec text,
+   linkedMediaIds: vec nat, tags: vec text) -> (opt Post);
   /// Edits a canonical mystery (steward only). Returns the updated mystery, or
   /// `null` when it does not exist.
   updateCanonicalMystery: (id: MysteryId, title: text, description: text,

@@ -538,6 +538,7 @@ it("creates a board post attaching existing media and new uploads without duplic
     [existing.id],
     [
       {
+        familyId: "norwood",
         title: "New reunion photo",
         description: "A photo from the reunion.",
         itemType: { Photo: null },

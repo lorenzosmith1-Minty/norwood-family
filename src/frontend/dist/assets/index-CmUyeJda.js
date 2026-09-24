@@ -33254,12 +33254,14 @@ const PostId = Nat;
 const AccountId = Principal2;
 const Timestamp = Int;
 const ReplyId = Nat;
+const FamilyId = Text;
 const Reply = Record({
   "authorAccountId": AccountId,
   "body": Text,
   "createdAt": Timestamp,
   "authorPersonId": PersonId,
   "replyId": ReplyId,
+  "familyId": FamilyId,
   "postId": PostId
 });
 const EvidenceStatus$1 = Variant({
@@ -33299,7 +33301,6 @@ const Photo = Record({
   "uploadedAt": Int,
   "uploadedBy": Principal2
 });
-const FamilyId = Text;
 const RelationshipType$1 = Variant({
   "Parent": Null,
   "Sibling": Null,
@@ -33624,6 +33625,7 @@ const Post = Record({
   "privacyScope": PrivacyScope,
   "authorPersonId": PersonId,
   "updatedAt": Timestamp,
+  "familyId": FamilyId,
   "relatedPersonIds": Vec(PersonId),
   "postId": PostId
 });
@@ -33692,6 +33694,7 @@ const BoardMediaUpload = Record({
   "primarySpeaker": Opt(OralHistorySpeaker),
   "itemType": ArchiveItemType$1,
   "relatedBranchId": Opt(Text),
+  "familyId": FamilyId,
   "sourceStatus": SourceStatus$1,
   "classification": ArchiveItemClassification$1
 });
@@ -34290,6 +34293,11 @@ Service({
   "_internet_identity_sign_in_start": Func([], [Vec(Nat8)], []),
   "activateSuccessor": Func([PersonId], [Result_10], []),
   "addBoardReply": Func([PostId, Text], [Reply], []),
+  "addBoardReplyForFamily": Func(
+    [FamilyId, PostId, Text],
+    [Reply],
+    []
+  ),
   "addCanonicalStory": Func(
     [
       Text,
@@ -34381,6 +34389,11 @@ Service({
   ),
   "approveStory": Func([StoryId], [Opt(Story)], []),
   "archiveBoardPost": Func([PostId], [Opt(Post)], []),
+  "archiveBoardPostForFamily": Func(
+    [FamilyId, PostId],
+    [Opt(Post)],
+    []
+  ),
   "archiveProfile": Func([PersonId], [Result_2], []),
   "assignCallerUserRole": Func([Principal2, UserRole], [], []),
   "bindAuthMethod": Func([AuthMethod], [Result_25], []),
@@ -34400,6 +34413,19 @@ Service({
   ),
   "createBoardPost": Func(
     [
+      PostType$1,
+      Opt(Text),
+      Text,
+      Vec(Text),
+      Vec(Nat),
+      Vec(Text)
+    ],
+    [Post],
+    []
+  ),
+  "createBoardPostForFamily": Func(
+    [
+      FamilyId,
       PostType$1,
       Opt(Text),
       Text,
@@ -34554,6 +34580,11 @@ Service({
     ["query"]
   ),
   "getBoardPost": Func([PostId], [Opt(Post)], ["query"]),
+  "getBoardPostForFamily": Func(
+    [FamilyId, PostId],
+    [Opt(Post)],
+    ["query"]
+  ),
   "getCallerUserRole": Func([], [UserRole], ["query"]),
   "getConflictReviewItemForFamily": Func(
     [FamilyId, Nat],
@@ -34694,7 +34725,17 @@ Service({
   "listAuditHistory": Func([], [Vec(AuditEntry)], ["query"]),
   "listBlockedUsers": Func([], [Vec(Principal2)], ["query"]),
   "listBoardPosts": Func([Opt(PostType$1)], [Vec(Post)], ["query"]),
+  "listBoardPostsForFamily": Func(
+    [FamilyId, Opt(PostType$1)],
+    [Vec(Post)],
+    ["query"]
+  ),
   "listBoardReplies": Func([PostId], [Vec(Reply)], ["query"]),
+  "listBoardRepliesForFamily": Func(
+    [FamilyId, PostId],
+    [Vec(Reply)],
+    ["query"]
+  ),
   "listClaimDiscoveryProfilesForFamily": Func(
     [FamilyId],
     [Vec(PersonProfile)],
@@ -34754,6 +34795,11 @@ Service({
     ["query"]
   ),
   "listHiddenBoardPosts": Func([], [Vec(Post)], ["query"]),
+  "listHiddenBoardPostsForFamily": Func(
+    [FamilyId],
+    [Vec(Post)],
+    ["query"]
+  ),
   "listMessageableMembers": Func([], [Vec(Text)], ["query"]),
   "listMysteries": Func([], [Vec(Mystery)], ["query"]),
   "listNewPersonCandidates": Func(
@@ -34979,6 +35025,11 @@ Service({
   ),
   "rejectStory": Func([StoryId], [Opt(Story)], []),
   "removeBoardReply": Func([ReplyId], [Opt(Reply)], []),
+  "removeBoardReplyForFamily": Func(
+    [FamilyId, ReplyId],
+    [Opt(Reply)],
+    []
+  ),
   "removeDuplicateProfile": Func([PersonId], [Result_8], []),
   "removeDuplicateProfileForFamily": Func(
     [FamilyId, PersonId],
@@ -35017,6 +35068,11 @@ Service({
     []
   ),
   "restoreBoardPost": Func([PostId], [Opt(Post)], []),
+  "restoreBoardPostForFamily": Func(
+    [FamilyId, PostId],
+    [Opt(Post)],
+    []
+  ),
   "restoreProfile": Func([PersonId], [Result_2], []),
   "reviewMysteryContribution": Func(
     [MysteryContributionId, Bool],
@@ -35037,6 +35093,11 @@ Service({
   ),
   "searchBoardPostsByTags": Func(
     [Vec(Text)],
+    [Vec(Post)],
+    ["query"]
+  ),
+  "searchBoardPostsByTagsForFamily": Func(
+    [FamilyId, Vec(Text)],
     [Vec(Post)],
     ["query"]
   ),
@@ -35164,6 +35225,20 @@ Service({
     [Opt(Post)],
     []
   ),
+  "updateBoardPostForFamily": Func(
+    [
+      FamilyId,
+      PostId,
+      PostType$1,
+      Opt(Text),
+      Text,
+      Vec(Text),
+      Vec(Nat),
+      Vec(Text)
+    ],
+    [Opt(Post)],
+    []
+  ),
   "updateCanonicalMystery": Func(
     [
       MysteryId,
@@ -35262,12 +35337,14 @@ const idlFactory = ({ IDL: IDL2 }) => {
   const AccountId2 = IDL2.Principal;
   const Timestamp2 = IDL2.Int;
   const ReplyId2 = IDL2.Nat;
+  const FamilyId2 = IDL2.Text;
   const Reply2 = IDL2.Record({
     "authorAccountId": AccountId2,
     "body": IDL2.Text,
     "createdAt": Timestamp2,
     "authorPersonId": PersonId2,
     "replyId": ReplyId2,
+    "familyId": FamilyId2,
     "postId": PostId2
   });
   const EvidenceStatus2 = IDL2.Variant({
@@ -35307,7 +35384,6 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "uploadedAt": IDL2.Int,
     "uploadedBy": IDL2.Principal
   });
-  const FamilyId2 = IDL2.Text;
   const RelationshipType2 = IDL2.Variant({
     "Parent": IDL2.Null,
     "Sibling": IDL2.Null,
@@ -35632,6 +35708,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "privacyScope": PrivacyScope2,
     "authorPersonId": PersonId2,
     "updatedAt": Timestamp2,
+    "familyId": FamilyId2,
     "relatedPersonIds": IDL2.Vec(PersonId2),
     "postId": PostId2
   });
@@ -35697,6 +35774,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "primarySpeaker": IDL2.Opt(OralHistorySpeaker2),
     "itemType": ArchiveItemType2,
     "relatedBranchId": IDL2.Opt(IDL2.Text),
+    "familyId": FamilyId2,
     "sourceStatus": SourceStatus2,
     "classification": ArchiveItemClassification2
   });
@@ -36274,6 +36352,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "_internet_identity_sign_in_start": IDL2.Func([], [IDL2.Vec(IDL2.Nat8)], []),
     "activateSuccessor": IDL2.Func([PersonId2], [Result_102], []),
     "addBoardReply": IDL2.Func([PostId2, IDL2.Text], [Reply2], []),
+    "addBoardReplyForFamily": IDL2.Func(
+      [FamilyId2, PostId2, IDL2.Text],
+      [Reply2],
+      []
+    ),
     "addCanonicalStory": IDL2.Func(
       [
         IDL2.Text,
@@ -36369,6 +36452,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
     ),
     "approveStory": IDL2.Func([StoryId2], [IDL2.Opt(Story2)], []),
     "archiveBoardPost": IDL2.Func([PostId2], [IDL2.Opt(Post2)], []),
+    "archiveBoardPostForFamily": IDL2.Func(
+      [FamilyId2, PostId2],
+      [IDL2.Opt(Post2)],
+      []
+    ),
     "archiveProfile": IDL2.Func([PersonId2], [Result_27], []),
     "assignCallerUserRole": IDL2.Func([IDL2.Principal, UserRole2], [], []),
     "bindAuthMethod": IDL2.Func([AuthMethod2], [Result_252], []),
@@ -36388,6 +36476,19 @@ const idlFactory = ({ IDL: IDL2 }) => {
     ),
     "createBoardPost": IDL2.Func(
       [
+        PostType2,
+        IDL2.Opt(IDL2.Text),
+        IDL2.Text,
+        IDL2.Vec(IDL2.Text),
+        IDL2.Vec(IDL2.Nat),
+        IDL2.Vec(IDL2.Text)
+      ],
+      [Post2],
+      []
+    ),
+    "createBoardPostForFamily": IDL2.Func(
+      [
+        FamilyId2,
         PostType2,
         IDL2.Opt(IDL2.Text),
         IDL2.Text,
@@ -36542,6 +36643,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
       ["query"]
     ),
     "getBoardPost": IDL2.Func([PostId2], [IDL2.Opt(Post2)], ["query"]),
+    "getBoardPostForFamily": IDL2.Func(
+      [FamilyId2, PostId2],
+      [IDL2.Opt(Post2)],
+      ["query"]
+    ),
     "getCallerUserRole": IDL2.Func([], [UserRole2], ["query"]),
     "getConflictReviewItemForFamily": IDL2.Func(
       [FamilyId2, IDL2.Nat],
@@ -36690,7 +36796,17 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [IDL2.Vec(Post2)],
       ["query"]
     ),
+    "listBoardPostsForFamily": IDL2.Func(
+      [FamilyId2, IDL2.Opt(PostType2)],
+      [IDL2.Vec(Post2)],
+      ["query"]
+    ),
     "listBoardReplies": IDL2.Func([PostId2], [IDL2.Vec(Reply2)], ["query"]),
+    "listBoardRepliesForFamily": IDL2.Func(
+      [FamilyId2, PostId2],
+      [IDL2.Vec(Reply2)],
+      ["query"]
+    ),
     "listClaimDiscoveryProfilesForFamily": IDL2.Func(
       [FamilyId2],
       [IDL2.Vec(PersonProfile2)],
@@ -36758,6 +36874,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
       ["query"]
     ),
     "listHiddenBoardPosts": IDL2.Func([], [IDL2.Vec(Post2)], ["query"]),
+    "listHiddenBoardPostsForFamily": IDL2.Func(
+      [FamilyId2],
+      [IDL2.Vec(Post2)],
+      ["query"]
+    ),
     "listMessageableMembers": IDL2.Func([], [IDL2.Vec(IDL2.Text)], ["query"]),
     "listMysteries": IDL2.Func([], [IDL2.Vec(Mystery2)], ["query"]),
     "listNewPersonCandidates": IDL2.Func(
@@ -36991,6 +37112,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
     ),
     "rejectStory": IDL2.Func([StoryId2], [IDL2.Opt(Story2)], []),
     "removeBoardReply": IDL2.Func([ReplyId2], [IDL2.Opt(Reply2)], []),
+    "removeBoardReplyForFamily": IDL2.Func(
+      [FamilyId2, ReplyId2],
+      [IDL2.Opt(Reply2)],
+      []
+    ),
     "removeDuplicateProfile": IDL2.Func([PersonId2], [Result_82], []),
     "removeDuplicateProfileForFamily": IDL2.Func(
       [FamilyId2, PersonId2],
@@ -37029,6 +37155,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
       []
     ),
     "restoreBoardPost": IDL2.Func([PostId2], [IDL2.Opt(Post2)], []),
+    "restoreBoardPostForFamily": IDL2.Func(
+      [FamilyId2, PostId2],
+      [IDL2.Opt(Post2)],
+      []
+    ),
     "restoreProfile": IDL2.Func([PersonId2], [Result_27], []),
     "reviewMysteryContribution": IDL2.Func(
       [MysteryContributionId2, IDL2.Bool],
@@ -37049,6 +37180,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
     ),
     "searchBoardPostsByTags": IDL2.Func(
       [IDL2.Vec(IDL2.Text)],
+      [IDL2.Vec(Post2)],
+      ["query"]
+    ),
+    "searchBoardPostsByTagsForFamily": IDL2.Func(
+      [FamilyId2, IDL2.Vec(IDL2.Text)],
       [IDL2.Vec(Post2)],
       ["query"]
     ),
@@ -37165,6 +37301,20 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "unblockUser": IDL2.Func([IDL2.Principal], [], []),
     "updateBoardPost": IDL2.Func(
       [
+        PostId2,
+        PostType2,
+        IDL2.Opt(IDL2.Text),
+        IDL2.Text,
+        IDL2.Vec(IDL2.Text),
+        IDL2.Vec(IDL2.Nat),
+        IDL2.Vec(IDL2.Text)
+      ],
+      [IDL2.Opt(Post2)],
+      []
+    ),
+    "updateBoardPostForFamily": IDL2.Func(
+      [
+        FamilyId2,
         PostId2,
         PostType2,
         IDL2.Opt(IDL2.Text),
@@ -37663,6 +37813,20 @@ class Backend {
       return result;
     }
   }
+  async addBoardReplyForFamily(arg0, arg1, arg2) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.addBoardReplyForFamily(arg0, arg1, arg2);
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.addBoardReplyForFamily(arg0, arg1, arg2);
+      return result;
+    }
+  }
   async addCanonicalStory(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
     if (this.processError) {
       try {
@@ -37971,6 +38135,20 @@ class Backend {
       return from_candid_opt_n90(this._uploadFile, this._downloadFile, result);
     }
   }
+  async archiveBoardPostForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.archiveBoardPostForFamily(arg0, arg1);
+        return from_candid_opt_n90(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.archiveBoardPostForFamily(arg0, arg1);
+      return from_candid_opt_n90(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async archiveProfile(arg0) {
     if (this.processError) {
       try {
@@ -38108,6 +38286,20 @@ class Backend {
       }
     } else {
       const result = await this.actor.createBoardPost(to_candid_PostType_n115(this._uploadFile, this._downloadFile, arg0), to_candid_opt_n18(this._uploadFile, this._downloadFile, arg1), arg2, arg3, arg4, arg5);
+      return from_candid_Post_n91(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async createBoardPostForFamily(arg0, arg1, arg2, arg3, arg4, arg5, arg6) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.createBoardPostForFamily(arg0, to_candid_PostType_n115(this._uploadFile, this._downloadFile, arg1), to_candid_opt_n18(this._uploadFile, this._downloadFile, arg2), arg3, arg4, arg5, arg6);
+        return from_candid_Post_n91(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.createBoardPostForFamily(arg0, to_candid_PostType_n115(this._uploadFile, this._downloadFile, arg1), to_candid_opt_n18(this._uploadFile, this._downloadFile, arg2), arg3, arg4, arg5, arg6);
       return from_candid_Post_n91(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -38374,6 +38566,20 @@ class Backend {
       }
     } else {
       const result = await this.actor.getBoardPost(arg0);
+      return from_candid_opt_n90(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async getBoardPostForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getBoardPostForFamily(arg0, arg1);
+        return from_candid_opt_n90(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getBoardPostForFamily(arg0, arg1);
       return from_candid_opt_n90(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -39049,6 +39255,20 @@ class Backend {
       return from_candid_vec_n228(this._uploadFile, this._downloadFile, result);
     }
   }
+  async listBoardPostsForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listBoardPostsForFamily(arg0, to_candid_opt_n227(this._uploadFile, this._downloadFile, arg1));
+        return from_candid_vec_n228(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listBoardPostsForFamily(arg0, to_candid_opt_n227(this._uploadFile, this._downloadFile, arg1));
+      return from_candid_vec_n228(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async listBoardReplies(arg0) {
     if (this.processError) {
       try {
@@ -39060,6 +39280,20 @@ class Backend {
       }
     } else {
       const result = await this.actor.listBoardReplies(arg0);
+      return result;
+    }
+  }
+  async listBoardRepliesForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listBoardRepliesForFamily(arg0, arg1);
+        return result;
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listBoardRepliesForFamily(arg0, arg1);
       return result;
     }
   }
@@ -39270,6 +39504,20 @@ class Backend {
       }
     } else {
       const result = await this.actor.listHiddenBoardPosts();
+      return from_candid_vec_n228(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listHiddenBoardPostsForFamily(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listHiddenBoardPostsForFamily(arg0);
+        return from_candid_vec_n228(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listHiddenBoardPostsForFamily(arg0);
       return from_candid_vec_n228(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -40183,6 +40431,20 @@ class Backend {
       return from_candid_opt_n284(this._uploadFile, this._downloadFile, result);
     }
   }
+  async removeBoardReplyForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.removeBoardReplyForFamily(arg0, arg1);
+        return from_candid_opt_n284(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.removeBoardReplyForFamily(arg0, arg1);
+      return from_candid_opt_n284(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async removeDuplicateProfile(arg0) {
     if (this.processError) {
       try {
@@ -40379,6 +40641,20 @@ class Backend {
       return from_candid_opt_n90(this._uploadFile, this._downloadFile, result);
     }
   }
+  async restoreBoardPostForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.restoreBoardPostForFamily(arg0, arg1);
+        return from_candid_opt_n90(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.restoreBoardPostForFamily(arg0, arg1);
+      return from_candid_opt_n90(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async restoreProfile(arg0) {
     if (this.processError) {
       try {
@@ -40474,6 +40750,20 @@ class Backend {
       }
     } else {
       const result = await this.actor.searchBoardPostsByTags(arg0);
+      return from_candid_vec_n228(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async searchBoardPostsByTagsForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.searchBoardPostsByTagsForFamily(arg0, arg1);
+        return from_candid_vec_n228(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.searchBoardPostsByTagsForFamily(arg0, arg1);
       return from_candid_vec_n228(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -40670,6 +40960,20 @@ class Backend {
       }
     } else {
       const result = await this.actor.updateBoardPost(arg0, to_candid_PostType_n115(this._uploadFile, this._downloadFile, arg1), to_candid_opt_n18(this._uploadFile, this._downloadFile, arg2), arg3, arg4, arg5, arg6);
+      return from_candid_opt_n90(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async updateBoardPostForFamily(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.updateBoardPostForFamily(arg0, arg1, to_candid_PostType_n115(this._uploadFile, this._downloadFile, arg2), to_candid_opt_n18(this._uploadFile, this._downloadFile, arg3), arg4, arg5, arg6, arg7);
+        return from_candid_opt_n90(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.updateBoardPostForFamily(arg0, arg1, to_candid_PostType_n115(this._uploadFile, this._downloadFile, arg2), to_candid_opt_n18(this._uploadFile, this._downloadFile, arg3), arg4, arg5, arg6, arg7);
       return from_candid_opt_n90(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -41772,6 +42076,7 @@ function from_candid_record_n92(_uploadFile, _downloadFile, value) {
     privacyScope: from_candid_PrivacyScope_n95(_uploadFile, _downloadFile, value.privacyScope),
     authorPersonId: value.authorPersonId,
     updatedAt: value.updatedAt,
+    familyId: value.familyId,
     relatedPersonIds: value.relatedPersonIds,
     postId: value.postId
   };
@@ -42476,6 +42781,7 @@ async function to_candid_record_n118(_uploadFile, _downloadFile, value) {
     primarySpeaker: value.primarySpeaker ? candid_some(to_candid_OralHistorySpeaker_n120(_uploadFile, _downloadFile, value.primarySpeaker)) : candid_none(),
     itemType: to_candid_ArchiveItemType_n122(_uploadFile, _downloadFile, value.itemType),
     relatedBranchId: value.relatedBranchId ? candid_some(value.relatedBranchId) : candid_none(),
+    familyId: value.familyId,
     sourceStatus: to_candid_SourceStatus_n123(_uploadFile, _downloadFile, value.sourceStatus),
     classification: to_candid_ArchiveItemClassification_n124(_uploadFile, _downloadFile, value.classification)
   };
@@ -46691,6 +46997,9 @@ function FamilyProvider({
 function useActiveFamily() {
   const context = reactExports.useContext(FamilyContext);
   return context ?? { familyId: DEFAULT_FAMILY_ID, familyScopedId: void 0 };
+}
+function useActiveFamilyId() {
+  return useActiveFamily().familyId;
 }
 function useFamilyScopedId() {
   return useActiveFamily().familyScopedId;
@@ -67997,45 +68306,57 @@ function ArchivePage({
   ] });
 }
 function useListBoardPosts(filter2 = null) {
+  const familyScopedId = useFamilyScopedId();
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["board", "posts", filter2 ?? "all"],
+    queryKey: familyScopedId === void 0 ? ["board", "posts", filter2 ?? "all"] : ["board", "posts", filter2 ?? "all", familyScopedId],
     queryFn: async () => {
       if (!actor) return [];
-      return actor.listBoardPosts(filter2);
+      return familyScopedId === void 0 ? actor.listBoardPosts(filter2) : actor.listBoardPostsForFamily(familyScopedId, filter2);
     },
     enabled: !!actor && !isFetching
   });
 }
 function useGetBoardPost(postId) {
+  const familyScopedId = useFamilyScopedId();
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["board", "post", (postId == null ? void 0 : postId.toString()) ?? "all"],
+    queryKey: familyScopedId === void 0 ? ["board", "post", (postId == null ? void 0 : postId.toString()) ?? "all"] : ["board", "post", (postId == null ? void 0 : postId.toString()) ?? "all", familyScopedId],
     queryFn: async () => {
       if (!actor || postId === null) return null;
-      return actor.getBoardPost(postId);
+      return familyScopedId === void 0 ? actor.getBoardPost(postId) : actor.getBoardPostForFamily(familyScopedId, postId);
     },
     enabled: !!actor && !isFetching && postId !== null
   });
 }
 function useListBoardReplies(postId) {
+  const familyScopedId = useFamilyScopedId();
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["board", "replies", (postId == null ? void 0 : postId.toString()) ?? "all"],
+    queryKey: familyScopedId === void 0 ? ["board", "replies", (postId == null ? void 0 : postId.toString()) ?? "all"] : ["board", "replies", (postId == null ? void 0 : postId.toString()) ?? "all", familyScopedId],
     queryFn: async () => {
       if (!actor || postId === null) return [];
-      return actor.listBoardReplies(postId);
+      return familyScopedId === void 0 ? actor.listBoardReplies(postId) : actor.listBoardRepliesForFamily(familyScopedId, postId);
     },
     enabled: !!actor && !isFetching && postId !== null
   });
 }
 function useCreateBoardPost() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
     mutationFn: async (input) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.createBoardPost(
+      return familyScopedId === void 0 ? actor.createBoardPost(
+        input.postType,
+        input.title,
+        input.body,
+        input.relatedPersonIds,
+        input.linkedMediaIds,
+        input.tags
+      ) : actor.createBoardPostForFamily(
+        familyScopedId,
         input.postType,
         input.title,
         input.body,
@@ -68051,34 +68372,50 @@ function useCreateBoardPost() {
   });
 }
 function useCreateBoardPostWithMedia() {
+  const familyScopedId = useFamilyScopedId();
+  const activeFamilyId = useActiveFamilyId();
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
     mutationFn: async (input) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.createBoardPostWithMedia(
+      const uploads = input.newUploads.map((upload) => ({
+        title: upload.title,
+        description: upload.description,
+        itemType: upload.itemType,
+        mimeType: upload.mimeType,
+        blob: upload.blob,
+        filename: upload.filename,
+        era: upload.era,
+        year: upload.year ?? void 0,
+        tags: upload.tags,
+        relatedMemberIds: upload.relatedMemberIds,
+        relatedBranchId: upload.relatedBranchId ?? void 0,
+        sourceStatus: upload.sourceStatus,
+        privacyLevel: upload.privacyLevel,
+        classification: upload.classification,
+        primarySpeaker: upload.primarySpeaker ?? void 0,
+        // The active family is read from the centralized FamilyContext; the
+        // default family resolves to the same value the legacy endpoint
+        // delegates with, so no family id is hardcoded here.
+        familyId: activeFamilyId
+      }));
+      return familyScopedId === void 0 ? actor.createBoardPostWithMedia(
         input.postType,
         input.title,
         input.body,
         input.relatedPersonIds,
         input.existingArchiveItemIds,
-        input.newUploads.map((upload) => ({
-          title: upload.title,
-          description: upload.description,
-          itemType: upload.itemType,
-          mimeType: upload.mimeType,
-          blob: upload.blob,
-          filename: upload.filename,
-          era: upload.era,
-          year: upload.year ?? void 0,
-          tags: upload.tags,
-          relatedMemberIds: upload.relatedMemberIds,
-          relatedBranchId: upload.relatedBranchId ?? void 0,
-          sourceStatus: upload.sourceStatus,
-          privacyLevel: upload.privacyLevel,
-          classification: upload.classification,
-          primarySpeaker: upload.primarySpeaker ?? void 0
-        })),
+        uploads,
+        input.tags
+      ) : actor.createBoardPostWithMediaForFamily(
+        familyScopedId,
+        input.postType,
+        input.title,
+        input.body,
+        input.relatedPersonIds,
+        input.existingArchiveItemIds,
+        uploads,
         input.tags
       );
     },
@@ -68094,12 +68431,22 @@ function useCreateBoardPostWithMedia() {
   });
 }
 function useUpdateBoardPost() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
     mutationFn: async (input) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.updateBoardPost(
+      return familyScopedId === void 0 ? actor.updateBoardPost(
+        input.postId,
+        input.postType,
+        input.title,
+        input.body,
+        input.relatedPersonIds,
+        input.linkedMediaIds,
+        input.tags
+      ) : actor.updateBoardPostForFamily(
+        familyScopedId,
         input.postId,
         input.postType,
         input.title,
@@ -68116,12 +68463,13 @@ function useUpdateBoardPost() {
   });
 }
 function useArchiveBoardPost() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
     mutationFn: async (postId) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.archiveBoardPost(postId);
+      return familyScopedId === void 0 ? actor.archiveBoardPost(postId) : actor.archiveBoardPostForFamily(familyScopedId, postId);
     },
     onSuccess: () => {
       void queryClient2.invalidateQueries({ queryKey: ["board", "posts"] });
@@ -68130,12 +68478,13 @@ function useArchiveBoardPost() {
   });
 }
 function useRestoreBoardPost() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
     mutationFn: async (postId) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.restoreBoardPost(postId);
+      return familyScopedId === void 0 ? actor.restoreBoardPost(postId) : actor.restoreBoardPostForFamily(familyScopedId, postId);
     },
     onSuccess: () => {
       void queryClient2.invalidateQueries({ queryKey: ["board", "posts"] });
@@ -68144,34 +68493,41 @@ function useRestoreBoardPost() {
   });
 }
 function useSearchBoardPostsByTags(tags) {
+  const familyScopedId = useFamilyScopedId();
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["board", "posts", "tags", tags],
+    queryKey: familyScopedId === void 0 ? ["board", "posts", "tags", tags] : ["board", "posts", "tags", tags, familyScopedId],
     queryFn: async () => {
       if (!actor) return [];
-      return actor.searchBoardPostsByTags(tags);
+      return familyScopedId === void 0 ? actor.searchBoardPostsByTags(tags) : actor.searchBoardPostsByTagsForFamily(familyScopedId, tags);
     },
     enabled: !!actor && !isFetching && tags.length > 0
   });
 }
 function useListHiddenBoardPosts() {
+  const familyScopedId = useFamilyScopedId();
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["board", "posts", "hidden"],
+    queryKey: familyScopedId === void 0 ? ["board", "posts", "hidden"] : ["board", "posts", "hidden", familyScopedId],
     queryFn: async () => {
       if (!actor) return [];
-      return actor.listHiddenBoardPosts();
+      return familyScopedId === void 0 ? actor.listHiddenBoardPosts() : actor.listHiddenBoardPostsForFamily(familyScopedId);
     },
     enabled: !!actor && !isFetching
   });
 }
 function useAddBoardReply() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
     mutationFn: async (input) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.addBoardReply(input.postId, input.body);
+      return familyScopedId === void 0 ? actor.addBoardReply(input.postId, input.body) : actor.addBoardReplyForFamily(
+        familyScopedId,
+        input.postId,
+        input.body
+      );
     },
     onSuccess: () => {
       void queryClient2.invalidateQueries({ queryKey: ["board", "replies"] });
@@ -68180,12 +68536,13 @@ function useAddBoardReply() {
   });
 }
 function useRemoveBoardReply() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
     mutationFn: async (replyId) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.removeBoardReply(replyId);
+      return familyScopedId === void 0 ? actor.removeBoardReply(replyId) : actor.removeBoardReplyForFamily(familyScopedId, replyId);
     },
     onSuccess: () => {
       void queryClient2.invalidateQueries({ queryKey: ["board", "replies"] });
@@ -68252,6 +68609,7 @@ function formatBytes(bytes) {
 }
 function BoardPostComposer({ postId, onBack }) {
   const isEditing = postId !== null;
+  const activeFamilyId = useActiveFamilyId();
   const { data: existingPost } = useGetBoardPost(postId);
   const { data: archiveItems = [] } = useApprovedArchiveItems();
   const { data: boardPosts = [] } = useListBoardPosts();
@@ -68467,7 +68825,11 @@ function BoardPostComposer({ postId, onBack }) {
             sourceStatus: upload.sourceStatus,
             privacyLevel: upload.privacyLevel,
             classification: upload.classification,
-            primarySpeaker: upload.primarySpeaker
+            primarySpeaker: upload.primarySpeaker,
+            // The active family is read from the centralized FamilyContext; the
+            // default family resolves to the same value the legacy endpoint
+            // delegates with, so no family id is hardcoded here.
+            familyId: activeFamilyId
           })),
           tags: normalizeTags(tags)
         },

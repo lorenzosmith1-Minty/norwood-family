@@ -124,6 +124,7 @@ export interface BoardMediaUpload {
   'primarySpeaker' : [] | [OralHistorySpeaker],
   'itemType' : ArchiveItemType,
   'relatedBranchId' : [] | [string],
+  'familyId' : FamilyId,
   'sourceStatus' : SourceStatus,
   'classification' : ArchiveItemClassification,
 }
@@ -474,6 +475,7 @@ export interface Post {
   'privacyScope' : PrivacyScope,
   'authorPersonId' : PersonId,
   'updatedAt' : Timestamp,
+  'familyId' : FamilyId,
   'relatedPersonIds' : Array<PersonId>,
   'postId' : PostId,
 }
@@ -649,6 +651,7 @@ export interface Reply {
   'createdAt' : Timestamp,
   'authorPersonId' : PersonId,
   'replyId' : ReplyId,
+  'familyId' : FamilyId,
   'postId' : PostId,
 }
 export type ReplyId = bigint;
@@ -951,10 +954,17 @@ export interface _SERVICE {
    */
   'activateSuccessor' : ActorMethod<[PersonId], Result_10>,
   /**
-   * / Adds a one-level reply to a board post. Approved family members only.
-   * / Creates a reply notification for the post author.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `addBoardReplyForFamily`.
    */
   'addBoardReply' : ActorMethod<[PostId, string], Reply>,
+  /**
+   * / Adds a one-level reply to a board post in `familyId`. Approved members of
+   * / `familyId` only. The parent post must belong to `familyId` and the new
+   * / reply's `familyId` is the requested `familyId`, so a Family B post can
+   * / never be replied to through a Family A context. Creates a reply
+   * / notification for the post author.
+   */
+  'addBoardReplyForFamily' : ActorMethod<[FamilyId, PostId, string], Reply>,
   /**
    * / Adds a canonical story directly (steward only), already approved.
    */
@@ -1137,10 +1147,15 @@ export interface _SERVICE {
    */
   'approveStory' : ActorMethod<[StoryId], [] | [Story]>,
   /**
-   * / Archives (hides) a board post. The author or a Family Steward may archive.
-   * / Governance actions create audit entries.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `archiveBoardPostForFamily`.
    */
   'archiveBoardPost' : ActorMethod<[PostId], [] | [Post]>,
+  /**
+   * / Archives (hides) a board post in `familyId`. The author or an active
+   * / Steward of `familyId` may archive. A post in another family is never
+   * / touched. Governance actions create audit entries.
+   */
+  'archiveBoardPostForFamily' : ActorMethod<[FamilyId, PostId], [] | [Post]>,
   /**
    * / Archives a profile, removing it from normal family browsing while
    * / preserving relationships, media, timeline, sources, and ownership history.
@@ -1198,13 +1213,30 @@ export interface _SERVICE {
     Result_23
   >,
   /**
-   * / Creates a board post with a type, optional title, body, related family
-   * / members, optional linked existing Archive/media ids, and free-form tags.
-   * / Approved family members only. Creates a mention notification for related
-   * / members where appropriate.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `createBoardPostForFamily`.
    */
   'createBoardPost' : ActorMethod<
     [
+      PostType,
+      [] | [string],
+      string,
+      Array<string>,
+      Array<bigint>,
+      Array<string>,
+    ],
+    Post
+  >,
+  /**
+   * / Creates a board post in `familyId` with a type, optional title, body,
+   * / related family members, optional linked existing Archive/media ids, and
+   * / free-form tags. Approved members or Stewards of `familyId` only. The new
+   * / post's `familyId` is the requested `familyId`; every related person and
+   * / every linked media id must belong to `familyId`. Creates a mention
+   * / notification for related members where appropriate.
+   */
+  'createBoardPostForFamily' : ActorMethod<
+    [
+      FamilyId,
       PostType,
       [] | [string],
       string,
@@ -1435,9 +1467,16 @@ export interface _SERVICE {
     [] | [ArchiveItem]
   >,
   /**
-   * / Returns a single active board post by id. Approved family members only.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `getBoardPostForFamily`.
    */
   'getBoardPost' : ActorMethod<[PostId], [] | [Post]>,
+  /**
+   * / Returns a single active board post by id when it belongs to `familyId`.
+   * / Approved members of `familyId` only. A post that exists under another
+   * / family is never returned, so a `postId` alone cannot cross the family
+   * / boundary.
+   */
+  'getBoardPostForFamily' : ActorMethod<[FamilyId, PostId], [] | [Post]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
   /**
    * / Returns the conflict with `conflictId` when it belongs to `familyId`, or
@@ -1750,15 +1789,31 @@ export interface _SERVICE {
    */
   'listBlockedUsers' : ActorMethod<[], Array<Principal>>,
   /**
-   * / Lists active board posts, newest first, optionally filtered by post type.
-   * / Approved family members only.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `listBoardPostsForFamily`.
    */
   'listBoardPosts' : ActorMethod<[[] | [PostType]], Array<Post>>,
   /**
-   * / Lists the replies to a board post, chronologically. Approved family members
-   * / only.
+   * / Lists active board posts in `familyId`, newest first, optionally filtered
+   * / by post type. Approved members of `familyId` only. A post whose `familyId`
+   * / differs is never returned, so Family A posts never appear in a Family B
+   * / call.
+   */
+  'listBoardPostsForFamily' : ActorMethod<
+    [FamilyId, [] | [PostType]],
+    Array<Post>
+  >,
+  /**
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `listBoardRepliesForFamily`.
    */
   'listBoardReplies' : ActorMethod<[PostId], Array<Reply>>,
+  /**
+   * / Lists the replies to a board post in `familyId`, chronologically. Approved
+   * / members of `familyId` only. The parent post must belong to `familyId` and
+   * / every returned reply must carry `familyId` too, so a `postId` alone cannot
+   * / cross the family boundary.
+   */
+  'listBoardRepliesForFamily' : ActorMethod<[FamilyId, PostId], Array<Reply>>,
   /**
    * / Public claim-discovery read: minimal profile data for `familyId` only,
    * / preserving the existing minimal-data behavior.
@@ -1861,11 +1916,16 @@ export interface _SERVICE {
    */
   'listFindingsForFamily' : ActorMethod<[FamilyId], Array<ProposedFinding>>,
   /**
-   * / Lists all hidden (moderated) board posts for the Steward-only Hidden /
-   * / Moderated Posts view. Family Steward only. Hidden posts are preserved with
-   * / their replies and attachments and are never permanently deleted.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `listHiddenBoardPostsForFamily`.
    */
   'listHiddenBoardPosts' : ActorMethod<[], Array<Post>>,
+  /**
+   * / Lists all hidden (moderated) board posts in `familyId` for the Steward-only
+   * / Hidden/Moderated Posts view. Active Steward of `familyId` only. A post
+   * / whose `familyId` differs is never returned.
+   */
+  'listHiddenBoardPostsForFamily' : ActorMethod<[FamilyId], Array<Post>>,
   /**
    * / Returns the person ids of every other member the signed-in caller may
    * / message: living, claimed, linked to an active account, not archived, and
@@ -2312,10 +2372,16 @@ export interface _SERVICE {
    */
   'rejectStory' : ActorMethod<[StoryId], [] | [Story]>,
   /**
-   * / Removes a reply. Family Steward only. Governance actions create audit
-   * / entries.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `removeBoardReplyForFamily`.
    */
   'removeBoardReply' : ActorMethod<[ReplyId], [] | [Reply]>,
+  /**
+   * / Removes a reply in `familyId`. Active Steward of `familyId` only. A reply
+   * / in another family is never touched, so a `replyId` alone cannot cross the
+   * / family boundary. Governance actions create audit entries.
+   */
+  'removeBoardReplyForFamily' : ActorMethod<[FamilyId, ReplyId], [] | [Reply]>,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for
    * / `removeDuplicateProfileForFamily`.
@@ -2400,10 +2466,15 @@ export interface _SERVICE {
    */
   'resolveMergeConflict' : ActorMethod<[bigint, string], [] | [MergeConflict]>,
   /**
-   * / Restores an archived board post. Family Steward only. Governance actions
-   * / create audit entries.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `restoreBoardPostForFamily`.
    */
   'restoreBoardPost' : ActorMethod<[PostId], [] | [Post]>,
+  /**
+   * / Restores an archived board post in `familyId`. Active Steward of `familyId`
+   * / only. A post in another family is never touched. Governance actions create
+   * / audit entries.
+   */
+  'restoreBoardPostForFamily' : ActorMethod<[FamilyId, PostId], [] | [Post]>,
   /**
    * / Restores an archived profile to normal family browsing. Family Steward
    * / only.
@@ -2443,10 +2514,19 @@ export interface _SERVICE {
     Array<ArchiveItem>
   >,
   /**
-   * / Lists active board posts that carry ANY of the given tags. Approved family
-   * / members only.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `searchBoardPostsByTagsForFamily`.
    */
   'searchBoardPostsByTags' : ActorMethod<[Array<string>], Array<Post>>,
+  /**
+   * / Lists active board posts in `familyId` that carry ANY of the given tags.
+   * / Approved members of `familyId` only. Only posts whose `familyId` equals
+   * / `familyId` are considered.
+   */
+  'searchBoardPostsByTagsForFamily' : ActorMethod<
+    [FamilyId, Array<string>],
+    Array<Post>
+  >,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for
    * / `searchPossibleMatchesForFamily`.
@@ -2612,11 +2692,29 @@ export interface _SERVICE {
    */
   'unblockUser' : ActorMethod<[Principal], undefined>,
   /**
-   * / Updates the caller's own board post. Approved family members only; the
-   * / caller must be the post author.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `updateBoardPostForFamily`.
    */
   'updateBoardPost' : ActorMethod<
     [
+      PostId,
+      PostType,
+      [] | [string],
+      string,
+      Array<string>,
+      Array<bigint>,
+      Array<string>,
+    ],
+    [] | [Post]
+  >,
+  /**
+   * / Updates the caller's own board post in `familyId`. Approved members of
+   * / `familyId` only; the caller must be the post author. A post in another
+   * / family is never touched, so a `postId` alone cannot cross the family
+   * / boundary.
+   */
+  'updateBoardPostForFamily' : ActorMethod<
+    [
+      FamilyId,
       PostId,
       PostType,
       [] | [string],

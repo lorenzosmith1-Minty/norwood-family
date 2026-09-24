@@ -73,6 +73,11 @@ export interface BoardMediaUpload {
   privacyLevel: PrivacyLevel;
   classification: ArchiveItemClassification;
   primarySpeaker: OralHistorySpeaker | null;
+  /**
+   * The family the created Archive item belongs to. Supplied from the active
+   * family context, never hardcoded.
+   */
+  familyId: string;
 }
 
 /** Friendly labels for the board post types. */

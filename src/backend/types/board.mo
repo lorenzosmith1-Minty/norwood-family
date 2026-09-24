@@ -1,4 +1,5 @@
 import Common "../types/common";
+import FamilyTypes "../types/family";
 
 module {
   /// Identifier of a single message board post.
@@ -38,6 +39,7 @@ module {
   /// rendering the canonical Person Profile identity). Raw account ids are never
   /// exposed to the UI.
   public type Post = {
+    familyId : FamilyTypes.FamilyId;
     postId : PostId;
     authorAccountId : Common.AccountId;
     authorPersonId : Common.PersonId;
@@ -56,6 +58,7 @@ module {
   /// A one-level reply to a board post. Replies are shown chronologically under
   /// each post.
   public type Reply = {
+    familyId : FamilyTypes.FamilyId;
     replyId : ReplyId;
     postId : PostId;
     authorAccountId : Common.AccountId;

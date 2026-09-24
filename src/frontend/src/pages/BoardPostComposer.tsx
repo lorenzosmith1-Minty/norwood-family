@@ -19,6 +19,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { useActiveFamilyId } from "../context/FamilyContext";
 import { useApprovedArchiveItems } from "../hooks/useArchiveStorage";
 import {
   useCreateBoardPost,
@@ -140,6 +141,7 @@ function formatBytes(bytes: number): string {
  */
 export function BoardPostComposer({ postId, onBack }: BoardPostComposerProps) {
   const isEditing = postId !== null;
+  const activeFamilyId = useActiveFamilyId();
   const { data: existingPost } = useGetBoardPost(postId);
   const { data: archiveItems = [] } = useApprovedArchiveItems();
   const { data: boardPosts = [] } = useListBoardPosts();
@@ -403,6 +405,10 @@ export function BoardPostComposer({ postId, onBack }: BoardPostComposerProps) {
             privacyLevel: upload.privacyLevel,
             classification: upload.classification,
             primarySpeaker: upload.primarySpeaker,
+            // The active family is read from the centralized FamilyContext; the
+            // default family resolves to the same value the legacy endpoint
+            // delegates with, so no family id is hardcoded here.
+            familyId: activeFamilyId,
           })),
           tags: normalizeTags(tags),
         },

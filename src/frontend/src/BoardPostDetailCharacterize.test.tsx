@@ -91,6 +91,7 @@ const { mockActor, resetBoard, setAuthenticated, getAuthenticated } =
         tags: string[],
       ): Promise<Post> {
         const post: Post = {
+          familyId: "norwood",
           postId: nextPostId++,
           authorAccountId: Principal.fromText(ACCOUNT),
           authorPersonId: MY_PERSON_ID,
@@ -153,6 +154,7 @@ const { mockActor, resetBoard, setAuthenticated, getAuthenticated } =
       },
       async addBoardReply(postId: bigint, body: string): Promise<Reply> {
         const reply: Reply = {
+          familyId: "norwood",
           replyId: nextReplyId++,
           postId,
           authorAccountId: Principal.fromText(ACCOUNT),

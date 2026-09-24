@@ -210,6 +210,7 @@ it("rejects too many attachments on a board post instead of truncating the list"
   // MAX_BOARD_ATTACHMENTS is 5; 6 new uploads must be rejected before any is
   // stored.
   const upload = {
+    familyId: "norwood",
     title: "Attachment",
     description: "An attachment.",
     itemType: { Photo: null },

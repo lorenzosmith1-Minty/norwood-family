@@ -519,6 +519,9 @@ describe("Upload hooks: backend call contract (characterization)", () => {
       privacyLevel: PrivacyLevel.FamilyOnly,
       classification: ArchiveItemClassification.Standard,
       primarySpeaker: null,
+      // The hook reads the active family from the centralized FamilyContext;
+      // with no provider mounted the context falls back to the default family.
+      familyId: "norwood",
     };
 
     let mutateAsync: (
@@ -565,6 +568,7 @@ describe("Upload hooks: backend call contract (characterization)", () => {
             year: 2024n,
             tags: ["reunion"],
             relatedMemberIds: ["julia"],
+            familyId: "norwood",
             relatedBranchId: undefined,
             sourceStatus: SourceStatus.Original,
             privacyLevel: PrivacyLevel.FamilyOnly,

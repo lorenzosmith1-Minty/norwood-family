@@ -981,6 +981,7 @@ type FamilyId__329536528 = Text;
 type FamilyId__357998493 = Text;
 type FamilyId__635793600 = Text;
 type FamilyId__649884009 = Text;
+type FamilyId__671487675 = Text;
 type FamilyStatus__298658265 = {#active; #archived};
 type FamilyStatus__662165415 = {#active; #archived};
 type Family__188663423 =
@@ -1377,6 +1378,11 @@ type NewActor__1048145655 =
         var adminAssigned : Bool;
         userRoles : Map__230067015<Principal, UserRole__1012859405>
       }
+  };
+type NewActor__1053168963 =
+  {
+    posts : List__836382695<NewPost__583321054>;
+    replies : List__836382695<NewReply__907178512>
   };
 type NewActor__1056258284 =
   {
@@ -2046,6 +2052,34 @@ type NewPost__197554778 =
     title : ?Text;
     updatedAt : Int
   };
+type NewPost__583321054 =
+  {
+    authorAccountId : Principal;
+    authorPersonId : Text;
+    body : Text;
+    createdAt : Int;
+    familyId : FamilyId__671487675;
+    linkedMediaIds : [Nat];
+    postId : Nat;
+    postType :
+      {
+        #Announcement;
+        #FamilyQuestion;
+        #General;
+        #Memorial;
+        #Other;
+        #PhotoIdentification;
+        #Recipe;
+        #ResearchHistory;
+        #ReunionEvent
+      };
+    privacyScope : {#FamilyOnly};
+    relatedPersonIds : [Text];
+    status : {#Active; #Archived};
+    tags : [Text];
+    title : ?Text;
+    updatedAt : Int
+  };
 type NewProfileClaim__881591488 =
   {
     familyId : FamilyId__635793600;
@@ -2141,6 +2175,16 @@ type NewRelationship__957824335 =
     relationshipType : RelationshipType__1061248369;
     status : RelationshipStatus__195624246;
     toPersonId : Text
+  };
+type NewReply__907178512 =
+  {
+    authorAccountId : Principal;
+    authorPersonId : Text;
+    body : Text;
+    createdAt : Int;
+    familyId : FamilyId__671487675;
+    postId : Nat;
+    replyId : Nat
   };
 type NewResearchAuditEntry__232993651 =
   {
@@ -2785,6 +2829,11 @@ type OldActor__931712378 =
     profiles : Map__230067015<Text, PersonProfile__863907179>;
     relationshipRequests : List__836382695<RelationshipRequest__839809220>
   };
+type OldActor__959457706 =
+  {
+    posts : List__836382695<OldPost__174808228>;
+    replies : List__836382695<OldReply__315522995>
+  };
 type OldActor__971630431 =
   {newPersonCandidates : List__836382695<OldNewPersonCandidate__279624242>};
 type OldArchiveItem__554142984 =
@@ -3044,6 +3093,33 @@ type OldPersonProfile__612086047 =
     suffix : ?Text;
     timeline : ?[Text]
   };
+type OldPost__174808228 =
+  {
+    authorAccountId : Principal;
+    authorPersonId : Text;
+    body : Text;
+    createdAt : Int;
+    linkedMediaIds : [Nat];
+    postId : Nat;
+    postType :
+      {
+        #Announcement;
+        #FamilyQuestion;
+        #General;
+        #Memorial;
+        #Other;
+        #PhotoIdentification;
+        #Recipe;
+        #ResearchHistory;
+        #ReunionEvent
+      };
+    privacyScope : {#FamilyOnly};
+    relatedPersonIds : [Text];
+    status : {#Active; #Archived};
+    tags : [Text];
+    title : ?Text;
+    updatedAt : Int
+  };
 type OldPost__268863917 =
   {
     authorAccountId : Principal;
@@ -3149,6 +3225,15 @@ type OldRelationship__891065882 =
     relationshipType : RelationshipType__1061248369;
     status : RelationshipStatus__195624246;
     toPersonId : Text
+  };
+type OldReply__315522995 =
+  {
+    authorAccountId : Principal;
+    authorPersonId : Text;
+    body : Text;
+    createdAt : Int;
+    postId : Nat;
+    replyId : Nat
   };
 type OldResearchAuditEntry__655275946 =
   {
@@ -3815,6 +3900,7 @@ type Post__95750762 =
     authorPersonId : PersonId__39539326;
     body : Text;
     createdAt : Timestamp__301639476;
+    familyId : FamilyId__357998493;
     linkedMediaIds : [Nat];
     postId : PostId__230554283;
     postType : PostType__463090404;
@@ -4645,6 +4731,7 @@ type Reply__875745582 =
     authorPersonId : PersonId__39539326;
     body : Text;
     createdAt : Timestamp__301639476;
+    familyId : FamilyId__357998493;
     postId : PostId__230554283;
     replyId : ReplyId__643741330
   };
@@ -5104,7 +5191,8 @@ type UserRole__968740559 = {#admin; #guest; #user};
   "20260923_120000" : (old : OldActor__860584657) -> NewActor__327868545;
   "20260923_130000" : (old : OldActor__971630431) -> NewActor__540330458;
   "20260923_140000" : (old : OldActor__66325736) -> NewActor__1044084074;
-  "20260923_150000" : (old : OldActor__114726251) -> NewActor__681737701
+  "20260923_150000" : (old : OldActor__114726251) -> NewActor__681737701;
+  "20260924_000000" : (old : OldActor__959457706) -> NewActor__1053168963
 }
 actor  {
   stable accessControlState :

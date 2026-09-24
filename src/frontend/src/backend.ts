@@ -128,6 +128,7 @@ export interface BoardMediaUpload {
     primarySpeaker?: OralHistorySpeaker;
     itemType: ArchiveItemType;
     relatedBranchId?: string;
+    familyId: FamilyId;
     sourceStatus: SourceStatus;
     classification: ArchiveItemClassification;
 }
@@ -427,6 +428,7 @@ export interface Post {
     privacyScope: PrivacyScope;
     authorPersonId: PersonId;
     updatedAt: Timestamp;
+    familyId: FamilyId;
     relatedPersonIds: Array<PersonId>;
     postId: PostId;
 }
@@ -553,6 +555,7 @@ export interface Reply {
     createdAt: Timestamp;
     authorPersonId: PersonId;
     replyId: ReplyId;
+    familyId: FamilyId;
     postId: PostId;
 }
 export type ReplyId = bigint;
@@ -1304,10 +1307,17 @@ export interface backendInterface {
      */
     activateSuccessor(personId: PersonId): Promise<Result_10>;
     /**
-     * / Adds a one-level reply to a board post. Approved family members only.
-     * / Creates a reply notification for the post author.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for `addBoardReplyForFamily`.
      */
     addBoardReply(postId: PostId, body: string): Promise<Reply>;
+    /**
+     * / Adds a one-level reply to a board post in `familyId`. Approved members of
+     * / `familyId` only. The parent post must belong to `familyId` and the new
+     * / reply's `familyId` is the requested `familyId`, so a Family B post can
+     * / never be replied to through a Family A context. Creates a reply
+     * / notification for the post author.
+     */
+    addBoardReplyForFamily(familyId: FamilyId, postId: PostId, body: string): Promise<Reply>;
     /**
      * / Adds a canonical story directly (steward only), already approved.
      */
@@ -1442,10 +1452,15 @@ export interface backendInterface {
      */
     approveStory(id: StoryId): Promise<Story | null>;
     /**
-     * / Archives (hides) a board post. The author or a Family Steward may archive.
-     * / Governance actions create audit entries.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for `archiveBoardPostForFamily`.
      */
     archiveBoardPost(postId: PostId): Promise<Post | null>;
+    /**
+     * / Archives (hides) a board post in `familyId`. The author or an active
+     * / Steward of `familyId` may archive. A post in another family is never
+     * / touched. Governance actions create audit entries.
+     */
+    archiveBoardPostForFamily(familyId: FamilyId, postId: PostId): Promise<Post | null>;
     /**
      * / Archives a profile, removing it from normal family browsing while
      * / preserving relationships, media, timeline, sources, and ownership history.
@@ -1497,12 +1512,18 @@ export interface backendInterface {
      */
     correctRelationshipType(relationshipId: bigint, relationshipType: RelationshipType): Promise<Result_23>;
     /**
-     * / Creates a board post with a type, optional title, body, related family
-     * / members, optional linked existing Archive/media ids, and free-form tags.
-     * / Approved family members only. Creates a mention notification for related
-     * / members where appropriate.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for `createBoardPostForFamily`.
      */
     createBoardPost(postType: PostType, title: string | null, body: string, relatedPersonIds: Array<string>, linkedMediaIds: Array<bigint>, tags: Array<string>): Promise<Post>;
+    /**
+     * / Creates a board post in `familyId` with a type, optional title, body,
+     * / related family members, optional linked existing Archive/media ids, and
+     * / free-form tags. Approved members or Stewards of `familyId` only. The new
+     * / post's `familyId` is the requested `familyId`; every related person and
+     * / every linked media id must belong to `familyId`. Creates a mention
+     * / notification for related members where appropriate.
+     */
+    createBoardPostForFamily(familyId: FamilyId, postType: PostType, title: string | null, body: string, relatedPersonIds: Array<string>, linkedMediaIds: Array<bigint>, tags: Array<string>): Promise<Post>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `createBoardPostWithMediaForFamily`. Deprecated single-family form:
@@ -1612,9 +1633,16 @@ export interface backendInterface {
      */
     getArchiveItemForFamily(familyId: FamilyId, id: ArchiveItemId): Promise<ArchiveItem | null>;
     /**
-     * / Returns a single active board post by id. Approved family members only.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for `getBoardPostForFamily`.
      */
     getBoardPost(postId: PostId): Promise<Post | null>;
+    /**
+     * / Returns a single active board post by id when it belongs to `familyId`.
+     * / Approved members of `familyId` only. A post that exists under another
+     * / family is never returned, so a `postId` alone cannot cross the family
+     * / boundary.
+     */
+    getBoardPostForFamily(familyId: FamilyId, postId: PostId): Promise<Post | null>;
     getCallerUserRole(): Promise<UserRole>;
     /**
      * / Returns the conflict with `conflictId` when it belongs to `familyId`, or
@@ -1897,15 +1925,28 @@ export interface backendInterface {
      */
     listBlockedUsers(): Promise<Array<Principal>>;
     /**
-     * / Lists active board posts, newest first, optionally filtered by post type.
-     * / Approved family members only.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for `listBoardPostsForFamily`.
      */
     listBoardPosts(filter: PostType | null): Promise<Array<Post>>;
     /**
-     * / Lists the replies to a board post, chronologically. Approved family members
-     * / only.
+     * / Lists active board posts in `familyId`, newest first, optionally filtered
+     * / by post type. Approved members of `familyId` only. A post whose `familyId`
+     * / differs is never returned, so Family A posts never appear in a Family B
+     * / call.
+     */
+    listBoardPostsForFamily(familyId: FamilyId, filter: PostType | null): Promise<Array<Post>>;
+    /**
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `listBoardRepliesForFamily`.
      */
     listBoardReplies(postId: PostId): Promise<Array<Reply>>;
+    /**
+     * / Lists the replies to a board post in `familyId`, chronologically. Approved
+     * / members of `familyId` only. The parent post must belong to `familyId` and
+     * / every returned reply must carry `familyId` too, so a `postId` alone cannot
+     * / cross the family boundary.
+     */
+    listBoardRepliesForFamily(familyId: FamilyId, postId: PostId): Promise<Array<Reply>>;
     /**
      * / Public claim-discovery read: minimal profile data for `familyId` only,
      * / preserving the existing minimal-data behavior.
@@ -1993,11 +2034,16 @@ export interface backendInterface {
      */
     listFindingsForFamily(familyId: FamilyId): Promise<Array<ProposedFinding>>;
     /**
-     * / Lists all hidden (moderated) board posts for the Steward-only Hidden /
-     * / Moderated Posts view. Family Steward only. Hidden posts are preserved with
-     * / their replies and attachments and are never permanently deleted.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `listHiddenBoardPostsForFamily`.
      */
     listHiddenBoardPosts(): Promise<Array<Post>>;
+    /**
+     * / Lists all hidden (moderated) board posts in `familyId` for the Steward-only
+     * / Hidden/Moderated Posts view. Active Steward of `familyId` only. A post
+     * / whose `familyId` differs is never returned.
+     */
+    listHiddenBoardPostsForFamily(familyId: FamilyId): Promise<Array<Post>>;
     /**
      * / Returns the person ids of every other member the signed-in caller may
      * / message: living, claimed, linked to an active account, not archived, and
@@ -2359,10 +2405,16 @@ export interface backendInterface {
      */
     rejectStory(id: StoryId): Promise<Story | null>;
     /**
-     * / Removes a reply. Family Steward only. Governance actions create audit
-     * / entries.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `removeBoardReplyForFamily`.
      */
     removeBoardReply(replyId: ReplyId): Promise<Reply | null>;
+    /**
+     * / Removes a reply in `familyId`. Active Steward of `familyId` only. A reply
+     * / in another family is never touched, so a `replyId` alone cannot cross the
+     * / family boundary. Governance actions create audit entries.
+     */
+    removeBoardReplyForFamily(familyId: FamilyId, replyId: ReplyId): Promise<Reply | null>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `removeDuplicateProfileForFamily`.
@@ -2438,10 +2490,15 @@ export interface backendInterface {
      */
     resolveMergeConflict(conflictId: bigint, canonicalValue: string): Promise<MergeConflict | null>;
     /**
-     * / Restores an archived board post. Family Steward only. Governance actions
-     * / create audit entries.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for `restoreBoardPostForFamily`.
      */
     restoreBoardPost(postId: PostId): Promise<Post | null>;
+    /**
+     * / Restores an archived board post in `familyId`. Active Steward of `familyId`
+     * / only. A post in another family is never touched. Governance actions create
+     * / audit entries.
+     */
+    restoreBoardPostForFamily(familyId: FamilyId, postId: PostId): Promise<Post | null>;
     /**
      * / Restores an archived profile to normal family browsing. Family Steward
      * / only.
@@ -2475,10 +2532,16 @@ export interface backendInterface {
      */
     searchArchiveItemsForFamily(familyId: FamilyId, filter: ArchiveSearchQuery): Promise<Array<ArchiveItem>>;
     /**
-     * / Lists active board posts that carry ANY of the given tags. Approved family
-     * / members only.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `searchBoardPostsByTagsForFamily`.
      */
     searchBoardPostsByTags(tags: Array<string>): Promise<Array<Post>>;
+    /**
+     * / Lists active board posts in `familyId` that carry ANY of the given tags.
+     * / Approved members of `familyId` only. Only posts whose `familyId` equals
+     * / `familyId` are considered.
+     */
+    searchBoardPostsByTagsForFamily(familyId: FamilyId, tags: Array<string>): Promise<Array<Post>>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `searchPossibleMatchesForFamily`.
@@ -2559,10 +2622,16 @@ export interface backendInterface {
      */
     unblockUser(blockedAccountId: Principal): Promise<void>;
     /**
-     * / Updates the caller's own board post. Approved family members only; the
-     * / caller must be the post author.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for `updateBoardPostForFamily`.
      */
     updateBoardPost(postId: PostId, postType: PostType, title: string | null, body: string, relatedPersonIds: Array<string>, linkedMediaIds: Array<bigint>, tags: Array<string>): Promise<Post | null>;
+    /**
+     * / Updates the caller's own board post in `familyId`. Approved members of
+     * / `familyId` only; the caller must be the post author. A post in another
+     * / family is never touched, so a `postId` alone cannot cross the family
+     * / boundary.
+     */
+    updateBoardPostForFamily(familyId: FamilyId, postId: PostId, postType: PostType, title: string | null, body: string, relatedPersonIds: Array<string>, linkedMediaIds: Array<bigint>, tags: Array<string>): Promise<Post | null>;
     /**
      * / Edits a canonical mystery (steward only). Returns the updated mystery, or
      * / `null` when it does not exist.
@@ -2739,6 +2808,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.addBoardReply(arg0, arg1);
+            return result;
+        }
+    }
+    async addBoardReplyForFamily(arg0: FamilyId, arg1: PostId, arg2: string): Promise<Reply> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.addBoardReplyForFamily(arg0, arg1, arg2);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.addBoardReplyForFamily(arg0, arg1, arg2);
             return result;
         }
     }
@@ -3050,6 +3133,20 @@ export class Backend implements backendInterface {
             return from_candid_opt_n90(this._uploadFile, this._downloadFile, result);
         }
     }
+    async archiveBoardPostForFamily(arg0: FamilyId, arg1: PostId): Promise<Post | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.archiveBoardPostForFamily(arg0, arg1);
+                return from_candid_opt_n90(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.archiveBoardPostForFamily(arg0, arg1);
+            return from_candid_opt_n90(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async archiveProfile(arg0: PersonId): Promise<Result_2> {
         if (this.processError) {
             try {
@@ -3187,6 +3284,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.createBoardPost(to_candid_PostType_n115(this._uploadFile, this._downloadFile, arg0), to_candid_opt_n18(this._uploadFile, this._downloadFile, arg1), arg2, arg3, arg4, arg5);
+            return from_candid_Post_n91(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async createBoardPostForFamily(arg0: FamilyId, arg1: PostType, arg2: string | null, arg3: string, arg4: Array<string>, arg5: Array<bigint>, arg6: Array<string>): Promise<Post> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.createBoardPostForFamily(arg0, to_candid_PostType_n115(this._uploadFile, this._downloadFile, arg1), to_candid_opt_n18(this._uploadFile, this._downloadFile, arg2), arg3, arg4, arg5, arg6);
+                return from_candid_Post_n91(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.createBoardPostForFamily(arg0, to_candid_PostType_n115(this._uploadFile, this._downloadFile, arg1), to_candid_opt_n18(this._uploadFile, this._downloadFile, arg2), arg3, arg4, arg5, arg6);
             return from_candid_Post_n91(this._uploadFile, this._downloadFile, result);
         }
     }
@@ -3453,6 +3564,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.getBoardPost(arg0);
+            return from_candid_opt_n90(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getBoardPostForFamily(arg0: FamilyId, arg1: PostId): Promise<Post | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getBoardPostForFamily(arg0, arg1);
+                return from_candid_opt_n90(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getBoardPostForFamily(arg0, arg1);
             return from_candid_opt_n90(this._uploadFile, this._downloadFile, result);
         }
     }
@@ -4128,6 +4253,20 @@ export class Backend implements backendInterface {
             return from_candid_vec_n228(this._uploadFile, this._downloadFile, result);
         }
     }
+    async listBoardPostsForFamily(arg0: FamilyId, arg1: PostType | null): Promise<Array<Post>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.listBoardPostsForFamily(arg0, to_candid_opt_n227(this._uploadFile, this._downloadFile, arg1));
+                return from_candid_vec_n228(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.listBoardPostsForFamily(arg0, to_candid_opt_n227(this._uploadFile, this._downloadFile, arg1));
+            return from_candid_vec_n228(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async listBoardReplies(arg0: PostId): Promise<Array<Reply>> {
         if (this.processError) {
             try {
@@ -4139,6 +4278,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.listBoardReplies(arg0);
+            return result;
+        }
+    }
+    async listBoardRepliesForFamily(arg0: FamilyId, arg1: PostId): Promise<Array<Reply>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.listBoardRepliesForFamily(arg0, arg1);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.listBoardRepliesForFamily(arg0, arg1);
             return result;
         }
     }
@@ -4349,6 +4502,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.listHiddenBoardPosts();
+            return from_candid_vec_n228(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async listHiddenBoardPostsForFamily(arg0: FamilyId): Promise<Array<Post>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.listHiddenBoardPostsForFamily(arg0);
+                return from_candid_vec_n228(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.listHiddenBoardPostsForFamily(arg0);
             return from_candid_vec_n228(this._uploadFile, this._downloadFile, result);
         }
     }
@@ -5262,6 +5429,20 @@ export class Backend implements backendInterface {
             return from_candid_opt_n284(this._uploadFile, this._downloadFile, result);
         }
     }
+    async removeBoardReplyForFamily(arg0: FamilyId, arg1: ReplyId): Promise<Reply | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.removeBoardReplyForFamily(arg0, arg1);
+                return from_candid_opt_n284(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.removeBoardReplyForFamily(arg0, arg1);
+            return from_candid_opt_n284(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async removeDuplicateProfile(arg0: PersonId): Promise<Result_8> {
         if (this.processError) {
             try {
@@ -5458,6 +5639,20 @@ export class Backend implements backendInterface {
             return from_candid_opt_n90(this._uploadFile, this._downloadFile, result);
         }
     }
+    async restoreBoardPostForFamily(arg0: FamilyId, arg1: PostId): Promise<Post | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.restoreBoardPostForFamily(arg0, arg1);
+                return from_candid_opt_n90(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.restoreBoardPostForFamily(arg0, arg1);
+            return from_candid_opt_n90(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async restoreProfile(arg0: PersonId): Promise<Result_2> {
         if (this.processError) {
             try {
@@ -5553,6 +5748,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.searchBoardPostsByTags(arg0);
+            return from_candid_vec_n228(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async searchBoardPostsByTagsForFamily(arg0: FamilyId, arg1: Array<string>): Promise<Array<Post>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.searchBoardPostsByTagsForFamily(arg0, arg1);
+                return from_candid_vec_n228(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.searchBoardPostsByTagsForFamily(arg0, arg1);
             return from_candid_vec_n228(this._uploadFile, this._downloadFile, result);
         }
     }
@@ -5749,6 +5958,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.updateBoardPost(arg0, to_candid_PostType_n115(this._uploadFile, this._downloadFile, arg1), to_candid_opt_n18(this._uploadFile, this._downloadFile, arg2), arg3, arg4, arg5, arg6);
+            return from_candid_opt_n90(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async updateBoardPostForFamily(arg0: FamilyId, arg1: PostId, arg2: PostType, arg3: string | null, arg4: string, arg5: Array<string>, arg6: Array<bigint>, arg7: Array<string>): Promise<Post | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateBoardPostForFamily(arg0, arg1, to_candid_PostType_n115(this._uploadFile, this._downloadFile, arg2), to_candid_opt_n18(this._uploadFile, this._downloadFile, arg3), arg4, arg5, arg6, arg7);
+                return from_candid_opt_n90(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateBoardPostForFamily(arg0, arg1, to_candid_PostType_n115(this._uploadFile, this._downloadFile, arg2), to_candid_opt_n18(this._uploadFile, this._downloadFile, arg3), arg4, arg5, arg6, arg7);
             return from_candid_opt_n90(this._uploadFile, this._downloadFile, result);
         }
     }
@@ -7642,6 +7865,7 @@ function from_candid_record_n92(_uploadFile: (file: ExternalBlob) => Promise<Uin
     privacyScope: _PrivacyScope;
     authorPersonId: _PersonId;
     updatedAt: _Timestamp;
+    familyId: _FamilyId;
     relatedPersonIds: Array<_PersonId>;
     postId: _PostId;
 }): {
@@ -7656,6 +7880,7 @@ function from_candid_record_n92(_uploadFile: (file: ExternalBlob) => Promise<Uin
     privacyScope: PrivacyScope;
     authorPersonId: PersonId;
     updatedAt: Timestamp;
+    familyId: FamilyId;
     relatedPersonIds: Array<PersonId>;
     postId: PostId;
 } {
@@ -7671,6 +7896,7 @@ function from_candid_record_n92(_uploadFile: (file: ExternalBlob) => Promise<Uin
         privacyScope: from_candid_PrivacyScope_n95(_uploadFile, _downloadFile, value.privacyScope),
         authorPersonId: value.authorPersonId,
         updatedAt: value.updatedAt,
+        familyId: value.familyId,
         relatedPersonIds: value.relatedPersonIds,
         postId: value.postId
     };
@@ -8867,6 +9093,7 @@ async function to_candid_record_n118(_uploadFile: (file: ExternalBlob) => Promis
     primarySpeaker?: OralHistorySpeaker;
     itemType: ArchiveItemType;
     relatedBranchId?: string;
+    familyId: FamilyId;
     sourceStatus: SourceStatus;
     classification: ArchiveItemClassification;
 }): Promise<{
@@ -8883,6 +9110,7 @@ async function to_candid_record_n118(_uploadFile: (file: ExternalBlob) => Promis
     primarySpeaker: [] | [_OralHistorySpeaker];
     itemType: _ArchiveItemType;
     relatedBranchId: [] | [string];
+    familyId: _FamilyId;
     sourceStatus: _SourceStatus;
     classification: _ArchiveItemClassification;
 }> {
@@ -8900,6 +9128,7 @@ async function to_candid_record_n118(_uploadFile: (file: ExternalBlob) => Promis
         primarySpeaker: value.primarySpeaker ? candid_some(to_candid_OralHistorySpeaker_n120(_uploadFile, _downloadFile, value.primarySpeaker)) : candid_none(),
         itemType: to_candid_ArchiveItemType_n122(_uploadFile, _downloadFile, value.itemType),
         relatedBranchId: value.relatedBranchId ? candid_some(value.relatedBranchId) : candid_none(),
+        familyId: value.familyId,
         sourceStatus: to_candid_SourceStatus_n123(_uploadFile, _downloadFile, value.sourceStatus),
         classification: to_candid_ArchiveItemClassification_n124(_uploadFile, _downloadFile, value.classification)
     };

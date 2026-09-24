@@ -155,6 +155,7 @@ mixin (
           };
         };
         ignore appendConflictAudit(
+          familyId,
           "ConflictResolved",
           ?c.findingId,
           null,
@@ -316,9 +317,11 @@ mixin (
   // Internal helpers.
   // ---------------------------------------------------------------------------
 
-  /// Appends a research audit entry for a conflict action, advancing the shared
-  /// audit id counter.
+  /// Appends a research audit entry for a conflict action in `familyId`,
+  /// advancing the shared audit id counter. The entry is written to the same
+  /// family as the conflict action, never inferred from the default family.
   func appendConflictAudit(
+    familyId : FamilyTypes.FamilyId,
     action : Text,
     findingId : ?Types.FindingId,
     sourceId : ?Types.SourceId,
@@ -329,6 +332,7 @@ mixin (
     let entry = ResearchAuditLib.appendAudit(
       auditLog,
       { var next = state.nextAuditId },
+      familyId,
       action,
       findingId,
       sourceId,

@@ -559,10 +559,15 @@ module {
     updated;
   };
 
-  /// Appends an audit entry recording a provenance or approval action.
+  /// Appends an audit entry recording a provenance or approval action, scoped to
+  /// `familyId`. This is the single canonical Research audit creation helper:
+  /// every Research workflow writes its entry through it, and the entry's
+  /// `familyId` is the family the action was performed in — never inferred from
+  /// `FamilyTypes.DEFAULT_FAMILY_ID` when the caller already knows its family.
   public func appendAudit(
     auditLog : List.List<Types.ResearchAuditEntry>,
     nextId : { var next : Nat },
+    familyId : Text,
     action : Text,
     findingId : ?Types.FindingId,
     sourceId : ?Types.SourceId,
@@ -573,6 +578,7 @@ module {
     let id = nextId.next;
     nextId.next += 1;
     let entry : Types.ResearchAuditEntry = {
+      familyId;
       id;
       action;
       findingId;
@@ -583,5 +589,15 @@ module {
     };
     auditLog.add(entry);
     entry;
+  };
+
+  /// Lists every audit entry in `familyId`. An entry whose `familyId` differs is
+  /// never returned, so Family A audit activity never appears in a Family B
+  /// call. This is the canonical family-scoped audit read filter.
+  public func listAuditForFamily(
+    auditLog : List.List<Types.ResearchAuditEntry>,
+    familyId : Text,
+  ) : [Types.ResearchAuditEntry] {
+    auditLog.toArray().filter(func e = e.familyId == familyId);
   };
 };

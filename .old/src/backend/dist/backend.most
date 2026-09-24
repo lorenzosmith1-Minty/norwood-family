@@ -977,6 +977,7 @@ type ExternalBlob__220559234 = Blob;
 type FamilyId__145942548 = Text;
 type FamilyId__228780613 = Text;
 type FamilyId__284510423 = Text;
+type FamilyId__329536528 = Text;
 type FamilyId__357998493 = Text;
 type FamilyId__635793600 = Text;
 type FamilyId__649884009 = Text;
@@ -1629,6 +1630,8 @@ type NewActor__681552274 =
     profiles : Map__230067015<Text, PersonProfile__630094272>;
     relationshipRequests : List__836382695<RelationshipRequest__174897287>
   };
+type NewActor__681737701 =
+  {researchAuditLog : List__836382695<NewResearchAuditEntry__232993651>};
 type NewActor__703993856 =
   {researchSources : List__836382695<NewSourceRecord__912464744>};
 type NewActor__756013677 =
@@ -2139,6 +2142,17 @@ type NewRelationship__957824335 =
     status : RelationshipStatus__195624246;
     toPersonId : Text
   };
+type NewResearchAuditEntry__232993651 =
+  {
+    action : Text;
+    actorId : Principal;
+    familyId : FamilyId__329536528;
+    findingId : ?Nat;
+    id : Nat;
+    sourceId : ?Nat;
+    summary : Text;
+    timestamp : Int
+  };
 type NewReviewStatus__830937128 =
   {#Approved; #Conflicting; #NeedsResearch; #Pending; #Rejected};
 type NewSourceRecord__864208503 =
@@ -2461,6 +2475,8 @@ type OldActor__1060490054 =
       };
     galleries : Map__230067015<Text, PhotoGallery__360467265>
   };
+type OldActor__114726251 =
+  {researchAuditLog : List__836382695<OldResearchAuditEntry__655275946>};
 type OldActor__190834961 =
   {
     accessControlState :
@@ -3133,6 +3149,16 @@ type OldRelationship__891065882 =
     relationshipType : RelationshipType__1061248369;
     status : RelationshipStatus__195624246;
     toPersonId : Text
+  };
+type OldResearchAuditEntry__655275946 =
+  {
+    action : Text;
+    actorId : Principal;
+    findingId : ?Nat;
+    id : Nat;
+    sourceId : ?Nat;
+    summary : Text;
+    timestamp : Int
   };
 type OldReviewStatus__969786594 =
   {#Approved; #Conflicting; #Pending; #Rejected};
@@ -4666,6 +4692,7 @@ type ResearchAuditEntry__807224576 =
   {
     action : Text;
     actorId : Principal;
+    familyId : Text;
     findingId : ?FindingId__838572545;
     id : Nat;
     sourceId : ?SourceId__430694605;
@@ -5076,7 +5103,8 @@ type UserRole__968740559 = {#admin; #guest; #user};
   "20260923_000837" : (old : OldActor__233056753) -> NewActor__703993856;
   "20260923_120000" : (old : OldActor__860584657) -> NewActor__327868545;
   "20260923_130000" : (old : OldActor__971630431) -> NewActor__540330458;
-  "20260923_140000" : (old : OldActor__66325736) -> NewActor__1044084074
+  "20260923_140000" : (old : OldActor__66325736) -> NewActor__1044084074;
+  "20260923_150000" : (old : OldActor__114726251) -> NewActor__681737701
 }
 actor  {
   stable accessControlState :

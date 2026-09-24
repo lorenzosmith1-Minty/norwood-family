@@ -397,6 +397,7 @@ type ResearchAuditEntry =
  record {
    action: text;
    actorId: principal;
+   familyId: text;
    findingId: opt FindingId;
    id: nat;
    sourceId: opt SourceId;
@@ -1631,10 +1632,19 @@ service : {
   /// reported message content is visible only when a report is filed. Stewards
   /// cannot browse arbitrary private conversations.
   getReportedMessage: (reportId: ReportId) -> (opt ReportedMessageView) query;
-  /// Returns the full research intake audit history. Family Steward only — the
-  /// audit log records provenance and approval actions, so it is not readable by
-  /// anonymous or non-steward callers.
+  /// TEMPORARY Tenancy 1C compatibility wrapper for
+  /// `getResearchAuditLogForFamily`. Deprecated single-family form: delegates
+  /// with `FamilyTypes.DEFAULT_FAMILY_ID`, so current Norwood behavior for
+  /// familyId "norwood" is unchanged. Contains no duplicated business logic and
+  /// will be removed once the frontend passes an explicit familyId everywhere.
   getResearchAuditLog: () -> (vec ResearchAuditEntry) query;
+  /// Returns the research intake audit history for `familyId`. Requires an
+  /// active Steward of `familyId`, using the existing Steward-access denial
+  /// behavior evaluated for that family. Only entries whose `familyId` equals
+  /// `familyId` are returned, so Family A audit activity is never listed or
+  /// exposed through Family B. This is the canonical family-scoped audit read.
+  getResearchAuditLogForFamily: (familyId: FamilyId) ->
+   (vec ResearchAuditEntry) query;
   /// TEMPORARY Tenancy 1C compatibility wrapper for `getReviewQueueForFamily`.
   getReviewQueue: () -> (ReviewQueue) query;
   /// Returns the review queue for `familyId`. Requires an active Steward of

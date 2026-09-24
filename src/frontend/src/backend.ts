@@ -577,6 +577,7 @@ export interface ResearchAuditEntry {
     actorId: Principal;
     summary: string;
     timestamp: bigint;
+    familyId: string;
 }
 export type ResearchError = {
     __kind__: "invalidState";
@@ -1771,11 +1772,21 @@ export interface backendInterface {
      */
     getReportedMessage(reportId: ReportId): Promise<ReportedMessageView | null>;
     /**
-     * / Returns the full research intake audit history. Family Steward only — the
-     * / audit log records provenance and approval actions, so it is not readable by
-     * / anonymous or non-steward callers.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `getResearchAuditLogForFamily`. Deprecated single-family form: delegates
+     * / with `FamilyTypes.DEFAULT_FAMILY_ID`, so current Norwood behavior for
+     * / familyId "norwood" is unchanged. Contains no duplicated business logic and
+     * / will be removed once the frontend passes an explicit familyId everywhere.
      */
     getResearchAuditLog(): Promise<Array<ResearchAuditEntry>>;
+    /**
+     * / Returns the research intake audit history for `familyId`. Requires an
+     * / active Steward of `familyId`, using the existing Steward-access denial
+     * / behavior evaluated for that family. Only entries whose `familyId` equals
+     * / `familyId` are returned, so Family A audit activity is never listed or
+     * / exposed through Family B. This is the canonical family-scoped audit read.
+     */
+    getResearchAuditLogForFamily(familyId: FamilyId): Promise<Array<ResearchAuditEntry>>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for `getReviewQueueForFamily`.
      */
@@ -3820,6 +3831,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.getResearchAuditLog();
+            return from_candid_vec_n201(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getResearchAuditLogForFamily(arg0: FamilyId): Promise<Array<ResearchAuditEntry>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getResearchAuditLogForFamily(arg0);
+                return from_candid_vec_n201(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getResearchAuditLogForFamily(arg0);
             return from_candid_vec_n201(this._uploadFile, this._downloadFile, result);
         }
     }
@@ -6674,6 +6699,7 @@ function from_candid_record_n203(_uploadFile: (file: ExternalBlob) => Promise<Ui
     actorId: Principal;
     summary: string;
     timestamp: bigint;
+    familyId: string;
 }): {
     id: bigint;
     action: string;
@@ -6682,6 +6708,7 @@ function from_candid_record_n203(_uploadFile: (file: ExternalBlob) => Promise<Ui
     actorId: Principal;
     summary: string;
     timestamp: bigint;
+    familyId: string;
 } {
     return {
         id: value.id,
@@ -6690,7 +6717,8 @@ function from_candid_record_n203(_uploadFile: (file: ExternalBlob) => Promise<Ui
         sourceId: record_opt_to_undefined(from_candid_opt_n205(_uploadFile, _downloadFile, value.sourceId)),
         actorId: value.actorId,
         summary: value.summary,
-        timestamp: value.timestamp
+        timestamp: value.timestamp,
+        familyId: value.familyId
     };
 }
 function from_candid_record_n207(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {

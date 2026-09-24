@@ -725,6 +725,7 @@ export const ResearchAuditEntry = IDL.Record({
   'actorId' : IDL.Principal,
   'summary' : IDL.Text,
   'timestamp' : IDL.Int,
+  'familyId' : IDL.Text,
 });
 export const ReviewItemKind = IDL.Variant({
   'Source' : IDL.Null,
@@ -1466,6 +1467,11 @@ export const idlService = IDL.Service({
     ),
   'getResearchAuditLog' : IDL.Func(
       [],
+      [IDL.Vec(ResearchAuditEntry)],
+      ['query'],
+    ),
+  'getResearchAuditLogForFamily' : IDL.Func(
+      [FamilyId],
       [IDL.Vec(ResearchAuditEntry)],
       ['query'],
     ),
@@ -2713,6 +2719,7 @@ export const idlFactory = ({ IDL }) => {
     'actorId' : IDL.Principal,
     'summary' : IDL.Text,
     'timestamp' : IDL.Int,
+    'familyId' : IDL.Text,
   });
   const ReviewItemKind = IDL.Variant({
     'Source' : IDL.Null,
@@ -3452,6 +3459,11 @@ export const idlFactory = ({ IDL }) => {
       ),
     'getResearchAuditLog' : IDL.Func(
         [],
+        [IDL.Vec(ResearchAuditEntry)],
+        ['query'],
+      ),
+    'getResearchAuditLogForFamily' : IDL.Func(
+        [FamilyId],
         [IDL.Vec(ResearchAuditEntry)],
         ['query'],
       ),

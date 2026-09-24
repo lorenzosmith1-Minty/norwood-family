@@ -350,6 +350,7 @@ function researchConflictAuditEntry(id: bigint): ResearchAuditEntry {
     actorId: STEWARD,
     summary: "Conflict Review item #1 resolved (Keep Existing)",
     timestamp: 1_700_000_000_000_000_000n,
+    familyId: "norwood",
   };
 }
 

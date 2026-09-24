@@ -241,7 +241,14 @@ module {
 
   /// A single audit entry recording provenance and approval actions for every
   /// finding and its review lifecycle.
+  ///
+  /// Tenancy 1C-B2-B5: `familyId` is the tenant boundary for a research audit
+  /// entry. Every family-scoped audit read requires `ResearchAuditEntry.familyId`
+  /// to equal the requested `familyId`; an audit entry id alone never crosses a
+  /// family boundary. Records created before this field existed are migrated to
+  /// `FamilyTypes.DEFAULT_FAMILY_ID` ("norwood").
   public type ResearchAuditEntry = {
+    familyId : Text;
     id : Nat;
     action : Text;
     findingId : ?FindingId;

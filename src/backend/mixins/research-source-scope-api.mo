@@ -10,6 +10,7 @@ import ResearchSourceScopeLib "../lib/research-source-scope";
 import FindingScopeLib "../lib/finding-scope";
 import ArchiveLib "../lib/archive";
 import FamilyAuthorizationLib "../lib/family-authorization";
+import ResearchAuditLib "../lib/research-intake";
 
 /// Tenancy 1C-B2 canonical family-scoped Research Source public API.
 ///
@@ -97,6 +98,32 @@ mixin (
     };
   };
 
+  /// Appends a research audit entry for a source review action in `familyId`,
+  /// advancing the shared audit id counter. The entry is written to the same
+  /// family as the source action, never inferred from the default family.
+  func appendSourceAudit(
+    familyId : FamilyTypes.FamilyId,
+    action : Text,
+    sourceId : ?Types.SourceId,
+    actorId : Principal,
+    now : Int,
+    summary : Text,
+  ) : Types.ResearchAuditEntry {
+    let entry = ResearchAuditLib.appendAudit(
+      auditLog,
+      { var next = state.nextAuditId },
+      familyId,
+      action,
+      null,
+      sourceId,
+      actorId,
+      now,
+      summary,
+    );
+    state.nextAuditId := state.nextAuditId + 1;
+    entry;
+  };
+
   /// Internal implementation of `approveSourceForFamily` that takes the caller
   /// explicitly. The public family-scoped endpoint and the temporary
   /// single-family compatibility wrapper both delegate here, so the Steward gate
@@ -108,10 +135,19 @@ mixin (
     caller : Principal,
   ) : ?Types.SourceRecord {
     requireSourceStewardForFamily(caller, familyId);
-    switch (ResearchSourceScopeLib.approveForFamily(sources, familyId, sourceId, Time.now())) {
+    let now = Time.now();
+    switch (ResearchSourceScopeLib.approveForFamily(sources, familyId, sourceId, now)) {
       case (?updated) {
         cascadeLinkedArchiveForFamily(updated, familyId, #Approved);
         addSourceNotification(updated.contributor, #ResearchApproved, "Your research submission was approved.");
+        ignore appendSourceAudit(
+          familyId,
+          "SourceApproved",
+          ?updated.id,
+          caller,
+          now,
+          "Source '" # updated.title # "' approved",
+        );
         ?updated;
       };
       case null { null };
@@ -126,10 +162,19 @@ mixin (
     caller : Principal,
   ) : ?Types.SourceRecord {
     requireSourceStewardForFamily(caller, familyId);
-    switch (ResearchSourceScopeLib.rejectForFamily(sources, familyId, sourceId, Time.now())) {
+    let now = Time.now();
+    switch (ResearchSourceScopeLib.rejectForFamily(sources, familyId, sourceId, now)) {
       case (?updated) {
         cascadeLinkedArchiveForFamily(updated, familyId, #Rejected);
         addSourceNotification(updated.contributor, #ResearchRejected, "Your research submission was not approved.");
+        ignore appendSourceAudit(
+          familyId,
+          "SourceRejected",
+          ?updated.id,
+          caller,
+          now,
+          "Source '" # updated.title # "' rejected",
+        );
         ?updated;
       };
       case null { null };
@@ -144,7 +189,21 @@ mixin (
     caller : Principal,
   ) : ?Types.SourceRecord {
     requireSourceStewardForFamily(caller, familyId);
-    ResearchSourceScopeLib.needsResearchForFamily(sources, familyId, sourceId, Time.now());
+    let now = Time.now();
+    switch (ResearchSourceScopeLib.needsResearchForFamily(sources, familyId, sourceId, now)) {
+      case (?updated) {
+        ignore appendSourceAudit(
+          familyId,
+          "SourceNeedsResearch",
+          ?updated.id,
+          caller,
+          now,
+          "Source '" # updated.title # "' marked as needing research",
+        );
+        ?updated;
+      };
+      case null { null };
+    };
   };
 
   /// Lists every source record in `familyId`. Requires an active Steward of

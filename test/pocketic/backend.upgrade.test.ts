@@ -544,3 +544,144 @@ it("defaults a pre-existing relationship proposal to norwood on upgrade, preserv
   expect(listedAgain.filter((p) => p.id === proposalId)).toHaveLength(1);
   expect(listedAgain.find((p) => p.id === proposalId)).toEqual(stored);
 });
+
+// ---------------------------------------------------------------------------
+// Tenancy 1C-B2-B5: ResearchAuditEntry familyId across a real upgrade.
+//
+// The previous revision's ResearchAuditEntry has no `familyId` field; this
+// build's 20260923_150000.mo migration adds one and backfills every pre-existing
+// audit record with familyId = "norwood". This test installs the previous
+// revision, writes audit records through its public API, upgrades to this build
+// (running the migration), and asserts:
+//   1. every pre-existing audit record reads back with familyId = "norwood";
+//   2. the records' ids, actions, actors, timestamps, and summaries are
+//      preserved — the migration backfills, it does not reset or reseed;
+//   3. the record count is unchanged and no id is duplicated — the migration
+//      rebuilds the list exactly once;
+//   4. a repeated read is idempotent: the same records come back unchanged, so
+//      the migration neither duplicates nor rewrites them.
+//
+// The pre-upgrade read goes through the previous revision's own declarations
+// (`.old/`), because this build's codec requires the new `familyId` field and
+// cannot decode the previous revision's pre-migration audit records.
+// ---------------------------------------------------------------------------
+it("backfills pre-existing Research audit records to norwood on upgrade, with no duplicates and an idempotent re-read", async () => {
+  const previousDeclarations = await import(
+    /* @vite-ignore */ PREVIOUS_DECLARATIONS
+  );
+  const previousIdlFactory = previousDeclarations.idlFactory;
+
+  // 1. Install the version the user is actually running.
+  const previous = await pic!.setupCanister({
+    idlFactory: previousIdlFactory,
+    wasm: PREVIOUS_WASM,
+  });
+
+  // 2. Write audit records through the OLD public API. The writer becomes the
+  //    Family Steward (the one-time claimSteward bootstrap) and approves its own
+  //    claim on a seeded profile so the contribution endpoints are authorized.
+  //    `createSource` and `createFinding` each append one audit entry, and
+  //    `approveFinding` appends a third, so three pre-existing records exist
+  //    before the upgrade.
+  const steward = createIdentity("upgrade-audit-steward-seed");
+  previous.actor.setIdentity(steward);
+  await previous.actor._initialize_access_control();
+  await previous.actor.claimSteward();
+  const requested = await previous.actor.requestProfileClaim("clayton");
+  if ("ok" in requested) {
+    await previous.actor.approveProfileClaim(requested.ok.id);
+  }
+
+  const createdSource = await previous.actor.createSource(
+    "Pre-tenancy audit source",
+    { CensusCitation: null },
+    "A source written before the audit familyId migration.",
+    [],
+  );
+  expect("ok" in createdSource).toBe(true);
+  const sourceId = (createdSource as { ok: { id: bigint } }).ok.id;
+
+  const createdFinding = await previous.actor.createFinding(
+    "Pre-tenancy audit finding",
+    { Documented: null },
+    { PersonFact: null },
+    {
+      PersonFact: {
+        field: "birthDate",
+        value: "12 March 1898",
+        personId: "julia",
+      },
+    },
+    sourceId,
+    ["julia"],
+    [],
+  );
+  expect("ok" in createdFinding).toBe(true);
+  const findingId = (createdFinding as { ok: { id: bigint } }).ok.id;
+
+  await previous.actor.approveFinding(findingId);
+
+  // Capture the pre-upgrade audit records through the previous revision's own
+  // codec. They carry no `familyId` yet.
+  const before = await previous.actor.getResearchAuditLog();
+  expect(before).toHaveLength(3);
+  const beforeIds = before.map((e) => e.id).sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
+  const beforeById = new Map(before.map((e) => [e.id.toString(), e]));
+
+  // 3. Upgrade to the version this build produces. The 20260923_150000.mo
+  //    migration runs here.
+  await pic!.upgradeCanister({
+    canisterId: previous.canisterId,
+    wasm: BACKEND_WASM,
+    upgradeModeOptions: {
+      skip_pre_upgrade: [],
+      wasm_memory_persistence: [{ keep: null }],
+    },
+  });
+
+  // 4. Read through the NEW API. Every pre-existing record is backfilled to
+  //    familyId = "norwood", and its id, action, actor, timestamp, and summary
+  //    are preserved.
+  const upgraded = pic!.createActor<_SERVICE>(idlFactory, previous.canisterId);
+  upgraded.setIdentity(steward);
+  const after = await upgraded.getResearchAuditLog();
+
+  // No duplicates: the same number of records, with the same ids.
+  expect(after).toHaveLength(before.length);
+  const afterIds = after.map((e) => e.id).sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
+  expect(afterIds).toEqual(beforeIds);
+  expect(new Set(afterIds.map((id) => id.toString())).size).toBe(afterIds.length);
+
+  // Every record is backfilled to the default family.
+  expect(after.every((e) => e.familyId === "norwood")).toBe(true);
+
+  // Each record's original fields survive the migration unchanged.
+  for (const entry of after) {
+    const original = beforeById.get(entry.id.toString());
+    expect(original).toBeDefined();
+    expect(entry).toMatchObject({
+      id: original!.id,
+      action: original!.action,
+      actorId: original!.actorId,
+      timestamp: original!.timestamp,
+      summary: original!.summary,
+      familyId: "norwood",
+    });
+  }
+
+  // The three actions written before the upgrade are all present.
+  const actions = after.map((e) => e.action);
+  expect(actions).toContain("SourceCreated");
+  expect(actions).toContain("FindingSubmitted");
+  expect(actions).toContain("FindingApproved");
+
+  // 5. A repeated read is idempotent: the same records come back, unchanged, so
+  //    the migration neither duplicates nor rewrites them.
+  const afterAgain = await upgraded.getResearchAuditLog();
+  expect(afterAgain).toHaveLength(after.length);
+  expect(afterAgain.map((e) => e.id).sort((a, b) => (a < b ? -1 : a > b ? 1 : 0))).toEqual(
+    afterIds,
+  );
+  expect(afterAgain.every((e) => e.familyId === "norwood")).toBe(true);
+  expect(afterAgain).toEqual(after);
+});

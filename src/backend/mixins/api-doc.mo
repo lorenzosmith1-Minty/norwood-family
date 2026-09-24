@@ -1487,8 +1487,20 @@ no business logic of their own.
   source as needing research, transitioning it to `#NeedsResearch` while
   preserving the source and its notes. Returns the updated source, or `null` when
   it does not exist or is not pending.
-- `getResearchAuditLog() : async [ResearchAuditEntry]` — query. Family Steward
-  only. Returns the full research intake audit history recording provenance and
+- `getResearchAuditLogForFamily(familyId : Text) : async [ResearchAuditEntry]` —
+  query. Requires an active Steward of `familyId`. Returns only the research
+  intake audit entries whose `familyId` equals `familyId`, recording provenance
+  and approval actions for every finding and its review lifecycle. Because the
+  audit log records provenance and approval actions, it is gated to Family
+  Stewards of that family and traps with `\"Unauthorized: You must be signed in\"`
+  for an anonymous caller and `\"Unauthorized: Only Family Stewards can perform
+  this action\"` when the caller is not an active Family Steward (an ACTIVE
+  persisted `StewardRecord`) of `familyId`. Family A audit activity is never
+  returned through a Family B call.
+- `getResearchAuditLog() : async [ResearchAuditEntry]` — query. TEMPORARY
+  Tenancy 1C compatibility wrapper for `getResearchAuditLogForFamily`, delegating
+  with the default family id (`\"norwood\"`). Family Steward only. Returns the
+  research intake audit history for the default family, recording provenance and
   approval actions for every finding and its review lifecycle. Because the audit
   log records provenance and approval actions, it is gated to Family Stewards
   and traps with `\"Unauthorized: You must be signed in\"` for an anonymous
@@ -2074,12 +2086,15 @@ admin). `listConflictsForPerson` and `listDisputedFactsForPerson` require a
 signed-in (non-anonymous) caller and
 return `[]` for an anonymous caller (they do not trap); they return only the
 unresolved conflicts / disputed facts for the requested Person. The review surface methods
-`getReviewQueueForFamily` and `getResearchAuditLog`
+`getReviewQueueForFamily` and `getResearchAuditLogForFamily`
 are Family Steward only — they expose contributor principals, proposed findings
 content, and provenance, so they trap with `\"Unauthorized: You must be signed
 in\"` for an anonymous caller and `\"Unauthorized: Only Family Stewards can
 perform this action\"` when the caller is not an active Family Steward (an
-ACTIVE persisted `StewardRecord`). The research-intake OQL
+ACTIVE persisted `StewardRecord`) of the requested family. The research audit
+read is family-scoped: only entries whose `familyId` equals the requested
+`familyId` are returned, so Family A audit activity is never exposed through
+Family B. The research-intake OQL
 entities (`proposedFinding`, `newPersonCandidate`,
 `relationshipProposal`, `conflictReviewItem`, `researchAuditLog`) are all
 declared `.controllerOnly()`, so only the platform controller can read their
@@ -2499,7 +2514,10 @@ already reference the caller's stable principal (`requestingUserId`,
   `#NeedsResearch` — both unresolved). Exposed by `listDisputedFactsForPerson`
   so the Person Profile can show a subtle disputed indicator on each disputed
   fact; resolved conflicts are never included.
-- `ResearchAuditEntry` fields: `id` (`Nat`), `action` (`Text`, the audit action
+- `ResearchAuditEntry` fields: `familyId` (`Text`, the tenant boundary — the
+  family the audited action was performed in; entries created before this field
+  existed are migrated to the default family id `\"norwood\"`), `id` (`Nat`),
+  `action` (`Text`, the audit action
   tag, e.g. `\"SourceCreated\"`/`\"FindingSubmitted\"`/`\"FindingApproved\"`/`\"FindingRoutedToConflict\"`/`\"ConflictResolved\"`),
   `findingId` (`?FindingId`, `null` when not tied to a finding), `sourceId`
   (`?SourceId`, `null` when not tied to a source), `actorId` (`Principal`),
@@ -2785,13 +2803,14 @@ prevented), `rejectRelationshipProposal` (marks `#Rejected` leaving the family
 graph unchanged), and `needsResearchRelationshipProposal` (marks
 `#NeedsResearch` leaving the canonical graph unchanged). Every
 creation and review action records a `ResearchAuditEntry` in the research audit
-log, readable via `getResearchAuditLog`. The review queue is
+log, written to the same family as the action and readable via
+`getResearchAuditLogForFamily`. The review queue is
 derived on demand via `getReviewQueue`, returning the pending/approved/rejected/
 conflicting/needs-research counts plus the full list of reviewable items
 (including pending Sources) with type, title/summary, contributor, provenance,
 created date, evidence label, and available steward actions. There is
 no async job to poll; the frontend can call the list methods (steward) or
-`getReviewQueue`/`getResearchAuditLog` to observe the current state.
+`getReviewQueue`/`getResearchAuditLogForFamily` to observe the current state.
 
 ## Mutation retry safety, idempotency, and destructive effects
 
@@ -3069,7 +3088,8 @@ no async job to poll; the frontend can call the list methods (steward) or
   single-family `approveRelationshipProposal` and `rejectRelationshipProposal`
   are TEMPORARY Tenancy 1C compatibility wrappers delegating with the default
   family id (`\"norwood\"`).
-- `getSource`, `getFinding`, `getReviewQueue`, and `getResearchAuditLog` are
+- `getSource`, `getFinding`, `getReviewQueue`, and
+  `getResearchAuditLogForFamily` are
   read-only queries with no side effects; they are always idempotent.- `getStewardAuditHistory` is a read-only query with no side effects; it is
   always idempotent and never mutates or duplicates any audit record.
 

@@ -1,17 +1,20 @@
 {
-  "overview": "A private family history research app where families record sources, findings, and relationships, and resolve conflicting facts under family-scoped stewardship.",
+  "overview": "A multi-family family-tree and heritage research app with family-scoped governance, archive, and research workflows.",
   "features": [
-    "Family-scoped conflict review so each family's conflicts stay private",
-    "Resolve conflicting facts by keeping existing, replacing, preserving both, or flagging for research",
-    "Family-correct review queue counts",
-    "Steward-gated conflict actions per family"
+    "Family tree with person profiles and relationships",
+    "Heritage archive with review workflow",
+    "Research intake for sources, findings, candidates, and relationship proposals",
+    "Conflict review and resolution",
+    "Family-scoped governance and audit history",
+    "Multi-family tenancy with strict data isolation"
   ],
-  "category": "family-history-research",
+  "category": "family-tree",
   "tags": [
     "genealogy",
     "family",
     "research",
+    "heritage",
     "multi-tenant"
   ],
-  "last_updated": "2026-09-24T02:17:39.958Z"
+  "last_updated": "2026-09-24T03:34:28.307Z"
 }

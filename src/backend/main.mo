@@ -1090,6 +1090,7 @@ actor {
         "id",
       )
       .sample({
+        familyId = FamilyTypes.DEFAULT_FAMILY_ID;
         id = 0;
         action = "";
         findingId = null;
@@ -1098,6 +1099,7 @@ actor {
         timestamp = 0;
         summary = "";
       })
+      .payload("familyId", func r = r.familyId)
       .payload("id", func r = r.id)
       .payload("action", func r = r.action)
       .payload("findingId", func r = r.findingId ?? 0)

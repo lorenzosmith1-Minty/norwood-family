@@ -108,6 +108,7 @@ mixin (
     );
     state.nextProposalId := state.nextProposalId + 1;
     ignore appendRelationshipProposalAudit(
+      familyId,
       "RelationshipProposalSubmitted",
       ?sourceId,
       caller,
@@ -222,6 +223,7 @@ mixin (
       case null {};
     };
     ignore appendRelationshipProposalAudit(
+      familyId,
       "RelationshipProposalApproved",
       ?proposal.sourceId,
       caller,
@@ -255,6 +257,7 @@ mixin (
     // Rejection transitions only that proposal; no confirmed relationship is
     // created.
     ignore appendRelationshipProposalAudit(
+      familyId,
       "RelationshipProposalRejected",
       ?proposal.sourceId,
       caller,
@@ -345,9 +348,12 @@ mixin (
   // Internal helpers.
   // ---------------------------------------------------------------------------
 
-  /// Appends a research audit entry for a relationship proposal action,
-  /// advancing the shared audit id counter.
+  /// Appends a research audit entry for a relationship proposal action in
+  /// `familyId`, advancing the shared audit id counter. The entry is written to
+  /// the same family as the proposal action, never inferred from the default
+  /// family.
   func appendRelationshipProposalAudit(
+    familyId : FamilyTypes.FamilyId,
     action : Text,
     sourceId : ?Types.SourceId,
     actorId : Principal,
@@ -357,6 +363,7 @@ mixin (
     let entry = ResearchAuditLib.appendAudit(
       auditLog,
       { var next = state.nextAuditId },
+      familyId,
       action,
       null,
       sourceId,

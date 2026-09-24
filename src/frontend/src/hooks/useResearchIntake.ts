@@ -922,15 +922,28 @@ export function useGetReviewQueue() {
   });
 }
 
-/** Returns the full research intake audit history. */
+/**
+ * Returns the research intake audit history for the active family. Follows the
+ * same family fork as the SOURCE/FINDING/CANDIDATE/PROPOSAL/CONFLICT/QUEUE
+ * hooks: the default family keeps the exact legacy no-argument call shape and
+ * React Query key, while a non-default family routes to the canonical
+ * `getResearchAuditLogForFamily` endpoint with the familyId included in the key
+ * so caches never collide across families.
+ */
 export function useGetResearchAuditLog() {
   const providersPresent = useProvidersPresent();
+  const familyScopedId = useFamilyScopedId();
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["research", "audit"],
+    queryKey:
+      familyScopedId === undefined
+        ? ["research", "audit"]
+        : ["research", "audit", familyScopedId],
     queryFn: async () => {
       if (!actor) return [] as ResearchAuditEntry[];
-      return actor.getResearchAuditLog();
+      return familyScopedId === undefined
+        ? actor.getResearchAuditLog()
+        : actor.getResearchAuditLogForFamily(familyScopedId);
     },
     enabled: providersPresent && !!actor && !isFetching,
   });

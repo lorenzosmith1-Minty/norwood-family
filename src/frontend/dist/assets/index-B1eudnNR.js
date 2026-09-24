@@ -33908,7 +33908,8 @@ const ResearchAuditEntry = Record({
   "sourceId": Opt(SourceId),
   "actorId": Principal2,
   "summary": Text,
-  "timestamp": Int
+  "timestamp": Int,
+  "familyId": Text
 });
 const ReviewItemKind = Variant({
   "Source": Null,
@@ -34649,6 +34650,11 @@ Service({
   ),
   "getResearchAuditLog": Func(
     [],
+    [Vec(ResearchAuditEntry)],
+    ["query"]
+  ),
+  "getResearchAuditLogForFamily": Func(
+    [FamilyId],
     [Vec(ResearchAuditEntry)],
     ["query"]
   ),
@@ -35892,7 +35898,8 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "sourceId": IDL2.Opt(SourceId2),
     "actorId": IDL2.Principal,
     "summary": IDL2.Text,
-    "timestamp": IDL2.Int
+    "timestamp": IDL2.Int,
+    "familyId": IDL2.Text
   });
   const ReviewItemKind2 = IDL2.Variant({
     "Source": IDL2.Null,
@@ -36631,6 +36638,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
     ),
     "getResearchAuditLog": IDL2.Func(
       [],
+      [IDL2.Vec(ResearchAuditEntry2)],
+      ["query"]
+    ),
+    "getResearchAuditLogForFamily": IDL2.Func(
+      [FamilyId2],
       [IDL2.Vec(ResearchAuditEntry2)],
       ["query"]
     ),
@@ -38740,6 +38752,20 @@ class Backend {
       }
     } else {
       const result = await this.actor.getResearchAuditLog();
+      return from_candid_vec_n201(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async getResearchAuditLogForFamily(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getResearchAuditLogForFamily(arg0);
+        return from_candid_vec_n201(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getResearchAuditLogForFamily(arg0);
       return from_candid_vec_n201(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -41370,7 +41396,8 @@ function from_candid_record_n203(_uploadFile, _downloadFile, value) {
     sourceId: record_opt_to_undefined(from_candid_opt_n205(_uploadFile, _downloadFile, value.sourceId)),
     actorId: value.actorId,
     summary: value.summary,
-    timestamp: value.timestamp
+    timestamp: value.timestamp,
+    familyId: value.familyId
   };
 }
 function from_candid_record_n207(_uploadFile, _downloadFile, value) {
@@ -48059,12 +48086,13 @@ function useGetReviewQueue() {
 }
 function useGetResearchAuditLog() {
   const providersPresent = useProvidersPresent();
+  const familyScopedId = useFamilyScopedId();
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["research", "audit"],
+    queryKey: familyScopedId === void 0 ? ["research", "audit"] : ["research", "audit", familyScopedId],
     queryFn: async () => {
       if (!actor) return [];
-      return actor.getResearchAuditLog();
+      return familyScopedId === void 0 ? actor.getResearchAuditLog() : actor.getResearchAuditLogForFamily(familyScopedId);
     },
     enabled: providersPresent && !!actor && !isFetching
   });

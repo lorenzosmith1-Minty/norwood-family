@@ -90,6 +90,7 @@ mixin (
     );
     state.nextCandidateId := state.nextCandidateId + 1;
     ignore appendCandidateAudit(
+      familyId,
       "NewPersonCandidateSubmitted",
       ?sourceId,
       caller,
@@ -134,6 +135,7 @@ mixin (
         CandidateScopeLib.createCanonicalPersonForFamily(profiles, c, familyId);
         let updated = CandidateScopeLib.approveForFamily(candidates, familyId, candidateId, caller, now);
         ignore appendCandidateAudit(
+          familyId,
           "NewPersonCandidateApproved",
           ?c.sourceId,
           caller,
@@ -163,6 +165,7 @@ mixin (
         };
         let updated = CandidateScopeLib.rejectForFamily(candidates, familyId, candidateId, caller, now);
         ignore appendCandidateAudit(
+          familyId,
           "NewPersonCandidateRejected",
           ?c.sourceId,
           caller,
@@ -192,6 +195,7 @@ mixin (
         };
         let updated = CandidateScopeLib.needsResearchForFamily(candidates, familyId, candidateId, caller, now);
         ignore appendCandidateAudit(
+          familyId,
           "NewPersonCandidateNeedsResearch",
           ?c.sourceId,
           caller,
@@ -327,9 +331,11 @@ mixin (
   // Internal helpers.
   // ---------------------------------------------------------------------------
 
-  /// Appends a research audit entry for a candidate action, advancing the shared
-  /// audit id counter.
+  /// Appends a research audit entry for a candidate action in `familyId`,
+  /// advancing the shared audit id counter. The entry is written to the same
+  /// family as the candidate action, never inferred from the default family.
   func appendCandidateAudit(
+    familyId : FamilyTypes.FamilyId,
     action : Text,
     sourceId : ?Types.SourceId,
     actorId : Principal,
@@ -339,6 +345,7 @@ mixin (
     let entry = ResearchAuditLib.appendAudit(
       auditLog,
       { var next = state.nextAuditId },
+      familyId,
       action,
       null,
       sourceId,

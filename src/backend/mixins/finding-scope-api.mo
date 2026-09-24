@@ -154,6 +154,7 @@ mixin (
     );
     state.nextFindingId := state.nextFindingId + 1;
     ignore appendFindingAudit(
+      familyId,
       "FindingSubmitted",
       ?finding.id,
       ?sourceId,
@@ -199,6 +200,7 @@ mixin (
           let conflict = createConflictReviewItemForFamily(f, familyId);
           let updated = FindingScopeLib.markConflictingForFamily(findings, familyId, findingId, conflict.id, caller, now);
           ignore appendFindingAudit(
+            familyId,
             "FindingRoutedToConflict",
             ?f.id,
             ?f.sourceId,
@@ -211,6 +213,7 @@ mixin (
           let updated = FindingScopeLib.approveForFamily(findings, familyId, findingId, caller, now);
           FindingScopeLib.routeToCanonicalForFamily(profiles, f, familyId);
           ignore appendFindingAudit(
+            familyId,
             "FindingApproved",
             ?findingId,
             ?f.sourceId,
@@ -241,6 +244,7 @@ mixin (
         };
         let updated = FindingScopeLib.rejectForFamily(findings, familyId, findingId, caller, now);
         ignore appendFindingAudit(
+          familyId,
           "FindingRejected",
           ?findingId,
           ?f.sourceId,
@@ -270,6 +274,7 @@ mixin (
         };
         let updated = FindingScopeLib.needsResearchForFamily(findings, familyId, findingId, caller, now);
         ignore appendFindingAudit(
+          familyId,
           "FindingNeedsResearch",
           ?findingId,
           ?f.sourceId,
@@ -417,9 +422,11 @@ mixin (
   // Internal helpers.
   // ---------------------------------------------------------------------------
 
-  /// Appends a research audit entry for a finding action, advancing the shared
-  /// audit id counter.
+  /// Appends a research audit entry for a finding action in `familyId`,
+  /// advancing the shared audit id counter. The entry is written to the same
+  /// family as the finding action, never inferred from the default family.
   func appendFindingAudit(
+    familyId : FamilyTypes.FamilyId,
     action : Text,
     findingId : ?Types.FindingId,
     sourceId : ?Types.SourceId,
@@ -430,6 +437,7 @@ mixin (
     let entry = ResearchAuditLib.appendAudit(
       auditLog,
       { var next = state.nextAuditId },
+      familyId,
       action,
       findingId,
       sourceId,

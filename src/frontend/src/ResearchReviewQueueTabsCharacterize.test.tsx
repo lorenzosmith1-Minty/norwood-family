@@ -354,6 +354,7 @@ function auditEntry(id: bigint): ResearchAuditEntry {
     actorId: STEWARD,
     summary: "Approved finding #1",
     timestamp: 1_700_000_000_000_000_000n,
+    familyId: "norwood",
   };
 }
 

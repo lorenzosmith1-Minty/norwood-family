@@ -533,6 +533,7 @@ export interface ResearchAuditEntry {
     actorId: Principal;
     summary: string;
     timestamp: bigint;
+    familyId: string;
 }
 export type ResearchError = {
     __kind__: "invalidState";
@@ -1707,11 +1708,21 @@ export interface backendInterface {
      */
     getReportedMessage(reportId: ReportId): Promise<ReportedMessageView | null>;
     /**
-     * / Returns the full research intake audit history. Family Steward only — the
-     * / audit log records provenance and approval actions, so it is not readable by
-     * / anonymous or non-steward callers.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `getResearchAuditLogForFamily`. Deprecated single-family form: delegates
+     * / with `FamilyTypes.DEFAULT_FAMILY_ID`, so current Norwood behavior for
+     * / familyId "norwood" is unchanged. Contains no duplicated business logic and
+     * / will be removed once the frontend passes an explicit familyId everywhere.
      */
     getResearchAuditLog(): Promise<Array<ResearchAuditEntry>>;
+    /**
+     * / Returns the research intake audit history for `familyId`. Requires an
+     * / active Steward of `familyId`, using the existing Steward-access denial
+     * / behavior evaluated for that family. Only entries whose `familyId` equals
+     * / `familyId` are returned, so Family A audit activity is never listed or
+     * / exposed through Family B. This is the canonical family-scoped audit read.
+     */
+    getResearchAuditLogForFamily(familyId: FamilyId): Promise<Array<ResearchAuditEntry>>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for `getReviewQueueForFamily`.
      */

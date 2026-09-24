@@ -84,6 +84,7 @@ mixin (
     ignore ResearchLib.appendAudit(
       auditLog,
       { var next = state.nextAuditId },
+      FamilyTypes.DEFAULT_FAMILY_ID,
       "SourceCreated",
       null,
       ?source.id,
@@ -130,6 +131,7 @@ mixin (
           ignore ResearchLib.appendAudit(
             auditLog,
             { var next = state.nextAuditId },
+            FamilyTypes.DEFAULT_FAMILY_ID,
             "RelationshipProposalNeedsResearch",
             null,
             ?p.sourceId,
@@ -144,12 +146,26 @@ mixin (
     };
   };
 
-  /// Returns the full research intake audit history. Family Steward only — the
-  /// audit log records provenance and approval actions, so it is not readable by
-  /// anonymous or non-steward callers.
+  /// Returns the research intake audit history for `familyId`. Requires an
+  /// active Steward of `familyId`, using the existing Steward-access denial
+  /// behavior evaluated for that family. Only entries whose `familyId` equals
+  /// `familyId` are returned, so Family A audit activity is never listed or
+  /// exposed through Family B. This is the canonical family-scoped audit read.
+  public query ({ caller }) func getResearchAuditLogForFamily(
+    familyId : FamilyTypes.FamilyId,
+  ) : async [Types.ResearchAuditEntry] {
+    FamilyAuthorizationLib.requireActiveStewardForFamily(stewards, caller, familyId);
+    ResearchLib.listAuditForFamily(auditLog, familyId);
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper for
+  /// `getResearchAuditLogForFamily`. Deprecated single-family form: delegates
+  /// with `FamilyTypes.DEFAULT_FAMILY_ID`, so current Norwood behavior for
+  /// familyId "norwood" is unchanged. Contains no duplicated business logic and
+  /// will be removed once the frontend passes an explicit familyId everywhere.
   public query ({ caller }) func getResearchAuditLog() : async [Types.ResearchAuditEntry] {
-    requireSteward(caller);
-    auditLog.toArray();
+    FamilyAuthorizationLib.requireActiveStewardForFamily(stewards, caller, FamilyTypes.DEFAULT_FAMILY_ID);
+    ResearchLib.listAuditForFamily(auditLog, FamilyTypes.DEFAULT_FAMILY_ID);
   };
 
   /// Computes the next notification id: one greater than the largest existing

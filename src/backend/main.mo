@@ -51,6 +51,7 @@ import ResearchSourceScopeApi "mixins/research-source-scope-api";
 import FindingScopeApi "mixins/finding-scope-api";
 import CandidateScopeApi "mixins/candidate-scope-api";
 import RelationshipProposalScopeApi "mixins/relationship-proposal-scope-api";
+import ConflictScopeApi "mixins/conflict-scope-api";
 import ArchiveResearchBoardNotificationsApi "mixins/archive-research-board-notifications-api";
 import AuditAndWorkloadApi "mixins/audit-and-workload-api";
 import StewardAuthorityApi "mixins/steward-authority-api";
@@ -1128,6 +1129,7 @@ actor {
   include FindingScopeApi(proposedFindings, researchSources, newPersonCandidates, relationshipProposals, conflictReviewItems, researchAuditLog, researchState, profiles, claims, stewards, notifications);
   include CandidateScopeApi(newPersonCandidates, researchSources, proposedFindings, relationshipProposals, conflictReviewItems, researchAuditLog, researchState, profiles, claims, stewards, notifications);
   include RelationshipProposalScopeApi(relationshipProposals, researchSources, researchAuditLog, researchState, profiles, claims, stewards, notifications, confirmedRelationships);
+  include ConflictScopeApi(conflictReviewItems, proposedFindings, researchSources, researchAuditLog, researchState, profiles, stewards);
   include ArchiveResearchBoardNotificationsApi(archiveItems, researchSources, researchState, posts, notifications, claims, profiles, stewards);
   include AuditAndWorkloadApi(accessControlState, auditLog, researchAuditLog, conflictReviewItems, stewards);
   include StewardAuthorityApi(accessControlState, stewards, auditLog);

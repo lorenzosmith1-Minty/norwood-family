@@ -1439,6 +1439,17 @@ export interface _SERVICE {
   'getBoardPost' : ActorMethod<[PostId], [] | [Post]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
   /**
+   * / Returns the conflict with `conflictId` when it belongs to `familyId`, or
+   * / `null` otherwise. Requires an active Steward of `familyId`, matching the
+   * / pre-tenancy Steward-only conflict-read behavior. A record that exists under
+   * / another family is never returned, so a `conflictId` alone cannot cross the
+   * / family boundary.
+   */
+  'getConflictReviewItemForFamily' : ActorMethod<
+    [FamilyId, bigint],
+    [] | [ConflictReviewItem]
+  >,
+  /**
    * / Returns a full conversation view for a participant. Only participants may
    * / read a conversation.
    */
@@ -1757,30 +1768,60 @@ export interface _SERVICE {
     Array<Relationship>
   >,
   /**
-   * / Lists all conflict review items (steward only).
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `listConflictReviewItemsForFamily`.
    */
   'listConflictReviewItems' : ActorMethod<[], Array<ConflictReviewItem>>,
   /**
-   * / Lists the unresolved conflict review items (`#Conflicting` and
-   * / `#NeedsResearch`) affecting a given Person, so the frontend can surface
-   * / them alongside canonical values on the person profile and source history
-   * / views. Requires a signed-in (non-anonymous) caller; anonymous callers
-   * / receive `[]`. Resolved conflicts are never returned.
+   * / Lists every conflict review item in `familyId`. Requires an active Steward
+   * / of `familyId`, matching the pre-tenancy Steward-only conflict-read
+   * / behavior. A conflict whose `familyId` differs is never returned, so Family
+   * / A conflicts never appear in a Family B call.
+   */
+  'listConflictReviewItemsForFamily' : ActorMethod<
+    [FamilyId],
+    Array<ConflictReviewItem>
+  >,
+  /**
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `listConflictsForPersonForFamily`.
    */
   'listConflictsForPerson' : ActorMethod<[string], Array<ConflictReviewItem>>,
+  /**
+   * / Lists the unresolved conflict review items (`#Conflicting` and
+   * / `#NeedsResearch`) affecting a given Person in `familyId`, so the frontend
+   * / can surface them alongside canonical values on the person profile and
+   * / source history views. Requires a signed-in (non-anonymous) caller;
+   * / anonymous callers receive `[]`. Only conflicts whose `familyId` equals
+   * / `familyId` are returned, so Family A conflicts never appear in a Family B
+   * / call. Resolved conflicts are never returned.
+   */
+  'listConflictsForPersonForFamily' : ActorMethod<
+    [FamilyId, string],
+    Array<ConflictReviewItem>
+  >,
   /**
    * / Returns the signed-in caller's inbox: one summary per conversation they
    * / participate in, newest activity first. Approved family members only.
    */
   'listConversations' : ActorMethod<[], Array<ConversationSummary>>,
   /**
-   * / Returns the facts on a Person Profile that have an unresolved conflict, so
-   * / the Person Profile can show a subtle disputed indicator on each disputed
-   * / fact. Includes conflicts where the canonical value is blank but a proposed
-   * / value exists. Requires a signed-in (non-anonymous) caller; anonymous
-   * / callers receive `[]`. Resolved conflicts are never returned.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `listDisputedFactsForPersonForFamily`.
    */
   'listDisputedFactsForPerson' : ActorMethod<[string], Array<DisputedFact>>,
+  /**
+   * / Returns the facts on a Person Profile in `familyId` that have an unresolved
+   * / conflict, so the Person Profile can show a subtle disputed indicator on
+   * / each disputed fact. Requires a signed-in (non-anonymous) caller; anonymous
+   * / callers receive `[]`. Only conflicts whose `familyId` equals `familyId`
+   * / contribute, so a disputed indicator in one family never reflects another
+   * / family's conflicts. Resolved conflicts are never returned.
+   */
+  'listDisputedFactsForPersonForFamily' : ActorMethod<
+    [FamilyId, string],
+    Array<DisputedFact>
+  >,
   /**
    * / Lists suspected duplicate Person records with comparison data. Family
    * / Steward only.
@@ -2314,18 +2355,29 @@ export interface _SERVICE {
    */
   'requestProfileRemoval' : ActorMethod<[PersonId, string], Result_4>,
   /**
-   * / Resolves a conflict review item (steward only) with an explicit decision.
-   * / `#KeepExisting` leaves canonical data unchanged and resolves the conflict;
-   * / `#ReplaceExisting` writes the proposed value into canonical data exactly
-   * / once (preserving the old value and its provenance in the conflict/audit
-   * / history and the new Source); `#PreserveBoth` keeps both values visible as an
-   * / unresolved `#Conflicting` conflict; `#NeedsResearch` leaves canonical data
-   * / unchanged and retains the conflict with `#NeedsResearch` status. Every
-   * / resolution records an audit entry. Returns the updated item, or `null` when
-   * / it does not exist.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `resolveConflictForFamily`.
    */
   'resolveConflict' : ActorMethod<
     [bigint, ConflictResolutionAction, string],
+    Result_3
+  >,
+  /**
+   * / Resolves a conflict review item in `familyId` (Steward of `familyId` only)
+   * / with an explicit decision. `#KeepExisting` leaves canonical data unchanged
+   * / and resolves the conflict; `#ReplaceExisting` writes the proposed value
+   * / into the canonical profile in `familyId` exactly once (preserving the old
+   * / value and its provenance in the conflict/audit history and the new Source);
+   * / `#PreserveBoth` keeps both values visible as an unresolved `#Conflicting`
+   * / conflict; `#NeedsResearch` leaves canonical data unchanged and retains the
+   * / conflict with `#NeedsResearch` status. Every conflict action validates that
+   * / the conflict and its linked Finding, linked Source, and referenced
+   * / PersonProfile all belong to `familyId`. Every resolution records an audit
+   * / entry. Returns the updated item, or `#err(#notFound(id))` when no conflict
+   * / with that id belongs to `familyId`.
+   */
+  'resolveConflictForFamily' : ActorMethod<
+    [FamilyId, bigint, ConflictResolutionAction, string],
     Result_3
   >,
   /**

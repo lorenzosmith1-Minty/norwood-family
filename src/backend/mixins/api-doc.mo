@@ -1308,57 +1308,112 @@ default family id (`\"norwood\"`), so current Norwood behavior is unchanged.
   proposal enters as `#Pending`; approved proposals route to the family graph.
 - `listRelationshipProposals() : async [RelationshipProposal]` — query. Family
   Steward only. Lists all relationship proposals.
-- `listConflictReviewItems() : async [ConflictReviewItem]` — query. Family
-  Steward only. Lists all conflict review items (findings that contradict
-  existing canonical data and were routed to review instead of silently
-  overwriting it). Each item captures the affected Person (`personId`), the
-  disputed `field`, the existing `canonicalValue` and the `proposedValue`, the
-  provenance/source of each side when available (`existingSourceId`,
-  `proposedSourceId`), the proposed finding's `evidenceLabel`, and any
-  `stewardNotes`. Items are created `#Conflicting` (unresolved) and canonical
-  data is never altered at creation.
-- `listConflictsForPerson(personId : Text) : async [ConflictReviewItem]` —
+Every conflict endpoint is family-scoped: it takes the requested `familyId` and
+evaluates authority and data access against that family. A `conflictId` alone is
+never a tenant boundary — a lookup that finds a record belonging to another
+family behaves exactly like a lookup that found nothing, so Family A can never
+read, resolve, or use a conflict to modify canonical data in Family B. Every
+conflict action validates that the conflict and its linked Finding, linked
+Source, and referenced PersonProfile all belong to the requested family; IDs
+alone are never trusted. The single-family endpoints listed after the
+family-scoped ones are TEMPORARY Tenancy 1C compatibility wrappers that delegate
+with the default family id (`\"norwood\"`); they are deprecated and will be
+removed once every caller passes an explicit `familyId`.
+
+- `listConflictReviewItemsForFamily(familyId : Text) : async [ConflictReviewItem]` —
+  query. Active Steward of `familyId` only. Lists the conflict review items in
+  `familyId` (findings that contradict existing canonical data and were routed
+  to review instead of silently overwriting it). Each item captures the affected
+  Person (`personId`), the disputed `field`, the existing `canonicalValue` and
+  the `proposedValue`, the provenance/source of each side when available
+  (`existingSourceId`, `proposedSourceId`), the proposed finding's
+  `evidenceLabel`, and any `stewardNotes`. Items are created `#Conflicting`
+  (unresolved) and canonical data is never altered at creation. Only items whose
+  `familyId` equals `familyId` are returned, so Family A conflicts never appear
+  in a Family B call.
+- `getConflictReviewItemForFamily(familyId : Text, conflictId : Nat) : async ?ConflictReviewItem` —
+  query. Active Steward of `familyId` only. Returns the conflict with
+  `conflictId` when it belongs to `familyId`, or `null` otherwise. A record that
+  exists under another family is never returned, so a `conflictId` alone cannot
+  cross the family boundary.
+- `listConflictsForPersonForFamily(familyId : Text, personId : Text) : async [ConflictReviewItem]` —
   query. Returns the unresolved conflict review items (`#Conflicting` and
-  `#NeedsResearch`) affecting a given Person, so the frontend can surface them
-  alongside canonical values on the person profile and source history views.
-  Requires a signed-in (non-anonymous) caller; anonymous callers receive `[]`.
+  `#NeedsResearch`) affecting a given Person in `familyId`, so the frontend can
+  surface them alongside canonical values on the person profile and source
+  history views. Requires a signed-in (non-anonymous) caller; anonymous callers
+  receive `[]`. Only conflicts whose `familyId` equals `familyId` are returned.
   Resolved conflicts are never returned.
-- `listDisputedFactsForPerson(personId : Text) : async [DisputedFact]` —
-  query. Returns the facts on a Person Profile that have an unresolved conflict
-  (`#Conflicting` or `#NeedsResearch`), so the Person Profile can show a subtle
-  disputed indicator on each disputed fact. Each `DisputedFact` carries the
-  disputed `field`, the `canonicalValue` (which may be blank when no canonical
-  value exists yet and only a proposed value is present), the `proposedValue`,
-  and the unresolved `status`. Requires a signed-in (non-anonymous) caller;
-  anonymous callers receive `[]`. Resolved conflicts are never returned. This is
-  a read-only view — it never resolves or alters conflicts.
+- `listDisputedFactsForPersonForFamily(familyId : Text, personId : Text) : async [DisputedFact]` —
+  query. Returns the facts on a Person Profile in `familyId` that have an
+  unresolved conflict (`#Conflicting` or `#NeedsResearch`), so the Person
+  Profile can show a subtle disputed indicator on each disputed fact. Each
+  `DisputedFact` carries the disputed `field`, the `canonicalValue` (which may be
+  blank when no canonical value exists yet and only a proposed value is
+  present), the `proposedValue`, and the unresolved `status`. Requires a
+  signed-in (non-anonymous) caller; anonymous callers receive `[]`. Only
+  conflicts whose `familyId` equals `familyId` contribute, so a disputed
+  indicator in one family never reflects another family's conflicts. Resolved
+  conflicts are never returned. This is a read-only view — it never resolves or
+  alters conflicts.
+- `resolveConflictForFamily(familyId : Text, id : Nat, action : ConflictResolutionAction, notes : Text) : async Result<ConflictReviewItem, ResearchError>` —
+  update. Active Steward of `familyId` only. Resolves a conflict review item in
+  `familyId` with an explicit decision. `#KeepExisting` leaves canonical data
+  unchanged and resolves the conflict (the proposed research and its provenance
+  are preserved). `#ReplaceExisting` writes the proposed value into the canonical
+  profile in `familyId` exactly once, preserving the old value and its provenance
+  in the conflict/audit history and the new Source, and records the actor and
+  timestamp; it never mutates a same-`personId` profile in another family.
+  `#PreserveBoth` keeps both values visible as an unresolved `#Conflicting`
+  conflict without silently choosing either. `#NeedsResearch` leaves canonical
+  data unchanged and retains the conflict with `#NeedsResearch` status. Every
+  conflict action validates that the conflict and its linked Finding, linked
+  Source, and referenced PersonProfile all belong to `familyId`. Every resolution
+  records an audit entry. Returns `#ok(updatedItem)` on success,
+  `#err(#notFound(id))` when no conflict with that id belongs to `familyId`, and
+  `#err(#invalidState(...))` when a `#ReplaceExisting` resolution targets a
+  Person Fact whose field cannot be mapped to a canonical Person field — in that
+  case the conflict is left unresolved and canonical data is not altered.
+
+The following single-family endpoints are TEMPORARY Tenancy 1C compatibility
+wrappers. Each delegates to its family-scoped counterpart with the default
+family id (`\"norwood\"`), so current Norwood behavior is unchanged. They contain
+no business logic of their own.
+
+- `listConflictReviewItems() : async [ConflictReviewItem]` — query. TEMPORARY
+  Tenancy 1C compatibility wrapper for `listConflictReviewItemsForFamily`,
+  delegating with the default family id (`\"norwood\"`). Family Steward only.
+  Lists all conflict review items.
+- `listConflictsForPerson(personId : Text) : async [ConflictReviewItem]` —
+  query. TEMPORARY Tenancy 1C compatibility wrapper for
+  `listConflictsForPersonForFamily`, delegating with the default family id
+  (`\"norwood\"`). Returns the unresolved conflict review items affecting a given
+  Person. Requires a signed-in (non-anonymous) caller; anonymous callers receive
+  `[]`.
+- `listDisputedFactsForPerson(personId : Text) : async [DisputedFact]` — query.
+  TEMPORARY Tenancy 1C compatibility wrapper for
+  `listDisputedFactsForPersonForFamily`, delegating with the default family id
+  (`\"norwood\"`). Returns the facts on a Person Profile that have an unresolved
+  conflict. Requires a signed-in (non-anonymous) caller; anonymous callers
+  receive `[]`.
 - `resolveConflict(id : Nat, action : ConflictResolutionAction, notes : Text) : async Result<ConflictReviewItem, ResearchError>` —
-  update. Family Steward only. Resolves a conflict review item with an explicit
-  decision. `#KeepExisting` leaves canonical data unchanged and resolves the
-  conflict (the proposed research and its provenance are preserved). `#ReplaceExisting`
-  writes the proposed value into canonical data exactly once, preserving the old
-  value and its provenance in the conflict/audit history and the new Source, and
-  records the actor and timestamp. `#PreserveBoth` keeps both values visible as
-  an unresolved `#Conflicting` conflict without silently choosing either.
-  `#NeedsResearch` leaves canonical data unchanged and retains the conflict with
-  `#NeedsResearch` status. Every resolution records an audit entry. Returns
-  `#ok(updatedItem)` on success, `#err(#notFound(id))` when the item does not
-  exist, and `#err(#invalidState(...))` when a `#ReplaceExisting` resolution
-  targets a Person Fact whose field cannot be mapped to a canonical Person field
-  — in that case the conflict is left unresolved and canonical data is not
-  altered.
+  update. TEMPORARY Tenancy 1C compatibility wrapper for
+  `resolveConflictForFamily`, delegating with the default family id
+  (`\"norwood\"`). Family Steward only. Resolves a conflict review item with an
+  explicit decision.
 - `getReviewQueueForFamily(familyId : Text) : async ReviewQueue` — query.
   Requires an active Steward of `familyId`. Returns the review queue badge counts
   (`pending`, `approved`, `rejected`, `conflicting`, `needsResearch`) and the
   full list of reviewable items (`items`). The Sources section and every
   source-derived count are restricted to sources whose `familyId` equals
   `familyId`, the Findings section and every finding-derived count are
-  restricted to findings whose `familyId` equals `familyId`, and the New Person
+  restricted to findings whose `familyId` equals `familyId`, the New Person
   Candidates section and every candidate-derived count are restricted to
-  candidates whose `familyId` equals `familyId`, so the queue never mixes
-  source, finding, or candidate counts across families; the
-  remaining categories (Relationships, Conflicts) keep
-  their existing aggregation behavior. Every pending item appears with its type,
+  candidates whose `familyId` equals `familyId`, the Relationships section is
+  restricted to proposals whose `familyId` equals `familyId`, and the Conflicts
+  section and every conflict-derived count are restricted to conflicts whose
+  `familyId` equals `familyId`, so the queue never mixes source, finding,
+  candidate, relationship-proposal, or conflict counts across families. Every
+  pending item appears with its type,
   title/summary, contributor, provenance, created date, evidence label, and
   available steward actions. Because the queue exposes contributor principals,
   proposed findings content, and provenance, it is gated to Family Stewards and

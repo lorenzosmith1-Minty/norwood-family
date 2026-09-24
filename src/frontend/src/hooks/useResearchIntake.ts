@@ -812,12 +812,18 @@ export function useNeedsResearchRelationshipProposal() {
 /** Lists all conflict review items (steward only). */
 export function useListConflictReviewItems() {
   const providersPresent = useProvidersPresent();
+  const familyScopedId = useFamilyScopedId();
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["research", "conflicts"],
+    queryKey:
+      familyScopedId === undefined
+        ? ["research", "conflicts"]
+        : ["research", "conflicts", familyScopedId],
     queryFn: async () => {
       if (!actor) return [] as ConflictReviewItem[];
-      return actor.listConflictReviewItems();
+      return familyScopedId === undefined
+        ? actor.listConflictReviewItems()
+        : actor.listConflictReviewItemsForFamily(familyScopedId);
     },
     enabled: providersPresent && !!actor && !isFetching,
   });
@@ -825,6 +831,7 @@ export function useListConflictReviewItems() {
 
 /** Resolves a conflict review item with an explicit action and steward notes. */
 export function useResolveConflict() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
@@ -838,7 +845,14 @@ export function useResolveConflict() {
       notes: string;
     }): Promise<Result_3> => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.resolveConflict(conflictId, action, notes);
+      return familyScopedId === undefined
+        ? actor.resolveConflict(conflictId, action, notes)
+        : actor.resolveConflictForFamily(
+            familyScopedId,
+            conflictId,
+            action,
+            notes,
+          );
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({
@@ -871,12 +885,18 @@ export function useResolveConflict() {
  */
 export function useListConflictsForPerson(personId: string) {
   const providersPresent = useProvidersPresent();
+  const familyScopedId = useFamilyScopedId();
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["research", "conflicts", "person", personId],
+    queryKey:
+      familyScopedId === undefined
+        ? ["research", "conflicts", "person", personId]
+        : ["research", "conflicts", "person", personId, familyScopedId],
     queryFn: async () => {
       if (!actor) return [] as ConflictReviewItem[];
-      return actor.listConflictsForPerson(personId);
+      return familyScopedId === undefined
+        ? actor.listConflictsForPerson(personId)
+        : actor.listConflictsForPersonForFamily(familyScopedId, personId);
     },
     enabled: providersPresent && !!actor && !isFetching,
   });

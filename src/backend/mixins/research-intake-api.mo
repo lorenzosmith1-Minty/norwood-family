@@ -11,7 +11,6 @@ import ArchiveTypes "../types/archive";
 import FamilyTypes "../types/family";
 import GovernanceTypes "../types/governance";
 import ResearchLib "../lib/research-intake";
-import FindingScopeLib "../lib/finding-scope";
 import FamilyAuthorizationLib "../lib/family-authorization";
 import StewardAuthorityLib "../lib/steward-authority";
 import InputValidation "../lib/input-validation";
@@ -102,121 +101,11 @@ mixin (
   // compatibility wrappers delegating to the canonical family-scoped endpoints
   // with `FamilyTypes.DEFAULT_FAMILY_ID`. Exactly one implementation exists.
 
-  /// Lists all conflict review items (steward only).
-  public query ({ caller }) func listConflictReviewItems() : async [Types.ConflictReviewItem] {
-    requireSteward(caller);
-    conflicts.toArray();
-  };
-
-  /// Lists the unresolved conflict review items (`#Conflicting` and
-  /// `#NeedsResearch`) affecting a given Person, so the frontend can surface
-  /// them alongside canonical values on the person profile and source history
-  /// views. Requires a signed-in (non-anonymous) caller; anonymous callers
-  /// receive `[]`. Resolved conflicts are never returned.
-  public query ({ caller }) func listConflictsForPerson(personId : Text) : async [Types.ConflictReviewItem] {
-    if (caller.isAnonymous()) {
-      return [];
-    };
-    conflicts.toArray().filter(func c =
-      c.personId == ?personId and
-      (c.status == #Conflicting or c.status == #NeedsResearch)
-    );
-  };
-
-  /// Returns the facts on a Person Profile that have an unresolved conflict, so
-  /// the Person Profile can show a subtle disputed indicator on each disputed
-  /// fact. Includes conflicts where the canonical value is blank but a proposed
-  /// value exists. Requires a signed-in (non-anonymous) caller; anonymous
-  /// callers receive `[]`. Resolved conflicts are never returned.
-  public query ({ caller }) func listDisputedFactsForPerson(personId : Text) : async [Types.DisputedFact] {
-    if (caller.isAnonymous()) {
-      return [];
-    };
-    ResearchLib.disputedFactsForPerson(conflicts, personId);
-  };
-
-  /// Resolves a conflict review item (steward only) with an explicit decision.
-  /// `#KeepExisting` leaves canonical data unchanged and resolves the conflict;
-  /// `#ReplaceExisting` writes the proposed value into canonical data exactly
-  /// once (preserving the old value and its provenance in the conflict/audit
-  /// history and the new Source); `#PreserveBoth` keeps both values visible as an
-  /// unresolved `#Conflicting` conflict; `#NeedsResearch` leaves canonical data
-  /// unchanged and retains the conflict with `#NeedsResearch` status. Every
-  /// resolution records an audit entry. Returns the updated item, or `null` when
-  /// it does not exist.
-  public shared ({ caller }) func resolveConflict(
-    id : Nat,
-    action : Types.ConflictResolutionAction,
-    notes : Text,
-  ) : async Result.Result<Types.ConflictReviewItem, Types.ResearchError> {
-    requireSteward(caller);
-    let cleanNotes = InputValidation.requireText("notes", notes, InputValidation.MAX_DESCRIPTION_CHARS);
-    let now = Time.now();
-    switch (conflicts.find(func c = c.id == id)) {
-      case null { #err(#notFound(id)) };
-      case (?c) {
-        // Only Replace Existing writes the proposed value into canonical data.
-        // Keep Existing, Preserve Both, and Needs Research leave canonical data
-        // unchanged — no silent overwrite.
-        if (action == #ReplaceExisting) {
-          switch (findings.find(func f = f.id == c.findingId)) {
-            case (?f) {
-              // Unknown Person Fact fields must not silently resolve Replace
-              // Existing as successful. Return a clear unsupported-field error,
-              // leave the conflict unresolved, and do not alter canonical data.
-              switch (f.content) {
-                case (#PersonFact pf) {
-                  switch (FindingScopeLib.normalizePersonFactField(pf.field)) {
-                    case null {
-                      return #err(#invalidState("Unsupported Person Fact field: '" # pf.field # "'"));
-                    };
-                    case (?_) {};
-                  };
-                };
-                case _ {};
-              };
-              // Canonical promotion is family-scoped: the conflict carries the
-              // finding's familyId, so the profile read/write is qualified by
-              // that family and a Family A finding never mutates a Family B
-              // profile. Delegates to the shared promotion helper so the
-              // conflict path and the finding endpoints promote identically.
-              FindingScopeLib.routeToCanonicalForFamily(profiles, f, c.familyId);
-            };
-            case null {};
-          };
-        };
-        let updated = ResearchLib.resolveConflict(conflicts, id, action, cleanNotes, caller, now)
-          ?? Runtime.trap("Conflict not found");
-        // Reflect the resolution outcome on the linked finding so it no longer
-        // counts as an unresolved conflict after Keep/Replace, and so Preserve
-        // Both / Needs Research keep it visible as unresolved.
-        switch (action) {
-          case (#KeepExisting) {
-            ignore ResearchLib.updateFindingStatus(findings, c.findingId, #Rejected, caller, now);
-          };
-          case (#ReplaceExisting) {
-            ignore ResearchLib.updateFindingStatus(findings, c.findingId, #Approved, caller, now);
-          };
-          case (#PreserveBoth) {};
-          case (#NeedsResearch) {
-            ignore ResearchLib.updateFindingStatus(findings, c.findingId, #NeedsResearch, caller, now);
-          };
-        };
-        ignore ResearchLib.appendAudit(
-          auditLog,
-          { var next = state.nextAuditId },
-          "ConflictResolved",
-          ?c.findingId,
-          null,
-          caller,
-          now,
-          "Conflict Review item #" # id.toText() # " resolved (" # conflictActionText(action) # ")",
-        );
-        state.nextAuditId := state.nextAuditId + 1;
-        #ok(updated);
-      };
-    };
-  };
+  // NOTE: the Conflict Review endpoints (`listConflictReviewItems`,
+  // `listConflictsForPerson`, `listDisputedFactsForPerson`, `resolveConflict`)
+  // moved to `mixins/conflict-scope-api.mo` as TEMPORARY Tenancy 1C
+  // compatibility wrappers delegating to the canonical family-scoped endpoints
+  // with `FamilyTypes.DEFAULT_FAMILY_ID`. Exactly one implementation exists.
 
   // NOTE: `approveRelationshipProposal` and `rejectRelationshipProposal` moved
   // to `mixins/relationship-proposal-scope-api.mo` as TEMPORARY Tenancy 1C
@@ -261,17 +150,6 @@ mixin (
   public query ({ caller }) func getResearchAuditLog() : async [Types.ResearchAuditEntry] {
     requireSteward(caller);
     auditLog.toArray();
-  };
-
-  /// Renders a conflict resolution action variant as its tag text for audit
-  /// summaries.
-  func conflictActionText(a : Types.ConflictResolutionAction) : Text {
-    switch (a) {
-      case (#KeepExisting) "KeepExisting";
-      case (#ReplaceExisting) "ReplaceExisting";
-      case (#PreserveBoth) "PreserveBoth";
-      case (#NeedsResearch) "NeedsResearch";
-    };
   };
 
   /// Computes the next notification id: one greater than the largest existing

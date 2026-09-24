@@ -1,19 +1,17 @@
 {
-  "overview": "A multi-family genealogy research app where each family's stewards review relationship proposals and confirm relationships within their own family.",
+  "overview": "A private family history research app where families record sources, findings, and relationships, and resolve conflicting facts under family-scoped stewardship.",
   "features": [
-    "Family-scoped relationship proposal review",
-    "Approve a proposal to create a confirmed relationship in that family",
-    "Reject a proposal without creating a relationship",
+    "Family-scoped conflict review so each family's conflicts stay private",
+    "Resolve conflicting facts by keeping existing, replacing, preserving both, or flagging for research",
     "Family-correct review queue counts",
-    "Preserved Norwood default behavior"
+    "Steward-gated conflict actions per family"
   ],
-  "category": "genealogy-research",
+  "category": "family-history-research",
   "tags": [
     "genealogy",
     "family",
-    "tenancy",
     "research",
-    "review"
+    "multi-tenant"
   ],
-  "last_updated": "2026-09-23T21:14:59.469Z"
+  "last_updated": "2026-09-24T02:17:39.958Z"
 }

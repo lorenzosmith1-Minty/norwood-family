@@ -638,6 +638,22 @@ export const Result__1 = IDL.Record({
   'hasMore' : IDL.Bool,
   'rows' : IDL.Vec(IDL.Vec(Cell)),
 });
+export const ConflictReviewItem = IDL.Record({
+  'id' : IDL.Nat,
+  'field' : IDL.Text,
+  'status' : ReviewStatus,
+  'evidenceLabel' : EvidenceLabel,
+  'findingId' : FindingId,
+  'proposedValue' : IDL.Text,
+  'stewardNotes' : IDL.Text,
+  'proposedSourceId' : IDL.Opt(IDL.Nat),
+  'personId' : IDL.Opt(IDL.Text),
+  'canonicalValue' : IDL.Text,
+  'familyId' : IDL.Text,
+  'resolvedAt' : IDL.Opt(IDL.Int),
+  'resolvedBy' : IDL.Opt(IDL.Principal),
+  'existingSourceId' : IDL.Opt(IDL.Nat),
+});
 export const ConversationId = IDL.Nat;
 export const MessageStatus = IDL.Variant({
   'Blocked' : IDL.Null,
@@ -793,22 +809,6 @@ export const AuditEntry = IDL.Record({
   'summary' : IDL.Text,
   'timestamp' : IDL.Int,
   'actorAccountId' : IDL.Principal,
-});
-export const ConflictReviewItem = IDL.Record({
-  'id' : IDL.Nat,
-  'field' : IDL.Text,
-  'status' : ReviewStatus,
-  'evidenceLabel' : EvidenceLabel,
-  'findingId' : FindingId,
-  'proposedValue' : IDL.Text,
-  'stewardNotes' : IDL.Text,
-  'proposedSourceId' : IDL.Opt(IDL.Nat),
-  'personId' : IDL.Opt(IDL.Text),
-  'canonicalValue' : IDL.Text,
-  'familyId' : IDL.Text,
-  'resolvedAt' : IDL.Opt(IDL.Int),
-  'resolvedBy' : IDL.Opt(IDL.Principal),
-  'existingSourceId' : IDL.Opt(IDL.Nat),
 });
 export const ConversationSummary = IDL.Record({
   'otherPersonId' : PersonId,
@@ -1371,6 +1371,11 @@ export const idlService = IDL.Service({
     ),
   'getBoardPost' : IDL.Func([PostId], [IDL.Opt(Post)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+  'getConflictReviewItemForFamily' : IDL.Func(
+      [FamilyId, IDL.Nat],
+      [IDL.Opt(ConflictReviewItem)],
+      ['query'],
+    ),
   'getConversation' : IDL.Func(
       [ConversationId],
       [IDL.Opt(ConversationView)],
@@ -1521,14 +1526,29 @@ export const idlService = IDL.Service({
       [IDL.Vec(ConflictReviewItem)],
       ['query'],
     ),
+  'listConflictReviewItemsForFamily' : IDL.Func(
+      [FamilyId],
+      [IDL.Vec(ConflictReviewItem)],
+      ['query'],
+    ),
   'listConflictsForPerson' : IDL.Func(
       [IDL.Text],
+      [IDL.Vec(ConflictReviewItem)],
+      ['query'],
+    ),
+  'listConflictsForPersonForFamily' : IDL.Func(
+      [FamilyId, IDL.Text],
       [IDL.Vec(ConflictReviewItem)],
       ['query'],
     ),
   'listConversations' : IDL.Func([], [IDL.Vec(ConversationSummary)], ['query']),
   'listDisputedFactsForPerson' : IDL.Func(
       [IDL.Text],
+      [IDL.Vec(DisputedFact)],
+      ['query'],
+    ),
+  'listDisputedFactsForPersonForFamily' : IDL.Func(
+      [FamilyId, IDL.Text],
       [IDL.Vec(DisputedFact)],
       ['query'],
     ),
@@ -1794,6 +1814,11 @@ export const idlService = IDL.Service({
   'requestProfileRemoval' : IDL.Func([PersonId, IDL.Text], [Result_4], []),
   'resolveConflict' : IDL.Func(
       [IDL.Nat, ConflictResolutionAction, IDL.Text],
+      [Result_3],
+      [],
+    ),
+  'resolveConflictForFamily' : IDL.Func(
+      [FamilyId, IDL.Nat, ConflictResolutionAction, IDL.Text],
       [Result_3],
       [],
     ),
@@ -2610,6 +2635,22 @@ export const idlFactory = ({ IDL }) => {
     'hasMore' : IDL.Bool,
     'rows' : IDL.Vec(IDL.Vec(Cell)),
   });
+  const ConflictReviewItem = IDL.Record({
+    'id' : IDL.Nat,
+    'field' : IDL.Text,
+    'status' : ReviewStatus,
+    'evidenceLabel' : EvidenceLabel,
+    'findingId' : FindingId,
+    'proposedValue' : IDL.Text,
+    'stewardNotes' : IDL.Text,
+    'proposedSourceId' : IDL.Opt(IDL.Nat),
+    'personId' : IDL.Opt(IDL.Text),
+    'canonicalValue' : IDL.Text,
+    'familyId' : IDL.Text,
+    'resolvedAt' : IDL.Opt(IDL.Int),
+    'resolvedBy' : IDL.Opt(IDL.Principal),
+    'existingSourceId' : IDL.Opt(IDL.Nat),
+  });
   const ConversationId = IDL.Nat;
   const MessageStatus = IDL.Variant({
     'Blocked' : IDL.Null,
@@ -2756,22 +2797,6 @@ export const idlFactory = ({ IDL }) => {
     'summary' : IDL.Text,
     'timestamp' : IDL.Int,
     'actorAccountId' : IDL.Principal,
-  });
-  const ConflictReviewItem = IDL.Record({
-    'id' : IDL.Nat,
-    'field' : IDL.Text,
-    'status' : ReviewStatus,
-    'evidenceLabel' : EvidenceLabel,
-    'findingId' : FindingId,
-    'proposedValue' : IDL.Text,
-    'stewardNotes' : IDL.Text,
-    'proposedSourceId' : IDL.Opt(IDL.Nat),
-    'personId' : IDL.Opt(IDL.Text),
-    'canonicalValue' : IDL.Text,
-    'familyId' : IDL.Text,
-    'resolvedAt' : IDL.Opt(IDL.Int),
-    'resolvedBy' : IDL.Opt(IDL.Principal),
-    'existingSourceId' : IDL.Opt(IDL.Nat),
   });
   const ConversationSummary = IDL.Record({
     'otherPersonId' : PersonId,
@@ -3332,6 +3357,11 @@ export const idlFactory = ({ IDL }) => {
       ),
     'getBoardPost' : IDL.Func([PostId], [IDL.Opt(Post)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+    'getConflictReviewItemForFamily' : IDL.Func(
+        [FamilyId, IDL.Nat],
+        [IDL.Opt(ConflictReviewItem)],
+        ['query'],
+      ),
     'getConversation' : IDL.Func(
         [ConversationId],
         [IDL.Opt(ConversationView)],
@@ -3490,8 +3520,18 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(ConflictReviewItem)],
         ['query'],
       ),
+    'listConflictReviewItemsForFamily' : IDL.Func(
+        [FamilyId],
+        [IDL.Vec(ConflictReviewItem)],
+        ['query'],
+      ),
     'listConflictsForPerson' : IDL.Func(
         [IDL.Text],
+        [IDL.Vec(ConflictReviewItem)],
+        ['query'],
+      ),
+    'listConflictsForPersonForFamily' : IDL.Func(
+        [FamilyId, IDL.Text],
         [IDL.Vec(ConflictReviewItem)],
         ['query'],
       ),
@@ -3502,6 +3542,11 @@ export const idlFactory = ({ IDL }) => {
       ),
     'listDisputedFactsForPerson' : IDL.Func(
         [IDL.Text],
+        [IDL.Vec(DisputedFact)],
+        ['query'],
+      ),
+    'listDisputedFactsForPersonForFamily' : IDL.Func(
+        [FamilyId, IDL.Text],
         [IDL.Vec(DisputedFact)],
         ['query'],
       ),
@@ -3779,6 +3824,11 @@ export const idlFactory = ({ IDL }) => {
     'requestProfileRemoval' : IDL.Func([PersonId, IDL.Text], [Result_4], []),
     'resolveConflict' : IDL.Func(
         [IDL.Nat, ConflictResolutionAction, IDL.Text],
+        [Result_3],
+        [],
+      ),
+    'resolveConflictForFamily' : IDL.Func(
+        [FamilyId, IDL.Nat, ConflictResolutionAction, IDL.Text],
         [Result_3],
         [],
       ),

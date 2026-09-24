@@ -6,6 +6,7 @@ import OwnershipTypes "../types/ownership";
 import FamilyTypes "../types/family";
 import TenancyLib "tenancy";
 import RelationshipProposalScopeLib "relationship-proposal-scope";
+import ConflictScopeLib "conflict-scope";
 
 /// Tenancy 1C-B2-B1 canonical family-scoped Proposed Finding domain logic.
 ///
@@ -229,10 +230,10 @@ module {
   /// behavior, the New Person Candidates section is restricted to candidates
   /// whose `familyId` equals `familyId` (Tenancy 1C-B2-B2), and the
   /// Relationships section is restricted to proposals whose `familyId` equals
-  /// `familyId` (Tenancy 1C-B2-B3-B). The Conflicts category keeps its existing
-  /// behavior unchanged in this build. The returned `ReviewQueue` therefore
-  /// never mixes source, finding, candidate, or relationship-proposal counts
-  /// across families.
+  /// `familyId` (Tenancy 1C-B2-B3-B), and the Conflicts section is restricted to
+  /// conflicts whose `familyId` equals `familyId` (Tenancy 1C-B2-B4). The
+  /// returned `ReviewQueue` therefore never mixes source, finding, candidate,
+  /// relationship-proposal, or conflict counts across families.
   public func computeQueueForFamily(
     sources : List.List<Types.SourceRecord>,
     findings : List.List<Types.ProposedFinding>,
@@ -321,7 +322,13 @@ module {
         actions = actionsFor(p.status);
       });
     };
-    for (c in conflicts.toArray().values()) {
+    // Conflicts: family-scoped (Tenancy 1C-B2-B4). Only a conflict whose
+    // `familyId` equals `familyId` contributes to the Conflicts section or to
+    // any conflict-derived count. The filter is the canonical
+    // `ConflictScopeLib.listForFamily` helper — the same family-boundary
+    // predicate the family-scoped conflict endpoints use — so there is exactly
+    // one family-filter implementation.
+    for (c in ConflictScopeLib.listForFamily(conflicts, familyId).values()) {
       items.add({
         id = c.id;
         kind = #ConflictReview;

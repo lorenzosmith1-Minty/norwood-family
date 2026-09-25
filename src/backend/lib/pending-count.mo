@@ -23,12 +23,12 @@ module {
   ///
   /// Tenancy 1C-B1: `familyId` is explicit and canonical. A pending Archive item
   /// is counted only when `item.familyId == familyId`, so Family A's pending
-  /// Archive never appears in Family B's count. `ArchiveItem` is the only
-  /// contribution type that currently carries a `familyId` field; recipes,
-  /// stories, and mystery contributions are not yet family-scoped and keep their
-  /// existing counting semantics unchanged (their family scoping belongs to a
-  /// later Tenancy 1C build). The Research-linked exclusion (`linkedIds`) is
-  /// applied after the family filter and is unchanged.
+  /// Archive never appears in Family B's count. Tenancy 1C-D3-A extends the same
+  /// rule to Stories: a pending Story is counted only when
+  /// `story.familyId == familyId`. Mystery contributions are not yet
+  /// family-scoped and keep their existing counting semantics unchanged (their
+  /// family scoping belongs to a later Tenancy 1C build). The Research-linked
+  /// exclusion (`linkedIds`) is applied after the family filter and is unchanged.
   public func countPendingForFamily(
     familyId : FamilyTypes.FamilyId,
     archiveItems : List.List<ArchiveTypes.ArchiveItem>,
@@ -47,7 +47,7 @@ module {
       if (r.familyId == familyId and r.status == #Pending) { count += 1 };
     };
     for (s in stories.toArray().values()) {
-      if (s.status == #Pending) { count += 1 };
+      if (s.familyId == familyId and s.status == #Pending) { count += 1 };
     };
     for (m in mysteryContributions.toArray().values()) {
       if (m.status == #Pending) { count += 1 };

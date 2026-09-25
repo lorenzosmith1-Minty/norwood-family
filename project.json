@@ -1,17 +1,19 @@
 {
-  "overview": "A private family hub for the Norwood family with recipes, stories, board posts, messaging, and archives.",
+  "overview": "A private family history app where relatives share stories, recipes, photos, and memories across multiple family groups.",
   "features": [
-    "Browse and read family recipes",
-    "View recipe details and per-person recipe lists",
-    "Steward review of pending recipe contributions",
-    "Family-scoped content isolation"
+    "Share family stories with photos and linked relatives",
+    "Steward review and approval of submitted stories",
+    "Family-scoped content so each family sees only its own material",
+    "Recipes, mysteries, timeline, and archive sections",
+    "Board and messaging for family coordination"
   ],
-  "category": "family-hub",
+  "category": "family-history",
   "tags": [
     "family",
-    "recipes",
-    "private",
-    "multi-tenant"
+    "genealogy",
+    "stories",
+    "multi-tenant",
+    "community"
   ],
-  "last_updated": "2026-09-25T09:48:21.774Z"
+  "last_updated": "2026-09-25T14:46:03.228Z"
 }

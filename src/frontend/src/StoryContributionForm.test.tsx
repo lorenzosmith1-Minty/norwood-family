@@ -143,6 +143,7 @@ describe("StoryContributionForm Related Family Members chips", () => {
       createdAt: 1_700_000_000_000_000_000n,
       updatedAt: 1_700_000_000_000_000_000n,
       contributor: "aaaaa-aa" as unknown as Story["contributor"],
+      familyId: "norwood",
     };
 
     renderForm({ isSteward: true, initialStory });

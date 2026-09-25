@@ -818,3 +818,123 @@ it("defaults a pre-existing recipe to norwood on upgrade, preserving its id, con
   expect(listedAgain).toHaveLength(1);
   expect(listedAgain.find((r) => r.recipeId === written.recipeId)).toEqual(stored);
 });
+
+// ---------------------------------------------------------------------------
+// Tenancy 1C-D3-A: Story familyId across a real upgrade.
+//
+// The previous revision's Story has no `familyId` field; this build's
+// 20260926_000000.mo migration adds one and backfills every pre-existing story
+// with familyId = "norwood". This test installs the previous revision, writes a
+// story (with a related person and a linked Archive media item) through its
+// public API, upgrades to this build (running the migration), and asserts:
+//   1. the story survives with its id, content, related-person references,
+//      media links, and status unchanged and familyId = "norwood";
+//   2. the record count is unchanged and no id is duplicated — the migration
+//      rebuilds the list exactly once;
+//   3. a repeated read is idempotent: the same story comes back unchanged, so
+//      the migration neither duplicates nor rewrites it.
+//
+// The pre-upgrade write goes through the previous revision's own declarations
+// (`.old/`), because this build's codec requires the new `familyId` field and
+// cannot encode a call against the previous revision's pre-migration types.
+// ---------------------------------------------------------------------------
+it("defaults a pre-existing story to norwood on upgrade, preserving its id, content, related people, media links, and status", async () => {
+  const previousDeclarations = await import(
+    /* @vite-ignore */ PREVIOUS_DECLARATIONS
+  );
+  const previousIdlFactory = previousDeclarations.idlFactory;
+
+  // 1. Install the version the user is actually running.
+  const previous = await pic!.setupCanister({
+    idlFactory: previousIdlFactory,
+    wasm: PREVIOUS_WASM,
+  });
+
+  // 2. Write a story through the OLD public API. The writer becomes the Family
+  //    Steward (the one-time claimSteward bootstrap) and approves its own claim
+  //    on a seeded profile so the contribution endpoints are authorized.
+  const steward = createIdentity("upgrade-story-steward-seed");
+  previous.actor.setIdentity(steward);
+  await previous.actor._initialize_access_control();
+  await previous.actor.claimSteward();
+  const requested = await previous.actor.requestProfileClaim("clayton");
+  if ("ok" in requested) {
+    await previous.actor.approveProfileClaim(requested.ok.id);
+  }
+
+  // A linked Archive media item, so the story's media link can be checked
+  // after the upgrade.
+  const media = await previous.actor.submitArchiveItem(
+    "Pre-tenancy story photo",
+    "A photo linked to a story written before the familyId migration.",
+    { Photo: null },
+    "image/png",
+    new Uint8Array([41, 42, 43]),
+    "1905",
+    [1905n],
+    ["stories"],
+    ["clayton"],
+    [],
+    { Original: null },
+    { FamilyOnly: null },
+    { Standard: null },
+    [],
+    "pre-tenancy-story-photo.png",
+  );
+
+  const written = await previous.actor.submitStory(
+    "Pre-tenancy story",
+    "A story written before the familyId migration.",
+    ["clayton", "hudson"],
+    ["early 1900s"],
+    [1905n],
+    ["Norwood, Mississippi"],
+    { FamilyHistory: null },
+    [media.id],
+  );
+  expect(written.status).toEqual({ Pending: null });
+
+  // 3. Upgrade to the version this build produces. The 20260926_000000.mo
+  //    migration runs here.
+  await pic!.upgradeCanister({
+    canisterId: previous.canisterId,
+    wasm: BACKEND_WASM,
+    upgradeModeOptions: {
+      skip_pre_upgrade: [],
+      wasm_memory_persistence: [{ keep: null }],
+    },
+  });
+
+  // 4. Read through the NEW API. The story survives with its id, content,
+  //    related-person references, media links, and status unchanged and
+  //    familyId = "norwood".
+  const upgraded = pic!.createActor<_SERVICE>(idlFactory, previous.canisterId);
+  upgraded.setIdentity(steward);
+  const listed = await upgraded.listStoriesForFamily("norwood");
+  const stored = listed.find((s) => s.id === written.id);
+  expect(stored).toBeDefined();
+  expect(stored).toMatchObject({
+    id: written.id,
+    familyId: "norwood",
+    title: "Pre-tenancy story",
+    storyText: "A story written before the familyId migration.",
+    relatedMemberIds: ["clayton", "hudson"],
+    era: ["early 1900s"],
+    year: [1905n],
+    location: ["Norwood, Mississippi"],
+    evidenceStatus: { FamilyHistory: null },
+    relatedArchiveItemIds: [media.id],
+    status: { Pending: null },
+  });
+
+  // No duplicates: exactly one story with that id, and the migration did not
+  // reseed the collection.
+  expect(listed.filter((s) => s.id === written.id)).toHaveLength(1);
+  expect(listed).toHaveLength(1);
+
+  // 5. A repeated read is idempotent: the same story comes back unchanged, so
+  //    the migration neither duplicates nor rewrites it.
+  const listedAgain = await upgraded.listStoriesForFamily("norwood");
+  expect(listedAgain).toHaveLength(1);
+  expect(listedAgain.find((s) => s.id === written.id)).toEqual(stored);
+});

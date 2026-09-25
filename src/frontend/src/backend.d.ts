@@ -850,6 +850,7 @@ export interface Story {
     relatedArchiveItemIds: Array<bigint>;
     updatedAt: bigint;
     evidenceStatus: EvidenceStatus;
+    familyId: FamilyId;
     location?: string;
     contributor: Principal;
 }
@@ -1273,9 +1274,17 @@ export interface backendInterface {
      */
     addBoardReplyForFamily(familyId: FamilyId, postId: PostId, body: string): Promise<Reply>;
     /**
-     * / Adds a canonical story directly (steward only), already approved.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `addCanonicalStoryForFamily`.
      */
     addCanonicalStory(title: string, storyText: string, relatedMemberIds: Array<string>, era: string | null, year: bigint | null, location: string | null, evidenceStatus: EvidenceStatus, relatedArchiveItemIds: Array<bigint>): Promise<Story>;
+    /**
+     * / Adds a canonical story directly into `familyId` (Steward only), already
+     * / approved. Active Steward of `familyId` only. The new story's `familyId` is
+     * / the requested `familyId`; every related person must belong to `familyId`,
+     * / and every linked Archive media id must belong to `familyId`.
+     */
+    addCanonicalStoryForFamily(familyId: FamilyId, title: string, storyText: string, relatedMemberIds: Array<string>, era: string | null, year: bigint | null, location: string | null, evidenceStatus: EvidenceStatus, relatedArchiveItemIds: Array<bigint>): Promise<Story>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for `addPhotoForFamily`.
      */
@@ -1407,10 +1416,16 @@ export interface backendInterface {
      */
     approveSourceForFamily(familyId: FamilyId, sourceId: SourceId): Promise<SourceRecord | null>;
     /**
-     * / Approves a pending story (steward only). Returns the updated story, or
-     * / `null` when the story does not exist or is not pending.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for `approveStoryForFamily`.
      */
     approveStory(id: StoryId): Promise<Story | null>;
+    /**
+     * / Approves a pending story in `familyId`. Active Steward of `familyId` only;
+     * / a Steward of another family cannot approve the story. Returns the updated
+     * / story, or `null` when no pending story with that id belongs to `familyId`.
+     * / A story in another family is never touched.
+     */
+    approveStoryForFamily(familyId: FamilyId, storyId: StoryId): Promise<Story | null>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for `archiveBoardPostForFamily`.
      */
@@ -1851,6 +1866,12 @@ export interface backendInterface {
      */
     getStewardAuditHistory(): Promise<Array<StewardAuditEntry>>;
     /**
+     * / Returns a single story by id when it belongs to `familyId`. Approved
+     * / members of `familyId` only. A story that exists under another family is
+     * / never returned, so a `storyId` alone cannot cross the family boundary.
+     */
+    getStoryForFamily(familyId: FamilyId, storyId: StoryId): Promise<Story | null>;
+    /**
      * / Whether any active Family Steward exists. Public so the frontend can show
      * / or hide the one-time "Claim Family Steward" control. Tenancy 1B: delegates
      * / to the canonical family-scoped helper with the default family id.
@@ -1902,9 +1923,15 @@ export interface backendInterface {
      */
     listApprovedRecipesForFamily(familyId: FamilyId): Promise<Array<Recipe>>;
     /**
-     * / Lists all approved stories (visible to viewers).
+     * / TEMPORARY Tenancy 1C compatibility wrapper for `listApprovedStoriesForFamily`.
      */
     listApprovedStories(): Promise<Array<Story>>;
+    /**
+     * / Lists every approved story in `familyId` (visible to viewers). Approved
+     * / members of `familyId` only. A story whose `familyId` differs is never
+     * / returned.
+     */
+    listApprovedStoriesForFamily(familyId: FamilyId): Promise<Array<Story>>;
     /**
      * / Returns the ids of all archived profiles so normal family browsing can
      * / filter them out. Not gated to stewards — any caller may read archived ids.
@@ -2122,9 +2149,14 @@ export interface backendInterface {
      */
     listPendingRecipesForFamily(familyId: FamilyId): Promise<Array<Recipe>>;
     /**
-     * / Lists all stories in pending state (steward only).
+     * / TEMPORARY Tenancy 1C compatibility wrapper for `listPendingStoriesForFamily`.
      */
     listPendingStories(): Promise<Array<Story>>;
+    /**
+     * / Lists every story in `familyId` currently in pending state. Active Steward
+     * / of `familyId` only. A story whose `familyId` differs is never returned.
+     */
+    listPendingStoriesForFamily(familyId: FamilyId): Promise<Array<Story>>;
     /**
      * / Returns the current relationships for a person. Family Steward only.
      */
@@ -2230,6 +2262,12 @@ export interface backendInterface {
      * / Family Steward only.
      */
     listStewards(): Promise<Array<StewardRecord>>;
+    /**
+     * / Lists every story in `familyId`, newest first. Approved members of
+     * / `familyId` only. A story whose `familyId` differs is never returned, so
+     * / Family A stories never appear in a Family B call.
+     */
+    listStoriesForFamily(familyId: FamilyId): Promise<Array<Story>>;
     /**
      * / Lists all successor designations. Family Steward only.
      */
@@ -2457,10 +2495,16 @@ export interface backendInterface {
      */
     rejectSourceForFamily(familyId: FamilyId, sourceId: SourceId): Promise<SourceRecord | null>;
     /**
-     * / Rejects a pending story (steward only). Returns the updated story, or
-     * / `null` when the story does not exist or is not pending.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for `rejectStoryForFamily`.
      */
     rejectStory(id: StoryId): Promise<Story | null>;
+    /**
+     * / Rejects a pending story in `familyId`. Active Steward of `familyId` only;
+     * / a Steward of another family cannot reject the story. Returns the updated
+     * / story, or `null` when no pending story with that id belongs to `familyId`.
+     * / A story in another family is never touched.
+     */
+    rejectStoryForFamily(familyId: FamilyId, storyId: StoryId): Promise<Story | null>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `removeBoardReplyForFamily`.
@@ -2688,11 +2732,17 @@ export interface backendInterface {
      */
     submitRecipeForFamily(familyId: FamilyId, title: string, shortDescription: string, originatingPersonId: string, relatedPersonIds: Array<string>, era: string | null, year: bigint | null, location: string | null, familyBranch: string | null, ingredients: Array<string>, instructions: string, familyStory: string | null, tags: Array<string>, privacyLevel: PrivacyLevel, evidenceStatus: EvidenceStatus, linkedMediaIds: Array<bigint>): Promise<Recipe>;
     /**
-     * / Submits a new story. Requires an approved family member; the caller is
-     * / recorded as the contributor. The story is stored in pending state and waits
-     * / for a Family Steward to approve it before becoming visible.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for `submitStoryForFamily`.
      */
     submitStory(title: string, storyText: string, relatedMemberIds: Array<string>, era: string | null, year: bigint | null, location: string | null, evidenceStatus: EvidenceStatus, relatedArchiveItemIds: Array<bigint>): Promise<Story>;
+    /**
+     * / Submits a new story into `familyId`. Approved members or Stewards of
+     * / `familyId` only. The new story's `familyId` is the requested `familyId`;
+     * / every related person must belong to `familyId`, and every linked Archive
+     * / media id must belong to `familyId`. The story is stored in pending state
+     * / and waits for a Steward of `familyId` to approve it.
+     */
+    submitStoryForFamily(familyId: FamilyId, title: string, storyText: string, relatedMemberIds: Array<string>, era: string | null, year: bigint | null, location: string | null, evidenceStatus: EvidenceStatus, relatedArchiveItemIds: Array<bigint>): Promise<Story>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for `unblockUserForFamily`.
      */
@@ -2719,10 +2769,17 @@ export interface backendInterface {
      */
     updateCanonicalMystery(id: MysteryId, title: string, description: string, relatedMemberIds: Array<string>, relatedBranchId: string | null, knownFacts: Array<string>, possibilities: Array<string>, relatedSourceIds: Array<bigint>, relatedArchiveItemIds: Array<bigint>, status: MysteryStatus): Promise<Mystery | null>;
     /**
-     * / Edits a canonical story (steward only). Returns the updated story, or
-     * / `null` when the story does not exist.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `updateCanonicalStoryForFamily`.
      */
     updateCanonicalStory(id: StoryId, title: string, storyText: string, relatedMemberIds: Array<string>, era: string | null, year: bigint | null, location: string | null, evidenceStatus: EvidenceStatus, relatedArchiveItemIds: Array<bigint>): Promise<Story | null>;
+    /**
+     * / Edits a canonical story in `familyId` (Steward only). Active Steward of
+     * / `familyId` only; a Steward of another family cannot edit the story. Returns
+     * / the updated story, or `null` when no story with that id belongs to
+     * / `familyId`. A story in another family is never touched.
+     */
+    updateCanonicalStoryForFamily(familyId: FamilyId, id: StoryId, title: string, storyText: string, relatedMemberIds: Array<string>, era: string | null, year: bigint | null, location: string | null, evidenceStatus: EvidenceStatus, relatedArchiveItemIds: Array<bigint>): Promise<Story | null>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `updateOwnProfileForFamily`.

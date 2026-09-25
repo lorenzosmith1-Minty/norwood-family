@@ -109,6 +109,7 @@ const {
         createdAt: 1_700_000_000_000_000_000n,
         updatedAt: 1_700_000_000_000_000_000n,
         status: StoryStatus.Pending,
+        familyId: "norwood",
       };
       stories = [...stories, story];
       return story;
@@ -137,6 +138,7 @@ const {
         createdAt: 1_700_000_000_000_000_000n,
         updatedAt: 1_700_000_000_000_000_000n,
         status: StoryStatus.Approved,
+        familyId: "norwood",
       };
       stories = [...stories, story];
       return story;
@@ -410,6 +412,7 @@ function makeStory(overrides: Partial<Story> = {}): Story {
     createdAt: 1_700_000_000_000_000_000n,
     updatedAt: 1_700_000_000_000_000_000n,
     status: StoryStatus.Approved,
+    familyId: "norwood",
     ...overrides,
   };
 }

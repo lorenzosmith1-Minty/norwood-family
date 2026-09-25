@@ -1,8 +1,12 @@
 import Principal "mo:core/Principal";
+import FamilyTypes "family";
 
 module {
   /// Identifier of a single family story.
   public type StoryId = Nat;
+
+  /// Reused from the family domain: the tenant boundary of a story.
+  public type FamilyId = FamilyTypes.FamilyId;
 
   /// Identifier of a single family mystery.
   public type MysteryId = Nat;
@@ -31,6 +35,9 @@ module {
   /// members. Stories reference existing person ids and archive item ids; they
   /// never create duplicate Person records.
   public type Story = {
+    /// The family that owns this story. The tenant boundary: a story is only
+    /// ever read, reviewed, or mutated through its own family.
+    familyId : FamilyId;
     id : StoryId;
     title : Text;
     storyText : Text;
@@ -52,6 +59,7 @@ module {
   /// their tag text; optional fields render as empty text when absent; array
   /// fields render as counts (OQL has no array value type).
   public type StoryRow = {
+    familyId : FamilyId;
     id : StoryId;
     title : Text;
     storyText : Text;

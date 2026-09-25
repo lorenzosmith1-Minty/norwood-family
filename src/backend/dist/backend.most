@@ -982,9 +982,11 @@ type FamilyId__284510423 = Text;
 type FamilyId__329536528 = Text;
 type FamilyId__357998493 = Text;
 type FamilyId__488711918 = Text;
+type FamilyId__629197896 = FamilyId__357998493;
 type FamilyId__635793600 = Text;
 type FamilyId__649884009 = Text;
 type FamilyId__671487675 = Text;
+type FamilyId__67753120 = Text;
 type FamilyId__78894948 = Text;
 type FamilyId__878624665 = FamilyId__357998493;
 type FamilyStatus__298658265 = {#active; #archived};
@@ -1463,6 +1465,7 @@ type NewActor__327868545 =
     conflictReviewItems : List__836382695<NewConflictReviewItem__190236234>;
     proposedFindings : List__836382695<NewProposedFinding__512461137>
   };
+type NewActor__341238509 = {stories : List__836382695<NewStory__292921907>};
 type NewActor__386112082 =
   {
     accessControlState :
@@ -2314,6 +2317,24 @@ type NewStewardRecord__158406795 =
     stewardAccountId : Principal;
     successorPriority : ?Nat
   };
+type NewStory__292921907 =
+  {
+    contributor : Principal;
+    createdAt : Int;
+    era : ?Text;
+    evidenceStatus :
+      {#Documented; #FamilyHistory; #PersonalMemory; #Unresolved};
+    familyId : FamilyId__67753120;
+    id : Nat;
+    location : ?Text;
+    relatedArchiveItemIds : [Nat];
+    relatedMemberIds : [Text];
+    status : {#Approved; #Pending; #Rejected};
+    storyText : Text;
+    title : Text;
+    updatedAt : Int;
+    year : ?Nat
+  };
 type Node__204828119<K, V> =
   {#internal : Internal__283199666<K, V>; #leaf : Leaf__598469445<K, V>};
 type NotificationType__133971452 =
@@ -2760,6 +2781,7 @@ type OldActor__606090735 =
       List__836382695<OldRelationshipProposal__728580113>;
     researchSources : List__836382695<OldSourceRecord__1066294631>
   };
+type OldActor__624391799 = {stories : List__836382695<OldStory__747998784>};
 type OldActor__650257485 =
   {
     accessControlState :
@@ -3429,6 +3451,23 @@ type OldStewardRecord__902725372 =
     roleStatus : StewardRoleStatus__523215037;
     stewardAccountId : Principal;
     successorPriority : ?Nat
+  };
+type OldStory__747998784 =
+  {
+    contributor : Principal;
+    createdAt : Int;
+    era : ?Text;
+    evidenceStatus :
+      {#Documented; #FamilyHistory; #PersonalMemory; #Unresolved};
+    id : Nat;
+    location : ?Text;
+    relatedArchiveItemIds : [Nat];
+    relatedMemberIds : [Text];
+    status : {#Approved; #Pending; #Rejected};
+    storyText : Text;
+    title : Text;
+    updatedAt : Int;
+    year : ?Nat
   };
 type OralHistorySpeaker__107404051 = {name : Text; personId : ?Text};
 type OralHistorySpeaker__297850193 = {name : Text; personId : ?Text};
@@ -5229,6 +5268,7 @@ type Story__316947319 =
     createdAt : Int;
     era : ?Text;
     evidenceStatus : EvidenceStatus__563034664;
+    familyId : FamilyId__629197896;
     id : StoryId__303413454;
     location : ?Text;
     relatedArchiveItemIds : [Nat];
@@ -5347,7 +5387,8 @@ type UserRole__968740559 = {#admin; #guest; #user};
   "20260923_150000" : (old : OldActor__114726251) -> NewActor__681737701;
   "20260924_000000" : (old : OldActor__959457706) -> NewActor__1053168963;
   "20260924_120000" : (old : OldActor__124006765) -> NewActor__861270690;
-  "20260925_000000" : (old : OldActor__3928544) -> NewActor__963881556
+  "20260925_000000" : (old : OldActor__3928544) -> NewActor__963881556;
+  "20260926_000000" : (old : OldActor__624391799) -> NewActor__341238509
 }
 actor  {
   stable accessControlState :

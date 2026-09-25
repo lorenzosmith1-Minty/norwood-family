@@ -16,6 +16,7 @@ import {
   useApprovedStories,
   usePendingStories,
   useRejectStory,
+  useStory,
 } from "../hooks/useFamilyHistory";
 import { useIsSteward } from "../hooks/useStewardAuthority";
 
@@ -59,13 +60,21 @@ export function StoriesPage({
   );
   const [editingStory, setEditingStory] = useState<Story | null>(null);
 
+  // The detail view reads the active family's story through the family-scoped
+  // Story read, so a non-default family never resolves another family's story.
+  const { data: fetchedStory = null, isLoading: isStoryLoading } = useStory(
+    selectedStoryId ?? 0n,
+  );
+
   const filteredStories = useMemo(
     () => stories.filter((story) => matchesStoryFilter(story, filter)),
     [stories, filter],
   );
 
   const selectedStory =
-    stories.find((story) => story.id === selectedStoryId) ?? null;
+    fetchedStory ??
+    stories.find((story) => story.id === selectedStoryId) ??
+    null;
 
   const openDetail = (id: bigint) => {
     setSelectedStoryId(id);
@@ -86,6 +95,39 @@ export function StoriesPage({
         isSteward={isSteward}
         onEdit={openForm}
       />
+    );
+  }
+
+  if (view === "detail" && isStoryLoading) {
+    return (
+      <div className="mx-auto w-full max-w-3xl px-6 py-10">
+        <div
+          data-ocid="stories.detail.loading_state"
+          className="h-64 animate-pulse rounded-xl border border-border/60 bg-card"
+        />
+      </div>
+    );
+  }
+
+  if (view === "detail") {
+    return (
+      <div className="mx-auto w-full max-w-3xl px-6 py-10">
+        <DomainEmptyState
+          icon={LibraryBig}
+          title="Story not found"
+          hint="This story may have been removed or belongs to another family."
+          action={
+            <button
+              type="button"
+              data-ocid="stories.detail.back_button"
+              onClick={() => setView("browse")}
+              className="archive-empty-reset"
+            >
+              Back to Stories
+            </button>
+          }
+        />
+      </div>
     );
   }
 

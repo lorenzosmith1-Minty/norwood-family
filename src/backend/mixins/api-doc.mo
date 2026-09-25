@@ -796,34 +796,128 @@ stays readable.
 
 ### Family Stories, Family Mysteries, and Travel Through Time
 
-- `listApprovedStories() : async [Story]` — query. Returns all stories in
-  `#Approved` state (the stories visible to viewers). Stories reference existing
-  person ids and archive item ids; they never create duplicate Person records.
-- `listPendingStories() : async [Story]` — query. Family Steward only. Returns
-  all stories currently in `#Pending` state.
-- `submitStory(title : Text, storyText : Text, relatedMemberIds : [Text], era : ?Text, year : ?Nat, location : ?Text, evidenceStatus : EvidenceStatus, relatedArchiveItemIds : [Nat]) : async Story` —
-  update. Submits a new story. Requires an approved family member (a caller
-  holding at least one `#Approved` profile claim, or a Family Steward);
-  anonymous and signed-in but unapproved callers are rejected with a trap. The
-  caller is recorded as the `contributor`. The story is stored in `#Pending`
-  state and waits for a Family Steward to approve it before becoming visible.
-  `evidenceStatus` carries the evidence distinction (`#Documented`,
-  `#FamilyHistory`, `#PersonalMemory`, `#Unresolved`) — Family History and
-  Personal Memory are never presented as documented fact. Submitting a story
-  never overwrites a person's profile story text.
-- `approveStory(id : Nat) : async ?Story` — update. Family Steward only. Moves a
-  pending story to `#Approved` state and returns the updated story, or `null`
-  when no pending story with that id exists.
-- `rejectStory(id : Nat) : async ?Story` — update. Family Steward only. Moves a
-  pending story to `#Rejected` state and returns the updated story, or `null`
-  when no pending story with that id exists.
-- `addCanonicalStory(title : Text, storyText : Text, relatedMemberIds : [Text], era : ?Text, year : ?Nat, location : ?Text, evidenceStatus : EvidenceStatus, relatedArchiveItemIds : [Nat]) : async Story` —
-  update. Family Steward only. Adds a canonical story directly, already in
-  `#Approved` state.
-- `updateCanonicalStory(id : Nat, title : Text, storyText : Text, relatedMemberIds : [Text], era : ?Text, year : ?Nat, location : ?Text, evidenceStatus : EvidenceStatus, relatedArchiveItemIds : [Nat]) : async ?Story` —
-  update. Family Steward only. Edits a canonical story, preserving its original
+The Family Stories surface is family-scoped. Every canonical Story endpoint takes
+an explicit `familyId` as its first argument and only ever reads or mutates a
+story whose `familyId` equals it, so a `storyId` alone never crosses a family
+boundary: a foreign-family id behaves exactly like a not-found id (`?null` or
+`[]`), never a distinguishable error that would leak another family's existence.
+The legacy no-`familyId` Story endpoints listed after the canonical ones are
+TEMPORARY Tenancy 1C compatibility wrappers that delegate with the default
+Norwood family (`\"norwood\"`); they contain no logic of their own and will be
+removed in a later build once every caller passes an explicit `familyId`.
+
+Family Mysteries are NOT family-scoped by this build: the Mystery endpoints keep
+their original single-family behavior and signatures.
+
+Canonical family-scoped Story methods:
+
+- `listStoriesForFamily(familyId : Text) : async [Story]` — query. Returns every
+  story in `familyId`, newest first. Requires an approved member or active
+  Steward of `familyId`; anonymous and signed-in but unapproved callers are
+  rejected with a trap. A story whose `familyId` differs is never returned, so
+  Family A stories never appear in a Family B call.
+- `getStoryForFamily(familyId : Text, storyId : Nat) : async ?Story` — query.
+  Requires an approved member or active Steward of `familyId`. Returns the story
+  with `storyId` when it belongs to `familyId`, or `null` otherwise. A story that
+  exists under another family is never returned, so a `storyId` alone cannot
+  cross the family boundary.
+- `listPendingStoriesForFamily(familyId : Text) : async [Story]` — query. Active
+  Steward of `familyId` only. Returns every story in `familyId` currently in
+  `#Pending` state. A story whose `familyId` differs is never returned.
+- `listApprovedStoriesForFamily(familyId : Text) : async [Story]` — query.
+  Requires an approved member or active Steward of `familyId`. Returns every
+  approved story in `familyId` (the stories visible to viewers). A story whose
+  `familyId` differs is never returned.
+- `submitStoryForFamily(familyId : Text, title : Text, storyText : Text, relatedMemberIds : [Text], era : ?Text, year : ?Nat, location : ?Text, evidenceStatus : EvidenceStatus, relatedArchiveItemIds : [Nat]) : async Story` —
+  update. Submits a new story into `familyId`. Requires an approved member or
+  active Steward of `familyId`; anonymous and signed-in but unapproved callers
+  are rejected with a trap. The caller is recorded as the `contributor`. The
+  stored story's `familyId` is the requested `familyId`, and every
+  `relatedMemberIds` entry must belong to that same family — Family A may never
+  reference Family B people; a related member that does not belong to `familyId`
+  traps with `\"Unauthorized: Related family members must belong to the same
+  family\"` and stores nothing. Every `relatedMemberIds` entry must also resolve
+  to an existing person in `familyId`; a related member that does not exist
+  traps with `\"Related family member not found\"` and stores nothing. Every
+  `relatedArchiveItemIds` entry must resolve
+  to an Archive item in `familyId`; a media id from another family traps with
+  `\"Unauthorized: Linked media must belong to the same family\"`. The story is
+  stored in `#Pending` state and waits for a Steward of `familyId` to approve it
+  before becoming visible. `evidenceStatus` carries the evidence distinction
+  (`#Documented`, `#FamilyHistory`, `#PersonalMemory`, `#Unresolved`) — Family
+  History and Personal Memory are never presented as documented fact. Submitting
+  a story never overwrites a person's profile story text.
+- `addCanonicalStoryForFamily(familyId : Text, title : Text, storyText : Text, relatedMemberIds : [Text], era : ?Text, year : ?Nat, location : ?Text, evidenceStatus : EvidenceStatus, relatedArchiveItemIds : [Nat]) : async Story` —
+  update. Active Steward of `familyId` only. Adds a canonical story directly into
+  `familyId`, already in `#Approved` state. The same related-person and
+  linked-media family-boundary rules as `submitStoryForFamily` apply.
+- `updateCanonicalStoryForFamily(familyId : Text, id : Nat, title : Text, storyText : Text, relatedMemberIds : [Text], era : ?Text, year : ?Nat, location : ?Text, evidenceStatus : EvidenceStatus, relatedArchiveItemIds : [Nat]) : async ?Story` —
+  update. Active Steward of `familyId` only; a Steward of another family cannot
+  edit the story. Edits a canonical story in `familyId`, preserving its original
   `contributor` and `createdAt`. Returns the updated story, or `null` when no
+  story with that id belongs to `familyId`. A story in another family is never
+  touched.
+- `approveStoryForFamily(familyId : Text, storyId : Nat) : async ?Story` —
+  update. Active Steward of `familyId` only; a Steward of another family cannot
+  approve the story. Moves a pending story in `familyId` to `#Approved` state and
+  returns the updated story, or `null` when no pending story with that id belongs
+  to `familyId`. A story in another family is never touched.
+- `rejectStoryForFamily(familyId : Text, storyId : Nat) : async ?Story` —
+  update. Active Steward of `familyId` only; a Steward of another family cannot
+  reject the story. Moves a pending story in `familyId` to `#Rejected` state and
+  returns the updated story, or `null` when no pending story with that id belongs
+  to `familyId`. A story in another family is never touched.
+
+The following single-family Story endpoints are TEMPORARY Tenancy 1C
+compatibility wrappers. Each delegates to its family-scoped counterpart with the
+default family id (`\"norwood\"`), so current Norwood behavior is unchanged. They
+contain no business logic of their own.
+
+- `listApprovedStories() : async [Story]` — query. TEMPORARY Tenancy 1C
+  compatibility wrapper for `listApprovedStoriesForFamily`, delegating with the
+  default family id (`\"norwood\"`). Returns all stories in `#Approved` state
+  (the stories visible to viewers). Stories reference existing person ids and
+  archive item ids; they never create duplicate Person records.
+- `listPendingStories() : async [Story]` — query. TEMPORARY Tenancy 1C
+  compatibility wrapper for `listPendingStoriesForFamily`, delegating with the
+  default family id (`\"norwood\"`). Family Steward only. Returns all stories
+  currently in `#Pending` state.
+- `submitStory(title : Text, storyText : Text, relatedMemberIds : [Text], era : ?Text, year : ?Nat, location : ?Text, evidenceStatus : EvidenceStatus, relatedArchiveItemIds : [Nat]) : async Story` —
+  update. TEMPORARY Tenancy 1C compatibility wrapper for `submitStoryForFamily`,
+  delegating with the default family id (`\"norwood\"`). Submits a new story.
+  Requires an approved family member (a caller holding at least one `#Approved`
+  profile claim, or a Family Steward); anonymous and signed-in but unapproved
+  callers are rejected with a trap. The caller is recorded as the `contributor`.
+  The story is stored in `#Pending` state and waits for a Family Steward to
+  approve it before becoming visible. `evidenceStatus` carries the evidence
+  distinction (`#Documented`, `#FamilyHistory`, `#PersonalMemory`,
+  `#Unresolved`) — Family History and Personal Memory are never presented as
+  documented fact. Submitting a story never overwrites a person's profile story
+  text.
+- `approveStory(id : Nat) : async ?Story` — update. TEMPORARY Tenancy 1C
+  compatibility wrapper for `approveStoryForFamily`, delegating with the default
+  family id (`\"norwood\"`). Family Steward only. Moves a pending story to
+  `#Approved` state and returns the updated story, or `null` when no pending
   story with that id exists.
+- `rejectStory(id : Nat) : async ?Story` — update. TEMPORARY Tenancy 1C
+  compatibility wrapper for `rejectStoryForFamily`, delegating with the default
+  family id (`\"norwood\"`). Family Steward only. Moves a pending story to
+  `#Rejected` state and returns the updated story, or `null` when no pending
+  story with that id exists.
+- `addCanonicalStory(title : Text, storyText : Text, relatedMemberIds : [Text], era : ?Text, year : ?Nat, location : ?Text, evidenceStatus : EvidenceStatus, relatedArchiveItemIds : [Nat]) : async Story` —
+  update. TEMPORARY Tenancy 1C compatibility wrapper for
+  `addCanonicalStoryForFamily`, delegating with the default family id
+  (`\"norwood\"`). Family Steward only. Adds a canonical story directly, already
+  in `#Approved` state.
+- `updateCanonicalStory(id : Nat, title : Text, storyText : Text, relatedMemberIds : [Text], era : ?Text, year : ?Nat, location : ?Text, evidenceStatus : EvidenceStatus, relatedArchiveItemIds : [Nat]) : async ?Story` —
+  update. TEMPORARY Tenancy 1C compatibility wrapper for
+  `updateCanonicalStoryForFamily`, delegating with the default family id
+  (`\"norwood\"`). Family Steward only. Edits a canonical story, preserving its
+  original `contributor` and `createdAt`. Returns the updated story, or `null`
+  when no story with that id exists.
+
+Family Mystery methods (not family-scoped by this build):
+
 - `listMysteries() : async [Mystery]` — query. Returns all mysteries (visible to
   viewers). Each mystery keeps `knownFacts`, `possibilities`, and
   `relatedSourceIds`/`relatedArchiveItemIds` separate so a theory never silently
@@ -1879,7 +1973,8 @@ affected person ids), `timestamp` (nanoseconds since epoch, `Int`), and
 the pair does not reappear in the duplicate review list.
 
 The family-history entities are flattened views of the corresponding records.
-`story` rows (primary key `id`) carry `title`, `storyText`,
+`story` rows (primary key `id`) carry `familyId` (the owning family id, the
+tenant boundary), `title`, `storyText`,
 `relatedMemberCount` (`Nat`, the number of related member ids),
 `era` (free text, `\"\"` when absent), `year` (`Nat`, `0` when absent),
 `location` (`\"\"` when absent), `contributor` (principal text),
@@ -2080,6 +2175,10 @@ the live caller. Most exposed entities — `family`, `photo`, `profile`,
 rows through `schema()`/`execute()`; end users do not read them directly. This
 keeps the family, governance, board, block, and report metadata private
 to the platform while still letting the Data Intelligence agent answer over it.
+The `story` entity carries the tenant boundary `familyId` column, so a
+controller-side query can separate Family A stories from Family B stories; the
+direct Story API methods enforce the same boundary for end users (see the
+Family Stories section).
 The `archiveItem` entity is declared `.controllerOrScoped()` with a
 privacy-reflecting row-visibility rule that mirrors the server-side archive
 privacy enforcement: the platform controller reads all rows, while a signed-in
@@ -2194,18 +2293,42 @@ signed-in (non-anonymous) caller and returns `#err(#NotSignedIn)` for an
 anonymous caller (it does not trap); it succeeds only while no active Steward
 exists and permanently refuses afterward.
 
-The Family Stories and Family Mysteries methods gate on sign-in and role.
-`submitStory` and `submitMysteryContribution` require a signed-in (non-anonymous)
-caller and trap with `\"Sign-in required to submit a story\"` / `\"Sign-in
-required to contribute to a mystery\"` for an anonymous caller. The Family
-Steward methods — `listPendingStories`, `approveStory`, `rejectStory`,
-`addCanonicalStory`, `updateCanonicalStory`, `listPendingMysteryContributions`,
+The Family Stories methods gate on sign-in and role, and every canonical Story
+endpoint is family-scoped. The member methods — `listStoriesForFamily`,
+`getStoryForFamily`, `listApprovedStoriesForFamily`, and
+`submitStoryForFamily` (and their no-`familyId` TEMPORARY Tenancy 1C wrappers
+`listApprovedStories` and `submitStory`) — resolve their membership gate through
+the canonical family-scoped helper (`requireApprovedFamilyMemberForFamily`), so
+they require a signed-in approved member or active Steward of the requested
+`familyId`; they trap with `\"Unauthorized: You must be signed in\"` for an
+anonymous caller and with the stable, non-technical `\"Family membership
+required. Claim your family profile and wait for Family Steward approval before
+contributing family content.\"` for a signed-in but unapproved caller. The
+Steward methods — `listPendingStoriesForFamily`, `approveStoryForFamily`,
+`rejectStoryForFamily`, `addCanonicalStoryForFamily`, and
+`updateCanonicalStoryForFamily` (and their no-`familyId` wrappers
+`listPendingStories`, `approveStory`, `rejectStory`, `addCanonicalStory`, and
+`updateCanonicalStory`) — are active Steward of the requested family only and
+trap with `\"Unauthorized: Only Family Stewards can perform this action\"` when
+the caller is not an active Steward of that family (an ACTIVE persisted
+`StewardRecord`). A Steward of one family can never review another family's
+stories. Every returned or mutated story must carry `Story.familyId == familyId`,
+so a `storyId` alone never crosses the family boundary.
+
+The Family Mysteries methods gate on sign-in and role.
+`submitMysteryContribution` requires a signed-in (non-anonymous)
+caller and traps with `\"Sign-in required to contribute to a mystery\"` for an
+anonymous caller. The Family
+Steward methods — `listPendingMysteryContributions`,
 `reviewMysteryContribution`, `createCanonicalMystery`,
 `updateCanonicalMystery`, and `markMysteryResolved` — are Family Steward only
 and trap
 with `\"Unauthorized: Only Family Stewards can ...\"` when the caller is not an
-active Family Steward (an ACTIVE persisted `StewardRecord`). `listApprovedStories`, `listMysteries`, and `listTimelineEvents` are
-readable by any caller (respecting the existing privacy conventions).
+active Family Steward (an ACTIVE persisted `StewardRecord`). `listMysteries` and
+`listTimelineEvents` are
+readable by any caller (respecting the existing privacy conventions). Mysteries
+are NOT family-scoped by this build: the Mystery endpoints keep their original
+single-family behavior and signatures.
 
 The Family Recipes methods gate on sign-in and role. Every canonical
 family-scoped recipe endpoint and every TEMPORARY Tenancy 1C wrapper resolves its
@@ -2585,7 +2708,11 @@ already reference the caller's stable principal (`requestingUserId`,
   never presented as documented fact — the `evidenceStatus` field carries this
   distinction.
 - `StoryStatus` is a variant: `#Pending`, `#Approved`, or `#Rejected`.
-- `Story` fields: `id` (`Nat`), `title` (`Text`), `storyText` (`Text`),
+- `Story` fields: `familyId` (`FamilyId`, the owning family — the tenant
+  boundary; a story is only ever read, reviewed, or mutated through its own
+  family, and records created before this field existed are migrated to the
+  default family id `\"norwood\"`), `id` (`Nat`), `title` (`Text`), `storyText`
+  (`Text`),
   `relatedMemberIds` (`[Text]`, existing person ids — never creates duplicate
   Person records), `era` (`?Text`, approximate date/era as free text), `year`
   (`?Nat`), `location` (`?Text`), `contributor` (`Principal`), `evidenceStatus`,
@@ -2929,14 +3056,19 @@ immediately makes the corresponding `#ConflictResolution` entry appear in the
 next call. The existing `listAuditHistory` (governance-only) is unchanged and
 remains available.
 
-Family Stories follow a submit → approve/reject lifecycle. `submitStory` stores
-the story in `#Pending` state. A Family Steward then calls `approveStory` or
-`rejectStory` to move it to `#Approved` or `#Rejected`. Only `#Approved` stories
-are returned by `listApprovedStories` (the Family Stories view). Stewards add
-canonical stories directly via `addCanonicalStory` (already `#Approved`) and edit
-them via `updateCanonicalStory`. There is no async job to poll; the frontend can
-call `listPendingStories` (steward) or `listApprovedStories` to observe the
-current state.
+Family Stories follow a submit → approve/reject lifecycle, scoped to a family.
+`submitStoryForFamily` stores the story in `#Pending` state with `familyId` set
+to the requested family. A Steward of that family then calls
+`approveStoryForFamily` or `rejectStoryForFamily` to move it to `#Approved` or
+`#Rejected`. Only `#Approved` stories are returned by
+`listApprovedStoriesForFamily` (the Family Stories view). Stewards add canonical
+stories directly via `addCanonicalStoryForFamily` (already `#Approved`) and edit
+them via `updateCanonicalStoryForFamily`. There is no async job to poll; the
+frontend can call `listPendingStoriesForFamily` (steward) or
+`listApprovedStoriesForFamily` to observe the current state. The legacy
+no-`familyId` wrappers (`submitStory`, `approveStory`, `rejectStory`,
+`addCanonicalStory`, `updateCanonicalStory`, `listPendingStories`,
+`listApprovedStories`) behave identically for the default Norwood family.
 
 Family Mysteries follow a steward-driven lifecycle. Stewards create canonical
 mysteries via `createCanonicalMystery` and edit them via
@@ -3190,16 +3322,30 @@ no async job to poll; the frontend can call the list methods (steward) or
   relationship returns `#err(#RelationshipNotFound)` and changes nothing.
   `correctRelationshipType` is idempotent: correcting to the same type is a
   no-op that returns the updated record.
-- `submitStory` is not idempotent: each call stores a new story with a fresh id.
-  Retrying a submission that actually succeeded creates a duplicate story.
-- `approveStory` and `rejectStory` are idempotent: approving or rejecting an
-  already-approved or already-rejected (or nonexistent) story returns `null` and
-  changes nothing. They only transition stories currently in `#Pending` state.
+- `submitStoryForFamily` (and its TEMPORARY Tenancy 1C wrapper `submitStory`) is
+  not idempotent: each call stores a new story with a fresh id.
+  Retrying a submission that actually succeeded creates a duplicate story. A
+  `relatedMemberIds` entry that does not belong to the requested `familyId`
+  traps with `\"Unauthorized: Related family members must belong to the same
+  family\"`, a related member that does not exist in the family traps with
+  `\"Related family member not found\"`, and a `relatedArchiveItemIds` entry from
+  another family traps with `\"Unauthorized: Linked media must belong to the same
+  family\"` — each stores nothing.
+- `approveStoryForFamily` and `rejectStoryForFamily` (and their TEMPORARY
+  Tenancy 1C wrappers `approveStory` and `rejectStory`) are idempotent:
+  approving or rejecting an
+  already-approved or already-rejected (or nonexistent, or other-family) story
+  returns `null` and
+  changes nothing. They only transition stories currently in `#Pending` state
+  that belong to the requested `familyId`.
   Neither is destructive — the story is preserved in either terminal state.
-- `addCanonicalStory` is not idempotent: each call stores a new canonical story
-  with a fresh id. `updateCanonicalStory` is idempotent: applying the same edit
+- `addCanonicalStoryForFamily` (and its TEMPORARY Tenancy 1C wrapper
+  `addCanonicalStory`) is not idempotent: each call stores a new canonical story
+  with a fresh id. `updateCanonicalStoryForFamily` (and its TEMPORARY Tenancy 1C
+  wrapper `updateCanonicalStory`) is idempotent: applying the same edit
   again yields the same story, preserving the original `contributor` and
-  `createdAt`.
+  `createdAt`. A story in another family is never touched — the update returns
+  `null`.
 - `submitMysteryContribution` is not idempotent: each call stores a new
   contribution with a fresh id. Retrying a submission that actually succeeded
   creates a duplicate contribution.
@@ -3460,16 +3606,27 @@ no async job to poll; the frontend can call the list methods (steward) or
   signed-in caller whose account has not been created yet (no `bindAuthMethod`
   call has been made); `getMyAccountId` and `bindAuthMethod` do not require an
   existing account —   `bindAuthMethod` creates it on first use.
-- `submitStory` traps with `\"Sign-in required to submit a story\"` for an
-  anonymous caller, and `submitMysteryContribution` traps with `\"Sign-in
+- The canonical Story methods trap with `\"Unauthorized: You must be signed in\"`
+  for an anonymous caller and with the stable, non-technical `\"Family membership
+  required. Claim your family profile and wait for Family Steward approval before
+  contributing family content.\"` for a signed-in but unapproved caller. The
+  Story Steward methods trap with `\"Unauthorized: Only Family Stewards can
+  perform this action\"` when the caller is not an active Family Steward of the
+  requested family (an ACTIVE persisted `StewardRecord`). A story that belongs to
+  another family is treated exactly like a nonexistent story: the single-record
+  reads return `null` and the mutations return `null` without touching the
+  foreign record, so a `storyId` alone never crosses the family boundary.
+  `submitMysteryContribution` traps with `\"Sign-in
   required to contribute to a mystery\"` for an anonymous caller. The Family
-  Steward family-history methods trap with `\"Unauthorized: Only Family Stewards
+  Steward Mystery methods trap with `\"Unauthorized: Only Family Stewards
   can ...\"` when the caller is not an active Family Steward (an ACTIVE persisted
   `StewardRecord`).
-- `approveStory`, `rejectStory`, `updateCanonicalStory`,
+- `approveStoryForFamily`, `rejectStoryForFamily`,
+  `updateCanonicalStoryForFamily` (and their TEMPORARY Tenancy 1C wrappers
+  `approveStory`, `rejectStory`, `updateCanonicalStory`),
   `reviewMysteryContribution`, `updateCanonicalMystery`, and
   `markMysteryResolved` return `null` (they do not trap) when the target id does
-  not exist or is not in the expected state.
+  not exist, belongs to another family, or is not in the expected state.
 - Stories and Mysteries reference existing person ids and archive item ids; they
   never create duplicate Person records or duplicate source files.
 - `submitRecipe` requires an approved family member (a caller holding at least

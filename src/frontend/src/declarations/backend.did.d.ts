@@ -876,6 +876,7 @@ export interface Story {
   'relatedArchiveItemIds' : Array<bigint>,
   'updatedAt' : bigint,
   'evidenceStatus' : EvidenceStatus,
+  'familyId' : FamilyId,
   'location' : [] | [string],
   'contributor' : Principal,
 }
@@ -979,10 +980,31 @@ export interface _SERVICE {
    */
   'addBoardReplyForFamily' : ActorMethod<[FamilyId, PostId, string], Reply>,
   /**
-   * / Adds a canonical story directly (steward only), already approved.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `addCanonicalStoryForFamily`.
    */
   'addCanonicalStory' : ActorMethod<
     [
+      string,
+      string,
+      Array<string>,
+      [] | [string],
+      [] | [bigint],
+      [] | [string],
+      EvidenceStatus,
+      Array<bigint>,
+    ],
+    Story
+  >,
+  /**
+   * / Adds a canonical story directly into `familyId` (Steward only), already
+   * / approved. Active Steward of `familyId` only. The new story's `familyId` is
+   * / the requested `familyId`; every related person must belong to `familyId`,
+   * / and every linked Archive media id must belong to `familyId`.
+   */
+  'addCanonicalStoryForFamily' : ActorMethod<
+    [
+      FamilyId,
       string,
       string,
       Array<string>,
@@ -1161,10 +1183,16 @@ export interface _SERVICE {
     [] | [SourceRecord]
   >,
   /**
-   * / Approves a pending story (steward only). Returns the updated story, or
-   * / `null` when the story does not exist or is not pending.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `approveStoryForFamily`.
    */
   'approveStory' : ActorMethod<[StoryId], [] | [Story]>,
+  /**
+   * / Approves a pending story in `familyId`. Active Steward of `familyId` only;
+   * / a Steward of another family cannot approve the story. Returns the updated
+   * / story, or `null` when no pending story with that id belongs to `familyId`.
+   * / A story in another family is never touched.
+   */
+  'approveStoryForFamily' : ActorMethod<[FamilyId, StoryId], [] | [Story]>,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for `archiveBoardPostForFamily`.
    */
@@ -1777,6 +1805,12 @@ export interface _SERVICE {
    */
   'getStewardAuditHistory' : ActorMethod<[], Array<StewardAuditEntry>>,
   /**
+   * / Returns a single story by id when it belongs to `familyId`. Approved
+   * / members of `familyId` only. A story that exists under another family is
+   * / never returned, so a `storyId` alone cannot cross the family boundary.
+   */
+  'getStoryForFamily' : ActorMethod<[FamilyId, StoryId], [] | [Story]>,
+  /**
    * / Whether any active Family Steward exists. Public so the frontend can show
    * / or hide the one-time "Claim Family Steward" control. Tenancy 1B: delegates
    * / to the canonical family-scoped helper with the default family id.
@@ -1831,9 +1865,15 @@ export interface _SERVICE {
    */
   'listApprovedRecipesForFamily' : ActorMethod<[FamilyId], Array<Recipe>>,
   /**
-   * / Lists all approved stories (visible to viewers).
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `listApprovedStoriesForFamily`.
    */
   'listApprovedStories' : ActorMethod<[], Array<Story>>,
+  /**
+   * / Lists every approved story in `familyId` (visible to viewers). Approved
+   * / members of `familyId` only. A story whose `familyId` differs is never
+   * / returned.
+   */
+  'listApprovedStoriesForFamily' : ActorMethod<[FamilyId], Array<Story>>,
   /**
    * / Returns the ids of all archived profiles so normal family browsing can
    * / filter them out. Not gated to stewards — any caller may read archived ids.
@@ -2084,9 +2124,14 @@ export interface _SERVICE {
    */
   'listPendingRecipesForFamily' : ActorMethod<[FamilyId], Array<Recipe>>,
   /**
-   * / Lists all stories in pending state (steward only).
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `listPendingStoriesForFamily`.
    */
   'listPendingStories' : ActorMethod<[], Array<Story>>,
+  /**
+   * / Lists every story in `familyId` currently in pending state. Active Steward
+   * / of `familyId` only. A story whose `familyId` differs is never returned.
+   */
+  'listPendingStoriesForFamily' : ActorMethod<[FamilyId], Array<Story>>,
   /**
    * / Returns the current relationships for a person. Family Steward only.
    */
@@ -2201,6 +2246,12 @@ export interface _SERVICE {
    * / Family Steward only.
    */
   'listStewards' : ActorMethod<[], Array<StewardRecord>>,
+  /**
+   * / Lists every story in `familyId`, newest first. Approved members of
+   * / `familyId` only. A story whose `familyId` differs is never returned, so
+   * / Family A stories never appear in a Family B call.
+   */
+  'listStoriesForFamily' : ActorMethod<[FamilyId], Array<Story>>,
   /**
    * / Lists all successor designations. Family Steward only.
    */
@@ -2521,10 +2572,16 @@ export interface _SERVICE {
     [] | [SourceRecord]
   >,
   /**
-   * / Rejects a pending story (steward only). Returns the updated story, or
-   * / `null` when the story does not exist or is not pending.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `rejectStoryForFamily`.
    */
   'rejectStory' : ActorMethod<[StoryId], [] | [Story]>,
+  /**
+   * / Rejects a pending story in `familyId`. Active Steward of `familyId` only;
+   * / a Steward of another family cannot reject the story. Returns the updated
+   * / story, or `null` when no pending story with that id belongs to `familyId`.
+   * / A story in another family is never touched.
+   */
+  'rejectStoryForFamily' : ActorMethod<[FamilyId, StoryId], [] | [Story]>,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for
    * / `removeBoardReplyForFamily`.
@@ -2866,12 +2923,31 @@ export interface _SERVICE {
     Recipe
   >,
   /**
-   * / Submits a new story. Requires an approved family member; the caller is
-   * / recorded as the contributor. The story is stored in pending state and waits
-   * / for a Family Steward to approve it before becoming visible.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `submitStoryForFamily`.
    */
   'submitStory' : ActorMethod<
     [
+      string,
+      string,
+      Array<string>,
+      [] | [string],
+      [] | [bigint],
+      [] | [string],
+      EvidenceStatus,
+      Array<bigint>,
+    ],
+    Story
+  >,
+  /**
+   * / Submits a new story into `familyId`. Approved members or Stewards of
+   * / `familyId` only. The new story's `familyId` is the requested `familyId`;
+   * / every related person must belong to `familyId`, and every linked Archive
+   * / media id must belong to `familyId`. The story is stored in pending state
+   * / and waits for a Steward of `familyId` to approve it.
+   */
+  'submitStoryForFamily' : ActorMethod<
+    [
+      FamilyId,
       string,
       string,
       Array<string>,
@@ -2946,11 +3022,32 @@ export interface _SERVICE {
     [] | [Mystery]
   >,
   /**
-   * / Edits a canonical story (steward only). Returns the updated story, or
-   * / `null` when the story does not exist.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `updateCanonicalStoryForFamily`.
    */
   'updateCanonicalStory' : ActorMethod<
     [
+      StoryId,
+      string,
+      string,
+      Array<string>,
+      [] | [string],
+      [] | [bigint],
+      [] | [string],
+      EvidenceStatus,
+      Array<bigint>,
+    ],
+    [] | [Story]
+  >,
+  /**
+   * / Edits a canonical story in `familyId` (Steward only). Active Steward of
+   * / `familyId` only; a Steward of another family cannot edit the story. Returns
+   * / the updated story, or `null` when no story with that id belongs to
+   * / `familyId`. A story in another family is never touched.
+   */
+  'updateCanonicalStoryForFamily' : ActorMethod<
+    [
+      FamilyId,
       StoryId,
       string,
       string,

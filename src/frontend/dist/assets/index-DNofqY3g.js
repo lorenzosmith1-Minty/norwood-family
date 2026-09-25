@@ -33288,6 +33288,7 @@ const Story = Record({
   "relatedArchiveItemIds": Vec(Nat),
   "updatedAt": Int,
   "evidenceStatus": EvidenceStatus$1,
+  "familyId": FamilyId,
   "location": Opt(Text),
   "contributor": Principal2
 });
@@ -34327,6 +34328,21 @@ Service({
     [Story],
     []
   ),
+  "addCanonicalStoryForFamily": Func(
+    [
+      FamilyId,
+      Text,
+      Text,
+      Vec(Text),
+      Opt(Text),
+      Opt(Nat),
+      Opt(Text),
+      EvidenceStatus$1,
+      Vec(Nat)
+    ],
+    [Story],
+    []
+  ),
   "addPhoto": Func(
     [PersonId, Text, Text, ExternalBlob2],
     [Photo],
@@ -34408,6 +34424,7 @@ Service({
     []
   ),
   "approveStory": Func([StoryId], [Opt(Story)], []),
+  "approveStoryForFamily": Func([FamilyId, StoryId], [Opt(Story)], []),
   "archiveBoardPost": Func([PostId], [Opt(Post)], []),
   "archiveBoardPostForFamily": Func(
     [FamilyId, PostId],
@@ -34750,6 +34767,11 @@ Service({
     [Vec(StewardAuditEntry)],
     ["query"]
   ),
+  "getStoryForFamily": Func(
+    [FamilyId, StoryId],
+    [Opt(Story)],
+    ["query"]
+  ),
   "hasActiveSteward": Func([], [Bool], ["query"]),
   "hasApprovedOwner": Func([PersonId], [Bool], ["query"]),
   "hasApprovedOwnerForFamily": Func(
@@ -34772,6 +34794,11 @@ Service({
     ["query"]
   ),
   "listApprovedStories": Func([], [Vec(Story)], ["query"]),
+  "listApprovedStoriesForFamily": Func(
+    [FamilyId],
+    [Vec(Story)],
+    ["query"]
+  ),
   "listArchivedProfileIds": Func([], [Vec(PersonId)], ["query"]),
   "listArchivedProfiles": Func([], [Vec(PersonProfile)], ["query"]),
   "listAuditHistory": Func([], [Vec(AuditEntry)], ["query"]),
@@ -34904,6 +34931,11 @@ Service({
     ["query"]
   ),
   "listPendingStories": Func([], [Vec(Story)], ["query"]),
+  "listPendingStoriesForFamily": Func(
+    [FamilyId],
+    [Vec(Story)],
+    ["query"]
+  ),
   "listPersonRelationships": Func(
     [PersonId],
     [Vec(Relationship)],
@@ -34968,6 +35000,7 @@ Service({
   ),
   "listStewardIdentities": Func([], [Vec(StewardIdentity)], ["query"]),
   "listStewards": Func([], [Vec(StewardRecord)], ["query"]),
+  "listStoriesForFamily": Func([FamilyId], [Vec(Story)], ["query"]),
   "listSuccessors": Func([], [Vec(SuccessorDesignation)], ["query"]),
   "listTimelineEvents": Func([], [Vec(TimelineEvent)], ["query"]),
   "markConversationRead": Func([ConversationId], [], []),
@@ -35141,6 +35174,7 @@ Service({
     []
   ),
   "rejectStory": Func([StoryId], [Opt(Story)], []),
+  "rejectStoryForFamily": Func([FamilyId, StoryId], [Opt(Story)], []),
   "removeBoardReply": Func([ReplyId], [Opt(Reply)], []),
   "removeBoardReplyForFamily": Func(
     [FamilyId, ReplyId],
@@ -35365,6 +35399,21 @@ Service({
     [Story],
     []
   ),
+  "submitStoryForFamily": Func(
+    [
+      FamilyId,
+      Text,
+      Text,
+      Vec(Text),
+      Opt(Text),
+      Opt(Nat),
+      Opt(Text),
+      EvidenceStatus$1,
+      Vec(Nat)
+    ],
+    [Story],
+    []
+  ),
   "unblockUser": Func([Principal2], [], []),
   "unblockUserForFamily": Func([FamilyId, Principal2], [], []),
   "updateBoardPost": Func(
@@ -35412,6 +35461,22 @@ Service({
   ),
   "updateCanonicalStory": Func(
     [
+      StoryId,
+      Text,
+      Text,
+      Vec(Text),
+      Opt(Text),
+      Opt(Nat),
+      Opt(Text),
+      EvidenceStatus$1,
+      Vec(Nat)
+    ],
+    [Opt(Story)],
+    []
+  ),
+  "updateCanonicalStoryForFamily": Func(
+    [
+      FamilyId,
       StoryId,
       Text,
       Text,
@@ -35526,6 +35591,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "relatedArchiveItemIds": IDL2.Vec(IDL2.Nat),
     "updatedAt": IDL2.Int,
     "evidenceStatus": EvidenceStatus2,
+    "familyId": FamilyId2,
     "location": IDL2.Opt(IDL2.Text),
     "contributor": IDL2.Principal
   });
@@ -36538,6 +36604,21 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [Story2],
       []
     ),
+    "addCanonicalStoryForFamily": IDL2.Func(
+      [
+        FamilyId2,
+        IDL2.Text,
+        IDL2.Text,
+        IDL2.Vec(IDL2.Text),
+        IDL2.Opt(IDL2.Text),
+        IDL2.Opt(IDL2.Nat),
+        IDL2.Opt(IDL2.Text),
+        EvidenceStatus2,
+        IDL2.Vec(IDL2.Nat)
+      ],
+      [Story2],
+      []
+    ),
     "addPhoto": IDL2.Func(
       [PersonId2, IDL2.Text, IDL2.Text, ExternalBlob3],
       [Photo2],
@@ -36623,6 +36704,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
       []
     ),
     "approveStory": IDL2.Func([StoryId2], [IDL2.Opt(Story2)], []),
+    "approveStoryForFamily": IDL2.Func(
+      [FamilyId2, StoryId2],
+      [IDL2.Opt(Story2)],
+      []
+    ),
     "archiveBoardPost": IDL2.Func([PostId2], [IDL2.Opt(Post2)], []),
     "archiveBoardPostForFamily": IDL2.Func(
       [FamilyId2, PostId2],
@@ -36965,6 +37051,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [IDL2.Vec(StewardAuditEntry2)],
       ["query"]
     ),
+    "getStoryForFamily": IDL2.Func(
+      [FamilyId2, StoryId2],
+      [IDL2.Opt(Story2)],
+      ["query"]
+    ),
     "hasActiveSteward": IDL2.Func([], [IDL2.Bool], ["query"]),
     "hasApprovedOwner": IDL2.Func([PersonId2], [IDL2.Bool], ["query"]),
     "hasApprovedOwnerForFamily": IDL2.Func(
@@ -36991,6 +37082,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
       ["query"]
     ),
     "listApprovedStories": IDL2.Func([], [IDL2.Vec(Story2)], ["query"]),
+    "listApprovedStoriesForFamily": IDL2.Func(
+      [FamilyId2],
+      [IDL2.Vec(Story2)],
+      ["query"]
+    ),
     "listArchivedProfileIds": IDL2.Func([], [IDL2.Vec(PersonId2)], ["query"]),
     "listArchivedProfiles": IDL2.Func([], [IDL2.Vec(PersonProfile2)], ["query"]),
     "listAuditHistory": IDL2.Func([], [IDL2.Vec(AuditEntry2)], ["query"]),
@@ -37135,6 +37231,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
       ["query"]
     ),
     "listPendingStories": IDL2.Func([], [IDL2.Vec(Story2)], ["query"]),
+    "listPendingStoriesForFamily": IDL2.Func(
+      [FamilyId2],
+      [IDL2.Vec(Story2)],
+      ["query"]
+    ),
     "listPersonRelationships": IDL2.Func(
       [PersonId2],
       [IDL2.Vec(Relationship2)],
@@ -37203,6 +37304,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
       ["query"]
     ),
     "listStewards": IDL2.Func([], [IDL2.Vec(StewardRecord2)], ["query"]),
+    "listStoriesForFamily": IDL2.Func([FamilyId2], [IDL2.Vec(Story2)], ["query"]),
     "listSuccessors": IDL2.Func([], [IDL2.Vec(SuccessorDesignation2)], ["query"]),
     "listTimelineEvents": IDL2.Func([], [IDL2.Vec(TimelineEvent2)], ["query"]),
     "markConversationRead": IDL2.Func([ConversationId2], [], []),
@@ -37380,6 +37482,11 @@ const idlFactory = ({ IDL: IDL2 }) => {
       []
     ),
     "rejectStory": IDL2.Func([StoryId2], [IDL2.Opt(Story2)], []),
+    "rejectStoryForFamily": IDL2.Func(
+      [FamilyId2, StoryId2],
+      [IDL2.Opt(Story2)],
+      []
+    ),
     "removeBoardReply": IDL2.Func([ReplyId2], [IDL2.Opt(Reply2)], []),
     "removeBoardReplyForFamily": IDL2.Func(
       [FamilyId2, ReplyId2],
@@ -37604,6 +37711,21 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [Story2],
       []
     ),
+    "submitStoryForFamily": IDL2.Func(
+      [
+        FamilyId2,
+        IDL2.Text,
+        IDL2.Text,
+        IDL2.Vec(IDL2.Text),
+        IDL2.Opt(IDL2.Text),
+        IDL2.Opt(IDL2.Nat),
+        IDL2.Opt(IDL2.Text),
+        EvidenceStatus2,
+        IDL2.Vec(IDL2.Nat)
+      ],
+      [Story2],
+      []
+    ),
     "unblockUser": IDL2.Func([IDL2.Principal], [], []),
     "unblockUserForFamily": IDL2.Func([FamilyId2, IDL2.Principal], [], []),
     "updateBoardPost": IDL2.Func(
@@ -37651,6 +37773,22 @@ const idlFactory = ({ IDL: IDL2 }) => {
     ),
     "updateCanonicalStory": IDL2.Func(
       [
+        StoryId2,
+        IDL2.Text,
+        IDL2.Text,
+        IDL2.Vec(IDL2.Text),
+        IDL2.Opt(IDL2.Text),
+        IDL2.Opt(IDL2.Nat),
+        IDL2.Opt(IDL2.Text),
+        EvidenceStatus2,
+        IDL2.Vec(IDL2.Nat)
+      ],
+      [IDL2.Opt(Story2)],
+      []
+    ),
+    "updateCanonicalStoryForFamily": IDL2.Func(
+      [
+        FamilyId2,
         StoryId2,
         IDL2.Text,
         IDL2.Text,
@@ -38148,6 +38286,20 @@ class Backend {
       return from_candid_Story_n21(this._uploadFile, this._downloadFile, result);
     }
   }
+  async addCanonicalStoryForFamily(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.addCanonicalStoryForFamily(arg0, arg1, arg2, arg3, to_candid_opt_n18(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n19(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n18(this._uploadFile, this._downloadFile, arg6), to_candid_EvidenceStatus_n20(this._uploadFile, this._downloadFile, arg7), arg8);
+        return from_candid_Story_n21(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.addCanonicalStoryForFamily(arg0, arg1, arg2, arg3, to_candid_opt_n18(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n19(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n18(this._uploadFile, this._downloadFile, arg6), to_candid_EvidenceStatus_n20(this._uploadFile, this._downloadFile, arg7), arg8);
+      return from_candid_Story_n21(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async addPhoto(arg0, arg1, arg2, arg3) {
     if (this.processError) {
       try {
@@ -38439,6 +38591,20 @@ class Backend {
       }
     } else {
       const result = await this.actor.approveStory(arg0);
+      return from_candid_opt_n89(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async approveStoryForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.approveStoryForFamily(arg0, arg1);
+        return from_candid_opt_n89(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.approveStoryForFamily(arg0, arg1);
       return from_candid_opt_n89(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -39478,6 +39644,20 @@ class Backend {
       return from_candid_vec_n218(this._uploadFile, this._downloadFile, result);
     }
   }
+  async getStoryForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.getStoryForFamily(arg0, arg1);
+        return from_candid_opt_n89(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.getStoryForFamily(arg0, arg1);
+      return from_candid_opt_n89(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async hasActiveSteward() {
     if (this.processError) {
       try {
@@ -39615,6 +39795,20 @@ class Backend {
       }
     } else {
       const result = await this.actor.listApprovedStories();
+      return from_candid_vec_n224(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listApprovedStoriesForFamily(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listApprovedStoriesForFamily(arg0);
+        return from_candid_vec_n224(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listApprovedStoriesForFamily(arg0);
       return from_candid_vec_n224(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -40178,6 +40372,20 @@ class Backend {
       return from_candid_vec_n224(this._uploadFile, this._downloadFile, result);
     }
   }
+  async listPendingStoriesForFamily(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listPendingStoriesForFamily(arg0);
+        return from_candid_vec_n224(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listPendingStoriesForFamily(arg0);
+      return from_candid_vec_n224(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async listPersonRelationships(arg0) {
     if (this.processError) {
       try {
@@ -40456,6 +40664,20 @@ class Backend {
     } else {
       const result = await this.actor.listStewards();
       return from_candid_vec_n260(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async listStoriesForFamily(arg0) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.listStoriesForFamily(arg0);
+        return from_candid_vec_n224(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.listStoriesForFamily(arg0);
+      return from_candid_vec_n224(this._uploadFile, this._downloadFile, result);
     }
   }
   async listSuccessors() {
@@ -41015,6 +41237,20 @@ class Backend {
       }
     } else {
       const result = await this.actor.rejectStory(arg0);
+      return from_candid_opt_n89(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async rejectStoryForFamily(arg0, arg1) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.rejectStoryForFamily(arg0, arg1);
+        return from_candid_opt_n89(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.rejectStoryForFamily(arg0, arg1);
       return from_candid_opt_n89(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -41592,6 +41828,20 @@ class Backend {
       return from_candid_Story_n21(this._uploadFile, this._downloadFile, result);
     }
   }
+  async submitStoryForFamily(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.submitStoryForFamily(arg0, arg1, arg2, arg3, to_candid_opt_n18(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n19(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n18(this._uploadFile, this._downloadFile, arg6), to_candid_EvidenceStatus_n20(this._uploadFile, this._downloadFile, arg7), arg8);
+        return from_candid_Story_n21(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.submitStoryForFamily(arg0, arg1, arg2, arg3, to_candid_opt_n18(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n19(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n18(this._uploadFile, this._downloadFile, arg6), to_candid_EvidenceStatus_n20(this._uploadFile, this._downloadFile, arg7), arg8);
+      return from_candid_Story_n21(this._uploadFile, this._downloadFile, result);
+    }
+  }
   async unblockUser(arg0) {
     if (this.processError) {
       try {
@@ -41673,6 +41923,20 @@ class Backend {
       }
     } else {
       const result = await this.actor.updateCanonicalStory(arg0, arg1, arg2, arg3, to_candid_opt_n18(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n19(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n18(this._uploadFile, this._downloadFile, arg6), to_candid_EvidenceStatus_n20(this._uploadFile, this._downloadFile, arg7), arg8);
+      return from_candid_opt_n89(this._uploadFile, this._downloadFile, result);
+    }
+  }
+  async updateCanonicalStoryForFamily(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9) {
+    if (this.processError) {
+      try {
+        const result = await this.actor.updateCanonicalStoryForFamily(arg0, arg1, arg2, arg3, arg4, to_candid_opt_n18(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n19(this._uploadFile, this._downloadFile, arg6), to_candid_opt_n18(this._uploadFile, this._downloadFile, arg7), to_candid_EvidenceStatus_n20(this._uploadFile, this._downloadFile, arg8), arg9);
+        return from_candid_opt_n89(this._uploadFile, this._downloadFile, result);
+      } catch (e) {
+        this.processError(e);
+        throw new Error("unreachable");
+      }
+    } else {
+      const result = await this.actor.updateCanonicalStoryForFamily(arg0, arg1, arg2, arg3, arg4, to_candid_opt_n18(this._uploadFile, this._downloadFile, arg5), to_candid_opt_n19(this._uploadFile, this._downloadFile, arg6), to_candid_opt_n18(this._uploadFile, this._downloadFile, arg7), to_candid_EvidenceStatus_n20(this._uploadFile, this._downloadFile, arg8), arg9);
       return from_candid_opt_n89(this._uploadFile, this._downloadFile, result);
     }
   }
@@ -42417,6 +42681,7 @@ function from_candid_record_n22(_uploadFile, _downloadFile, value) {
     relatedArchiveItemIds: value.relatedArchiveItemIds,
     updatedAt: value.updatedAt,
     evidenceStatus: from_candid_EvidenceStatus_n25(_uploadFile, _downloadFile, value.evidenceStatus),
+    familyId: value.familyId,
     location: record_opt_to_undefined(from_candid_opt_n23(_uploadFile, _downloadFile, value.location)),
     contributor: value.contributor
   };
@@ -75901,37 +76166,73 @@ function MysteryCard({
     ] })
   ] });
 }
+function storyInvalidation(kind, familyScopedId) {
+  if (familyScopedId === void 0) {
+    return { queryKey: ["familyHistory", "stories", kind] };
+  }
+  const familyIndex = kind === "detail" ? 4 : 3;
+  return {
+    queryKey: ["familyHistory", "stories", kind],
+    predicate: (query) => query.queryKey[familyIndex] === familyScopedId
+  };
+}
 function useApprovedStories() {
+  const familyScopedId = useFamilyScopedId();
   const providersPresent = useProvidersPresent();
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["familyHistory", "stories", "approved"],
+    queryKey: familyScopedId === void 0 ? ["familyHistory", "stories", "approved"] : ["familyHistory", "stories", "approved", familyScopedId],
     queryFn: async () => {
       if (!actor) return [];
-      return actor.listApprovedStories();
+      return familyScopedId === void 0 ? actor.listApprovedStories() : actor.listApprovedStoriesForFamily(familyScopedId);
     },
     enabled: providersPresent && !!actor && !isFetching
   });
 }
 function usePendingStories() {
+  const familyScopedId = useFamilyScopedId();
   const providersPresent = useProvidersPresent();
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["familyHistory", "stories", "pending"],
+    queryKey: familyScopedId === void 0 ? ["familyHistory", "stories", "pending"] : ["familyHistory", "stories", "pending", familyScopedId],
     queryFn: async () => {
       if (!actor) return [];
-      return actor.listPendingStories();
+      return familyScopedId === void 0 ? actor.listPendingStories() : actor.listPendingStoriesForFamily(familyScopedId);
+    },
+    enabled: providersPresent && !!actor && !isFetching
+  });
+}
+function useStory(id2) {
+  const familyId = useActiveFamilyId();
+  const providersPresent = useProvidersPresent();
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["familyHistory", "stories", "detail", id2.toString(), familyId],
+    queryFn: async () => {
+      if (!actor) return null;
+      return actor.getStoryForFamily(familyId, id2);
     },
     enabled: providersPresent && !!actor && !isFetching
   });
 }
 function useSubmitStory() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
     mutationFn: async (input) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.submitStory(
+      return familyScopedId === void 0 ? actor.submitStory(
+        input.title,
+        input.storyText,
+        input.relatedMemberIds,
+        input.era,
+        input.year,
+        input.location,
+        input.evidenceStatus,
+        input.relatedArchiveItemIds
+      ) : actor.submitStoryForFamily(
+        familyScopedId,
         input.title,
         input.storyText,
         input.relatedMemberIds,
@@ -75943,9 +76244,9 @@ function useSubmitStory() {
       );
     },
     onSuccess: () => {
-      void queryClient2.invalidateQueries({
-        queryKey: ["familyHistory", "stories", "pending"]
-      });
+      void queryClient2.invalidateQueries(
+        storyInvalidation("pending", familyScopedId)
+      );
       void queryClient2.invalidateQueries({
         queryKey: ["pendingContributionsCount"]
       });
@@ -75953,20 +76254,24 @@ function useSubmitStory() {
   });
 }
 function useApproveStory() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
     mutationFn: async (id2) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.approveStory(id2);
+      return familyScopedId === void 0 ? actor.approveStory(id2) : actor.approveStoryForFamily(familyScopedId, id2);
     },
     onSuccess: () => {
-      void queryClient2.invalidateQueries({
-        queryKey: ["familyHistory", "stories", "pending"]
-      });
-      void queryClient2.invalidateQueries({
-        queryKey: ["familyHistory", "stories", "approved"]
-      });
+      void queryClient2.invalidateQueries(
+        storyInvalidation("pending", familyScopedId)
+      );
+      void queryClient2.invalidateQueries(
+        storyInvalidation("approved", familyScopedId)
+      );
+      void queryClient2.invalidateQueries(
+        storyInvalidation("detail", familyScopedId)
+      );
       void queryClient2.invalidateQueries({
         queryKey: ["pendingContributionsCount"]
       });
@@ -75975,17 +76280,21 @@ function useApproveStory() {
   });
 }
 function useRejectStory() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
     mutationFn: async (id2) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.rejectStory(id2);
+      return familyScopedId === void 0 ? actor.rejectStory(id2) : actor.rejectStoryForFamily(familyScopedId, id2);
     },
     onSuccess: () => {
-      void queryClient2.invalidateQueries({
-        queryKey: ["familyHistory", "stories", "pending"]
-      });
+      void queryClient2.invalidateQueries(
+        storyInvalidation("pending", familyScopedId)
+      );
+      void queryClient2.invalidateQueries(
+        storyInvalidation("detail", familyScopedId)
+      );
       void queryClient2.invalidateQueries({
         queryKey: ["pendingContributionsCount"]
       });
@@ -75994,12 +76303,23 @@ function useRejectStory() {
   });
 }
 function useAddCanonicalStory() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
     mutationFn: async (input) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.addCanonicalStory(
+      return familyScopedId === void 0 ? actor.addCanonicalStory(
+        input.title,
+        input.storyText,
+        input.relatedMemberIds,
+        input.era,
+        input.year,
+        input.location,
+        input.evidenceStatus,
+        input.relatedArchiveItemIds
+      ) : actor.addCanonicalStoryForFamily(
+        familyScopedId,
         input.title,
         input.storyText,
         input.relatedMemberIds,
@@ -76011,19 +76331,31 @@ function useAddCanonicalStory() {
       );
     },
     onSuccess: () => {
-      void queryClient2.invalidateQueries({
-        queryKey: ["familyHistory", "stories", "approved"]
-      });
+      void queryClient2.invalidateQueries(
+        storyInvalidation("approved", familyScopedId)
+      );
     }
   });
 }
 function useUpdateCanonicalStory() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient2 = useQueryClient();
   return useMutation({
     mutationFn: async (input) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.updateCanonicalStory(
+      return familyScopedId === void 0 ? actor.updateCanonicalStory(
+        input.id,
+        input.title,
+        input.storyText,
+        input.relatedMemberIds,
+        input.era,
+        input.year,
+        input.location,
+        input.evidenceStatus,
+        input.relatedArchiveItemIds
+      ) : actor.updateCanonicalStoryForFamily(
+        familyScopedId,
         input.id,
         input.title,
         input.storyText,
@@ -76036,9 +76368,12 @@ function useUpdateCanonicalStory() {
       );
     },
     onSuccess: () => {
-      void queryClient2.invalidateQueries({
-        queryKey: ["familyHistory", "stories", "approved"]
-      });
+      void queryClient2.invalidateQueries(
+        storyInvalidation("approved", familyScopedId)
+      );
+      void queryClient2.invalidateQueries(
+        storyInvalidation("detail", familyScopedId)
+      );
     }
   });
 }
@@ -83733,11 +84068,14 @@ function StoriesPage({
     initialStoryId ?? null
   );
   const [editingStory, setEditingStory] = reactExports.useState(null);
+  const { data: fetchedStory = null, isLoading: isStoryLoading } = useStory(
+    selectedStoryId ?? 0n
+  );
   const filteredStories = reactExports.useMemo(
     () => stories.filter((story) => matchesStoryFilter(story, filter2)),
     [stories, filter2]
   );
-  const selectedStory = stories.find((story) => story.id === selectedStoryId) ?? null;
+  const selectedStory = fetchedStory ?? stories.find((story) => story.id === selectedStoryId) ?? null;
   const openDetail = (id2) => {
     setSelectedStoryId(id2);
     setView("detail");
@@ -83757,6 +84095,35 @@ function StoriesPage({
         onEdit: openForm
       }
     );
+  }
+  if (view === "detail" && isStoryLoading) {
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mx-auto w-full max-w-3xl px-6 py-10", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "div",
+      {
+        "data-ocid": "stories.detail.loading_state",
+        className: "h-64 animate-pulse rounded-xl border border-border/60 bg-card"
+      }
+    ) });
+  }
+  if (view === "detail") {
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mx-auto w-full max-w-3xl px-6 py-10", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+      DomainEmptyState,
+      {
+        icon: LibraryBig,
+        title: "Story not found",
+        hint: "This story may have been removed or belongs to another family.",
+        action: /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "button",
+          {
+            type: "button",
+            "data-ocid": "stories.detail.back_button",
+            onClick: () => setView("browse"),
+            className: "archive-empty-reset",
+            children: "Back to Stories"
+          }
+        )
+      }
+    ) });
   }
   if (view === "form") {
     return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mx-auto w-full max-w-3xl px-6 py-10", children: /* @__PURE__ */ jsxRuntimeExports.jsx(

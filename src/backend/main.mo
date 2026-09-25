@@ -32,6 +32,7 @@ import ArchiveLib "lib/archive";
 import OwnershipLib "lib/ownership";
 import AccountIdentityLib "lib/account-identity";
 import RecipesScopeLib "lib/recipes-scope";
+import FamilyHistoryScopeLib "lib/family-history-scope";
 import ObjectStorageApi "mixins/object-storage-api";
 import FamilyApi "mixins/family-api";
 import ArchiveApi "mixins/archive-api";
@@ -41,7 +42,8 @@ import RelationshipsApi "mixins/relationships-api";
 import NotificationsApi "mixins/notifications-api";
 import AccountIdentityApi "mixins/account-identity-api";
 import GovernanceApi "mixins/governance-api";
-import FamilyHistoryApi "mixins/family-history-api";
+import FamilyHistoryScopeApi "mixins/family-history-scope-api";
+import MysteryApi "mixins/mystery-api";
 import RecipesScopeApi "mixins/recipes-scope-api";
 import BoardScopeApi "mixins/board-scope-api";
 import MessagingScopeApi "mixins/messaging-scope-api";
@@ -620,40 +622,42 @@ actor {
       .payload("personIdB", func r = r.personIdB)
       .controllerOnly()
       .build(),
-      OQL.Entity.manual<FamilyHistoryTypes.Story>(
+      OQL.Entity.manual<FamilyHistoryTypes.StoryRow>(
         "story",
-        func() : Iter.Iter<FamilyHistoryTypes.Story> = stories.values(),
+        func() : Iter.Iter<FamilyHistoryTypes.StoryRow> = FamilyHistoryScopeLib.storyRows(stories),
         "Story",
         "id",
       )
       .sample({
+        familyId = FamilyTypes.DEFAULT_FAMILY_ID;
         id = 0;
         title = "";
         storyText = "";
-        relatedMemberIds = [];
-        era = null;
+        relatedMemberCount = 0;
+        era = "";
         year = null;
-        location = null;
-        contributor = Principal.fromText("aaaaa-aa");
-        evidenceStatus = #Documented;
-        relatedArchiveItemIds = [];
+        location = "";
+        contributor = "";
+        evidenceStatus = "";
+        relatedArchiveItemCount = 0;
         createdAt = 0;
         updatedAt = 0;
-        status = #Approved;
+        status = "";
       })
+      .payload("familyId", func r = r.familyId)
       .payload("id", func r = r.id)
       .payload("title", func r = r.title)
       .payload("storyText", func r = r.storyText)
-      .payload("relatedMemberCount", func r = r.relatedMemberIds.size())
-      .payload("era", func r = r.era ?? "")
+      .payload("relatedMemberCount", func r = r.relatedMemberCount)
+      .payload("era", func r = r.era)
       .payload("year", func r = r.year ?? 0)
-      .payload("location", func r = r.location ?? "")
-      .payload("contributor", func r = r.contributor.toText())
-      .payload("evidenceStatus", func r = switch (r.evidenceStatus) { case (#Documented) "Documented"; case (#FamilyHistory) "FamilyHistory"; case (#PersonalMemory) "PersonalMemory"; case (#Unresolved) "Unresolved" })
-      .payload("relatedArchiveItemCount", func r = r.relatedArchiveItemIds.size())
+      .payload("location", func r = r.location)
+      .payload("contributor", func r = r.contributor)
+      .payload("evidenceStatus", func r = r.evidenceStatus)
+      .payload("relatedArchiveItemCount", func r = r.relatedArchiveItemCount)
       .payload("createdAt", func r = r.createdAt)
       .payload("updatedAt", func r = r.updatedAt)
-      .payload("status", func r = switch (r.status) { case (#Pending) "Pending"; case (#Approved) "Approved"; case (#Rejected) "Rejected" })
+      .payload("status", func r = r.status)
       .controllerOnly()
       .build(),
       OQL.Entity.manual<FamilyHistoryTypes.Mystery>(
@@ -1135,7 +1139,8 @@ actor {
   include NotificationsApi(notifications);
   include AccountIdentityApi(accounts);
   include GovernanceApi(accessControlState, profiles, confirmedRelationships, stewards, successors, removalRequests, auditLog, mergeConflicts, archivedProfiles, galleries, archiveItems, dismissedDuplicates);
-  include FamilyHistoryApi(stories, mysteries, mysteryContributions, profiles, archiveItems, claims, stewards);
+  include FamilyHistoryScopeApi(stories, profiles, claims, stewards, archiveItems);
+  include MysteryApi(stories, mysteries, mysteryContributions, profiles, archiveItems, claims, stewards);
   include RecipesScopeApi(recipes, profiles, claims, stewards, archiveItems);
   include BoardScopeApi(posts, replies, profiles, notifications, auditLog, stewards, claims, archiveItems);
   include MessagingScopeApi(conversations, messages, blocks, reports, profiles, archivedProfiles, notifications, accounts, stewards, claims);

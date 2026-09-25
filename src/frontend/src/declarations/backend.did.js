@@ -104,6 +104,7 @@ export const Story = IDL.Record({
   'relatedArchiveItemIds' : IDL.Vec(IDL.Nat),
   'updatedAt' : IDL.Int,
   'evidenceStatus' : EvidenceStatus,
+  'familyId' : FamilyId,
   'location' : IDL.Opt(IDL.Text),
   'contributor' : IDL.Principal,
 });
@@ -1144,6 +1145,21 @@ export const idlService = IDL.Service({
       [Story],
       [],
     ),
+  'addCanonicalStoryForFamily' : IDL.Func(
+      [
+        FamilyId,
+        IDL.Text,
+        IDL.Text,
+        IDL.Vec(IDL.Text),
+        IDL.Opt(IDL.Text),
+        IDL.Opt(IDL.Nat),
+        IDL.Opt(IDL.Text),
+        EvidenceStatus,
+        IDL.Vec(IDL.Nat),
+      ],
+      [Story],
+      [],
+    ),
   'addPhoto' : IDL.Func(
       [PersonId, IDL.Text, IDL.Text, ExternalBlob],
       [Photo],
@@ -1225,6 +1241,7 @@ export const idlService = IDL.Service({
       [],
     ),
   'approveStory' : IDL.Func([StoryId], [IDL.Opt(Story)], []),
+  'approveStoryForFamily' : IDL.Func([FamilyId, StoryId], [IDL.Opt(Story)], []),
   'archiveBoardPost' : IDL.Func([PostId], [IDL.Opt(Post)], []),
   'archiveBoardPostForFamily' : IDL.Func(
       [FamilyId, PostId],
@@ -1567,6 +1584,11 @@ export const idlService = IDL.Service({
       [IDL.Vec(StewardAuditEntry)],
       ['query'],
     ),
+  'getStoryForFamily' : IDL.Func(
+      [FamilyId, StoryId],
+      [IDL.Opt(Story)],
+      ['query'],
+    ),
   'hasActiveSteward' : IDL.Func([], [IDL.Bool], ['query']),
   'hasApprovedOwner' : IDL.Func([PersonId], [IDL.Bool], ['query']),
   'hasApprovedOwnerForFamily' : IDL.Func(
@@ -1589,6 +1611,11 @@ export const idlService = IDL.Service({
       ['query'],
     ),
   'listApprovedStories' : IDL.Func([], [IDL.Vec(Story)], ['query']),
+  'listApprovedStoriesForFamily' : IDL.Func(
+      [FamilyId],
+      [IDL.Vec(Story)],
+      ['query'],
+    ),
   'listArchivedProfileIds' : IDL.Func([], [IDL.Vec(PersonId)], ['query']),
   'listArchivedProfiles' : IDL.Func([], [IDL.Vec(PersonProfile)], ['query']),
   'listAuditHistory' : IDL.Func([], [IDL.Vec(AuditEntry)], ['query']),
@@ -1721,6 +1748,11 @@ export const idlService = IDL.Service({
       ['query'],
     ),
   'listPendingStories' : IDL.Func([], [IDL.Vec(Story)], ['query']),
+  'listPendingStoriesForFamily' : IDL.Func(
+      [FamilyId],
+      [IDL.Vec(Story)],
+      ['query'],
+    ),
   'listPersonRelationships' : IDL.Func(
       [PersonId],
       [IDL.Vec(Relationship)],
@@ -1785,6 +1817,7 @@ export const idlService = IDL.Service({
     ),
   'listStewardIdentities' : IDL.Func([], [IDL.Vec(StewardIdentity)], ['query']),
   'listStewards' : IDL.Func([], [IDL.Vec(StewardRecord)], ['query']),
+  'listStoriesForFamily' : IDL.Func([FamilyId], [IDL.Vec(Story)], ['query']),
   'listSuccessors' : IDL.Func([], [IDL.Vec(SuccessorDesignation)], ['query']),
   'listTimelineEvents' : IDL.Func([], [IDL.Vec(TimelineEvent)], ['query']),
   'markConversationRead' : IDL.Func([ConversationId], [], []),
@@ -1958,6 +1991,7 @@ export const idlService = IDL.Service({
       [],
     ),
   'rejectStory' : IDL.Func([StoryId], [IDL.Opt(Story)], []),
+  'rejectStoryForFamily' : IDL.Func([FamilyId, StoryId], [IDL.Opt(Story)], []),
   'removeBoardReply' : IDL.Func([ReplyId], [IDL.Opt(Reply)], []),
   'removeBoardReplyForFamily' : IDL.Func(
       [FamilyId, ReplyId],
@@ -2182,6 +2216,21 @@ export const idlService = IDL.Service({
       [Story],
       [],
     ),
+  'submitStoryForFamily' : IDL.Func(
+      [
+        FamilyId,
+        IDL.Text,
+        IDL.Text,
+        IDL.Vec(IDL.Text),
+        IDL.Opt(IDL.Text),
+        IDL.Opt(IDL.Nat),
+        IDL.Opt(IDL.Text),
+        EvidenceStatus,
+        IDL.Vec(IDL.Nat),
+      ],
+      [Story],
+      [],
+    ),
   'unblockUser' : IDL.Func([IDL.Principal], [], []),
   'unblockUserForFamily' : IDL.Func([FamilyId, IDL.Principal], [], []),
   'updateBoardPost' : IDL.Func(
@@ -2229,6 +2278,22 @@ export const idlService = IDL.Service({
     ),
   'updateCanonicalStory' : IDL.Func(
       [
+        StoryId,
+        IDL.Text,
+        IDL.Text,
+        IDL.Vec(IDL.Text),
+        IDL.Opt(IDL.Text),
+        IDL.Opt(IDL.Nat),
+        IDL.Opt(IDL.Text),
+        EvidenceStatus,
+        IDL.Vec(IDL.Nat),
+      ],
+      [IDL.Opt(Story)],
+      [],
+    ),
+  'updateCanonicalStoryForFamily' : IDL.Func(
+      [
+        FamilyId,
         StoryId,
         IDL.Text,
         IDL.Text,
@@ -2346,6 +2411,7 @@ export const idlFactory = ({ IDL }) => {
     'relatedArchiveItemIds' : IDL.Vec(IDL.Nat),
     'updatedAt' : IDL.Int,
     'evidenceStatus' : EvidenceStatus,
+    'familyId' : FamilyId,
     'location' : IDL.Opt(IDL.Text),
     'contributor' : IDL.Principal,
   });
@@ -3359,6 +3425,21 @@ export const idlFactory = ({ IDL }) => {
         [Story],
         [],
       ),
+    'addCanonicalStoryForFamily' : IDL.Func(
+        [
+          FamilyId,
+          IDL.Text,
+          IDL.Text,
+          IDL.Vec(IDL.Text),
+          IDL.Opt(IDL.Text),
+          IDL.Opt(IDL.Nat),
+          IDL.Opt(IDL.Text),
+          EvidenceStatus,
+          IDL.Vec(IDL.Nat),
+        ],
+        [Story],
+        [],
+      ),
     'addPhoto' : IDL.Func(
         [PersonId, IDL.Text, IDL.Text, ExternalBlob],
         [Photo],
@@ -3444,6 +3525,11 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'approveStory' : IDL.Func([StoryId], [IDL.Opt(Story)], []),
+    'approveStoryForFamily' : IDL.Func(
+        [FamilyId, StoryId],
+        [IDL.Opt(Story)],
+        [],
+      ),
     'archiveBoardPost' : IDL.Func([PostId], [IDL.Opt(Post)], []),
     'archiveBoardPostForFamily' : IDL.Func(
         [FamilyId, PostId],
@@ -3786,6 +3872,11 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(StewardAuditEntry)],
         ['query'],
       ),
+    'getStoryForFamily' : IDL.Func(
+        [FamilyId, StoryId],
+        [IDL.Opt(Story)],
+        ['query'],
+      ),
     'hasActiveSteward' : IDL.Func([], [IDL.Bool], ['query']),
     'hasApprovedOwner' : IDL.Func([PersonId], [IDL.Bool], ['query']),
     'hasApprovedOwnerForFamily' : IDL.Func(
@@ -3812,6 +3903,11 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'listApprovedStories' : IDL.Func([], [IDL.Vec(Story)], ['query']),
+    'listApprovedStoriesForFamily' : IDL.Func(
+        [FamilyId],
+        [IDL.Vec(Story)],
+        ['query'],
+      ),
     'listArchivedProfileIds' : IDL.Func([], [IDL.Vec(PersonId)], ['query']),
     'listArchivedProfiles' : IDL.Func([], [IDL.Vec(PersonProfile)], ['query']),
     'listAuditHistory' : IDL.Func([], [IDL.Vec(AuditEntry)], ['query']),
@@ -3956,6 +4052,11 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'listPendingStories' : IDL.Func([], [IDL.Vec(Story)], ['query']),
+    'listPendingStoriesForFamily' : IDL.Func(
+        [FamilyId],
+        [IDL.Vec(Story)],
+        ['query'],
+      ),
     'listPersonRelationships' : IDL.Func(
         [PersonId],
         [IDL.Vec(Relationship)],
@@ -4024,6 +4125,7 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'listStewards' : IDL.Func([], [IDL.Vec(StewardRecord)], ['query']),
+    'listStoriesForFamily' : IDL.Func([FamilyId], [IDL.Vec(Story)], ['query']),
     'listSuccessors' : IDL.Func([], [IDL.Vec(SuccessorDesignation)], ['query']),
     'listTimelineEvents' : IDL.Func([], [IDL.Vec(TimelineEvent)], ['query']),
     'markConversationRead' : IDL.Func([ConversationId], [], []),
@@ -4201,6 +4303,11 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'rejectStory' : IDL.Func([StoryId], [IDL.Opt(Story)], []),
+    'rejectStoryForFamily' : IDL.Func(
+        [FamilyId, StoryId],
+        [IDL.Opt(Story)],
+        [],
+      ),
     'removeBoardReply' : IDL.Func([ReplyId], [IDL.Opt(Reply)], []),
     'removeBoardReplyForFamily' : IDL.Func(
         [FamilyId, ReplyId],
@@ -4425,6 +4532,21 @@ export const idlFactory = ({ IDL }) => {
         [Story],
         [],
       ),
+    'submitStoryForFamily' : IDL.Func(
+        [
+          FamilyId,
+          IDL.Text,
+          IDL.Text,
+          IDL.Vec(IDL.Text),
+          IDL.Opt(IDL.Text),
+          IDL.Opt(IDL.Nat),
+          IDL.Opt(IDL.Text),
+          EvidenceStatus,
+          IDL.Vec(IDL.Nat),
+        ],
+        [Story],
+        [],
+      ),
     'unblockUser' : IDL.Func([IDL.Principal], [], []),
     'unblockUserForFamily' : IDL.Func([FamilyId, IDL.Principal], [], []),
     'updateBoardPost' : IDL.Func(
@@ -4472,6 +4594,22 @@ export const idlFactory = ({ IDL }) => {
       ),
     'updateCanonicalStory' : IDL.Func(
         [
+          StoryId,
+          IDL.Text,
+          IDL.Text,
+          IDL.Vec(IDL.Text),
+          IDL.Opt(IDL.Text),
+          IDL.Opt(IDL.Nat),
+          IDL.Opt(IDL.Text),
+          EvidenceStatus,
+          IDL.Vec(IDL.Nat),
+        ],
+        [IDL.Opt(Story)],
+        [],
+      ),
+    'updateCanonicalStoryForFamily' : IDL.Func(
+        [
+          FamilyId,
           StoryId,
           IDL.Text,
           IDL.Text,

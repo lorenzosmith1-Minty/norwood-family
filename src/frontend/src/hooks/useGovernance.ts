@@ -17,6 +17,7 @@ import type {
   Result_13,
   Result_16,
   Result_23,
+  Result_24,
   StewardIdentity,
   StewardRecord,
   SuccessorDesignation,
@@ -514,7 +515,7 @@ export function useAddRelationship() {
       fromPersonId: string;
       toPersonId: string;
       relationshipType: RelationshipType;
-    }): Promise<Result_23> => {
+    }): Promise<Result_24> => {
       if (!actor) throw new Error("Backend is not ready");
       return actor.addRelationship(fromPersonId, toPersonId, relationshipType);
     },
@@ -563,7 +564,7 @@ export function useCorrectRelationshipType() {
     }: {
       relationshipId: bigint;
       relationshipType: RelationshipType;
-    }): Promise<Result_23> => {
+    }): Promise<Result_24> => {
       if (!actor) throw new Error("Backend is not ready");
       return actor.correctRelationshipType(relationshipId, relationshipType);
     },

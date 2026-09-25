@@ -31,7 +31,7 @@ import StewardAuthorityLib "lib/steward-authority";
 import ArchiveLib "lib/archive";
 import OwnershipLib "lib/ownership";
 import AccountIdentityLib "lib/account-identity";
-import RecipesLib "lib/recipes";
+import RecipesScopeLib "lib/recipes-scope";
 import ObjectStorageApi "mixins/object-storage-api";
 import FamilyApi "mixins/family-api";
 import ArchiveApi "mixins/archive-api";
@@ -42,9 +42,9 @@ import NotificationsApi "mixins/notifications-api";
 import AccountIdentityApi "mixins/account-identity-api";
 import GovernanceApi "mixins/governance-api";
 import FamilyHistoryApi "mixins/family-history-api";
-import RecipesApi "mixins/recipes-api";
+import RecipesScopeApi "mixins/recipes-scope-api";
 import BoardScopeApi "mixins/board-scope-api";
-import MessagingApi "mixins/messaging-api";
+import MessagingScopeApi "mixins/messaging-scope-api";
 import PendingCountApi "mixins/pending-count-api";
 import ResearchIntakeApi "mixins/research-intake-api";
 import ResearchSourceScopeApi "mixins/research-source-scope-api";
@@ -724,11 +724,12 @@ actor {
       .build(),
       OQL.Entity.manual<RecipeTypes.RecipeRow>(
         "recipe",
-        func() : Iter.Iter<RecipeTypes.RecipeRow> = RecipesLib.recipeRows(recipes),
+        func() : Iter.Iter<RecipeTypes.RecipeRow> = RecipesScopeLib.recipeRows(recipes),
         "Recipe",
         "recipeId",
       )
       .sample({
+        familyId = FamilyTypes.DEFAULT_FAMILY_ID;
         recipeId = 0;
         title = "";
         shortDescription = "";
@@ -748,6 +749,7 @@ actor {
         createdAt = 0;
         updatedAt = 0;
       })
+      .payload("familyId", func r = r.familyId)
       .payload("recipeId", func r = r.recipeId)
       .payload("title", func r = r.title)
       .payload("shortDescription", func r = r.shortDescription)
@@ -837,12 +839,14 @@ actor {
         "conversationId",
       )
       .sample({
+        familyId = FamilyTypes.DEFAULT_FAMILY_ID;
         conversationId = 0;
         participantAccountIds = [];
         participantPersonIds = [];
         createdAt = 0;
         updatedAt = 0;
       })
+      .payload("familyId", func r = r.familyId)
       .payload("conversationId", func r = r.conversationId)
       .payload("participantCount", func r = r.participantAccountIds.size())
       .payload("createdAt", func r = r.createdAt)
@@ -857,6 +861,7 @@ actor {
         "messageId",
       )
       .sample({
+        familyId = FamilyTypes.DEFAULT_FAMILY_ID;
         messageId = 0;
         conversationId = 0;
         senderAccountId = Principal.fromText("aaaaa-aa");
@@ -866,6 +871,7 @@ actor {
         readAt = null;
         status = #Sent;
       })
+      .payload("familyId", func r = r.familyId)
       .payload("messageId", func r = r.messageId)
       .payload("conversationId", func r = r.conversationId)
       .payload("senderAccountId", func r = r.senderAccountId.toText())
@@ -884,10 +890,12 @@ actor {
         "key",
       )
       .sample({
+        familyId = FamilyTypes.DEFAULT_FAMILY_ID;
         blockerAccountId = Principal.fromText("aaaaa-aa");
         blockedAccountId = Principal.fromText("aaaaa-aa");
         createdAt = 0;
       })
+      .payload("familyId", func r = r.familyId)
       .payload("key", func r = r.blockerAccountId.toText() # ":" # r.blockedAccountId.toText())
       .payload("blockerAccountId", func r = r.blockerAccountId.toText())
       .payload("blockedAccountId", func r = r.blockedAccountId.toText())
@@ -901,6 +909,7 @@ actor {
         "reportId",
       )
       .sample({
+        familyId = FamilyTypes.DEFAULT_FAMILY_ID;
         reportId = 0;
         reportingAccountId = Principal.fromText("aaaaa-aa");
         reportedMessageId = 0;
@@ -908,6 +917,7 @@ actor {
         createdAt = 0;
         status = #Pending;
       })
+      .payload("familyId", func r = r.familyId)
       .payload("reportId", func r = r.reportId)
       .payload("reportingAccountId", func r = r.reportingAccountId.toText())
       .payload("reportedMessageId", func r = r.reportedMessageId)
@@ -1126,9 +1136,9 @@ actor {
   include AccountIdentityApi(accounts);
   include GovernanceApi(accessControlState, profiles, confirmedRelationships, stewards, successors, removalRequests, auditLog, mergeConflicts, archivedProfiles, galleries, archiveItems, dismissedDuplicates);
   include FamilyHistoryApi(stories, mysteries, mysteryContributions, profiles, archiveItems, claims, stewards);
-  include RecipesApi(recipes, profiles, claims, stewards);
+  include RecipesScopeApi(recipes, profiles, claims, stewards, archiveItems);
   include BoardScopeApi(posts, replies, profiles, notifications, auditLog, stewards, claims, archiveItems);
-  include MessagingApi(conversations, messages, blocks, reports, profiles, archivedProfiles, notifications, accounts, stewards, claims);
+  include MessagingScopeApi(conversations, messages, blocks, reports, profiles, archivedProfiles, notifications, accounts, stewards, claims);
   include PendingCountApi(accessControlState, archiveItems, recipes, stories, mysteryContributions, stewards, researchSources);
   include ResearchIntakeApi(researchSources, proposedFindings, newPersonCandidates, relationshipProposals, conflictReviewItems, researchAuditLog, researchState, profiles, stories, mysteries, archiveItems, notifications, claims, stewards);
   include ResearchSourceScopeApi(researchSources, proposedFindings, newPersonCandidates, relationshipProposals, conflictReviewItems, researchAuditLog, researchState, archiveItems, notifications, claims, stewards);

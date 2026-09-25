@@ -862,44 +862,62 @@ stays readable.
 
 ### Family Recipes
 
-- `submitRecipe(title : Text, shortDescription : Text, originatingPersonId : Text, relatedPersonIds : [Text], era : ?Text, year : ?Nat, location : ?Text, familyBranch : ?Text, ingredients : [Text], instructions : Text, familyStory : ?Text, tags : [Text], privacyLevel : PrivacyLevel, evidenceStatus : EvidenceStatus, linkedMediaIds : [Nat]) : async Recipe` —
-  update. Submits a new family recipe. Requires an approved family member (a
-  caller holding at least one `#Approved` profile claim, or a Family Steward);
-  anonymous and signed-in but unapproved callers are rejected with a trap. The
-  caller is recorded as the `contributorAccountId`. The recipe is
-  stored in `#Pending` state and waits for a Family Steward to approve it before
-  appearing in Family Recipes. `originatingPersonId` must reference a canonical
-  Person record — the call traps with `\"Originating family member not found\"`
-  when that person is not tracked. `relatedPersonIds` may include multiple
-  people, each a canonical Person id. `linkedMediaIds` reference canonical
-  Archive/media records by id only — no media file is duplicated, and one
-  uploaded media file remains one canonical archive record even when linked to
-  multiple recipes or profiles. The reserved future-ready fields (`ocrText`,
-  `transcript`, `extractedIngredients`, `aiDerivedText`) are initialized to
-  `null` and are not populated by any logic yet; original source material is
-  always preserved separately from any future AI-derived text.
-- `listPendingRecipes() : async [Recipe]` — query. Family Steward only. Returns
-  all recipes currently in `#Pending` state.
-- `approveRecipe(id : Nat) : async ?Recipe` — update. Family Steward only. Moves
-  a pending recipe to `#Approved` state and returns the updated recipe, or `null`
-  when no pending recipe with that id exists. Approval does not create a second
-  Recipe — the same canonical record transitions to `#Approved`.
-- `rejectRecipe(id : Nat) : async ?Recipe` — update. Family Steward only. Moves
-  a pending recipe to `#Rejected` state and returns the updated recipe, or `null`
-  when no pending recipe with that id exists.
-- `listApprovedRecipes() : async [Recipe]` — query. Returns all recipes in
-  `#Approved` state (the recipes visible in Family Recipes).
-- `getRecipe(id : Nat) : async ?Recipe` — query. Returns a single recipe by id,
-  or `null` when it does not exist.
-- `listRecipesForPerson(personId : Text) : async [Recipe]` — query. Returns the
-  approved recipes linked to a person, whether as the originating member or a
-  related member. Returns only `#Approved` recipes for public views.
-- `publishRecipe(title : Text, shortDescription : Text, originatingPersonId : Text, relatedPersonIds : [Text], era : ?Text, year : ?Nat, location : ?Text, familyBranch : ?Text, ingredients : [Text], instructions : Text, familyStory : ?Text, tags : [Text], privacyLevel : PrivacyLevel, evidenceStatus : EvidenceStatus, linkedMediaIds : [Nat]) : async Recipe` —
-  update. Family Steward only. Publishes a canonical recipe directly, already in
-  `#Approved` state. This is the steward-only add flow; it does not create a
-  second Recipe on approval. `originatingPersonId` must reference a canonical
-  Person record — the call traps with `\"Originating family member not found\"`
-  when that person is not tracked.
+The recipes surface is family-scoped. Every canonical endpoint takes an explicit
+`familyId` as its first argument and only ever reads or mutates a recipe whose
+`familyId` equals it, so a `recipeId` alone never crosses a family boundary: a
+foreign-family id behaves exactly like a not-found id (`?null` or `[]`), never a
+distinguishable error that would leak another family's existence. The legacy
+no-`familyId` endpoints listed after the canonical ones are TEMPORARY Tenancy 1C
+compatibility wrappers that delegate with the default Norwood family
+(`\"norwood\"`); they contain no logic of their own and will be removed in a
+later build once every caller passes an explicit `familyId`.
+
+- `submitRecipeForFamily(familyId : FamilyId, title : Text, shortDescription : Text, originatingPersonId : Text, relatedPersonIds : [Text], era : ?Text, year : ?Nat, location : ?Text, familyBranch : ?Text, ingredients : [Text], instructions : Text, familyStory : ?Text, tags : [Text], privacyLevel : PrivacyLevel, evidenceStatus : EvidenceStatus, linkedMediaIds : [Nat]) : async Recipe` —
+  update. Submits a new family recipe into `familyId`. Requires an approved
+  member or Steward of `familyId`; a member of one family cannot submit into
+  another. The new recipe's `familyId` is the requested `familyId`, the caller is
+  recorded as the `contributorAccountId`, and the recipe is stored in `#Pending`
+  state. `originatingPersonId` and every `relatedPersonIds` entry must belong to
+  `familyId`, and every `linkedMediaIds` entry must resolve to an Archive item in
+  `familyId`; a foreign-family person or media id is rejected with a trap. The
+  reserved future-ready fields (`ocrText`, `transcript`, `extractedIngredients`,
+  `aiDerivedText`) are initialized to `null` and are not populated by any logic
+  yet.
+- `publishRecipeForFamily(familyId : FamilyId, ...) : async Recipe` — update.
+  Active Steward of `familyId` only. Publishes a canonical recipe directly into
+  `familyId`, already in `#Approved` state. Same person and media family-boundary
+  checks as `submitRecipeForFamily`.
+- `listRecipesForFamily(familyId : FamilyId) : async [Recipe]` — query. Approved
+  members of `familyId` only. Returns every recipe in `familyId`, newest first.
+- `listPendingRecipesForFamily(familyId : FamilyId) : async [Recipe]` — query.
+  Active Steward of `familyId` only. Returns the `#Pending` recipes in
+  `familyId`.
+- `listApprovedRecipesForFamily(familyId : FamilyId) : async [Recipe]` — query.
+  Approved members of `familyId` only. Returns the `#Approved` recipes in
+  `familyId` visible to the caller (private recipes only to their contributor or
+  a Steward).
+- `getRecipeForFamily(familyId : FamilyId, recipeId : Nat) : async ?Recipe` —
+  query. Approved members of `familyId` only. Returns the recipe when it belongs
+  to `familyId` and is visible to the caller, or `null` otherwise.
+- `listRecipesForPersonForFamily(familyId : FamilyId, personId : Text) : async [Recipe]` —
+  query. Approved members of `familyId` only. Returns the approved recipes in
+  `familyId` linked to a person, whether as the originating member or a related
+  member.
+- `approveRecipeForFamily(familyId : FamilyId, recipeId : Nat) : async ?Recipe` —
+  update. Active Steward of `familyId` only; a Steward of another family cannot
+  approve the recipe. Moves a pending recipe in `familyId` to `#Approved` and
+  returns it, or `null` when no pending recipe with that id belongs to
+  `familyId`. Approval transitions the same canonical record — it never creates a
+  second Recipe.
+- `rejectRecipeForFamily(familyId : FamilyId, recipeId : Nat) : async ?Recipe` —
+  update. Active Steward of `familyId` only. Moves a pending recipe in `familyId`
+  to `#Rejected` and returns it, or `null` when no pending recipe with that id
+  belongs to `familyId`.
+
+TEMPORARY Tenancy 1C compatibility wrappers (delegate with `familyId = \"norwood\"`):
+`submitRecipe`, `publishRecipe`, `listPendingRecipes`, `approveRecipe`,
+`rejectRecipe`, `listApprovedRecipes`, `getRecipe`, and `listRecipesForPerson`.
+Their signatures and behavior are unchanged from before tenancy.
 
 ### Family Message Board
 
@@ -1043,12 +1061,105 @@ TEMPORARY Tenancy 1C compatibility wrappers (default Norwood family only):
 
 ### Private Messaging
 
-- `canMessagePerson(personId : Text) : async Bool` — query. Returns whether the
-  signed-in caller may message the person identified by `personId`: the viewer is
-  signed in, the target has an active linked account, the target is not the
-  viewer, and the target is not archived. Unclaimed profiles are never
-  messageable. Drives the Message button on a living claimed Person Profile.
-  Returns `false` for an anonymous caller.
+Private messaging is family-scoped. Every canonical endpoint takes an explicit
+`familyId` as its first argument and only ever reads or mutates a conversation,
+message, block, or report whose `familyId` equals it, so a `conversationId` or
+`messageId` alone never crosses a family boundary: a foreign-family id behaves
+exactly like a not-found id. The legacy no-`familyId` endpoints listed after the
+canonical ones are TEMPORARY Tenancy 1C compatibility wrappers that delegate with
+the default Norwood family (`\"norwood\"`); they contain no logic of their own and
+will be removed in a later build once every caller passes an explicit `familyId`.
+
+Authorization model: reads and creation require an approved member of `familyId`
+(a caller holding at least one `#Approved` profile claim in that family) or an
+active Steward of `familyId`; participant-only actions additionally require the
+caller to be a participant of the conversation; Steward-only actions are
+`listReportsForFamily`, `reviewReportForFamily`, and
+`getReportedMessageForFamily`. A Steward of one family can never moderate another
+family's reports or messages, and a participant of one family can never mutate
+another family's conversation or message.
+
+Messaging gotchas:
+
+- The family boundary is enforced by `record.familyId`, never by
+  `conversationId` or `messageId` alone. A lookup that finds a record belonging
+  to another family behaves exactly like a lookup that found nothing: the
+  single-record reads (`getConversationForFamily`) return the existing safe
+  not-found `?null` rather than a distinct error, and the mutations return `null`
+  (or, for `markConversationReadForFamily` and `reportMessageForFamily`, trap
+  with the existing `\"Conversation not found\"` / `\"Message not found\"`
+  messages) without touching the foreign record.
+- A conversation's participants must all belong to the same `familyId`; a
+  conversation mixing participants from two families is rejected, and a message
+  is only ever stored with the `familyId` of its conversation.
+- Family ids and principals are never exposed in user-facing errors.
+
+Canonical family-scoped endpoints:
+
+- `canMessagePersonForFamily(familyId : FamilyId, personId : Text) : async Bool` —
+  query. Approved members of `familyId` only. Returns whether the signed-in
+  caller may message the person within `familyId`. Returns `false` for an
+  anonymous caller (it does not trap).
+- `listMessageableMembersForFamily(familyId : FamilyId) : async [Text]` — query.
+  Approved members of `familyId` only. Returns the person ids of every other
+  member the caller may message within `familyId`. Returns `[]` for an anonymous
+  caller (it does not trap).
+- `listConversationsForFamily(familyId : FamilyId) : async [ConversationSummary]` —
+  query. Approved members of `familyId` only. Returns the caller's inbox in
+  `familyId`, newest activity first.
+- `getConversationForFamily(familyId : FamilyId, conversationId : ConversationId) : async ?ConversationView` —
+  query. Approved members of `familyId` only. Returns the full conversation view
+  when it belongs to `familyId` and the caller is a participant, or `null`
+  otherwise (including when it exists under another family).
+- `listMessagesForFamily(familyId : FamilyId, conversationId : ConversationId) : async [Message]` —
+  query. Approved members of `familyId` only. Returns the messages of a
+  conversation in `familyId`, oldest first; `[]` when the conversation does not
+  belong to `familyId`.
+- `createConversationForFamily(familyId : FamilyId, recipientPersonId : Text) : async Result<Conversation, MessageError>` —
+  update. Approved members of `familyId` only. Creates a 1:1 conversation in
+  `familyId` between the caller and the recipient, reusing the existing canonical
+  conversation for the account pair when one exists. Both participants must
+  belong to `familyId`.
+- `sendMessageForFamily(familyId : FamilyId, recipientPersonId : Text, body : Text) : async Result<Message, MessageError>` —
+  update. Approved members of `familyId` only. Sends a private message within
+  `familyId`, reusing the existing canonical 1:1 conversation when one exists.
+  Returns `#err(#BlockedByRecipient)` when the recipient has blocked the sender
+  (no message is stored).
+- `markConversationReadForFamily(familyId : FamilyId, conversationId : ConversationId) : async ()` —
+  update. Approved members of `familyId` only; the caller must be a participant.
+  Marks the caller's messages in the conversation as read.
+- `blockUserForFamily(familyId : FamilyId, blockedAccountId : Principal) : async ()` —
+  update. Approved members of `familyId` only. Blocks another member within
+  `familyId`. Idempotent.
+- `unblockUserForFamily(familyId : FamilyId, blockedAccountId : Principal) : async ()` —
+  update. Approved members of `familyId` only. Unblocks another member within
+  `familyId`.
+- `listBlockedUsersForFamily(familyId : FamilyId) : async [Principal]` — query.
+  Approved members of `familyId` only. Returns the account ids the caller has
+  blocked in `familyId`.
+- `reportMessageForFamily(familyId : FamilyId, messageId : MessageId, reason : Text) : async Report` —
+  update. Approved members of `familyId` only; the caller must be a participant
+  of the message's conversation. Reports a specific message within `familyId`.
+- `listReportsForFamily(familyId : FamilyId) : async [Report]` — query. Active
+  Steward of `familyId` only. Lists the reports of `familyId`.
+- `reviewReportForFamily(familyId : FamilyId, reportId : ReportId, status : ReportStatus) : async ?Report` —
+  update. Active Steward of `familyId` only. Updates a report's review status
+  within `familyId`.
+- `getReportedMessageForFamily(familyId : FamilyId, reportId : ReportId) : async ?ReportedMessageView` —
+  query. Active Steward of `familyId` only. Returns the reported message content
+  for a report in `familyId`.
+
+TEMPORARY Tenancy 1C compatibility wrappers (default Norwood family only):
+
+- `canMessagePerson(personId : Text) : async Bool` — query. Approved family
+  members only. Returns whether the signed-in caller may message the person
+  identified by `personId`: the viewer is signed in, the target has an active
+  linked account, the target is not the viewer, and the target is not archived.
+  Unclaimed profiles are never messageable. Drives the Message button on a living
+  claimed Person Profile. Returns `false` for an anonymous caller.
+- `listMessageableMembers() : async [Text]` — query. Approved family members
+  only. Returns the person ids of every other member the caller may message.
+  Returns `[]` for an anonymous caller (it does not trap).
 - `listConversations() : async [ConversationSummary]` — query. Approved family
   members only. Returns the signed-in caller's inbox: one summary per
   conversation they participate in, newest activity first, with the other
@@ -1058,6 +1169,13 @@ TEMPORARY Tenancy 1C compatibility wrappers (default Norwood family only):
   (participant identity plus message history) for a participant, or `null` when
   the conversation does not exist or the caller is not a participant. Only
   participants may read a conversation.
+- `listMessages(conversationId : ConversationId) : async [Message]` — query.
+  Approved family members only. Returns the messages of a conversation, oldest
+  first.
+- `createConversation(recipientPersonId : Text) : async Result<Conversation, MessageError>` —
+  update. Approved family members only. Creates a 1:1 conversation with the
+  person identified by `recipientPersonId`, reusing the existing canonical
+  conversation for the account pair when one exists.
 - `sendMessage(recipientPersonId : Text, body : Text) : async Result<Message, MessageError>` —
   update. Approved family members only. Sends a private message to the person
   identified by `recipientPersonId`, reusing the existing canonical 1:1
@@ -1784,7 +1902,8 @@ text), `status` (`\"Pending\"`/`\"Approved\"`/`\"Rejected\"`), `createdAt` (`Int
 are exposed as counts since OQL has no array value type.
 
 The recipe entity is a flattened view of the corresponding records. `recipe`
-rows (primary key `recipeId`, a `Nat`) carry `title`, `shortDescription`,
+rows (primary key `recipeId`, a `Nat`) carry `familyId` (the tenant boundary —
+the owning family id), `title`, `shortDescription`,
 `originatingPersonId` (the canonical Person id of the primary originating
 family member), `relatedPersonCount` (`Nat`, the number of related member ids),
 `contributorAccountId` (the contributing account principal rendered as text),
@@ -1826,17 +1945,21 @@ actions (archive/restore post, remove reply) are recorded in the shared
 governance `auditLog` entity, not a separate board-owned collection.
 
 The messaging entities are flattened views of the corresponding records.
-`conversation` rows (primary key `conversationId`, a `Nat`) carry
-`participantCount` (`Nat`, the number of participant account ids), `createdAt`
+`conversation` rows (primary key `conversationId`, a `Nat`) carry `familyId`
+(the owning family id, the tenant boundary), `participantCount` (`Nat`, the
+number of participant account ids), `createdAt`
 (`Int`), and `updatedAt` (`Int`). The array-valued fields
 (`participantAccountIds`, `participantPersonIds`) are exposed as counts since
 OQL has no array value type. `message` rows (primary key `messageId`, a `Nat`)
-carry `conversationId`, `senderAccountId` (principal text), `senderPersonId`,
+carry `familyId` (the owning family id, the tenant boundary), `conversationId`,
+`senderAccountId` (principal text), `senderPersonId`,
 `body`, `createdAt` (`Int`), `readAt` (`Int`, `0` when unread), and `status`
 (`\"Sent\"`/`\"Blocked\"`). `block` rows (primary key `key`, the composite
-`\"<blockerAccountId>:<blockedAccountId>\"`) carry `blockerAccountId` (principal
+`\"<blockerAccountId>:<blockedAccountId>\"`) carry `familyId` (the owning family
+id, the tenant boundary), `blockerAccountId` (principal
 text), `blockedAccountId` (principal text), and `createdAt` (`Int`). `report`
-rows (primary key `reportId`, a `Nat`) carry `reportingAccountId` (principal
+rows (primary key `reportId`, a `Nat`) carry `familyId` (the owning family id,
+the tenant boundary), `reportingAccountId` (principal
 text), `reportedMessageId` (`Nat`), `reason`, `createdAt` (`Int`), and `status`
 (`\"Pending\"`/`\"Reviewed\"`/`\"Dismissed\"`).
 
@@ -2084,29 +2207,38 @@ with `\"Unauthorized: Only Family Stewards can ...\"` when the caller is not an
 active Family Steward (an ACTIVE persisted `StewardRecord`). `listApprovedStories`, `listMysteries`, and `listTimelineEvents` are
 readable by any caller (respecting the existing privacy conventions).
 
-The Family Recipes methods gate on sign-in and role. `submitRecipe` requires an
-approved family member (a caller holding at least one `#Approved` profile claim,
-or a Family Steward); it traps with `\"Unauthorized: You must be signed in\"` for
-an anonymous caller and with the stable, non-technical `\"Family membership
-required. Claim your family profile and wait for Family Steward approval before
-contributing family content.\"` for a signed-in but unapproved caller, so the
-frontend can present a definitive family-membership-required outcome rather than
-a generic retry. The Family Steward methods —
-`listPendingRecipes`, `approveRecipe`, `rejectRecipe`, and `publishRecipe` — are
-Family Steward only and trap with `\"Unauthorized: Only Family Stewards can ...\"`
-when
-the caller is not an active Family Steward (an ACTIVE persisted `StewardRecord`). `listApprovedRecipes`, `getRecipe`, and
-`listRecipesForPerson` are readable by any caller (respecting the existing
-privacy conventions).
+The Family Recipes methods gate on sign-in and role. Every canonical
+family-scoped recipe endpoint and every TEMPORARY Tenancy 1C wrapper resolves its
+membership gate through the same canonical family-scoped helper
+(`requireApprovedFamilyMemberForFamily`), so `submitRecipeForFamily`,
+`listRecipesForFamily`, `listApprovedRecipesForFamily`, `getRecipeForFamily`, and
+`listRecipesForPersonForFamily` (and their no-`familyId` wrappers) require a
+signed-in approved member or Steward of the requested family; they trap with
+`\"Unauthorized: You must be signed in\"` for an anonymous caller and with the
+stable, non-technical `\"Family membership required. Claim your family profile and
+wait for Family Steward approval before contributing family content.\"` for a
+signed-in but unapproved caller. The Steward methods —
+`listPendingRecipesForFamily`, `approveRecipeForFamily`, `rejectRecipeForFamily`,
+and `publishRecipeForFamily` (and their no-`familyId` wrappers) — are active
+Steward of the requested family only and trap with `\"Unauthorized: Only Family
+Stewards can perform this action\"` when the caller is not an active Steward of
+that family (an ACTIVE persisted `StewardRecord`). A Steward of one family can
+never review another family's recipes.
 
-The Family Message Board methods gate on sign-in and approved-membership. The
-member methods — `listBoardPosts`, `getBoardPost`, `createBoardPost`,
-`updateBoardPost`, `searchBoardPostsByTags`, `archiveBoardPost`,
-`listBoardReplies`, and `addBoardReply` —
+The Family Message Board methods gate on sign-in and approved-membership. Every
+canonical family-scoped board endpoint and every TEMPORARY Tenancy 1C wrapper
+resolves its membership gate through the same canonical family-scoped helper
+(`requireApprovedFamilyMemberForFamily`), so the member methods —
+`listBoardPostsForFamily`, `getBoardPostForFamily`, `createBoardPostForFamily`,
+`updateBoardPostForFamily`, `searchBoardPostsByTagsForFamily`,
+`archiveBoardPostForFamily`, `listBoardRepliesForFamily`, and
+`addBoardReplyForFamily` (and their no-`familyId` wrappers) —
 require a signed-in approved family member and trap with `\"Unauthorized: You
-must be signed in\"` for an anonymous caller and `\"Unauthorized: Only approved
-family members can access the message board\"` when the caller is not an
-approved member. `updateBoardPost` additionally requires the caller to be the
+must be signed in\"` for an anonymous caller and with the stable, non-technical
+`\"Family membership required. Claim your family profile and wait for Family
+Steward approval before contributing family content.\"` when the caller is a
+signed-in but unapproved member of the requested `familyId`. `updateBoardPost`
+additionally requires the caller to be the
 post author (trapping with `\"Unauthorized: Only the post author can edit this
 post\"`), and `archiveBoardPost` requires the author or a Family Steward
 (trapping with `\"Unauthorized: Only the post author or a Family Steward can
@@ -2119,23 +2251,41 @@ Steward (an ACTIVE persisted `StewardRecord`). Board
 governance actions (`archiveBoardPost`, `restoreBoardPost`, `removeBoardReply`)
 record audit entries in the steward-only audit log.
 
-The Private Messaging methods gate on sign-in and approved-membership. The
-member methods — `listConversations`, `getConversation`, `sendMessage`,
-`markConversationRead`, `blockUser`, `unblockUser`, `listBlockedUsers`, and
-`reportMessage` — require a signed-in approved family member and trap with
-`\"Unauthorized: You must be signed in\"` for an anonymous caller and
-`\"Unauthorized: Only approved family members can use private messaging\"` when
-the caller is not an approved member. `getConversation` returns `null` (it does
-not trap) when the caller is not a participant, and `markConversationRead` traps
-with `\"Unauthorized: Only participants can mark a conversation read\"` when the
-caller is not a participant. `reportMessage` traps with `\"Unauthorized: Only
-conversation participants can report a message\"` when the caller is not a
-participant of the message's conversation. The steward methods — `listReports`,
-`reviewReport`, and `getReportedMessage` — are Family Steward only and trap with
-`\"Unauthorized: Only Family Stewards can perform this action\"` when the caller
-is not an active Family Steward (an ACTIVE persisted `StewardRecord`). Stewards
-cannot browse arbitrary private conversations; they see
-reported message content only when a report is filed (via `getReportedMessage`).
+The Private Messaging methods gate on sign-in and approved-membership. Every
+canonical family-scoped endpoint and every TEMPORARY Tenancy 1C wrapper resolves
+its membership gate through the same canonical family-scoped helper
+(`requireApprovedFamilyMemberForFamily`), so the member methods —
+`listConversationsForFamily`, `getConversationForFamily`,
+`listMessagesForFamily`, `createConversationForFamily`, `sendMessageForFamily`,
+`markConversationReadForFamily`, `blockUserForFamily`, `unblockUserForFamily`,
+`listBlockedUsersForFamily`, and `reportMessageForFamily` (and their
+no-`familyId` wrappers) — trap with `\"Unauthorized: You must be signed in\"` for
+an anonymous caller and with the stable, non-technical `\"Family membership
+required. Claim your family profile and wait for Family Steward approval before
+contributing family content.\"` when the caller is a signed-in but unapproved
+member of the requested `familyId`. The denial message carries no family id or
+principal. The two messageability reads are the exception: an anonymous caller
+resolves `false` from `canMessagePersonForFamily` / `canMessagePerson` and `[]`
+from `listMessageableMembersForFamily` / `listMessageableMembers` rather than
+trapping; a signed-in but unapproved caller still traps with the stable
+family-membership message. `getConversationForFamily` returns `null` (it does not
+trap) when the caller is not a participant, and `markConversationReadForFamily`
+traps with `\"Conversation not found\"` when the conversation does not belong to
+`familyId` and `\"Unauthorized: Only participants can mark a conversation read\"`
+when the caller is not a participant. `reportMessageForFamily` traps with
+`\"Message not found\"` when the message does not belong to `familyId`,
+`\"Conversation not found\"` when its conversation does not belong to `familyId`,
+and `\"Unauthorized: Only conversation participants can report a message\"` when
+the caller is not a participant of the message's conversation. The steward
+methods — `listReportsForFamily`, `reviewReportForFamily`, and
+`getReportedMessageForFamily` (and their no-`familyId` wrappers) — are active
+Steward of `familyId` only and trap with `\"Unauthorized: You must be signed in\"`
+for an anonymous caller and `\"Unauthorized: Only Family Stewards can perform
+this action\"` when the caller is not an active Family Steward (an ACTIVE
+persisted `StewardRecord`) of the requested `familyId`. A Steward of one family
+can never moderate another family's reports or messages. Stewards cannot browse
+arbitrary private conversations; they see reported message content only when a
+report is filed (via `getReportedMessageForFamily`).
 
 The Pending Contributions methods are family-scoped and Steward-only.
 `getPendingContributionsCountForFamily` requires an active Steward of the
@@ -2463,7 +2613,8 @@ already reference the caller's stable principal (`requestingUserId`,
 - `RecipeId` is a `Nat`, unique across the whole recipe collection.
 - `RecipeStatus` is a variant: `#Pending`, `#Approved`, `#Rejected`, or
   `#Archived`.
-- `Recipe` fields: `recipeId` (`Nat`), `title` (`Text`), `shortDescription`
+- `Recipe` fields: `familyId` (`FamilyId`, the owning family — the tenant
+  boundary), `recipeId` (`Nat`), `title` (`Text`), `shortDescription`
   (`Text`), `originatingPersonId` (`Text`, the single primary originating family
   member linked to a canonical Person record — no Person data is duplicated
   inside the Recipe), `relatedPersonIds` (`[Text]`, related family members, each
@@ -2502,19 +2653,25 @@ already reference the caller's stable principal (`requestingUserId`,
   `#PostNotFound`, `#NotAuthor`, or `#NotSteward`.
 - `ConversationId`, `MessageId`, and `ReportId` are `Nat`, unique across their
   respective collections.
-- `Conversation` fields: `conversationId` (`Nat`), `participantAccountIds`
+- `Conversation` fields: `familyId` (`Text`, the tenant boundary — every
+  family-scoped read and action requires it to equal the requested `familyId`;
+  records created before this field existed are migrated to the default family
+  id `\"norwood\"`), `conversationId` (`Nat`), `participantAccountIds`
   (`[Principal]`, exactly two for a 1:1 conversation), `participantPersonIds`
   (`[Text]`, the canonical Person ids of the two participants), `createdAt`
   (`Int`), and `updatedAt` (`Int`).
 - `MessageStatus` is a variant: `#Sent` or `#Blocked` (a send attempt prevented
   because the recipient blocked the sender).
-- `Message` fields: `messageId` (`Nat`), `conversationId` (`Nat`),
+- `Message` fields: `familyId` (`Text`, the tenant boundary — always the
+  `familyId` of its conversation), `messageId` (`Nat`), `conversationId` (`Nat`),
   `senderAccountId` (`Principal`), `senderPersonId` (`Text`), `body` (`Text`),
   `createdAt` (`Int`), `readAt` (`?Int`, `null` until read), and `status`.
-- `Block` fields: `blockerAccountId` (`Principal`), `blockedAccountId`
+- `Block` fields: `familyId` (`Text`, the tenant boundary), `blockerAccountId`
+  (`Principal`), `blockedAccountId`
   (`Principal`), and `createdAt` (`Int`).
 - `ReportStatus` is a variant: `#Pending`, `#Reviewed`, or `#Dismissed`.
-- `Report` fields: `reportId` (`Nat`), `reportingAccountId` (`Principal`),
+- `Report` fields: `familyId` (`Text`, the tenant boundary), `reportId` (`Nat`),
+  `reportingAccountId` (`Principal`),
   `reportedMessageId` (`MessageId`), `reason` (`Text`), `createdAt` (`Int`), and
   `status`.
 - `ConversationSummary` fields: `conversationId` (`Nat`), `otherPersonId`
@@ -2795,16 +2952,19 @@ never deleted. There is no async job to poll; the frontend can call
 `listMysteries` (viewers) or `listPendingMysteryContributions` (steward) to
 observe the current state.
 
-Family Recipes follow a submit → approve/reject lifecycle. `submitRecipe` stores
-the recipe in `#Pending` state. A Family Steward then calls `approveRecipe` or
-`rejectRecipe` to move it to `#Approved` or `#Rejected`. Only `#Approved`
-recipes are returned by `listApprovedRecipes` (the Family Recipes view) and by
-`listRecipesForPerson` (the per-person view). Stewards publish canonical recipes
-directly via `publishRecipe` (already `#Approved`). Approval transitions the
-same canonical Recipe record — it never creates a second Recipe. There is no
-async job to poll; the frontend can call `listPendingRecipes` (steward),
-`listApprovedRecipes`, `getRecipe`, or `listRecipesForPerson` to observe the
-current state.
+Family Recipes follow a submit → approve/reject lifecycle, scoped to a family.
+`submitRecipeForFamily` stores the recipe in `#Pending` state in the requested
+family. A Steward of that family then calls `approveRecipeForFamily` or
+`rejectRecipeForFamily` to move it to `#Approved` or `#Rejected`. Only
+`#Approved` recipes are returned by `listApprovedRecipesForFamily` (the Family
+Recipes view) and by `listRecipesForPersonForFamily` (the per-person view).
+Stewards publish canonical recipes directly via `publishRecipeForFamily` (already
+`#Approved`). Approval transitions the same canonical Recipe record — it never
+creates a second Recipe. There is no async job to poll; the frontend can call
+`listPendingRecipesForFamily` (steward), `listApprovedRecipesForFamily`,
+`getRecipeForFamily`, or `listRecipesForPersonForFamily` to observe the current
+state. The legacy no-`familyId` wrappers behave identically for the default
+Norwood family.
 
 Travel Through Time is a read-only chronological view. `listTimelineEvents`
 aggregates events from existing canonical data only — PersonProfile timeline
@@ -3341,13 +3501,13 @@ no async job to poll; the frontend can call the list methods (steward) or
   their tag text, optional fields render as empty text or `0`, and the
   array-valued fields (`relatedPersonIds`, `ingredients`, `tags`,
   `linkedMediaIds`) are exposed as counts since OQL has no array value type.
-- The board and messaging methods gate on approved family membership. The member
-  board methods trap with `\"Unauthorized: You must be signed in\"` for an
-  anonymous caller and `\"Unauthorized: Only approved family members can access
-  the message board\"` when the caller is not an approved member. The member
-  messaging methods trap with `\"Unauthorized: You must be signed in\"` for an
-  anonymous caller and `\"Unauthorized: Only approved family members can use
-  private messaging\"` when the caller is not an approved member. The steward
+- The board and messaging methods gate on approved family membership through the
+  canonical family-scoped helper (`requireApprovedFamilyMemberForFamily`). The
+  member board and messaging methods trap with `\"Unauthorized: You must be
+  signed in\"` for an anonymous caller and with the stable, non-technical
+  `\"Family membership required. Claim your family profile and wait for Family
+  Steward approval before contributing family content.\"` when the caller is a
+  signed-in but unapproved member of the requested `familyId`. The steward
   board/messaging methods (`restoreBoardPost`, `removeBoardReply`, `listReports`,
   `reviewReport`, `getReportedMessage`) and the Pending Contributions methods
   (`getPendingContributionsCountForFamily` and its TEMPORARY Tenancy 1C wrapper

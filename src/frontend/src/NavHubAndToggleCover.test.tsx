@@ -206,6 +206,7 @@ function pendingRequest(id: bigint): RelationshipRequest {
 
 function pendingReport(id: bigint): Report {
   return {
+    familyId: "norwood",
     reportId: id,
     reportedMessageId: 1n,
     createdAt: 1_700_000_000_000_000_000n,

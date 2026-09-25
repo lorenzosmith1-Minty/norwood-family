@@ -541,19 +541,50 @@ describe("countPendingForFamily (executed predicate)", () => {
     expect(countArchive(items, FAMILY_A, [1n])).toBe(1);
   });
 
-  it("keeps the non-archive contribution types family-agnostic", () => {
-    // Recipes, stories, and mystery contributions are not yet family-scoped;
-    // their loops must not consult familyId, or the count would silently drop
-    // them for every non-default family.
+  it("scopes the recipe loop to the family and keeps stories and mystery contributions family-agnostic", () => {
+    // Tenancy 1C-D1 family-scoped Recipes: the recipe loop now consults
+    // familyId, so a pending Family A recipe never inflates Family B's count.
+    // Stories and mystery contributions are still not family-scoped; their loops
+    // must not consult familyId, or the count would silently drop them for every
+    // non-default family.
     const recipeLoop = /for \(r in recipes\.toArray\(\)\.values\(\)\) \{([\s\S]*?)\n    \};/u.exec(body);
     const storyLoop = /for \(s in stories\.toArray\(\)\.values\(\)\) \{([\s\S]*?)\n    \};/u.exec(body);
     const mysteryLoop = /for \(m in mysteryContributions\.toArray\(\)\.values\(\)\) \{([\s\S]*?)\n    \};/u.exec(body);
     expect(recipeLoop?.[1]).toContain("r.status == #Pending");
-    expect(recipeLoop?.[1]).not.toContain("familyId");
+    expect(recipeLoop?.[1]).toContain("r.familyId == familyId");
     expect(storyLoop?.[1]).toContain("s.status == #Pending");
     expect(storyLoop?.[1]).not.toContain("familyId");
     expect(mysteryLoop?.[1]).toContain("m.status == #Pending");
     expect(mysteryLoop?.[1]).not.toContain("familyId");
+  });
+
+  it("counts only pending recipes of the requested family", () => {
+    // The recipe loop's family conjunct is evaluated against test-only Family A
+    // / Family B fixtures, so a pending recipe in another family is excluded.
+    const loop = /for \(r in recipes\.toArray\(\)\.values\(\)\) \{([\s\S]*?)\n    \};/u.exec(body);
+    if (loop === null) {
+      throw new Error("countPendingForFamily no longer has a recipes loop");
+    }
+    const condition = /if \(([\s\S]*?)\) \{/u.exec(loop[1]);
+    if (condition === null) {
+      throw new Error("countPendingForFamily recipes loop has no condition");
+    }
+    const recipes = [
+      { familyId: FAMILY_A, status: { tag: "Pending" } },
+      { familyId: FAMILY_B, status: { tag: "Pending" } },
+      { familyId: FAMILY_A, status: { tag: "Approved" } },
+    ];
+    const count = (familyId: string): number =>
+      recipes.filter((value) =>
+        evaluateAndChain(condition[1], {
+          vars: { familyId },
+          sets: {},
+          record: { name: "r", value: value as unknown as Record<string, Scalar> },
+        }),
+      ).length;
+    expect(count(FAMILY_A)).toBe(1);
+    expect(count(FAMILY_B)).toBe(1);
+    expect(count(NORWOOD)).toBe(0);
   });
 });
 

@@ -44,7 +44,7 @@ module {
       };
     };
     for (r in recipes.toArray().values()) {
-      if (r.status == #Pending) { count += 1 };
+      if (r.familyId == familyId and r.status == #Pending) { count += 1 };
     };
     for (s in stories.toArray().values()) {
       if (s.status == #Pending) { count += 1 };

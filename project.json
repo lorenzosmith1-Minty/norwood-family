@@ -1,18 +1,17 @@
 {
-  "overview": "A private family hub for the Norwood family with a message board, archive, research tools, and shared family content.",
+  "overview": "A private family hub for the Norwood family with recipes, stories, board posts, messaging, and archives.",
   "features": [
-    "Read and post on the family message board",
-    "Reply to posts and moderate as a Steward",
-    "Search and filter posts by category and tag",
-    "Upload photos and media with posts",
-    "Family-scoped content across the app"
+    "Browse and read family recipes",
+    "View recipe details and per-person recipe lists",
+    "Steward review of pending recipe contributions",
+    "Family-scoped content isolation"
   ],
-  "category": "family-community",
+  "category": "family-hub",
   "tags": [
     "family",
-    "message-board",
-    "community",
-    "multi-tenancy"
+    "recipes",
+    "private",
+    "multi-tenant"
   ],
-  "last_updated": "2026-09-24T19:01:57.405Z"
+  "last_updated": "2026-09-25T09:48:21.774Z"
 }

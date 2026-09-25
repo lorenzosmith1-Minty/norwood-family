@@ -116,6 +116,14 @@ export interface ConflictReviewItem {
     resolvedBy?: Principal;
     existingSourceId?: bigint;
 }
+export interface Conversation {
+    participantAccountIds: Array<AccountId>;
+    createdAt: Timestamp;
+    updatedAt: Timestamp;
+    participantPersonIds: Array<PersonId>;
+    conversationId: ConversationId;
+    familyId: FamilyId;
+}
 export type ConversationId = bigint;
 export interface ConversationSummary {
     otherPersonId: PersonId;
@@ -276,6 +284,7 @@ export interface Message {
     conversationId: ConversationId;
     senderAccountId: AccountId;
     senderPersonId: PersonId;
+    familyId: FamilyId;
     readAt?: Timestamp;
 }
 export type MessageId = bigint;
@@ -466,6 +475,7 @@ export interface Recipe {
     evidenceStatus: EvidenceStatus;
     shortDescription: string;
     extractedIngredients?: Array<string>;
+    familyId: FamilyId;
     transcript?: string;
     location?: string;
     originatingPersonId: string;
@@ -520,6 +530,7 @@ export interface Report {
     reportedMessageId: MessageId;
     createdAt: Timestamp;
     reportingAccountId: AccountId;
+    familyId: FamilyId;
     reportId: ReportId;
     reason: string;
 }
@@ -668,26 +679,33 @@ export type Result_22 = {
 };
 export type Result_23 = {
     __kind__: "ok";
+    ok: Conversation;
+} | {
+    __kind__: "err";
+    err: MessageError;
+};
+export type Result_24 = {
+    __kind__: "ok";
     ok: Relationship;
 } | {
     __kind__: "err";
     err: RelationshipAdminError;
 };
-export type Result_24 = {
+export type Result_25 = {
     __kind__: "ok";
     ok: StewardClaimResult;
 } | {
     __kind__: "err";
     err: StewardClaimError;
 };
-export type Result_25 = {
+export type Result_26 = {
     __kind__: "ok";
     ok: Account;
 } | {
     __kind__: "err";
     err: AccountError;
 };
-export type Result_26 = {
+export type Result_27 = {
     __kind__: "ok";
     ok: null;
 } | {
@@ -1272,7 +1290,7 @@ export interface backendInterface {
      * / Adds a missing relationship to the shared family graph. Family Steward
      * / only.
      */
-    addRelationship(fromPersonId: PersonId, toPersonId: PersonId, relationshipType: RelationshipType): Promise<Result_23>;
+    addRelationship(fromPersonId: PersonId, toPersonId: PersonId, relationshipType: RelationshipType): Promise<Result_24>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `approveArchiveItemForFamily`.
@@ -1334,10 +1352,16 @@ export interface backendInterface {
      */
     approveProfileRemoval(requestId: bigint): Promise<ProfileRemovalRequest | null>;
     /**
-     * / Approves a pending recipe (steward only). Returns the updated recipe, or
-     * / `null` when the recipe does not exist or is not pending.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for `approveRecipeForFamily`.
      */
-    approveRecipe(id: RecipeId): Promise<Recipe | null>;
+    approveRecipe(recipeId: RecipeId): Promise<Recipe | null>;
+    /**
+     * / Approves a pending recipe in `familyId`. Active Steward of `familyId` only;
+     * / a Steward of another family cannot approve the recipe. Returns the updated
+     * / recipe, or `null` when no pending recipe with that id belongs to
+     * / `familyId`. A recipe in another family is never touched.
+     */
+    approveRecipeForFamily(familyId: FamilyId, recipeId: RecipeId): Promise<Recipe | null>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `approveRelationshipProposalForFamily`. Deprecated single-family form:
@@ -1409,12 +1433,16 @@ export interface backendInterface {
      * / account. The account id is the caller's stable principal, so the same
      * / person profile stays intact if the provider changes.
      */
-    bindAuthMethod(method: AuthMethod): Promise<Result_25>;
+    bindAuthMethod(method: AuthMethod): Promise<Result_26>;
     /**
-     * / Blocks another member, preventing them from sending new messages to the
-     * / caller. Approved family members only.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for `blockUserForFamily`.
      */
     blockUser(blockedAccountId: Principal): Promise<void>;
+    /**
+     * / Blocks another member within `familyId`. Approved members of `familyId`
+     * / only.
+     */
+    blockUserForFamily(familyId: FamilyId, blockedAccountId: Principal): Promise<void>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `canClaimProfileForFamily`.
@@ -1426,13 +1454,16 @@ export interface backendInterface {
      */
     canClaimProfileForFamily(familyId: FamilyId, personId: PersonId): Promise<ClaimEligibility>;
     /**
-     * / Returns whether the signed-in caller may message the person identified by
-     * / `personId`: the viewer is signed in, the target has an active linked
-     * / account, the target is not the viewer, and the target is not archived.
-     * / Unclaimed profiles are never messageable. Drives the Message button on a
-     * / living claimed Person Profile.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for `canMessagePersonForFamily`.
+     * / An anonymous caller resolves `false` rather than trapping, preserving the
+     * / documented `canMessagePerson` contract.
      */
     canMessagePerson(personId: string): Promise<boolean>;
+    /**
+     * / Returns whether the signed-in caller may message the person identified by
+     * / `personId` within `familyId`. Approved members of `familyId` only.
+     */
+    canMessagePersonForFamily(familyId: FamilyId, personId: string): Promise<boolean>;
     /**
      * / One-time "Claim Family Steward" bootstrap. Any signed-in account may claim
      * / while no active Steward exists; no approved family profile is required.
@@ -1441,12 +1472,12 @@ export interface backendInterface {
      * / permanently refuses. Tenancy 1B: delegates to the canonical family-scoped
      * / helper with the default family id.
      */
-    claimSteward(): Promise<Result_24>;
+    claimSteward(): Promise<Result_25>;
     /**
      * / Corrects the relationship type of an existing relationship. Family Steward
      * / only.
      */
-    correctRelationshipType(relationshipId: bigint, relationshipType: RelationshipType): Promise<Result_23>;
+    correctRelationshipType(relationshipId: bigint, relationshipType: RelationshipType): Promise<Result_24>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for `createBoardPostForFamily`.
      */
@@ -1480,6 +1511,17 @@ export interface backendInterface {
      * / Creates a canonical mystery directly (steward only).
      */
     createCanonicalMystery(title: string, description: string, relatedMemberIds: Array<string>, relatedBranchId: string | null, knownFacts: Array<string>, possibilities: Array<string>, relatedSourceIds: Array<bigint>, relatedArchiveItemIds: Array<bigint>, status: MysteryStatus): Promise<Mystery>;
+    /**
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `createConversationForFamily`.
+     */
+    createConversation(recipientPersonId: string): Promise<Result_23>;
+    /**
+     * / Creates a 1:1 conversation in `familyId` between the caller and the person
+     * / identified by `recipientPersonId`. Approved members of `familyId` only;
+     * / both participants must belong to `familyId`.
+     */
+    createConversationForFamily(familyId: FamilyId, recipientPersonId: string): Promise<Result_23>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for `createFindingForFamily`.
      */
@@ -1589,10 +1631,15 @@ export interface backendInterface {
      */
     getConflictReviewItemForFamily(familyId: FamilyId, conflictId: bigint): Promise<ConflictReviewItem | null>;
     /**
-     * / Returns a full conversation view for a participant. Only participants may
-     * / read a conversation.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for `getConversationForFamily`.
      */
     getConversation(conversationId: ConversationId): Promise<ConversationView | null>;
+    /**
+     * / Returns a full conversation view for a participant when the conversation
+     * / belongs to `familyId`, or `null` otherwise. Approved members of `familyId`
+     * / only.
+     */
+    getConversationForFamily(familyId: FamilyId, conversationId: ConversationId): Promise<ConversationView | null>;
     /**
      * / Returns the family with the given id, or `null` when it is not tracked.
      * / Read-only: this never creates a family.
@@ -1705,12 +1752,16 @@ export interface backendInterface {
      */
     getProfilePhotoForFamily(familyId: FamilyId, personId: PersonId): Promise<Photo | null>;
     /**
-     * / Returns a single recipe by id, or `null` when it does not exist or is not
-     * / visible to the caller. Private recipes are only visible to their
-     * / contributor or a Family Steward; non-approved recipes are only visible to
-     * / a Family Steward.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for `getRecipeForFamily`.
      */
-    getRecipe(id: RecipeId): Promise<Recipe | null>;
+    getRecipe(recipeId: RecipeId): Promise<Recipe | null>;
+    /**
+     * / Returns a single recipe by id when it belongs to `familyId` and is visible
+     * / to the caller. Approved members of `familyId` only. A recipe that exists
+     * / under another family is never returned, so a `recipeId` alone cannot cross
+     * / the family boundary.
+     */
+    getRecipeForFamily(familyId: FamilyId, recipeId: RecipeId): Promise<Recipe | null>;
     /**
      * / Returns the proposal with `proposalId` when it belongs to `familyId`, or
      * / `null` otherwise. Requires an active Steward of `familyId`, matching the
@@ -1730,11 +1781,15 @@ export interface backendInterface {
      */
     getRelationshipRequestForFamily(familyId: FamilyId, id: bigint): Promise<RelationshipRequest | null>;
     /**
-     * / Returns the reported message content for a report. Family Steward only;
-     * / reported message content is visible only when a report is filed. Stewards
-     * / cannot browse arbitrary private conversations.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `getReportedMessageForFamily`.
      */
     getReportedMessage(reportId: ReportId): Promise<ReportedMessageView | null>;
+    /**
+     * / Returns the reported message content for a report in `familyId`. Active
+     * / Steward of `familyId` only.
+     */
+    getReportedMessageForFamily(familyId: FamilyId, reportId: ReportId): Promise<ReportedMessageView | null>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `getResearchAuditLogForFamily`. Deprecated single-family form: delegates
@@ -1835,10 +1890,17 @@ export interface backendInterface {
      */
     listApprovedArchiveItemsForFamily(familyId: FamilyId): Promise<Array<ArchiveItem>>;
     /**
-     * / Lists all approved recipes visible to the caller. Private recipes are only
-     * / visible to their contributor or a Family Steward.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `listApprovedRecipesForFamily`.
      */
     listApprovedRecipes(): Promise<Array<Recipe>>;
+    /**
+     * / Lists every approved recipe in `familyId` visible to the caller. Approved
+     * / members of `familyId` only. Private recipes are only visible to their
+     * / contributor or a Family Steward. A recipe whose `familyId` differs is never
+     * / returned.
+     */
+    listApprovedRecipesForFamily(familyId: FamilyId): Promise<Array<Recipe>>;
     /**
      * / Lists all approved stories (visible to viewers).
      */
@@ -1857,9 +1919,14 @@ export interface backendInterface {
      */
     listAuditHistory(): Promise<Array<AuditEntry>>;
     /**
-     * / Lists the account ids the caller has blocked. Approved family members only.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for `listBlockedUsersForFamily`.
      */
     listBlockedUsers(): Promise<Array<Principal>>;
+    /**
+     * / Lists the account ids the caller has blocked in `familyId`. Approved
+     * / members of `familyId` only.
+     */
+    listBlockedUsersForFamily(familyId: FamilyId): Promise<Array<Principal>>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for `listBoardPostsForFamily`.
      */
@@ -1927,10 +1994,15 @@ export interface backendInterface {
      */
     listConflictsForPersonForFamily(familyId: FamilyId, personId: string): Promise<Array<ConflictReviewItem>>;
     /**
-     * / Returns the signed-in caller's inbox: one summary per conversation they
-     * / participate in, newest activity first. Approved family members only.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `listConversationsForFamily`.
      */
     listConversations(): Promise<Array<ConversationSummary>>;
+    /**
+     * / Returns the signed-in caller's inbox in `familyId`, newest activity first.
+     * / Approved members of `familyId` only.
+     */
+    listConversationsForFamily(familyId: FamilyId): Promise<Array<ConversationSummary>>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `listDisputedFactsForPersonForFamily`.
@@ -1981,14 +2053,25 @@ export interface backendInterface {
      */
     listHiddenBoardPostsForFamily(familyId: FamilyId): Promise<Array<Post>>;
     /**
-     * / Returns the person ids of every other member the signed-in caller may
-     * / message: living, claimed, linked to an active account, not archived, and
-     * / not the caller. Not gated to stewards — any approved member may read it, so
-     * / the Private Messages inbox can determine whether any other eligible member
-     * / exists. Data-driven: as another relative claims and receives approval they
-     * / automatically appear without code changes.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `listMessageableMembersForFamily`. An anonymous caller resolves `[]` rather
+     * / than trapping, preserving the documented `listMessageableMembers` contract.
      */
     listMessageableMembers(): Promise<Array<string>>;
+    /**
+     * / Returns the person ids of every other member the signed-in caller may
+     * / message within `familyId`. Approved members of `familyId` only.
+     */
+    listMessageableMembersForFamily(familyId: FamilyId): Promise<Array<string>>;
+    /**
+     * / TEMPORARY Tenancy 1C compatibility wrapper for `listMessagesForFamily`.
+     */
+    listMessages(conversationId: ConversationId): Promise<Array<Message>>;
+    /**
+     * / Lists the messages of a conversation in `familyId`, oldest first. Approved
+     * / members of `familyId` only.
+     */
+    listMessagesForFamily(familyId: FamilyId, conversationId: ConversationId): Promise<Array<Message>>;
     /**
      * / Lists all mysteries (visible to viewers).
      */
@@ -2029,9 +2112,15 @@ export interface backendInterface {
      */
     listPendingMysteryContributions(): Promise<Array<MysteryContribution>>;
     /**
-     * / Lists all recipes in pending state (steward only).
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `listPendingRecipesForFamily`.
      */
     listPendingRecipes(): Promise<Array<Recipe>>;
+    /**
+     * / Lists every recipe in `familyId` currently in pending state. Active Steward
+     * / of `familyId` only. A recipe whose `familyId` differs is never returned.
+     */
+    listPendingRecipesForFamily(familyId: FamilyId): Promise<Array<Recipe>>;
     /**
      * / Lists all stories in pending state (steward only).
      */
@@ -2070,11 +2159,22 @@ export interface backendInterface {
      */
     listProfilesForFamily(familyId: FamilyId): Promise<Array<PersonProfile>>;
     /**
-     * / Lists recipes linked to a person, whether as the originating member or a
-     * / related member. Returns only approved recipes visible to the caller;
-     * / private recipes are only visible to their contributor or a Family Steward.
+     * / Lists every recipe in `familyId`, newest first. Approved members of
+     * / `familyId` only. A recipe whose `familyId` differs is never returned, so
+     * / Family A recipes never appear in a Family B call.
+     */
+    listRecipesForFamily(familyId: FamilyId): Promise<Array<Recipe>>;
+    /**
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `listRecipesForPersonForFamily`.
      */
     listRecipesForPerson(personId: string): Promise<Array<Recipe>>;
+    /**
+     * / Lists approved recipes in `familyId` linked to a person, whether as the
+     * / originating member or a related member. Approved members of `familyId`
+     * / only. A recipe whose `familyId` differs is never returned.
+     */
+    listRecipesForPersonForFamily(familyId: FamilyId, personId: string): Promise<Array<Recipe>>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `listRelationshipProposalsForFamily`.
@@ -2098,9 +2198,13 @@ export interface backendInterface {
      */
     listRelationshipRequestsForFamily(familyId: FamilyId): Promise<Array<RelationshipRequest>>;
     /**
-     * / Lists all reports. Family Steward only.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for `listReportsForFamily`.
      */
     listReports(): Promise<Array<Report>>;
+    /**
+     * / Lists all reports in `familyId`. Active Steward of `familyId` only.
+     */
+    listReportsForFamily(familyId: FamilyId): Promise<Array<Report>>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for `listSourcesForFamily`.
      */
@@ -2136,10 +2240,15 @@ export interface backendInterface {
      */
     listTimelineEvents(): Promise<Array<TimelineEvent>>;
     /**
-     * / Marks all of the caller's messages in a conversation as read. Only
-     * / participants may mark a conversation read.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `markConversationReadForFamily`.
      */
     markConversationRead(conversationId: ConversationId): Promise<void>;
+    /**
+     * / Marks all of the caller's messages in a conversation in `familyId` as read.
+     * / Approved members of `familyId` only; the caller must be a participant.
+     */
+    markConversationReadForFamily(familyId: FamilyId, conversationId: ConversationId): Promise<void>;
     /**
      * / Marks a mystery resolved (steward only), recording the resolution summary
      * / and supporting evidence while preserving the prior theories/history.
@@ -2228,11 +2337,17 @@ export interface backendInterface {
      */
     proposeRelationshipForFamily(familyId: FamilyId, fromPersonId: PersonId, toPersonId: PersonId, relationshipType: RelationshipType): Promise<Result_9>;
     /**
-     * / Publishes a canonical recipe directly (steward only), already approved.
-     * / This is the steward-only add flow; it does not create a second Recipe on
-     * / approval.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for `publishRecipeForFamily`.
      */
     publishRecipe(title: string, shortDescription: string, originatingPersonId: string, relatedPersonIds: Array<string>, era: string | null, year: bigint | null, location: string | null, familyBranch: string | null, ingredients: Array<string>, instructions: string, familyStory: string | null, tags: Array<string>, privacyLevel: PrivacyLevel, evidenceStatus: EvidenceStatus, linkedMediaIds: Array<bigint>): Promise<Recipe>;
+    /**
+     * / Publishes a canonical recipe directly into `familyId` (Steward only),
+     * / already approved. Active Steward of `familyId` only. The new recipe's
+     * / `familyId` is the requested `familyId`; the originating person and every
+     * / related person must belong to `familyId`, and every linked Archive media id
+     * / must belong to `familyId`.
+     */
+    publishRecipeForFamily(familyId: FamilyId, title: string, shortDescription: string, originatingPersonId: string, relatedPersonIds: Array<string>, era: string | null, year: bigint | null, location: string | null, familyBranch: string | null, ingredients: Array<string>, instructions: string, familyStory: string | null, tags: Array<string>, privacyLevel: PrivacyLevel, evidenceStatus: EvidenceStatus, linkedMediaIds: Array<bigint>): Promise<Recipe>;
     /**
      * / Reconciles stale claim notifications for a claim: when the claim is
      * / `#Approved`, marks the pending `#ProfileClaimRequested` notification for
@@ -2291,10 +2406,16 @@ export interface backendInterface {
      */
     rejectProfileRemoval(requestId: bigint): Promise<ProfileRemovalRequest | null>;
     /**
-     * / Rejects a pending recipe (steward only). Returns the updated recipe, or
-     * / `null` when the recipe does not exist or is not pending.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for `rejectRecipeForFamily`.
      */
-    rejectRecipe(id: RecipeId): Promise<Recipe | null>;
+    rejectRecipe(recipeId: RecipeId): Promise<Recipe | null>;
+    /**
+     * / Rejects a pending recipe in `familyId`. Active Steward of `familyId` only;
+     * / a Steward of another family cannot reject the recipe. Returns the updated
+     * / recipe, or `null` when no pending recipe with that id belongs to
+     * / `familyId`. A recipe in another family is never touched.
+     */
+    rejectRecipeForFamily(familyId: FamilyId, recipeId: RecipeId): Promise<Recipe | null>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `rejectRelationshipProposalForFamily`. Deprecated single-family form:
@@ -2381,9 +2502,15 @@ export interface backendInterface {
      */
     removeSteward(stewardAccountId: Principal): Promise<Result_6>;
     /**
-     * / Reports a specific message with a reason. Approved family members only.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for `reportMessageForFamily`.
      */
     reportMessage(messageId: MessageId, reason: string): Promise<Report>;
+    /**
+     * / Reports a specific message within `familyId`. Approved members of
+     * / `familyId` only; the caller must be a participant of the message's
+     * / conversation.
+     */
+    reportMessageForFamily(familyId: FamilyId, messageId: MessageId, reason: string): Promise<Report>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `requestProfileClaimForFamily`.
@@ -2447,9 +2574,14 @@ export interface backendInterface {
      */
     reviewMysteryContribution(id: MysteryContributionId, approve: boolean): Promise<MysteryContribution | null>;
     /**
-     * / Updates a report's review status. Family Steward only.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for `reviewReportForFamily`.
      */
     reviewReport(reportId: ReportId, status: ReportStatus): Promise<Report | null>;
+    /**
+     * / Updates a report's review status within `familyId`. Active Steward of
+     * / `familyId` only.
+     */
+    reviewReportForFamily(familyId: FamilyId, reportId: ReportId, status: ReportStatus): Promise<Report | null>;
     schema(): Promise<string>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for the canonical
@@ -2490,12 +2622,15 @@ export interface backendInterface {
      */
     searchPossibleMatchesForFamily(familyId: FamilyId, name: string): Promise<Array<PersonMatch>>;
     /**
-     * / Sends a private message to the person identified by `personId`, reusing the
-     * / existing 1:1 conversation when one exists. Approved family members only.
-     * / Creates a new-message notification for the recipient. Blocking prevents new
-     * / messages from the blocked user.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for `sendMessageForFamily`.
      */
     sendMessage(recipientPersonId: string, body: string): Promise<Result_1>;
+    /**
+     * / Sends a private message to the person identified by `recipientPersonId`
+     * / within `familyId`, reusing the existing 1:1 conversation when one exists.
+     * / Approved members of `familyId` only.
+     */
+    sendMessageForFamily(familyId: FamilyId, recipientPersonId: string, body: string): Promise<Result_1>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `setProfilePhotoForFamily`.
@@ -2540,12 +2675,18 @@ export interface backendInterface {
      */
     submitMysteryContribution(mysteryId: MysteryId, contributionType: MysteryContributionType, text: string): Promise<MysteryContribution>;
     /**
-     * / Submits a new recipe. Requires an approved family member; the caller is
-     * / recorded as the contributor. The recipe is stored in pending state and
-     * / waits for a Family Steward to approve it before becoming visible in Family
-     * / Recipes.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for `submitRecipeForFamily`.
      */
     submitRecipe(title: string, shortDescription: string, originatingPersonId: string, relatedPersonIds: Array<string>, era: string | null, year: bigint | null, location: string | null, familyBranch: string | null, ingredients: Array<string>, instructions: string, familyStory: string | null, tags: Array<string>, privacyLevel: PrivacyLevel, evidenceStatus: EvidenceStatus, linkedMediaIds: Array<bigint>): Promise<Recipe>;
+    /**
+     * / Submits a new recipe into `familyId`. Approved members or Stewards of
+     * / `familyId` only. The new recipe's `familyId` is the requested `familyId`;
+     * / the originating person and every related person must belong to `familyId`,
+     * / and every linked Archive media id must belong to `familyId`. The recipe is
+     * / stored in pending state and waits for a Steward of `familyId` to approve
+     * / it.
+     */
+    submitRecipeForFamily(familyId: FamilyId, title: string, shortDescription: string, originatingPersonId: string, relatedPersonIds: Array<string>, era: string | null, year: bigint | null, location: string | null, familyBranch: string | null, ingredients: Array<string>, instructions: string, familyStory: string | null, tags: Array<string>, privacyLevel: PrivacyLevel, evidenceStatus: EvidenceStatus, linkedMediaIds: Array<bigint>): Promise<Recipe>;
     /**
      * / Submits a new story. Requires an approved family member; the caller is
      * / recorded as the contributor. The story is stored in pending state and waits
@@ -2553,10 +2694,14 @@ export interface backendInterface {
      */
     submitStory(title: string, storyText: string, relatedMemberIds: Array<string>, era: string | null, year: bigint | null, location: string | null, evidenceStatus: EvidenceStatus, relatedArchiveItemIds: Array<bigint>): Promise<Story>;
     /**
-     * / Unblocks another member, allowing them to message the caller again.
-     * / Approved family members only.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for `unblockUserForFamily`.
      */
     unblockUser(blockedAccountId: Principal): Promise<void>;
+    /**
+     * / Unblocks another member within `familyId`. Approved members of `familyId`
+     * / only.
+     */
+    unblockUserForFamily(familyId: FamilyId, blockedAccountId: Principal): Promise<void>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for `updateBoardPostForFamily`.
      */

@@ -68,6 +68,7 @@ const {
   let currentPrincipal = "aaaaa-aa";
 
   const makeRecipe = (id: bigint, overrides: Partial<Recipe> = {}): Recipe => ({
+    familyId: overrides.familyId ?? "norwood",
     recipeId: id,
     title: "Sweet Potato Pie",
     shortDescription: "Grandma Julia's holiday favorite.",

@@ -1,10 +1,14 @@
 import Principal "mo:core/Principal";
 import ArchiveTypes "../types/archive";
 import FamilyHistoryTypes "../types/family-history";
+import FamilyTypes "../types/family";
 
 module {
   /// Identifier of a single family recipe.
   public type RecipeId = Nat;
+
+  /// Reused from the family domain: the tenant boundary of a recipe.
+  public type FamilyId = FamilyTypes.FamilyId;
 
   /// Lifecycle of a contributed recipe: it is submitted pending, then a Family
   /// Steward either approves it (making it visible in Family Recipes) or rejects
@@ -33,6 +37,9 @@ module {
   /// separate from the reserved future-ready AI-derived fields, so derived text
   /// never overwrites the original.
   public type Recipe = {
+    /// The family that owns this recipe. The tenant boundary: a recipe is only
+    /// ever read, reviewed, or mutated through its own family.
+    familyId : FamilyId;
     recipeId : RecipeId;
     title : Text;
     shortDescription : Text;
@@ -71,6 +78,7 @@ module {
   /// their tag text; optional fields render as empty text when absent; array
   /// fields render as counts (OQL has no array value type).
   public type RecipeRow = {
+    familyId : FamilyId;
     recipeId : RecipeId;
     title : Text;
     shortDescription : Text;

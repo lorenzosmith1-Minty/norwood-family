@@ -166,6 +166,14 @@ export interface ConflictReviewItem {
   'resolvedBy' : [] | [Principal],
   'existingSourceId' : [] | [bigint],
 }
+export interface Conversation {
+  'participantAccountIds' : Array<AccountId>,
+  'createdAt' : Timestamp,
+  'updatedAt' : Timestamp,
+  'participantPersonIds' : Array<PersonId>,
+  'conversationId' : ConversationId,
+  'familyId' : FamilyId,
+}
 export type ConversationId = bigint;
 export interface ConversationSummary {
   'otherPersonId' : PersonId,
@@ -333,6 +341,7 @@ export interface Message {
   'conversationId' : ConversationId,
   'senderAccountId' : AccountId,
   'senderPersonId' : PersonId,
+  'familyId' : FamilyId,
   'readAt' : [] | [Timestamp],
 }
 export type MessageError = { 'ConversationNotFound' : null } |
@@ -578,6 +587,7 @@ export interface Recipe {
   'evidenceStatus' : EvidenceStatus,
   'shortDescription' : string,
   'extractedIngredients' : [] | [Array<string>],
+  'familyId' : FamilyId,
   'transcript' : [] | [string],
   'location' : [] | [string],
   'originatingPersonId' : string,
@@ -660,6 +670,7 @@ export interface Report {
   'reportedMessageId' : MessageId,
   'createdAt' : Timestamp,
   'reportingAccountId' : AccountId,
+  'familyId' : FamilyId,
   'reportId' : ReportId,
   'reason' : string,
 }
@@ -719,13 +730,15 @@ export type Result_21 = { 'ok' : PersonProfile } |
   { 'err' : CreateError };
 export type Result_22 = { 'ok' : ProposedFinding } |
   { 'err' : ResearchError };
-export type Result_23 = { 'ok' : Relationship } |
+export type Result_23 = { 'ok' : Conversation } |
+  { 'err' : MessageError };
+export type Result_24 = { 'ok' : Relationship } |
   { 'err' : RelationshipAdminError };
-export type Result_24 = { 'ok' : StewardClaimResult } |
+export type Result_25 = { 'ok' : StewardClaimResult } |
   { 'err' : StewardClaimError };
-export type Result_25 = { 'ok' : Account } |
+export type Result_26 = { 'ok' : Account } |
   { 'err' : AccountError };
-export type Result_26 = { 'ok' : null } |
+export type Result_27 = { 'ok' : null } |
   { 'err' : Error };
 export type Result_3 = { 'ok' : ConflictReviewItem } |
   { 'err' : ResearchError };
@@ -946,7 +959,7 @@ export interface _SERVICE {
   >,
   '_immutableObjectStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
   '_initialize_access_control' : ActorMethod<[], undefined>,
-  '_internet_identity_sign_in_finish' : ActorMethod<[], Result_26>,
+  '_internet_identity_sign_in_finish' : ActorMethod<[], Result_27>,
   '_internet_identity_sign_in_start' : ActorMethod<[], Uint8Array>,
   /**
    * / Activates/promotes a designated successor into the active steward role.
@@ -1000,7 +1013,7 @@ export interface _SERVICE {
    */
   'addRelationship' : ActorMethod<
     [PersonId, PersonId, RelationshipType],
-    Result_23
+    Result_24
   >,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for
@@ -1078,10 +1091,16 @@ export interface _SERVICE {
    */
   'approveProfileRemoval' : ActorMethod<[bigint], [] | [ProfileRemovalRequest]>,
   /**
-   * / Approves a pending recipe (steward only). Returns the updated recipe, or
-   * / `null` when the recipe does not exist or is not pending.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `approveRecipeForFamily`.
    */
   'approveRecipe' : ActorMethod<[RecipeId], [] | [Recipe]>,
+  /**
+   * / Approves a pending recipe in `familyId`. Active Steward of `familyId` only;
+   * / a Steward of another family cannot approve the recipe. Returns the updated
+   * / recipe, or `null` when no pending recipe with that id belongs to
+   * / `familyId`. A recipe in another family is never touched.
+   */
+  'approveRecipeForFamily' : ActorMethod<[FamilyId, RecipeId], [] | [Recipe]>,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for
    * / `approveRelationshipProposalForFamily`. Deprecated single-family form:
@@ -1168,12 +1187,16 @@ export interface _SERVICE {
    * / account. The account id is the caller's stable principal, so the same
    * / person profile stays intact if the provider changes.
    */
-  'bindAuthMethod' : ActorMethod<[AuthMethod], Result_25>,
+  'bindAuthMethod' : ActorMethod<[AuthMethod], Result_26>,
   /**
-   * / Blocks another member, preventing them from sending new messages to the
-   * / caller. Approved family members only.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `blockUserForFamily`.
    */
   'blockUser' : ActorMethod<[Principal], undefined>,
+  /**
+   * / Blocks another member within `familyId`. Approved members of `familyId`
+   * / only.
+   */
+  'blockUserForFamily' : ActorMethod<[FamilyId, Principal], undefined>,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for
    * / `canClaimProfileForFamily`.
@@ -1188,13 +1211,16 @@ export interface _SERVICE {
     ClaimEligibility
   >,
   /**
-   * / Returns whether the signed-in caller may message the person identified by
-   * / `personId`: the viewer is signed in, the target has an active linked
-   * / account, the target is not the viewer, and the target is not archived.
-   * / Unclaimed profiles are never messageable. Drives the Message button on a
-   * / living claimed Person Profile.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `canMessagePersonForFamily`.
+   * / An anonymous caller resolves `false` rather than trapping, preserving the
+   * / documented `canMessagePerson` contract.
    */
   'canMessagePerson' : ActorMethod<[string], boolean>,
+  /**
+   * / Returns whether the signed-in caller may message the person identified by
+   * / `personId` within `familyId`. Approved members of `familyId` only.
+   */
+  'canMessagePersonForFamily' : ActorMethod<[FamilyId, string], boolean>,
   /**
    * / One-time "Claim Family Steward" bootstrap. Any signed-in account may claim
    * / while no active Steward exists; no approved family profile is required.
@@ -1203,14 +1229,14 @@ export interface _SERVICE {
    * / permanently refuses. Tenancy 1B: delegates to the canonical family-scoped
    * / helper with the default family id.
    */
-  'claimSteward' : ActorMethod<[], Result_24>,
+  'claimSteward' : ActorMethod<[], Result_25>,
   /**
    * / Corrects the relationship type of an existing relationship. Family Steward
    * / only.
    */
   'correctRelationshipType' : ActorMethod<
     [bigint, RelationshipType],
-    Result_23
+    Result_24
   >,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for `createBoardPostForFamily`.
@@ -1302,6 +1328,17 @@ export interface _SERVICE {
     ],
     Mystery
   >,
+  /**
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `createConversationForFamily`.
+   */
+  'createConversation' : ActorMethod<[string], Result_23>,
+  /**
+   * / Creates a 1:1 conversation in `familyId` between the caller and the person
+   * / identified by `recipientPersonId`. Approved members of `familyId` only;
+   * / both participants must belong to `familyId`.
+   */
+  'createConversationForFamily' : ActorMethod<[FamilyId, string], Result_23>,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for `createFindingForFamily`.
    */
@@ -1490,10 +1527,18 @@ export interface _SERVICE {
     [] | [ConflictReviewItem]
   >,
   /**
-   * / Returns a full conversation view for a participant. Only participants may
-   * / read a conversation.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `getConversationForFamily`.
    */
   'getConversation' : ActorMethod<[ConversationId], [] | [ConversationView]>,
+  /**
+   * / Returns a full conversation view for a participant when the conversation
+   * / belongs to `familyId`, or `null` otherwise. Approved members of `familyId`
+   * / only.
+   */
+  'getConversationForFamily' : ActorMethod<
+    [FamilyId, ConversationId],
+    [] | [ConversationView]
+  >,
   /**
    * / Returns the family with the given id, or `null` when it is not tracked.
    * / Read-only: this never creates a family.
@@ -1621,12 +1666,16 @@ export interface _SERVICE {
    */
   'getProfilePhotoForFamily' : ActorMethod<[FamilyId, PersonId], [] | [Photo]>,
   /**
-   * / Returns a single recipe by id, or `null` when it does not exist or is not
-   * / visible to the caller. Private recipes are only visible to their
-   * / contributor or a Family Steward; non-approved recipes are only visible to
-   * / a Family Steward.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `getRecipeForFamily`.
    */
   'getRecipe' : ActorMethod<[RecipeId], [] | [Recipe]>,
+  /**
+   * / Returns a single recipe by id when it belongs to `familyId` and is visible
+   * / to the caller. Approved members of `familyId` only. A recipe that exists
+   * / under another family is never returned, so a `recipeId` alone cannot cross
+   * / the family boundary.
+   */
+  'getRecipeForFamily' : ActorMethod<[FamilyId, RecipeId], [] | [Recipe]>,
   /**
    * / Returns the proposal with `proposalId` when it belongs to `familyId`, or
    * / `null` otherwise. Requires an active Steward of `familyId`, matching the
@@ -1652,11 +1701,18 @@ export interface _SERVICE {
     [] | [RelationshipRequest]
   >,
   /**
-   * / Returns the reported message content for a report. Family Steward only;
-   * / reported message content is visible only when a report is filed. Stewards
-   * / cannot browse arbitrary private conversations.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `getReportedMessageForFamily`.
    */
   'getReportedMessage' : ActorMethod<[ReportId], [] | [ReportedMessageView]>,
+  /**
+   * / Returns the reported message content for a report in `familyId`. Active
+   * / Steward of `familyId` only.
+   */
+  'getReportedMessageForFamily' : ActorMethod<
+    [FamilyId, ReportId],
+    [] | [ReportedMessageView]
+  >,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for
    * / `getResearchAuditLogForFamily`. Deprecated single-family form: delegates
@@ -1763,10 +1819,17 @@ export interface _SERVICE {
     Array<ArchiveItem>
   >,
   /**
-   * / Lists all approved recipes visible to the caller. Private recipes are only
-   * / visible to their contributor or a Family Steward.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `listApprovedRecipesForFamily`.
    */
   'listApprovedRecipes' : ActorMethod<[], Array<Recipe>>,
+  /**
+   * / Lists every approved recipe in `familyId` visible to the caller. Approved
+   * / members of `familyId` only. Private recipes are only visible to their
+   * / contributor or a Family Steward. A recipe whose `familyId` differs is never
+   * / returned.
+   */
+  'listApprovedRecipesForFamily' : ActorMethod<[FamilyId], Array<Recipe>>,
   /**
    * / Lists all approved stories (visible to viewers).
    */
@@ -1785,9 +1848,14 @@ export interface _SERVICE {
    */
   'listAuditHistory' : ActorMethod<[], Array<AuditEntry>>,
   /**
-   * / Lists the account ids the caller has blocked. Approved family members only.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `listBlockedUsersForFamily`.
    */
   'listBlockedUsers' : ActorMethod<[], Array<Principal>>,
+  /**
+   * / Lists the account ids the caller has blocked in `familyId`. Approved
+   * / members of `familyId` only.
+   */
+  'listBlockedUsersForFamily' : ActorMethod<[FamilyId], Array<Principal>>,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for `listBoardPostsForFamily`.
    */
@@ -1870,10 +1938,18 @@ export interface _SERVICE {
     Array<ConflictReviewItem>
   >,
   /**
-   * / Returns the signed-in caller's inbox: one summary per conversation they
-   * / participate in, newest activity first. Approved family members only.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `listConversationsForFamily`.
    */
   'listConversations' : ActorMethod<[], Array<ConversationSummary>>,
+  /**
+   * / Returns the signed-in caller's inbox in `familyId`, newest activity first.
+   * / Approved members of `familyId` only.
+   */
+  'listConversationsForFamily' : ActorMethod<
+    [FamilyId],
+    Array<ConversationSummary>
+  >,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for
    * / `listDisputedFactsForPersonForFamily`.
@@ -1927,14 +2003,28 @@ export interface _SERVICE {
    */
   'listHiddenBoardPostsForFamily' : ActorMethod<[FamilyId], Array<Post>>,
   /**
-   * / Returns the person ids of every other member the signed-in caller may
-   * / message: living, claimed, linked to an active account, not archived, and
-   * / not the caller. Not gated to stewards — any approved member may read it, so
-   * / the Private Messages inbox can determine whether any other eligible member
-   * / exists. Data-driven: as another relative claims and receives approval they
-   * / automatically appear without code changes.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `listMessageableMembersForFamily`. An anonymous caller resolves `[]` rather
+   * / than trapping, preserving the documented `listMessageableMembers` contract.
    */
   'listMessageableMembers' : ActorMethod<[], Array<string>>,
+  /**
+   * / Returns the person ids of every other member the signed-in caller may
+   * / message within `familyId`. Approved members of `familyId` only.
+   */
+  'listMessageableMembersForFamily' : ActorMethod<[FamilyId], Array<string>>,
+  /**
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `listMessagesForFamily`.
+   */
+  'listMessages' : ActorMethod<[ConversationId], Array<Message>>,
+  /**
+   * / Lists the messages of a conversation in `familyId`, oldest first. Approved
+   * / members of `familyId` only.
+   */
+  'listMessagesForFamily' : ActorMethod<
+    [FamilyId, ConversationId],
+    Array<Message>
+  >,
   /**
    * / Lists all mysteries (visible to viewers).
    */
@@ -1984,9 +2074,15 @@ export interface _SERVICE {
     Array<MysteryContribution>
   >,
   /**
-   * / Lists all recipes in pending state (steward only).
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `listPendingRecipesForFamily`.
    */
   'listPendingRecipes' : ActorMethod<[], Array<Recipe>>,
+  /**
+   * / Lists every recipe in `familyId` currently in pending state. Active Steward
+   * / of `familyId` only. A recipe whose `familyId` differs is never returned.
+   */
+  'listPendingRecipesForFamily' : ActorMethod<[FamilyId], Array<Recipe>>,
   /**
    * / Lists all stories in pending state (steward only).
    */
@@ -2025,11 +2121,25 @@ export interface _SERVICE {
    */
   'listProfilesForFamily' : ActorMethod<[FamilyId], Array<PersonProfile>>,
   /**
-   * / Lists recipes linked to a person, whether as the originating member or a
-   * / related member. Returns only approved recipes visible to the caller;
-   * / private recipes are only visible to their contributor or a Family Steward.
+   * / Lists every recipe in `familyId`, newest first. Approved members of
+   * / `familyId` only. A recipe whose `familyId` differs is never returned, so
+   * / Family A recipes never appear in a Family B call.
+   */
+  'listRecipesForFamily' : ActorMethod<[FamilyId], Array<Recipe>>,
+  /**
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `listRecipesForPersonForFamily`.
    */
   'listRecipesForPerson' : ActorMethod<[string], Array<Recipe>>,
+  /**
+   * / Lists approved recipes in `familyId` linked to a person, whether as the
+   * / originating member or a related member. Approved members of `familyId`
+   * / only. A recipe whose `familyId` differs is never returned.
+   */
+  'listRecipesForPersonForFamily' : ActorMethod<
+    [FamilyId, string],
+    Array<Recipe>
+  >,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for
    * / `listRelationshipProposalsForFamily`.
@@ -2059,9 +2169,13 @@ export interface _SERVICE {
     Array<RelationshipRequest>
   >,
   /**
-   * / Lists all reports. Family Steward only.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `listReportsForFamily`.
    */
   'listReports' : ActorMethod<[], Array<Report>>,
+  /**
+   * / Lists all reports in `familyId`. Active Steward of `familyId` only.
+   */
+  'listReportsForFamily' : ActorMethod<[FamilyId], Array<Report>>,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for `listSourcesForFamily`.
    */
@@ -2097,10 +2211,18 @@ export interface _SERVICE {
    */
   'listTimelineEvents' : ActorMethod<[], Array<TimelineEvent>>,
   /**
-   * / Marks all of the caller's messages in a conversation as read. Only
-   * / participants may mark a conversation read.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `markConversationReadForFamily`.
    */
   'markConversationRead' : ActorMethod<[ConversationId], undefined>,
+  /**
+   * / Marks all of the caller's messages in a conversation in `familyId` as read.
+   * / Approved members of `familyId` only; the caller must be a participant.
+   */
+  'markConversationReadForFamily' : ActorMethod<
+    [FamilyId, ConversationId],
+    undefined
+  >,
   /**
    * / Marks a mystery resolved (steward only), recording the resolution summary
    * / and supporting evidence while preserving the prior theories/history.
@@ -2213,12 +2335,38 @@ export interface _SERVICE {
     Result_9
   >,
   /**
-   * / Publishes a canonical recipe directly (steward only), already approved.
-   * / This is the steward-only add flow; it does not create a second Recipe on
-   * / approval.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `publishRecipeForFamily`.
    */
   'publishRecipe' : ActorMethod<
     [
+      string,
+      string,
+      string,
+      Array<string>,
+      [] | [string],
+      [] | [bigint],
+      [] | [string],
+      [] | [string],
+      Array<string>,
+      string,
+      [] | [string],
+      Array<string>,
+      PrivacyLevel,
+      EvidenceStatus,
+      Array<bigint>,
+    ],
+    Recipe
+  >,
+  /**
+   * / Publishes a canonical recipe directly into `familyId` (Steward only),
+   * / already approved. Active Steward of `familyId` only. The new recipe's
+   * / `familyId` is the requested `familyId`; the originating person and every
+   * / related person must belong to `familyId`, and every linked Archive media id
+   * / must belong to `familyId`.
+   */
+  'publishRecipeForFamily' : ActorMethod<
+    [
+      FamilyId,
       string,
       string,
       string,
@@ -2307,10 +2455,16 @@ export interface _SERVICE {
    */
   'rejectProfileRemoval' : ActorMethod<[bigint], [] | [ProfileRemovalRequest]>,
   /**
-   * / Rejects a pending recipe (steward only). Returns the updated recipe, or
-   * / `null` when the recipe does not exist or is not pending.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `rejectRecipeForFamily`.
    */
   'rejectRecipe' : ActorMethod<[RecipeId], [] | [Recipe]>,
+  /**
+   * / Rejects a pending recipe in `familyId`. Active Steward of `familyId` only;
+   * / a Steward of another family cannot reject the recipe. Returns the updated
+   * / recipe, or `null` when no pending recipe with that id belongs to
+   * / `familyId`. A recipe in another family is never touched.
+   */
+  'rejectRecipeForFamily' : ActorMethod<[FamilyId, RecipeId], [] | [Recipe]>,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for
    * / `rejectRelationshipProposalForFamily`. Deprecated single-family form:
@@ -2415,9 +2569,15 @@ export interface _SERVICE {
    */
   'removeSteward' : ActorMethod<[Principal], Result_6>,
   /**
-   * / Reports a specific message with a reason. Approved family members only.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `reportMessageForFamily`.
    */
   'reportMessage' : ActorMethod<[MessageId, string], Report>,
+  /**
+   * / Reports a specific message within `familyId`. Approved members of
+   * / `familyId` only; the caller must be a participant of the message's
+   * / conversation.
+   */
+  'reportMessageForFamily' : ActorMethod<[FamilyId, MessageId, string], Report>,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for
    * / `requestProfileClaimForFamily`.
@@ -2490,9 +2650,17 @@ export interface _SERVICE {
     [] | [MysteryContribution]
   >,
   /**
-   * / Updates a report's review status. Family Steward only.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `reviewReportForFamily`.
    */
   'reviewReport' : ActorMethod<[ReportId, ReportStatus], [] | [Report]>,
+  /**
+   * / Updates a report's review status within `familyId`. Active Steward of
+   * / `familyId` only.
+   */
+  'reviewReportForFamily' : ActorMethod<
+    [FamilyId, ReportId, ReportStatus],
+    [] | [Report]
+  >,
   'schema' : ActorMethod<[], string>,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for the canonical
@@ -2542,12 +2710,15 @@ export interface _SERVICE {
     Array<PersonMatch>
   >,
   /**
-   * / Sends a private message to the person identified by `personId`, reusing the
-   * / existing 1:1 conversation when one exists. Approved family members only.
-   * / Creates a new-message notification for the recipient. Blocking prevents new
-   * / messages from the blocked user.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `sendMessageForFamily`.
    */
   'sendMessage' : ActorMethod<[string, string], Result_1>,
+  /**
+   * / Sends a private message to the person identified by `recipientPersonId`
+   * / within `familyId`, reusing the existing 1:1 conversation when one exists.
+   * / Approved members of `familyId` only.
+   */
+  'sendMessageForFamily' : ActorMethod<[FamilyId, string, string], Result_1>,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for
    * / `setProfilePhotoForFamily`.
@@ -2643,13 +2814,39 @@ export interface _SERVICE {
     MysteryContribution
   >,
   /**
-   * / Submits a new recipe. Requires an approved family member; the caller is
-   * / recorded as the contributor. The recipe is stored in pending state and
-   * / waits for a Family Steward to approve it before becoming visible in Family
-   * / Recipes.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `submitRecipeForFamily`.
    */
   'submitRecipe' : ActorMethod<
     [
+      string,
+      string,
+      string,
+      Array<string>,
+      [] | [string],
+      [] | [bigint],
+      [] | [string],
+      [] | [string],
+      Array<string>,
+      string,
+      [] | [string],
+      Array<string>,
+      PrivacyLevel,
+      EvidenceStatus,
+      Array<bigint>,
+    ],
+    Recipe
+  >,
+  /**
+   * / Submits a new recipe into `familyId`. Approved members or Stewards of
+   * / `familyId` only. The new recipe's `familyId` is the requested `familyId`;
+   * / the originating person and every related person must belong to `familyId`,
+   * / and every linked Archive media id must belong to `familyId`. The recipe is
+   * / stored in pending state and waits for a Steward of `familyId` to approve
+   * / it.
+   */
+  'submitRecipeForFamily' : ActorMethod<
+    [
+      FamilyId,
       string,
       string,
       string,
@@ -2687,10 +2884,14 @@ export interface _SERVICE {
     Story
   >,
   /**
-   * / Unblocks another member, allowing them to message the caller again.
-   * / Approved family members only.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `unblockUserForFamily`.
    */
   'unblockUser' : ActorMethod<[Principal], undefined>,
+  /**
+   * / Unblocks another member within `familyId`. Approved members of `familyId`
+   * / only.
+   */
+  'unblockUserForFamily' : ActorMethod<[FamilyId, Principal], undefined>,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for `updateBoardPostForFamily`.
    */

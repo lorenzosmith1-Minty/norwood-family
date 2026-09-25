@@ -1,4 +1,5 @@
 import Common "../types/common";
+import FamilyTypes "../types/family";
 
 module {
   /// Identifier of a single 1:1 conversation.
@@ -15,6 +16,7 @@ module {
   /// again. No group chat, attachments, reactions, calling, or typing
   /// indicators for MVP.
   public type Conversation = {
+    familyId : FamilyTypes.FamilyId;
     conversationId : ConversationId;
     participantAccountIds : [Common.AccountId];
     participantPersonIds : [Common.PersonId];
@@ -31,6 +33,7 @@ module {
 
   /// A single private message. Only participants may read it.
   public type Message = {
+    familyId : FamilyTypes.FamilyId;
     messageId : MessageId;
     conversationId : ConversationId;
     senderAccountId : Common.AccountId;
@@ -43,6 +46,7 @@ module {
 
   /// A block preventing one account from sending new messages to another.
   public type Block = {
+    familyId : FamilyTypes.FamilyId;
     blockerAccountId : Common.AccountId;
     blockedAccountId : Common.AccountId;
     createdAt : Common.Timestamp;
@@ -58,6 +62,7 @@ module {
   /// A report of a specific message. Stewards see the reported message content
   /// only when a report is filed.
   public type Report = {
+    familyId : FamilyTypes.FamilyId;
     reportId : ReportId;
     reportingAccountId : Common.AccountId;
     reportedMessageId : MessageId;

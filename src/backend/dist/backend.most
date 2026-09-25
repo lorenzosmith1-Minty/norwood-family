@@ -830,7 +830,8 @@ type Block__1026842118 =
   {
     blockedAccountId : AccountId__552256128;
     blockerAccountId : AccountId__552256128;
-    createdAt : Timestamp__301639476
+    createdAt : Timestamp__301639476;
+    familyId : FamilyId__357998493
   };
 type Block__187203820 =
   {
@@ -897,6 +898,7 @@ type Conversation__78217734 =
   {
     conversationId : ConversationId__199309249;
     createdAt : Timestamp__301639476;
+    familyId : FamilyId__357998493;
     participantAccountIds : [AccountId__552256128];
     participantPersonIds : [PersonId__39539326];
     updatedAt : Timestamp__301639476
@@ -979,9 +981,12 @@ type FamilyId__228780613 = Text;
 type FamilyId__284510423 = Text;
 type FamilyId__329536528 = Text;
 type FamilyId__357998493 = Text;
+type FamilyId__488711918 = Text;
 type FamilyId__635793600 = Text;
 type FamilyId__649884009 = Text;
 type FamilyId__671487675 = Text;
+type FamilyId__78894948 = Text;
+type FamilyId__878624665 = FamilyId__357998493;
 type FamilyStatus__298658265 = {#active; #archived};
 type FamilyStatus__662165415 = {#active; #archived};
 type Family__188663423 =
@@ -1194,6 +1199,7 @@ type Message__804209456 =
     body : Text;
     conversationId : ConversationId__199309249;
     createdAt : Timestamp__301639476;
+    familyId : FamilyId__357998493;
     messageId : MessageId__883709611;
     readAt : ?Timestamp__301639476;
     senderAccountId : AccountId__552256128;
@@ -1726,6 +1732,13 @@ type NewActor__848664417 =
     profiles : Map__230067015<Text, PersonProfile__283538937>;
     relationshipRequests : List__836382695<RelationshipRequest__518523894>
   };
+type NewActor__861270690 =
+  {
+    blocks : List__836382695<NewBlock__231702122>;
+    conversations : List__836382695<NewConversation__626180038>;
+    messages : List__836382695<NewMessage__810052061>;
+    reports : List__836382695<NewReport__751464573>
+  };
 type NewActor__91402668 =
   {
     accessControlState :
@@ -1767,6 +1780,7 @@ type NewActor__960473320 =
     profiles : Map__230067015<Text, PersonProfile__668376542>;
     relationshipRequests : List__836382695<RelationshipRequest__18150306>
   };
+type NewActor__963881556 = {recipes : List__836382695<NewRecipe__47755930>};
 type NewArchiveItem__1052374070 =
   {
     aiSummary : ?Text;
@@ -1847,6 +1861,13 @@ type NewArchiveItem__756289652 =
     transcript : ?Text;
     year : ?Nat
   };
+type NewBlock__231702122 =
+  {
+    blockedAccountId : Principal;
+    blockerAccountId : Principal;
+    createdAt : Int;
+    familyId : FamilyId__488711918
+  };
 type NewConflictReviewItem__190236234 =
   {
     canonicalValue : Text;
@@ -1890,6 +1911,27 @@ type NewConflictReviewItem__668899675 =
     resolvedBy : ?Principal;
     status : ReviewStatus__724723279;
     stewardNotes : Text
+  };
+type NewConversation__626180038 =
+  {
+    conversationId : Nat;
+    createdAt : Int;
+    familyId : FamilyId__488711918;
+    participantAccountIds : [Principal];
+    participantPersonIds : [Text];
+    updatedAt : Int
+  };
+type NewMessage__810052061 =
+  {
+    body : Text;
+    conversationId : Nat;
+    createdAt : Int;
+    familyId : FamilyId__488711918;
+    messageId : Nat;
+    readAt : ?Int;
+    senderAccountId : Principal;
+    senderPersonId : Text;
+    status : {#Blocked; #Sent}
   };
 type NewNewPersonCandidate__515114504 =
   {
@@ -2128,6 +2170,35 @@ type NewProposedFinding__512461137 =
     title : Text;
     updatedAt : Int
   };
+type NewRecipe__47755930 =
+  {
+    aiDerivedText : ?Text;
+    contributorAccountId : Principal;
+    createdAt : Int;
+    era : ?Text;
+    evidenceStatus :
+      {#Documented; #FamilyHistory; #PersonalMemory; #Unresolved};
+    extractedIngredients : ?[Text];
+    familyBranch : ?Text;
+    familyId : FamilyId__78894948;
+    familyStory : ?Text;
+    ingredients : [Text];
+    instructions : Text;
+    linkedMediaIds : [Nat];
+    location : ?Text;
+    ocrText : ?Text;
+    originatingPersonId : Text;
+    privacyLevel : {#FamilyOnly; #Private; #Public};
+    recipeId : Nat;
+    relatedPersonIds : [Text];
+    shortDescription : Text;
+    status : {#Approved; #Archived; #Pending; #Rejected};
+    tags : [Text];
+    title : Text;
+    transcript : ?Text;
+    updatedAt : Int;
+    year : ?Nat
+  };
 type NewRelationshipProposal__2634370 =
   {
     familyId : FamilyId__145942548;
@@ -2185,6 +2256,16 @@ type NewReply__907178512 =
     familyId : FamilyId__671487675;
     postId : Nat;
     replyId : Nat
+  };
+type NewReport__751464573 =
+  {
+    createdAt : Int;
+    familyId : FamilyId__488711918;
+    reason : Text;
+    reportId : Nat;
+    reportedMessageId : Nat;
+    reportingAccountId : Principal;
+    status : {#Dismissed; #Pending; #Reviewed}
   };
 type NewResearchAuditEntry__232993651 =
   {
@@ -2521,6 +2602,13 @@ type OldActor__1060490054 =
   };
 type OldActor__114726251 =
   {researchAuditLog : List__836382695<OldResearchAuditEntry__655275946>};
+type OldActor__124006765 =
+  {
+    blocks : List__836382695<OldBlock__166027910>;
+    conversations : List__836382695<OldConversation__845865202>;
+    messages : List__836382695<OldMessage__438566306>;
+    reports : List__836382695<OldReport__1051195978>
+  };
 type OldActor__190834961 =
   {
     accessControlState :
@@ -2587,6 +2675,7 @@ type OldActor__363696330 =
     archiveItems : List__836382695<ArchiveItem__806251454>;
     galleries : Map__230067015<Text, PhotoGallery__646543908>
   };
+type OldActor__3928544 = {recipes : List__836382695<OldRecipe__604135865>};
 type OldActor__402068192 = {posts : List__836382695<OldPost__268863917>};
 type OldActor__433484568 =
   {
@@ -2936,6 +3025,12 @@ type OldAuditEntry__364127483 =
     summary : Text;
     timestamp : Int
   };
+type OldBlock__166027910 =
+  {
+    blockedAccountId : Principal;
+    blockerAccountId : Principal;
+    createdAt : Int
+  };
 type OldConflictReviewItem__474632668 =
   {
     canonicalValue : Text;
@@ -2973,6 +3068,25 @@ type OldConflictReviewItem__721244178 =
     resolvedAt : ?Int;
     resolvedBy : ?Principal;
     status : OldReviewStatus__969786594
+  };
+type OldConversation__845865202 =
+  {
+    conversationId : Nat;
+    createdAt : Int;
+    participantAccountIds : [Principal];
+    participantPersonIds : [Text];
+    updatedAt : Int
+  };
+type OldMessage__438566306 =
+  {
+    body : Text;
+    conversationId : Nat;
+    createdAt : Int;
+    messageId : Nat;
+    readAt : ?Int;
+    senderAccountId : Principal;
+    senderPersonId : Text;
+    status : {#Blocked; #Sent}
   };
 type OldNewPersonCandidate__279624242 =
   {
@@ -3181,6 +3295,34 @@ type OldProposedFinding__854663539 =
     title : Text;
     updatedAt : Int
   };
+type OldRecipe__604135865 =
+  {
+    aiDerivedText : ?Text;
+    contributorAccountId : Principal;
+    createdAt : Int;
+    era : ?Text;
+    evidenceStatus :
+      {#Documented; #FamilyHistory; #PersonalMemory; #Unresolved};
+    extractedIngredients : ?[Text];
+    familyBranch : ?Text;
+    familyStory : ?Text;
+    ingredients : [Text];
+    instructions : Text;
+    linkedMediaIds : [Nat];
+    location : ?Text;
+    ocrText : ?Text;
+    originatingPersonId : Text;
+    privacyLevel : {#FamilyOnly; #Private; #Public};
+    recipeId : Nat;
+    relatedPersonIds : [Text];
+    shortDescription : Text;
+    status : {#Approved; #Archived; #Pending; #Rejected};
+    tags : [Text];
+    title : Text;
+    transcript : ?Text;
+    updatedAt : Int;
+    year : ?Nat
+  };
 type OldRelationshipProposal__634598119 =
   {
     fromPersonId : Text;
@@ -3234,6 +3376,15 @@ type OldReply__315522995 =
     createdAt : Int;
     postId : Nat;
     replyId : Nat
+  };
+type OldReport__1051195978 =
+  {
+    createdAt : Int;
+    reason : Text;
+    reportId : Nat;
+    reportedMessageId : Nat;
+    reportingAccountId : Principal;
+    status : {#Dismissed; #Pending; #Reviewed}
   };
 type OldResearchAuditEntry__655275946 =
   {
@@ -4273,6 +4424,7 @@ type Recipe__767283240 =
     evidenceStatus : EvidenceStatus__824382737;
     extractedIngredients : ?[Text];
     familyBranch : ?Text;
+    familyId : FamilyId__878624665;
     familyStory : ?Text;
     ingredients : [Text];
     instructions : Text;
@@ -4750,6 +4902,7 @@ type ReportStatus__568596574 = {#Dismissed; #Pending; #Reviewed};
 type Report__79617168 =
   {
     createdAt : Timestamp__301639476;
+    familyId : FamilyId__357998493;
     reason : Text;
     reportId : ReportId__80689598;
     reportedMessageId : MessageId__883709611;
@@ -5192,7 +5345,9 @@ type UserRole__968740559 = {#admin; #guest; #user};
   "20260923_130000" : (old : OldActor__971630431) -> NewActor__540330458;
   "20260923_140000" : (old : OldActor__66325736) -> NewActor__1044084074;
   "20260923_150000" : (old : OldActor__114726251) -> NewActor__681737701;
-  "20260924_000000" : (old : OldActor__959457706) -> NewActor__1053168963
+  "20260924_000000" : (old : OldActor__959457706) -> NewActor__1053168963;
+  "20260924_120000" : (old : OldActor__124006765) -> NewActor__861270690;
+  "20260925_000000" : (old : OldActor__3928544) -> NewActor__963881556
 }
 actor  {
   stable accessControlState :

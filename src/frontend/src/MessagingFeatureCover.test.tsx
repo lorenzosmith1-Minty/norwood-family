@@ -123,6 +123,7 @@ const {
     > {
       sentMessages = [...sentMessages, { recipientPersonId, body }];
       const message: Message = {
+        familyId: "norwood",
         messageId: 99n,
         conversationId: 1n,
         senderAccountId: Principal.fromText(ACCOUNT),
@@ -153,6 +154,7 @@ const {
     },
     async reportMessage(messageId: bigint, reason: string): Promise<Report> {
       const report: Report = {
+        familyId: "norwood",
         reportId: 5n,
         reportedMessageId: messageId,
         reportingAccountId: Principal.fromText(ACCOUNT),
@@ -351,6 +353,7 @@ describe("Private Messaging: canonical conversation and read state", () => {
       participantDisplayNames: ["Julia Norwood", "Versie Smith"],
       messages: [
         {
+          familyId: "norwood",
           messageId: 1n,
           conversationId: 1n,
           senderAccountId: OTHER_ACCOUNT,
@@ -460,6 +463,7 @@ describe("Private Messaging: report and steward review", () => {
       participantDisplayNames: ["Julia Norwood", "Versie Smith"],
       messages: [
         {
+          familyId: "norwood",
           messageId: 7n,
           conversationId: 1n,
           senderAccountId: OTHER_ACCOUNT,
@@ -510,6 +514,7 @@ describe("Private Messaging: report and steward review", () => {
     setAuthenticated(true);
     setAdmin(true);
     const report: Report = {
+      familyId: "norwood",
       reportId: 5n,
       reportedMessageId: 7n,
       reportingAccountId: Principal.fromText(ACCOUNT),
@@ -521,6 +526,7 @@ describe("Private Messaging: report and steward review", () => {
     setReportedMessage(5n, {
       report: report,
       message: {
+        familyId: "norwood",
         messageId: 7n,
         conversationId: 1n,
         senderAccountId: OTHER_ACCOUNT,

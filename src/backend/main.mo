@@ -33,6 +33,7 @@ import OwnershipLib "lib/ownership";
 import AccountIdentityLib "lib/account-identity";
 import RecipesScopeLib "lib/recipes-scope";
 import FamilyHistoryScopeLib "lib/family-history-scope";
+import MysteryScopeLib "lib/mystery-scope";
 import ObjectStorageApi "mixins/object-storage-api";
 import FamilyApi "mixins/family-api";
 import ArchiveApi "mixins/archive-api";
@@ -43,7 +44,7 @@ import NotificationsApi "mixins/notifications-api";
 import AccountIdentityApi "mixins/account-identity-api";
 import GovernanceApi "mixins/governance-api";
 import FamilyHistoryScopeApi "mixins/family-history-scope-api";
-import MysteryApi "mixins/mystery-api";
+import MysteryScopeApi "mixins/mystery-scope-api";
 import RecipesScopeApi "mixins/recipes-scope-api";
 import BoardScopeApi "mixins/board-scope-api";
 import MessagingScopeApi "mixins/messaging-scope-api";
@@ -660,42 +661,44 @@ actor {
       .payload("status", func r = r.status)
       .controllerOnly()
       .build(),
-      OQL.Entity.manual<FamilyHistoryTypes.Mystery>(
+      OQL.Entity.manual<FamilyHistoryTypes.MysteryRow>(
         "mystery",
-        func() : Iter.Iter<FamilyHistoryTypes.Mystery> = mysteries.values(),
+        func() : Iter.Iter<FamilyHistoryTypes.MysteryRow> = MysteryScopeLib.mysteryRows(mysteries),
         "Mystery",
         "id",
       )
       .sample({
+        familyId = FamilyTypes.DEFAULT_FAMILY_ID;
         id = 0;
         title = "";
         description = "";
-        relatedMemberIds = [];
-        relatedBranchId = null;
-        knownFacts = [];
-        possibilities = [];
-        relatedSourceIds = [];
-        relatedArchiveItemIds = [];
-        status = #Open;
-        contributor = Principal.fromText("aaaaa-aa");
+        relatedMemberCount = 0;
+        relatedBranchId = "";
+        knownFactCount = 0;
+        possibilityCount = 0;
+        relatedSourceCount = 0;
+        relatedArchiveItemCount = 0;
+        status = "";
+        contributor = "";
         createdAt = 0;
         updatedAt = 0;
-        resolution = null;
+        resolved = false;
       })
+      .payload("familyId", func r = r.familyId)
       .payload("id", func r = r.id)
       .payload("title", func r = r.title)
       .payload("description", func r = r.description)
-      .payload("relatedMemberCount", func r = r.relatedMemberIds.size())
-      .payload("relatedBranchId", func r = r.relatedBranchId ?? "")
-      .payload("knownFactCount", func r = r.knownFacts.size())
-      .payload("possibilityCount", func r = r.possibilities.size())
-      .payload("relatedSourceCount", func r = r.relatedSourceIds.size())
-      .payload("relatedArchiveItemCount", func r = r.relatedArchiveItemIds.size())
-      .payload("status", func r = switch (r.status) { case (#Open) "Open"; case (#Researching) "Researching"; case (#PartiallyResolved) "PartiallyResolved"; case (#Resolved) "Resolved" })
-      .payload("contributor", func r = r.contributor.toText())
+      .payload("relatedMemberCount", func r = r.relatedMemberCount)
+      .payload("relatedBranchId", func r = r.relatedBranchId)
+      .payload("knownFactCount", func r = r.knownFactCount)
+      .payload("possibilityCount", func r = r.possibilityCount)
+      .payload("relatedSourceCount", func r = r.relatedSourceCount)
+      .payload("relatedArchiveItemCount", func r = r.relatedArchiveItemCount)
+      .payload("status", func r = r.status)
+      .payload("contributor", func r = r.contributor)
       .payload("createdAt", func r = r.createdAt)
       .payload("updatedAt", func r = r.updatedAt)
-      .payload("resolved", func r = r.resolution != null)
+      .payload("resolved", func r = r.resolved)
       .controllerOnly()
       .build(),
       OQL.Entity.manual<FamilyHistoryTypes.MysteryContribution>(
@@ -705,6 +708,7 @@ actor {
         "id",
       )
       .sample({
+        familyId = FamilyTypes.DEFAULT_FAMILY_ID;
         id = 0;
         mysteryId = 0;
         contributionType = #Note;
@@ -715,6 +719,7 @@ actor {
         reviewedBy = null;
         reviewedAt = null;
       })
+      .payload("familyId", func r = r.familyId)
       .payload("id", func r = r.id)
       .payload("mysteryId", func r = r.mysteryId)
       .payload("contributionType", func r = switch (r.contributionType) { case (#Note) "Note"; case (#Memory) "Memory"; case (#Lead) "Lead"; case (#Source) "Source" })
@@ -1140,7 +1145,7 @@ actor {
   include AccountIdentityApi(accounts);
   include GovernanceApi(accessControlState, profiles, confirmedRelationships, stewards, successors, removalRequests, auditLog, mergeConflicts, archivedProfiles, galleries, archiveItems, dismissedDuplicates);
   include FamilyHistoryScopeApi(stories, profiles, claims, stewards, archiveItems);
-  include MysteryApi(stories, mysteries, mysteryContributions, profiles, archiveItems, claims, stewards);
+  include MysteryScopeApi(stories, mysteries, mysteryContributions, profiles, archiveItems, claims, stewards);
   include RecipesScopeApi(recipes, profiles, claims, stewards, archiveItems);
   include BoardScopeApi(posts, replies, profiles, notifications, auditLog, stewards, claims, archiveItems);
   include MessagingScopeApi(conversations, messages, blocks, reports, profiles, archivedProfiles, notifications, accounts, stewards, claims);

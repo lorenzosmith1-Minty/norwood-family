@@ -14,6 +14,7 @@ import { useAuth } from "../hooks/useAuth";
 import {
   useCreateCanonicalMystery,
   useMysteries,
+  useMystery,
   usePendingMysteryContributions,
   useReviewMysteryContribution,
 } from "../hooks/useFamilyHistory";
@@ -68,10 +69,11 @@ export function MysteriesPage({
   const [showCreate, setShowCreate] = useState(false);
   const [showReview, setShowReview] = useState(false);
 
-  const selected = useMemo(
-    () => mysteries.find((m) => m.id === selectedId) ?? null,
-    [mysteries, selectedId],
-  );
+  // The detail view reads the selected mystery through the family-scoped
+  // `getMysteryForFamily` endpoint rather than resolving it from the
+  // already-fetched list, so a non-default family never resolves another
+  // family's mystery. The list is only used to seed the initial selection.
+  const { data: selected = null } = useMystery(selectedId ?? 0n);
 
   const filtered = useMemo(
     () =>

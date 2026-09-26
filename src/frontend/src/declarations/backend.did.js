@@ -543,6 +543,7 @@ export const Mystery = IDL.Record({
   'possibilities' : IDL.Vec(IDL.Text),
   'relatedBranchId' : IDL.Opt(IDL.Text),
   'relatedSourceIds' : IDL.Vec(IDL.Nat),
+  'familyId' : FamilyId,
   'contributor' : IDL.Principal,
 });
 export const ConversationId = IDL.Nat;
@@ -880,6 +881,30 @@ export const StewardIdentity = IDL.Record({
   'personId' : PersonId,
   'canonicalName' : IDL.Text,
 });
+export const MysteryContributionId = IDL.Nat;
+export const MysteryContributionStatus = IDL.Variant({
+  'Approved' : IDL.Null,
+  'Rejected' : IDL.Null,
+  'Pending' : IDL.Null,
+});
+export const MysteryContributionType = IDL.Variant({
+  'Lead' : IDL.Null,
+  'Note' : IDL.Null,
+  'Memory' : IDL.Null,
+  'Source' : IDL.Null,
+});
+export const MysteryContribution = IDL.Record({
+  'id' : MysteryContributionId,
+  'status' : MysteryContributionStatus,
+  'createdAt' : IDL.Int,
+  'text' : IDL.Text,
+  'mysteryId' : MysteryId,
+  'reviewedAt' : IDL.Opt(IDL.Int),
+  'reviewedBy' : IDL.Opt(IDL.Principal),
+  'familyId' : FamilyId,
+  'contributionType' : MysteryContributionType,
+  'contributor' : IDL.Principal,
+});
 export const NotificationType = IDL.Variant({
   'ResearchSubmission' : IDL.Null,
   'ResearchApproved' : IDL.Null,
@@ -901,29 +926,6 @@ export const Notification = IDL.Record({
   'read' : IDL.Bool,
   'recipient' : IDL.Principal,
   'message' : IDL.Text,
-});
-export const MysteryContributionId = IDL.Nat;
-export const MysteryContributionStatus = IDL.Variant({
-  'Approved' : IDL.Null,
-  'Rejected' : IDL.Null,
-  'Pending' : IDL.Null,
-});
-export const MysteryContributionType = IDL.Variant({
-  'Lead' : IDL.Null,
-  'Note' : IDL.Null,
-  'Memory' : IDL.Null,
-  'Source' : IDL.Null,
-});
-export const MysteryContribution = IDL.Record({
-  'id' : MysteryContributionId,
-  'status' : MysteryContributionStatus,
-  'createdAt' : IDL.Int,
-  'text' : IDL.Text,
-  'mysteryId' : MysteryId,
-  'reviewedAt' : IDL.Opt(IDL.Int),
-  'reviewedBy' : IDL.Opt(IDL.Principal),
-  'contributionType' : MysteryContributionType,
-  'contributor' : IDL.Principal,
 });
 export const TimelineLinkTarget = IDL.Variant({
   'Story' : StoryId,
@@ -1338,6 +1340,22 @@ export const idlService = IDL.Service({
       [Mystery],
       [],
     ),
+  'createCanonicalMysteryForFamily' : IDL.Func(
+      [
+        FamilyId,
+        IDL.Text,
+        IDL.Text,
+        IDL.Vec(IDL.Text),
+        IDL.Opt(IDL.Text),
+        IDL.Vec(IDL.Text),
+        IDL.Vec(IDL.Text),
+        IDL.Vec(IDL.Nat),
+        IDL.Vec(IDL.Nat),
+        MysteryStatus,
+      ],
+      [Mystery],
+      [],
+    ),
   'createConversation' : IDL.Func([IDL.Text], [Result_23], []),
   'createConversationForFamily' : IDL.Func(
       [FamilyId, IDL.Text],
@@ -1500,6 +1518,11 @@ export const idlService = IDL.Service({
   'getMyRelationshipRequestsForFamily' : IDL.Func(
       [FamilyId],
       [IDL.Vec(RelationshipRequest)],
+      ['query'],
+    ),
+  'getMysteryForFamily' : IDL.Func(
+      [FamilyId, MysteryId],
+      [IDL.Opt(Mystery)],
       ['query'],
     ),
   'getNewPersonCandidateForFamily' : IDL.Func(
@@ -1719,6 +1742,16 @@ export const idlService = IDL.Service({
       ['query'],
     ),
   'listMysteries' : IDL.Func([], [IDL.Vec(Mystery)], ['query']),
+  'listMysteriesForFamily' : IDL.Func(
+      [FamilyId],
+      [IDL.Vec(Mystery)],
+      ['query'],
+    ),
+  'listMysteryContributionsForFamily' : IDL.Func(
+      [FamilyId, MysteryId],
+      [IDL.Vec(MysteryContribution)],
+      ['query'],
+    ),
   'listNewPersonCandidates' : IDL.Func(
       [],
       [IDL.Vec(NewPersonCandidate)],
@@ -1738,6 +1771,11 @@ export const idlService = IDL.Service({
     ),
   'listPendingMysteryContributions' : IDL.Func(
       [],
+      [IDL.Vec(MysteryContribution)],
+      ['query'],
+    ),
+  'listPendingMysteryContributionsForFamily' : IDL.Func(
+      [FamilyId],
       [IDL.Vec(MysteryContribution)],
       ['query'],
     ),
@@ -1820,6 +1858,11 @@ export const idlService = IDL.Service({
   'listStoriesForFamily' : IDL.Func([FamilyId], [IDL.Vec(Story)], ['query']),
   'listSuccessors' : IDL.Func([], [IDL.Vec(SuccessorDesignation)], ['query']),
   'listTimelineEvents' : IDL.Func([], [IDL.Vec(TimelineEvent)], ['query']),
+  'listTimelineEventsForFamily' : IDL.Func(
+      [FamilyId],
+      [IDL.Vec(TimelineEvent)],
+      ['query'],
+    ),
   'markConversationRead' : IDL.Func([ConversationId], [], []),
   'markConversationReadForFamily' : IDL.Func(
       [FamilyId, ConversationId],
@@ -1828,6 +1871,11 @@ export const idlService = IDL.Service({
     ),
   'markMysteryResolved' : IDL.Func(
       [MysteryId, IDL.Text, IDL.Vec(IDL.Text)],
+      [IDL.Opt(Mystery)],
+      [],
+    ),
+  'markMysteryResolvedForFamily' : IDL.Func(
+      [FamilyId, MysteryId, IDL.Text, IDL.Vec(IDL.Text)],
       [IDL.Opt(Mystery)],
       [],
     ),
@@ -2052,6 +2100,11 @@ export const idlService = IDL.Service({
       [IDL.Opt(MysteryContribution)],
       [],
     ),
+  'reviewMysteryContributionForFamily' : IDL.Func(
+      [FamilyId, MysteryContributionId, IDL.Bool],
+      [IDL.Opt(MysteryContribution)],
+      [],
+    ),
   'reviewReport' : IDL.Func([ReportId, ReportStatus], [IDL.Opt(Report)], []),
   'reviewReportForFamily' : IDL.Func(
       [FamilyId, ReportId, ReportStatus],
@@ -2159,6 +2212,11 @@ export const idlService = IDL.Service({
       [MysteryContribution],
       [],
     ),
+  'submitMysteryContributionForFamily' : IDL.Func(
+      [FamilyId, MysteryId, MysteryContributionType, IDL.Text],
+      [MysteryContribution],
+      [],
+    ),
   'submitRecipe' : IDL.Func(
       [
         IDL.Text,
@@ -2262,6 +2320,23 @@ export const idlService = IDL.Service({
     ),
   'updateCanonicalMystery' : IDL.Func(
       [
+        MysteryId,
+        IDL.Text,
+        IDL.Text,
+        IDL.Vec(IDL.Text),
+        IDL.Opt(IDL.Text),
+        IDL.Vec(IDL.Text),
+        IDL.Vec(IDL.Text),
+        IDL.Vec(IDL.Nat),
+        IDL.Vec(IDL.Nat),
+        MysteryStatus,
+      ],
+      [IDL.Opt(Mystery)],
+      [],
+    ),
+  'updateCanonicalMysteryForFamily' : IDL.Func(
+      [
+        FamilyId,
         MysteryId,
         IDL.Text,
         IDL.Text,
@@ -2847,6 +2922,7 @@ export const idlFactory = ({ IDL }) => {
     'possibilities' : IDL.Vec(IDL.Text),
     'relatedBranchId' : IDL.Opt(IDL.Text),
     'relatedSourceIds' : IDL.Vec(IDL.Nat),
+    'familyId' : FamilyId,
     'contributor' : IDL.Principal,
   });
   const ConversationId = IDL.Nat;
@@ -3166,6 +3242,30 @@ export const idlFactory = ({ IDL }) => {
     'personId' : PersonId,
     'canonicalName' : IDL.Text,
   });
+  const MysteryContributionId = IDL.Nat;
+  const MysteryContributionStatus = IDL.Variant({
+    'Approved' : IDL.Null,
+    'Rejected' : IDL.Null,
+    'Pending' : IDL.Null,
+  });
+  const MysteryContributionType = IDL.Variant({
+    'Lead' : IDL.Null,
+    'Note' : IDL.Null,
+    'Memory' : IDL.Null,
+    'Source' : IDL.Null,
+  });
+  const MysteryContribution = IDL.Record({
+    'id' : MysteryContributionId,
+    'status' : MysteryContributionStatus,
+    'createdAt' : IDL.Int,
+    'text' : IDL.Text,
+    'mysteryId' : MysteryId,
+    'reviewedAt' : IDL.Opt(IDL.Int),
+    'reviewedBy' : IDL.Opt(IDL.Principal),
+    'familyId' : FamilyId,
+    'contributionType' : MysteryContributionType,
+    'contributor' : IDL.Principal,
+  });
   const NotificationType = IDL.Variant({
     'ResearchSubmission' : IDL.Null,
     'ResearchApproved' : IDL.Null,
@@ -3187,29 +3287,6 @@ export const idlFactory = ({ IDL }) => {
     'read' : IDL.Bool,
     'recipient' : IDL.Principal,
     'message' : IDL.Text,
-  });
-  const MysteryContributionId = IDL.Nat;
-  const MysteryContributionStatus = IDL.Variant({
-    'Approved' : IDL.Null,
-    'Rejected' : IDL.Null,
-    'Pending' : IDL.Null,
-  });
-  const MysteryContributionType = IDL.Variant({
-    'Lead' : IDL.Null,
-    'Note' : IDL.Null,
-    'Memory' : IDL.Null,
-    'Source' : IDL.Null,
-  });
-  const MysteryContribution = IDL.Record({
-    'id' : MysteryContributionId,
-    'status' : MysteryContributionStatus,
-    'createdAt' : IDL.Int,
-    'text' : IDL.Text,
-    'mysteryId' : MysteryId,
-    'reviewedAt' : IDL.Opt(IDL.Int),
-    'reviewedBy' : IDL.Opt(IDL.Principal),
-    'contributionType' : MysteryContributionType,
-    'contributor' : IDL.Principal,
   });
   const TimelineLinkTarget = IDL.Variant({
     'Story' : StoryId,
@@ -3626,6 +3703,22 @@ export const idlFactory = ({ IDL }) => {
         [Mystery],
         [],
       ),
+    'createCanonicalMysteryForFamily' : IDL.Func(
+        [
+          FamilyId,
+          IDL.Text,
+          IDL.Text,
+          IDL.Vec(IDL.Text),
+          IDL.Opt(IDL.Text),
+          IDL.Vec(IDL.Text),
+          IDL.Vec(IDL.Text),
+          IDL.Vec(IDL.Nat),
+          IDL.Vec(IDL.Nat),
+          MysteryStatus,
+        ],
+        [Mystery],
+        [],
+      ),
     'createConversation' : IDL.Func([IDL.Text], [Result_23], []),
     'createConversationForFamily' : IDL.Func(
         [FamilyId, IDL.Text],
@@ -3788,6 +3881,11 @@ export const idlFactory = ({ IDL }) => {
     'getMyRelationshipRequestsForFamily' : IDL.Func(
         [FamilyId],
         [IDL.Vec(RelationshipRequest)],
+        ['query'],
+      ),
+    'getMysteryForFamily' : IDL.Func(
+        [FamilyId, MysteryId],
+        [IDL.Opt(Mystery)],
         ['query'],
       ),
     'getNewPersonCandidateForFamily' : IDL.Func(
@@ -4023,6 +4121,16 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'listMysteries' : IDL.Func([], [IDL.Vec(Mystery)], ['query']),
+    'listMysteriesForFamily' : IDL.Func(
+        [FamilyId],
+        [IDL.Vec(Mystery)],
+        ['query'],
+      ),
+    'listMysteryContributionsForFamily' : IDL.Func(
+        [FamilyId, MysteryId],
+        [IDL.Vec(MysteryContribution)],
+        ['query'],
+      ),
     'listNewPersonCandidates' : IDL.Func(
         [],
         [IDL.Vec(NewPersonCandidate)],
@@ -4042,6 +4150,11 @@ export const idlFactory = ({ IDL }) => {
       ),
     'listPendingMysteryContributions' : IDL.Func(
         [],
+        [IDL.Vec(MysteryContribution)],
+        ['query'],
+      ),
+    'listPendingMysteryContributionsForFamily' : IDL.Func(
+        [FamilyId],
         [IDL.Vec(MysteryContribution)],
         ['query'],
       ),
@@ -4128,6 +4241,11 @@ export const idlFactory = ({ IDL }) => {
     'listStoriesForFamily' : IDL.Func([FamilyId], [IDL.Vec(Story)], ['query']),
     'listSuccessors' : IDL.Func([], [IDL.Vec(SuccessorDesignation)], ['query']),
     'listTimelineEvents' : IDL.Func([], [IDL.Vec(TimelineEvent)], ['query']),
+    'listTimelineEventsForFamily' : IDL.Func(
+        [FamilyId],
+        [IDL.Vec(TimelineEvent)],
+        ['query'],
+      ),
     'markConversationRead' : IDL.Func([ConversationId], [], []),
     'markConversationReadForFamily' : IDL.Func(
         [FamilyId, ConversationId],
@@ -4136,6 +4254,11 @@ export const idlFactory = ({ IDL }) => {
       ),
     'markMysteryResolved' : IDL.Func(
         [MysteryId, IDL.Text, IDL.Vec(IDL.Text)],
+        [IDL.Opt(Mystery)],
+        [],
+      ),
+    'markMysteryResolvedForFamily' : IDL.Func(
+        [FamilyId, MysteryId, IDL.Text, IDL.Vec(IDL.Text)],
         [IDL.Opt(Mystery)],
         [],
       ),
@@ -4368,6 +4491,11 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Opt(MysteryContribution)],
         [],
       ),
+    'reviewMysteryContributionForFamily' : IDL.Func(
+        [FamilyId, MysteryContributionId, IDL.Bool],
+        [IDL.Opt(MysteryContribution)],
+        [],
+      ),
     'reviewReport' : IDL.Func([ReportId, ReportStatus], [IDL.Opt(Report)], []),
     'reviewReportForFamily' : IDL.Func(
         [FamilyId, ReportId, ReportStatus],
@@ -4475,6 +4603,11 @@ export const idlFactory = ({ IDL }) => {
         [MysteryContribution],
         [],
       ),
+    'submitMysteryContributionForFamily' : IDL.Func(
+        [FamilyId, MysteryId, MysteryContributionType, IDL.Text],
+        [MysteryContribution],
+        [],
+      ),
     'submitRecipe' : IDL.Func(
         [
           IDL.Text,
@@ -4578,6 +4711,23 @@ export const idlFactory = ({ IDL }) => {
       ),
     'updateCanonicalMystery' : IDL.Func(
         [
+          MysteryId,
+          IDL.Text,
+          IDL.Text,
+          IDL.Vec(IDL.Text),
+          IDL.Opt(IDL.Text),
+          IDL.Vec(IDL.Text),
+          IDL.Vec(IDL.Text),
+          IDL.Vec(IDL.Nat),
+          IDL.Vec(IDL.Nat),
+          MysteryStatus,
+        ],
+        [IDL.Opt(Mystery)],
+        [],
+      ),
+    'updateCanonicalMysteryForFamily' : IDL.Func(
+        [
+          FamilyId,
           MysteryId,
           IDL.Text,
           IDL.Text,

@@ -254,6 +254,7 @@ function makeMystery(overrides: Partial<Mystery> = {}): Mystery {
     createdAt: 1_700_000_000_000_000_000n,
     updatedAt: 1_700_000_000_000_000_000n,
     resolution: undefined,
+    familyId: DEFAULT_FAMILY_ID,
     ...overrides,
   };
 }
@@ -271,6 +272,7 @@ function makeContribution(
     createdAt: 1_700_000_000_000_000_000n,
     reviewedBy: undefined,
     reviewedAt: undefined,
+    familyId: DEFAULT_FAMILY_ID,
     ...overrides,
   };
 }

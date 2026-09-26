@@ -30,8 +30,8 @@ import InputValidation "../lib/input-validation";
 /// The Story review flow emits no notifications (OwnershipTypes.NotificationType
 /// has no Story variants), so this mixin takes no notifications parameter.
 ///
-/// Mystery endpoints are NOT part of this mixin: mysteries are not family-scoped
-/// by this build and remain in `mixins/family-history-api.mo`.
+/// Mystery endpoints are NOT part of this mixin: they live in the canonical
+/// family-scoped `mixins/mystery-scope-api.mo` (Tenancy 1C-D4-A).
 mixin (
   stories : List.List<Types.Story>,
   profiles : Map.Map<OwnershipTypes.PersonId, OwnershipTypes.PersonProfile>,

@@ -806,8 +806,138 @@ TEMPORARY Tenancy 1C compatibility wrappers that delegate with the default
 Norwood family (`\"norwood\"`); they contain no logic of their own and will be
 removed in a later build once every caller passes an explicit `familyId`.
 
-Family Mysteries are NOT family-scoped by this build: the Mystery endpoints keep
-their original single-family behavior and signatures.
+Family Mysteries are family-scoped. Every canonical Mystery endpoint takes an
+explicit `familyId` as its first argument and only ever reads or mutates a
+mystery or contribution whose `familyId` equals it, so a `mysteryId` or
+`contributionId` alone never crosses a family boundary: a foreign-family id
+behaves exactly like a not-found id (`?null` or `[]`), never a distinguishable
+error that would leak another family's existence. The legacy no-`familyId`
+Mystery endpoints listed after the canonical ones are TEMPORARY Tenancy 1C
+compatibility wrappers that delegate with the default Norwood family
+(`\"norwood\"`); they contain no logic of their own and will be removed in a
+later build once every caller passes an explicit `familyId`.
+
+Canonical family-scoped Mystery methods:
+
+- `listMysteriesForFamily(familyId : Text) : async [Mystery]` — query. Returns
+  every mystery in `familyId`, newest first. Requires an approved member or
+  active Steward of `familyId`; anonymous and signed-in but unapproved callers
+  are rejected with a trap. A mystery whose `familyId` differs is never returned,
+  so Family A mysteries never appear in a Family B call. Each mystery keeps
+  `knownFacts`, `possibilities`, and `relatedSourceIds`/`relatedArchiveItemIds`
+  separate so a theory never silently becomes a confirmed fact.
+- `getMysteryForFamily(familyId : Text, mysteryId : Nat) : async ?Mystery` —
+  query. Requires an approved member or active Steward of `familyId`. Returns the
+  mystery with `mysteryId` when it belongs to `familyId`, or `null` otherwise. A
+  mystery that exists under another family is never returned, so a `mysteryId`
+  alone cannot cross the family boundary.
+- `listMysteryContributionsForFamily(familyId : Text, mysteryId : Nat) : async [MysteryContribution]` —
+  query. Requires an approved member or active Steward of `familyId`. Returns
+  every contribution to `mysteryId` in `familyId`. A contribution whose
+  `familyId` differs, or whose target mystery belongs to another family, is never
+  returned.
+- `listPendingMysteryContributionsForFamily(familyId : Text) : async [MysteryContribution]` —
+  query. Active Steward of `familyId` only. Returns every mystery contribution in
+  `familyId` currently in `#Pending` state. A contribution whose `familyId`
+  differs is never returned.
+- `submitMysteryContributionForFamily(familyId : Text, mysteryId : Nat, contributionType : MysteryContributionType, text : Text) : async MysteryContribution` —
+  update. Submits a mystery contribution (a note, memory, possible lead, or
+  source/document reference) to a mystery in `familyId`. Requires an approved
+  member or active Steward of `familyId`; anonymous and signed-in but unapproved
+  callers are rejected with a trap. The target mystery must belong to `familyId`
+  — a Family A member can never contribute to a Family B mystery, and a
+  foreign-family `mysteryId` traps with `\"Mystery not found\"`. The caller is
+  recorded as the `contributor`, and the stored contribution's `familyId` is the
+  requested `familyId`. The contribution is stored in `#Pending` state and waits
+  for a Steward of `familyId` to review it before altering the canonical mystery
+  record.
+- `reviewMysteryContributionForFamily(familyId : Text, id : Nat, approve : Bool) : async ?MysteryContribution` —
+  update. Active Steward of `familyId` only; a Steward of another family cannot
+  review the contribution. Approves or rejects a pending mystery contribution in
+  `familyId`, recording the reviewer and review time. Returns the updated
+  contribution, or `null` when no pending contribution with that id belongs to
+  `familyId`.
+- `createCanonicalMysteryForFamily(familyId : Text, title : Text, description : Text, relatedMemberIds : [Text], relatedBranchId : ?Text, knownFacts : [Text], possibilities : [Text], relatedSourceIds : [Nat], relatedArchiveItemIds : [Nat], status : MysteryStatus) : async Mystery` —
+  update. Active Steward of `familyId` only. Creates a canonical mystery directly
+  in `familyId`. The new mystery's `familyId` is the requested `familyId`; every
+  related person must belong to `familyId`, and every linked Archive media id
+  must belong to `familyId`.
+- `updateCanonicalMysteryForFamily(familyId : Text, id : Nat, title : Text, description : Text, relatedMemberIds : [Text], relatedBranchId : ?Text, knownFacts : [Text], possibilities : [Text], relatedSourceIds : [Nat], relatedArchiveItemIds : [Nat], status : MysteryStatus) : async ?Mystery` —
+  update. Active Steward of `familyId` only; a Steward of another family cannot
+  edit the mystery. Edits a canonical mystery in `familyId`, preserving its
+  original `contributor`, `createdAt`, and any existing `resolution`. Returns the
+  updated mystery, or `null` when no mystery with that id belongs to `familyId`.
+- `markMysteryResolvedForFamily(familyId : Text, id : Nat, summary : Text, supportingEvidence : [Text]) : async ?Mystery` —
+  update. Active Steward of `familyId` only; a Steward of another family cannot
+  resolve the mystery. Marks a mystery in `familyId` `#Resolved`, recording a
+  resolution summary and supporting evidence while preserving the prior
+  theories/history (the research trail is never deleted). Returns the updated
+  mystery, or `null` when no mystery with that id belongs to `familyId`.
+- `listTimelineEventsForFamily(familyId : Text) : async [TimelineEvent]` — query.
+  Requires an approved member or active Steward of `familyId`. Returns timeline
+  events aggregated from existing canonical data in `familyId` only: PersonProfile
+  timeline entries, ArchiveItem year/era, Story era/date, and Mystery records.
+  Empty eras are never fabricated. Each event carries an evidence badge and a link
+  target (Person Profile, Story, Archive Item, or Mystery).
+
+The following single-family endpoints are TEMPORARY Tenancy 1C compatibility
+wrappers. Each delegates to its family-scoped counterpart with the default family
+id (`\"norwood\"`), so current Norwood behavior is unchanged. They contain no
+business logic of their own.
+
+- `listMysteries() : async [Mystery]` — query. TEMPORARY Tenancy 1C compatibility
+  wrapper for `listMysteriesForFamily`, delegating with the default family id
+  (`\"norwood\"`). Preserves the pre-tenancy behavior exactly: it is an ungated
+  public query. Returns all mysteries (visible to viewers). Each mystery keeps
+  `knownFacts`, `possibilities`, and
+  `relatedSourceIds`/`relatedArchiveItemIds` separate so a theory never silently
+  becomes a confirmed fact.
+- `submitMysteryContribution(mysteryId : Nat, contributionType : MysteryContributionType, text : Text) : async MysteryContribution` —
+  update. TEMPORARY Tenancy 1C compatibility wrapper for
+  `submitMysteryContributionForFamily`, delegating with the default family id
+  (`\"norwood\"`). Submits a mystery contribution (a note, memory, possible lead,
+  or source/document reference). Requires an approved family member (a caller
+  holding at least one `#Approved` profile claim, or a Family Steward);
+  anonymous and signed-in but unapproved callers are rejected with a trap. The
+  caller is recorded as the `contributor`. The contribution is stored in
+  `#Pending` state and waits for a Family Steward to review it before altering
+  the canonical mystery record.
+- `listPendingMysteryContributions() : async [MysteryContribution]` — query.
+  TEMPORARY Tenancy 1C compatibility wrapper for
+  `listPendingMysteryContributionsForFamily`, delegating with the default family
+  id (`\"norwood\"`). Family Steward only. Returns all mystery contributions
+  currently in `#Pending` state.
+- `reviewMysteryContribution(id : Nat, approve : Bool) : async ?MysteryContribution` —
+  update. TEMPORARY Tenancy 1C compatibility wrapper for
+  `reviewMysteryContributionForFamily`, delegating with the default family id
+  (`\"norwood\"`). Family Steward only. Approves or rejects a pending mystery
+  contribution, recording the reviewer and review time. Returns the updated
+  contribution, or `null` when no pending contribution with that id exists.
+- `createCanonicalMystery(title : Text, description : Text, relatedMemberIds : [Text], relatedBranchId : ?Text, knownFacts : [Text], possibilities : [Text], relatedSourceIds : [Nat], relatedArchiveItemIds : [Nat], status : MysteryStatus) : async Mystery` —
+  update. TEMPORARY Tenancy 1C compatibility wrapper for
+  `createCanonicalMysteryForFamily`, delegating with the default family id
+  (`\"norwood\"`). Family Steward only. Creates a canonical mystery directly.
+- `updateCanonicalMystery(id : Nat, title : Text, description : Text, relatedMemberIds : [Text], relatedBranchId : ?Text, knownFacts : [Text], possibilities : [Text], relatedSourceIds : [Nat], relatedArchiveItemIds : [Nat], status : MysteryStatus) : async ?Mystery` —
+  update. TEMPORARY Tenancy 1C compatibility wrapper for
+  `updateCanonicalMysteryForFamily`, delegating with the default family id
+  (`\"norwood\"`). Family Steward only. Edits a canonical mystery, preserving its
+  original `contributor`, `createdAt`, and any existing `resolution`. Returns the
+  updated mystery, or `null` when no mystery with that id exists.
+- `markMysteryResolved(id : Nat, summary : Text, supportingEvidence : [Text]) : async ?Mystery` —
+  update. TEMPORARY Tenancy 1C compatibility wrapper for
+  `markMysteryResolvedForFamily`, delegating with the default family id
+  (`\"norwood\"`). Family Steward only. Marks a mystery `#Resolved`, recording a
+  resolution summary and supporting evidence while preserving the prior
+  theories/history (the research trail is never deleted). Returns the updated
+  mystery, or `null` when no mystery with that id exists.
+- `listTimelineEvents() : async [TimelineEvent]` — query. TEMPORARY Tenancy 1C
+  compatibility wrapper for `listTimelineEventsForFamily`, delegating with the
+  default family id (`\"norwood\"`). Preserves the pre-tenancy behavior exactly:
+  it is an ungated public query. Returns timeline events aggregated from
+  existing canonical data only: PersonProfile timeline entries, ArchiveItem
+  year/era, Story era/date, and Mystery records. Empty eras are never fabricated.
+  Each event carries an evidence badge and a link target (Person Profile, Story,
+  Archive Item, or Mystery).
 
 Canonical family-scoped Story methods:
 
@@ -915,44 +1045,6 @@ contain no business logic of their own.
   (`\"norwood\"`). Family Steward only. Edits a canonical story, preserving its
   original `contributor` and `createdAt`. Returns the updated story, or `null`
   when no story with that id exists.
-
-Family Mystery methods (not family-scoped by this build):
-
-- `listMysteries() : async [Mystery]` — query. Returns all mysteries (visible to
-  viewers). Each mystery keeps `knownFacts`, `possibilities`, and
-  `relatedSourceIds`/`relatedArchiveItemIds` separate so a theory never silently
-  becomes a confirmed fact.
-- `submitMysteryContribution(mysteryId : Nat, contributionType : MysteryContributionType, text : Text) : async MysteryContribution` —
-  update. Submits a mystery contribution (a note, memory, possible lead, or
-  source/document reference). Requires an approved family member (a caller
-  holding at least one `#Approved` profile claim, or a Family Steward);
-  anonymous and signed-in but unapproved callers are rejected with a trap. The
-  caller is recorded as the `contributor`. The contribution is stored in
-  `#Pending` state and waits for a Family Steward to review it before altering
-  the canonical mystery record.
-- `listPendingMysteryContributions() : async [MysteryContribution]` — query.
-  Family Steward only. Returns all mystery contributions currently in `#Pending`
-  state.
-- `reviewMysteryContribution(id : Nat, approve : Bool) : async ?MysteryContribution` —
-  update. Family Steward only. Approves or rejects a pending mystery
-  contribution, recording the reviewer and review time. Returns the updated
-  contribution, or `null` when no pending contribution with that id exists.
-- `createCanonicalMystery(title : Text, description : Text, relatedMemberIds : [Text], relatedBranchId : ?Text, knownFacts : [Text], possibilities : [Text], relatedSourceIds : [Nat], relatedArchiveItemIds : [Nat], status : MysteryStatus) : async Mystery` —
-  update. Family Steward only. Creates a canonical mystery directly.
-- `updateCanonicalMystery(id : Nat, title : Text, description : Text, relatedMemberIds : [Text], relatedBranchId : ?Text, knownFacts : [Text], possibilities : [Text], relatedSourceIds : [Nat], relatedArchiveItemIds : [Nat], status : MysteryStatus) : async ?Mystery` —
-  update. Family Steward only. Edits a canonical mystery, preserving its
-  original `contributor`, `createdAt`, and any existing `resolution`. Returns the
-  updated mystery, or `null` when no mystery with that id exists.
-- `markMysteryResolved(id : Nat, summary : Text, supportingEvidence : [Text]) : async ?Mystery` —
-  update. Family Steward only. Marks a mystery `#Resolved`, recording a
-  resolution summary and supporting evidence while preserving the prior
-  theories/history (the research trail is never deleted). Returns the updated
-  mystery, or `null` when no mystery with that id exists.
-- `listTimelineEvents() : async [TimelineEvent]` — query. Returns timeline
-  events aggregated from existing canonical data only: PersonProfile timeline
-  entries, ArchiveItem year/era, Story era/date, and Mystery records. Empty eras
-  are never fabricated. Each event carries an evidence badge and a link target
-  (Person Profile, Story, Archive Item, or Mystery).
 
 ### Family Recipes
 
@@ -1981,20 +2073,28 @@ tenant boundary), `title`, `storyText`,
 `evidenceStatus` (`\"Documented\"`/`\"FamilyHistory\"`/`\"PersonalMemory\"`/`\"Unresolved\"`),
 `relatedArchiveItemCount` (`Nat`), `createdAt` (`Int`, nanoseconds since epoch),
 `updatedAt` (`Int`), and `status` (`\"Pending\"`/`\"Approved\"`/`\"Rejected\"`).
-`mystery` rows (primary key `id`) carry `title`, `description`,
+`mystery` rows (primary key `id`) carry `familyId` (the owning family — the
+tenant boundary), `title`, `description`,
 `relatedMemberCount` (`Nat`), `relatedBranchId` (`\"\"` when absent),
 `knownFactCount` (`Nat`), `possibilityCount` (`Nat`), `relatedSourceCount`
 (`Nat`), `relatedArchiveItemCount` (`Nat`), `status`
 (`\"Open\"`/`\"Researching\"`/`\"PartiallyResolved\"`/`\"Resolved\"`), `contributor`
 (principal text), `createdAt` (`Int`), `updatedAt` (`Int`), and `resolved`
 (`Bool`, whether the mystery has a resolution). `mysteryContribution` rows
-(primary key `id`) carry `mysteryId` (`Nat`), `contributionType`
+(primary key `id`) carry `familyId` (the owning family — the tenant boundary),
+`mysteryId` (`Nat`), `contributionType`
 (`\"Note\"`/`\"Memory\"`/`\"Lead\"`/`\"Source\"`), `text`, `contributor` (principal
 text), `status` (`\"Pending\"`/`\"Approved\"`/`\"Rejected\"`), `createdAt` (`Int`),
 `reviewedBy` (principal text, `\"\"` when unreviewed), and `reviewedAt` (`Int`,
 `0` when unreviewed). The array-valued fields (`relatedMemberIds`,
 `knownFacts`, `possibilities`, `relatedSourceIds`, `relatedArchiveItemIds`)
-are exposed as counts since OQL has no array value type.
+are exposed as counts since OQL has no array value type. Both the `mystery` and
+`mysteryContribution` entities are `.controllerOnly()`, so only the platform
+controller reads their rows through `schema()`/`execute()`; end users read
+Mystery data through the family-scoped Mystery API methods, which enforce the
+same `familyId` boundary. The `familyId` column on each row is the tenant
+boundary, so a controller-side query can separate Family A mysteries and
+contributions from Family B's.
 
 The recipe entity is a flattened view of the corresponding records. `recipe`
 rows (primary key `recipeId`, a `Nat`) carry `familyId` (the tenant boundary —
@@ -2315,20 +2415,28 @@ the caller is not an active Steward of that family (an ACTIVE persisted
 stories. Every returned or mutated story must carry `Story.familyId == familyId`,
 so a `storyId` alone never crosses the family boundary.
 
-The Family Mysteries methods gate on sign-in and role.
-`submitMysteryContribution` requires a signed-in (non-anonymous)
-caller and traps with `\"Sign-in required to contribute to a mystery\"` for an
-anonymous caller. The Family
-Steward methods — `listPendingMysteryContributions`,
-`reviewMysteryContribution`, `createCanonicalMystery`,
-`updateCanonicalMystery`, and `markMysteryResolved` — are Family Steward only
-and trap
-with `\"Unauthorized: Only Family Stewards can ...\"` when the caller is not an
-active Family Steward (an ACTIVE persisted `StewardRecord`). `listMysteries` and
-`listTimelineEvents` are
-readable by any caller (respecting the existing privacy conventions). Mysteries
-are NOT family-scoped by this build: the Mystery endpoints keep their original
-single-family behavior and signatures.
+The Family Mysteries methods gate on sign-in and role. Every canonical
+family-scoped Mystery endpoint resolves its membership gate through the same
+canonical family-scoped helper (`requireApprovedFamilyMemberForFamily`), so
+`listMysteriesForFamily`, `getMysteryForFamily`,
+`listMysteryContributionsForFamily`, `submitMysteryContributionForFamily`, and
+`listTimelineEventsForFamily` require a signed-in approved member or Steward of
+the requested family; an anonymous caller is rejected with a trap carrying
+`\"Unauthorized: You must be signed in\"`, and a signed-in but unapproved caller
+is rejected with the stable, non-technical family-membership-required message.
+The Steward methods — `listPendingMysteryContributionsForFamily`,
+`reviewMysteryContributionForFamily`, `createCanonicalMysteryForFamily`,
+`updateCanonicalMysteryForFamily`, and `markMysteryResolvedForFamily` — are
+active Steward of the requested family only and trap with
+`\"Unauthorized: Only Family Stewards can perform this action\"` when the caller
+is not an active Steward of that family (an ACTIVE persisted `StewardRecord`). A
+Steward of one family can never review another family's mysteries. Every
+returned or mutated mystery and contribution must carry `familyId == familyId`,
+so a `mysteryId` or `contributionId` alone never crosses the family boundary.
+The TEMPORARY Tenancy 1C wrappers `listMysteries` and `listTimelineEvents`
+preserve their pre-tenancy behavior exactly: they were ungated public queries
+and remain ungated, delegating to the canonical family-scoped logic with the
+default family id (`\"norwood\"`).
 
 The Family Recipes methods gate on sign-in and role. Every canonical
 family-scoped recipe endpoint and every TEMPORARY Tenancy 1C wrapper resolves its
@@ -2726,14 +2834,18 @@ already reference the caller's stable principal (`requestingUserId`,
   `#Rejected`.
 - `Resolution` fields: `summary` (`Text`), `supportingEvidence` (`[Text]`),
   `resolvedAt` (`Int`, nanoseconds since epoch), and `resolvedBy` (`Principal`).
-- `Mystery` fields: `id` (`Nat`), `title` (`Text`), `description` (`Text`),
+- `Mystery` fields: `familyId` (`FamilyId`, the owning family — the tenant
+  boundary; pre-tenancy records migrate to the default family id `\"norwood\"`),
+  `id` (`Nat`), `title` (`Text`), `description` (`Text`),
   `relatedMemberIds` (`[Text]`), `relatedBranchId` (`?Text`), `knownFacts`
   (`[Text]`), `possibilities` (`[Text]`, competing theories/possibilities kept
   separate from known facts), `relatedSourceIds` (`[Nat]`),
   `relatedArchiveItemIds` (`[Nat]`), `status`, `contributor` (`Principal`),
   `createdAt` (`Int`), `updatedAt` (`Int`), and `resolution` (`?Resolution`,
   `null` until resolved).
-- `MysteryContribution` fields: `id` (`Nat`), `mysteryId` (`Nat`),
+- `MysteryContribution` fields: `familyId` (`FamilyId`, the owning family — the
+  tenant boundary; pre-tenancy records migrate to the default family id
+  `\"norwood\"`), `id` (`Nat`), `mysteryId` (`Nat`),
   `contributionType`, `text` (`Text`), `contributor` (`Principal`), `status`,
   `createdAt` (`Int`), `reviewedBy` (`?Principal`, `null` when unreviewed), and
   `reviewedAt` (`?Int`, `null` when unreviewed).
@@ -3070,19 +3182,25 @@ no-`familyId` wrappers (`submitStory`, `approveStory`, `rejectStory`,
 `addCanonicalStory`, `updateCanonicalStory`, `listPendingStories`,
 `listApprovedStories`) behave identically for the default Norwood family.
 
-Family Mysteries follow a steward-driven lifecycle. Stewards create canonical
-mysteries via `createCanonicalMystery` and edit them via
-`updateCanonicalMystery`. Family members contribute a note, memory, possible
-lead, or source reference via `submitMysteryContribution`, which stores the
-contribution in `#Pending` state; a Family Steward then calls
-`reviewMysteryContribution` to approve or reject it before it alters the
+Family Mysteries follow a steward-driven lifecycle, scoped to a family. Stewards
+create canonical mysteries via `createCanonicalMysteryForFamily` and edit them
+via `updateCanonicalMysteryForFamily`. Family members contribute a note, memory,
+possible lead, or source reference via `submitMysteryContributionForFamily`,
+which stores the contribution in `#Pending` state with `familyId` set to the
+requested family; a Steward of that family then calls
+`reviewMysteryContributionForFamily` to approve or reject it before it alters the
 canonical mystery record. A mystery's `status` moves through `#Open`,
 `#Researching`, `#PartiallyResolved`, and `#Resolved`. Marking a mystery
-`#Resolved` via `markMysteryResolved` records a resolution summary and supporting
-evidence while preserving the prior theories/history — the research trail is
-never deleted. There is no async job to poll; the frontend can call
-`listMysteries` (viewers) or `listPendingMysteryContributions` (steward) to
-observe the current state.
+`#Resolved` via `markMysteryResolvedForFamily` records a resolution summary and
+supporting evidence while preserving the prior theories/history — the research
+trail is never deleted. There is no async job to poll; the frontend can call
+`listMysteriesForFamily` (members) or
+`listPendingMysteryContributionsForFamily` (steward) to observe the current
+state. The legacy no-`familyId` wrappers (`createCanonicalMystery`,
+`updateCanonicalMystery`, `submitMysteryContribution`,
+`reviewMysteryContribution`, `markMysteryResolved`, `listMysteries`,
+`listPendingMysteryContributions`) behave identically for the default Norwood
+family.
 
 Family Recipes follow a submit → approve/reject lifecycle, scoped to a family.
 `submitRecipeForFamily` stores the recipe in `#Pending` state in the requested
@@ -3346,19 +3464,29 @@ no async job to poll; the frontend can call the list methods (steward) or
   again yields the same story, preserving the original `contributor` and
   `createdAt`. A story in another family is never touched — the update returns
   `null`.
-- `submitMysteryContribution` is not idempotent: each call stores a new
+- `submitMysteryContributionForFamily` (and its TEMPORARY Tenancy 1C wrapper
+  `submitMysteryContribution`) is not idempotent: each call stores a new
   contribution with a fresh id. Retrying a submission that actually succeeded
-  creates a duplicate contribution.
-- `reviewMysteryContribution` is idempotent: reviewing an already-reviewed (or
+  creates a duplicate contribution. The target mystery must belong to the
+  requested `familyId`; a foreign-family `mysteryId` traps with
+  `\"Mystery not found\"`.
+- `reviewMysteryContributionForFamily` (and its TEMPORARY Tenancy 1C wrapper
+  `reviewMysteryContribution`) is idempotent: reviewing an already-reviewed (or
   nonexistent) contribution returns `null` and changes nothing. It only
-  transitions contributions currently in `#Pending` state.
-- `createCanonicalMystery` is not idempotent: each call stores a new mystery
-  with a fresh id. `updateCanonicalMystery` is idempotent: applying the same edit
+  transitions contributions currently in `#Pending` state that belong to the
+  requested `familyId`.
+- `createCanonicalMysteryForFamily` (and its TEMPORARY Tenancy 1C wrapper
+  `createCanonicalMystery`) is not idempotent: each call stores a new mystery
+  with a fresh id. `updateCanonicalMysteryForFamily` (and its TEMPORARY Tenancy
+  1C wrapper `updateCanonicalMystery`) is idempotent: applying the same edit
   again yields the same mystery, preserving the original `contributor`,
-  `createdAt`, and any existing `resolution`.
-- `markMysteryResolved` is idempotent: marking an already-resolved (or
+  `createdAt`, and any existing `resolution`. A mystery in another family is
+  never touched — the update returns `null`.
+- `markMysteryResolvedForFamily` (and its TEMPORARY Tenancy 1C wrapper
+  `markMysteryResolved`) is idempotent: marking an already-resolved (or
   nonexistent) mystery resolved returns `null` and changes nothing. It preserves
-  the prior theories/history and never deletes the research trail.
+  the prior theories/history and never deletes the research trail. A mystery in
+  another family is never touched.
 - `submitRecipe` is not idempotent: each call stores a new recipe with a fresh
   id. Retrying a submission that actually succeeded creates a duplicate recipe.
   It validates `originatingPersonId` at submission: it traps with `\"Originating
@@ -3616,16 +3744,30 @@ no async job to poll; the frontend can call the list methods (steward) or
   another family is treated exactly like a nonexistent story: the single-record
   reads return `null` and the mutations return `null` without touching the
   foreign record, so a `storyId` alone never crosses the family boundary.
-  `submitMysteryContribution` traps with `\"Sign-in
-  required to contribute to a mystery\"` for an anonymous caller. The Family
+  `submitMysteryContributionForFamily` (and its TEMPORARY Tenancy 1C wrapper
+  `submitMysteryContribution`) traps with `\"Mystery not found\"` when the target
+  mystery does not belong to the requested family. The Family
   Steward Mystery methods trap with `\"Unauthorized: Only Family Stewards
-  can ...\"` when the caller is not an active Family Steward (an ACTIVE persisted
-  `StewardRecord`).
+  can perform this action\"` when the caller is not an active Family Steward of
+  the   requested family (an ACTIVE persisted `StewardRecord`). A mystery or
+  contribution that belongs to another family is treated exactly like a
+  nonexistent record: the single-record reads return `null` and the mutations
+  return `null` without touching the foreign record, so a `mysteryId` or
+  `contributionId` alone never crosses the family boundary. A foreign-family
+  `mysteryId`/`contributionId` therefore resolves as not-found (`?null` or `[]`)
+  rather than a distinguishable error, so a caller cannot use the response to
+  learn whether another family's record exists. The one exception is
+  `submitMysteryContributionForFamily` (and its TEMPORARY Tenancy 1C wrapper
+  `submitMysteryContribution`), which traps with `\"Mystery not found\"` when the
+  target mystery does not belong to the requested family — the same message it
+  produces for a mystery that does not exist at all.
 - `approveStoryForFamily`, `rejectStoryForFamily`,
   `updateCanonicalStoryForFamily` (and their TEMPORARY Tenancy 1C wrappers
   `approveStory`, `rejectStory`, `updateCanonicalStory`),
+  `reviewMysteryContributionForFamily`, `updateCanonicalMysteryForFamily`, and
+  `markMysteryResolvedForFamily` (and their TEMPORARY Tenancy 1C wrappers
   `reviewMysteryContribution`, `updateCanonicalMystery`, and
-  `markMysteryResolved` return `null` (they do not trap) when the target id does
+  `markMysteryResolved`) return `null` (they do not trap) when the target id does
   not exist, belongs to another family, or is not in the expected state.
 - Stories and Mysteries reference existing person ids and archive item ids; they
   never create duplicate Person records or duplicate source files.

@@ -976,6 +976,7 @@ type EvidenceStatus__824382737 = EvidenceStatus__563034664;
 type EvidenceStatus__952143850 =
   {#Documented; #FamilyHistory; #PersonalMemory; #Unresolved};
 type ExternalBlob__220559234 = Blob;
+type FamilyId__1049127122 = Text;
 type FamilyId__145942548 = Text;
 type FamilyId__228780613 = Text;
 type FamilyId__284510423 = Text;
@@ -1224,6 +1225,7 @@ type MysteryContribution__1055347275 =
     contributionType : MysteryContributionType__664156237;
     contributor : Principal;
     createdAt : Int;
+    familyId : FamilyId__629197896;
     id : MysteryContributionId__727222479;
     mysteryId : MysteryId__216886028;
     reviewedAt : ?Int;
@@ -1295,6 +1297,7 @@ type Mystery__227220973 =
     contributor : Principal;
     createdAt : Int;
     description : Text;
+    familyId : FamilyId__629197896;
     id : MysteryId__216886028;
     knownFacts : [Text];
     possibilities : [Text];
@@ -1768,6 +1771,11 @@ type NewActor__937507792 =
       List__836382695<NewRelationshipProposal__340140100>;
     researchSources : List__836382695<NewSourceRecord__864208503>
   };
+type NewActor__949499829 =
+  {
+    mysteries : List__836382695<NewMystery__1028468955>;
+    mysteryContributions : List__836382695<NewMysteryContribution__868989606>
+  };
 type NewActor__960473320 =
   {
     accessControlState :
@@ -1935,6 +1943,43 @@ type NewMessage__810052061 =
     senderAccountId : Principal;
     senderPersonId : Text;
     status : {#Blocked; #Sent}
+  };
+type NewMysteryContribution__868989606 =
+  {
+    contributionType : {#Lead; #Memory; #Note; #Source};
+    contributor : Principal;
+    createdAt : Int;
+    familyId : FamilyId__1049127122;
+    id : Nat;
+    mysteryId : Nat;
+    reviewedAt : ?Int;
+    reviewedBy : ?Principal;
+    status : {#Approved; #Pending; #Rejected};
+    text : Text
+  };
+type NewMystery__1028468955 =
+  {
+    contributor : Principal;
+    createdAt : Int;
+    description : Text;
+    familyId : FamilyId__1049127122;
+    id : Nat;
+    knownFacts : [Text];
+    possibilities : [Text];
+    relatedArchiveItemIds : [Nat];
+    relatedBranchId : ?Text;
+    relatedMemberIds : [Text];
+    relatedSourceIds : [Nat];
+    resolution :
+      ?{
+         resolvedAt : Int;
+         resolvedBy : Principal;
+         summary : Text;
+         supportingEvidence : [Text]
+       };
+    status : {#Open; #PartiallyResolved; #Researching; #Resolved};
+    title : Text;
+    updatedAt : Int
   };
 type NewNewPersonCandidate__515114504 =
   {
@@ -2681,6 +2726,11 @@ type OldActor__241283283 =
     relationshipRequests : List__836382695<OldRelationshipRequest__779691310>;
     stewards : List__836382695<OldStewardRecord__902725372>
   };
+type OldActor__263139629 =
+  {
+    mysteries : List__836382695<OldMystery__794241011>;
+    mysteryContributions : List__836382695<OldMysteryContribution__386803244>
+  };
 type OldActor__358288849 =
   {
     archiveItems : List__836382695<OldArchiveItem__6033014>;
@@ -3109,6 +3159,41 @@ type OldMessage__438566306 =
     senderAccountId : Principal;
     senderPersonId : Text;
     status : {#Blocked; #Sent}
+  };
+type OldMysteryContribution__386803244 =
+  {
+    contributionType : {#Lead; #Memory; #Note; #Source};
+    contributor : Principal;
+    createdAt : Int;
+    id : Nat;
+    mysteryId : Nat;
+    reviewedAt : ?Int;
+    reviewedBy : ?Principal;
+    status : {#Approved; #Pending; #Rejected};
+    text : Text
+  };
+type OldMystery__794241011 =
+  {
+    contributor : Principal;
+    createdAt : Int;
+    description : Text;
+    id : Nat;
+    knownFacts : [Text];
+    possibilities : [Text];
+    relatedArchiveItemIds : [Nat];
+    relatedBranchId : ?Text;
+    relatedMemberIds : [Text];
+    relatedSourceIds : [Nat];
+    resolution :
+      ?{
+         resolvedAt : Int;
+         resolvedBy : Principal;
+         summary : Text;
+         supportingEvidence : [Text]
+       };
+    status : {#Open; #PartiallyResolved; #Researching; #Resolved};
+    title : Text;
+    updatedAt : Int
   };
 type OldNewPersonCandidate__279624242 =
   {
@@ -5388,7 +5473,8 @@ type UserRole__968740559 = {#admin; #guest; #user};
   "20260924_000000" : (old : OldActor__959457706) -> NewActor__1053168963;
   "20260924_120000" : (old : OldActor__124006765) -> NewActor__861270690;
   "20260925_000000" : (old : OldActor__3928544) -> NewActor__963881556;
-  "20260926_000000" : (old : OldActor__624391799) -> NewActor__341238509
+  "20260926_000000" : (old : OldActor__624391799) -> NewActor__341238509;
+  "20260927_000000" : (old : OldActor__263139629) -> NewActor__949499829
 }
 actor  {
   stable accessControlState :

@@ -370,6 +370,7 @@ export interface Mystery {
   'possibilities' : Array<string>,
   'relatedBranchId' : [] | [string],
   'relatedSourceIds' : Array<bigint>,
+  'familyId' : FamilyId,
   'contributor' : Principal,
 }
 export interface MysteryContribution {
@@ -380,6 +381,7 @@ export interface MysteryContribution {
   'mysteryId' : MysteryId,
   'reviewedAt' : [] | [bigint],
   'reviewedBy' : [] | [Principal],
+  'familyId' : FamilyId,
   'contributionType' : MysteryContributionType,
   'contributor' : Principal,
 }
@@ -1340,10 +1342,32 @@ export interface _SERVICE {
     Post
   >,
   /**
-   * / Creates a canonical mystery directly (steward only).
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `createCanonicalMysteryForFamily`.
    */
   'createCanonicalMystery' : ActorMethod<
     [
+      string,
+      string,
+      Array<string>,
+      [] | [string],
+      Array<string>,
+      Array<string>,
+      Array<bigint>,
+      Array<bigint>,
+      MysteryStatus,
+    ],
+    Mystery
+  >,
+  /**
+   * / Creates a canonical mystery directly in `familyId` (Steward only). Active
+   * / Steward of `familyId` only. The new mystery's `familyId` is the requested
+   * / `familyId`; every related person must belong to `familyId`, and every
+   * / linked Archive media id must belong to `familyId`.
+   */
+  'createCanonicalMysteryForFamily' : ActorMethod<
+    [
+      FamilyId,
       string,
       string,
       Array<string>,
@@ -1634,6 +1658,12 @@ export interface _SERVICE {
     [FamilyId],
     Array<RelationshipRequest>
   >,
+  /**
+   * / Returns a single mystery by id when it belongs to `familyId`. Approved
+   * / members of `familyId` only. A mystery that exists under another family is
+   * / never returned, so a `mysteryId` alone cannot cross the family boundary.
+   */
+  'getMysteryForFamily' : ActorMethod<[FamilyId, MysteryId], [] | [Mystery]>,
   /**
    * / Returns the candidate with `candidateId` when it belongs to `familyId`, or
    * / `null` otherwise. Requires an active Steward of `familyId`, matching the
@@ -2066,9 +2096,27 @@ export interface _SERVICE {
     Array<Message>
   >,
   /**
-   * / Lists all mysteries (visible to viewers).
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `listMysteriesForFamily`.
+   * / Preserves the pre-tenancy behavior exactly: the legacy `listMysteries` was
+   * / an ungated public query, so this wrapper does not add a membership gate.
    */
   'listMysteries' : ActorMethod<[], Array<Mystery>>,
+  /**
+   * / Lists every mystery in `familyId`, newest first. Approved members of
+   * / `familyId` only. A mystery whose `familyId` differs is never returned, so
+   * / Family A mysteries never appear in a Family B call.
+   */
+  'listMysteriesForFamily' : ActorMethod<[FamilyId], Array<Mystery>>,
+  /**
+   * / Lists every contribution to `mysteryId` in `familyId`. Approved members of
+   * / `familyId` only. A contribution whose `familyId` differs, or whose target
+   * / mystery belongs to another family, is never returned, so a `mysteryId` or
+   * / `contributionId` alone cannot cross the family boundary.
+   */
+  'listMysteryContributionsForFamily' : ActorMethod<
+    [FamilyId, MysteryId],
+    Array<MysteryContribution>
+  >,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for
    * / `listNewPersonCandidatesForFamily`.
@@ -2107,10 +2155,20 @@ export interface _SERVICE {
     Array<ArchiveItem>
   >,
   /**
-   * / Lists all mystery contributions in pending state (steward only).
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `listPendingMysteryContributionsForFamily`.
    */
   'listPendingMysteryContributions' : ActorMethod<
     [],
+    Array<MysteryContribution>
+  >,
+  /**
+   * / Lists every mystery contribution in `familyId` currently in pending state.
+   * / Active Steward of `familyId` only. A contribution whose `familyId` differs
+   * / is never returned.
+   */
+  'listPendingMysteryContributionsForFamily' : ActorMethod<
+    [FamilyId],
     Array<MysteryContribution>
   >,
   /**
@@ -2257,10 +2315,18 @@ export interface _SERVICE {
    */
   'listSuccessors' : ActorMethod<[], Array<SuccessorDesignation>>,
   /**
-   * / Lists timeline events aggregated from existing canonical data (visible to
-   * / viewers).
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `listTimelineEventsForFamily`. Preserves the pre-tenancy behavior exactly:
+   * / the legacy `listTimelineEvents` was an ungated public query, so this
+   * / wrapper does not add a membership gate.
    */
   'listTimelineEvents' : ActorMethod<[], Array<TimelineEvent>>,
+  /**
+   * / Lists timeline events aggregated from existing canonical data in `familyId`
+   * / (visible to approved members of `familyId`). Only records whose `familyId`
+   * / equals `familyId` are considered.
+   */
+  'listTimelineEventsForFamily' : ActorMethod<[FamilyId], Array<TimelineEvent>>,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for
    * / `markConversationReadForFamily`.
@@ -2275,12 +2341,22 @@ export interface _SERVICE {
     undefined
   >,
   /**
-   * / Marks a mystery resolved (steward only), recording the resolution summary
-   * / and supporting evidence while preserving the prior theories/history.
-   * / Returns the updated mystery, or `null` when it does not exist.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `markMysteryResolvedForFamily`.
    */
   'markMysteryResolved' : ActorMethod<
     [MysteryId, string, Array<string>],
+    [] | [Mystery]
+  >,
+  /**
+   * / Marks a mystery in `familyId` resolved (Steward only), recording the
+   * / resolution summary and supporting evidence while preserving the prior
+   * / theories/history. Active Steward of `familyId` only; a Steward of another
+   * / family cannot resolve the mystery. Returns the updated mystery, or `null`
+   * / when no mystery with that id belongs to `familyId`.
+   */
+  'markMysteryResolvedForFamily' : ActorMethod<
+    [FamilyId, MysteryId, string, Array<string>],
     [] | [Mystery]
   >,
   /**
@@ -2698,12 +2774,22 @@ export interface _SERVICE {
    */
   'restoreProfile' : ActorMethod<[PersonId], Result_2>,
   /**
-   * / Approves or rejects a pending mystery contribution (steward only). Returns
-   * / the updated contribution, or `null` when it does not exist or is not
-   * / pending.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `reviewMysteryContributionForFamily`.
    */
   'reviewMysteryContribution' : ActorMethod<
     [MysteryContributionId, boolean],
+    [] | [MysteryContribution]
+  >,
+  /**
+   * / Approves or rejects a pending mystery contribution in `familyId`. Active
+   * / Steward of `familyId` only; a Steward of another family cannot review the
+   * / contribution. Returns the updated contribution, or `null` when no pending
+   * / contribution with that id belongs to `familyId`. A contribution in another
+   * / family is never touched.
+   */
+  'reviewMysteryContributionForFamily' : ActorMethod<
+    [FamilyId, MysteryContributionId, boolean],
     [] | [MysteryContribution]
   >,
   /**
@@ -2860,14 +2946,24 @@ export interface _SERVICE {
     ArchiveItem
   >,
   /**
-   * / Submits a mystery contribution (a note, memory, possible lead, or
-   * / source/document reference). Requires an approved family member; the caller
-   * / is recorded as the contributor. The contribution is stored in pending state
-   * / and waits for a Family Steward to review it before altering the canonical
-   * / mystery record.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `submitMysteryContributionForFamily`.
    */
   'submitMysteryContribution' : ActorMethod<
     [MysteryId, MysteryContributionType, string],
+    MysteryContribution
+  >,
+  /**
+   * / Submits a mystery contribution (a note, memory, possible lead, or
+   * / source/document reference) to a mystery in `familyId`. Approved members or
+   * / Stewards of `familyId` only. The contribution's `familyId` is the requested
+   * / `familyId`, its target mystery must belong to `familyId`, and every related
+   * / person must belong to `familyId`. The contribution is stored in pending
+   * / state and waits for a Steward of `familyId` to review it before altering
+   * / the canonical mystery record.
+   */
+  'submitMysteryContributionForFamily' : ActorMethod<
+    [FamilyId, MysteryId, MysteryContributionType, string],
     MysteryContribution
   >,
   /**
@@ -3003,11 +3099,33 @@ export interface _SERVICE {
     [] | [Post]
   >,
   /**
-   * / Edits a canonical mystery (steward only). Returns the updated mystery, or
-   * / `null` when it does not exist.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `updateCanonicalMysteryForFamily`.
    */
   'updateCanonicalMystery' : ActorMethod<
     [
+      MysteryId,
+      string,
+      string,
+      Array<string>,
+      [] | [string],
+      Array<string>,
+      Array<string>,
+      Array<bigint>,
+      Array<bigint>,
+      MysteryStatus,
+    ],
+    [] | [Mystery]
+  >,
+  /**
+   * / Edits a canonical mystery in `familyId` (Steward only). Active Steward of
+   * / `familyId` only; a Steward of another family cannot edit the mystery.
+   * / Returns the updated mystery, or `null` when no mystery with that id belongs
+   * / to `familyId`. A mystery in another family is never touched.
+   */
+  'updateCanonicalMysteryForFamily' : ActorMethod<
+    [
+      FamilyId,
       MysteryId,
       string,
       string,

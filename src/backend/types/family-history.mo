@@ -113,6 +113,9 @@ module {
   /// possibilities, and sources are kept separate so a theory never silently
   /// becomes a confirmed fact.
   public type Mystery = {
+    /// The family that owns this mystery. The tenant boundary: a mystery is only
+    /// ever read, reviewed, or mutated through its own family.
+    familyId : FamilyId;
     id : MysteryId;
     title : Text;
     description : Text;
@@ -133,6 +136,10 @@ module {
   /// source/document reference). Passes through steward review before it alters
   /// the canonical mystery record.
   public type MysteryContribution = {
+    /// The family that owns this contribution. The tenant boundary: a
+    /// contribution is only ever read, reviewed, or mutated through its own
+    /// family.
+    familyId : FamilyId;
     id : MysteryContributionId;
     mysteryId : MysteryId;
     contributionType : MysteryContributionType;
@@ -148,6 +155,7 @@ module {
   /// their tag text; optional fields render as empty text when absent; array
   /// fields render as counts.
   public type MysteryRow = {
+    familyId : FamilyId;
     id : MysteryId;
     title : Text;
     description : Text;

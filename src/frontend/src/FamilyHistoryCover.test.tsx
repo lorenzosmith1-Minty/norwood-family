@@ -188,6 +188,12 @@ const {
     async listMysteries(): Promise<Mystery[]> {
       return mysteries;
     },
+    async getMysteryForFamily(
+      _familyId: string,
+      mysteryId: bigint,
+    ): Promise<Mystery | null> {
+      return mysteries.find((m) => m.id === mysteryId) ?? null;
+    },
     async createCanonicalMystery(
       title: string,
       description: string,
@@ -214,6 +220,7 @@ const {
         createdAt: 1_700_000_000_000_000_000n,
         updatedAt: 1_700_000_000_000_000_000n,
         resolution: undefined,
+        familyId: "norwood",
       };
       mysteries = [...mysteries, mystery];
       return mystery;
@@ -284,6 +291,7 @@ const {
         createdAt: 1_700_000_000_000_000_000n,
         reviewedBy: undefined,
         reviewedAt: undefined,
+        familyId: "norwood",
       };
       contributions = [...contributions, contribution];
       return contribution;
@@ -433,6 +441,7 @@ function makeMystery(overrides: Partial<Mystery> = {}): Mystery {
     createdAt: 1_700_000_000_000_000_000n,
     updatedAt: 1_700_000_000_000_000_000n,
     resolution: undefined,
+    familyId: "norwood",
     ...overrides,
   };
 }

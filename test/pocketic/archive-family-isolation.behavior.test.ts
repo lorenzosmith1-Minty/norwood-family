@@ -541,12 +541,11 @@ describe("countPendingForFamily (executed predicate)", () => {
     expect(countArchive(items, FAMILY_A, [1n])).toBe(1);
   });
 
-  it("scopes the recipe and story loops to the family and keeps mystery contributions family-agnostic", () => {
-    // Tenancy 1C-D1 family-scoped Recipes and Tenancy 1C-D3-A family-scoped
-    // Stories: both loops now consult familyId, so a pending Family A recipe or
-    // story never inflates Family B's count. Mystery contributions are still not
-    // family-scoped; their loop must not consult familyId, or the count would
-    // silently drop them for every non-default family.
+  it("scopes the recipe, story, and mystery loops to the family", () => {
+    // Tenancy 1C-D1 family-scoped Recipes, Tenancy 1C-D3-A family-scoped
+    // Stories, and Tenancy 1C-D4-A family-scoped Mystery contributions: all
+    // three loops now consult familyId, so a pending Family A recipe, story, or
+    // mystery contribution never inflates Family B's count.
     const recipeLoop = /for \(r in recipes\.toArray\(\)\.values\(\)\) \{([\s\S]*?)\n    \};/u.exec(body);
     const storyLoop = /for \(s in stories\.toArray\(\)\.values\(\)\) \{([\s\S]*?)\n    \};/u.exec(body);
     const mysteryLoop = /for \(m in mysteryContributions\.toArray\(\)\.values\(\)\) \{([\s\S]*?)\n    \};/u.exec(body);
@@ -555,7 +554,7 @@ describe("countPendingForFamily (executed predicate)", () => {
     expect(storyLoop?.[1]).toContain("s.status == #Pending");
     expect(storyLoop?.[1]).toContain("s.familyId == familyId");
     expect(mysteryLoop?.[1]).toContain("m.status == #Pending");
-    expect(mysteryLoop?.[1]).not.toContain("familyId");
+    expect(mysteryLoop?.[1]).toContain("m.familyId == familyId");
   });
 
   it("counts only pending recipes of the requested family", () => {
@@ -610,6 +609,37 @@ describe("countPendingForFamily (executed predicate)", () => {
           vars: { familyId },
           sets: {},
           record: { name: "s", value: value as unknown as Record<string, Scalar> },
+        }),
+      ).length;
+    expect(count(FAMILY_A)).toBe(1);
+    expect(count(FAMILY_B)).toBe(1);
+    expect(count(NORWOOD)).toBe(0);
+  });
+
+  it("counts only pending mystery contributions of the requested family", () => {
+    // Tenancy 1C-D4-A family-scoped Mystery contributions: the mystery loop's
+    // family conjunct is evaluated against test-only Family A / Family B
+    // fixtures, so a pending contribution in another family is excluded from the
+    // count.
+    const loop = /for \(m in mysteryContributions\.toArray\(\)\.values\(\)\) \{([\s\S]*?)\n    \};/u.exec(body);
+    if (loop === null) {
+      throw new Error("countPendingForFamily no longer has a mysteryContributions loop");
+    }
+    const condition = /if \(([\s\S]*?)\) \{/u.exec(loop[1]);
+    if (condition === null) {
+      throw new Error("countPendingForFamily mysteryContributions loop has no condition");
+    }
+    const contributions = [
+      { familyId: FAMILY_A, status: { tag: "Pending" } },
+      { familyId: FAMILY_B, status: { tag: "Pending" } },
+      { familyId: FAMILY_A, status: { tag: "Approved" } },
+    ];
+    const count = (familyId: string): number =>
+      contributions.filter((value) =>
+        evaluateAndChain(condition[1], {
+          vars: { familyId },
+          sets: {},
+          record: { name: "m", value: value as unknown as Record<string, Scalar> },
         }),
       ).length;
     expect(count(FAMILY_A)).toBe(1);

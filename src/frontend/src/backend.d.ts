@@ -302,6 +302,7 @@ export interface Mystery {
     possibilities: Array<string>;
     relatedBranchId?: string;
     relatedSourceIds: Array<bigint>;
+    familyId: FamilyId;
     contributor: Principal;
 }
 export interface MysteryContribution {
@@ -312,6 +313,7 @@ export interface MysteryContribution {
     mysteryId: MysteryId;
     reviewedAt?: bigint;
     reviewedBy?: Principal;
+    familyId: FamilyId;
     contributionType: MysteryContributionType;
     contributor: Principal;
 }
@@ -1523,9 +1525,17 @@ export interface backendInterface {
      */
     createBoardPostWithMediaForFamily(familyId: FamilyId, postType: PostType, title: string | null, body: string, relatedPersonIds: Array<string>, existingArchiveItemIds: Array<bigint>, newUploads: Array<BoardMediaUpload>, tags: Array<string>): Promise<Post>;
     /**
-     * / Creates a canonical mystery directly (steward only).
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `createCanonicalMysteryForFamily`.
      */
     createCanonicalMystery(title: string, description: string, relatedMemberIds: Array<string>, relatedBranchId: string | null, knownFacts: Array<string>, possibilities: Array<string>, relatedSourceIds: Array<bigint>, relatedArchiveItemIds: Array<bigint>, status: MysteryStatus): Promise<Mystery>;
+    /**
+     * / Creates a canonical mystery directly in `familyId` (Steward only). Active
+     * / Steward of `familyId` only. The new mystery's `familyId` is the requested
+     * / `familyId`; every related person must belong to `familyId`, and every
+     * / linked Archive media id must belong to `familyId`.
+     */
+    createCanonicalMysteryForFamily(familyId: FamilyId, title: string, description: string, relatedMemberIds: Array<string>, relatedBranchId: string | null, knownFacts: Array<string>, possibilities: Array<string>, relatedSourceIds: Array<bigint>, relatedArchiveItemIds: Array<bigint>, status: MysteryStatus): Promise<Mystery>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `createConversationForFamily`.
@@ -1713,6 +1723,12 @@ export interface backendInterface {
      * / family.
      */
     getMyRelationshipRequestsForFamily(familyId: FamilyId): Promise<Array<RelationshipRequest>>;
+    /**
+     * / Returns a single mystery by id when it belongs to `familyId`. Approved
+     * / members of `familyId` only. A mystery that exists under another family is
+     * / never returned, so a `mysteryId` alone cannot cross the family boundary.
+     */
+    getMysteryForFamily(familyId: FamilyId, mysteryId: MysteryId): Promise<Mystery | null>;
     /**
      * / Returns the candidate with `candidateId` when it belongs to `familyId`, or
      * / `null` otherwise. Requires an active Steward of `familyId`, matching the
@@ -2100,9 +2116,24 @@ export interface backendInterface {
      */
     listMessagesForFamily(familyId: FamilyId, conversationId: ConversationId): Promise<Array<Message>>;
     /**
-     * / Lists all mysteries (visible to viewers).
+     * / TEMPORARY Tenancy 1C compatibility wrapper for `listMysteriesForFamily`.
+     * / Preserves the pre-tenancy behavior exactly: the legacy `listMysteries` was
+     * / an ungated public query, so this wrapper does not add a membership gate.
      */
     listMysteries(): Promise<Array<Mystery>>;
+    /**
+     * / Lists every mystery in `familyId`, newest first. Approved members of
+     * / `familyId` only. A mystery whose `familyId` differs is never returned, so
+     * / Family A mysteries never appear in a Family B call.
+     */
+    listMysteriesForFamily(familyId: FamilyId): Promise<Array<Mystery>>;
+    /**
+     * / Lists every contribution to `mysteryId` in `familyId`. Approved members of
+     * / `familyId` only. A contribution whose `familyId` differs, or whose target
+     * / mystery belongs to another family, is never returned, so a `mysteryId` or
+     * / `contributionId` alone cannot cross the family boundary.
+     */
+    listMysteryContributionsForFamily(familyId: FamilyId, mysteryId: MysteryId): Promise<Array<MysteryContribution>>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `listNewPersonCandidatesForFamily`.
@@ -2135,9 +2166,16 @@ export interface backendInterface {
      */
     listPendingArchiveItemsForFamily(familyId: FamilyId): Promise<Array<ArchiveItem>>;
     /**
-     * / Lists all mystery contributions in pending state (steward only).
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `listPendingMysteryContributionsForFamily`.
      */
     listPendingMysteryContributions(): Promise<Array<MysteryContribution>>;
+    /**
+     * / Lists every mystery contribution in `familyId` currently in pending state.
+     * / Active Steward of `familyId` only. A contribution whose `familyId` differs
+     * / is never returned.
+     */
+    listPendingMysteryContributionsForFamily(familyId: FamilyId): Promise<Array<MysteryContribution>>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `listPendingRecipesForFamily`.
@@ -2273,10 +2311,18 @@ export interface backendInterface {
      */
     listSuccessors(): Promise<Array<SuccessorDesignation>>;
     /**
-     * / Lists timeline events aggregated from existing canonical data (visible to
-     * / viewers).
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `listTimelineEventsForFamily`. Preserves the pre-tenancy behavior exactly:
+     * / the legacy `listTimelineEvents` was an ungated public query, so this
+     * / wrapper does not add a membership gate.
      */
     listTimelineEvents(): Promise<Array<TimelineEvent>>;
+    /**
+     * / Lists timeline events aggregated from existing canonical data in `familyId`
+     * / (visible to approved members of `familyId`). Only records whose `familyId`
+     * / equals `familyId` are considered.
+     */
+    listTimelineEventsForFamily(familyId: FamilyId): Promise<Array<TimelineEvent>>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `markConversationReadForFamily`.
@@ -2288,11 +2334,18 @@ export interface backendInterface {
      */
     markConversationReadForFamily(familyId: FamilyId, conversationId: ConversationId): Promise<void>;
     /**
-     * / Marks a mystery resolved (steward only), recording the resolution summary
-     * / and supporting evidence while preserving the prior theories/history.
-     * / Returns the updated mystery, or `null` when it does not exist.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `markMysteryResolvedForFamily`.
      */
     markMysteryResolved(id: MysteryId, summary: string, supportingEvidence: Array<string>): Promise<Mystery | null>;
+    /**
+     * / Marks a mystery in `familyId` resolved (Steward only), recording the
+     * / resolution summary and supporting evidence while preserving the prior
+     * / theories/history. Active Steward of `familyId` only; a Steward of another
+     * / family cannot resolve the mystery. Returns the updated mystery, or `null`
+     * / when no mystery with that id belongs to `familyId`.
+     */
+    markMysteryResolvedForFamily(familyId: FamilyId, id: MysteryId, summary: string, supportingEvidence: Array<string>): Promise<Mystery | null>;
     /**
      * / Marks one of the signed-in caller's notifications as read. Returns the
      * / updated notification, or `null` when it does not exist or is not addressed
@@ -2612,11 +2665,18 @@ export interface backendInterface {
      */
     restoreProfile(personId: PersonId): Promise<Result_2>;
     /**
-     * / Approves or rejects a pending mystery contribution (steward only). Returns
-     * / the updated contribution, or `null` when it does not exist or is not
-     * / pending.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `reviewMysteryContributionForFamily`.
      */
     reviewMysteryContribution(id: MysteryContributionId, approve: boolean): Promise<MysteryContribution | null>;
+    /**
+     * / Approves or rejects a pending mystery contribution in `familyId`. Active
+     * / Steward of `familyId` only; a Steward of another family cannot review the
+     * / contribution. Returns the updated contribution, or `null` when no pending
+     * / contribution with that id belongs to `familyId`. A contribution in another
+     * / family is never touched.
+     */
+    reviewMysteryContributionForFamily(familyId: FamilyId, id: MysteryContributionId, approve: boolean): Promise<MysteryContribution | null>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for `reviewReportForFamily`.
      */
@@ -2711,13 +2771,20 @@ export interface backendInterface {
      */
     submitArchiveItemForFamily(familyId: FamilyId, title: string, description: string, itemType: ArchiveItemType, mimeType: string, blob: ExternalBlob, era: string, year: bigint | null, tags: Array<string>, relatedMemberIds: Array<string>, relatedBranchId: string | null, sourceStatus: SourceStatus, privacyLevel: PrivacyLevel, classification: ArchiveItemClassification, primarySpeaker: OralHistorySpeaker | null, filename: string): Promise<ArchiveItem>;
     /**
-     * / Submits a mystery contribution (a note, memory, possible lead, or
-     * / source/document reference). Requires an approved family member; the caller
-     * / is recorded as the contributor. The contribution is stored in pending state
-     * / and waits for a Family Steward to review it before altering the canonical
-     * / mystery record.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `submitMysteryContributionForFamily`.
      */
     submitMysteryContribution(mysteryId: MysteryId, contributionType: MysteryContributionType, text: string): Promise<MysteryContribution>;
+    /**
+     * / Submits a mystery contribution (a note, memory, possible lead, or
+     * / source/document reference) to a mystery in `familyId`. Approved members or
+     * / Stewards of `familyId` only. The contribution's `familyId` is the requested
+     * / `familyId`, its target mystery must belong to `familyId`, and every related
+     * / person must belong to `familyId`. The contribution is stored in pending
+     * / state and waits for a Steward of `familyId` to review it before altering
+     * / the canonical mystery record.
+     */
+    submitMysteryContributionForFamily(familyId: FamilyId, mysteryId: MysteryId, contributionType: MysteryContributionType, text: string): Promise<MysteryContribution>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for `submitRecipeForFamily`.
      */
@@ -2764,10 +2831,17 @@ export interface backendInterface {
      */
     updateBoardPostForFamily(familyId: FamilyId, postId: PostId, postType: PostType, title: string | null, body: string, relatedPersonIds: Array<string>, linkedMediaIds: Array<bigint>, tags: Array<string>): Promise<Post | null>;
     /**
-     * / Edits a canonical mystery (steward only). Returns the updated mystery, or
-     * / `null` when it does not exist.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `updateCanonicalMysteryForFamily`.
      */
     updateCanonicalMystery(id: MysteryId, title: string, description: string, relatedMemberIds: Array<string>, relatedBranchId: string | null, knownFacts: Array<string>, possibilities: Array<string>, relatedSourceIds: Array<bigint>, relatedArchiveItemIds: Array<bigint>, status: MysteryStatus): Promise<Mystery | null>;
+    /**
+     * / Edits a canonical mystery in `familyId` (Steward only). Active Steward of
+     * / `familyId` only; a Steward of another family cannot edit the mystery.
+     * / Returns the updated mystery, or `null` when no mystery with that id belongs
+     * / to `familyId`. A mystery in another family is never touched.
+     */
+    updateCanonicalMysteryForFamily(familyId: FamilyId, id: MysteryId, title: string, description: string, relatedMemberIds: Array<string>, relatedBranchId: string | null, knownFacts: Array<string>, possibilities: Array<string>, relatedSourceIds: Array<bigint>, relatedArchiveItemIds: Array<bigint>, status: MysteryStatus): Promise<Mystery | null>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `updateCanonicalStoryForFamily`.

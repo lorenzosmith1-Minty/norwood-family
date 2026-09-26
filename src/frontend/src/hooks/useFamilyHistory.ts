@@ -33,8 +33,21 @@ export { useProvidersPresent };
  * predicate that admits only the active family's family-appended key, so a
  * mutation in one family never marks another family's Story cache stale.
  *
- * Mysteries and the Timeline are intentionally left on the legacy endpoints in
- * this task; their family wiring is deferred.
+ * The Mystery READ hooks and the Timeline read hook are family-aware in the
+ * same way: the active family is read from the centralized FamilyContext and
+ * `familyScopedId` is `undefined` for the default family. The default family
+ * keeps the exact legacy no-argument call shape and React Query key, while a
+ * non-default family routes to the canonical `*ForFamily` endpoint with the
+ * familyId appended to the key so caches never collide across families.
+ *
+ * The Mystery MUTATION hooks are family-aware in the same way: the active
+ * family is read from the centralized FamilyContext and `familyScopedId` is
+ * `undefined` for the default family. The default family keeps the exact legacy
+ * no-familyId mutation call and legacy invalidation keys, while a non-default
+ * family routes to the canonical `*ForFamily` mutation with the familyId as the
+ * FIRST argument. Mystery mutations invalidate family-separated Mystery caches
+ * through `mysteryInvalidation`, so a mutation in one family never marks
+ * another family's Mystery cache stale.
  */
 
 /**
@@ -62,6 +75,74 @@ function storyInvalidation(
     queryKey: ["familyHistory", "stories", kind],
     predicate: (query) => query.queryKey[familyIndex] === familyScopedId,
   };
+}
+
+/**
+ * Builds the React Query invalidation filter for a Mystery cache.
+ *
+ * React Query matches `invalidateQueries` by key PREFIX, so a bare
+ * `["familyHistory", "mysteries"]` filter would also match
+ * `["familyHistory", "mysteries", <otherFamily>]` and mark another family's
+ * cache stale. The default family keeps the exact legacy bare-prefix filter; a
+ * non-default family keeps the same bare prefix but narrows it with a predicate
+ * that admits only the active family's key.
+ *
+ * The family id sits at a different index per Mystery cache key:
+ * - list: `["familyHistory", "mysteries", familyId]` (index 2)
+ * - detail: `["familyHistory", "mysteries", "detail", id, familyId]` (index 4)
+ * - contributions: `["familyHistory", "mysteries", "contributions", mysteryId,
+ *   familyId]` (index 4)
+ * - pending contributions: `["familyHistory", "mysteries", "contributions",
+ *   "pending", familyId]` (index 4)
+ * - timeline: `["familyHistory", "timeline", familyId]` (index 2)
+ */
+function mysteryInvalidation(
+  kind: "list" | "detail" | "contributions" | "pending" | "timeline",
+  familyScopedId: string | undefined,
+): InvalidateQueryFilters {
+  if (familyScopedId === undefined) {
+    switch (kind) {
+      case "list":
+        return { queryKey: ["familyHistory", "mysteries"] };
+      case "detail":
+        return { queryKey: ["familyHistory", "mysteries", "detail"] };
+      case "contributions":
+        return { queryKey: ["familyHistory", "mysteries", "contributions"] };
+      case "pending":
+        return {
+          queryKey: ["familyHistory", "mysteries", "contributions", "pending"],
+        };
+      case "timeline":
+        return { queryKey: ["familyHistory", "timeline"] };
+    }
+  }
+  switch (kind) {
+    case "list":
+      return {
+        queryKey: ["familyHistory", "mysteries"],
+        predicate: (query) => query.queryKey[2] === familyScopedId,
+      };
+    case "detail":
+      return {
+        queryKey: ["familyHistory", "mysteries", "detail"],
+        predicate: (query) => query.queryKey[4] === familyScopedId,
+      };
+    case "contributions":
+      return {
+        queryKey: ["familyHistory", "mysteries", "contributions"],
+        predicate: (query) => query.queryKey[4] === familyScopedId,
+      };
+    case "pending":
+      return {
+        queryKey: ["familyHistory", "mysteries", "contributions", "pending"],
+        predicate: (query) => query.queryKey[4] === familyScopedId,
+      };
+    case "timeline":
+      return {
+        queryKey: ["familyHistory", "timeline"],
+        predicate: (query) => query.queryKey[2] === familyScopedId,
+      };
+  }
 }
 
 /** Lists approved (publicly visible) family stories. */
@@ -327,13 +408,72 @@ export function useUpdateCanonicalStory() {
 
 /** Lists all family mysteries. */
 export function useMysteries() {
+  const familyScopedId = useFamilyScopedId();
   const providersPresent = useProvidersPresent();
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["familyHistory", "mysteries"],
+    queryKey:
+      familyScopedId === undefined
+        ? ["familyHistory", "mysteries"]
+        : ["familyHistory", "mysteries", familyScopedId],
     queryFn: async () => {
       if (!actor) return [];
-      return actor.listMysteries();
+      return familyScopedId === undefined
+        ? actor.listMysteries()
+        : actor.listMysteriesForFamily(familyScopedId);
+    },
+    enabled: providersPresent && !!actor && !isFetching,
+  });
+}
+
+/**
+ * Fetches a single mystery by id within the active family.
+ *
+ * There is no legacy unscoped Mystery detail endpoint in the generated
+ * bindings — only `getMysteryForFamily` — so the detail read always passes the
+ * active family id explicitly (including the default family). The family id is
+ * part of the cache key, so Family A and Family B never share a Mystery detail
+ * cache entry.
+ */
+export function useMystery(id: bigint) {
+  const familyId = useActiveFamilyId();
+  const providersPresent = useProvidersPresent();
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["familyHistory", "mysteries", "detail", id.toString(), familyId],
+    queryFn: async () => {
+      if (!actor) return null;
+      return actor.getMysteryForFamily(familyId, id);
+    },
+    enabled: providersPresent && !!actor && !isFetching,
+  });
+}
+
+/**
+ * Lists the contributions attached to a single mystery within the active
+ * family.
+ *
+ * There is no legacy unscoped contribution-list endpoint in the generated
+ * bindings — only `listMysteryContributionsForFamily` — so the read always
+ * passes the active family id explicitly (including the default family). The
+ * family id is part of the cache key so contributions never leak across
+ * families.
+ */
+export function useMysteryContributions(mysteryId: bigint) {
+  const familyId = useActiveFamilyId();
+  const providersPresent = useProvidersPresent();
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: [
+      "familyHistory",
+      "mysteries",
+      "contributions",
+      mysteryId.toString(),
+      familyId,
+    ],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.listMysteryContributionsForFamily(familyId, mysteryId);
     },
     enabled: providersPresent && !!actor && !isFetching,
   });
@@ -347,21 +487,29 @@ export interface SubmitMysteryContributionInput {
 
 /** Submits a contribution to a mystery (note, memory, lead, or source). */
 export function useSubmitMysteryContribution() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (input: SubmitMysteryContributionInput) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.submitMysteryContribution(
-        input.mysteryId,
-        input.contributionType,
-        input.text,
-      );
+      return familyScopedId === undefined
+        ? actor.submitMysteryContribution(
+            input.mysteryId,
+            input.contributionType,
+            input.text,
+          )
+        : actor.submitMysteryContributionForFamily(
+            familyScopedId,
+            input.mysteryId,
+            input.contributionType,
+            input.text,
+          );
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({
-        queryKey: ["familyHistory", "mysteries", "contributions", "pending"],
-      });
+      void queryClient.invalidateQueries(
+        mysteryInvalidation("pending", familyScopedId),
+      );
       void queryClient.invalidateQueries({
         queryKey: ["pendingContributionsCount"],
       });
@@ -371,13 +519,25 @@ export function useSubmitMysteryContribution() {
 
 /** Lists mystery contributions pending steward review (steward-only). */
 export function usePendingMysteryContributions() {
+  const familyScopedId = useFamilyScopedId();
   const providersPresent = useProvidersPresent();
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["familyHistory", "mysteries", "contributions", "pending"],
+    queryKey:
+      familyScopedId === undefined
+        ? ["familyHistory", "mysteries", "contributions", "pending"]
+        : [
+            "familyHistory",
+            "mysteries",
+            "contributions",
+            "pending",
+            familyScopedId,
+          ],
     queryFn: async () => {
       if (!actor) return [];
-      return actor.listPendingMysteryContributions();
+      return familyScopedId === undefined
+        ? actor.listPendingMysteryContributions()
+        : actor.listPendingMysteryContributionsForFamily(familyScopedId);
     },
     enabled: providersPresent && !!actor && !isFetching,
   });
@@ -385,20 +545,27 @@ export function usePendingMysteryContributions() {
 
 /** Reviews a pending mystery contribution (approve or reject). */
 export function useReviewMysteryContribution() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (input: { id: bigint; approve: boolean }) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.reviewMysteryContribution(input.id, input.approve);
+      return familyScopedId === undefined
+        ? actor.reviewMysteryContribution(input.id, input.approve)
+        : actor.reviewMysteryContributionForFamily(
+            familyScopedId,
+            input.id,
+            input.approve,
+          );
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({
-        queryKey: ["familyHistory", "mysteries", "contributions", "pending"],
-      });
-      void queryClient.invalidateQueries({
-        queryKey: ["familyHistory", "mysteries"],
-      });
+      void queryClient.invalidateQueries(
+        mysteryInvalidation("pending", familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        mysteryInvalidation("list", familyScopedId),
+      );
       void queryClient.invalidateQueries({
         queryKey: ["pendingContributionsCount"],
       });
@@ -423,27 +590,41 @@ export interface CreateCanonicalMysteryInput {
 
 /** Creates a canonical mystery directly (steward-only). */
 export function useCreateCanonicalMystery() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (input: CreateCanonicalMysteryInput) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.createCanonicalMystery(
-        input.title,
-        input.description,
-        input.relatedMemberIds,
-        input.relatedBranchId,
-        input.knownFacts,
-        input.possibilities,
-        input.relatedSourceIds,
-        input.relatedArchiveItemIds,
-        input.status,
-      );
+      return familyScopedId === undefined
+        ? actor.createCanonicalMystery(
+            input.title,
+            input.description,
+            input.relatedMemberIds,
+            input.relatedBranchId,
+            input.knownFacts,
+            input.possibilities,
+            input.relatedSourceIds,
+            input.relatedArchiveItemIds,
+            input.status,
+          )
+        : actor.createCanonicalMysteryForFamily(
+            familyScopedId,
+            input.title,
+            input.description,
+            input.relatedMemberIds,
+            input.relatedBranchId,
+            input.knownFacts,
+            input.possibilities,
+            input.relatedSourceIds,
+            input.relatedArchiveItemIds,
+            input.status,
+          );
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({
-        queryKey: ["familyHistory", "mysteries"],
-      });
+      void queryClient.invalidateQueries(
+        mysteryInvalidation("list", familyScopedId),
+      );
     },
   });
 }
@@ -455,28 +636,43 @@ export interface UpdateCanonicalMysteryInput
 
 /** Updates a canonical mystery (steward-only). */
 export function useUpdateCanonicalMystery() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (input: UpdateCanonicalMysteryInput) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.updateCanonicalMystery(
-        input.id,
-        input.title,
-        input.description,
-        input.relatedMemberIds,
-        input.relatedBranchId,
-        input.knownFacts,
-        input.possibilities,
-        input.relatedSourceIds,
-        input.relatedArchiveItemIds,
-        input.status,
-      );
+      return familyScopedId === undefined
+        ? actor.updateCanonicalMystery(
+            input.id,
+            input.title,
+            input.description,
+            input.relatedMemberIds,
+            input.relatedBranchId,
+            input.knownFacts,
+            input.possibilities,
+            input.relatedSourceIds,
+            input.relatedArchiveItemIds,
+            input.status,
+          )
+        : actor.updateCanonicalMysteryForFamily(
+            familyScopedId,
+            input.id,
+            input.title,
+            input.description,
+            input.relatedMemberIds,
+            input.relatedBranchId,
+            input.knownFacts,
+            input.possibilities,
+            input.relatedSourceIds,
+            input.relatedArchiveItemIds,
+            input.status,
+          );
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({
-        queryKey: ["familyHistory", "mysteries"],
-      });
+      void queryClient.invalidateQueries(
+        mysteryInvalidation("list", familyScopedId),
+      );
     },
   });
 }
@@ -489,34 +685,48 @@ export interface MarkMysteryResolvedInput {
 
 /** Marks a mystery resolved, preserving the research trail. */
 export function useMarkMysteryResolved() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (input: MarkMysteryResolvedInput) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.markMysteryResolved(
-        input.id,
-        input.summary,
-        input.supportingEvidence,
-      );
+      return familyScopedId === undefined
+        ? actor.markMysteryResolved(
+            input.id,
+            input.summary,
+            input.supportingEvidence,
+          )
+        : actor.markMysteryResolvedForFamily(
+            familyScopedId,
+            input.id,
+            input.summary,
+            input.supportingEvidence,
+          );
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({
-        queryKey: ["familyHistory", "mysteries"],
-      });
+      void queryClient.invalidateQueries(
+        mysteryInvalidation("list", familyScopedId),
+      );
     },
   });
 }
 
 /** Lists the aggregated Travel Through Time timeline events. */
 export function useTimelineEvents() {
+  const familyScopedId = useFamilyScopedId();
   const providersPresent = useProvidersPresent();
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["familyHistory", "timeline"],
+    queryKey:
+      familyScopedId === undefined
+        ? ["familyHistory", "timeline"]
+        : ["familyHistory", "timeline", familyScopedId],
     queryFn: async () => {
       if (!actor) return [];
-      return actor.listTimelineEvents();
+      return familyScopedId === undefined
+        ? actor.listTimelineEvents()
+        : actor.listTimelineEventsForFamily(familyScopedId);
     },
     enabled: providersPresent && !!actor && !isFetching,
   });

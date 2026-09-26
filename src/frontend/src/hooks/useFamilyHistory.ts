@@ -12,6 +12,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
+import { notificationInvalidation } from "./useNotifications";
 import { useProvidersPresent } from "./usePhotoStorage";
 
 export { useProvidersPresent };
@@ -286,7 +287,9 @@ export function useApproveStory() {
         queryKey: ["pendingContributionsCount"],
       });
       // Approval notifies the contributor, so the unread badge must refresh.
-      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient.invalidateQueries(
+        notificationInvalidation(familyScopedId),
+      );
     },
   });
 }
@@ -314,7 +317,9 @@ export function useRejectStory() {
         queryKey: ["pendingContributionsCount"],
       });
       // Rejection notifies the contributor, so the unread badge must refresh.
-      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient.invalidateQueries(
+        notificationInvalidation(familyScopedId),
+      );
     },
   });
 }
@@ -571,7 +576,9 @@ export function useReviewMysteryContribution() {
       });
       // Reviewing a contribution notifies the contributor, so the unread badge
       // must refresh.
-      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient.invalidateQueries(
+        notificationInvalidation(familyScopedId),
+      );
     },
   });
 }

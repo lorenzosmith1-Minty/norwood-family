@@ -8,6 +8,7 @@ import Types "../types/ownership";
 import FamilyTypes "../types/family";
 import GovernanceTypes "../types/governance";
 import TenancyLib "tenancy";
+import NotificationsScopeLib "notifications-scope";
 
 /// Tenancy 1C-A family-scoped profile / claim / relationship domain logic.
 ///
@@ -138,14 +139,14 @@ module {
       reviewedDate = null;
     };
     claims.add(claim);
-    notifications.add({
-      id = nextNotificationId(notifications);
-      recipient = caller;
-      notificationType = #ProfileClaimRequested;
-      message = "Your profile claim request was submitted for review.";
-      createdAt = Time.now();
-      read = false;
-    });
+    ignore NotificationsScopeLib.createForFamily(
+      notifications,
+      familyId,
+      caller,
+      #ProfileClaimRequested,
+      "Your profile claim request was submitted for review.",
+      Time.now(),
+    );
     #ok(claim);
   };
 
@@ -209,14 +210,14 @@ module {
       reviewedDate = ?now;
     };
     replaceClaim(claims, updatedClaim);
-    notifications.add({
-      id = nextNotificationId(notifications);
-      recipient = claim.requestingUserId;
-      notificationType = #ProfileClaimReviewed;
-      message = "Your profile claim was approved.";
-      createdAt = now;
-      read = false;
-    });
+    ignore NotificationsScopeLib.createForFamily(
+      notifications,
+      familyId,
+      claim.requestingUserId,
+      #ProfileClaimReviewed,
+      "Your profile claim was approved.",
+      now,
+    );
     auditLog.add({
       id = nextAuditId(auditLog);
       actionType = #ClaimApproved;
@@ -257,14 +258,14 @@ module {
       reviewedDate = ?now;
     };
     replaceClaim(claims, updatedClaim);
-    notifications.add({
-      id = nextNotificationId(notifications);
-      recipient = claim.requestingUserId;
-      notificationType = #ProfileClaimReviewed;
-      message = "Your profile claim was rejected.";
-      createdAt = now;
-      read = false;
-    });
+    ignore NotificationsScopeLib.createForFamily(
+      notifications,
+      familyId,
+      claim.requestingUserId,
+      #ProfileClaimReviewed,
+      "Your profile claim was rejected.",
+      now,
+    );
     auditLog.add({
       id = nextAuditId(auditLog);
       actionType = #ClaimRejected;
@@ -378,14 +379,14 @@ module {
       reviewedBy = ?caller;
       reviewedDate = ?now;
     });
-    notifications.add({
-      id = nextNotificationId(notifications);
-      recipient = caller;
-      notificationType = #ProfileClaimReviewed;
-      message = "Your profile was created and linked to your account.";
-      createdAt = now;
-      read = false;
-    });
+    ignore NotificationsScopeLib.createForFamily(
+      notifications,
+      familyId,
+      caller,
+      #ProfileClaimReviewed,
+      "Your profile was created and linked to your account.",
+      now,
+    );
     #ok(profile);
   };
 
@@ -436,14 +437,14 @@ module {
       reviewedDate = null;
     };
     requests.add(request);
-    notifications.add({
-      id = nextNotificationId(notifications);
-      recipient = caller;
-      notificationType = #RelationshipRequested;
-      message = "Your relationship request is pending review.";
-      createdAt = Time.now();
-      read = false;
-    });
+    ignore NotificationsScopeLib.createForFamily(
+      notifications,
+      familyId,
+      caller,
+      #RelationshipRequested,
+      "Your relationship request is pending review.",
+      Time.now(),
+    );
     #ok(request);
   };
 
@@ -505,14 +506,14 @@ module {
       reviewedDate = ?now;
     };
     replaceRelationshipRequest(requests, updatedRequest);
-    notifications.add({
-      id = nextNotificationId(notifications);
-      recipient = reviewer;
-      notificationType = #RelationshipReviewed;
-      message = "A relationship request was approved.";
-      createdAt = now;
-      read = false;
-    });
+    ignore NotificationsScopeLib.createForFamily(
+      notifications,
+      familyId,
+      reviewer,
+      #RelationshipReviewed,
+      "A relationship request was approved.",
+      now,
+    );
     auditLog.add({
       id = nextAuditId(auditLog);
       actionType = #RelationshipRequestApproved;
@@ -555,14 +556,14 @@ module {
       reviewedDate = ?now;
     };
     replaceRelationshipRequest(requests, updatedRequest);
-    notifications.add({
-      id = nextNotificationId(notifications);
-      recipient = reviewer;
-      notificationType = #RelationshipReviewed;
-      message = "A relationship request was rejected.";
-      createdAt = now;
-      read = false;
-    });
+    ignore NotificationsScopeLib.createForFamily(
+      notifications,
+      familyId,
+      reviewer,
+      #RelationshipReviewed,
+      "A relationship request was rejected.",
+      now,
+    );
     auditLog.add({
       id = nextAuditId(auditLog);
       actionType = #RelationshipRequestRejected;
@@ -908,13 +909,15 @@ module {
     removeDuplicateProfileForFamily(profiles, claims, relationshipRequests, notifications, FamilyTypes.DEFAULT_FAMILY_ID, personId, caller);
   };
 
-  /// Lists in-app notification records for the signed-in caller. Notifications
-  /// are recipient-addressed and are not family-scoped.
+  /// TEMPORARY Tenancy 1C compatibility wrapper for the canonical
+  /// `NotificationsScopeLib.listForFamily`. Deprecated single-family form:
+  /// delegates with `FamilyTypes.DEFAULT_FAMILY_ID`, so current Norwood
+  /// behavior is unchanged. Contains no logic of its own.
   public func listNotifications(
     notifications : List.List<Types.Notification>,
     caller : Principal.Principal,
   ) : [Types.Notification] {
-    notifications.toArray().filter(func n = n.recipient == caller);
+    NotificationsScopeLib.listForFamily(notifications, FamilyTypes.DEFAULT_FAMILY_ID, caller);
   };
 
   /// Flattens every person profile into OQL-exposable rows. The row already
@@ -994,18 +997,13 @@ module {
     });
   };
 
-  /// Flattens every in-app notification record into OQL-exposable rows.
+  /// Flattens every in-app notification record into OQL-exposable rows. The row
+  /// carries `familyId`, so a notification row is always attributable to its
+  /// family. Delegates to the canonical family-scoped notification module.
   public func notificationRows(
     notifications : List.List<Types.Notification>,
   ) : Iter.Iter<Types.NotificationRow> {
-    notifications.toArray().values().map(func notification = {
-      id = notification.id;
-      recipient = notification.recipient.toText();
-      notificationType = notificationTypeText(notification.notificationType);
-      message = notification.message;
-      createdAt = notification.createdAt;
-      read = notification.read;
-    });
+    NotificationsScopeLib.notificationRows(notifications);
   };
 
   // ---------------------------------------------------------------------------
@@ -1046,16 +1044,6 @@ module {
     var maxId = 0;
     for (claim in claims.toArray().values()) {
       if (claim.id >= maxId) { maxId := claim.id + 1 };
-    };
-    maxId;
-  };
-
-  /// The next notification id: one greater than the largest existing id, or
-  /// `0` when there are no notifications.
-  func nextNotificationId(notifications : List.List<Types.Notification>) : Nat {
-    var maxId = 0;
-    for (notification in notifications.toArray().values()) {
-      if (notification.id >= maxId) { maxId := notification.id + 1 };
     };
     maxId;
   };

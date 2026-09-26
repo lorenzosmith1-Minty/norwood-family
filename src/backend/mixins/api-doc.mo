@@ -530,8 +530,10 @@ no business logic of their own.
   profile's owner nor a Family Steward editing an unclaimed profile, and
   `#err(#DeceasedProfile)` for a deceased profile when the caller is not on the
   steward-editable path.
-- `listNotifications() : async [Notification]` — query. Returns the in-app
-  notification records addressed to the signed-in caller.
+- `listNotifications() : async [Notification]` — query. TEMPORARY Tenancy 1C
+  compatibility wrapper for `listNotificationsForFamily`; returns the in-app
+  notification records addressed to the signed-in caller in the default family
+  (`\"norwood\"`).
 - `removeDuplicateProfile(personId : Text) : async Result<(), RemoveError>` —
   update. Family Steward only. Removes a duplicate test-created profile and any
   pending relationship request or pending claim tied only to it, preserving the
@@ -621,6 +623,47 @@ stays readable.
 - `getRelationshipRequestForFamily(familyId : Text, id : Nat) : async ?RelationshipRequest` —
   query. Returns a relationship request in `familyId`, or `null`.
 
+#### Family-scoped notification methods (canonical)
+
+Every notification record carries a `familyId` naming the family whose activity
+produced it. The methods below are the canonical notification API and take an
+explicit `familyId : Text` as their first argument. A notification is only ever
+read, counted, or mutated when its `familyId` equals the requested family AND its
+`recipient` is the caller, so a `notificationId` alone never crosses a family
+boundary and Family A notifications never appear in a Family B read or count.
+The legacy `listNotifications` and `markNotificationRead` are TEMPORARY Tenancy
+1C compatibility wrappers that delegate here with the default family
+(`\"norwood\"`).
+
+- `listNotificationsForFamily(familyId : Text) : async [Notification]` — query.
+  Lists the signed-in caller's notifications in `familyId`, newest first. Only
+  notifications whose `familyId` equals `familyId` and whose recipient is the
+  caller are returned.
+- `listUnreadNotificationsForFamily(familyId : Text) : async [Notification]` —
+  query. Lists the signed-in caller's unread notifications in `familyId`, newest
+  first.
+- `unreadNotificationCountForFamily(familyId : Text) : async Nat` — query. Counts
+  the signed-in caller's unread notifications in `familyId`; Family B unread
+  notifications never inflate a Family A count.
+- `getNotificationForFamily(familyId : Text, id : Nat) : async ?Notification` —
+  query. Returns the signed-in caller's notification with `id` in `familyId`, or
+  `null` when no notification with that id belongs to `familyId` and is addressed
+  to the caller. A notification id from another family never resolves here.
+- `markNotificationReadForFamily(familyId : Text, id : Nat) : async ?Notification` —
+  update. Marks the signed-in caller's notification with `id` in `familyId` as
+  read. Returns the updated notification, or `null` when no notification with
+  that id belongs to `familyId` and is addressed to the caller. A Family A action
+  can never mutate a Family B notification.
+- `markAllNotificationsReadForFamily(familyId : Text) : async Nat` — update. Marks
+  every unread notification addressed to the signed-in caller in `familyId` as
+  read and returns the number marked. Notifications in other families are never
+  touched.
+- `dismissNotificationForFamily(familyId : Text, id : Nat) : async Bool` — update.
+  Dismisses (deletes) the signed-in caller's notification with `id` in
+  `familyId`. Returns `true` when a matching notification was removed, `false`
+  when none belongs to `familyId` and is addressed to the caller. A Family A
+  action can never delete a Family B notification.
+
 ### Account identity
 
 - `getMyAccountId() : async Result<AccountId, AccountError>` — query. Returns the
@@ -661,48 +704,119 @@ stays readable.
 
 ### Family Governance (Steward Management, Succession, Removal, Merge, Relationships, Audit)
 
+The canonical governance mutation paths are family-scoped: `promoteToStewardForFamily`,
+`designateSuccessorForFamily`, `activateSuccessorForFamily`, and
+`addRelationshipForFamily` take an explicit `familyId` as their first argument and
+evaluate Steward authority and data access against that family. A Steward of one
+family can never promote, designate, activate, or relate a member of another
+family, and every record they create is stamped with the requested `familyId`.
+Successor designations carry a `familyId`, so the same `personId` may hold
+independent designations in different families and a designation from one family
+can never activate a Steward in another. The family-scoped successor reads
+`listSuccessorsForFamily` and `listStewardIdentitiesForFamily` only ever return
+records stamped with the requested `familyId`. The legacy no-`familyId` forms
+(`promoteToSteward`, `designateSuccessor`, `activateSuccessor`,
+`listSuccessors`, `listStewardIdentities`, `addRelationship`) are TEMPORARY
+Tenancy 1C compatibility wrappers that delegate with the default family id
+(`\"norwood\"`); they contain no business logic of their own.
+
 - `listStewards() : async [StewardRecord]` — query. Family Steward only. Lists
   all steward governance records with role status and account identity.
+- `promoteToStewardForFamily(familyId : Text, personId : Text) : async Result<StewardRecord, StewardError>` —
+  update. Active Steward of `familyId` only. Promotes an approved claimed member
+  of `familyId` (a profile in that family with `claimStatus == #Claimed` and a
+  claiming owner) to Family Steward. The target profile is resolved through the
+  family-qualified profile lookup, the duplicate-Steward check is filtered by
+  `familyId`, and the new `StewardRecord` is stamped with `familyId`. Returns
+  `#err(#NotApprovedClaimedMember)` when the person is not an approved claimed
+  member of `familyId` and `#err(#AlreadySteward)` when the member's account is
+  already an active steward of `familyId`. A Steward of one family can never
+  promote a member of another family.
 - `promoteToSteward(personId : Text) : async Result<StewardRecord, StewardError>` —
-  update. Family Steward only. Promotes an existing approved claimed family
-  member (a profile with `claimStatus == #Claimed` and a claiming owner) to
-  Family Steward. Returns `#err(#NotApprovedClaimedMember)` when the person is
-  not an approved claimed member and `#err(#AlreadySteward)` when the member's
-  account is already an active steward.
+  update. TEMPORARY Tenancy 1C compatibility wrapper for
+  `promoteToStewardForFamily`, delegating with the default family id
+  (`\"norwood\"`). Family Steward only. Promotes an existing approved claimed
+  family member to Family Steward. Returns `#err(#NotApprovedClaimedMember)` when
+  the person is not an approved claimed member and `#err(#AlreadySteward)` when
+  the member's account is already an active steward.
 - `removeSteward(stewardAccountId : Principal) : async Result<(), StewardError>` —
   update. Family Steward only. Removes the steward role from another steward,
   never allowing the last active steward to be removed (returns
   `#err(#LastSteward)` when only one active steward remains). Returns
   `#err(#NotSteward)` when the account is not an active steward.
+- `designateSuccessorForFamily(familyId : Text, personId : Text, priority : Nat) : async Result<SuccessorDesignation, StewardError>` —
+  update. Active Steward of `familyId` only. Designates an approved claimed
+  member of `familyId` as a successor steward with a priority/order. The target
+  profile is resolved through the family-qualified profile lookup, the
+  duplicate-designation check is scoped by `familyId`, and the new
+  `SuccessorDesignation` is stamped with `familyId`. A successor is a
+  designation only — not an active steward until explicitly activated. The same
+  `personId` may hold independent successor designations in different families.
+  Returns `#err(#NotApprovedClaimedMember)` when the person is not an approved
+  claimed member of `familyId`, `#err(#AlreadySteward)` when the member's
+  account is already an active steward of `familyId`, and
+  `#err(#AlreadyDesignated)` when that person already has a `#Designated`
+  successor record in `familyId`.
 - `designateSuccessor(personId : Text, priority : Nat) : async Result<SuccessorDesignation, StewardError>` —
-  update. Family Steward only. Designates an approved claimed family member as a
-  successor steward with a priority/order. A successor is a designation only —
-  not an active steward until explicitly activated. Returns
+  update. TEMPORARY Tenancy 1C compatibility wrapper for
+  `designateSuccessorForFamily`, delegating with the default family id
+  (`\"norwood\"`). Family Steward only. Designates an approved claimed family
+  member as a successor steward with a priority/order. A successor is a
+  designation only — not an active steward until explicitly activated. Returns
   `#err(#NotApprovedClaimedMember)` when the person is not an approved claimed
   member.
+- `activateSuccessorForFamily(familyId : Text, personId : Text) : async Result<StewardRecord, StewardError>` —
+  update. Active Steward of `familyId` only. Activates/promotes a designated
+  successor into the active steward role in `familyId`. The successor
+  designation lookup requires `designation.familyId == familyId` AND
+  `designation.personId == personId` AND `designation.status == #Designated`,
+  and all Steward and profile lookups are filtered by `familyId`, so a
+  designation from one family can never activate a Steward in another. The
+  activated `StewardRecord` remains in `familyId`. Activating a successor in one
+  family never modifies another family's state. Returns `#err(#NotDesignated)`
+  when the person has no `#Designated` successor record in `familyId`,
+  `#err(#NotApprovedClaimedMember)` when the person is not an approved claimed
+  member of `familyId`, and `#err(#AlreadySteward)` when the member's account is
+  already an active steward of `familyId`.
 - `activateSuccessor(personId : Text) : async Result<StewardRecord, StewardError>` —
-  update. Family Steward only. Activates/promotes a designated successor into
-  the active steward role. Returns `#err(#NotDesignated)` when the person has no
-  `#Designated` successor record, `#err(#NotApprovedClaimedMember)` when the
-  person is not an approved claimed member, and `#err(#AlreadySteward)` when the
-  member's account is already an active steward.
-- `listSuccessors() : async [SuccessorDesignation]` — query. Family Steward
-  only. Lists all successor designations.
+  update. TEMPORARY Tenancy 1C compatibility wrapper for
+  `activateSuccessorForFamily`, delegating with the default family id
+  (`\"norwood\"`). Family Steward only. Activates/promotes a designated successor
+  into the active steward role. Returns `#err(#NotDesignated)` when the person
+  has no `#Designated` successor record, `#err(#NotApprovedClaimedMember)` when
+  the person is not an approved claimed member, and `#err(#AlreadySteward)` when
+  the member's account is already an active steward.
+- `listSuccessorsForFamily(familyId : Text) : async [SuccessorDesignation]` —
+  query. Active Steward of `familyId` only. Lists the successor designations in
+  `familyId`; a designation stamped with another family is never returned, so
+  Family A never sees Family B designations.
+- `listSuccessors() : async [SuccessorDesignation]` — query. TEMPORARY Tenancy
+  1C compatibility wrapper for `listSuccessorsForFamily`, delegating with the
+  default family id (`\"norwood\"`). Family Steward only. Lists all successor
+  designations in the default family.
 - `getSingleStewardWarning() : async ?Text` — query. Family Steward only.
   Returns a warning encouraging successor designation when only one active
   steward exists, or `null` when there are multiple stewards.
-- `listStewardIdentities() : async [StewardIdentity]` — query. Family Steward
-  only. Returns each current Steward and designated Successor enriched with the
-  linked approved Person identity, resolved via steward accountId -> approved
-  linked personId (`PersonProfile.claimedByUserId`) -> canonical Person Profile.
-  Each `StewardIdentity` carries `personId`, `displayName` (the family-facing
-  identity: preferred/display name, falling back to the canonical full person
-  name), `canonicalName` (the canonical full person name), and `accountId` (the
-  internal account principal, carried only for authorization/audit and never the
-  primary displayed identity). Current Stewards are those with
-  `roleStatus == #Active`; designated Successors are those with
-  `status == #Designated`. A steward or successor whose account/person cannot be
-  resolved to an approved claimed Person profile is omitted.
+- `listStewardIdentitiesForFamily(familyId : Text) : async [StewardIdentity]` —
+  query. Active Steward of `familyId` only. Returns each current Steward and
+  designated Successor of `familyId` enriched with the linked approved Person
+  identity, resolved via steward accountId -> approved linked personId
+  (`PersonProfile.claimedByUserId`) -> canonical Person Profile. Only Steward
+  records and successor designations stamped with `familyId` are considered, so
+  Family A never sees Family B identities. Each `StewardIdentity` carries
+  `personId`, `displayName` (the family-facing identity: preferred/display name,
+  falling back to the canonical full person name), `canonicalName` (the
+  canonical full person name), and `accountId` (the internal account principal,
+  carried only for authorization/audit and never the primary displayed
+  identity). Current Stewards are those with `roleStatus == #Active`; designated
+  Successors are those with `status == #Designated`. A steward or successor
+  whose account/person cannot be resolved to an approved claimed Person profile
+  is omitted.
+- `listStewardIdentities() : async [StewardIdentity]` — query. TEMPORARY
+  Tenancy 1C compatibility wrapper for `listStewardIdentitiesForFamily`,
+  delegating with the default family id (`\"norwood\"`). Family Steward only.
+  Returns each current Steward and designated Successor of the default family
+  enriched with the linked approved Person identity, as described above.
 - `listEligibleStewardCandidates() : async [StewardIdentity]` — query. Family
   Steward only. Returns the eligible promotion/successor candidate list: all
   people who are living, have an APPROVED/CLAIMED profile
@@ -767,10 +881,20 @@ stays readable.
   pending conflict with that id exists.
 - `listPersonRelationships(personId : Text) : async [Relationship]` — query.
   Family Steward only. Returns the current relationships for a person.
+- `addRelationshipForFamily(familyId : Text, fromPersonId : Text, toPersonId : Text, relationshipType : RelationshipType) : async Result<Relationship, RelationshipAdminError>` —
+  update. Active Steward of `familyId` only. Adds a missing relationship to
+  `familyId`'s family graph. Both people must belong to `familyId`, the duplicate
+  check is filtered by `familyId`, and the new `Relationship` is stamped with
+  `familyId`, so no cross-family relationship edge can be created. Returns
+  `#err(#PersonNotFound)` when either person does not belong to `familyId` and
+  `#err(#DuplicateRelationship)` when an identical relationship already exists in
+  `familyId`.
 - `addRelationship(fromPersonId : Text, toPersonId : Text, relationshipType : RelationshipType) : async Result<Relationship, RelationshipAdminError>` —
-  update. Family Steward only. Adds a missing relationship to the shared family
-  graph. Returns `#err(#DuplicateRelationship)` when an identical relationship
-  already exists.
+  update. TEMPORARY Tenancy 1C compatibility wrapper for
+  `addRelationshipForFamily`, delegating with the default family id
+  (`\"norwood\"`). Family Steward only. Adds a missing relationship to the shared
+  family graph. Returns `#err(#DuplicateRelationship)` when an identical
+  relationship already exists.
 - `removeRelationship(relationshipId : Nat) : async Result<(), RelationshipAdminError>` —
   update. Family Steward only. Removes an incorrect relationship from the shared
   family graph. Returns `#err(#RelationshipNotFound)` when no relationship with
@@ -2031,9 +2155,14 @@ epoch, `Int`), `reviewedBy` (principal text, `\"\"` when unreviewed), and
 `fromPersonId`, `toPersonId`, `relationshipType`
 (`\"Parent\"`/`\"Child\"`/`\"SpousePartner\"`/`\"Sibling\"`), and `status`
 (`\"Confirmed\"`/`\"Pending\"`/`\"Disputed\"`). `notification` rows (primary key
-`id`) carry `recipient` (principal text), `notificationType`
-(`\"ProfileClaimRequested\"`/`\"ProfileClaimReviewed\"`/`\"RelationshipRequested\"`/`\"RelationshipReviewed\"`),
+`id`) carry `familyId` (the family whose activity produced the notification —
+the tenant boundary), `recipient` (principal text), `notificationType`
+(`\"ProfileClaimRequested\"`/`\"ProfileClaimReviewed\"`/`\"RelationshipRequested\"`/`\"RelationshipReviewed\"`/`\"BoardReply\"`/`\"BoardMention\"`/`\"NewMessage\"`/`\"ResearchSubmission\"`/`\"ResearchApproved\"`/`\"ResearchRejected\"`/`\"ArchiveApproved\"`/`\"ArchiveRejected\"`),
 `message`, `createdAt` (nanoseconds since epoch, `Int`), and `read` (`Bool`).
+The `notification` entity is `.controllerOnly()`, so only the platform
+controller reads its rows through `schema()`/`execute()`; the `familyId` column
+lets a controller-side query separate Family A notifications from Family B
+notifications.
 `account` rows (primary key `id`, the account's stable principal rendered as
 text) carry `google` and `apple` (`Bool`, whether that authentication method is
 bound to the account) and `createdAt` (nanoseconds since epoch, `Int`).
@@ -2365,19 +2494,45 @@ caller's own linked or pending profile, `getMyRelationshipRequests` returns only
 the caller's own pending relationship requests, and `listNotifications` returns
 only the caller's own records).
 
+The notification methods are family-scoped and recipient-scoped. The canonical
+reads — `listNotificationsForFamily`, `listUnreadNotificationsForFamily`,
+`unreadNotificationCountForFamily`, and `getNotificationForFamily` — are
+readable by any caller, including an anonymous one, but each returns only
+records whose `familyId` equals the requested family AND whose `recipient` is
+the caller, so an anonymous caller receives `[]`/`0`/`null` and never another
+user's notifications. The canonical actions —
+`markNotificationReadForFamily`, `markAllNotificationsReadForFamily`, and
+`dismissNotificationForFamily` — likewise act only on the caller's own
+notifications in the requested family; they do not trap for an anonymous caller,
+they simply find no matching record and return `null`/`0`/`false`. The legacy
+`listNotifications` and `markNotificationRead` are TEMPORARY Tenancy 1C
+compatibility wrappers that delegate to the canonical methods with the default
+family (`\"norwood\"`); they contain no logic of their own.
+
 The Family Governance methods are steward-only. `listStewards`,
-`promoteToSteward`, `removeSteward`, `designateSuccessor`, `activateSuccessor`,
-`listSuccessors`, `getSingleStewardWarning`, `listStewardIdentities`,
+`promoteToStewardForFamily`, `promoteToSteward`, `removeSteward`,
+`designateSuccessorForFamily`, `designateSuccessor`,
+`activateSuccessorForFamily`, `activateSuccessor`,
+`listSuccessorsForFamily`, `listSuccessors`, `getSingleStewardWarning`,
+`listStewardIdentitiesForFamily`, `listStewardIdentities`,
 `listEligibleStewardCandidates`, `listProfileRemovalRequests`,
 `approveProfileRemoval`, `rejectProfileRemoval`, `archiveProfile`,
 `restoreProfile`, `listArchivedProfiles`, `permanentlyDeleteProfile`,
 `listDuplicateCandidates`, `notDuplicate`, `mergeProfiles`,
-`resolveMergeConflict`, `listPersonRelationships`, `addRelationship`,
-`removeRelationship`, `correctRelationshipType`, and `listAuditHistory` all trap
+`resolveMergeConflict`, `listPersonRelationships`, `addRelationshipForFamily`,
+`addRelationship`, `removeRelationship`, `correctRelationshipType`, and
+`listAuditHistory` all trap
 with `\"Unauthorized: Only Family Stewards can ...\"` when the caller is not an
-active Family Steward (an ACTIVE persisted `StewardRecord`). The platform admin
-role does not grant these powers. `getStewardAuditHistory` is likewise Family
-Steward only: it traps with
+active Family Steward (an ACTIVE persisted `StewardRecord`). The canonical
+family-scoped forms (`promoteToStewardForFamily`, `designateSuccessorForFamily`,
+`activateSuccessorForFamily`, `listSuccessorsForFamily`,
+`listStewardIdentitiesForFamily`, `addRelationshipForFamily`) evaluate Steward
+authority against the requested `familyId`, so a Steward of one family can never
+promote, designate, activate, list, or relate a member of another family; the
+legacy no-`familyId` forms are TEMPORARY Tenancy 1C
+compatibility wrappers that delegate with the default family (`\"norwood\"`). The
+platform admin role does not grant these powers. `getStewardAuditHistory` is
+likewise Family Steward only: it traps with
 `\"Unauthorized: You must be signed in\"` for an anonymous caller and
 `\"Unauthorized: Only Family Stewards can view audit history\"` when the caller
 is not an active Family Steward. `requestProfileRemoval` is the one governance
@@ -2708,9 +2863,10 @@ already reference the caller's stable principal (`requestingUserId`,
   and `reviewedDate` (`?Int`, `null` when unreviewed).
 - `Relationship` fields: `id` (`Nat`), `fromPersonId` (`Text`),
   `toPersonId` (`Text`), `relationshipType`, and `status`.
-- `Notification` fields: `id` (`Nat`), `recipient` (`Principal`),
-  `notificationType`, `message` (`Text`), `createdAt` (`Int`), and `read`
-  (`Bool`).
+- `Notification` fields: `familyId` (`Text`, the family whose activity produced
+  the notification), `id` (`Nat`), `recipient` (`Principal`), `notificationType`,
+  `message` (`Text`), `createdAt` (`Int`), and `read` (`Bool`). A notification is
+  only ever read, counted, or mutated within its own `familyId`.
 - `ProfileEdits` carries the owner-editable optionals `preferredName`,
   `firstName`, `middleName`, `lastName`, `suffix`, `nickname`, `story`,
   `shortBio`, `longerStory`, `occupation`, `birthInfo`, `birthDate`,
@@ -2742,7 +2898,9 @@ already reference the caller's stable principal (`requestingUserId`,
   `#StewardAlreadyExists` (an active Family Steward already exists, so the
   one-time claim is permanently closed), or `#AlreadySteward` (the caller already
   holds an active Family Steward record).
-- `SuccessorDesignation` fields: `personId` (`Text`), `priority` (`Nat`, the
+- `SuccessorDesignation` fields: `familyId` (`Text`, the family the designation
+  belongs to — the same `personId` may hold independent designations in different
+  families), `personId` (`Text`), `priority` (`Nat`, the
   order in which the successor should be considered for activation),
   `assignedBy` (`Principal`), `assignedAt` (`Int`), and `status`
   (`#Designated`/`#Activated`/`#Removed`). A successor is a designation only —
@@ -3066,7 +3224,9 @@ async job to poll; the frontend can call `listPendingArchiveItemsForFamily`
 Each successful
 transition out of `#Pending` records exactly one `#ArchiveApproved` /
 `#ArchiveRejected` notification to the item's contributor, readable via
-`listNotifications`; a repeated approve/reject call on an already-reviewed item
+`listNotificationsForFamily(familyId)` (or the TEMPORARY `listNotifications`
+wrapper for the default family); a repeated approve/reject call on an
+already-reviewed item
 returns `null` and creates no duplicate notification. An Oral History item
 (`classification == #OralHistory`) must carry exactly one primary speaker at
 submission time; the speaker is fixed at submission and does not change through
@@ -3115,7 +3275,9 @@ relationship as `#Confirmed` to the shared family graph),
 relationship automatically appears in Explore Family, Family Tree, Heritage, and
 profiles without a manual insertion step. There is no async job to poll; the
 frontend can call `listProfileClaims` / `listRelationshipRequests` (steward) or
-`listNotifications` to observe current state. A regular signed-in caller can
+`listNotificationsForFamily(familyId)` (or the TEMPORARY `listNotifications`
+wrapper for the default family) to observe current state. A regular signed-in
+caller can
 observe their own pending relationship state at any time via
 `getMyRelationshipRequests` (returns only the caller's own pending requests)
 without needing Family Steward privileges.
@@ -3136,7 +3298,10 @@ Governance actions follow steward-driven lifecycles. Steward succession:
 `promoteToSteward` makes an approved claimed member an active steward directly;
 `designateSuccessor` records a successor as a `#Designated` designation only,
 and `activateSuccessor` promotes a designated successor into the active steward
-role (marking the designation `#Activated`). A successor is never an active
+role (marking the designation `#Activated`). The canonical family-scoped forms
+`designateSuccessorForFamily` and `activateSuccessorForFamily` stamp and match
+the designation's `familyId`, so a designation from one family can never
+activate a Steward in another. A successor is never an active
 steward until explicitly activated — there is no automatic transfer based on
 inactivity. Safe profile removal: a claimed living profile owner calls
 `requestProfileRemoval` to create a `#Pending` request; a Family Steward then
@@ -3385,6 +3550,20 @@ no async job to poll; the frontend can call the list methods (steward) or
   Steward, an unclaimed/historical profile, and never rewrites family
   relationships; any relationship addition or change must go through
   `proposeRelationship`.
+- `markNotificationReadForFamily` is idempotent: marking an already-read
+  notification read again returns the same notification and changes nothing. It
+  returns `null` when no notification with that id belongs to the requested
+  family and is addressed to the caller, so a retry that actually succeeded is
+  safe and a foreign-family or foreign-recipient id is a no-op.
+  `markAllNotificationsReadForFamily` is idempotent: a second call marks nothing
+  and returns `0`. `dismissNotificationForFamily` is idempotent: dismissing an
+  already-dismissed (or nonexistent, or other-family, or other-recipient)
+  notification returns `false` and changes nothing. Dismissal is destructive and
+  irreversible — the notification record is removed from the caller's list — but
+  it never touches another family's or another recipient's notification.
+- The TEMPORARY Tenancy 1C notification wrappers (`listNotifications`,
+  `markNotificationRead`) have the same retry semantics as their family-scoped
+  counterparts, applied to the default family (`\"norwood\"`).
 - `bindAuthMethod` is idempotent: binding an authentication method that is
   already bound to the account is a no-op that returns the unchanged account.
   It never removes or replaces other bound methods, so a retry that actually
@@ -3405,9 +3584,12 @@ no async job to poll; the frontend can call the list methods (steward) or
   steward returns `#err(#NotSteward)` and changes nothing. It never allows the
   last active steward to be removed (`#err(#LastSteward)`).
 - `designateSuccessor` is not idempotent: each call appends a new designation
-  record for the person. `activateSuccessor` is idempotent in effect — it
-  returns `#err(#NotDesignated)` when the person has no `#Designated` record,
-  and `#err(#AlreadySteward)` when the member is already an active steward.
+  record for the person. `designateSuccessorForFamily` guards against a duplicate
+  `#Designated` record for the same `(familyId, personId)` and returns
+  `#err(#AlreadyDesignated)`. `activateSuccessor` is idempotent in effect — it
+  returns `#err(#NotDesignated)` when the person has no `#Designated` record in
+  the requested family, and `#err(#AlreadySteward)` when the member is already an
+  active steward.
 - `requestProfileRemoval` is not idempotent in effect but guards against
   duplicates: it returns `#err(#AlreadyPending)` when a pending removal request
   already exists for the person.
@@ -3719,8 +3901,20 @@ no async job to poll; the frontend can call the list methods (steward) or
   via an approved claim. The authoritative relationship graph and most display
   content live in the frontend's shared person/family graph; the backend tracks
   ownership/lifecycle state and the owner-editable fields.
-- `listNotifications` returns only the signed-in caller's own notification
-  records; it is not a global feed.
+- The notification reads (`listNotificationsForFamily`,
+  `listUnreadNotificationsForFamily`, `unreadNotificationCountForFamily`,
+  `getNotificationForFamily`) and the TEMPORARY `listNotifications` wrapper
+  return only the signed-in caller's own notification records in the requested
+  family; they are not a global feed. A notification is only ever read, counted,
+  or mutated when its `familyId` equals the requested family AND its `recipient`
+  is the caller. A `notificationId` alone never crosses the family boundary: a
+  foreign-family notification id behaves exactly like a not-found id — the
+  single-record reads return `null`, the mutations return `null`/`0`/`false`,
+  and no distinguishable error is produced — so a caller cannot use the response
+  to learn whether another family's notification exists. The same account
+  participating in two families receives its notifications separated by family,
+  and marking a Family A notification read never marks a Family B notification
+  read.
 - `searchPossibleMatches` searches only the backend-tracked profiles; the
   frontend merges these with its own authoritative family graph search to show
   name plus parents when known.

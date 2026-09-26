@@ -197,6 +197,7 @@ const {
               "Your research submission is awaiting Family Steward review.",
             createdAt: 1_700_000_000_000_000_000n,
             read: false,
+            familyId: "norwood",
           },
         ];
       }
@@ -244,6 +245,7 @@ const {
             message: "Your research submission was approved.",
             createdAt: 1_700_000_000_000_000_000n,
             read: false,
+            familyId: "norwood",
           },
         ];
       }
@@ -273,6 +275,7 @@ const {
             message: "Your research submission was not approved.",
             createdAt: 1_700_000_000_000_000_000n,
             read: false,
+            familyId: "norwood",
           },
         ];
       }
@@ -742,6 +745,7 @@ describe("Research notifications: awaiting review, approved, not approved", () =
         message: "Your research submission is awaiting Family Steward review.",
         createdAt: 1_700_000_000_000_000_000n,
         read: false,
+        familyId: "norwood",
       },
       {
         id: 2n,
@@ -750,6 +754,7 @@ describe("Research notifications: awaiting review, approved, not approved", () =
         message: "Your research submission was approved.",
         createdAt: 1_700_000_000_000_000_000n,
         read: false,
+        familyId: "norwood",
       },
       {
         id: 3n,
@@ -758,6 +763,7 @@ describe("Research notifications: awaiting review, approved, not approved", () =
         message: "Your research submission was not approved.",
         createdAt: 1_700_000_000_000_000_000n,
         read: false,
+        familyId: "norwood",
       },
     ]);
     renderNotificationsPage();

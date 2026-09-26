@@ -9,6 +9,7 @@ import GovernanceTypes "../types/governance";
 import FamilyTypes "../types/family";
 import RelationshipProposalScopeLib "../lib/relationship-proposal-scope";
 import FamilyAuthorizationLib "../lib/family-authorization";
+import NotificationsScopeLib "../lib/notifications-scope";
 import ResearchAuditLib "../lib/research-intake";
 import InputValidation "../lib/input-validation";
 
@@ -115,7 +116,7 @@ mixin (
       now,
       "Relationship proposal '" # cleanFrom # " - " # cleanType # " - " # cleanTo # "' submitted",
     );
-    addRelationshipProposalNotification(caller, #ResearchSubmission, "Your research submission is awaiting Family Steward review.");
+    addRelationshipProposalNotification(familyId, caller, #ResearchSubmission, "Your research submission is awaiting Family Steward review.");
     #ok(proposal);
   };
 
@@ -230,7 +231,7 @@ mixin (
       now,
       "Relationship proposal '" # proposal.fromPersonId # " - " # proposal.relationshipType # " - " # proposal.toPersonId # "' approved",
     );
-    addRelationshipProposalNotification(proposal.submittedBy, #ResearchApproved, "Your relationship proposal was approved.");
+    addRelationshipProposalNotification(familyId, proposal.submittedBy, #ResearchApproved, "Your relationship proposal was approved.");
     ?updated;
   };
 
@@ -264,7 +265,7 @@ mixin (
       now,
       "Relationship proposal '" # proposal.fromPersonId # " - " # proposal.relationshipType # " - " # proposal.toPersonId # "' rejected",
     );
-    addRelationshipProposalNotification(proposal.submittedBy, #ResearchRejected, "Your relationship proposal was not approved.");
+    addRelationshipProposalNotification(familyId, proposal.submittedBy, #ResearchRejected, "Your relationship proposal was not approved.");
     ?updated;
   };
 
@@ -375,34 +376,15 @@ mixin (
     entry;
   };
 
-  /// Computes the next notification id: one greater than the largest existing
-  /// id, or `0` when there are no notifications.
-  func nextRelationshipProposalNotificationId() : Nat {
-    var maxId = 0;
-    for (n in notifications.toArray().values()) {
-      if (n.id >= maxId) { maxId := n.id + 1 };
-    };
-    maxId;
-  };
-
-  /// Appends a research notification for the given recipient, avoiding
-  /// duplicates. Shared by the family-scoped proposal endpoints and their
-  /// temporary compatibility wrappers so notification behavior never diverges.
+  /// Appends a research notification for the given recipient in `familyId`,
+  /// avoiding duplicates. Delegates to the canonical family-scoped notification
+  /// helper, so the stored `familyId` is always the action's family.
   func addRelationshipProposalNotification(
+    familyId : FamilyTypes.FamilyId,
     recipient : Principal,
     notificationType : OwnershipTypes.NotificationType,
     message : Text,
   ) {
-    let exists = notifications.toArray().any(func n = n.recipient == recipient and n.notificationType == notificationType and n.message == message);
-    if (not exists) {
-      notifications.add({
-        id = nextRelationshipProposalNotificationId();
-        recipient;
-        notificationType;
-        message;
-        createdAt = Time.now();
-        read = false;
-      });
-    };
+    ignore NotificationsScopeLib.createUniqueForFamily(notifications, familyId, recipient, notificationType, message, Time.now());
   };
 };

@@ -10,6 +10,7 @@ import GovernanceTypes "../types/governance";
 import FamilyTypes "../types/family";
 import FindingScopeLib "../lib/finding-scope";
 import FamilyAuthorizationLib "../lib/family-authorization";
+import NotificationsScopeLib "../lib/notifications-scope";
 import TenancyLib "../lib/tenancy";
 import ResearchAuditLib "../lib/research-intake";
 import InputValidation "../lib/input-validation";
@@ -162,7 +163,7 @@ mixin (
       now,
       "Finding '" # cleanTitle # "' submitted",
     );
-    addFindingNotification(caller, #ResearchSubmission, "Your research submission is awaiting Family Steward review.");
+    addFindingNotification(familyId, caller, #ResearchSubmission, "Your research submission is awaiting Family Steward review.");
     #ok(finding);
   };
 
@@ -449,35 +450,16 @@ mixin (
     entry;
   };
 
-  /// Computes the next notification id: one greater than the largest existing
-  /// id, or `0` when there are no notifications.
-  func nextFindingNotificationId() : Nat {
-    var maxId = 0;
-    for (n in notifications.toArray().values()) {
-      if (n.id >= maxId) { maxId := n.id + 1 };
-    };
-    maxId;
-  };
-
-  /// Appends a research notification for the given recipient, avoiding
-  /// duplicates. Shared by the family-scoped finding endpoints and their
-  /// temporary compatibility wrappers so notification behavior never diverges.
+  /// Appends a research notification for the given recipient in `familyId`,
+  /// avoiding duplicates. Delegates to the canonical family-scoped notification
+  /// helper, so the stored `familyId` is always the action's family.
   func addFindingNotification(
+    familyId : FamilyTypes.FamilyId,
     recipient : Principal,
     notificationType : OwnershipTypes.NotificationType,
     message : Text,
   ) {
-    let exists = notifications.toArray().any(func n = n.recipient == recipient and n.notificationType == notificationType and n.message == message);
-    if (not exists) {
-      notifications.add({
-        id = nextFindingNotificationId();
-        recipient;
-        notificationType;
-        message;
-        createdAt = Time.now();
-        read = false;
-      });
-    };
+    ignore NotificationsScopeLib.createUniqueForFamily(notifications, familyId, recipient, notificationType, message, Time.now());
   };
 
   /// Creates a Conflict Review item for a finding that contradicts canonical

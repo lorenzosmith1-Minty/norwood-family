@@ -11,6 +11,7 @@ import GovernanceTypes "../types/governance";
 import AccountIdentityTypes "../types/account-identity";
 import MessagingScopeLib "../lib/messaging-scope";
 import FamilyAuthorizationLib "../lib/family-authorization";
+import NotificationsScopeLib "../lib/notifications-scope";
 import TenancyLib "../lib/tenancy";
 
 /// Tenancy 1C-C3 canonical family-scoped private Messaging public API.
@@ -374,7 +375,7 @@ mixin (
         )) {
           case (#err e) { #err(e) };
           case (#ok message) {
-            addMessagingNotification(recipientAccountId, #NewMessage, "You have a new private message");
+            addMessagingNotification(familyId, recipientAccountId, #NewMessage, "You have a new private message");
             #ok(message);
           };
         };
@@ -528,15 +529,16 @@ mixin (
     caller.toText();
   };
 
-  func addMessagingNotification(recipient : Principal, notificationType : OwnershipTypes.NotificationType, message : Text) {
-    notifications.add({
-      id = messagingNextId(notifications.toArray().map(func n = n.id));
-      recipient;
-      notificationType;
-      message;
-      createdAt = Time.now();
-      read = false;
-    });
+  /// Appends a messaging notification for the given recipient in `familyId`.
+  /// Delegates to the canonical family-scoped notification helper, so the
+  /// stored `familyId` is always the action's family.
+  func addMessagingNotification(
+    familyId : FamilyTypes.FamilyId,
+    recipient : Principal,
+    notificationType : OwnershipTypes.NotificationType,
+    message : Text,
+  ) {
+    ignore NotificationsScopeLib.createForFamily(notifications, familyId, recipient, notificationType, message, Time.now());
   };
 
   func messagingNextId(ids : [Nat]) : Nat {

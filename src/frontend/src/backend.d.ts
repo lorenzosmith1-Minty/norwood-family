@@ -338,6 +338,7 @@ export interface Notification {
     read: boolean;
     recipient: Principal;
     message: string;
+    familyId: string;
 }
 export type NotificationId = bigint;
 export interface OralHistorySpeaker {
@@ -863,6 +864,7 @@ export interface SuccessorDesignation {
     assignedBy: Principal;
     personId: PersonId;
     priority: bigint;
+    familyId: string;
 }
 export interface TimelineEvent {
     id: string;
@@ -1219,6 +1221,7 @@ export enum StewardClaimError {
 }
 export enum StewardError {
     LastSteward = "LastSteward",
+    AlreadyDesignated = "AlreadyDesignated",
     NotSteward = "NotSteward",
     AlreadySteward = "AlreadySteward",
     NotSignedIn = "NotSignedIn",
@@ -1259,10 +1262,19 @@ export enum UserRole {
 }
 export interface backendInterface {
     /**
-     * / Activates/promotes a designated successor into the active steward role.
-     * / Family Steward only.
+     * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+     * / delegates to `activateSuccessorForFamily` with the default family id so
+     * / current Norwood behavior is unchanged.
      */
     activateSuccessor(personId: PersonId): Promise<Result_10>;
+    /**
+     * / Activates/promotes a designated successor into the active steward role in
+     * / `familyId`. Canonical family-scoped form: the caller must be an active
+     * / Steward of `familyId`, all Steward and profile lookups are filtered by
+     * / `familyId`, and the activated Steward record remains in `familyId`.
+     * / Activating a successor in one family never modifies another family's state.
+     */
+    activateSuccessorForFamily(familyId: string, personId: PersonId): Promise<Result_10>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for `addBoardReplyForFamily`.
      */
@@ -1298,10 +1310,19 @@ export interface backendInterface {
      */
     addPhotoForFamily(familyId: FamilyId, personId: PersonId, filename: string, mimeType: string, blob: ExternalBlob): Promise<Photo>;
     /**
-     * / Adds a missing relationship to the shared family graph. Family Steward
-     * / only.
+     * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+     * / delegates to `addRelationshipForFamily` with the default family id so
+     * / current Norwood behavior is unchanged.
      */
     addRelationship(fromPersonId: PersonId, toPersonId: PersonId, relationshipType: RelationshipType): Promise<Result_24>;
+    /**
+     * / Adds a missing relationship to `familyId`'s family graph. Canonical
+     * / family-scoped form: the caller must be an active Steward of `familyId`,
+     * / both people must belong to `familyId`, the duplicate check is filtered by
+     * / `familyId`, and the new Relationship is stamped with `familyId`, so no
+     * / cross-family relationship edge can be created.
+     */
+    addRelationshipForFamily(familyId: string, fromPersonId: PersonId, toPersonId: PersonId, relationshipType: RelationshipType): Promise<Result_24>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `approveArchiveItemForFamily`.
@@ -1599,10 +1620,25 @@ export interface backendInterface {
      */
     createRelationshipProposalForFamily(familyId: FamilyId, fromPersonId: string, toPersonId: string, relationshipType: string, sourceId: SourceId): Promise<Result_19>;
     /**
-     * / Creates a new source record. Requires an approved family member; the caller
-     * / is recorded as the contributor. The source enters as `#Pending`.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for `createSourceForFamily`.
+     * / Deprecated single-family form: delegates to the canonical family-scoped
+     * / endpoint with `FamilyTypes.DEFAULT_FAMILY_ID`, so current Norwood behavior
+     * / for familyId "norwood" is unchanged. Contains no duplicated business logic
+     * / and will be removed once the frontend passes an explicit familyId
+     * / everywhere.
      */
     createSource(title: string, sourceType: SourceType, description: string, archiveItemId: bigint | null): Promise<Result_18>;
+    /**
+     * / Creates a new source record in `familyId`. Requires an approved member or
+     * / Steward of `familyId`; the caller is recorded as the contributor. The
+     * / source enters as `#Pending`. The stored `SourceRecord.familyId` is
+     * / `familyId`, the Research audit entry is written to `familyId`, and the
+     * / submission notification is scoped to `familyId`. A linked Archive item,
+     * / when supplied, must belong to `familyId`. This is the canonical
+     * / family-scoped non-upload Source creation path and never relies on the
+     * / default family.
+     */
+    createSourceForFamily(familyId: FamilyId, title: string, sourceType: SourceType, description: string, archiveItemId: bigint | null): Promise<Result_18>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `createSourceWithUploadForFamily`. Deprecated single-family form:
@@ -1620,11 +1656,28 @@ export interface backendInterface {
      */
     createSourceWithUploadForFamily(familyId: FamilyId, title: string, sourceType: SourceType, description: string, mimeType: string, blob: ExternalBlob, tags: Array<string>, era: string, year: bigint | null, relatedMemberIds: Array<string>, privacyLevel: PrivacyLevel, classification: ArchiveItemClassification, primarySpeaker: OralHistorySpeaker | null, filename: string): Promise<Result_17>;
     /**
-     * / Designates an approved claimed family member as a successor steward with a
-     * / priority/order. A successor is a designation only until activated.
-     * / Family Steward only.
+     * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+     * / delegates to `designateSuccessorForFamily` with the default family id so
+     * / current Norwood behavior is unchanged.
      */
     designateSuccessor(personId: PersonId, priority: bigint): Promise<Result_16>;
+    /**
+     * / Designates an approved claimed member of `familyId` as a successor steward
+     * / with a priority/order. Canonical family-scoped form: the caller must be an
+     * / active Steward of `familyId`, the target profile must belong to `familyId`,
+     * / the duplicate-designation check is scoped by `familyId`, and the new
+     * / designation is stamped with `familyId`. A successor is a designation only
+     * / until activated. A Steward of one family can never designate a member of
+     * / another family.
+     */
+    designateSuccessorForFamily(familyId: string, personId: PersonId, priority: bigint): Promise<Result_16>;
+    /**
+     * / Dismisses (deletes) the signed-in caller's notification with `id` in
+     * / `familyId`. Returns `true` when a matching notification was removed,
+     * / `false` when none belongs to `familyId` and is addressed to the caller. A
+     * / Family A action can never delete a Family B notification.
+     */
+    dismissNotificationForFamily(familyId: FamilyId, id: NotificationId): Promise<boolean>;
     execute(qJson: string): Promise<Result__1>;
     getApiDoc(): Promise<string>;
     /**
@@ -1737,6 +1790,13 @@ export interface backendInterface {
      * / cross the family boundary.
      */
     getNewPersonCandidateForFamily(familyId: FamilyId, candidateId: bigint): Promise<NewPersonCandidate | null>;
+    /**
+     * / Returns the signed-in caller's notification with `id` in `familyId`, or
+     * / `null` when no notification with that id belongs to `familyId` and is
+     * / addressed to the caller. A notification id from another family never
+     * / resolves here.
+     */
+    getNotificationForFamily(familyId: FamilyId, id: NotificationId): Promise<Notification | null>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
      * / delegates to the canonical family-scoped implementation with the default
@@ -2147,10 +2207,16 @@ export interface backendInterface {
      */
     listNewPersonCandidatesForFamily(familyId: FamilyId): Promise<Array<NewPersonCandidate>>;
     /**
-     * / Lists in-app notification records for the signed-in caller. Notifications
-     * / are recipient-addressed and are not family-scoped.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `listNotificationsForFamily`.
      */
     listNotifications(): Promise<Array<Notification>>;
+    /**
+     * / Lists the signed-in caller's notifications in `familyId`, newest first.
+     * / Only notifications whose `familyId` equals `familyId` and whose recipient
+     * / is the caller are returned.
+     */
+    listNotificationsForFamily(familyId: FamilyId): Promise<Array<Notification>>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `listPendingArchiveItemsForFamily`.
@@ -2287,14 +2353,23 @@ export interface backendInterface {
      */
     listSourcesForFamily(familyId: FamilyId): Promise<Array<SourceRecord>>;
     /**
-     * / Returns each current Steward and designated Successor enriched with the
-     * / linked approved Person identity (personId, preferred/display name, and
-     * / canonical full person name), resolved via steward accountId -> approved
-     * / linked personId (PersonProfile.claimedByUserId) -> canonical Person
-     * / Profile. The internal account id is carried only for authorization/audit.
-     * / Family Steward only.
+     * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+     * / delegates to `listStewardIdentitiesForFamily` with the default family id so
+     * / current Norwood behavior is unchanged.
      */
     listStewardIdentities(): Promise<Array<StewardIdentity>>;
+    /**
+     * / Returns each current Steward and designated Successor of `familyId`
+     * / enriched with the linked approved Person identity (personId,
+     * / preferred/display name, and canonical full person name), resolved via
+     * / steward accountId -> approved linked personId
+     * / (PersonProfile.claimedByUserId) -> canonical Person Profile. Canonical
+     * / family-scoped form: only Steward records and successor designations stamped
+     * / with `familyId` are considered, so Family A never sees Family B identities.
+     * / The internal account id is carried only for authorization/audit. Family
+     * / Steward of `familyId` only.
+     */
+    listStewardIdentitiesForFamily(familyId: string): Promise<Array<StewardIdentity>>;
     /**
      * / Lists all current Family Stewards with role status and account identity.
      * / Family Steward only.
@@ -2307,9 +2382,18 @@ export interface backendInterface {
      */
     listStoriesForFamily(familyId: FamilyId): Promise<Array<Story>>;
     /**
-     * / Lists all successor designations. Family Steward only.
+     * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+     * / delegates to `listSuccessorsForFamily` with the default family id so
+     * / current Norwood behavior is unchanged.
      */
     listSuccessors(): Promise<Array<SuccessorDesignation>>;
+    /**
+     * / Lists all successor designations in `familyId`. Canonical family-scoped
+     * / form: the caller must be an active Steward of `familyId`, and a designation
+     * / stamped with another family is never returned. Family Steward of `familyId`
+     * / only.
+     */
+    listSuccessorsForFamily(familyId: string): Promise<Array<SuccessorDesignation>>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `listTimelineEventsForFamily`. Preserves the pre-tenancy behavior exactly:
@@ -2323,6 +2407,18 @@ export interface backendInterface {
      * / equals `familyId` are considered.
      */
     listTimelineEventsForFamily(familyId: FamilyId): Promise<Array<TimelineEvent>>;
+    /**
+     * / Lists the signed-in caller's unread notifications in `familyId`, newest
+     * / first. Only notifications whose `familyId` equals `familyId`, whose
+     * / recipient is the caller, and whose `read` is `false` are returned.
+     */
+    listUnreadNotificationsForFamily(familyId: FamilyId): Promise<Array<Notification>>;
+    /**
+     * / Marks every unread notification addressed to the signed-in caller in
+     * / `familyId` as read. Returns the number of notifications marked.
+     * / Notifications in other families are never touched.
+     */
+    markAllNotificationsReadForFamily(familyId: FamilyId): Promise<bigint>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `markConversationReadForFamily`.
@@ -2347,11 +2443,17 @@ export interface backendInterface {
      */
     markMysteryResolvedForFamily(familyId: FamilyId, id: MysteryId, summary: string, supportingEvidence: Array<string>): Promise<Mystery | null>;
     /**
-     * / Marks one of the signed-in caller's notifications as read. Returns the
-     * / updated notification, or `null` when it does not exist or is not addressed
-     * / to the caller.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `markNotificationReadForFamily`.
      */
     markNotificationRead(id: NotificationId): Promise<Notification | null>;
+    /**
+     * / Marks the signed-in caller's notification with `id` in `familyId` as read.
+     * / Returns the updated notification, or `null` when no notification with that
+     * / id belongs to `familyId` and is addressed to the caller. A Family A action
+     * / can never mutate a Family B notification.
+     */
+    markNotificationReadForFamily(familyId: FamilyId, id: NotificationId): Promise<Notification | null>;
     /**
      * / Merges two duplicate profiles into one canonical record, preserving all
      * / valid relationships, media, timeline, stories, sources, archive references,
@@ -2413,10 +2515,19 @@ export interface backendInterface {
      */
     permanentlyDeleteProfile(personId: PersonId, confirmation: boolean): Promise<Result_11>;
     /**
-     * / Promotes an existing approved claimed family member to Family Steward.
-     * / Family Steward only.
+     * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+     * / delegates to `promoteToStewardForFamily` with the default family id so
+     * / current Norwood behavior is unchanged.
      */
     promoteToSteward(personId: PersonId): Promise<Result_10>;
+    /**
+     * / Promotes an existing approved claimed member of `familyId` to Family
+     * / Steward. Canonical family-scoped form: the caller must be an active Steward
+     * / of `familyId`, the target profile must belong to `familyId`, and the new
+     * / Steward record is stamped with `familyId`. A Steward of one family can never
+     * / promote a member of another family.
+     */
+    promoteToStewardForFamily(familyId: string, personId: PersonId): Promise<Result_10>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `proposeRelationshipForFamily`.
@@ -2819,6 +2930,12 @@ export interface backendInterface {
      * / only.
      */
     unblockUserForFamily(familyId: FamilyId, blockedAccountId: Principal): Promise<void>;
+    /**
+     * / Counts the signed-in caller's unread notifications in `familyId`. Only
+     * / notifications whose `familyId` equals `familyId`, whose recipient is the
+     * / caller, and whose `read` is `false` are counted.
+     */
+    unreadNotificationCountForFamily(familyId: FamilyId): Promise<bigint>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for `updateBoardPostForFamily`.
      */

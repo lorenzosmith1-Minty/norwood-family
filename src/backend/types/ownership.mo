@@ -134,8 +134,11 @@ module {
   };
 
   /// An in-app notification record addressed to one user. Email is never used
-  /// for relationship proof; notifications are purely in-app.
+  /// for relationship proof; notifications are purely in-app. `familyId` is the
+  /// family whose activity produced the notification; a notification is only
+  /// ever read, counted, or mutated within its own family.
   public type Notification = {
+    familyId : Text;
     id : Nat;
     recipient : Principal;
     notificationType : NotificationType;
@@ -280,6 +283,7 @@ module {
 
   /// Flattened, OQL-exposable view of an in-app notification record.
   public type NotificationRow = {
+    familyId : Text;
     id : Nat;
     recipient : Text;
     notificationType : Text;

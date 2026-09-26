@@ -5,9 +5,13 @@ import type {
   ProfileClaim,
   ProfileEdits,
 } from "@/backend";
+import { useFamilyScopedId } from "@/context/FamilyContext";
 import { useActor } from "@caffeineai/core-infrastructure";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useReconcileClaimNotifications } from "./useNotifications";
+import {
+  notificationInvalidation,
+  useReconcileClaimNotifications,
+} from "./useNotifications";
 
 /**
  * React Query hooks for the profile-claim and owner-editing workflows,
@@ -134,6 +138,7 @@ export function useListProfileClaims(familyId?: string) {
  * does not grant ownership until approved by a Family Steward.
  */
 export function useRequestProfileClaim(familyId?: string) {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
@@ -152,7 +157,9 @@ export function useRequestProfileClaim(familyId?: string) {
       // identity must resolve the newly pending profile.
       void queryClient.invalidateQueries({ queryKey: ["myProfileClaim"] });
       void queryClient.invalidateQueries({ queryKey: ["myProfile"] });
-      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient.invalidateQueries(
+        notificationInvalidation(familyScopedId),
+      );
       // A pending claim is a steward-review action, so the Pending
       // Contributions badge and the steward aggregate badge must refresh.
       void queryClient.invalidateQueries({
@@ -164,6 +171,7 @@ export function useRequestProfileClaim(familyId?: string) {
 
 /** Approves a pending profile claim, granting the user ownership. */
 export function useApproveProfileClaim(familyId?: string) {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   const reconcile = useReconcileClaimNotifications();
@@ -186,7 +194,9 @@ export function useApproveProfileClaim(familyId?: string) {
       void queryClient.invalidateQueries({ queryKey: ["personProfile"] });
       void queryClient.invalidateQueries({ queryKey: ["myProfileClaim"] });
       void queryClient.invalidateQueries({ queryKey: ["myProfile"] });
-      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient.invalidateQueries(
+        notificationInvalidation(familyScopedId),
+      );
       // Approving/rejecting a claim removes it from the steward-review queue,
       // so the Pending Contributions badge and steward aggregate badge refresh.
       void queryClient.invalidateQueries({
@@ -198,6 +208,7 @@ export function useApproveProfileClaim(familyId?: string) {
 
 /** Rejects a pending profile claim, recording the reviewer and reviewed date. */
 export function useRejectProfileClaim(familyId?: string) {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
@@ -212,7 +223,9 @@ export function useRejectProfileClaim(familyId?: string) {
       void queryClient.invalidateQueries({ queryKey: ["personProfile"] });
       void queryClient.invalidateQueries({ queryKey: ["myProfileClaim"] });
       void queryClient.invalidateQueries({ queryKey: ["myProfile"] });
-      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient.invalidateQueries(
+        notificationInvalidation(familyScopedId),
+      );
       // Approving/rejecting a claim removes it from the steward-review queue,
       // so the Pending Contributions badge and steward aggregate badge refresh.
       void queryClient.invalidateQueries({

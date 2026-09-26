@@ -147,6 +147,7 @@ const {
     },
     async designateSuccessor(personId: string, priority: bigint) {
       const designation: SuccessorDesignation = {
+        familyId: "norwood",
         personId,
         priority,
         status: SuccessorStatus.Designated,
@@ -721,6 +722,7 @@ describe("Steward Management tab", () => {
     setAdmin(true);
     setSuccessors([
       {
+        familyId: "norwood",
         personId: "julia",
         priority: 1n,
         status: SuccessorStatus.Designated,
@@ -777,6 +779,7 @@ describe("Steward Management tab", () => {
     setAdmin(true);
     setSuccessors([
       {
+        familyId: "norwood",
         personId: "julia",
         priority: 1n,
         status: SuccessorStatus.Designated,

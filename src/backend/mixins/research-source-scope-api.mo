@@ -10,6 +10,7 @@ import ResearchSourceScopeLib "../lib/research-source-scope";
 import FindingScopeLib "../lib/finding-scope";
 import ArchiveLib "../lib/archive";
 import FamilyAuthorizationLib "../lib/family-authorization";
+import NotificationsScopeLib "../lib/notifications-scope";
 import ResearchAuditLib "../lib/research-intake";
 
 /// Tenancy 1C-B2 canonical family-scoped Research Source public API.
@@ -50,35 +51,16 @@ mixin (
     FamilyAuthorizationLib.requireActiveStewardForFamily(stewards, caller, familyId);
   };
 
-  /// Computes the next notification id: one greater than the largest existing
-  /// id, or `0` when there are no notifications.
-  func nextSourceNotificationId() : Nat {
-    var maxId = 0;
-    for (n in notifications.toArray().values()) {
-      if (n.id >= maxId) { maxId := n.id + 1 };
-    };
-    maxId;
-  };
-
-  /// Appends a research notification for the given recipient, avoiding
-  /// duplicates. Shared by the family-scoped source review endpoints and their
-  /// temporary compatibility wrappers so notification behavior never diverges.
+  /// Appends a research notification for the given recipient in `familyId`,
+  /// avoiding duplicates. Delegates to the canonical family-scoped notification
+  /// helper, so the stored `familyId` is always the action's family.
   func addSourceNotification(
+    familyId : FamilyTypes.FamilyId,
     recipient : Principal,
     notificationType : OwnershipTypes.NotificationType,
     message : Text,
   ) {
-    let exists = notifications.toArray().any(func n = n.recipient == recipient and n.notificationType == notificationType and n.message == message);
-    if (not exists) {
-      notifications.add({
-        id = nextSourceNotificationId();
-        recipient;
-        notificationType;
-        message;
-        createdAt = Time.now();
-        read = false;
-      });
-    };
+    ignore NotificationsScopeLib.createUniqueForFamily(notifications, familyId, recipient, notificationType, message, Time.now());
   };
 
   /// Cascades a source review decision to its linked Archive item, but only when
@@ -139,7 +121,7 @@ mixin (
     switch (ResearchSourceScopeLib.approveForFamily(sources, familyId, sourceId, now)) {
       case (?updated) {
         cascadeLinkedArchiveForFamily(updated, familyId, #Approved);
-        addSourceNotification(updated.contributor, #ResearchApproved, "Your research submission was approved.");
+        addSourceNotification(familyId, updated.contributor, #ResearchApproved, "Your research submission was approved.");
         ignore appendSourceAudit(
           familyId,
           "SourceApproved",
@@ -166,7 +148,7 @@ mixin (
     switch (ResearchSourceScopeLib.rejectForFamily(sources, familyId, sourceId, now)) {
       case (?updated) {
         cascadeLinkedArchiveForFamily(updated, familyId, #Rejected);
-        addSourceNotification(updated.contributor, #ResearchRejected, "Your research submission was not approved.");
+        addSourceNotification(familyId, updated.contributor, #ResearchRejected, "Your research submission was not approved.");
         ignore appendSourceAudit(
           familyId,
           "SourceRejected",

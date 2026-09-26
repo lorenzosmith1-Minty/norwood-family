@@ -49,9 +49,13 @@ module {
     accountId : Principal;
   };
 
-  /// A designated successor steward. `priority` is the order in which the
+  /// A designated successor steward. `familyId` is the family the designation
+  /// belongs to, so the same `personId` may hold independent successor
+  /// designations in different families and a designation from one family can
+  /// never activate a Steward in another. `priority` is the order in which the
   /// successor should be considered for activation.
   public type SuccessorDesignation = {
+    familyId : Text;
     personId : PersonId;
     priority : Nat;
     assignedBy : Principal;
@@ -178,6 +182,7 @@ module {
     #LastSteward;
     #AlreadySteward;
     #NotDesignated;
+    #AlreadyDesignated;
   };
 
   /// Errors for safe profile removal requests.

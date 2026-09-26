@@ -9,6 +9,7 @@ import type {
 } from "@/types/board";
 import { useActor } from "@caffeineai/core-infrastructure";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { notificationInvalidation } from "./useNotifications";
 
 /**
  * React Query hooks for the Family Message Board, following the existing
@@ -122,7 +123,9 @@ export function useCreateBoardPost() {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["board", "posts"] });
       // A new post notifies family members, so the unread badge must refresh.
-      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient.invalidateQueries(
+        notificationInvalidation(familyScopedId),
+      );
     },
   });
 }
@@ -203,7 +206,9 @@ export function useCreateBoardPostWithMedia() {
         queryKey: ["pendingContributionsCount"],
       });
       // A new post notifies family members, so the unread badge must refresh.
-      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient.invalidateQueries(
+        notificationInvalidation(familyScopedId),
+      );
     },
   });
 }
@@ -356,7 +361,9 @@ export function useAddBoardReply() {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["board", "replies"] });
       // A reply notifies the post author, so the unread badge must refresh.
-      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient.invalidateQueries(
+        notificationInvalidation(familyScopedId),
+      );
     },
   });
 }

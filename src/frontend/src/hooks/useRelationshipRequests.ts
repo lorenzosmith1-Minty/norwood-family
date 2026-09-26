@@ -1,7 +1,9 @@
 import { createActor } from "@/backend";
 import type { Relationship, RelationshipRequest } from "@/backend";
+import { useFamilyScopedId } from "@/context/FamilyContext";
 import { useActor } from "@caffeineai/core-infrastructure";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { notificationInvalidation } from "./useNotifications";
 
 /**
  * React Query hooks for the relationship-verification workflow, following the
@@ -74,6 +76,7 @@ export function useGetRelationshipRequest(
  * starts Pending and is never treated as confirmed until approved.
  */
 export function useProposeRelationship(familyId?: string) {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
@@ -100,7 +103,9 @@ export function useProposeRelationship(familyId?: string) {
       void queryClient.invalidateQueries({
         queryKey: ["relationshipRequests"],
       });
-      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient.invalidateQueries(
+        notificationInvalidation(familyScopedId),
+      );
       // The caller's own request list must reflect the new pending request.
       void queryClient.invalidateQueries({
         queryKey: ["myRelationshipRequests"],
@@ -111,6 +116,7 @@ export function useProposeRelationship(familyId?: string) {
 
 /** Approves a relationship request, confirming it in the shared family graph. */
 export function useApproveRelationshipRequest(familyId?: string) {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
@@ -127,7 +133,9 @@ export function useApproveRelationshipRequest(familyId?: string) {
       void queryClient.invalidateQueries({
         queryKey: ["confirmedRelationships"],
       });
-      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient.invalidateQueries(
+        notificationInvalidation(familyScopedId),
+      );
       // Approving removes the request from the steward-review queue, so the
       // Pending Contributions badge and steward aggregate badge refresh.
       void queryClient.invalidateQueries({
@@ -142,6 +150,7 @@ export function useApproveRelationshipRequest(familyId?: string) {
 
 /** Rejects a relationship request, recording the reviewer and reviewed date. */
 export function useRejectRelationshipRequest(familyId?: string) {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
@@ -155,7 +164,9 @@ export function useRejectRelationshipRequest(familyId?: string) {
       void queryClient.invalidateQueries({
         queryKey: ["relationshipRequests"],
       });
-      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient.invalidateQueries(
+        notificationInvalidation(familyScopedId),
+      );
       // Rejecting removes the request from the steward-review queue, so the
       // Pending Contributions badge and steward aggregate badge refresh.
       void queryClient.invalidateQueries({
@@ -170,6 +181,7 @@ export function useRejectRelationshipRequest(familyId?: string) {
 
 /** Returns a relationship request to the Pending state (e.g. after a dispute). */
 export function useSetRelationshipRequestPending(familyId?: string) {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
@@ -183,7 +195,9 @@ export function useSetRelationshipRequestPending(familyId?: string) {
       void queryClient.invalidateQueries({
         queryKey: ["relationshipRequests"],
       });
-      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient.invalidateQueries(
+        notificationInvalidation(familyScopedId),
+      );
       // Returning to Pending re-adds the request to the steward-review queue,
       // so the Pending Contributions badge and steward aggregate badge refresh.
       void queryClient.invalidateQueries({

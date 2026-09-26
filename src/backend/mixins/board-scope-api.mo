@@ -11,6 +11,7 @@ import GovernanceTypes "../types/governance";
 import BoardScopeLib "../lib/board-scope";
 import ArchiveLib "../lib/archive";
 import FamilyAuthorizationLib "../lib/family-authorization";
+import NotificationsScopeLib "../lib/notifications-scope";
 import InputValidation "../lib/input-validation";
 
 /// Tenancy 1C-C1 canonical family-scoped Message Board public API.
@@ -312,7 +313,7 @@ mixin (
         ignore (BoardScopeLib.addReplyForFamily(replies, reply));
         // Notify the post author (unless they replied to their own post).
         if (post.authorAccountId != caller) {
-          addBoardNotification(post.authorAccountId, #BoardReply, "Someone replied to your board post");
+          addBoardNotification(familyId, post.authorAccountId, #BoardReply, "Someone replied to your board post");
         };
         reply;
       };
@@ -478,7 +479,8 @@ mixin (
   };
 
   /// Creates a mention notification for each related member who has a linked
-  /// account, avoiding duplicates.
+  /// account, avoiding duplicates. The notification is stored in the post's own
+  /// `familyId`, so a Family A mention never appears in a Family B read.
   func notifyBoardMentions(post : Types.Post) {
     for (personId in post.relatedPersonIds.values()) {
       switch (profiles.get(personId)) {
@@ -486,7 +488,7 @@ mixin (
           switch (profile.claimedByUserId) {
             case (?accountId) {
               if (accountId != post.authorAccountId) {
-                addBoardNotification(accountId, #BoardMention, "You were mentioned in a board post");
+                addBoardNotification(post.familyId, accountId, #BoardMention, "You were mentioned in a board post");
               };
             };
             case null {};
@@ -497,15 +499,16 @@ mixin (
     };
   };
 
-  func addBoardNotification(recipient : Principal, notificationType : OwnershipTypes.NotificationType, message : Text) {
-    notifications.add({
-      id = boardNextId(notifications.toArray().map(func n = n.id));
-      recipient;
-      notificationType;
-      message;
-      createdAt = Time.now();
-      read = false;
-    });
+  /// Appends a board notification for the given recipient in `familyId`.
+  /// Delegates to the canonical family-scoped notification helper, so the
+  /// stored `familyId` is always the action's family.
+  func addBoardNotification(
+    familyId : FamilyTypes.FamilyId,
+    recipient : Principal,
+    notificationType : OwnershipTypes.NotificationType,
+    message : Text,
+  ) {
+    ignore NotificationsScopeLib.createForFamily(notifications, familyId, recipient, notificationType, message, Time.now());
   };
 
   func appendBoardAudit(actionType : GovernanceTypes.AuditActionType, actorId : Principal, affectedPersonIds : [Text], summary : Text) {

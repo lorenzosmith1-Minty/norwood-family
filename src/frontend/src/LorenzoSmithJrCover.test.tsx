@@ -345,6 +345,7 @@ describe("Notifications surface the canonical Lorenzo Smith Jr. name", () => {
       message: "Your profile claim for Lorenzo Smith Jr. is pending review.",
       createdAt: 1_700_000_000_000_000_000n,
       read: false,
+      familyId: "norwood",
     });
     renderPage(<NotificationsPage />);
 

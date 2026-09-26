@@ -40,7 +40,7 @@ import ArchiveApi "mixins/archive-api";
 import OwnershipApi "mixins/ownership-api";
 import ClaimPersistenceApi "mixins/claim-persistence-api";
 import RelationshipsApi "mixins/relationships-api";
-import NotificationsApi "mixins/notifications-api";
+import NotificationsScopeApi "mixins/notifications-scope-api";
 import AccountIdentityApi "mixins/account-identity-api";
 import GovernanceApi "mixins/governance-api";
 import FamilyHistoryScopeApi "mixins/family-history-scope-api";
@@ -264,17 +264,23 @@ actor {
   /// items to approved family members or admins; `#Private` items to their
   /// contributor or an admin. The owner column is the archive item's `id`, which
   /// lets the rule look up the item's privacy level and contributor.
+  ///
+  /// Tenancy: the item is resolved first and its own `familyId` is the family
+  /// passed into every authorization decision. Steward authority and approved
+  /// membership are evaluated against `item.familyId`, never the caller's
+  /// default family, so a Steward or approved member of one family never gains
+  /// visibility into another family's items.
   func canSeeArchiveItem(caller : Principal, owner : OQL.Value) : Bool {
-    if (StewardAuthorityLib.isActiveStewardForFamily(stewards, caller, FamilyTypes.DEFAULT_FAMILY_ID)) {
-      return true;
-    };
     switch (owner) {
       case (#nat id) {
         switch (archiveItems.find(func it = it.id == id)) {
           case (?item) {
+            if (StewardAuthorityLib.isActiveStewardForFamily(stewards, caller, item.familyId)) {
+              return true;
+            };
             switch (item.privacyLevel) {
               case (#Public) true;
-              case (#FamilyOnly) FamilyAuthorizationLib.isApprovedFamilyMemberForFamily(stewards, claims, caller, FamilyTypes.DEFAULT_FAMILY_ID);
+              case (#FamilyOnly) FamilyAuthorizationLib.isApprovedFamilyMemberForFamily(stewards, claims, caller, item.familyId);
               case (#Private) item.contributor == caller;
             };
           };
@@ -461,6 +467,7 @@ actor {
         "id",
       )
       .sample({
+        familyId = FamilyTypes.DEFAULT_FAMILY_ID;
         id = 0;
         recipient = "";
         notificationType = "";
@@ -468,6 +475,13 @@ actor {
         createdAt = 0;
         read = false;
       })
+      .payload("familyId", func r = r.familyId)
+      .payload("id", func r = r.id)
+      .payload("recipient", func r = r.recipient)
+      .payload("notificationType", func r = r.notificationType)
+      .payload("message", func r = r.message)
+      .payload("createdAt", func r = r.createdAt)
+      .payload("read", func r = r.read)
       .controllerOnly()
       .build(),
       OQL.Entity.new<AccountIdentityTypes.AccountRow>(
@@ -513,12 +527,14 @@ actor {
         "personId",
       )
       .sample({
+        familyId = FamilyTypes.DEFAULT_FAMILY_ID;
         personId = "";
         priority = 0;
         assignedBy = Principal.fromText("aaaaa-aa");
         assignedAt = 0;
         status = #Designated;
       })
+      .payload("familyId", func r = r.familyId)
       .payload("personId", func r = r.personId)
       .payload("priority", func r = r.priority)
       .payload("assignedBy", func r = r.assignedBy.toText())
@@ -1141,7 +1157,7 @@ actor {
   include OwnershipApi(accessControlState, profiles, claims, confirmedRelationships, relationshipRequests, notifications, auditLog, stewards);
   include ClaimPersistenceApi(profiles, claims);
   include RelationshipsApi(relationshipRequests, confirmedRelationships);
-  include NotificationsApi(notifications);
+  include NotificationsScopeApi(notifications);
   include AccountIdentityApi(accounts);
   include GovernanceApi(accessControlState, profiles, confirmedRelationships, stewards, successors, removalRequests, auditLog, mergeConflicts, archivedProfiles, galleries, archiveItems, dismissedDuplicates);
   include FamilyHistoryScopeApi(stories, profiles, claims, stewards, archiveItems);

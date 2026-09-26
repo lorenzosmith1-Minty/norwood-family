@@ -144,6 +144,7 @@ const {
           message: `Your claim for profile ${personId} is pending Family Steward review.`,
           createdAt: 1_700_000_000_000_000_000n,
           read: false,
+          familyId: "norwood",
         },
       ];
       return { __kind__: "ok", ok: claim };
@@ -180,6 +181,7 @@ const {
           message: `Your claim for profile ${claim.personId} was approved.`,
           createdAt: 1_700_000_000_000_000_000n,
           read: false,
+          familyId: "norwood",
         },
       ];
       return updated;
@@ -205,6 +207,7 @@ const {
           message: `Your claim for profile ${claim.personId} was rejected.`,
           createdAt: 1_700_000_000_000_000_000n,
           read: false,
+          familyId: "norwood",
         },
       ];
       return updated;
@@ -268,6 +271,7 @@ const {
             "Your relationship request is pending Family Steward review.",
           createdAt: 1_700_000_000_000_000_000n,
           read: false,
+          familyId: "norwood",
         },
       ];
       return { __kind__: "ok", ok: request };
@@ -823,6 +827,7 @@ describe("Notifications", () => {
       message: "Your claim for profile clayton was approved.",
       createdAt: 1_700_000_000_000_000_000n,
       read: false,
+      familyId: "norwood",
     });
     const user = userEvent.setup();
     renderPage(<NotificationsPage />);
@@ -855,6 +860,7 @@ describe("Notifications", () => {
         "Your claim for profile clayton is pending Family Steward review.",
       createdAt: 1_700_000_000_000_000_000n,
       read: true,
+      familyId: "norwood",
     });
     renderPage(<NotificationsPage />);
 

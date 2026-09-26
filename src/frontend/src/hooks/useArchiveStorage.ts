@@ -13,6 +13,7 @@ import { getMediaKind } from "@/types/archive";
 import { useActor } from "@caffeineai/core-infrastructure";
 import type { ExternalBlob } from "@caffeineai/object-storage";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { notificationInvalidation } from "./useNotifications";
 import { useProvidersPresent } from "./usePhotoStorage";
 
 export { useProvidersPresent };
@@ -256,7 +257,9 @@ export function useApproveArchiveItem() {
         queryKey: ["pendingContributionsCount"],
       });
       // Approval notifies the contributor, so the unread badge must refresh.
-      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient.invalidateQueries(
+        notificationInvalidation(familyScopedId),
+      );
     },
   });
 }
@@ -279,7 +282,9 @@ export function useRejectArchiveItem() {
         queryKey: ["pendingContributionsCount"],
       });
       // Rejection notifies the contributor, so the unread badge must refresh.
-      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient.invalidateQueries(
+        notificationInvalidation(familyScopedId),
+      );
     },
   });
 }

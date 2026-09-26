@@ -5,6 +5,7 @@ import Result "mo:core/Result";
 import Time "mo:core/Time";
 import Types "../types/governance";
 import FamilyTypes "../types/family";
+import TenancyLib "tenancy";
 import ObjectStorageTypes "../types/object-storage";
 import ArchiveTypes "../types/archive";
 
@@ -18,15 +19,20 @@ module {
     stewards.toArray();
   };
 
-  /// Promotes an approved claimed family member to Family Steward.
-  public func promoteToSteward(
+  /// Promotes an approved claimed member of `familyId` to Family Steward.
+  /// Canonical family-scoped form: the target profile is resolved through the
+  /// family-qualified profile lookup, the duplicate-Steward check is filtered by
+  /// `familyId`, and the new `StewardRecord` is stamped with `familyId`. A
+  /// personId in another family is never promoted here.
+  public func promoteToStewardForFamily(
     stewards : List.List<Types.StewardRecord>,
     auditLog : List.List<Types.AuditEntry>,
     profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    familyId : FamilyTypes.FamilyId,
     personId : Types.PersonId,
     actorId : Principal,
   ) : Result.Result<Types.StewardRecord, Types.StewardError> {
-    switch (profiles.get(personId)) {
+    switch (TenancyLib.getProfileForFamily(profiles, familyId, personId)) {
       case null { #err(#NotApprovedClaimedMember) };
       case (?profile) {
         if (profile.claimStatus != #Claimed) {
@@ -35,11 +41,11 @@ module {
         switch (profile.claimedByUserId) {
           case null { #err(#NotApprovedClaimedMember) };
           case (?ownerId) {
-            if (stewards.toArray().any(func s = s.stewardAccountId == ownerId and s.roleStatus == #Active)) {
+            if (stewards.toArray().any(func s = s.stewardAccountId == ownerId and s.roleStatus == #Active and s.familyId == familyId)) {
               return #err(#AlreadySteward);
             };
             let record : Types.StewardRecord = {
-              familyId = FamilyTypes.DEFAULT_FAMILY_ID;
+              familyId;
               stewardAccountId = ownerId;
               roleStatus = #Active;
               successorPriority = null;
@@ -53,6 +59,19 @@ module {
         };
       };
     };
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+  /// delegates to `promoteToStewardForFamily` with the default family id so
+  /// current Norwood behavior is unchanged.
+  public func promoteToSteward(
+    stewards : List.List<Types.StewardRecord>,
+    auditLog : List.List<Types.AuditEntry>,
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    personId : Types.PersonId,
+    actorId : Principal,
+  ) : Result.Result<Types.StewardRecord, Types.StewardError> {
+    promoteToStewardForFamily(stewards, auditLog, profiles, FamilyTypes.DEFAULT_FAMILY_ID, personId, actorId);
   };
 
   /// Removes the steward role from another steward, never allowing the last
@@ -78,34 +97,45 @@ module {
     };
   };
 
-  /// Designates an approved claimed family member as a successor steward with a
-  /// priority/order. A successor is a designation only until activated.
-  public func designateSuccessor(
+  /// Designates an approved claimed member of `familyId` as a successor steward
+  /// with a priority/order. Canonical family-scoped form: the target profile is
+  /// resolved through the family-qualified profile lookup, the duplicate
+  /// designation check is filtered by `familyId`, and the new
+  /// `SuccessorDesignation` is stamped with `familyId`. A personId in another
+  /// family is never designated here, and the same personId may hold independent
+  /// designations in different families. A successor is a designation only until
+  /// activated.
+  public func designateSuccessorForFamily(
     stewards : List.List<Types.StewardRecord>,
     successors : List.List<Types.SuccessorDesignation>,
     auditLog : List.List<Types.AuditEntry>,
     profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    familyId : FamilyTypes.FamilyId,
     personId : Types.PersonId,
     priority : Nat,
     actorId : Principal,
   ) : Result.Result<Types.SuccessorDesignation, Types.StewardError> {
-    if (not isApprovedClaimedMember(profiles, personId)) {
-      return #err(#NotApprovedClaimedMember);
-    };
-    switch (profiles.get(personId)) {
+    switch (TenancyLib.getProfileForFamily(profiles, familyId, personId)) {
       case null { return #err(#NotApprovedClaimedMember) };
       case (?profile) {
+        if (profile.claimStatus != #Claimed) {
+          return #err(#NotApprovedClaimedMember);
+        };
         switch (profile.claimedByUserId) {
           case null { return #err(#NotApprovedClaimedMember) };
           case (?ownerId) {
-            if (stewards.toArray().any(func s = s.stewardAccountId == ownerId and s.roleStatus == #Active)) {
+            if (stewards.toArray().any(func s = s.stewardAccountId == ownerId and s.roleStatus == #Active and s.familyId == familyId)) {
               return #err(#AlreadySteward);
             };
           };
         };
       };
     };
+    if (successors.toArray().any(func s = s.familyId == familyId and s.personId == personId and s.status == #Designated)) {
+      return #err(#AlreadyDesignated);
+    };
     let designation : Types.SuccessorDesignation = {
+      familyId;
       personId;
       priority;
       assignedBy = actorId;
@@ -117,19 +147,40 @@ module {
     #ok(designation);
   };
 
-  /// Activates/promotes a designated successor into the active steward role.
-  public func activateSuccessor(
+  /// TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+  /// delegates to `designateSuccessorForFamily` with the default family id so
+  /// current Norwood behavior is unchanged.
+  public func designateSuccessor(
     stewards : List.List<Types.StewardRecord>,
     successors : List.List<Types.SuccessorDesignation>,
     auditLog : List.List<Types.AuditEntry>,
     profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
     personId : Types.PersonId,
+    priority : Nat,
+    actorId : Principal,
+  ) : Result.Result<Types.SuccessorDesignation, Types.StewardError> {
+    designateSuccessorForFamily(stewards, successors, auditLog, profiles, FamilyTypes.DEFAULT_FAMILY_ID, personId, priority, actorId);
+  };
+
+  /// Activates/promotes a designated successor into the active steward role in
+  /// `familyId`. Canonical family-scoped form: the successor designation and the
+  /// target profile are resolved family-qualified, the duplicate-Steward check is
+  /// filtered by `familyId`, and the activated `StewardRecord` remains in
+  /// `familyId`. Activating a successor in one family never modifies another
+  /// family's state.
+  public func activateSuccessorForFamily(
+    stewards : List.List<Types.StewardRecord>,
+    successors : List.List<Types.SuccessorDesignation>,
+    auditLog : List.List<Types.AuditEntry>,
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    familyId : FamilyTypes.FamilyId,
+    personId : Types.PersonId,
     actorId : Principal,
   ) : Result.Result<Types.StewardRecord, Types.StewardError> {
-    switch (successors.find(func s = s.personId == personId and s.status == #Designated)) {
+    switch (successors.find(func s = s.familyId == familyId and s.personId == personId and s.status == #Designated)) {
       case null { #err(#NotDesignated) };
       case (?designation) {
-        switch (profiles.get(personId)) {
+        switch (TenancyLib.getProfileForFamily(profiles, familyId, personId)) {
           case null { #err(#NotApprovedClaimedMember) };
           case (?profile) {
             if (profile.claimStatus != #Claimed) {
@@ -138,11 +189,11 @@ module {
             switch (profile.claimedByUserId) {
               case null { #err(#NotApprovedClaimedMember) };
               case (?ownerId) {
-                if (stewards.toArray().any(func s = s.stewardAccountId == ownerId and s.roleStatus == #Active)) {
+                if (stewards.toArray().any(func s = s.stewardAccountId == ownerId and s.roleStatus == #Active and s.familyId == familyId)) {
                   return #err(#AlreadySteward);
                 };
                 let record : Types.StewardRecord = {
-                  familyId = FamilyTypes.DEFAULT_FAMILY_ID;
+                  familyId;
                   stewardAccountId = ownerId;
                   roleStatus = #Active;
                   successorPriority = ?designation.priority;
@@ -162,9 +213,35 @@ module {
     };
   };
 
-  /// Returns all successor designations.
+  /// TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+  /// delegates to `activateSuccessorForFamily` with the default family id so
+  /// current Norwood behavior is unchanged.
+  public func activateSuccessor(
+    stewards : List.List<Types.StewardRecord>,
+    successors : List.List<Types.SuccessorDesignation>,
+    auditLog : List.List<Types.AuditEntry>,
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    personId : Types.PersonId,
+    actorId : Principal,
+  ) : Result.Result<Types.StewardRecord, Types.StewardError> {
+    activateSuccessorForFamily(stewards, successors, auditLog, profiles, FamilyTypes.DEFAULT_FAMILY_ID, personId, actorId);
+  };
+
+  /// Returns all successor designations in `familyId`. Canonical family-scoped
+  /// form: a designation stamped with another family is never returned, so
+  /// Family A never sees Family B designations.
+  public func listSuccessorsForFamily(
+    successors : List.List<Types.SuccessorDesignation>,
+    familyId : FamilyTypes.FamilyId,
+  ) : [Types.SuccessorDesignation] {
+    successors.toArray().filter(func s = s.familyId == familyId);
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+  /// delegates to `listSuccessorsForFamily` with the default family id so
+  /// current Norwood behavior is unchanged.
   public func listSuccessors(successors : List.List<Types.SuccessorDesignation>) : [Types.SuccessorDesignation] {
-    successors.toArray();
+    listSuccessorsForFamily(successors, FamilyTypes.DEFAULT_FAMILY_ID);
   };
 
   /// Returns a warning encouraging successor designation when only one steward
@@ -178,19 +255,23 @@ module {
     };
   };
 
-  /// Returns each current Steward and designated Successor enriched with the
-  /// linked approved Person identity (personId, preferred/display name, and
-  /// canonical full person name), resolved via steward accountId -> approved
-  /// linked personId (PersonProfile.claimedByUserId) -> canonical Person
-  /// Profile. The internal account id is carried only for authorization/audit.
-  public func listStewardIdentities(
+  /// Returns each current Steward and designated Successor of `familyId`
+  /// enriched with the linked approved Person identity (personId,
+  /// preferred/display name, and canonical full person name), resolved via
+  /// steward accountId -> approved linked personId
+  /// (PersonProfile.claimedByUserId) -> canonical Person Profile. Canonical
+  /// family-scoped form: only Steward records and successor designations stamped
+  /// with `familyId` are considered, so Family A never sees Family B identities.
+  /// The internal account id is carried only for authorization/audit.
+  public func listStewardIdentitiesForFamily(
     stewards : List.List<Types.StewardRecord>,
     successors : List.List<Types.SuccessorDesignation>,
     profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    familyId : FamilyTypes.FamilyId,
   ) : [Types.StewardIdentity] {
     let result = List.empty<Types.StewardIdentity>();
     for (s in stewards.toArray().values()) {
-      if (s.roleStatus == #Active) {
+      if (s.roleStatus == #Active and s.familyId == familyId) {
         switch (resolveIdentityByAccount(profiles, s.stewardAccountId)) {
           case (?id) result.add(id);
           case null {};
@@ -198,7 +279,7 @@ module {
       };
     };
     for (d in successors.toArray().values()) {
-      if (d.status == #Designated) {
+      if (d.status == #Designated and d.familyId == familyId) {
         switch (resolveIdentityByPerson(profiles, d.personId)) {
           case (?id) result.add(id);
           case null {};
@@ -206,6 +287,17 @@ module {
       };
     };
     result.toArray();
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+  /// delegates to `listStewardIdentitiesForFamily` with the default family id so
+  /// current Norwood behavior is unchanged.
+  public func listStewardIdentities(
+    stewards : List.List<Types.StewardRecord>,
+    successors : List.List<Types.SuccessorDesignation>,
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+  ) : [Types.StewardIdentity] {
+    listStewardIdentitiesForFamily(stewards, successors, profiles, FamilyTypes.DEFAULT_FAMILY_ID);
   };
 
   /// Returns the eligible promotion/successor candidate list: all people who
@@ -683,21 +775,30 @@ module {
     confirmedRelationships.toArray().filter(func r = r.fromPersonId == personId or r.toPersonId == personId);
   };
 
-  /// Adds a missing relationship to the shared family graph.
-  public func addRelationship(
+  /// Adds a missing relationship to `familyId`'s family graph. Canonical
+  /// family-scoped form: both people must belong to `familyId`, the duplicate
+  /// check is filtered by `familyId`, and the new `Relationship` is stamped with
+  /// `familyId`, so no cross-family relationship edge can be created.
+  public func addRelationshipForFamily(
     confirmedRelationships : List.List<Types.Relationship>,
     auditLog : List.List<Types.AuditEntry>,
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    familyId : FamilyTypes.FamilyId,
     fromPersonId : Types.PersonId,
     toPersonId : Types.PersonId,
     relationshipType : Types.RelationshipType,
     actorId : Principal,
   ) : Result.Result<Types.Relationship, Types.RelationshipAdminError> {
+    if (TenancyLib.getProfileForFamily(profiles, familyId, fromPersonId) == null
+        or TenancyLib.getProfileForFamily(profiles, familyId, toPersonId) == null) {
+      return #err(#PersonNotFound);
+    };
     if (confirmedRelationships.toArray().any(func r =
-      r.fromPersonId == fromPersonId and r.toPersonId == toPersonId and r.relationshipType == relationshipType)) {
+      r.familyId == familyId and r.fromPersonId == fromPersonId and r.toPersonId == toPersonId and r.relationshipType == relationshipType)) {
       return #err(#DuplicateRelationship);
     };
     let relationship : Types.Relationship = {
-      familyId = FamilyTypes.DEFAULT_FAMILY_ID;
+      familyId;
       id = nextId(confirmedRelationships.toArray().map(func r = r.id));
       fromPersonId;
       toPersonId;
@@ -707,6 +808,21 @@ module {
     confirmedRelationships.add(relationship);
     appendAudit(auditLog, #RelationshipAdded, actorId, [fromPersonId, toPersonId], "Added " # relationshipTypeText(relationshipType) # " relationship between " # fromPersonId # " and " # toPersonId);
     #ok(relationship);
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+  /// delegates to `addRelationshipForFamily` with the default family id so
+  /// current Norwood behavior is unchanged.
+  public func addRelationship(
+    confirmedRelationships : List.List<Types.Relationship>,
+    auditLog : List.List<Types.AuditEntry>,
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    fromPersonId : Types.PersonId,
+    toPersonId : Types.PersonId,
+    relationshipType : Types.RelationshipType,
+    actorId : Principal,
+  ) : Result.Result<Types.Relationship, Types.RelationshipAdminError> {
+    addRelationshipForFamily(confirmedRelationships, auditLog, profiles, FamilyTypes.DEFAULT_FAMILY_ID, fromPersonId, toPersonId, relationshipType, actorId);
   };
 
   /// Removes an incorrect relationship from the shared family graph.
@@ -760,18 +876,6 @@ module {
   };
 
   // --- helpers ---
-
-  /// Whether a person is an approved claimed family member (a profile with an
-  /// approved claim, i.e. `claimStatus == #Claimed`).
-  func isApprovedClaimedMember(
-    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
-    personId : Types.PersonId,
-  ) : Bool {
-    switch (profiles.get(personId)) {
-      case (?p) p.claimStatus == #Claimed;
-      case null false;
-    };
-  };
 
   /// Whether the given account is an active steward.
   func isActiveStewardAccount(
@@ -982,7 +1086,7 @@ module {
     let snapshot = successors.toArray();
     successors.clear();
     for (s in snapshot.values()) {
-      if (s.personId == updated.personId) { successors.add(updated) } else { successors.add(s) };
+      if (s.familyId == updated.familyId and s.personId == updated.personId) { successors.add(updated) } else { successors.add(s) };
     };
   };
 

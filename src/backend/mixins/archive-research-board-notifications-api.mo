@@ -16,6 +16,7 @@ import Lib "../lib/archive-research-board-notifications";
 import ArchiveLib "../lib/archive";
 import FamilyAuthorizationLib "../lib/family-authorization";
 import StewardAuthorityLib "../lib/steward-authority";
+import NotificationsScopeLib "../lib/notifications-scope";
 import InputValidation "../lib/input-validation";
 import InputValidationTypes "../types/input-validation";
 
@@ -90,14 +91,23 @@ mixin (
     maxId;
   };
 
-  /// Computes the next notification id: one greater than the largest existing
-  /// id, or `0` when there are no notifications.
-  func nextNotificationId() : Nat {
-    var maxId = 0;
-    for (n in notifications.toArray().values()) {
-      if (n.id >= maxId) { maxId := n.id + 1 };
-    };
-    maxId;
+  /// Appends a research submission notification for the given recipient in
+  /// `familyId`, avoiding duplicates. Delegates to the canonical family-scoped
+  /// notification helper, so the stored `familyId` is always the action's
+  /// family.
+  func addResearchSubmissionNotification(
+    familyId : FamilyTypes.FamilyId,
+    recipient : Principal,
+    message : Text,
+  ) {
+    ignore NotificationsScopeLib.createUniqueForFamily(
+      notifications,
+      familyId,
+      recipient,
+      #ResearchSubmission,
+      message,
+      Time.now(),
+    );
   };
 
   /// TEMPORARY Tenancy 1C compatibility wrapper for the canonical
@@ -222,17 +232,11 @@ mixin (
       Time.now(),
     );
     // Notify the contributor that the research submission awaits steward review.
-    let exists = notifications.toArray().any(func n = n.recipient == caller and n.notificationType == #ResearchSubmission and n.message == "Your research submission is awaiting Family Steward review.");
-    if (not exists) {
-      notifications.add({
-        id = nextNotificationId();
-        recipient = caller;
-        notificationType = #ResearchSubmission;
-        message = "Your research submission is awaiting Family Steward review.";
-        createdAt = Time.now();
-        read = false;
-      });
-    };
+    addResearchSubmissionNotification(
+      familyId,
+      caller,
+      "Your research submission is awaiting Family Steward review.",
+    );
     #ok(result);
   };
 

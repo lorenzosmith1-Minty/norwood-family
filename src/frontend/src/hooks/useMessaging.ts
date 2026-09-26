@@ -12,6 +12,7 @@ import type {
 import { useActor } from "@caffeineai/core-infrastructure";
 import type { Principal } from "@icp-sdk/core/principal";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { notificationInvalidation } from "./useNotifications";
 
 /**
  * React Query hooks for Private Messaging, following the existing
@@ -143,7 +144,9 @@ export function useSendMessage() {
         queryKey: ["messaging", "conversation"],
       });
       // A sent message notifies the recipient, so the unread badge must refresh.
-      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient.invalidateQueries(
+        notificationInvalidation(familyScopedId),
+      );
     },
   });
 }
@@ -251,7 +254,9 @@ export function useReportMessage() {
         queryKey: ["messaging", "reports"],
       });
       // Filing a report notifies the stewards, so the unread badge must refresh.
-      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient.invalidateQueries(
+        notificationInvalidation(familyScopedId),
+      );
     },
   });
 }
@@ -321,7 +326,9 @@ export function useReviewReport() {
       });
       // Reviewing a report notifies the reporter, so the unread badge must
       // refresh.
-      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient.invalidateQueries(
+        notificationInvalidation(familyScopedId),
+      );
     },
   });
 }

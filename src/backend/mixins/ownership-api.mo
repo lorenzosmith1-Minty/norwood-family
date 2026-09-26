@@ -303,9 +303,8 @@ mixin (
     OwnershipLib.removeDuplicateProfileForFamily(profiles, claims, relationshipRequests, notifications, FamilyTypes.DEFAULT_FAMILY_ID, personId, caller);
   };
 
-  /// Lists in-app notification records for the signed-in caller. Notifications
-  /// are recipient-addressed and are not family-scoped.
-  public query ({ caller }) func listNotifications() : async [Types.Notification] {
-    OwnershipLib.listNotifications(notifications, caller);
-  };
+  // The TEMPORARY Tenancy 1C `listNotifications` compatibility wrapper lives in
+  // `mixins/notifications-scope-api.mo`, the canonical owner of the
+  // family-scoped Notification API. It is not declared here, so exactly one
+  // implementation of the endpoint exists.
 };

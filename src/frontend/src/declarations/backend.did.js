@@ -56,6 +56,7 @@ export const StewardRecord = IDL.Record({
 });
 export const StewardError = IDL.Variant({
   'LastSteward' : IDL.Null,
+  'AlreadyDesignated' : IDL.Null,
   'NotSteward' : IDL.Null,
   'AlreadySteward' : IDL.Null,
   'NotSignedIn' : IDL.Null,
@@ -650,11 +651,13 @@ export const SuccessorDesignation = IDL.Record({
   'assignedBy' : IDL.Principal,
   'personId' : PersonId,
   'priority' : IDL.Nat,
+  'familyId' : IDL.Text,
 });
 export const Result_16 = IDL.Variant({
   'ok' : SuccessorDesignation,
   'err' : StewardError,
 });
+export const NotificationId = IDL.Nat;
 export const Value = IDL.Variant({
   'int' : IDL.Int,
   'nat' : IDL.Nat,
@@ -728,6 +731,29 @@ export const AuthMethods = IDL.Record({
 export const Result_14 = IDL.Variant({
   'ok' : AuthMethods,
   'err' : AccountError,
+});
+export const NotificationType = IDL.Variant({
+  'ResearchSubmission' : IDL.Null,
+  'ResearchApproved' : IDL.Null,
+  'ArchiveApproved' : IDL.Null,
+  'ResearchRejected' : IDL.Null,
+  'ArchiveRejected' : IDL.Null,
+  'RelationshipRequested' : IDL.Null,
+  'BoardMention' : IDL.Null,
+  'RelationshipReviewed' : IDL.Null,
+  'BoardReply' : IDL.Null,
+  'NewMessage' : IDL.Null,
+  'ProfileClaimReviewed' : IDL.Null,
+  'ProfileClaimRequested' : IDL.Null,
+});
+export const Notification = IDL.Record({
+  'id' : IDL.Nat,
+  'notificationType' : NotificationType,
+  'createdAt' : IDL.Int,
+  'read' : IDL.Bool,
+  'recipient' : IDL.Principal,
+  'message' : IDL.Text,
+  'familyId' : IDL.Text,
 });
 export const ReportId = IDL.Nat;
 export const ReportStatus = IDL.Variant({
@@ -905,28 +931,6 @@ export const MysteryContribution = IDL.Record({
   'contributionType' : MysteryContributionType,
   'contributor' : IDL.Principal,
 });
-export const NotificationType = IDL.Variant({
-  'ResearchSubmission' : IDL.Null,
-  'ResearchApproved' : IDL.Null,
-  'ArchiveApproved' : IDL.Null,
-  'ResearchRejected' : IDL.Null,
-  'ArchiveRejected' : IDL.Null,
-  'RelationshipRequested' : IDL.Null,
-  'BoardMention' : IDL.Null,
-  'RelationshipReviewed' : IDL.Null,
-  'BoardReply' : IDL.Null,
-  'NewMessage' : IDL.Null,
-  'ProfileClaimReviewed' : IDL.Null,
-  'ProfileClaimRequested' : IDL.Null,
-});
-export const Notification = IDL.Record({
-  'id' : IDL.Nat,
-  'notificationType' : NotificationType,
-  'createdAt' : IDL.Int,
-  'read' : IDL.Bool,
-  'recipient' : IDL.Principal,
-  'message' : IDL.Text,
-});
 export const TimelineLinkTarget = IDL.Variant({
   'Story' : StoryId,
   'Mystery' : MysteryId,
@@ -956,7 +960,6 @@ export const TimelineEvent = IDL.Record({
   'evidenceStatus' : EvidenceStatus,
   'eventType' : TimelineEventType,
 });
-export const NotificationId = IDL.Nat;
 export const MergeConflictStatus = IDL.Variant({
   'Resolved' : IDL.Null,
   'Pending' : IDL.Null,
@@ -1127,6 +1130,11 @@ export const idlService = IDL.Service({
   '_internet_identity_sign_in_finish' : IDL.Func([], [Result_27], []),
   '_internet_identity_sign_in_start' : IDL.Func([], [IDL.Vec(IDL.Nat8)], []),
   'activateSuccessor' : IDL.Func([PersonId], [Result_10], []),
+  'activateSuccessorForFamily' : IDL.Func(
+      [IDL.Text, PersonId],
+      [Result_10],
+      [],
+    ),
   'addBoardReply' : IDL.Func([PostId, IDL.Text], [Reply], []),
   'addBoardReplyForFamily' : IDL.Func(
       [FamilyId, PostId, IDL.Text],
@@ -1174,6 +1182,11 @@ export const idlService = IDL.Service({
     ),
   'addRelationship' : IDL.Func(
       [PersonId, PersonId, RelationshipType],
+      [Result_24],
+      [],
+    ),
+  'addRelationshipForFamily' : IDL.Func(
+      [IDL.Text, PersonId, PersonId, RelationshipType],
       [Result_24],
       [],
     ),
@@ -1416,6 +1429,11 @@ export const idlService = IDL.Service({
       [Result_18],
       [],
     ),
+  'createSourceForFamily' : IDL.Func(
+      [FamilyId, IDL.Text, SourceType, IDL.Text, IDL.Opt(IDL.Nat)],
+      [Result_18],
+      [],
+    ),
   'createSourceWithUpload' : IDL.Func(
       [
         IDL.Text,
@@ -1456,6 +1474,16 @@ export const idlService = IDL.Service({
       [],
     ),
   'designateSuccessor' : IDL.Func([PersonId, IDL.Nat], [Result_16], []),
+  'designateSuccessorForFamily' : IDL.Func(
+      [IDL.Text, PersonId, IDL.Nat],
+      [Result_16],
+      [],
+    ),
+  'dismissNotificationForFamily' : IDL.Func(
+      [FamilyId, NotificationId],
+      [IDL.Bool],
+      [],
+    ),
   'execute' : IDL.Func([IDL.Text], [Result__1], ['query']),
   'getApiDoc' : IDL.Func([], [IDL.Text], ['query']),
   'getArchiveItemForFamily' : IDL.Func(
@@ -1528,6 +1556,11 @@ export const idlService = IDL.Service({
   'getNewPersonCandidateForFamily' : IDL.Func(
       [FamilyId, IDL.Nat],
       [IDL.Opt(NewPersonCandidate)],
+      ['query'],
+    ),
+  'getNotificationForFamily' : IDL.Func(
+      [FamilyId, NotificationId],
+      [IDL.Opt(Notification)],
       ['query'],
     ),
   'getPendingContributionsCount' : IDL.Func([], [IDL.Nat], ['query']),
@@ -1763,6 +1796,11 @@ export const idlService = IDL.Service({
       ['query'],
     ),
   'listNotifications' : IDL.Func([], [IDL.Vec(Notification)], ['query']),
+  'listNotificationsForFamily' : IDL.Func(
+      [FamilyId],
+      [IDL.Vec(Notification)],
+      ['query'],
+    ),
   'listPendingArchiveItems' : IDL.Func([], [IDL.Vec(ArchiveItem)], ['query']),
   'listPendingArchiveItemsForFamily' : IDL.Func(
       [FamilyId],
@@ -1854,15 +1892,31 @@ export const idlService = IDL.Service({
       ['query'],
     ),
   'listStewardIdentities' : IDL.Func([], [IDL.Vec(StewardIdentity)], ['query']),
+  'listStewardIdentitiesForFamily' : IDL.Func(
+      [IDL.Text],
+      [IDL.Vec(StewardIdentity)],
+      ['query'],
+    ),
   'listStewards' : IDL.Func([], [IDL.Vec(StewardRecord)], ['query']),
   'listStoriesForFamily' : IDL.Func([FamilyId], [IDL.Vec(Story)], ['query']),
   'listSuccessors' : IDL.Func([], [IDL.Vec(SuccessorDesignation)], ['query']),
+  'listSuccessorsForFamily' : IDL.Func(
+      [IDL.Text],
+      [IDL.Vec(SuccessorDesignation)],
+      ['query'],
+    ),
   'listTimelineEvents' : IDL.Func([], [IDL.Vec(TimelineEvent)], ['query']),
   'listTimelineEventsForFamily' : IDL.Func(
       [FamilyId],
       [IDL.Vec(TimelineEvent)],
       ['query'],
     ),
+  'listUnreadNotificationsForFamily' : IDL.Func(
+      [FamilyId],
+      [IDL.Vec(Notification)],
+      ['query'],
+    ),
+  'markAllNotificationsReadForFamily' : IDL.Func([FamilyId], [IDL.Nat], []),
   'markConversationRead' : IDL.Func([ConversationId], [], []),
   'markConversationReadForFamily' : IDL.Func(
       [FamilyId, ConversationId],
@@ -1881,6 +1935,11 @@ export const idlService = IDL.Service({
     ),
   'markNotificationRead' : IDL.Func(
       [NotificationId],
+      [IDL.Opt(Notification)],
+      [],
+    ),
+  'markNotificationReadForFamily' : IDL.Func(
+      [FamilyId, NotificationId],
       [IDL.Opt(Notification)],
       [],
     ),
@@ -1919,6 +1978,7 @@ export const idlService = IDL.Service({
   'notDuplicate' : IDL.Func([PersonId, PersonId], [Result_12], []),
   'permanentlyDeleteProfile' : IDL.Func([PersonId, IDL.Bool], [Result_11], []),
   'promoteToSteward' : IDL.Func([PersonId], [Result_10], []),
+  'promoteToStewardForFamily' : IDL.Func([IDL.Text, PersonId], [Result_10], []),
   'proposeRelationship' : IDL.Func(
       [PersonId, PersonId, RelationshipType],
       [Result_9],
@@ -2291,6 +2351,11 @@ export const idlService = IDL.Service({
     ),
   'unblockUser' : IDL.Func([IDL.Principal], [], []),
   'unblockUserForFamily' : IDL.Func([FamilyId, IDL.Principal], [], []),
+  'unreadNotificationCountForFamily' : IDL.Func(
+      [FamilyId],
+      [IDL.Nat],
+      ['query'],
+    ),
   'updateBoardPost' : IDL.Func(
       [
         PostId,
@@ -2441,6 +2506,7 @@ export const idlFactory = ({ IDL }) => {
   });
   const StewardError = IDL.Variant({
     'LastSteward' : IDL.Null,
+    'AlreadyDesignated' : IDL.Null,
     'NotSteward' : IDL.Null,
     'AlreadySteward' : IDL.Null,
     'NotSignedIn' : IDL.Null,
@@ -3020,11 +3086,13 @@ export const idlFactory = ({ IDL }) => {
     'assignedBy' : IDL.Principal,
     'personId' : PersonId,
     'priority' : IDL.Nat,
+    'familyId' : IDL.Text,
   });
   const Result_16 = IDL.Variant({
     'ok' : SuccessorDesignation,
     'err' : StewardError,
   });
+  const NotificationId = IDL.Nat;
   const Value = IDL.Variant({
     'int' : IDL.Int,
     'nat' : IDL.Nat,
@@ -3090,6 +3158,29 @@ export const idlFactory = ({ IDL }) => {
   const Result_15 = IDL.Variant({ 'ok' : AccountId, 'err' : AccountError });
   const AuthMethods = IDL.Record({ 'apple' : IDL.Bool, 'google' : IDL.Bool });
   const Result_14 = IDL.Variant({ 'ok' : AuthMethods, 'err' : AccountError });
+  const NotificationType = IDL.Variant({
+    'ResearchSubmission' : IDL.Null,
+    'ResearchApproved' : IDL.Null,
+    'ArchiveApproved' : IDL.Null,
+    'ResearchRejected' : IDL.Null,
+    'ArchiveRejected' : IDL.Null,
+    'RelationshipRequested' : IDL.Null,
+    'BoardMention' : IDL.Null,
+    'RelationshipReviewed' : IDL.Null,
+    'BoardReply' : IDL.Null,
+    'NewMessage' : IDL.Null,
+    'ProfileClaimReviewed' : IDL.Null,
+    'ProfileClaimRequested' : IDL.Null,
+  });
+  const Notification = IDL.Record({
+    'id' : IDL.Nat,
+    'notificationType' : NotificationType,
+    'createdAt' : IDL.Int,
+    'read' : IDL.Bool,
+    'recipient' : IDL.Principal,
+    'message' : IDL.Text,
+    'familyId' : IDL.Text,
+  });
   const ReportId = IDL.Nat;
   const ReportStatus = IDL.Variant({
     'Dismissed' : IDL.Null,
@@ -3266,28 +3357,6 @@ export const idlFactory = ({ IDL }) => {
     'contributionType' : MysteryContributionType,
     'contributor' : IDL.Principal,
   });
-  const NotificationType = IDL.Variant({
-    'ResearchSubmission' : IDL.Null,
-    'ResearchApproved' : IDL.Null,
-    'ArchiveApproved' : IDL.Null,
-    'ResearchRejected' : IDL.Null,
-    'ArchiveRejected' : IDL.Null,
-    'RelationshipRequested' : IDL.Null,
-    'BoardMention' : IDL.Null,
-    'RelationshipReviewed' : IDL.Null,
-    'BoardReply' : IDL.Null,
-    'NewMessage' : IDL.Null,
-    'ProfileClaimReviewed' : IDL.Null,
-    'ProfileClaimRequested' : IDL.Null,
-  });
-  const Notification = IDL.Record({
-    'id' : IDL.Nat,
-    'notificationType' : NotificationType,
-    'createdAt' : IDL.Int,
-    'read' : IDL.Bool,
-    'recipient' : IDL.Principal,
-    'message' : IDL.Text,
-  });
   const TimelineLinkTarget = IDL.Variant({
     'Story' : StoryId,
     'Mystery' : MysteryId,
@@ -3317,7 +3386,6 @@ export const idlFactory = ({ IDL }) => {
     'evidenceStatus' : EvidenceStatus,
     'eventType' : TimelineEventType,
   });
-  const NotificationId = IDL.Nat;
   const MergeConflictStatus = IDL.Variant({
     'Resolved' : IDL.Null,
     'Pending' : IDL.Null,
@@ -3482,6 +3550,11 @@ export const idlFactory = ({ IDL }) => {
     '_internet_identity_sign_in_finish' : IDL.Func([], [Result_27], []),
     '_internet_identity_sign_in_start' : IDL.Func([], [IDL.Vec(IDL.Nat8)], []),
     'activateSuccessor' : IDL.Func([PersonId], [Result_10], []),
+    'activateSuccessorForFamily' : IDL.Func(
+        [IDL.Text, PersonId],
+        [Result_10],
+        [],
+      ),
     'addBoardReply' : IDL.Func([PostId, IDL.Text], [Reply], []),
     'addBoardReplyForFamily' : IDL.Func(
         [FamilyId, PostId, IDL.Text],
@@ -3529,6 +3602,11 @@ export const idlFactory = ({ IDL }) => {
       ),
     'addRelationship' : IDL.Func(
         [PersonId, PersonId, RelationshipType],
+        [Result_24],
+        [],
+      ),
+    'addRelationshipForFamily' : IDL.Func(
+        [IDL.Text, PersonId, PersonId, RelationshipType],
         [Result_24],
         [],
       ),
@@ -3779,6 +3857,11 @@ export const idlFactory = ({ IDL }) => {
         [Result_18],
         [],
       ),
+    'createSourceForFamily' : IDL.Func(
+        [FamilyId, IDL.Text, SourceType, IDL.Text, IDL.Opt(IDL.Nat)],
+        [Result_18],
+        [],
+      ),
     'createSourceWithUpload' : IDL.Func(
         [
           IDL.Text,
@@ -3819,6 +3902,16 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'designateSuccessor' : IDL.Func([PersonId, IDL.Nat], [Result_16], []),
+    'designateSuccessorForFamily' : IDL.Func(
+        [IDL.Text, PersonId, IDL.Nat],
+        [Result_16],
+        [],
+      ),
+    'dismissNotificationForFamily' : IDL.Func(
+        [FamilyId, NotificationId],
+        [IDL.Bool],
+        [],
+      ),
     'execute' : IDL.Func([IDL.Text], [Result__1], ['query']),
     'getApiDoc' : IDL.Func([], [IDL.Text], ['query']),
     'getArchiveItemForFamily' : IDL.Func(
@@ -3891,6 +3984,11 @@ export const idlFactory = ({ IDL }) => {
     'getNewPersonCandidateForFamily' : IDL.Func(
         [FamilyId, IDL.Nat],
         [IDL.Opt(NewPersonCandidate)],
+        ['query'],
+      ),
+    'getNotificationForFamily' : IDL.Func(
+        [FamilyId, NotificationId],
+        [IDL.Opt(Notification)],
         ['query'],
       ),
     'getPendingContributionsCount' : IDL.Func([], [IDL.Nat], ['query']),
@@ -4142,6 +4240,11 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'listNotifications' : IDL.Func([], [IDL.Vec(Notification)], ['query']),
+    'listNotificationsForFamily' : IDL.Func(
+        [FamilyId],
+        [IDL.Vec(Notification)],
+        ['query'],
+      ),
     'listPendingArchiveItems' : IDL.Func([], [IDL.Vec(ArchiveItem)], ['query']),
     'listPendingArchiveItemsForFamily' : IDL.Func(
         [FamilyId],
@@ -4237,15 +4340,31 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(StewardIdentity)],
         ['query'],
       ),
+    'listStewardIdentitiesForFamily' : IDL.Func(
+        [IDL.Text],
+        [IDL.Vec(StewardIdentity)],
+        ['query'],
+      ),
     'listStewards' : IDL.Func([], [IDL.Vec(StewardRecord)], ['query']),
     'listStoriesForFamily' : IDL.Func([FamilyId], [IDL.Vec(Story)], ['query']),
     'listSuccessors' : IDL.Func([], [IDL.Vec(SuccessorDesignation)], ['query']),
+    'listSuccessorsForFamily' : IDL.Func(
+        [IDL.Text],
+        [IDL.Vec(SuccessorDesignation)],
+        ['query'],
+      ),
     'listTimelineEvents' : IDL.Func([], [IDL.Vec(TimelineEvent)], ['query']),
     'listTimelineEventsForFamily' : IDL.Func(
         [FamilyId],
         [IDL.Vec(TimelineEvent)],
         ['query'],
       ),
+    'listUnreadNotificationsForFamily' : IDL.Func(
+        [FamilyId],
+        [IDL.Vec(Notification)],
+        ['query'],
+      ),
+    'markAllNotificationsReadForFamily' : IDL.Func([FamilyId], [IDL.Nat], []),
     'markConversationRead' : IDL.Func([ConversationId], [], []),
     'markConversationReadForFamily' : IDL.Func(
         [FamilyId, ConversationId],
@@ -4264,6 +4383,11 @@ export const idlFactory = ({ IDL }) => {
       ),
     'markNotificationRead' : IDL.Func(
         [NotificationId],
+        [IDL.Opt(Notification)],
+        [],
+      ),
+    'markNotificationReadForFamily' : IDL.Func(
+        [FamilyId, NotificationId],
         [IDL.Opt(Notification)],
         [],
       ),
@@ -4306,6 +4430,11 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'promoteToSteward' : IDL.Func([PersonId], [Result_10], []),
+    'promoteToStewardForFamily' : IDL.Func(
+        [IDL.Text, PersonId],
+        [Result_10],
+        [],
+      ),
     'proposeRelationship' : IDL.Func(
         [PersonId, PersonId, RelationshipType],
         [Result_9],
@@ -4682,6 +4811,11 @@ export const idlFactory = ({ IDL }) => {
       ),
     'unblockUser' : IDL.Func([IDL.Principal], [], []),
     'unblockUserForFamily' : IDL.Func([FamilyId, IDL.Principal], [], []),
+    'unreadNotificationCountForFamily' : IDL.Func(
+        [FamilyId],
+        [IDL.Nat],
+        ['query'],
+      ),
     'updateBoardPost' : IDL.Func(
         [
           PostId,

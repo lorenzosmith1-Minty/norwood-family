@@ -417,6 +417,7 @@ export interface Notification {
   'read' : boolean,
   'recipient' : Principal,
   'message' : string,
+  'familyId' : string,
 }
 export type NotificationId = bigint;
 export type NotificationType = { 'ResearchSubmission' : null } |
@@ -845,6 +846,7 @@ export interface StewardClaimResult {
   'claimedBy' : Principal,
 }
 export type StewardError = { 'LastSteward' : null } |
+  { 'AlreadyDesignated' : null } |
   { 'NotSteward' : null } |
   { 'AlreadySteward' : null } |
   { 'NotSignedIn' : null } |
@@ -892,6 +894,7 @@ export interface SuccessorDesignation {
   'assignedBy' : Principal,
   'personId' : PersonId,
   'priority' : bigint,
+  'familyId' : string,
 }
 export type SuccessorStatus = { 'Activated' : null } |
   { 'Removed' : null } |
@@ -965,10 +968,19 @@ export interface _SERVICE {
   '_internet_identity_sign_in_finish' : ActorMethod<[], Result_27>,
   '_internet_identity_sign_in_start' : ActorMethod<[], Uint8Array>,
   /**
-   * / Activates/promotes a designated successor into the active steward role.
-   * / Family Steward only.
+   * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+   * / delegates to `activateSuccessorForFamily` with the default family id so
+   * / current Norwood behavior is unchanged.
    */
   'activateSuccessor' : ActorMethod<[PersonId], Result_10>,
+  /**
+   * / Activates/promotes a designated successor into the active steward role in
+   * / `familyId`. Canonical family-scoped form: the caller must be an active
+   * / Steward of `familyId`, all Steward and profile lookups are filtered by
+   * / `familyId`, and the activated Steward record remains in `familyId`.
+   * / Activating a successor in one family never modifies another family's state.
+   */
+  'activateSuccessorForFamily' : ActorMethod<[string, PersonId], Result_10>,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for `addBoardReplyForFamily`.
    */
@@ -1032,11 +1044,23 @@ export interface _SERVICE {
     Photo
   >,
   /**
-   * / Adds a missing relationship to the shared family graph. Family Steward
-   * / only.
+   * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+   * / delegates to `addRelationshipForFamily` with the default family id so
+   * / current Norwood behavior is unchanged.
    */
   'addRelationship' : ActorMethod<
     [PersonId, PersonId, RelationshipType],
+    Result_24
+  >,
+  /**
+   * / Adds a missing relationship to `familyId`'s family graph. Canonical
+   * / family-scoped form: the caller must be an active Steward of `familyId`,
+   * / both people must belong to `familyId`, the duplicate check is filtered by
+   * / `familyId`, and the new Relationship is stamped with `familyId`, so no
+   * / cross-family relationship edge can be created.
+   */
+  'addRelationshipForFamily' : ActorMethod<
+    [string, PersonId, PersonId, RelationshipType],
     Result_24
   >,
   /**
@@ -1478,11 +1502,29 @@ export interface _SERVICE {
     Result_19
   >,
   /**
-   * / Creates a new source record. Requires an approved family member; the caller
-   * / is recorded as the contributor. The source enters as `#Pending`.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for `createSourceForFamily`.
+   * / Deprecated single-family form: delegates to the canonical family-scoped
+   * / endpoint with `FamilyTypes.DEFAULT_FAMILY_ID`, so current Norwood behavior
+   * / for familyId "norwood" is unchanged. Contains no duplicated business logic
+   * / and will be removed once the frontend passes an explicit familyId
+   * / everywhere.
    */
   'createSource' : ActorMethod<
     [string, SourceType, string, [] | [bigint]],
+    Result_18
+  >,
+  /**
+   * / Creates a new source record in `familyId`. Requires an approved member or
+   * / Steward of `familyId`; the caller is recorded as the contributor. The
+   * / source enters as `#Pending`. The stored `SourceRecord.familyId` is
+   * / `familyId`, the Research audit entry is written to `familyId`, and the
+   * / submission notification is scoped to `familyId`. A linked Archive item,
+   * / when supplied, must belong to `familyId`. This is the canonical
+   * / family-scoped non-upload Source creation path and never relies on the
+   * / default family.
+   */
+  'createSourceForFamily' : ActorMethod<
+    [FamilyId, string, SourceType, string, [] | [bigint]],
     Result_18
   >,
   /**
@@ -1537,11 +1579,34 @@ export interface _SERVICE {
     Result_17
   >,
   /**
-   * / Designates an approved claimed family member as a successor steward with a
-   * / priority/order. A successor is a designation only until activated.
-   * / Family Steward only.
+   * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+   * / delegates to `designateSuccessorForFamily` with the default family id so
+   * / current Norwood behavior is unchanged.
    */
   'designateSuccessor' : ActorMethod<[PersonId, bigint], Result_16>,
+  /**
+   * / Designates an approved claimed member of `familyId` as a successor steward
+   * / with a priority/order. Canonical family-scoped form: the caller must be an
+   * / active Steward of `familyId`, the target profile must belong to `familyId`,
+   * / the duplicate-designation check is scoped by `familyId`, and the new
+   * / designation is stamped with `familyId`. A successor is a designation only
+   * / until activated. A Steward of one family can never designate a member of
+   * / another family.
+   */
+  'designateSuccessorForFamily' : ActorMethod<
+    [string, PersonId, bigint],
+    Result_16
+  >,
+  /**
+   * / Dismisses (deletes) the signed-in caller's notification with `id` in
+   * / `familyId`. Returns `true` when a matching notification was removed,
+   * / `false` when none belongs to `familyId` and is addressed to the caller. A
+   * / Family A action can never delete a Family B notification.
+   */
+  'dismissNotificationForFamily' : ActorMethod<
+    [FamilyId, NotificationId],
+    boolean
+  >,
   'execute' : ActorMethod<[string], Result__1>,
   'getApiDoc' : ActorMethod<[], string>,
   /**
@@ -1674,6 +1739,16 @@ export interface _SERVICE {
   'getNewPersonCandidateForFamily' : ActorMethod<
     [FamilyId, bigint],
     [] | [NewPersonCandidate]
+  >,
+  /**
+   * / Returns the signed-in caller's notification with `id` in `familyId`, or
+   * / `null` when no notification with that id belongs to `familyId` and is
+   * / addressed to the caller. A notification id from another family never
+   * / resolves here.
+   */
+  'getNotificationForFamily' : ActorMethod<
+    [FamilyId, NotificationId],
+    [] | [Notification]
   >,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
@@ -2133,10 +2208,16 @@ export interface _SERVICE {
     Array<NewPersonCandidate>
   >,
   /**
-   * / Lists in-app notification records for the signed-in caller. Notifications
-   * / are recipient-addressed and are not family-scoped.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `listNotificationsForFamily`.
    */
   'listNotifications' : ActorMethod<[], Array<Notification>>,
+  /**
+   * / Lists the signed-in caller's notifications in `familyId`, newest first.
+   * / Only notifications whose `familyId` equals `familyId` and whose recipient
+   * / is the caller are returned.
+   */
+  'listNotificationsForFamily' : ActorMethod<[FamilyId], Array<Notification>>,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for
    * / `listPendingArchiveItemsForFamily`.
@@ -2291,14 +2372,26 @@ export interface _SERVICE {
    */
   'listSourcesForFamily' : ActorMethod<[FamilyId], Array<SourceRecord>>,
   /**
-   * / Returns each current Steward and designated Successor enriched with the
-   * / linked approved Person identity (personId, preferred/display name, and
-   * / canonical full person name), resolved via steward accountId -> approved
-   * / linked personId (PersonProfile.claimedByUserId) -> canonical Person
-   * / Profile. The internal account id is carried only for authorization/audit.
-   * / Family Steward only.
+   * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+   * / delegates to `listStewardIdentitiesForFamily` with the default family id so
+   * / current Norwood behavior is unchanged.
    */
   'listStewardIdentities' : ActorMethod<[], Array<StewardIdentity>>,
+  /**
+   * / Returns each current Steward and designated Successor of `familyId`
+   * / enriched with the linked approved Person identity (personId,
+   * / preferred/display name, and canonical full person name), resolved via
+   * / steward accountId -> approved linked personId
+   * / (PersonProfile.claimedByUserId) -> canonical Person Profile. Canonical
+   * / family-scoped form: only Steward records and successor designations stamped
+   * / with `familyId` are considered, so Family A never sees Family B identities.
+   * / The internal account id is carried only for authorization/audit. Family
+   * / Steward of `familyId` only.
+   */
+  'listStewardIdentitiesForFamily' : ActorMethod<
+    [string],
+    Array<StewardIdentity>
+  >,
   /**
    * / Lists all current Family Stewards with role status and account identity.
    * / Family Steward only.
@@ -2311,9 +2404,21 @@ export interface _SERVICE {
    */
   'listStoriesForFamily' : ActorMethod<[FamilyId], Array<Story>>,
   /**
-   * / Lists all successor designations. Family Steward only.
+   * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+   * / delegates to `listSuccessorsForFamily` with the default family id so
+   * / current Norwood behavior is unchanged.
    */
   'listSuccessors' : ActorMethod<[], Array<SuccessorDesignation>>,
+  /**
+   * / Lists all successor designations in `familyId`. Canonical family-scoped
+   * / form: the caller must be an active Steward of `familyId`, and a designation
+   * / stamped with another family is never returned. Family Steward of `familyId`
+   * / only.
+   */
+  'listSuccessorsForFamily' : ActorMethod<
+    [string],
+    Array<SuccessorDesignation>
+  >,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for
    * / `listTimelineEventsForFamily`. Preserves the pre-tenancy behavior exactly:
@@ -2327,6 +2432,21 @@ export interface _SERVICE {
    * / equals `familyId` are considered.
    */
   'listTimelineEventsForFamily' : ActorMethod<[FamilyId], Array<TimelineEvent>>,
+  /**
+   * / Lists the signed-in caller's unread notifications in `familyId`, newest
+   * / first. Only notifications whose `familyId` equals `familyId`, whose
+   * / recipient is the caller, and whose `read` is `false` are returned.
+   */
+  'listUnreadNotificationsForFamily' : ActorMethod<
+    [FamilyId],
+    Array<Notification>
+  >,
+  /**
+   * / Marks every unread notification addressed to the signed-in caller in
+   * / `familyId` as read. Returns the number of notifications marked.
+   * / Notifications in other families are never touched.
+   */
+  'markAllNotificationsReadForFamily' : ActorMethod<[FamilyId], bigint>,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for
    * / `markConversationReadForFamily`.
@@ -2360,11 +2480,20 @@ export interface _SERVICE {
     [] | [Mystery]
   >,
   /**
-   * / Marks one of the signed-in caller's notifications as read. Returns the
-   * / updated notification, or `null` when it does not exist or is not addressed
-   * / to the caller.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `markNotificationReadForFamily`.
    */
   'markNotificationRead' : ActorMethod<[NotificationId], [] | [Notification]>,
+  /**
+   * / Marks the signed-in caller's notification with `id` in `familyId` as read.
+   * / Returns the updated notification, or `null` when no notification with that
+   * / id belongs to `familyId` and is addressed to the caller. A Family A action
+   * / can never mutate a Family B notification.
+   */
+  'markNotificationReadForFamily' : ActorMethod<
+    [FamilyId, NotificationId],
+    [] | [Notification]
+  >,
   /**
    * / Merges two duplicate profiles into one canonical record, preserving all
    * / valid relationships, media, timeline, stories, sources, archive references,
@@ -2441,10 +2570,19 @@ export interface _SERVICE {
    */
   'permanentlyDeleteProfile' : ActorMethod<[PersonId, boolean], Result_11>,
   /**
-   * / Promotes an existing approved claimed family member to Family Steward.
-   * / Family Steward only.
+   * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+   * / delegates to `promoteToStewardForFamily` with the default family id so
+   * / current Norwood behavior is unchanged.
    */
   'promoteToSteward' : ActorMethod<[PersonId], Result_10>,
+  /**
+   * / Promotes an existing approved claimed member of `familyId` to Family
+   * / Steward. Canonical family-scoped form: the caller must be an active Steward
+   * / of `familyId`, the target profile must belong to `familyId`, and the new
+   * / Steward record is stamped with `familyId`. A Steward of one family can never
+   * / promote a member of another family.
+   */
+  'promoteToStewardForFamily' : ActorMethod<[string, PersonId], Result_10>,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for
    * / `proposeRelationshipForFamily`.
@@ -3064,6 +3202,12 @@ export interface _SERVICE {
    * / only.
    */
   'unblockUserForFamily' : ActorMethod<[FamilyId, Principal], undefined>,
+  /**
+   * / Counts the signed-in caller's unread notifications in `familyId`. Only
+   * / notifications whose `familyId` equals `familyId`, whose recipient is the
+   * / caller, and whose `read` is `false` are counted.
+   */
+  'unreadNotificationCountForFamily' : ActorMethod<[FamilyId], bigint>,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for `updateBoardPostForFamily`.
    */

@@ -275,7 +275,9 @@ module {
   /// Reconciles stale claim notifications for a claim: marks the pending
   /// `#ProfileClaimRequested` notification for the claimant as read/resolved.
   /// The `#ProfileClaimReviewed` notification already reflects the final claim
-  /// state. Returns the number of notifications reconciled.
+  /// state. Only notifications whose `familyId` equals the claim's `familyId`
+  /// are reconciled, so a Family A claim never mutates a Family B notification.
+  /// Returns the number of notifications reconciled.
   public func reconcileClaimNotifications(
     notifications : List.List<OwnershipTypes.Notification>,
     claim : OwnershipTypes.ProfileClaim,
@@ -284,7 +286,7 @@ module {
     let snapshot = notifications.toArray();
     notifications.clear();
     for (n in snapshot.values()) {
-      if (n.recipient == claim.requestingUserId and n.notificationType == #ProfileClaimRequested) {
+      if (n.familyId == claim.familyId and n.recipient == claim.requestingUserId and n.notificationType == #ProfileClaimRequested) {
         notifications.add({ n with read = true });
         reconciled += 1;
       } else {

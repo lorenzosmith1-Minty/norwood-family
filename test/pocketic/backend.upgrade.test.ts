@@ -938,3 +938,118 @@ it("defaults a pre-existing story to norwood on upgrade, preserving its id, cont
   expect(listedAgain).toHaveLength(1);
   expect(listedAgain.find((s) => s.id === written.id)).toEqual(stored);
 });
+
+// ---------------------------------------------------------------------------
+// Tenancy 1B: SuccessorDesignation familyId across a real upgrade.
+//
+// The previous revision's SuccessorDesignation has no `familyId` field; this
+// build's 20260929_000000.mo migration adds one and backfills every pre-existing
+// designation with familyId = "norwood". This test installs the previous
+// revision, designates a successor through its public API, upgrades to this
+// build (running the migration), and asserts:
+//   1. the designation survives with its personId, priority, assignedBy,
+//      assignedAt, and status unchanged and familyId = "norwood";
+//   2. the record count is unchanged and no designation is duplicated — the
+//      migration rebuilds the list exactly once;
+//   3. a repeated read is idempotent: the same designation comes back unchanged,
+//      so the migration neither duplicates nor reseeds it.
+//
+// The pre-upgrade write goes through the previous revision's own declarations
+// (`.old/`), because this build's codec requires the new `familyId` field and
+// cannot encode a call against the previous revision's pre-migration types.
+// ---------------------------------------------------------------------------
+it("defaults a pre-existing successor designation to norwood on upgrade, preserving personId, priority, assignedBy, assignedAt, and status", async () => {
+  const previousDeclarations = await import(
+    /* @vite-ignore */ PREVIOUS_DECLARATIONS
+  );
+  const previousIdlFactory = previousDeclarations.idlFactory;
+
+  // 1. Install the version the user is actually running.
+  const previous = await pic!.setupCanister({
+    idlFactory: previousIdlFactory,
+    wasm: PREVIOUS_WASM,
+  });
+
+  // 2. Designate a successor through the OLD public API. The writer becomes the
+  //    Family Steward (the one-time claimSteward bootstrap). The designation
+  //    target must be an approved claimed member whose owner is NOT already an
+  //    active Steward, so a second identity claims a seeded profile and the
+  //    steward approves that claim.
+  const steward = createIdentity("upgrade-successor-steward-seed");
+  previous.actor.setIdentity(steward);
+  await previous.actor._initialize_access_control();
+  await previous.actor.claimSteward();
+
+  const successor = createIdentity("upgrade-successor-target-seed");
+  previous.actor.setIdentity(successor);
+  await previous.actor._initialize_access_control();
+  const requested = await previous.actor.requestProfileClaim("hudson");
+  expect("ok" in requested).toBe(true);
+  previous.actor.setIdentity(steward);
+  await previous.actor.approveProfileClaim((requested as { ok: { id: bigint } }).ok.id);
+
+  const designated = await previous.actor.designateSuccessor("hudson", 3n);
+  expect("ok" in designated).toBe(true);
+
+  // Capture the pre-upgrade designation through the previous revision's own
+  // codec. It carries no `familyId` yet.
+  const before = await previous.actor.listSuccessors();
+  expect(before).toHaveLength(1);
+  const original = before[0] as {
+    personId: string;
+    priority: bigint;
+    assignedBy: unknown;
+    assignedAt: bigint;
+    status: unknown;
+  };
+  expect(original).toMatchObject({
+    personId: "hudson",
+    priority: 3n,
+    status: { Designated: null },
+  });
+
+  // 3. Upgrade to the version this build produces. The 20260929_000000.mo
+  //    migration runs here.
+  await pic!.upgradeCanister({
+    canisterId: previous.canisterId,
+    wasm: BACKEND_WASM,
+    upgradeModeOptions: {
+      skip_pre_upgrade: [],
+      wasm_memory_persistence: [{ keep: null }],
+    },
+  });
+
+  // 4. Read through the NEW API. The designation survives with its personId,
+  //    priority, assignedBy, assignedAt, and status unchanged and
+  //    familyId = "norwood".
+  const upgraded = pic!.createActor<_SERVICE>(idlFactory, previous.canisterId);
+  upgraded.setIdentity(steward);
+  const listed = await upgraded.listSuccessorsForFamily("norwood");
+  const stored = listed.find((s) => s.personId === "hudson");
+  expect(stored).toBeDefined();
+  expect(stored).toMatchObject({
+    familyId: "norwood",
+    personId: original.personId,
+    priority: original.priority,
+    assignedBy: original.assignedBy,
+    assignedAt: original.assignedAt,
+    status: original.status,
+  });
+
+  // No duplicates: exactly one designation for that person, and the migration
+  // did not reseed the collection.
+  expect(listed.filter((s) => s.personId === "hudson")).toHaveLength(1);
+  expect(listed).toHaveLength(before.length);
+
+  // The legacy no-familyId read agrees with the canonical Norwood read.
+  const legacy = await upgraded.listSuccessors();
+  expect(legacy.map((s) => s.personId).sort()).toEqual(
+    listed.map((s) => s.personId).sort(),
+  );
+
+  // 5. A repeated read is idempotent: the same designation comes back unchanged,
+  //    so the migration neither duplicates nor rewrites it.
+  const listedAgain = await upgraded.listSuccessorsForFamily("norwood");
+  expect(listedAgain).toHaveLength(before.length);
+  expect(listedAgain.find((s) => s.personId === "hudson")).toEqual(stored);
+});

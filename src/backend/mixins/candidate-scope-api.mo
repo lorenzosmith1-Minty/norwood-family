@@ -9,6 +9,7 @@ import GovernanceTypes "../types/governance";
 import FamilyTypes "../types/family";
 import CandidateScopeLib "../lib/candidate-scope";
 import FamilyAuthorizationLib "../lib/family-authorization";
+import NotificationsScopeLib "../lib/notifications-scope";
 import ResearchAuditLib "../lib/research-intake";
 import InputValidation "../lib/input-validation";
 
@@ -97,7 +98,7 @@ mixin (
       now,
       "New Person Candidate '" # cleanName # "' submitted",
     );
-    addCandidateNotification(caller, #ResearchSubmission, "Your research submission is awaiting Family Steward review.");
+    addCandidateNotification(familyId, caller, #ResearchSubmission, "Your research submission is awaiting Family Steward review.");
     #ok(candidate);
   };
 
@@ -142,7 +143,7 @@ mixin (
           now,
           "New Person Candidate '" # c.name # "' approved and created as a canonical Person",
         );
-        addCandidateNotification(c.submittedBy, #ResearchApproved, "Your research submission was approved.");
+        addCandidateNotification(familyId, c.submittedBy, #ResearchApproved, "Your research submission was approved.");
         updated;
       };
     };
@@ -172,7 +173,7 @@ mixin (
           now,
           "New Person Candidate '" # c.name # "' rejected",
         );
-        addCandidateNotification(c.submittedBy, #ResearchRejected, "Your research submission was not approved.");
+        addCandidateNotification(familyId, c.submittedBy, #ResearchRejected, "Your research submission was not approved.");
         updated;
       };
     };
@@ -357,34 +358,15 @@ mixin (
     entry;
   };
 
-  /// Computes the next notification id: one greater than the largest existing
-  /// id, or `0` when there are no notifications.
-  func nextCandidateNotificationId() : Nat {
-    var maxId = 0;
-    for (n in notifications.toArray().values()) {
-      if (n.id >= maxId) { maxId := n.id + 1 };
-    };
-    maxId;
-  };
-
-  /// Appends a research notification for the given recipient, avoiding
-  /// duplicates. Shared by the family-scoped candidate endpoints and their
-  /// temporary compatibility wrappers so notification behavior never diverges.
+  /// Appends a research notification for the given recipient in `familyId`,
+  /// avoiding duplicates. Delegates to the canonical family-scoped notification
+  /// helper, so the stored `familyId` is always the action's family.
   func addCandidateNotification(
+    familyId : FamilyTypes.FamilyId,
     recipient : Principal,
     notificationType : OwnershipTypes.NotificationType,
     message : Text,
   ) {
-    let exists = notifications.toArray().any(func n = n.recipient == recipient and n.notificationType == notificationType and n.message == message);
-    if (not exists) {
-      notifications.add({
-        id = nextCandidateNotificationId();
-        recipient;
-        notificationType;
-        message;
-        createdAt = Time.now();
-        read = false;
-      });
-    };
+    ignore NotificationsScopeLib.createUniqueForFamily(notifications, familyId, recipient, notificationType, message, Time.now());
   };
 };

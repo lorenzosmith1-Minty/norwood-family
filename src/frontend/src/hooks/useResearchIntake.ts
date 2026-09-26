@@ -27,6 +27,7 @@ import type {
 import { useActor } from "@caffeineai/core-infrastructure";
 import type { ExternalBlob } from "@caffeineai/object-storage";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { notificationInvalidation } from "./useNotifications";
 import { useProvidersPresent } from "./usePhotoStorage";
 
 /**
@@ -91,6 +92,7 @@ export function useGetSource(sourceId: SourceId) {
 
 /** Creates a new source record. */
 export function useCreateSource() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
@@ -117,7 +119,9 @@ export function useCreateSource() {
       void queryClient.invalidateQueries({
         queryKey: ["pendingContributionsCount"],
       });
-      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient.invalidateQueries(
+        notificationInvalidation(familyScopedId),
+      );
     },
   });
 }
@@ -201,7 +205,9 @@ export function useCreateSourceWithUpload() {
       void queryClient.invalidateQueries({
         queryKey: ["pendingContributionsCount"],
       });
-      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient.invalidateQueries(
+        notificationInvalidation(familyScopedId),
+      );
     },
   });
 }
@@ -229,7 +235,9 @@ export function useApproveSource() {
       void queryClient.invalidateQueries({
         queryKey: ["pendingContributionsCount"],
       });
-      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient.invalidateQueries(
+        notificationInvalidation(familyScopedId),
+      );
     },
   });
 }
@@ -257,7 +265,9 @@ export function useRejectSource() {
       void queryClient.invalidateQueries({
         queryKey: ["pendingContributionsCount"],
       });
-      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient.invalidateQueries(
+        notificationInvalidation(familyScopedId),
+      );
     },
   });
 }
@@ -285,7 +295,9 @@ export function useNeedsResearchSource() {
       void queryClient.invalidateQueries({
         queryKey: ["pendingContributionsCount"],
       });
-      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient.invalidateQueries(
+        notificationInvalidation(familyScopedId),
+      );
     },
   });
 }
@@ -384,7 +396,9 @@ export function useCreateFinding() {
       void queryClient.invalidateQueries({
         queryKey: ["pendingContributionsCount"],
       });
-      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient.invalidateQueries(
+        notificationInvalidation(familyScopedId),
+      );
     },
   });
 }
@@ -418,7 +432,9 @@ export function useApproveFinding() {
       void queryClient.invalidateQueries({
         queryKey: ["pendingContributionsCount"],
       });
-      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient.invalidateQueries(
+        notificationInvalidation(familyScopedId),
+      );
     },
   });
 }
@@ -447,7 +463,9 @@ export function useRejectFinding() {
       void queryClient.invalidateQueries({
         queryKey: ["pendingContributionsCount"],
       });
-      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient.invalidateQueries(
+        notificationInvalidation(familyScopedId),
+      );
     },
   });
 }
@@ -480,7 +498,9 @@ export function useNeedsResearchFinding() {
       void queryClient.invalidateQueries({
         queryKey: ["pendingContributionsCount"],
       });
-      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient.invalidateQueries(
+        notificationInvalidation(familyScopedId),
+      );
     },
   });
 }
@@ -539,7 +559,9 @@ export function useCreateNewPersonCandidate() {
       void queryClient.invalidateQueries({
         queryKey: ["pendingContributionsCount"],
       });
-      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient.invalidateQueries(
+        notificationInvalidation(familyScopedId),
+      );
     },
   });
 }
@@ -572,7 +594,9 @@ export function useApproveNewPersonCandidate() {
       void queryClient.invalidateQueries({
         queryKey: ["pendingContributionsCount"],
       });
-      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient.invalidateQueries(
+        notificationInvalidation(familyScopedId),
+      );
     },
   });
 }
@@ -604,7 +628,9 @@ export function useRejectNewPersonCandidate() {
       void queryClient.invalidateQueries({
         queryKey: ["pendingContributionsCount"],
       });
-      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient.invalidateQueries(
+        notificationInvalidation(familyScopedId),
+      );
     },
   });
 }
@@ -639,7 +665,9 @@ export function useNeedsResearchNewPersonCandidate() {
       void queryClient.invalidateQueries({
         queryKey: ["pendingContributionsCount"],
       });
-      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient.invalidateQueries(
+        notificationInvalidation(familyScopedId),
+      );
     },
   });
 }
@@ -706,7 +734,9 @@ export function useCreateRelationshipProposal() {
       void queryClient.invalidateQueries({
         queryKey: ["pendingContributionsCount"],
       });
-      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient.invalidateQueries(
+        notificationInvalidation(familyScopedId),
+      );
     },
   });
 }
@@ -743,7 +773,9 @@ export function useApproveRelationshipProposal() {
       void queryClient.invalidateQueries({
         queryKey: ["pendingContributionsCount"],
       });
-      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient.invalidateQueries(
+        notificationInvalidation(familyScopedId),
+      );
     },
   });
 }
@@ -775,7 +807,9 @@ export function useRejectRelationshipProposal() {
       void queryClient.invalidateQueries({
         queryKey: ["pendingContributionsCount"],
       });
-      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient.invalidateQueries(
+        notificationInvalidation(familyScopedId),
+      );
     },
   });
 }
@@ -786,6 +820,7 @@ export function useRejectRelationshipProposal() {
  * status `NeedsResearch`.
  */
 export function useNeedsResearchRelationshipProposal() {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
@@ -804,7 +839,9 @@ export function useNeedsResearchRelationshipProposal() {
       void queryClient.invalidateQueries({
         queryKey: ["pendingContributionsCount"],
       });
-      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient.invalidateQueries(
+        notificationInvalidation(familyScopedId),
+      );
     },
   });
 }
@@ -867,7 +904,9 @@ export function useResolveConflict() {
       void queryClient.invalidateQueries({
         queryKey: ["pendingContributionsCount"],
       });
-      void queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      void queryClient.invalidateQueries(
+        notificationInvalidation(familyScopedId),
+      );
       // Resolving a conflict records a ConflictResolved entry in the merged
       // Steward Audit History, so that query must refresh immediately.
       void queryClient.invalidateQueries({

@@ -982,9 +982,11 @@ type FamilyId__228780613 = Text;
 type FamilyId__284510423 = Text;
 type FamilyId__329536528 = Text;
 type FamilyId__357998493 = Text;
+type FamilyId__478542481 = Text;
 type FamilyId__488711918 = Text;
 type FamilyId__629197896 = FamilyId__357998493;
 type FamilyId__635793600 = Text;
+type FamilyId__648058587 = Text;
 type FamilyId__649884009 = Text;
 type FamilyId__671487675 = Text;
 type FamilyId__67753120 = Text;
@@ -1545,6 +1547,8 @@ type NewActor__439319376 =
     profiles : Map__230067015<Text, PersonProfile__153367514>;
     relationshipRequests : List__836382695<RelationshipRequest__461877614>
   };
+type NewActor__486559717 =
+  {notifications : List__836382695<NewNotification__384233547>};
 type NewActor__50454331 =
   {
     accessControlState :
@@ -1652,6 +1656,8 @@ type NewActor__681737701 =
   {researchAuditLog : List__836382695<NewResearchAuditEntry__232993651>};
 type NewActor__703993856 =
   {researchSources : List__836382695<NewSourceRecord__912464744>};
+type NewActor__705461471 =
+  {successors : List__836382695<NewSuccessorDesignation__918855477>};
 type NewActor__756013677 =
   {
     conflictReviewItems : List__836382695<ConflictReviewItem__670731780>;
@@ -2052,6 +2058,30 @@ type NewNotification__281268636 =
     read : Bool;
     recipient : Principal
   };
+type NewNotification__384233547 =
+  {
+    createdAt : Int;
+    familyId : FamilyId__648058587;
+    id : Nat;
+    message : Text;
+    notificationType :
+      {
+        #ArchiveApproved;
+        #ArchiveRejected;
+        #BoardMention;
+        #BoardReply;
+        #NewMessage;
+        #ProfileClaimRequested;
+        #ProfileClaimReviewed;
+        #RelationshipRequested;
+        #RelationshipReviewed;
+        #ResearchApproved;
+        #ResearchRejected;
+        #ResearchSubmission
+      };
+    read : Bool;
+    recipient : Principal
+  };
 type NewPersonCandidate__867230435 =
   {
     details : Text;
@@ -2380,6 +2410,15 @@ type NewStory__292921907 =
     updatedAt : Int;
     year : ?Nat
   };
+type NewSuccessorDesignation__918855477 =
+  {
+    assignedAt : Int;
+    assignedBy : Principal;
+    familyId : FamilyId__478542481;
+    personId : Text;
+    priority : Nat;
+    status : {#Activated; #Designated; #Removed}
+  };
 type Node__204828119<K, V> =
   {#internal : Internal__283199666<K, V>; #leaf : Leaf__598469445<K, V>};
 type NotificationType__133971452 =
@@ -2555,6 +2594,7 @@ type Notification__558599323 =
 type Notification__565523058 =
   {
     createdAt : Int;
+    familyId : Text;
     id : Nat;
     message : Text;
     notificationType : NotificationType__873564229;
@@ -2820,6 +2860,8 @@ type OldActor__534714275 =
     stories : List__836382695<Story__271674494>;
     successors : List__836382695<SuccessorDesignation__303563642>
   };
+type OldActor__542196375 =
+  {successors : List__836382695<OldSuccessorDesignation__848753311>};
 type OldActor__560581152 = {};
 type OldActor__606090735 =
   {
@@ -2831,6 +2873,8 @@ type OldActor__606090735 =
       List__836382695<OldRelationshipProposal__728580113>;
     researchSources : List__836382695<OldSourceRecord__1066294631>
   };
+type OldActor__61572473 =
+  {notifications : List__836382695<OldNotification__694137814>};
 type OldActor__624391799 = {stories : List__836382695<OldStory__747998784>};
 type OldActor__650257485 =
   {
@@ -3258,6 +3302,29 @@ type OldNotification__501838132 =
     read : Bool;
     recipient : Principal
   };
+type OldNotification__694137814 =
+  {
+    createdAt : Int;
+    id : Nat;
+    message : Text;
+    notificationType :
+      {
+        #ArchiveApproved;
+        #ArchiveRejected;
+        #BoardMention;
+        #BoardReply;
+        #NewMessage;
+        #ProfileClaimRequested;
+        #ProfileClaimReviewed;
+        #RelationshipRequested;
+        #RelationshipReviewed;
+        #ResearchApproved;
+        #ResearchRejected;
+        #ResearchSubmission
+      };
+    read : Bool;
+    recipient : Principal
+  };
 type OldNotification__719817552 =
   {
     createdAt : Int;
@@ -3553,6 +3620,14 @@ type OldStory__747998784 =
     title : Text;
     updatedAt : Int;
     year : ?Nat
+  };
+type OldSuccessorDesignation__848753311 =
+  {
+    assignedAt : Int;
+    assignedBy : Principal;
+    personId : Text;
+    priority : Nat;
+    status : {#Activated; #Designated; #Removed}
   };
 type OralHistorySpeaker__107404051 = {name : Text; personId : ?Text};
 type OralHistorySpeaker__297850193 = {name : Text; personId : ?Text};
@@ -5376,6 +5451,7 @@ type SuccessorDesignation__1046527940 =
   {
     assignedAt : Int;
     assignedBy : Principal;
+    familyId : Text;
     personId : PersonId__1048869529;
     priority : Nat;
     status : SuccessorStatus__10753292
@@ -5474,7 +5550,9 @@ type UserRole__968740559 = {#admin; #guest; #user};
   "20260924_120000" : (old : OldActor__124006765) -> NewActor__861270690;
   "20260925_000000" : (old : OldActor__3928544) -> NewActor__963881556;
   "20260926_000000" : (old : OldActor__624391799) -> NewActor__341238509;
-  "20260927_000000" : (old : OldActor__263139629) -> NewActor__949499829
+  "20260927_000000" : (old : OldActor__263139629) -> NewActor__949499829;
+  "20260928_000000" : (old : OldActor__61572473) -> NewActor__486559717;
+  "20260929_000000" : (old : OldActor__542196375) -> NewActor__705461471
 }
 actor  {
   stable accessControlState :

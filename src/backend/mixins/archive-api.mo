@@ -13,6 +13,7 @@ import GovernanceTypes "../types/governance";
 import ArchiveLib "../lib/archive";
 import ResearchSourceScopeLib "../lib/research-source-scope";
 import FamilyAuthorizationLib "../lib/family-authorization";
+import NotificationsScopeLib "../lib/notifications-scope";
 import InputValidation "../lib/input-validation";
 import InputValidationTypes "../types/input-validation";
 
@@ -45,32 +46,26 @@ mixin (
     maxId;
   };
 
-  /// Computes the next notification id: one greater than the largest existing
-  /// id, or `0` when there are no notifications.
-  func nextArchiveNotificationId() : Nat {
-    var maxId = 0;
-    for (n in notifications.toArray().values()) {
-      if (n.id >= maxId) { maxId := n.id + 1 };
-    };
-    maxId;
-  };
-
-  /// Appends an archive review notification for the given recipient, avoiding
-  /// duplicates. A notification is only added when no identical (same
-  /// recipient, type, and message) notification already exists, so a repeated
-  /// approve/reject call on an already-reviewed item never duplicates it.
-  func addArchiveNotification(recipient : Principal, notificationType : OwnershipTypes.NotificationType, message : Text) {
-    let exists = notifications.toArray().any(func n = n.recipient == recipient and n.notificationType == notificationType and n.message == message);
-    if (not exists) {
-      notifications.add({
-        id = nextArchiveNotificationId();
-        recipient;
-        notificationType;
-        message;
-        createdAt = Time.now();
-        read = false;
-      });
-    };
+  /// Appends an archive review notification for the given recipient in
+  /// `familyId`, avoiding duplicates. A notification is only added when no
+  /// identical (same family, recipient, type, and message) notification already
+  /// exists, so a repeated approve/reject call on an already-reviewed item never
+  /// duplicates it. Delegates to the canonical family-scoped notification
+  /// helper, so the stored `familyId` is always the action's family.
+  func addArchiveNotification(
+    familyId : FamilyTypes.FamilyId,
+    recipient : Principal,
+    notificationType : OwnershipTypes.NotificationType,
+    message : Text,
+  ) {
+    ignore NotificationsScopeLib.createUniqueForFamily(
+      notifications,
+      familyId,
+      recipient,
+      notificationType,
+      message,
+      Time.now(),
+    );
   };
 
   /// Maps an archive item type to the upload surface whose MIME allowlist and
@@ -251,6 +246,7 @@ mixin (
     switch (ArchiveLib.approveForFamily(items, familyId, id)) {
       case (?updated) {
         addArchiveNotification(
+          familyId,
           updated.contributor,
           #ArchiveApproved,
           "Your archive contribution \"" # updated.title # "\" was approved.",
@@ -276,6 +272,7 @@ mixin (
     switch (ArchiveLib.rejectForFamily(items, familyId, id)) {
       case (?updated) {
         addArchiveNotification(
+          familyId,
           updated.contributor,
           #ArchiveRejected,
           "Your archive contribution \"" # updated.title # "\" was not approved.",
@@ -403,6 +400,7 @@ mixin (
     switch (ArchiveLib.approveForFamily(items, FamilyTypes.DEFAULT_FAMILY_ID, id)) {
       case (?updated) {
         addArchiveNotification(
+          FamilyTypes.DEFAULT_FAMILY_ID,
           updated.contributor,
           #ArchiveApproved,
           "Your archive contribution \"" # updated.title # "\" was approved.",
@@ -422,6 +420,7 @@ mixin (
     switch (ArchiveLib.rejectForFamily(items, FamilyTypes.DEFAULT_FAMILY_ID, id)) {
       case (?updated) {
         addArchiveNotification(
+          FamilyTypes.DEFAULT_FAMILY_ID,
           updated.contributor,
           #ArchiveRejected,
           "Your archive contribution \"" # updated.title # "\" was not approved.",

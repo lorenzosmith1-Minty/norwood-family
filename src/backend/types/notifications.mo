@@ -8,4 +8,8 @@ module {
   /// definition of each shared notification type.
   public type NotificationType = Ownership.NotificationType;
   public type Notification = Ownership.Notification;
+
+  /// Flattened, OQL-exposable view of an in-app notification record. Carries
+  /// `familyId` so a notification row is always attributable to its family.
+  public type NotificationRow = Ownership.NotificationRow;
 };

@@ -136,6 +136,7 @@ const {
           message: "Your research submission was approved.",
           createdAt: 1_700_000_000_000_000_000n,
           read: false,
+          familyId: "norwood",
         },
       ];
       return sources.find((s) => s.id === id) ?? null;
@@ -158,6 +159,7 @@ const {
           message: "Your research submission was not approved.",
           createdAt: 1_700_000_000_000_000_000n,
           read: false,
+          familyId: "norwood",
         },
       ];
       return sources.find((s) => s.id === id) ?? null;

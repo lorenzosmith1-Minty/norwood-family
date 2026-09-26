@@ -37,8 +37,21 @@ mixin (
     GovernanceLib.listStewards(stewards);
   };
 
-  /// Promotes an existing approved claimed family member to Family Steward.
-  /// Family Steward only.
+  /// Promotes an existing approved claimed member of `familyId` to Family
+  /// Steward. Canonical family-scoped form: the caller must be an active Steward
+  /// of `familyId`, the target profile must belong to `familyId`, and the new
+  /// Steward record is stamped with `familyId`. A Steward of one family can never
+  /// promote a member of another family.
+  public shared ({ caller }) func promoteToStewardForFamily(familyId : Text, personId : Types.PersonId) : async Result.Result<Types.StewardRecord, Types.StewardError> {
+    if (not StewardAuthorityLib.isActiveStewardForFamily(stewards, caller, familyId)) {
+      Runtime.trap("Unauthorized: Only Family Stewards can promote stewards");
+    };
+    GovernanceLib.promoteToStewardForFamily(stewards, auditLog, profiles, familyId, personId, caller);
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+  /// delegates to `promoteToStewardForFamily` with the default family id so
+  /// current Norwood behavior is unchanged.
   public shared ({ caller }) func promoteToSteward(personId : Types.PersonId) : async Result.Result<Types.StewardRecord, Types.StewardError> {
     if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can promote stewards");
@@ -55,9 +68,23 @@ mixin (
     GovernanceLib.removeSteward(stewards, auditLog, stewardAccountId, caller);
   };
 
-  /// Designates an approved claimed family member as a successor steward with a
-  /// priority/order. A successor is a designation only until activated.
-  /// Family Steward only.
+  /// Designates an approved claimed member of `familyId` as a successor steward
+  /// with a priority/order. Canonical family-scoped form: the caller must be an
+  /// active Steward of `familyId`, the target profile must belong to `familyId`,
+  /// the duplicate-designation check is scoped by `familyId`, and the new
+  /// designation is stamped with `familyId`. A successor is a designation only
+  /// until activated. A Steward of one family can never designate a member of
+  /// another family.
+  public shared ({ caller }) func designateSuccessorForFamily(familyId : Text, personId : Types.PersonId, priority : Nat) : async Result.Result<Types.SuccessorDesignation, Types.StewardError> {
+    if (not StewardAuthorityLib.isActiveStewardForFamily(stewards, caller, familyId)) {
+      Runtime.trap("Unauthorized: Only Family Stewards can designate successors");
+    };
+    GovernanceLib.designateSuccessorForFamily(stewards, successors, auditLog, profiles, familyId, personId, priority, caller);
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+  /// delegates to `designateSuccessorForFamily` with the default family id so
+  /// current Norwood behavior is unchanged.
   public shared ({ caller }) func designateSuccessor(personId : Types.PersonId, priority : Nat) : async Result.Result<Types.SuccessorDesignation, Types.StewardError> {
     if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can designate successors");
@@ -65,8 +92,21 @@ mixin (
     GovernanceLib.designateSuccessor(stewards, successors, auditLog, profiles, personId, priority, caller);
   };
 
-  /// Activates/promotes a designated successor into the active steward role.
-  /// Family Steward only.
+  /// Activates/promotes a designated successor into the active steward role in
+  /// `familyId`. Canonical family-scoped form: the caller must be an active
+  /// Steward of `familyId`, all Steward and profile lookups are filtered by
+  /// `familyId`, and the activated Steward record remains in `familyId`.
+  /// Activating a successor in one family never modifies another family's state.
+  public shared ({ caller }) func activateSuccessorForFamily(familyId : Text, personId : Types.PersonId) : async Result.Result<Types.StewardRecord, Types.StewardError> {
+    if (not StewardAuthorityLib.isActiveStewardForFamily(stewards, caller, familyId)) {
+      Runtime.trap("Unauthorized: Only Family Stewards can activate successors");
+    };
+    GovernanceLib.activateSuccessorForFamily(stewards, successors, auditLog, profiles, familyId, personId, caller);
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+  /// delegates to `activateSuccessorForFamily` with the default family id so
+  /// current Norwood behavior is unchanged.
   public shared ({ caller }) func activateSuccessor(personId : Types.PersonId) : async Result.Result<Types.StewardRecord, Types.StewardError> {
     if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can activate successors");
@@ -74,7 +114,20 @@ mixin (
     GovernanceLib.activateSuccessor(stewards, successors, auditLog, profiles, personId, caller);
   };
 
-  /// Lists all successor designations. Family Steward only.
+  /// Lists all successor designations in `familyId`. Canonical family-scoped
+  /// form: the caller must be an active Steward of `familyId`, and a designation
+  /// stamped with another family is never returned. Family Steward of `familyId`
+  /// only.
+  public query ({ caller }) func listSuccessorsForFamily(familyId : Text) : async [Types.SuccessorDesignation] {
+    if (not StewardAuthorityLib.isActiveStewardForFamily(stewards, caller, familyId)) {
+      Runtime.trap("Unauthorized: Only Family Stewards can list successors");
+    };
+    GovernanceLib.listSuccessorsForFamily(successors, familyId);
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+  /// delegates to `listSuccessorsForFamily` with the default family id so
+  /// current Norwood behavior is unchanged.
   public query ({ caller }) func listSuccessors() : async [Types.SuccessorDesignation] {
     if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can list successors");
@@ -91,12 +144,25 @@ mixin (
     GovernanceLib.getSingleStewardWarning(stewards);
   };
 
-  /// Returns each current Steward and designated Successor enriched with the
-  /// linked approved Person identity (personId, preferred/display name, and
-  /// canonical full person name), resolved via steward accountId -> approved
-  /// linked personId (PersonProfile.claimedByUserId) -> canonical Person
-  /// Profile. The internal account id is carried only for authorization/audit.
-  /// Family Steward only.
+  /// Returns each current Steward and designated Successor of `familyId`
+  /// enriched with the linked approved Person identity (personId,
+  /// preferred/display name, and canonical full person name), resolved via
+  /// steward accountId -> approved linked personId
+  /// (PersonProfile.claimedByUserId) -> canonical Person Profile. Canonical
+  /// family-scoped form: only Steward records and successor designations stamped
+  /// with `familyId` are considered, so Family A never sees Family B identities.
+  /// The internal account id is carried only for authorization/audit. Family
+  /// Steward of `familyId` only.
+  public query ({ caller }) func listStewardIdentitiesForFamily(familyId : Text) : async [Types.StewardIdentity] {
+    if (not StewardAuthorityLib.isActiveStewardForFamily(stewards, caller, familyId)) {
+      Runtime.trap("Unauthorized: Only Family Stewards can list steward identities");
+    };
+    GovernanceLib.listStewardIdentitiesForFamily(stewards, successors, profiles, familyId);
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+  /// delegates to `listStewardIdentitiesForFamily` with the default family id so
+  /// current Norwood behavior is unchanged.
   public query ({ caller }) func listStewardIdentities() : async [Types.StewardIdentity] {
     if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can list steward identities");
@@ -248,13 +314,26 @@ mixin (
     GovernanceLib.listPersonRelationships(confirmedRelationships, personId);
   };
 
-  /// Adds a missing relationship to the shared family graph. Family Steward
-  /// only.
+  /// Adds a missing relationship to `familyId`'s family graph. Canonical
+  /// family-scoped form: the caller must be an active Steward of `familyId`,
+  /// both people must belong to `familyId`, the duplicate check is filtered by
+  /// `familyId`, and the new Relationship is stamped with `familyId`, so no
+  /// cross-family relationship edge can be created.
+  public shared ({ caller }) func addRelationshipForFamily(familyId : Text, fromPersonId : Types.PersonId, toPersonId : Types.PersonId, relationshipType : Types.RelationshipType) : async Result.Result<Types.Relationship, Types.RelationshipAdminError> {
+    if (not StewardAuthorityLib.isActiveStewardForFamily(stewards, caller, familyId)) {
+      Runtime.trap("Unauthorized: Only Family Stewards can add relationships");
+    };
+    GovernanceLib.addRelationshipForFamily(confirmedRelationships, auditLog, profiles, familyId, fromPersonId, toPersonId, relationshipType, caller);
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+  /// delegates to `addRelationshipForFamily` with the default family id so
+  /// current Norwood behavior is unchanged.
   public shared ({ caller }) func addRelationship(fromPersonId : Types.PersonId, toPersonId : Types.PersonId, relationshipType : Types.RelationshipType) : async Result.Result<Types.Relationship, Types.RelationshipAdminError> {
     if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
       Runtime.trap("Unauthorized: Only Family Stewards can add relationships");
     };
-    GovernanceLib.addRelationship(confirmedRelationships, auditLog, fromPersonId, toPersonId, relationshipType, caller);
+    GovernanceLib.addRelationship(confirmedRelationships, auditLog, profiles, fromPersonId, toPersonId, relationshipType, caller);
   };
 
   /// Removes an incorrect relationship from the shared family graph. Family

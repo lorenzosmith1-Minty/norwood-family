@@ -17,10 +17,10 @@ import {
   type PersonId,
   type Result_5,
   type Result_19,
-  type Result_23,
   type Result_24,
-  type Result_27,
-  type Result_41,
+  type Result_25,
+  type Result_28,
+  type Result_42,
   SimpleRelationshipType,
 } from "@/backend";
 
@@ -171,8 +171,8 @@ describe("confirmation consumer seam (characterization)", () => {
   });
 
   it("types the submit Result as an ok record / err error union", () => {
-    const ok: Result_41 = { __kind__: "ok", ok: confirmationRecord() };
-    const err: Result_41 = {
+    const ok: Result_42 = { __kind__: "ok", ok: confirmationRecord() };
+    const err: Result_42 = {
       __kind__: "err",
       err: MembershipConfirmationError.MembershipNotPending,
     };
@@ -184,7 +184,7 @@ describe("confirmation consumer seam (characterization)", () => {
   });
 
   it("types the Steward read Result as a state/decisions/resolution tuple", () => {
-    const ok: Result_27 = {
+    const ok: Result_28 = {
       __kind__: "ok",
       ok: [
         MembershipConfirmationState.ApprovedByRelative,
@@ -192,7 +192,7 @@ describe("confirmation consumer seam (characterization)", () => {
         resolutionRecord(),
       ],
     };
-    const err: Result_27 = {
+    const err: Result_28 = {
       __kind__: "err",
       err: MembershipConfirmationError.NotAuthorized,
     };
@@ -205,7 +205,7 @@ describe("confirmation consumer seam (characterization)", () => {
   });
 
   it("types the applicant read Result as a redacted applicant view", () => {
-    const ok: Result_23 = {
+    const ok: Result_24 = {
       __kind__: "ok",
       ok: {
         state: MembershipConfirmationState.ApprovedByRelative,
@@ -216,7 +216,7 @@ describe("confirmation consumer seam (characterization)", () => {
         updatedAt: 1_700_000_000_000_000_000n,
       },
     };
-    const err: Result_23 = {
+    const err: Result_24 = {
       __kind__: "err",
       err: MembershipConfirmationError.NotAuthorized,
     };
@@ -229,9 +229,9 @@ describe("confirmation consumer seam (characterization)", () => {
   });
 
   it("types the own-decision read Result as an optional record", () => {
-    const present: Result_24 = { __kind__: "ok", ok: confirmationRecord() };
-    const absent: Result_24 = { __kind__: "ok", ok: null };
-    const err: Result_24 = {
+    const present: Result_25 = { __kind__: "ok", ok: confirmationRecord() };
+    const absent: Result_25 = { __kind__: "ok", ok: null };
+    const err: Result_25 = {
       __kind__: "err",
       err: MembershipConfirmationError.NotSignedIn,
     };

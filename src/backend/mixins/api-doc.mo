@@ -306,6 +306,29 @@ is the final arbiter for split decisions.
   `profilePhoto` and `birthYear` are currently always `null` because the
   canonical `PersonProfile` record carries no profile-photo reference or birth
   year field.
+- `listMembershipConfirmationReviewsForSteward(familyId : Text) : async Result<[MembershipConfirmationReviewView], MembershipConfirmationError>` —
+  query. Returns the privacy-safe list of unresolved confirmation cases in
+  `familyId` that require Steward review. Allowed only when the caller is an
+  active Steward of `familyId`; anonymous callers get `#err(#NotSignedIn)` and
+  any other caller gets `#err(#NotAuthorized)`. The caller identity is derived
+  server-side from the query `{ caller }` parameter, never from a caller-supplied
+  id, and a Steward of another family cannot read this family's cases. Only cases
+  whose derived confirmation state is `#StewardReviewRequired` (a recorded
+  `#Disputed` decision with no persisted Steward resolution) are returned;
+  `#ResolvedBySteward`, `#ApprovedByRelative`, and `#AwaitingConfirmation` cases
+  are excluded. Each `MembershipConfirmationReviewView` carries only `familyId`,
+  `membershipId`, `pendingPersonId`, `applicantDisplayName`, `simpleRelationship`
+  (Parent/Child, Sibling, SpousePartner), `membershipStatus`, a
+  `confirmationHistory` list (each entry with a simple relationship label, a
+  server-resolved confirmer display name, the `#Confirmed`/`#Disputed` decision,
+  and the decision timestamp), `confirmedCount`, `disputedCount`, and
+  `confirmationState`. Confirmer display names are resolved server-side from the
+  family's person profiles (falling back to a neutral label). The response never
+  exposes an applicant or confirmer account principal, a confirmer person id, a
+  relationship id, raw relationship context, sensitive relationship metadata
+  (Biological/Adoptive/Foster/Step/Guardian), private profile notes, or unrelated
+  family data. The result is a pure read: it never mutates state, and it is
+  scoped to `familyId`, so a Family A case never appears in a Family B result.
 
 A FoundingSteward nominee whose membership becomes `#Active` through
 trusted-relative confirmation keeps the existing nomination intact and may then

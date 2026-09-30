@@ -8,8 +8,8 @@ import {
   MembershipConfirmationState,
   MembershipStatus,
   type Result,
-  type Result_28,
-  type Result_30,
+  type Result_29,
+  type Result_31,
 } from "@/backend";
 import { Principal } from "@icp-sdk/core/principal";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -308,7 +308,7 @@ describe("InviteRedemptionPage: unchanged terminal states (characterization)", (
     mockActor.getInvitationRedemptionState = vi.fn(
       async (...args: unknown[]) => {
         calls.getInvitationRedemptionState.push(args);
-        return { __kind__: "ok", ok: state } satisfies Result_28;
+        return { __kind__: "ok", ok: state } satisfies Result_29;
       },
     );
   }
@@ -370,7 +370,7 @@ describe("InviteRedemptionPage: post-acceptance onboarding (characterization)", 
         return {
           __kind__: "ok",
           ok: { __kind__: "Valid", Valid: makePreview() },
-        } satisfies Result_28;
+        } satisfies Result_29;
       },
     );
     mockActor.acceptFamilyInvitation = vi.fn(async (...args: unknown[]) => {
@@ -378,7 +378,7 @@ describe("InviteRedemptionPage: post-acceptance onboarding (characterization)", 
       return {
         __kind__: "ok",
         ok: makeInvitation({ invitationType: InvitationType.FamilyMember }),
-      } satisfies Result_30;
+      } satisfies Result_31;
     });
     // The caller's own membership is Pending, so the limited onboarding state
     // renders the applicant-safe confirmation status card for that membership.
@@ -441,7 +441,7 @@ describe("InviteRedemptionPage: post-acceptance onboarding (characterization)", 
               invitationType: InvitationType.FoundingSteward,
             }),
           },
-        } satisfies Result_28;
+        } satisfies Result_29;
       },
     );
     mockActor.acceptFamilyInvitation = vi.fn(async (...args: unknown[]) => {
@@ -449,7 +449,7 @@ describe("InviteRedemptionPage: post-acceptance onboarding (characterization)", 
       return {
         __kind__: "ok",
         ok: makeInvitation({ invitationType: InvitationType.FoundingSteward }),
-      } satisfies Result_30;
+      } satisfies Result_31;
     });
 
     renderPage({});
@@ -469,7 +469,7 @@ describe("InviteRedemptionPage: post-acceptance onboarding (characterization)", 
         return {
           __kind__: "ok",
           ok: { __kind__: "Valid", Valid: makePreview() },
-        } satisfies Result_28;
+        } satisfies Result_29;
       },
     );
     mockActor.declineFamilyInvitation = vi.fn(async (...args: unknown[]) => {
@@ -477,7 +477,7 @@ describe("InviteRedemptionPage: post-acceptance onboarding (characterization)", 
       return {
         __kind__: "ok",
         ok: makeInvitation({ status: InvitationStatus.Declined }),
-      } satisfies Result_30;
+      } satisfies Result_31;
     });
     const onConsumed = vi.fn();
 

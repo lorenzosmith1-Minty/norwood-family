@@ -181,6 +181,7 @@ function renderStewardHub() {
         onOpenGovernance={() => {}}
         onOpenResearchIntake={() => {}}
         onOpenHiddenPosts={() => {}}
+        onOpenMembershipReviews={() => {}}
       />
     </QueryClientProvider>,
   );

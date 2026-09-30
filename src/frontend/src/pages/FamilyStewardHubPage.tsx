@@ -10,10 +10,12 @@ import {
   Network,
   ScrollText,
   ShieldCheck,
+  UserCheck,
   UserCog,
 } from "lucide-react";
 import PendingContributionsBadge from "../components/PendingContributionsBadge";
 import { usePendingArchiveItems } from "../hooks/useArchiveStorage";
+import { useMembershipReviews } from "../hooks/useMembershipReviews";
 import { useListReports } from "../hooks/useMessaging";
 import { useListProfileClaims } from "../hooks/useProfileClaims";
 import { useListRelationshipRequests } from "../hooks/useRelationshipRequests";
@@ -27,6 +29,7 @@ interface FamilyStewardHubPageProps {
   onOpenGovernance: () => void;
   onOpenResearchIntake: () => void;
   onOpenHiddenPosts: () => void;
+  onOpenMembershipReviews: () => void;
 }
 
 /**
@@ -64,6 +67,7 @@ export function FamilyStewardHubPage({
   onOpenGovernance,
   onOpenResearchIntake,
   onOpenHiddenPosts,
+  onOpenMembershipReviews,
 }: FamilyStewardHubPageProps) {
   const { data: isSteward = false } = useIsSteward();
   const { data: claims = [] } = useListProfileClaims();
@@ -71,6 +75,7 @@ export function FamilyStewardHubPage({
   const { data: reports = [] } = useListReports();
   const { data: pendingArchiveItems = [] } = usePendingArchiveItems();
   const { data: reviewQueue } = useGetReviewQueue();
+  const { data: membershipReviews = [] } = useMembershipReviews();
 
   const pendingClaims = claims.filter((c) => c.status === "Pending").length;
   const pendingRequests = requests.filter((r) => r.status === "Pending").length;
@@ -86,6 +91,11 @@ export function FamilyStewardHubPage({
       Number(reviewQueue.needsResearch) +
       Number(reviewQueue.conflicting)
     : 0;
+  // Membership-confirmation cases awaiting Steward review. The canonical
+  // Steward read already returns only unresolved (#StewardReviewRequired)
+  // cases, so the count is the list length and the hub card always agrees with
+  // the Membership Reviews page.
+  const pendingMembershipReviewCount = membershipReviews.length;
 
   // Normal family members must never see Steward controls. The nav link is
   // already gated to Stewards; this guard is defense-in-depth so a direct
@@ -195,6 +205,31 @@ export function FamilyStewardHubPage({
           </span>
           <span className="hub-option-desc">
             Confirm profile claims and family connections.
+          </span>
+        </button>
+
+        <button
+          type="button"
+          data-ocid="steward_hub.membership_reviews_option"
+          onClick={onOpenMembershipReviews}
+          className="hub-option hub-accent-steward"
+        >
+          <span className="hub-option-head">
+            <span className="hub-option-icon">
+              <UserCheck
+                className="h-5 w-5"
+                strokeWidth={1.75}
+                aria-hidden="true"
+              />
+            </span>
+            <span className="hub-option-title">Membership Reviews</span>
+            <StewardCountBadge count={pendingMembershipReviewCount} />
+            <span className="hub-option-arrow" aria-hidden="true">
+              →
+            </span>
+          </span>
+          <span className="hub-option-desc">
+            Resolve membership cases that need a Steward decision.
           </span>
         </button>
 

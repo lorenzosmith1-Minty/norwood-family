@@ -34,6 +34,7 @@ import ExploreFamilyPage from "./pages/ExploreFamilyPage";
 import { FamilyHistoryHubPage } from "./pages/FamilyHistoryHubPage";
 import { FamilyStewardGovernancePage } from "./pages/FamilyStewardGovernancePage";
 import { FamilyStewardHubPage } from "./pages/FamilyStewardHubPage";
+import { FamilyStewardMembershipReviewsPage } from "./pages/FamilyStewardMembershipReviewsPage";
 import { FamilyStewardReviewPage } from "./pages/FamilyStewardReviewPage";
 import HeritageBranchPage from "./pages/HeritageBranchPage";
 import { HiddenPostsPage } from "./pages/HiddenPostsPage";
@@ -97,6 +98,7 @@ type View =
   | "family-history"
   | "message-board-hub"
   | "steward-hub"
+  | "membership-reviews"
   | "hidden-posts"
   | "research-intake"
   | "research-queue"
@@ -136,6 +138,7 @@ const VALID_VIEWS: readonly View[] = [
   "family-history",
   "message-board-hub",
   "steward-hub",
+  "membership-reviews",
   "hidden-posts",
   "research-intake",
   "research-queue",
@@ -802,6 +805,12 @@ export default function App() {
         <StewardOnly isSteward={isSteward}>
           <FamilyStewardReviewPage onBack={() => setView("home")} />
         </StewardOnly>
+      ) : view === "membership-reviews" ? (
+        <StewardOnly isSteward={isSteward}>
+          <FamilyStewardMembershipReviewsPage
+            onBack={() => setView("steward-hub")}
+          />
+        </StewardOnly>
       ) : view === "governance" ? (
         <StewardOnly isSteward={isSteward}>
           <FamilyStewardGovernancePage onBack={() => setView("home")} />
@@ -1039,6 +1048,7 @@ export default function App() {
           <FamilyStewardHubPage
             onBack={() => setView("home")}
             onOpenReview={() => setView("steward-review")}
+            onOpenMembershipReviews={() => setView("membership-reviews")}
             onOpenPendingContributions={() => setView("admin-approval")}
             onOpenGovernance={() => setView("governance")}
             onOpenResearchIntake={() => setView("research-intake")}

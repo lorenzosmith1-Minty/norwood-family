@@ -40,7 +40,7 @@ export const Error = IDL.Variant({
     'expected' : IDL.Vec(IDL.Text),
   }),
 });
-export const Result_44 = IDL.Variant({ 'ok' : IDL.Null, 'err' : Error });
+export const Result_45 = IDL.Variant({ 'ok' : IDL.Null, 'err' : Error });
 export const InvitationStatus = IDL.Variant({
   'Accepted' : IDL.Null,
   'Declined' : IDL.Null,
@@ -86,7 +86,7 @@ export const FamilyInvitationError = IDL.Variant({
   'Expired' : IDL.Null,
   'RelationshipNotificationRequired' : IDL.Null,
 });
-export const Result_30 = IDL.Variant({
+export const Result_31 = IDL.Variant({
   'ok' : FamilyInvitation,
   'err' : FamilyInvitationError,
 });
@@ -267,7 +267,7 @@ export const RelationshipAdminError = IDL.Variant({
   'DuplicateRelationship' : IDL.Null,
   'PersonNotFound' : IDL.Null,
 });
-export const Result_40 = IDL.Variant({
+export const Result_41 = IDL.Variant({
   'ok' : Relationship,
   'err' : RelationshipAdminError,
 });
@@ -597,7 +597,7 @@ export const AccountError = IDL.Variant({
   'AccountNotFound' : IDL.Null,
   'NotSignedIn' : IDL.Null,
 });
-export const Result_43 = IDL.Variant({ 'ok' : Account, 'err' : AccountError });
+export const Result_44 = IDL.Variant({ 'ok' : Account, 'err' : AccountError });
 export const ClaimPersistenceError = IDL.Variant({
   'AlreadyOwned' : IDL.Null,
   'AlreadyPending' : IDL.Null,
@@ -619,7 +619,7 @@ export const StewardClaimError = IDL.Variant({
   'AlreadySteward' : IDL.Null,
   'NotSignedIn' : IDL.Null,
 });
-export const Result_42 = IDL.Variant({
+export const Result_43 = IDL.Variant({
   'ok' : StewardClaimResult,
   'err' : StewardClaimError,
 });
@@ -652,7 +652,7 @@ export const MembershipConfirmationError = IDL.Variant({
   'NoQualifyingRelationship' : IDL.Null,
   'AlreadyDecided' : IDL.Null,
 });
-export const Result_41 = IDL.Variant({
+export const Result_42 = IDL.Variant({
   'ok' : MembershipConfirmation,
   'err' : MembershipConfirmationError,
 });
@@ -724,7 +724,7 @@ export const MessageError = IDL.Variant({
   'CannotMessageSelf' : IDL.Null,
   'RecipientNotFound' : IDL.Null,
 });
-export const Result_39 = IDL.Variant({
+export const Result_40 = IDL.Variant({
   'ok' : Conversation,
   'err' : MessageError,
 });
@@ -738,7 +738,7 @@ export const FamilyInvitationCreateOutcome = IDL.Variant({
   'Created' : FamilyInvitationCreated,
   'RelationshipNotificationRequired' : IDL.Null,
 });
-export const Result_36 = IDL.Variant({
+export const Result_37 = IDL.Variant({
   'ok' : FamilyInvitationCreateOutcome,
   'err' : FamilyInvitationError,
 });
@@ -807,7 +807,7 @@ export const FamilyCreationError = IDL.Variant({
   'ProfileAlreadyOwned' : IDL.Null,
   'AlreadyMember' : IDL.Null,
 });
-export const Result_38 = IDL.Variant({
+export const Result_39 = IDL.Variant({
   'ok' : FamilyCreationResult,
   'err' : FamilyCreationError,
 });
@@ -816,7 +816,7 @@ export const ResearchError = IDL.Variant({
   'notAuthorized' : IDL.Null,
   'notFound' : IDL.Nat,
 });
-export const Result_37 = IDL.Variant({
+export const Result_38 = IDL.Variant({
   'ok' : ProposedFinding,
   'err' : ResearchError,
 });
@@ -824,19 +824,19 @@ export const CreateError = IDL.Variant({
   'AlreadyOwned' : IDL.Null,
   'NotSignedIn' : IDL.Null,
 });
-export const Result_35 = IDL.Variant({
+export const Result_36 = IDL.Variant({
   'ok' : PersonProfile,
   'err' : CreateError,
 });
-export const Result_34 = IDL.Variant({
+export const Result_35 = IDL.Variant({
   'ok' : NewPersonCandidate,
   'err' : ResearchError,
 });
-export const Result_33 = IDL.Variant({
+export const Result_34 = IDL.Variant({
   'ok' : RelationshipProposal,
   'err' : ResearchError,
 });
-export const Result_32 = IDL.Variant({
+export const Result_33 = IDL.Variant({
   'ok' : SourceRecord,
   'err' : ResearchError,
 });
@@ -844,7 +844,7 @@ export const SourceUploadResult = IDL.Record({
   'source' : SourceRecord,
   'archiveItem' : ArchiveItem,
 });
-export const Result_31 = IDL.Variant({
+export const Result_32 = IDL.Variant({
   'ok' : SourceUploadResult,
   'err' : ResearchError,
 });
@@ -861,7 +861,7 @@ export const SuccessorDesignation = IDL.Record({
   'priority' : IDL.Nat,
   'familyId' : IDL.Text,
 });
-export const Result_29 = IDL.Variant({
+export const Result_30 = IDL.Variant({
   'ok' : SuccessorDesignation,
   'err' : StewardError,
 });
@@ -935,7 +935,7 @@ export const InvitationRedemptionState = IDL.Variant({
   'Valid' : FamilyInvitationPreview,
   'Expired' : IDL.Null,
 });
-export const Result_28 = IDL.Variant({
+export const Result_29 = IDL.Variant({
   'ok' : InvitationRedemptionState,
   'err' : FamilyInvitationError,
 });
@@ -957,7 +957,7 @@ export const MembershipConfirmationResolutionRecord = IDL.Record({
   'familyId' : FamilyId,
   'resolvedAt' : IDL.Int,
 });
-export const Result_27 = IDL.Variant({
+export const Result_28 = IDL.Variant({
   'ok' : IDL.Tuple(
     MembershipConfirmationState,
     IDL.Vec(MembershipConfirmation),
@@ -965,11 +965,11 @@ export const Result_27 = IDL.Variant({
   ),
   'err' : MembershipConfirmationError,
 });
-export const Result_22 = IDL.Variant({
+export const Result_23 = IDL.Variant({
   'ok' : IDL.Opt(FamilyMembership),
   'err' : MembershipError,
 });
-export const Result_26 = IDL.Variant({
+export const Result_27 = IDL.Variant({
   'ok' : AccountId,
   'err' : AccountError,
 });
@@ -977,11 +977,11 @@ export const AuthMethods = IDL.Record({
   'apple' : IDL.Bool,
   'google' : IDL.Bool,
 });
-export const Result_25 = IDL.Variant({
+export const Result_26 = IDL.Variant({
   'ok' : AuthMethods,
   'err' : AccountError,
 });
-export const Result_24 = IDL.Variant({
+export const Result_25 = IDL.Variant({
   'ok' : IDL.Opt(MembershipConfirmation),
   'err' : MembershipConfirmationError,
 });
@@ -999,7 +999,7 @@ export const MembershipConfirmationApplicantView = IDL.Record({
   'state' : MembershipConfirmationState,
   'myRelationship' : IDL.Opt(SimpleRelationshipType),
 });
-export const Result_23 = IDL.Variant({
+export const Result_24 = IDL.Variant({
   'ok' : MembershipConfirmationApplicantView,
   'err' : MembershipConfirmationError,
 });
@@ -1108,7 +1108,7 @@ export const StewardAuditEntry = IDL.Record({
   'actorAccountId' : IDL.Principal,
   'existingSourceId' : IDL.Opt(IDL.Nat),
 });
-export const Result_21 = IDL.Variant({
+export const Result_22 = IDL.Variant({
   'ok' : IDL.Bool,
   'err' : MembershipError,
 });
@@ -1186,6 +1186,28 @@ export const StewardIdentity = IDL.Record({
 export const Result_20 = IDL.Variant({
   'ok' : IDL.Vec(FamilyMembership),
   'err' : MembershipError,
+});
+export const MembershipConfirmationReviewHistoryEntry = IDL.Record({
+  'decision' : ConfirmationDecision,
+  'simpleRelationship' : SimpleRelationshipType,
+  'confirmerDisplayName' : IDL.Text,
+  'decidedAt' : IDL.Int,
+});
+export const MembershipConfirmationReviewView = IDL.Record({
+  'applicantDisplayName' : IDL.Text,
+  'confirmationState' : MembershipConfirmationState,
+  'pendingPersonId' : PersonId,
+  'membershipStatus' : MembershipStatus,
+  'confirmationHistory' : IDL.Vec(MembershipConfirmationReviewHistoryEntry),
+  'confirmedCount' : IDL.Nat,
+  'simpleRelationship' : SimpleRelationshipType,
+  'membershipId' : IDL.Nat,
+  'disputedCount' : IDL.Nat,
+  'familyId' : FamilyId,
+});
+export const Result_21 = IDL.Variant({
+  'ok' : IDL.Vec(MembershipConfirmationReviewView),
+  'err' : MembershipConfirmationError,
 });
 export const EligibleMembershipConfirmationView = IDL.Record({
   'displayName' : IDL.Text,
@@ -1437,9 +1459,9 @@ export const idlService = IDL.Service({
     ),
   '_immutableObjectStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
   '_initialize_access_control' : IDL.Func([], [], []),
-  '_internet_identity_sign_in_finish' : IDL.Func([], [Result_44], []),
+  '_internet_identity_sign_in_finish' : IDL.Func([], [Result_45], []),
   '_internet_identity_sign_in_start' : IDL.Func([], [IDL.Vec(IDL.Nat8)], []),
-  'acceptFamilyInvitation' : IDL.Func([IDL.Text], [Result_30], []),
+  'acceptFamilyInvitation' : IDL.Func([IDL.Text], [Result_31], []),
   'acceptFoundingStewardNomination' : IDL.Func(
       [IDL.Text, IDL.Nat],
       [Result_17],
@@ -1500,12 +1522,12 @@ export const idlService = IDL.Service({
     ),
   'addRelationship' : IDL.Func(
       [PersonId, PersonId, RelationshipType],
-      [Result_40],
+      [Result_41],
       [],
     ),
   'addRelationshipForFamily' : IDL.Func(
       [IDL.Text, PersonId, PersonId, RelationshipType],
-      [Result_40],
+      [Result_41],
       [],
     ),
   'approveArchiveItem' : IDL.Func([ArchiveItemId], [IDL.Opt(ArchiveItem)], []),
@@ -1589,7 +1611,7 @@ export const idlService = IDL.Service({
   'archiveProfile' : IDL.Func([PersonId], [Result_4], []),
   'archiveProfileForFamily' : IDL.Func([IDL.Text, PersonId], [Result_4], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-  'bindAuthMethod' : IDL.Func([AuthMethod], [Result_43], []),
+  'bindAuthMethod' : IDL.Func([AuthMethod], [Result_44], []),
   'blockUser' : IDL.Func([IDL.Principal], [], []),
   'blockUserForFamily' : IDL.Func([FamilyId, IDL.Principal], [], []),
   'canClaimProfile' : IDL.Func([PersonId], [ClaimEligibility], ['query']),
@@ -1604,26 +1626,26 @@ export const idlService = IDL.Service({
       [IDL.Bool],
       ['query'],
     ),
-  'cancelFamilyInvitation' : IDL.Func([IDL.Text, IDL.Nat], [Result_30], []),
+  'cancelFamilyInvitation' : IDL.Func([IDL.Text, IDL.Nat], [Result_31], []),
   'cancelFoundingStewardNomination' : IDL.Func(
       [IDL.Text, IDL.Nat],
       [Result_17],
       [],
     ),
-  'claimSteward' : IDL.Func([], [Result_42], []),
+  'claimSteward' : IDL.Func([], [Result_43], []),
   'confirmPendingMembership' : IDL.Func(
       [FamilyId, IDL.Nat, ConfirmationDecision],
-      [Result_41],
+      [Result_42],
       [],
     ),
   'correctRelationshipType' : IDL.Func(
       [IDL.Nat, RelationshipType],
-      [Result_40],
+      [Result_41],
       [],
     ),
   'correctRelationshipTypeForFamily' : IDL.Func(
       [IDL.Text, IDL.Nat, RelationshipType],
-      [Result_40],
+      [Result_41],
       [],
     ),
   'createBoardPost' : IDL.Func(
@@ -1709,20 +1731,20 @@ export const idlService = IDL.Service({
       [Mystery],
       [],
     ),
-  'createConversation' : IDL.Func([IDL.Text], [Result_39], []),
+  'createConversation' : IDL.Func([IDL.Text], [Result_40], []),
   'createConversationForFamily' : IDL.Func(
       [FamilyId, IDL.Text],
-      [Result_39],
+      [Result_40],
       [],
     ),
   'createFamilyInvitation' : IDL.Func(
       [IDL.Text, IDL.Text, IDL.Opt(IDL.Text)],
-      [Result_36],
+      [Result_37],
       [],
     ),
   'createFamilyWithFounder' : IDL.Func(
       [IDL.Text, FounderProfileInput, IDL.Text],
-      [Result_38],
+      [Result_39],
       [],
     ),
   'createFinding' : IDL.Func(
@@ -1735,7 +1757,7 @@ export const idlService = IDL.Service({
         IDL.Opt(IDL.Text),
         IDL.Opt(IDL.Nat),
       ],
-      [Result_37],
+      [Result_38],
       [],
     ),
   'createFindingForFamily' : IDL.Func(
@@ -1749,24 +1771,24 @@ export const idlService = IDL.Service({
         IDL.Opt(IDL.Text),
         IDL.Opt(IDL.Nat),
       ],
-      [Result_37],
+      [Result_38],
       [],
     ),
   'createFoundingStewardInvitation' : IDL.Func(
       [IDL.Text, IDL.Text, IDL.Opt(IDL.Text)],
-      [Result_36],
+      [Result_37],
       [],
     ),
-  'createMyself' : IDL.Func([IDL.Text], [Result_35], []),
-  'createMyselfForFamily' : IDL.Func([FamilyId, IDL.Text], [Result_35], []),
+  'createMyself' : IDL.Func([IDL.Text], [Result_36], []),
+  'createMyselfForFamily' : IDL.Func([FamilyId, IDL.Text], [Result_36], []),
   'createNewPersonCandidate' : IDL.Func(
       [IDL.Text, IDL.Text, SourceId],
-      [Result_34],
+      [Result_35],
       [],
     ),
   'createNewPersonCandidateForFamily' : IDL.Func(
       [FamilyId, IDL.Text, IDL.Text, SourceId],
-      [Result_34],
+      [Result_35],
       [],
     ),
   'createPendingMembershipForFamily' : IDL.Func(
@@ -1776,22 +1798,22 @@ export const idlService = IDL.Service({
     ),
   'createRelationshipProposal' : IDL.Func(
       [IDL.Text, IDL.Text, IDL.Text, SourceId],
-      [Result_33],
+      [Result_34],
       [],
     ),
   'createRelationshipProposalForFamily' : IDL.Func(
       [FamilyId, IDL.Text, IDL.Text, IDL.Text, SourceId],
-      [Result_33],
+      [Result_34],
       [],
     ),
   'createSource' : IDL.Func(
       [IDL.Text, SourceType, IDL.Text, IDL.Opt(IDL.Nat)],
-      [Result_32],
+      [Result_33],
       [],
     ),
   'createSourceForFamily' : IDL.Func(
       [FamilyId, IDL.Text, SourceType, IDL.Text, IDL.Opt(IDL.Nat)],
-      [Result_32],
+      [Result_33],
       [],
     ),
   'createSourceWithUpload' : IDL.Func(
@@ -1810,7 +1832,7 @@ export const idlService = IDL.Service({
         IDL.Opt(OralHistorySpeaker),
         IDL.Text,
       ],
-      [Result_31],
+      [Result_32],
       [],
     ),
   'createSourceWithUploadForFamily' : IDL.Func(
@@ -1830,19 +1852,19 @@ export const idlService = IDL.Service({
         IDL.Opt(OralHistorySpeaker),
         IDL.Text,
       ],
-      [Result_31],
+      [Result_32],
       [],
     ),
-  'declineFamilyInvitation' : IDL.Func([IDL.Text], [Result_30], []),
+  'declineFamilyInvitation' : IDL.Func([IDL.Text], [Result_31], []),
   'declineFoundingStewardNomination' : IDL.Func(
       [IDL.Text, IDL.Nat],
       [Result_17],
       [],
     ),
-  'designateSuccessor' : IDL.Func([PersonId, IDL.Nat], [Result_29], []),
+  'designateSuccessor' : IDL.Func([PersonId, IDL.Nat], [Result_30], []),
   'designateSuccessorForFamily' : IDL.Func(
       [IDL.Text, PersonId, IDL.Nat],
-      [Result_29],
+      [Result_30],
       [],
     ),
   'dismissNotificationForFamily' : IDL.Func(
@@ -1896,30 +1918,30 @@ export const idlService = IDL.Service({
       [Result_17],
       ['query'],
     ),
-  'getInvitationRedemptionState' : IDL.Func([IDL.Text], [Result_28], ['query']),
+  'getInvitationRedemptionState' : IDL.Func([IDL.Text], [Result_29], ['query']),
   'getMembershipConfirmationStateForSteward' : IDL.Func(
       [FamilyId, IDL.Nat],
-      [Result_27],
+      [Result_28],
       ['query'],
     ),
   'getMembershipForFamily' : IDL.Func(
       [FamilyId, AccountId],
-      [Result_22],
+      [Result_23],
       ['query'],
     ),
-  'getMyAccountId' : IDL.Func([], [Result_26], ['query']),
-  'getMyAuthMethods' : IDL.Func([], [Result_25], ['query']),
+  'getMyAccountId' : IDL.Func([], [Result_27], ['query']),
+  'getMyAuthMethods' : IDL.Func([], [Result_26], ['query']),
   'getMyConfirmationForMembership' : IDL.Func(
       [FamilyId, IDL.Nat],
-      [Result_24],
+      [Result_25],
       ['query'],
     ),
   'getMyMembershipConfirmationState' : IDL.Func(
       [FamilyId, IDL.Nat],
-      [Result_23],
+      [Result_24],
       ['query'],
     ),
-  'getMyMembershipForFamily' : IDL.Func([FamilyId], [Result_22], ['query']),
+  'getMyMembershipForFamily' : IDL.Func([FamilyId], [Result_23], ['query']),
   'getMyProfile' : IDL.Func([], [IDL.Opt(PersonProfile)], ['query']),
   'getMyProfileClaim' : IDL.Func(
       [PersonId],
@@ -2055,7 +2077,7 @@ export const idlService = IDL.Service({
     ),
   'hasActiveMembershipForFamily' : IDL.Func(
       [FamilyId, AccountId],
-      [Result_21],
+      [Result_22],
       ['query'],
     ),
   'hasActiveSteward' : IDL.Func([], [IDL.Bool], ['query']),
@@ -2200,6 +2222,11 @@ export const idlService = IDL.Service({
   'listHiddenBoardPostsForFamily' : IDL.Func(
       [FamilyId],
       [IDL.Vec(Post)],
+      ['query'],
+    ),
+  'listMembershipConfirmationReviewsForSteward' : IDL.Func(
+      [FamilyId],
+      [Result_21],
       ['query'],
     ),
   'listMembershipsForAccount' : IDL.Func([AccountId], [Result_20], ['query']),
@@ -3019,7 +3046,7 @@ export const idlFactory = ({ IDL }) => {
       'expected' : IDL.Vec(IDL.Text),
     }),
   });
-  const Result_44 = IDL.Variant({ 'ok' : IDL.Null, 'err' : Error });
+  const Result_45 = IDL.Variant({ 'ok' : IDL.Null, 'err' : Error });
   const InvitationStatus = IDL.Variant({
     'Accepted' : IDL.Null,
     'Declined' : IDL.Null,
@@ -3065,7 +3092,7 @@ export const idlFactory = ({ IDL }) => {
     'Expired' : IDL.Null,
     'RelationshipNotificationRequired' : IDL.Null,
   });
-  const Result_30 = IDL.Variant({
+  const Result_31 = IDL.Variant({
     'ok' : FamilyInvitation,
     'err' : FamilyInvitationError,
   });
@@ -3243,7 +3270,7 @@ export const idlFactory = ({ IDL }) => {
     'DuplicateRelationship' : IDL.Null,
     'PersonNotFound' : IDL.Null,
   });
-  const Result_40 = IDL.Variant({
+  const Result_41 = IDL.Variant({
     'ok' : Relationship,
     'err' : RelationshipAdminError,
   });
@@ -3570,7 +3597,7 @@ export const idlFactory = ({ IDL }) => {
     'AccountNotFound' : IDL.Null,
     'NotSignedIn' : IDL.Null,
   });
-  const Result_43 = IDL.Variant({ 'ok' : Account, 'err' : AccountError });
+  const Result_44 = IDL.Variant({ 'ok' : Account, 'err' : AccountError });
   const ClaimPersistenceError = IDL.Variant({
     'AlreadyOwned' : IDL.Null,
     'AlreadyPending' : IDL.Null,
@@ -3592,7 +3619,7 @@ export const idlFactory = ({ IDL }) => {
     'AlreadySteward' : IDL.Null,
     'NotSignedIn' : IDL.Null,
   });
-  const Result_42 = IDL.Variant({
+  const Result_43 = IDL.Variant({
     'ok' : StewardClaimResult,
     'err' : StewardClaimError,
   });
@@ -3625,7 +3652,7 @@ export const idlFactory = ({ IDL }) => {
     'NoQualifyingRelationship' : IDL.Null,
     'AlreadyDecided' : IDL.Null,
   });
-  const Result_41 = IDL.Variant({
+  const Result_42 = IDL.Variant({
     'ok' : MembershipConfirmation,
     'err' : MembershipConfirmationError,
   });
@@ -3697,7 +3724,7 @@ export const idlFactory = ({ IDL }) => {
     'CannotMessageSelf' : IDL.Null,
     'RecipientNotFound' : IDL.Null,
   });
-  const Result_39 = IDL.Variant({ 'ok' : Conversation, 'err' : MessageError });
+  const Result_40 = IDL.Variant({ 'ok' : Conversation, 'err' : MessageError });
   const FamilyInvitationCreated = IDL.Record({
     'created' : IDL.Bool,
     'rawToken' : IDL.Text,
@@ -3708,7 +3735,7 @@ export const idlFactory = ({ IDL }) => {
     'Created' : FamilyInvitationCreated,
     'RelationshipNotificationRequired' : IDL.Null,
   });
-  const Result_36 = IDL.Variant({
+  const Result_37 = IDL.Variant({
     'ok' : FamilyInvitationCreateOutcome,
     'err' : FamilyInvitationError,
   });
@@ -3777,7 +3804,7 @@ export const idlFactory = ({ IDL }) => {
     'ProfileAlreadyOwned' : IDL.Null,
     'AlreadyMember' : IDL.Null,
   });
-  const Result_38 = IDL.Variant({
+  const Result_39 = IDL.Variant({
     'ok' : FamilyCreationResult,
     'err' : FamilyCreationError,
   });
@@ -3786,7 +3813,7 @@ export const idlFactory = ({ IDL }) => {
     'notAuthorized' : IDL.Null,
     'notFound' : IDL.Nat,
   });
-  const Result_37 = IDL.Variant({
+  const Result_38 = IDL.Variant({
     'ok' : ProposedFinding,
     'err' : ResearchError,
   });
@@ -3794,21 +3821,21 @@ export const idlFactory = ({ IDL }) => {
     'AlreadyOwned' : IDL.Null,
     'NotSignedIn' : IDL.Null,
   });
-  const Result_35 = IDL.Variant({ 'ok' : PersonProfile, 'err' : CreateError });
-  const Result_34 = IDL.Variant({
+  const Result_36 = IDL.Variant({ 'ok' : PersonProfile, 'err' : CreateError });
+  const Result_35 = IDL.Variant({
     'ok' : NewPersonCandidate,
     'err' : ResearchError,
   });
-  const Result_33 = IDL.Variant({
+  const Result_34 = IDL.Variant({
     'ok' : RelationshipProposal,
     'err' : ResearchError,
   });
-  const Result_32 = IDL.Variant({ 'ok' : SourceRecord, 'err' : ResearchError });
+  const Result_33 = IDL.Variant({ 'ok' : SourceRecord, 'err' : ResearchError });
   const SourceUploadResult = IDL.Record({
     'source' : SourceRecord,
     'archiveItem' : ArchiveItem,
   });
-  const Result_31 = IDL.Variant({
+  const Result_32 = IDL.Variant({
     'ok' : SourceUploadResult,
     'err' : ResearchError,
   });
@@ -3825,7 +3852,7 @@ export const idlFactory = ({ IDL }) => {
     'priority' : IDL.Nat,
     'familyId' : IDL.Text,
   });
-  const Result_29 = IDL.Variant({
+  const Result_30 = IDL.Variant({
     'ok' : SuccessorDesignation,
     'err' : StewardError,
   });
@@ -3899,7 +3926,7 @@ export const idlFactory = ({ IDL }) => {
     'Valid' : FamilyInvitationPreview,
     'Expired' : IDL.Null,
   });
-  const Result_28 = IDL.Variant({
+  const Result_29 = IDL.Variant({
     'ok' : InvitationRedemptionState,
     'err' : FamilyInvitationError,
   });
@@ -3921,7 +3948,7 @@ export const idlFactory = ({ IDL }) => {
     'familyId' : FamilyId,
     'resolvedAt' : IDL.Int,
   });
-  const Result_27 = IDL.Variant({
+  const Result_28 = IDL.Variant({
     'ok' : IDL.Tuple(
       MembershipConfirmationState,
       IDL.Vec(MembershipConfirmation),
@@ -3929,14 +3956,14 @@ export const idlFactory = ({ IDL }) => {
     ),
     'err' : MembershipConfirmationError,
   });
-  const Result_22 = IDL.Variant({
+  const Result_23 = IDL.Variant({
     'ok' : IDL.Opt(FamilyMembership),
     'err' : MembershipError,
   });
-  const Result_26 = IDL.Variant({ 'ok' : AccountId, 'err' : AccountError });
+  const Result_27 = IDL.Variant({ 'ok' : AccountId, 'err' : AccountError });
   const AuthMethods = IDL.Record({ 'apple' : IDL.Bool, 'google' : IDL.Bool });
-  const Result_25 = IDL.Variant({ 'ok' : AuthMethods, 'err' : AccountError });
-  const Result_24 = IDL.Variant({
+  const Result_26 = IDL.Variant({ 'ok' : AuthMethods, 'err' : AccountError });
+  const Result_25 = IDL.Variant({
     'ok' : IDL.Opt(MembershipConfirmation),
     'err' : MembershipConfirmationError,
   });
@@ -3954,7 +3981,7 @@ export const idlFactory = ({ IDL }) => {
     'state' : MembershipConfirmationState,
     'myRelationship' : IDL.Opt(SimpleRelationshipType),
   });
-  const Result_23 = IDL.Variant({
+  const Result_24 = IDL.Variant({
     'ok' : MembershipConfirmationApplicantView,
     'err' : MembershipConfirmationError,
   });
@@ -4063,7 +4090,7 @@ export const idlFactory = ({ IDL }) => {
     'actorAccountId' : IDL.Principal,
     'existingSourceId' : IDL.Opt(IDL.Nat),
   });
-  const Result_21 = IDL.Variant({ 'ok' : IDL.Bool, 'err' : MembershipError });
+  const Result_22 = IDL.Variant({ 'ok' : IDL.Bool, 'err' : MembershipError });
   const AuditActionType = IDL.Variant({
     'ProfileRemovalRequested' : IDL.Null,
     'ClaimRejected' : IDL.Null,
@@ -4138,6 +4165,28 @@ export const idlFactory = ({ IDL }) => {
   const Result_20 = IDL.Variant({
     'ok' : IDL.Vec(FamilyMembership),
     'err' : MembershipError,
+  });
+  const MembershipConfirmationReviewHistoryEntry = IDL.Record({
+    'decision' : ConfirmationDecision,
+    'simpleRelationship' : SimpleRelationshipType,
+    'confirmerDisplayName' : IDL.Text,
+    'decidedAt' : IDL.Int,
+  });
+  const MembershipConfirmationReviewView = IDL.Record({
+    'applicantDisplayName' : IDL.Text,
+    'confirmationState' : MembershipConfirmationState,
+    'pendingPersonId' : PersonId,
+    'membershipStatus' : MembershipStatus,
+    'confirmationHistory' : IDL.Vec(MembershipConfirmationReviewHistoryEntry),
+    'confirmedCount' : IDL.Nat,
+    'simpleRelationship' : SimpleRelationshipType,
+    'membershipId' : IDL.Nat,
+    'disputedCount' : IDL.Nat,
+    'familyId' : FamilyId,
+  });
+  const Result_21 = IDL.Variant({
+    'ok' : IDL.Vec(MembershipConfirmationReviewView),
+    'err' : MembershipConfirmationError,
   });
   const EligibleMembershipConfirmationView = IDL.Record({
     'displayName' : IDL.Text,
@@ -4380,9 +4429,9 @@ export const idlFactory = ({ IDL }) => {
       ),
     '_immutableObjectStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
     '_initialize_access_control' : IDL.Func([], [], []),
-    '_internet_identity_sign_in_finish' : IDL.Func([], [Result_44], []),
+    '_internet_identity_sign_in_finish' : IDL.Func([], [Result_45], []),
     '_internet_identity_sign_in_start' : IDL.Func([], [IDL.Vec(IDL.Nat8)], []),
-    'acceptFamilyInvitation' : IDL.Func([IDL.Text], [Result_30], []),
+    'acceptFamilyInvitation' : IDL.Func([IDL.Text], [Result_31], []),
     'acceptFoundingStewardNomination' : IDL.Func(
         [IDL.Text, IDL.Nat],
         [Result_17],
@@ -4447,12 +4496,12 @@ export const idlFactory = ({ IDL }) => {
       ),
     'addRelationship' : IDL.Func(
         [PersonId, PersonId, RelationshipType],
-        [Result_40],
+        [Result_41],
         [],
       ),
     'addRelationshipForFamily' : IDL.Func(
         [IDL.Text, PersonId, PersonId, RelationshipType],
-        [Result_40],
+        [Result_41],
         [],
       ),
     'approveArchiveItem' : IDL.Func(
@@ -4544,7 +4593,7 @@ export const idlFactory = ({ IDL }) => {
     'archiveProfile' : IDL.Func([PersonId], [Result_4], []),
     'archiveProfileForFamily' : IDL.Func([IDL.Text, PersonId], [Result_4], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-    'bindAuthMethod' : IDL.Func([AuthMethod], [Result_43], []),
+    'bindAuthMethod' : IDL.Func([AuthMethod], [Result_44], []),
     'blockUser' : IDL.Func([IDL.Principal], [], []),
     'blockUserForFamily' : IDL.Func([FamilyId, IDL.Principal], [], []),
     'canClaimProfile' : IDL.Func([PersonId], [ClaimEligibility], ['query']),
@@ -4559,26 +4608,26 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Bool],
         ['query'],
       ),
-    'cancelFamilyInvitation' : IDL.Func([IDL.Text, IDL.Nat], [Result_30], []),
+    'cancelFamilyInvitation' : IDL.Func([IDL.Text, IDL.Nat], [Result_31], []),
     'cancelFoundingStewardNomination' : IDL.Func(
         [IDL.Text, IDL.Nat],
         [Result_17],
         [],
       ),
-    'claimSteward' : IDL.Func([], [Result_42], []),
+    'claimSteward' : IDL.Func([], [Result_43], []),
     'confirmPendingMembership' : IDL.Func(
         [FamilyId, IDL.Nat, ConfirmationDecision],
-        [Result_41],
+        [Result_42],
         [],
       ),
     'correctRelationshipType' : IDL.Func(
         [IDL.Nat, RelationshipType],
-        [Result_40],
+        [Result_41],
         [],
       ),
     'correctRelationshipTypeForFamily' : IDL.Func(
         [IDL.Text, IDL.Nat, RelationshipType],
-        [Result_40],
+        [Result_41],
         [],
       ),
     'createBoardPost' : IDL.Func(
@@ -4664,20 +4713,20 @@ export const idlFactory = ({ IDL }) => {
         [Mystery],
         [],
       ),
-    'createConversation' : IDL.Func([IDL.Text], [Result_39], []),
+    'createConversation' : IDL.Func([IDL.Text], [Result_40], []),
     'createConversationForFamily' : IDL.Func(
         [FamilyId, IDL.Text],
-        [Result_39],
+        [Result_40],
         [],
       ),
     'createFamilyInvitation' : IDL.Func(
         [IDL.Text, IDL.Text, IDL.Opt(IDL.Text)],
-        [Result_36],
+        [Result_37],
         [],
       ),
     'createFamilyWithFounder' : IDL.Func(
         [IDL.Text, FounderProfileInput, IDL.Text],
-        [Result_38],
+        [Result_39],
         [],
       ),
     'createFinding' : IDL.Func(
@@ -4690,7 +4739,7 @@ export const idlFactory = ({ IDL }) => {
           IDL.Opt(IDL.Text),
           IDL.Opt(IDL.Nat),
         ],
-        [Result_37],
+        [Result_38],
         [],
       ),
     'createFindingForFamily' : IDL.Func(
@@ -4704,24 +4753,24 @@ export const idlFactory = ({ IDL }) => {
           IDL.Opt(IDL.Text),
           IDL.Opt(IDL.Nat),
         ],
-        [Result_37],
+        [Result_38],
         [],
       ),
     'createFoundingStewardInvitation' : IDL.Func(
         [IDL.Text, IDL.Text, IDL.Opt(IDL.Text)],
-        [Result_36],
+        [Result_37],
         [],
       ),
-    'createMyself' : IDL.Func([IDL.Text], [Result_35], []),
-    'createMyselfForFamily' : IDL.Func([FamilyId, IDL.Text], [Result_35], []),
+    'createMyself' : IDL.Func([IDL.Text], [Result_36], []),
+    'createMyselfForFamily' : IDL.Func([FamilyId, IDL.Text], [Result_36], []),
     'createNewPersonCandidate' : IDL.Func(
         [IDL.Text, IDL.Text, SourceId],
-        [Result_34],
+        [Result_35],
         [],
       ),
     'createNewPersonCandidateForFamily' : IDL.Func(
         [FamilyId, IDL.Text, IDL.Text, SourceId],
-        [Result_34],
+        [Result_35],
         [],
       ),
     'createPendingMembershipForFamily' : IDL.Func(
@@ -4731,22 +4780,22 @@ export const idlFactory = ({ IDL }) => {
       ),
     'createRelationshipProposal' : IDL.Func(
         [IDL.Text, IDL.Text, IDL.Text, SourceId],
-        [Result_33],
+        [Result_34],
         [],
       ),
     'createRelationshipProposalForFamily' : IDL.Func(
         [FamilyId, IDL.Text, IDL.Text, IDL.Text, SourceId],
-        [Result_33],
+        [Result_34],
         [],
       ),
     'createSource' : IDL.Func(
         [IDL.Text, SourceType, IDL.Text, IDL.Opt(IDL.Nat)],
-        [Result_32],
+        [Result_33],
         [],
       ),
     'createSourceForFamily' : IDL.Func(
         [FamilyId, IDL.Text, SourceType, IDL.Text, IDL.Opt(IDL.Nat)],
-        [Result_32],
+        [Result_33],
         [],
       ),
     'createSourceWithUpload' : IDL.Func(
@@ -4765,7 +4814,7 @@ export const idlFactory = ({ IDL }) => {
           IDL.Opt(OralHistorySpeaker),
           IDL.Text,
         ],
-        [Result_31],
+        [Result_32],
         [],
       ),
     'createSourceWithUploadForFamily' : IDL.Func(
@@ -4785,19 +4834,19 @@ export const idlFactory = ({ IDL }) => {
           IDL.Opt(OralHistorySpeaker),
           IDL.Text,
         ],
-        [Result_31],
+        [Result_32],
         [],
       ),
-    'declineFamilyInvitation' : IDL.Func([IDL.Text], [Result_30], []),
+    'declineFamilyInvitation' : IDL.Func([IDL.Text], [Result_31], []),
     'declineFoundingStewardNomination' : IDL.Func(
         [IDL.Text, IDL.Nat],
         [Result_17],
         [],
       ),
-    'designateSuccessor' : IDL.Func([PersonId, IDL.Nat], [Result_29], []),
+    'designateSuccessor' : IDL.Func([PersonId, IDL.Nat], [Result_30], []),
     'designateSuccessorForFamily' : IDL.Func(
         [IDL.Text, PersonId, IDL.Nat],
-        [Result_29],
+        [Result_30],
         [],
       ),
     'dismissNotificationForFamily' : IDL.Func(
@@ -4853,32 +4902,32 @@ export const idlFactory = ({ IDL }) => {
       ),
     'getInvitationRedemptionState' : IDL.Func(
         [IDL.Text],
-        [Result_28],
+        [Result_29],
         ['query'],
       ),
     'getMembershipConfirmationStateForSteward' : IDL.Func(
         [FamilyId, IDL.Nat],
-        [Result_27],
+        [Result_28],
         ['query'],
       ),
     'getMembershipForFamily' : IDL.Func(
         [FamilyId, AccountId],
-        [Result_22],
+        [Result_23],
         ['query'],
       ),
-    'getMyAccountId' : IDL.Func([], [Result_26], ['query']),
-    'getMyAuthMethods' : IDL.Func([], [Result_25], ['query']),
+    'getMyAccountId' : IDL.Func([], [Result_27], ['query']),
+    'getMyAuthMethods' : IDL.Func([], [Result_26], ['query']),
     'getMyConfirmationForMembership' : IDL.Func(
         [FamilyId, IDL.Nat],
-        [Result_24],
+        [Result_25],
         ['query'],
       ),
     'getMyMembershipConfirmationState' : IDL.Func(
         [FamilyId, IDL.Nat],
-        [Result_23],
+        [Result_24],
         ['query'],
       ),
-    'getMyMembershipForFamily' : IDL.Func([FamilyId], [Result_22], ['query']),
+    'getMyMembershipForFamily' : IDL.Func([FamilyId], [Result_23], ['query']),
     'getMyProfile' : IDL.Func([], [IDL.Opt(PersonProfile)], ['query']),
     'getMyProfileClaim' : IDL.Func(
         [PersonId],
@@ -5014,7 +5063,7 @@ export const idlFactory = ({ IDL }) => {
       ),
     'hasActiveMembershipForFamily' : IDL.Func(
         [FamilyId, AccountId],
-        [Result_21],
+        [Result_22],
         ['query'],
       ),
     'hasActiveSteward' : IDL.Func([], [IDL.Bool], ['query']),
@@ -5175,6 +5224,11 @@ export const idlFactory = ({ IDL }) => {
     'listHiddenBoardPostsForFamily' : IDL.Func(
         [FamilyId],
         [IDL.Vec(Post)],
+        ['query'],
+      ),
+    'listMembershipConfirmationReviewsForSteward' : IDL.Func(
+        [FamilyId],
+        [Result_21],
         ['query'],
       ),
     'listMembershipsForAccount' : IDL.Func([AccountId], [Result_20], ['query']),

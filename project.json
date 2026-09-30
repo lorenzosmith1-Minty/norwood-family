@@ -1,17 +1,19 @@
 {
-  "overview": "A private family platform for the Norwood family with membership onboarding, trusted-relative confirmation, and family-scoped access.",
+  "overview": "A private family connection app where members confirm relationships and Family Stewards review and resolve membership confirmation cases.",
   "features": [
-    "Trusted-relative membership confirmation requests",
-    "Limited membership-status screen while a membership is pending",
-    "Family-scoped access and privacy-safe relationship labels",
-    "Invitation redemption and family onboarding"
+    "Review pending membership confirmation cases as a Family Steward",
+    "Approve or reject a membership with a confirmation dialog",
+    "Request more information on a case and keep it open",
+    "Neutral success and error messaging with retry",
+    "Family-scoped refresh of confirmation and membership data"
   ],
-  "category": "family-platform",
+  "category": "family-community",
   "tags": [
     "family",
     "membership",
-    "onboarding",
+    "steward",
+    "review",
     "privacy"
   ],
-  "last_updated": "2026-09-30T01:15:45.813Z"
+  "last_updated": "2026-09-30T18:03:07.409Z"
 }

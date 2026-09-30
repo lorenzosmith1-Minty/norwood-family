@@ -8,10 +8,10 @@ import type {
   RelationshipProposal,
   ResearchAuditEntry,
   Result_6,
-  Result_32,
   Result_33,
   Result_34,
-  Result_37,
+  Result_35,
+  Result_38,
   ReviewQueue,
   ReviewQueueItem,
   SourceId,
@@ -275,7 +275,7 @@ export function useCreateSource() {
       sourceType: SourceRecord["sourceType"];
       description: string;
       archiveItemId: bigint | null;
-    }): Promise<Result_32> => {
+    }): Promise<Result_33> => {
       if (!actor) throw new Error("Backend is not ready");
       // The default family keeps the exact legacy no-argument call shape (the
       // backend's compatibility wrapper resolves the default family), while a
@@ -577,7 +577,7 @@ export function useCreateFinding() {
       sourceId: SourceId;
       personId: string | null;
       newPersonCandidateId: bigint | null;
-    }): Promise<Result_37> => {
+    }): Promise<Result_38> => {
       if (!actor) throw new Error("Backend is not ready");
       return familyScopedId === undefined
         ? actor.createFinding(
@@ -774,7 +774,7 @@ export function useCreateNewPersonCandidate() {
       name: string;
       details: string;
       sourceId: SourceId;
-    }): Promise<Result_34> => {
+    }): Promise<Result_35> => {
       if (!actor) throw new Error("Backend is not ready");
       return familyScopedId === undefined
         ? actor.createNewPersonCandidate(name, details, sourceId)
@@ -959,7 +959,7 @@ export function useCreateRelationshipProposal() {
       toPersonId: string;
       relationshipType: string;
       sourceId: SourceId;
-    }): Promise<Result_33> => {
+    }): Promise<Result_34> => {
       if (!actor) throw new Error("Backend is not ready");
       return familyScopedId === undefined
         ? actor.createRelationshipProposal(

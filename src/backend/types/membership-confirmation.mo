@@ -1,4 +1,5 @@
 import Principal "mo:core/Principal";
+import MembershipTypes "family-membership";
 
 /// MembershipConfirmation domain types (Onboarding Phase 1D).
 ///
@@ -181,6 +182,59 @@ module {
     profilePhoto : ?Blob;
     birthYear : ?Nat;
     simpleRelationship : SimpleRelationshipType;
+    confirmationState : MembershipConfirmationState;
+  };
+
+  /// One entry in a Steward-facing review case's confirmation/dispute history.
+  ///
+  /// It carries only the SIMPLE relationship label that qualified the confirmer
+  /// and a server-resolved confirmer display name. It NEVER carries a confirmer
+  /// account principal, a confirmer person id, a relationship id, or any
+  /// sensitive relationship context (Biological/Adoptive/Foster/Step/Guardian).
+  /// `decidedAt` is a nanosecond timestamp.
+  public type MembershipConfirmationReviewHistoryEntry = {
+    simpleRelationship : SimpleRelationshipType;
+    confirmerDisplayName : Text;
+    decision : ConfirmationDecision;
+    decidedAt : Int;
+  };
+
+  /// Privacy-safe, Steward-facing view of an unresolved membership confirmation
+  /// case that requires Steward review (Onboarding Phase 1D-UI-B1).
+  ///
+  /// It is derived entirely server-side from the requested family's memberships,
+  /// the recorded confirmation decisions, the persisted Steward resolutions, the
+  /// confirmed relationships in that family, and the family's person profiles.
+  /// It carries only what a Steward review surface needs to render:
+  ///
+  /// - `familyId` — the family the case belongs to.
+  /// - `membershipId` — the membership under review.
+  /// - `pendingPersonId` — the person the membership is for.
+  /// - `applicantDisplayName` — the pending person's family-safe display name.
+  /// - `simpleRelationship` — the SIMPLE relationship label that qualifies the
+  ///   most recent confirmer (Parent/Child, Sibling, SpousePartner).
+  /// - `membershipStatus` — the membership's own lifecycle status.
+  /// - `confirmationHistory` — the recorded decisions, each with a simple
+  ///   relationship label, a server-resolved confirmer display name, the
+  ///   decision, and the decision timestamp.
+  /// - `confirmedCount` / `disputedCount` — the decision tallies.
+  /// - `confirmationState` — the derived case state (always
+  ///   `#StewardReviewRequired` for a returned case).
+  ///
+  /// It NEVER carries an applicant or confirmer account principal, a confirmer
+  /// person id, a relationship id, raw relationship context, sensitive
+  /// relationship metadata (Biological/Adoptive/Foster/Step/Guardian), private
+  /// profile notes, or unrelated family data.
+  public type MembershipConfirmationReviewView = {
+    familyId : FamilyId;
+    membershipId : Nat;
+    pendingPersonId : PersonId;
+    applicantDisplayName : Text;
+    simpleRelationship : SimpleRelationshipType;
+    membershipStatus : MembershipTypes.MembershipStatus;
+    confirmationHistory : [MembershipConfirmationReviewHistoryEntry];
+    confirmedCount : Nat;
+    disputedCount : Nat;
     confirmationState : MembershipConfirmationState;
   };
 

@@ -29,12 +29,12 @@
     "connector-spotify": {
       "source": "caffeinelabs/skills",
       "sourceType": "github",
-      "computedHash": "ee2f5704b3ac2c2fa7110364d470718c963d2e55729aa1583e3ec9a99107a419"
+      "computedHash": "f5101f67a12b8a5b42a7efc41af39b7569b14e297ff2955b93a4964d2be33fd3"
     },
     "connector-tmdb": {
       "source": "caffeinelabs/skills",
       "sourceType": "github",
-      "computedHash": "9756473c4d7da25ef313e93f4508a11717863a8e1e615b6c853ccdf2e0a83eb3"
+      "computedHash": "5e7bd8292c83272bcab98d2f809c84544c39b9a3105a58d42cc85d5c45189521"
     },
     "connector-twilio": {
       "source": "caffeinelabs/skills",
@@ -44,12 +44,12 @@
     "connector-weatherapi": {
       "source": "caffeinelabs/skills",
       "sourceType": "github",
-      "computedHash": "a4508dceae76b760810ba2117f8088b7b1077a1e0784bbbb891b8ed03ff5731b"
+      "computedHash": "67d0380d44c13def757abfff9de29aac9ec62a6296eec5980f9449af89b4cc9a"
     },
     "connector-x": {
       "source": "caffeinelabs/skills",
       "sourceType": "github",
-      "computedHash": "c3d5b3423a61e52cf4d4ccba10e8af779577cd3ba51506adc7f8ed9ad26dccf6"
+      "computedHash": "f7df8b2214c27701fb4f70449822a5e8188ccbe39d47f1b7f25323971e911dec"
     },
     "extension-authorization": {
       "source": "caffeinelabs/skills",

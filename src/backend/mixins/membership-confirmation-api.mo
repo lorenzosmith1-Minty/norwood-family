@@ -190,6 +190,46 @@ mixin (
     ));
   };
 
+  /// Returns the privacy-safe list of unresolved confirmation cases in
+  /// `familyId` that require Steward review.
+  ///
+  /// Allowed only when the caller is an active Steward of `familyId`; anonymous
+  /// callers get `#err(#NotSignedIn)` and any other caller gets
+  /// `#err(#NotAuthorized)`. The caller identity is derived server-side from the
+  /// query `{ caller }` parameter, never from a caller-supplied id, and a Steward
+  /// of another family cannot read this family's cases.
+  ///
+  /// Only cases whose derived confirmation state is `#StewardReviewRequired` are
+  /// returned; `#ResolvedBySteward`, `#ApprovedByRelative`, and
+  /// `#AwaitingConfirmation` cases are excluded. Each
+  /// `MembershipConfirmationReviewView` carries only the family id, membership
+  /// id, pending person id, applicant display name, the simple relationship
+  /// label, the membership status, the confirmation/dispute history (each entry
+  /// with a simple relationship label, a server-resolved confirmer display name,
+  /// the decision, and the decision timestamp), the confirmed/disputed counts,
+  /// and the derived case state. It never exposes an applicant or confirmer
+  /// account principal, a confirmer person id, a relationship id, raw
+  /// relationship context, sensitive relationship metadata, private profile
+  /// notes, or unrelated family data.
+  public query ({ caller }) func listMembershipConfirmationReviewsForSteward(
+    familyId : ConfirmationTypes.FamilyId,
+  ) : async Result.Result<[ConfirmationTypes.MembershipConfirmationReviewView], ConfirmationTypes.MembershipConfirmationError> {
+    if (caller.isAnonymous()) {
+      return #err(#NotSignedIn);
+    };
+    if (not StewardAuthorityLib.isActiveStewardForFamily(stewards, caller, familyId)) {
+      return #err(#NotAuthorized);
+    };
+    #ok(ConfirmationLib.listReviewsForSteward(
+      confirmations,
+      resolutions,
+      memberships,
+      profiles,
+      confirmedRelationships,
+      familyId,
+    ));
+  };
+
   /// Returns the signed-in caller's own recorded decision for `membershipId` in
   /// `familyId`, or `null` when the caller has not decided. Anonymous callers
   /// get `#err(#NotSignedIn)`.

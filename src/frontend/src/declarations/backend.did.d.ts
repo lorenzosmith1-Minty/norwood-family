@@ -493,6 +493,24 @@ export interface MembershipConfirmationResolutionRecord {
   'familyId' : FamilyId,
   'resolvedAt' : bigint,
 }
+export interface MembershipConfirmationReviewHistoryEntry {
+  'decision' : ConfirmationDecision,
+  'simpleRelationship' : SimpleRelationshipType,
+  'confirmerDisplayName' : string,
+  'decidedAt' : bigint,
+}
+export interface MembershipConfirmationReviewView {
+  'applicantDisplayName' : string,
+  'confirmationState' : MembershipConfirmationState,
+  'pendingPersonId' : PersonId,
+  'membershipStatus' : MembershipStatus,
+  'confirmationHistory' : Array<MembershipConfirmationReviewHistoryEntry>,
+  'confirmedCount' : bigint,
+  'simpleRelationship' : SimpleRelationshipType,
+  'membershipId' : bigint,
+  'disputedCount' : bigint,
+  'familyId' : FamilyId,
+}
 export type MembershipConfirmationState = { 'StewardReviewRequired' : null } |
   { 'ResolvedBySteward' : null } |
   { 'AwaitingConfirmation' : null } |
@@ -927,19 +945,21 @@ export type Result_2 = { 'ok' : FamilyMembership } |
   { 'err' : MembershipError };
 export type Result_20 = { 'ok' : Array<FamilyMembership> } |
   { 'err' : MembershipError };
-export type Result_21 = { 'ok' : boolean } |
-  { 'err' : MembershipError };
-export type Result_22 = { 'ok' : [] | [FamilyMembership] } |
-  { 'err' : MembershipError };
-export type Result_23 = { 'ok' : MembershipConfirmationApplicantView } |
+export type Result_21 = { 'ok' : Array<MembershipConfirmationReviewView> } |
   { 'err' : MembershipConfirmationError };
-export type Result_24 = { 'ok' : [] | [MembershipConfirmation] } |
+export type Result_22 = { 'ok' : boolean } |
+  { 'err' : MembershipError };
+export type Result_23 = { 'ok' : [] | [FamilyMembership] } |
+  { 'err' : MembershipError };
+export type Result_24 = { 'ok' : MembershipConfirmationApplicantView } |
   { 'err' : MembershipConfirmationError };
-export type Result_25 = { 'ok' : AuthMethods } |
+export type Result_25 = { 'ok' : [] | [MembershipConfirmation] } |
+  { 'err' : MembershipConfirmationError };
+export type Result_26 = { 'ok' : AuthMethods } |
   { 'err' : AccountError };
-export type Result_26 = { 'ok' : AccountId } |
+export type Result_27 = { 'ok' : AccountId } |
   { 'err' : AccountError };
-export type Result_27 = {
+export type Result_28 = {
     'ok' : [
       MembershipConfirmationState,
       Array<MembershipConfirmation>,
@@ -947,43 +967,43 @@ export type Result_27 = {
     ]
   } |
   { 'err' : MembershipConfirmationError };
-export type Result_28 = { 'ok' : InvitationRedemptionState } |
+export type Result_29 = { 'ok' : InvitationRedemptionState } |
   { 'err' : FamilyInvitationError };
-export type Result_29 = { 'ok' : SuccessorDesignation } |
-  { 'err' : StewardError };
 export type Result_3 = { 'ok' : Message } |
   { 'err' : MessageError };
-export type Result_30 = { 'ok' : FamilyInvitation } |
+export type Result_30 = { 'ok' : SuccessorDesignation } |
+  { 'err' : StewardError };
+export type Result_31 = { 'ok' : FamilyInvitation } |
   { 'err' : FamilyInvitationError };
-export type Result_31 = { 'ok' : SourceUploadResult } |
+export type Result_32 = { 'ok' : SourceUploadResult } |
   { 'err' : ResearchError };
-export type Result_32 = { 'ok' : SourceRecord } |
+export type Result_33 = { 'ok' : SourceRecord } |
   { 'err' : ResearchError };
-export type Result_33 = { 'ok' : RelationshipProposal } |
+export type Result_34 = { 'ok' : RelationshipProposal } |
   { 'err' : ResearchError };
-export type Result_34 = { 'ok' : NewPersonCandidate } |
+export type Result_35 = { 'ok' : NewPersonCandidate } |
   { 'err' : ResearchError };
-export type Result_35 = { 'ok' : PersonProfile } |
+export type Result_36 = { 'ok' : PersonProfile } |
   { 'err' : CreateError };
-export type Result_36 = { 'ok' : FamilyInvitationCreateOutcome } |
+export type Result_37 = { 'ok' : FamilyInvitationCreateOutcome } |
   { 'err' : FamilyInvitationError };
-export type Result_37 = { 'ok' : ProposedFinding } |
+export type Result_38 = { 'ok' : ProposedFinding } |
   { 'err' : ResearchError };
-export type Result_38 = { 'ok' : FamilyCreationResult } |
+export type Result_39 = { 'ok' : FamilyCreationResult } |
   { 'err' : FamilyCreationError };
-export type Result_39 = { 'ok' : Conversation } |
-  { 'err' : MessageError };
 export type Result_4 = { 'ok' : null } |
   { 'err' : ArchiveError };
-export type Result_40 = { 'ok' : Relationship } |
+export type Result_40 = { 'ok' : Conversation } |
+  { 'err' : MessageError };
+export type Result_41 = { 'ok' : Relationship } |
   { 'err' : RelationshipAdminError };
-export type Result_41 = { 'ok' : MembershipConfirmation } |
+export type Result_42 = { 'ok' : MembershipConfirmation } |
   { 'err' : MembershipConfirmationError };
-export type Result_42 = { 'ok' : StewardClaimResult } |
+export type Result_43 = { 'ok' : StewardClaimResult } |
   { 'err' : StewardClaimError };
-export type Result_43 = { 'ok' : Account } |
+export type Result_44 = { 'ok' : Account } |
   { 'err' : AccountError };
-export type Result_44 = { 'ok' : null } |
+export type Result_45 = { 'ok' : null } |
   { 'err' : Error };
 export type Result_5 = { 'ok' : FamilyMembership } |
   { 'err' : MembershipConfirmationError };
@@ -1208,7 +1228,7 @@ export interface _SERVICE {
   >,
   '_immutableObjectStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
   '_initialize_access_control' : ActorMethod<[], undefined>,
-  '_internet_identity_sign_in_finish' : ActorMethod<[], Result_44>,
+  '_internet_identity_sign_in_finish' : ActorMethod<[], Result_45>,
   '_internet_identity_sign_in_start' : ActorMethod<[], Uint8Array>,
   /**
    * / Accepts a raw invite token for the authenticated caller. The token must be
@@ -1219,7 +1239,7 @@ export interface _SERVICE {
    * / membership/founding-Steward rule without bypassing nominee acceptance. The
    * / invitation is marked `#Accepted` only when acceptance succeeds.
    */
-  'acceptFamilyInvitation' : ActorMethod<[string], Result_30>,
+  'acceptFamilyInvitation' : ActorMethod<[string], Result_31>,
   /**
    * / The authenticated nominee accepts a pending founding-Steward nomination.
    */
@@ -1319,7 +1339,7 @@ export interface _SERVICE {
    */
   'addRelationship' : ActorMethod<
     [PersonId, PersonId, RelationshipType],
-    Result_40
+    Result_41
   >,
   /**
    * / Adds a missing relationship to `familyId`'s family graph. Canonical
@@ -1330,7 +1350,7 @@ export interface _SERVICE {
    */
   'addRelationshipForFamily' : ActorMethod<
     [string, PersonId, PersonId, RelationshipType],
-    Result_40
+    Result_41
   >,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for
@@ -1530,7 +1550,7 @@ export interface _SERVICE {
    * / account. The account id is the caller's stable principal, so the same
    * / person profile stays intact if the provider changes.
    */
-  'bindAuthMethod' : ActorMethod<[AuthMethod], Result_43>,
+  'bindAuthMethod' : ActorMethod<[AuthMethod], Result_44>,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for `blockUserForFamily`.
    */
@@ -1569,7 +1589,7 @@ export interface _SERVICE {
    * / invitation. The invitation becomes `#Cancelled` and can never be accepted
    * / afterwards.
    */
-  'cancelFamilyInvitation' : ActorMethod<[string, bigint], Result_30>,
+  'cancelFamilyInvitation' : ActorMethod<[string, bigint], Result_31>,
   /**
    * / The founder cancels a pending founding-Steward nomination.
    */
@@ -1582,7 +1602,7 @@ export interface _SERVICE {
    * / permanently refuses. Tenancy 1B: delegates to the canonical family-scoped
    * / helper with the default family id.
    */
-  'claimSteward' : ActorMethod<[], Result_42>,
+  'claimSteward' : ActorMethod<[], Result_43>,
   /**
    * / Records the signed-in caller's trusted-relative decision about a membership
    * / in `familyId`. A decision is accepted when the membership is `#Pending`, or
@@ -1594,7 +1614,7 @@ export interface _SERVICE {
    */
   'confirmPendingMembership' : ActorMethod<
     [FamilyId, bigint, ConfirmationDecision],
-    Result_41
+    Result_42
   >,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
@@ -1603,7 +1623,7 @@ export interface _SERVICE {
    */
   'correctRelationshipType' : ActorMethod<
     [bigint, RelationshipType],
-    Result_40
+    Result_41
   >,
   /**
    * / Corrects the relationship type of an existing relationship in `familyId`.
@@ -1615,7 +1635,7 @@ export interface _SERVICE {
    */
   'correctRelationshipTypeForFamily' : ActorMethod<
     [string, bigint, RelationshipType],
-    Result_40
+    Result_41
   >,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for `createBoardPostForFamily`.
@@ -1733,13 +1753,13 @@ export interface _SERVICE {
    * / TEMPORARY Tenancy 1C compatibility wrapper for
    * / `createConversationForFamily`.
    */
-  'createConversation' : ActorMethod<[string], Result_39>,
+  'createConversation' : ActorMethod<[string], Result_40>,
   /**
    * / Creates a 1:1 conversation in `familyId` between the caller and the person
    * / identified by `recipientPersonId`. Approved members of `familyId` only;
    * / both participants must belong to `familyId`.
    */
-  'createConversationForFamily' : ActorMethod<[FamilyId, string], Result_39>,
+  'createConversationForFamily' : ActorMethod<[FamilyId, string], Result_40>,
   /**
    * / Creates a `#Pending` family-member invitation for an unclaimed profile in
    * / `familyId`. Callable by an approved member or active Steward of `familyId`.
@@ -1753,7 +1773,7 @@ export interface _SERVICE {
    */
   'createFamilyInvitation' : ActorMethod<
     [string, string, [] | [string]],
-    Result_36
+    Result_37
   >,
   /**
    * / Creates a brand-new family with the authenticated caller as its founder.
@@ -1780,7 +1800,7 @@ export interface _SERVICE {
    */
   'createFamilyWithFounder' : ActorMethod<
     [string, FounderProfileInput, string],
-    Result_38
+    Result_39
   >,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for `createFindingForFamily`.
@@ -1795,7 +1815,7 @@ export interface _SERVICE {
       [] | [string],
       [] | [bigint],
     ],
-    Result_37
+    Result_38
   >,
   /**
    * / Creates a new proposed finding in `familyId`. Requires an approved member
@@ -1816,7 +1836,7 @@ export interface _SERVICE {
       [] | [string],
       [] | [bigint],
     ],
-    Result_37
+    Result_38
   >,
   /**
    * / Creates a `#Pending` `#FoundingSteward` invitation linked to the existing
@@ -1827,24 +1847,24 @@ export interface _SERVICE {
    */
   'createFoundingStewardInvitation' : ActorMethod<
     [string, string, [] | [string]],
-    Result_36
+    Result_37
   >,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for `createMyselfForFamily`.
    */
-  'createMyself' : ActorMethod<[string], Result_35>,
+  'createMyself' : ActorMethod<[string], Result_36>,
   /**
    * / "Add Myself to This Family": creates a minimal person profile in
    * / `familyId` for a user who does not already exist there.
    */
-  'createMyselfForFamily' : ActorMethod<[FamilyId, string], Result_35>,
+  'createMyselfForFamily' : ActorMethod<[FamilyId, string], Result_36>,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for
    * / `createNewPersonCandidateForFamily`.
    */
   'createNewPersonCandidate' : ActorMethod<
     [string, string, SourceId],
-    Result_34
+    Result_35
   >,
   /**
    * / Creates a new New Person candidate in `familyId`. Requires an approved
@@ -1856,7 +1876,7 @@ export interface _SERVICE {
    */
   'createNewPersonCandidateForFamily' : ActorMethod<
     [FamilyId, string, string, SourceId],
-    Result_34
+    Result_35
   >,
   /**
    * / Creates a `#Pending` membership for `accountId` linked to `personId` in
@@ -1873,7 +1893,7 @@ export interface _SERVICE {
    */
   'createRelationshipProposal' : ActorMethod<
     [string, string, string, SourceId],
-    Result_33
+    Result_34
   >,
   /**
    * / Creates a new relationship proposal in `familyId`. Requires an approved
@@ -1886,7 +1906,7 @@ export interface _SERVICE {
    */
   'createRelationshipProposalForFamily' : ActorMethod<
     [FamilyId, string, string, string, SourceId],
-    Result_33
+    Result_34
   >,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for `createSourceForFamily`.
@@ -1898,7 +1918,7 @@ export interface _SERVICE {
    */
   'createSource' : ActorMethod<
     [string, SourceType, string, [] | [bigint]],
-    Result_32
+    Result_33
   >,
   /**
    * / Creates a new source record in `familyId`. Requires an approved member or
@@ -1912,7 +1932,7 @@ export interface _SERVICE {
    */
   'createSourceForFamily' : ActorMethod<
     [FamilyId, string, SourceType, string, [] | [bigint]],
-    Result_32
+    Result_33
   >,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for
@@ -1936,7 +1956,7 @@ export interface _SERVICE {
       [] | [OralHistorySpeaker],
       string,
     ],
-    Result_31
+    Result_32
   >,
   /**
    * / Uploads a research source file into `familyId`: creates one canonical
@@ -1963,13 +1983,13 @@ export interface _SERVICE {
       [] | [OralHistorySpeaker],
       string,
     ],
-    Result_31
+    Result_32
   >,
   /**
    * / The invited user declines a raw invite token. The invitation becomes
    * / `#Declined` and can never be accepted afterwards.
    */
-  'declineFamilyInvitation' : ActorMethod<[string], Result_30>,
+  'declineFamilyInvitation' : ActorMethod<[string], Result_31>,
   /**
    * / The nominee declines a pending founding-Steward nomination.
    */
@@ -1979,7 +1999,7 @@ export interface _SERVICE {
    * / delegates to `designateSuccessorForFamily` with the default family id so
    * / current Norwood behavior is unchanged.
    */
-  'designateSuccessor' : ActorMethod<[PersonId, bigint], Result_29>,
+  'designateSuccessor' : ActorMethod<[PersonId, bigint], Result_30>,
   /**
    * / Designates an approved claimed member of `familyId` as a successor steward
    * / with a priority/order. Canonical family-scoped form: the caller must be an
@@ -1991,7 +2011,7 @@ export interface _SERVICE {
    */
   'designateSuccessorForFamily' : ActorMethod<
     [string, PersonId, bigint],
-    Result_29
+    Result_30
   >,
   /**
    * / Dismisses (deletes) the signed-in caller's notification with `id` in
@@ -2097,7 +2117,7 @@ export interface _SERVICE {
    * / unrelated accounts or families exist and never includes `tokenHash` or any
    * / member identity beyond the existing preview fields.
    */
-  'getInvitationRedemptionState' : ActorMethod<[string], Result_28>,
+  'getInvitationRedemptionState' : ActorMethod<[string], Result_29>,
   /**
    * / Returns the FULL, Steward-authorized confirmation record for `membershipId`
    * / in `familyId`: the derived case state, every recorded decision, and any
@@ -2108,7 +2128,7 @@ export interface _SERVICE {
    */
   'getMembershipConfirmationStateForSteward' : ActorMethod<
     [FamilyId, bigint],
-    Result_27
+    Result_28
   >,
   /**
    * / Returns the account's membership in `familyId` only, or `null` when the
@@ -2118,22 +2138,22 @@ export interface _SERVICE {
    * / `#err(#NotSignedIn)`). The denial is identical whether or not the target
    * / account belongs to another family.
    */
-  'getMembershipForFamily' : ActorMethod<[FamilyId, AccountId], Result_22>,
+  'getMembershipForFamily' : ActorMethod<[FamilyId, AccountId], Result_23>,
   /**
    * / Returns the stable account id of the signed-in caller. Anonymous callers
    * / receive #NotSignedIn.
    */
-  'getMyAccountId' : ActorMethod<[], Result_26>,
+  'getMyAccountId' : ActorMethod<[], Result_27>,
   /**
    * / Returns the authentication methods bound to the signed-in caller's account.
    */
-  'getMyAuthMethods' : ActorMethod<[], Result_25>,
+  'getMyAuthMethods' : ActorMethod<[], Result_26>,
   /**
    * / Returns the signed-in caller's own recorded decision for `membershipId` in
    * / `familyId`, or `null` when the caller has not decided. Anonymous callers
    * / get `#err(#NotSignedIn)`.
    */
-  'getMyConfirmationForMembership' : ActorMethod<[FamilyId, bigint], Result_24>,
+  'getMyConfirmationForMembership' : ActorMethod<[FamilyId, bigint], Result_25>,
   /**
    * / Returns the REDACTED, applicant-safe confirmation view for `membershipId`
    * / in `familyId`: the derived case state, the caller's own decision and simple
@@ -2146,14 +2166,14 @@ export interface _SERVICE {
    */
   'getMyMembershipConfirmationState' : ActorMethod<
     [FamilyId, bigint],
-    Result_23
+    Result_24
   >,
   /**
    * / Returns the signed-in caller's own membership in `familyId`, or `null`
    * / when the caller has no membership in that family. Anonymous callers are
    * / denied with `#err(#NotSignedIn)`.
    */
-  'getMyMembershipForFamily' : ActorMethod<[FamilyId], Result_22>,
+  'getMyMembershipForFamily' : ActorMethod<[FamilyId], Result_23>,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for `getMyProfileForFamily`.
    */
@@ -2419,7 +2439,7 @@ export interface _SERVICE {
    */
   'hasActiveMembershipForFamily' : ActorMethod<
     [FamilyId, AccountId],
-    Result_21
+    Result_22
   >,
   /**
    * / Whether any active Family Steward exists. Public so the frontend can show
@@ -2721,6 +2741,33 @@ export interface _SERVICE {
    * / whose `familyId` differs is never returned.
    */
   'listHiddenBoardPostsForFamily' : ActorMethod<[FamilyId], Array<Post>>,
+  /**
+   * / Returns the privacy-safe list of unresolved confirmation cases in
+   * / `familyId` that require Steward review.
+   * /
+   * / Allowed only when the caller is an active Steward of `familyId`; anonymous
+   * / callers get `#err(#NotSignedIn)` and any other caller gets
+   * / `#err(#NotAuthorized)`. The caller identity is derived server-side from the
+   * / query `{ caller }` parameter, never from a caller-supplied id, and a Steward
+   * / of another family cannot read this family's cases.
+   * /
+   * / Only cases whose derived confirmation state is `#StewardReviewRequired` are
+   * / returned; `#ResolvedBySteward`, `#ApprovedByRelative`, and
+   * / `#AwaitingConfirmation` cases are excluded. Each
+   * / `MembershipConfirmationReviewView` carries only the family id, membership
+   * / id, pending person id, applicant display name, the simple relationship
+   * / label, the membership status, the confirmation/dispute history (each entry
+   * / with a simple relationship label, a server-resolved confirmer display name,
+   * / the decision, and the decision timestamp), the confirmed/disputed counts,
+   * / and the derived case state. It never exposes an applicant or confirmer
+   * / account principal, a confirmer person id, a relationship id, raw
+   * / relationship context, sensitive relationship metadata, private profile
+   * / notes, or unrelated family data.
+   */
+  'listMembershipConfirmationReviewsForSteward' : ActorMethod<
+    [FamilyId],
+    Result_21
+  >,
   /**
    * / Returns every membership held by `accountId` across all families. Allowed
    * / for self only; anonymous callers get `#err(#NotSignedIn)` and any other

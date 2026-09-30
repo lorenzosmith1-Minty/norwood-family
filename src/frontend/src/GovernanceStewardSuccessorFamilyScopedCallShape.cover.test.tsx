@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom/vitest";
 import type {
   Result_14,
-  Result_29,
+  Result_30,
   StewardIdentity,
   StewardRecord,
   SuccessorDesignation,
@@ -81,7 +81,7 @@ const { mockActor, calls, resetCalls } = vi.hoisted(() => {
     } as StewardRecord,
   });
 
-  const okSuccessor = (): Result_29 => ({
+  const okSuccessor = (): Result_30 => ({
     __kind__: "ok",
     ok: {
       familyId: "norwood",
@@ -102,11 +102,11 @@ const { mockActor, calls, resetCalls } = vi.hoisted(() => {
       calls.promoteToStewardForFamily.push(args);
       return okSteward();
     },
-    async designateSuccessor(...args: unknown[]): Promise<Result_29> {
+    async designateSuccessor(...args: unknown[]): Promise<Result_30> {
       calls.designateSuccessor.push(args);
       return okSuccessor();
     },
-    async designateSuccessorForFamily(...args: unknown[]): Promise<Result_29> {
+    async designateSuccessorForFamily(...args: unknown[]): Promise<Result_30> {
       calls.designateSuccessorForFamily.push(args);
       return okSuccessor();
     },

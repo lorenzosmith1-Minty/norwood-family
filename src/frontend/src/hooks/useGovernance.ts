@@ -16,8 +16,8 @@ import type {
   Result_16,
   Result_18,
   Result_27,
-  Result_29,
-  Result_40,
+  Result_30,
+  Result_41,
   StewardIdentity,
   StewardRecord,
   SuccessorDesignation,
@@ -436,7 +436,7 @@ export function useDesignateSuccessor() {
     }: {
       personId: string;
       priority: bigint;
-    }): Promise<Result_29> => {
+    }): Promise<Result_30> => {
       if (!actor) throw new Error("Backend is not ready");
       return familyScopedId === undefined
         ? actor.designateSuccessor(personId, priority)
@@ -1096,7 +1096,7 @@ export function useAddRelationship() {
       fromPersonId: string;
       toPersonId: string;
       relationshipType: RelationshipType;
-    }): Promise<Result_40> => {
+    }): Promise<Result_41> => {
       if (!actor) throw new Error("Backend is not ready");
       return familyScopedId === undefined
         ? actor.addRelationship(fromPersonId, toPersonId, relationshipType)
@@ -1174,7 +1174,7 @@ export function useCorrectRelationshipType() {
     }: {
       relationshipId: bigint;
       relationshipType: RelationshipType;
-    }): Promise<Result_40> => {
+    }): Promise<Result_41> => {
       if (!actor) throw new Error("Backend is not ready");
       return familyScopedId === undefined
         ? actor.correctRelationshipType(relationshipId, relationshipType)

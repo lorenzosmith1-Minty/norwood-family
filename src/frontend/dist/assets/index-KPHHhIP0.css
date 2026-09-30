@@ -2964,6 +2964,12 @@ video {
 .border-t-transparent {
   border-top-color: transparent;
 }
+.bg-\[oklch\(var\(--confirm-accent\)\)\] {
+  background-color: oklch(var(--confirm-accent));
+}
+.bg-\[oklch\(var\(--confirm-review\)\)\] {
+  background-color: oklch(var(--confirm-review));
+}
 .bg-accent {
   --tw-bg-opacity: 1;
   background-color: oklch(var(--accent) / var(--tw-bg-opacity, 1));

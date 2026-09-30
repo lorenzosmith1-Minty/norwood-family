@@ -501,6 +501,90 @@ module {
     eligible.toArray();
   };
 
+  /// INTERNAL (library-only, never a public endpoint). Derives the privacy-safe
+  /// list of unresolved confirmation cases in `familyId` that require Steward
+  /// review.
+  ///
+  /// A case is included only when its derived confirmation state is
+  /// `#StewardReviewRequired` (a recorded `#Disputed` decision with no persisted
+  /// Steward resolution). `#ResolvedBySteward`, `#ApprovedByRelative`, and
+  /// `#AwaitingConfirmation` cases are excluded. Only memberships belonging to
+  /// `familyId` are considered, so a case from another family is never returned.
+  ///
+  /// The view is built entirely from backend records: the applicant display name
+  /// resolves from the family's person profiles (falling back to the person id),
+  /// each confirmer's display name resolves server-side from the confirmer's
+  /// person profile (falling back to a neutral label), and the simple
+  /// relationship label is derived from the confirmed relationship between the
+  /// pending person and the confirmer. No account principal, confirmer person
+  /// id, relationship id, or sensitive relationship context is ever exposed.
+  public func listReviewsForSteward(
+    confirmations : List.List<ConfirmationTypes.MembershipConfirmation>,
+    resolutions : List.List<ConfirmationTypes.MembershipConfirmationResolutionRecord>,
+    memberships : List.List<MembershipTypes.FamilyMembership>,
+    profiles : Map.Map<OwnershipTypes.PersonId, OwnershipTypes.PersonProfile>,
+    confirmedRelationships : List.List<OwnershipTypes.Relationship>,
+    familyId : ConfirmationTypes.FamilyId,
+  ) : [ConfirmationTypes.MembershipConfirmationReviewView] {
+    let candidates = MembershipLib.listFamilyMembersForFamily(memberships, familyId);
+    let reviews = List.empty<ConfirmationTypes.MembershipConfirmationReviewView>();
+    for (membership in candidates.values()) {
+      let caseState = confirmationStateForMembership(confirmations, resolutions, familyId, membership.id);
+      if (caseState == #StewardReviewRequired) {
+        let decisions = listConfirmationsForMembership(confirmations, familyId, membership.id);
+        let history = List.empty<ConfirmationTypes.MembershipConfirmationReviewHistoryEntry>();
+        var confirmedCount = 0;
+        var disputedCount = 0;
+        var latestRelationship : ?ConfirmationTypes.SimpleRelationshipType = null;
+        for (c in decisions.values()) {
+          switch (c.decision) {
+            case (#Confirmed) { confirmedCount += 1 };
+            case (#Disputed) { disputedCount += 1 };
+          };
+          let simpleRelationship = switch (
+            RelationshipsLib.findConfirmedRelationshipBetween(
+              confirmedRelationships,
+              familyId,
+              membership.personId,
+              c.confirmerPersonId,
+            )
+          ) {
+            case (?relationship) simpleRelationshipLabel(relationship.relationshipType);
+            case null #Sibling;
+          };
+          latestRelationship := ?simpleRelationship;
+          let confirmerDisplayName = switch (profiles.get(c.confirmerPersonId)) {
+            case (?p) p.name;
+            case null "Family member";
+          };
+          history.add({
+            simpleRelationship;
+            confirmerDisplayName;
+            decision = c.decision;
+            decidedAt = c.updatedAt;
+          });
+        };
+        let applicantDisplayName = switch (profiles.get(membership.personId)) {
+          case (?p) p.name;
+          case null membership.personId;
+        };
+        reviews.add({
+          familyId;
+          membershipId = membership.id;
+          pendingPersonId = membership.personId;
+          applicantDisplayName;
+          simpleRelationship = latestRelationship ?? #Sibling;
+          membershipStatus = membership.status;
+          confirmationHistory = history.toArray();
+          confirmedCount;
+          disputedCount;
+          confirmationState = caseState;
+        });
+      };
+    };
+    reviews.toArray();
+  };
+
   /// Builds the OQL-exposable rows for every membership confirmation.
   public func confirmationRows(
     confirmations : List.List<ConfirmationTypes.MembershipConfirmation>,

@@ -425,6 +425,42 @@
     --preview-accent: 0.42 0.11 35;
     --preview-accent-foreground: 0.96 0.02 70;
     --preview-download: 0.5 0.03 45;
+
+    /* Invitation Redemption: a calm centered welcome card on warm paper.
+       The invite surface is a slightly lifted paper plate; the family
+       crest mark is the sepia ink; the pending treatment is the dusty
+       bronze already used for "in progress" states; terminal notices
+       reuse the archive's warm-green / terracotta / ochre dot-pill
+       language so every outcome reads as a familiar Norwood state. */
+    --invite-surface: 0.985 0.015 70;
+    --invite-surface-foreground: 0.22 0.04 45;
+    --invite-rule: 0.42 0.11 35 / 0.16;
+    --invite-crest: 0.42 0.11 35;
+    --invite-crest-foreground: 0.96 0.02 70;
+    --invite-muted: 0.5 0.03 45;
+    --invite-pending: 0.55 0.09 60;
+    --invite-pending-surface: 0.95 0.02 72;
+    --invite-notice: 0.95 0.02 72;
+    --invite-notice-foreground: 0.3 0.04 45;
+    --invite-notice-success: 0.55 0.12 150;
+    --invite-notice-expired: 0.7 0.13 80;
+    --invite-notice-cancelled: 0.5 0.03 45;
+    --invite-notice-declined: 0.5 0.2 25;
+
+    /* Membership confirmation: a trusted-relative request card and an
+       applicant-safe status card. Both reuse the warm paper plate language;
+       the confirm action is the family green, the dispute action is the
+       quiet bronze (never the terracotta "reject" red, so a dispute reads as
+       "needs review", not "rejected"). */
+    --confirm-surface: 0.985 0.015 70;
+    --confirm-surface-foreground: 0.22 0.04 45;
+    --confirm-accent: 0.55 0.12 150;
+    --confirm-accent-foreground: 0.98 0.01 150;
+    --confirm-dispute: 0.5 0.03 45;
+    --confirm-dispute-foreground: 0.98 0.01 70;
+    --confirm-pending: 0.55 0.09 60;
+    --confirm-review: 0.7 0.13 80;
+    --confirm-neutral: 0.5 0.03 45;
   }
 
   .dark {
@@ -780,6 +816,35 @@
     --preview-accent: 0.72 0.14 60;
     --preview-accent-foreground: 0.16 0.02 55;
     --preview-download: 0.7 0.1 55;
+
+    /* Invitation Redemption (dark): the welcome card is a dark paper plate,
+       the crest brightens to the sepia ink, pending stays bronze, and the
+       terminal notices keep the same warm-green / ochre / grey / terracotta
+       encoding as the light theme. */
+    --invite-surface: 0.2 0.02 55;
+    --invite-surface-foreground: 0.93 0.02 60;
+    --invite-rule: 0.72 0.14 60 / 0.2;
+    --invite-crest: 0.72 0.14 60;
+    --invite-crest-foreground: 0.16 0.02 55;
+    --invite-muted: 0.7 0.1 55;
+    --invite-pending: 0.72 0.14 60;
+    --invite-pending-surface: 0.21 0.02 55;
+    --invite-notice: 0.21 0.02 55;
+    --invite-notice-foreground: 0.85 0.02 60;
+    --invite-notice-success: 0.6 0.15 150;
+    --invite-notice-expired: 0.72 0.13 80;
+    --invite-notice-cancelled: 0.7 0.1 55;
+    --invite-notice-declined: 0.55 0.2 25;
+
+    --confirm-surface: 0.21 0.02 55;
+    --confirm-surface-foreground: 0.85 0.02 60;
+    --confirm-accent: 0.6 0.15 150;
+    --confirm-accent-foreground: 0.16 0.02 55;
+    --confirm-dispute: 0.7 0.1 55;
+    --confirm-dispute-foreground: 0.16 0.02 55;
+    --confirm-pending: 0.72 0.14 60;
+    --confirm-review: 0.72 0.13 80;
+    --confirm-neutral: 0.7 0.1 55;
   }
 
   * {
@@ -5673,5 +5738,359 @@
   }
   .privacy-private::before {
     background-color: oklch(var(--privacy-private));
+  }
+
+  /* ---- Invitation Redemption: preview, sign-in gate, and terminal states ---- */
+
+  /* Invite screen wrapper: a calm, centered column on the warm paper. The
+     invite is a small, focused moment — one card, one decision. */
+  .invite-screen {
+    @apply mx-auto flex w-full max-w-md flex-col items-center gap-5 px-4 py-10;
+  }
+
+  /* Invite card: a lifted paper plate that hosts the family crest, the
+     privacy-safe preview lines, and the accept/decline actions. Reads as a
+     quiet welcome, not a marketing hero. */
+  .invite-card {
+    @apply flex w-full flex-col items-center gap-4 rounded-2xl border border-border/60 p-6 text-center sm:p-7;
+    background-color: oklch(var(--invite-surface));
+    color: oklch(var(--invite-surface-foreground));
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.14), 0 0 0 3px
+      oklch(var(--photo-ring) / 0.14);
+    animation: invite-in 0.35s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+
+  /* Crest mark: the sepia ink roundel at the top of the invite card. */
+  .invite-crest {
+    @apply flex h-14 w-14 items-center justify-center rounded-full;
+    background-color: oklch(var(--invite-crest));
+    color: oklch(var(--invite-crest-foreground));
+    box-shadow: 0 0 0 3px oklch(var(--invite-crest) / 0.2);
+  }
+
+  /* Invite title + hint: display serif title with a quiet supporting line. */
+  .invite-title {
+    @apply font-display text-xl font-semibold leading-snug;
+    color: oklch(var(--invite-surface-foreground));
+  }
+  .invite-hint {
+    @apply max-w-sm text-sm leading-relaxed;
+    color: oklch(var(--invite-muted));
+  }
+
+  /* Short bronze rule separating the crest from the preview details. */
+  .invite-rule {
+    width: 3rem;
+    height: 1px;
+    background-color: oklch(var(--invite-rule));
+  }
+
+  /* Preview detail list: the privacy-safe facts (family name, invite type,
+     expiry). One label/value row per fact, no relationship context. */
+  .invite-details {
+    @apply flex w-full flex-col gap-2.5;
+  }
+  .invite-detail-row {
+    @apply flex items-center justify-between gap-3 border-b border-border/50 py-2 text-sm last:border-0;
+  }
+  .invite-detail-row .invite-detail-label {
+    @apply text-xs font-semibold uppercase tracking-[0.14em];
+    color: oklch(var(--invite-muted));
+  }
+  .invite-detail-row .invite-detail-value {
+    @apply text-right font-semibold;
+    color: oklch(var(--invite-surface-foreground));
+  }
+
+  /* Invite type badge: a sepia dot-pill naming the invitation kind. */
+  .invite-type-badge {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-border/60 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em];
+    background-color: oklch(var(--card));
+    color: oklch(var(--invite-crest));
+  }
+  .invite-type-badge::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background-color: oklch(var(--invite-crest));
+  }
+
+  /* Invite action stack: accept (sepia primary) above decline (quiet
+     outline), full-width and thumb-friendly. */
+  .invite-actions {
+    @apply flex w-full flex-col gap-3;
+  }
+  .invite-accept {
+    @apply inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-full px-5 text-[15px] font-semibold;
+    color: oklch(var(--primary-foreground));
+    background-color: oklch(var(--primary));
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.18);
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow
+      0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .invite-accept:hover {
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.24);
+  }
+  .invite-accept:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(var(--ring) / 0.35);
+  }
+  .invite-accept:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .invite-decline {
+    @apply inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-full border border-border/60 px-5 text-[15px] font-semibold;
+    background-color: oklch(var(--card));
+    color: oklch(var(--foreground));
+    transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .invite-decline:hover,
+  .invite-decline:focus-visible {
+    border-color: oklch(var(--invite-notice-declined) / 0.5);
+    color: oklch(var(--invite-notice-declined));
+  }
+  .invite-decline:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(var(--ring) / 0.25);
+  }
+
+  /* Pending treatment: a soft bronze breathing dot + label shown while an
+     accept/decline is in flight. Calm, never alarming. */
+  .invite-pending {
+    @apply inline-flex items-center gap-2 rounded-full border border-border/60 px-3 py-1.5 text-xs font-semibold;
+    background-color: oklch(var(--invite-pending-surface));
+    color: oklch(var(--invite-pending));
+  }
+  .invite-pending::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background-color: oklch(var(--invite-pending));
+    animation: invite-pulse 2s ease-in-out infinite;
+  }
+
+  /* Terminal notice: the single outcome panel for every terminal invite
+     state (accepted, expired, cancelled, declined, already-member,
+     claimed-unavailable, conflict, invalid token). One calm plate with a
+     status dot-pill; the dot color encodes the outcome family. */
+  .invite-notice {
+    @apply flex w-full flex-col items-center gap-3 rounded-2xl border border-border/60 p-6 text-center sm:p-7;
+    background-color: oklch(var(--invite-notice));
+    color: oklch(var(--invite-notice-foreground));
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.1);
+    animation: invite-in 0.35s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+  .invite-notice-mark {
+    @apply flex h-14 w-14 items-center justify-center rounded-full;
+    background-color: oklch(var(--invite-muted) / 0.14);
+    color: oklch(var(--invite-muted));
+    box-shadow: 0 0 0 2px oklch(var(--invite-muted) / 0.4);
+  }
+  .invite-notice-title {
+    @apply font-display text-xl font-semibold leading-snug;
+    color: oklch(var(--invite-notice-foreground));
+  }
+  .invite-notice-hint {
+    @apply max-w-sm text-sm leading-relaxed;
+    color: oklch(var(--invite-muted));
+  }
+
+  /* Terminal status dot-pill: outcome family encoded by color. */
+  .invite-status {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-card px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em];
+    color: oklch(var(--invite-muted));
+  }
+  .invite-status::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background-color: oklch(var(--invite-muted));
+  }
+  .invite-status-success {
+    color: oklch(var(--invite-notice-success));
+    border-color: oklch(var(--invite-notice-success) / 0.45);
+  }
+  .invite-status-success::before {
+    background-color: oklch(var(--invite-notice-success));
+  }
+  .invite-status-expired {
+    color: oklch(var(--invite-notice-expired));
+    border-color: oklch(var(--invite-notice-expired) / 0.45);
+  }
+  .invite-status-expired::before {
+    background-color: oklch(var(--invite-notice-expired));
+  }
+  .invite-status-cancelled {
+    color: oklch(var(--invite-notice-cancelled));
+    border-color: oklch(var(--invite-notice-cancelled) / 0.4);
+  }
+  .invite-status-cancelled::before {
+    background-color: oklch(var(--invite-notice-cancelled));
+  }
+  .invite-status-declined {
+    color: oklch(var(--invite-notice-declined));
+    border-color: oklch(var(--invite-notice-declined) / 0.45);
+  }
+  .invite-status-declined::before {
+    background-color: oklch(var(--invite-notice-declined));
+  }
+
+  /* Sign-in-required state: the invite preview stays visible, with a quiet
+     gate plate below it explaining that signing in is required to accept.
+     The provider buttons reuse .signin-btn / .signin-google / .signin-apple. */
+  .invite-gate {
+    @apply flex w-full flex-col items-center gap-4 rounded-2xl border border-dashed border-border/70 p-5 text-center;
+    background-color: oklch(var(--card) / 0.5);
+    animation: invite-in 0.35s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+  .invite-gate-title {
+    @apply font-display text-base font-semibold leading-snug;
+    color: oklch(var(--foreground));
+  }
+  .invite-gate-hint {
+    @apply max-w-sm text-sm leading-relaxed;
+    color: oklch(var(--invite-muted));
+  }
+
+  /* ---- Membership confirmation: request card + applicant status card ---- */
+
+  /* Confirmation request card: a warm paper plate hosting the pending
+     person's family-safe identity and the two neutral decisions. Reads as a
+     quiet question, not an alert. */
+  .confirm-card {
+    @apply flex w-full flex-col gap-4 rounded-xl border border-border/60 p-4 sm:p-5;
+    background-color: oklch(var(--confirm-surface));
+    color: oklch(var(--confirm-surface-foreground));
+    box-shadow: 0 1px 2px -1px oklch(0.36 0.05 45 / 0.08);
+    animation: fold-in 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+  .confirm-card-result {
+    @apply flex-row items-start gap-3;
+  }
+  .confirm-head {
+    @apply flex items-start gap-3;
+  }
+  .confirm-avatar {
+    @apply h-12 w-12 shrink-0 rounded-full object-cover;
+    box-shadow: 0 0 0 2px oklch(var(--photo-ring) / 0.4);
+  }
+  .confirm-avatar-fallback {
+    @apply flex items-center justify-center font-display text-lg font-semibold;
+    background-color: oklch(var(--confirm-pending) / 0.16);
+    color: oklch(var(--confirm-pending));
+  }
+  .confirm-body {
+    @apply flex min-w-0 flex-1 flex-col gap-1;
+  }
+  .confirm-title {
+    @apply font-display text-base font-semibold leading-snug;
+    color: oklch(var(--confirm-surface-foreground));
+  }
+  .confirm-person {
+    @apply text-sm font-semibold;
+    color: oklch(var(--foreground));
+  }
+  .confirm-birth {
+    @apply font-normal;
+    color: oklch(var(--muted-foreground));
+  }
+  .confirm-relationship {
+    @apply text-xs font-medium uppercase tracking-[0.12em];
+    color: oklch(var(--muted-foreground));
+  }
+  .confirm-hint {
+    @apply text-sm leading-relaxed;
+    color: oklch(var(--muted-foreground));
+  }
+  .confirm-mark {
+    @apply flex h-10 w-10 shrink-0 items-center justify-center rounded-full;
+    background-color: oklch(var(--confirm-pending) / 0.14);
+    color: oklch(var(--confirm-pending));
+  }
+  .confirm-actions {
+    @apply flex flex-wrap items-center gap-2.5;
+  }
+  .confirm-accept {
+    @apply inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold;
+    color: oklch(var(--confirm-accent-foreground));
+    background-color: oklch(var(--confirm-accent));
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.18);
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow
+      0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .confirm-accept:hover {
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.24);
+  }
+  .confirm-accept:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(var(--ring) / 0.35);
+  }
+  .confirm-accept:disabled {
+    @apply cursor-not-allowed opacity-60;
+  }
+  .confirm-dispute {
+    @apply inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full border border-border/60 px-5 py-2.5 text-sm font-semibold;
+    color: oklch(var(--confirm-dispute-foreground));
+    background-color: oklch(var(--confirm-dispute) / 0.1);
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .confirm-dispute:hover {
+    background-color: oklch(var(--confirm-dispute) / 0.18);
+  }
+  .confirm-dispute:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(var(--ring) / 0.35);
+  }
+  .confirm-dispute:disabled {
+    @apply cursor-not-allowed opacity-60;
+  }
+  .confirm-submitting {
+    @apply text-xs font-medium;
+    color: oklch(var(--muted-foreground));
+  }
+
+  /* Applicant-safe status card: a compact plate inside the limited onboarding
+     state. The tone dot-pill encodes the derived confirmation state. */
+  .confirm-status-card {
+    @apply flex w-full items-start gap-3 rounded-xl border border-border/60 p-4 text-left;
+    background-color: oklch(var(--card) / 0.6);
+    color: oklch(var(--confirm-surface-foreground));
+  }
+  .confirm-status-mark {
+    @apply flex h-9 w-9 shrink-0 items-center justify-center rounded-full;
+    background-color: oklch(var(--confirm-neutral) / 0.14);
+    color: oklch(var(--confirm-neutral));
+  }
+  .confirm-status-text {
+    @apply flex min-w-0 flex-1 flex-col gap-0.5;
+  }
+  .confirm-status-title {
+    @apply text-sm font-semibold leading-snug;
+    color: oklch(var(--foreground));
+  }
+  .confirm-status-body {
+    @apply text-sm leading-relaxed;
+    color: oklch(var(--muted-foreground));
+  }
+  .confirm-status-pending .confirm-status-mark {
+    background-color: oklch(var(--confirm-pending) / 0.14);
+    color: oklch(var(--confirm-pending));
+  }
+  .confirm-status-success .confirm-status-mark {
+    background-color: oklch(var(--confirm-accent) / 0.14);
+    color: oklch(var(--confirm-accent));
+  }
+  .confirm-status-review .confirm-status-mark {
+    background-color: oklch(var(--confirm-review) / 0.16);
+    color: oklch(var(--confirm-review));
+  }
+  .confirm-status-neutral .confirm-status-mark {
+    background-color: oklch(var(--confirm-neutral) / 0.14);
+    color: oklch(var(--confirm-neutral));
   }
 }

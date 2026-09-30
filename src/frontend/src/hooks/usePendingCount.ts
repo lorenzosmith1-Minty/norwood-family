@@ -1,7 +1,7 @@
 import { createActor } from "@/backend";
 import { useFamilyScopedId } from "@/context/FamilyContext";
 import { useActor } from "@caffeineai/core-infrastructure";
-import { useQuery } from "@tanstack/react-query";
+import { type InvalidateQueryFilters, useQuery } from "@tanstack/react-query";
 import { useIsSteward } from "./useStewardAuthority";
 
 /**
@@ -19,6 +19,32 @@ import { useIsSteward } from "./useStewardAuthority";
  * The backend returns a bigint; it is converted to a number here so the badge
  * can render it directly.
  */
+
+/**
+ * Builds the React Query invalidation filter for the pending-contributions-count
+ * cache, following the same active-family compatibility pattern as
+ * `notificationInvalidation`, `recipeListInvalidation`, `storyInvalidation`, and
+ * `mysteryInvalidation`.
+ *
+ * React Query matches `invalidateQueries` by key PREFIX, so a bare
+ * `["pendingContributionsCount"]` filter would also match
+ * `["pendingContributionsCount", <otherFamily>]` and mark another family's
+ * pending count stale. Both branches are therefore family-exact: the default
+ * family (`familyScopedId` undefined) targets only the exact read key
+ * `["pendingContributionsCount", ""]`, and a non-default family targets only
+ * `["pendingContributionsCount", familyId]` (family id at index 1).
+ */
+export function pendingContributionsCountInvalidation(
+  familyScopedId: string | undefined,
+): InvalidateQueryFilters {
+  if (familyScopedId === undefined) {
+    return { queryKey: ["pendingContributionsCount", ""] };
+  }
+  return {
+    queryKey: ["pendingContributionsCount"],
+    predicate: (query) => query.queryKey[1] === familyScopedId,
+  };
+}
 
 /** The number of pending contributions awaiting steward review, or 0 for non-stewards. */
 export function usePendingCount() {

@@ -65,6 +65,7 @@ export interface AuditEntry {
     summary: string;
     timestamp: bigint;
     actorAccountId: Principal;
+    familyId: string;
 }
 export interface AuthMethods {
     apple: boolean;
@@ -164,6 +165,16 @@ export interface DuplicatePair {
     candidateA: DuplicateCandidate;
     candidateB: DuplicateCandidate;
 }
+export interface EligibleMembershipConfirmationView {
+    displayName: string;
+    birthYear?: bigint;
+    profilePhoto?: Uint8Array;
+    confirmationState: MembershipConfirmationState;
+    pendingPersonId: PersonId;
+    simpleRelationship: SimpleRelationshipType;
+    membershipId: bigint;
+    familyId: FamilyId;
+}
 export type Error_ = {
     __kind__: "FrontendOriginsNotConfigured";
     FrontendOriginsNotConfigured: null;
@@ -215,7 +226,65 @@ export interface Family {
     createdAt: bigint;
     createdBy: Principal;
 }
+export interface FamilyCreationResult {
+    membership: FamilyMembership;
+    founderProfile: PersonProfile;
+    family: Family;
+}
 export type FamilyId = string;
+export interface FamilyInvitation {
+    id: bigint;
+    status: InvitationStatus;
+    invitedByAccountId: AccountId;
+    expiresAt: bigint;
+    createdAt: bigint;
+    invitedByPersonId?: PersonId;
+    cancelledAt?: bigint;
+    personId: PersonId;
+    tokenHash: string;
+    acceptedByAccountId?: AccountId;
+    acceptedAt?: bigint;
+    invitedEmail?: string;
+    familyId: FamilyId;
+    invitationType: InvitationType;
+}
+export type FamilyInvitationCreateOutcome = {
+    __kind__: "AlreadyMember";
+    AlreadyMember: null;
+} | {
+    __kind__: "Created";
+    Created: FamilyInvitationCreated;
+} | {
+    __kind__: "RelationshipNotificationRequired";
+    RelationshipNotificationRequired: null;
+};
+export interface FamilyInvitationCreated {
+    created: boolean;
+    rawToken: string;
+    invitation: FamilyInvitation;
+}
+export interface FamilyInvitationPreview {
+    status: InvitationStatus;
+    expiresAt: bigint;
+    invitationId: bigint;
+    familyDisplayName: string;
+    targetPersonId: PersonId;
+    familyId: FamilyId;
+    targetDisplayName: string;
+    invitationType: InvitationType;
+}
+export interface FamilyMembership {
+    id: bigint;
+    status: MembershipStatus;
+    accountId: AccountId;
+    approvedAt?: bigint;
+    approvedBy?: Principal;
+    createdAt: bigint;
+    joinedAt?: bigint;
+    updatedAt: bigint;
+    personId: PersonId;
+    familyId: FamilyId;
+}
 export type FindingContent = {
     __kind__: "Story";
     Story: {
@@ -262,12 +331,86 @@ export type FindingContent = {
     };
 };
 export type FindingId = bigint;
+export interface FounderProfileInput {
+    birthDate?: string;
+    birthYear?: string;
+    middleName?: string;
+    suffix?: string;
+    preferredName?: string;
+    currentLocation?: string;
+    birthplace?: string;
+    lastName: string;
+    firstName: string;
+}
+export interface FoundingStewardNomination {
+    id: bigint;
+    status: FoundingStewardNominationStatus;
+    createdAt: bigint;
+    nomineeAccountId?: Principal;
+    updatedAt: bigint;
+    founderAccountId: Principal;
+    familyId: FamilyId;
+    nomineeEmail?: string;
+    nomineePersonId: PersonId;
+}
+export interface FoundingStewardStatus {
+    state: FoundingStewardState;
+    activeNomination?: FoundingStewardNomination;
+    familyId: FamilyId;
+}
+export type InvitationRedemptionState = {
+    __kind__: "AlreadyAccepted";
+    AlreadyAccepted: null;
+} | {
+    __kind__: "InvalidToken";
+    InvalidToken: null;
+} | {
+    __kind__: "Declined";
+    Declined: null;
+} | {
+    __kind__: "Cancelled";
+    Cancelled: null;
+} | {
+    __kind__: "Valid";
+    Valid: FamilyInvitationPreview;
+} | {
+    __kind__: "Expired";
+    Expired: null;
+};
+export interface MembershipConfirmation {
+    id: bigint;
+    confirmerAccountId: AccountId;
+    decision: ConfirmationDecision;
+    relationshipId?: bigint;
+    createdAt: bigint;
+    pendingPersonId: PersonId;
+    updatedAt: bigint;
+    confirmerPersonId: PersonId;
+    membershipId: bigint;
+    familyId: FamilyId;
+}
+export interface MembershipConfirmationApplicantView {
+    myDecidedAt?: bigint;
+    createdAt?: bigint;
+    updatedAt?: bigint;
+    myDecision?: ConfirmationDecision;
+    state: MembershipConfirmationState;
+    myRelationship?: SimpleRelationshipType;
+}
+export interface MembershipConfirmationResolutionRecord {
+    resolvedByAccountId: AccountId;
+    resolution: MembershipConfirmationResolution;
+    membershipId: bigint;
+    familyId: FamilyId;
+    resolvedAt: bigint;
+}
 export interface MergeConflict {
     id: bigint;
     field: string;
     status: MergeConflictStatus;
     alternateValue: string;
     canonicalValue: string;
+    familyId: string;
     resolvedAt?: bigint;
     resolvedBy?: Principal;
 }
@@ -438,6 +581,7 @@ export interface ProfileRemovalRequest {
     reviewedBy?: Principal;
     personId: PersonId;
     requestingUserId: Principal;
+    familyId: string;
     reason: string;
 }
 export interface ProposedFinding {
@@ -570,21 +714,21 @@ export interface Resolution {
 }
 export type Result = {
     __kind__: "ok";
+    ok: FamilyInvitationPreview;
+} | {
+    __kind__: "err";
+    err: FamilyInvitationError;
+};
+export type Result_1 = {
+    __kind__: "ok";
     ok: PersonProfile;
 } | {
     __kind__: "err";
     err: EditError;
 };
-export type Result_1 = {
-    __kind__: "ok";
-    ok: Message;
-} | {
-    __kind__: "err";
-    err: MessageError;
-};
 export type Result_10 = {
     __kind__: "ok";
-    ok: StewardRecord;
+    ok: null;
 } | {
     __kind__: "err";
     err: StewardError;
@@ -594,175 +738,294 @@ export type Result_11 = {
     ok: null;
 } | {
     __kind__: "err";
-    err: DeleteError;
+    err: RelationshipAdminError;
 };
 export type Result_12 = {
     __kind__: "ok";
     ok: null;
 } | {
     __kind__: "err";
-    err: MergeError;
+    err: RemoveError;
 };
 export type Result_13 = {
+    __kind__: "ok";
+    ok: RelationshipRequest;
+} | {
+    __kind__: "err";
+    err: RelationshipError;
+};
+export type Result_14 = {
+    __kind__: "ok";
+    ok: StewardRecord;
+} | {
+    __kind__: "err";
+    err: StewardError;
+};
+export type Result_15 = {
+    __kind__: "ok";
+    ok: null;
+} | {
+    __kind__: "err";
+    err: DeleteError;
+};
+export type Result_16 = {
+    __kind__: "ok";
+    ok: null;
+} | {
+    __kind__: "err";
+    err: MergeError;
+};
+export type Result_17 = {
+    __kind__: "ok";
+    ok: FoundingStewardStatus;
+} | {
+    __kind__: "err";
+    err: FoundingStewardError;
+};
+export type Result_18 = {
     __kind__: "ok";
     ok: MergeResult;
 } | {
     __kind__: "err";
     err: MergeError;
 };
-export type Result_14 = {
+export type Result_19 = {
+    __kind__: "ok";
+    ok: Array<EligibleMembershipConfirmationView>;
+} | {
+    __kind__: "err";
+    err: MembershipConfirmationError;
+};
+export type Result_2 = {
+    __kind__: "ok";
+    ok: FamilyMembership;
+} | {
+    __kind__: "err";
+    err: MembershipError;
+};
+export type Result_20 = {
+    __kind__: "ok";
+    ok: Array<FamilyMembership>;
+} | {
+    __kind__: "err";
+    err: MembershipError;
+};
+export type Result_21 = {
+    __kind__: "ok";
+    ok: boolean;
+} | {
+    __kind__: "err";
+    err: MembershipError;
+};
+export type Result_22 = {
+    __kind__: "ok";
+    ok: FamilyMembership | null;
+} | {
+    __kind__: "err";
+    err: MembershipError;
+};
+export type Result_23 = {
+    __kind__: "ok";
+    ok: MembershipConfirmationApplicantView;
+} | {
+    __kind__: "err";
+    err: MembershipConfirmationError;
+};
+export type Result_24 = {
+    __kind__: "ok";
+    ok: MembershipConfirmation | null;
+} | {
+    __kind__: "err";
+    err: MembershipConfirmationError;
+};
+export type Result_25 = {
     __kind__: "ok";
     ok: AuthMethods;
 } | {
     __kind__: "err";
     err: AccountError;
 };
-export type Result_15 = {
+export type Result_26 = {
     __kind__: "ok";
     ok: AccountId;
 } | {
     __kind__: "err";
     err: AccountError;
 };
-export type Result_16 = {
+export type Result_27 = {
+    __kind__: "ok";
+    ok: [MembershipConfirmationState, Array<MembershipConfirmation>, MembershipConfirmationResolutionRecord | null];
+} | {
+    __kind__: "err";
+    err: MembershipConfirmationError;
+};
+export type Result_28 = {
+    __kind__: "ok";
+    ok: InvitationRedemptionState;
+} | {
+    __kind__: "err";
+    err: FamilyInvitationError;
+};
+export type Result_29 = {
     __kind__: "ok";
     ok: SuccessorDesignation;
 } | {
     __kind__: "err";
     err: StewardError;
 };
-export type Result_17 = {
+export type Result_3 = {
+    __kind__: "ok";
+    ok: Message;
+} | {
+    __kind__: "err";
+    err: MessageError;
+};
+export type Result_30 = {
+    __kind__: "ok";
+    ok: FamilyInvitation;
+} | {
+    __kind__: "err";
+    err: FamilyInvitationError;
+};
+export type Result_31 = {
     __kind__: "ok";
     ok: SourceUploadResult;
 } | {
     __kind__: "err";
     err: ResearchError;
 };
-export type Result_18 = {
+export type Result_32 = {
     __kind__: "ok";
     ok: SourceRecord;
 } | {
     __kind__: "err";
     err: ResearchError;
 };
-export type Result_19 = {
+export type Result_33 = {
     __kind__: "ok";
     ok: RelationshipProposal;
 } | {
     __kind__: "err";
     err: ResearchError;
 };
-export type Result_2 = {
-    __kind__: "ok";
-    ok: null;
-} | {
-    __kind__: "err";
-    err: ArchiveError;
-};
-export type Result_20 = {
+export type Result_34 = {
     __kind__: "ok";
     ok: NewPersonCandidate;
 } | {
     __kind__: "err";
     err: ResearchError;
 };
-export type Result_21 = {
+export type Result_35 = {
     __kind__: "ok";
     ok: PersonProfile;
 } | {
     __kind__: "err";
     err: CreateError;
 };
-export type Result_22 = {
+export type Result_36 = {
+    __kind__: "ok";
+    ok: FamilyInvitationCreateOutcome;
+} | {
+    __kind__: "err";
+    err: FamilyInvitationError;
+};
+export type Result_37 = {
     __kind__: "ok";
     ok: ProposedFinding;
 } | {
     __kind__: "err";
     err: ResearchError;
 };
-export type Result_23 = {
+export type Result_38 = {
+    __kind__: "ok";
+    ok: FamilyCreationResult;
+} | {
+    __kind__: "err";
+    err: FamilyCreationError;
+};
+export type Result_39 = {
     __kind__: "ok";
     ok: Conversation;
 } | {
     __kind__: "err";
     err: MessageError;
 };
-export type Result_24 = {
+export type Result_4 = {
+    __kind__: "ok";
+    ok: null;
+} | {
+    __kind__: "err";
+    err: ArchiveError;
+};
+export type Result_40 = {
     __kind__: "ok";
     ok: Relationship;
 } | {
     __kind__: "err";
     err: RelationshipAdminError;
 };
-export type Result_25 = {
+export type Result_41 = {
+    __kind__: "ok";
+    ok: MembershipConfirmation;
+} | {
+    __kind__: "err";
+    err: MembershipConfirmationError;
+};
+export type Result_42 = {
     __kind__: "ok";
     ok: StewardClaimResult;
 } | {
     __kind__: "err";
     err: StewardClaimError;
 };
-export type Result_26 = {
+export type Result_43 = {
     __kind__: "ok";
     ok: Account;
 } | {
     __kind__: "err";
     err: AccountError;
 };
-export type Result_27 = {
+export type Result_44 = {
     __kind__: "ok";
     ok: null;
 } | {
     __kind__: "err";
     err: Error_;
 };
-export type Result_3 = {
+export type Result_5 = {
+    __kind__: "ok";
+    ok: FamilyMembership;
+} | {
+    __kind__: "err";
+    err: MembershipConfirmationError;
+};
+export type Result_6 = {
     __kind__: "ok";
     ok: ConflictReviewItem;
 } | {
     __kind__: "err";
     err: ResearchError;
 };
-export type Result_4 = {
+export type Result_7 = {
+    __kind__: "ok";
+    ok: FamilyInvitationCreated;
+} | {
+    __kind__: "err";
+    err: FamilyInvitationError;
+};
+export type Result_8 = {
     __kind__: "ok";
     ok: ProfileRemovalRequest;
 } | {
     __kind__: "err";
     err: RemovalError;
 };
-export type Result_5 = {
+export type Result_9 = {
     __kind__: "ok";
     ok: ProfileClaim;
 } | {
     __kind__: "err";
     err: ClaimError;
-};
-export type Result_6 = {
-    __kind__: "ok";
-    ok: null;
-} | {
-    __kind__: "err";
-    err: StewardError;
-};
-export type Result_7 = {
-    __kind__: "ok";
-    ok: null;
-} | {
-    __kind__: "err";
-    err: RelationshipAdminError;
-};
-export type Result_8 = {
-    __kind__: "ok";
-    ok: null;
-} | {
-    __kind__: "err";
-    err: RemoveError;
-};
-export type Result_9 = {
-    __kind__: "ok";
-    ok: RelationshipRequest;
-} | {
-    __kind__: "err";
-    err: RelationshipError;
 };
 export interface Result__1 {
     hasMore: boolean;
@@ -836,6 +1099,7 @@ export interface StewardIdentity {
 export interface StewardRecord {
     assignedAt: bigint;
     assignedBy: Principal;
+    founding: boolean;
     stewardAccountId: Principal;
     successorPriority?: bigint;
     roleStatus: StewardRoleStatus;
@@ -983,6 +1247,10 @@ export enum ClaimStatus {
     Unclaimed = "Unclaimed",
     Claimed = "Claimed"
 }
+export enum ConfirmationDecision {
+    Disputed = "Disputed",
+    Confirmed = "Confirmed"
+}
 export enum ConflictResolutionAction {
     NeedsResearch = "NeedsResearch",
     PreserveBoth = "PreserveBoth",
@@ -1023,6 +1291,27 @@ export enum EvidenceStatus {
     FamilyHistory = "FamilyHistory",
     PersonalMemory = "PersonalMemory"
 }
+export enum FamilyCreationError {
+    InvalidInput = "InvalidInput",
+    NotSignedIn = "NotSignedIn",
+    ProfileAlreadyOwned = "ProfileAlreadyOwned",
+    AlreadyMember = "AlreadyMember"
+}
+export enum FamilyInvitationError {
+    InvitationNotFound = "InvitationNotFound",
+    InvalidInput = "InvalidInput",
+    NomineeMismatch = "NomineeMismatch",
+    PersonNotInFamily = "PersonNotInFamily",
+    InvalidTransition = "InvalidTransition",
+    NominationNotFound = "NominationNotFound",
+    NotAuthorized = "NotAuthorized",
+    InvalidToken = "InvalidToken",
+    NotSignedIn = "NotSignedIn",
+    FamilyNotFound = "FamilyNotFound",
+    AlreadyMember = "AlreadyMember",
+    Expired = "Expired",
+    RelationshipNotificationRequired = "RelationshipNotificationRequired"
+}
 export enum FamilyStatus {
     active = "active",
     archived = "archived"
@@ -1035,9 +1324,84 @@ export enum FindingType {
     Mystery = "Mystery",
     Relationship = "Relationship"
 }
+export enum FoundingStewardError {
+    InvalidInput = "InvalidInput",
+    NotFounder = "NotFounder",
+    InvalidTransition = "InvalidTransition",
+    NominationNotFound = "NominationNotFound",
+    NotAuthorized = "NotAuthorized",
+    AlreadySteward = "AlreadySteward",
+    NotSignedIn = "NotSignedIn",
+    NomineeNotActiveMember = "NomineeNotActiveMember",
+    FamilyNotFound = "FamilyNotFound",
+    NomineeNotInFamily = "NomineeNotInFamily"
+}
+export enum FoundingStewardNominationStatus {
+    Accepted = "Accepted",
+    Declined = "Declined",
+    Cancelled = "Cancelled",
+    Pending = "Pending"
+}
+export enum FoundingStewardState {
+    FounderAccepted = "FounderAccepted",
+    Transferred = "Transferred",
+    Undecided = "Undecided",
+    NominationPending = "NominationPending"
+}
+export enum InvitationStatus {
+    Accepted = "Accepted",
+    Declined = "Declined",
+    Cancelled = "Cancelled",
+    Expired = "Expired",
+    Pending = "Pending"
+}
+export enum InvitationType {
+    FamilyMember = "FamilyMember",
+    FoundingSteward = "FoundingSteward"
+}
 export enum LivingStatus {
     Living = "Living",
     Deceased = "Deceased"
+}
+export enum MembershipConfirmationError {
+    NoActiveMembership = "NoActiveMembership",
+    NotSteward = "NotSteward",
+    MembershipNotFound = "MembershipNotFound",
+    NotAuthorized = "NotAuthorized",
+    ActivationFailed = "ActivationFailed",
+    NotSignedIn = "NotSignedIn",
+    SelfConfirmation = "SelfConfirmation",
+    MembershipNotPending = "MembershipNotPending",
+    FamilyNotFound = "FamilyNotFound",
+    NoQualifyingRelationship = "NoQualifyingRelationship",
+    AlreadyDecided = "AlreadyDecided"
+}
+export enum MembershipConfirmationResolution {
+    Approve = "Approve",
+    Reject = "Reject",
+    NeedsMoreInformation = "NeedsMoreInformation"
+}
+export enum MembershipConfirmationState {
+    StewardReviewRequired = "StewardReviewRequired",
+    ResolvedBySteward = "ResolvedBySteward",
+    AwaitingConfirmation = "AwaitingConfirmation",
+    ApprovedByRelative = "ApprovedByRelative"
+}
+export enum MembershipError {
+    PersonNotInFamily = "PersonNotInFamily",
+    MembershipNotFound = "MembershipNotFound",
+    InvalidTransition = "InvalidTransition",
+    NotAuthorized = "NotAuthorized",
+    NotSignedIn = "NotSignedIn",
+    ProfileAlreadyOwned = "ProfileAlreadyOwned",
+    FamilyNotFound = "FamilyNotFound",
+    AlreadyMember = "AlreadyMember"
+}
+export enum MembershipStatus {
+    Left = "Left",
+    Active = "Active",
+    Suspended = "Suspended",
+    Pending = "Pending"
 }
 export enum MergeConflictStatus {
     Resolved = "Resolved",
@@ -1196,6 +1560,12 @@ export enum ReviewStatus {
     Rejected = "Rejected",
     Pending = "Pending"
 }
+export enum SimpleRelationshipType {
+    Parent = "Parent",
+    Sibling = "Sibling",
+    SpousePartner = "SpousePartner",
+    Child = "Child"
+}
 export enum SourceStatus {
     Copy = "Copy",
     Unverified = "Unverified",
@@ -1262,11 +1632,37 @@ export enum UserRole {
 }
 export interface backendInterface {
     /**
+     * / Accepts a raw invite token for the authenticated caller. The token must be
+     * / valid, `#Pending`, and unexpired, and the target profile must still be
+     * / unclaimed. For `#FamilyMember` this creates or reuses a `#Pending`
+     * / `FamilyMembership` linking the caller, `familyId`, and `personId`; it never
+     * / auto-activates. For `#FoundingSteward` the membership follows the existing
+     * / membership/founding-Steward rule without bypassing nominee acceptance. The
+     * / invitation is marked `#Accepted` only when acceptance succeeds.
+     */
+    acceptFamilyInvitation(rawToken: string): Promise<Result_30>;
+    /**
+     * / The authenticated nominee accepts a pending founding-Steward nomination.
+     */
+    acceptFoundingStewardNomination(familyId: string, nominationId: bigint): Promise<Result_17>;
+    /**
+     * / The family founder accepts founding Stewardship for their own family.
+     */
+    acceptFoundingStewardship(familyId: string): Promise<Result_17>;
+    /**
+     * / Activates a `#Pending` membership in `familyId` through the authorized
+     * / family approval path. Steward of `familyId` only; there is no unrestricted
+     * / self-promotion to `#Active`. The persisted `approvedBy` is always the real
+     * / authenticated caller (the approving Steward) and `approvedAt` is the
+     * / current time; no caller-supplied approver identity is trusted.
+     */
+    activateMembershipForFamily(familyId: FamilyId, membershipId: bigint): Promise<Result_2>;
+    /**
      * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
      * / delegates to `activateSuccessorForFamily` with the default family id so
      * / current Norwood behavior is unchanged.
      */
-    activateSuccessor(personId: PersonId): Promise<Result_10>;
+    activateSuccessor(personId: PersonId): Promise<Result_14>;
     /**
      * / Activates/promotes a designated successor into the active steward role in
      * / `familyId`. Canonical family-scoped form: the caller must be an active
@@ -1274,7 +1670,7 @@ export interface backendInterface {
      * / `familyId`, and the activated Steward record remains in `familyId`.
      * / Activating a successor in one family never modifies another family's state.
      */
-    activateSuccessorForFamily(familyId: string, personId: PersonId): Promise<Result_10>;
+    activateSuccessorForFamily(familyId: string, personId: PersonId): Promise<Result_14>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for `addBoardReplyForFamily`.
      */
@@ -1314,7 +1710,7 @@ export interface backendInterface {
      * / delegates to `addRelationshipForFamily` with the default family id so
      * / current Norwood behavior is unchanged.
      */
-    addRelationship(fromPersonId: PersonId, toPersonId: PersonId, relationshipType: RelationshipType): Promise<Result_24>;
+    addRelationship(fromPersonId: PersonId, toPersonId: PersonId, relationshipType: RelationshipType): Promise<Result_40>;
     /**
      * / Adds a missing relationship to `familyId`'s family graph. Canonical
      * / family-scoped form: the caller must be an active Steward of `familyId`,
@@ -1322,7 +1718,7 @@ export interface backendInterface {
      * / `familyId`, and the new Relationship is stamped with `familyId`, so no
      * / cross-family relationship edge can be created.
      */
-    addRelationshipForFamily(familyId: string, fromPersonId: PersonId, toPersonId: PersonId, relationshipType: RelationshipType): Promise<Result_24>;
+    addRelationshipForFamily(familyId: string, fromPersonId: PersonId, toPersonId: PersonId, relationshipType: RelationshipType): Promise<Result_40>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `approveArchiveItemForFamily`.
@@ -1379,10 +1775,18 @@ export interface backendInterface {
      */
     approveProfileClaimForFamily(familyId: FamilyId, claimId: bigint): Promise<ProfileClaim | null>;
     /**
-     * / Approves a profile removal request, archiving the profile. Family Steward
-     * / only.
+     * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+     * / delegates to `approveProfileRemovalForFamily` with the default family id so
+     * / current Norwood behavior is unchanged.
      */
     approveProfileRemoval(requestId: bigint): Promise<ProfileRemovalRequest | null>;
+    /**
+     * / Approves a profile removal request in `familyId`, archiving the profile.
+     * / Canonical family-scoped form: the caller must be an active Steward of
+     * / `familyId`, and the request must belong to `familyId`, so a request id
+     * / alone never crosses a family boundary. Family Steward of `familyId` only.
+     */
+    approveProfileRemovalForFamily(familyId: string, requestId: bigint): Promise<ProfileRemovalRequest | null>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for `approveRecipeForFamily`.
      */
@@ -1460,18 +1864,27 @@ export interface backendInterface {
      */
     archiveBoardPostForFamily(familyId: FamilyId, postId: PostId): Promise<Post | null>;
     /**
-     * / Archives a profile, removing it from normal family browsing while
-     * / preserving relationships, media, timeline, sources, and ownership history.
-     * / Family Steward only.
+     * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+     * / delegates to `archiveProfileForFamily` with the default family id so
+     * / current Norwood behavior is unchanged.
      */
-    archiveProfile(personId: PersonId): Promise<Result_2>;
+    archiveProfile(personId: PersonId): Promise<Result_4>;
+    /**
+     * / Archives a profile in `familyId`, removing it from normal family browsing
+     * / while preserving relationships, media, timeline, sources, and ownership
+     * / history. Canonical family-scoped form: the caller must be an active Steward
+     * / of `familyId`, and the target profile must belong to `familyId`, so a
+     * / `personId` alone never crosses a family boundary. Family Steward of
+     * / `familyId` only.
+     */
+    archiveProfileForFamily(familyId: string, personId: PersonId): Promise<Result_4>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     /**
      * / Binds an authentication method (Google or Apple) to the signed-in caller's
      * / account. The account id is the caller's stable principal, so the same
      * / person profile stays intact if the provider changes.
      */
-    bindAuthMethod(method: AuthMethod): Promise<Result_26>;
+    bindAuthMethod(method: AuthMethod): Promise<Result_43>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for `blockUserForFamily`.
      */
@@ -1503,6 +1916,16 @@ export interface backendInterface {
      */
     canMessagePersonForFamily(familyId: FamilyId, personId: string): Promise<boolean>;
     /**
+     * / The inviter or an active Steward of `familyId` cancels a `#Pending`
+     * / invitation. The invitation becomes `#Cancelled` and can never be accepted
+     * / afterwards.
+     */
+    cancelFamilyInvitation(familyId: string, invitationId: bigint): Promise<Result_30>;
+    /**
+     * / The founder cancels a pending founding-Steward nomination.
+     */
+    cancelFoundingStewardNomination(familyId: string, nominationId: bigint): Promise<Result_17>;
+    /**
      * / One-time "Claim Family Steward" bootstrap. Any signed-in account may claim
      * / while no active Steward exists; no approved family profile is required.
      * / Succeeds only when no active Steward exists, creating an ACTIVE
@@ -1510,12 +1933,32 @@ export interface backendInterface {
      * / permanently refuses. Tenancy 1B: delegates to the canonical family-scoped
      * / helper with the default family id.
      */
-    claimSteward(): Promise<Result_25>;
+    claimSteward(): Promise<Result_42>;
     /**
-     * / Corrects the relationship type of an existing relationship. Family Steward
-     * / only.
+     * / Records the signed-in caller's trusted-relative decision about a membership
+     * / in `familyId`. A decision is accepted when the membership is `#Pending`, or
+     * / when it is `#Active` and the confirmation case shows it was activated by
+     * / relative confirmation and has not been finally resolved by a Steward. The
+     * / confirmer identity and the qualifying relationship are derived server-side;
+     * / the caller can never spoof another confirmer. Anonymous callers get
+     * / `#err(#NotSignedIn)`.
      */
-    correctRelationshipType(relationshipId: bigint, relationshipType: RelationshipType): Promise<Result_24>;
+    confirmPendingMembership(familyId: FamilyId, membershipId: bigint, decision: ConfirmationDecision): Promise<Result_41>;
+    /**
+     * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+     * / delegates to `correctRelationshipTypeForFamily` with the default family id
+     * / so current Norwood behavior is unchanged.
+     */
+    correctRelationshipType(relationshipId: bigint, relationshipType: RelationshipType): Promise<Result_40>;
+    /**
+     * / Corrects the relationship type of an existing relationship in `familyId`.
+     * / Canonical family-scoped form: the caller must be an active Steward of
+     * / `familyId`, the relationship must belong to `familyId`, and both referenced
+     * / people must still belong to `familyId`, so a `relationshipId` alone never
+     * / crosses a family boundary and only that family's relationship is updated.
+     * / Existing correction/audit semantics are preserved.
+     */
+    correctRelationshipTypeForFamily(familyId: string, relationshipId: bigint, relationshipType: RelationshipType): Promise<Result_40>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for `createBoardPostForFamily`.
      */
@@ -1561,17 +2004,53 @@ export interface backendInterface {
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `createConversationForFamily`.
      */
-    createConversation(recipientPersonId: string): Promise<Result_23>;
+    createConversation(recipientPersonId: string): Promise<Result_39>;
     /**
      * / Creates a 1:1 conversation in `familyId` between the caller and the person
      * / identified by `recipientPersonId`. Approved members of `familyId` only;
      * / both participants must belong to `familyId`.
      */
-    createConversationForFamily(familyId: FamilyId, recipientPersonId: string): Promise<Result_23>;
+    createConversationForFamily(familyId: FamilyId, recipientPersonId: string): Promise<Result_39>;
+    /**
+     * / Creates a `#Pending` family-member invitation for an unclaimed profile in
+     * / `familyId`. Callable by an approved member or active Steward of `familyId`.
+     * / The target profile must belong to `familyId` and be unclaimed with no
+     * / active membership owner; a target that is already an active member returns
+     * / `#AlreadyMember` / `#RelationshipNotificationRequired` and creates nothing.
+     * / A repeat create for the same `familyId` + `personId` + `invitationType`
+     * / reuses the existing `#Pending` invitation rather than duplicating it. The
+     * / raw token is returned once; only its hash is persisted. No membership is
+     * / created.
+     */
+    createFamilyInvitation(familyId: string, personId: string, invitedEmail: string | null): Promise<Result_36>;
+    /**
+     * / Creates a brand-new family with the authenticated caller as its founder.
+     * /
+     * / The transaction creates exactly three linked records: the `Family`, the
+     * / founder's `PersonProfile` inside that family, and an `#Active`
+     * / `FamilyMembership` linking the caller to the founder profile. It returns
+     * / all three together so a later onboarding UI can continue.
+     * /
+     * / Anonymous callers receive `#err(#NotSignedIn)`. A blank display name or a
+     * / missing first/last name receives `#err(#InvalidInput)`; nothing is created
+     * / in either case. The founder account is always the authenticated caller —
+     * / there is no account parameter, so a caller can never name another account
+     * / as founder.
+     * /
+     * / `idempotencyKey` is REQUIRED and must be non-empty. When it was already
+     * / used by this caller, the previously created family/profile/membership are
+     * / returned instead of creating duplicate records, so a retried or
+     * / double-submitted onboarding attempt is safe. A blank or whitespace-only key
+     * / receives `#err(#InvalidInput)` and creates nothing, so the canonical
+     * / creation path can never create a family without retry protection.
+     * /
+     * / No `StewardRecord` is created by this operation.
+     */
+    createFamilyWithFounder(displayName: string, input: FounderProfileInput, idempotencyKey: string): Promise<Result_38>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for `createFindingForFamily`.
      */
-    createFinding(title: string, evidenceLabel: EvidenceLabel, findingType: FindingType, content: FindingContent, sourceId: SourceId, personId: string | null, newPersonCandidateId: bigint | null): Promise<Result_22>;
+    createFinding(title: string, evidenceLabel: EvidenceLabel, findingType: FindingType, content: FindingContent, sourceId: SourceId, personId: string | null, newPersonCandidateId: bigint | null): Promise<Result_37>;
     /**
      * / Creates a new proposed finding in `familyId`. Requires an approved member
      * / of `familyId`; the caller is recorded as the submitter. The linked
@@ -1580,21 +2059,29 @@ export interface backendInterface {
      * / against a profile in Family B. The finding enters as `#Pending` and its
      * / `familyId` is the requested `familyId`.
      */
-    createFindingForFamily(familyId: FamilyId, title: string, evidenceLabel: EvidenceLabel, findingType: FindingType, content: FindingContent, sourceId: SourceId, personId: string | null, newPersonCandidateId: bigint | null): Promise<Result_22>;
+    createFindingForFamily(familyId: FamilyId, title: string, evidenceLabel: EvidenceLabel, findingType: FindingType, content: FindingContent, sourceId: SourceId, personId: string | null, newPersonCandidateId: bigint | null): Promise<Result_37>;
+    /**
+     * / Creates a `#Pending` `#FoundingSteward` invitation linked to the existing
+     * / Phase 1B-2 nomination for `familyId` + `personId`. The nomination must
+     * / exist and be `#Pending`; the invitation carries no Steward authority and
+     * / does not duplicate nomination state. The nominee still becomes Steward only
+     * / through the existing authenticated founding-Steward acceptance rule.
+     */
+    createFoundingStewardInvitation(familyId: string, personId: string, nomineeEmail: string | null): Promise<Result_36>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for `createMyselfForFamily`.
      */
-    createMyself(name: string): Promise<Result_21>;
+    createMyself(name: string): Promise<Result_35>;
     /**
      * / "Add Myself to This Family": creates a minimal person profile in
      * / `familyId` for a user who does not already exist there.
      */
-    createMyselfForFamily(familyId: FamilyId, name: string): Promise<Result_21>;
+    createMyselfForFamily(familyId: FamilyId, name: string): Promise<Result_35>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `createNewPersonCandidateForFamily`.
      */
-    createNewPersonCandidate(name: string, details: string, sourceId: SourceId): Promise<Result_20>;
+    createNewPersonCandidate(name: string, details: string, sourceId: SourceId): Promise<Result_34>;
     /**
      * / Creates a new New Person candidate in `familyId`. Requires an approved
      * / member of `familyId`; the caller is recorded as the submitter. The linked
@@ -1603,12 +2090,18 @@ export interface backendInterface {
      * / Candidate in Family B. The candidate enters as `#Pending` and its `familyId`
      * / is the requested `familyId`.
      */
-    createNewPersonCandidateForFamily(familyId: FamilyId, name: string, details: string, sourceId: SourceId): Promise<Result_20>;
+    createNewPersonCandidateForFamily(familyId: FamilyId, name: string, details: string, sourceId: SourceId): Promise<Result_34>;
+    /**
+     * / Creates a `#Pending` membership for `accountId` linked to `personId` in
+     * / `familyId`. Requires an authorized family approval path (Steward authority
+     * / for now). Rejects a `personId` that does not belong to `familyId`.
+     */
+    createPendingMembershipForFamily(familyId: FamilyId, accountId: AccountId, personId: PersonId): Promise<Result_2>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `createRelationshipProposalForFamily`.
      */
-    createRelationshipProposal(fromPersonId: string, toPersonId: string, relationshipType: string, sourceId: SourceId): Promise<Result_19>;
+    createRelationshipProposal(fromPersonId: string, toPersonId: string, relationshipType: string, sourceId: SourceId): Promise<Result_33>;
     /**
      * / Creates a new relationship proposal in `familyId`. Requires an approved
      * / member of `familyId`; the caller is recorded as the submitter. Both
@@ -1618,7 +2111,7 @@ export interface backendInterface {
      * / is the requested `familyId`. No approval or confirmed relationship is
      * / created by this flow.
      */
-    createRelationshipProposalForFamily(familyId: FamilyId, fromPersonId: string, toPersonId: string, relationshipType: string, sourceId: SourceId): Promise<Result_19>;
+    createRelationshipProposalForFamily(familyId: FamilyId, fromPersonId: string, toPersonId: string, relationshipType: string, sourceId: SourceId): Promise<Result_33>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for `createSourceForFamily`.
      * / Deprecated single-family form: delegates to the canonical family-scoped
@@ -1627,7 +2120,7 @@ export interface backendInterface {
      * / and will be removed once the frontend passes an explicit familyId
      * / everywhere.
      */
-    createSource(title: string, sourceType: SourceType, description: string, archiveItemId: bigint | null): Promise<Result_18>;
+    createSource(title: string, sourceType: SourceType, description: string, archiveItemId: bigint | null): Promise<Result_32>;
     /**
      * / Creates a new source record in `familyId`. Requires an approved member or
      * / Steward of `familyId`; the caller is recorded as the contributor. The
@@ -1638,14 +2131,14 @@ export interface backendInterface {
      * / family-scoped non-upload Source creation path and never relies on the
      * / default family.
      */
-    createSourceForFamily(familyId: FamilyId, title: string, sourceType: SourceType, description: string, archiveItemId: bigint | null): Promise<Result_18>;
+    createSourceForFamily(familyId: FamilyId, title: string, sourceType: SourceType, description: string, archiveItemId: bigint | null): Promise<Result_32>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `createSourceWithUploadForFamily`. Deprecated single-family form:
      * / delegates to the canonical family-scoped endpoint with
      * / `FamilyTypes.DEFAULT_FAMILY_ID`, so current Norwood behavior is unchanged.
      */
-    createSourceWithUpload(title: string, sourceType: SourceType, description: string, mimeType: string, blob: ExternalBlob, tags: Array<string>, era: string, year: bigint | null, relatedMemberIds: Array<string>, privacyLevel: PrivacyLevel, classification: ArchiveItemClassification, primarySpeaker: OralHistorySpeaker | null, filename: string): Promise<Result_17>;
+    createSourceWithUpload(title: string, sourceType: SourceType, description: string, mimeType: string, blob: ExternalBlob, tags: Array<string>, era: string, year: bigint | null, relatedMemberIds: Array<string>, privacyLevel: PrivacyLevel, classification: ArchiveItemClassification, primarySpeaker: OralHistorySpeaker | null, filename: string): Promise<Result_31>;
     /**
      * / Uploads a research source file into `familyId`: creates one canonical
      * / Archive item (pending) in that family and links a new Research Source
@@ -1654,13 +2147,22 @@ export interface backendInterface {
      * / contributor of both records. Every `relatedMemberIds` entry must belong to
      * / `familyId`.
      */
-    createSourceWithUploadForFamily(familyId: FamilyId, title: string, sourceType: SourceType, description: string, mimeType: string, blob: ExternalBlob, tags: Array<string>, era: string, year: bigint | null, relatedMemberIds: Array<string>, privacyLevel: PrivacyLevel, classification: ArchiveItemClassification, primarySpeaker: OralHistorySpeaker | null, filename: string): Promise<Result_17>;
+    createSourceWithUploadForFamily(familyId: FamilyId, title: string, sourceType: SourceType, description: string, mimeType: string, blob: ExternalBlob, tags: Array<string>, era: string, year: bigint | null, relatedMemberIds: Array<string>, privacyLevel: PrivacyLevel, classification: ArchiveItemClassification, primarySpeaker: OralHistorySpeaker | null, filename: string): Promise<Result_31>;
+    /**
+     * / The invited user declines a raw invite token. The invitation becomes
+     * / `#Declined` and can never be accepted afterwards.
+     */
+    declineFamilyInvitation(rawToken: string): Promise<Result_30>;
+    /**
+     * / The nominee declines a pending founding-Steward nomination.
+     */
+    declineFoundingStewardNomination(familyId: string, nominationId: bigint): Promise<Result_17>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
      * / delegates to `designateSuccessorForFamily` with the default family id so
      * / current Norwood behavior is unchanged.
      */
-    designateSuccessor(personId: PersonId, priority: bigint): Promise<Result_16>;
+    designateSuccessor(personId: PersonId, priority: bigint): Promise<Result_29>;
     /**
      * / Designates an approved claimed member of `familyId` as a successor steward
      * / with a priority/order. Canonical family-scoped form: the caller must be an
@@ -1670,7 +2172,7 @@ export interface backendInterface {
      * / until activated. A Steward of one family can never designate a member of
      * / another family.
      */
-    designateSuccessorForFamily(familyId: string, personId: PersonId, priority: bigint): Promise<Result_16>;
+    designateSuccessorForFamily(familyId: string, personId: PersonId, priority: bigint): Promise<Result_29>;
     /**
      * / Dismisses (deletes) the signed-in caller's notification with `id` in
      * / `familyId`. Returns `true` when a matching notification was removed,
@@ -1688,6 +2190,14 @@ export interface backendInterface {
      * / `archiveItemId` alone cannot cross the family boundary.
      */
     getArchiveItemForFamily(familyId: FamilyId, id: ArchiveItemId): Promise<ArchiveItem | null>;
+    /**
+     * / Returns the archived profile for `personId` in `familyId`, or `null` when
+     * / the person is not archived in that family. Canonical family-scoped direct
+     * / lookup: the caller must be an active Steward of `familyId`, and a
+     * / `personId` alone never crosses a family boundary. Family Steward of
+     * / `familyId` only.
+     */
+    getArchivedProfileForFamily(familyId: string, personId: PersonId): Promise<PersonProfile | null>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for `getBoardPostForFamily`.
      */
@@ -1736,14 +2246,70 @@ export interface backendInterface {
      */
     getFindingForFamily(familyId: FamilyId, findingId: FindingId): Promise<ProposedFinding | null>;
     /**
+     * / Reads the founding-Steward onboarding status of `familyId`: the current
+     * / state plus the active pending nomination, when one exists.
+     */
+    getFoundingStewardStatusForFamily(familyId: string): Promise<Result_17>;
+    /**
+     * / Resolves a raw invite token to a safe, discriminated redemption state for
+     * / the invitation landing/terminal UI. Read-only: it never mutates state and
+     * / never creates a membership. Returns `#Valid(preview)` for a `#Pending`,
+     * / unexpired invitation, and `#Expired` / `#Cancelled` / `#Declined` /
+     * / `#AlreadyAccepted` / `#InvalidToken` otherwise. It never reveals whether
+     * / unrelated accounts or families exist and never includes `tokenHash` or any
+     * / member identity beyond the existing preview fields.
+     */
+    getInvitationRedemptionState(rawToken: string): Promise<Result_28>;
+    /**
+     * / Returns the FULL, Steward-authorized confirmation record for `membershipId`
+     * / in `familyId`: the derived case state, every recorded decision, and any
+     * / persisted Steward resolution. Allowed only when the caller is an active
+     * / Steward of `familyId`; anonymous callers get `#err(#NotSignedIn)` and any
+     * / other caller gets `#err(#NotAuthorized)`. Confirmations and resolutions
+     * / from other families are never returned.
+     */
+    getMembershipConfirmationStateForSteward(familyId: FamilyId, membershipId: bigint): Promise<Result_27>;
+    /**
+     * / Returns the account's membership in `familyId` only, or `null` when the
+     * / account has no membership in that family. Allowed only when `accountId`
+     * / equals the caller, or the caller is an active Steward of `familyId`;
+     * / otherwise `#err(#NotAuthorized)` (anonymous callers get
+     * / `#err(#NotSignedIn)`). The denial is identical whether or not the target
+     * / account belongs to another family.
+     */
+    getMembershipForFamily(familyId: FamilyId, accountId: AccountId): Promise<Result_22>;
+    /**
      * / Returns the stable account id of the signed-in caller. Anonymous callers
      * / receive #NotSignedIn.
      */
-    getMyAccountId(): Promise<Result_15>;
+    getMyAccountId(): Promise<Result_26>;
     /**
      * / Returns the authentication methods bound to the signed-in caller's account.
      */
-    getMyAuthMethods(): Promise<Result_14>;
+    getMyAuthMethods(): Promise<Result_25>;
+    /**
+     * / Returns the signed-in caller's own recorded decision for `membershipId` in
+     * / `familyId`, or `null` when the caller has not decided. Anonymous callers
+     * / get `#err(#NotSignedIn)`.
+     */
+    getMyConfirmationForMembership(familyId: FamilyId, membershipId: bigint): Promise<Result_24>;
+    /**
+     * / Returns the REDACTED, applicant-safe confirmation view for `membershipId`
+     * / in `familyId`: the derived case state, the caller's own decision and simple
+     * / relationship label, and timestamps. It never exposes a confirmer account
+     * / principal, sensitive relationship context, private notes, or unrelated
+     * / profile information. Allowed only when the caller is the pending
+     * / membership's own account; anonymous callers get `#err(#NotSignedIn)` and
+     * / any other caller gets `#err(#NotAuthorized)`. A confirmation in another
+     * / family is never returned.
+     */
+    getMyMembershipConfirmationState(familyId: FamilyId, membershipId: bigint): Promise<Result_23>;
+    /**
+     * / Returns the signed-in caller's own membership in `familyId`, or `null`
+     * / when the caller has no membership in that family. Anonymous callers are
+     * / denied with `#err(#NotSignedIn)`.
+     */
+    getMyMembershipForFamily(familyId: FamilyId): Promise<Result_22>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for `getMyProfileForFamily`.
      */
@@ -1915,10 +2481,20 @@ export interface backendInterface {
      */
     getReviewQueueForFamily(familyId: FamilyId): Promise<ReviewQueue>;
     /**
-     * / Returns a warning encouraging successor designation when only one steward
-     * / exists, or `null` when there are multiple stewards. Family Steward only.
+     * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+     * / delegates to `getSingleStewardWarningForFamily` with the default family id
+     * / so current Norwood behavior is unchanged. Family Steward only.
      */
     getSingleStewardWarning(): Promise<string | null>;
+    /**
+     * / Returns a warning encouraging successor designation when only one steward
+     * / of `familyId` exists, or `null` when there are multiple stewards of that
+     * / family. Canonical family-scoped form: the caller must be an active Steward
+     * / of `familyId`, and only steward records stamped with `familyId` are
+     * / counted, so a Steward of one family can never read another family's
+     * / warning. Family Steward of `familyId` only.
+     */
+    getSingleStewardWarningForFamily(familyId: string): Promise<string | null>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for `getSourceForFamily`.
      */
@@ -1932,21 +2508,42 @@ export interface backendInterface {
      */
     getSourceForFamily(familyId: FamilyId, sourceId: SourceId): Promise<SourceRecord | null>;
     /**
-     * / Returns the merged Family Steward Audit History: every governance audit
-     * / entry plus every conflict-resolution action (Keep Existing, Replace
-     * / Existing, Preserve Both/Unresolved, Needs Research) merged
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `getStewardAuditHistoryForFamily`. Deprecated single-family form: delegates
+     * / with `FamilyTypes.DEFAULT_FAMILY_ID`, so current Norwood behavior for
+     * / familyId "norwood" is unchanged. Contains no duplicated merge logic and
+     * / will be removed once the frontend passes an explicit familyId everywhere.
+     */
+    getStewardAuditHistory(): Promise<Array<StewardAuditEntry>>;
+    /**
+     * / Returns the merged Family Steward Audit History for `familyId`: every
+     * / governance audit entry belonging to `familyId` plus every
+     * / conflict-resolution action (Keep Existing, Replace Existing, Preserve
+     * / Both/Unresolved, Needs Research) belonging to `familyId`, merged
      * / chronologically, newest first, without duplicating records. Each
      * / conflict-resolution entry carries person, field, existing value, proposed
      * / value, resolution, steward notes, steward identity, timestamp, and
-     * / provenance/source refs where available. Family Steward only.
+     * / provenance/source refs where available.
+     * /
+     * / Requires an active Steward of `familyId`; a Steward of one family can never
+     * / read another family's audit history. Only entries belonging to `familyId`
+     * / are returned, so Family A audit activity is never exposed through Family B.
+     * / This is the canonical family-scoped audit read.
      */
-    getStewardAuditHistory(): Promise<Array<StewardAuditEntry>>;
+    getStewardAuditHistoryForFamily(familyId: FamilyId): Promise<Array<StewardAuditEntry>>;
     /**
      * / Returns a single story by id when it belongs to `familyId`. Approved
      * / members of `familyId` only. A story that exists under another family is
      * / never returned, so a `storyId` alone cannot cross the family boundary.
      */
     getStoryForFamily(familyId: FamilyId, storyId: StoryId): Promise<Story | null>;
+    /**
+     * / Whether `accountId` holds an `#Active` membership in `familyId`. Retained
+     * / public for compatibility but restricted to self or an active Steward of
+     * / `familyId`; anonymous callers get `#err(#NotSignedIn)` and any other
+     * / caller gets `#err(#NotAuthorized)`.
+     */
+    hasActiveMembershipForFamily(familyId: FamilyId, accountId: AccountId): Promise<Result_21>;
     /**
      * / Whether any active Family Steward exists. Public so the frontend can show
      * / or hide the one-time "Claim Family Steward" control. Tenancy 1B: delegates
@@ -1972,6 +2569,12 @@ export interface backendInterface {
      * / default family id; multi-family bootstrap UI is not exposed yet.
      */
     isCallerSteward(): Promise<boolean>;
+    /**
+     * / Sets an `#Active` membership in `familyId` to `#Left`. The caller may
+     * / leave their own membership; a Steward of `familyId` may also record a
+     * / leave for a member of that family.
+     */
+    leaveFamilyMembership(familyId: FamilyId, membershipId: bigint): Promise<Result_2>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `listApprovedArchiveItemsForFamily`.
@@ -2009,18 +2612,46 @@ export interface backendInterface {
      */
     listApprovedStoriesForFamily(familyId: FamilyId): Promise<Array<Story>>;
     /**
-     * / Returns the ids of all archived profiles so normal family browsing can
-     * / filter them out. Not gated to stewards — any caller may read archived ids.
+     * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+     * / delegates to `listArchivedProfileIdsForFamily` with the default family id
+     * / so current Norwood behavior is unchanged.
      */
     listArchivedProfileIds(): Promise<Array<PersonId>>;
     /**
-     * / Lists all archived profiles. Family Steward only.
+     * / Returns the ids of the archived profiles of `familyId` so normal family
+     * / browsing can filter them out. Canonical family-scoped form: only archived
+     * / ids whose profile belongs to `familyId` are returned, so one family's
+     * / archived ids never hide another family's profiles. Not gated to stewards —
+     * / any caller may read archived ids.
+     */
+    listArchivedProfileIdsForFamily(familyId: string): Promise<Array<PersonId>>;
+    /**
+     * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+     * / delegates to `listArchivedProfilesForFamily` with the default family id so
+     * / current Norwood behavior is unchanged.
      */
     listArchivedProfiles(): Promise<Array<PersonProfile>>;
     /**
-     * / Returns the governance audit log. Audit History is strictly steward-only.
+     * / Lists the archived profiles of `familyId`. Canonical family-scoped form:
+     * / the caller must be an active Steward of `familyId`, and only archived
+     * / profiles belonging to `familyId` are returned. Family Steward of `familyId`
+     * / only.
+     */
+    listArchivedProfilesForFamily(familyId: string): Promise<Array<PersonProfile>>;
+    /**
+     * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+     * / delegates to `listAuditHistoryForFamily` with the default family id so
+     * / current Norwood behavior is unchanged.
      */
     listAuditHistory(): Promise<Array<AuditEntry>>;
+    /**
+     * / Returns the governance audit log of `familyId`. Canonical family-scoped
+     * / form: the caller must be an active Steward of `familyId`, and only audit
+     * / entries stamped with `familyId` are returned, so a Steward of one family
+     * / can never read another family's audit history. Existing entry shape,
+     * / chronological ordering, and action labels/details are preserved.
+     */
+    listAuditHistoryForFamily(familyId: string): Promise<Array<AuditEntry>>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for `listBlockedUsersForFamily`.
      */
@@ -2121,18 +2752,46 @@ export interface backendInterface {
      */
     listDisputedFactsForPersonForFamily(familyId: FamilyId, personId: string): Promise<Array<DisputedFact>>;
     /**
-     * / Lists suspected duplicate Person records with comparison data. Family
-     * / Steward only.
+     * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+     * / delegates to `listDuplicateCandidatesForFamily` with the default family id
+     * / so current Norwood behavior is unchanged.
      */
     listDuplicateCandidates(): Promise<Array<DuplicatePair>>;
     /**
-     * / Returns the eligible promotion/successor candidate list: all people who
-     * / are living, have an APPROVED/CLAIMED profile, are linked to a valid
-     * / account, are not already an active Steward, and are not archived. This is
-     * / data-driven — as additional family members claim and receive approval they
-     * / automatically appear without code changes. Family Steward only.
+     * / Lists suspected duplicate Person records of `familyId` with comparison
+     * / data. Canonical family-scoped form: the caller must be an active Steward of
+     * / `familyId`, and only profiles belonging to `familyId` are compared, so a
+     * / Family A duplicate candidate never includes a Family B profile. Family
+     * / Steward of `familyId` only.
+     */
+    listDuplicateCandidatesForFamily(familyId: string): Promise<Array<DuplicatePair>>;
+    /**
+     * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+     * / delegates to `listEligibleStewardCandidatesForFamily` with the default
+     * / family id so current Norwood behavior is unchanged. Family Steward only.
      */
     listEligibleStewardCandidates(): Promise<Array<StewardIdentity>>;
+    /**
+     * / Returns the eligible promotion/successor candidate list of `familyId`: all
+     * / people who belong to `familyId`, are living, have an APPROVED/CLAIMED
+     * / profile, are linked to a valid account, are not already an active Steward
+     * / of `familyId`, and are not archived. Canonical family-scoped form: the
+     * / caller must be an active Steward of `familyId`, only profiles belonging to
+     * / `familyId` are considered, and the already-a-Steward exclusion is filtered
+     * / by `familyId`, so a Steward of one family can never read another family's
+     * / candidates and an account that is an active Steward of Family A remains
+     * / eligible in Family B when current rules otherwise permit. This is
+     * / data-driven — as additional family members claim and receive approval they
+     * / automatically appear without code changes. Family Steward of `familyId`
+     * / only.
+     */
+    listEligibleStewardCandidatesForFamily(familyId: string): Promise<Array<StewardIdentity>>;
+    /**
+     * / Returns the memberships of one family only. Requires an approved active
+     * / family member or an active Steward of `familyId`; anonymous callers get
+     * / `#err(#NotSignedIn)` and non-members get `#err(#NotAuthorized)`.
+     */
+    listFamilyMembersForFamily(familyId: FamilyId): Promise<Result_20>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for `listFindingsForFamily`.
      */
@@ -2156,6 +2815,13 @@ export interface backendInterface {
      */
     listHiddenBoardPostsForFamily(familyId: FamilyId): Promise<Array<Post>>;
     /**
+     * / Returns every membership held by `accountId` across all families. Allowed
+     * / for self only; anonymous callers get `#err(#NotSignedIn)` and any other
+     * / account gets `#err(#NotAuthorized)`. Unrestricted cross-account reads stay
+     * / internal to library code and are never exposed as a public endpoint.
+     */
+    listMembershipsForAccount(accountId: AccountId): Promise<Result_20>;
+    /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `listMessageableMembersForFamily`. An anonymous caller resolves `[]` rather
      * / than trapping, preserving the documented `listMessageableMembers` contract.
@@ -2175,6 +2841,33 @@ export interface backendInterface {
      * / members of `familyId` only.
      */
     listMessagesForFamily(familyId: FamilyId, conversationId: ConversationId): Promise<Array<Message>>;
+    /**
+     * / Returns the privacy-safe list of confirmation requests the signed-in caller
+     * / is currently eligible to act on in `familyId`.
+     * /
+     * / The caller is derived server-side; the frontend never passes a confirmer
+     * / account, confirmer person, or relationship id. Eligibility is computed from
+     * / the caller's own `#Active` `FamilyMembership` in `familyId`, the caller's
+     * / `personId`, the confirmed relationships in `familyId`, and the target
+     * / membership's state — never from notification message text.
+     * /
+     * / Returns only actionable cases: `#Pending` memberships awaiting
+     * / trusted-relative confirmation, and `#Active` memberships approved by a
+     * / relative that remain challengeable under the 1D-H rule. Excludes
+     * / self-confirmation, cases the caller has already decided, other-family
+     * / memberships, Steward-resolved cases, `#Left` memberships, unrelated
+     * / `#Suspended` memberships, and cases with no qualifying relationship.
+     * /
+     * / Each returned `EligibleMembershipConfirmationView` carries only the family
+     * / id, membership id, pending person id, display name, optional profile photo,
+     * / optional birth year, the simple relationship label, and the derived case
+     * / state. It never exposes an applicant or confirmer account principal, raw
+     * / relationship context, sensitive relationship metadata, private profile
+     * / notes, or unrelated family data. Anonymous callers get
+     * / `#err(#NotSignedIn)`; a caller with no `#Active` membership in `familyId`
+     * / gets `#err(#NoActiveMembership)`.
+     */
+    listMyEligibleMembershipConfirmationsForFamily(familyId: FamilyId): Promise<Result_19>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for `listMysteriesForFamily`.
      * / Preserves the pre-tenancy behavior exactly: the legacy `listMysteries` was
@@ -2262,9 +2955,19 @@ export interface backendInterface {
      */
     listPendingStoriesForFamily(familyId: FamilyId): Promise<Array<Story>>;
     /**
-     * / Returns the current relationships for a person. Family Steward only.
+     * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+     * / delegates to `listPersonRelationshipsForFamily` with the default family id
+     * / so current Norwood behavior is unchanged.
      */
     listPersonRelationships(personId: PersonId): Promise<Array<Relationship>>;
+    /**
+     * / Returns the current relationships for a person in `familyId`. Canonical
+     * / family-scoped form: the caller must be an active Steward of `familyId`, the
+     * / target profile must belong to `familyId`, and only relationships stamped
+     * / with `familyId` are returned, so a `personId` alone never crosses a family
+     * / boundary. Existing relationship ordering and record shape are preserved.
+     */
+    listPersonRelationshipsForFamily(familyId: string, personId: PersonId): Promise<Array<Relationship>>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for `listPhotosForFamily`.
      */
@@ -2286,9 +2989,18 @@ export interface backendInterface {
      */
     listProfileClaimsForFamily(familyId: FamilyId): Promise<Array<ProfileClaim>>;
     /**
-     * / Lists all profile removal requests for steward review. Family Steward only.
+     * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+     * / delegates to `listProfileRemovalRequestsForFamily` with the default family
+     * / id so current Norwood behavior is unchanged.
      */
     listProfileRemovalRequests(): Promise<Array<ProfileRemovalRequest>>;
+    /**
+     * / Lists the profile removal requests of `familyId` for steward review.
+     * / Canonical family-scoped form: the caller must be an active Steward of
+     * / `familyId`, and a request stamped with another family is never returned.
+     * / Family Steward of `familyId` only.
+     */
+    listProfileRemovalRequestsForFamily(familyId: string): Promise<Array<ProfileRemovalRequest>>;
     /**
      * / Lists the profiles of `familyId` for Explore Family / Person Profile
      * / hydration. Requires an approved member or active Steward of `familyId`.
@@ -2371,10 +3083,19 @@ export interface backendInterface {
      */
     listStewardIdentitiesForFamily(familyId: string): Promise<Array<StewardIdentity>>;
     /**
-     * / Lists all current Family Stewards with role status and account identity.
-     * / Family Steward only.
+     * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+     * / delegates to `listStewardsForFamily` with the default family id so current
+     * / Norwood behavior is unchanged.
      */
     listStewards(): Promise<Array<StewardRecord>>;
+    /**
+     * / Lists the current Family Stewards of `familyId` with role status and
+     * / account identity. Canonical family-scoped form: the caller must be an
+     * / active Steward of `familyId`, and only steward records stamped with
+     * / `familyId` are returned, so a Steward of one family can never read another
+     * / family's roster. Existing ordering and record shape are preserved.
+     */
+    listStewardsForFamily(familyId: string): Promise<Array<StewardRecord>>;
     /**
      * / Lists every story in `familyId`, newest first. Approved members of
      * / `familyId` only. A story whose `familyId` differs is never returned, so
@@ -2455,13 +3176,22 @@ export interface backendInterface {
      */
     markNotificationReadForFamily(familyId: FamilyId, id: NotificationId): Promise<Notification | null>;
     /**
-     * / Merges two duplicate profiles into one canonical record, preserving all
-     * / valid relationships, media, timeline, stories, sources, archive references,
-     * / and ownership/claim history without duplicating shared items. Conflicting
-     * / fields are preserved as conflict/review items. The merged-away record is
-     * / archived rather than hard-deleted. Family Steward only.
+     * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+     * / delegates to `mergeProfilesForFamily` with the default family id so current
+     * / Norwood behavior is unchanged.
      */
-    mergeProfiles(canonicalPersonId: PersonId, mergedAwayPersonId: PersonId): Promise<Result_13>;
+    mergeProfiles(canonicalPersonId: PersonId, mergedAwayPersonId: PersonId): Promise<Result_18>;
+    /**
+     * / Merges two duplicate profiles in `familyId` into one canonical record,
+     * / preserving all valid relationships, media, timeline, stories, sources,
+     * / archive references, and ownership/claim history without duplicating shared
+     * / items. Canonical family-scoped form: the caller must be an active Steward
+     * / of `familyId`, and both profiles must belong to `familyId`, so a merge
+     * / never crosses families and Family B remains unchanged. Conflicting fields
+     * / are preserved as conflict/review items. The merged-away record is archived
+     * / rather than hard-deleted. Family Steward of `familyId` only.
+     */
+    mergeProfilesForFamily(familyId: string, canonicalPersonId: PersonId, mergedAwayPersonId: PersonId): Promise<Result_18>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `needsResearchFindingForFamily`.
@@ -2487,12 +3217,26 @@ export interface backendInterface {
      */
     needsResearchNewPersonCandidateForFamily(familyId: FamilyId, candidateId: bigint): Promise<NewPersonCandidate | null>;
     /**
-     * / Marks a pending Relationship proposal as needing research (Family Steward
-     * / only), transitioning it to `#NeedsResearch` while preserving the proposal.
-     * / The canonical graph is left unchanged. Returns the updated proposal, or
-     * / `null` when it does not exist or is not pending.
+     * / TEMPORARY Tenancy 1C compatibility wrapper for
+     * / `needsResearchRelationshipProposalForFamily`. Deprecated single-family
+     * / form: delegates with `FamilyTypes.DEFAULT_FAMILY_ID`, so current Norwood
+     * / behavior for familyId "norwood" is unchanged. Contains no duplicated
+     * / business logic and will be removed once the frontend passes an explicit
+     * / familyId everywhere.
      */
     needsResearchRelationshipProposal(id: bigint): Promise<RelationshipProposal | null>;
+    /**
+     * / Marks the pending Relationship proposal with `proposalId` in `familyId` as
+     * / needing research. Requires an active Steward of `familyId`; a Steward of
+     * / one family can never affect another family's proposal. The proposal must
+     * / belong to `familyId` — a proposal whose `familyId` differs is treated as
+     * / not found, so a `proposalId` alone cannot cross the family boundary. Only
+     * / that family's proposal is transitioned to `#NeedsResearch` while the
+     * / canonical graph is left unchanged, and the Research audit entry is written
+     * / to `familyId`. Returns the updated proposal, or `null` when no pending
+     * / proposal with that id belongs to `familyId`.
+     */
+    needsResearchRelationshipProposalForFamily(familyId: FamilyId, proposalId: bigint): Promise<RelationshipProposal | null>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `needsResearchSourceForFamily`.
@@ -2505,21 +3249,45 @@ export interface backendInterface {
      */
     needsResearchSourceForFamily(familyId: FamilyId, sourceId: SourceId): Promise<SourceRecord | null>;
     /**
-     * / Marks two suspected duplicates as not a duplicate. Family Steward only.
+     * / The family founder nominates another member of their own family as
+     * / founding Steward, optionally supplying an email for an unclaimed nominee.
      */
-    notDuplicate(personIdA: PersonId, personIdB: PersonId): Promise<Result_12>;
+    nominateFoundingSteward(familyId: string, nomineePersonId: string, nomineeEmail: string | null): Promise<Result_17>;
     /**
-     * / Permanently deletes a profile only when it is empty of archive items,
-     * / media, timeline/history, approved relationships, and ownership history,
-     * / and explicit confirmation is given. Family Steward only.
+     * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+     * / delegates to `notDuplicateForFamily` with the default family id so current
+     * / Norwood behavior is unchanged.
      */
-    permanentlyDeleteProfile(personId: PersonId, confirmation: boolean): Promise<Result_11>;
+    notDuplicate(personIdA: PersonId, personIdB: PersonId): Promise<Result_16>;
+    /**
+     * / Marks two suspected duplicates in `familyId` as not a duplicate. Canonical
+     * / family-scoped form: the caller must be an active Steward of `familyId`,
+     * / both people must belong to `familyId`, and the dismissal is stamped with
+     * / `familyId`, so a dismissal in one family never hides a candidate in
+     * / another. Family Steward of `familyId` only.
+     */
+    notDuplicateForFamily(familyId: string, personIdA: PersonId, personIdB: PersonId): Promise<Result_16>;
+    /**
+     * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+     * / delegates to `permanentlyDeleteProfileForFamily` with the default family id
+     * / so current Norwood behavior is unchanged.
+     */
+    permanentlyDeleteProfile(personId: PersonId, confirmation: boolean): Promise<Result_15>;
+    /**
+     * / Permanently deletes a profile in `familyId` only when it is empty of
+     * / archive items, media, timeline/history, approved relationships, and
+     * / ownership history, and explicit confirmation is given. Canonical
+     * / family-scoped form: the caller must be an active Steward of `familyId`, and
+     * / the target profile must belong to `familyId`, so a `personId` alone never
+     * / crosses a family boundary. Family Steward of `familyId` only.
+     */
+    permanentlyDeleteProfileForFamily(familyId: string, personId: PersonId, confirmation: boolean): Promise<Result_15>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
      * / delegates to `promoteToStewardForFamily` with the default family id so
      * / current Norwood behavior is unchanged.
      */
-    promoteToSteward(personId: PersonId): Promise<Result_10>;
+    promoteToSteward(personId: PersonId): Promise<Result_14>;
     /**
      * / Promotes an existing approved claimed member of `familyId` to Family
      * / Steward. Canonical family-scoped form: the caller must be an active Steward
@@ -2527,17 +3295,17 @@ export interface backendInterface {
      * / Steward record is stamped with `familyId`. A Steward of one family can never
      * / promote a member of another family.
      */
-    promoteToStewardForFamily(familyId: string, personId: PersonId): Promise<Result_10>;
+    promoteToStewardForFamily(familyId: string, personId: PersonId): Promise<Result_14>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `proposeRelationshipForFamily`.
      */
-    proposeRelationship(fromPersonId: PersonId, toPersonId: PersonId, relationshipType: RelationshipType): Promise<Result_9>;
+    proposeRelationship(fromPersonId: PersonId, toPersonId: PersonId, relationshipType: RelationshipType): Promise<Result_13>;
     /**
      * / Proposes a new relationship between two people in `familyId`. Both
      * / referenced people must belong to `familyId`.
      */
-    proposeRelationshipForFamily(familyId: FamilyId, fromPersonId: PersonId, toPersonId: PersonId, relationshipType: RelationshipType): Promise<Result_9>;
+    proposeRelationshipForFamily(familyId: FamilyId, fromPersonId: PersonId, toPersonId: PersonId, relationshipType: RelationshipType): Promise<Result_13>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for `publishRecipeForFamily`.
      */
@@ -2551,12 +3319,26 @@ export interface backendInterface {
      */
     publishRecipeForFamily(familyId: FamilyId, title: string, shortDescription: string, originatingPersonId: string, relatedPersonIds: Array<string>, era: string | null, year: bigint | null, location: string | null, familyBranch: string | null, ingredients: Array<string>, instructions: string, familyStory: string | null, tags: Array<string>, privacyLevel: PrivacyLevel, evidenceStatus: EvidenceStatus, linkedMediaIds: Array<bigint>): Promise<Recipe>;
     /**
-     * / Reconciles stale claim notifications for a claim: when the claim is
-     * / `#Approved`, marks the pending `#ProfileClaimRequested` notification for
-     * / the claimant as read/resolved. The profile status stays `#Claimed` and no
-     * / new claim is created. Returns the number of notifications reconciled.
+     * / TEMPORARY Tenancy compatibility wrapper for
+     * / `reconcileClaimNotificationsForFamily`. Deprecated single-family form:
+     * / delegates to the canonical family-scoped implementation with
+     * / `FamilyTypes.DEFAULT_FAMILY_ID`, so current Norwood behavior is unchanged.
+     * / Contains no logic of its own.
      */
     reconcileClaimNotifications(claimId: bigint): Promise<bigint>;
+    /**
+     * / Reconciles stale claim notifications for a claim in `familyId`: when the
+     * / claim is `#Approved`, marks the pending `#ProfileClaimRequested`
+     * / notification for the claimant as read/resolved. The profile status stays
+     * / `#Claimed` and no new claim is created. Returns the number of
+     * / notifications reconciled.
+     * /
+     * / The claim is located with a family-qualified lookup, so a `claimId` alone
+     * / can never cross the family boundary: a claim belonging to another family
+     * / is never found and nothing is reconciled. Requires an approved member of
+     * / `familyId` (or a Steward of `familyId`).
+     */
+    reconcileClaimNotificationsForFamily(familyId: FamilyId, claimId: bigint): Promise<bigint>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `rejectArchiveItemForFamily`.
@@ -2604,9 +3386,18 @@ export interface backendInterface {
      */
     rejectProfileClaimForFamily(familyId: FamilyId, claimId: bigint): Promise<ProfileClaim | null>;
     /**
-     * / Rejects a profile removal request. Family Steward only.
+     * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+     * / delegates to `rejectProfileRemovalForFamily` with the default family id so
+     * / current Norwood behavior is unchanged.
      */
     rejectProfileRemoval(requestId: bigint): Promise<ProfileRemovalRequest | null>;
+    /**
+     * / Rejects a profile removal request in `familyId`. Canonical family-scoped
+     * / form: the caller must be an active Steward of `familyId`, and the request
+     * / must belong to `familyId`, so a request id alone never crosses a family
+     * / boundary. Family Steward of `familyId` only.
+     */
+    rejectProfileRemovalForFamily(familyId: string, requestId: bigint): Promise<ProfileRemovalRequest | null>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for `rejectRecipeForFamily`.
      */
@@ -2684,12 +3475,12 @@ export interface backendInterface {
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `removeDuplicateProfileForFamily`.
      */
-    removeDuplicateProfile(personId: PersonId): Promise<Result_8>;
+    removeDuplicateProfile(personId: PersonId): Promise<Result_12>;
     /**
      * / Removes a duplicate test-created profile in `familyId`. Steward of
      * / `familyId` only.
      */
-    removeDuplicateProfileForFamily(familyId: FamilyId, personId: PersonId): Promise<Result_8>;
+    removeDuplicateProfileForFamily(familyId: FamilyId, personId: PersonId): Promise<Result_12>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for `removePhotoForFamily`.
      */
@@ -2700,15 +3491,34 @@ export interface backendInterface {
      */
     removePhotoForFamily(familyId: FamilyId, personId: PersonId, photoId: PhotoId): Promise<boolean>;
     /**
-     * / Removes an incorrect relationship from the shared family graph. Family
-     * / Steward only.
+     * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+     * / delegates to `removeRelationshipForFamily` with the default family id so
+     * / current Norwood behavior is unchanged.
      */
-    removeRelationship(relationshipId: bigint): Promise<Result_7>;
+    removeRelationship(relationshipId: bigint): Promise<Result_11>;
     /**
-     * / Removes the steward role from another steward, never allowing the last
-     * / steward to be removed. Family Steward only.
+     * / Removes an incorrect relationship from `familyId`'s family graph. Canonical
+     * / family-scoped form: the caller must be an active Steward of `familyId`, the
+     * / relationship must belong to `familyId`, and only that family's relationship
+     * / is removed, so a `relationshipId` alone never crosses a family boundary.
+     * / Existing audit/governance behavior is preserved.
      */
-    removeSteward(stewardAccountId: Principal): Promise<Result_6>;
+    removeRelationshipForFamily(familyId: string, relationshipId: bigint): Promise<Result_11>;
+    /**
+     * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+     * / delegates to `removeStewardForFamily` with the default family id so current
+     * / Norwood behavior is unchanged. Family Steward only.
+     */
+    removeSteward(stewardAccountId: Principal): Promise<Result_10>;
+    /**
+     * / Removes the steward role from another steward of `familyId`, never allowing
+     * / the last steward of that family to be removed. Canonical family-scoped
+     * / form: the caller must be an active Steward of `familyId`, the target
+     * / `StewardRecord` is matched on both `stewardAccountId` and `familyId`, and
+     * / the last-Steward guard counts only active stewards of `familyId`. A Steward
+     * / of one family can never remove a steward of another family.
+     */
+    removeStewardForFamily(familyId: string, stewardAccountId: Principal): Promise<Result_10>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for `reportMessageForFamily`.
      */
@@ -2723,23 +3533,39 @@ export interface backendInterface {
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `requestProfileClaimForFamily`.
      */
-    requestProfileClaim(personId: PersonId): Promise<Result_5>;
+    requestProfileClaim(personId: PersonId): Promise<Result_9>;
     /**
      * / "This is Me": creates a pending profile claim for an unclaimed living
      * / profile in `familyId`. Requires sign-in; does not grant ownership until
      * / approved. The claim belongs to exactly `familyId`.
      */
-    requestProfileClaimForFamily(familyId: FamilyId, personId: PersonId): Promise<Result_5>;
+    requestProfileClaimForFamily(familyId: FamilyId, personId: PersonId): Promise<Result_9>;
     /**
-     * / A claimed living profile owner requests removal of their own profile.
-     * / A Family Steward reviews the request.
+     * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+     * / delegates to `requestProfileRemovalForFamily` with the default family id so
+     * / current Norwood behavior is unchanged.
      */
-    requestProfileRemoval(personId: PersonId, reason: string): Promise<Result_4>;
+    requestProfileRemoval(personId: PersonId, reason: string): Promise<Result_8>;
+    /**
+     * / A claimed living profile owner requests removal of their own profile in
+     * / `familyId`. Canonical family-scoped form: the target profile must belong to
+     * / `familyId`, and the request is stamped with `familyId`, so a `personId`
+     * / alone never crosses a family boundary. A Family Steward of `familyId`
+     * / reviews the request.
+     */
+    requestProfileRemovalForFamily(familyId: string, personId: PersonId, reason: string): Promise<Result_8>;
+    /**
+     * / Rotates the token of an existing `#Pending` invitation for `familyId` +
+     * / `personId` + `invitationType`, returning the new raw token once. The old
+     * / token stops resolving. This is the explicit resend operation, so a resend
+     * / never silently creates a duplicate invitation.
+     */
+    resendFamilyInvitation(familyId: string, personId: string, invitationType: InvitationType): Promise<Result_7>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `resolveConflictForFamily`.
      */
-    resolveConflict(id: bigint, action: ConflictResolutionAction, notes: string): Promise<Result_3>;
+    resolveConflict(id: bigint, action: ConflictResolutionAction, notes: string): Promise<Result_6>;
     /**
      * / Resolves a conflict review item in `familyId` (Steward of `familyId` only)
      * / with an explicit decision. `#KeepExisting` leaves canonical data unchanged
@@ -2754,12 +3580,30 @@ export interface backendInterface {
      * / entry. Returns the updated item, or `#err(#notFound(id))` when no conflict
      * / with that id belongs to `familyId`.
      */
-    resolveConflictForFamily(familyId: FamilyId, id: bigint, action: ConflictResolutionAction, notes: string): Promise<Result_3>;
+    resolveConflictForFamily(familyId: FamilyId, id: bigint, action: ConflictResolutionAction, notes: string): Promise<Result_6>;
     /**
-     * / Resolves a merge conflict by choosing the canonical display value. Family
-     * / Steward only.
+     * / Resolves an escalated confirmation case for `membershipId` in `familyId`.
+     * / Steward of `familyId` only; anonymous callers get `#err(#NotSignedIn)` and
+     * / non-Stewards get `#err(#NotSteward)`. `#Approve` activates a `#Pending`
+     * / membership or restores a membership suspended by this confirmation dispute
+     * / back to `#Active`; `#Reject` leaves the membership non-`#Active` with a
+     * / resolved rejection recorded; `#NeedsMoreInformation` leaves the membership
+     * / `#Pending` or `#Suspended` and the case open.
+     */
+    resolveMembershipConfirmation(familyId: FamilyId, membershipId: bigint, resolution: MembershipConfirmationResolution): Promise<Result_5>;
+    /**
+     * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+     * / delegates to `resolveMergeConflictForFamily` with the default family id so
+     * / current Norwood behavior is unchanged.
      */
     resolveMergeConflict(conflictId: bigint, canonicalValue: string): Promise<MergeConflict | null>;
+    /**
+     * / Resolves a merge conflict in `familyId` by choosing the canonical display
+     * / value. Canonical family-scoped form: the caller must be an active Steward
+     * / of `familyId`, and the conflict must belong to `familyId`, so a conflict id
+     * / alone never crosses a family boundary. Family Steward of `familyId` only.
+     */
+    resolveMergeConflictForFamily(familyId: string, conflictId: bigint, canonicalValue: string): Promise<MergeConflict | null>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for `restoreBoardPostForFamily`.
      */
@@ -2771,10 +3615,19 @@ export interface backendInterface {
      */
     restoreBoardPostForFamily(familyId: FamilyId, postId: PostId): Promise<Post | null>;
     /**
-     * / Restores an archived profile to normal family browsing. Family Steward
-     * / only.
+     * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+     * / delegates to `restoreProfileForFamily` with the default family id so
+     * / current Norwood behavior is unchanged.
      */
-    restoreProfile(personId: PersonId): Promise<Result_2>;
+    restoreProfile(personId: PersonId): Promise<Result_4>;
+    /**
+     * / Restores an archived profile in `familyId` to normal family browsing.
+     * / Canonical family-scoped form: the caller must be an active Steward of
+     * / `familyId`, and the target profile must belong to `familyId`, so a
+     * / `personId` alone never crosses a family boundary. Family Steward of
+     * / `familyId` only.
+     */
+    restoreProfileForFamily(familyId: string, personId: PersonId): Promise<Result_4>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `reviewMysteryContributionForFamily`.
@@ -2839,13 +3692,13 @@ export interface backendInterface {
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for `sendMessageForFamily`.
      */
-    sendMessage(recipientPersonId: string, body: string): Promise<Result_1>;
+    sendMessage(recipientPersonId: string, body: string): Promise<Result_3>;
     /**
      * / Sends a private message to the person identified by `recipientPersonId`
      * / within `familyId`, reusing the existing 1:1 conversation when one exists.
      * / Approved members of `familyId` only.
      */
-    sendMessageForFamily(familyId: FamilyId, recipientPersonId: string, body: string): Promise<Result_1>;
+    sendMessageForFamily(familyId: FamilyId, recipientPersonId: string, body: string): Promise<Result_3>;
     /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `setProfilePhotoForFamily`.
@@ -2922,6 +3775,11 @@ export interface backendInterface {
      */
     submitStoryForFamily(familyId: FamilyId, title: string, storyText: string, relatedMemberIds: Array<string>, era: string | null, year: bigint | null, location: string | null, evidenceStatus: EvidenceStatus, relatedArchiveItemIds: Array<bigint>): Promise<Story>;
     /**
+     * / Sets an `#Active` membership in `familyId` to `#Suspended`. Steward of
+     * / `familyId` only.
+     */
+    suspendMembershipForFamily(familyId: FamilyId, membershipId: bigint): Promise<Result_2>;
+    /**
      * / TEMPORARY Tenancy 1C compatibility wrapper for `unblockUserForFamily`.
      */
     unblockUser(blockedAccountId: Principal): Promise<void>;
@@ -2975,11 +3833,21 @@ export interface backendInterface {
      * / TEMPORARY Tenancy 1C compatibility wrapper for
      * / `updateOwnProfileForFamily`.
      */
-    updateOwnProfile(personId: PersonId, edits: ProfileEdits): Promise<Result>;
+    updateOwnProfile(personId: PersonId, edits: ProfileEdits): Promise<Result_1>;
     /**
      * / Updates an approved owner's own living profile fields in `familyId`, or,
      * / for a Steward of `familyId`, the fields of an unclaimed/historical profile
      * / in that family.
      */
-    updateOwnProfileForFamily(familyId: FamilyId, personId: PersonId, edits: ProfileEdits): Promise<Result>;
+    updateOwnProfileForFamily(familyId: FamilyId, personId: PersonId, edits: ProfileEdits): Promise<Result_1>;
+    /**
+     * / Validates a raw invite token and returns only the minimal,
+     * / relationship-safe preview context needed for later onboarding: invitation
+     * / id, family display name, target profile safe identity preview, invitation
+     * / type, status, and expiry. Never exposes the private family tree, Archive,
+     * / other member identities, sensitive relationship context, or Steward-only
+     * / data. A wrong, unknown, cancelled, declined, accepted, or expired token
+     * / returns `#InvalidToken` / `#Expired`.
+     */
+    validateFamilyInvitationToken(rawToken: string): Promise<Result>;
 }

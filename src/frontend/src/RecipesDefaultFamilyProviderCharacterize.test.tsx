@@ -431,7 +431,9 @@ describe("Recipe mutations under the default-family provider: cache invalidation
 
     const keys = invalidatedKeys();
     expect(keys).toContainEqual(["recipes", "pending"]);
-    expect(keys).toContainEqual(["pendingContributionsCount"]);
+    // The default-family branch is family-exact: it targets the exact read key
+    // ["pendingContributionsCount", ""], not a bare prefix.
+    expect(keys).toContainEqual(["pendingContributionsCount", ""]);
   });
 
   it("useApproveRecipe invalidates the pending, approved, pendingContributionsCount, and notifications keys", async () => {
@@ -442,7 +444,9 @@ describe("Recipe mutations under the default-family provider: cache invalidation
     const keys = invalidatedKeys();
     expect(keys).toContainEqual(["recipes", "pending"]);
     expect(keys).toContainEqual(["recipes", "approved"]);
-    expect(keys).toContainEqual(["pendingContributionsCount"]);
+    // The default-family branch is family-exact: it targets the exact read key
+    // ["pendingContributionsCount", ""], not a bare prefix.
+    expect(keys).toContainEqual(["pendingContributionsCount", ""]);
     expect(keys).toContainEqual(["notifications"]);
   });
 
@@ -453,7 +457,9 @@ describe("Recipe mutations under the default-family provider: cache invalidation
 
     const keys = invalidatedKeys();
     expect(keys).toContainEqual(["recipes", "pending"]);
-    expect(keys).toContainEqual(["pendingContributionsCount"]);
+    // The default-family branch is family-exact: it targets the exact read key
+    // ["pendingContributionsCount", ""], not a bare prefix.
+    expect(keys).toContainEqual(["pendingContributionsCount", ""]);
     expect(keys).toContainEqual(["notifications"]);
   });
 

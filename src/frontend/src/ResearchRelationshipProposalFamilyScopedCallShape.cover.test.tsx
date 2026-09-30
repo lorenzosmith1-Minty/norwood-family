@@ -14,6 +14,7 @@ import {
   useApproveRelationshipProposal,
   useCreateRelationshipProposal,
   useListRelationshipProposals,
+  useNeedsResearchRelationshipProposal,
   useRejectRelationshipProposal,
 } from "./hooks/useResearchIntake";
 
@@ -47,22 +48,26 @@ const { mockActor, calls, resetCalls } = vi.hoisted(() => {
     getRelationshipProposalForFamily: unknown[][];
     approveRelationshipProposalForFamily: unknown[][];
     rejectRelationshipProposalForFamily: unknown[][];
+    needsResearchRelationshipProposalForFamily: unknown[][];
     listRelationshipProposals: unknown[][];
     createRelationshipProposal: unknown[][];
     getRelationshipProposal: unknown[][];
     approveRelationshipProposal: unknown[][];
     rejectRelationshipProposal: unknown[][];
+    needsResearchRelationshipProposal: unknown[][];
   } = {
     listRelationshipProposalsForFamily: [],
     createRelationshipProposalForFamily: [],
     getRelationshipProposalForFamily: [],
     approveRelationshipProposalForFamily: [],
     rejectRelationshipProposalForFamily: [],
+    needsResearchRelationshipProposalForFamily: [],
     listRelationshipProposals: [],
     createRelationshipProposal: [],
     getRelationshipProposal: [],
     approveRelationshipProposal: [],
     rejectRelationshipProposal: [],
+    needsResearchRelationshipProposal: [],
   };
 
   const mockActor = {
@@ -96,6 +101,12 @@ const { mockActor, calls, resetCalls } = vi.hoisted(() => {
       calls.rejectRelationshipProposalForFamily.push(args);
       return null;
     },
+    async needsResearchRelationshipProposalForFamily(
+      ...args: unknown[]
+    ): Promise<RelationshipProposal | null> {
+      calls.needsResearchRelationshipProposalForFamily.push(args);
+      return null;
+    },
     // The legacy endpoints must NOT be reached for a non-default family; they
     // are recorded so a regression that falls back to them is visible.
     async listRelationshipProposals(
@@ -124,6 +135,12 @@ const { mockActor, calls, resetCalls } = vi.hoisted(() => {
       ...args: unknown[]
     ): Promise<RelationshipProposal | null> {
       calls.rejectRelationshipProposal.push(args);
+      return null;
+    },
+    async needsResearchRelationshipProposal(
+      ...args: unknown[]
+    ): Promise<RelationshipProposal | null> {
+      calls.needsResearchRelationshipProposal.push(args);
       return null;
     },
     async isCallerSteward(): Promise<boolean> {
@@ -227,6 +244,23 @@ describe("Research relationship-proposal review hooks: non-default family routes
 
     expect(calls.rejectRelationshipProposalForFamily).toEqual([[FAMILY_A, 9n]]);
     expect(calls.rejectRelationshipProposal).toEqual([]);
+  });
+
+  it("useNeedsResearchRelationshipProposal calls needsResearchRelationshipProposalForFamily(familyId, proposalId) and not the legacy family-blind endpoint", async () => {
+    const { result } = renderHook(
+      () => useNeedsResearchRelationshipProposal(),
+      { wrapper },
+    );
+
+    await result.current.mutateAsync(11n);
+
+    // The active familyId is the first positional argument, followed by the
+    // proposal id; the legacy family-blind endpoint is never reached for a
+    // non-default family.
+    expect(calls.needsResearchRelationshipProposalForFamily).toEqual([
+      [FAMILY_A, 11n],
+    ]);
+    expect(calls.needsResearchRelationshipProposal).toEqual([]);
   });
 });
 

@@ -275,6 +275,154 @@ it("treats a Family A proposal id as not found under Norwood and creates no edge
 });
 
 // ---------------------------------------------------------------------------
+// (3b) Needs Research is family-scoped: the canonical
+//      `needsResearchRelationshipProposalForFamily` transitions only the
+//      requested family's proposal, writes its Research audit entry with the
+//      supplied familyId (never the default family), and treats a proposal id
+//      from another family as not found so a `proposalId` alone cannot cross
+//      the boundary.
+// ---------------------------------------------------------------------------
+
+it("marks a Norwood proposal Needs Research and records the audit entry under Norwood", async () => {
+  const { actor } = await setupFamilies();
+
+  actor.setIdentity(adminIdentity);
+  const sourceId = await uploadSourceInto(actor, NORWOOD, "Norwood census");
+  const proposalId = await createProposalInto(
+    actor,
+    NORWOOD,
+    "clayton",
+    "julia",
+    sourceId,
+  );
+
+  const updated = await actor.needsResearchRelationshipProposalForFamily(
+    NORWOOD,
+    proposalId,
+  );
+  expect(updated).toHaveLength(1);
+  expect(updated[0]).toMatchObject({
+    id: proposalId,
+    familyId: NORWOOD,
+    status: { NeedsResearch: null },
+  });
+
+  // The canonical graph is left unchanged: Needs Research creates no edge.
+  await expect(
+    actor.listConfirmedRelationshipsForFamily(NORWOOD),
+  ).resolves.toEqual([]);
+
+  // The audit entry carries the supplied familyId and the unchanged action
+  // wording/semantics.
+  const audit = await actor.getResearchAuditLogForFamily(NORWOOD);
+  const entry = audit.find(
+    (e) => e.action === "RelationshipProposalNeedsResearch",
+  );
+  expect(entry).toBeDefined();
+  expect(entry).toMatchObject({
+    action: "RelationshipProposalNeedsResearch",
+    familyId: NORWOOD,
+    actorId: adminIdentity.getPrincipal(),
+    summary:
+      "Relationship proposal 'clayton - Father - julia' marked as needing research",
+  });
+  expect(entry?.sourceId).toEqual([sourceId]);
+  expect(typeof entry?.timestamp).toBe("bigint");
+});
+
+it("treats a Family A proposal id as not found under Norwood for Needs Research and writes no audit entry", async () => {
+  const { actor } = await setupFamilies();
+
+  // MEMBER_A creates a Family A proposal.
+  actor.setIdentity(memberAIdentity);
+  const sourceId = await uploadSourceInto(actor, FAMILY_A, "Family A source");
+  const familyAProposalId = await createProposalInto(
+    actor,
+    FAMILY_A,
+    "family_a_member",
+    "family_a_member",
+    sourceId,
+  );
+
+  // The Norwood Steward cannot mark the Family A id Needs Research under
+  // Norwood: the record belongs to another family, so the lookup behaves like
+  // not-found and no audit entry is written.
+  actor.setIdentity(adminIdentity);
+  await expect(
+    actor.needsResearchRelationshipProposalForFamily(
+      NORWOOD,
+      familyAProposalId,
+    ),
+  ).resolves.toEqual([]);
+
+  const norwoodAudit = await actor.getResearchAuditLogForFamily(NORWOOD);
+  expect(
+    norwoodAudit.find(
+      (e) => e.action === "RelationshipProposalNeedsResearch",
+    ),
+  ).toBeUndefined();
+
+  // No confirmed relationship was created in Norwood, and the Family A id does
+  // not resolve under Norwood, so the Norwood action could not have touched it.
+  await expect(
+    actor.listConfirmedRelationshipsForFamily(NORWOOD),
+  ).resolves.toEqual([]);
+  await expect(
+    actor.getRelationshipProposalForFamily(NORWOOD, familyAProposalId),
+  ).resolves.toEqual([]);
+});
+
+it("does not leak a Norwood Needs Research action into another family's history", async () => {
+  const { actor } = await setupFamilies();
+
+  // A Norwood proposal is marked Needs Research by the Norwood Steward.
+  actor.setIdentity(adminIdentity);
+  const norwoodSource = await uploadSourceInto(actor, NORWOOD, "Norwood census");
+  const norwoodProposalId = await createProposalInto(
+    actor,
+    NORWOOD,
+    "clayton",
+    "julia",
+    norwoodSource,
+  );
+  await actor.needsResearchRelationshipProposalForFamily(
+    NORWOOD,
+    norwoodProposalId,
+  );
+
+  // A Family A proposal created by MEMBER_A is unaffected: the Norwood action
+  // never touched Family A, and the Family A proposal remains Pending.
+  actor.setIdentity(memberAIdentity);
+  const familyASource = await uploadSourceInto(actor, FAMILY_A, "Family A source");
+  const familyAProposalId = await createProposalInto(
+    actor,
+    FAMILY_A,
+    "family_a_member",
+    "family_a_member",
+    familyASource,
+  );
+
+  // The Norwood Steward's Norwood audit contains exactly the Norwood entry and
+  // no Family A entry; the Family A source is not referenced.
+  actor.setIdentity(adminIdentity);
+  const norwoodAudit = await actor.getResearchAuditLogForFamily(NORWOOD);
+  const needsResearchEntries = norwoodAudit.filter(
+    (e) => e.action === "RelationshipProposalNeedsResearch",
+  );
+  expect(needsResearchEntries).toHaveLength(1);
+  expect(needsResearchEntries[0].familyId).toBe(NORWOOD);
+  expect(
+    norwoodAudit.find((e) => e.sourceId[0] === familyASource),
+  ).toBeUndefined();
+
+  // The Family A proposal id does not resolve under Norwood, so the Norwood
+  // action could not have transitioned it: the family boundary held.
+  await expect(
+    actor.getRelationshipProposalForFamily(NORWOOD, familyAProposalId),
+  ).resolves.toEqual([]);
+});
+
+// ---------------------------------------------------------------------------
 // (4) The Review Queue Relationships count is family-filtered.
 // ---------------------------------------------------------------------------
 

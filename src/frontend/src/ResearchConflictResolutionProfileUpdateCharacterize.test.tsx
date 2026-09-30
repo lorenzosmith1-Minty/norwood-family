@@ -11,7 +11,7 @@ import {
   type ProposedFinding,
   type RelationshipRequest,
   type Report,
-  type Result_3,
+  type Result_6,
   type ReviewQueue,
   ReviewStatus,
   type SourceRecord,
@@ -175,7 +175,7 @@ const {
       id: bigint,
       action: string,
       notes: string,
-    ): Promise<Result_3> {
+    ): Promise<Result_6> {
       const found = conflicts.find((c) => c.id === id);
       if (!found)
         return { __kind__: "err", err: { __kind__: "notFound", notFound: id } };

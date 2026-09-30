@@ -119,6 +119,11 @@ const { mockActor, resetCalls } = vi.hoisted(() => {
     async reconcileClaimNotifications(..._args: unknown[]): Promise<unknown> {
       return 0n;
     },
+    async reconcileClaimNotificationsForFamily(
+      ..._args: unknown[]
+    ): Promise<unknown> {
+      return 0n;
+    },
   };
 
   return {

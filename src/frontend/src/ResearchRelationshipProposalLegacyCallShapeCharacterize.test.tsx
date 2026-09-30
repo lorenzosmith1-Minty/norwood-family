@@ -16,7 +16,6 @@ import {
   useApproveRelationshipProposal,
   useCreateRelationshipProposal,
   useListRelationshipProposals,
-  useNeedsResearchRelationshipProposal,
   useRejectRelationshipProposal,
 } from "./hooks/useResearchIntake";
 
@@ -43,6 +42,15 @@ import {
 // the hooks make today keeps its current shape: no familyId argument, and the
 // same positional arguments in the same order.
 //
+// The Needs Research action is the ONE proposal endpoint this change
+// intentionally re-scopes: today `useNeedsResearchRelationshipProposal` calls
+// the family-blind `needsResearchRelationshipProposal(id)`, and the accepted
+// change makes it family-aware. That legacy call shape is therefore NOT frozen
+// here — freezing it would pin the very behavior being changed. The adjacent
+// list/create/approve/reject call shapes and the default-family query key are
+// frozen, and the Needs Research UI journey is covered by
+// ResearchReviewActionsCover.test.tsx.
+//
 // The proposal create/review UI journeys are already covered by
 // ResearchIntakeCover.test.tsx and ResearchReviewActionsCover.test.tsx, and the
 // proposal card rendering by the Review Queue characterization files. This file
@@ -65,13 +73,11 @@ const { mockActor, calls, resetCalls } = vi.hoisted(() => {
     createRelationshipProposal: unknown[][];
     approveRelationshipProposal: unknown[][];
     rejectRelationshipProposal: unknown[][];
-    needsResearchRelationshipProposal: unknown[][];
   } = {
     listRelationshipProposals: [],
     createRelationshipProposal: [],
     approveRelationshipProposal: [],
     rejectRelationshipProposal: [],
-    needsResearchRelationshipProposal: [],
   };
 
   const mockActor = {
@@ -93,12 +99,6 @@ const { mockActor, calls, resetCalls } = vi.hoisted(() => {
       ...args: unknown[]
     ): Promise<RelationshipProposal | null> {
       calls.rejectRelationshipProposal.push(args);
-      return null;
-    },
-    async needsResearchRelationshipProposal(
-      ...args: unknown[]
-    ): Promise<RelationshipProposal | null> {
-      calls.needsResearchRelationshipProposal.push(args);
       return null;
     },
     async isCallerSteward(): Promise<boolean> {
@@ -227,28 +227,6 @@ describe("Research relationship-proposal review hooks: legacy single-argument ca
 
     expect(calls.rejectRelationshipProposal).toEqual([[9n]]);
     expect(returned).toBe(rejected);
-  });
-
-  it("useNeedsResearchRelationshipProposal calls needsResearchRelationshipProposal(id) with the id and no familyId", async () => {
-    const needsResearch = makeProposal({
-      id: 11n,
-      status: ReviewStatus.NeedsResearch,
-    });
-    mockActor.needsResearchRelationshipProposal = vi.fn(
-      async (...args: unknown[]) => {
-        calls.needsResearchRelationshipProposal.push(args);
-        return needsResearch;
-      },
-    );
-
-    const { result } = renderHook(
-      () => useNeedsResearchRelationshipProposal(),
-      { wrapper },
-    );
-    const returned = await result.current.mutateAsync(11n);
-
-    expect(calls.needsResearchRelationshipProposal).toEqual([[11n]]);
-    expect(returned).toBe(needsResearch);
   });
 });
 

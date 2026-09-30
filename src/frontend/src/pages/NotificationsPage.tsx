@@ -1,4 +1,6 @@
 import { Bell, Check, Inbox } from "lucide-react";
+import { MembershipConfirmationRequestCard } from "../components/MembershipConfirmationRequestCard";
+import { useMyEligibleMembershipConfirmations } from "../hooks/useMembershipConfirmation";
 import {
   useListNotifications,
   useMarkNotificationRead,
@@ -10,6 +12,13 @@ import { NOTIFICATION_TYPE_LABELS, NotificationType } from "../types/ownership";
  * (useListNotifications), showing each notification's message, type, and
  * created time with read/unread styling from the notif-* design tokens. Each
  * unread notification can be marked as read (useMarkNotificationRead).
+ *
+ * Confirmation requests are discovered through the canonical, family-scoped
+ * `useMyEligibleMembershipConfirmations` query — never by parsing notification
+ * message text. A notification may still signal that action is needed, but it
+ * carries no authorization identifiers; the eligible-confirmation query is the
+ * single source of truth for which requests the caller may act on in the active
+ * family. A Family A request never renders while Family B is active.
  */
 
 /** Converts a backend nanosecond timestamp to a readable relative time. */
@@ -36,6 +45,8 @@ function formatNotificationTime(timestamp: bigint): string {
 export function NotificationsPage() {
   const { data: notifications = [], isLoading } = useListNotifications();
   const markRead = useMarkNotificationRead();
+  const { data: eligibleConfirmations = [] } =
+    useMyEligibleMembershipConfirmations();
 
   const unreadCount = notifications.filter(
     (notification) => !notification.read,
@@ -61,6 +72,23 @@ export function NotificationsPage() {
         </div>
       </header>
 
+      {eligibleConfirmations.length > 0 ? (
+        <section
+          data-ocid="confirmation.request_section"
+          className="flex flex-col gap-3"
+          aria-label="Confirmation requests"
+        >
+          {eligibleConfirmations.map((eligible) => (
+            <MembershipConfirmationRequestCard
+              key={eligible.membershipId.toString()}
+              membershipId={eligible.membershipId}
+              pendingPersonId={eligible.pendingPersonId}
+              eligible={eligible}
+            />
+          ))}
+        </section>
+      ) : null}
+
       {isLoading ? (
         <div
           data-ocid="notifications.loading_state"
@@ -75,21 +103,23 @@ export function NotificationsPage() {
           ))}
         </div>
       ) : notifications.length === 0 ? (
-        <div
-          data-ocid="notifications.empty_state"
-          className="flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-border/70 bg-card/50 px-6 py-16 text-center"
-        >
-          <span className="flex h-12 w-12 items-center justify-center rounded-full bg-muted text-muted-foreground">
-            <Inbox className="h-6 w-6" strokeWidth={1.5} aria-hidden="true" />
-          </span>
-          <h2 className="font-display text-xl font-semibold text-foreground">
-            No notifications yet
-          </h2>
-          <p className="max-w-sm text-sm text-muted-foreground">
-            When someone requests a profile claim or a relationship connection,
-            the activity will show up here.
-          </p>
-        </div>
+        eligibleConfirmations.length > 0 ? null : (
+          <div
+            data-ocid="notifications.empty_state"
+            className="flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-border/70 bg-card/50 px-6 py-16 text-center"
+          >
+            <span className="flex h-12 w-12 items-center justify-center rounded-full bg-muted text-muted-foreground">
+              <Inbox className="h-6 w-6" strokeWidth={1.5} aria-hidden="true" />
+            </span>
+            <h2 className="font-display text-xl font-semibold text-foreground">
+              No notifications yet
+            </h2>
+            <p className="max-w-sm text-sm text-muted-foreground">
+              When someone requests a profile claim or a relationship
+              connection, the activity will show up here.
+            </p>
+          </div>
+        )
       ) : (
         <ul data-ocid="notifications.list" className="notif-list">
           {notifications.map((notification, index) => {

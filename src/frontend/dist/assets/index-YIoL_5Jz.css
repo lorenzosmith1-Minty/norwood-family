@@ -897,6 +897,42 @@ video {
     --preview-accent: 0.42 0.11 35;
     --preview-accent-foreground: 0.96 0.02 70;
     --preview-download: 0.5 0.03 45;
+
+    /* Invitation Redemption: a calm centered welcome card on warm paper.
+       The invite surface is a slightly lifted paper plate; the family
+       crest mark is the sepia ink; the pending treatment is the dusty
+       bronze already used for "in progress" states; terminal notices
+       reuse the archive's warm-green / terracotta / ochre dot-pill
+       language so every outcome reads as a familiar Norwood state. */
+    --invite-surface: 0.985 0.015 70;
+    --invite-surface-foreground: 0.22 0.04 45;
+    --invite-rule: 0.42 0.11 35 / 0.16;
+    --invite-crest: 0.42 0.11 35;
+    --invite-crest-foreground: 0.96 0.02 70;
+    --invite-muted: 0.5 0.03 45;
+    --invite-pending: 0.55 0.09 60;
+    --invite-pending-surface: 0.95 0.02 72;
+    --invite-notice: 0.95 0.02 72;
+    --invite-notice-foreground: 0.3 0.04 45;
+    --invite-notice-success: 0.55 0.12 150;
+    --invite-notice-expired: 0.7 0.13 80;
+    --invite-notice-cancelled: 0.5 0.03 45;
+    --invite-notice-declined: 0.5 0.2 25;
+
+    /* Membership confirmation: a trusted-relative request card and an
+       applicant-safe status card. Both reuse the warm paper plate language;
+       the confirm action is the family green, the dispute action is the
+       quiet bronze (never the terracotta "reject" red, so a dispute reads as
+       "needs review", not "rejected"). */
+    --confirm-surface: 0.985 0.015 70;
+    --confirm-surface-foreground: 0.22 0.04 45;
+    --confirm-accent: 0.55 0.12 150;
+    --confirm-accent-foreground: 0.98 0.01 150;
+    --confirm-dispute: 0.5 0.03 45;
+    --confirm-dispute-foreground: 0.98 0.01 70;
+    --confirm-pending: 0.55 0.09 60;
+    --confirm-review: 0.7 0.13 80;
+    --confirm-neutral: 0.5 0.03 45;
   }
 
   .dark {
@@ -1252,6 +1288,35 @@ video {
     --preview-accent: 0.72 0.14 60;
     --preview-accent-foreground: 0.16 0.02 55;
     --preview-download: 0.7 0.1 55;
+
+    /* Invitation Redemption (dark): the welcome card is a dark paper plate,
+       the crest brightens to the sepia ink, pending stays bronze, and the
+       terminal notices keep the same warm-green / ochre / grey / terracotta
+       encoding as the light theme. */
+    --invite-surface: 0.2 0.02 55;
+    --invite-surface-foreground: 0.93 0.02 60;
+    --invite-rule: 0.72 0.14 60 / 0.2;
+    --invite-crest: 0.72 0.14 60;
+    --invite-crest-foreground: 0.16 0.02 55;
+    --invite-muted: 0.7 0.1 55;
+    --invite-pending: 0.72 0.14 60;
+    --invite-pending-surface: 0.21 0.02 55;
+    --invite-notice: 0.21 0.02 55;
+    --invite-notice-foreground: 0.85 0.02 60;
+    --invite-notice-success: 0.6 0.15 150;
+    --invite-notice-expired: 0.72 0.13 80;
+    --invite-notice-cancelled: 0.7 0.1 55;
+    --invite-notice-declined: 0.55 0.2 25;
+
+    --confirm-surface: 0.21 0.02 55;
+    --confirm-surface-foreground: 0.85 0.02 60;
+    --confirm-accent: 0.6 0.15 150;
+    --confirm-accent-foreground: 0.16 0.02 55;
+    --confirm-dispute: 0.7 0.1 55;
+    --confirm-dispute-foreground: 0.16 0.02 55;
+    --confirm-pending: 0.72 0.14 60;
+    --confirm-review: 0.72 0.13 80;
+    --confirm-neutral: 0.7 0.1 55;
   }
 
   * {
@@ -1277,6 +1342,421 @@ video {
   .container {
     max-width: 1400px;
   }
+}
+.prose {
+  color: var(--tw-prose-body);
+  max-width: 65ch;
+}
+.prose :where(p):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  margin-top: 1.25em;
+  margin-bottom: 1.25em;
+}
+.prose :where([class~="lead"]):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  color: var(--tw-prose-lead);
+  font-size: 1.25em;
+  line-height: 1.6;
+  margin-top: 1.2em;
+  margin-bottom: 1.2em;
+}
+.prose :where(a):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  color: var(--tw-prose-links);
+  text-decoration: underline;
+  font-weight: 500;
+}
+.prose :where(strong):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  color: var(--tw-prose-bold);
+  font-weight: 600;
+}
+.prose :where(a strong):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  color: inherit;
+}
+.prose :where(blockquote strong):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  color: inherit;
+}
+.prose :where(thead th strong):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  color: inherit;
+}
+.prose :where(ol):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  list-style-type: decimal;
+  margin-top: 1.25em;
+  margin-bottom: 1.25em;
+  padding-left: 1.625em;
+}
+.prose :where(ol[type="A"]):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  list-style-type: upper-alpha;
+}
+.prose :where(ol[type="a"]):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  list-style-type: lower-alpha;
+}
+.prose :where(ol[type="A" s]):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  list-style-type: upper-alpha;
+}
+.prose :where(ol[type="a" s]):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  list-style-type: lower-alpha;
+}
+.prose :where(ol[type="I"]):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  list-style-type: upper-roman;
+}
+.prose :where(ol[type="i"]):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  list-style-type: lower-roman;
+}
+.prose :where(ol[type="I" s]):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  list-style-type: upper-roman;
+}
+.prose :where(ol[type="i" s]):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  list-style-type: lower-roman;
+}
+.prose :where(ol[type="1"]):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  list-style-type: decimal;
+}
+.prose :where(ul):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  list-style-type: disc;
+  margin-top: 1.25em;
+  margin-bottom: 1.25em;
+  padding-left: 1.625em;
+}
+.prose :where(ol > li):not(:where([class~="not-prose"],[class~="not-prose"] *))::marker {
+  font-weight: 400;
+  color: var(--tw-prose-counters);
+}
+.prose :where(ul > li):not(:where([class~="not-prose"],[class~="not-prose"] *))::marker {
+  color: var(--tw-prose-bullets);
+}
+.prose :where(dt):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  color: var(--tw-prose-headings);
+  font-weight: 600;
+  margin-top: 1.25em;
+}
+.prose :where(hr):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  border-color: var(--tw-prose-hr);
+  border-top-width: 1px;
+  margin-top: 3em;
+  margin-bottom: 3em;
+}
+.prose :where(blockquote):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  font-weight: 500;
+  font-style: italic;
+  color: var(--tw-prose-quotes);
+  border-left-width: 0.25rem;
+  border-left-color: var(--tw-prose-quote-borders);
+  quotes: "\201C""\201D""\2018""\2019";
+  margin-top: 1.6em;
+  margin-bottom: 1.6em;
+  padding-left: 1em;
+}
+.prose :where(blockquote p:first-of-type):not(:where([class~="not-prose"],[class~="not-prose"] *))::before {
+  content: open-quote;
+}
+.prose :where(blockquote p:last-of-type):not(:where([class~="not-prose"],[class~="not-prose"] *))::after {
+  content: close-quote;
+}
+.prose :where(h1):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  color: var(--tw-prose-headings);
+  font-weight: 800;
+  font-size: 2.25em;
+  margin-top: 0;
+  margin-bottom: 0.8888889em;
+  line-height: 1.1111111;
+}
+.prose :where(h1 strong):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  font-weight: 900;
+  color: inherit;
+}
+.prose :where(h2):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  color: var(--tw-prose-headings);
+  font-weight: 700;
+  font-size: 1.5em;
+  margin-top: 2em;
+  margin-bottom: 1em;
+  line-height: 1.3333333;
+}
+.prose :where(h2 strong):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  font-weight: 800;
+  color: inherit;
+}
+.prose :where(h3):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  color: var(--tw-prose-headings);
+  font-weight: 600;
+  font-size: 1.25em;
+  margin-top: 1.6em;
+  margin-bottom: 0.6em;
+  line-height: 1.6;
+}
+.prose :where(h3 strong):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  font-weight: 700;
+  color: inherit;
+}
+.prose :where(h4):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  color: var(--tw-prose-headings);
+  font-weight: 600;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  line-height: 1.5;
+}
+.prose :where(h4 strong):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  font-weight: 700;
+  color: inherit;
+}
+.prose :where(img):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  margin-top: 2em;
+  margin-bottom: 2em;
+}
+.prose :where(picture):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  display: block;
+  margin-top: 2em;
+  margin-bottom: 2em;
+}
+.prose :where(kbd):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  font-weight: 500;
+  font-family: inherit;
+  color: var(--tw-prose-kbd);
+  box-shadow: 0 0 0 1px rgb(var(--tw-prose-kbd-shadows) / 10%), 0 3px 0 rgb(var(--tw-prose-kbd-shadows) / 10%);
+  font-size: 0.875em;
+  border-radius: 0.3125rem;
+  padding-top: 0.1875em;
+  padding-right: 0.375em;
+  padding-bottom: 0.1875em;
+  padding-left: 0.375em;
+}
+.prose :where(code):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  color: var(--tw-prose-code);
+  font-weight: 600;
+  font-size: 0.875em;
+}
+.prose :where(code):not(:where([class~="not-prose"],[class~="not-prose"] *))::before {
+  content: "`";
+}
+.prose :where(code):not(:where([class~="not-prose"],[class~="not-prose"] *))::after {
+  content: "`";
+}
+.prose :where(a code):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  color: inherit;
+}
+.prose :where(h1 code):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  color: inherit;
+}
+.prose :where(h2 code):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  color: inherit;
+  font-size: 0.875em;
+}
+.prose :where(h3 code):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  color: inherit;
+  font-size: 0.9em;
+}
+.prose :where(h4 code):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  color: inherit;
+}
+.prose :where(blockquote code):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  color: inherit;
+}
+.prose :where(thead th code):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  color: inherit;
+}
+.prose :where(pre):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  color: var(--tw-prose-pre-code);
+  background-color: var(--tw-prose-pre-bg);
+  overflow-x: auto;
+  font-weight: 400;
+  font-size: 0.875em;
+  line-height: 1.7142857;
+  margin-top: 1.7142857em;
+  margin-bottom: 1.7142857em;
+  border-radius: 0.375rem;
+  padding-top: 0.8571429em;
+  padding-right: 1.1428571em;
+  padding-bottom: 0.8571429em;
+  padding-left: 1.1428571em;
+}
+.prose :where(pre code):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  background-color: transparent;
+  border-width: 0;
+  border-radius: 0;
+  padding: 0;
+  font-weight: inherit;
+  color: inherit;
+  font-size: inherit;
+  font-family: inherit;
+  line-height: inherit;
+}
+.prose :where(pre code):not(:where([class~="not-prose"],[class~="not-prose"] *))::before {
+  content: none;
+}
+.prose :where(pre code):not(:where([class~="not-prose"],[class~="not-prose"] *))::after {
+  content: none;
+}
+.prose :where(table):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  width: 100%;
+  table-layout: auto;
+  text-align: left;
+  margin-top: 2em;
+  margin-bottom: 2em;
+  font-size: 0.875em;
+  line-height: 1.7142857;
+}
+.prose :where(thead):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  border-bottom-width: 1px;
+  border-bottom-color: var(--tw-prose-th-borders);
+}
+.prose :where(thead th):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  color: var(--tw-prose-headings);
+  font-weight: 600;
+  vertical-align: bottom;
+  padding-right: 0.5714286em;
+  padding-bottom: 0.5714286em;
+  padding-left: 0.5714286em;
+}
+.prose :where(tbody tr):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  border-bottom-width: 1px;
+  border-bottom-color: var(--tw-prose-td-borders);
+}
+.prose :where(tbody tr:last-child):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  border-bottom-width: 0;
+}
+.prose :where(tbody td):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  vertical-align: baseline;
+}
+.prose :where(tfoot):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  border-top-width: 1px;
+  border-top-color: var(--tw-prose-th-borders);
+}
+.prose :where(tfoot td):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  vertical-align: top;
+}
+.prose :where(figure > *):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.prose :where(figcaption):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  color: var(--tw-prose-captions);
+  font-size: 0.875em;
+  line-height: 1.4285714;
+  margin-top: 0.8571429em;
+}
+.prose {
+  --tw-prose-body: #374151;
+  --tw-prose-headings: #111827;
+  --tw-prose-lead: #4b5563;
+  --tw-prose-links: #111827;
+  --tw-prose-bold: #111827;
+  --tw-prose-counters: #6b7280;
+  --tw-prose-bullets: #d1d5db;
+  --tw-prose-hr: #e5e7eb;
+  --tw-prose-quotes: #111827;
+  --tw-prose-quote-borders: #e5e7eb;
+  --tw-prose-captions: #6b7280;
+  --tw-prose-kbd: #111827;
+  --tw-prose-kbd-shadows: 17 24 39;
+  --tw-prose-code: #111827;
+  --tw-prose-pre-code: #e5e7eb;
+  --tw-prose-pre-bg: #1f2937;
+  --tw-prose-th-borders: #d1d5db;
+  --tw-prose-td-borders: #e5e7eb;
+  --tw-prose-invert-body: #d1d5db;
+  --tw-prose-invert-headings: #fff;
+  --tw-prose-invert-lead: #9ca3af;
+  --tw-prose-invert-links: #fff;
+  --tw-prose-invert-bold: #fff;
+  --tw-prose-invert-counters: #9ca3af;
+  --tw-prose-invert-bullets: #4b5563;
+  --tw-prose-invert-hr: #374151;
+  --tw-prose-invert-quotes: #f3f4f6;
+  --tw-prose-invert-quote-borders: #374151;
+  --tw-prose-invert-captions: #9ca3af;
+  --tw-prose-invert-kbd: #fff;
+  --tw-prose-invert-kbd-shadows: 255 255 255;
+  --tw-prose-invert-code: #fff;
+  --tw-prose-invert-pre-code: #d1d5db;
+  --tw-prose-invert-pre-bg: rgb(0 0 0 / 50%);
+  --tw-prose-invert-th-borders: #4b5563;
+  --tw-prose-invert-td-borders: #374151;
+  font-size: 1rem;
+  line-height: 1.75;
+}
+.prose :where(picture > img):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.prose :where(video):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  margin-top: 2em;
+  margin-bottom: 2em;
+}
+.prose :where(li):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+.prose :where(ol > li):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  padding-left: 0.375em;
+}
+.prose :where(ul > li):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  padding-left: 0.375em;
+}
+.prose :where(.prose > ul > li p):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  margin-top: 0.75em;
+  margin-bottom: 0.75em;
+}
+.prose :where(.prose > ul > li > *:first-child):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  margin-top: 1.25em;
+}
+.prose :where(.prose > ul > li > *:last-child):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  margin-bottom: 1.25em;
+}
+.prose :where(.prose > ol > li > *:first-child):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  margin-top: 1.25em;
+}
+.prose :where(.prose > ol > li > *:last-child):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  margin-bottom: 1.25em;
+}
+.prose :where(ul ul, ul ol, ol ul, ol ol):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  margin-top: 0.75em;
+  margin-bottom: 0.75em;
+}
+.prose :where(dl):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  margin-top: 1.25em;
+  margin-bottom: 1.25em;
+}
+.prose :where(dd):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  margin-top: 0.5em;
+  padding-left: 1.625em;
+}
+.prose :where(hr + *):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  margin-top: 0;
+}
+.prose :where(h2 + *):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  margin-top: 0;
+}
+.prose :where(h3 + *):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  margin-top: 0;
+}
+.prose :where(h4 + *):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  margin-top: 0;
+}
+.prose :where(thead th:first-child):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  padding-left: 0;
+}
+.prose :where(thead th:last-child):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  padding-right: 0;
+}
+.prose :where(tbody td, tfoot td):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  padding-top: 0.5714286em;
+  padding-right: 0.5714286em;
+  padding-bottom: 0.5714286em;
+  padding-left: 0.5714286em;
+}
+.prose :where(tbody td:first-child, tfoot td:first-child):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  padding-left: 0;
+}
+.prose :where(tbody td:last-child, tfoot td:last-child):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  padding-right: 0;
+}
+.prose :where(figure):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  margin-top: 2em;
+  margin-bottom: 2em;
+}
+.prose :where(.prose > :first-child):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  margin-top: 0;
+}
+.prose :where(.prose > :last-child):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  margin-bottom: 0;
 }
 .sr-only {
   position: absolute;
@@ -2127,6 +2607,9 @@ video {
 .cursor-default {
   cursor: default;
 }
+.cursor-not-allowed {
+  cursor: not-allowed;
+}
 .touch-none {
   touch-action: none;
 }
@@ -2448,11 +2931,18 @@ video {
 .border-border\/80 {
   border-color: oklch(var(--border) / 0.8);
 }
+.border-destructive\/30 {
+  border-color: oklch(var(--destructive) / 0.3);
+}
 .border-destructive\/40 {
   border-color: oklch(var(--destructive) / 0.4);
 }
 .border-input {
   border-color: oklch(var(--input));
+}
+.border-muted {
+  --tw-border-opacity: 1;
+  border-color: oklch(var(--muted) / var(--tw-border-opacity, 1));
 }
 .border-primary {
   --tw-border-opacity: 1;
@@ -2466,6 +2956,10 @@ video {
 }
 .border-l-transparent {
   border-left-color: transparent;
+}
+.border-t-accent {
+  --tw-border-opacity: 1;
+  border-top-color: oklch(var(--accent) / var(--tw-border-opacity, 1));
 }
 .border-t-transparent {
   border-top-color: transparent;
@@ -11410,6 +11904,622 @@ video {
 .privacy-private::before {
     background-color: oklch(var(--privacy-private));
   }
+/* ---- Invitation Redemption: preview, sign-in gate, and terminal states ---- */
+/* Invite screen wrapper: a calm, centered column on the warm paper. The
+     invite is a small, focused moment — one card, one decision. */
+.invite-screen {
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  width: 100%;
+  max-width: 28rem;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
+}
+/* Invite card: a lifted paper plate that hosts the family crest, the
+     privacy-safe preview lines, and the accept/decline actions. Reads as a
+     quiet welcome, not a marketing hero. */
+.invite-card {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  border-radius: 1rem;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  padding: 1.5rem;
+  text-align: center;
+}
+@media (min-width: 640px) {
+
+  .invite-card {
+    padding: 1.75rem;
+  }
+}
+.invite-card {
+    background-color: oklch(var(--invite-surface));
+    color: oklch(var(--invite-surface-foreground));
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.14), 0 0 0 3px
+      oklch(var(--photo-ring) / 0.14);
+    animation: invite-in 0.35s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+/* Crest mark: the sepia ink roundel at the top of the invite card. */
+.invite-crest {
+  display: flex;
+  height: 3.5rem;
+  width: 3.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+    background-color: oklch(var(--invite-crest));
+    color: oklch(var(--invite-crest-foreground));
+    box-shadow: 0 0 0 3px oklch(var(--invite-crest) / 0.2);
+}
+/* Invite title + hint: display serif title with a quiet supporting line. */
+.invite-title {
+  font-family: var(--font-display), serif;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+  line-height: 1.375;
+    color: oklch(var(--invite-surface-foreground));
+}
+.invite-hint {
+  max-width: 24rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  line-height: 1.625;
+    color: oklch(var(--invite-muted));
+}
+/* Short bronze rule separating the crest from the preview details. */
+.invite-rule {
+    width: 3rem;
+    height: 1px;
+    background-color: oklch(var(--invite-rule));
+  }
+/* Preview detail list: the privacy-safe facts (family name, invite type,
+     expiry). One label/value row per fact, no relationship context. */
+.invite-details {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+.invite-detail-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border-bottom-width: 1px;
+  border-color: oklch(var(--border) / 0.5);
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+.invite-detail-row:last-child {
+  border-width: 0px;
+}
+.invite-detail-row .invite-detail-label {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+    color: oklch(var(--invite-muted));
+}
+.invite-detail-row .invite-detail-value {
+  text-align: right;
+  font-weight: 600;
+    color: oklch(var(--invite-surface-foreground));
+}
+/* Invite type badge: a sepia dot-pill naming the invitation kind. */
+.invite-type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: 9999px;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  padding-left: 0.625rem;
+  padding-right: 0.625rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+    background-color: oklch(var(--card));
+    color: oklch(var(--invite-crest));
+}
+.invite-type-badge::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background-color: oklch(var(--invite-crest));
+  }
+/* Invite action stack: accept (sepia primary) above decline (quiet
+     outline), full-width and thumb-friendly. */
+.invite-actions {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.invite-accept {
+  display: inline-flex;
+  min-height: 48px;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  font-size: 15px;
+  font-weight: 600;
+    color: oklch(var(--primary-foreground));
+    background-color: oklch(var(--primary));
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.18);
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow
+      0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.invite-accept:hover {
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.24);
+  }
+.invite-accept:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(var(--ring) / 0.35);
+  }
+.invite-accept:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+.invite-decline {
+  display: inline-flex;
+  min-height: 48px;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  font-size: 15px;
+  font-weight: 600;
+    background-color: oklch(var(--card));
+    color: oklch(var(--foreground));
+    transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s
+      cubic-bezier(0.4, 0, 0.2, 1);
+}
+.invite-decline:hover,
+  .invite-decline:focus-visible {
+    border-color: oklch(var(--invite-notice-declined) / 0.5);
+    color: oklch(var(--invite-notice-declined));
+  }
+.invite-decline:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(var(--ring) / 0.25);
+  }
+/* Pending treatment: a soft bronze breathing dot + label shown while an
+     accept/decline is in flight. Calm, never alarming. */
+.invite-pending {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  padding-top: 0.375rem;
+  padding-bottom: 0.375rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 600;
+    background-color: oklch(var(--invite-pending-surface));
+    color: oklch(var(--invite-pending));
+}
+.invite-pending::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background-color: oklch(var(--invite-pending));
+    animation: invite-pulse 2s ease-in-out infinite;
+  }
+/* Terminal notice: the single outcome panel for every terminal invite
+     state (accepted, expired, cancelled, declined, already-member,
+     claimed-unavailable, conflict, invalid token). One calm plate with a
+     status dot-pill; the dot color encodes the outcome family. */
+.invite-notice {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  border-radius: 1rem;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  padding: 1.5rem;
+  text-align: center;
+}
+@media (min-width: 640px) {
+
+  .invite-notice {
+    padding: 1.75rem;
+  }
+}
+.invite-notice {
+    background-color: oklch(var(--invite-notice));
+    color: oklch(var(--invite-notice-foreground));
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.1);
+    animation: invite-in 0.35s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+.invite-notice-mark {
+  display: flex;
+  height: 3.5rem;
+  width: 3.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+    background-color: oklch(var(--invite-muted) / 0.14);
+    color: oklch(var(--invite-muted));
+    box-shadow: 0 0 0 2px oklch(var(--invite-muted) / 0.4);
+}
+.invite-notice-title {
+  font-family: var(--font-display), serif;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+  line-height: 1.375;
+    color: oklch(var(--invite-notice-foreground));
+}
+.invite-notice-hint {
+  max-width: 24rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  line-height: 1.625;
+    color: oklch(var(--invite-muted));
+}
+/* Terminal status dot-pill: outcome family encoded by color. */
+.invite-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: 9999px;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  background-color: oklch(var(--card));
+  padding-left: 0.625rem;
+  padding-right: 0.625rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+    color: oklch(var(--invite-muted));
+}
+.invite-status::before {
+    content: "";
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background-color: oklch(var(--invite-muted));
+  }
+.invite-status-success {
+    color: oklch(var(--invite-notice-success));
+    border-color: oklch(var(--invite-notice-success) / 0.45);
+  }
+.invite-status-success::before {
+    background-color: oklch(var(--invite-notice-success));
+  }
+.invite-status-expired {
+    color: oklch(var(--invite-notice-expired));
+    border-color: oklch(var(--invite-notice-expired) / 0.45);
+  }
+.invite-status-expired::before {
+    background-color: oklch(var(--invite-notice-expired));
+  }
+.invite-status-cancelled {
+    color: oklch(var(--invite-notice-cancelled));
+    border-color: oklch(var(--invite-notice-cancelled) / 0.4);
+  }
+.invite-status-cancelled::before {
+    background-color: oklch(var(--invite-notice-cancelled));
+  }
+.invite-status-declined {
+    color: oklch(var(--invite-notice-declined));
+    border-color: oklch(var(--invite-notice-declined) / 0.45);
+  }
+.invite-status-declined::before {
+    background-color: oklch(var(--invite-notice-declined));
+  }
+/* Sign-in-required state: the invite preview stays visible, with a quiet
+     gate plate below it explaining that signing in is required to accept.
+     The provider buttons reuse .signin-btn / .signin-google / .signin-apple. */
+.invite-gate {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  border-radius: 1rem;
+  border-width: 1px;
+  border-style: dashed;
+  border-color: oklch(var(--border) / 0.7);
+  padding: 1.25rem;
+  text-align: center;
+    background-color: oklch(var(--card) / 0.5);
+    animation: invite-in 0.35s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+.invite-gate-title {
+  font-family: var(--font-display), serif;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 600;
+  line-height: 1.375;
+    color: oklch(var(--foreground));
+}
+.invite-gate-hint {
+  max-width: 24rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  line-height: 1.625;
+    color: oklch(var(--invite-muted));
+}
+/* ---- Membership confirmation: request card + applicant status card ---- */
+/* Confirmation request card: a warm paper plate hosting the pending
+     person's family-safe identity and the two neutral decisions. Reads as a
+     quiet question, not an alert. */
+.confirm-card {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 1rem;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  padding: 1rem;
+}
+@media (min-width: 640px) {
+
+  .confirm-card {
+    padding: 1.25rem;
+  }
+}
+.confirm-card {
+    background-color: oklch(var(--confirm-surface));
+    color: oklch(var(--confirm-surface-foreground));
+    box-shadow: 0 1px 2px -1px oklch(0.36 0.05 45 / 0.08);
+    animation: fold-in 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+.confirm-card-result {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+.confirm-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+.confirm-avatar {
+  height: 3rem;
+  width: 3rem;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  -o-object-fit: cover;
+     object-fit: cover;
+    box-shadow: 0 0 0 2px oklch(var(--photo-ring) / 0.4);
+}
+.confirm-avatar-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display), serif;
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+    background-color: oklch(var(--confirm-pending) / 0.16);
+    color: oklch(var(--confirm-pending));
+}
+.confirm-body {
+  display: flex;
+  min-width: 0px;
+  flex: 1 1 0%;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.confirm-title {
+  font-family: var(--font-display), serif;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 600;
+  line-height: 1.375;
+    color: oklch(var(--confirm-surface-foreground));
+}
+.confirm-person {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+    color: oklch(var(--foreground));
+}
+.confirm-birth {
+  font-weight: 400;
+    color: oklch(var(--muted-foreground));
+}
+.confirm-relationship {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+    color: oklch(var(--muted-foreground));
+}
+.confirm-hint {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  line-height: 1.625;
+    color: oklch(var(--muted-foreground));
+}
+.confirm-mark {
+  display: flex;
+  height: 2.5rem;
+  width: 2.5rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+    background-color: oklch(var(--confirm-pending) / 0.14);
+    color: oklch(var(--confirm-pending));
+}
+.confirm-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.625rem;
+}
+.confirm-accept {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+    color: oklch(var(--confirm-accent-foreground));
+    background-color: oklch(var(--confirm-accent));
+    box-shadow: 0 2px 8px -2px oklch(0.36 0.05 45 / 0.18);
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow
+      0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.confirm-accept:hover {
+    box-shadow: 0 12px 32px -8px oklch(0.36 0.05 45 / 0.24);
+  }
+.confirm-accept:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(var(--ring) / 0.35);
+  }
+.confirm-accept:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.confirm-dispute {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+    color: oklch(var(--confirm-dispute-foreground));
+    background-color: oklch(var(--confirm-dispute) / 0.1);
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.confirm-dispute:hover {
+    background-color: oklch(var(--confirm-dispute) / 0.18);
+  }
+.confirm-dispute:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px oklch(var(--ring) / 0.35);
+  }
+.confirm-dispute:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.confirm-submitting {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 500;
+    color: oklch(var(--muted-foreground));
+}
+/* Applicant-safe status card: a compact plate inside the limited onboarding
+     state. The tone dot-pill encodes the derived confirmation state. */
+.confirm-status-card {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  gap: 0.75rem;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-color: oklch(var(--border) / 0.6);
+  padding: 1rem;
+  text-align: left;
+    background-color: oklch(var(--card) / 0.6);
+    color: oklch(var(--confirm-surface-foreground));
+}
+.confirm-status-mark {
+  display: flex;
+  height: 2.25rem;
+  width: 2.25rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+    background-color: oklch(var(--confirm-neutral) / 0.14);
+    color: oklch(var(--confirm-neutral));
+}
+.confirm-status-text {
+  display: flex;
+  min-width: 0px;
+  flex: 1 1 0%;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+.confirm-status-title {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  line-height: 1.375;
+    color: oklch(var(--foreground));
+}
+.confirm-status-body {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  line-height: 1.625;
+    color: oklch(var(--muted-foreground));
+}
+.confirm-status-pending .confirm-status-mark {
+    background-color: oklch(var(--confirm-pending) / 0.14);
+    color: oklch(var(--confirm-pending));
+  }
+.confirm-status-success .confirm-status-mark {
+    background-color: oklch(var(--confirm-accent) / 0.14);
+    color: oklch(var(--confirm-accent));
+  }
+.confirm-status-review .confirm-status-mark {
+    background-color: oklch(var(--confirm-review) / 0.16);
+    color: oklch(var(--confirm-review));
+  }
+.confirm-status-neutral .confirm-status-mark {
+    background-color: oklch(var(--confirm-neutral) / 0.14);
+    color: oklch(var(--confirm-neutral));
+  }
 .\[--cell-size\:--spacing\(8\)\] {
   --cell-size: var(--spacing(8));
 }
@@ -11578,6 +12688,16 @@ video {
 
 .last\:border-b-0:last-child {
   border-bottom-width: 0px;
+}
+
+.default\:hidden:default {
+  display: none;
+}
+
+.default\:conversation:default {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .focus-within\:border-ring:focus-within {

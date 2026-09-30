@@ -77,11 +77,254 @@ Contributions badge.
 
 - `getFamily(familyId : Text) : async ?Family` — query. Returns the family with
   the given id, or `null` when it is not tracked. Read-only: it never creates a
-  family, and no family-creation surface is exposed. The single existing Norwood
-  family has id `\"norwood\"` and display name `\"Norwood\"`; it is created once
-  by the migration chain and is never duplicated or reset by later upgrades.
+  family. The single existing Norwood family has id `\"norwood\"` and display
+  name `\"Norwood\"`; it is created once by the migration chain and is never
+  duplicated or reset by later upgrades.
   A `Family` carries `id`, `displayName`, `createdAt`, `createdBy`, and
   `status` (`#active` or `#archived`).
+- `createFamilyWithFounder(displayName : Text, input : FounderProfileInput, idempotencyKey : Text) : async Result<FamilyCreationResult, FamilyCreationError>` —
+  update. The zero-to-family creation foundation: it creates a brand-new
+  `Family`, the founder's first `PersonProfile` inside that family, and an
+  `#Active` `FamilyMembership` linking the authenticated caller to that founder
+  profile — all in one atomic transaction. It intentionally does NOT assign
+  Stewardship: no `StewardRecord` is created, and Steward selection happens in
+  Onboarding Phase 1B-2. See the Family Creation section below for the full
+  contract.
+
+### Founding Steward onboarding
+
+Every newly created family begins the founding-Steward decision in the
+`#Undecided` onboarding state. The family creator first creates the Family, the
+founder's `PersonProfile`, and an `#Active` `FamilyMembership`
+(`createFamilyWithFounder`), then chooses one of two paths:
+
+- **Accept Stewardship** — `acceptFoundingStewardship` creates an active
+  `StewardRecord` for the founder and sets the onboarding state to
+  `#FounderAccepted`.
+- **Ask another member** — `nominateFoundingSteward` persists a `#Pending`
+  nomination and ensures the founder holds a temporary founding `StewardRecord`,
+  so the family is never left with zero active Stewards. The onboarding state
+  becomes `#NominationPending`.
+
+The onboarding state is PROGRESS TRACKING ONLY. `StewardRecord` remains the
+single source of actual Steward authority; the onboarding state never grants or
+removes authority by itself. A `StewardRecord` created by this onboarding flow
+carries `founding = true` as a role-context marker (the founder's temporary
+founding record); a nominee who accepts becomes a full Steward with
+`founding = false`. The flag never changes authority — a founding Steward is a
+full active Steward exactly like any other. The default Norwood family is never
+initialized into this state and its onboarding logic is never re-run.
+
+While a nomination is pending the founder retains full governance authority. The
+nominee becomes an active Steward only after an authenticated acceptance
+(`acceptFoundingStewardNomination`), which marks the nomination `#Accepted` and
+advances the onboarding state to `#Transferred`. The founder is NOT
+automatically removed from Stewardship on acceptance — both remain active
+Stewards until a later explicit transfer/co-Steward/step-down decision using the
+existing `removeStewardForFamily` safeguards. A nominee may decline
+(`declineFoundingStewardNomination`) and the founder may cancel
+(`cancelFoundingStewardNomination`); in both cases the founder remains Steward
+and may nominate someone else. No email is sent and no invite-link redemption
+exists in this phase.
+
+- `getFoundingStewardStatusForFamily(familyId : Text) : async Result<FoundingStewardStatus, FoundingStewardError>` —
+  query. Returns the family's onboarding state (`#Undecided`,
+  `#FounderAccepted`, `#NominationPending`, or `#Transferred`) plus the active
+  pending nomination when one exists. A family with no recorded state reads as
+  `#Undecided`. Requires a signed-in caller; anonymous callers receive
+  `#err(#NotSignedIn)`.
+- `acceptFoundingStewardship(familyId : Text) : async Result<FoundingStewardStatus, FoundingStewardError>` —
+  update. The family founder accepts founding Stewardship for their own family.
+  Requires an authenticated caller who is the family's creator/founder, holds an
+  `#Active` `FamilyMembership` in that family, and the family currently has no
+  active Steward. Creates an active `StewardRecord` for the caller and sets the
+  onboarding state to `#FounderAccepted`. Idempotent: a repeat call returns the
+  current state and never creates a duplicate `StewardRecord`. It does not alter
+  the caller's `PersonProfile` or `FamilyMembership`. Errors: `#NotSignedIn`,
+  `#FamilyNotFound`, `#NotFounder`, `#NotAuthorized`, `#AlreadySteward`.
+- `nominateFoundingSteward(familyId : Text, nomineePersonId : Text, nomineeEmail : ?Text) : async Result<FoundingStewardStatus, FoundingStewardError>` —
+  update. The founder nominates a `PersonProfile` belonging to their own family
+  as founding Steward, optionally supplying an email for an unclaimed nominee.
+  Persists a `#Pending` nomination and ensures the founder holds a temporary
+  founding `StewardRecord` so the family is never left with zero active
+  Stewards. The nominee is NOT made Steward at nomination time and no email is
+  sent. A nominee profile from another family is rejected with
+  `#err(#NomineeNotInFamily)`. Errors: `#NotSignedIn`, `#FamilyNotFound`,
+  `#NotFounder`, `#NomineeNotInFamily`, `#InvalidInput`.
+- `acceptFoundingStewardNomination(familyId : Text, nominationId : Nat) : async Result<FoundingStewardStatus, FoundingStewardError>` —
+  update. The authenticated nominee accepts a pending nomination. Requires the
+  nominee's account to be linked to the nominated `PersonProfile` through an
+  `#Active` `FamilyMembership` in that family, and the nomination to be
+  `#Pending`. Activates a `StewardRecord` for the nominee, marks the nomination
+  `#Accepted`, and advances the onboarding state to `#Transferred`. The founder
+  is not automatically removed. Errors: `#NotSignedIn`, `#FamilyNotFound`,
+  `#NominationNotFound`, `#InvalidTransition`, `#NomineeNotActiveMember`,
+  `#NotAuthorized`.
+- `declineFoundingStewardNomination(familyId : Text, nominationId : Nat) : async Result<FoundingStewardStatus, FoundingStewardError>` —
+  update. The nominee declines a pending nomination. The nomination becomes
+  `#Declined`, the founder remains Steward, and the founder may nominate someone
+  else. Errors: `#NotSignedIn`, `#FamilyNotFound`, `#NominationNotFound`,
+  `#InvalidTransition`, `#NotAuthorized`.
+- `cancelFoundingStewardNomination(familyId : Text, nominationId : Nat) : async Result<FoundingStewardStatus, FoundingStewardError>` —
+  update. The founder cancels a pending nomination. The nomination becomes
+  `#Cancelled` and the founder remains Steward. Errors: `#NotSignedIn`,
+  `#FamilyNotFound`, `#NotFounder`, `#NominationNotFound`, `#InvalidTransition`.
+
+Nominee selection and display rely only on normal family-safe profile identity;
+sensitive relationship context (adopted/foster/step/biological/guardian) is
+never surfaced as a nomination label.
+
+### Membership confirmation (trusted relative)
+
+A pending new family member may be confirmed by an existing trusted relative.
+The rule is:
+
+    Pending Membership
+      -> trusted relative confirms
+      -> if no dispute: Active Membership
+    If dispute:
+      -> Steward Review
+      -> Steward decides
+
+A membership activated through relative confirmation remains challengeable by
+another qualifying trusted relative: a later `#Disputed` decision moves the
+membership from `#Active` to `#Suspended` and escalates the case to the Steward.
+A Steward `#Approve` then restores the membership to `#Active`.
+
+Relationship confirmation is a separate record from `FamilyMembership`,
+`ProfileClaim`, `StewardRecord`, and `FamilyInvitation`. A confirmation records
+only the SIMPLE relationship type used to qualify the confirmer
+(Parent/Child, Sibling, SpousePartner); sensitive relationship context
+(Biological/Adoptive/Foster/Step/Guardian) is never inspected or surfaced.
+Confirmation state tracks resolution without duplicating
+`FamilyMembership.status`: the membership remains the single source of truth for
+whether an account is `#Pending`/`#Active`/`#Suspended`/`#Left`.
+
+A confirmer must be authenticated, hold an `#Active` `FamilyMembership` in the
+same family, and have a `#Confirmed` direct relationship to the pending person
+in that family. The confirmer identity and the qualifying relationship are
+derived server-side from the caller; a caller can never spoof another confirmer.
+One confirmer holds at most one decision per membership (a repeat call safely
+updates the existing decision in place). A single disputed response never
+permanently removes the applicant and never deletes the membership; the Steward
+is the final arbiter for split decisions.
+
+- `confirmPendingMembership(familyId : Text, membershipId : Nat, decision : ConfirmationDecision) : async Result<MembershipConfirmation, MembershipConfirmationError>` —
+  update. Records the signed-in caller's trusted-relative decision
+  (`#Confirmed` or `#Disputed`) about a membership in `familyId`. A decision is
+  accepted when the membership is `#Pending`, OR when it is `#Active` and the
+  confirmation case shows it was activated through trusted-relative confirmation
+  (`#ApprovedByRelative`) and has not been finally resolved by a Steward. A
+  Steward-approved final membership, a `#Suspended` membership unrelated to this
+  confirmation case, and a `#Left` membership are all rejected with
+  `#err(#MembershipNotPending)`. The caller, the confirmer person, and the
+  qualifying relationship are derived server-side. Rejects with
+  `#err(#NotSignedIn)` for an anonymous caller, `#err(#MembershipNotFound)` when
+  the membership does not belong to `familyId`, `#err(#NoActiveMembership)` when
+  the caller has no `#Active` membership in `familyId`, `#err(#SelfConfirmation)`
+  when the caller's own person is the pending person, and
+  `#err(#NoQualifyingRelationship)` when no `#Confirmed` direct relationship
+  exists between the caller's person and the pending person in that family. A
+  repeat call from the same confirmer safely updates that confirmer's existing
+  decision in place (at most one active decision per confirmer per membership).
+  When the resulting state is `#ApprovedByRelative` (at least one `#Confirmed`
+  and no `#Disputed`), a `#Pending` membership is activated through the existing
+  secure `FamilyMembership` activation path, recording `approvedBy` (the
+  confirming account) and `approvedAt` without bypassing profile-ownership
+  invariants. If that activation fails, the case is NOT reported as
+  `#ApprovedByRelative`; the decision is rolled back and
+  `#err(#ActivationFailed)` is returned so the membership and confirmation state
+  stay internally consistent. When any `#Disputed` exists (with or without a
+  `#Confirmed`), the confirmation state becomes `#StewardReviewRequired`; a
+  `#Pending` membership stays `#Pending`, and a relative-activated `#Active`
+  membership is transitioned to `#Suspended`. The membership and every
+  previously recorded confirmation are preserved.
+- `resolveMembershipConfirmation(familyId : Text, membershipId : Nat, resolution : MembershipConfirmationResolution) : async Result<FamilyMembership, MembershipConfirmationError>` —
+  update. Active Steward of `familyId` only; anonymous callers get
+  `#err(#NotSignedIn)` and non-Stewards get `#err(#NotSteward)`. A Steward of
+  another family cannot resolve this family's case. `#Approve` activates a
+  `#Pending` membership through the existing secure activation path, and
+  restores a membership suspended by this confirmation dispute back to `#Active`
+  through a narrow, confirmation-scoped restore path (there is no unrestricted
+  reactivation). Either way it persists a Steward resolution record, so the
+  confirmation state reads `#ResolvedBySteward`. A real activation or restore
+  failure is surfaced as `#err(#ActivationFailed)` rather than collapsed into
+  `#MembershipNotPending`. `#Reject` leaves the membership non-`#Active` (a
+  `#Pending` membership stays `#Pending`, a confirmation-suspended membership
+  stays `#Suspended`, and a relative-activated `#Active` membership is
+  suspended) and persists a Steward resolution record, so the state reads
+  `#ResolvedBySteward` and the rejection is distinguishable from
+  `#NeedsMoreInformation`. `#NeedsMoreInformation` persists no resolution
+  record, keeping the membership `#Pending` or `#Suspended` as appropriate and
+  the case open at `#StewardReviewRequired`. The membership is never deleted.
+- `getMyMembershipConfirmationState(familyId : Text, membershipId : Nat) : async Result<MembershipConfirmationApplicantView, MembershipConfirmationError>` —
+  query. Returns the REDACTED, applicant-safe confirmation view for
+  `membershipId` in `familyId`: the derived case state
+  (`#AwaitingConfirmation`, `#ApprovedByRelative`, `#StewardReviewRequired`, or
+  `#ResolvedBySteward`), the caller's own decision and simple relationship label
+  (Parent/Child, Sibling, SpousePartner), and timestamps. It never exposes a
+  confirmer account principal, sensitive relationship context, private notes, or
+  unrelated profile information. Allowed only when the caller is the pending
+  membership's own account; anonymous callers get `#err(#NotSignedIn)` and any
+  other caller gets `#err(#NotAuthorized)`. A confirmation in another family is
+  never returned.
+- `getMembershipConfirmationStateForSteward(familyId : Text, membershipId : Nat) : async Result<(MembershipConfirmationState, [MembershipConfirmation], ?MembershipConfirmationResolutionRecord), MembershipConfirmationError>` —
+  query. Returns the FULL, Steward-authorized confirmation record for
+  `membershipId` in `familyId`: the derived case state, every recorded decision,
+  and any persisted Steward resolution. Allowed only when the caller is an
+  active Steward of `familyId`; anonymous callers get `#err(#NotSignedIn)` and
+  any other caller gets `#err(#NotAuthorized)`. Confirmations and resolutions
+  from other families are never returned.
+- `getMyConfirmationForMembership(familyId : Text, membershipId : Nat) : async Result<?MembershipConfirmation, MembershipConfirmationError>` —
+  query. Returns the signed-in caller's own recorded decision for `membershipId`
+  in `familyId`, or `null` when the caller has not decided. Anonymous callers get
+  `#err(#NotSignedIn)`.
+- `listMyEligibleMembershipConfirmationsForFamily(familyId : Text) : async Result<[EligibleMembershipConfirmationView], MembershipConfirmationError>` —
+  query. Returns the privacy-safe list of confirmation requests the signed-in
+  caller is currently eligible to act on in `familyId`. The caller is derived
+  server-side; the frontend never passes a confirmer account, confirmer person,
+  or relationship id. Eligibility is computed from the caller's own `#Active`
+  `FamilyMembership` in `familyId`, the caller's `personId`, the confirmed
+  relationships in `familyId`, and the target membership's state — never from
+  notification message text. Returns only actionable cases: `#Pending`
+  memberships awaiting trusted-relative confirmation, and `#Active` memberships
+  approved by a relative that remain challengeable under the 1D-H rule. Excludes
+  self-confirmation, cases the caller has already decided, other-family
+  memberships, Steward-resolved cases, `#Left` memberships, unrelated
+  `#Suspended` memberships, and cases with no qualifying relationship. Each
+  `EligibleMembershipConfirmationView` carries only `familyId`, `membershipId`,
+  `pendingPersonId`, `displayName`, optional `profilePhoto`, optional
+  `birthYear`, `simpleRelationship` (Parent/Child, Sibling, SpousePartner), and
+  `confirmationState`. It never exposes an applicant or confirmer account
+  principal, raw relationship context, sensitive relationship metadata, private
+  profile notes, or unrelated family data. Anonymous callers get
+  `#err(#NotSignedIn)`; a caller with no `#Active` membership in `familyId` gets
+  `#err(#NoActiveMembership)`. The result is a pure read: it never mutates
+  state, and it is scoped to `familyId`, so a Family A request never appears in
+  a Family B result. The `displayName` is the pending person's family-safe
+  profile name (falling back to the person id when no profile is tracked);
+  `profilePhoto` and `birthYear` are currently always `null` because the
+  canonical `PersonProfile` record carries no profile-photo reference or birth
+  year field.
+
+A FoundingSteward nominee whose membership becomes `#Active` through
+trusted-relative confirmation keeps the existing nomination intact and may then
+accept the nomination; confirmation itself grants no Steward authority.
+
+The OQL `membershipConfirmation` entity is a flattened, `.controllerOnly()` view
+of every recorded trusted-relative decision: `familyId`, `id`, `membershipId`,
+`pendingPersonId`, `confirmerAccountId`, `confirmerPersonId`, `decision` (the
+`#Confirmed`/`#Disputed` tag text), `relationshipId`, `createdAt`, and
+`updatedAt`. The OQL `membershipConfirmationResolution` entity is a flattened,
+`.controllerOnly()` view of the persisted Steward resolutions, keyed by
+`membershipId`: `familyId`, `membershipId`, `resolution` (the
+`#Approve`/`#Reject`/`#NeedsMoreInformation` tag text), `resolvedByAccountId`,
+and `resolvedAt`. Both are `.controllerOnly()`, so only the platform controller
+reads their rows through `schema()`/`execute()`; end users read confirmation
+data only through the redacted applicant view or the Steward-authorized view
+described above. The `familyId` column carries the tenant boundary, so a
+controller-side query can separate Family A confirmations from Family B
+confirmations.
 
 ### Photo gallery
 
@@ -720,8 +963,15 @@ records stamped with the requested `familyId`. The legacy no-`familyId` forms
 Tenancy 1C compatibility wrappers that delegate with the default family id
 (`\"norwood\"`); they contain no business logic of their own.
 
-- `listStewards() : async [StewardRecord]` — query. Family Steward only. Lists
-  all steward governance records with role status and account identity.
+- `listStewardsForFamily(familyId : Text) : async [StewardRecord]` — query.
+  Active Steward of `familyId` only. Lists the steward governance records of
+  `familyId` with role status and account identity. Only records whose `familyId`
+  equals `familyId` are returned, so a Steward of one family can never read
+  another family's roster; existing ordering and record shape are preserved.
+- `listStewards() : async [StewardRecord]` — query. TEMPORARY Tenancy 1C
+  compatibility wrapper for `listStewardsForFamily`, delegating with the default
+  family id (`\"norwood\"`). Family Steward only. Lists all steward governance
+  records of the default family with role status and account identity.
 - `promoteToStewardForFamily(familyId : Text, personId : Text) : async Result<StewardRecord, StewardError>` —
   update. Active Steward of `familyId` only. Promotes an approved claimed member
   of `familyId` (a profile in that family with `claimStatus == #Claimed` and a
@@ -825,62 +1075,183 @@ Tenancy 1C compatibility wrappers that delegate with the default family id
   archived. This is data-driven — as additional family members claim and receive
   approval they automatically appear without code changes. Each candidate is a
   `StewardIdentity` as described above.
+- `requestProfileRemovalForFamily(familyId : Text, personId : Text, reason : Text) : async Result<ProfileRemovalRequest, RemovalError>` —
+  update. Requests removal of a profile in `familyId`. The target profile must
+  belong to `familyId`, and the request is stamped with `familyId`, so a
+  `personId` alone never crosses a family boundary. Returns `#err(#NotSignedIn)`
+  for an anonymous caller, `#err(#ProfileNotFound)` when the person is not
+  tracked in `familyId`, `#err(#DeceasedProfile)` for a deceased profile,
+  `#err(#NotOwner)` when the caller is not the profile's owner, and
+  `#err(#AlreadyPending)` when a pending removal request already exists for that
+  person in `familyId`.
 - `requestProfileRemoval(personId : Text, reason : Text) : async Result<ProfileRemovalRequest, RemovalError>` —
-  update. A claimed living profile owner requests removal of their own profile;
-  a Family Steward reviews the request. Returns `#err(#NotSignedIn)` for an
-  anonymous caller, `#err(#ProfileNotFound)` when the person is not tracked,
+  update. TEMPORARY Tenancy 1C compatibility wrapper for
+  `requestProfileRemovalForFamily`, delegating with the default family id
+  (`\"norwood\"`). A claimed living profile owner requests removal of their own
+  profile; a Family Steward reviews the request. Returns `#err(#NotSignedIn)` for
+  an anonymous caller, `#err(#ProfileNotFound)` when the person is not tracked,
   `#err(#DeceasedProfile)` for a deceased profile, `#err(#NotOwner)` when the
   caller is not the profile's owner, and `#err(#AlreadyPending)` when a pending
   removal request already exists for that person.
-- `listProfileRemovalRequests() : async [ProfileRemovalRequest]` — query. Family
-  Steward only. Lists all profile removal requests for review.
+- `listProfileRemovalRequestsForFamily(familyId : Text) : async [ProfileRemovalRequest]` —
+  query. Active Steward of `familyId` only. Lists the profile removal requests of
+  `familyId` for review; a request stamped with another family is never returned.
+- `listProfileRemovalRequests() : async [ProfileRemovalRequest]` — query.
+  TEMPORARY Tenancy 1C compatibility wrapper for
+  `listProfileRemovalRequestsForFamily`, delegating with the default family id
+  (`\"norwood\"`). Family Steward only. Lists all profile removal requests for
+  review.
+- `approveProfileRemovalForFamily(familyId : Text, requestId : Nat) : async ?ProfileRemovalRequest` —
+  update. Active Steward of `familyId` only. Approves a pending removal request
+  in `familyId`, archiving the profile. The request must belong to `familyId`, so
+  a request id alone never crosses a family boundary. Returns the updated
+  request, or `null` when no pending request with that id exists in `familyId`.
 - `approveProfileRemoval(requestId : Nat) : async ?ProfileRemovalRequest` —
-  update. Family Steward only. Approves a pending removal request, archiving the
-  profile. Returns the updated request, or `null` when no pending request with
-  that id exists.
+  update. TEMPORARY Tenancy 1C compatibility wrapper for
+  `approveProfileRemovalForFamily`, delegating with the default family id
+  (`\"norwood\"`). Family Steward only. Approves a pending removal request,
+  archiving the profile. Returns the updated request, or `null` when no pending
+  request with that id exists.
+- `rejectProfileRemovalForFamily(familyId : Text, requestId : Nat) : async ?ProfileRemovalRequest` —
+  update. Active Steward of `familyId` only. Rejects a pending removal request in
+  `familyId`. The request must belong to `familyId`, so a request id alone never
+  crosses a family boundary. Returns the updated request, or `null` when no
+  pending request with that id exists in `familyId`.
 - `rejectProfileRemoval(requestId : Nat) : async ?ProfileRemovalRequest` —
-  update. Family Steward only. Rejects a pending removal request. Returns the
-  updated request, or `null` when no pending request with that id exists.
+  update. TEMPORARY Tenancy 1C compatibility wrapper for
+  `rejectProfileRemovalForFamily`, delegating with the default family id
+  (`\"norwood\"`). Family Steward only. Rejects a pending removal request.
+  Returns the updated request, or `null` when no pending request with that id
+  exists.
+- `archiveProfileForFamily(familyId : Text, personId : Text) : async Result<(), ArchiveError>` —
+  update. Active Steward of `familyId` only. Archives a profile in `familyId`,
+  removing it from normal family browsing while preserving relationships, media,
+  timeline, sources, and ownership history. The target profile must belong to
+  `familyId`, so a `personId` alone never crosses a family boundary. Returns
+  `#err(#ProfileNotFound)` when the person is not tracked in `familyId` and
+  `#err(#AlreadyArchived)` when already archived.
 - `archiveProfile(personId : Text) : async Result<(), ArchiveError>` — update.
-  Family Steward only. Archives a profile, removing it from normal family
-  browsing while preserving relationships, media, timeline, sources, and
-  ownership history. Returns `#err(#ProfileNotFound)` when the person is not
-  tracked and `#err(#AlreadyArchived)` when already archived.
+  TEMPORARY Tenancy 1C compatibility wrapper for `archiveProfileForFamily`,
+  delegating with the default family id (`\"norwood\"`). Family Steward only.
+  Archives a profile, removing it from normal family browsing while preserving
+  relationships, media, timeline, sources, and ownership history. Returns
+  `#err(#ProfileNotFound)` when the person is not tracked and
+  `#err(#AlreadyArchived)` when already archived.
+- `restoreProfileForFamily(familyId : Text, personId : Text) : async Result<(), ArchiveError>` —
+  update. Active Steward of `familyId` only. Restores an archived profile in
+  `familyId` to normal family browsing. The target profile must belong to
+  `familyId`, so a `personId` alone never crosses a family boundary. Returns
+  `#err(#NotArchived)` when the profile is not archived in `familyId`.
 - `restoreProfile(personId : Text) : async Result<(), ArchiveError>` — update.
-  Family Steward only. Restores an archived profile to normal family browsing.
-  Returns `#err(#NotArchived)` when the profile is not archived.
-- `listArchivedProfiles() : async [PersonProfile]` — query. Family Steward only.
-  Lists the profiles currently archived.
+  TEMPORARY Tenancy 1C compatibility wrapper for `restoreProfileForFamily`,
+  delegating with the default family id (`\"norwood\"`). Family Steward only.
+  Restores an archived profile to normal family browsing. Returns
+  `#err(#NotArchived)` when the profile is not archived.
+- `listArchivedProfilesForFamily(familyId : Text) : async [PersonProfile]` —
+  query. Active Steward of `familyId` only. Lists the archived profiles of
+  `familyId`; only archived profiles belonging to `familyId` are returned.
+- `listArchivedProfiles() : async [PersonProfile]` — query. TEMPORARY Tenancy 1C
+  compatibility wrapper for `listArchivedProfilesForFamily`, delegating with the
+  default family id (`\"norwood\"`). Family Steward only. Lists the profiles
+  currently archived.
+- `listArchivedProfileIdsForFamily(familyId : Text) : async [PersonId]` — query.
+  Not gated to stewards — any caller may read archived ids. Returns the ids of
+  the archived profiles of `familyId` so normal family browsing can filter them
+  out; only archived ids whose profile belongs to `familyId` are returned, so one
+  family's archived ids never hide another family's profiles.
+- `listArchivedProfileIds() : async [PersonId]` — query. TEMPORARY Tenancy 1C
+  compatibility wrapper for `listArchivedProfileIdsForFamily`, delegating with
+  the default family id (`\"norwood\"`). Not gated to stewards. Returns the ids of
+  the archived profiles of the default family.
+- `getArchivedProfileForFamily(familyId : Text, personId : Text) : async ?PersonProfile` —
+  query. Active Steward of `familyId` only. Returns the archived profile for
+  `personId` in `familyId`, or `null` when the person is not archived in that
+  family. A `personId` alone never crosses a family boundary.
+- `permanentlyDeleteProfileForFamily(familyId : Text, personId : Text, confirmation : Bool) : async Result<(), DeleteError>` —
+  update. Active Steward of `familyId` only. Permanently deletes a profile in
+  `familyId` only when it is empty of archive items, media, timeline/history,
+  approved relationships, and ownership history, and explicit confirmation is
+  given. The target profile must belong to `familyId`, so a `personId` alone
+  never crosses a family boundary. Returns `#err(#ConfirmationRequired)` when
+  `confirmation` is `false`, `#err(#HasTimeline)` when the profile has timeline
+  entries, `#err(#HasApprovedRelationships)` when it has confirmed
+  relationships, `#err(#HasOwnershipHistory)` when it is claimed or has a
+  claiming owner, and `#err(#ProfileNotFound)` when the person is not tracked in
+  `familyId`.
 - `permanentlyDeleteProfile(personId : Text, confirmation : Bool) : async Result<(), DeleteError>` —
-  update. Family Steward only. Permanently deletes a profile only when it is
-  empty of archive items, media, timeline/history, approved relationships, and
+  update. TEMPORARY Tenancy 1C compatibility wrapper for
+  `permanentlyDeleteProfileForFamily`, delegating with the default family id
+  (`\"norwood\"`). Family Steward only. Permanently deletes a profile only when it
+  is empty of archive items, media, timeline/history, approved relationships, and
   ownership history, and explicit confirmation is given. Returns
   `#err(#ConfirmationRequired)` when `confirmation` is `false`,
   `#err(#HasTimeline)` when the profile has timeline entries,
   `#err(#HasApprovedRelationships)` when it has confirmed relationships,
   `#err(#HasOwnershipHistory)` when it is claimed or has a claiming owner, and
   `#err(#ProfileNotFound)` when the person is not tracked.
-- `listDuplicateCandidates() : async [DuplicatePair]` — query. Family Steward
-  only. Lists suspected duplicate Person records with comparison data (names,
-  birth/death details, parents, spouses, children, claim status, owner account,
-  and timeline counts).
+- `listDuplicateCandidatesForFamily(familyId : Text) : async [DuplicatePair]` —
+  query. Active Steward of `familyId` only. Lists suspected duplicate Person
+  records of `familyId` with comparison data (names, birth/death details,
+  parents, spouses, children, claim status, owner account, and timeline counts).
+  Only profiles belonging to `familyId` are compared, so a Family A duplicate
+  candidate never includes a Family B profile.
+- `listDuplicateCandidates() : async [DuplicatePair]` — query. TEMPORARY Tenancy
+  1C compatibility wrapper for `listDuplicateCandidatesForFamily`, delegating
+  with the default family id (`\"norwood\"`). Family Steward only. Lists suspected
+  duplicate Person records with comparison data (names, birth/death details,
+  parents, spouses, children, claim status, owner account, and timeline counts).
+- `notDuplicateForFamily(familyId : Text, personIdA : Text, personIdB : Text) : async Result<(), MergeError>` —
+  update. Active Steward of `familyId` only. Marks two suspected duplicates in
+  `familyId` as not a duplicate. Both people must belong to `familyId`, and the
+  dismissal is stamped with `familyId`, so a dismissal in one family never hides
+  a candidate in another.
 - `notDuplicate(personIdA : Text, personIdB : Text) : async Result<(), MergeError>` —
-  update. Family Steward only. Marks two suspected duplicates as not a
-  duplicate. No persistent state changes.
+  update. TEMPORARY Tenancy 1C compatibility wrapper for `notDuplicateForFamily`,
+  delegating with the default family id (`\"norwood\"`). Family Steward only.
+  Marks two suspected duplicates as not a duplicate.
+- `mergeProfilesForFamily(familyId : Text, canonicalPersonId : Text, mergedAwayPersonId : Text) : async Result<MergeResult, MergeError>` —
+  update. Active Steward of `familyId` only. Merges two duplicate profiles in
+  `familyId` into one canonical record, moving/linking all valid relationships,
+  media, timeline, stories, sources, archive references, and ownership/claim
+  history without duplicating shared items. Both profiles must belong to
+  `familyId`, so a merge never crosses families and Family B remains unchanged.
+  Conflicting fields are preserved as conflict/review items. The merged-away
+  record is archived rather than hard-deleted. Returns `#err(#SameProfile)` when
+  both ids are equal and `#err(#ProfileNotFound)` when either person is not
+  tracked in `familyId`.
 - `mergeProfiles(canonicalPersonId : Text, mergedAwayPersonId : Text) : async Result<MergeResult, MergeError>` —
-  update. Family Steward only. Merges two duplicate profiles into one canonical
-  record, moving/linking all valid relationships, media, timeline, stories,
-  sources, archive references, and ownership/claim history without duplicating
-  shared items. Conflicting fields are preserved as conflict/review items. The
-  merged-away record is archived rather than hard-deleted. Returns
-  `#err(#SameProfile)` when both ids are equal and `#err(#ProfileNotFound)` when
-  either person is not tracked.
+  update. TEMPORARY Tenancy 1C compatibility wrapper for `mergeProfilesForFamily`,
+  delegating with the default family id (`\"norwood\"`). Family Steward only.
+  Merges two duplicate profiles into one canonical record, moving/linking all
+  valid relationships, media, timeline, stories, sources, archive references, and
+  ownership/claim history without duplicating shared items. Conflicting fields
+  are preserved as conflict/review items. The merged-away record is archived
+  rather than hard-deleted. Returns `#err(#SameProfile)` when both ids are equal
+  and `#err(#ProfileNotFound)` when either person is not tracked.
+- `resolveMergeConflictForFamily(familyId : Text, conflictId : Nat, canonicalValue : Text) : async ?MergeConflict` —
+  update. Active Steward of `familyId` only. Resolves a merge conflict in
+  `familyId` by choosing the canonical display value. The conflict must belong to
+  `familyId`, so a conflict id alone never crosses a family boundary. Returns the
+  updated conflict, or `null` when no pending conflict with that id exists in
+  `familyId`.
 - `resolveMergeConflict(conflictId : Nat, canonicalValue : Text) : async ?MergeConflict` —
-  update. Family Steward only. Resolves a merge conflict by choosing the
+  update. TEMPORARY Tenancy 1C compatibility wrapper for
+  `resolveMergeConflictForFamily`, delegating with the default family id
+  (`\"norwood\"`). Family Steward only. Resolves a merge conflict by choosing the
   canonical display value. Returns the updated conflict, or `null` when no
   pending conflict with that id exists.
+- `listPersonRelationshipsForFamily(familyId : Text, personId : Text) : async [Relationship]` —
+  query. Active Steward of `familyId` only. Returns the current relationships
+  for a person in `familyId`. The target profile must belong to `familyId`, and
+  only relationships stamped with `familyId` are returned, so a `personId` alone
+  never crosses a family boundary and Family A never sees Family B
+  relationships. Existing relationship ordering and record shape are preserved.
+  Returns `[]` when the person does not belong to `familyId`.
 - `listPersonRelationships(personId : Text) : async [Relationship]` — query.
-  Family Steward only. Returns the current relationships for a person.
+  TEMPORARY Tenancy 1C compatibility wrapper for
+  `listPersonRelationshipsForFamily`, delegating with the default family id
+  (`\"norwood\"`). Family Steward only. Returns the current relationships for a
+  person in the default family.
 - `addRelationshipForFamily(familyId : Text, fromPersonId : Text, toPersonId : Text, relationshipType : RelationshipType) : async Result<Relationship, RelationshipAdminError>` —
   update. Active Steward of `familyId` only. Adds a missing relationship to
   `familyId`'s family graph. Both people must belong to `familyId`, the duplicate
@@ -895,28 +1266,75 @@ Tenancy 1C compatibility wrappers that delegate with the default family id
   (`\"norwood\"`). Family Steward only. Adds a missing relationship to the shared
   family graph. Returns `#err(#DuplicateRelationship)` when an identical
   relationship already exists.
+- `removeRelationshipForFamily(familyId : Text, relationshipId : Nat) : async Result<(), RelationshipAdminError>` —
+  update. Active Steward of `familyId` only. Removes an incorrect relationship
+  from `familyId`'s family graph. The relationship must belong to `familyId`, so
+  a `relationshipId` alone never crosses a family boundary and only that
+  family's relationship is removed. Existing audit/governance behavior is
+  preserved. Returns `#err(#RelationshipNotFound)` when no relationship with that
+  id belongs to `familyId`.
 - `removeRelationship(relationshipId : Nat) : async Result<(), RelationshipAdminError>` —
-  update. Family Steward only. Removes an incorrect relationship from the shared
-  family graph. Returns `#err(#RelationshipNotFound)` when no relationship with
-  that id exists.
+  update. TEMPORARY Tenancy 1C compatibility wrapper for
+  `removeRelationshipForFamily`, delegating with the default family id
+  (`\"norwood\"`). Family Steward only. Removes an incorrect relationship from the
+  shared family graph. Returns `#err(#RelationshipNotFound)` when no relationship
+  with that id exists.
+- `correctRelationshipTypeForFamily(familyId : Text, relationshipId : Nat, relationshipType : RelationshipType) : async Result<Relationship, RelationshipAdminError>` —
+  update. Active Steward of `familyId` only. Corrects the relationship type of an
+  existing relationship in `familyId`. The relationship must belong to
+  `familyId` and both referenced people must still belong to `familyId`, so a
+  `relationshipId` alone never crosses a family boundary and only that family's
+  relationship is updated. Existing correction/audit semantics are preserved.
+  Returns `#err(#RelationshipNotFound)` when no relationship with that id belongs
+  to `familyId` and `#err(#PersonNotFound)` when either referenced person no
+  longer belongs to `familyId`.
 - `correctRelationshipType(relationshipId : Nat, relationshipType : RelationshipType) : async Result<Relationship, RelationshipAdminError>` —
-  update. Family Steward only. Corrects the relationship type of an existing
-  relationship. Returns `#err(#RelationshipNotFound)` when no relationship with
-  that id exists.
-- `listAuditHistory() : async [AuditEntry]` — query. Family Steward only.
-  Returns the governance audit log. Audit History is strictly steward-only.
-- `getStewardAuditHistory() : async [StewardAuditEntry]` — query. Family
-  Steward only. Returns the merged Family Steward Audit History: every
-  governance audit entry plus every conflict-resolution action (Keep Existing,
-  Replace Existing, Preserve Both/Unresolved, Needs Research) merged
-  chronologically, newest first, without duplicating records. Each
-  conflict-resolution entry is enriched from its linked Conflict Review item so
-  it carries the affected person, disputed field, existing value, proposed
-  value, resolution action, steward notes, steward identity (the resolving
-  steward's account principal), timestamp, and provenance/source refs where
-  available. This is a computed read over the existing governance audit log and
-  research audit log — it does not add or alter any persisted records, and the
-  existing `listAuditHistory` endpoint is unchanged.
+  update. TEMPORARY Tenancy 1C compatibility wrapper for
+  `correctRelationshipTypeForFamily`, delegating with the default family id
+  (`\"norwood\"`). Family Steward only. Corrects the relationship type of an
+  existing relationship. Returns `#err(#RelationshipNotFound)` when no
+  relationship with that id exists.
+- `listAuditHistoryForFamily(familyId : Text) : async [AuditEntry]` — query.
+  Active Steward of `familyId` only; a Steward of one family can never read
+  another family's audit history. Returns only the governance audit entries
+  whose `familyId` equals `familyId`, preserving the existing entry shape,
+  chronological ordering, and action labels/details.
+- `listAuditHistory() : async [AuditEntry]` — query. TEMPORARY Tenancy 1C
+  compatibility wrapper for `listAuditHistoryForFamily`, delegating with the
+  default family id (`\"norwood\"`). Family Steward only. Returns the governance
+  audit log of the default family. Audit History is strictly steward-only.
+- `getStewardAuditHistoryForFamily(familyId : Text) : async [StewardAuditEntry]` —
+  query. Active Steward of `familyId` only; a Steward of one family can never
+  read another family's audit history. Returns the merged Family Steward Audit
+  History for `familyId`: every governance audit entry belonging to `familyId`
+  plus every conflict-resolution action (Keep Existing, Replace Existing,
+  Preserve Both/Unresolved, Needs Research) belonging to `familyId`, merged
+  chronologically, newest first, without duplicating records. Both sources are
+  filtered by `familyId` before merging, so Family A audit activity is never
+  returned through Family B. Each conflict-resolution entry is enriched from its
+  linked Conflict Review item so it carries the affected person, disputed field,
+  existing value, proposed value, resolution action, steward notes, steward
+  identity (the resolving steward's account principal), timestamp, and
+  provenance/source refs where available. Governance audit entries carry their
+  own `familyId` tenant-boundary field, stamped when the entry is appended, so
+  each entry belongs directly to the family it acted on; it is additionally
+  attributed to `familyId` through the family-scoped data it references when at
+  least one of its affected people belongs to that family (a profile or an
+  approved claim in that family). The default Norwood family is the legacy
+  family tree, so every governance entry attributes to it, preserving the
+  pre-tenancy default behavior; a non-default family only ever receives entries
+  whose affected people are tracked in that family, so an entry with no affected
+  people (such as a steward removal) never leaks into a non-default history.
+  This is a computed read over the existing governance audit log and research
+  audit log — it does not add or alter any persisted records, and the existing
+  `listAuditHistory` endpoint is unchanged.
+- `getStewardAuditHistory() : async [StewardAuditEntry]` — query. TEMPORARY
+  Tenancy 1C compatibility wrapper for `getStewardAuditHistoryForFamily`,
+  delegating with the default family id (`\"norwood\"`). Family Steward of the
+  default family only. Returns the merged Family Steward Audit History for the
+  default family, with the same entry shapes, chronological ordering, and
+  conflict-resolution enrichment described above. It contains no merge logic of
+  its own and will be removed once every caller passes an explicit `familyId`.
 
 ### Family Stories, Family Mysteries, and Travel Through Time
 
@@ -1550,6 +1968,421 @@ TEMPORARY Tenancy 1C compatibility wrappers (default Norwood family only):
   data, so it increments on new pending items and decrements on Approve/Reject
   automatically.
 
+### Family Membership
+
+`FamilyMembership` is the canonical account-to-family membership state: it links
+an account (`accountId`, an ICP Principal) to a person profile (`personId`)
+inside one family (`familyId`). It is deliberately separate from the other
+identity concepts:
+
+- `Account` is the stable internal identity (an ICP Principal) plus its bound
+  authentication methods.
+- `PersonProfile` is the family-tree person record and its ownership state.
+- `ProfileClaim` is the legacy claim workflow, retained temporarily for
+  compatibility (see below).
+- `StewardRecord` is family governance authority, not membership.
+
+Membership is never inferred from `StewardRecord`, and an account may hold
+independent memberships in multiple families, each mapping to a different
+`personId`. A membership in Family A never implies membership in Family B, and
+an `accountId` alone is never treated as global family membership.
+
+A `FamilyMembership` carries `id`, `familyId`, `accountId`, `personId`,
+`status`, `joinedAt`, `approvedBy`, `approvedAt`, `createdAt`, and `updatedAt`.
+`status` is one of `#Pending`, `#Active`, `#Suspended`, or `#Left`. `joinedAt`,
+`approvedBy`, and `approvedAt` are set when the membership becomes `#Active`;
+`createdAt`/`updatedAt` are nanosecond timestamps.
+
+Invariants enforced server-side:
+
+- `familyId` is mandatory and `personId` must belong to that `familyId`.
+- At most one `#Active` membership may exist per `familyId` + `accountId`.
+- At most one `#Active` membership may exist per `familyId` + `personId`.
+- `#Pending`, `#Suspended`, and `#Left` memberships grant no normal family
+  access; only `#Active` satisfies `hasActiveMembershipForFamily`.
+- The same `personId` text may exist independently in two families without
+  cross-family leakage.
+
+Membership is not public directory data. Every read below is gated on the caller
+being the target account or an active Steward of the requested family, and every
+read returns `Result<_, MembershipError>`: an anonymous caller receives
+`#err(#NotSignedIn)`, and a signed-in caller who is neither the target account
+nor an active Steward of `familyId` receives `#err(#NotAuthorized)`. Denials are
+uniform and non-leaking — the same `#err(#NotAuthorized)` is returned whether or
+not the target account belongs to another family, so a caller can never use these
+endpoints to probe whether an account is a member of some other family. Anonymous
+callers cannot enumerate account ids, person ids, or family memberships.
+
+- `getMembershipForFamily(familyId : Text, accountId : Principal) : async Result<?FamilyMembership, MembershipError>` —
+  query. Returns the account's membership in `familyId` only, or `null` when the
+  account has no membership in that family. Allowed only when `accountId` equals
+  the caller, or the caller is an active Steward of `familyId`. A membership in
+  another family is never returned.
+- `getMyMembershipForFamily(familyId : Text) : async Result<?FamilyMembership, MembershipError>` —
+  query. Returns the signed-in caller's own membership in `familyId`, or `null`
+  when the caller has no membership in that family. Self only: a signed-in caller
+  may read only their own membership.
+- `listMembershipsForAccount(accountId : Principal) : async Result<[FamilyMembership], MembershipError>` —
+  query. Returns every membership held by `accountId` across all families. Self
+  only; any other account is denied with `#err(#NotAuthorized)`. Unrestricted
+  cross-account reads stay internal to library code and are never exposed as a
+  public endpoint.
+- `listFamilyMembersForFamily(familyId : Text) : async Result<[FamilyMembership], MembershipError>` —
+  query. Returns the memberships of one family only; memberships from other
+  families are never included. Requires an approved active family member or an
+  active Steward of `familyId`.
+- `hasActiveMembershipForFamily(familyId : Text, accountId : Principal) : async Result<Bool, MembershipError>` —
+  query. Returns `true` only when `accountId` holds an `#Active` membership in
+  `familyId`. Returns `false` for `#Pending`, `#Suspended`, and `#Left`
+  memberships, and for a membership in another family. Retained public for
+  compatibility but restricted to self or an active Steward of `familyId`, so it
+  cannot be used to probe arbitrary membership.
+- `createPendingMembershipForFamily(familyId : Text, accountId : Principal, personId : Text) : async Result<FamilyMembership, MembershipError>` —
+  update. Creates a `#Pending` membership for `accountId` linked to `personId`
+  in `familyId`. Active Steward of `familyId` only. Returns
+  `#err(#NotSignedIn)` for an anonymous caller, `#err(#NotAuthorized)` when the
+  caller is not an active Steward of `familyId`, `#err(#PersonNotInFamily)` when
+  `personId` does not belong to `familyId`, `#err(#AlreadyMember)` when the
+  account already has a membership in that family, and
+  `#err(#ProfileAlreadyOwned)` when an `#Active` membership already owns that
+  person profile in that family.
+- `activateMembershipForFamily(familyId : Text, membershipId : Nat) : async Result<FamilyMembership, MembershipError>` —
+  update. Activates a `#Pending` membership in `familyId` through the authorized
+  family approval path. Active Steward of `familyId` only; there is no
+  unrestricted self-promotion to `#Active`. The persisted `approvedBy` is always
+  the real authenticated caller (the approving Steward) and `approvedAt` is the
+  current time; a caller-supplied approver identity is never trusted. Returns
+  `#err(#NotSignedIn)` for an anonymous caller, `#err(#NotAuthorized)` when the
+  caller is not an active Steward of `familyId`, `#err(#MembershipNotFound)` when
+  no membership with that id belongs to `familyId`, `#err(#InvalidTransition)`
+  when the membership is not `#Pending`, and `#err(#ProfileAlreadyOwned)` when
+  another `#Active` membership already owns the person profile in that family. On
+  success it sets `status = #Active`, `joinedAt`, `approvedBy = ?caller`, and
+  `approvedAt = ?now`.
+- `leaveFamilyMembership(familyId : Text, membershipId : Nat) : async Result<FamilyMembership, MembershipError>` —
+  update. Sets an `#Active` membership in `familyId` to `#Left`. The caller may
+  be the membership's own account, or an active Steward of `familyId` recording a
+  leave for a member of that family. Returns `#err(#NotSignedIn)` for an
+  anonymous caller, `#err(#MembershipNotFound)` when no membership with that id
+  belongs to `familyId`, `#err(#NotAuthorized)` when the caller is neither the
+  membership's account nor an active Steward of `familyId`, and
+  `#err(#InvalidTransition)` when the membership is not `#Active`.
+- `suspendMembershipForFamily(familyId : Text, membershipId : Nat) : async Result<FamilyMembership, MembershipError>` —
+  update. Sets an `#Active` membership in `familyId` to `#Suspended`. Active
+  Steward of `familyId` only. Returns `#err(#NotSignedIn)` for an anonymous
+  caller, `#err(#NotAuthorized)` when the caller is not an active Steward of
+  `familyId`, `#err(#MembershipNotFound)` when no membership with that id
+  belongs to `familyId`, and `#err(#InvalidTransition)` when the membership is
+  not `#Active`.
+
+The OQL `familyMembership` entity is a flattened, `.controllerOnly()` view:
+enumerated status renders as its tag text and optional fields render as empty
+text or `0` when absent.
+
+#### ProfileClaim compatibility
+
+`ProfileClaim` remains temporarily for compatibility and the existing claim
+workflow. This phase only establishes `FamilyMembership`; it does NOT switch the
+application's family authorization from approved `ProfileClaim`s to
+`FamilyMembership`. Existing family-scoped authorization helpers continue to use
+the current claim-based compatibility logic, and the canonical membership
+helpers above are provided so later onboarding/security phases can adopt them.
+Migration from claim-based membership checks to `FamilyMembership` is a later
+onboarding/security phase.
+
+The migration chain backfills one `#Active` membership for every `#Approved`
+`ProfileClaim` in the default family (`\"norwood\"`), preserving the
+`ProfileClaim` records, Steward records, profile ids, relationships, and all
+other existing data unchanged. Historical `ProfileClaim` data is not assumed to
+be perfect, so the backfill enforces both `#Active` invariants — at most one
+`#Active` membership per `familyId` + `accountId`, and at most one `#Active`
+membership per `familyId` + `personId` — with a deterministic conflict rule:
+claims are processed in ascending claim id order, and the earliest approved claim
+wins both the account slot and the person slot; any later approved claim that
+collides on either slot is skipped and creates no membership record. The
+backfill never deletes or rewrites historical `ProfileClaim` records. The
+backfill is idempotent: a repeated upgrade creates no duplicate membership.
+
+### Family Creation (zero-to-family onboarding foundation)
+
+`createFamilyWithFounder` is the canonical backend transaction for a brand-new
+authenticated user to start a family. It is the foundation of onboarding and
+creates exactly three linked records in one atomic step:
+
+1. the new `Family` record,
+2. the founder's first `PersonProfile` inside that family, and
+3. an `#Active` `FamilyMembership` linking the authenticated account to that
+   founder profile.
+
+It reuses the existing `Family`, `PersonProfile`, and `FamilyMembership` models
+— there is no parallel family type — and it deliberately does NOT assign
+Stewardship. After a successful call the family temporarily exists with a founder
+profile and an active founder membership but no permanent Steward decision;
+Steward selection (\"Would you like to start as Family Steward?\") is implemented
+in Onboarding Phase 1B-2 and is not bypassed here.
+
+- `createFamilyWithFounder(displayName : Text, input : FounderProfileInput, idempotencyKey : Text) : async Result<FamilyCreationResult, FamilyCreationError>` —
+  update. Creates a brand-new family with the authenticated caller as founder.
+
+  **Authentication.** The caller must be signed in. An anonymous caller receives
+  `#err(#NotSignedIn)` and nothing is created.
+
+  **Authorization.** The founder account is always the authenticated caller.
+  There is no account parameter, so a caller can never name another account as
+  founder. The caller does not need to belong to any existing family to create a
+  new family, and an account that already belongs to another family (including
+  Norwood) may create a new family without changing its existing membership or
+  data. One account may simultaneously hold `#Active` memberships in multiple
+  families.
+
+  **Input.** `displayName` is the new family's display name; it is trimmed and
+  must be non-empty. `input` is a `FounderProfileInput`:
+  `firstName` and `lastName` are REQUIRED (each trimmed and non-empty);
+  `middleName`, `suffix`, `preferredName`, `birthDate`, `birthYear`,
+  `birthplace`, and `currentLocation` are optional. Parents, siblings, partner,
+  and children are deliberately not collected here — those belong to later
+  \"Add Family Member\" steps. A blank display name or a missing first/last name
+  receives `#err(#InvalidInput)`.
+
+  **Result.** On success returns `#ok(FamilyCreationResult)` carrying the three
+  created records together — `family`, `founderProfile`, and `membership` — so a
+  later onboarding UI can continue. The founder profile is created claimed by the
+  caller (`claimStatus == #Claimed`, `claimedByUserId == caller`) and living, and
+  the membership is `#Active` with `accountId == caller`,
+  `personId == founderProfile.personId`, `joinedAt` set to the creation time, and
+  `approvedBy`/`approvedAt` set to the caller/creation time (the founding
+  membership is self-approved by the system).
+
+  **Family-id generation.** The family id is unique, stable, URL/storage safe,
+  and not derived only from `displayName`: it is built from a slug of the display
+  name plus a unique suffix, and it never exposes an internal account principal.
+  Two families may share the same display name and still receive distinct ids.
+
+  **Atomicity.** All inputs are validated before any stable collection is
+  mutated, so a rejected request leaves no orphan family, orphan profile, or
+  incomplete membership. If founder-profile or membership creation cannot
+  complete, no partial family is left behind.
+
+  **Retry / idempotency.** `idempotencyKey` is REQUIRED and must be non-empty.
+  A blank or whitespace-only key receives `#err(#InvalidInput)` and creates
+  nothing, so the canonical creation path can never create a family without
+  retry protection. When the key was already used by this caller, the previously
+  created family/profile/membership are returned instead of creating duplicate
+  records, so a retried or double-submitted onboarding attempt is safe. The
+  idempotency index is keyed by caller plus key, so one account's key never
+  collides with another account's key, and two different callers may reuse the
+  same key independently. A replay does not advance the family-creation nonce;
+  the nonce advances only when a new family is actually created.
+
+  **Errors.** `#err(#NotSignedIn)` for an anonymous caller; `#err(#InvalidInput)`
+  for a blank display name or missing first/last name; `#err(#AlreadyMember)` and
+  `#err(#ProfileAlreadyOwned)` for the membership-model conflicts that can still
+  arise during the atomic creation step.
+
+  **Non-goal.** No `StewardRecord` is created by this operation. Steward
+  selection is a later onboarding phase.
+
+### Family Invitation (secure onboarding transport)
+
+A `FamilyInvitation` is a secure onboarding TRANSPORT record. It carries a
+one-time invite token (persisted only as a hash) that lets an invited person
+reach the onboarding flow for exactly one family and one target person profile.
+
+It is deliberately separate from every other onboarding/identity record:
+
+- `PersonProfile` is the family-tree person record and its ownership state.
+- `ProfileClaim` is the legacy claim workflow retained for compatibility.
+- `FamilyMembership` is the canonical account-to-family membership state.
+- `StewardRecord` is the single source of Steward authority.
+- `FoundingStewardNomination` is the Phase 1B-2 founding-Steward progress
+  record.
+
+An invitation never grants family access by itself. Accepting one only
+establishes the connection to onboarding (at most a `#Pending`
+`FamilyMembership`); it never creates Steward authority and never bypasses the
+existing founding-Steward acceptance rule. No email, SMS, or landing page is
+part of this surface — the raw token is returned once so a later phase can
+deliver it.
+
+**Invitation model.** `FamilyInvitation` carries `id`, `familyId`, `personId`,
+`invitedEmail?`, `invitedByAccountId`, `invitedByPersonId?`, `invitationType`,
+`tokenHash`, `status`, `createdAt`, `expiresAt`, `acceptedAt?`,
+`acceptedByAccountId?`, and `cancelledAt?`. `invitationType` is
+`#FamilyMember` or `#FoundingSteward`; `status` is `#Pending`, `#Accepted`,
+`#Declined`, `#Cancelled`, or `#Expired`. An invitation belongs to exactly one
+family, and its `personId` must belong to that same family.
+
+**Token safety.** The raw invite token is generated from IC secure randomness
+(the management canister `raw_rand`, 256 bits of entropy) and is URL-safe. It is
+never derived from the caller principal, invitation id, timestamp, `familyId`,
+`personId`, or email. Only a cryptographic digest (SHA-256) of the raw token is
+persisted; the raw token is returned exactly once from the create/resend API and
+is never stored or logged. Token lookup is by digest only, so a wrong token
+never resolves an invitation.
+
+- `createFamilyInvitation(familyId : Text, personId : Text, invitedEmail : ?Text) : async Result<FamilyInvitationCreateOutcome, FamilyInvitationError>` —
+  update. Creates a `#Pending` `#FamilyMember` invitation for an unclaimed
+  profile in `familyId`.
+
+  **Authentication.** The caller must be signed in; an anonymous caller receives
+  `#err(#NotSignedIn)`.
+
+  **Authorization.** The caller must be an approved member or an active Steward
+  of `familyId`; otherwise `#err(#NotAuthorized)`. The target profile must
+  belong to `familyId`; a person from another family receives
+  `#err(#PersonNotInFamily)`.
+
+  **Claimed-profile rule.** If the target already has an `#Active` membership
+  owner in that family, or is already claimed through the legacy
+  `ProfileClaim` / `PersonProfile.claimedByUserId` ownership path, no join
+  invitation is created and the call returns `#ok(#AlreadyMember)` (or
+  `#ok(#RelationshipNotificationRequired)`), which a later UI can convert into a
+  normal relationship notification. No duplicate invitation flow is sent to an
+  existing member.
+
+  **Duplicate / resend safety.** A repeat create for the same `familyId` +
+  `personId` + `invitationType` reuses the existing active `#Pending` invitation
+  (`created = false`) rather than creating a duplicate. An invitation whose
+  `expiresAt <= now` is not active: it is transitioned to `#Expired` (preserved
+  for history) and a fresh `#Pending` invitation with a new token and a fresh
+  expiry is created. Because only the token digest is stored, a reused result
+  carries an empty `rawToken`; use `resendFamilyInvitation` when a fresh
+  deliverable token is needed.
+
+  **Result.** On success returns `#ok(#Created(FamilyInvitationCreated))`
+  carrying the invitation, the one-time `rawToken`, and `created = true` when a
+  new invitation was stored. No membership is created.
+
+- `createFoundingStewardInvitation(familyId : Text, personId : Text, nomineeEmail : ?Text) : async Result<FamilyInvitationCreateOutcome, FamilyInvitationError>` —
+  update. Creates a `#Pending` `#FoundingSteward` invitation linked to the
+  existing Phase 1B-2 nomination for `familyId` + `personId`.
+
+  **Authorization.** The caller must be the family founder or an active Steward
+  of `familyId`; otherwise `#err(#NotAuthorized)`.
+
+  **Linkage.** The nomination must exist and be `#Pending` for that family and
+  nominee; otherwise `#err(#NominationNotFound)` / `#err(#NomineeMismatch)`.
+  Nomination state is never duplicated inside the invitation. Creating the
+  invitation grants no Steward authority: the nominee still becomes Steward only
+  through the existing authenticated founding-Steward acceptance rule.
+
+- `validateFamilyInvitationToken(rawToken : Text) : async Result<FamilyInvitationPreview, FamilyInvitationError>` —
+  query. Validates a raw token and returns only the minimal, relationship-safe
+  preview context needed for later onboarding: invitation id, family display
+  name, target profile safe identity preview (its display name), invitation
+  type, status, and expiry. It never exposes the private family tree, Archive
+  data, other member identities, sensitive relationship context (adoptive /
+  foster / step / biological / guardian labels or private notes), or
+  Steward-only data. A wrong, unknown, cancelled, declined, or accepted token
+  returns `#err(#InvalidToken)`; an expired token returns `#err(#Expired)`.
+
+- `getInvitationRedemptionState(rawToken : Text) : async Result<InvitationRedemptionState, FamilyInvitationError>` —
+  query. Resolves a raw token to a safe, discriminated redemption state for the
+  invitation landing/terminal UI. Read-only: it never mutates state and never
+  creates a membership. `InvitationRedemptionState` is `#Valid(preview)` for a
+  `#Pending`, unexpired invitation (where `preview` is the same minimal,
+  relationship-safe `FamilyInvitationPreview` returned by
+  `validateFamilyInvitationToken`), or one of the terminal states `#Expired`,
+  `#Cancelled`, `#Declined`, `#AlreadyAccepted`, `#InvalidToken`. An unknown,
+  empty, or wrong token returns `#ok(#InvalidToken)`. The state never carries
+  `tokenHash`, any member identity beyond the existing preview fields, or any
+  signal about whether unrelated accounts or families exist. `#err(#FamilyNotFound)`
+  is returned only when a resolved `#Pending` invitation's family record is
+  missing (an internal inconsistency), never as a probe for other families.
+
+  **Redemption flow.** The frontend may call this query while signed out to
+  render a safe preview, then re-call it after authentication to revalidate the
+  token before accepting; the pre-sign-in preview state is never trusted.
+  Acceptance proceeds only when the state is `#Valid` (still `#Pending`,
+  unexpired, not cancelled, not declined, not previously accepted).
+
+- `acceptFamilyInvitation(rawToken : Text) : async Result<FamilyInvitation, FamilyInvitationError>` —
+  update. Accepts a raw token for the authenticated caller.
+
+  **Authentication.** The caller must be signed in; an anonymous caller receives
+  `#err(#NotSignedIn)`.
+
+  **Preconditions.** The token must be valid, `#Pending`, and unexpired, and the
+  target profile must still be unclaimed (no active membership owner and no
+  legacy `ProfileClaim` / `PersonProfile.claimedByUserId` ownership). A wrong
+  token returns `#err(#InvalidToken)`, an expired token `#err(#Expired)`, a
+  non-pending token `#err(#InvalidTransition)`, and an already-claimed target
+  `#err(#AlreadyMember)`.
+
+  **Membership matching.** When the caller already holds a membership in the
+  invitation's family, it is reused only when it is `#Pending` and its
+  `personId` equals the invitation's `personId`. Any other existing membership —
+  a different `personId`, or an `#Active`, `#Suspended`, or `#Left` status —
+  rejects acceptance with `#err(#AlreadyMember)` and the invitation stays
+  `#Pending`.
+
+  **Effect.** Creates or reuses a `#Pending` `FamilyMembership` linking the
+  caller, `familyId`, and `personId`. It never auto-activates the membership.
+  For `#FoundingSteward` the membership follows the existing
+  membership/founding-Steward rule without bypassing nominee acceptance. The
+  invitation is marked `#Accepted` only when acceptance succeeds, and an
+  accepted invitation can never be reused.
+
+  **Founding-Steward handoff.** The returned `FamilyInvitation` carries its
+  `invitationType`, so a `#FoundingSteward` acceptance signals to the frontend
+  that this invitation is also a Steward nomination. Acceptance does NOT grant
+  Steward authority and does NOT auto-accept the nomination: the nominee still
+  becomes an active Steward only through the existing authenticated
+  `acceptFoundingStewardNomination` flow, and only once its membership
+  requirements are satisfied. Possession of the invite token alone never
+  creates Steward authority.
+
+  **Onboarding state.** A successful `#FamilyMember` acceptance returns the
+  accepted invitation and establishes or reuses only the valid same-profile
+  `#Pending` membership; the frontend should present a `MembershipPending`
+  onboarding state. Acceptance does not grant normal family access — the next
+  phase handles confirmation/approval.
+
+  **Alternate outcomes.** A caller who already owns the invited profile or holds
+  a valid `#Active` membership receives `#err(#AlreadyMember)` with no duplicate
+  membership created (a safe \"Already connected\" result). A caller with a
+  conflicting membership/profile state (a different `personId`, or a
+  non-`#Pending` status) also receives `#err(#AlreadyMember)`; the invitation
+  stays `#Pending` and no unrelated membership details are revealed. A target
+  profile claimed after the invite was issued returns `#err(#AlreadyMember)`
+  and never attaches the caller.
+
+- `declineFamilyInvitation(rawToken : Text) : async Result<FamilyInvitation, FamilyInvitationError>` —
+  update. The invited user declines a raw token. The invitation becomes
+  `#Declined` and can never be accepted afterwards. Anonymous callers receive
+  `#err(#NotSignedIn)`.
+
+- `cancelFamilyInvitation(familyId : Text, invitationId : Nat) : async Result<FamilyInvitation, FamilyInvitationError>` —
+  update. The inviter or an active Steward of `familyId` cancels a `#Pending`
+  invitation. The invitation becomes `#Cancelled` and can never be accepted
+  afterwards. A non-pending invitation returns `#err(#InvalidTransition)`; an
+  unauthorized caller returns `#err(#NotAuthorized)`; an unknown id in that
+  family returns `#err(#InvitationNotFound)`.
+
+- `resendFamilyInvitation(familyId : Text, personId : Text, invitationType : InvitationType) : async Result<FamilyInvitationCreated, FamilyInvitationError>` —
+  update. Rotates the token of an existing active `#Pending` invitation for the
+  same `familyId` + `personId` + `invitationType`, returning the new raw token
+  once. The old token stops resolving, and `expiresAt` is refreshed to a full
+  TTL from now, so a resend never issues an already-expired token. This is the
+  explicit resend operation, so a resend never silently creates a duplicate
+  invitation. Requires the same authority as create; a missing pending
+  invitation returns `#err(#InvitationNotFound)`.
+
+  **Already-expired rule.** An invitation whose `expiresAt <= now` is not an
+  active `#Pending` invitation and is not resent. It is transitioned to
+  `#Expired` (preserved for history) and the call returns `#err(#Expired)`; the
+  caller must use `createFamilyInvitation` to issue a fresh invitation.
+
+**Expiration.** The default invitation lifetime is 30 days. An invitation whose
+`expiresAt <= now` is never treated as an active `#Pending` invitation: it is
+ignored by duplicate-pending lookup, fails validation and acceptance, and
+creates no membership. Expired records are preserved for audit/history and are
+never automatically deleted.
+
+**Privacy.** Invitation previews use relationship-safe/public-safe identity
+only. Public/simple family labels remain unchanged, and the existence of an
+invitation never reveals unrelated family membership.
+
 ### Historical Research Intake
 
 - `createSource(title : Text, sourceType : SourceType, description : Text, archiveItemId : ?Nat) : async Result<SourceRecord, ResearchError>` —
@@ -2080,8 +2913,28 @@ no business logic of their own.
   must be signed in\"` for an anonymous caller and `\"Unauthorized: Only
   approved family members can access the message board\"` when the caller is not
   an approved member.
-- `reconcileClaimNotifications(claimId : Nat) : async Nat` — update. Reconciles
-  stale claim notifications for a claim. When the claim is `#Approved`, marks
+- `reconcileClaimNotificationsForFamily(familyId : Text, claimId : Nat) : async Nat` —
+  update. Reconciles stale claim notifications for a claim in `familyId`. When
+  the claim is `#Approved`, marks the pending `#ProfileClaimRequested`
+  notification for the claimant as read/resolved so it no longer reads \"pending
+  review\"; the `#ProfileClaimReviewed` notification already reflects the final
+  approved state. The profile status stays `#Claimed` and no new claim is
+  created. The claim is located with a family-qualified lookup, so a `claimId`
+  alone can never cross the family boundary: a claim belonging to another family
+  is never found and nothing is reconciled. Returns the number of notifications
+  reconciled (0 when the claim does not exist in `familyId` or is not
+  `#Approved`). Requires an approved member of `familyId` (a caller holding at
+  least one `#Approved` profile claim in `familyId`, or a Steward of
+  `familyId`); traps with `\"Unauthorized: You must be signed in\"` for an
+  anonymous caller and with the stable, non-technical `\"Family membership
+  required. Claim your family profile and wait for Family Steward approval
+  before contributing family content.\"` for a signed-in but unapproved caller,
+  so the frontend can present a definitive family-membership-required outcome
+  rather than a generic retry.
+- `reconcileClaimNotifications(claimId : Nat) : async Nat` — update. TEMPORARY
+  compatibility wrapper for `reconcileClaimNotificationsForFamily`; delegates
+  with the default Norwood family (`\"norwood\"`). Reconciles stale claim
+  notifications for a claim. When the claim is `#Approved`, marks
   the pending `#ProfileClaimRequested` notification for the claimant as
   read/resolved so it no longer reads \"pending review\"; the `#ProfileClaimReviewed`
   notification already reflects the final approved state. The profile status
@@ -2104,7 +2957,10 @@ no business logic of their own.
 
 The exposed entities are `family`, `photo`, `archiveItem`, `profile`, `claim`,
 `relationshipRequest`, `confirmedRelationship`, `notification`, `account`,
-`steward`, `successor`, `removalRequest`, `auditLog`, `mergeConflict`,
+`steward`, `foundingStewardState`, `foundingStewardNomination`,
+`familyMembership`, `familyInvitation`, `membershipConfirmation`,
+`membershipConfirmationResolution`, `successor`,
+`removalRequest`, `auditLog`, `mergeConflict`,
 `archivedProfile`, `dismissedPair`, `story`, `mystery`, `mysteryContribution`,
 `recipe`, `boardPost`, `boardReply`, `conversation`, `message`, `block`,
 `report`, `researchSource`, `proposedFinding`, `newPersonCandidate`,
@@ -2115,7 +2971,11 @@ Most are declared `.controllerOnly()` (see the authorization section); the
 `archiveItem` uses a privacy-reflecting row-visibility rule (see the
 authorization section); `researchSource` uses a family-membership
 row-visibility rule; `conversation` and `message` use a participant-only
-visibility rule. `family` rows (primary key
+visibility rule. The governance entities `steward`, `successor`,
+`removalRequest`, `auditLog`, `mergeConflict`, and `dismissedPair` each carry a
+`familyId` column naming the family the record belongs to — the tenant boundary
+— so a controller-side query can separate Family A governance records from
+Family B's. `family` rows (primary key
 `id`) carry `displayName`, `createdAt` (nanoseconds since epoch, `Int`),
 `createdBy` (the creating principal, rendered as text), and `status`
 (`\"active\"`/`\"archived\"`). `photo` rows are flattened
@@ -2169,27 +3029,52 @@ bound to the account) and `createdAt` (nanoseconds since epoch, `Int`).
 
 The governance entities are flattened views of the corresponding records.
 `steward` rows (primary key `stewardAccountId`, the steward's account principal
-rendered as text) carry `roleStatus` (`\"Active\"`/`\"Removed\"`),
+rendered as text) carry `familyId` (the owning family id, the tenant boundary),
+`roleStatus` (`\"Active\"`/`\"Removed\"`),
 `successorPriority` (the steward's own designated successor priority, `0` when
 none), `assignedBy` (the promoting steward's principal rendered as text), and
-`assignedAt` (nanoseconds since epoch, `Int`). `successor` rows (primary key
-`personId`) carry `priority` (`Nat`, the order in which the successor should be
+`assignedAt` (nanoseconds since epoch, `Int`). `foundingStewardState` rows
+(primary key `familyId`, the tenant boundary) carry `state` — the family's
+founding-Steward onboarding progress as tag text (`\"Undecided\"`,
+`\"FounderAccepted\"`, `\"NominationPending\"`, or `\"Transferred\"`). This table
+is PROGRESS TRACKING ONLY: it never grants or removes Steward authority, which
+lives solely in the `steward` table. A family with no recorded state simply has
+no row here (it reads as `#Undecided` through the API), and the default Norwood
+family is never initialized into this state. `foundingStewardNomination` rows
+(primary key `id`) carry `familyId` (the owning family id, the tenant boundary —
+a nomination id alone never resolves across families), `founderAccountId` (the
+nominating founder's principal rendered as text), `nomineePersonId`,
+`nomineeAccountId` (the nominee's account principal rendered as text, `\"\"` when
+the nominee profile is unclaimed), `nomineeEmail` (`\"\"` when none was
+supplied), `status` (`\"Pending\"`/`\"Accepted\"`/`\"Declined\"`/`\"Cancelled\"`),
+`createdAt`, and `updatedAt` (nanoseconds since epoch, `Int`). Both entities are
+`.controllerOnly()`, matching the `steward` and `familyMembership` governance
+entities. `successor` rows (primary key
+`personId`) carry `familyId` (the owning family id, the tenant boundary),
+`priority` (`Nat`, the order in which the successor should be
 considered for activation), `assignedBy` (principal text), `assignedAt` (`Int`),
 and `status` (`\"Designated\"`/`\"Activated\"`/`\"Removed\"`). `removalRequest`
-rows (primary key `id`) carry `personId`, `requestingUserId` (principal text),
-`reason`, `status` (`\"Pending\"`/`\"Approved\"`/`\"Rejected\"`),
+rows (primary key `id`) carry `familyId` (the owning family id, the tenant
+boundary — the target profile must belong to that family and only a Steward of
+that family may review the request), `personId`, `requestingUserId` (principal
+text), `reason`, `status` (`\"Pending\"`/`\"Approved\"`/`\"Rejected\"`),
 `submittedDate` (`Int`), `reviewedBy` (principal text, `\"\"` when unreviewed),
 and `reviewedDate` (`Int`, `0` when unreviewed). `auditLog` rows (primary key
-`id`) carry `actionType` (the audit action tag text, e.g.
+`id`) carry `familyId` (the owning family id, the tenant boundary — every
+governance action stamps the family it acted on), `actionType` (the audit action
+tag text, e.g.
 `\"ClaimApproved\"`/`\"StewardPromoted\"`/`\"ProfileArchived\"`/`\"DuplicateMerged\"`),
 `actorAccountId` (principal text), `affectedPersonCount` (`Nat`, the number of
 affected person ids), `timestamp` (nanoseconds since epoch, `Int`), and
-`summary`. `mergeConflict` rows (primary key `id`) carry `field`,
+`summary`. `mergeConflict` rows (primary key `id`) carry `familyId` (the owning
+family id, the tenant boundary — stamped from the merge's family), `field`,
 `canonicalValue`, `alternateValue`, `status` (`\"Pending\"`/`\"Resolved\"`),
 `resolvedBy` (principal text, `\"\"` when unresolved), and `resolvedAt` (`Int`,
 `0` when unresolved). `archivedProfile` rows (primary key `personId`) carry only
 `personId` — the id of each archived profile. `dismissedPair` rows (primary key
-`key`, the composite `\"<personIdA>:<personIdB>\"`) carry `personIdA` and
+`key`, the composite `\"<personIdA>:<personIdB>\"`) carry `familyId` (the owning
+family id, the tenant boundary — a dismissal in one family never hides a
+duplicate candidate in another), `personIdA`, and
 `personIdB` — the two Person ids a steward dismissed as \"Not a duplicate\", so
 the pair does not reappear in the duplicate review list.
 
@@ -2374,8 +3259,11 @@ membership, profile ownership, and Family Steward authority — is evaluated
 against the one default `\"norwood\"` family and is unchanged by the tenancy
 foundation. The `familyId` field now carried by `PersonProfile`, `ProfileClaim`,
 `Relationship`, `RelationshipRequest`, `StewardRecord`, and `ArchiveItem` is
-persisted and migrated, but no endpoint filters or scopes by it yet, and no
-family-creation or onboarding surface exists. Authorization is converted to
+persisted and migrated, but no endpoint filters or scopes by it yet. A
+family-creation surface now exists: `createFamilyWithFounder` creates a new
+family with its founder profile and active founder membership (see the Family
+Creation section), but it does not assign Stewardship, and the onboarding UI and
+Steward selection remain future phases. Authorization is converted to
 family-scoped authorization in Tenancy 1B; until then, callers must not assume
 that a `familyId` value restricts what an authorized caller can read or write.
 
@@ -2397,7 +3285,9 @@ enforce the admin/user/guest model described in their entries.
 The OQL methods (`schema`, `execute`) enforce authorization per entity against
 the live caller. Most exposed entities — `family`, `photo`, `profile`,
 `claim`, `relationshipRequest`, `confirmedRelationship`, `notification`,
-`account`, `steward`, `successor`, `removalRequest`, `auditLog`,
+`account`, `steward`, `foundingStewardState`, `foundingStewardNomination`,
+`familyMembership`, `familyInvitation`, `membershipConfirmation`,
+`membershipConfirmationResolution`, `successor`, `removalRequest`, `auditLog`,
 `mergeConflict`, `archivedProfile`, `dismissedPair`, `story`, `mystery`,
 `mysteryContribution`, `recipe`, `boardPost`, `boardReply`, `block`, and
 `report` — are declared `.controllerOnly()`, so only the platform controller can read their
@@ -2509,8 +3399,8 @@ they simply find no matching record and return `null`/`0`/`false`. The legacy
 compatibility wrappers that delegate to the canonical methods with the default
 family (`\"norwood\"`); they contain no logic of their own.
 
-The Family Governance methods are steward-only. `listStewards`,
-`promoteToStewardForFamily`, `promoteToSteward`, `removeSteward`,
+The Family Governance methods are steward-only. `listStewardsForFamily`,
+`listStewards`, `promoteToStewardForFamily`, `promoteToSteward`, `removeSteward`,
 `designateSuccessorForFamily`, `designateSuccessor`,
 `activateSuccessorForFamily`, `activateSuccessor`,
 `listSuccessorsForFamily`, `listSuccessors`, `getSingleStewardWarning`,
@@ -2520,15 +3410,18 @@ The Family Governance methods are steward-only. `listStewards`,
 `restoreProfile`, `listArchivedProfiles`, `permanentlyDeleteProfile`,
 `listDuplicateCandidates`, `notDuplicate`, `mergeProfiles`,
 `resolveMergeConflict`, `listPersonRelationships`, `addRelationshipForFamily`,
-`addRelationship`, `removeRelationship`, `correctRelationshipType`, and
+`addRelationship`, `removeRelationship`, `correctRelationshipType`,
+`listAuditHistoryForFamily`, and
 `listAuditHistory` all trap
 with `\"Unauthorized: Only Family Stewards can ...\"` when the caller is not an
 active Family Steward (an ACTIVE persisted `StewardRecord`). The canonical
 family-scoped forms (`promoteToStewardForFamily`, `designateSuccessorForFamily`,
 `activateSuccessorForFamily`, `listSuccessorsForFamily`,
-`listStewardIdentitiesForFamily`, `addRelationshipForFamily`) evaluate Steward
+`listStewardIdentitiesForFamily`, `addRelationshipForFamily`,
+`listAuditHistoryForFamily`) evaluate Steward
 authority against the requested `familyId`, so a Steward of one family can never
-promote, designate, activate, list, or relate a member of another family; the
+promote, designate, activate, list, relate, or read the audit history of a
+member of another family; the
 legacy no-`familyId` forms are TEMPORARY Tenancy 1C
 compatibility wrappers that delegate with the default family (`\"norwood\"`). The
 platform admin role does not grant these powers. `getStewardAuditHistory` is
@@ -2886,8 +3779,10 @@ already reference the caller's stable principal (`requestingUserId`,
 - `StewardRecord` fields: `stewardAccountId` (`Principal`, the steward's
   account), `roleStatus` (`#Active`/`#Removed`), `successorPriority` (`?Nat`,
   the steward's own designated successor priority, `null` when none),
-  `assignedBy` (`Principal`, the promoting steward), and `assignedAt` (`Int`,
-  nanoseconds since epoch). A caller is a Family Steward only when they match a
+  `assignedBy` (`Principal`, the promoting steward), `assignedAt` (`Int`,
+  nanoseconds since epoch), and `founding` (`Bool`, `true` only for a record
+  created by the founding-Steward onboarding flow; a role-context marker that
+  never changes authority). A caller is a Family Steward only when they match a
   `StewardRecord` with `roleStatus == #Active`; the platform admin role is never
   consulted.
 - `StewardClaimResult` fields: `stewardAccountId` (`Principal`, the account that
@@ -3260,11 +4155,12 @@ that same canonical record.
 
 When a claim is approved, the pending `#ProfileClaimRequested` notification
 (\"Your profile claim ... is pending review\") is reconciled so it no longer
-remains actionable/current: `reconcileClaimNotifications(claimId)` marks it
-read/resolved, while the `#ProfileClaimReviewed` notification already reflects
-the final approved state. The profile status stays `#Claimed` and no new claim
-is created. Historical notification history may remain, but it clearly shows the
-final resolved state and no longer implies the claim is pending.
+remains actionable/current: `reconcileClaimNotificationsForFamily(familyId,
+claimId)` (or its default-family wrapper `reconcileClaimNotifications(claimId)`)
+marks it read/resolved, while the `#ProfileClaimReviewed` notification already
+reflects the final approved state. The profile status stays `#Claimed` and no new
+claim is created. Historical notification history may remain, but it clearly
+shows the final resolved state and no longer implies the claim is pending.
 
 Relationship requests follow a propose → approve/reject lifecycle.
 `proposeRelationship` creates a `#Pending` request that is never treated as

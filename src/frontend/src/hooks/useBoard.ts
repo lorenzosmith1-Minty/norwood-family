@@ -8,8 +8,18 @@ import type {
   Reply,
 } from "@/types/board";
 import { useActor } from "@caffeineai/core-infrastructure";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  type InvalidateQueryFilters,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import {
+  approvedArchiveItemsInvalidation,
+  pendingArchiveItemsInvalidation,
+} from "./useArchiveStorage";
 import { notificationInvalidation } from "./useNotifications";
+import { pendingContributionsCountInvalidation } from "./usePendingCount";
 
 /**
  * React Query hooks for the Family Message Board, following the existing
@@ -23,9 +33,143 @@ import { notificationInvalidation } from "./useNotifications";
  * The default family keeps the exact legacy no-argument call shape and React
  * Query key, while a non-default family routes to the canonical `*ForFamily`
  * endpoint with the familyId included in the key so caches never collide
- * across families. Mutations invalidate the legacy query-key prefix, which
- * matches both branches.
+ * across families. Mutations invalidate through the family-exact helpers below.
  */
+
+/**
+ * Family-aware React Query invalidation filters for the Board caches.
+ *
+ * React Query matches `invalidateQueries` by key PREFIX, so a bare
+ * `["board", "posts"]` filter would also match
+ * `["board", "posts", <filter>, <otherFamily>]` and mark another family's
+ * Board cache stale. These helpers follow the exact precedent of
+ * `pendingContributionsCountInvalidation` in `usePendingCount.ts`, the Archive
+ * helpers in `useArchiveStorage.ts`, and the Research helpers in
+ * `useResearchIntake.ts`: both branches are family-exact.
+ *
+ * The Board read keys carry the family id at the LAST index:
+ * `["board", "posts", filter]` / `["board", "posts", filter, familyScopedId]`,
+ * `["board", "post", id]` / `["board", "post", id, familyScopedId]`,
+ * `["board", "replies", id]` / `["board", "replies", id, familyScopedId]`,
+ * `["board", "posts", "tags", tags]` /
+ * `["board", "posts", "tags", tags, familyScopedId]`, and
+ * `["board", "posts", "hidden"]` /
+ * `["board", "posts", "hidden", familyScopedId]`.
+ *
+ * The default family's read key omits the family slot entirely, which is a
+ * PREFIX of every non-default key for the same cache. A bare exact-key filter
+ * would therefore still mark another family's cache stale, so the default
+ * branch keeps the exact key but narrows it with a predicate that admits only
+ * the default shape (a `queryKey.length` check). This mirrors the
+ * `researchSourcesInvalidation` default branch in `useResearchIntake.ts`.
+ *
+ * - The default family (`familyScopedId` undefined) targets only the exact
+ *   default read key, so no non-default family's key can match.
+ * - A non-default family keeps the bare prefix (so the recorded filter shape is
+ *   unchanged) but narrows it with a predicate that admits only the active
+ *   family's keys.
+ *
+ * The active family id is always the centralized `useFamilyScopedId()` value;
+ * no family id is hard-coded here.
+ */
+
+/**
+ * Invalidation filter for the Board post-list caches of the active family.
+ *
+ * The `["board", "posts"]` prefix also matches the tag-search keys
+ * (`["board", "posts", "tags", ...]`) and the hidden keys
+ * (`["board", "posts", "hidden", ...]`), which have their own helpers, so the
+ * predicate excludes index 2 === "tags" and index 2 === "hidden".
+ */
+export function boardPostListsInvalidation(
+  familyScopedId: string | undefined,
+): InvalidateQueryFilters {
+  if (familyScopedId === undefined) {
+    return {
+      queryKey: ["board", "posts"],
+      predicate: (query) =>
+        query.queryKey.length === 3 &&
+        query.queryKey[2] !== "tags" &&
+        query.queryKey[2] !== "hidden",
+    };
+  }
+  return {
+    queryKey: ["board", "posts"],
+    predicate: (query) =>
+      query.queryKey.length === 4 &&
+      query.queryKey[2] !== "tags" &&
+      query.queryKey[2] !== "hidden" &&
+      query.queryKey[3] === familyScopedId,
+  };
+}
+
+/** Invalidation filter for the single Board post-detail cache of the active family. */
+export function boardPostDetailInvalidation(
+  familyScopedId: string | undefined,
+): InvalidateQueryFilters {
+  if (familyScopedId === undefined) {
+    return {
+      queryKey: ["board", "post"],
+      predicate: (query) => query.queryKey.length === 3,
+    };
+  }
+  return {
+    queryKey: ["board", "post"],
+    predicate: (query) =>
+      query.queryKey.length === 4 && query.queryKey[3] === familyScopedId,
+  };
+}
+
+/** Invalidation filter for the Board replies caches of the active family. */
+export function boardRepliesInvalidation(
+  familyScopedId: string | undefined,
+): InvalidateQueryFilters {
+  if (familyScopedId === undefined) {
+    return {
+      queryKey: ["board", "replies"],
+      predicate: (query) => query.queryKey.length === 3,
+    };
+  }
+  return {
+    queryKey: ["board", "replies"],
+    predicate: (query) =>
+      query.queryKey.length === 4 && query.queryKey[3] === familyScopedId,
+  };
+}
+
+/** Invalidation filter for the Board tag-search caches of the active family. */
+export function boardTagSearchInvalidation(
+  familyScopedId: string | undefined,
+): InvalidateQueryFilters {
+  if (familyScopedId === undefined) {
+    return {
+      queryKey: ["board", "posts", "tags"],
+      predicate: (query) => query.queryKey.length === 4,
+    };
+  }
+  return {
+    queryKey: ["board", "posts", "tags"],
+    predicate: (query) =>
+      query.queryKey.length === 5 && query.queryKey[4] === familyScopedId,
+  };
+}
+
+/** Invalidation filter for the hidden / moderated Board post caches of the active family. */
+export function boardHiddenPostsInvalidation(
+  familyScopedId: string | undefined,
+): InvalidateQueryFilters {
+  if (familyScopedId === undefined) {
+    return {
+      queryKey: ["board", "posts", "hidden"],
+      predicate: (query) => query.queryKey.length === 3,
+    };
+  }
+  return {
+    queryKey: ["board", "posts", "hidden"],
+    predicate: (query) =>
+      query.queryKey.length === 4 && query.queryKey[3] === familyScopedId,
+  };
+}
 
 /** Lists board posts, newest first, optionally filtered by post type. */
 export function useListBoardPosts(filter: PostType | null = null) {
@@ -121,7 +265,9 @@ export function useCreateBoardPost() {
           );
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["board", "posts"] });
+      void queryClient.invalidateQueries(
+        boardPostListsInvalidation(familyScopedId),
+      );
       // A new post notifies family members, so the unread badge must refresh.
       void queryClient.invalidateQueries(
         notificationInvalidation(familyScopedId),
@@ -197,14 +343,20 @@ export function useCreateBoardPostWithMedia() {
           );
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["board", "posts"] });
+      void queryClient.invalidateQueries(
+        boardPostListsInvalidation(familyScopedId),
+      );
       // New uploads create pending Archive items, so the pending/approved
-      // archive lists must refresh.
-      void queryClient.invalidateQueries({ queryKey: ["archive", "pending"] });
-      void queryClient.invalidateQueries({ queryKey: ["archive", "approved"] });
-      void queryClient.invalidateQueries({
-        queryKey: ["pendingContributionsCount"],
-      });
+      // archive lists must refresh for the active family only.
+      void queryClient.invalidateQueries(
+        pendingArchiveItemsInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        approvedArchiveItemsInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        pendingContributionsCountInvalidation(familyScopedId),
+      );
       // A new post notifies family members, so the unread badge must refresh.
       void queryClient.invalidateQueries(
         notificationInvalidation(familyScopedId),
@@ -253,8 +405,12 @@ export function useUpdateBoardPost() {
           );
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["board", "posts"] });
-      void queryClient.invalidateQueries({ queryKey: ["board", "post"] });
+      void queryClient.invalidateQueries(
+        boardPostListsInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        boardPostDetailInvalidation(familyScopedId),
+      );
     },
   });
 }
@@ -272,8 +428,16 @@ export function useArchiveBoardPost() {
         : actor.archiveBoardPostForFamily(familyScopedId, postId);
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["board", "posts"] });
-      void queryClient.invalidateQueries({ queryKey: ["board", "post"] });
+      void queryClient.invalidateQueries(
+        boardPostListsInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        boardPostDetailInvalidation(familyScopedId),
+      );
+      // Archiving hides a post, so the hidden/moderated review list must refresh.
+      void queryClient.invalidateQueries(
+        boardHiddenPostsInvalidation(familyScopedId),
+      );
     },
   });
 }
@@ -291,8 +455,16 @@ export function useRestoreBoardPost() {
         : actor.restoreBoardPostForFamily(familyScopedId, postId);
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["board", "posts"] });
-      void queryClient.invalidateQueries({ queryKey: ["board", "post"] });
+      void queryClient.invalidateQueries(
+        boardPostListsInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        boardPostDetailInvalidation(familyScopedId),
+      );
+      // Restoring removes a post from the hidden/moderated review list.
+      void queryClient.invalidateQueries(
+        boardHiddenPostsInvalidation(familyScopedId),
+      );
     },
   });
 }
@@ -359,7 +531,9 @@ export function useAddBoardReply() {
           );
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["board", "replies"] });
+      void queryClient.invalidateQueries(
+        boardRepliesInvalidation(familyScopedId),
+      );
       // A reply notifies the post author, so the unread badge must refresh.
       void queryClient.invalidateQueries(
         notificationInvalidation(familyScopedId),
@@ -381,7 +555,9 @@ export function useRemoveBoardReply() {
         : actor.removeBoardReplyForFamily(familyScopedId, replyId);
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["board", "replies"] });
+      void queryClient.invalidateQueries(
+        boardRepliesInvalidation(familyScopedId),
+      );
     },
   });
 }

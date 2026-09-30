@@ -92,6 +92,7 @@ const {
         affectedPersonIds,
         timestamp: 1_700_000_000_000_000_000n,
         actorAccountId: Principal.fromText(STEWARD_ACCOUNT),
+        familyId: "norwood",
       },
     ];
   };
@@ -124,6 +125,7 @@ const {
         assignedAt: 1_700_000_000_000_000_000n,
         assignedBy: Principal.fromText(STEWARD_ACCOUNT),
         roleStatus: StewardRoleStatus.Active,
+        founding: false,
       };
       stewards = [...stewards, record];
       recordAudit(AuditActionType.StewardPromoted, `Promoted ${personId}`);
@@ -174,6 +176,7 @@ const {
         assignedAt: 1_700_000_000_000_000_000n,
         assignedBy: Principal.fromText(STEWARD_ACCOUNT),
         roleStatus: StewardRoleStatus.Active,
+        founding: false,
       };
       stewards = [...stewards, record];
       recordAudit(
@@ -333,6 +336,7 @@ const {
         status: ProfileRemovalStatus.Pending,
         submittedDate: 1_700_000_000_000_000_000n,
         requestingUserId: Principal.fromText(OTHER_ACCOUNT),
+        familyId: "norwood",
       };
       removalRequests = [...removalRequests, request];
       recordAudit(
@@ -485,6 +489,7 @@ function stewardRecord(account: string): StewardRecord {
     assignedAt: 1_700_000_000_000_000_000n,
     assignedBy: Principal.fromText(STEWARD_ACCOUNT),
     roleStatus: StewardRoleStatus.Active,
+    founding: false,
   };
 }
 
@@ -554,6 +559,7 @@ function auditEntry(actionType: AuditActionType, summary: string): AuditEntry {
     affectedPersonIds: ["julia"],
     timestamp: 1_700_000_000_000_000_000n,
     actorAccountId: Principal.fromText(STEWARD_ACCOUNT),
+    familyId: "norwood",
   };
 }
 

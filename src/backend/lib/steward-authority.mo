@@ -88,9 +88,11 @@ module {
       successorPriority = null;
       assignedBy = caller;
       assignedAt = now;
+      founding = false;
     };
     stewards.add(record);
     auditLog.add({
+      familyId;
       id = nextAuditId(auditLog);
       actionType = #StewardPromoted;
       actorAccountId = caller;

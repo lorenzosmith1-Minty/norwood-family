@@ -129,10 +129,16 @@ export function useUnreadNotificationCount() {
 }
 
 /**
- * Reconciles stale claim notifications for a claim: marks the pending
- * `ProfileClaimRequested` notification for the claimant as read/resolved and
- * ensures the `ProfileClaimReviewed` notification reflects the final claim
- * state. Returns the number of notifications reconciled.
+ * Reconciles stale claim notifications for a claim in the active family: marks
+ * the pending `ProfileClaimRequested` notification for the claimant as
+ * read/resolved and ensures the `ProfileClaimReviewed` notification reflects the
+ * final claim state. Returns the number of notifications reconciled.
+ *
+ * The default family keeps the exact legacy no-argument call shape; a
+ * non-default family routes to the canonical
+ * `reconcileClaimNotificationsForFamily(familyId, claimId)` endpoint so the
+ * claim is located within the active family and a claim id alone can never
+ * cross the family boundary.
  */
 export function useReconcileClaimNotifications() {
   const familyScopedId = useFamilyScopedId();
@@ -141,7 +147,9 @@ export function useReconcileClaimNotifications() {
   return useMutation({
     mutationFn: async (claimId: bigint) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.reconcileClaimNotifications(claimId);
+      return familyScopedId === undefined
+        ? actor.reconcileClaimNotifications(claimId)
+        : actor.reconcileClaimNotificationsForFamily(familyScopedId, claimId);
     },
     onSuccess: () => {
       void queryClient.invalidateQueries(

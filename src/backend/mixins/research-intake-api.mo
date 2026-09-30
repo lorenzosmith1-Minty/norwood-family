@@ -11,10 +11,10 @@ import ArchiveTypes "../types/archive";
 import FamilyTypes "../types/family";
 import GovernanceTypes "../types/governance";
 import ResearchLib "../lib/research-intake";
+import RelationshipProposalScopeLib "../lib/relationship-proposal-scope";
 import ArchiveLib "../lib/archive";
 import FamilyAuthorizationLib "../lib/family-authorization";
 import NotificationsScopeLib "../lib/notifications-scope";
-import StewardAuthorityLib "../lib/steward-authority";
 import InputValidation "../lib/input-validation";
 
 /// Public API for the Historical Research Intake feature. Everything enters as
@@ -43,16 +43,6 @@ mixin (
   claims : List.List<OwnershipTypes.ProfileClaim>,
   stewards : List.List<GovernanceTypes.StewardRecord>,
 ) {
-  /// Traps unless the caller is a signed-in Family Steward.
-  func requireSteward(caller : Principal) {
-    if (caller.isAnonymous()) {
-      Runtime.trap("Unauthorized: You must be signed in");
-    };
-    if (not StewardAuthorityLib.isActiveSteward(stewards, caller)) {
-      Runtime.trap("Unauthorized: Only Family Stewards can perform this action");
-    };
-  };
-
   /// Returns `true` when a source with the given id exists.
   func sourceExists(id : Types.SourceId) : Bool {
     sources.find(func s = s.id == id) != null;
@@ -167,36 +157,74 @@ mixin (
   // with `FamilyTypes.DEFAULT_FAMILY_ID`. Exactly one implementation exists;
   // declaring them here too would be a duplicate definition (M0051).
 
-  /// Marks a pending Relationship proposal as needing research (Family Steward
-  /// only), transitioning it to `#NeedsResearch` while preserving the proposal.
-  /// The canonical graph is left unchanged. Returns the updated proposal, or
-  /// `null` when it does not exist or is not pending.
-  public shared ({ caller }) func needsResearchRelationshipProposal(id : Nat) : async ?Types.RelationshipProposal {
-    requireSteward(caller);
-    let now = Time.now();
-    switch (proposals.find(func p = p.id == id)) {
-      case null { null };
-      case (?p) {
-        if (p.status != #Pending) {
-          null;
-        } else {
-          let updated = ResearchLib.needsResearchRelationshipProposal(proposals, id, caller, now);
-          ignore ResearchLib.appendAudit(
-            auditLog,
-            { var next = state.nextAuditId },
-            FamilyTypes.DEFAULT_FAMILY_ID,
-            "RelationshipProposalNeedsResearch",
-            null,
-            ?p.sourceId,
-            caller,
-            now,
-            "Relationship proposal '" # p.fromPersonId # " - " # p.relationshipType # " - " # p.toPersonId # "' marked as needing research",
-          );
-          state.nextAuditId := state.nextAuditId + 1;
-          updated;
-        };
-      };
+  /// Internal implementation of `needsResearchRelationshipProposalForFamily`
+  /// that takes the caller explicitly. The public family-scoped endpoint and the
+  /// temporary single-family compatibility wrapper both delegate here, so the
+  /// Steward gate always evaluates the real caller rather than the canister
+  /// principal a shared-to-shared call would otherwise present.
+  ///
+  /// Requires an active Steward of `familyId`. The proposal is looked up with
+  /// the family-qualified `RelationshipProposalScopeLib.getForFamily`, so a
+  /// `proposalId` alone can never cross a family boundary: a proposal belonging
+  /// to another family is treated exactly like a missing proposal. Only that
+  /// family's pending proposal is transitioned to `#NeedsResearch`, and the
+  /// Research audit entry is written to `familyId`, never the default family.
+  func needsResearchRelationshipProposalForFamilyInternal(
+    familyId : FamilyTypes.FamilyId,
+    proposalId : Nat,
+    caller : Principal,
+  ) : ?Types.RelationshipProposal {
+    FamilyAuthorizationLib.requireActiveStewardForFamily(stewards, caller, familyId);
+    // A proposal whose `familyId` differs from the requested family is treated
+    // exactly like a missing proposal, so a `proposalId` alone never bypasses
+    // the family boundary.
+    let proposal = RelationshipProposalScopeLib.getForFamily(proposals, familyId, proposalId)
+      ?? return null;
+    if (proposal.status != #Pending) {
+      return null;
     };
+    let now = Time.now();
+    let updated = RelationshipProposalScopeLib.transitionForFamily(proposals, familyId, proposalId, #NeedsResearch, caller, now)
+      ?? return null;
+    ignore ResearchLib.appendAudit(
+      auditLog,
+      { var next = state.nextAuditId },
+      familyId,
+      "RelationshipProposalNeedsResearch",
+      null,
+      ?proposal.sourceId,
+      caller,
+      now,
+      "Relationship proposal '" # proposal.fromPersonId # " - " # proposal.relationshipType # " - " # proposal.toPersonId # "' marked as needing research",
+    );
+    state.nextAuditId := state.nextAuditId + 1;
+    ?updated;
+  };
+
+  /// Marks the pending Relationship proposal with `proposalId` in `familyId` as
+  /// needing research. Requires an active Steward of `familyId`; a Steward of
+  /// one family can never affect another family's proposal. The proposal must
+  /// belong to `familyId` — a proposal whose `familyId` differs is treated as
+  /// not found, so a `proposalId` alone cannot cross the family boundary. Only
+  /// that family's proposal is transitioned to `#NeedsResearch` while the
+  /// canonical graph is left unchanged, and the Research audit entry is written
+  /// to `familyId`. Returns the updated proposal, or `null` when no pending
+  /// proposal with that id belongs to `familyId`.
+  public shared ({ caller }) func needsResearchRelationshipProposalForFamily(
+    familyId : FamilyTypes.FamilyId,
+    proposalId : Nat,
+  ) : async ?Types.RelationshipProposal {
+    needsResearchRelationshipProposalForFamilyInternal(familyId, proposalId, caller);
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper for
+  /// `needsResearchRelationshipProposalForFamily`. Deprecated single-family
+  /// form: delegates with `FamilyTypes.DEFAULT_FAMILY_ID`, so current Norwood
+  /// behavior for familyId "norwood" is unchanged. Contains no duplicated
+  /// business logic and will be removed once the frontend passes an explicit
+  /// familyId everywhere.
+  public shared ({ caller }) func needsResearchRelationshipProposal(id : Nat) : async ?Types.RelationshipProposal {
+    needsResearchRelationshipProposalForFamilyInternal(FamilyTypes.DEFAULT_FAMILY_ID, id, caller);
   };
 
   /// Returns the research intake audit history for `familyId`. Requires an

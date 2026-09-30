@@ -249,18 +249,23 @@ it("preserves claims, owners, relationships, Steward state, and Archive records"
 });
 
 // ---------------------------------------------------------------------------
-// getFamily is a read-only surface: no family-creation endpoint is exposed, and
-// repeated reads never add a second family.
+// The family surface exposes the canonical create-family endpoint alongside the
+// read-only getFamily lookup, and repeated reads never add a second family.
+//
+// Onboarding Phase 1B-1 intentionally adds `createFamilyWithFounder`, so the
+// earlier "no family-creation surface" assertion is obsolete. The endpoint's
+// behavior is covered in depth by family-creation.cover.test.ts; this test only
+// pins that the deployed Candid interface exposes it next to the existing
+// family-scoped surface.
 // ---------------------------------------------------------------------------
 
-it("exposes no family-creation surface and never duplicates the default family", async () => {
+it("exposes the canonical create-family endpoint and never duplicates the default family", async () => {
   const setup = await pic!.setupCanister<_SERVICE>({ idlFactory, wasm: BACKEND_WASM });
   const actor = setup.actor;
 
   // The family-related methods on the real Candid interface are the read-only
-  // getFamily lookup plus the Tenancy 1C-A family-scoped endpoints (the
-  // `*ForFamily` surface). There is still no createFamily/onboardFamily
-  // surface: the accepted change adds scoped reads/writes, not family creation.
+  // getFamily lookup, the Tenancy 1C-A family-scoped endpoints (the
+  // `*ForFamily` surface), and the Phase 1B-1 create-family transaction.
   // The service class's `_fields` is the authoritative method list the canister
   // actually exposes, so this reads the deployed interface rather than the
   // actor object's own enumerable keys.
@@ -276,13 +281,8 @@ it("exposes no family-creation surface and never duplicates the default family",
   expect(familyMethods).toContain("listProfilesForFamily");
   expect(familyMethods).toContain("createMyselfForFamily");
   expect(familyMethods).toContain("listPhotosForFamily");
-  // No family-creation endpoint is exposed. `createMyselfForFamily` creates a
-  // person profile within a family, not a family, so it is not a family-creation
-  // surface; the check is for methods that would create/onboard a family.
-  const familyCreationMethods = familyMethods.filter((name) =>
-    /^(create|onboard|register)Family/i.test(name),
-  );
-  expect(familyCreationMethods).toEqual([]);
+  // The canonical zero-to-family creation endpoint is exposed (Phase 1B-1).
+  expect(familyMethods).toContain("createFamilyWithFounder");
 
   // Repeated reads of the default family return the same single record.
   const first = await actor.getFamily("norwood");

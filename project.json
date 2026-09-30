@@ -1,18 +1,17 @@
 {
-  "overview": "A private family connection app for the Norwood family to share history, stories, recipes, and memories.",
+  "overview": "A private family platform for the Norwood family with membership onboarding, trusted-relative confirmation, and family-scoped access.",
   "features": [
-    "Family-scoped steward promotion",
-    "Family-scoped successor activation",
-    "Family-scoped relationship creation",
-    "Two-family governance isolation",
-    "Default-family compatibility preserved"
+    "Trusted-relative membership confirmation requests",
+    "Limited membership-status screen while a membership is pending",
+    "Family-scoped access and privacy-safe relationship labels",
+    "Invitation redemption and family onboarding"
   ],
-  "category": "family-history",
+  "category": "family-platform",
   "tags": [
     "family",
-    "genealogy",
-    "tenancy",
-    "governance"
+    "membership",
+    "onboarding",
+    "privacy"
   ],
-  "last_updated": "2026-09-26T08:13:44.961Z"
+  "last_updated": "2026-09-30T01:15:45.813Z"
 }

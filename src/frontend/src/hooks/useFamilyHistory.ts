@@ -13,6 +13,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { notificationInvalidation } from "./useNotifications";
+import { pendingContributionsCountInvalidation } from "./usePendingCount";
 import { useProvidersPresent } from "./usePhotoStorage";
 
 export { useProvidersPresent };
@@ -254,9 +255,9 @@ export function useSubmitStory() {
       void queryClient.invalidateQueries(
         storyInvalidation("pending", familyScopedId),
       );
-      void queryClient.invalidateQueries({
-        queryKey: ["pendingContributionsCount"],
-      });
+      void queryClient.invalidateQueries(
+        pendingContributionsCountInvalidation(familyScopedId),
+      );
     },
   });
 }
@@ -283,9 +284,9 @@ export function useApproveStory() {
       void queryClient.invalidateQueries(
         storyInvalidation("detail", familyScopedId),
       );
-      void queryClient.invalidateQueries({
-        queryKey: ["pendingContributionsCount"],
-      });
+      void queryClient.invalidateQueries(
+        pendingContributionsCountInvalidation(familyScopedId),
+      );
       // Approval notifies the contributor, so the unread badge must refresh.
       void queryClient.invalidateQueries(
         notificationInvalidation(familyScopedId),
@@ -313,9 +314,9 @@ export function useRejectStory() {
       void queryClient.invalidateQueries(
         storyInvalidation("detail", familyScopedId),
       );
-      void queryClient.invalidateQueries({
-        queryKey: ["pendingContributionsCount"],
-      });
+      void queryClient.invalidateQueries(
+        pendingContributionsCountInvalidation(familyScopedId),
+      );
       // Rejection notifies the contributor, so the unread badge must refresh.
       void queryClient.invalidateQueries(
         notificationInvalidation(familyScopedId),
@@ -515,9 +516,9 @@ export function useSubmitMysteryContribution() {
       void queryClient.invalidateQueries(
         mysteryInvalidation("pending", familyScopedId),
       );
-      void queryClient.invalidateQueries({
-        queryKey: ["pendingContributionsCount"],
-      });
+      void queryClient.invalidateQueries(
+        pendingContributionsCountInvalidation(familyScopedId),
+      );
     },
   });
 }
@@ -571,9 +572,9 @@ export function useReviewMysteryContribution() {
       void queryClient.invalidateQueries(
         mysteryInvalidation("list", familyScopedId),
       );
-      void queryClient.invalidateQueries({
-        queryKey: ["pendingContributionsCount"],
-      });
+      void queryClient.invalidateQueries(
+        pendingContributionsCountInvalidation(familyScopedId),
+      );
       // Reviewing a contribution notifies the contributor, so the unread badge
       // must refresh.
       void queryClient.invalidateQueries(

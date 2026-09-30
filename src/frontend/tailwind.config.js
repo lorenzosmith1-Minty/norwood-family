@@ -193,6 +193,14 @@ export default {
           from: { opacity: "0", transform: "translateY(10px)" },
           to: { opacity: "1", transform: "translateY(0)" },
         },
+        "invite-in": {
+          from: { opacity: "0", transform: "translateY(10px) scale(0.99)" },
+          to: { opacity: "1", transform: "translateY(0) scale(1)" },
+        },
+        "invite-pulse": {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.45" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -215,6 +223,8 @@ export default {
         "recipe-in": "recipe-in 0.4s cubic-bezier(0.4, 0, 0.2, 1) both",
         "msg-in": "msg-in 0.25s cubic-bezier(0.4, 0, 0.2, 1) both",
         "hub-in": "hub-in 0.35s cubic-bezier(0.4, 0, 0.2, 1) both",
+        "invite-in": "invite-in 0.35s cubic-bezier(0.4, 0, 0.2, 1) both",
+        "invite-pulse": "invite-pulse 2s ease-in-out infinite",
       },
     },
   },

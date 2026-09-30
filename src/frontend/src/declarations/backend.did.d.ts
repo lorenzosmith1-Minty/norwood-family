@@ -106,6 +106,7 @@ export interface AuditEntry {
   'summary' : string,
   'timestamp' : bigint,
   'actorAccountId' : Principal,
+  'familyId' : string,
 }
 export type AuthMethod = { 'Google' : null } |
   { 'Apple' : null };
@@ -146,6 +147,8 @@ export type ClaimPersistenceError = { 'AlreadyOwned' : null } |
   { 'ApprovedOwnerExists' : null };
 export type ClaimStatus = { 'Unclaimed' : null } |
   { 'Claimed' : null };
+export type ConfirmationDecision = { 'Disputed' : null } |
+  { 'Confirmed' : null };
 export type ConflictResolutionAction = { 'NeedsResearch' : null } |
   { 'PreserveBoth' : null } |
   { 'ReplaceExisting' : null } |
@@ -228,6 +231,16 @@ export type EditError = { 'ProfileNotFound' : null } |
   { 'NotSignedIn' : null } |
   { 'NotOwner' : null } |
   { 'DeceasedProfile' : null };
+export interface EligibleMembershipConfirmationView {
+  'displayName' : string,
+  'birthYear' : [] | [bigint],
+  'profilePhoto' : [] | [Uint8Array],
+  'confirmationState' : MembershipConfirmationState,
+  'pendingPersonId' : PersonId,
+  'simpleRelationship' : SimpleRelationshipType,
+  'membershipId' : bigint,
+  'familyId' : FamilyId,
+}
 export type Error = { 'FrontendOriginsNotConfigured' : null } |
   {
     'MixedSsoSources' : {
@@ -261,7 +274,75 @@ export interface Family {
   'createdAt' : bigint,
   'createdBy' : Principal,
 }
+export type FamilyCreationError = { 'InvalidInput' : null } |
+  { 'NotSignedIn' : null } |
+  { 'ProfileAlreadyOwned' : null } |
+  { 'AlreadyMember' : null };
+export interface FamilyCreationResult {
+  'membership' : FamilyMembership,
+  'founderProfile' : PersonProfile,
+  'family' : Family,
+}
 export type FamilyId = string;
+export interface FamilyInvitation {
+  'id' : bigint,
+  'status' : InvitationStatus,
+  'invitedByAccountId' : AccountId,
+  'expiresAt' : bigint,
+  'createdAt' : bigint,
+  'invitedByPersonId' : [] | [PersonId],
+  'cancelledAt' : [] | [bigint],
+  'personId' : PersonId,
+  'tokenHash' : string,
+  'acceptedByAccountId' : [] | [AccountId],
+  'acceptedAt' : [] | [bigint],
+  'invitedEmail' : [] | [string],
+  'familyId' : FamilyId,
+  'invitationType' : InvitationType,
+}
+export type FamilyInvitationCreateOutcome = { 'AlreadyMember' : null } |
+  { 'Created' : FamilyInvitationCreated } |
+  { 'RelationshipNotificationRequired' : null };
+export interface FamilyInvitationCreated {
+  'created' : boolean,
+  'rawToken' : string,
+  'invitation' : FamilyInvitation,
+}
+export type FamilyInvitationError = { 'InvitationNotFound' : null } |
+  { 'InvalidInput' : null } |
+  { 'NomineeMismatch' : null } |
+  { 'PersonNotInFamily' : null } |
+  { 'InvalidTransition' : null } |
+  { 'NominationNotFound' : null } |
+  { 'NotAuthorized' : null } |
+  { 'InvalidToken' : null } |
+  { 'NotSignedIn' : null } |
+  { 'FamilyNotFound' : null } |
+  { 'AlreadyMember' : null } |
+  { 'Expired' : null } |
+  { 'RelationshipNotificationRequired' : null };
+export interface FamilyInvitationPreview {
+  'status' : InvitationStatus,
+  'expiresAt' : bigint,
+  'invitationId' : bigint,
+  'familyDisplayName' : string,
+  'targetPersonId' : PersonId,
+  'familyId' : FamilyId,
+  'targetDisplayName' : string,
+  'invitationType' : InvitationType,
+}
+export interface FamilyMembership {
+  'id' : bigint,
+  'status' : MembershipStatus,
+  'accountId' : AccountId,
+  'approvedAt' : [] | [bigint],
+  'approvedBy' : [] | [Principal],
+  'createdAt' : bigint,
+  'joinedAt' : [] | [bigint],
+  'updatedAt' : bigint,
+  'personId' : PersonId,
+  'familyId' : FamilyId,
+}
 export type FamilyStatus = { 'active' : null } |
   { 'archived' : null };
 export type FindingContent = {
@@ -311,14 +392,130 @@ export type FindingType = { 'Story' : null } |
   { 'Source' : null } |
   { 'Mystery' : null } |
   { 'Relationship' : null };
+export interface FounderProfileInput {
+  'birthDate' : [] | [string],
+  'birthYear' : [] | [string],
+  'middleName' : [] | [string],
+  'suffix' : [] | [string],
+  'preferredName' : [] | [string],
+  'currentLocation' : [] | [string],
+  'birthplace' : [] | [string],
+  'lastName' : string,
+  'firstName' : string,
+}
+export type FoundingStewardError = { 'InvalidInput' : null } |
+  { 'NotFounder' : null } |
+  { 'InvalidTransition' : null } |
+  { 'NominationNotFound' : null } |
+  { 'NotAuthorized' : null } |
+  { 'AlreadySteward' : null } |
+  { 'NotSignedIn' : null } |
+  { 'NomineeNotActiveMember' : null } |
+  { 'FamilyNotFound' : null } |
+  { 'NomineeNotInFamily' : null };
+export interface FoundingStewardNomination {
+  'id' : bigint,
+  'status' : FoundingStewardNominationStatus,
+  'createdAt' : bigint,
+  'nomineeAccountId' : [] | [Principal],
+  'updatedAt' : bigint,
+  'founderAccountId' : Principal,
+  'familyId' : FamilyId,
+  'nomineeEmail' : [] | [string],
+  'nomineePersonId' : PersonId,
+}
+export type FoundingStewardNominationStatus = { 'Accepted' : null } |
+  { 'Declined' : null } |
+  { 'Cancelled' : null } |
+  { 'Pending' : null };
+export type FoundingStewardState = { 'FounderAccepted' : null } |
+  { 'Transferred' : null } |
+  { 'Undecided' : null } |
+  { 'NominationPending' : null };
+export interface FoundingStewardStatus {
+  'state' : FoundingStewardState,
+  'activeNomination' : [] | [FoundingStewardNomination],
+  'familyId' : FamilyId,
+}
+export type InvitationRedemptionState = { 'AlreadyAccepted' : null } |
+  { 'InvalidToken' : null } |
+  { 'Declined' : null } |
+  { 'Cancelled' : null } |
+  { 'Valid' : FamilyInvitationPreview } |
+  { 'Expired' : null };
+export type InvitationStatus = { 'Accepted' : null } |
+  { 'Declined' : null } |
+  { 'Cancelled' : null } |
+  { 'Expired' : null } |
+  { 'Pending' : null };
+export type InvitationType = { 'FamilyMember' : null } |
+  { 'FoundingSteward' : null };
 export type LivingStatus = { 'Living' : null } |
   { 'Deceased' : null };
+export interface MembershipConfirmation {
+  'id' : bigint,
+  'confirmerAccountId' : AccountId,
+  'decision' : ConfirmationDecision,
+  'relationshipId' : [] | [bigint],
+  'createdAt' : bigint,
+  'pendingPersonId' : PersonId,
+  'updatedAt' : bigint,
+  'confirmerPersonId' : PersonId,
+  'membershipId' : bigint,
+  'familyId' : FamilyId,
+}
+export interface MembershipConfirmationApplicantView {
+  'myDecidedAt' : [] | [bigint],
+  'createdAt' : [] | [bigint],
+  'updatedAt' : [] | [bigint],
+  'myDecision' : [] | [ConfirmationDecision],
+  'state' : MembershipConfirmationState,
+  'myRelationship' : [] | [SimpleRelationshipType],
+}
+export type MembershipConfirmationError = { 'NoActiveMembership' : null } |
+  { 'NotSteward' : null } |
+  { 'MembershipNotFound' : null } |
+  { 'NotAuthorized' : null } |
+  { 'ActivationFailed' : null } |
+  { 'NotSignedIn' : null } |
+  { 'SelfConfirmation' : null } |
+  { 'MembershipNotPending' : null } |
+  { 'FamilyNotFound' : null } |
+  { 'NoQualifyingRelationship' : null } |
+  { 'AlreadyDecided' : null };
+export type MembershipConfirmationResolution = { 'Approve' : null } |
+  { 'Reject' : null } |
+  { 'NeedsMoreInformation' : null };
+export interface MembershipConfirmationResolutionRecord {
+  'resolvedByAccountId' : AccountId,
+  'resolution' : MembershipConfirmationResolution,
+  'membershipId' : bigint,
+  'familyId' : FamilyId,
+  'resolvedAt' : bigint,
+}
+export type MembershipConfirmationState = { 'StewardReviewRequired' : null } |
+  { 'ResolvedBySteward' : null } |
+  { 'AwaitingConfirmation' : null } |
+  { 'ApprovedByRelative' : null };
+export type MembershipError = { 'PersonNotInFamily' : null } |
+  { 'MembershipNotFound' : null } |
+  { 'InvalidTransition' : null } |
+  { 'NotAuthorized' : null } |
+  { 'NotSignedIn' : null } |
+  { 'ProfileAlreadyOwned' : null } |
+  { 'FamilyNotFound' : null } |
+  { 'AlreadyMember' : null };
+export type MembershipStatus = { 'Left' : null } |
+  { 'Active' : null } |
+  { 'Suspended' : null } |
+  { 'Pending' : null };
 export interface MergeConflict {
   'id' : bigint,
   'field' : string,
   'status' : MergeConflictStatus,
   'alternateValue' : string,
   'canonicalValue' : string,
+  'familyId' : string,
   'resolvedAt' : [] | [bigint],
   'resolvedBy' : [] | [Principal],
 }
@@ -547,6 +744,7 @@ export interface ProfileRemovalRequest {
   'reviewedBy' : [] | [Principal],
   'personId' : PersonId,
   'requestingUserId' : Principal,
+  'familyId' : string,
   'reason' : string,
 }
 export type ProfileRemovalStatus = { 'Approved' : null } |
@@ -701,62 +899,102 @@ export interface Resolution {
   'resolvedAt' : bigint,
   'resolvedBy' : Principal,
 }
-export type Result = { 'ok' : PersonProfile } |
+export type Result = { 'ok' : FamilyInvitationPreview } |
+  { 'err' : FamilyInvitationError };
+export type Result_1 = { 'ok' : PersonProfile } |
   { 'err' : EditError };
-export type Result_1 = { 'ok' : Message } |
-  { 'err' : MessageError };
-export type Result_10 = { 'ok' : StewardRecord } |
+export type Result_10 = { 'ok' : null } |
   { 'err' : StewardError };
 export type Result_11 = { 'ok' : null } |
-  { 'err' : DeleteError };
+  { 'err' : RelationshipAdminError };
 export type Result_12 = { 'ok' : null } |
-  { 'err' : MergeError };
-export type Result_13 = { 'ok' : MergeResult } |
-  { 'err' : MergeError };
-export type Result_14 = { 'ok' : AuthMethods } |
-  { 'err' : AccountError };
-export type Result_15 = { 'ok' : AccountId } |
-  { 'err' : AccountError };
-export type Result_16 = { 'ok' : SuccessorDesignation } |
-  { 'err' : StewardError };
-export type Result_17 = { 'ok' : SourceUploadResult } |
-  { 'err' : ResearchError };
-export type Result_18 = { 'ok' : SourceRecord } |
-  { 'err' : ResearchError };
-export type Result_19 = { 'ok' : RelationshipProposal } |
-  { 'err' : ResearchError };
-export type Result_2 = { 'ok' : null } |
-  { 'err' : ArchiveError };
-export type Result_20 = { 'ok' : NewPersonCandidate } |
-  { 'err' : ResearchError };
-export type Result_21 = { 'ok' : PersonProfile } |
-  { 'err' : CreateError };
-export type Result_22 = { 'ok' : ProposedFinding } |
-  { 'err' : ResearchError };
-export type Result_23 = { 'ok' : Conversation } |
-  { 'err' : MessageError };
-export type Result_24 = { 'ok' : Relationship } |
-  { 'err' : RelationshipAdminError };
-export type Result_25 = { 'ok' : StewardClaimResult } |
-  { 'err' : StewardClaimError };
-export type Result_26 = { 'ok' : Account } |
-  { 'err' : AccountError };
-export type Result_27 = { 'ok' : null } |
-  { 'err' : Error };
-export type Result_3 = { 'ok' : ConflictReviewItem } |
-  { 'err' : ResearchError };
-export type Result_4 = { 'ok' : ProfileRemovalRequest } |
-  { 'err' : RemovalError };
-export type Result_5 = { 'ok' : ProfileClaim } |
-  { 'err' : ClaimError };
-export type Result_6 = { 'ok' : null } |
-  { 'err' : StewardError };
-export type Result_7 = { 'ok' : null } |
-  { 'err' : RelationshipAdminError };
-export type Result_8 = { 'ok' : null } |
   { 'err' : RemoveError };
-export type Result_9 = { 'ok' : RelationshipRequest } |
+export type Result_13 = { 'ok' : RelationshipRequest } |
   { 'err' : RelationshipError };
+export type Result_14 = { 'ok' : StewardRecord } |
+  { 'err' : StewardError };
+export type Result_15 = { 'ok' : null } |
+  { 'err' : DeleteError };
+export type Result_16 = { 'ok' : null } |
+  { 'err' : MergeError };
+export type Result_17 = { 'ok' : FoundingStewardStatus } |
+  { 'err' : FoundingStewardError };
+export type Result_18 = { 'ok' : MergeResult } |
+  { 'err' : MergeError };
+export type Result_19 = { 'ok' : Array<EligibleMembershipConfirmationView> } |
+  { 'err' : MembershipConfirmationError };
+export type Result_2 = { 'ok' : FamilyMembership } |
+  { 'err' : MembershipError };
+export type Result_20 = { 'ok' : Array<FamilyMembership> } |
+  { 'err' : MembershipError };
+export type Result_21 = { 'ok' : boolean } |
+  { 'err' : MembershipError };
+export type Result_22 = { 'ok' : [] | [FamilyMembership] } |
+  { 'err' : MembershipError };
+export type Result_23 = { 'ok' : MembershipConfirmationApplicantView } |
+  { 'err' : MembershipConfirmationError };
+export type Result_24 = { 'ok' : [] | [MembershipConfirmation] } |
+  { 'err' : MembershipConfirmationError };
+export type Result_25 = { 'ok' : AuthMethods } |
+  { 'err' : AccountError };
+export type Result_26 = { 'ok' : AccountId } |
+  { 'err' : AccountError };
+export type Result_27 = {
+    'ok' : [
+      MembershipConfirmationState,
+      Array<MembershipConfirmation>,
+      [] | [MembershipConfirmationResolutionRecord],
+    ]
+  } |
+  { 'err' : MembershipConfirmationError };
+export type Result_28 = { 'ok' : InvitationRedemptionState } |
+  { 'err' : FamilyInvitationError };
+export type Result_29 = { 'ok' : SuccessorDesignation } |
+  { 'err' : StewardError };
+export type Result_3 = { 'ok' : Message } |
+  { 'err' : MessageError };
+export type Result_30 = { 'ok' : FamilyInvitation } |
+  { 'err' : FamilyInvitationError };
+export type Result_31 = { 'ok' : SourceUploadResult } |
+  { 'err' : ResearchError };
+export type Result_32 = { 'ok' : SourceRecord } |
+  { 'err' : ResearchError };
+export type Result_33 = { 'ok' : RelationshipProposal } |
+  { 'err' : ResearchError };
+export type Result_34 = { 'ok' : NewPersonCandidate } |
+  { 'err' : ResearchError };
+export type Result_35 = { 'ok' : PersonProfile } |
+  { 'err' : CreateError };
+export type Result_36 = { 'ok' : FamilyInvitationCreateOutcome } |
+  { 'err' : FamilyInvitationError };
+export type Result_37 = { 'ok' : ProposedFinding } |
+  { 'err' : ResearchError };
+export type Result_38 = { 'ok' : FamilyCreationResult } |
+  { 'err' : FamilyCreationError };
+export type Result_39 = { 'ok' : Conversation } |
+  { 'err' : MessageError };
+export type Result_4 = { 'ok' : null } |
+  { 'err' : ArchiveError };
+export type Result_40 = { 'ok' : Relationship } |
+  { 'err' : RelationshipAdminError };
+export type Result_41 = { 'ok' : MembershipConfirmation } |
+  { 'err' : MembershipConfirmationError };
+export type Result_42 = { 'ok' : StewardClaimResult } |
+  { 'err' : StewardClaimError };
+export type Result_43 = { 'ok' : Account } |
+  { 'err' : AccountError };
+export type Result_44 = { 'ok' : null } |
+  { 'err' : Error };
+export type Result_5 = { 'ok' : FamilyMembership } |
+  { 'err' : MembershipConfirmationError };
+export type Result_6 = { 'ok' : ConflictReviewItem } |
+  { 'err' : ResearchError };
+export type Result_7 = { 'ok' : FamilyInvitationCreated } |
+  { 'err' : FamilyInvitationError };
+export type Result_8 = { 'ok' : ProfileRemovalRequest } |
+  { 'err' : RemovalError };
+export type Result_9 = { 'ok' : ProfileClaim } |
+  { 'err' : ClaimError };
 export interface Result__1 { 'hasMore' : boolean, 'rows' : Array<Array<Cell>> }
 export type ReviewAction = { 'NeedsResearch' : null } |
   { 'Approve' : null } |
@@ -791,6 +1029,10 @@ export type ReviewStatus = { 'NeedsResearch' : null } |
   { 'Approved' : null } |
   { 'Rejected' : null } |
   { 'Pending' : null };
+export type SimpleRelationshipType = { 'Parent' : null } |
+  { 'Sibling' : null } |
+  { 'SpousePartner' : null } |
+  { 'Child' : null };
 export type SourceId = bigint;
 export interface SourceRecord {
   'id' : SourceId,
@@ -861,6 +1103,7 @@ export interface StewardIdentity {
 export interface StewardRecord {
   'assignedAt' : bigint,
   'assignedBy' : Principal,
+  'founding' : boolean,
   'stewardAccountId' : Principal,
   'successorPriority' : [] | [bigint],
   'roleStatus' : StewardRoleStatus,
@@ -965,14 +1208,40 @@ export interface _SERVICE {
   >,
   '_immutableObjectStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
   '_initialize_access_control' : ActorMethod<[], undefined>,
-  '_internet_identity_sign_in_finish' : ActorMethod<[], Result_27>,
+  '_internet_identity_sign_in_finish' : ActorMethod<[], Result_44>,
   '_internet_identity_sign_in_start' : ActorMethod<[], Uint8Array>,
+  /**
+   * / Accepts a raw invite token for the authenticated caller. The token must be
+   * / valid, `#Pending`, and unexpired, and the target profile must still be
+   * / unclaimed. For `#FamilyMember` this creates or reuses a `#Pending`
+   * / `FamilyMembership` linking the caller, `familyId`, and `personId`; it never
+   * / auto-activates. For `#FoundingSteward` the membership follows the existing
+   * / membership/founding-Steward rule without bypassing nominee acceptance. The
+   * / invitation is marked `#Accepted` only when acceptance succeeds.
+   */
+  'acceptFamilyInvitation' : ActorMethod<[string], Result_30>,
+  /**
+   * / The authenticated nominee accepts a pending founding-Steward nomination.
+   */
+  'acceptFoundingStewardNomination' : ActorMethod<[string, bigint], Result_17>,
+  /**
+   * / The family founder accepts founding Stewardship for their own family.
+   */
+  'acceptFoundingStewardship' : ActorMethod<[string], Result_17>,
+  /**
+   * / Activates a `#Pending` membership in `familyId` through the authorized
+   * / family approval path. Steward of `familyId` only; there is no unrestricted
+   * / self-promotion to `#Active`. The persisted `approvedBy` is always the real
+   * / authenticated caller (the approving Steward) and `approvedAt` is the
+   * / current time; no caller-supplied approver identity is trusted.
+   */
+  'activateMembershipForFamily' : ActorMethod<[FamilyId, bigint], Result_2>,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
    * / delegates to `activateSuccessorForFamily` with the default family id so
    * / current Norwood behavior is unchanged.
    */
-  'activateSuccessor' : ActorMethod<[PersonId], Result_10>,
+  'activateSuccessor' : ActorMethod<[PersonId], Result_14>,
   /**
    * / Activates/promotes a designated successor into the active steward role in
    * / `familyId`. Canonical family-scoped form: the caller must be an active
@@ -980,7 +1249,7 @@ export interface _SERVICE {
    * / `familyId`, and the activated Steward record remains in `familyId`.
    * / Activating a successor in one family never modifies another family's state.
    */
-  'activateSuccessorForFamily' : ActorMethod<[string, PersonId], Result_10>,
+  'activateSuccessorForFamily' : ActorMethod<[string, PersonId], Result_14>,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for `addBoardReplyForFamily`.
    */
@@ -1050,7 +1319,7 @@ export interface _SERVICE {
    */
   'addRelationship' : ActorMethod<
     [PersonId, PersonId, RelationshipType],
-    Result_24
+    Result_40
   >,
   /**
    * / Adds a missing relationship to `familyId`'s family graph. Canonical
@@ -1061,7 +1330,7 @@ export interface _SERVICE {
    */
   'addRelationshipForFamily' : ActorMethod<
     [string, PersonId, PersonId, RelationshipType],
-    Result_24
+    Result_40
   >,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for
@@ -1134,10 +1403,21 @@ export interface _SERVICE {
     [] | [ProfileClaim]
   >,
   /**
-   * / Approves a profile removal request, archiving the profile. Family Steward
-   * / only.
+   * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+   * / delegates to `approveProfileRemovalForFamily` with the default family id so
+   * / current Norwood behavior is unchanged.
    */
   'approveProfileRemoval' : ActorMethod<[bigint], [] | [ProfileRemovalRequest]>,
+  /**
+   * / Approves a profile removal request in `familyId`, archiving the profile.
+   * / Canonical family-scoped form: the caller must be an active Steward of
+   * / `familyId`, and the request must belong to `familyId`, so a request id
+   * / alone never crosses a family boundary. Family Steward of `familyId` only.
+   */
+  'approveProfileRemovalForFamily' : ActorMethod<
+    [string, bigint],
+    [] | [ProfileRemovalRequest]
+  >,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for `approveRecipeForFamily`.
    */
@@ -1230,18 +1510,27 @@ export interface _SERVICE {
    */
   'archiveBoardPostForFamily' : ActorMethod<[FamilyId, PostId], [] | [Post]>,
   /**
-   * / Archives a profile, removing it from normal family browsing while
-   * / preserving relationships, media, timeline, sources, and ownership history.
-   * / Family Steward only.
+   * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+   * / delegates to `archiveProfileForFamily` with the default family id so
+   * / current Norwood behavior is unchanged.
    */
-  'archiveProfile' : ActorMethod<[PersonId], Result_2>,
+  'archiveProfile' : ActorMethod<[PersonId], Result_4>,
+  /**
+   * / Archives a profile in `familyId`, removing it from normal family browsing
+   * / while preserving relationships, media, timeline, sources, and ownership
+   * / history. Canonical family-scoped form: the caller must be an active Steward
+   * / of `familyId`, and the target profile must belong to `familyId`, so a
+   * / `personId` alone never crosses a family boundary. Family Steward of
+   * / `familyId` only.
+   */
+  'archiveProfileForFamily' : ActorMethod<[string, PersonId], Result_4>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
   /**
    * / Binds an authentication method (Google or Apple) to the signed-in caller's
    * / account. The account id is the caller's stable principal, so the same
    * / person profile stays intact if the provider changes.
    */
-  'bindAuthMethod' : ActorMethod<[AuthMethod], Result_26>,
+  'bindAuthMethod' : ActorMethod<[AuthMethod], Result_43>,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for `blockUserForFamily`.
    */
@@ -1276,6 +1565,16 @@ export interface _SERVICE {
    */
   'canMessagePersonForFamily' : ActorMethod<[FamilyId, string], boolean>,
   /**
+   * / The inviter or an active Steward of `familyId` cancels a `#Pending`
+   * / invitation. The invitation becomes `#Cancelled` and can never be accepted
+   * / afterwards.
+   */
+  'cancelFamilyInvitation' : ActorMethod<[string, bigint], Result_30>,
+  /**
+   * / The founder cancels a pending founding-Steward nomination.
+   */
+  'cancelFoundingStewardNomination' : ActorMethod<[string, bigint], Result_17>,
+  /**
    * / One-time "Claim Family Steward" bootstrap. Any signed-in account may claim
    * / while no active Steward exists; no approved family profile is required.
    * / Succeeds only when no active Steward exists, creating an ACTIVE
@@ -1283,14 +1582,40 @@ export interface _SERVICE {
    * / permanently refuses. Tenancy 1B: delegates to the canonical family-scoped
    * / helper with the default family id.
    */
-  'claimSteward' : ActorMethod<[], Result_25>,
+  'claimSteward' : ActorMethod<[], Result_42>,
   /**
-   * / Corrects the relationship type of an existing relationship. Family Steward
-   * / only.
+   * / Records the signed-in caller's trusted-relative decision about a membership
+   * / in `familyId`. A decision is accepted when the membership is `#Pending`, or
+   * / when it is `#Active` and the confirmation case shows it was activated by
+   * / relative confirmation and has not been finally resolved by a Steward. The
+   * / confirmer identity and the qualifying relationship are derived server-side;
+   * / the caller can never spoof another confirmer. Anonymous callers get
+   * / `#err(#NotSignedIn)`.
+   */
+  'confirmPendingMembership' : ActorMethod<
+    [FamilyId, bigint, ConfirmationDecision],
+    Result_41
+  >,
+  /**
+   * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+   * / delegates to `correctRelationshipTypeForFamily` with the default family id
+   * / so current Norwood behavior is unchanged.
    */
   'correctRelationshipType' : ActorMethod<
     [bigint, RelationshipType],
-    Result_24
+    Result_40
+  >,
+  /**
+   * / Corrects the relationship type of an existing relationship in `familyId`.
+   * / Canonical family-scoped form: the caller must be an active Steward of
+   * / `familyId`, the relationship must belong to `familyId`, and both referenced
+   * / people must still belong to `familyId`, so a `relationshipId` alone never
+   * / crosses a family boundary and only that family's relationship is updated.
+   * / Existing correction/audit semantics are preserved.
+   */
+  'correctRelationshipTypeForFamily' : ActorMethod<
+    [string, bigint, RelationshipType],
+    Result_40
   >,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for `createBoardPostForFamily`.
@@ -1408,13 +1733,55 @@ export interface _SERVICE {
    * / TEMPORARY Tenancy 1C compatibility wrapper for
    * / `createConversationForFamily`.
    */
-  'createConversation' : ActorMethod<[string], Result_23>,
+  'createConversation' : ActorMethod<[string], Result_39>,
   /**
    * / Creates a 1:1 conversation in `familyId` between the caller and the person
    * / identified by `recipientPersonId`. Approved members of `familyId` only;
    * / both participants must belong to `familyId`.
    */
-  'createConversationForFamily' : ActorMethod<[FamilyId, string], Result_23>,
+  'createConversationForFamily' : ActorMethod<[FamilyId, string], Result_39>,
+  /**
+   * / Creates a `#Pending` family-member invitation for an unclaimed profile in
+   * / `familyId`. Callable by an approved member or active Steward of `familyId`.
+   * / The target profile must belong to `familyId` and be unclaimed with no
+   * / active membership owner; a target that is already an active member returns
+   * / `#AlreadyMember` / `#RelationshipNotificationRequired` and creates nothing.
+   * / A repeat create for the same `familyId` + `personId` + `invitationType`
+   * / reuses the existing `#Pending` invitation rather than duplicating it. The
+   * / raw token is returned once; only its hash is persisted. No membership is
+   * / created.
+   */
+  'createFamilyInvitation' : ActorMethod<
+    [string, string, [] | [string]],
+    Result_36
+  >,
+  /**
+   * / Creates a brand-new family with the authenticated caller as its founder.
+   * /
+   * / The transaction creates exactly three linked records: the `Family`, the
+   * / founder's `PersonProfile` inside that family, and an `#Active`
+   * / `FamilyMembership` linking the caller to the founder profile. It returns
+   * / all three together so a later onboarding UI can continue.
+   * /
+   * / Anonymous callers receive `#err(#NotSignedIn)`. A blank display name or a
+   * / missing first/last name receives `#err(#InvalidInput)`; nothing is created
+   * / in either case. The founder account is always the authenticated caller —
+   * / there is no account parameter, so a caller can never name another account
+   * / as founder.
+   * /
+   * / `idempotencyKey` is REQUIRED and must be non-empty. When it was already
+   * / used by this caller, the previously created family/profile/membership are
+   * / returned instead of creating duplicate records, so a retried or
+   * / double-submitted onboarding attempt is safe. A blank or whitespace-only key
+   * / receives `#err(#InvalidInput)` and creates nothing, so the canonical
+   * / creation path can never create a family without retry protection.
+   * /
+   * / No `StewardRecord` is created by this operation.
+   */
+  'createFamilyWithFounder' : ActorMethod<
+    [string, FounderProfileInput, string],
+    Result_38
+  >,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for `createFindingForFamily`.
    */
@@ -1428,7 +1795,7 @@ export interface _SERVICE {
       [] | [string],
       [] | [bigint],
     ],
-    Result_22
+    Result_37
   >,
   /**
    * / Creates a new proposed finding in `familyId`. Requires an approved member
@@ -1449,24 +1816,35 @@ export interface _SERVICE {
       [] | [string],
       [] | [bigint],
     ],
-    Result_22
+    Result_37
+  >,
+  /**
+   * / Creates a `#Pending` `#FoundingSteward` invitation linked to the existing
+   * / Phase 1B-2 nomination for `familyId` + `personId`. The nomination must
+   * / exist and be `#Pending`; the invitation carries no Steward authority and
+   * / does not duplicate nomination state. The nominee still becomes Steward only
+   * / through the existing authenticated founding-Steward acceptance rule.
+   */
+  'createFoundingStewardInvitation' : ActorMethod<
+    [string, string, [] | [string]],
+    Result_36
   >,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for `createMyselfForFamily`.
    */
-  'createMyself' : ActorMethod<[string], Result_21>,
+  'createMyself' : ActorMethod<[string], Result_35>,
   /**
    * / "Add Myself to This Family": creates a minimal person profile in
    * / `familyId` for a user who does not already exist there.
    */
-  'createMyselfForFamily' : ActorMethod<[FamilyId, string], Result_21>,
+  'createMyselfForFamily' : ActorMethod<[FamilyId, string], Result_35>,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for
    * / `createNewPersonCandidateForFamily`.
    */
   'createNewPersonCandidate' : ActorMethod<
     [string, string, SourceId],
-    Result_20
+    Result_34
   >,
   /**
    * / Creates a new New Person candidate in `familyId`. Requires an approved
@@ -1478,7 +1856,16 @@ export interface _SERVICE {
    */
   'createNewPersonCandidateForFamily' : ActorMethod<
     [FamilyId, string, string, SourceId],
-    Result_20
+    Result_34
+  >,
+  /**
+   * / Creates a `#Pending` membership for `accountId` linked to `personId` in
+   * / `familyId`. Requires an authorized family approval path (Steward authority
+   * / for now). Rejects a `personId` that does not belong to `familyId`.
+   */
+  'createPendingMembershipForFamily' : ActorMethod<
+    [FamilyId, AccountId, PersonId],
+    Result_2
   >,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for
@@ -1486,7 +1873,7 @@ export interface _SERVICE {
    */
   'createRelationshipProposal' : ActorMethod<
     [string, string, string, SourceId],
-    Result_19
+    Result_33
   >,
   /**
    * / Creates a new relationship proposal in `familyId`. Requires an approved
@@ -1499,7 +1886,7 @@ export interface _SERVICE {
    */
   'createRelationshipProposalForFamily' : ActorMethod<
     [FamilyId, string, string, string, SourceId],
-    Result_19
+    Result_33
   >,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for `createSourceForFamily`.
@@ -1511,7 +1898,7 @@ export interface _SERVICE {
    */
   'createSource' : ActorMethod<
     [string, SourceType, string, [] | [bigint]],
-    Result_18
+    Result_32
   >,
   /**
    * / Creates a new source record in `familyId`. Requires an approved member or
@@ -1525,7 +1912,7 @@ export interface _SERVICE {
    */
   'createSourceForFamily' : ActorMethod<
     [FamilyId, string, SourceType, string, [] | [bigint]],
-    Result_18
+    Result_32
   >,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for
@@ -1549,7 +1936,7 @@ export interface _SERVICE {
       [] | [OralHistorySpeaker],
       string,
     ],
-    Result_17
+    Result_31
   >,
   /**
    * / Uploads a research source file into `familyId`: creates one canonical
@@ -1576,14 +1963,23 @@ export interface _SERVICE {
       [] | [OralHistorySpeaker],
       string,
     ],
-    Result_17
+    Result_31
   >,
+  /**
+   * / The invited user declines a raw invite token. The invitation becomes
+   * / `#Declined` and can never be accepted afterwards.
+   */
+  'declineFamilyInvitation' : ActorMethod<[string], Result_30>,
+  /**
+   * / The nominee declines a pending founding-Steward nomination.
+   */
+  'declineFoundingStewardNomination' : ActorMethod<[string, bigint], Result_17>,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
    * / delegates to `designateSuccessorForFamily` with the default family id so
    * / current Norwood behavior is unchanged.
    */
-  'designateSuccessor' : ActorMethod<[PersonId, bigint], Result_16>,
+  'designateSuccessor' : ActorMethod<[PersonId, bigint], Result_29>,
   /**
    * / Designates an approved claimed member of `familyId` as a successor steward
    * / with a priority/order. Canonical family-scoped form: the caller must be an
@@ -1595,7 +1991,7 @@ export interface _SERVICE {
    */
   'designateSuccessorForFamily' : ActorMethod<
     [string, PersonId, bigint],
-    Result_16
+    Result_29
   >,
   /**
    * / Dismisses (deletes) the signed-in caller's notification with `id` in
@@ -1619,6 +2015,17 @@ export interface _SERVICE {
   'getArchiveItemForFamily' : ActorMethod<
     [FamilyId, ArchiveItemId],
     [] | [ArchiveItem]
+  >,
+  /**
+   * / Returns the archived profile for `personId` in `familyId`, or `null` when
+   * / the person is not archived in that family. Canonical family-scoped direct
+   * / lookup: the caller must be an active Steward of `familyId`, and a
+   * / `personId` alone never crosses a family boundary. Family Steward of
+   * / `familyId` only.
+   */
+  'getArchivedProfileForFamily' : ActorMethod<
+    [string, PersonId],
+    [] | [PersonProfile]
   >,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for `getBoardPostForFamily`.
@@ -1677,14 +2084,76 @@ export interface _SERVICE {
     [] | [ProposedFinding]
   >,
   /**
+   * / Reads the founding-Steward onboarding status of `familyId`: the current
+   * / state plus the active pending nomination, when one exists.
+   */
+  'getFoundingStewardStatusForFamily' : ActorMethod<[string], Result_17>,
+  /**
+   * / Resolves a raw invite token to a safe, discriminated redemption state for
+   * / the invitation landing/terminal UI. Read-only: it never mutates state and
+   * / never creates a membership. Returns `#Valid(preview)` for a `#Pending`,
+   * / unexpired invitation, and `#Expired` / `#Cancelled` / `#Declined` /
+   * / `#AlreadyAccepted` / `#InvalidToken` otherwise. It never reveals whether
+   * / unrelated accounts or families exist and never includes `tokenHash` or any
+   * / member identity beyond the existing preview fields.
+   */
+  'getInvitationRedemptionState' : ActorMethod<[string], Result_28>,
+  /**
+   * / Returns the FULL, Steward-authorized confirmation record for `membershipId`
+   * / in `familyId`: the derived case state, every recorded decision, and any
+   * / persisted Steward resolution. Allowed only when the caller is an active
+   * / Steward of `familyId`; anonymous callers get `#err(#NotSignedIn)` and any
+   * / other caller gets `#err(#NotAuthorized)`. Confirmations and resolutions
+   * / from other families are never returned.
+   */
+  'getMembershipConfirmationStateForSteward' : ActorMethod<
+    [FamilyId, bigint],
+    Result_27
+  >,
+  /**
+   * / Returns the account's membership in `familyId` only, or `null` when the
+   * / account has no membership in that family. Allowed only when `accountId`
+   * / equals the caller, or the caller is an active Steward of `familyId`;
+   * / otherwise `#err(#NotAuthorized)` (anonymous callers get
+   * / `#err(#NotSignedIn)`). The denial is identical whether or not the target
+   * / account belongs to another family.
+   */
+  'getMembershipForFamily' : ActorMethod<[FamilyId, AccountId], Result_22>,
+  /**
    * / Returns the stable account id of the signed-in caller. Anonymous callers
    * / receive #NotSignedIn.
    */
-  'getMyAccountId' : ActorMethod<[], Result_15>,
+  'getMyAccountId' : ActorMethod<[], Result_26>,
   /**
    * / Returns the authentication methods bound to the signed-in caller's account.
    */
-  'getMyAuthMethods' : ActorMethod<[], Result_14>,
+  'getMyAuthMethods' : ActorMethod<[], Result_25>,
+  /**
+   * / Returns the signed-in caller's own recorded decision for `membershipId` in
+   * / `familyId`, or `null` when the caller has not decided. Anonymous callers
+   * / get `#err(#NotSignedIn)`.
+   */
+  'getMyConfirmationForMembership' : ActorMethod<[FamilyId, bigint], Result_24>,
+  /**
+   * / Returns the REDACTED, applicant-safe confirmation view for `membershipId`
+   * / in `familyId`: the derived case state, the caller's own decision and simple
+   * / relationship label, and timestamps. It never exposes a confirmer account
+   * / principal, sensitive relationship context, private notes, or unrelated
+   * / profile information. Allowed only when the caller is the pending
+   * / membership's own account; anonymous callers get `#err(#NotSignedIn)` and
+   * / any other caller gets `#err(#NotAuthorized)`. A confirmation in another
+   * / family is never returned.
+   */
+  'getMyMembershipConfirmationState' : ActorMethod<
+    [FamilyId, bigint],
+    Result_23
+  >,
+  /**
+   * / Returns the signed-in caller's own membership in `familyId`, or `null`
+   * / when the caller has no membership in that family. Anonymous callers are
+   * / denied with `#err(#NotSignedIn)`.
+   */
+  'getMyMembershipForFamily' : ActorMethod<[FamilyId], Result_22>,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for `getMyProfileForFamily`.
    */
@@ -1883,10 +2352,20 @@ export interface _SERVICE {
    */
   'getReviewQueueForFamily' : ActorMethod<[FamilyId], ReviewQueue>,
   /**
-   * / Returns a warning encouraging successor designation when only one steward
-   * / exists, or `null` when there are multiple stewards. Family Steward only.
+   * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+   * / delegates to `getSingleStewardWarningForFamily` with the default family id
+   * / so current Norwood behavior is unchanged. Family Steward only.
    */
   'getSingleStewardWarning' : ActorMethod<[], [] | [string]>,
+  /**
+   * / Returns a warning encouraging successor designation when only one steward
+   * / of `familyId` exists, or `null` when there are multiple stewards of that
+   * / family. Canonical family-scoped form: the caller must be an active Steward
+   * / of `familyId`, and only steward records stamped with `familyId` are
+   * / counted, so a Steward of one family can never read another family's
+   * / warning. Family Steward of `familyId` only.
+   */
+  'getSingleStewardWarningForFamily' : ActorMethod<[string], [] | [string]>,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for `getSourceForFamily`.
    */
@@ -1900,21 +2379,48 @@ export interface _SERVICE {
    */
   'getSourceForFamily' : ActorMethod<[FamilyId, SourceId], [] | [SourceRecord]>,
   /**
-   * / Returns the merged Family Steward Audit History: every governance audit
-   * / entry plus every conflict-resolution action (Keep Existing, Replace
-   * / Existing, Preserve Both/Unresolved, Needs Research) merged
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `getStewardAuditHistoryForFamily`. Deprecated single-family form: delegates
+   * / with `FamilyTypes.DEFAULT_FAMILY_ID`, so current Norwood behavior for
+   * / familyId "norwood" is unchanged. Contains no duplicated merge logic and
+   * / will be removed once the frontend passes an explicit familyId everywhere.
+   */
+  'getStewardAuditHistory' : ActorMethod<[], Array<StewardAuditEntry>>,
+  /**
+   * / Returns the merged Family Steward Audit History for `familyId`: every
+   * / governance audit entry belonging to `familyId` plus every
+   * / conflict-resolution action (Keep Existing, Replace Existing, Preserve
+   * / Both/Unresolved, Needs Research) belonging to `familyId`, merged
    * / chronologically, newest first, without duplicating records. Each
    * / conflict-resolution entry carries person, field, existing value, proposed
    * / value, resolution, steward notes, steward identity, timestamp, and
-   * / provenance/source refs where available. Family Steward only.
+   * / provenance/source refs where available.
+   * /
+   * / Requires an active Steward of `familyId`; a Steward of one family can never
+   * / read another family's audit history. Only entries belonging to `familyId`
+   * / are returned, so Family A audit activity is never exposed through Family B.
+   * / This is the canonical family-scoped audit read.
    */
-  'getStewardAuditHistory' : ActorMethod<[], Array<StewardAuditEntry>>,
+  'getStewardAuditHistoryForFamily' : ActorMethod<
+    [FamilyId],
+    Array<StewardAuditEntry>
+  >,
   /**
    * / Returns a single story by id when it belongs to `familyId`. Approved
    * / members of `familyId` only. A story that exists under another family is
    * / never returned, so a `storyId` alone cannot cross the family boundary.
    */
   'getStoryForFamily' : ActorMethod<[FamilyId, StoryId], [] | [Story]>,
+  /**
+   * / Whether `accountId` holds an `#Active` membership in `familyId`. Retained
+   * / public for compatibility but restricted to self or an active Steward of
+   * / `familyId`; anonymous callers get `#err(#NotSignedIn)` and any other
+   * / caller gets `#err(#NotAuthorized)`.
+   */
+  'hasActiveMembershipForFamily' : ActorMethod<
+    [FamilyId, AccountId],
+    Result_21
+  >,
   /**
    * / Whether any active Family Steward exists. Public so the frontend can show
    * / or hide the one-time "Claim Family Steward" control. Tenancy 1B: delegates
@@ -1940,6 +2446,12 @@ export interface _SERVICE {
    * / default family id; multi-family bootstrap UI is not exposed yet.
    */
   'isCallerSteward' : ActorMethod<[], boolean>,
+  /**
+   * / Sets an `#Active` membership in `familyId` to `#Left`. The caller may
+   * / leave their own membership; a Steward of `familyId` may also record a
+   * / leave for a member of that family.
+   */
+  'leaveFamilyMembership' : ActorMethod<[FamilyId, bigint], Result_2>,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for
    * / `listApprovedArchiveItemsForFamily`.
@@ -1980,18 +2492,46 @@ export interface _SERVICE {
    */
   'listApprovedStoriesForFamily' : ActorMethod<[FamilyId], Array<Story>>,
   /**
-   * / Returns the ids of all archived profiles so normal family browsing can
-   * / filter them out. Not gated to stewards — any caller may read archived ids.
+   * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+   * / delegates to `listArchivedProfileIdsForFamily` with the default family id
+   * / so current Norwood behavior is unchanged.
    */
   'listArchivedProfileIds' : ActorMethod<[], Array<PersonId>>,
   /**
-   * / Lists all archived profiles. Family Steward only.
+   * / Returns the ids of the archived profiles of `familyId` so normal family
+   * / browsing can filter them out. Canonical family-scoped form: only archived
+   * / ids whose profile belongs to `familyId` are returned, so one family's
+   * / archived ids never hide another family's profiles. Not gated to stewards —
+   * / any caller may read archived ids.
+   */
+  'listArchivedProfileIdsForFamily' : ActorMethod<[string], Array<PersonId>>,
+  /**
+   * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+   * / delegates to `listArchivedProfilesForFamily` with the default family id so
+   * / current Norwood behavior is unchanged.
    */
   'listArchivedProfiles' : ActorMethod<[], Array<PersonProfile>>,
   /**
-   * / Returns the governance audit log. Audit History is strictly steward-only.
+   * / Lists the archived profiles of `familyId`. Canonical family-scoped form:
+   * / the caller must be an active Steward of `familyId`, and only archived
+   * / profiles belonging to `familyId` are returned. Family Steward of `familyId`
+   * / only.
+   */
+  'listArchivedProfilesForFamily' : ActorMethod<[string], Array<PersonProfile>>,
+  /**
+   * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+   * / delegates to `listAuditHistoryForFamily` with the default family id so
+   * / current Norwood behavior is unchanged.
    */
   'listAuditHistory' : ActorMethod<[], Array<AuditEntry>>,
+  /**
+   * / Returns the governance audit log of `familyId`. Canonical family-scoped
+   * / form: the caller must be an active Steward of `familyId`, and only audit
+   * / entries stamped with `familyId` are returned, so a Steward of one family
+   * / can never read another family's audit history. Existing entry shape,
+   * / chronological ordering, and action labels/details are preserved.
+   */
+  'listAuditHistoryForFamily' : ActorMethod<[string], Array<AuditEntry>>,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for `listBlockedUsersForFamily`.
    */
@@ -2113,18 +2653,52 @@ export interface _SERVICE {
     Array<DisputedFact>
   >,
   /**
-   * / Lists suspected duplicate Person records with comparison data. Family
-   * / Steward only.
+   * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+   * / delegates to `listDuplicateCandidatesForFamily` with the default family id
+   * / so current Norwood behavior is unchanged.
    */
   'listDuplicateCandidates' : ActorMethod<[], Array<DuplicatePair>>,
   /**
-   * / Returns the eligible promotion/successor candidate list: all people who
-   * / are living, have an APPROVED/CLAIMED profile, are linked to a valid
-   * / account, are not already an active Steward, and are not archived. This is
-   * / data-driven — as additional family members claim and receive approval they
-   * / automatically appear without code changes. Family Steward only.
+   * / Lists suspected duplicate Person records of `familyId` with comparison
+   * / data. Canonical family-scoped form: the caller must be an active Steward of
+   * / `familyId`, and only profiles belonging to `familyId` are compared, so a
+   * / Family A duplicate candidate never includes a Family B profile. Family
+   * / Steward of `familyId` only.
+   */
+  'listDuplicateCandidatesForFamily' : ActorMethod<
+    [string],
+    Array<DuplicatePair>
+  >,
+  /**
+   * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+   * / delegates to `listEligibleStewardCandidatesForFamily` with the default
+   * / family id so current Norwood behavior is unchanged. Family Steward only.
    */
   'listEligibleStewardCandidates' : ActorMethod<[], Array<StewardIdentity>>,
+  /**
+   * / Returns the eligible promotion/successor candidate list of `familyId`: all
+   * / people who belong to `familyId`, are living, have an APPROVED/CLAIMED
+   * / profile, are linked to a valid account, are not already an active Steward
+   * / of `familyId`, and are not archived. Canonical family-scoped form: the
+   * / caller must be an active Steward of `familyId`, only profiles belonging to
+   * / `familyId` are considered, and the already-a-Steward exclusion is filtered
+   * / by `familyId`, so a Steward of one family can never read another family's
+   * / candidates and an account that is an active Steward of Family A remains
+   * / eligible in Family B when current rules otherwise permit. This is
+   * / data-driven — as additional family members claim and receive approval they
+   * / automatically appear without code changes. Family Steward of `familyId`
+   * / only.
+   */
+  'listEligibleStewardCandidatesForFamily' : ActorMethod<
+    [string],
+    Array<StewardIdentity>
+  >,
+  /**
+   * / Returns the memberships of one family only. Requires an approved active
+   * / family member or an active Steward of `familyId`; anonymous callers get
+   * / `#err(#NotSignedIn)` and non-members get `#err(#NotAuthorized)`.
+   */
+  'listFamilyMembersForFamily' : ActorMethod<[FamilyId], Result_20>,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for `listFindingsForFamily`.
    */
@@ -2148,6 +2722,13 @@ export interface _SERVICE {
    */
   'listHiddenBoardPostsForFamily' : ActorMethod<[FamilyId], Array<Post>>,
   /**
+   * / Returns every membership held by `accountId` across all families. Allowed
+   * / for self only; anonymous callers get `#err(#NotSignedIn)` and any other
+   * / account gets `#err(#NotAuthorized)`. Unrestricted cross-account reads stay
+   * / internal to library code and are never exposed as a public endpoint.
+   */
+  'listMembershipsForAccount' : ActorMethod<[AccountId], Result_20>,
+  /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for
    * / `listMessageableMembersForFamily`. An anonymous caller resolves `[]` rather
    * / than trapping, preserving the documented `listMessageableMembers` contract.
@@ -2169,6 +2750,36 @@ export interface _SERVICE {
   'listMessagesForFamily' : ActorMethod<
     [FamilyId, ConversationId],
     Array<Message>
+  >,
+  /**
+   * / Returns the privacy-safe list of confirmation requests the signed-in caller
+   * / is currently eligible to act on in `familyId`.
+   * /
+   * / The caller is derived server-side; the frontend never passes a confirmer
+   * / account, confirmer person, or relationship id. Eligibility is computed from
+   * / the caller's own `#Active` `FamilyMembership` in `familyId`, the caller's
+   * / `personId`, the confirmed relationships in `familyId`, and the target
+   * / membership's state — never from notification message text.
+   * /
+   * / Returns only actionable cases: `#Pending` memberships awaiting
+   * / trusted-relative confirmation, and `#Active` memberships approved by a
+   * / relative that remain challengeable under the 1D-H rule. Excludes
+   * / self-confirmation, cases the caller has already decided, other-family
+   * / memberships, Steward-resolved cases, `#Left` memberships, unrelated
+   * / `#Suspended` memberships, and cases with no qualifying relationship.
+   * /
+   * / Each returned `EligibleMembershipConfirmationView` carries only the family
+   * / id, membership id, pending person id, display name, optional profile photo,
+   * / optional birth year, the simple relationship label, and the derived case
+   * / state. It never exposes an applicant or confirmer account principal, raw
+   * / relationship context, sensitive relationship metadata, private profile
+   * / notes, or unrelated family data. Anonymous callers get
+   * / `#err(#NotSignedIn)`; a caller with no `#Active` membership in `familyId`
+   * / gets `#err(#NoActiveMembership)`.
+   */
+  'listMyEligibleMembershipConfirmationsForFamily' : ActorMethod<
+    [FamilyId],
+    Result_19
   >,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for `listMysteriesForFamily`.
@@ -2272,9 +2883,22 @@ export interface _SERVICE {
    */
   'listPendingStoriesForFamily' : ActorMethod<[FamilyId], Array<Story>>,
   /**
-   * / Returns the current relationships for a person. Family Steward only.
+   * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+   * / delegates to `listPersonRelationshipsForFamily` with the default family id
+   * / so current Norwood behavior is unchanged.
    */
   'listPersonRelationships' : ActorMethod<[PersonId], Array<Relationship>>,
+  /**
+   * / Returns the current relationships for a person in `familyId`. Canonical
+   * / family-scoped form: the caller must be an active Steward of `familyId`, the
+   * / target profile must belong to `familyId`, and only relationships stamped
+   * / with `familyId` are returned, so a `personId` alone never crosses a family
+   * / boundary. Existing relationship ordering and record shape are preserved.
+   */
+  'listPersonRelationshipsForFamily' : ActorMethod<
+    [string, PersonId],
+    Array<Relationship>
+  >,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for `listPhotosForFamily`.
    */
@@ -2296,9 +2920,21 @@ export interface _SERVICE {
    */
   'listProfileClaimsForFamily' : ActorMethod<[FamilyId], Array<ProfileClaim>>,
   /**
-   * / Lists all profile removal requests for steward review. Family Steward only.
+   * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+   * / delegates to `listProfileRemovalRequestsForFamily` with the default family
+   * / id so current Norwood behavior is unchanged.
    */
   'listProfileRemovalRequests' : ActorMethod<[], Array<ProfileRemovalRequest>>,
+  /**
+   * / Lists the profile removal requests of `familyId` for steward review.
+   * / Canonical family-scoped form: the caller must be an active Steward of
+   * / `familyId`, and a request stamped with another family is never returned.
+   * / Family Steward of `familyId` only.
+   */
+  'listProfileRemovalRequestsForFamily' : ActorMethod<
+    [string],
+    Array<ProfileRemovalRequest>
+  >,
   /**
    * / Lists the profiles of `familyId` for Explore Family / Person Profile
    * / hydration. Requires an approved member or active Steward of `familyId`.
@@ -2393,10 +3029,19 @@ export interface _SERVICE {
     Array<StewardIdentity>
   >,
   /**
-   * / Lists all current Family Stewards with role status and account identity.
-   * / Family Steward only.
+   * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+   * / delegates to `listStewardsForFamily` with the default family id so current
+   * / Norwood behavior is unchanged.
    */
   'listStewards' : ActorMethod<[], Array<StewardRecord>>,
+  /**
+   * / Lists the current Family Stewards of `familyId` with role status and
+   * / account identity. Canonical family-scoped form: the caller must be an
+   * / active Steward of `familyId`, and only steward records stamped with
+   * / `familyId` are returned, so a Steward of one family can never read another
+   * / family's roster. Existing ordering and record shape are preserved.
+   */
+  'listStewardsForFamily' : ActorMethod<[string], Array<StewardRecord>>,
   /**
    * / Lists every story in `familyId`, newest first. Approved members of
    * / `familyId` only. A story whose `familyId` differs is never returned, so
@@ -2495,13 +3140,25 @@ export interface _SERVICE {
     [] | [Notification]
   >,
   /**
-   * / Merges two duplicate profiles into one canonical record, preserving all
-   * / valid relationships, media, timeline, stories, sources, archive references,
-   * / and ownership/claim history without duplicating shared items. Conflicting
-   * / fields are preserved as conflict/review items. The merged-away record is
-   * / archived rather than hard-deleted. Family Steward only.
+   * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+   * / delegates to `mergeProfilesForFamily` with the default family id so current
+   * / Norwood behavior is unchanged.
    */
-  'mergeProfiles' : ActorMethod<[PersonId, PersonId], Result_13>,
+  'mergeProfiles' : ActorMethod<[PersonId, PersonId], Result_18>,
+  /**
+   * / Merges two duplicate profiles in `familyId` into one canonical record,
+   * / preserving all valid relationships, media, timeline, stories, sources,
+   * / archive references, and ownership/claim history without duplicating shared
+   * / items. Canonical family-scoped form: the caller must be an active Steward
+   * / of `familyId`, and both profiles must belong to `familyId`, so a merge
+   * / never crosses families and Family B remains unchanged. Conflicting fields
+   * / are preserved as conflict/review items. The merged-away record is archived
+   * / rather than hard-deleted. Family Steward of `familyId` only.
+   */
+  'mergeProfilesForFamily' : ActorMethod<
+    [string, PersonId, PersonId],
+    Result_18
+  >,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for
    * / `needsResearchFindingForFamily`.
@@ -2536,13 +3193,30 @@ export interface _SERVICE {
     [] | [NewPersonCandidate]
   >,
   /**
-   * / Marks a pending Relationship proposal as needing research (Family Steward
-   * / only), transitioning it to `#NeedsResearch` while preserving the proposal.
-   * / The canonical graph is left unchanged. Returns the updated proposal, or
-   * / `null` when it does not exist or is not pending.
+   * / TEMPORARY Tenancy 1C compatibility wrapper for
+   * / `needsResearchRelationshipProposalForFamily`. Deprecated single-family
+   * / form: delegates with `FamilyTypes.DEFAULT_FAMILY_ID`, so current Norwood
+   * / behavior for familyId "norwood" is unchanged. Contains no duplicated
+   * / business logic and will be removed once the frontend passes an explicit
+   * / familyId everywhere.
    */
   'needsResearchRelationshipProposal' : ActorMethod<
     [bigint],
+    [] | [RelationshipProposal]
+  >,
+  /**
+   * / Marks the pending Relationship proposal with `proposalId` in `familyId` as
+   * / needing research. Requires an active Steward of `familyId`; a Steward of
+   * / one family can never affect another family's proposal. The proposal must
+   * / belong to `familyId` — a proposal whose `familyId` differs is treated as
+   * / not found, so a `proposalId` alone cannot cross the family boundary. Only
+   * / that family's proposal is transitioned to `#NeedsResearch` while the
+   * / canonical graph is left unchanged, and the Research audit entry is written
+   * / to `familyId`. Returns the updated proposal, or `null` when no pending
+   * / proposal with that id belongs to `familyId`.
+   */
+  'needsResearchRelationshipProposalForFamily' : ActorMethod<
+    [FamilyId, bigint],
     [] | [RelationshipProposal]
   >,
   /**
@@ -2560,21 +3234,54 @@ export interface _SERVICE {
     [] | [SourceRecord]
   >,
   /**
-   * / Marks two suspected duplicates as not a duplicate. Family Steward only.
+   * / The family founder nominates another member of their own family as
+   * / founding Steward, optionally supplying an email for an unclaimed nominee.
    */
-  'notDuplicate' : ActorMethod<[PersonId, PersonId], Result_12>,
+  'nominateFoundingSteward' : ActorMethod<
+    [string, string, [] | [string]],
+    Result_17
+  >,
   /**
-   * / Permanently deletes a profile only when it is empty of archive items,
-   * / media, timeline/history, approved relationships, and ownership history,
-   * / and explicit confirmation is given. Family Steward only.
+   * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+   * / delegates to `notDuplicateForFamily` with the default family id so current
+   * / Norwood behavior is unchanged.
    */
-  'permanentlyDeleteProfile' : ActorMethod<[PersonId, boolean], Result_11>,
+  'notDuplicate' : ActorMethod<[PersonId, PersonId], Result_16>,
+  /**
+   * / Marks two suspected duplicates in `familyId` as not a duplicate. Canonical
+   * / family-scoped form: the caller must be an active Steward of `familyId`,
+   * / both people must belong to `familyId`, and the dismissal is stamped with
+   * / `familyId`, so a dismissal in one family never hides a candidate in
+   * / another. Family Steward of `familyId` only.
+   */
+  'notDuplicateForFamily' : ActorMethod<
+    [string, PersonId, PersonId],
+    Result_16
+  >,
+  /**
+   * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+   * / delegates to `permanentlyDeleteProfileForFamily` with the default family id
+   * / so current Norwood behavior is unchanged.
+   */
+  'permanentlyDeleteProfile' : ActorMethod<[PersonId, boolean], Result_15>,
+  /**
+   * / Permanently deletes a profile in `familyId` only when it is empty of
+   * / archive items, media, timeline/history, approved relationships, and
+   * / ownership history, and explicit confirmation is given. Canonical
+   * / family-scoped form: the caller must be an active Steward of `familyId`, and
+   * / the target profile must belong to `familyId`, so a `personId` alone never
+   * / crosses a family boundary. Family Steward of `familyId` only.
+   */
+  'permanentlyDeleteProfileForFamily' : ActorMethod<
+    [string, PersonId, boolean],
+    Result_15
+  >,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
    * / delegates to `promoteToStewardForFamily` with the default family id so
    * / current Norwood behavior is unchanged.
    */
-  'promoteToSteward' : ActorMethod<[PersonId], Result_10>,
+  'promoteToSteward' : ActorMethod<[PersonId], Result_14>,
   /**
    * / Promotes an existing approved claimed member of `familyId` to Family
    * / Steward. Canonical family-scoped form: the caller must be an active Steward
@@ -2582,14 +3289,14 @@ export interface _SERVICE {
    * / Steward record is stamped with `familyId`. A Steward of one family can never
    * / promote a member of another family.
    */
-  'promoteToStewardForFamily' : ActorMethod<[string, PersonId], Result_10>,
+  'promoteToStewardForFamily' : ActorMethod<[string, PersonId], Result_14>,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for
    * / `proposeRelationshipForFamily`.
    */
   'proposeRelationship' : ActorMethod<
     [PersonId, PersonId, RelationshipType],
-    Result_9
+    Result_13
   >,
   /**
    * / Proposes a new relationship between two people in `familyId`. Both
@@ -2597,7 +3304,7 @@ export interface _SERVICE {
    */
   'proposeRelationshipForFamily' : ActorMethod<
     [FamilyId, PersonId, PersonId, RelationshipType],
-    Result_9
+    Result_13
   >,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for `publishRecipeForFamily`.
@@ -2651,12 +3358,29 @@ export interface _SERVICE {
     Recipe
   >,
   /**
-   * / Reconciles stale claim notifications for a claim: when the claim is
-   * / `#Approved`, marks the pending `#ProfileClaimRequested` notification for
-   * / the claimant as read/resolved. The profile status stays `#Claimed` and no
-   * / new claim is created. Returns the number of notifications reconciled.
+   * / TEMPORARY Tenancy compatibility wrapper for
+   * / `reconcileClaimNotificationsForFamily`. Deprecated single-family form:
+   * / delegates to the canonical family-scoped implementation with
+   * / `FamilyTypes.DEFAULT_FAMILY_ID`, so current Norwood behavior is unchanged.
+   * / Contains no logic of its own.
    */
   'reconcileClaimNotifications' : ActorMethod<[bigint], bigint>,
+  /**
+   * / Reconciles stale claim notifications for a claim in `familyId`: when the
+   * / claim is `#Approved`, marks the pending `#ProfileClaimRequested`
+   * / notification for the claimant as read/resolved. The profile status stays
+   * / `#Claimed` and no new claim is created. Returns the number of
+   * / notifications reconciled.
+   * /
+   * / The claim is located with a family-qualified lookup, so a `claimId` alone
+   * / can never cross the family boundary: a claim belonging to another family
+   * / is never found and nothing is reconciled. Requires an approved member of
+   * / `familyId` (or a Steward of `familyId`).
+   */
+  'reconcileClaimNotificationsForFamily' : ActorMethod<
+    [FamilyId, bigint],
+    bigint
+  >,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for
    * / `rejectArchiveItemForFamily`.
@@ -2716,9 +3440,21 @@ export interface _SERVICE {
     [] | [ProfileClaim]
   >,
   /**
-   * / Rejects a profile removal request. Family Steward only.
+   * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+   * / delegates to `rejectProfileRemovalForFamily` with the default family id so
+   * / current Norwood behavior is unchanged.
    */
   'rejectProfileRemoval' : ActorMethod<[bigint], [] | [ProfileRemovalRequest]>,
+  /**
+   * / Rejects a profile removal request in `familyId`. Canonical family-scoped
+   * / form: the caller must be an active Steward of `familyId`, and the request
+   * / must belong to `familyId`, so a request id alone never crosses a family
+   * / boundary. Family Steward of `familyId` only.
+   */
+  'rejectProfileRemovalForFamily' : ActorMethod<
+    [string, bigint],
+    [] | [ProfileRemovalRequest]
+  >,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for `rejectRecipeForFamily`.
    */
@@ -2811,14 +3547,14 @@ export interface _SERVICE {
    * / TEMPORARY Tenancy 1C compatibility wrapper for
    * / `removeDuplicateProfileForFamily`.
    */
-  'removeDuplicateProfile' : ActorMethod<[PersonId], Result_8>,
+  'removeDuplicateProfile' : ActorMethod<[PersonId], Result_12>,
   /**
    * / Removes a duplicate test-created profile in `familyId`. Steward of
    * / `familyId` only.
    */
   'removeDuplicateProfileForFamily' : ActorMethod<
     [FamilyId, PersonId],
-    Result_8
+    Result_12
   >,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for `removePhotoForFamily`.
@@ -2830,15 +3566,34 @@ export interface _SERVICE {
    */
   'removePhotoForFamily' : ActorMethod<[FamilyId, PersonId, PhotoId], boolean>,
   /**
-   * / Removes an incorrect relationship from the shared family graph. Family
-   * / Steward only.
+   * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+   * / delegates to `removeRelationshipForFamily` with the default family id so
+   * / current Norwood behavior is unchanged.
    */
-  'removeRelationship' : ActorMethod<[bigint], Result_7>,
+  'removeRelationship' : ActorMethod<[bigint], Result_11>,
   /**
-   * / Removes the steward role from another steward, never allowing the last
-   * / steward to be removed. Family Steward only.
+   * / Removes an incorrect relationship from `familyId`'s family graph. Canonical
+   * / family-scoped form: the caller must be an active Steward of `familyId`, the
+   * / relationship must belong to `familyId`, and only that family's relationship
+   * / is removed, so a `relationshipId` alone never crosses a family boundary.
+   * / Existing audit/governance behavior is preserved.
    */
-  'removeSteward' : ActorMethod<[Principal], Result_6>,
+  'removeRelationshipForFamily' : ActorMethod<[string, bigint], Result_11>,
+  /**
+   * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+   * / delegates to `removeStewardForFamily` with the default family id so current
+   * / Norwood behavior is unchanged. Family Steward only.
+   */
+  'removeSteward' : ActorMethod<[Principal], Result_10>,
+  /**
+   * / Removes the steward role from another steward of `familyId`, never allowing
+   * / the last steward of that family to be removed. Canonical family-scoped
+   * / form: the caller must be an active Steward of `familyId`, the target
+   * / `StewardRecord` is matched on both `stewardAccountId` and `familyId`, and
+   * / the last-Steward guard counts only active stewards of `familyId`. A Steward
+   * / of one family can never remove a steward of another family.
+   */
+  'removeStewardForFamily' : ActorMethod<[string, Principal], Result_10>,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for `reportMessageForFamily`.
    */
@@ -2853,25 +3608,47 @@ export interface _SERVICE {
    * / TEMPORARY Tenancy 1C compatibility wrapper for
    * / `requestProfileClaimForFamily`.
    */
-  'requestProfileClaim' : ActorMethod<[PersonId], Result_5>,
+  'requestProfileClaim' : ActorMethod<[PersonId], Result_9>,
   /**
    * / "This is Me": creates a pending profile claim for an unclaimed living
    * / profile in `familyId`. Requires sign-in; does not grant ownership until
    * / approved. The claim belongs to exactly `familyId`.
    */
-  'requestProfileClaimForFamily' : ActorMethod<[FamilyId, PersonId], Result_5>,
+  'requestProfileClaimForFamily' : ActorMethod<[FamilyId, PersonId], Result_9>,
   /**
-   * / A claimed living profile owner requests removal of their own profile.
-   * / A Family Steward reviews the request.
+   * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+   * / delegates to `requestProfileRemovalForFamily` with the default family id so
+   * / current Norwood behavior is unchanged.
    */
-  'requestProfileRemoval' : ActorMethod<[PersonId, string], Result_4>,
+  'requestProfileRemoval' : ActorMethod<[PersonId, string], Result_8>,
+  /**
+   * / A claimed living profile owner requests removal of their own profile in
+   * / `familyId`. Canonical family-scoped form: the target profile must belong to
+   * / `familyId`, and the request is stamped with `familyId`, so a `personId`
+   * / alone never crosses a family boundary. A Family Steward of `familyId`
+   * / reviews the request.
+   */
+  'requestProfileRemovalForFamily' : ActorMethod<
+    [string, PersonId, string],
+    Result_8
+  >,
+  /**
+   * / Rotates the token of an existing `#Pending` invitation for `familyId` +
+   * / `personId` + `invitationType`, returning the new raw token once. The old
+   * / token stops resolving. This is the explicit resend operation, so a resend
+   * / never silently creates a duplicate invitation.
+   */
+  'resendFamilyInvitation' : ActorMethod<
+    [string, string, InvitationType],
+    Result_7
+  >,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for
    * / `resolveConflictForFamily`.
    */
   'resolveConflict' : ActorMethod<
     [bigint, ConflictResolutionAction, string],
-    Result_3
+    Result_6
   >,
   /**
    * / Resolves a conflict review item in `familyId` (Steward of `familyId` only)
@@ -2889,13 +3666,37 @@ export interface _SERVICE {
    */
   'resolveConflictForFamily' : ActorMethod<
     [FamilyId, bigint, ConflictResolutionAction, string],
-    Result_3
+    Result_6
   >,
   /**
-   * / Resolves a merge conflict by choosing the canonical display value. Family
-   * / Steward only.
+   * / Resolves an escalated confirmation case for `membershipId` in `familyId`.
+   * / Steward of `familyId` only; anonymous callers get `#err(#NotSignedIn)` and
+   * / non-Stewards get `#err(#NotSteward)`. `#Approve` activates a `#Pending`
+   * / membership or restores a membership suspended by this confirmation dispute
+   * / back to `#Active`; `#Reject` leaves the membership non-`#Active` with a
+   * / resolved rejection recorded; `#NeedsMoreInformation` leaves the membership
+   * / `#Pending` or `#Suspended` and the case open.
+   */
+  'resolveMembershipConfirmation' : ActorMethod<
+    [FamilyId, bigint, MembershipConfirmationResolution],
+    Result_5
+  >,
+  /**
+   * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+   * / delegates to `resolveMergeConflictForFamily` with the default family id so
+   * / current Norwood behavior is unchanged.
    */
   'resolveMergeConflict' : ActorMethod<[bigint, string], [] | [MergeConflict]>,
+  /**
+   * / Resolves a merge conflict in `familyId` by choosing the canonical display
+   * / value. Canonical family-scoped form: the caller must be an active Steward
+   * / of `familyId`, and the conflict must belong to `familyId`, so a conflict id
+   * / alone never crosses a family boundary. Family Steward of `familyId` only.
+   */
+  'resolveMergeConflictForFamily' : ActorMethod<
+    [string, bigint, string],
+    [] | [MergeConflict]
+  >,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for `restoreBoardPostForFamily`.
    */
@@ -2907,10 +3708,19 @@ export interface _SERVICE {
    */
   'restoreBoardPostForFamily' : ActorMethod<[FamilyId, PostId], [] | [Post]>,
   /**
-   * / Restores an archived profile to normal family browsing. Family Steward
-   * / only.
+   * / TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+   * / delegates to `restoreProfileForFamily` with the default family id so
+   * / current Norwood behavior is unchanged.
    */
-  'restoreProfile' : ActorMethod<[PersonId], Result_2>,
+  'restoreProfile' : ActorMethod<[PersonId], Result_4>,
+  /**
+   * / Restores an archived profile in `familyId` to normal family browsing.
+   * / Canonical family-scoped form: the caller must be an active Steward of
+   * / `familyId`, and the target profile must belong to `familyId`, so a
+   * / `personId` alone never crosses a family boundary. Family Steward of
+   * / `familyId` only.
+   */
+  'restoreProfileForFamily' : ActorMethod<[string, PersonId], Result_4>,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for
    * / `reviewMysteryContributionForFamily`.
@@ -2993,13 +3803,13 @@ export interface _SERVICE {
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for `sendMessageForFamily`.
    */
-  'sendMessage' : ActorMethod<[string, string], Result_1>,
+  'sendMessage' : ActorMethod<[string, string], Result_3>,
   /**
    * / Sends a private message to the person identified by `recipientPersonId`
    * / within `familyId`, reusing the existing 1:1 conversation when one exists.
    * / Approved members of `familyId` only.
    */
-  'sendMessageForFamily' : ActorMethod<[FamilyId, string, string], Result_1>,
+  'sendMessageForFamily' : ActorMethod<[FamilyId, string, string], Result_3>,
   /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for
    * / `setProfilePhotoForFamily`.
@@ -3194,6 +4004,11 @@ export interface _SERVICE {
     Story
   >,
   /**
+   * / Sets an `#Active` membership in `familyId` to `#Suspended`. Steward of
+   * / `familyId` only.
+   */
+  'suspendMembershipForFamily' : ActorMethod<[FamilyId, bigint], Result_2>,
+  /**
    * / TEMPORARY Tenancy 1C compatibility wrapper for `unblockUserForFamily`.
    */
   'unblockUser' : ActorMethod<[Principal], undefined>,
@@ -3326,7 +4141,7 @@ export interface _SERVICE {
    * / TEMPORARY Tenancy 1C compatibility wrapper for
    * / `updateOwnProfileForFamily`.
    */
-  'updateOwnProfile' : ActorMethod<[PersonId, ProfileEdits], Result>,
+  'updateOwnProfile' : ActorMethod<[PersonId, ProfileEdits], Result_1>,
   /**
    * / Updates an approved owner's own living profile fields in `familyId`, or,
    * / for a Steward of `familyId`, the fields of an unclaimed/historical profile
@@ -3334,8 +4149,18 @@ export interface _SERVICE {
    */
   'updateOwnProfileForFamily' : ActorMethod<
     [FamilyId, PersonId, ProfileEdits],
-    Result
+    Result_1
   >,
+  /**
+   * / Validates a raw invite token and returns only the minimal,
+   * / relationship-safe preview context needed for later onboarding: invitation
+   * / id, family display name, target profile safe identity preview, invitation
+   * / type, status, and expiry. Never exposes the private family tree, Archive,
+   * / other member identities, sensitive relationship context, or Steward-only
+   * / data. A wrong, unknown, cancelled, declined, accepted, or expired token
+   * / returns `#InvalidToken` / `#Expired`.
+   */
+  'validateFamilyInvitationToken' : ActorMethod<[string], Result>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

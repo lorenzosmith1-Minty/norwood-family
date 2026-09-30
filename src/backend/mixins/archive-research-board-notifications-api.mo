@@ -418,13 +418,35 @@ mixin (
     );
   };
 
-  /// Reconciles stale claim notifications for a claim: when the claim is
-  /// `#Approved`, marks the pending `#ProfileClaimRequested` notification for
-  /// the claimant as read/resolved. The profile status stays `#Claimed` and no
-  /// new claim is created. Returns the number of notifications reconciled.
-  public shared ({ caller }) func reconcileClaimNotifications(claimId : Nat) : async Nat {
-    FamilyAuthorizationLib.requireApprovedFamilyMember(stewards, claims, caller);
-    switch (claims.find(func c = c.id == claimId)) {
+  /// Reconciles stale claim notifications for a claim in `familyId`: when the
+  /// claim is `#Approved`, marks the pending `#ProfileClaimRequested`
+  /// notification for the claimant as read/resolved. The profile status stays
+  /// `#Claimed` and no new claim is created. Returns the number of
+  /// notifications reconciled.
+  ///
+  /// The claim is located with a family-qualified lookup, so a `claimId` alone
+  /// can never cross the family boundary: a claim belonging to another family
+  /// is never found and nothing is reconciled. Requires an approved member of
+  /// `familyId` (or a Steward of `familyId`).
+  public shared ({ caller }) func reconcileClaimNotificationsForFamily(
+    familyId : FamilyTypes.FamilyId,
+    claimId : Nat,
+  ) : async Nat {
+    reconcileClaimNotificationsForFamilyInternal(familyId, claimId, caller);
+  };
+
+  /// Internal implementation of `reconcileClaimNotificationsForFamily` that
+  /// takes the caller explicitly. The public family-scoped endpoint and the
+  /// temporary single-family compatibility wrapper both delegate here, so the
+  /// membership gate always evaluates the real caller rather than the canister
+  /// principal a shared-to-shared call would otherwise present.
+  func reconcileClaimNotificationsForFamilyInternal(
+    familyId : FamilyTypes.FamilyId,
+    claimId : Nat,
+    caller : Principal,
+  ) : Nat {
+    FamilyAuthorizationLib.requireApprovedFamilyMemberForFamily(stewards, claims, caller, familyId);
+    switch (claims.find(func c = c.id == claimId and c.familyId == familyId)) {
       case null { 0 };
       case (?claim) {
         if (claim.status != #Approved) {
@@ -434,5 +456,14 @@ mixin (
         };
       };
     };
+  };
+
+  /// TEMPORARY Tenancy compatibility wrapper for
+  /// `reconcileClaimNotificationsForFamily`. Deprecated single-family form:
+  /// delegates to the canonical family-scoped implementation with
+  /// `FamilyTypes.DEFAULT_FAMILY_ID`, so current Norwood behavior is unchanged.
+  /// Contains no logic of its own.
+  public shared ({ caller }) func reconcileClaimNotifications(claimId : Nat) : async Nat {
+    reconcileClaimNotificationsForFamilyInternal(FamilyTypes.DEFAULT_FAMILY_ID, claimId, caller);
   };
 };

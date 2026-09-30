@@ -14,9 +14,22 @@ module {
   // Steward Management & Succession
   // ---------------------------------------------------------------------------
 
-  /// Returns all steward governance records.
+  /// Returns the steward governance records of `familyId`. Canonical
+  /// family-scoped form: only `StewardRecord` entries whose `familyId` equals
+  /// `familyId` are returned, so Family A never sees Family B stewards. Existing
+  /// collection ordering and record shape are preserved.
+  public func listStewardsForFamily(
+    stewards : List.List<Types.StewardRecord>,
+    familyId : FamilyTypes.FamilyId,
+  ) : [Types.StewardRecord] {
+    stewards.toArray().filter(func s = s.familyId == familyId);
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+  /// delegates to `listStewardsForFamily` with the default family id so current
+  /// Norwood behavior is unchanged.
   public func listStewards(stewards : List.List<Types.StewardRecord>) : [Types.StewardRecord] {
-    stewards.toArray();
+    listStewardsForFamily(stewards, FamilyTypes.DEFAULT_FAMILY_ID);
   };
 
   /// Promotes an approved claimed member of `familyId` to Family Steward.
@@ -51,9 +64,10 @@ module {
               successorPriority = null;
               assignedBy = actorId;
               assignedAt = Time.now();
+              founding = false;
             };
             stewards.add(record);
-            appendAudit(auditLog, #StewardPromoted, actorId, [personId], "Promoted " # personId # " to Family Steward");
+            appendAudit(auditLog, familyId, #StewardPromoted, actorId, [personId], "Promoted " # personId # " to Family Steward");
             #ok(record);
           };
         };
@@ -74,27 +88,46 @@ module {
     promoteToStewardForFamily(stewards, auditLog, profiles, FamilyTypes.DEFAULT_FAMILY_ID, personId, actorId);
   };
 
-  /// Removes the steward role from another steward, never allowing the last
-  /// steward to be removed.
+  /// Removes the steward role from another steward of `familyId`, never
+  /// allowing the last steward of that family to be removed. Canonical
+  /// family-scoped form: the target `StewardRecord` is matched on both
+  /// `stewardAccountId` and `familyId`, and the last-Steward guard counts only
+  /// active stewards whose `familyId` equals `familyId`, so a steward account id
+  /// alone never crosses the family boundary and another family's active
+  /// stewards never satisfy this family's guard. The audit entry is stamped with
+  /// `familyId`.
+  public func removeStewardForFamily(
+    stewards : List.List<Types.StewardRecord>,
+    auditLog : List.List<Types.AuditEntry>,
+    familyId : FamilyTypes.FamilyId,
+    stewardAccountId : Principal,
+    actorId : Principal,
+  ) : Result.Result<(), Types.StewardError> {
+    switch (stewards.find(func s = s.stewardAccountId == stewardAccountId and s.roleStatus == #Active and s.familyId == familyId)) {
+      case null { #err(#NotSteward) };
+      case (?record) {
+        let active = stewards.toArray().filter(func s = s.roleStatus == #Active and s.familyId == familyId);
+        if (active.size() <= 1) {
+          return #err(#LastSteward);
+        };
+        let updated : Types.StewardRecord = { record with roleStatus = #Removed };
+        replaceSteward(stewards, updated);
+        appendAudit(auditLog, familyId, #StewardRemoved, actorId, [], "Removed steward role from " # stewardAccountId.toText());
+        #ok(());
+      };
+    };
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+  /// delegates to `removeStewardForFamily` with the default family id so current
+  /// Norwood behavior is unchanged.
   public func removeSteward(
     stewards : List.List<Types.StewardRecord>,
     auditLog : List.List<Types.AuditEntry>,
     stewardAccountId : Principal,
     actorId : Principal,
   ) : Result.Result<(), Types.StewardError> {
-    switch (stewards.find(func s = s.stewardAccountId == stewardAccountId and s.roleStatus == #Active)) {
-      case null { #err(#NotSteward) };
-      case (?record) {
-        let active = stewards.toArray().filter(func s = s.roleStatus == #Active);
-        if (active.size() <= 1) {
-          return #err(#LastSteward);
-        };
-        let updated : Types.StewardRecord = { record with roleStatus = #Removed };
-        replaceSteward(stewards, updated);
-        appendAudit(auditLog, #StewardRemoved, actorId, [], "Removed steward role from " # stewardAccountId.toText());
-        #ok(());
-      };
-    };
+    removeStewardForFamily(stewards, auditLog, FamilyTypes.DEFAULT_FAMILY_ID, stewardAccountId, actorId);
   };
 
   /// Designates an approved claimed member of `familyId` as a successor steward
@@ -143,7 +176,7 @@ module {
       status = #Designated;
     };
     successors.add(designation);
-    appendAudit(auditLog, #SuccessorDesignated, actorId, [personId], "Designated " # personId # " as successor steward (priority " # Nat.toText(priority) # ")");
+    appendAudit(auditLog, familyId, #SuccessorDesignated, actorId, [personId], "Designated " # personId # " as successor steward (priority " # Nat.toText(priority) # ")");
     #ok(designation);
   };
 
@@ -199,11 +232,12 @@ module {
                   successorPriority = ?designation.priority;
                   assignedBy = actorId;
                   assignedAt = Time.now();
+                  founding = false;
                 };
                 stewards.add(record);
                 let updated : Types.SuccessorDesignation = { designation with status = #Activated };
                 replaceSuccessor(successors, updated);
-                appendAudit(auditLog, #SuccessorActivated, actorId, [personId], "Activated successor " # personId # " as Family Steward");
+                appendAudit(auditLog, familyId, #SuccessorActivated, actorId, [personId], "Activated successor " # personId # " as Family Steward");
                 #ok(record);
               };
             };
@@ -245,14 +279,27 @@ module {
   };
 
   /// Returns a warning encouraging successor designation when only one steward
-  /// exists, or `null` when there are multiple stewards.
-  public func getSingleStewardWarning(stewards : List.List<Types.StewardRecord>) : ?Text {
-    let active = stewards.toArray().filter(func s = s.roleStatus == #Active);
+  /// of `familyId` exists, or `null` when there are multiple stewards of that
+  /// family. Canonical family-scoped form: only `StewardRecord` entries whose
+  /// `familyId` equals `familyId` and whose `roleStatus == #Active` are counted,
+  /// so another family's active stewards never affect this family's warning.
+  public func getSingleStewardWarningForFamily(
+    stewards : List.List<Types.StewardRecord>,
+    familyId : FamilyTypes.FamilyId,
+  ) : ?Text {
+    let active = stewards.toArray().filter(func s = s.roleStatus == #Active and s.familyId == familyId);
     if (active.size() == 1) {
       ?"Only one Family Steward remains. Designate a successor steward to ensure continuity.";
     } else {
       null;
     };
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+  /// delegates to `getSingleStewardWarningForFamily` with the default family id
+  /// so current Norwood behavior is unchanged.
+  public func getSingleStewardWarning(stewards : List.List<Types.StewardRecord>) : ?Text {
+    getSingleStewardWarningForFamily(stewards, FamilyTypes.DEFAULT_FAMILY_ID);
   };
 
   /// Returns each current Steward and designated Successor of `familyId`
@@ -300,24 +347,32 @@ module {
     listStewardIdentitiesForFamily(stewards, successors, profiles, FamilyTypes.DEFAULT_FAMILY_ID);
   };
 
-  /// Returns the eligible promotion/successor candidate list: all people who
-  /// are living, have an APPROVED/CLAIMED profile, are linked to a valid
-  /// account, are not already an active Steward, and are not archived. This is
-  /// data-driven — as additional family members claim and receive approval they
-  /// automatically appear without code changes.
-  public func listEligibleStewardCandidates(
+  /// Returns the eligible promotion/successor candidate list of `familyId`: all
+  /// people who belong to `familyId`, are living, have an APPROVED/CLAIMED
+  /// profile, are linked to a valid account, are not already an active Steward
+  /// of `familyId`, and are not archived. Canonical family-scoped form: only
+  /// profiles whose `familyId` equals `familyId` are considered, and the
+  /// already-a-Steward exclusion is filtered by `familyId`, so a profile of
+  /// another family is never a candidate here and an account that is an active
+  /// Steward of Family A remains eligible in Family B when current rules
+  /// otherwise permit. This is data-driven — as additional family members claim
+  /// and receive approval they automatically appear without code changes.
+  /// Existing candidate shape and Map iteration ordering are preserved.
+  public func listEligibleStewardCandidatesForFamily(
     stewards : List.List<Types.StewardRecord>,
     profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
     archivedProfiles : List.List<Types.PersonId>,
+    familyId : FamilyTypes.FamilyId,
   ) : [Types.StewardIdentity] {
     let result = List.empty<Types.StewardIdentity>();
     let archived = archivedProfiles.toArray();
     for ((personId, profile) in profiles.entries()) {
-      if (profile.livingStatus == #Living
+      if (profile.familyId == familyId
+          and profile.livingStatus == #Living
           and profile.claimStatus == #Claimed
           and profile.claimedByUserId != null
           and not archived.any(func p = p == personId)
-          and not isActiveStewardAccount(stewards, profile.claimedByUserId)
+          and not isActiveStewardAccountForFamily(stewards, profile.claimedByUserId, familyId)
       ) {
         result.add(buildIdentity(profile));
       };
@@ -325,23 +380,36 @@ module {
     result.toArray();
   };
 
+  /// TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+  /// delegates to `listEligibleStewardCandidatesForFamily` with the default
+  /// family id so current Norwood behavior is unchanged.
+  public func listEligibleStewardCandidates(
+    stewards : List.List<Types.StewardRecord>,
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    archivedProfiles : List.List<Types.PersonId>,
+  ) : [Types.StewardIdentity] {
+    listEligibleStewardCandidatesForFamily(stewards, profiles, archivedProfiles, FamilyTypes.DEFAULT_FAMILY_ID);
+  };
+
   // ---------------------------------------------------------------------------
   // Safe Profile Removal, Archive & Restore
   // ---------------------------------------------------------------------------
 
-  /// Records a claimed living profile owner's request for profile removal.
-  public func requestProfileRemoval(
+  /// Records a claimed living profile owner's request for removal of a profile
+  /// in `familyId`. Canonical family-scoped form: the target profile is resolved
+  /// through the family-qualified profile lookup, the pending-request check is
+  /// filtered by `familyId`, and the new request is stamped with `familyId`, so
+  /// a `personId` alone never crosses a family boundary.
+  public func requestProfileRemovalForFamily(
     removalRequests : List.List<Types.ProfileRemovalRequest>,
     auditLog : List.List<Types.AuditEntry>,
     profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    familyId : FamilyTypes.FamilyId,
     personId : Types.PersonId,
     reason : Text,
     caller : Principal,
   ) : Result.Result<Types.ProfileRemovalRequest, Types.RemovalError> {
-    if (caller.isAnonymous()) {
-      return #err(#NotSignedIn);
-    };
-    switch (profiles.get(personId)) {
+    switch (TenancyLib.getProfileForFamily(profiles, familyId, personId)) {
       case null { #err(#ProfileNotFound) };
       case (?profile) {
         if (profile.livingStatus == #Deceased) {
@@ -350,10 +418,12 @@ module {
         if (profile.claimedByUserId != ?caller) {
           return #err(#NotOwner);
         };
-        if (removalRequests.toArray().any(func r = r.personId == personId and r.status == #Pending)) {
+        if (removalRequests.toArray().any(func r =
+          r.familyId == familyId and r.personId == personId and r.status == #Pending)) {
           return #err(#AlreadyPending);
         };
         let request : Types.ProfileRemovalRequest = {
+          familyId;
           id = nextId(removalRequests.toArray().map(func r = r.id));
           personId;
           requestingUserId = caller;
@@ -364,28 +434,60 @@ module {
           reviewedDate = null;
         };
         removalRequests.add(request);
-        appendAudit(auditLog, #ProfileRemovalRequested, caller, [personId], "Requested removal of profile " # personId);
+        appendAudit(auditLog, familyId, #ProfileRemovalRequested, caller, [personId], "Requested removal of profile " # personId);
         #ok(request);
       };
     };
   };
 
-  /// Returns all profile removal requests for steward review.
-  public func listProfileRemovalRequests(removalRequests : List.List<Types.ProfileRemovalRequest>) : [Types.ProfileRemovalRequest] {
-    removalRequests.toArray();
+  /// TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+  /// delegates to `requestProfileRemovalForFamily` with the default family id so
+  /// current Norwood behavior is unchanged.
+  public func requestProfileRemoval(
+    removalRequests : List.List<Types.ProfileRemovalRequest>,
+    auditLog : List.List<Types.AuditEntry>,
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    personId : Types.PersonId,
+    reason : Text,
+    caller : Principal,
+  ) : Result.Result<Types.ProfileRemovalRequest, Types.RemovalError> {
+    requestProfileRemovalForFamily(removalRequests, auditLog, profiles, FamilyTypes.DEFAULT_FAMILY_ID, personId, reason, caller);
   };
 
-  /// Approves a profile removal request, archiving the profile.
-  public func approveProfileRemoval(
+  /// Returns the profile removal requests of `familyId` for steward review.
+  /// Canonical family-scoped form: a request stamped with another family is
+  /// never returned.
+  public func listProfileRemovalRequestsForFamily(
+    removalRequests : List.List<Types.ProfileRemovalRequest>,
+    familyId : FamilyTypes.FamilyId,
+  ) : [Types.ProfileRemovalRequest] {
+    removalRequests.toArray().filter(func r = r.familyId == familyId);
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+  /// delegates to `listProfileRemovalRequestsForFamily` with the default family
+  /// id so current Norwood behavior is unchanged.
+  public func listProfileRemovalRequests(removalRequests : List.List<Types.ProfileRemovalRequest>) : [Types.ProfileRemovalRequest] {
+    listProfileRemovalRequestsForFamily(removalRequests, FamilyTypes.DEFAULT_FAMILY_ID);
+  };
+
+  /// Approves a profile removal request in `familyId`, archiving the profile.
+  /// Canonical family-scoped form: the request must belong to `familyId`, so a
+  /// request id alone never crosses a family boundary.
+  public func approveProfileRemovalForFamily(
     removalRequests : List.List<Types.ProfileRemovalRequest>,
     archivedProfiles : List.List<Types.PersonId>,
     auditLog : List.List<Types.AuditEntry>,
+    familyId : FamilyTypes.FamilyId,
     requestId : Nat,
     actorId : Principal,
   ) : ?Types.ProfileRemovalRequest {
-    switch (removalRequests.find(func r = r.id == requestId and r.status == #Pending)) {
+    switch (removalRequests.find(func r = r.id == requestId and r.familyId == familyId)) {
       case null { null };
       case (?request) {
+        if (request.status != #Pending) {
+          return null;
+        };
         let updated : Types.ProfileRemovalRequest = {
           request with
           status = #Approved;
@@ -396,22 +498,41 @@ module {
         if (not archivedProfiles.toArray().any(func p = p == request.personId)) {
           archivedProfiles.add(request.personId);
         };
-        appendAudit(auditLog, #ProfileRemovalReviewed, actorId, [request.personId], "Approved removal of profile " # request.personId # " (archived)");
+        appendAudit(auditLog, familyId, #ProfileRemovalReviewed, actorId, [request.personId], "Approved removal of profile " # request.personId);
         ?updated;
       };
     };
   };
 
-  /// Rejects a profile removal request.
-  public func rejectProfileRemoval(
+  /// TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+  /// delegates to `approveProfileRemovalForFamily` with the default family id so
+  /// current Norwood behavior is unchanged.
+  public func approveProfileRemoval(
     removalRequests : List.List<Types.ProfileRemovalRequest>,
+    archivedProfiles : List.List<Types.PersonId>,
     auditLog : List.List<Types.AuditEntry>,
     requestId : Nat,
     actorId : Principal,
   ) : ?Types.ProfileRemovalRequest {
-    switch (removalRequests.find(func r = r.id == requestId and r.status == #Pending)) {
+    approveProfileRemovalForFamily(removalRequests, archivedProfiles, auditLog, FamilyTypes.DEFAULT_FAMILY_ID, requestId, actorId);
+  };
+
+  /// Rejects a profile removal request in `familyId`. Canonical family-scoped
+  /// form: the request must belong to `familyId`, so a request id alone never
+  /// crosses a family boundary.
+  public func rejectProfileRemovalForFamily(
+    removalRequests : List.List<Types.ProfileRemovalRequest>,
+    auditLog : List.List<Types.AuditEntry>,
+    familyId : FamilyTypes.FamilyId,
+    requestId : Nat,
+    actorId : Principal,
+  ) : ?Types.ProfileRemovalRequest {
+    switch (removalRequests.find(func r = r.id == requestId and r.familyId == familyId)) {
       case null { null };
       case (?request) {
+        if (request.status != #Pending) {
+          return null;
+        };
         let updated : Types.ProfileRemovalRequest = {
           request with
           status = #Rejected;
@@ -419,14 +540,52 @@ module {
           reviewedDate = ?Time.now();
         };
         replaceRemovalRequest(removalRequests, updated);
-        appendAudit(auditLog, #ProfileRemovalReviewed, actorId, [request.personId], "Rejected removal of profile " # request.personId);
+        appendAudit(auditLog, familyId, #ProfileRemovalReviewed, actorId, [request.personId], "Rejected removal of profile " # request.personId);
         ?updated;
       };
     };
   };
 
-  /// Archives a profile, removing it from normal family browsing while
-  /// preserving relationships, media, timeline, sources, and ownership history.
+  /// TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+  /// delegates to `rejectProfileRemovalForFamily` with the default family id so
+  /// current Norwood behavior is unchanged.
+  public func rejectProfileRemoval(
+    removalRequests : List.List<Types.ProfileRemovalRequest>,
+    auditLog : List.List<Types.AuditEntry>,
+    requestId : Nat,
+    actorId : Principal,
+  ) : ?Types.ProfileRemovalRequest {
+    rejectProfileRemovalForFamily(removalRequests, auditLog, FamilyTypes.DEFAULT_FAMILY_ID, requestId, actorId);
+  };
+
+  /// Archives a profile in `familyId`, removing it from normal family browsing
+  /// while preserving relationships, media, timeline, sources, and ownership
+  /// history. Canonical family-scoped form: the target profile must belong to
+  /// `familyId`, so a `personId` alone never crosses a family boundary.
+  public func archiveProfileForFamily(
+    archivedProfiles : List.List<Types.PersonId>,
+    auditLog : List.List<Types.AuditEntry>,
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    familyId : FamilyTypes.FamilyId,
+    personId : Types.PersonId,
+    actorId : Principal,
+  ) : Result.Result<(), Types.ArchiveError> {
+    switch (TenancyLib.getProfileForFamily(profiles, familyId, personId)) {
+      case null { #err(#ProfileNotFound) };
+      case (?_) {
+        if (archivedProfiles.toArray().any(func p = p == personId)) {
+          return #err(#AlreadyArchived);
+        };
+        archivedProfiles.add(personId);
+        appendAudit(auditLog, familyId, #ProfileArchived, actorId, [personId], "Archived profile " # personId);
+        #ok(());
+      };
+    };
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+  /// delegates to `archiveProfileForFamily` with the default family id so
+  /// current Norwood behavior is unchanged.
   public func archiveProfile(
     archivedProfiles : List.List<Types.PersonId>,
     auditLog : List.List<Types.AuditEntry>,
@@ -434,62 +593,173 @@ module {
     personId : Types.PersonId,
     actorId : Principal,
   ) : Result.Result<(), Types.ArchiveError> {
-    if (profiles.get(personId) == null) {
-      return #err(#ProfileNotFound);
-    };
-    if (archivedProfiles.toArray().any(func p = p == personId)) {
-      return #err(#AlreadyArchived);
-    };
-    archivedProfiles.add(personId);
-    appendAudit(auditLog, #ProfileArchived, actorId, [personId], "Archived profile " # personId);
-    #ok(());
+    archiveProfileForFamily(archivedProfiles, auditLog, profiles, FamilyTypes.DEFAULT_FAMILY_ID, personId, actorId);
   };
 
-  /// Restores an archived profile to normal family browsing.
-  public func restoreProfile(
+  /// Restores an archived profile in `familyId` to normal family browsing.
+  /// Canonical family-scoped form: the target profile must belong to `familyId`,
+  /// so a `personId` alone never crosses a family boundary.
+  public func restoreProfileForFamily(
     archivedProfiles : List.List<Types.PersonId>,
     auditLog : List.List<Types.AuditEntry>,
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    familyId : FamilyTypes.FamilyId,
     personId : Types.PersonId,
     actorId : Principal,
   ) : Result.Result<(), Types.ArchiveError> {
-    if (not archivedProfiles.toArray().any(func p = p == personId)) {
-      return #err(#NotArchived);
+    switch (TenancyLib.getProfileForFamily(profiles, familyId, personId)) {
+      case null { #err(#ProfileNotFound) };
+      case (?_) {
+        if (not archivedProfiles.toArray().any(func p = p == personId)) {
+          return #err(#NotArchived);
+        };
+        let snapshot = archivedProfiles.toArray();
+        archivedProfiles.clear();
+        for (p in snapshot.values()) {
+          if (p != personId) { archivedProfiles.add(p) };
+        };
+        appendAudit(auditLog, familyId, #ProfileRestored, actorId, [personId], "Restored profile " # personId);
+        #ok(());
+      };
     };
-    let snapshot = archivedProfiles.toArray();
-    archivedProfiles.clear();
-    for (p in snapshot.values()) {
-      if (p != personId) { archivedProfiles.add(p) };
-    };
-    appendAudit(auditLog, #ProfileRestored, actorId, [personId], "Restored profile " # personId);
-    #ok(());
   };
 
-  /// Returns all archived profiles.
-  public func listArchivedProfiles(
+  /// TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+  /// delegates to `restoreProfileForFamily` with the default family id so
+  /// current Norwood behavior is unchanged.
+  public func restoreProfile(
+    archivedProfiles : List.List<Types.PersonId>,
+    auditLog : List.List<Types.AuditEntry>,
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    personId : Types.PersonId,
+    actorId : Principal,
+  ) : Result.Result<(), Types.ArchiveError> {
+    restoreProfileForFamily(archivedProfiles, auditLog, profiles, FamilyTypes.DEFAULT_FAMILY_ID, personId, actorId);
+  };
+
+  /// Returns the archived profiles of `familyId`. Canonical family-scoped form:
+  /// only archived ids whose profile belongs to `familyId` are returned, so a
+  /// `personId` alone never crosses a family boundary.
+  public func listArchivedProfilesForFamily(
     archivedProfiles : List.List<Types.PersonId>,
     profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    familyId : FamilyTypes.FamilyId,
   ) : [Types.PersonProfile] {
     let result = List.empty<Types.PersonProfile>();
     for (personId in archivedProfiles.toArray().values()) {
-      switch (profiles.get(personId)) {
-        case (?p) result.add(p);
+      switch (TenancyLib.getProfileForFamily(profiles, familyId, personId)) {
+        case (?profile) result.add(profile);
         case null {};
       };
     };
     result.toArray();
   };
 
-  /// Returns the ids of all archived profiles so normal family browsing can
-  /// filter them out. Not gated to stewards — any caller may read archived ids.
-  public func listArchivedProfileIds(
+  /// TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+  /// delegates to `listArchivedProfilesForFamily` with the default family id so
+  /// current Norwood behavior is unchanged.
+  public func listArchivedProfiles(
     archivedProfiles : List.List<Types.PersonId>,
-  ) : [Types.PersonId] {
-    archivedProfiles.toArray();
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+  ) : [Types.PersonProfile] {
+    listArchivedProfilesForFamily(archivedProfiles, profiles, FamilyTypes.DEFAULT_FAMILY_ID);
   };
 
-  /// Permanently deletes a profile only when it is empty of archive items,
-  /// media, timeline/history, approved relationships, and ownership history,
-  /// and explicit confirmation is given.
+  /// Returns the ids of the archived profiles of `familyId` so normal family
+  /// browsing can filter them out. Canonical family-scoped form: only archived
+  /// ids whose profile belongs to `familyId` are returned, so one family's
+  /// archived ids never hide another family's profiles. Not gated to stewards —
+  /// any caller may read archived ids.
+  public func listArchivedProfileIdsForFamily(
+    archivedProfiles : List.List<Types.PersonId>,
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    familyId : FamilyTypes.FamilyId,
+  ) : [Types.PersonId] {
+    archivedProfiles.toArray().filter(func personId =
+      TenancyLib.getProfileForFamily(profiles, familyId, personId) != null);
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+  /// delegates to `listArchivedProfileIdsForFamily` with the default family id
+  /// so current Norwood behavior is unchanged.
+  public func listArchivedProfileIds(
+    archivedProfiles : List.List<Types.PersonId>,
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+  ) : [Types.PersonId] {
+    listArchivedProfileIdsForFamily(archivedProfiles, profiles, FamilyTypes.DEFAULT_FAMILY_ID);
+  };
+
+  /// Returns the archived profile for `personId` in `familyId`, or `null` when
+  /// the person is not archived in that family. Canonical family-scoped direct
+  /// lookup: a `personId` alone never crosses a family boundary.
+  public func getArchivedProfileForFamily(
+    archivedProfiles : List.List<Types.PersonId>,
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    familyId : FamilyTypes.FamilyId,
+    personId : Types.PersonId,
+  ) : ?Types.PersonProfile {
+    if (not archivedProfiles.toArray().any(func p = p == personId)) {
+      return null;
+    };
+    TenancyLib.getProfileForFamily(profiles, familyId, personId);
+  };
+
+  /// Permanently deletes a profile in `familyId` only when it is empty of
+  /// archive items, media, timeline/history, approved relationships, and
+  /// ownership history, and explicit confirmation is given. Canonical
+  /// family-scoped form: the target profile must belong to `familyId`, so a
+  /// `personId` alone never crosses a family boundary.
+  public func permanentlyDeleteProfileForFamily(
+    archivedProfiles : List.List<Types.PersonId>,
+    auditLog : List.List<Types.AuditEntry>,
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    confirmedRelationships : List.List<Types.Relationship>,
+    galleries : Map.Map<Types.PersonId, ObjectStorageTypes.PhotoGallery>,
+    archiveItems : List.List<ArchiveTypes.ArchiveItem>,
+    familyId : FamilyTypes.FamilyId,
+    personId : Types.PersonId,
+    confirmation : Bool,
+    actorId : Principal,
+  ) : Result.Result<(), Types.DeleteError> {
+    switch (TenancyLib.getProfileForFamily(profiles, familyId, personId)) {
+      case null { #err(#ProfileNotFound) };
+      case (?profile) {
+        if (not confirmation) {
+          return #err(#ConfirmationRequired);
+        };
+        if (archiveItems.toArray().any(func a = a.relatedMemberIds.any(func id = id == personId))) {
+          return #err(#HasArchiveItems);
+        };
+        switch (galleries.get(personId)) {
+          case (?g) { if (g.photos.size() > 0) { return #err(#HasMedia) } };
+          case null {};
+        };
+        switch (profile.timeline) {
+          case (?t) { if (t.size() > 0) { return #err(#HasTimeline) } };
+          case null {};
+        };
+        if (confirmedRelationships.toArray().any(func r =
+          r.familyId == familyId and (r.fromPersonId == personId or r.toPersonId == personId))) {
+          return #err(#HasApprovedRelationships);
+        };
+        if (profile.claimedByUserId != null) {
+          return #err(#HasOwnershipHistory);
+        };
+        TenancyLib.removeProfileForFamily(profiles, familyId, personId);
+        let snapshot = archivedProfiles.toArray();
+        archivedProfiles.clear();
+        for (p in snapshot.values()) {
+          if (p != personId) { archivedProfiles.add(p) };
+        };
+        appendAudit(auditLog, familyId, #ProfilePermanentlyDeleted, actorId, [personId], "Permanently deleted profile " # personId);
+        #ok(());
+      };
+    };
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+  /// delegates to `permanentlyDeleteProfileForFamily` with the default family id
+  /// so current Norwood behavior is unchanged.
   public func permanentlyDeleteProfile(
     archivedProfiles : List.List<Types.PersonId>,
     auditLog : List.List<Types.AuditEntry>,
@@ -501,46 +771,50 @@ module {
     confirmation : Bool,
     actorId : Principal,
   ) : Result.Result<(), Types.DeleteError> {
-    switch (profiles.get(personId)) {
-      case null { #err(#ProfileNotFound) };
-      case (?profile) {
-        if (not confirmation) {
-          return #err(#ConfirmationRequired);
-        };
-        switch (profile.timeline) {
-          case (?t) { if (t.size() > 0) { return #err(#HasTimeline) } };
-          case null {};
-        };
-        if (confirmedRelationships.toArray().any(func r = r.status == #Confirmed and (r.fromPersonId == personId or r.toPersonId == personId))) {
-          return #err(#HasApprovedRelationships);
-        };
-        if (profile.claimStatus == #Claimed or profile.claimedByUserId != null) {
-          return #err(#HasOwnershipHistory);
-        };
-        switch (galleries.get(personId)) {
-          case (?g) { if (g.photos.size() > 0) { return #err(#HasMedia) } };
-          case null {};
-        };
-        if (archiveItems.toArray().any(func a = a.relatedMemberIds.any(func id = id == personId))) {
-          return #err(#HasArchiveItems);
-        };
-        profiles.remove(personId);
-        let snapshot = archivedProfiles.toArray();
-        archivedProfiles.clear();
-        for (p in snapshot.values()) {
-          if (p != personId) { archivedProfiles.add(p) };
-        };
-        appendAudit(auditLog, #ProfilePermanentlyDeleted, actorId, [personId], "Permanently deleted profile " # personId);
-        #ok(());
-      };
-    };
+    permanentlyDeleteProfileForFamily(archivedProfiles, auditLog, profiles, confirmedRelationships, galleries, archiveItems, FamilyTypes.DEFAULT_FAMILY_ID, personId, confirmation, actorId);
   };
 
   // ---------------------------------------------------------------------------
   // Duplicate Profile Review & Merge
   // ---------------------------------------------------------------------------
 
-  /// Returns suspected duplicate Person records with comparison data.
+  /// Returns suspected duplicate Person records of `familyId` with comparison
+  /// data. Canonical family-scoped form: only profiles belonging to `familyId`
+  /// are compared, so a Family A duplicate candidate never includes a Family B
+  /// profile and the same name/personId in another family is not a candidate.
+  public func listDuplicateCandidatesForFamily(
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    confirmedRelationships : List.List<Types.Relationship>,
+    galleries : Map.Map<Types.PersonId, ObjectStorageTypes.PhotoGallery>,
+    archiveItems : List.List<ArchiveTypes.ArchiveItem>,
+    dismissedDuplicates : List.List<Types.DismissedPair>,
+    familyId : FamilyTypes.FamilyId,
+  ) : [Types.DuplicatePair] {
+    let familyProfiles = profiles.entries().filter(func ((_, p)) = p.familyId == familyId).toArray();
+    let result = List.empty<Types.DuplicatePair>();
+    var i = 0;
+    while (i < familyProfiles.size()) {
+      var j = i + 1;
+      while (j < familyProfiles.size()) {
+        let (_, a) = familyProfiles[i];
+        let (_, b) = familyProfiles[j];
+        if (isDuplicateCandidate(profiles, confirmedRelationships, a, b)
+            and not isDismissedForFamily(dismissedDuplicates, familyId, a.personId, b.personId)) {
+          result.add({
+            candidateA = buildCandidate(profiles, confirmedRelationships, galleries, archiveItems, a.personId);
+            candidateB = buildCandidate(profiles, confirmedRelationships, galleries, archiveItems, b.personId);
+          });
+        };
+        j += 1;
+      };
+      i += 1;
+    };
+    result.toArray();
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+  /// delegates to `listDuplicateCandidatesForFamily` with the default family id
+  /// so current Norwood behavior is unchanged.
   public func listDuplicateCandidates(
     profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
     confirmedRelationships : List.List<Types.Relationship>,
@@ -548,44 +822,19 @@ module {
     archiveItems : List.List<ArchiveTypes.ArchiveItem>,
     dismissedDuplicates : List.List<Types.DismissedPair>,
   ) : [Types.DuplicatePair] {
-    let ids = List.empty<Types.PersonId>();
-    for ((personId, _) in profiles.entries()) { ids.add(personId) };
-    let idArr = ids.toArray();
-    if (idArr.size() < 2) {
-      return [];
-    };
-    let pairs = List.empty<Types.DuplicatePair>();
-    var i = 0;
-    while (i < idArr.size()) {
-      var j = i + 1;
-      while (j < idArr.size()) {
-        let a = idArr[i];
-        let b = idArr[j];
-        if (not isDismissed(dismissedDuplicates, a, b)) {
-          switch (profiles.get(a), profiles.get(b)) {
-            case (?pa, ?pb) {
-              if (isDuplicateCandidate(profiles, confirmedRelationships, pa, pb)) {
-                pairs.add({
-                  candidateA = buildCandidate(profiles, confirmedRelationships, galleries, archiveItems, a);
-                  candidateB = buildCandidate(profiles, confirmedRelationships, galleries, archiveItems, b);
-                });
-              };
-            };
-            case _ {};
-          };
-        };
-        j += 1;
-      };
-      i += 1;
-    };
-    pairs.toArray();
+    listDuplicateCandidatesForFamily(profiles, confirmedRelationships, galleries, archiveItems, dismissedDuplicates, FamilyTypes.DEFAULT_FAMILY_ID);
   };
 
-  /// Marks two suspected duplicates as not a duplicate, persisting the pair so
-  /// it does not reappear in the duplicate review list.
-  public func notDuplicate(
+  /// Marks two suspected duplicates in `familyId` as not a duplicate, persisting
+  /// the pair so it does not reappear in that family's duplicate review list.
+  /// Canonical family-scoped form: both people must belong to `familyId`, and
+  /// the dismissal is stamped with `familyId`, so a dismissal in one family
+  /// never hides a candidate in another.
+  public func notDuplicateForFamily(
     dismissedDuplicates : List.List<Types.DismissedPair>,
     auditLog : List.List<Types.AuditEntry>,
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    familyId : FamilyTypes.FamilyId,
     personIdA : Types.PersonId,
     personIdB : Types.PersonId,
     actorId : Principal,
@@ -593,18 +842,158 @@ module {
     if (personIdA == personIdB) {
       return #err(#SameProfile);
     };
-    if (not isDismissed(dismissedDuplicates, personIdA, personIdB)) {
-      dismissedDuplicates.add({ personIdA; personIdB });
+    if (TenancyLib.getProfileForFamily(profiles, familyId, personIdA) == null
+        or TenancyLib.getProfileForFamily(profiles, familyId, personIdB) == null) {
+      return #err(#ProfileNotFound);
     };
-    appendAudit(auditLog, #DuplicateMerged, actorId, [personIdA, personIdB], "Marked " # personIdA # " and " # personIdB # " as not duplicates");
+    if (not isDismissedForFamily(dismissedDuplicates, familyId, personIdA, personIdB)) {
+      dismissedDuplicates.add({ familyId; personIdA; personIdB });
+    };
+    appendAudit(auditLog, familyId, #DuplicateMerged, actorId, [personIdA, personIdB], "Marked " # personIdA # " and " # personIdB # " as not duplicates");
     #ok(());
   };
 
-  /// Merges two duplicate profiles into one canonical record, moving/linking
-  /// all valid relationships, media, timeline, stories, sources, archive
-  /// references, and ownership/claim history without duplicating shared items.
-  /// Conflicting fields are preserved as conflict/review items. The merged-away
-  /// record is archived rather than hard-deleted.
+  /// TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+  /// delegates to `notDuplicateForFamily` with the default family id so current
+  /// Norwood behavior is unchanged.
+  public func notDuplicate(
+    dismissedDuplicates : List.List<Types.DismissedPair>,
+    auditLog : List.List<Types.AuditEntry>,
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    personIdA : Types.PersonId,
+    personIdB : Types.PersonId,
+    actorId : Principal,
+  ) : Result.Result<(), Types.MergeError> {
+    notDuplicateForFamily(dismissedDuplicates, auditLog, profiles, FamilyTypes.DEFAULT_FAMILY_ID, personIdA, personIdB, actorId);
+  };
+
+  /// Merges two duplicate profiles in `familyId` into one canonical record,
+  /// moving/linking all valid relationships, media, timeline, stories, sources,
+  /// archive references, and ownership/claim history without duplicating shared
+  /// items. Canonical family-scoped form: both profiles must belong to
+  /// `familyId`, so a merge never crosses families and Family B remains
+  /// unchanged. Conflicting fields are preserved as conflict/review items. The
+  /// merged-away record is archived rather than hard-deleted.
+  public func mergeProfilesForFamily(
+    archivedProfiles : List.List<Types.PersonId>,
+    mergeConflicts : List.List<Types.MergeConflict>,
+    auditLog : List.List<Types.AuditEntry>,
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    confirmedRelationships : List.List<Types.Relationship>,
+    galleries : Map.Map<Types.PersonId, ObjectStorageTypes.PhotoGallery>,
+    archiveItems : List.List<ArchiveTypes.ArchiveItem>,
+    familyId : FamilyTypes.FamilyId,
+    canonicalPersonId : Types.PersonId,
+    mergedAwayPersonId : Types.PersonId,
+    actorId : Principal,
+  ) : Result.Result<Types.MergeResult, Types.MergeError> {
+    if (canonicalPersonId == mergedAwayPersonId) {
+      return #err(#SameProfile);
+    };
+    let canonical = switch (TenancyLib.getProfileForFamily(profiles, familyId, canonicalPersonId)) {
+      case null { return #err(#ProfileNotFound) };
+      case (?p) p;
+    };
+    let mergedAway = switch (TenancyLib.getProfileForFamily(profiles, familyId, mergedAwayPersonId)) {
+      case null { return #err(#ProfileNotFound) };
+      case (?p) p;
+    };
+    let conflicts = List.empty<Types.MergeConflict>();
+    let addConflict = func (field : Text, a : Text, b : Text) : () {
+      let conflict : Types.MergeConflict = {
+        familyId;
+        id = nextId(mergeConflicts.toArray().map(func c = c.id));
+        field;
+        canonicalValue = a;
+        alternateValue = b;
+        status = #Pending;
+        resolvedBy = null;
+        resolvedAt = null;
+      };
+      mergeConflicts.add(conflict);
+      conflicts.add(conflict);
+    };
+    compareOpt(addConflict, "name", ?canonical.name, ?mergedAway.name);
+    compareOpt(addConflict, "preferredName", canonical.preferredName, mergedAway.preferredName);
+    compareOpt(addConflict, "firstName", canonical.firstName, mergedAway.firstName);
+    compareOpt(addConflict, "middleName", canonical.middleName, mergedAway.middleName);
+    compareOpt(addConflict, "lastName", canonical.lastName, mergedAway.lastName);
+    compareOpt(addConflict, "suffix", canonical.suffix, mergedAway.suffix);
+    compareOpt(addConflict, "nickname", canonical.nickname, mergedAway.nickname);
+    compareOpt(addConflict, "story", canonical.story, mergedAway.story);
+    compareOpt(addConflict, "shortBio", canonical.shortBio, mergedAway.shortBio);
+    compareOpt(addConflict, "longerStory", canonical.longerStory, mergedAway.longerStory);
+    compareOpt(addConflict, "occupation", canonical.occupation, mergedAway.occupation);
+    compareOpt(addConflict, "birthInfo", canonical.birthInfo, mergedAway.birthInfo);
+    compareOpt(addConflict, "birthDate", canonical.birthDate, mergedAway.birthDate);
+    compareOpt(addConflict, "birthplace", canonical.birthplace, mergedAway.birthplace);
+    compareOpt(addConflict, "currentLocation", canonical.currentLocation, mergedAway.currentLocation);
+    compareOpt(addConflict, "privacySettings", canonical.privacySettings, mergedAway.privacySettings);
+    // Move the merged-away profile's relationships onto the canonical profile,
+    // dropping any edge that would duplicate an existing canonical edge.
+    let relSnapshot = confirmedRelationships.toArray();
+    for (r in relSnapshot.values()) {
+      if (r.familyId == familyId and (r.fromPersonId == mergedAwayPersonId or r.toPersonId == mergedAwayPersonId)) {
+        let fromId = if (r.fromPersonId == mergedAwayPersonId) { canonicalPersonId } else { r.fromPersonId };
+        let toId = if (r.toPersonId == mergedAwayPersonId) { canonicalPersonId } else { r.toPersonId };
+        if (fromId != toId
+            and not confirmedRelationships.toArray().any(func e =
+              e.familyId == familyId and e.fromPersonId == fromId and e.toPersonId == toId and e.relationshipType == r.relationshipType)) {
+          confirmedRelationships.add({
+            familyId;
+            id = nextId(confirmedRelationships.toArray().map(func e = e.id));
+            fromPersonId = fromId;
+            toPersonId = toId;
+            relationshipType = r.relationshipType;
+            status = r.status;
+          });
+        };
+      };
+    };
+    let keptRelationships = confirmedRelationships.toArray().filter(func r =
+      not (r.familyId == familyId and (r.fromPersonId == mergedAwayPersonId or r.toPersonId == mergedAwayPersonId)));
+    confirmedRelationships.clear();
+    for (r in keptRelationships.values()) { confirmedRelationships.add(r) };
+    // Move the merged-away profile's media gallery onto the canonical profile
+    // when the canonical profile has none.
+    switch (galleries.get(mergedAwayPersonId)) {
+      case (?g) {
+        switch (galleries.get(canonicalPersonId)) {
+          case null { galleries.add(canonicalPersonId, g) };
+          case (?_) {};
+        };
+        galleries.remove(mergedAwayPersonId);
+      };
+      case null {};
+    };
+    // Re-point archive items at the canonical profile, preserving provenance.
+    let archiveSnapshot = archiveItems.toArray();
+    archiveItems.clear();
+    for (a in archiveSnapshot.values()) {
+      if (a.relatedMemberIds.any(func id = id == mergedAwayPersonId)) {
+        archiveItems.add({
+          a with
+          relatedMemberIds = a.relatedMemberIds.map(func id = if (id == mergedAwayPersonId) { canonicalPersonId } else { id });
+        });
+      } else {
+        archiveItems.add(a);
+      };
+    };
+    // Archive the merged-away record rather than hard-deleting it.
+    if (not archivedProfiles.toArray().any(func p = p == mergedAwayPersonId)) {
+      archivedProfiles.add(mergedAwayPersonId);
+    };
+    appendAudit(auditLog, familyId, #DuplicateMerged, actorId, [canonicalPersonId, mergedAwayPersonId], "Merged profile " # mergedAwayPersonId # " into " # canonicalPersonId);
+    #ok({
+      canonicalPersonId;
+      archivedPersonId = mergedAwayPersonId;
+      conflicts = conflicts.toArray();
+    });
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+  /// delegates to `mergeProfilesForFamily` with the default family id so current
+  /// Norwood behavior is unchanged.
   public func mergeProfiles(
     archivedProfiles : List.List<Types.PersonId>,
     mergeConflicts : List.List<Types.MergeConflict>,
@@ -617,137 +1006,20 @@ module {
     mergedAwayPersonId : Types.PersonId,
     actorId : Principal,
   ) : Result.Result<Types.MergeResult, Types.MergeError> {
-    if (canonicalPersonId == mergedAwayPersonId) {
-      return #err(#SameProfile);
-    };
-    switch (profiles.get(canonicalPersonId), profiles.get(mergedAwayPersonId)) {
-      case (null, _) { #err(#ProfileNotFound) };
-      case (_, null) { #err(#ProfileNotFound) };
-      case (?canonical, ?mergedAway) {
-        // Re-point relationships from the merged-away record to the canonical
-        // record, skipping any that would duplicate an existing relationship.
-        let relSnapshot = confirmedRelationships.toArray();
-        confirmedRelationships.clear();
-        for (rel in relSnapshot.values()) {
-          if (rel.fromPersonId == mergedAwayPersonId or rel.toPersonId == mergedAwayPersonId) {
-            let newFrom = if (rel.fromPersonId == mergedAwayPersonId) canonicalPersonId else rel.fromPersonId;
-            let newTo = if (rel.toPersonId == mergedAwayPersonId) canonicalPersonId else rel.toPersonId;
-            if (newFrom != newTo) {
-              let dup = confirmedRelationships.toArray().any(func r =
-                r.fromPersonId == newFrom and r.toPersonId == newTo and r.relationshipType == rel.relationshipType);
-              if (not dup) {
-                confirmedRelationships.add({ rel with fromPersonId = newFrom; toPersonId = newTo });
-              };
-            };
-          } else {
-            confirmedRelationships.add(rel);
-          };
-        };
-        // Preserve conflicting fields as conflict/review items.
-        let conflictList = List.empty<Types.MergeConflict>();
-        func addConflict(field : Text, canonicalVal : Text, alternateVal : Text) {
-          if (canonicalVal != alternateVal) {
-            let conflict : Types.MergeConflict = {
-              id = nextId(mergeConflicts.toArray().map(func c = c.id));
-              field;
-              canonicalValue = canonicalVal;
-              alternateValue = alternateVal;
-              status = #Pending;
-              resolvedBy = null;
-              resolvedAt = null;
-            };
-            mergeConflicts.add(conflict);
-            conflictList.add(conflict);
-          };
-        };
-        addConflict("name", canonical.name, mergedAway.name);
-        compareOpt(addConflict, "birthDate", canonical.birthDate, mergedAway.birthDate);
-        compareOpt(addConflict, "birthplace", canonical.birthplace, mergedAway.birthplace);
-        compareOpt(addConflict, "currentLocation", canonical.currentLocation, mergedAway.currentLocation);
-        compareOpt(addConflict, "occupation", canonical.occupation, mergedAway.occupation);
-        compareOpt(addConflict, "story", canonical.story, mergedAway.story);
-        // Move photos/media from the merged-away gallery into the canonical
-        // gallery without duplicating shared items.
-        switch (galleries.get(mergedAwayPersonId)) {
-          case (?awayGallery) {
-            let canonicalGallery = switch (galleries.get(canonicalPersonId)) {
-              case (?g) g;
-              case null {
-                let g : ObjectStorageTypes.PhotoGallery = { photos = List.empty(); var profilePhotoId = null };
-                galleries.add(canonicalPersonId, g);
-                g;
-              };
-            };
-            for (photo in awayGallery.photos.toArray().values()) {
-              if (not canonicalGallery.photos.toArray().any(func p = p.id == photo.id)) {
-                canonicalGallery.photos.add(photo);
-              };
-            };
-            if (canonicalGallery.profilePhotoId == null) {
-              canonicalGallery.profilePhotoId := awayGallery.profilePhotoId;
-            };
-            galleries.remove(mergedAwayPersonId);
-          };
-          case null {};
-        };
-        // Merge timeline entries into the canonical record without duplicating.
-        switch (mergedAway.timeline) {
-          case (?awayTimeline) {
-            let merged = List.empty<Text>();
-            for (t in awayTimeline.values()) {
-              if (not merged.toArray().any(func x = x == t)) { merged.add(t) };
-            };
-            switch (canonical.timeline) {
-              case (?canonTimeline) {
-                for (t in canonTimeline.values()) {
-                  if (not merged.toArray().any(func x = x == t)) { merged.add(t) };
-                };
-              };
-              case null {};
-            };
-            let updatedProfile : Types.PersonProfile = { canonical with timeline = ?merged.toArray() };
-            profiles.add(canonicalPersonId, updatedProfile);
-          };
-          case null {};
-        };
-        // Link archive items that referenced the merged-away record to the
-        // canonical record without duplicating.
-        let archiveSnapshot = archiveItems.toArray();
-        archiveItems.clear();
-        for (item in archiveSnapshot.values()) {
-          if (item.relatedMemberIds.any(func id = id == mergedAwayPersonId)) {
-            let linked = List.empty<Text>();
-            for (id in item.relatedMemberIds.values()) {
-              if (id != mergedAwayPersonId and not linked.toArray().any(func x = x == id)) { linked.add(id) };
-            };
-            if (not linked.toArray().any(func x = x == canonicalPersonId)) { linked.add(canonicalPersonId) };
-            archiveItems.add({ item with relatedMemberIds = linked.toArray() });
-          } else {
-            archiveItems.add(item);
-          };
-        };
-        // Archive the merged-away record rather than hard-deleting it.
-        if (not archivedProfiles.toArray().any(func p = p == mergedAwayPersonId)) {
-          archivedProfiles.add(mergedAwayPersonId);
-        };
-        appendAudit(auditLog, #DuplicateMerged, actorId, [canonicalPersonId, mergedAwayPersonId], "Merged " # mergedAwayPersonId # " into " # canonicalPersonId);
-        #ok({
-          canonicalPersonId;
-          archivedPersonId = mergedAwayPersonId;
-          conflicts = conflictList.toArray();
-        });
-      };
-    };
+    mergeProfilesForFamily(archivedProfiles, mergeConflicts, auditLog, profiles, confirmedRelationships, galleries, archiveItems, FamilyTypes.DEFAULT_FAMILY_ID, canonicalPersonId, mergedAwayPersonId, actorId);
   };
 
-  /// Resolves a merge conflict by choosing the canonical display value.
-  public func resolveMergeConflict(
+  /// Resolves a merge conflict in `familyId` by choosing the canonical display
+  /// value. Canonical family-scoped form: the conflict must belong to
+  /// `familyId`, so a conflict id alone never crosses a family boundary.
+  public func resolveMergeConflictForFamily(
     mergeConflicts : List.List<Types.MergeConflict>,
+    familyId : FamilyTypes.FamilyId,
     conflictId : Nat,
     canonicalValue : Text,
     actorId : Principal,
   ) : ?Types.MergeConflict {
-    switch (mergeConflicts.find(func c = c.id == conflictId and c.status == #Pending)) {
+    switch (mergeConflicts.find(func c = c.id == conflictId and c.familyId == familyId)) {
       case null { null };
       case (?conflict) {
         let updated : Types.MergeConflict = {
@@ -763,16 +1035,50 @@ module {
     };
   };
 
+  /// TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+  /// delegates to `resolveMergeConflictForFamily` with the default family id so
+  /// current Norwood behavior is unchanged.
+  public func resolveMergeConflict(
+    mergeConflicts : List.List<Types.MergeConflict>,
+    conflictId : Nat,
+    canonicalValue : Text,
+    actorId : Principal,
+  ) : ?Types.MergeConflict {
+    resolveMergeConflictForFamily(mergeConflicts, FamilyTypes.DEFAULT_FAMILY_ID, conflictId, canonicalValue, actorId);
+  };
+
   // ---------------------------------------------------------------------------
   // Relationship Administration
   // ---------------------------------------------------------------------------
 
-  /// Returns the current relationships for a person.
-  public func listPersonRelationships(
+  /// Returns the current relationships for a person in `familyId`. Canonical
+  /// family-scoped form: the target profile must belong to `familyId`, and only
+  /// relationships stamped with `familyId` are returned, so a `personId` alone
+  /// never crosses a family boundary and Family A never sees Family B
+  /// relationships. Existing relationship ordering and record shape are
+  /// preserved.
+  public func listPersonRelationshipsForFamily(
     confirmedRelationships : List.List<Types.Relationship>,
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    familyId : FamilyTypes.FamilyId,
     personId : Types.PersonId,
   ) : [Types.Relationship] {
-    confirmedRelationships.toArray().filter(func r = r.fromPersonId == personId or r.toPersonId == personId);
+    if (TenancyLib.getProfileForFamily(profiles, familyId, personId) == null) {
+      return [];
+    };
+    confirmedRelationships.toArray().filter(func r =
+      r.familyId == familyId and (r.fromPersonId == personId or r.toPersonId == personId));
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+  /// delegates to `listPersonRelationshipsForFamily` with the default family id
+  /// so current Norwood behavior is unchanged.
+  public func listPersonRelationships(
+    confirmedRelationships : List.List<Types.Relationship>,
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    personId : Types.PersonId,
+  ) : [Types.Relationship] {
+    listPersonRelationshipsForFamily(confirmedRelationships, profiles, FamilyTypes.DEFAULT_FAMILY_ID, personId);
   };
 
   /// Adds a missing relationship to `familyId`'s family graph. Canonical
@@ -806,7 +1112,7 @@ module {
       status = #Confirmed;
     };
     confirmedRelationships.add(relationship);
-    appendAudit(auditLog, #RelationshipAdded, actorId, [fromPersonId, toPersonId], "Added " # relationshipTypeText(relationshipType) # " relationship between " # fromPersonId # " and " # toPersonId);
+    appendAudit(auditLog, familyId, #RelationshipAdded, actorId, [fromPersonId, toPersonId], "Added " # relationshipTypeText(relationshipType) # " relationship between " # fromPersonId # " and " # toPersonId);
     #ok(relationship);
   };
 
@@ -825,54 +1131,109 @@ module {
     addRelationshipForFamily(confirmedRelationships, auditLog, profiles, FamilyTypes.DEFAULT_FAMILY_ID, fromPersonId, toPersonId, relationshipType, actorId);
   };
 
-  /// Removes an incorrect relationship from the shared family graph.
+  /// Removes an incorrect relationship from `familyId`'s family graph.
+  /// Canonical family-scoped form: the relationship must belong to `familyId`,
+  /// so a `relationshipId` alone never crosses a family boundary and only that
+  /// family's relationship is removed. Existing audit/governance behavior is
+  /// preserved.
+  public func removeRelationshipForFamily(
+    confirmedRelationships : List.List<Types.Relationship>,
+    auditLog : List.List<Types.AuditEntry>,
+    familyId : FamilyTypes.FamilyId,
+    relationshipId : Nat,
+    actorId : Principal,
+  ) : Result.Result<(), Types.RelationshipAdminError> {
+    switch (confirmedRelationships.find(func r = r.id == relationshipId and r.familyId == familyId)) {
+      case null { #err(#RelationshipNotFound) };
+      case (?rel) {
+        let snapshot = confirmedRelationships.toArray();
+        confirmedRelationships.clear();
+        for (r in snapshot.values()) {
+          if (not (r.id == relationshipId and r.familyId == familyId)) { confirmedRelationships.add(r) };
+        };
+        appendAudit(auditLog, familyId, #RelationshipRemoved, actorId, [rel.fromPersonId, rel.toPersonId], "Removed " # relationshipTypeText(rel.relationshipType) # " relationship between " # rel.fromPersonId # " and " # rel.toPersonId);
+        #ok(());
+      };
+    };
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+  /// delegates to `removeRelationshipForFamily` with the default family id so
+  /// current Norwood behavior is unchanged.
   public func removeRelationship(
     confirmedRelationships : List.List<Types.Relationship>,
     auditLog : List.List<Types.AuditEntry>,
     relationshipId : Nat,
     actorId : Principal,
   ) : Result.Result<(), Types.RelationshipAdminError> {
-    switch (confirmedRelationships.find(func r = r.id == relationshipId)) {
-      case null { #err(#RelationshipNotFound) };
-      case (?rel) {
-        let snapshot = confirmedRelationships.toArray();
-        confirmedRelationships.clear();
-        for (r in snapshot.values()) {
-          if (r.id != relationshipId) { confirmedRelationships.add(r) };
-        };
-        appendAudit(auditLog, #RelationshipRemoved, actorId, [rel.fromPersonId, rel.toPersonId], "Removed " # relationshipTypeText(rel.relationshipType) # " relationship between " # rel.fromPersonId # " and " # rel.toPersonId);
-        #ok(());
-      };
-    };
+    removeRelationshipForFamily(confirmedRelationships, auditLog, FamilyTypes.DEFAULT_FAMILY_ID, relationshipId, actorId);
   };
 
-  /// Corrects the relationship type of an existing relationship.
-  public func correctRelationshipType(
+  /// Corrects the relationship type of an existing relationship in `familyId`.
+  /// Canonical family-scoped form: the relationship must belong to `familyId`
+  /// and both referenced people must still belong to `familyId`, so a
+  /// `relationshipId` alone never crosses a family boundary and only that
+  /// family's relationship is updated. Existing correction/audit semantics are
+  /// preserved.
+  public func correctRelationshipTypeForFamily(
     confirmedRelationships : List.List<Types.Relationship>,
     auditLog : List.List<Types.AuditEntry>,
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    familyId : FamilyTypes.FamilyId,
     relationshipId : Nat,
     relationshipType : Types.RelationshipType,
     actorId : Principal,
   ) : Result.Result<Types.Relationship, Types.RelationshipAdminError> {
-    switch (confirmedRelationships.find(func r = r.id == relationshipId)) {
+    switch (confirmedRelationships.find(func r = r.id == relationshipId and r.familyId == familyId)) {
       case null { #err(#RelationshipNotFound) };
       case (?rel) {
+        if (TenancyLib.getProfileForFamily(profiles, familyId, rel.fromPersonId) == null
+            or TenancyLib.getProfileForFamily(profiles, familyId, rel.toPersonId) == null) {
+          return #err(#PersonNotFound);
+        };
         let previous = rel.relationshipType;
         let updated : Types.Relationship = { rel with relationshipType };
         replaceRelationship(confirmedRelationships, updated);
-        appendAudit(auditLog, #RelationshipTypeCorrected, actorId, [rel.fromPersonId, rel.toPersonId], "Corrected relationship type from " # relationshipTypeText(previous) # " to " # relationshipTypeText(relationshipType) # " between " # rel.fromPersonId # " and " # rel.toPersonId);
+        appendAudit(auditLog, familyId, #RelationshipTypeCorrected, actorId, [rel.fromPersonId, rel.toPersonId], "Corrected relationship type from " # relationshipTypeText(previous) # " to " # relationshipTypeText(relationshipType) # " between " # rel.fromPersonId # " and " # rel.toPersonId);
         #ok(updated);
       };
     };
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+  /// delegates to `correctRelationshipTypeForFamily` with the default family id
+  /// so current Norwood behavior is unchanged.
+  public func correctRelationshipType(
+    confirmedRelationships : List.List<Types.Relationship>,
+    auditLog : List.List<Types.AuditEntry>,
+    profiles : Map.Map<Types.PersonId, Types.PersonProfile>,
+    relationshipId : Nat,
+    relationshipType : Types.RelationshipType,
+    actorId : Principal,
+  ) : Result.Result<Types.Relationship, Types.RelationshipAdminError> {
+    correctRelationshipTypeForFamily(confirmedRelationships, auditLog, profiles, FamilyTypes.DEFAULT_FAMILY_ID, relationshipId, relationshipType, actorId);
   };
 
   // ---------------------------------------------------------------------------
   // Audit History
   // ---------------------------------------------------------------------------
 
-  /// Returns the governance audit log. Audit History is strictly steward-only.
+  /// Returns the governance audit log of `familyId`. Canonical family-scoped
+  /// form: only `AuditEntry` records whose `familyId` equals `familyId` are
+  /// returned, so Family A never sees Family B audit history. Existing entry
+  /// shape, chronological ordering, and action labels/details are preserved.
+  public func listAuditHistoryForFamily(
+    auditLog : List.List<Types.AuditEntry>,
+    familyId : FamilyTypes.FamilyId,
+  ) : [Types.AuditEntry] {
+    auditLog.toArray().filter(func e = e.familyId == familyId);
+  };
+
+  /// TEMPORARY Tenancy 1C compatibility wrapper. Deprecated single-family form:
+  /// delegates to `listAuditHistoryForFamily` with the default family id so
+  /// current Norwood behavior is unchanged.
   public func listAuditHistory(auditLog : List.List<Types.AuditEntry>) : [Types.AuditEntry] {
-    auditLog.toArray();
+    listAuditHistoryForFamily(auditLog, FamilyTypes.DEFAULT_FAMILY_ID);
   };
 
   // --- helpers ---
@@ -884,6 +1245,22 @@ module {
   ) : Bool {
     switch (accountId) {
       case (?a) stewards.toArray().any(func s = s.stewardAccountId == a and s.roleStatus == #Active);
+      case null false;
+    };
+  };
+
+  /// Whether the given account is an active steward of `familyId`. Only
+  /// `StewardRecord` entries whose `familyId` equals `familyId` are considered,
+  /// so an account that is an active Steward of another family is not excluded
+  /// here.
+  func isActiveStewardAccountForFamily(
+    stewards : List.List<Types.StewardRecord>,
+    accountId : ?Principal,
+    familyId : FamilyTypes.FamilyId,
+  ) : Bool {
+    switch (accountId) {
+      case (?a) stewards.toArray().any(func s =
+        s.stewardAccountId == a and s.roleStatus == #Active and s.familyId == familyId);
       case null false;
     };
   };
@@ -934,14 +1311,18 @@ module {
     };
   };
 
-  /// Whether a pair of person ids has been dismissed as "not a duplicate".
-  func isDismissed(
+  /// Whether a pair of person ids has been dismissed as "not a duplicate" in
+  /// `familyId`. A dismissal stamped with another family never hides a candidate
+  /// in this family.
+  func isDismissedForFamily(
     dismissedDuplicates : List.List<Types.DismissedPair>,
+    familyId : FamilyTypes.FamilyId,
     a : Types.PersonId,
     b : Types.PersonId,
   ) : Bool {
     dismissedDuplicates.toArray().any(func p =
-      (p.personIdA == a and p.personIdB == b) or (p.personIdA == b and p.personIdB == a)
+      p.familyId == familyId
+      and ((p.personIdA == a and p.personIdB == b) or (p.personIdA == b and p.personIdB == a))
     );
   };
 
@@ -1056,9 +1437,10 @@ module {
     maxId;
   };
 
-  /// Appends a governance audit entry.
+  /// Appends a governance audit entry stamped with the owning `familyId`.
   func appendAudit(
     auditLog : List.List<Types.AuditEntry>,
+    familyId : FamilyTypes.FamilyId,
     actionType : Types.AuditActionType,
     actorId : Principal,
     affectedPersonIds : [Types.PersonId],
@@ -1066,6 +1448,7 @@ module {
   ) {
     auditLog.add({
       id = nextId(auditLog.toArray().map(func e = e.id));
+      familyId;
       actionType;
       actorAccountId = actorId;
       affectedPersonIds;
@@ -1074,11 +1457,15 @@ module {
     });
   };
 
+  /// Family-qualified replacement: a StewardRecord is rewritten only when both
+  /// its `stewardAccountId` and its `familyId` match `updated`, so a principal
+  /// holding StewardRecords in several families never has another family's
+  /// record overwritten by a removal in one family.
   func replaceSteward(stewards : List.List<Types.StewardRecord>, updated : Types.StewardRecord) {
     let snapshot = stewards.toArray();
     stewards.clear();
     for (s in snapshot.values()) {
-      if (s.stewardAccountId == updated.stewardAccountId) { stewards.add(updated) } else { stewards.add(s) };
+      if (s.stewardAccountId == updated.stewardAccountId and s.familyId == updated.familyId) { stewards.add(updated) } else { stewards.add(s) };
     };
   };
 

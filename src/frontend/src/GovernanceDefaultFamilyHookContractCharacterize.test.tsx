@@ -131,6 +131,7 @@ describe("usePromoteToSteward: default-family consumer contract (characterizatio
       successorPriority: undefined,
       assignedBy: STEWARD,
       assignedAt: 1_700_000_000_000_000_000n,
+      founding: false,
     };
     mockActor.promoteToSteward = vi.fn(async (...args: unknown[]) => {
       calls.promoteToSteward.push(args);
@@ -163,6 +164,7 @@ describe("useActivateSuccessor: default-family consumer contract (characterizati
       successorPriority: 1n,
       assignedBy: STEWARD,
       assignedAt: 1_700_000_000_000_000_000n,
+      founding: false,
     };
     mockActor.activateSuccessor = vi.fn(async (...args: unknown[]) => {
       calls.activateSuccessor.push(args);

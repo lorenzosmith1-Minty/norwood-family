@@ -12,14 +12,13 @@ import {
 } from "./lane-helpers";
 
 // ---------------------------------------------------------------------------
-// Tenancy 1C governance family-scope cover (real-canister).
+// Tenancy 1C governance family-scope cover (real-canister) — Steward/Successor.
 //
-// The accepted change makes `promoteToStewardForFamily`,
-// `activateSuccessorForFamily`, and `addRelationshipForFamily` the canonical
-// paths, each taking an explicit `familyId` and filtering every Steward and
-// profile lookup by it, and reduces the legacy `promoteToSteward`,
-// `activateSuccessor`, and `addRelationship` to thin wrappers delegating to the
-// default Norwood family.
+// The accepted change makes `promoteToStewardForFamily` and
+// `activateSuccessorForFamily` the canonical paths, each taking an explicit
+// `familyId` and filtering every Steward and profile lookup by it, and reduces
+// the legacy `promoteToSteward` and `activateSuccessor` to thin wrappers
+// delegating to the default Norwood family.
 //
 // The frontend suite mocks the actor and has no principals, so the per-caller
 // authorization and the family-qualified lookups can only be asserted here.
@@ -35,11 +34,15 @@ import {
 //   4. `activateSuccessorForFamily` rejects a caller who is not an active
 //      Steward of the supplied familyId, and (in the default family) activates
 //      the designated successor into a record stamped with that familyId.
-//   5. `addRelationshipForFamily` creates a Relationship whose familyId equals
-//      the supplied familyId, rejects a cross-family edge, and does not create a
-//      duplicate for the same pair in that family.
-//   6. The legacy `promoteToSteward`, `activateSuccessor`, and `addRelationship`
-//      wrappers still produce the default-family behavior.
+//
+// The relationship half of this cover lives in the sibling
+// `governance-relationship-family-scope.cover.test.ts`, and the legacy
+// default-family wrappers in `governance-legacy-wrapper-family-scope.cover.test.ts`.
+// The split is deliberate: each test installs its own canister, and a single
+// file that installs ~26 canisters exhausts the shared sidecar's pid ceiling,
+// after which the replica stops accepting connections and every later test
+// fails with `fetch failed`. Keeping each file's install count well under that
+// ceiling is what makes the lane reliable.
 //
 // Coverage limits this file cannot close, stated plainly:
 //
@@ -48,10 +51,10 @@ import {
 //     `familyId = "norwood"`, and `promoteToStewardForFamily` requires the
 //     caller to already be an active Steward of the supplied family. A Family A
 //     Steward therefore cannot be bootstrapped through the public API, so the
-//     "Family A Steward promotes/activates/relates in Family A" direction is
-//     driven in the default family (where a Steward exists) and in the denial
-//     direction for Family A. The internal family-scoped predicate is covered by
-//     the sibling `family-scoped-authorization.behavior.test.ts`, which executes
+//     "Family A Steward promotes/activates in Family A" direction is driven in
+//     the default family (where a Steward exists) and in the denial direction
+//     for Family A. The internal family-scoped predicate is covered by the
+//     sibling `family-scoped-authorization.behavior.test.ts`, which executes
 //     the real Motoko source.
 //   * The two-family isolation of `activateSuccessorForFamily` is asserted in
 //     the direction the API supports: a Norwood Steward cannot activate a
@@ -307,136 +310,4 @@ it("a Norwood successor designation cannot activate a Steward in Family A", asyn
   });
 });
 
-// ---------------------------------------------------------------------------
-// addRelationshipForFamily
-// ---------------------------------------------------------------------------
 
-it("addRelationshipForFamily creates a Relationship whose familyId equals the supplied familyId", async () => {
-  const { actor } = await setupFamilies();
-
-  actor.setIdentity(adminIdentity);
-  const added = await actor.addRelationshipForFamily(
-    NORWOOD,
-    "clayton",
-    "erma",
-    { SpousePartner: null },
-  );
-  expect(added).toEqual({
-    ok: expect.objectContaining({
-      familyId: NORWOOD,
-      fromPersonId: "clayton",
-      toPersonId: "erma",
-      relationshipType: { SpousePartner: null },
-      status: { Confirmed: null },
-    }),
-  });
-
-  const relationships = await actor.listConfirmedRelationships();
-  const stored = relationships.find(
-    (r) => r.fromPersonId === "clayton" && r.toPersonId === "erma",
-  );
-  expect(stored).toMatchObject({ familyId: NORWOOD });
-});
-
-it("addRelationshipForFamily rejects a cross-family edge", async () => {
-  const { actor } = await setupFamilies();
-
-  const familyAPersonId = await myPersonIdIn(actor, FAMILY_A);
-
-  // One endpoint is a Family A person: the family-qualified lookup finds no
-  // such Norwood profile, so no cross-family edge can be created.
-  actor.setIdentity(adminIdentity);
-  await expect(
-    actor.addRelationshipForFamily(NORWOOD, "clayton", familyAPersonId, {
-      SpousePartner: null,
-    }),
-  ).resolves.toEqual({ err: { PersonNotFound: null } });
-
-  const relationships = await actor.listConfirmedRelationships();
-  expect(
-    relationships.some(
-      (r) => r.fromPersonId === "clayton" && r.toPersonId === familyAPersonId,
-    ),
-  ).toBe(false);
-});
-
-it("addRelationshipForFamily does not create a duplicate for the same pair in that family", async () => {
-  const { actor } = await setupFamilies();
-
-  actor.setIdentity(adminIdentity);
-  const first = await actor.addRelationshipForFamily(
-    NORWOOD,
-    "clayton",
-    "erma",
-    { SpousePartner: null },
-  );
-  expect("ok" in first).toBe(true);
-
-  const second = await actor.addRelationshipForFamily(
-    NORWOOD,
-    "clayton",
-    "erma",
-    { SpousePartner: null },
-  );
-  expect(second).toEqual({ err: { DuplicateRelationship: null } });
-
-  const relationships = await actor.listConfirmedRelationships();
-  const matching = relationships.filter(
-    (r) =>
-      r.familyId === NORWOOD &&
-      r.fromPersonId === "clayton" &&
-      r.toPersonId === "erma" &&
-      "SpousePartner" in r.relationshipType,
-  );
-  expect(matching).toHaveLength(1);
-});
-
-// ---------------------------------------------------------------------------
-// Legacy wrappers keep the default-family behavior
-// ---------------------------------------------------------------------------
-
-it("the legacy promoteToSteward wrapper still writes the default-family StewardRecord", async () => {
-  const { actor } = await setupFamilies();
-
-  actor.setIdentity(adminIdentity);
-  const promoted = await actor.promoteToSteward("clayton");
-  expect(promoted).toEqual({
-    ok: expect.objectContaining({
-      familyId: NORWOOD,
-      stewardAccountId: contributorIdentity.getPrincipal(),
-      roleStatus: { Active: null },
-    }),
-  });
-});
-
-it("the legacy activateSuccessor wrapper still activates into the default family", async () => {
-  const { actor } = await setupFamilies();
-
-  actor.setIdentity(adminIdentity);
-  await actor.designateSuccessor("clayton", 1n);
-  const activated = await actor.activateSuccessor("clayton");
-  expect(activated).toEqual({
-    ok: expect.objectContaining({
-      familyId: NORWOOD,
-      stewardAccountId: contributorIdentity.getPrincipal(),
-      roleStatus: { Active: null },
-    }),
-  });
-});
-
-it("the legacy addRelationship wrapper still writes the default-family Relationship", async () => {
-  const { actor } = await setupFamilies();
-
-  actor.setIdentity(adminIdentity);
-  const added = await actor.addRelationship("clayton", "erma", {
-    SpousePartner: null,
-  });
-  expect(added).toEqual({
-    ok: expect.objectContaining({
-      familyId: NORWOOD,
-      fromPersonId: "clayton",
-      toPersonId: "erma",
-      status: { Confirmed: null },
-    }),
-  });
-});

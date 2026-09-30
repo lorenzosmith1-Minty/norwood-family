@@ -1,4 +1,7 @@
 // Version: 4.0.0
+type AccountId__179449828 = Principal;
+type AccountId__266067895 = Principal;
+type AccountId__342420057 = Principal;
 type AccountId__489528044 = Principal;
 type AccountId__552256128 = Principal;
 type Account__208626829 =
@@ -626,6 +629,30 @@ type ArchiveItem__955012566 =
     title : Text;
     year : ?Nat
   };
+type AuditActionType__1003128928 =
+  {
+    #BoardPostArchived;
+    #BoardPostRestored;
+    #BoardReplyRemoved;
+    #ClaimApproved;
+    #ClaimRejected;
+    #DuplicateMerged;
+    #ProfileArchived;
+    #ProfilePermanentlyDeleted;
+    #ProfileRemovalRequested;
+    #ProfileRemovalReviewed;
+    #ProfileRestored;
+    #RelationshipAdded;
+    #RelationshipRemoved;
+    #RelationshipRequestApproved;
+    #RelationshipRequestPending;
+    #RelationshipRequestRejected;
+    #RelationshipTypeCorrected;
+    #StewardPromoted;
+    #StewardRemoved;
+    #SuccessorActivated;
+    #SuccessorDesignated
+  };
 type AuditActionType__328747846 =
   {
     #BoardPostArchived;
@@ -763,6 +790,7 @@ type AuditEntry__1014805826 =
     actionType : AuditActionType__625679516;
     actorAccountId : Principal;
     affectedPersonIds : [PersonId__1048869529];
+    familyId : Text;
     id : Nat;
     summary : Text;
     timestamp : Int
@@ -865,6 +893,8 @@ type ClaimStatus__615129352 = {#Claimed; #Unclaimed};
 type ClaimStatus__686684228 = {#Claimed; #Unclaimed};
 type ClaimStatus__732050185 = {#Claimed; #Unclaimed};
 type ClaimStatus__986343746 = {#Claimed; #Unclaimed};
+type ConfirmationDecision__196996957 = {#Confirmed; #Disputed};
+type ConfirmationDecision__664487516 = {#Confirmed; #Disputed};
 type ConflictReviewItem__205302016 =
   {
     canonicalValue : Text;
@@ -916,7 +946,11 @@ type DismissedPair__58022202 = {personIdA : Text; personIdB : Text};
 type DismissedPair__595483233 = {personIdA : Text; personIdB : Text};
 type DismissedPair__599264591 = {personIdA : Text; personIdB : Text};
 type DismissedPair__70445725 =
-  {personIdA : PersonId__1048869529; personIdB : PersonId__1048869529};
+  {
+    familyId : Text;
+    personIdA : PersonId__1048869529;
+    personIdB : PersonId__1048869529
+  };
 type DismissedPair__735285339 = {personIdA : Text; personIdB : Text};
 type DismissedPair__75263914 = {personIdA : Text; personIdB : Text};
 type EvidenceLabel__1039778530 =
@@ -976,22 +1010,89 @@ type EvidenceStatus__824382737 = EvidenceStatus__563034664;
 type EvidenceStatus__952143850 =
   {#Documented; #FamilyHistory; #PersonalMemory; #Unresolved};
 type ExternalBlob__220559234 = Blob;
+type FamilyId__1013582186 = Text;
 type FamilyId__1049127122 = Text;
 type FamilyId__145942548 = Text;
+type FamilyId__211639352 = Text;
 type FamilyId__228780613 = Text;
 type FamilyId__284510423 = Text;
 type FamilyId__329536528 = Text;
+type FamilyId__340625321 = Text;
 type FamilyId__357998493 = Text;
 type FamilyId__478542481 = Text;
 type FamilyId__488711918 = Text;
+type FamilyId__627702516 = Text;
 type FamilyId__629197896 = FamilyId__357998493;
 type FamilyId__635793600 = Text;
 type FamilyId__648058587 = Text;
 type FamilyId__649884009 = Text;
+type FamilyId__669935831 = Text;
 type FamilyId__671487675 = Text;
 type FamilyId__67753120 = Text;
+type FamilyId__766456427 = Text;
 type FamilyId__78894948 = Text;
 type FamilyId__878624665 = FamilyId__357998493;
+type FamilyId__997792151 = Text;
+type FamilyInvitation__27286872 =
+  {
+    acceptedAt : ?Int;
+    acceptedByAccountId : ?AccountId__266067895;
+    cancelledAt : ?Int;
+    createdAt : Int;
+    expiresAt : Int;
+    familyId : FamilyId__340625321;
+    id : Nat;
+    invitationType : InvitationType__492484851;
+    invitedByAccountId : AccountId__266067895;
+    invitedByPersonId : ?PersonId__388221490;
+    invitedEmail : ?Text;
+    personId : PersonId__388221490;
+    status : InvitationStatus__598485023;
+    tokenHash : Text
+  };
+type FamilyInvitation__615629172 =
+  {
+    acceptedAt : ?Int;
+    acceptedByAccountId : ?Principal;
+    cancelledAt : ?Int;
+    createdAt : Int;
+    expiresAt : Int;
+    familyId : Text;
+    id : Nat;
+    invitationType : InvitationType__191458170;
+    invitedByAccountId : Principal;
+    invitedByPersonId : ?Text;
+    invitedEmail : ?Text;
+    personId : Text;
+    status : InvitationStatus__500747119;
+    tokenHash : Text
+  };
+type FamilyMembership__617028089 =
+  {
+    accountId : Principal;
+    approvedAt : ?Int;
+    approvedBy : ?Principal;
+    createdAt : Int;
+    familyId : FamilyId__669935831;
+    id : Nat;
+    joinedAt : ?Int;
+    personId : Text;
+    status : MembershipStatus__1005397901;
+    updatedAt : Int
+  };
+type FamilyMembership__637659258 =
+  {
+    accountId : AccountId__179449828;
+    approvedAt : ?Int;
+    approvedBy : ?Principal;
+    createdAt : Int;
+    familyId : FamilyId__211639352;
+    id : Nat;
+    joinedAt : ?Int;
+    personId : PersonId__358866726;
+    status : MembershipStatus__394728996;
+    updatedAt : Int
+  };
 type FamilyStatus__298658265 = {#active; #archived};
 type FamilyStatus__662165415 = {#active; #archived};
 type Family__188663423 =
@@ -1087,8 +1188,46 @@ type FindingType__738643381 =
   {#Mystery; #PersonFact; #Relationship; #Source; #Story; #TimelineEvent};
 type FindingType__927960265 =
   {#Mystery; #PersonFact; #Relationship; #Source; #Story; #TimelineEvent};
+type FoundingStewardNominationStatus__222546844 =
+  {#Accepted; #Cancelled; #Declined; #Pending};
+type FoundingStewardNominationStatus__788896872 =
+  {#Accepted; #Cancelled; #Declined; #Pending};
+type FoundingStewardNomination__327286472 =
+  {
+    createdAt : Int;
+    familyId : Text;
+    founderAccountId : Principal;
+    id : Nat;
+    nomineeAccountId : ?Principal;
+    nomineeEmail : ?Text;
+    nomineePersonId : Text;
+    status : FoundingStewardNominationStatus__788896872;
+    updatedAt : Int
+  };
+type FoundingStewardNomination__93780411 =
+  {
+    createdAt : Int;
+    familyId : FamilyId__627702516;
+    founderAccountId : Principal;
+    id : Nat;
+    nomineeAccountId : ?Principal;
+    nomineeEmail : ?Text;
+    nomineePersonId : PersonId__107699894;
+    status : FoundingStewardNominationStatus__222546844;
+    updatedAt : Int
+  };
+type FoundingStewardState__1048289285 =
+  {#FounderAccepted; #NominationPending; #Transferred; #Undecided};
+type FoundingStewardState__944936043 =
+  {#FounderAccepted; #NominationPending; #Transferred; #Undecided};
 type Internal__283199666<K, V> =
   {children : [var ?Node__204828119<K, V>]; data : Data__44217153<K, V>};
+type InvitationStatus__500747119 =
+  {#Accepted; #Cancelled; #Declined; #Expired; #Pending};
+type InvitationStatus__598485023 =
+  {#Accepted; #Cancelled; #Declined; #Expired; #Pending};
+type InvitationType__191458170 = {#FamilyMember; #FoundingSteward};
+type InvitationType__492484851 = {#FamilyMember; #FoundingSteward};
 type Leaf__598469445<K, V> = {data : Data__44217153<K, V>};
 type List__355132335<T> =
   {
@@ -1119,6 +1258,55 @@ type Map__230067015<K, V> = Map__405889023<K, V>;
 type Map__405889023<K, V> = Map__603270868<K, V>;
 type Map__603270868<K, V> =
   {var root : Node__204828119<K, V>; var size : Nat__227979830};
+type MembershipConfirmationResolutionRecord__1036666834 =
+  {
+    familyId : FamilyId__1013582186;
+    membershipId : Nat;
+    resolution : MembershipConfirmationResolution__153298349;
+    resolvedAt : Int;
+    resolvedByAccountId : AccountId__342420057
+  };
+type MembershipConfirmationResolutionRecord__812852590 =
+  {
+    familyId : Text;
+    membershipId : Nat;
+    resolution : MembershipConfirmationResolution__845202614;
+    resolvedAt : Int;
+    resolvedByAccountId : Principal
+  };
+type MembershipConfirmationResolution__153298349 =
+  {#Approve; #NeedsMoreInformation; #Reject};
+type MembershipConfirmationResolution__845202614 =
+  {#Approve; #NeedsMoreInformation; #Reject};
+type MembershipConfirmation__194484960 =
+  {
+    confirmerAccountId : Principal;
+    confirmerPersonId : Text;
+    createdAt : Int;
+    decision : ConfirmationDecision__664487516;
+    familyId : Text;
+    id : Nat;
+    membershipId : Nat;
+    pendingPersonId : Text;
+    relationshipId : ?Nat;
+    updatedAt : Int
+  };
+type MembershipConfirmation__240523724 =
+  {
+    confirmerAccountId : AccountId__342420057;
+    confirmerPersonId : PersonId__654861073;
+    createdAt : Int;
+    decision : ConfirmationDecision__196996957;
+    familyId : FamilyId__1013582186;
+    id : Nat;
+    membershipId : Nat;
+    pendingPersonId : PersonId__654861073;
+    relationshipId : ?Nat;
+    updatedAt : Int
+  };
+type MembershipStatus__1005397901 = {#Active; #Left; #Pending; #Suspended};
+type MembershipStatus__39198097 = {#Active; #Left; #Pending; #Suspended};
+type MembershipStatus__394728996 = {#Active; #Left; #Pending; #Suspended};
 type MergeConflictStatus__241303888 = {#Pending; #Resolved};
 type MergeConflictStatus__333105710 = {#Pending; #Resolved};
 type MergeConflictStatus__641594810 = {#Pending; #Resolved};
@@ -1129,6 +1317,7 @@ type MergeConflict__125824605 =
   {
     alternateValue : Text;
     canonicalValue : Text;
+    familyId : Text;
     field : Text;
     id : Nat;
     resolvedAt : ?Int;
@@ -1465,6 +1654,18 @@ type NewActor__251972276 =
     stories : List__836382695<Story__271674494>;
     successors : List__836382695<SuccessorDesignation__303563642>
   };
+type NewActor__256259615 =
+  {
+    auditLog : List__836382695<NewAuditEntry__788944538>;
+    dismissedDuplicates : List__836382695<NewDismissedPair__1011708792>;
+    mergeConflicts : List__836382695<NewMergeConflict__830783418>;
+    removalRequests : List__836382695<NewProfileRemovalRequest__890476343>
+  };
+type NewActor__261022624 =
+  {
+    claims : List__836382695<OldProfileClaim__656299978>;
+    memberships : List__836382695<FamilyMembership__617028089>
+  };
 type NewActor__327868545 =
   {
     conflictReviewItems : List__836382695<NewConflictReviewItem__190236234>;
@@ -1503,6 +1704,12 @@ type NewActor__386112082 =
     stewards : List__836382695<StewardRecord__741754157>;
     stories : List__836382695<Story__1055416797>;
     successors : List__836382695<SuccessorDesignation__1035508315>
+  };
+type NewActor__416082931 =
+  {
+    confirmations : List__836382695<MembershipConfirmation__194484960>;
+    stewardResolutions :
+      List__836382695<MembershipConfirmationResolutionRecord__812852590>
   };
 type NewActor__426907465 =
   {
@@ -1654,10 +1861,20 @@ type NewActor__681552274 =
   };
 type NewActor__681737701 =
   {researchAuditLog : List__836382695<NewResearchAuditEntry__232993651>};
+type NewActor__694455010 =
+  {
+    familyCreationIdempotency : Map__230067015<Text, Text>;
+    familyCreationState : {var nextFamilyNonce : Nat}
+  };
 type NewActor__703993856 =
   {researchSources : List__836382695<NewSourceRecord__912464744>};
 type NewActor__705461471 =
   {successors : List__836382695<NewSuccessorDesignation__918855477>};
+type NewActor__712516871 =
+  {
+    claims : List__836382695<OldProfileClaim__77559155>;
+    memberships : List__836382695<NewFamilyMembership__148186502>
+  };
 type NewActor__756013677 =
   {
     conflictReviewItems : List__836382695<ConflictReviewItem__670731780>;
@@ -1717,6 +1934,15 @@ type NewActor__772849243 =
     profiles : Map__230067015<Text, PersonProfile__18875826>;
     relationshipRequests : List__836382695<RelationshipRequest__748863822>;
     stewards : List__836382695<StewardRecord__165949082>
+  };
+type NewActor__793188255 =
+  {
+    foundingStewardNominations :
+      List__836382695<FoundingStewardNomination__327286472>;
+    foundingStewardState : {var nextNominationId : Nat};
+    foundingStewardStates :
+      Map__230067015<Text, FoundingStewardState__944936043>;
+    stewards : List__836382695<NewStewardRecord__232290842>
   };
 type NewActor__816907118 =
   {
@@ -1798,6 +2024,11 @@ type NewActor__960473320 =
     relationshipRequests : List__836382695<RelationshipRequest__18150306>
   };
 type NewActor__963881556 = {recipes : List__836382695<NewRecipe__47755930>};
+type NewActor__969407957 =
+  {
+    invitationState : {var nextInvitationId : Nat};
+    invitations : List__836382695<FamilyInvitation__615629172>
+  };
 type NewArchiveItem__1052374070 =
   {
     aiSummary : ?Text;
@@ -1878,6 +2109,16 @@ type NewArchiveItem__756289652 =
     transcript : ?Text;
     year : ?Nat
   };
+type NewAuditEntry__788944538 =
+  {
+    actionType : AuditActionType__1003128928;
+    actorAccountId : Principal;
+    affectedPersonIds : [Text];
+    familyId : FamilyId__766456427;
+    id : Nat;
+    summary : Text;
+    timestamp : Int
+  };
 type NewBlock__231702122 =
   {
     blockedAccountId : Principal;
@@ -1937,6 +2178,32 @@ type NewConversation__626180038 =
     participantAccountIds : [Principal];
     participantPersonIds : [Text];
     updatedAt : Int
+  };
+type NewDismissedPair__1011708792 =
+  {familyId : FamilyId__766456427; personIdA : Text; personIdB : Text};
+type NewFamilyMembership__148186502 =
+  {
+    accountId : Principal;
+    approvedAt : ?Int;
+    approvedBy : ?Principal;
+    createdAt : Int;
+    familyId : FamilyId__997792151;
+    id : Nat;
+    joinedAt : ?Int;
+    personId : Text;
+    status : MembershipStatus__39198097;
+    updatedAt : Int
+  };
+type NewMergeConflict__830783418 =
+  {
+    alternateValue : Text;
+    canonicalValue : Text;
+    familyId : FamilyId__766456427;
+    field : Text;
+    id : Nat;
+    resolvedAt : ?Int;
+    resolvedBy : ?Principal;
+    status : {#Pending; #Resolved}
   };
 type NewMessage__810052061 =
   {
@@ -2211,6 +2478,18 @@ type NewProfileClaim__881591488 =
     status : ProfileClaimStatus__547003711;
     submittedDate : Int
   };
+type NewProfileRemovalRequest__890476343 =
+  {
+    familyId : FamilyId__766456427;
+    id : Nat;
+    personId : Text;
+    reason : Text;
+    requestingUserId : Principal;
+    reviewedBy : ?Principal;
+    reviewedDate : ?Int;
+    status : {#Approved; #Pending; #Rejected};
+    submittedDate : Int
+  };
 type NewProposedFinding__46231331 =
   {
     conflictReviewId : ?Nat;
@@ -2389,6 +2668,16 @@ type NewStewardRecord__158406795 =
     assignedBy : Principal;
     familyId : FamilyId__635793600;
     roleStatus : StewardRoleStatus__523215037;
+    stewardAccountId : Principal;
+    successorPriority : ?Nat
+  };
+type NewStewardRecord__232290842 =
+  {
+    assignedAt : Int;
+    assignedBy : Principal;
+    familyId : Text;
+    founding : Bool;
+    roleStatus : {#Active; #Removed};
     stewardAccountId : Principal;
     successorPriority : ?Nat
   };
@@ -2715,6 +3004,13 @@ type OldActor__124006765 =
     messages : List__836382695<OldMessage__438566306>;
     reports : List__836382695<OldReport__1051195978>
   };
+type OldActor__148175652 =
+  {
+    auditLog : List__836382695<OldAuditEntry__454709923>;
+    dismissedDuplicates : List__836382695<OldDismissedPair__975273464>;
+    mergeConflicts : List__836382695<OldMergeConflict__523194352>;
+    removalRequests : List__836382695<OldProfileRemovalRequest__642566800>
+  };
 type OldActor__190834961 =
   {
     accessControlState :
@@ -2786,6 +3082,7 @@ type OldActor__363696330 =
     archiveItems : List__836382695<ArchiveItem__806251454>;
     galleries : Map__230067015<Text, PhotoGallery__646543908>
   };
+type OldActor__386101605 = {};
 type OldActor__3928544 = {recipes : List__836382695<OldRecipe__604135865>};
 type OldActor__402068192 = {posts : List__836382695<OldPost__268863917>};
 type OldActor__433484568 =
@@ -2804,6 +3101,7 @@ type OldActor__433484568 =
     profiles : Map__230067015<Text, PersonProfile__740680794>;
     relationshipRequests : List__836382695<RelationshipRequest__583015510>
   };
+type OldActor__463938666 = {};
 type OldActor__487684809 =
   {
     accessControlState :
@@ -2818,6 +3116,8 @@ type OldActor__487684809 =
     relationshipRequests : List__836382695<RelationshipRequest__748863822>;
     stewards : List__836382695<StewardRecord__165949082>
   };
+type OldActor__511848114 =
+  {claims : List__836382695<OldProfileClaim__77559155>};
 type OldActor__513739081 =
   {
     accessControlState :
@@ -2986,6 +3286,8 @@ type OldActor__860584657 =
   };
 type OldActor__887486218 =
   {conflictReviewItems : List__836382695<OldConflictReviewItem__636748176>};
+type OldActor__904324871 =
+  {stewards : List__836382695<OldStewardRecord__533687724>};
 type OldActor__916314435 =
   {
     accessControlState :
@@ -3018,6 +3320,7 @@ type OldActor__919010116 =
     profiles : Map__230067015<Text, PersonProfile__153367514>;
     relationshipRequests : List__836382695<RelationshipRequest__461877614>
   };
+type OldActor__927544402 = {};
 type OldActor__931712378 =
   {
     accessControlState :
@@ -3038,6 +3341,11 @@ type OldActor__959457706 =
   {
     posts : List__836382695<OldPost__174808228>;
     replies : List__836382695<OldReply__315522995>
+  };
+type OldActor__969310924 =
+  {
+    claims : List__836382695<OldProfileClaim__656299978>;
+    memberships : List__836382695<FamilyMembership__617028089>
   };
 type OldActor__971630431 =
   {newPersonCandidates : List__836382695<OldNewPersonCandidate__279624242>};
@@ -3141,6 +3449,15 @@ type OldAuditEntry__364127483 =
     summary : Text;
     timestamp : Int
   };
+type OldAuditEntry__454709923 =
+  {
+    actionType : AuditActionType__1003128928;
+    actorAccountId : Principal;
+    affectedPersonIds : [Text];
+    id : Nat;
+    summary : Text;
+    timestamp : Int
+  };
 type OldBlock__166027910 =
   {
     blockedAccountId : Principal;
@@ -3192,6 +3509,17 @@ type OldConversation__845865202 =
     participantAccountIds : [Principal];
     participantPersonIds : [Text];
     updatedAt : Int
+  };
+type OldDismissedPair__975273464 = {personIdA : Text; personIdB : Text};
+type OldMergeConflict__523194352 =
+  {
+    alternateValue : Text;
+    canonicalValue : Text;
+    field : Text;
+    id : Nat;
+    resolvedAt : ?Int;
+    resolvedBy : ?Principal;
+    status : {#Pending; #Resolved}
   };
 type OldMessage__438566306 =
   {
@@ -3433,6 +3761,39 @@ type OldProfileClaim__274575170 =
     status : ProfileClaimStatus__547003711;
     submittedDate : Int
   };
+type OldProfileClaim__656299978 =
+  {
+    familyId : Text;
+    id : Nat;
+    personId : Text;
+    requestingUserId : Principal;
+    reviewedBy : ?Principal;
+    reviewedDate : ?Int;
+    status : ProfileClaimStatus__13828007;
+    submittedDate : Int
+  };
+type OldProfileClaim__77559155 =
+  {
+    familyId : Text;
+    id : Nat;
+    personId : Text;
+    requestingUserId : Principal;
+    reviewedBy : ?Principal;
+    reviewedDate : ?Int;
+    status : ProfileClaimStatus__841815497;
+    submittedDate : Int
+  };
+type OldProfileRemovalRequest__642566800 =
+  {
+    id : Nat;
+    personId : Text;
+    reason : Text;
+    requestingUserId : Principal;
+    reviewedBy : ?Principal;
+    reviewedDate : ?Int;
+    status : {#Approved; #Pending; #Rejected};
+    submittedDate : Int
+  };
 type OldProposedFinding__1068966754 =
   {
     conflictReviewId : ?Nat;
@@ -3596,6 +3957,15 @@ type OldSourceRecord__638514156 =
     title : Text;
     updatedAt : Int
   };
+type OldStewardRecord__533687724 =
+  {
+    assignedAt : Int;
+    assignedBy : Principal;
+    familyId : Text;
+    roleStatus : {#Active; #Removed};
+    stewardAccountId : Principal;
+    successorPriority : ?Nat
+  };
 type OldStewardRecord__902725372 =
   {
     assignedAt : Int;
@@ -3638,8 +4008,12 @@ type OralHistorySpeaker__832928613 = {name : Text; personId : ?Text};
 type OralHistorySpeaker__926562536 = {name : Text; personId : ?Text};
 type OralHistorySpeaker__949974461 = {name : Text; personId : ?Text};
 type PersonId__1048869529 = PersonId__610106223;
+type PersonId__107699894 = PersonId__610106223;
+type PersonId__358866726 = Text;
+type PersonId__388221490 = Text;
 type PersonId__39539326 = Text;
 type PersonId__610106223 = Text;
+type PersonId__654861073 = Text;
 type PersonId__675039419 = Text;
 type PersonProfile__116240516 =
   {
@@ -4289,6 +4663,7 @@ type ProfileClaimStatus__1042784098 = {#Approved; #Pending; #Rejected};
 type ProfileClaimStatus__124669974 = {#Approved; #Pending; #Rejected};
 type ProfileClaimStatus__12791985 = {#Approved; #Pending; #Rejected};
 type ProfileClaimStatus__137051071 = {#Approved; #Pending; #Rejected};
+type ProfileClaimStatus__13828007 = {#Approved; #Pending; #Rejected};
 type ProfileClaimStatus__267707437 = {#Approved; #Pending; #Rejected};
 type ProfileClaimStatus__294825591 = {#Approved; #Pending; #Rejected};
 type ProfileClaimStatus__332418012 = {#Approved; #Pending; #Rejected};
@@ -4302,6 +4677,7 @@ type ProfileClaimStatus__597904421 = {#Approved; #Pending; #Rejected};
 type ProfileClaimStatus__661098194 = {#Approved; #Pending; #Rejected};
 type ProfileClaimStatus__679543545 = {#Approved; #Pending; #Rejected};
 type ProfileClaimStatus__774306457 = {#Approved; #Pending; #Rejected};
+type ProfileClaimStatus__841815497 = {#Approved; #Pending; #Rejected};
 type ProfileClaimStatus__842160831 = {#Approved; #Pending; #Rejected};
 type ProfileClaim__1046262541 =
   {
@@ -4498,6 +4874,7 @@ type ProfileRemovalRequest__141657078 =
   };
 type ProfileRemovalRequest__164024723 =
   {
+    familyId : Text;
     id : Nat;
     personId : PersonId__1048869529;
     reason : Text;
@@ -5323,6 +5700,7 @@ type StewardRecord__5758418 =
     assignedAt : Int;
     assignedBy : Principal;
     familyId : Text;
+    founding : Bool;
     roleStatus : StewardRoleStatus__843369164;
     stewardAccountId : Principal;
     successorPriority : ?Nat
@@ -5552,7 +5930,14 @@ type UserRole__968740559 = {#admin; #guest; #user};
   "20260926_000000" : (old : OldActor__624391799) -> NewActor__341238509;
   "20260927_000000" : (old : OldActor__263139629) -> NewActor__949499829;
   "20260928_000000" : (old : OldActor__61572473) -> NewActor__486559717;
-  "20260929_000000" : (old : OldActor__542196375) -> NewActor__705461471
+  "20260929_000000" : (old : OldActor__542196375) -> NewActor__705461471;
+  "20260930_000000" : (old : OldActor__148175652) -> NewActor__256259615;
+  "20261001_000000" : (old : OldActor__511848114) -> NewActor__712516871;
+  "20261002_000000" : (old : OldActor__969310924) -> NewActor__261022624;
+  "20261003_000000" : (_old : OldActor__463938666) -> NewActor__694455010;
+  "20261004_000000" : (old : OldActor__904324871) -> NewActor__793188255;
+  "20261005_000000" : (_old : OldActor__386101605) -> NewActor__969407957;
+  "20261006_000000" : (_old : OldActor__927544402) -> NewActor__416082931
 }
 actor  {
   stable accessControlState :
@@ -5595,6 +5980,12 @@ actor  {
       var blocks : [var [var ?ProfileClaim__107809243]];
       var elementIndex : Nat__227979830
     };
+  stable confirmations :
+    {
+      var blockIndex : Nat__227979830;
+      var blocks : [var [var ?MembershipConfirmation__240523724]];
+      var elementIndex : Nat__227979830
+    };
   stable confirmedRelationships :
     {
       var blockIndex : Nat__227979830;
@@ -5624,10 +6015,38 @@ actor  {
       var root : Node__204828119<FamilyId__357998493, Family__188663423>;
       var size : Nat__227979830
     };
+  stable familyCreationIdempotency :
+    {var root : Node__204828119<Text, Text>; var size : Nat__227979830};
+  stable familyCreationState : {var nextFamilyNonce : Nat};
+  stable foundingStewardNominations :
+    {
+      var blockIndex : Nat__227979830;
+      var blocks : [var [var ?FoundingStewardNomination__93780411]];
+      var elementIndex : Nat__227979830
+    };
+  stable foundingStewardState : {var nextNominationId : Nat};
+  stable foundingStewardStates :
+    {
+      var root : Node__204828119<Text, FoundingStewardState__1048289285>;
+      var size : Nat__227979830
+    };
   stable galleries :
     {
       var root : Node__204828119<PersonId__675039419, PhotoGallery__749612372>;
       var size : Nat__227979830
+    };
+  stable invitationState : {var nextInvitationId : Nat};
+  stable invitations :
+    {
+      var blockIndex : Nat__227979830;
+      var blocks : [var [var ?FamilyInvitation__27286872]];
+      var elementIndex : Nat__227979830
+    };
+  stable memberships :
+    {
+      var blockIndex : Nat__227979830;
+      var blocks : [var [var ?FamilyMembership__637659258]];
+      var elementIndex : Nat__227979830
     };
   stable mergeConflicts :
     {
@@ -5739,6 +6158,13 @@ actor  {
       var nextFindingId : Nat;
       var nextProposalId : Nat;
       var nextSourceId : Nat
+    };
+  stable stewardResolutions :
+    {
+      var blockIndex : Nat__227979830;
+      var blocks :
+        [var [var ?MembershipConfirmationResolutionRecord__1036666834]];
+      var elementIndex : Nat__227979830
     };
   stable stewards :
     {

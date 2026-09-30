@@ -1,4 +1,8 @@
-import { CreateError } from "@/backend";
+import {
+  AccountError,
+  CreateError,
+  type FamilyInvitationError,
+} from "@/backend";
 import { ExternalBlob } from "@caffeineai/object-storage";
 import {
   Archive,
@@ -96,12 +100,23 @@ function parseYear(value: string): bigint | null {
   return BigInt(trimmed);
 }
 
-/** Maps a backend ResearchError (or CreateError) to a friendly, actionable message. */
-function researchErrorMessage(err: ResearchError | CreateError): string {
+/**
+ * Maps a backend ResearchError, CreateError, AccountError, or
+ * FamilyInvitationError to a friendly, actionable message. CreateError,
+ * AccountError, and FamilyInvitationError are string enums, so they are
+ * handled before the object-union switch.
+ */
+function researchErrorMessage(
+  err: ResearchError | CreateError | AccountError | FamilyInvitationError,
+): string {
   if (typeof err === "string") {
-    return err === CreateError.NotSignedIn
-      ? "You must be signed in to perform this action."
-      : "The action could not be completed.";
+    if (err === CreateError.NotSignedIn || err === AccountError.NotSignedIn) {
+      return "You must be signed in to perform this action.";
+    }
+    if (err === AccountError.AccountNotFound) {
+      return "Your account could not be found. Please sign in again.";
+    }
+    return "The action could not be completed.";
   }
   switch (err.__kind__) {
     case "notAuthorized":

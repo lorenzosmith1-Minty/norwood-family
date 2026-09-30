@@ -7,11 +7,11 @@ import type {
   ProposedFinding,
   RelationshipProposal,
   ResearchAuditEntry,
-  Result_3,
-  Result_18,
-  Result_19,
-  Result_20,
-  Result_22,
+  Result_6,
+  Result_32,
+  Result_33,
+  Result_34,
+  Result_37,
   ReviewQueue,
   ReviewQueueItem,
   SourceId,
@@ -26,8 +26,18 @@ import type {
 } from "@/types/archive";
 import { useActor } from "@caffeineai/core-infrastructure";
 import type { ExternalBlob } from "@caffeineai/object-storage";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  type InvalidateQueryFilters,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import {
+  approvedArchiveItemsInvalidation,
+  pendingArchiveItemsInvalidation,
+} from "./useArchiveStorage";
 import { notificationInvalidation } from "./useNotifications";
+import { pendingContributionsCountInvalidation } from "./usePendingCount";
 import { useProvidersPresent } from "./usePhotoStorage";
 
 /**
@@ -49,6 +59,165 @@ import { useProvidersPresent } from "./usePhotoStorage";
  * the key so caches never collide across families. Conflicts/audit hooks are
  * intentionally NOT family-scoped in this build.
  */
+
+/**
+ * Family-aware React Query invalidation filters for the seven Research caches.
+ *
+ * React Query matches `invalidateQueries` by key PREFIX, so a bare
+ * `["research", "sources"]` filter would also match
+ * `["research", "sources", <otherFamily>]` and mark another family's Research
+ * cache stale. These helpers follow the exact precedent of
+ * `pendingContributionsCountInvalidation` in `usePendingCount.ts` and the
+ * Archive helpers in `useArchiveStorage.ts`: both branches are family-exact.
+ *
+ * Every Research list key carries the family id at index 2 for a non-default
+ * family:
+ * `["research", "sources", familyScopedId]`,
+ * `["research", "findings", familyScopedId]`,
+ * `["research", "candidates", familyScopedId]`,
+ * `["research", "relationshipProposals", familyScopedId]`,
+ * `["research", "conflicts", familyScopedId]`,
+ * `["research", "queue", familyScopedId]`, and
+ * `["research", "audit", familyScopedId]`.
+ *
+ * The default family's read key omits the family slot entirely
+ * (`["research", "sources"]`), which is a PREFIX of every non-default key
+ * `["research", "sources", <otherFamily>]`. A bare exact-key filter would
+ * therefore still mark another family's cache stale, so the default branch
+ * keeps the exact key but narrows it with a predicate that admits only the
+ * two-element default shape (`queryKey.length === 2`). This mirrors the
+ * `archivePhotoInvalidation` default branch in `useArchiveStorage.ts`.
+ *
+ * - The default family (`familyScopedId` undefined) targets only the exact
+ *   two-element read key, so no non-default family's key can match.
+ * - A non-default family keeps the bare prefix (so the recorded filter shape is
+ *   unchanged) but narrows it with a predicate that admits only the active
+ *   family's keys.
+ *
+ * The active family id is always the centralized `useFamilyScopedId()` value;
+ * no family id is hard-coded here.
+ */
+
+/** Invalidation filter for the Research sources cache of the active family. */
+export function researchSourcesInvalidation(
+  familyScopedId: string | undefined,
+): InvalidateQueryFilters {
+  if (familyScopedId === undefined) {
+    return {
+      queryKey: ["research", "sources"],
+      predicate: (query) => query.queryKey.length === 2,
+    };
+  }
+  return {
+    queryKey: ["research", "sources"],
+    predicate: (query) => query.queryKey[2] === familyScopedId,
+  };
+}
+
+/** Invalidation filter for the Research findings cache of the active family. */
+export function researchFindingsInvalidation(
+  familyScopedId: string | undefined,
+): InvalidateQueryFilters {
+  if (familyScopedId === undefined) {
+    return {
+      queryKey: ["research", "findings"],
+      predicate: (query) => query.queryKey.length === 2,
+    };
+  }
+  return {
+    queryKey: ["research", "findings"],
+    predicate: (query) => query.queryKey[2] === familyScopedId,
+  };
+}
+
+/** Invalidation filter for the Research candidates cache of the active family. */
+export function researchCandidatesInvalidation(
+  familyScopedId: string | undefined,
+): InvalidateQueryFilters {
+  if (familyScopedId === undefined) {
+    return {
+      queryKey: ["research", "candidates"],
+      predicate: (query) => query.queryKey.length === 2,
+    };
+  }
+  return {
+    queryKey: ["research", "candidates"],
+    predicate: (query) => query.queryKey[2] === familyScopedId,
+  };
+}
+
+/**
+ * Invalidation filter for the Research relationship-proposals cache of the
+ * active family.
+ */
+export function researchRelationshipProposalsInvalidation(
+  familyScopedId: string | undefined,
+): InvalidateQueryFilters {
+  if (familyScopedId === undefined) {
+    return {
+      queryKey: ["research", "relationshipProposals"],
+      predicate: (query) => query.queryKey.length === 2,
+    };
+  }
+  return {
+    queryKey: ["research", "relationshipProposals"],
+    predicate: (query) => query.queryKey[2] === familyScopedId,
+  };
+}
+
+/**
+ * Invalidation filter for the Research conflicts cache of the active family.
+ *
+ * The per-person conflict key is `["research", "conflicts", "person", ...]`,
+ * so the non-default predicate also requires the family id at index 2, which
+ * excludes every per-person key (its index 2 is the literal `"person"`).
+ */
+export function researchConflictsInvalidation(
+  familyScopedId: string | undefined,
+): InvalidateQueryFilters {
+  if (familyScopedId === undefined) {
+    return {
+      queryKey: ["research", "conflicts"],
+      predicate: (query) => query.queryKey.length === 2,
+    };
+  }
+  return {
+    queryKey: ["research", "conflicts"],
+    predicate: (query) => query.queryKey[2] === familyScopedId,
+  };
+}
+
+/** Invalidation filter for the Research review-queue cache of the active family. */
+export function researchQueueInvalidation(
+  familyScopedId: string | undefined,
+): InvalidateQueryFilters {
+  if (familyScopedId === undefined) {
+    return {
+      queryKey: ["research", "queue"],
+      predicate: (query) => query.queryKey.length === 2,
+    };
+  }
+  return {
+    queryKey: ["research", "queue"],
+    predicate: (query) => query.queryKey[2] === familyScopedId,
+  };
+}
+
+/** Invalidation filter for the Research audit-log cache of the active family. */
+export function researchAuditInvalidation(
+  familyScopedId: string | undefined,
+): InvalidateQueryFilters {
+  if (familyScopedId === undefined) {
+    return {
+      queryKey: ["research", "audit"],
+      predicate: (query) => query.queryKey.length === 2,
+    };
+  }
+  return {
+    queryKey: ["research", "audit"],
+    predicate: (query) => query.queryKey[2] === familyScopedId,
+  };
+}
 
 /** Lists all source records (steward only). */
 export function useListSources() {
@@ -106,19 +275,35 @@ export function useCreateSource() {
       sourceType: SourceRecord["sourceType"];
       description: string;
       archiveItemId: bigint | null;
-    }): Promise<Result_18> => {
+    }): Promise<Result_32> => {
       if (!actor) throw new Error("Backend is not ready");
-      // The backend exposes no family-scoped createSource endpoint: createSource
-      // sets the familyId itself, so the legacy call is used for every family.
-      return actor.createSource(title, sourceType, description, archiveItemId);
+      // The default family keeps the exact legacy no-argument call shape (the
+      // backend's compatibility wrapper resolves the default family), while a
+      // non-default family routes to the canonical family-scoped endpoint with
+      // the active family id. This mirrors useCreateSourceWithUpload below.
+      return familyScopedId === undefined
+        ? actor.createSource(title, sourceType, description, archiveItemId)
+        : actor.createSourceForFamily(
+            familyScopedId,
+            title,
+            sourceType,
+            description,
+            archiveItemId,
+          );
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["research", "sources"] });
-      void queryClient.invalidateQueries({ queryKey: ["research", "queue"] });
-      void queryClient.invalidateQueries({ queryKey: ["research", "audit"] });
-      void queryClient.invalidateQueries({
-        queryKey: ["pendingContributionsCount"],
-      });
+      void queryClient.invalidateQueries(
+        researchSourcesInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchQueueInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchAuditInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        pendingContributionsCountInvalidation(familyScopedId),
+      );
       void queryClient.invalidateQueries(
         notificationInvalidation(familyScopedId),
       );
@@ -195,16 +380,26 @@ export function useCreateSourceWithUpload() {
       );
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["research", "sources"] });
-      void queryClient.invalidateQueries({ queryKey: ["research", "queue"] });
-      void queryClient.invalidateQueries({ queryKey: ["research", "audit"] });
+      void queryClient.invalidateQueries(
+        researchSourcesInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchQueueInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchAuditInvalidation(familyScopedId),
+      );
       // The upload creates a pending Archive item, so the pending/approved
-      // archive lists must refresh.
-      void queryClient.invalidateQueries({ queryKey: ["archive", "pending"] });
-      void queryClient.invalidateQueries({ queryKey: ["archive", "approved"] });
-      void queryClient.invalidateQueries({
-        queryKey: ["pendingContributionsCount"],
-      });
+      // archive lists must refresh for the active family only.
+      void queryClient.invalidateQueries(
+        pendingArchiveItemsInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        approvedArchiveItemsInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        pendingContributionsCountInvalidation(familyScopedId),
+      );
       void queryClient.invalidateQueries(
         notificationInvalidation(familyScopedId),
       );
@@ -229,12 +424,18 @@ export function useApproveSource() {
         : actor.approveSourceForFamily(familyScopedId, sourceId);
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["research", "sources"] });
-      void queryClient.invalidateQueries({ queryKey: ["research", "queue"] });
-      void queryClient.invalidateQueries({ queryKey: ["research", "audit"] });
-      void queryClient.invalidateQueries({
-        queryKey: ["pendingContributionsCount"],
-      });
+      void queryClient.invalidateQueries(
+        researchSourcesInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchQueueInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchAuditInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        pendingContributionsCountInvalidation(familyScopedId),
+      );
       void queryClient.invalidateQueries(
         notificationInvalidation(familyScopedId),
       );
@@ -259,12 +460,18 @@ export function useRejectSource() {
         : actor.rejectSourceForFamily(familyScopedId, sourceId);
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["research", "sources"] });
-      void queryClient.invalidateQueries({ queryKey: ["research", "queue"] });
-      void queryClient.invalidateQueries({ queryKey: ["research", "audit"] });
-      void queryClient.invalidateQueries({
-        queryKey: ["pendingContributionsCount"],
-      });
+      void queryClient.invalidateQueries(
+        researchSourcesInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchQueueInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchAuditInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        pendingContributionsCountInvalidation(familyScopedId),
+      );
       void queryClient.invalidateQueries(
         notificationInvalidation(familyScopedId),
       );
@@ -289,12 +496,18 @@ export function useNeedsResearchSource() {
         : actor.needsResearchSourceForFamily(familyScopedId, sourceId);
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["research", "sources"] });
-      void queryClient.invalidateQueries({ queryKey: ["research", "queue"] });
-      void queryClient.invalidateQueries({ queryKey: ["research", "audit"] });
-      void queryClient.invalidateQueries({
-        queryKey: ["pendingContributionsCount"],
-      });
+      void queryClient.invalidateQueries(
+        researchSourcesInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchQueueInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchAuditInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        pendingContributionsCountInvalidation(familyScopedId),
+      );
       void queryClient.invalidateQueries(
         notificationInvalidation(familyScopedId),
       );
@@ -364,7 +577,7 @@ export function useCreateFinding() {
       sourceId: SourceId;
       personId: string | null;
       newPersonCandidateId: bigint | null;
-    }): Promise<Result_22> => {
+    }): Promise<Result_37> => {
       if (!actor) throw new Error("Backend is not ready");
       return familyScopedId === undefined
         ? actor.createFinding(
@@ -388,14 +601,18 @@ export function useCreateFinding() {
           );
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({
-        queryKey: ["research", "findings"],
-      });
-      void queryClient.invalidateQueries({ queryKey: ["research", "queue"] });
-      void queryClient.invalidateQueries({ queryKey: ["research", "audit"] });
-      void queryClient.invalidateQueries({
-        queryKey: ["pendingContributionsCount"],
-      });
+      void queryClient.invalidateQueries(
+        researchFindingsInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchQueueInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchAuditInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        pendingContributionsCountInvalidation(familyScopedId),
+      );
       void queryClient.invalidateQueries(
         notificationInvalidation(familyScopedId),
       );
@@ -418,20 +635,26 @@ export function useApproveFinding() {
         : actor.approveFindingForFamily(familyScopedId, findingId);
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({
-        queryKey: ["research", "findings"],
-      });
-      void queryClient.invalidateQueries({ queryKey: ["research", "sources"] });
-      void queryClient.invalidateQueries({ queryKey: ["research", "queue"] });
-      void queryClient.invalidateQueries({ queryKey: ["research", "audit"] });
+      void queryClient.invalidateQueries(
+        researchFindingsInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchSourcesInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchQueueInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchAuditInvalidation(familyScopedId),
+      );
       // Approving a finding can route it to the Conflict Review surface, so the
       // conflict list must refresh immediately.
-      void queryClient.invalidateQueries({
-        queryKey: ["research", "conflicts"],
-      });
-      void queryClient.invalidateQueries({
-        queryKey: ["pendingContributionsCount"],
-      });
+      void queryClient.invalidateQueries(
+        researchConflictsInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        pendingContributionsCountInvalidation(familyScopedId),
+      );
       void queryClient.invalidateQueries(
         notificationInvalidation(familyScopedId),
       );
@@ -454,15 +677,21 @@ export function useRejectFinding() {
         : actor.rejectFindingForFamily(familyScopedId, findingId);
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({
-        queryKey: ["research", "findings"],
-      });
-      void queryClient.invalidateQueries({ queryKey: ["research", "sources"] });
-      void queryClient.invalidateQueries({ queryKey: ["research", "queue"] });
-      void queryClient.invalidateQueries({ queryKey: ["research", "audit"] });
-      void queryClient.invalidateQueries({
-        queryKey: ["pendingContributionsCount"],
-      });
+      void queryClient.invalidateQueries(
+        researchFindingsInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchSourcesInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchQueueInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchAuditInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        pendingContributionsCountInvalidation(familyScopedId),
+      );
       void queryClient.invalidateQueries(
         notificationInvalidation(familyScopedId),
       );
@@ -489,15 +718,21 @@ export function useNeedsResearchFinding() {
         : actor.needsResearchFindingForFamily(familyScopedId, findingId);
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({
-        queryKey: ["research", "findings"],
-      });
-      void queryClient.invalidateQueries({ queryKey: ["research", "sources"] });
-      void queryClient.invalidateQueries({ queryKey: ["research", "queue"] });
-      void queryClient.invalidateQueries({ queryKey: ["research", "audit"] });
-      void queryClient.invalidateQueries({
-        queryKey: ["pendingContributionsCount"],
-      });
+      void queryClient.invalidateQueries(
+        researchFindingsInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchSourcesInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchQueueInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchAuditInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        pendingContributionsCountInvalidation(familyScopedId),
+      );
       void queryClient.invalidateQueries(
         notificationInvalidation(familyScopedId),
       );
@@ -539,7 +774,7 @@ export function useCreateNewPersonCandidate() {
       name: string;
       details: string;
       sourceId: SourceId;
-    }): Promise<Result_20> => {
+    }): Promise<Result_34> => {
       if (!actor) throw new Error("Backend is not ready");
       return familyScopedId === undefined
         ? actor.createNewPersonCandidate(name, details, sourceId)
@@ -551,14 +786,18 @@ export function useCreateNewPersonCandidate() {
           );
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({
-        queryKey: ["research", "candidates"],
-      });
-      void queryClient.invalidateQueries({ queryKey: ["research", "queue"] });
-      void queryClient.invalidateQueries({ queryKey: ["research", "audit"] });
-      void queryClient.invalidateQueries({
-        queryKey: ["pendingContributionsCount"],
-      });
+      void queryClient.invalidateQueries(
+        researchCandidatesInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchQueueInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchAuditInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        pendingContributionsCountInvalidation(familyScopedId),
+      );
       void queryClient.invalidateQueries(
         notificationInvalidation(familyScopedId),
       );
@@ -586,14 +825,18 @@ export function useApproveNewPersonCandidate() {
         : actor.approveNewPersonCandidateForFamily(familyScopedId, candidateId);
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({
-        queryKey: ["research", "candidates"],
-      });
-      void queryClient.invalidateQueries({ queryKey: ["research", "queue"] });
-      void queryClient.invalidateQueries({ queryKey: ["research", "audit"] });
-      void queryClient.invalidateQueries({
-        queryKey: ["pendingContributionsCount"],
-      });
+      void queryClient.invalidateQueries(
+        researchCandidatesInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchQueueInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchAuditInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        pendingContributionsCountInvalidation(familyScopedId),
+      );
       void queryClient.invalidateQueries(
         notificationInvalidation(familyScopedId),
       );
@@ -620,14 +863,18 @@ export function useRejectNewPersonCandidate() {
         : actor.rejectNewPersonCandidateForFamily(familyScopedId, candidateId);
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({
-        queryKey: ["research", "candidates"],
-      });
-      void queryClient.invalidateQueries({ queryKey: ["research", "queue"] });
-      void queryClient.invalidateQueries({ queryKey: ["research", "audit"] });
-      void queryClient.invalidateQueries({
-        queryKey: ["pendingContributionsCount"],
-      });
+      void queryClient.invalidateQueries(
+        researchCandidatesInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchQueueInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchAuditInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        pendingContributionsCountInvalidation(familyScopedId),
+      );
       void queryClient.invalidateQueries(
         notificationInvalidation(familyScopedId),
       );
@@ -657,14 +904,18 @@ export function useNeedsResearchNewPersonCandidate() {
           );
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({
-        queryKey: ["research", "candidates"],
-      });
-      void queryClient.invalidateQueries({ queryKey: ["research", "queue"] });
-      void queryClient.invalidateQueries({ queryKey: ["research", "audit"] });
-      void queryClient.invalidateQueries({
-        queryKey: ["pendingContributionsCount"],
-      });
+      void queryClient.invalidateQueries(
+        researchCandidatesInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchQueueInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchAuditInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        pendingContributionsCountInvalidation(familyScopedId),
+      );
       void queryClient.invalidateQueries(
         notificationInvalidation(familyScopedId),
       );
@@ -708,7 +959,7 @@ export function useCreateRelationshipProposal() {
       toPersonId: string;
       relationshipType: string;
       sourceId: SourceId;
-    }): Promise<Result_19> => {
+    }): Promise<Result_33> => {
       if (!actor) throw new Error("Backend is not ready");
       return familyScopedId === undefined
         ? actor.createRelationshipProposal(
@@ -726,14 +977,18 @@ export function useCreateRelationshipProposal() {
           );
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({
-        queryKey: ["research", "relationshipProposals"],
-      });
-      void queryClient.invalidateQueries({ queryKey: ["research", "queue"] });
-      void queryClient.invalidateQueries({ queryKey: ["research", "audit"] });
-      void queryClient.invalidateQueries({
-        queryKey: ["pendingContributionsCount"],
-      });
+      void queryClient.invalidateQueries(
+        researchRelationshipProposalsInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchQueueInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchAuditInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        pendingContributionsCountInvalidation(familyScopedId),
+      );
       void queryClient.invalidateQueries(
         notificationInvalidation(familyScopedId),
       );
@@ -765,14 +1020,18 @@ export function useApproveRelationshipProposal() {
           );
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({
-        queryKey: ["research", "relationshipProposals"],
-      });
-      void queryClient.invalidateQueries({ queryKey: ["research", "queue"] });
-      void queryClient.invalidateQueries({ queryKey: ["research", "audit"] });
-      void queryClient.invalidateQueries({
-        queryKey: ["pendingContributionsCount"],
-      });
+      void queryClient.invalidateQueries(
+        researchRelationshipProposalsInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchQueueInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchAuditInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        pendingContributionsCountInvalidation(familyScopedId),
+      );
       void queryClient.invalidateQueries(
         notificationInvalidation(familyScopedId),
       );
@@ -799,14 +1058,18 @@ export function useRejectRelationshipProposal() {
         : actor.rejectRelationshipProposalForFamily(familyScopedId, proposalId);
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({
-        queryKey: ["research", "relationshipProposals"],
-      });
-      void queryClient.invalidateQueries({ queryKey: ["research", "queue"] });
-      void queryClient.invalidateQueries({ queryKey: ["research", "audit"] });
-      void queryClient.invalidateQueries({
-        queryKey: ["pendingContributionsCount"],
-      });
+      void queryClient.invalidateQueries(
+        researchRelationshipProposalsInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchQueueInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchAuditInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        pendingContributionsCountInvalidation(familyScopedId),
+      );
       void queryClient.invalidateQueries(
         notificationInvalidation(familyScopedId),
       );
@@ -828,17 +1091,26 @@ export function useNeedsResearchRelationshipProposal() {
       proposalId: bigint,
     ): Promise<RelationshipProposal | null> => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.needsResearchRelationshipProposal(proposalId);
+      return familyScopedId === undefined
+        ? actor.needsResearchRelationshipProposal(proposalId)
+        : actor.needsResearchRelationshipProposalForFamily(
+            familyScopedId,
+            proposalId,
+          );
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({
-        queryKey: ["research", "relationshipProposals"],
-      });
-      void queryClient.invalidateQueries({ queryKey: ["research", "queue"] });
-      void queryClient.invalidateQueries({ queryKey: ["research", "audit"] });
-      void queryClient.invalidateQueries({
-        queryKey: ["pendingContributionsCount"],
-      });
+      void queryClient.invalidateQueries(
+        researchRelationshipProposalsInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchQueueInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchAuditInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        pendingContributionsCountInvalidation(familyScopedId),
+      );
       void queryClient.invalidateQueries(
         notificationInvalidation(familyScopedId),
       );
@@ -880,7 +1152,7 @@ export function useResolveConflict() {
       conflictId: bigint;
       action: ConflictResolutionAction;
       notes: string;
-    }): Promise<Result_3> => {
+    }): Promise<Result_6> => {
       if (!actor) throw new Error("Backend is not ready");
       return familyScopedId === undefined
         ? actor.resolveConflict(conflictId, action, notes)
@@ -892,18 +1164,24 @@ export function useResolveConflict() {
           );
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({
-        queryKey: ["research", "conflicts"],
-      });
-      void queryClient.invalidateQueries({
-        queryKey: ["research", "findings"],
-      });
-      void queryClient.invalidateQueries({ queryKey: ["research", "sources"] });
-      void queryClient.invalidateQueries({ queryKey: ["research", "queue"] });
-      void queryClient.invalidateQueries({ queryKey: ["research", "audit"] });
-      void queryClient.invalidateQueries({
-        queryKey: ["pendingContributionsCount"],
-      });
+      void queryClient.invalidateQueries(
+        researchConflictsInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchFindingsInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchSourcesInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchQueueInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        researchAuditInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        pendingContributionsCountInvalidation(familyScopedId),
+      );
       void queryClient.invalidateQueries(
         notificationInvalidation(familyScopedId),
       );
@@ -996,7 +1274,7 @@ export type {
   ProposedFinding,
   RelationshipProposal,
   ResearchAuditEntry,
-  Result_3,
+  Result_6,
   ReviewQueue,
   ReviewQueueItem,
   SourceId,

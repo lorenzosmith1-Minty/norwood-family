@@ -207,6 +207,7 @@ const seededSteward: StewardRecord = {
   successorPriority: 1n,
   assignedBy: REVIEWER,
   assignedAt: 1_700_000_400_000_000_000n,
+  founding: false,
 };
 
 // Built lazily inside each test: ExternalBlob.fromBytes calls

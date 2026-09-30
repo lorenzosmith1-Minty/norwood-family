@@ -2,8 +2,14 @@ import { createActor } from "@/backend";
 import type { Relationship, RelationshipRequest } from "@/backend";
 import { useFamilyScopedId } from "@/context/FamilyContext";
 import { useActor } from "@caffeineai/core-infrastructure";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  type InvalidateQueryFilters,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { notificationInvalidation } from "./useNotifications";
+import { pendingContributionsCountInvalidation } from "./usePendingCount";
 
 /**
  * React Query hooks for the relationship-verification workflow, following the
@@ -17,6 +23,102 @@ import { notificationInvalidation } from "./useNotifications";
  * behavior is preserved exactly. Callers pass the active family from
  * `useActiveFamilyId()`.
  */
+
+/**
+ * Family-aware React Query invalidation filters for the Relationship Request
+ * caches.
+ *
+ * React Query matches `invalidateQueries` by key PREFIX, so a bare
+ * `["relationshipRequests"]` filter would also match
+ * `["relationshipRequests", <otherFamily>]` and mark another family's request
+ * cache stale. These helpers follow the exact precedent of
+ * `pendingContributionsCountInvalidation` in `usePendingCount.ts`,
+ * `notificationInvalidation` in `useNotifications.ts`, and the Board / Messaging
+ * / Research / Archive helpers: both branches are family-exact.
+ *
+ * The Relationship Request read keys carry the family id at index 1 (the
+ * default family uses `familyId ?? null`, NOT an omitted slot):
+ * `["relationshipRequests", familyId ?? null]`,
+ * `["relationshipRequests", familyId ?? null, requestId]`,
+ * `["confirmedRelationships", familyId ?? null]`, and
+ * `["myRelationshipRequests", familyId ?? null]`.
+ *
+ * Because the default family's key keeps the family slot (as `null`), a bare
+ * exact-key filter would still match a non-default family's key for the same
+ * cache. The default branch therefore keeps the exact key but narrows it with a
+ * predicate that admits only the default shape (`queryKey[1] === null` plus a
+ * `queryKey.length` check), which also excludes the sibling request-detail keys
+ * that share the `["relationshipRequests"]` prefix.
+ *
+ * - The default family (`familyScopedId` undefined) targets only the exact
+ *   default read key, so no non-default family's key can match.
+ * - A non-default family keeps the bare prefix (so the recorded filter shape is
+ *   unchanged) but narrows it with a predicate that admits only the active
+ *   family's keys (`queryKey[1] === familyScopedId`).
+ *
+ * The active family id is always the centralized `useFamilyScopedId()` value;
+ * no family id is hard-coded here.
+ */
+
+/**
+ * Invalidation filter for the relationship-request list caches of the active
+ * family.
+ *
+ * The `["relationshipRequests"]` prefix also matches the single request-detail
+ * keys (`["relationshipRequests", familyId, requestId]`), so the predicate
+ * admits both the list shape (length 2 for the default family) and the detail
+ * shape (length 3 for the default family) for the active family.
+ */
+export function relationshipRequestsInvalidation(
+  familyScopedId: string | undefined,
+): InvalidateQueryFilters {
+  if (familyScopedId === undefined) {
+    return {
+      queryKey: ["relationshipRequests"],
+      predicate: (query) =>
+        query.queryKey[1] === null &&
+        (query.queryKey.length === 2 || query.queryKey.length === 3),
+    };
+  }
+  return {
+    queryKey: ["relationshipRequests"],
+    predicate: (query) => query.queryKey[1] === familyScopedId,
+  };
+}
+
+/** Invalidation filter for the confirmed-relationship graph caches of the active family. */
+export function confirmedRelationshipsInvalidation(
+  familyScopedId: string | undefined,
+): InvalidateQueryFilters {
+  if (familyScopedId === undefined) {
+    return {
+      queryKey: ["confirmedRelationships"],
+      predicate: (query) =>
+        query.queryKey.length === 2 && query.queryKey[1] === null,
+    };
+  }
+  return {
+    queryKey: ["confirmedRelationships"],
+    predicate: (query) => query.queryKey[1] === familyScopedId,
+  };
+}
+
+/** Invalidation filter for the caller's own relationship-request caches of the active family. */
+export function myRelationshipRequestsInvalidation(
+  familyScopedId: string | undefined,
+): InvalidateQueryFilters {
+  if (familyScopedId === undefined) {
+    return {
+      queryKey: ["myRelationshipRequests"],
+      predicate: (query) =>
+        query.queryKey.length === 2 && query.queryKey[1] === null,
+    };
+  }
+  return {
+    queryKey: ["myRelationshipRequests"],
+    predicate: (query) => query.queryKey[1] === familyScopedId,
+  };
+}
 
 /**
  * Fetches the current signed-in caller's own relationship requests. Unlike
@@ -100,16 +202,16 @@ export function useProposeRelationship(familyId?: string) {
         : actor.proposeRelationship(fromPersonId, toPersonId, relationshipType);
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({
-        queryKey: ["relationshipRequests"],
-      });
+      void queryClient.invalidateQueries(
+        relationshipRequestsInvalidation(familyScopedId),
+      );
       void queryClient.invalidateQueries(
         notificationInvalidation(familyScopedId),
       );
       // The caller's own request list must reflect the new pending request.
-      void queryClient.invalidateQueries({
-        queryKey: ["myRelationshipRequests"],
-      });
+      void queryClient.invalidateQueries(
+        myRelationshipRequestsInvalidation(familyScopedId),
+      );
     },
   });
 }
@@ -127,23 +229,23 @@ export function useApproveRelationshipRequest(familyId?: string) {
         : actor.approveRelationshipRequest(requestId);
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({
-        queryKey: ["relationshipRequests"],
-      });
-      void queryClient.invalidateQueries({
-        queryKey: ["confirmedRelationships"],
-      });
+      void queryClient.invalidateQueries(
+        relationshipRequestsInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        confirmedRelationshipsInvalidation(familyScopedId),
+      );
       void queryClient.invalidateQueries(
         notificationInvalidation(familyScopedId),
       );
       // Approving removes the request from the steward-review queue, so the
       // Pending Contributions badge and steward aggregate badge refresh.
-      void queryClient.invalidateQueries({
-        queryKey: ["pendingContributionsCount"],
-      });
-      void queryClient.invalidateQueries({
-        queryKey: ["myRelationshipRequests"],
-      });
+      void queryClient.invalidateQueries(
+        pendingContributionsCountInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        myRelationshipRequestsInvalidation(familyScopedId),
+      );
     },
   });
 }
@@ -161,20 +263,20 @@ export function useRejectRelationshipRequest(familyId?: string) {
         : actor.rejectRelationshipRequest(requestId);
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({
-        queryKey: ["relationshipRequests"],
-      });
+      void queryClient.invalidateQueries(
+        relationshipRequestsInvalidation(familyScopedId),
+      );
       void queryClient.invalidateQueries(
         notificationInvalidation(familyScopedId),
       );
       // Rejecting removes the request from the steward-review queue, so the
       // Pending Contributions badge and steward aggregate badge refresh.
-      void queryClient.invalidateQueries({
-        queryKey: ["pendingContributionsCount"],
-      });
-      void queryClient.invalidateQueries({
-        queryKey: ["myRelationshipRequests"],
-      });
+      void queryClient.invalidateQueries(
+        pendingContributionsCountInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        myRelationshipRequestsInvalidation(familyScopedId),
+      );
     },
   });
 }
@@ -192,20 +294,20 @@ export function useSetRelationshipRequestPending(familyId?: string) {
         : actor.setRelationshipRequestPending(requestId);
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({
-        queryKey: ["relationshipRequests"],
-      });
+      void queryClient.invalidateQueries(
+        relationshipRequestsInvalidation(familyScopedId),
+      );
       void queryClient.invalidateQueries(
         notificationInvalidation(familyScopedId),
       );
       // Returning to Pending re-adds the request to the steward-review queue,
       // so the Pending Contributions badge and steward aggregate badge refresh.
-      void queryClient.invalidateQueries({
-        queryKey: ["pendingContributionsCount"],
-      });
-      void queryClient.invalidateQueries({
-        queryKey: ["myRelationshipRequests"],
-      });
+      void queryClient.invalidateQueries(
+        pendingContributionsCountInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        myRelationshipRequestsInvalidation(familyScopedId),
+      );
     },
   });
 }

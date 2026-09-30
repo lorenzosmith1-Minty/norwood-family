@@ -1,16 +1,24 @@
+import { TreePine } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import type { ReactNode } from "react";
+import { MembershipStatus } from "./backend";
 import { ClaimStewardControl } from "./components/ClaimStewardControl";
 import { Layout } from "./components/Layout";
 import { LoginSurface } from "./components/LoginSurface";
+import { MembershipInactiveShell } from "./components/MembershipInactiveShell";
+import { MembershipPendingShell } from "./components/MembershipPendingShell";
 import PendingContributionsBadge from "./components/PendingContributionsBadge";
 import { useAuth } from "./hooks/useAuth";
 import { resolveCanonicalPersonProfile } from "./hooks/useCanonicalPerson";
+import { useMyMembershipStatus } from "./hooks/useMyMembershipStatus";
 import { useNavbarIdentity } from "./hooks/useNavbarIdentity";
 import { usePersonProfile } from "./hooks/useProfileClaims";
 import { useIsSteward } from "./hooks/useStewardAuthority";
+import { isInvitePath, parseInviteToken } from "./lib/inviteRoute";
 import {
+  clearInviteToken,
   clearOriginatingView,
+  loadInviteToken,
   loadOriginatingView,
   saveOriginatingView,
 } from "./lib/originatingView";
@@ -31,6 +39,7 @@ import HeritageBranchPage from "./pages/HeritageBranchPage";
 import { HiddenPostsPage } from "./pages/HiddenPostsPage";
 import { HomePage } from "./pages/HomePage";
 import { InboxPage } from "./pages/InboxPage";
+import { InviteRedemptionPage } from "./pages/InviteRedemptionPage";
 import { MessageBoardHubPage } from "./pages/MessageBoardHubPage";
 import { MessageBoardPage } from "./pages/MessageBoardPage";
 import { MysteriesPage } from "./pages/MysteriesPage";
@@ -91,7 +100,8 @@ type View =
   | "hidden-posts"
   | "research-intake"
   | "research-queue"
-  | "research-conflict";
+  | "research-conflict"
+  | "invite";
 
 const VALID_VIEWS: readonly View[] = [
   "home",
@@ -130,6 +140,7 @@ const VALID_VIEWS: readonly View[] = [
   "research-intake",
   "research-queue",
   "research-conflict",
+  "invite",
 ];
 
 function isView(value: string): value is View {
@@ -195,9 +206,33 @@ export default function App() {
   // state the user left and the Add Myself / ClaimButton auto-submit effects
   // fire automatically after the redirect remount.
   const origin = loadOriginatingView();
-  const [view, setView] = useState<View>(() =>
-    origin && isView(origin.view) ? origin.view : "home",
-  );
+  // The canonical invite route is `/invite/<raw-token>`. The token is the only
+  // invite data in the URL and is treated as opaque. It is parsed once on mount
+  // and, when the visitor is signed out, persisted through the existing
+  // short-lived session mechanism so the invitation resumes automatically after
+  // authentication.
+  //
+  // A pathname that begins with the invite route but fails canonical parsing
+  // (e.g. `/invite`, `/invite/`, `/invite/<token>/extra`, or a malformed
+  // percent-encoding) is NOT a valid invite link. It resolves to a null token so
+  // the invite surface renders its safe invalid-link state instead of silently
+  // falling through to Home.
+  const [inviteToken, setInviteToken] = useState<string | null>(() => {
+    const fromPath = parseInviteToken(window.location.pathname);
+    if (fromPath) return fromPath;
+    if (isInvitePath(window.location.pathname)) return null;
+    return loadInviteToken();
+  });
+  const [view, setView] = useState<View>(() => {
+    if (
+      parseInviteToken(window.location.pathname) ||
+      isInvitePath(window.location.pathname) ||
+      loadInviteToken()
+    ) {
+      return "invite";
+    }
+    return origin && isView(origin.view) ? origin.view : "home";
+  });
   // Restore the originating profileId directly (not gated on the static
   // `profiles` record). Graph-only nodes (e.g. lorenzoSmithJr) and createMyself
   // profiles keyed by the caller's principal are not in the static record, but
@@ -267,6 +302,16 @@ export default function App() {
   const { data: isSteward = false, isLoading: isStewardLoading } =
     useIsSteward();
   const { isAuthenticated, accountId, signOut } = useAuth();
+  // The signed-in caller's own membership in the ACTIVE family. This drives the
+  // app-shell routing rule: a Pending membership renders the limited pending
+  // shell, a Suspended membership renders the limited review shell, and a Left
+  // membership renders the neutral ended shell — all instead of normal family
+  // navigation. The read is family-scoped, so an account can be Active in one
+  // family and Pending in another and each family resolves its own shell. The
+  // read tolerates a mock actor without the method (resolves to null), so the
+  // normal family shell still renders in the tester-owned App tests.
+  const { membership: myMembership, isLoading: myMembershipLoading } =
+    useMyMembershipStatus();
   const {
     displayName,
     status: identityStatus,
@@ -330,23 +375,67 @@ export default function App() {
   // are not in the static record, but the profile view resolves them from the
   // backend, so gating on the static record would wrongly fall back to another
   // person (e.g. julia) and auto-submit a claim for the wrong person.
+  //
+  // The saved origin is cleared ONLY here, after an authenticated restore has
+  // actually been applied (or after it is determined unrestorable). App mount
+  // alone never clears it: a signed-out visitor who started sign-in from an
+  // invite link must keep the pending invitation until authentication resumes
+  // it.
   useEffect(() => {
     if (!isAuthenticated) return;
     const origin = loadOriginatingView();
     if (!origin) return;
-    if (isView(origin.view)) {
-      if (origin.profileId) {
-        setProfileId(origin.profileId);
-      }
-      setView(origin.view);
+    if (!isView(origin.view)) {
+      // An origin that names no known view can never be restored; drop it so a
+      // stale record does not linger for the rest of the session.
+      clearOriginatingView();
+      return;
     }
+    // The URL governs the invite route. A canonical or malformed invite path
+    // already determined the invite view on mount, so a persisted invite origin
+    // must not override it (and must not resurrect a stale token).
+    if (origin.view === "invite" && isInvitePath(window.location.pathname)) {
+      clearOriginatingView();
+      return;
+    }
+    if (origin.profileId) {
+      setProfileId(origin.profileId);
+    }
+    // Resume a pending invitation automatically after authentication: restore
+    // the raw token so the invite view re-validates it without asking the user
+    // to re-enter the invite link or code.
+    if (origin.view === "invite" && origin.inviteToken) {
+      setInviteToken(origin.inviteToken);
+    }
+    setView(origin.view);
     clearOriginatingView();
   }, [isAuthenticated]);
 
-  // Clear any remaining persisted originating view once it has been restored so
-  // a later reload doesn't re-apply a stale view.
+  // Detect the canonical invite route on mount (before/alongside the existing
+  // originating-view restore). A valid `/invite/<raw-token>` path always routes
+  // to the invite view; a path that begins with the invite route but fails
+  // canonical parsing renders the safe invalid-invite state inside the invite
+  // page rather than a blank screen or a silent fall-through to Home.
   useEffect(() => {
-    clearOriginatingView();
+    const pathname = window.location.pathname;
+    const fromPath = parseInviteToken(pathname);
+    if (fromPath) {
+      setInviteToken(fromPath);
+      setView("invite");
+      return;
+    }
+    if (isInvitePath(pathname)) {
+      // Malformed invite path: no valid token, so the invite surface renders
+      // its invalid-link state. Never fall through to Home.
+      setInviteToken(null);
+      setView("invite");
+      return;
+    }
+    const persisted = loadInviteToken();
+    if (persisted) {
+      setInviteToken(persisted);
+      setView("invite");
+    }
   }, []);
 
   const openArchiveItem = useCallback((id: bigint) => {
@@ -448,6 +537,96 @@ export default function App() {
     }
     setView("add-myself");
   }, [claimStatus, myPersonId]);
+
+  // ---- App-shell membership routing rule ----------------------------------
+  //
+  // After authentication and family-context resolution, the active family's
+  // membership status decides the shell:
+  //
+  //   - Pending   -> the limited pending shell (branding, family name, the
+  //                  applicant-safe confirmation status card, Sign out),
+  //   - Suspended -> the limited "under review" shell,
+  //   - Left      -> the neutral "no longer an active member" shell,
+  //   - Active / none -> the normal family application.
+  //
+  // The rule is per-active-family: `myMembership` is read for the active family
+  // only, so an account can be Active in Family A and Pending in Family B and
+  // each family resolves its own shell. It holds across refresh and
+  // sign-out/sign-in because the read is re-issued on every mount and the
+  // membership is backend-owned, not local state.
+  //
+  // The invite route is exempt: the invite surface owns its own onboarding and
+  // terminal states (including its own pending-membership state), so the
+  // app-shell rule must not pre-empt it. The gate also waits for the membership
+  // read to resolve (`myMembershipLoading`) so the normal shell never flashes
+  // before a Pending/Suspended/Left membership is known.
+  const membershipStatus = myMembership?.status ?? null;
+  const isMembershipResolved = !myMembershipLoading;
+  // While the active-family membership read is still resolving we cannot yet
+  // tell a Pending/Suspended/Left member from an Active one, so we render a
+  // neutral loading state instead of the normal family Layout. This is what
+  // actually prevents the normal family navigation (Explore Family, Heritage
+  // Branch, Archive, Message Board, ...) from flashing before a limited
+  // membership is known. The invite route stays exempt and owns its own states.
+  const showMembershipLoading =
+    isAuthenticated && !isMembershipResolved && view !== "invite";
+  const showPendingShell =
+    isAuthenticated &&
+    isMembershipResolved &&
+    view !== "invite" &&
+    membershipStatus === MembershipStatus.Pending;
+  const showSuspendedShell =
+    isAuthenticated &&
+    isMembershipResolved &&
+    view !== "invite" &&
+    membershipStatus === MembershipStatus.Suspended;
+  const showLeftShell =
+    isAuthenticated &&
+    isMembershipResolved &&
+    view !== "invite" &&
+    membershipStatus === MembershipStatus.Left;
+
+  if (showMembershipLoading) {
+    return (
+      <div
+        className="invite-screen"
+        data-ocid="membership.loading_shell"
+        aria-label="Loading family membership"
+        aria-busy="true"
+      >
+        <div className="invite-card" data-ocid="membership.loading_card">
+          <span className="invite-crest" aria-hidden="true">
+            <TreePine className="h-7 w-7 animate-pulse" strokeWidth={1.75} />
+          </span>
+          <div className="flex flex-col items-center gap-2">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+              Family
+            </p>
+            <h1 className="invite-title">Loading your family</h1>
+            <p className="invite-hint">
+              Checking your membership before opening the family pages.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (showPendingShell) {
+    return (
+      <MembershipPendingShell
+        membershipId={myMembership?.id ?? null}
+        membershipStatus={membershipStatus}
+        onSignOut={signOut}
+      />
+    );
+  }
+  if (showSuspendedShell) {
+    return <MembershipInactiveShell kind="suspended" onSignOut={signOut} />;
+  }
+  if (showLeftShell) {
+    return <MembershipInactiveShell kind="left" onSignOut={signOut} />;
+  }
 
   return (
     <Layout
@@ -647,6 +826,29 @@ export default function App() {
         <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center px-6 py-12">
           <LoginSurface />
         </div>
+      ) : view === "invite" ? (
+        <InviteRedemptionPage
+          rawToken={inviteToken}
+          isAuthenticated={isAuthenticated}
+          onSignIn={() => {
+            if (inviteToken) {
+              saveOriginatingView({ view: "invite", inviteToken });
+            }
+            setView("sign-in");
+          }}
+          onConsumed={() => {
+            clearInviteToken();
+            setInviteToken(null);
+            // Remove the raw bearer token from the address bar so no consumed
+            // token remains visible or shareable after returning Home. The
+            // token is only ever in the URL on the invite route, so the path is
+            // reset to the app root.
+            if (isInvitePath(window.location.pathname)) {
+              window.history.replaceState({}, "", "/");
+            }
+            setView("home");
+          }}
+        />
       ) : view === "stories" ? (
         <StoriesPage
           onBack={() => setView("home")}

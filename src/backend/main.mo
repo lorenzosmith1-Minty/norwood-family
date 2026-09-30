@@ -19,6 +19,10 @@ import ArchiveTypes "types/archive";
 import OwnershipTypes "types/ownership";
 import AccountIdentityTypes "types/account-identity";
 import GovernanceTypes "types/governance";
+import MembershipTypes "types/family-membership";
+import FoundingStewardTypes "types/founding-steward";
+import FamilyInvitationTypes "types/family-invitation";
+import MembershipConfirmationTypes "types/membership-confirmation";
 import FamilyHistoryTypes "types/family-history";
 import RecipeTypes "types/recipes";
 import BoardTypes "types/board";
@@ -28,6 +32,9 @@ import ObjectStorageLib "lib/object-storage";
 import FamilyLib "lib/family";
 import FamilyAuthorizationLib "lib/family-authorization";
 import StewardAuthorityLib "lib/steward-authority";
+import FamilyMembershipLib "lib/family-membership";
+import FamilyInvitationLib "lib/family-invitation";
+import MembershipConfirmationLib "lib/membership-confirmation";
 import ArchiveLib "lib/archive";
 import OwnershipLib "lib/ownership";
 import AccountIdentityLib "lib/account-identity";
@@ -58,6 +65,11 @@ import ConflictScopeApi "mixins/conflict-scope-api";
 import ArchiveResearchBoardNotificationsApi "mixins/archive-research-board-notifications-api";
 import AuditAndWorkloadApi "mixins/audit-and-workload-api";
 import StewardAuthorityApi "mixins/steward-authority-api";
+import FamilyMembershipApi "mixins/family-membership-api";
+import FamilyCreationApi "mixins/family-creation-api";
+import FoundingStewardApi "mixins/founding-steward-api";
+import FamilyInvitationApi "mixins/family-invitation-api";
+import MembershipConfirmationApi "mixins/membership-confirmation-api";
 import ApiDocMixin "mixins/api-doc";
 
 actor {
@@ -67,6 +79,16 @@ actor {
   let archiveItems : List.List<ArchiveTypes.ArchiveItem>;
   let profiles : Map.Map<OwnershipTypes.PersonId, OwnershipTypes.PersonProfile>;
   let claims : List.List<OwnershipTypes.ProfileClaim>;
+  let memberships : List.List<MembershipTypes.FamilyMembership>;
+  let familyCreationIdempotency : Map.Map<Text, Text>;
+  let familyCreationState : { var nextFamilyNonce : Nat };
+  let foundingStewardStates : Map.Map<Text, FoundingStewardTypes.FoundingStewardState>;
+  let foundingStewardNominations : List.List<FoundingStewardTypes.FoundingStewardNomination>;
+  let foundingStewardState : { var nextNominationId : Nat };
+  let invitations : List.List<FamilyInvitationTypes.FamilyInvitation>;
+  let invitationState : { var nextInvitationId : Nat };
+  let confirmations : List.List<MembershipConfirmationTypes.MembershipConfirmation>;
+  let stewardResolutions : List.List<MembershipConfirmationTypes.MembershipConfirmationResolutionRecord>;
   let relationshipRequests : List.List<OwnershipTypes.RelationshipRequest>;
   let confirmedRelationships : List.List<OwnershipTypes.Relationship>;
   let notifications : List.List<OwnershipTypes.Notification>;
@@ -511,6 +533,7 @@ actor {
         successorPriority = null;
         assignedBy = Principal.fromText("aaaaa-aa");
         assignedAt = 0;
+        founding = false;
       })
       .payload("familyId", func r = r.familyId)
       .payload("stewardAccountId", func r = r.stewardAccountId.toText())
@@ -518,6 +541,176 @@ actor {
       .payload("successorPriority", func r = r.successorPriority ?? 0)
       .payload("assignedBy", func r = r.assignedBy.toText())
       .payload("assignedAt", func r = r.assignedAt)
+      .payload("founding", func r = r.founding)
+      .controllerOnly()
+      .build(),
+      OQL.Entity.manual<(Text, FoundingStewardTypes.FoundingStewardState)>(
+        "foundingStewardState",
+        func() : Iter.Iter<(Text, FoundingStewardTypes.FoundingStewardState)> = foundingStewardStates.entries(),
+        "FoundingStewardState",
+        "familyId",
+      )
+      .sample(("", #Undecided))
+      .payload("familyId", func ((familyId, _)) = familyId)
+      .payload("state", func ((_, state)) = switch (state) {
+        case (#Undecided) "Undecided";
+        case (#FounderAccepted) "FounderAccepted";
+        case (#NominationPending) "NominationPending";
+        case (#Transferred) "Transferred";
+      })
+      .controllerOnly()
+      .build(),
+      OQL.Entity.manual<FoundingStewardTypes.FoundingStewardNomination>(
+        "foundingStewardNomination",
+        func() : Iter.Iter<FoundingStewardTypes.FoundingStewardNomination> = foundingStewardNominations.values(),
+        "FoundingStewardNomination",
+        "id",
+      )
+      .sample({
+        id = 0;
+        familyId = "";
+        founderAccountId = Principal.fromText("aaaaa-aa");
+        nomineePersonId = "";
+        nomineeAccountId = null;
+        nomineeEmail = null;
+        status = #Pending;
+        createdAt = 0;
+        updatedAt = 0;
+      })
+      .payload("id", func r = r.id)
+      .payload("familyId", func r = r.familyId)
+      .payload("founderAccountId", func r = r.founderAccountId.toText())
+      .payload("nomineePersonId", func r = r.nomineePersonId)
+      .payload("nomineeAccountId", func r = switch (r.nomineeAccountId) { case (?p) p.toText(); case null "" })
+      .payload("nomineeEmail", func r = r.nomineeEmail ?? "")
+      .payload("status", func r = switch (r.status) {
+        case (#Pending) "Pending";
+        case (#Accepted) "Accepted";
+        case (#Declined) "Declined";
+        case (#Cancelled) "Cancelled";
+      })
+      .payload("createdAt", func r = r.createdAt)
+      .payload("updatedAt", func r = r.updatedAt)
+      .controllerOnly()
+      .build(),
+      OQL.Entity.manual<MembershipTypes.MembershipRow>(
+        "familyMembership",
+        func() : Iter.Iter<MembershipTypes.MembershipRow> = FamilyMembershipLib.membershipRows(memberships).values(),
+        "FamilyMembership",
+        "id",
+      )
+      .sample({
+        familyId = "";
+        id = 0;
+        accountId = "";
+        personId = "";
+        status = "";
+        joinedAt = 0;
+        approvedBy = "";
+        approvedAt = 0;
+        createdAt = 0;
+        updatedAt = 0;
+      })
+      .payload("familyId", func r = r.familyId)
+      .payload("id", func r = r.id)
+      .payload("accountId", func r = r.accountId)
+      .payload("personId", func r = r.personId)
+      .payload("status", func r = r.status)
+      .payload("joinedAt", func r = r.joinedAt)
+      .payload("approvedBy", func r = r.approvedBy)
+      .payload("approvedAt", func r = r.approvedAt)
+      .payload("createdAt", func r = r.createdAt)
+      .payload("updatedAt", func r = r.updatedAt)
+      .controllerOnly()
+      .build(),
+      OQL.Entity.manual<FamilyInvitationTypes.FamilyInvitationRow>(
+        "familyInvitation",
+        func() : Iter.Iter<FamilyInvitationTypes.FamilyInvitationRow> = FamilyInvitationLib.invitationRows(invitations).values(),
+        "FamilyInvitation",
+        "id",
+      )
+      .sample({
+        familyId = "";
+        id = 0;
+        personId = "";
+        invitedEmail = "";
+        invitedByAccountId = "";
+        invitedByPersonId = "";
+        invitationType = "";
+        status = "";
+        createdAt = 0;
+        expiresAt = 0;
+        acceptedAt = 0;
+        acceptedByAccountId = "";
+        cancelledAt = 0;
+      })
+      .payload("familyId", func r = r.familyId)
+      .payload("id", func r = r.id)
+      .payload("personId", func r = r.personId)
+      .payload("invitedEmail", func r = r.invitedEmail)
+      .payload("invitedByAccountId", func r = r.invitedByAccountId)
+      .payload("invitedByPersonId", func r = r.invitedByPersonId)
+      .payload("invitationType", func r = r.invitationType)
+      .payload("status", func r = r.status)
+      .payload("createdAt", func r = r.createdAt)
+      .payload("expiresAt", func r = r.expiresAt)
+      .payload("acceptedAt", func r = r.acceptedAt)
+      .payload("acceptedByAccountId", func r = r.acceptedByAccountId)
+      .payload("cancelledAt", func r = r.cancelledAt)
+      .controllerOnly()
+      .build(),
+      OQL.Entity.manual<MembershipConfirmationTypes.MembershipConfirmationRow>(
+        "membershipConfirmation",
+        func() : Iter.Iter<MembershipConfirmationTypes.MembershipConfirmationRow> = MembershipConfirmationLib.confirmationRows(confirmations).values(),
+        "MembershipConfirmation",
+        "id",
+      )
+      .sample({
+        familyId = "";
+        id = 0;
+        membershipId = 0;
+        pendingPersonId = "";
+        confirmerAccountId = "";
+        confirmerPersonId = "";
+        decision = "";
+        relationshipId = 0;
+        createdAt = 0;
+        updatedAt = 0;
+      })
+      .payload("familyId", func r = r.familyId)
+      .payload("id", func r = r.id)
+      .payload("membershipId", func r = r.membershipId)
+      .payload("pendingPersonId", func r = r.pendingPersonId)
+      .payload("confirmerAccountId", func r = r.confirmerAccountId)
+      .payload("confirmerPersonId", func r = r.confirmerPersonId)
+      .payload("decision", func r = r.decision)
+      .payload("relationshipId", func r = r.relationshipId)
+      .payload("createdAt", func r = r.createdAt)
+      .payload("updatedAt", func r = r.updatedAt)
+      .controllerOnly()
+      .build(),
+      OQL.Entity.manual<MembershipConfirmationTypes.MembershipConfirmationResolutionRecord>(
+        "membershipConfirmationResolution",
+        func() : Iter.Iter<MembershipConfirmationTypes.MembershipConfirmationResolutionRecord> = stewardResolutions.values(),
+        "MembershipConfirmationResolution",
+        "membershipId",
+      )
+      .sample({
+        familyId = "";
+        membershipId = 0;
+        resolution = #Approve;
+        resolvedByAccountId = Principal.fromText("aaaaa-aa");
+        resolvedAt = 0;
+      })
+      .payload("familyId", func r = r.familyId)
+      .payload("membershipId", func r = r.membershipId)
+      .payload("resolution", func r = switch (r.resolution) {
+        case (#Approve) "Approve";
+        case (#Reject) "Reject";
+        case (#NeedsMoreInformation) "NeedsMoreInformation";
+      })
+      .payload("resolvedByAccountId", func r = r.resolvedByAccountId.toText())
+      .payload("resolvedAt", func r = r.resolvedAt)
       .controllerOnly()
       .build(),
       OQL.Entity.manual<GovernanceTypes.SuccessorDesignation>(
@@ -549,6 +742,7 @@ actor {
         "id",
       )
       .sample({
+        familyId = FamilyTypes.DEFAULT_FAMILY_ID;
         id = 0;
         personId = "";
         requestingUserId = Principal.fromText("aaaaa-aa");
@@ -558,6 +752,7 @@ actor {
         reviewedBy = null;
         reviewedDate = null;
       })
+      .payload("familyId", func r = r.familyId)
       .payload("id", func r = r.id)
       .payload("personId", func r = r.personId)
       .payload("requestingUserId", func r = r.requestingUserId.toText())
@@ -575,6 +770,7 @@ actor {
         "id",
       )
       .sample({
+        familyId = FamilyTypes.DEFAULT_FAMILY_ID;
         id = 0;
         actionType = #ClaimApproved;
         actorAccountId = Principal.fromText("aaaaa-aa");
@@ -582,6 +778,7 @@ actor {
         timestamp = 0;
         summary = "";
       })
+      .payload("familyId", func r = r.familyId)
       .payload("id", func r = r.id)
       .payload("actionType", func r = auditActionText(r.actionType))
       .payload("actorAccountId", func r = r.actorAccountId.toText())
@@ -597,6 +794,7 @@ actor {
         "id",
       )
       .sample({
+        familyId = FamilyTypes.DEFAULT_FAMILY_ID;
         id = 0;
         field = "";
         canonicalValue = "";
@@ -605,6 +803,7 @@ actor {
         resolvedBy = null;
         resolvedAt = null;
       })
+      .payload("familyId", func r = r.familyId)
       .payload("id", func r = r.id)
       .payload("field", func r = r.field)
       .payload("canonicalValue", func r = r.canonicalValue)
@@ -631,9 +830,11 @@ actor {
         "key",
       )
       .sample({
+        familyId = FamilyTypes.DEFAULT_FAMILY_ID;
         personIdA = "";
         personIdB = "";
       })
+      .payload("familyId", func r = r.familyId)
       .payload("key", func r = r.personIdA # ":" # r.personIdB)
       .payload("personIdA", func r = r.personIdA)
       .payload("personIdB", func r = r.personIdB)
@@ -1155,6 +1356,11 @@ actor {
   include ObjectStorageApi(galleries, claims, profiles, stewards);
   include ArchiveApi(archiveItems, claims, profiles, stewards, notifications, researchSources);
   include OwnershipApi(accessControlState, profiles, claims, confirmedRelationships, relationshipRequests, notifications, auditLog, stewards);
+  include FamilyMembershipApi(memberships, profiles, claims, stewards);
+  include FamilyCreationApi(families, profiles, memberships, familyCreationIdempotency, familyCreationState);
+  include FoundingStewardApi(families, foundingStewardStates, foundingStewardNominations, foundingStewardState, stewards, memberships, profiles, claims);
+  include FamilyInvitationApi(invitations, invitationState, families, profiles, claims, memberships, stewards, foundingStewardNominations);
+  include MembershipConfirmationApi(confirmations, stewardResolutions, memberships, profiles, claims, confirmedRelationships, stewards);
   include ClaimPersistenceApi(profiles, claims);
   include RelationshipsApi(relationshipRequests, confirmedRelationships);
   include NotificationsScopeApi(notifications);
@@ -1173,7 +1379,7 @@ actor {
   include RelationshipProposalScopeApi(relationshipProposals, researchSources, researchAuditLog, researchState, profiles, claims, stewards, notifications, confirmedRelationships);
   include ConflictScopeApi(conflictReviewItems, proposedFindings, researchSources, researchAuditLog, researchState, profiles, stewards);
   include ArchiveResearchBoardNotificationsApi(archiveItems, researchSources, researchState, posts, notifications, claims, profiles, stewards);
-  include AuditAndWorkloadApi(accessControlState, auditLog, researchAuditLog, conflictReviewItems, stewards);
+  include AuditAndWorkloadApi(accessControlState, auditLog, researchAuditLog, conflictReviewItems, profiles, claims, stewards);
   include StewardAuthorityApi(accessControlState, stewards, auditLog);
   include ApiDocMixin();
 };

@@ -7,11 +7,21 @@ import type {
 } from "@/backend";
 import { useFamilyScopedId } from "@/context/FamilyContext";
 import { useActor } from "@caffeineai/core-infrastructure";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  type InvalidateQueryFilters,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import {
   notificationInvalidation,
   useReconcileClaimNotifications,
 } from "./useNotifications";
+import { pendingContributionsCountInvalidation } from "./usePendingCount";
+import {
+  confirmedRelationshipsInvalidation,
+  myRelationshipRequestsInvalidation,
+} from "./useRelationshipRequests";
 
 /**
  * React Query hooks for the profile-claim and owner-editing workflows,
@@ -25,6 +35,110 @@ import {
  * behavior is preserved exactly. Callers pass the active family from
  * `useActiveFamilyId()`.
  */
+
+/**
+ * Family-aware React Query invalidation filters for the Profile Claim caches.
+ *
+ * React Query matches `invalidateQueries` by key PREFIX, so a bare
+ * `["profileClaims"]` filter would also match
+ * `["profileClaims", <otherFamily>]` and mark another family's claim cache
+ * stale. These helpers follow the exact precedent of
+ * `pendingContributionsCountInvalidation` in `usePendingCount.ts`,
+ * `notificationInvalidation` in `useNotifications.ts`, and the Board / Messaging
+ * / Research / Archive helpers: both branches are family-exact.
+ *
+ * The Profile Claim read keys carry the family id at index 1 (the default
+ * family uses `familyId ?? null`, NOT an omitted slot):
+ * `["profileClaims", familyId ?? null]`,
+ * `["personProfile", familyId ?? null, personId]`,
+ * `["myProfileClaim", familyId ?? null, personId]`, and
+ * `["myProfile", familyId ?? null]`.
+ *
+ * Because the default family's key keeps the family slot (as `null`), a bare
+ * exact-key filter would still match a non-default family's key for the same
+ * cache. The default branch therefore keeps the exact key but narrows it with a
+ * predicate that admits only the default shape (`queryKey[1] === null` plus a
+ * `queryKey.length` check), which also excludes sibling literals that share the
+ * prefix (e.g. the `["personProfile", ...]` keys are distinct from
+ * `["profileClaims", ...]`).
+ *
+ * - The default family (`familyScopedId` undefined) targets only the exact
+ *   default read key, so no non-default family's key can match.
+ * - A non-default family keeps the bare prefix (so the recorded filter shape is
+ *   unchanged) but narrows it with a predicate that admits only the active
+ *   family's keys (`queryKey[1] === familyScopedId`).
+ *
+ * The active family id is always the centralized `useFamilyScopedId()` value;
+ * no family id is hard-coded here.
+ */
+
+/** Invalidation filter for the profile-claim list / review-queue cache of the active family. */
+export function profileClaimsInvalidation(
+  familyScopedId: string | undefined,
+): InvalidateQueryFilters {
+  if (familyScopedId === undefined) {
+    return {
+      queryKey: ["profileClaims"],
+      predicate: (query) =>
+        query.queryKey.length === 2 && query.queryKey[1] === null,
+    };
+  }
+  return {
+    queryKey: ["profileClaims"],
+    predicate: (query) => query.queryKey[1] === familyScopedId,
+  };
+}
+
+/** Invalidation filter for the person-profile caches of the active family. */
+export function personProfileInvalidation(
+  familyScopedId: string | undefined,
+): InvalidateQueryFilters {
+  if (familyScopedId === undefined) {
+    return {
+      queryKey: ["personProfile"],
+      predicate: (query) =>
+        query.queryKey.length === 3 && query.queryKey[1] === null,
+    };
+  }
+  return {
+    queryKey: ["personProfile"],
+    predicate: (query) => query.queryKey[1] === familyScopedId,
+  };
+}
+
+/** Invalidation filter for the caller's own profile-claim caches of the active family. */
+export function myProfileClaimInvalidation(
+  familyScopedId: string | undefined,
+): InvalidateQueryFilters {
+  if (familyScopedId === undefined) {
+    return {
+      queryKey: ["myProfileClaim"],
+      predicate: (query) =>
+        query.queryKey.length === 3 && query.queryKey[1] === null,
+    };
+  }
+  return {
+    queryKey: ["myProfileClaim"],
+    predicate: (query) => query.queryKey[1] === familyScopedId,
+  };
+}
+
+/** Invalidation filter for the caller's own linked-profile cache of the active family. */
+export function myProfileInvalidation(
+  familyScopedId: string | undefined,
+): InvalidateQueryFilters {
+  if (familyScopedId === undefined) {
+    return {
+      queryKey: ["myProfile"],
+      predicate: (query) =>
+        query.queryKey.length === 2 && query.queryKey[1] === null,
+    };
+  }
+  return {
+    queryKey: ["myProfile"],
+    predicate: (query) => query.queryKey[1] === familyScopedId,
+  };
+}
 
 /**
  * Fetches the backend profile record for a person (living/claim status, owner).
@@ -149,22 +263,28 @@ export function useRequestProfileClaim(familyId?: string) {
         : actor.requestProfileClaim(personId);
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["profileClaims"] });
-      void queryClient.invalidateQueries({ queryKey: ["personProfile"] });
+      void queryClient.invalidateQueries(
+        profileClaimsInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        personProfileInvalidation(familyScopedId),
+      );
       // The caller's own claim and identity change the moment a claim is
       // submitted: the ClaimButton must immediately surface the pending state
       // (hiding 'This is Me' to prevent a duplicate submission) and the navbar
       // identity must resolve the newly pending profile.
-      void queryClient.invalidateQueries({ queryKey: ["myProfileClaim"] });
-      void queryClient.invalidateQueries({ queryKey: ["myProfile"] });
+      void queryClient.invalidateQueries(
+        myProfileClaimInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(myProfileInvalidation(familyScopedId));
       void queryClient.invalidateQueries(
         notificationInvalidation(familyScopedId),
       );
       // A pending claim is a steward-review action, so the Pending
       // Contributions badge and the steward aggregate badge must refresh.
-      void queryClient.invalidateQueries({
-        queryKey: ["pendingContributionsCount"],
-      });
+      void queryClient.invalidateQueries(
+        pendingContributionsCountInvalidation(familyScopedId),
+      );
     },
   });
 }
@@ -190,18 +310,24 @@ export function useApproveProfileClaim(familyId?: string) {
       void reconcile.mutateAsync(claimId).catch(() => {
         // ignore reconcile failure
       });
-      void queryClient.invalidateQueries({ queryKey: ["profileClaims"] });
-      void queryClient.invalidateQueries({ queryKey: ["personProfile"] });
-      void queryClient.invalidateQueries({ queryKey: ["myProfileClaim"] });
-      void queryClient.invalidateQueries({ queryKey: ["myProfile"] });
+      void queryClient.invalidateQueries(
+        profileClaimsInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        personProfileInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        myProfileClaimInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(myProfileInvalidation(familyScopedId));
       void queryClient.invalidateQueries(
         notificationInvalidation(familyScopedId),
       );
       // Approving/rejecting a claim removes it from the steward-review queue,
       // so the Pending Contributions badge and steward aggregate badge refresh.
-      void queryClient.invalidateQueries({
-        queryKey: ["pendingContributionsCount"],
-      });
+      void queryClient.invalidateQueries(
+        pendingContributionsCountInvalidation(familyScopedId),
+      );
     },
   });
 }
@@ -219,18 +345,24 @@ export function useRejectProfileClaim(familyId?: string) {
         : actor.rejectProfileClaim(claimId);
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["profileClaims"] });
-      void queryClient.invalidateQueries({ queryKey: ["personProfile"] });
-      void queryClient.invalidateQueries({ queryKey: ["myProfileClaim"] });
-      void queryClient.invalidateQueries({ queryKey: ["myProfile"] });
+      void queryClient.invalidateQueries(
+        profileClaimsInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        personProfileInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        myProfileClaimInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(myProfileInvalidation(familyScopedId));
       void queryClient.invalidateQueries(
         notificationInvalidation(familyScopedId),
       );
       // Approving/rejecting a claim removes it from the steward-review queue,
       // so the Pending Contributions badge and steward aggregate badge refresh.
-      void queryClient.invalidateQueries({
-        queryKey: ["pendingContributionsCount"],
-      });
+      void queryClient.invalidateQueries(
+        pendingContributionsCountInvalidation(familyScopedId),
+      );
     },
   });
 }
@@ -257,6 +389,7 @@ export function useSearchPossibleMatches(familyId?: string) {
  * proposed connection is confirmed.
  */
 export function useCreateMyself(familyId?: string) {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
@@ -267,7 +400,9 @@ export function useCreateMyself(familyId?: string) {
         : actor.createMyself(name);
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["personProfile"] });
+      void queryClient.invalidateQueries(
+        personProfileInvalidation(familyScopedId),
+      );
     },
   });
 }
@@ -284,6 +419,7 @@ export function useCreateMyself(familyId?: string) {
  * (photos / profilePhoto).
  */
 export function useUpdateOwnProfile(familyId?: string) {
+  const familyScopedId = useFamilyScopedId();
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
@@ -300,22 +436,28 @@ export function useUpdateOwnProfile(familyId?: string) {
         : actor.updateOwnProfile(personId, edits);
     },
     onSuccess: (_data, variables) => {
-      void queryClient.invalidateQueries({
-        queryKey: ["personProfile"],
-      });
+      void queryClient.invalidateQueries(
+        personProfileInvalidation(familyScopedId),
+      );
       // The navbar identity resolves from myProfile (preferredName || name),
       // so a display-name edit must refresh it immediately.
-      void queryClient.invalidateQueries({ queryKey: ["myProfile"] });
-      void queryClient.invalidateQueries({ queryKey: ["myProfileClaim"] });
-      void queryClient.invalidateQueries({ queryKey: ["profileClaims"] });
+      void queryClient.invalidateQueries(myProfileInvalidation(familyScopedId));
+      void queryClient.invalidateQueries(
+        myProfileClaimInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        profileClaimsInvalidation(familyScopedId),
+      );
       // Shared family data and photo state are consumed across the profile,
-      // Explore Family, Family Tree, and Heritage views.
-      void queryClient.invalidateQueries({
-        queryKey: ["confirmedRelationships"],
-      });
-      void queryClient.invalidateQueries({
-        queryKey: ["myRelationshipRequests"],
-      });
+      // Explore Family, Family Tree, and Heritage views. Route through the
+      // family-exact helpers so a saved edit never marks another family's
+      // relationship caches stale.
+      void queryClient.invalidateQueries(
+        confirmedRelationshipsInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        myRelationshipRequestsInvalidation(familyScopedId),
+      );
       // Invalidate the exact scoped photo keys for the edited person so the
       // gallery and profile-photo surfaces refresh without over-invalidating
       // every family/person entry. The default family keeps the legacy

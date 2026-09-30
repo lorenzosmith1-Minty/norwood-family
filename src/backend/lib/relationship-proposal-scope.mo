@@ -111,7 +111,7 @@ module {
   /// differs is never touched, so a `proposalId` alone cannot cross a family
   /// boundary. Returns the updated proposal, or `null` when no pending proposal
   /// with that id belongs to `familyId`.
-  func transitionForFamily(
+  public func transitionForFamily(
     proposals : List.List<Types.RelationshipProposal>,
     familyId : Text,
     id : Nat,

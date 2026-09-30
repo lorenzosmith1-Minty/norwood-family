@@ -11,7 +11,12 @@ import type {
 } from "@/types/messaging";
 import { useActor } from "@caffeineai/core-infrastructure";
 import type { Principal } from "@icp-sdk/core/principal";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  type InvalidateQueryFilters,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { notificationInvalidation } from "./useNotifications";
 
 /**
@@ -27,9 +32,145 @@ import { notificationInvalidation } from "./useNotifications";
  * The default family keeps the exact legacy no-argument call shape and React
  * Query key, while a non-default family routes to the canonical `*ForFamily`
  * endpoint with the familyId included in the key so caches never collide
- * across families. Mutations invalidate the legacy query-key prefix, which
- * matches both branches.
+ * across families. Mutations invalidate through the family-exact helpers below.
  */
+
+/**
+ * Family-aware React Query invalidation filters for the Messaging caches.
+ *
+ * React Query matches `invalidateQueries` by key PREFIX, so a bare
+ * `["messaging", "conversations"]` filter would also match
+ * `["messaging", "conversations", <otherFamily>]` and mark another family's
+ * Messaging cache stale. These helpers follow the exact precedent of
+ * `boardPostListsInvalidation` in `useBoard.ts`, `researchSourcesInvalidation`
+ * in `useResearchIntake.ts`, and `pendingContributionsCountInvalidation` in
+ * `usePendingCount.ts`: both branches are family-exact.
+ *
+ * The Messaging read keys carry the family id at the LAST index:
+ * `["messaging", "conversations"]` /
+ * `["messaging", "conversations", familyScopedId]`,
+ * `["messaging", "conversation", id]` /
+ * `["messaging", "conversation", id, familyScopedId]`,
+ * `["messaging", "blocked"]` / `["messaging", "blocked", familyScopedId]`,
+ * `["messaging", "reports"]` / `["messaging", "reports", familyScopedId]`, and
+ * `["messaging", "reports", reportId]` /
+ * `["messaging", "reports", reportId, familyScopedId]`.
+ *
+ * The default family's read key omits the family slot entirely, which is a
+ * PREFIX of every non-default key for the same cache. A bare exact-key filter
+ * would therefore still mark another family's cache stale, so the default
+ * branch keeps the exact key but narrows it with a predicate that admits only
+ * the default shape (a `queryKey.length` check). This mirrors the
+ * `boardPostListsInvalidation` default branch in `useBoard.ts`.
+ *
+ * - The default family (`familyScopedId` undefined) targets only the exact
+ *   default read key, so no non-default family's key can match.
+ * - A non-default family keeps the bare prefix (so the recorded filter shape is
+ *   unchanged) but narrows it with a predicate that admits only the active
+ *   family's keys.
+ *
+ * The active family id is always the centralized `useFamilyScopedId()` value;
+ * no family id is hard-coded here.
+ */
+
+/** Invalidation filter for the conversation-list caches of the active family. */
+export function conversationListsInvalidation(
+  familyScopedId: string | undefined,
+): InvalidateQueryFilters {
+  if (familyScopedId === undefined) {
+    return {
+      queryKey: ["messaging", "conversations"],
+      predicate: (query) => query.queryKey.length === 2,
+    };
+  }
+  return {
+    queryKey: ["messaging", "conversations"],
+    predicate: (query) =>
+      query.queryKey.length === 3 && query.queryKey[2] === familyScopedId,
+  };
+}
+
+/** Invalidation filter for the single conversation-detail caches of the active family. */
+export function conversationDetailInvalidation(
+  familyScopedId: string | undefined,
+): InvalidateQueryFilters {
+  if (familyScopedId === undefined) {
+    return {
+      queryKey: ["messaging", "conversation"],
+      predicate: (query) => query.queryKey.length === 3,
+    };
+  }
+  return {
+    queryKey: ["messaging", "conversation"],
+    predicate: (query) =>
+      query.queryKey.length === 4 && query.queryKey[3] === familyScopedId,
+  };
+}
+
+/** Invalidation filter for the blocked-participant caches of the active family. */
+export function blockedUsersInvalidation(
+  familyScopedId: string | undefined,
+): InvalidateQueryFilters {
+  if (familyScopedId === undefined) {
+    return {
+      queryKey: ["messaging", "blocked"],
+      predicate: (query) => query.queryKey.length === 2,
+    };
+  }
+  return {
+    queryKey: ["messaging", "blocked"],
+    predicate: (query) =>
+      query.queryKey.length === 3 && query.queryKey[2] === familyScopedId,
+  };
+}
+
+/**
+ * Invalidation filter for the report caches of the active family.
+ *
+ * The `["messaging", "reports"]` prefix also matches the report-detail keys
+ * (`["messaging", "reports", reportId]` / `[..., familyScopedId]`), so the
+ * predicate admits both the list shape (family at index 2) and the detail shape
+ * (family at index 3) for the active family.
+ *
+ * The default family's list key is `["messaging", "reports"]` (length 2) and
+ * its detail key is `["messaging", "reports", reportId]` (length 3). A
+ * non-default family's list key is ALSO length 3
+ * (`["messaging", "reports", familyScopedId]`), so a bare `length === 3` check
+ * would mark another family's report list stale. The default branch therefore
+ * admits a length-3 key only when index 2 is a report-id token (the digits of a
+ * `bigint` report id, or the `"all"` placeholder used when no report is
+ * selected) — never a family id, which is always a slug.
+ */
+export function reportsInvalidation(
+  familyScopedId: string | undefined,
+): InvalidateQueryFilters {
+  if (familyScopedId === undefined) {
+    return {
+      queryKey: ["messaging", "reports"],
+      predicate: (query) =>
+        query.queryKey.length === 2 ||
+        (query.queryKey.length === 3 && isReportIdToken(query.queryKey[2])),
+    };
+  }
+  return {
+    queryKey: ["messaging", "reports"],
+    predicate: (query) =>
+      (query.queryKey.length === 3 && query.queryKey[2] === familyScopedId) ||
+      (query.queryKey.length === 4 && query.queryKey[3] === familyScopedId),
+  };
+}
+
+/**
+ * Whether a report-cache key segment is a report-id token rather than a family
+ * id. `useGetReportedMessage` builds the detail key from
+ * `reportId?.toString() ?? "all"`, so a valid token is either the `"all"`
+ * placeholder or the decimal digits of a `bigint` report id. Family ids are
+ * slugs, so this distinguishes the default detail shape from a non-default
+ * family's list shape without hard-coding any family id.
+ */
+function isReportIdToken(value: unknown): boolean {
+  return value === "all" || (typeof value === "string" && /^\d+$/u.test(value));
+}
 
 /** Lists the signed-in user's 1:1 conversations, newest activity first. */
 export function useListConversations() {
@@ -137,12 +278,12 @@ export function useSendMessage() {
           );
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({
-        queryKey: ["messaging", "conversations"],
-      });
-      void queryClient.invalidateQueries({
-        queryKey: ["messaging", "conversation"],
-      });
+      void queryClient.invalidateQueries(
+        conversationListsInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        conversationDetailInvalidation(familyScopedId),
+      );
       // A sent message notifies the recipient, so the unread badge must refresh.
       void queryClient.invalidateQueries(
         notificationInvalidation(familyScopedId),
@@ -164,12 +305,12 @@ export function useMarkConversationRead() {
         : actor.markConversationReadForFamily(familyScopedId, conversationId);
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({
-        queryKey: ["messaging", "conversations"],
-      });
-      void queryClient.invalidateQueries({
-        queryKey: ["messaging", "conversation"],
-      });
+      void queryClient.invalidateQueries(
+        conversationListsInvalidation(familyScopedId),
+      );
+      void queryClient.invalidateQueries(
+        conversationDetailInvalidation(familyScopedId),
+      );
     },
   });
 }
@@ -187,9 +328,9 @@ export function useBlockUser() {
         : actor.blockUserForFamily(familyScopedId, blockedAccountId);
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({
-        queryKey: ["messaging", "blocked"],
-      });
+      void queryClient.invalidateQueries(
+        blockedUsersInvalidation(familyScopedId),
+      );
     },
   });
 }
@@ -207,9 +348,9 @@ export function useUnblockUser() {
         : actor.unblockUserForFamily(familyScopedId, blockedAccountId);
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({
-        queryKey: ["messaging", "blocked"],
-      });
+      void queryClient.invalidateQueries(
+        blockedUsersInvalidation(familyScopedId),
+      );
     },
   });
 }
@@ -250,9 +391,7 @@ export function useReportMessage() {
           );
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({
-        queryKey: ["messaging", "reports"],
-      });
+      void queryClient.invalidateQueries(reportsInvalidation(familyScopedId));
       // Filing a report notifies the stewards, so the unread badge must refresh.
       void queryClient.invalidateQueries(
         notificationInvalidation(familyScopedId),
@@ -321,9 +460,7 @@ export function useReviewReport() {
           );
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({
-        queryKey: ["messaging", "reports"],
-      });
+      void queryClient.invalidateQueries(reportsInvalidation(familyScopedId));
       // Reviewing a report notifies the reporter, so the unread badge must
       // refresh.
       void queryClient.invalidateQueries(

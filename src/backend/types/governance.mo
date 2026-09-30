@@ -19,6 +19,13 @@ module {
 
   /// Governance record for a Family Steward account. `successorPriority` is the
   /// priority/order of the steward's own designated successor, if any.
+  ///
+  /// `founding` marks a StewardRecord created by the founding-Steward onboarding
+  /// flow (Onboarding Phase 1B-2) rather than by ordinary promotion/succession.
+  /// It is a role CONTEXT flag only: it never changes authority, and a founding
+  /// Steward is a full active Steward exactly like any other. It exists so the
+  /// onboarding flow can distinguish the founder's temporary founding record
+  /// from a later full Steward record. Existing records default to `false`.
   public type StewardRecord = {
     familyId : Text;
     stewardAccountId : Principal;
@@ -26,6 +33,7 @@ module {
     successorPriority : ?Nat;
     assignedBy : Principal;
     assignedAt : Int;
+    founding : Bool;
   };
 
   /// Lifecycle of a successor designation. A successor is a designation only —
@@ -72,7 +80,11 @@ module {
 
   /// A request by a claimed living profile owner to have their profile removed.
   /// A Family Steward reviews the request; removal is never automatic.
+  /// `familyId` is the tenant boundary for the request: the target profile must
+  /// belong to that family and only a Steward of that family may review it, so a
+  /// request id alone never crosses a family boundary.
   public type ProfileRemovalRequest = {
+    familyId : Text;
     id : Nat;
     personId : PersonId;
     requestingUserId : Principal;
@@ -109,8 +121,11 @@ module {
   };
 
   /// A single governance audit log entry. Audit History is strictly
-  /// steward-only.
+  /// steward-only. `familyId` is the tenant boundary for the entry: every
+  /// governance action stamps the family it acted on, so a family-scoped audit
+  /// read never returns another family's entries.
   public type AuditEntry = {
+    familyId : Text;
     id : Nat;
     actionType : AuditActionType;
     actorAccountId : Principal;
@@ -127,7 +142,10 @@ module {
 
   /// A conflicting field value discovered during a duplicate-profile merge.
   /// Both values are preserved; a steward chooses the canonical display value.
+  /// `familyId` is the tenant boundary for the conflict: it is stamped from the
+  /// merge's family, so a conflict id alone never crosses a family boundary.
   public type MergeConflict = {
+    familyId : Text;
     id : Nat;
     field : Text;
     canonicalValue : Text;
@@ -161,8 +179,11 @@ module {
   };
 
   /// A pair of Person records dismissed as "Not a duplicate" by a steward, so
-  /// the pair does not reappear in the duplicate review list.
+  /// the pair does not reappear in the duplicate review list. `familyId` is the
+  /// tenant boundary for the dismissal: a dismissal in one family never hides a
+  /// duplicate candidate in another.
   public type DismissedPair = {
+    familyId : Text;
     personIdA : PersonId;
     personIdB : PersonId;
   };

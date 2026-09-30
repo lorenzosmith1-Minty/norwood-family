@@ -48,6 +48,31 @@ module {
     confirmed.toArray().filter(func r = relationshipBelongsToFamily(r, familyId));
   };
 
+  /// Returns the confirmed relationship between `personA` and `personB` within
+  /// `familyId` only, or `null` when no such confirmed relationship exists.
+  ///
+  /// The match is direction-agnostic (either person may be `fromPersonId` or
+  /// `toPersonId`) and uses only the simple `RelationshipType`
+  /// (Parent/Child, Sibling, SpousePartner). It never inspects sensitive
+  /// relationship context. A relationship carrying a different family id is
+  /// never returned, so a relationship in another family can never satisfy a
+  /// confirmation here.
+  public func findConfirmedRelationshipBetween(
+    confirmed : List.List<Types.Relationship>,
+    familyId : FamilyTypes.FamilyId,
+    personA : Types.PersonId,
+    personB : Types.PersonId,
+  ) : ?Types.Relationship {
+    confirmed.find(func r =
+      relationshipBelongsToFamily(r, familyId)
+      and r.status == #Confirmed
+      and (
+        (r.fromPersonId == personA and r.toPersonId == personB)
+        or (r.fromPersonId == personB and r.toPersonId == personA)
+      )
+    );
+  };
+
   /// TEMPORARY Tenancy 1C compatibility wrapper for
   /// `getRelationshipRequestForFamily`.
   public func getRelationshipRequest(

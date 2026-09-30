@@ -219,6 +219,7 @@ module {
       now,
     );
     auditLog.add({
+      familyId;
       id = nextAuditId(auditLog);
       actionType = #ClaimApproved;
       actorAccountId = reviewer;
@@ -267,6 +268,7 @@ module {
       now,
     );
     auditLog.add({
+      familyId;
       id = nextAuditId(auditLog);
       actionType = #ClaimRejected;
       actorAccountId = reviewer;
@@ -515,6 +517,7 @@ module {
       now,
     );
     auditLog.add({
+      familyId;
       id = nextAuditId(auditLog);
       actionType = #RelationshipRequestApproved;
       actorAccountId = reviewer;
@@ -565,6 +568,7 @@ module {
       now,
     );
     auditLog.add({
+      familyId;
       id = nextAuditId(auditLog);
       actionType = #RelationshipRequestRejected;
       actorAccountId = reviewer;
@@ -603,6 +607,7 @@ module {
     };
     replaceRelationshipRequest(requests, updatedRequest);
     auditLog.add({
+      familyId;
       id = nextAuditId(auditLog);
       actionType = #RelationshipRequestPending;
       actorAccountId = reviewer;

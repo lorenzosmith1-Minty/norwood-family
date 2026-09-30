@@ -69,9 +69,9 @@ const { mockActor, calls, resetCalls } = vi.hoisted(() => {
     // non-default branch never falls back to them.
     listNotifications: unknown[][];
     markNotificationRead: unknown[][];
-    // Reconcile has no family-scoped variant; it is recorded so the cover can
-    // prove it is still called with the claim id alone.
     reconcileClaimNotifications: unknown[][];
+    // Canonical family-scoped reconcile endpoint.
+    reconcileClaimNotificationsForFamily: unknown[][];
     // Profile-claim mutations whose success invalidates the Notification cache.
     approveProfileClaimForFamily: unknown[][];
     rejectProfileClaimForFamily: unknown[][];
@@ -82,6 +82,7 @@ const { mockActor, calls, resetCalls } = vi.hoisted(() => {
     listNotifications: [],
     markNotificationRead: [],
     reconcileClaimNotifications: [],
+    reconcileClaimNotificationsForFamily: [],
     approveProfileClaimForFamily: [],
     rejectProfileClaimForFamily: [],
   };
@@ -117,6 +118,12 @@ const { mockActor, calls, resetCalls } = vi.hoisted(() => {
     },
     async reconcileClaimNotifications(...args: unknown[]): Promise<bigint> {
       calls.reconcileClaimNotifications.push(args);
+      return 1n;
+    },
+    async reconcileClaimNotificationsForFamily(
+      ...args: unknown[]
+    ): Promise<bigint> {
+      calls.reconcileClaimNotificationsForFamily.push(args);
       return 1n;
     },
     async approveProfileClaimForFamily(...args: unknown[]): Promise<unknown> {
@@ -221,16 +228,20 @@ describe("Notification hooks: non-default family routes to *ForFamily (cover)", 
     expect(calls.listNotifications).toEqual([]);
   });
 
-  it("useReconcileClaimNotifications keeps the claim-id-only call shape", async () => {
+  it("useReconcileClaimNotifications calls reconcileClaimNotificationsForFamily(familyId, claimId) with the familyId first", async () => {
     const { result } = renderHook(() => useReconcileClaimNotifications(), {
       wrapper,
     });
 
     await result.current.mutateAsync(11n);
 
-    // Reconcile has no family-scoped variant: it is still called with the claim
-    // id alone, and the family separation lives in the invalidation filter.
-    expect(calls.reconcileClaimNotifications).toEqual([[11n]]);
+    // The non-default branch routes to the canonical family-scoped endpoint so
+    // the claim is located within the active family; the claim id alone is
+    // never sent across the family boundary.
+    expect(calls.reconcileClaimNotificationsForFamily).toEqual([
+      [FAMILY_A, 11n],
+    ]);
+    expect(calls.reconcileClaimNotifications).toEqual([]);
     expectNoLegacyNotificationCalls();
   });
 });

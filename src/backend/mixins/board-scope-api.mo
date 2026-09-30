@@ -239,7 +239,7 @@ mixin (
           Runtime.trap("Unauthorized: Only the post author or a Family Steward can archive this post");
         };
         let updated = BoardScopeLib.archivePostForFamily(posts, familyId, postId);
-        appendBoardAudit(#BoardPostArchived, caller, [post.authorPersonId], "Archived board post " # boardPostIdText(postId));
+        appendBoardAudit(familyId, #BoardPostArchived, caller, [post.authorPersonId], "Archived board post " # boardPostIdText(postId));
         updated;
       };
     };
@@ -269,7 +269,7 @@ mixin (
       case null { null };
       case (?post) {
         let updated = BoardScopeLib.restorePostForFamily(posts, familyId, postId);
-        appendBoardAudit(#BoardPostRestored, caller, [post.authorPersonId], "Restored board post " # boardPostIdText(postId));
+        appendBoardAudit(familyId, #BoardPostRestored, caller, [post.authorPersonId], "Restored board post " # boardPostIdText(postId));
         updated;
       };
     };
@@ -342,7 +342,7 @@ mixin (
       case null { null };
       case (?reply) {
         let removed = BoardScopeLib.removeReplyForFamily(replies, familyId, replyId);
-        appendBoardAudit(#BoardReplyRemoved, caller, [reply.authorPersonId], "Removed board reply " # boardReplyIdText(replyId));
+        appendBoardAudit(familyId, #BoardReplyRemoved, caller, [reply.authorPersonId], "Removed board reply " # boardReplyIdText(replyId));
         removed;
       };
     };
@@ -511,8 +511,9 @@ mixin (
     ignore NotificationsScopeLib.createForFamily(notifications, familyId, recipient, notificationType, message, Time.now());
   };
 
-  func appendBoardAudit(actionType : GovernanceTypes.AuditActionType, actorId : Principal, affectedPersonIds : [Text], summary : Text) {
+  func appendBoardAudit(familyId : FamilyTypes.FamilyId, actionType : GovernanceTypes.AuditActionType, actorId : Principal, affectedPersonIds : [Text], summary : Text) {
     auditLog.add({
+      familyId;
       id = boardNextId(auditLog.toArray().map(func e = e.id));
       actionType;
       actorAccountId = actorId;

@@ -509,7 +509,9 @@ describe("Mystery mutations under the default-family provider: cache invalidatio
       "contributions",
       "pending",
     ]);
-    expect(keys).toContainEqual(["pendingContributionsCount"]);
+    // The default-family branch is family-exact: it targets the exact read key
+    // ["pendingContributionsCount", ""], not a bare prefix.
+    expect(keys).toContainEqual(["pendingContributionsCount", ""]);
   });
 
   it("useReviewMysteryContribution invalidates the pending contributions, mysteries, pendingContributionsCount, and notifications keys", async () => {
@@ -527,7 +529,9 @@ describe("Mystery mutations under the default-family provider: cache invalidatio
       "pending",
     ]);
     expect(keys).toContainEqual(["familyHistory", "mysteries"]);
-    expect(keys).toContainEqual(["pendingContributionsCount"]);
+    // The default-family branch is family-exact: it targets the exact read key
+    // ["pendingContributionsCount", ""], not a bare prefix.
+    expect(keys).toContainEqual(["pendingContributionsCount", ""]);
     expect(keys).toContainEqual(["notifications"]);
   });
 

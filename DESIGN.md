@@ -57,5 +57,18 @@ Mobile-first single column (`max-w-2xl` centered), `px-4` gutters; gated panel `
 - No-access states are privacy gating, not error pages; never show the family graph to guests without approved access
 - Draft vs Saved is explicit and local-first; a stale local Draft is cleared after a successful backend save
 - Archive privacy (Public / FamilyOnly / Private) is enforced server-side; the badge is an indicator, not the enforcement
+## Invitation Redemption
+- Direction: a calm, centered welcome card on warm paper — one card, one decision. The invite flow extends the existing Norwood identity; no other surface is restyled.
+- Palette additions (light / dark): `invite-surface` 0.985 0.015 70 / 0.2 0.02 55 (lifted paper card); `invite-crest` 0.42 0.11 35 / 0.72 0.14 60 (sepia crest ink); `invite-pending` 0.55 0.09 60 / 0.72 0.14 60 (dusty bronze in-flight); `invite-notice` 0.95 0.02 72 / 0.21 0.02 55 (terminal plate); outcome dots `invite-notice-success` 0.55 0.12 150 / 0.6 0.15 150, `invite-notice-expired` 0.7 0.13 80 / 0.72 0.13 80, `invite-notice-cancelled` 0.5 0.03 45 / 0.7 0.1 55, `invite-notice-declined` 0.5 0.2 25 / 0.55 0.2 25.
+- Typography: reuse Fraunces display for `invite-title` / `invite-notice-title` (`font-display text-xl`); General Sans for hints, detail labels (`text-xs uppercase tracking-[0.14em]`), and values (`text-sm font-semibold`); Geist Mono only if an expiry timestamp is shown.
+- Preview screen: `.invite-screen` centered column (`max-w-md`, `px-4`, `py-10`) → `.invite-card` (rounded-2xl lifted paper plate) → `.invite-crest` roundel → `.invite-title` / `.invite-hint` → `.invite-rule` short bronze rule → `.invite-details` label/value rows (family display name, invitation type, expiry) → `.invite-type-badge` sepia dot-pill → `.invite-actions`.
+- Privacy: preview shows only family display name, target profile safe display name, invitation type, and expiry/status. Never adopted/foster/step/biological/guardian or any relationship context; never the tree, Archive, member list, or Steward data.
+- Sign-in-required: `.invite-gate` dashed quiet plate below the preview ("Sign in to accept") that reuses the existing `.signin-btn` / `.signin-google` / `.signin-apple` provider buttons.
+- Authenticated accept/decline: `.invite-accept` (sepia primary pill, full-width) and `.invite-decline` (quiet outline pill that warms to terracotta on hover). Both `min-h-[48px]`.
+- Pending: `.invite-pending` bronze dot-pill with a gentle `invite-pulse` breathing dot while an action is in flight — calm, never alarming.
+- Terminal states: one `.invite-notice` plate for every outcome (Valid/Accepted, Expired, Cancelled, Declined, AlreadyAccepted, AlreadyMember, ClaimedUnavailable, Conflict, InvalidToken) with `.invite-notice-mark` + `.invite-notice-title` + `.invite-notice-hint` + an `.invite-status` dot-pill whose color encodes the outcome family.
+- Motion: `invite-in` (0.35s rise + fade, matches the existing `fold-in` cadence) on card / gate / notice; `invite-pulse` only on the pending dot.
+- Constraints: token-only styling, mobile-first, min 44px targets with visible focus rings; do NOT redesign Home, tree, archive, or navigation; no email sending, resend UI, family search/selector, relative confirmation, or onboarding pages beyond this flow.
+
 ## Signature Detail
 The family-archive language extended to privacy: a locked warm plate for gated family-graph pages, a three-state ink note for Draft vs Saved, and a dot-pill privacy label — tying access, editing, and archive privacy into the same warm Norwood identity without disturbing existing UI.

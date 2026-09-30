@@ -9,6 +9,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { notificationInvalidation } from "./useNotifications";
+import { pendingContributionsCountInvalidation } from "./usePendingCount";
 import { useProvidersPresent } from "./usePhotoStorage";
 
 export { useProvidersPresent };
@@ -200,9 +201,9 @@ export function useSubmitRecipe() {
       void queryClient.invalidateQueries(
         recipeListInvalidation("pending", familyScopedId),
       );
-      void queryClient.invalidateQueries({
-        queryKey: ["pendingContributionsCount"],
-      });
+      void queryClient.invalidateQueries(
+        pendingContributionsCountInvalidation(familyScopedId),
+      );
     },
   });
 }
@@ -226,9 +227,9 @@ export function useApproveRecipe() {
       void queryClient.invalidateQueries(
         recipeListInvalidation("approved", familyScopedId),
       );
-      void queryClient.invalidateQueries({
-        queryKey: ["pendingContributionsCount"],
-      });
+      void queryClient.invalidateQueries(
+        pendingContributionsCountInvalidation(familyScopedId),
+      );
       // Approval notifies the contributor, so the unread badge must refresh.
       void queryClient.invalidateQueries(
         notificationInvalidation(familyScopedId),
@@ -253,9 +254,9 @@ export function useRejectRecipe() {
       void queryClient.invalidateQueries(
         recipeListInvalidation("pending", familyScopedId),
       );
-      void queryClient.invalidateQueries({
-        queryKey: ["pendingContributionsCount"],
-      });
+      void queryClient.invalidateQueries(
+        pendingContributionsCountInvalidation(familyScopedId),
+      );
       // Rejection notifies the contributor, so the unread badge must refresh.
       void queryClient.invalidateQueries(
         notificationInvalidation(familyScopedId),

@@ -319,6 +319,7 @@ function governanceAuditEntry(
     affectedPersonIds: ["julia"],
     timestamp: 1_700_000_000_000_000_000n,
     actorAccountId: STEWARD,
+    familyId: "norwood",
   };
 }
 

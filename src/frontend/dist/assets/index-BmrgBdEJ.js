@@ -33297,14 +33297,26 @@ const createLucideIcon = (iconName, iconNode) => {
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$1p = [
+const __iconNode$1q = [
   ["rect", { width: "20", height: "5", x: "2", y: "3", rx: "1", key: "1wp1u1" }],
   ["path", { d: "M4 8v11a2 2 0 0 0 2 2h2", key: "tvwodi" }],
   ["path", { d: "M20 8v11a2 2 0 0 1-2 2h-2", key: "1gkqxj" }],
   ["path", { d: "m9 15 3-3 3 3", key: "1pd0qc" }],
   ["path", { d: "M12 12v9", key: "192myk" }]
 ];
-const ArchiveRestore = createLucideIcon("archive-restore", __iconNode$1p);
+const ArchiveRestore = createLucideIcon("archive-restore", __iconNode$1q);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$1p = [
+  ["rect", { width: "20", height: "5", x: "2", y: "3", rx: "1", key: "1wp1u1" }],
+  ["path", { d: "M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8", key: "1s80jp" }],
+  ["path", { d: "M10 12h4", key: "a56b0p" }]
+];
+const Archive = createLucideIcon("archive", __iconNode$1p);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33312,11 +33324,10 @@ const ArchiveRestore = createLucideIcon("archive-restore", __iconNode$1p);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$1o = [
-  ["rect", { width: "20", height: "5", x: "2", y: "3", rx: "1", key: "1wp1u1" }],
-  ["path", { d: "M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8", key: "1s80jp" }],
-  ["path", { d: "M10 12h4", key: "a56b0p" }]
+  ["path", { d: "m12 19-7-7 7-7", key: "1l729n" }],
+  ["path", { d: "M19 12H5", key: "x3x0zl" }]
 ];
-const Archive = createLucideIcon("archive", __iconNode$1o);
+const ArrowLeft = createLucideIcon("arrow-left", __iconNode$1o);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33324,10 +33335,10 @@ const Archive = createLucideIcon("archive", __iconNode$1o);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$1n = [
-  ["path", { d: "m12 19-7-7 7-7", key: "1l729n" }],
-  ["path", { d: "M19 12H5", key: "x3x0zl" }]
+  ["path", { d: "M5 12h14", key: "1ays0h" }],
+  ["path", { d: "m12 5 7 7-7 7", key: "xquz4c" }]
 ];
-const ArrowLeft = createLucideIcon("arrow-left", __iconNode$1n);
+const ArrowRight = createLucideIcon("arrow-right", __iconNode$1n);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33335,17 +33346,6 @@ const ArrowLeft = createLucideIcon("arrow-left", __iconNode$1n);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$1m = [
-  ["path", { d: "M5 12h14", key: "1ays0h" }],
-  ["path", { d: "m12 5 7 7-7 7", key: "xquz4c" }]
-];
-const ArrowRight = createLucideIcon("arrow-right", __iconNode$1m);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$1l = [
   ["path", { d: "M2 10v3", key: "1fnikh" }],
   ["path", { d: "M6 6v11", key: "11sgs0" }],
   ["path", { d: "M10 3v18", key: "yhl04a" }],
@@ -33353,7 +33353,18 @@ const __iconNode$1l = [
   ["path", { d: "M18 5v13", key: "123xd1" }],
   ["path", { d: "M22 10v3", key: "154ddg" }]
 ];
-const AudioLines = createLucideIcon("audio-lines", __iconNode$1l);
+const AudioLines = createLucideIcon("audio-lines", __iconNode$1m);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$1l = [
+  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
+  ["path", { d: "m4.9 4.9 14.2 14.2", key: "1m5liu" }]
+];
+const Ban = createLucideIcon("ban", __iconNode$1l);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33361,17 +33372,6 @@ const AudioLines = createLucideIcon("audio-lines", __iconNode$1l);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$1k = [
-  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["path", { d: "m4.9 4.9 14.2 14.2", key: "1m5liu" }]
-];
-const Ban = createLucideIcon("ban", __iconNode$1k);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$1j = [
   ["path", { d: "M10.268 21a2 2 0 0 0 3.464 0", key: "vwvbt9" }],
   [
     "path",
@@ -33381,14 +33381,14 @@ const __iconNode$1j = [
     }
   ]
 ];
-const Bell = createLucideIcon("bell", __iconNode$1j);
+const Bell = createLucideIcon("bell", __iconNode$1k);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$1i = [
+const __iconNode$1j = [
   ["path", { d: "M12 7v14", key: "1akyts" }],
   [
     "path",
@@ -33398,7 +33398,18 @@ const __iconNode$1i = [
     }
   ]
 ];
-const BookOpen = createLucideIcon("book-open", __iconNode$1i);
+const BookOpen = createLucideIcon("book-open", __iconNode$1j);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$1i = [
+  ["path", { d: "M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16", key: "jecpp" }],
+  ["rect", { width: "20", height: "14", x: "2", y: "6", rx: "2", key: "i6l2r4" }]
+];
+const Briefcase = createLucideIcon("briefcase", __iconNode$1i);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33406,17 +33417,6 @@ const BookOpen = createLucideIcon("book-open", __iconNode$1i);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$1h = [
-  ["path", { d: "M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16", key: "jecpp" }],
-  ["rect", { width: "20", height: "14", x: "2", y: "6", rx: "2", key: "i6l2r4" }]
-];
-const Briefcase = createLucideIcon("briefcase", __iconNode$1h);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$1g = [
   ["path", { d: "M8 2v4", key: "1cmpym" }],
   ["path", { d: "M16 2v4", key: "4m81vk" }],
   ["rect", { width: "18", height: "18", x: "3", y: "4", rx: "2", key: "1hopcy" }],
@@ -33428,14 +33428,14 @@ const __iconNode$1g = [
   ["path", { d: "M12 18h.01", key: "mhygvu" }],
   ["path", { d: "M16 18h.01", key: "kzsmim" }]
 ];
-const CalendarDays = createLucideIcon("calendar-days", __iconNode$1g);
+const CalendarDays = createLucideIcon("calendar-days", __iconNode$1h);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$1f = [
+const __iconNode$1g = [
   [
     "path",
     {
@@ -33445,22 +33445,22 @@ const __iconNode$1f = [
   ],
   ["circle", { cx: "12", cy: "13", r: "3", key: "1vg3eu" }]
 ];
-const Camera = createLucideIcon("camera", __iconNode$1f);
+const Camera = createLucideIcon("camera", __iconNode$1g);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$1e = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
-const Check = createLucideIcon("check", __iconNode$1e);
+const __iconNode$1f = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
+const Check = createLucideIcon("check", __iconNode$1f);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$1d = [
+const __iconNode$1e = [
   [
     "path",
     {
@@ -33470,23 +33470,34 @@ const __iconNode$1d = [
   ],
   ["path", { d: "M6 17h12", key: "1jwigz" }]
 ];
-const ChefHat = createLucideIcon("chef-hat", __iconNode$1d);
+const ChefHat = createLucideIcon("chef-hat", __iconNode$1e);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$1c = [["path", { d: "m6 9 6 6 6-6", key: "qrunsl" }]];
-const ChevronDown = createLucideIcon("chevron-down", __iconNode$1c);
+const __iconNode$1d = [["path", { d: "m6 9 6 6 6-6", key: "qrunsl" }]];
+const ChevronDown = createLucideIcon("chevron-down", __iconNode$1d);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$1b = [["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]];
-const ChevronRight = createLucideIcon("chevron-right", __iconNode$1b);
+const __iconNode$1c = [["path", { d: "m9 18 6-6-6-6", key: "mthhwq" }]];
+const ChevronRight = createLucideIcon("chevron-right", __iconNode$1c);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$1b = [
+  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
+  ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
+];
+const CircleCheck = createLucideIcon("circle-check", __iconNode$1b);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33495,9 +33506,10 @@ const ChevronRight = createLucideIcon("chevron-right", __iconNode$1b);
  */
 const __iconNode$1a = [
   ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
+  ["path", { d: "M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3", key: "1u773s" }],
+  ["path", { d: "M12 17h.01", key: "p32p05" }]
 ];
-const CircleCheck = createLucideIcon("circle-check", __iconNode$1a);
+const CircleHelp = createLucideIcon("circle-help", __iconNode$1a);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33506,10 +33518,10 @@ const CircleCheck = createLucideIcon("circle-check", __iconNode$1a);
  */
 const __iconNode$19 = [
   ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["path", { d: "M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3", key: "1u773s" }],
-  ["path", { d: "M12 17h.01", key: "p32p05" }]
+  ["circle", { cx: "12", cy: "10", r: "3", key: "ilqhr7" }],
+  ["path", { d: "M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662", key: "154egf" }]
 ];
-const CircleHelp = createLucideIcon("circle-help", __iconNode$19);
+const CircleUser = createLucideIcon("circle-user", __iconNode$19);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33518,37 +33530,25 @@ const CircleHelp = createLucideIcon("circle-help", __iconNode$19);
  */
 const __iconNode$18 = [
   ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["circle", { cx: "12", cy: "10", r: "3", key: "ilqhr7" }],
-  ["path", { d: "M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662", key: "154egf" }]
-];
-const CircleUser = createLucideIcon("circle-user", __iconNode$18);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$17 = [
-  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
   ["path", { d: "m15 9-6 6", key: "1uzhvr" }],
   ["path", { d: "m9 9 6 6", key: "z0biqf" }]
 ];
-const CircleX = createLucideIcon("circle-x", __iconNode$17);
+const CircleX = createLucideIcon("circle-x", __iconNode$18);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$16 = [["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }]];
-const Circle = createLucideIcon("circle", __iconNode$16);
+const __iconNode$17 = [["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }]];
+const Circle = createLucideIcon("circle", __iconNode$17);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$15 = [
+const __iconNode$16 = [
   [
     "path",
     { d: "M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3Z", key: "1tn4o7" }
@@ -33557,7 +33557,25 @@ const __iconNode$15 = [
   ["path", { d: "m12.4 3.4 3.1 4", key: "6hsd6n" }],
   ["path", { d: "M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z", key: "ltgou9" }]
 ];
-const Clapperboard = createLucideIcon("clapperboard", __iconNode$15);
+const Clapperboard = createLucideIcon("clapperboard", __iconNode$16);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$15 = [
+  ["rect", { width: "8", height: "4", x: "8", y: "2", rx: "1", ry: "1", key: "tgr4d6" }],
+  [
+    "path",
+    {
+      d: "M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2",
+      key: "116196"
+    }
+  ],
+  ["path", { d: "m9 14 2 2 4-4", key: "df797q" }]
+];
+const ClipboardCheck = createLucideIcon("clipboard-check", __iconNode$15);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33573,9 +33591,12 @@ const __iconNode$14 = [
       key: "116196"
     }
   ],
-  ["path", { d: "m9 14 2 2 4-4", key: "df797q" }]
+  ["path", { d: "M12 11h4", key: "1jrz19" }],
+  ["path", { d: "M12 16h4", key: "n85exb" }],
+  ["path", { d: "M8 11h.01", key: "1dfujw" }],
+  ["path", { d: "M8 16h.01", key: "18s6g9" }]
 ];
-const ClipboardCheck = createLucideIcon("clipboard-check", __iconNode$14);
+const ClipboardList = createLucideIcon("clipboard-list", __iconNode$14);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33583,20 +33604,10 @@ const ClipboardCheck = createLucideIcon("clipboard-check", __iconNode$14);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$13 = [
-  ["rect", { width: "8", height: "4", x: "8", y: "2", rx: "1", ry: "1", key: "tgr4d6" }],
-  [
-    "path",
-    {
-      d: "M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2",
-      key: "116196"
-    }
-  ],
-  ["path", { d: "M12 11h4", key: "1jrz19" }],
-  ["path", { d: "M12 16h4", key: "n85exb" }],
-  ["path", { d: "M8 11h.01", key: "1dfujw" }],
-  ["path", { d: "M8 16h.01", key: "18s6g9" }]
+  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
+  ["polyline", { points: "12 6 12 12 16.5 12", key: "1aq6pp" }]
 ];
-const ClipboardList = createLucideIcon("clipboard-list", __iconNode$13);
+const Clock3 = createLucideIcon("clock-3", __iconNode$13);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33605,9 +33616,9 @@ const ClipboardList = createLucideIcon("clipboard-list", __iconNode$13);
  */
 const __iconNode$12 = [
   ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["polyline", { points: "12 6 12 12 16.5 12", key: "1aq6pp" }]
+  ["polyline", { points: "12 6 12 12 16 14", key: "68esgv" }]
 ];
-const Clock3 = createLucideIcon("clock-3", __iconNode$12);
+const Clock = createLucideIcon("clock", __iconNode$12);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -33615,10 +33626,10 @@ const Clock3 = createLucideIcon("clock-3", __iconNode$12);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$11 = [
-  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["polyline", { points: "12 6 12 12 16 14", key: "68esgv" }]
+  ["rect", { width: "14", height: "14", x: "8", y: "8", rx: "2", ry: "2", key: "17jyea" }],
+  ["path", { d: "M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2", key: "zix9uf" }]
 ];
-const Clock = createLucideIcon("clock", __iconNode$11);
+const Copy = createLucideIcon("copy", __iconNode$11);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -34633,7 +34644,7 @@ const FamilyInvitation = Record({
   "familyId": FamilyId,
   "invitationType": InvitationType$1
 });
-const FamilyInvitationError = Variant({
+const FamilyInvitationError$1 = Variant({
   "InvitationNotFound": Null,
   "InvalidInput": Null,
   "NomineeMismatch": Null,
@@ -34650,7 +34661,7 @@ const FamilyInvitationError = Variant({
 });
 const Result_31 = Variant({
   "ok": FamilyInvitation,
-  "err": FamilyInvitationError
+  "err": FamilyInvitationError$1
 });
 const FoundingStewardState = Variant({
   "FounderAccepted": Null,
@@ -35302,7 +35313,7 @@ const FamilyInvitationCreateOutcome = Variant({
 });
 const Result_37 = Variant({
   "ok": FamilyInvitationCreateOutcome,
-  "err": FamilyInvitationError
+  "err": FamilyInvitationError$1
 });
 const FounderProfileInput = Record({
   "birthDate": Opt(Text),
@@ -35499,7 +35510,7 @@ const InvitationRedemptionState = Variant({
 });
 const Result_29 = Variant({
   "ok": InvitationRedemptionState,
-  "err": FamilyInvitationError
+  "err": FamilyInvitationError$1
 });
 const MembershipConfirmationState$1 = Variant({
   "StewardReviewRequired": Null,
@@ -35922,7 +35933,7 @@ const Result_8 = Variant({
 });
 const Result_7 = Variant({
   "ok": FamilyInvitationCreated,
-  "err": FamilyInvitationError
+  "err": FamilyInvitationError$1
 });
 const ConflictResolutionAction$1 = Variant({
   "NeedsResearch": Null,
@@ -35990,7 +36001,7 @@ const Result_1 = Variant({
 });
 const Result = Variant({
   "ok": FamilyInvitationPreview,
-  "err": FamilyInvitationError
+  "err": FamilyInvitationError$1
 });
 Service({
   "_immutableObjectStorageBlobsAreLive": Func(
@@ -40705,6 +40716,22 @@ var EvidenceStatus = /* @__PURE__ */ ((EvidenceStatus2) => {
   EvidenceStatus2["PersonalMemory"] = "PersonalMemory";
   return EvidenceStatus2;
 })(EvidenceStatus || {});
+var FamilyInvitationError = /* @__PURE__ */ ((FamilyInvitationError2) => {
+  FamilyInvitationError2["InvitationNotFound"] = "InvitationNotFound";
+  FamilyInvitationError2["InvalidInput"] = "InvalidInput";
+  FamilyInvitationError2["NomineeMismatch"] = "NomineeMismatch";
+  FamilyInvitationError2["PersonNotInFamily"] = "PersonNotInFamily";
+  FamilyInvitationError2["InvalidTransition"] = "InvalidTransition";
+  FamilyInvitationError2["NominationNotFound"] = "NominationNotFound";
+  FamilyInvitationError2["NotAuthorized"] = "NotAuthorized";
+  FamilyInvitationError2["InvalidToken"] = "InvalidToken";
+  FamilyInvitationError2["NotSignedIn"] = "NotSignedIn";
+  FamilyInvitationError2["FamilyNotFound"] = "FamilyNotFound";
+  FamilyInvitationError2["AlreadyMember"] = "AlreadyMember";
+  FamilyInvitationError2["Expired"] = "Expired";
+  FamilyInvitationError2["RelationshipNotificationRequired"] = "RelationshipNotificationRequired";
+  return FamilyInvitationError2;
+})(FamilyInvitationError || {});
 var FindingType = /* @__PURE__ */ ((FindingType2) => {
   FindingType2["Story"] = "Story";
   FindingType2["TimelineEvent"] = "TimelineEvent";
@@ -54811,6 +54838,9 @@ function parseInviteToken(pathname) {
   }
   return token.length > 0 ? token : null;
 }
+function buildInviteUrl(rawToken) {
+  return `${INVITE_PATH_PREFIX}${encodeURIComponent(rawToken)}`;
+}
 const ORIGINATING_VIEW_KEY = "app.originatingView.v1";
 function saveOriginatingView(origin) {
   try {
@@ -65931,6 +65961,93 @@ function useGetStewardAuditHistory() {
     enabled: providersPresent && !!actor && !isFetching
   });
 }
+function invitationPreviewKey(rawToken) {
+  return ["invitationPreview", rawToken];
+}
+function invitationRedemptionKey(rawToken) {
+  return ["invitationRedemption", rawToken];
+}
+function invitationInvalidation(rawToken) {
+  return {
+    predicate: (query) => (query.queryKey[0] === "invitationPreview" || query.queryKey[0] === "invitationRedemption") && query.queryKey[1] === rawToken
+  };
+}
+function useInvitationPreview(rawToken) {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: invitationPreviewKey(rawToken ?? ""),
+    queryFn: async () => {
+      if (!actor || !rawToken) return null;
+      return actor.validateFamilyInvitationToken(rawToken);
+    },
+    enabled: !!actor && !isFetching && !!rawToken
+  });
+}
+function useInvitationRedemptionState(rawToken) {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: invitationRedemptionKey(rawToken ?? ""),
+    queryFn: async () => {
+      if (!actor || !rawToken) return null;
+      return actor.getInvitationRedemptionState(rawToken);
+    },
+    enabled: !!actor && !isFetching && !!rawToken
+  });
+}
+function useAcceptInvitation() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (rawToken) => {
+      if (!actor) throw new Error("Backend is not ready");
+      const result = await actor.acceptFamilyInvitation(rawToken);
+      if (result.__kind__ === "err") throw new Error(result.err);
+      return result.ok;
+    },
+    onSuccess: (_data, rawToken) => {
+      void queryClient2.invalidateQueries(invitationInvalidation(rawToken));
+    }
+  });
+}
+function useDeclineInvitation() {
+  const { actor } = useActor(createActor);
+  const queryClient2 = useQueryClient();
+  return useMutation({
+    mutationFn: async (rawToken) => {
+      if (!actor) throw new Error("Backend is not ready");
+      const result = await actor.declineFamilyInvitation(rawToken);
+      if (result.__kind__ === "err") throw new Error(result.err);
+      return result.ok;
+    },
+    onSuccess: (_data, rawToken) => {
+      void queryClient2.invalidateQueries(invitationInvalidation(rawToken));
+    }
+  });
+}
+function useCreateFamilyInvitation() {
+  const { actor } = useActor(createActor);
+  return useMutation({
+    mutationFn: async (input) => {
+      if (!actor) throw new Error("Backend is not ready");
+      const result = await actor.createFamilyInvitation(
+        input.familyId,
+        input.personId,
+        input.invitedEmail
+      );
+      if (result.__kind__ === "err") {
+        return { kind: "error", error: result.err };
+      }
+      const outcome = result.ok;
+      if (outcome.__kind__ === "Created") {
+        return { kind: "created", created: outcome.Created };
+      }
+      if (outcome.__kind__ === "AlreadyMember") {
+        return { kind: "already-member" };
+      }
+      return { kind: "relationship-notification-required" };
+    }
+  });
+}
 function recipeListInvalidation(kind, familyScopedId) {
   if (familyScopedId === void 0) {
     return { queryKey: ["recipes", kind] };
@@ -68664,6 +68781,48 @@ const profiles = {
 function backendProfileToPersonProfile(backend) {
   return resolveCanonicalPersonProfile(backend);
 }
+async function copyInviteLink(link) {
+  var _a2;
+  try {
+    if ((_a2 = navigator.clipboard) == null ? void 0 : _a2.writeText) {
+      await navigator.clipboard.writeText(link);
+      return true;
+    }
+  } catch {
+  }
+  try {
+    const textarea = document.createElement("textarea");
+    textarea.value = link;
+    textarea.setAttribute("readonly", "");
+    textarea.style.position = "fixed";
+    textarea.style.opacity = "0";
+    document.body.appendChild(textarea);
+    textarea.select();
+    const ok = document.execCommand("copy");
+    document.body.removeChild(textarea);
+    return ok;
+  } catch {
+    return false;
+  }
+}
+function inviteErrorMessage(error) {
+  switch (error) {
+    case FamilyInvitationError.AlreadyMember:
+      return "This family member already has an account in the archive.";
+    case FamilyInvitationError.RelationshipNotificationRequired:
+      return "This family member needs a confirmed relationship before an invitation can be created.";
+    case FamilyInvitationError.NotAuthorized:
+    case FamilyInvitationError.NotSignedIn:
+      return "You don't have permission to invite this family member.";
+    case FamilyInvitationError.PersonNotInFamily:
+    case FamilyInvitationError.FamilyNotFound:
+      return "This family member isn't part of the active family.";
+    case FamilyInvitationError.InvalidInput:
+      return "Please check the email address and try again.";
+    default:
+      return "We couldn't create the invitation. Please try again.";
+  }
+}
 function getInitials$b(name) {
   var _a2;
   const parts = name.split(/\s+/).filter((part) => part.length > 0 && /[A-Za-z]/.test(part.charAt(0)));
@@ -69491,8 +69650,9 @@ function PersonProfilePage({
   onOpenConversation,
   onOpenConflictReview
 }) {
-  var _a2, _b2, _c2, _d2;
+  var _a2, _b2, _c2, _d2, _e2, _f2, _g2;
   const familyId = useFamilyScopedId();
+  const activeFamilyId = useActiveFamilyId();
   const storyLabel = person.id === "julia" || person.id === "erma" || person.id === "hudson" || person.id === "gertrude-adams-hill" || person.id === "mary-louise-sims" || person.id === "mary-jane-johnson" || person.id === "mildred-adams" || person.id === "christine-adams" || person.id === "tammy" || person.id === "punchy" || person.id === "patricia-rollins" || person.id === "fannie-adams" || person.id === "christine-adams-tucker" || person.id === "ella-mae-adams" || person.id === "eula-lee-adams" || person.id === "sherriSmith" || person.id === "beatriceSmith" ? "Her Story" : "His Story";
   const { data: backendProfile, isLoading: profileLoading } = usePersonProfile(
     person.id,
@@ -69502,6 +69662,8 @@ function PersonProfilePage({
   const { data: myClaim } = useMyProfileClaim(person.id, familyId);
   const { data: relationshipRequests = [] } = useMyRelationshipRequests(familyId);
   const { data: isSteward = false } = useIsSteward();
+  const { membership } = useMyMembershipStatus();
+  const isApprovedMember = (membership == null ? void 0 : membership.status) === MembershipStatus.Active;
   const { data: archivedIds = [] } = useListArchivedProfileIds();
   const isArchived = archivedIds.includes(person.id);
   const requestRemoval = useRequestProfileRemoval();
@@ -69511,6 +69673,12 @@ function PersonProfilePage({
   const [removalOpen, setRemovalOpen] = reactExports.useState(false);
   const [removalReason, setRemovalReason] = reactExports.useState("");
   const [deleteOpen, setDeleteOpen] = reactExports.useState(false);
+  const createInvitation = useCreateFamilyInvitation();
+  const [inviteOpen, setInviteOpen] = reactExports.useState(false);
+  const [inviteEmail, setInviteEmail] = reactExports.useState("");
+  const [inviteLink, setInviteLink] = reactExports.useState(null);
+  const [inviteCopied, setInviteCopied] = reactExports.useState(false);
+  const [inviteExisting, setInviteExisting] = reactExports.useState(false);
   const currentPrincipal = identity == null ? void 0 : identity.getPrincipal().toString();
   const isOwner = Boolean(
     (backendProfile == null ? void 0 : backendProfile.claimedByUserId) && currentPrincipal && backendProfile.claimedByUserId.toString() === currentPrincipal
@@ -69532,6 +69700,14 @@ function PersonProfilePage({
     claimStatus: backendProfile.claimStatus === ClaimStatus.Claimed ? "claimed" : "unclaimed"
   } : void 0;
   const claimable = isProfileClaimable(graphNode);
+  const closeInviteDialog = () => {
+    setInviteOpen(false);
+    setInviteEmail("");
+    setInviteLink(null);
+    setInviteCopied(false);
+    setInviteExisting(false);
+    createInvitation.reset();
+  };
   const familyGraphNode = FAMILY_GRAPH[person.id];
   const childIds = (familyGraphNode == null ? void 0 : familyGraphNode.children) ?? [];
   const canonical = useCanonicalPerson(person.id, person.name);
@@ -69546,6 +69722,7 @@ function PersonProfilePage({
   const portraitSrc = canonical.profilePhotoUrl ?? (!canonical.hasCanonicalProfile ? profilePhoto ?? person.portrait.src : void 0);
   const portraitAlt = hasProfilePhoto ? `${person.name}'s profile photo` : person.portrait.alt;
   const isLivingProfile = (backendProfile == null ? void 0 : backendProfile.livingStatus) === LivingStatus.Living || person.livingStatus === "living";
+  const canInvite = isAuthenticated && isLivingProfile && claimable && !isClaimedByAnother && (isApprovedMember || isSteward);
   const hasLinkedHistoricalData = person.timeline.length > 0 || person.sources.length > 0 || Boolean(person.family.spouseName) || (((_a2 = person.family.spouses) == null ? void 0 : _a2.length) ?? 0) > 0 || hasProfilePhoto;
   const usesRepresentativeImage = Boolean(person.portrait.src) && person.portrait.src !== PLACEHOLDER_SRC;
   const portraitCaption = hasProfilePhoto ? "Uploaded profile photo." : !isLivingProfile && usesRepresentativeImage ? `Representative historical portrait — not an actual photograph of ${person.name.split(" ")[0]} Norwood.` : "";
@@ -69847,6 +70024,34 @@ function PersonProfilePage({
                     }
                   )
                 ] }) : /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-3 text-sm text-muted-foreground", children: (backendProfile == null ? void 0 : backendProfile.livingStatus) === LivingStatus.Deceased ? "This profile is not claimable." : "This profile is owned by a family member." }),
+                canInvite && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-4 flex flex-col items-start gap-3 border-t border-border/60 pt-4", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "flex items-center gap-2 text-sm text-muted-foreground", children: [
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(
+                      UserPlus,
+                      {
+                        className: "h-4 w-4 shrink-0 text-accent-foreground/70",
+                        strokeWidth: 2,
+                        "aria-hidden": "true"
+                      }
+                    ),
+                    "Know ",
+                    person.name.split(" ")[0],
+                    "? Invite them to join the family archive."
+                  ] }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs(
+                    "button",
+                    {
+                      type: "button",
+                      "data-ocid": "profile.invite_button",
+                      onClick: () => setInviteOpen(true),
+                      className: "this-is-me-action focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                      children: [
+                        /* @__PURE__ */ jsxRuntimeExports.jsx(UserPlus, { className: "h-4 w-4", "aria-hidden": "true" }),
+                        "Invite this family member"
+                      ]
+                    }
+                  )
+                ] }),
                 canMessage && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-4 flex flex-col items-start gap-3 border-t border-border/60 pt-4", children: [
                   /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "flex items-center gap-2 text-sm text-muted-foreground", children: [
                     /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -70316,6 +70521,192 @@ function PersonProfilePage({
         )
       ] })
     ] }) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      Dialog,
+      {
+        open: inviteOpen,
+        onOpenChange: (open) => {
+          if (!open) closeInviteDialog();
+          else setInviteOpen(true);
+        },
+        children: /* @__PURE__ */ jsxRuntimeExports.jsxs(DialogContent, { "data-ocid": "profile.invite_dialog", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(DialogHeader, { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(DialogTitle, { children: "Invite this family member" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(DialogDescription, { children: [
+              "Create a secure invitation link for ",
+              person.name,
+              ". You can copy the link and send it to them yourself."
+            ] })
+          ] }),
+          inviteLink ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-3", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "p",
+              {
+                "data-ocid": "profile.invite_success",
+                className: "invite-success-line",
+                children: "Invitation created."
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm leading-relaxed text-muted-foreground", children: "Copy this secure invitation link and send it to the family member." }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "invite-link-field", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                Link2,
+                {
+                  className: "h-4 w-4 shrink-0 text-muted-foreground",
+                  strokeWidth: 1.75,
+                  "aria-hidden": "true"
+                }
+              ),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "span",
+                {
+                  "data-ocid": "profile.invite_link",
+                  className: "invite-link-token",
+                  children: inviteLink
+                }
+              )
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "button",
+              {
+                type: "button",
+                "data-ocid": "profile.invite_copy_button",
+                onClick: () => {
+                  void copyInviteLink(inviteLink).then((ok) => {
+                    if (ok) setInviteCopied(true);
+                  });
+                },
+                className: "this-is-me-action focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                children: [
+                  inviteCopied ? /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { className: "h-4 w-4", "aria-hidden": "true" }) : /* @__PURE__ */ jsxRuntimeExports.jsx(Copy, { className: "h-4 w-4", "aria-hidden": "true" }),
+                  inviteCopied ? "Copied" : "Copy Link"
+                ]
+              }
+            )
+          ] }) : inviteExisting ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-3", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "p",
+              {
+                "data-ocid": "profile.invite_existing",
+                className: "text-sm leading-relaxed text-muted-foreground",
+                children: "An invitation already exists for this family member."
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm leading-relaxed text-muted-foreground", children: "Create a fresh invitation link before sending it." })
+          ] }) : /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-3", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "label",
+              {
+                htmlFor: "invite-email",
+                className: "text-sm font-medium text-foreground",
+                children: "Email address"
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "input",
+              {
+                id: "invite-email",
+                "data-ocid": "profile.invite_email_input",
+                type: "email",
+                value: inviteEmail,
+                onChange: (event) => setInviteEmail(event.target.value),
+                placeholder: "name@example.com",
+                autoComplete: "email",
+                className: "w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-xs outline-none transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] md:text-sm"
+              }
+            ),
+            ((_d2 = createInvitation.data) == null ? void 0 : _d2.kind) === "error" && /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "p",
+              {
+                "data-ocid": "profile.invite_error",
+                className: "text-sm text-destructive",
+                children: inviteErrorMessage(createInvitation.data.error)
+              }
+            ),
+            ((_e2 = createInvitation.data) == null ? void 0 : _e2.kind) === "already-member" && /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "p",
+              {
+                "data-ocid": "profile.invite_already_member",
+                className: "text-sm text-muted-foreground",
+                children: "This family member already has an account in the archive."
+              }
+            ),
+            ((_f2 = createInvitation.data) == null ? void 0 : _f2.kind) === "relationship-notification-required" && /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "p",
+              {
+                "data-ocid": "profile.invite_relationship_required",
+                className: "text-sm text-muted-foreground",
+                children: "This family member needs a confirmed relationship before an invitation can be created."
+              }
+            ),
+            createInvitation.isError && /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "p",
+              {
+                "data-ocid": "profile.invite_error",
+                className: "text-sm text-destructive",
+                children: "We couldn't create the invitation. Please try again."
+              }
+            )
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(DialogFooter, { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "button",
+              {
+                type: "button",
+                "data-ocid": "profile.invite_cancel_button",
+                onClick: closeInviteDialog,
+                className: "inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full border border-border bg-card px-5 py-2.5 text-sm font-semibold text-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                children: inviteLink || inviteExisting ? "Close" : "Cancel"
+              }
+            ),
+            !inviteLink && !inviteExisting && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              "button",
+              {
+                type: "button",
+                "data-ocid": "profile.invite_create_button",
+                onClick: () => {
+                  const email = inviteEmail.trim();
+                  createInvitation.mutate(
+                    {
+                      familyId: activeFamilyId,
+                      personId: person.id,
+                      invitedEmail: email === "" ? null : email
+                    },
+                    {
+                      onSuccess: (result) => {
+                        if (result.kind === "created") {
+                          if (result.created.created && result.created.rawToken !== "") {
+                            setInviteLink(
+                              `${window.location.origin}${buildInviteUrl(
+                                result.created.rawToken
+                              )}`
+                            );
+                          } else {
+                            setInviteExisting(true);
+                          }
+                        }
+                      }
+                    }
+                  );
+                },
+                disabled: createInvitation.isPending,
+                className: "inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-60",
+                children: [
+                  createInvitation.isPending ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    LoaderCircle,
+                    {
+                      className: "h-4 w-4 animate-spin",
+                      "aria-hidden": "true"
+                    }
+                  ) : /* @__PURE__ */ jsxRuntimeExports.jsx(Mail, { className: "h-4 w-4", "aria-hidden": "true" }),
+                  "Create Invite"
+                ]
+              }
+            )
+          ] })
+        ] })
+      }
+    ),
     /* @__PURE__ */ jsxRuntimeExports.jsx(AlertDialog, { open: deleteOpen, onOpenChange: setDeleteOpen, children: /* @__PURE__ */ jsxRuntimeExports.jsxs(AlertDialogContent, { "data-ocid": "profile.permanent_delete_dialog", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsxs(AlertDialogHeader, { children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx(AlertDialogTitle, { children: "Permanently delete this profile?" }),
@@ -70338,7 +70729,7 @@ function PersonProfilePage({
           ] })
         }
       ),
-      permanentlyDelete.isError || ((_d2 = permanentlyDelete.data) == null ? void 0 : _d2.__kind__) === "err" && /* @__PURE__ */ jsxRuntimeExports.jsx(
+      permanentlyDelete.isError || ((_g2 = permanentlyDelete.data) == null ? void 0 : _g2.__kind__) === "err" && /* @__PURE__ */ jsxRuntimeExports.jsx(
         "p",
         {
           "data-ocid": "profile.permanent_delete_error",
@@ -80390,69 +80781,6 @@ function InboxPage({ onOpenConversation, onBack }) {
       conversation.conversationId
     )) })
   ] });
-}
-function invitationPreviewKey(rawToken) {
-  return ["invitationPreview", rawToken];
-}
-function invitationRedemptionKey(rawToken) {
-  return ["invitationRedemption", rawToken];
-}
-function invitationInvalidation(rawToken) {
-  return {
-    predicate: (query) => (query.queryKey[0] === "invitationPreview" || query.queryKey[0] === "invitationRedemption") && query.queryKey[1] === rawToken
-  };
-}
-function useInvitationPreview(rawToken) {
-  const { actor, isFetching } = useActor(createActor);
-  return useQuery({
-    queryKey: invitationPreviewKey(rawToken ?? ""),
-    queryFn: async () => {
-      if (!actor || !rawToken) return null;
-      return actor.validateFamilyInvitationToken(rawToken);
-    },
-    enabled: !!actor && !isFetching && !!rawToken
-  });
-}
-function useInvitationRedemptionState(rawToken) {
-  const { actor, isFetching } = useActor(createActor);
-  return useQuery({
-    queryKey: invitationRedemptionKey(rawToken ?? ""),
-    queryFn: async () => {
-      if (!actor || !rawToken) return null;
-      return actor.getInvitationRedemptionState(rawToken);
-    },
-    enabled: !!actor && !isFetching && !!rawToken
-  });
-}
-function useAcceptInvitation() {
-  const { actor } = useActor(createActor);
-  const queryClient2 = useQueryClient();
-  return useMutation({
-    mutationFn: async (rawToken) => {
-      if (!actor) throw new Error("Backend is not ready");
-      const result = await actor.acceptFamilyInvitation(rawToken);
-      if (result.__kind__ === "err") throw new Error(result.err);
-      return result.ok;
-    },
-    onSuccess: (_data, rawToken) => {
-      void queryClient2.invalidateQueries(invitationInvalidation(rawToken));
-    }
-  });
-}
-function useDeclineInvitation() {
-  const { actor } = useActor(createActor);
-  const queryClient2 = useQueryClient();
-  return useMutation({
-    mutationFn: async (rawToken) => {
-      if (!actor) throw new Error("Backend is not ready");
-      const result = await actor.declineFamilyInvitation(rawToken);
-      if (result.__kind__ === "err") throw new Error(result.err);
-      return result.ok;
-    },
-    onSuccess: (_data, rawToken) => {
-      void queryClient2.invalidateQueries(invitationInvalidation(rawToken));
-    }
-  });
 }
 function invitationTypeLabel(type) {
   return type === InvitationType.FoundingSteward ? "Steward nomination" : "Family member";

@@ -145,6 +145,21 @@
       "source": "caffeinelabs/skills",
       "sourceType": "github",
       "computedHash": "0d8c6f3c5d8c04c91738de51361c755e93a821f13df5dfcf1bc9291442d5b709"
+    },
+    "migrating-motoko-actors": {
+      "source": "caffeinelabs/skills",
+      "sourceType": "github",
+      "computedHash": "c1abc405db6d1d8e38e7fdc26c230a61e50ee2136d1101606a9ce64e13195a3b"
+    },
+    "troubleshooting-motoko-migrations": {
+      "source": "caffeinelabs/skills",
+      "sourceType": "github",
+      "computedHash": "fca587b7558aa730afbefcbbe183fa93b16a40c4e4c033976e2904ebdee72aa1"
+    },
+    "writing-motoko": {
+      "source": "caffeinelabs/skills",
+      "sourceType": "github",
+      "computedHash": "b9ed1384b612517fce2d5f4e6e397d1556353e86194edc91f8742ee4eefa3b33"
     }
   }
 }

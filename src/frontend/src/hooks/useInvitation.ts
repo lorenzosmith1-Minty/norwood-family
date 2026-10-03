@@ -1,6 +1,8 @@
 import { createActor } from "@/backend";
 import type {
   FamilyInvitation,
+  FamilyInvitationCreated,
+  FamilyInvitationError,
   FamilyInvitationPreview,
   InvitationRedemptionState,
 } from "@/backend";
@@ -127,6 +129,60 @@ export function useDeclineInvitation() {
     },
     onSuccess: (_data, rawToken) => {
       void queryClient.invalidateQueries(invitationInvalidation(rawToken));
+    },
+  });
+}
+
+/** Input for creating a family invitation for a specific person. */
+export interface CreateFamilyInvitationInput {
+  familyId: string;
+  personId: string;
+  invitedEmail: string | null;
+}
+
+/**
+ * Discriminated result of creating a family invitation. The backend returns a
+ * three-way outcome plus a typed error enum; both are surfaced as data so the
+ * caller can render neutral, outcome-specific copy without exposing the raw
+ * error tag to the user.
+ */
+export type CreateFamilyInvitationResult =
+  | { kind: "created"; created: FamilyInvitationCreated }
+  | { kind: "already-member" }
+  | { kind: "relationship-notification-required" }
+  | { kind: "error"; error: FamilyInvitationError };
+
+/**
+ * Creates a family invitation via the existing `createFamilyInvitation` backend
+ * API. The raw token is returned once in the success payload and is never
+ * persisted here; the caller builds the secure link from it.
+ *
+ * The mutation resolves (never rejects) with a discriminated result so the
+ * dialog can show neutral copy for every outcome, including backend conflicts.
+ */
+export function useCreateFamilyInvitation() {
+  const { actor } = useActor(createActor);
+  return useMutation({
+    mutationFn: async (
+      input: CreateFamilyInvitationInput,
+    ): Promise<CreateFamilyInvitationResult> => {
+      if (!actor) throw new Error("Backend is not ready");
+      const result = await actor.createFamilyInvitation(
+        input.familyId,
+        input.personId,
+        input.invitedEmail,
+      );
+      if (result.__kind__ === "err") {
+        return { kind: "error", error: result.err };
+      }
+      const outcome = result.ok;
+      if (outcome.__kind__ === "Created") {
+        return { kind: "created", created: outcome.Created };
+      }
+      if (outcome.__kind__ === "AlreadyMember") {
+        return { kind: "already-member" };
+      }
+      return { kind: "relationship-notification-required" };
     },
   });
 }

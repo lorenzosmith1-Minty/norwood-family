@@ -12284,6 +12284,39 @@ video {
   line-height: 1.625;
     color: oklch(var(--invite-muted));
 }
+/* Invite-creation dialog: the one-time secure link field and its copy
+     affordance. The link reads as a paper well with a monospace token, and
+     the success line uses the archive's warm-green confirmed tone. */
+.invite-link-field {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: var(--radius);
+  border-width: 1px;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+    border-color: oklch(var(--invite-rule));
+    background-color: oklch(var(--invite-notice));
+}
+.invite-link-token {
+  min-width: 0px;
+  flex: 1 1 0%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.75rem;
+  line-height: 1rem;
+    color: oklch(var(--invite-surface-foreground));
+}
+.invite-success-line {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+    color: oklch(var(--invite-notice-success));
+}
 /* ---- Membership confirmation: request card + applicant status card ---- */
 /* Confirmation request card: a warm paper plate hosting the pending
      person's family-safe identity and the two neutral decisions. Reads as a

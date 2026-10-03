@@ -1,4 +1,8 @@
-import { RemovalError } from "@/backend";
+import {
+  FamilyInvitationError,
+  MembershipStatus,
+  RemovalError,
+} from "@/backend";
 import type { PersonProfile as BackendPersonProfile, Photo } from "@/backend";
 import { useInternetIdentity } from "@caffeineai/core-infrastructure";
 import { ExternalBlob } from "@caffeineai/object-storage";
@@ -15,12 +19,15 @@ import {
   Check,
   ChefHat,
   Clapperboard,
+  Copy,
   FileText,
   Film,
   ImagePlus,
   Landmark,
+  Link2,
   Loader2,
   type LucideIcon,
+  Mail,
   MessageSquareText,
   Mic,
   NotebookPen,
@@ -32,6 +39,7 @@ import {
   Trash2,
   UserCheck,
   UserMinus,
+  UserPlus,
   UserRound,
   Users,
 } from "lucide-react";
@@ -57,7 +65,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../components/ui/dialog";
-import { useFamilyScopedId } from "../context/FamilyContext";
+import { useActiveFamilyId, useFamilyScopedId } from "../context/FamilyContext";
 import {
   useApprovedArchiveItems,
   useApprovedMediaItems,
@@ -73,7 +81,9 @@ import {
   useRequestProfileRemoval,
   useRestoreProfile,
 } from "../hooks/useGovernance";
+import { useCreateFamilyInvitation } from "../hooks/useInvitation";
 import { useCanMessagePerson } from "../hooks/useMessaging";
+import { useMyMembershipStatus } from "../hooks/useMyMembershipStatus";
 import {
   useAddPhoto,
   usePhotos,
@@ -88,6 +98,7 @@ import { useMyRelationshipRequests } from "../hooks/useRelationshipRequests";
 import { useListConflictsForPerson } from "../hooks/useResearchIntake";
 import { useIsSteward } from "../hooks/useStewardAuthority";
 import { sanitizeFilename, validateFile } from "../lib/fileValidation";
+import { buildInviteUrl } from "../lib/inviteRoute";
 import type { ArchiveItem } from "../types/archive";
 import { getMediaKind } from "../types/archive";
 import {
@@ -2636,6 +2647,60 @@ export function backendProfileToPersonProfile(
   return resolveCanonicalPersonProfile(backend);
 }
 
+/**
+ * Copies the secure invitation link to the clipboard. Uses the async Clipboard
+ * API when available and falls back to a hidden textarea + execCommand for
+ * browsers/contexts where it is unavailable. Resolves to whether the copy
+ * succeeded so the caller can show a neutral confirmation.
+ */
+async function copyInviteLink(link: string): Promise<boolean> {
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(link);
+      return true;
+    }
+  } catch {
+    // Fall through to the legacy path below.
+  }
+  try {
+    const textarea = document.createElement("textarea");
+    textarea.value = link;
+    textarea.setAttribute("readonly", "");
+    textarea.style.position = "fixed";
+    textarea.style.opacity = "0";
+    document.body.appendChild(textarea);
+    textarea.select();
+    const ok = document.execCommand("copy");
+    document.body.removeChild(textarea);
+    return ok;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Maps a backend invitation error to neutral, user-facing copy. Technical error
+ * tags and private reasons are never shown to the user.
+ */
+function inviteErrorMessage(error: FamilyInvitationError): string {
+  switch (error) {
+    case FamilyInvitationError.AlreadyMember:
+      return "This family member already has an account in the archive.";
+    case FamilyInvitationError.RelationshipNotificationRequired:
+      return "This family member needs a confirmed relationship before an invitation can be created.";
+    case FamilyInvitationError.NotAuthorized:
+    case FamilyInvitationError.NotSignedIn:
+      return "You don't have permission to invite this family member.";
+    case FamilyInvitationError.PersonNotInFamily:
+    case FamilyInvitationError.FamilyNotFound:
+      return "This family member isn't part of the active family.";
+    case FamilyInvitationError.InvalidInput:
+      return "Please check the email address and try again.";
+    default:
+      return "We couldn't create the invitation. Please try again.";
+  }
+}
+
 interface PersonProfilePageProps {
   onBack: () => void;
   person: PersonProfile;
@@ -3649,6 +3714,10 @@ export function PersonProfilePage({
   onOpenConflictReview,
 }: PersonProfilePageProps) {
   const familyId = useFamilyScopedId();
+  // The invitation backend call requires a non-optional familyId, so it uses
+  // the always-defined active family id rather than the scoped id (which is
+  // undefined for the default family).
+  const activeFamilyId = useActiveFamilyId();
   const storyLabel =
     person.id === "julia" ||
     person.id === "erma" ||
@@ -3684,6 +3753,12 @@ export function PersonProfilePage({
   const { data: relationshipRequests = [] } =
     useMyRelationshipRequests(familyId);
   const { data: isSteward = false } = useIsSteward();
+  // The signed-in caller's own membership in the ACTIVE family. The invite
+  // action is limited to an approved member (Active membership) or an active
+  // Family Steward, so a signed-in account that has not been approved into the
+  // active family cannot invite.
+  const { membership } = useMyMembershipStatus();
+  const isApprovedMember = membership?.status === MembershipStatus.Active;
 
   // Family Governance & Safety controls. The archived ids list is guest-safe
   // (non-gated on the backend), so it can be queried by any caller to drive the
@@ -3698,6 +3773,20 @@ export function PersonProfilePage({
   const [removalOpen, setRemovalOpen] = useState(false);
   const [removalReason, setRemovalReason] = useState("");
   const [deleteOpen, setDeleteOpen] = useState(false);
+
+  // Invite this family member: a signed-in authorized family user may invite a
+  // living, unclaimed profile. The dialog collects an optional email and, on
+  // success, shows the one-time secure link to copy. The raw token is never
+  // persisted; it lives only in this dialog's local state.
+  const createInvitation = useCreateFamilyInvitation();
+  const [inviteOpen, setInviteOpen] = useState(false);
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [inviteLink, setInviteLink] = useState<string | null>(null);
+  const [inviteCopied, setInviteCopied] = useState(false);
+  // True when the backend reports an existing Pending invitation for this
+  // person (Created with created=false and an empty rawToken). In that case no
+  // link can be built, so the dialog shows neutral guidance instead.
+  const [inviteExisting, setInviteExisting] = useState(false);
 
   const currentPrincipal = identity?.getPrincipal().toString();
   const isOwner = Boolean(
@@ -3753,6 +3842,15 @@ export function PersonProfilePage({
     : undefined;
   const claimable = isProfileClaimable(graphNode);
 
+  const closeInviteDialog = () => {
+    setInviteOpen(false);
+    setInviteEmail("");
+    setInviteLink(null);
+    setInviteCopied(false);
+    setInviteExisting(false);
+    createInvitation.reset();
+  };
+
   // The shared family graph node for this person, used to resolve the personIds
   // of the spouse/child family members shown in the Family section so their
   // avatars resolve the canonical profile photo via the shared resolver.
@@ -3801,6 +3899,17 @@ export function PersonProfilePage({
   const isLivingProfile =
     backendProfile?.livingStatus === LivingStatus.Living ||
     person.livingStatus === "living";
+
+  // A signed-in authorized family user may invite a living, unclaimed profile
+  // that is not owned by another account. The viewer must also be an approved
+  // member of the active family or an active Family Steward. Deceased, claimed,
+  // and owned-by-another profiles never show the invite action.
+  const canInvite =
+    isAuthenticated &&
+    isLivingProfile &&
+    claimable &&
+    !isClaimedByAnother &&
+    (isApprovedMember || isSteward);
   // A profile carries linked historical data when it has a timeline, sources,
   // family relationships, or media. Permanent deletion is only permitted by the
   // backend when none of these exist, so the steward is warned before deleting
@@ -4133,6 +4242,32 @@ export function PersonProfilePage({
                 ? "This profile is not claimable."
                 : "This profile is owned by a family member."}
             </p>
+          )}
+
+          {/* Invite this family member: shown only for a signed-in authorized
+              family user viewing a living, unclaimed profile that is not owned
+              by another account. */}
+          {canInvite && (
+            <div className="mt-4 flex flex-col items-start gap-3 border-t border-border/60 pt-4">
+              <p className="flex items-center gap-2 text-sm text-muted-foreground">
+                <UserPlus
+                  className="h-4 w-4 shrink-0 text-accent-foreground/70"
+                  strokeWidth={2}
+                  aria-hidden="true"
+                />
+                Know {person.name.split(" ")[0]}? Invite them to join the family
+                archive.
+              </p>
+              <button
+                type="button"
+                data-ocid="profile.invite_button"
+                onClick={() => setInviteOpen(true)}
+                className="this-is-me-action focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              >
+                <UserPlus className="h-4 w-4" aria-hidden="true" />
+                Invite this family member
+              </button>
+            </div>
           )}
 
           {/* Private Messaging: the Message button appears only when the
@@ -4668,6 +4803,196 @@ export function PersonProfilePage({
               )}
               Submit request
             </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Invite this family member dialog (living, unclaimed profile) */}
+      <Dialog
+        open={inviteOpen}
+        onOpenChange={(open) => {
+          if (!open) closeInviteDialog();
+          else setInviteOpen(true);
+        }}
+      >
+        <DialogContent data-ocid="profile.invite_dialog">
+          <DialogHeader>
+            <DialogTitle>Invite this family member</DialogTitle>
+            <DialogDescription>
+              Create a secure invitation link for {person.name}. You can copy
+              the link and send it to them yourself.
+            </DialogDescription>
+          </DialogHeader>
+
+          {inviteLink ? (
+            <div className="flex flex-col gap-3">
+              <p
+                data-ocid="profile.invite_success"
+                className="invite-success-line"
+              >
+                Invitation created.
+              </p>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                Copy this secure invitation link and send it to the family
+                member.
+              </p>
+              <div className="invite-link-field">
+                <Link2
+                  className="h-4 w-4 shrink-0 text-muted-foreground"
+                  strokeWidth={1.75}
+                  aria-hidden="true"
+                />
+                <span
+                  data-ocid="profile.invite_link"
+                  className="invite-link-token"
+                >
+                  {inviteLink}
+                </span>
+              </div>
+              <button
+                type="button"
+                data-ocid="profile.invite_copy_button"
+                onClick={() => {
+                  void copyInviteLink(inviteLink).then((ok) => {
+                    if (ok) setInviteCopied(true);
+                  });
+                }}
+                className="this-is-me-action focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              >
+                {inviteCopied ? (
+                  <Check className="h-4 w-4" aria-hidden="true" />
+                ) : (
+                  <Copy className="h-4 w-4" aria-hidden="true" />
+                )}
+                {inviteCopied ? "Copied" : "Copy Link"}
+              </button>
+            </div>
+          ) : inviteExisting ? (
+            <div className="flex flex-col gap-3">
+              <p
+                data-ocid="profile.invite_existing"
+                className="text-sm leading-relaxed text-muted-foreground"
+              >
+                An invitation already exists for this family member.
+              </p>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                Create a fresh invitation link before sending it.
+              </p>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-3">
+              <label
+                htmlFor="invite-email"
+                className="text-sm font-medium text-foreground"
+              >
+                Email address
+              </label>
+              <input
+                id="invite-email"
+                data-ocid="profile.invite_email_input"
+                type="email"
+                value={inviteEmail}
+                onChange={(event) => setInviteEmail(event.target.value)}
+                placeholder="name@example.com"
+                autoComplete="email"
+                className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-xs outline-none transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] md:text-sm"
+              />
+              {createInvitation.data?.kind === "error" && (
+                <p
+                  data-ocid="profile.invite_error"
+                  className="text-sm text-destructive"
+                >
+                  {inviteErrorMessage(createInvitation.data.error)}
+                </p>
+              )}
+              {createInvitation.data?.kind === "already-member" && (
+                <p
+                  data-ocid="profile.invite_already_member"
+                  className="text-sm text-muted-foreground"
+                >
+                  This family member already has an account in the archive.
+                </p>
+              )}
+              {createInvitation.data?.kind ===
+                "relationship-notification-required" && (
+                <p
+                  data-ocid="profile.invite_relationship_required"
+                  className="text-sm text-muted-foreground"
+                >
+                  This family member needs a confirmed relationship before an
+                  invitation can be created.
+                </p>
+              )}
+              {createInvitation.isError && (
+                <p
+                  data-ocid="profile.invite_error"
+                  className="text-sm text-destructive"
+                >
+                  We couldn't create the invitation. Please try again.
+                </p>
+              )}
+            </div>
+          )}
+
+          <DialogFooter>
+            <button
+              type="button"
+              data-ocid="profile.invite_cancel_button"
+              onClick={closeInviteDialog}
+              className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full border border-border bg-card px-5 py-2.5 text-sm font-semibold text-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            >
+              {inviteLink || inviteExisting ? "Close" : "Cancel"}
+            </button>
+            {!inviteLink && !inviteExisting && (
+              <button
+                type="button"
+                data-ocid="profile.invite_create_button"
+                onClick={() => {
+                  const email = inviteEmail.trim();
+                  createInvitation.mutate(
+                    {
+                      familyId: activeFamilyId,
+                      personId: person.id,
+                      invitedEmail: email === "" ? null : email,
+                    },
+                    {
+                      onSuccess: (result) => {
+                        if (result.kind === "created") {
+                          // The backend reports an existing Pending invitation
+                          // as Created with created=false and an empty rawToken.
+                          // Never build a link from an empty token; show neutral
+                          // guidance instead.
+                          if (
+                            result.created.created &&
+                            result.created.rawToken !== ""
+                          ) {
+                            setInviteLink(
+                              `${window.location.origin}${buildInviteUrl(
+                                result.created.rawToken,
+                              )}`,
+                            );
+                          } else {
+                            setInviteExisting(true);
+                          }
+                        }
+                      },
+                    },
+                  );
+                }}
+                disabled={createInvitation.isPending}
+                className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-subtle transition-all duration-300 hover:-translate-y-0.5 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-60"
+              >
+                {createInvitation.isPending ? (
+                  <Loader2
+                    className="h-4 w-4 animate-spin"
+                    aria-hidden="true"
+                  />
+                ) : (
+                  <Mail className="h-4 w-4" aria-hidden="true" />
+                )}
+                Create Invite
+              </button>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>

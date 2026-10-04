@@ -3,6 +3,7 @@ import {
   MembershipConfirmationResolution,
   type MembershipConfirmationReviewHistoryEntry,
   type MembershipConfirmationReviewView,
+  MembershipConfirmationState,
   MembershipStatus,
   SimpleRelationshipType,
 } from "@/backend";
@@ -17,6 +18,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useResolveMembershipConfirmation } from "@/hooks/useMembershipReviews";
+import { MEMBERSHIP_CONFIRMATION_STATE_LABELS } from "@/types/ownership";
 import {
   Check,
   ChevronDown,
@@ -24,30 +26,38 @@ import {
   HelpCircle,
   Loader2,
   ShieldQuestion,
+  TriangleAlert,
   X,
 } from "lucide-react";
 import { useId, useState } from "react";
 
 /**
- * One unresolved membership-confirmation case awaiting Family Steward review.
+ * One membership-confirmation case awaiting Family Steward review.
  *
  * The card renders only family-safe fields from the canonical
  * `MembershipConfirmationReviewView`: the applicant's display name, the simple
- * relationship label, the membership status, and the confirmed / disputed
- * counts. It never renders an account principal, a technical id (membershipId,
+ * relationship label, the membership status, the related family (as a neutral
+ * label, never the raw family id), and the confirmed / disputed counts. It
+ * never renders an account principal, a technical id (membershipId,
  * pendingPersonId, familyId), or sensitive relationship metadata.
  *
  * The case is expandable to inspect a human-readable confirmation history —
  * who confirmed or disputed, the simple relationship, and when.
  *
- * A Steward resolves the case through three actions: Approve Membership and
- * Reject Membership each open a confirmation dialog before submitting, while
- * Needs More Information submits directly. All three call the existing
- * `resolveMembershipConfirmation` backend API for the active family and the
- * case's membership; the backend membership transitions are preserved exactly.
- * While a resolution is submitting the actions are disabled and a calm
- * in-progress state is shown. A case already settled elsewhere settles into a
- * neutral state with no technical detail or private reason exposed.
+ * A Steward resolves the case through exactly two actions: Approve Membership
+ * and Reject Membership. Each opens a confirmation dialog before submitting.
+ * Both call the existing `resolveMembershipConfirmation` backend API for the
+ * active family and the case's membership; the backend membership transitions
+ * are preserved exactly. While a resolution is submitting the actions are
+ * disabled and a calm in-progress state is shown.
+ *
+ * After a resolution the card renders a clear READ-ONLY resolved state in
+ * place — approved cases show a resolved state, rejected cases show a
+ * rejected/resolved state — with no action buttons, so duplicate submission is
+ * impossible. The page keeps the resolved case visible through the
+ * `onResolved` callback even after the backend's unresolved list drops it. A
+ * case already settled elsewhere settles into a neutral state with no
+ * technical detail or private reason exposed.
  *
  * Wording is neutral and family-safe: a dispute is described as a
  * disagreement, never as an accusation.
@@ -95,24 +105,44 @@ function decisionTone(decision: ConfirmationDecision): string {
     : "confirm-status-review";
 }
 
-/** The neutral settled state the card shows after a resolution. */
-type CaseResult =
+/**
+ * The neutral settled state the card shows after a resolution. `approved` and
+ * `rejected` are the two Steward outcomes; `alreadySettled` and `error` cover a
+ * case that changed elsewhere and a failed submission.
+ */
+export type CaseResult =
   | { kind: "approved" }
   | { kind: "rejected" }
-  | { kind: "needsMoreInformation" }
   | { kind: "alreadySettled" }
   | { kind: "error" };
 
 interface MembershipReviewCaseCardProps {
-  /** The unresolved review case, in the active family. */
+  /** The review case, in the active family. */
   review: MembershipConfirmationReviewView;
   /** The 1-based position of this case in the list, for stable test markers. */
   position: number;
+  /**
+   * Called after a resolution settles so the page can keep the case visible in
+   * its read-only resolved state even once the backend's unresolved list drops
+   * it. Not called for a failed submission.
+   */
+  onResolved?: (
+    review: MembershipConfirmationReviewView,
+    result: CaseResult,
+  ) => void;
+  /**
+   * A resolution already recorded for this case (e.g. the page re-renders a
+   * case the backend's unresolved list has dropped). When set, the card opens
+   * directly in its read-only resolved state.
+   */
+  initialResult?: CaseResult;
 }
 
 export function MembershipReviewCaseCard({
   review,
   position,
+  onResolved,
+  initialResult,
 }: MembershipReviewCaseCardProps) {
   const [expanded, setExpanded] = useState(false);
   const [confirming, setConfirming] = useState<
@@ -120,7 +150,9 @@ export function MembershipReviewCaseCard({
     | MembershipConfirmationResolution.Reject
     | null
   >(null);
-  const [result, setResult] = useState<CaseResult | null>(null);
+  const [result, setResult] = useState<CaseResult | null>(
+    initialResult ?? null,
+  );
   const historyId = useId();
   const resolve = useResolveMembershipConfirmation();
 
@@ -132,7 +164,21 @@ export function MembershipReviewCaseCard({
   const disputedCount = Number(review.disputedCount);
   const history = review.confirmationHistory;
 
+  // Conflicting evidence: at least one relative confirmed and at least one
+  // disputed, or the backend already derived the case as needing Steward review
+  // because the evidence conflicts. This is a family-safe signal only — it
+  // never names who confirmed or disputed.
+  const hasConflictingEvidence =
+    (confirmedCount > 0 && disputedCount > 0) ||
+    review.confirmationState ===
+      MembershipConfirmationState.StewardReviewRequired;
+
   const isSubmitting = resolve.isPending;
+
+  const settle = (next: CaseResult) => {
+    setResult(next);
+    onResolved?.(review, next);
+  };
 
   const submit = (resolution: MembershipConfirmationResolution) => {
     resolve.mutate(
@@ -141,16 +187,14 @@ export function MembershipReviewCaseCard({
         onSuccess: (outcome) => {
           switch (outcome.kind) {
             case "resolved":
-              setResult(
+              settle(
                 resolution === MembershipConfirmationResolution.Approve
                   ? { kind: "approved" }
-                  : resolution === MembershipConfirmationResolution.Reject
-                    ? { kind: "rejected" }
-                    : { kind: "needsMoreInformation" },
+                  : { kind: "rejected" },
               );
               break;
             case "alreadySettled":
-              setResult({ kind: "alreadySettled" });
+              settle({ kind: "alreadySettled" });
               break;
             case "error":
               setResult({ kind: "error" });
@@ -163,6 +207,8 @@ export function MembershipReviewCaseCard({
   };
 
   if (result) {
+    const isError = result.kind === "error";
+    const isRejected = result.kind === "rejected";
     return (
       <li
         data-ocid={`membership_reviews.case_item.${position}`}
@@ -171,14 +217,18 @@ export function MembershipReviewCaseCard({
         <div
           data-ocid={`membership_reviews.case_result.${position}`}
           className={`confirm-status-card ${
-            result.kind === "error"
+            isError
               ? "confirm-status-review"
-              : "confirm-status-success"
+              : isRejected
+                ? "confirm-status-neutral"
+                : "confirm-status-success"
           }`}
         >
           <span className="confirm-status-mark" aria-hidden="true">
-            {result.kind === "error" ? (
+            {isError ? (
               <HelpCircle className="h-4 w-4" strokeWidth={1.75} />
+            ) : isRejected ? (
+              <X className="h-4 w-4" strokeWidth={1.75} />
             ) : (
               <Check className="h-4 w-4" strokeWidth={1.75} />
             )}
@@ -186,25 +236,21 @@ export function MembershipReviewCaseCard({
           <div className="confirm-status-text">
             <h3 className="confirm-status-title">
               {result.kind === "approved"
-                ? "Membership approved"
+                ? "Approved by Family Steward"
                 : result.kind === "rejected"
-                  ? "Membership rejected"
-                  : result.kind === "needsMoreInformation"
-                    ? "More information requested"
-                    : result.kind === "alreadySettled"
-                      ? "This case was already settled"
-                      : "We couldn't record your decision"}
+                  ? "Rejected by Family Steward"
+                  : result.kind === "alreadySettled"
+                    ? "This case was already settled"
+                    : "We couldn't record your decision"}
             </h3>
             <p className="confirm-status-body">
               {result.kind === "approved"
                 ? "This member can now join the family."
                 : result.kind === "rejected"
                   ? "This connection will not be added to the family."
-                  : result.kind === "needsMoreInformation"
-                    ? "This case stays open until more information is available."
-                    : result.kind === "alreadySettled"
-                      ? "Nothing further is needed from you right now."
-                      : "Please try again in a moment."}
+                  : result.kind === "alreadySettled"
+                    ? "Nothing further is needed from you right now."
+                    : "Please try again in a moment."}
             </p>
           </div>
         </div>
@@ -224,6 +270,12 @@ export function MembershipReviewCaseCard({
           <p className="review-card-meta">
             {relationshipLabel} · Membership {statusLabel}
           </p>
+          <p
+            data-ocid={`membership_reviews.family_context.${position}`}
+            className="review-card-meta"
+          >
+            Related family · This family
+          </p>
         </div>
         <span
           data-ocid={`membership_reviews.case_state.${position}`}
@@ -232,7 +284,13 @@ export function MembershipReviewCaseCard({
           <span className="confirm-status-mark h-6 w-6" aria-hidden="true">
             <ShieldQuestion className="h-3.5 w-3.5" strokeWidth={1.75} />
           </span>
-          <span className="confirm-status-title text-xs">Needs review</span>
+          <span className="confirm-status-title text-xs">
+            {
+              MEMBERSHIP_CONFIRMATION_STATE_LABELS[
+                MembershipConfirmationState.StewardReviewRequired
+              ]
+            }
+          </span>
         </span>
       </div>
 
@@ -257,6 +315,19 @@ export function MembershipReviewCaseCard({
           />
           {disputedCount} disputed
         </span>
+        {hasConflictingEvidence ? (
+          <span
+            data-ocid={`membership_reviews.conflict_indicator.${position}`}
+            className="inline-flex items-center gap-1.5 rounded-full border border-[oklch(var(--confirm-review)/0.35)] bg-[oklch(var(--confirm-review)/0.1)] px-3 py-1 text-xs font-semibold text-[oklch(var(--confirm-review))]"
+          >
+            <TriangleAlert
+              className="h-3.5 w-3.5"
+              strokeWidth={2}
+              aria-hidden="true"
+            />
+            Conflicting evidence
+          </span>
+        ) : null}
       </div>
 
       <div className="review-card-actions">
@@ -281,22 +352,6 @@ export function MembershipReviewCaseCard({
         >
           <X className="h-4 w-4" strokeWidth={2.25} aria-hidden="true" />
           Reject Membership
-        </button>
-        <button
-          type="button"
-          data-ocid={`membership_reviews.needs_info_button.${position}`}
-          onClick={() =>
-            submit(MembershipConfirmationResolution.NeedsMoreInformation)
-          }
-          disabled={isSubmitting}
-          className="steward-pending-action disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          <HelpCircle
-            className="h-4 w-4"
-            strokeWidth={2.25}
-            aria-hidden="true"
-          />
-          Needs More Information
         </button>
       </div>
 

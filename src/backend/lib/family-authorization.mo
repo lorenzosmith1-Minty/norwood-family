@@ -172,7 +172,7 @@ module {
     personId : OwnershipTypes.PersonId,
     familyId : FamilyTypes.FamilyId,
   ) : Bool {
-    let profile = switch (profiles.get(personId)) {
+    let profile = switch (TenancyLib.getProfileForFamily(profiles, familyId, personId)) {
       case (?p) {
         if (p.familyId != familyId) {
           return false;

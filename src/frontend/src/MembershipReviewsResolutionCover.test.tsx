@@ -38,24 +38,24 @@ import { FamilyStewardMembershipReviewsPage } from "./pages/FamilyStewardMembers
 //
 // The accepted change requires:
 //
-//   1. each review case shows Approve Membership, Reject Membership, and Needs
-//      More Information;
+//   1. each review case shows EXACTLY two resolution actions: Approve
+//      Membership and Reject Membership (the former Needs More Information
+//      action is intentionally removed);
 //   2. Approve and Reject each open a confirmation dialog before submitting;
 //      cancelling closes it without submitting;
-//   3. Needs More Information submits directly, with no dialog;
-//   4. all three call `resolveMembershipConfirmation(activeFamilyId,
+//   3. both call `resolveMembershipConfirmation(activeFamilyId,
 //      caseMembershipId, resolution)`;
-//   5. after a successful Approve or Reject the resolved case is removed from
-//      the review list and a neutral success message is shown;
-//   6. after a successful Needs More Information the case stays in the list and
-//      a neutral success message is shown;
-//   7. after a successful action only the active family's confirmation,
+//   4. after a successful Approve or Reject the case stays visible in place in
+//      a READ-ONLY resolved/rejected state with no action buttons, so duplicate
+//      submission is impossible even though the backend's unresolved list drops
+//      it;
+//   5. after a successful action only the active family's confirmation,
 //      membership, and Steward review caches are invalidated — another family's
 //      caches are untouched;
-//   8. a case already resolved elsewhere settles into a neutral state with no
-//      technical tag or private reason;
-//   9. a failed resolution shows a neutral error message;
-//  10. a failed review read shows a neutral error state with Retry and never an
+//   6. a case already resolved elsewhere settles into a neutral read-only state
+//      with no technical tag or private reason;
+//   7. a failed resolution shows a neutral error message;
+//   8. a failed review read shows a neutral error state with Retry and never an
 //      empty list, and Retry re-runs the query.
 //
 // The backend is a typed local actor mock, so this is component/integration
@@ -93,8 +93,7 @@ const {
   let resolveResult: unknown = null;
   // When true, a successful resolution removes the resolved membership from the
   // backend's unresolved list, so the next review read returns it without that
-  // case. This models the real backend, where Approve/Reject resolve the case
-  // and Needs More Information leaves it open.
+  // case. This models the real backend, where Approve/Reject resolve the case.
   let removeResolvedOnSuccess = false;
 
   const mockActor = {
@@ -116,11 +115,7 @@ const {
     async resolveMembershipConfirmation(...args: unknown[]): Promise<Result_5> {
       calls.resolveMembershipConfirmation.push(args);
       const result = resolveResult as Result_5;
-      if (
-        removeResolvedOnSuccess &&
-        result?.__kind__ === "ok" &&
-        args[2] !== MembershipConfirmationResolution.NeedsMoreInformation
-      ) {
+      if (removeResolvedOnSuccess && result?.__kind__ === "ok") {
         const resolvedId = args[1];
         reviews = reviews.filter(
           (review) => review.membershipId !== resolvedId,
@@ -242,11 +237,11 @@ function renderCard(
 }
 
 // ---------------------------------------------------------------------------
-// 1. Each case shows the three resolution actions.
+// 1. Each case shows exactly the two resolution actions.
 // ---------------------------------------------------------------------------
 
 describe("Membership Review case card: resolution actions (cover)", () => {
-  it("shows Approve Membership, Reject Membership, and Needs More Information", () => {
+  it("shows exactly Approve Membership and Reject Membership", () => {
     renderCard(makeReview());
 
     expect(
@@ -255,9 +250,11 @@ describe("Membership Review case card: resolution actions (cover)", () => {
     expect(
       screen.getByTestId("membership_reviews.reject_button.1"),
     ).toHaveTextContent("Reject Membership");
+    // The former third action is intentionally removed from the accepted
+    // contract.
     expect(
-      screen.getByTestId("membership_reviews.needs_info_button.1"),
-    ).toHaveTextContent("Needs More Information");
+      screen.queryByTestId("membership_reviews.needs_info_button.1"),
+    ).not.toBeInTheDocument();
   });
 
   // -------------------------------------------------------------------------
@@ -354,35 +351,11 @@ describe("Membership Review case card: resolution actions (cover)", () => {
     );
   });
 
-  it("Needs More Information submits directly with the active family, membership, and NeedsMoreInformation", async () => {
-    const user = userEvent.setup();
-    setResolveResult({ __kind__: "ok", ok: makeMembership() });
-    renderCard(makeReview({ membershipId: 11n }));
-
-    await user.click(
-      screen.getByTestId("membership_reviews.needs_info_button.1"),
-    );
-
-    // No confirmation dialog for Needs More Information.
-    expect(
-      screen.queryByTestId("membership_reviews.confirm_dialog.1"),
-    ).not.toBeInTheDocument();
-    await waitFor(() =>
-      expect(calls.resolveMembershipConfirmation).toEqual([
-        [
-          DEFAULT_FAMILY_ID,
-          11n,
-          MembershipConfirmationResolution.NeedsMoreInformation,
-        ],
-      ]),
-    );
-  });
-
   // -------------------------------------------------------------------------
-  // 4. Neutral success messages after a successful action.
+  // 4. Read-only resolved states after a successful action.
   // -------------------------------------------------------------------------
 
-  it("shows a neutral success message after a successful Approve", async () => {
+  it("shows a read-only approved state with no action buttons after a successful Approve", async () => {
     const user = userEvent.setup();
     setResolveResult({ __kind__: "ok", ok: makeMembership() });
     renderCard(makeReview());
@@ -395,10 +368,20 @@ describe("Membership Review case card: resolution actions (cover)", () => {
     const result = await screen.findByTestId(
       "membership_reviews.case_result.1",
     );
-    expect(within(result).getByText("Membership approved")).toBeInTheDocument();
+    expect(
+      within(result).getByText("Approved by Family Steward"),
+    ).toBeInTheDocument();
+    // The resolved state is read-only: no resolution controls remain, so the
+    // case cannot be submitted again.
+    expect(
+      screen.queryByTestId("membership_reviews.approve_button.1"),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("membership_reviews.reject_button.1"),
+    ).not.toBeInTheDocument();
   });
 
-  it("shows a neutral success message after a successful Reject", async () => {
+  it("shows a read-only rejected state with no action buttons after a successful Reject", async () => {
     const user = userEvent.setup();
     setResolveResult({ __kind__: "ok", ok: makeMembership() });
     renderCard(makeReview());
@@ -411,32 +394,23 @@ describe("Membership Review case card: resolution actions (cover)", () => {
     const result = await screen.findByTestId(
       "membership_reviews.case_result.1",
     );
-    expect(within(result).getByText("Membership rejected")).toBeInTheDocument();
-  });
-
-  it("shows a neutral success message after a successful Needs More Information", async () => {
-    const user = userEvent.setup();
-    setResolveResult({ __kind__: "ok", ok: makeMembership() });
-    renderCard(makeReview());
-
-    await user.click(
-      screen.getByTestId("membership_reviews.needs_info_button.1"),
-    );
-
-    const result = await screen.findByTestId(
-      "membership_reviews.case_result.1",
-    );
     expect(
-      within(result).getByText("More information requested"),
+      within(result).getByText("Rejected by Family Steward"),
     ).toBeInTheDocument();
+    expect(
+      screen.queryByTestId("membership_reviews.approve_button.1"),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("membership_reviews.reject_button.1"),
+    ).not.toBeInTheDocument();
   });
 
   // -------------------------------------------------------------------------
-  // 5. A case already resolved elsewhere settles into a neutral state with no
-  //    technical tag or private reason.
+  // 5. A case already resolved elsewhere settles into a neutral read-only state
+  //    with no technical tag or private reason.
   // -------------------------------------------------------------------------
 
-  it("settles into a neutral state when the case was already resolved elsewhere", async () => {
+  it("settles into a neutral read-only state when the case was already resolved elsewhere", async () => {
     const user = userEvent.setup();
     setResolveResult({
       __kind__: "err",
@@ -457,6 +431,13 @@ describe("Membership Review case card: resolution actions (cover)", () => {
     ).toBeInTheDocument();
     // No technical error tag or private reason is exposed.
     expect(result.textContent ?? "").not.toContain("AlreadyDecided");
+    // The settled state is read-only.
+    expect(
+      screen.queryByTestId("membership_reviews.approve_button.1"),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("membership_reviews.reject_button.1"),
+    ).not.toBeInTheDocument();
   });
 
   // -------------------------------------------------------------------------
@@ -487,12 +468,12 @@ describe("Membership Review case card: resolution actions (cover)", () => {
 });
 
 // ---------------------------------------------------------------------------
-// 7. Resolved cases are removed from the review list; Needs More Information
-//    cases remain available.
+// 7. A resolved case stays visible in place in its read-only state even after
+//    the backend's unresolved list drops it, so it cannot be submitted again.
 // ---------------------------------------------------------------------------
 
-describe("Membership Reviews page: resolved-case removal (cover)", () => {
-  it("removes an approved case from the review list after a successful resolution", async () => {
+describe("Membership Reviews page: resolved case stays read-only in place (cover)", () => {
+  it("keeps an approved case visible read-only after the backend drops it", async () => {
     const user = userEvent.setup();
     setSteward(true);
     setReviews([makeReview({ membershipId: 3n })]);
@@ -508,16 +489,26 @@ describe("Membership Reviews page: resolved-case removal (cover)", () => {
       await screen.findByTestId("membership_reviews.confirm_submit_button.1"),
     );
 
-    // The refreshed list is empty and the resolved case is gone.
-    await waitFor(() =>
-      expect(
-        screen.queryByTestId("membership_reviews.case_item.1"),
-      ).not.toBeInTheDocument(),
+    // The case stays visible in place in its read-only resolved state.
+    const result = await screen.findByTestId(
+      "membership_reviews.case_result.1",
     );
-    expect(screen.getByText("Nothing awaiting review")).toBeInTheDocument();
+    expect(
+      within(result).getByText("Approved by Family Steward"),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByTestId("membership_reviews.approve_button.1"),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("membership_reviews.reject_button.1"),
+    ).not.toBeInTheDocument();
+    // The empty state is not shown while the resolved case remains visible.
+    expect(
+      screen.queryByText("Nothing awaiting review"),
+    ).not.toBeInTheDocument();
   });
 
-  it("removes a rejected case from the review list after a successful resolution", async () => {
+  it("keeps a rejected case visible read-only after the backend drops it", async () => {
     const user = userEvent.setup();
     setSteward(true);
     setReviews([makeReview({ membershipId: 3n })]);
@@ -531,35 +522,18 @@ describe("Membership Reviews page: resolved-case removal (cover)", () => {
       await screen.findByTestId("membership_reviews.confirm_submit_button.1"),
     );
 
-    await waitFor(() =>
-      expect(
-        screen.queryByTestId("membership_reviews.case_item.1"),
-      ).not.toBeInTheDocument(),
+    const result = await screen.findByTestId(
+      "membership_reviews.case_result.1",
     );
-    expect(screen.getByText("Nothing awaiting review")).toBeInTheDocument();
-  });
-
-  it("keeps a Needs More Information case in the review list after a successful resolution", async () => {
-    const user = userEvent.setup();
-    setSteward(true);
-    setReviews([makeReview({ membershipId: 3n })]);
-    setResolveResult({ __kind__: "ok", ok: makeMembership() });
-    // Needs More Information leaves the case open, so the backend keeps it.
-    setRemoveResolvedOnSuccess(true);
-    renderReviewsPage();
-
-    await screen.findByTestId("membership_reviews.case_item.1");
-    await user.click(
-      screen.getByTestId("membership_reviews.needs_info_button.1"),
-    );
-
-    // The case stays open on the backend, so the refreshed list still contains
-    // it and the case remains available.
-    await waitFor(() =>
-      expect(
-        screen.getByTestId("membership_reviews.case_item.1"),
-      ).toBeInTheDocument(),
-    );
+    expect(
+      within(result).getByText("Rejected by Family Steward"),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByTestId("membership_reviews.approve_button.1"),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("membership_reviews.reject_button.1"),
+    ).not.toBeInTheDocument();
     expect(
       screen.queryByText("Nothing awaiting review"),
     ).not.toBeInTheDocument();

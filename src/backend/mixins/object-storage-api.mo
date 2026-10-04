@@ -9,6 +9,7 @@ import GovernanceTypes "../types/governance";
 import FamilyTypes "../types/family";
 import ObjectStorageLib "../lib/object-storage";
 import FamilyAuthorizationLib "../lib/family-authorization";
+import TenancyLib "../lib/tenancy";
 import InputValidation "../lib/input-validation";
 
 /// Tenancy 1C-A family-scoped photo / gallery public API.
@@ -46,11 +47,8 @@ mixin (
   /// portrait stays discoverable. A profile belonging to another family is
   /// never treated as unclaimed here.
   func isUnclaimedProfileForFamily(familyId : FamilyTypes.FamilyId, personId : Types.PersonId) : Bool {
-    switch (profiles.get(personId)) {
+    switch (TenancyLib.getProfileForFamily(profiles, familyId, personId)) {
       case (?profile) {
-        if (profile.familyId != familyId) {
-          return false;
-        };
         switch (profile.claimedByUserId) {
           case (?_) false;
           case null true;

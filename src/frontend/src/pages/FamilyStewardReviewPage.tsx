@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { StatusBadge } from "../components/StatusBadge";
 import { ReportedMessagesTab } from "../components/governance/ReportedMessagesTab";
+import { useFamilyScopedId } from "../context/FamilyContext";
 import {
   useApproveProfileClaim,
   useListProfileClaims,
@@ -60,16 +61,17 @@ export function FamilyStewardReviewPage({
   onBack,
 }: FamilyStewardReviewPageProps) {
   const { data: isSteward = false, isLoading: stewardLoading } = useIsSteward();
+  const familyId = useFamilyScopedId();
   const { data: claims = [], isLoading: claimsLoading } =
-    useListProfileClaims();
+    useListProfileClaims(familyId);
   const { data: requests = [], isLoading: requestsLoading } =
-    useListRelationshipRequests();
+    useListRelationshipRequests(familyId);
 
-  const approveClaim = useApproveProfileClaim();
-  const rejectClaim = useRejectProfileClaim();
-  const approveRequest = useApproveRelationshipRequest();
-  const rejectRequest = useRejectRelationshipRequest();
-  const setPending = useSetRelationshipRequestPending();
+  const approveClaim = useApproveProfileClaim(familyId);
+  const rejectClaim = useRejectProfileClaim(familyId);
+  const approveRequest = useApproveRelationshipRequest(familyId);
+  const rejectRequest = useRejectRelationshipRequest(familyId);
+  const setPending = useSetRelationshipRequestPending(familyId);
 
   const pendingClaims = claims.filter((c) => c.status === "Pending");
   const pendingRequests = requests.filter((r) => r.status === "Pending");

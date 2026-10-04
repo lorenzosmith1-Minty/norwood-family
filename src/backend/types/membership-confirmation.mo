@@ -42,15 +42,26 @@ module {
   /// This is NOT a duplicate of `FamilyMembership.status`: it tracks only how
   /// the confirmation case is being resolved.
   ///
-  /// - `#AwaitingConfirmation` — no decision recorded yet.
-  /// - `#ApprovedByRelative` — at least one `#Confirmed` and no `#Disputed`;
-  ///   the membership was activated through the existing activation path.
-  /// - `#StewardReviewRequired` — a conflict (`#Confirmed` + `#Disputed`) or
-  ///   only `#Disputed`; the case is escalated to the Family Steward.
-  /// - `#ResolvedBySteward` — a Steward resolved the case (approve or reject).
+  /// Semantic mapping to the membership-confirmation outcomes:
+  ///
+  /// - `#AwaitingConfirmation` — Pending: no decision recorded yet; the
+  ///   membership awaits trusted-relative confirmation/review.
+  /// - `#ApprovedByRelative` — Confirmed: at least one valid `#Confirmed` and
+  ///   no `#Disputed`; the membership was activated through the existing
+  ///   activation path.
+  /// - `#RejectedByRelative` — Rejected/Disputed: a standalone trusted-relative
+  ///   `#Disputed` with no `#Confirmed`; the membership is NOT activated and
+  ///   stays pending/reviewable. This is an explicit persisted representation
+  ///   distinct from `#ResolvedBySteward`.
+  /// - `#StewardReviewRequired` — NeedsStewardReview: conflicting evidence
+  ///   (`#Confirmed` + `#Disputed`) requires a Steward decision; the membership
+  ///   is not auto-activated.
+  /// - `#ResolvedBySteward` — a later Steward outcome (approve or reject); it is
+  ///   NOT equivalent to `#RejectedByRelative`.
   public type MembershipConfirmationState = {
     #AwaitingConfirmation;
     #ApprovedByRelative;
+    #RejectedByRelative;
     #StewardReviewRequired;
     #ResolvedBySteward;
   };
@@ -94,6 +105,13 @@ module {
   /// relationship that qualified the confirmer; it is an internal reference and
   /// is never surfaced as sensitive relationship context.
   /// `createdAt`/`updatedAt` are nanosecond timestamps.
+  ///
+  /// `rejectedByAccountId`/`rejectedAt` are the explicit persisted
+  /// representation of a standalone trusted-relative rejection/dispute: they
+  /// are set when this confirmer's `decision` is `#Disputed` and are cleared
+  /// when the decision is `#Confirmed`. They are distinct from the Steward
+  /// resolution record (`MembershipConfirmationResolutionRecord`), so a
+  /// relative rejection is never conflated with a Steward outcome.
   public type MembershipConfirmation = {
     id : Nat;
     familyId : FamilyId;
@@ -103,6 +121,8 @@ module {
     confirmerPersonId : PersonId;
     decision : ConfirmationDecision;
     relationshipId : ?Nat;
+    rejectedByAccountId : ?AccountId;
+    rejectedAt : ?Int;
     createdAt : Int;
     updatedAt : Int;
   };
@@ -218,8 +238,9 @@ module {
   ///   relationship label, a server-resolved confirmer display name, the
   ///   decision, and the decision timestamp.
   /// - `confirmedCount` / `disputedCount` — the decision tallies.
-  /// - `confirmationState` — the derived case state (always
-  ///   `#StewardReviewRequired` for a returned case).
+  /// - `confirmationState` — the derived case state (`#StewardReviewRequired`
+  ///   for a conflicting case, or `#RejectedByRelative` for a standalone
+  ///   trusted-relative rejection/dispute).
   ///
   /// It NEVER carries an applicant or confirmer account principal, a confirmer
   /// person id, a relationship id, raw relationship context, sensitive
@@ -240,7 +261,9 @@ module {
 
   /// Flattened, OQL-exposable view of a membership confirmation. Enumerated
   /// variants are rendered as their tag text; the optional `relationshipId`
-  /// renders as `0` when absent. No sensitive relationship context is exposed.
+  /// renders as `0` when absent. `rejectedByAccountId` renders as `""` and
+  /// `rejectedAt` as `0` when the decision is not a standalone rejection. No
+  /// sensitive relationship context is exposed.
   public type MembershipConfirmationRow = {
     familyId : Text;
     id : Nat;
@@ -250,6 +273,8 @@ module {
     confirmerPersonId : Text;
     decision : Text;
     relationshipId : Nat;
+    rejectedByAccountId : Text;
+    rejectedAt : Int;
     createdAt : Int;
     updatedAt : Int;
   };

@@ -1,6 +1,7 @@
 import { RelationshipType } from "@/backend";
 import { Link2, Loader2 } from "lucide-react";
 import { useState } from "react";
+import { useFamilyScopedId } from "../context/FamilyContext";
 import { useProposeRelationship } from "../hooks/useRelationshipRequests";
 import { RELATIONSHIP_TYPE_LABELS } from "../types/ownership";
 
@@ -33,7 +34,8 @@ export function RelationshipRequestForm({
   onSuccess,
 }: RelationshipRequestFormProps) {
   const [selected, setSelected] = useState<RelationshipType | null>(null);
-  const propose = useProposeRelationship();
+  const familyId = useFamilyScopedId();
+  const propose = useProposeRelationship(familyId);
 
   const handleSubmit = () => {
     if (!selected) return;

@@ -31,9 +31,9 @@ import * as membershipConfirmation from "./hooks/useMembershipConfirmation";
 //   2. a generated familyId suffix is never shown as the family name;
 //   3. the default Norwood family still renders "Norwood Family";
 //   4. the pending copy reflects trusted-relative confirmation plus Steward
-//      escalation ("A family member may confirm your connection. If there is a
-//      disagreement, a Family Steward will review it."), not universal Steward
-//      review;
+//      escalation ("Your family connection is waiting for a family member to
+//      confirm it. If there is a disagreement, a Family Steward will review
+//      it."), not universal Steward review;
 //   5. the obsolete notification-message parsing helpers
 //      (parseConfirmationRequest / ConfirmationRequestRef) are gone from the
 //      confirmation hook module, while the canonical eligible-confirmation
@@ -154,7 +154,7 @@ describe("pending shell: real family display name (cover)", () => {
 
     expect(
       await screen.findByText(
-        "Your family connection is waiting for confirmation. A family member may confirm your connection. If there is a disagreement, a Family Steward will review it.",
+        "Your family connection is waiting for a family member to confirm it. If there is a disagreement, a Family Steward will review it.",
       ),
     ).toBeInTheDocument();
     // The copy must not claim a Steward always reviews the connection.

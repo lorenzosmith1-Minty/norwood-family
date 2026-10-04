@@ -95,6 +95,8 @@ function confirmationRecord(): MembershipConfirmation {
     confirmerPersonId: "clayton",
     decision: ConfirmationDecision.Disputed,
     relationshipId: 11n,
+    rejectedByAccountId: CONFIRMER,
+    rejectedAt: 1_700_000_000_000_000_000n,
     createdAt: 1_700_000_000_000_000_000n,
     updatedAt: 1_700_000_000_000_000_000n,
   };

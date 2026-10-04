@@ -632,10 +632,12 @@ export const MembershipConfirmation = IDL.Record({
   'confirmerAccountId' : AccountId,
   'decision' : ConfirmationDecision,
   'relationshipId' : IDL.Opt(IDL.Nat),
+  'rejectedByAccountId' : IDL.Opt(AccountId),
   'createdAt' : IDL.Int,
   'pendingPersonId' : PersonId,
   'updatedAt' : IDL.Int,
   'confirmerPersonId' : PersonId,
+  'rejectedAt' : IDL.Opt(IDL.Int),
   'membershipId' : IDL.Nat,
   'familyId' : FamilyId,
 });
@@ -942,6 +944,7 @@ export const Result_29 = IDL.Variant({
 export const MembershipConfirmationState = IDL.Variant({
   'StewardReviewRequired' : IDL.Null,
   'ResolvedBySteward' : IDL.Null,
+  'RejectedByRelative' : IDL.Null,
   'AwaitingConfirmation' : IDL.Null,
   'ApprovedByRelative' : IDL.Null,
 });
@@ -3632,10 +3635,12 @@ export const idlFactory = ({ IDL }) => {
     'confirmerAccountId' : AccountId,
     'decision' : ConfirmationDecision,
     'relationshipId' : IDL.Opt(IDL.Nat),
+    'rejectedByAccountId' : IDL.Opt(AccountId),
     'createdAt' : IDL.Int,
     'pendingPersonId' : PersonId,
     'updatedAt' : IDL.Int,
     'confirmerPersonId' : PersonId,
+    'rejectedAt' : IDL.Opt(IDL.Int),
     'membershipId' : IDL.Nat,
     'familyId' : FamilyId,
   });
@@ -3933,6 +3938,7 @@ export const idlFactory = ({ IDL }) => {
   const MembershipConfirmationState = IDL.Variant({
     'StewardReviewRequired' : IDL.Null,
     'ResolvedBySteward' : IDL.Null,
+    'RejectedByRelative' : IDL.Null,
     'AwaitingConfirmation' : IDL.Null,
     'ApprovedByRelative' : IDL.Null,
   });

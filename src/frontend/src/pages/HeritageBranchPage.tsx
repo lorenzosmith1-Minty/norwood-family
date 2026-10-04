@@ -6,6 +6,7 @@ import {
   HeritageBranchCard,
   type HeritagePerson,
 } from "../components/HeritageBranchCard";
+import { useFamilyScopedId } from "../context/FamilyContext";
 import { useListArchivedProfileIds } from "../hooks/useGovernance";
 import { useListConfirmedRelationships } from "../hooks/useRelationshipRequests";
 import {
@@ -185,7 +186,8 @@ export default function HeritageBranchPage({
   // render time so approved relationship requests appear in the map without
   // mutating the static FAMILY_GRAPH. Falls back to the static graph when the
   // user is not signed in (no confirmed relationships loaded).
-  const { data: confirmed = [] } = useListConfirmedRelationships();
+  const familyId = useFamilyScopedId();
+  const { data: confirmed = [] } = useListConfirmedRelationships(familyId);
   const graph = useMemo(
     () => overlayConfirmedRelationships(FAMILY_GRAPH, confirmed),
     [confirmed],

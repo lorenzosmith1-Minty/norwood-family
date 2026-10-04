@@ -4,6 +4,7 @@ import {
   MembershipStatus,
 } from "@/backend";
 import { useMyMembershipConfirmationState } from "@/hooks/useMembershipConfirmation";
+import { MEMBERSHIP_CONFIRMATION_STATE_LABELS } from "@/types/ownership";
 import { CheckCircle2, Clock, Info, ShieldQuestion } from "lucide-react";
 
 /**
@@ -18,6 +19,10 @@ import { CheckCircle2, Clock, Info, ShieldQuestion } from "lucide-react";
  * The card renders one calm line per derived state:
  *   - AWAITING            -> "Waiting for a family member to confirm your connection."
  *   - APPROVED BY RELATIVE-> "Your family connection has been confirmed."
+ *   - REJECTED BY RELATIVE-> "Your family connection needs Family Steward review."
+ *     A relative did not confirm the connection, but the case is not final: a
+ *     Family Steward still reviews it, so it must never read as a permanent
+ *     rejection.
  *   - STEWARD REVIEW      -> "Your family connection needs Family Steward review."
  *   - RESOLVED / APPROVED -> "Your family membership is confirmed."
  *   - RESOLVED / NOT APPROVED -> "Your membership request was not approved."
@@ -49,21 +54,25 @@ function presentStatus(
     case MembershipConfirmationState.AwaitingConfirmation:
       return {
         icon: Clock,
-        title: "Waiting for confirmation",
+        title: MEMBERSHIP_CONFIRMATION_STATE_LABELS[view.state],
         body: "Waiting for a family member to confirm your connection.",
         tone: "confirm-status-pending",
       };
     case MembershipConfirmationState.ApprovedByRelative:
       return {
         icon: CheckCircle2,
-        title: "Connection confirmed",
+        title: MEMBERSHIP_CONFIRMATION_STATE_LABELS[view.state],
         body: "Your family connection has been confirmed.",
         tone: "confirm-status-success",
       };
+    case MembershipConfirmationState.RejectedByRelative:
     case MembershipConfirmationState.StewardReviewRequired:
+      // A relative did not confirm the connection, but the case is not final:
+      // a Family Steward still reviews it. Both states therefore read as under
+      // review, never as a permanent rejection.
       return {
         icon: ShieldQuestion,
-        title: "Family Steward review",
+        title: MEMBERSHIP_CONFIRMATION_STATE_LABELS[view.state],
         body: "Your family connection needs Family Steward review.",
         tone: "confirm-status-review",
       };
@@ -71,20 +80,23 @@ function presentStatus(
       return membershipStatus === MembershipStatus.Active
         ? {
             icon: CheckCircle2,
-            title: "Membership confirmed",
+            title: "Approved by Family Steward",
             body: "Your family membership is confirmed.",
             tone: "confirm-status-success",
           }
         : {
             icon: Info,
-            title: "Membership not approved",
+            title: "Rejected by Family Steward",
             body: "Your membership request was not approved.",
             tone: "confirm-status-neutral",
           };
     default:
       return {
         icon: Clock,
-        title: "Waiting for confirmation",
+        title:
+          MEMBERSHIP_CONFIRMATION_STATE_LABELS[
+            MembershipConfirmationState.AwaitingConfirmation
+          ],
         body: "Waiting for a family member to confirm your connection.",
         tone: "confirm-status-pending",
       };

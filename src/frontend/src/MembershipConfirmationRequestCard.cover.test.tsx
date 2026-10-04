@@ -38,10 +38,11 @@ import { MembershipConfirmationRequestCard } from "./components/MembershipConfir
 //      this is correct", with neutral wording and no accusatory language;
 //   3. disables both actions and shows a calm in-progress state while a decision
 //      is submitting;
-//   4. renders the correct result state: "Connection confirmed" + "[Name] can
-//      now join the family." on activation, an accurate further-review state,
-//      the neutral dispute state, and the neutral "This request no longer needs
-//      your confirmation." state when the case changed before the user acted;
+//   4. renders the correct result state: "Confirmed by a family member" +
+//      "[Name] can now join the family." on activation, an accurate
+//      further-review state, the neutral dispute state, and the neutral "This
+//      request no longer needs your confirmation." state when the case changed
+//      before the user acted;
 //   5. never surfaces backend membership details, sensitive relationship
 //      context, private notes, or technical identifiers.
 //
@@ -341,13 +342,15 @@ describe("confirmation request card: primary actions (cover)", () => {
 });
 
 describe("confirmation request card: result states (cover)", () => {
-  it("renders 'Connection confirmed' and '[Name] can now join the family.' on activation", async () => {
+  it("renders 'Confirmed by a family member' and '[Name] can now join the family.' on activation", async () => {
     const user = userEvent.setup();
     renderCard({});
 
     await user.click(await screen.findByTestId("confirmation.confirm_button"));
 
-    expect(await screen.findByText("Connection confirmed")).toBeInTheDocument();
+    expect(
+      await screen.findByText("Confirmed by a family member"),
+    ).toBeInTheDocument();
     expect(
       screen.getByText("Hudson Norwood can now join the family."),
     ).toBeInTheDocument();
@@ -382,10 +385,8 @@ describe("confirmation request card: result states (cover)", () => {
 
     await user.click(await screen.findByTestId("confirmation.confirm_button"));
 
-    expect(
-      await screen.findByText("This connection needs a Family Steward"),
-    ).toBeInTheDocument();
-    expect(screen.queryByText("Connection confirmed")).toBeNull();
+    expect(await screen.findByText("Needs Steward review")).toBeInTheDocument();
+    expect(screen.queryByText("Confirmed by a family member")).toBeNull();
   });
 
   it("renders the neutral dispute state and never says the applicant was rejected", async () => {
@@ -400,7 +401,7 @@ describe("confirmation request card: result states (cover)", () => {
 
     expect(
       await screen.findByText(
-        "Thanks — this connection will be reviewed by a Family Steward.",
+        "Thanks — a Family Steward will review this connection.",
       ),
     ).toBeInTheDocument();
     const text = document.body.textContent ?? "";
@@ -481,7 +482,9 @@ describe("confirmation request card: result states (cover)", () => {
 
     renderCard({});
 
-    expect(await screen.findByText("Connection confirmed")).toBeInTheDocument();
+    expect(
+      await screen.findByText("Confirmed by a family member"),
+    ).toBeInTheDocument();
     expect(calls.confirmPendingMembership).toEqual([]);
   });
 
@@ -490,7 +493,7 @@ describe("confirmation request card: result states (cover)", () => {
     renderCard({});
 
     await user.click(await screen.findByTestId("confirmation.confirm_button"));
-    await screen.findByText("Connection confirmed");
+    await screen.findByText("Confirmed by a family member");
 
     const text = document.body.textContent ?? "";
     expect(text).not.toContain("relationshipId");

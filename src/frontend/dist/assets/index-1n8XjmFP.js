@@ -35205,10 +35205,12 @@ const MembershipConfirmation = Record({
   "confirmerAccountId": AccountId,
   "decision": ConfirmationDecision$1,
   "relationshipId": Opt(Nat),
+  "rejectedByAccountId": Opt(AccountId),
   "createdAt": Int,
   "pendingPersonId": PersonId,
   "updatedAt": Int,
   "confirmerPersonId": PersonId,
+  "rejectedAt": Opt(Int),
   "membershipId": Nat,
   "familyId": FamilyId
 });
@@ -35515,6 +35517,7 @@ const Result_29 = Variant({
 const MembershipConfirmationState$1 = Variant({
   "StewardReviewRequired": Null,
   "ResolvedBySteward": Null,
+  "RejectedByRelative": Null,
   "AwaitingConfirmation": Null,
   "ApprovedByRelative": Null
 });
@@ -38201,10 +38204,12 @@ const idlFactory = ({ IDL: IDL2 }) => {
     "confirmerAccountId": AccountId2,
     "decision": ConfirmationDecision2,
     "relationshipId": IDL2.Opt(IDL2.Nat),
+    "rejectedByAccountId": IDL2.Opt(AccountId2),
     "createdAt": IDL2.Int,
     "pendingPersonId": PersonId2,
     "updatedAt": IDL2.Int,
     "confirmerPersonId": PersonId2,
+    "rejectedAt": IDL2.Opt(IDL2.Int),
     "membershipId": IDL2.Nat,
     "familyId": FamilyId2
   });
@@ -38502,6 +38507,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
   const MembershipConfirmationState2 = IDL2.Variant({
     "StewardReviewRequired": IDL2.Null,
     "ResolvedBySteward": IDL2.Null,
+    "RejectedByRelative": IDL2.Null,
     "AwaitingConfirmation": IDL2.Null,
     "ApprovedByRelative": IDL2.Null
   });
@@ -40774,6 +40780,7 @@ var MembershipConfirmationResolution = /* @__PURE__ */ ((MembershipConfirmationR
 var MembershipConfirmationState = /* @__PURE__ */ ((MembershipConfirmationState2) => {
   MembershipConfirmationState2["StewardReviewRequired"] = "StewardReviewRequired";
   MembershipConfirmationState2["ResolvedBySteward"] = "ResolvedBySteward";
+  MembershipConfirmationState2["RejectedByRelative"] = "RejectedByRelative";
   MembershipConfirmationState2["AwaitingConfirmation"] = "AwaitingConfirmation";
   MembershipConfirmationState2["ApprovedByRelative"] = "ApprovedByRelative";
   return MembershipConfirmationState2;
@@ -46121,7 +46128,7 @@ function from_candid_MembershipConfirmationReviewView_n329(_uploadFile, _downloa
   return from_candid_record_n330(_uploadFile, _downloadFile, value);
 }
 function from_candid_MembershipConfirmationState_n246(_uploadFile, _downloadFile, value) {
-  return "StewardReviewRequired" in value ? "StewardReviewRequired" : "ResolvedBySteward" in value ? "ResolvedBySteward" : "AwaitingConfirmation" in value ? "AwaitingConfirmation" : "ApprovedByRelative" in value ? "ApprovedByRelative" : value;
+  return "StewardReviewRequired" in value ? "StewardReviewRequired" : "ResolvedBySteward" in value ? "ResolvedBySteward" : "RejectedByRelative" in value ? "RejectedByRelative" : "AwaitingConfirmation" in value ? "AwaitingConfirmation" : "ApprovedByRelative" in value ? "ApprovedByRelative" : value;
 }
 function from_candid_MembershipConfirmation_n143(_uploadFile, _downloadFile, value) {
   return from_candid_record_n144(_uploadFile, _downloadFile, value);
@@ -46732,10 +46739,12 @@ function from_candid_record_n144(_uploadFile, _downloadFile, value) {
     confirmerAccountId: value.confirmerAccountId,
     decision: from_candid_ConfirmationDecision_n145(_uploadFile, _downloadFile, value.decision),
     relationshipId: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.relationshipId)),
+    rejectedByAccountId: record_opt_to_undefined(from_candid_opt_n19(_uploadFile, _downloadFile, value.rejectedByAccountId)),
     createdAt: value.createdAt,
     pendingPersonId: value.pendingPersonId,
     updatedAt: value.updatedAt,
     confirmerPersonId: value.confirmerPersonId,
+    rejectedAt: record_opt_to_undefined(from_candid_opt_n18(_uploadFile, _downloadFile, value.rejectedAt)),
     membershipId: value.membershipId,
     familyId: value.familyId
   };
@@ -51929,10 +51938,10 @@ function useMyRelationshipRequests(familyId) {
 function useListRelationshipRequests(familyId) {
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["relationshipRequests", null],
+    queryKey: ["relationshipRequests", familyId ?? null],
     queryFn: async () => {
       if (!actor) return [];
-      return actor.listRelationshipRequests();
+      return familyId ? actor.listRelationshipRequestsForFamily(familyId) : actor.listRelationshipRequests();
     },
     enabled: !!actor && !isFetching
   });
@@ -51948,7 +51957,12 @@ function useProposeRelationship(familyId) {
       relationshipType
     }) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.proposeRelationship(fromPersonId, toPersonId, relationshipType);
+      return familyId ? actor.proposeRelationshipForFamily(
+        familyId,
+        fromPersonId,
+        toPersonId,
+        relationshipType
+      ) : actor.proposeRelationship(fromPersonId, toPersonId, relationshipType);
     },
     onSuccess: () => {
       void queryClient2.invalidateQueries(
@@ -51970,7 +51984,7 @@ function useApproveRelationshipRequest(familyId) {
   return useMutation({
     mutationFn: async (requestId) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.approveRelationshipRequest(requestId);
+      return familyId ? actor.approveRelationshipRequestForFamily(familyId, requestId) : actor.approveRelationshipRequest(requestId);
     },
     onSuccess: () => {
       void queryClient2.invalidateQueries(
@@ -51998,7 +52012,7 @@ function useRejectRelationshipRequest(familyId) {
   return useMutation({
     mutationFn: async (requestId) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.rejectRelationshipRequest(requestId);
+      return familyId ? actor.rejectRelationshipRequestForFamily(familyId, requestId) : actor.rejectRelationshipRequest(requestId);
     },
     onSuccess: () => {
       void queryClient2.invalidateQueries(
@@ -52023,7 +52037,7 @@ function useSetRelationshipRequestPending(familyId) {
   return useMutation({
     mutationFn: async (requestId) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.setRelationshipRequestPending(requestId);
+      return familyId ? actor.setRelationshipRequestPendingForFamily(familyId, requestId) : actor.setRelationshipRequestPending(requestId);
     },
     onSuccess: () => {
       void queryClient2.invalidateQueries(
@@ -52115,10 +52129,10 @@ function usePersonProfile(personId, options) {
 function usePersonClaimStatus(personId, familyId) {
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["personProfile", null, personId],
+    queryKey: ["personProfile", familyId ?? null, personId],
     queryFn: async () => {
       if (!actor) return null;
-      return actor.getPersonProfile(personId);
+      return familyId ? actor.getPersonProfileForFamily(familyId, personId) : actor.getPersonProfile(personId);
     },
     enabled: !!actor && !isFetching,
     select: (profile) => ({
@@ -52151,10 +52165,10 @@ function useMyProfile(familyId) {
 function useListProfileClaims(familyId) {
   const { actor, isFetching } = useActor(createActor);
   return useQuery({
-    queryKey: ["profileClaims", null],
+    queryKey: ["profileClaims", familyId ?? null],
     queryFn: async () => {
       if (!actor) return [];
-      return actor.listProfileClaims();
+      return familyId ? actor.listProfileClaimsForFamily(familyId) : actor.listProfileClaims();
     },
     enabled: !!actor && !isFetching
   });
@@ -52196,7 +52210,7 @@ function useApproveProfileClaim(familyId) {
   return useMutation({
     mutationFn: async (claimId) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.approveProfileClaim(claimId);
+      return familyId ? actor.approveProfileClaimForFamily(familyId, claimId) : actor.approveProfileClaim(claimId);
     },
     onSuccess: (_data, claimId) => {
       void reconcile.mutateAsync(claimId).catch(() => {
@@ -52227,7 +52241,7 @@ function useRejectProfileClaim(familyId) {
   return useMutation({
     mutationFn: async (claimId) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.rejectProfileClaim(claimId);
+      return familyId ? actor.rejectProfileClaimForFamily(familyId, claimId) : actor.rejectProfileClaim(claimId);
     },
     onSuccess: () => {
       void queryClient2.invalidateQueries(
@@ -52254,7 +52268,7 @@ function useSearchPossibleMatches(familyId) {
   return useMutation({
     mutationFn: async (name) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.searchPossibleMatches(name);
+      return familyId ? actor.searchPossibleMatchesForFamily(familyId, name) : actor.searchPossibleMatches(name);
     }
   });
 }
@@ -52265,7 +52279,7 @@ function useCreateMyself(familyId) {
   return useMutation({
     mutationFn: async (name) => {
       if (!actor) throw new Error("Backend is not ready");
-      return actor.createMyself(name);
+      return familyId ? actor.createMyselfForFamily(familyId, name) : actor.createMyself(name);
     },
     onSuccess: () => {
       void queryClient2.invalidateQueries(
@@ -53169,9 +53183,10 @@ function useGetResearchAuditLog() {
   });
 }
 function StewardActionBadge() {
+  const familyId = useFamilyScopedId();
   const { data: isSteward = false } = useIsSteward();
-  const { data: claims = [] } = useListProfileClaims();
-  const { data: requests = [] } = useListRelationshipRequests();
+  const { data: claims = [] } = useListProfileClaims(familyId);
+  const { data: requests = [] } = useListRelationshipRequests(familyId);
   const { data: reports = [] } = useListReports();
   const { data: pendingArchive = [] } = usePendingArchiveItems();
   const { data: reviewQueue } = useGetReviewQueue();
@@ -53888,45 +53903,140 @@ function isNoLongerNeededError(error) {
       return false;
   }
 }
+function resolveMyProfileRoute(claimStatus, personId) {
+  if (claimStatus === ClaimStatus.Claimed && personId) return "owned";
+  if (claimStatus === ClaimStatus.Unclaimed && personId) return "pending";
+  return "add-myself";
+}
+const PRIVACY_OPTIONS = [
+  { value: PrivacyLevel.FamilyOnly, label: "Family only" },
+  { value: PrivacyLevel.Private, label: "Private" }
+];
+const MEMBERSHIP_CONFIRMATION_STATE_LABELS = {
+  [MembershipConfirmationState.AwaitingConfirmation]: "Waiting for family confirmation",
+  [MembershipConfirmationState.ApprovedByRelative]: "Confirmed by a family member",
+  [MembershipConfirmationState.RejectedByRelative]: "Disputed",
+  [MembershipConfirmationState.StewardReviewRequired]: "Needs Steward review",
+  [MembershipConfirmationState.ResolvedBySteward]: "Reviewed by a Family Steward"
+};
+({
+  [RelationshipStatus.Confirmed]: "Confirmed",
+  [RelationshipStatus.Pending]: "Pending",
+  [RelationshipStatus.Disputed]: "Disputed"
+});
+const RELATIONSHIP_TYPE_LABELS = {
+  [RelationshipType.Parent]: "Parent",
+  [RelationshipType.Child]: "Child",
+  [RelationshipType.Sibling]: "Sibling",
+  [RelationshipType.SpousePartner]: "Spouse or Partner"
+};
+const NOTIFICATION_TYPE_LABELS = {
+  [NotificationType.ResearchSubmission]: "Research submitted",
+  [NotificationType.ResearchApproved]: "Research approved",
+  [NotificationType.ResearchRejected]: "Research rejected",
+  [NotificationType.ArchiveApproved]: "Archive contribution approved",
+  [NotificationType.ArchiveRejected]: "Archive contribution rejected",
+  [NotificationType.ProfileClaimRequested]: "Profile claim requested",
+  [NotificationType.ProfileClaimReviewed]: "Profile claim reviewed",
+  [NotificationType.RelationshipRequested]: "Relationship requested",
+  [NotificationType.RelationshipReviewed]: "Relationship reviewed",
+  [NotificationType.BoardMention]: "Board mention",
+  [NotificationType.BoardReply]: "Board reply",
+  [NotificationType.NewMessage]: "New message"
+};
+function resolveStatusBadge(kind, status) {
+  if (kind === "claim") {
+    switch (status) {
+      case "Unclaimed":
+        return {
+          base: "claim-badge",
+          tone: "claim-badge-unclaimed",
+          label: "Unclaimed"
+        };
+      case "Claimed":
+      case "Approved":
+        return {
+          base: "claim-badge",
+          tone: "claim-badge-claimed",
+          label: "Claimed"
+        };
+      case "Pending":
+        return {
+          base: "claim-badge",
+          tone: "claim-badge-pending",
+          label: "Pending claim"
+        };
+      case "Rejected":
+        return {
+          base: "claim-badge",
+          tone: "rel-disputed",
+          label: "Rejected"
+        };
+      default:
+        return null;
+    }
+  }
+  switch (status) {
+    case "Confirmed":
+    case "Approved":
+      return {
+        base: "rel-status",
+        tone: "rel-confirmed",
+        label: status === "Confirmed" ? "Confirmed" : "Approved"
+      };
+    case "Pending":
+      return { base: "rel-status", tone: "rel-pending", label: "Pending" };
+    case "Disputed":
+    case "Rejected":
+      return {
+        base: "rel-status",
+        tone: "rel-disputed",
+        label: status === "Disputed" ? "Disputed" : "Rejected"
+      };
+    default:
+      return null;
+  }
+}
 function presentStatus(view, membershipStatus) {
   switch (view.state) {
     case MembershipConfirmationState.AwaitingConfirmation:
       return {
         icon: Clock,
-        title: "Waiting for confirmation",
+        title: MEMBERSHIP_CONFIRMATION_STATE_LABELS[view.state],
         body: "Waiting for a family member to confirm your connection.",
         tone: "confirm-status-pending"
       };
     case MembershipConfirmationState.ApprovedByRelative:
       return {
         icon: CircleCheck,
-        title: "Connection confirmed",
+        title: MEMBERSHIP_CONFIRMATION_STATE_LABELS[view.state],
         body: "Your family connection has been confirmed.",
         tone: "confirm-status-success"
       };
+    case MembershipConfirmationState.RejectedByRelative:
     case MembershipConfirmationState.StewardReviewRequired:
       return {
         icon: ShieldQuestion,
-        title: "Family Steward review",
+        title: MEMBERSHIP_CONFIRMATION_STATE_LABELS[view.state],
         body: "Your family connection needs Family Steward review.",
         tone: "confirm-status-review"
       };
     case MembershipConfirmationState.ResolvedBySteward:
       return membershipStatus === MembershipStatus.Active ? {
         icon: CircleCheck,
-        title: "Membership confirmed",
+        title: "Approved by Family Steward",
         body: "Your family membership is confirmed.",
         tone: "confirm-status-success"
       } : {
         icon: Info,
-        title: "Membership not approved",
+        title: "Rejected by Family Steward",
         body: "Your membership request was not approved.",
         tone: "confirm-status-neutral"
       };
     default:
       return {
         icon: Clock,
-        title: "Waiting for confirmation",
+        title: MEMBERSHIP_CONFIRMATION_STATE_LABELS[MembershipConfirmationState.AwaitingConfirmation],
         body: "Waiting for a family member to confirm your connection.",
         tone: "confirm-status-pending"
       };
@@ -53987,8 +54097,8 @@ function MembershipPendingShell({
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "invite-crest", "aria-hidden": "true", children: /* @__PURE__ */ jsxRuntimeExports.jsx(TreePine, { className: "h-7 w-7", strokeWidth: 1.75 }) }),
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col items-center gap-2", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground", children: displayName ? `${displayName} Family` : "Family" }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "invite-title", children: "Your membership is pending" }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "invite-hint", children: "Your family connection is waiting for confirmation. A family member may confirm your connection. If there is a disagreement, a Family Steward will review it." })
+            /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "invite-title", children: "Waiting for family confirmation" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "invite-hint", children: "Your family connection is waiting for a family member to confirm it. If there is a disagreement, a Family Steward will review it." })
           ] }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "invite-rule", "aria-hidden": "true" }),
           /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "invite-status invite-status-expired", children: [
@@ -54613,93 +54723,6 @@ function overlayConfirmedRelationships(base, confirmed) {
     }
   }
   return graph;
-}
-function resolveMyProfileRoute(claimStatus, personId) {
-  if (claimStatus === ClaimStatus.Claimed && personId) return "owned";
-  if (claimStatus === ClaimStatus.Unclaimed && personId) return "pending";
-  return "add-myself";
-}
-const PRIVACY_OPTIONS = [
-  { value: PrivacyLevel.FamilyOnly, label: "Family only" },
-  { value: PrivacyLevel.Private, label: "Private" }
-];
-({
-  [RelationshipStatus.Confirmed]: "Confirmed",
-  [RelationshipStatus.Pending]: "Pending",
-  [RelationshipStatus.Disputed]: "Disputed"
-});
-const RELATIONSHIP_TYPE_LABELS = {
-  [RelationshipType.Parent]: "Parent",
-  [RelationshipType.Child]: "Child",
-  [RelationshipType.Sibling]: "Sibling",
-  [RelationshipType.SpousePartner]: "Spouse or Partner"
-};
-const NOTIFICATION_TYPE_LABELS = {
-  [NotificationType.ResearchSubmission]: "Research submitted",
-  [NotificationType.ResearchApproved]: "Research approved",
-  [NotificationType.ResearchRejected]: "Research rejected",
-  [NotificationType.ArchiveApproved]: "Archive contribution approved",
-  [NotificationType.ArchiveRejected]: "Archive contribution rejected",
-  [NotificationType.ProfileClaimRequested]: "Profile claim requested",
-  [NotificationType.ProfileClaimReviewed]: "Profile claim reviewed",
-  [NotificationType.RelationshipRequested]: "Relationship requested",
-  [NotificationType.RelationshipReviewed]: "Relationship reviewed",
-  [NotificationType.BoardMention]: "Board mention",
-  [NotificationType.BoardReply]: "Board reply",
-  [NotificationType.NewMessage]: "New message"
-};
-function resolveStatusBadge(kind, status) {
-  if (kind === "claim") {
-    switch (status) {
-      case "Unclaimed":
-        return {
-          base: "claim-badge",
-          tone: "claim-badge-unclaimed",
-          label: "Unclaimed"
-        };
-      case "Claimed":
-      case "Approved":
-        return {
-          base: "claim-badge",
-          tone: "claim-badge-claimed",
-          label: "Claimed"
-        };
-      case "Pending":
-        return {
-          base: "claim-badge",
-          tone: "claim-badge-pending",
-          label: "Pending claim"
-        };
-      case "Rejected":
-        return {
-          base: "claim-badge",
-          tone: "rel-disputed",
-          label: "Rejected"
-        };
-      default:
-        return null;
-    }
-  }
-  switch (status) {
-    case "Confirmed":
-    case "Approved":
-      return {
-        base: "rel-status",
-        tone: "rel-confirmed",
-        label: status === "Confirmed" ? "Confirmed" : "Approved"
-      };
-    case "Pending":
-      return { base: "rel-status", tone: "rel-pending", label: "Pending" };
-    case "Disputed":
-    case "Rejected":
-      return {
-        base: "rel-status",
-        tone: "rel-disputed",
-        label: status === "Disputed" ? "Disputed" : "Rejected"
-      };
-    default:
-      return null;
-  }
 }
 function resolveCanonicalPersonProfile(backend, canonical) {
   var _a2;
@@ -70834,11 +70857,14 @@ function MatchCard({
   onNoMatch
 }) {
   const { accountId, isInitializing } = useAuth();
+  const familyId = useFamilyScopedId();
   const { data: myClaim, isLoading: claimLoading } = useMyProfileClaim(
-    match.personId
+    match.personId,
+    familyId
   );
   const { data: claimStatus, isLoading: profileLoading } = usePersonClaimStatus(
-    match.personId
+    match.personId,
+    familyId
   );
   const currentPrincipal = accountId;
   const ownedByCurrentUser = (myClaim == null ? void 0 : myClaim.personId) === match.personId && myClaim.status === "Approved" && myClaim.requestingUserId.toString() === currentPrincipal;
@@ -70916,6 +70942,7 @@ function AddMyselfPage({
     signInWithGoogle,
     signInWithApple
   } = useAuth();
+  const familyId = useFamilyScopedId();
   const [step, setStep] = reactExports.useState(() => {
     var _a2;
     return ((_a2 = loadDraft()) == null ? void 0 : _a2.step) ?? "name";
@@ -70986,10 +71013,10 @@ function AddMyselfPage({
       }
     }
   }, [submitted]);
-  const search = useSearchPossibleMatches();
-  const create = useCreateMyself();
-  const propose = useProposeRelationship();
-  const claim = useRequestProfileClaim();
+  const search = useSearchPossibleMatches(familyId);
+  const create = useCreateMyself(familyId);
+  const propose = useProposeRelationship(familyId);
+  const claim = useRequestProfileClaim(familyId);
   const matches = reactExports.useMemo(
     () => mergeMatches(buildLocalMatches(submittedName), search.data ?? []),
     [submittedName, search.data]
@@ -75725,8 +75752,10 @@ function ConversationPage({
     otherPersonId ?? void 0,
     otherDisplayName
   );
+  const familyId = useFamilyScopedId();
   const { data: otherProfile } = usePersonProfile(otherPersonId ?? "", {
-    enabled: Boolean(otherPersonId)
+    enabled: Boolean(otherPersonId),
+    familyId
   });
   const otherAccountId = otherProfile == null ? void 0 : otherProfile.claimedByUserId;
   const { data: blockedUsers = [] } = useListBlockedUsers();
@@ -77464,13 +77493,14 @@ function personName$4(personId) {
   return resolveDisplayName(personId, profiles);
 }
 function ReviewRequestsTab() {
-  const { data: claims = [], isLoading: claimsLoading } = useListProfileClaims();
-  const { data: requests = [], isLoading: requestsLoading } = useListRelationshipRequests();
-  const approveClaim = useApproveProfileClaim();
-  const rejectClaim = useRejectProfileClaim();
-  const approveRequest = useApproveRelationshipRequest();
-  const rejectRequest = useRejectRelationshipRequest();
-  const setPending = useSetRelationshipRequestPending();
+  const familyId = useFamilyScopedId();
+  const { data: claims = [], isLoading: claimsLoading } = useListProfileClaims(familyId);
+  const { data: requests = [], isLoading: requestsLoading } = useListRelationshipRequests(familyId);
+  const approveClaim = useApproveProfileClaim(familyId);
+  const rejectClaim = useRejectProfileClaim(familyId);
+  const approveRequest = useApproveRelationshipRequest(familyId);
+  const rejectRequest = useRejectRelationshipRequest(familyId);
+  const setPending = useSetRelationshipRequestPending(familyId);
   const pendingClaims = claims.filter((c2) => c2.status === "Pending");
   const pendingRequests = requests.filter((r2) => r2.status === "Pending");
   const isLoading = claimsLoading || requestsLoading;
@@ -78254,8 +78284,9 @@ function FamilyStewardHubPage({
   onOpenMembershipReviews
 }) {
   const { data: isSteward = false } = useIsSteward();
-  const { data: claims = [] } = useListProfileClaims();
-  const { data: requests = [] } = useListRelationshipRequests();
+  const familyId = useFamilyScopedId();
+  const { data: claims = [] } = useListProfileClaims(familyId);
+  const { data: requests = [] } = useListRelationshipRequests(familyId);
   const { data: reports = [] } = useListReports();
   const { data: pendingArchiveItems = [] } = usePendingArchiveItems();
   const { data: reviewQueue } = useGetReviewQueue();
@@ -78653,11 +78684,15 @@ function decisionTone(decision) {
 }
 function MembershipReviewCaseCard({
   review,
-  position
+  position,
+  onResolved,
+  initialResult
 }) {
   const [expanded, setExpanded] = reactExports.useState(false);
   const [confirming, setConfirming] = reactExports.useState(null);
-  const [result, setResult] = reactExports.useState(null);
+  const [result, setResult] = reactExports.useState(
+    initialResult ?? null
+  );
   const historyId = reactExports.useId();
   const resolve = useResolveMembershipConfirmation();
   const relationshipLabel = SIMPLE_RELATIONSHIP_LABELS$1[review.simpleRelationship] ?? "Family member";
@@ -78665,7 +78700,12 @@ function MembershipReviewCaseCard({
   const confirmedCount = Number(review.confirmedCount);
   const disputedCount = Number(review.disputedCount);
   const history = review.confirmationHistory;
+  const hasConflictingEvidence = confirmedCount > 0 && disputedCount > 0 || review.confirmationState === MembershipConfirmationState.StewardReviewRequired;
   const isSubmitting = resolve.isPending;
+  const settle = (next) => {
+    setResult(next);
+    onResolved == null ? void 0 : onResolved(review, next);
+  };
   const submit = (resolution) => {
     resolve.mutate(
       { membershipId: review.membershipId, resolution },
@@ -78673,12 +78713,12 @@ function MembershipReviewCaseCard({
         onSuccess: (outcome) => {
           switch (outcome.kind) {
             case "resolved":
-              setResult(
-                resolution === MembershipConfirmationResolution.Approve ? { kind: "approved" } : resolution === MembershipConfirmationResolution.Reject ? { kind: "rejected" } : { kind: "needsMoreInformation" }
+              settle(
+                resolution === MembershipConfirmationResolution.Approve ? { kind: "approved" } : { kind: "rejected" }
               );
               break;
             case "alreadySettled":
-              setResult({ kind: "alreadySettled" });
+              settle({ kind: "alreadySettled" });
               break;
             case "error":
               setResult({ kind: "error" });
@@ -78690,6 +78730,8 @@ function MembershipReviewCaseCard({
     );
   };
   if (result) {
+    const isError = result.kind === "error";
+    const isRejected = result.kind === "rejected";
     return /* @__PURE__ */ jsxRuntimeExports.jsx(
       "li",
       {
@@ -78699,12 +78741,12 @@ function MembershipReviewCaseCard({
           "div",
           {
             "data-ocid": `membership_reviews.case_result.${position}`,
-            className: `confirm-status-card ${result.kind === "error" ? "confirm-status-review" : "confirm-status-success"}`,
+            className: `confirm-status-card ${isError ? "confirm-status-review" : isRejected ? "confirm-status-neutral" : "confirm-status-success"}`,
             children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "confirm-status-mark", "aria-hidden": "true", children: result.kind === "error" ? /* @__PURE__ */ jsxRuntimeExports.jsx(CircleHelp, { className: "h-4 w-4", strokeWidth: 1.75 }) : /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { className: "h-4 w-4", strokeWidth: 1.75 }) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "confirm-status-mark", "aria-hidden": "true", children: isError ? /* @__PURE__ */ jsxRuntimeExports.jsx(CircleHelp, { className: "h-4 w-4", strokeWidth: 1.75 }) : isRejected ? /* @__PURE__ */ jsxRuntimeExports.jsx(X, { className: "h-4 w-4", strokeWidth: 1.75 }) : /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { className: "h-4 w-4", strokeWidth: 1.75 }) }),
               /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "confirm-status-text", children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "confirm-status-title", children: result.kind === "approved" ? "Membership approved" : result.kind === "rejected" ? "Membership rejected" : result.kind === "needsMoreInformation" ? "More information requested" : result.kind === "alreadySettled" ? "This case was already settled" : "We couldn't record your decision" }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "confirm-status-body", children: result.kind === "approved" ? "This member can now join the family." : result.kind === "rejected" ? "This connection will not be added to the family." : result.kind === "needsMoreInformation" ? "This case stays open until more information is available." : result.kind === "alreadySettled" ? "Nothing further is needed from you right now." : "Please try again in a moment." })
+                /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "confirm-status-title", children: result.kind === "approved" ? "Approved by Family Steward" : result.kind === "rejected" ? "Rejected by Family Steward" : result.kind === "alreadySettled" ? "This case was already settled" : "We couldn't record your decision" }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "confirm-status-body", children: result.kind === "approved" ? "This member can now join the family." : result.kind === "rejected" ? "This connection will not be added to the family." : result.kind === "alreadySettled" ? "Nothing further is needed from you right now." : "Please try again in a moment." })
               ] })
             ]
           }
@@ -78726,7 +78768,15 @@ function MembershipReviewCaseCard({
               relationshipLabel,
               " · Membership ",
               statusLabel
-            ] })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "p",
+              {
+                "data-ocid": `membership_reviews.family_context.${position}`,
+                className: "review-card-meta",
+                children: "Related family · This family"
+              }
+            )
           ] }),
           /* @__PURE__ */ jsxRuntimeExports.jsxs(
             "span",
@@ -78735,7 +78785,7 @@ function MembershipReviewCaseCard({
               className: "confirm-status-card confirm-status-review w-auto shrink-0 items-center gap-2 px-3 py-1.5",
               children: [
                 /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "confirm-status-mark h-6 w-6", "aria-hidden": "true", children: /* @__PURE__ */ jsxRuntimeExports.jsx(ShieldQuestion, { className: "h-3.5 w-3.5", strokeWidth: 1.75 }) }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "confirm-status-title text-xs", children: "Needs review" })
+                /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "confirm-status-title text-xs", children: MEMBERSHIP_CONFIRMATION_STATE_LABELS[MembershipConfirmationState.StewardReviewRequired] })
               ]
             }
           )
@@ -78776,7 +78826,25 @@ function MembershipReviewCaseCard({
                 " disputed"
               ]
             }
-          )
+          ),
+          hasConflictingEvidence ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "span",
+            {
+              "data-ocid": `membership_reviews.conflict_indicator.${position}`,
+              className: "inline-flex items-center gap-1.5 rounded-full border border-[oklch(var(--confirm-review)/0.35)] bg-[oklch(var(--confirm-review)/0.1)] px-3 py-1 text-xs font-semibold text-[oklch(var(--confirm-review))]",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  TriangleAlert,
+                  {
+                    className: "h-3.5 w-3.5",
+                    strokeWidth: 2,
+                    "aria-hidden": "true"
+                  }
+                ),
+                "Conflicting evidence"
+              ]
+            }
+          ) : null
         ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "review-card-actions", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsxs(
@@ -78804,27 +78872,6 @@ function MembershipReviewCaseCard({
               children: [
                 /* @__PURE__ */ jsxRuntimeExports.jsx(X, { className: "h-4 w-4", strokeWidth: 2.25, "aria-hidden": "true" }),
                 "Reject Membership"
-              ]
-            }
-          ),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs(
-            "button",
-            {
-              type: "button",
-              "data-ocid": `membership_reviews.needs_info_button.${position}`,
-              onClick: () => submit(MembershipConfirmationResolution.NeedsMoreInformation),
-              disabled: isSubmitting,
-              className: "steward-pending-action disabled:cursor-not-allowed disabled:opacity-60",
-              children: [
-                /* @__PURE__ */ jsxRuntimeExports.jsx(
-                  CircleHelp,
-                  {
-                    className: "h-4 w-4",
-                    strokeWidth: 2.25,
-                    "aria-hidden": "true"
-                  }
-                ),
-                "Needs More Information"
               ]
             }
           )
@@ -78975,6 +79022,30 @@ function FamilyStewardMembershipReviewsPage({
     isError: reviewsError,
     refetch: refetchReviews
   } = useMembershipReviews();
+  const [resolvedCases, setResolvedCases] = reactExports.useState(
+    () => /* @__PURE__ */ new Map()
+  );
+  const handleResolved = reactExports.useCallback(
+    (review, result) => {
+      setResolvedCases((current) => {
+        const next = new Map(current);
+        next.set(review.membershipId.toString(), { review, result });
+        return next;
+      });
+    },
+    []
+  );
+  const visibleCases = reactExports.useMemo(() => {
+    const backendIds = new Set(reviews.map((r2) => r2.membershipId.toString()));
+    const resolvedOnly = [...resolvedCases.entries()].filter(([id2]) => !backendIds.has(id2)).map(([, entry]) => entry);
+    return [
+      ...reviews.map((review) => ({ review, result: void 0 })),
+      ...resolvedOnly.map((entry) => ({
+        review: entry.review,
+        result: entry.result
+      }))
+    ];
+  }, [reviews, resolvedCases]);
   const isLoading = stewardLoading || reviewsLoading;
   if (!stewardLoading && !isSteward) {
     return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mx-auto w-full max-w-3xl px-6 py-8", children: [
@@ -79094,22 +79165,24 @@ function FamilyStewardMembershipReviewsPage({
         className: "steward-section",
         children: [
           /* @__PURE__ */ jsxRuntimeExports.jsxs("h2", { className: "steward-section-title", children: [
-            "Awaiting Review (",
-            reviews.length,
+            "Needs Steward review (",
+            visibleCases.length,
             ")"
           ] }),
-          reviews.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+          visibleCases.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx(
             DomainEmptyState,
             {
               icon: Inbox,
-              title: "Nothing awaiting review",
+              title: "Nothing needs review",
               hint: "Membership connections that need a Steward decision will appear here."
             }
-          ) : /* @__PURE__ */ jsxRuntimeExports.jsx("ul", { "data-ocid": "membership_reviews.list", className: "space-y-3", children: reviews.map((review, index2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+          ) : /* @__PURE__ */ jsxRuntimeExports.jsx("ul", { "data-ocid": "membership_reviews.list", className: "space-y-3", children: visibleCases.map(({ review, result }, index2) => /* @__PURE__ */ jsxRuntimeExports.jsx(
             MembershipReviewCaseCard,
             {
               review,
-              position: index2 + 1
+              position: index2 + 1,
+              onResolved: handleResolved,
+              initialResult: result
             },
             review.membershipId.toString()
           )) })
@@ -79307,13 +79380,14 @@ function FamilyStewardReviewPage({
   onBack
 }) {
   const { data: isSteward = false, isLoading: stewardLoading } = useIsSteward();
-  const { data: claims = [], isLoading: claimsLoading } = useListProfileClaims();
-  const { data: requests = [], isLoading: requestsLoading } = useListRelationshipRequests();
-  const approveClaim = useApproveProfileClaim();
-  const rejectClaim = useRejectProfileClaim();
-  const approveRequest = useApproveRelationshipRequest();
-  const rejectRequest = useRejectRelationshipRequest();
-  const setPending = useSetRelationshipRequestPending();
+  const familyId = useFamilyScopedId();
+  const { data: claims = [], isLoading: claimsLoading } = useListProfileClaims(familyId);
+  const { data: requests = [], isLoading: requestsLoading } = useListRelationshipRequests(familyId);
+  const approveClaim = useApproveProfileClaim(familyId);
+  const rejectClaim = useRejectProfileClaim(familyId);
+  const approveRequest = useApproveRelationshipRequest(familyId);
+  const rejectRequest = useRejectRelationshipRequest(familyId);
+  const setPending = useSetRelationshipRequestPending(familyId);
   const pendingClaims = claims.filter((c2) => c2.status === "Pending");
   const pendingRequests = requests.filter((r2) => r2.status === "Pending");
   const isLoading = stewardLoading || claimsLoading || requestsLoading;
@@ -79905,7 +79979,8 @@ function HeritageBranchPage({
   onOpenExploreFamily,
   onSignIn
 }) {
-  const { data: confirmed = [] } = useListConfirmedRelationships();
+  const familyId = useFamilyScopedId();
+  const { data: confirmed = [] } = useListConfirmedRelationships(familyId);
   const graph = reactExports.useMemo(
     () => overlayConfirmedRelationships(FAMILY_GRAPH, confirmed),
     [confirmed]
@@ -80991,8 +81066,8 @@ function MembershipPendingState({ onConsumed }) {
       children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "invite-notice-mark", "aria-hidden": "true", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Clock, { className: "h-7 w-7", strokeWidth: 1.75 }) }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col items-center gap-2", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "invite-notice-title", children: "Your membership is pending" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "invite-notice-hint", children: "Your family connection is waiting for confirmation. A family member may confirm your connection. If there is a disagreement, a Family Steward will review it." })
+          /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "invite-notice-title", children: "Waiting for family confirmation" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "invite-notice-hint", children: "Your family connection is waiting for a family member to confirm it. If there is a disagreement, a Family Steward will review it." })
         ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "invite-status", children: "Pending" }),
         /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -83358,6 +83433,32 @@ const SIMPLE_RELATIONSHIP_LABELS = {
   [SimpleRelationshipType.Sibling]: "Sibling",
   [SimpleRelationshipType.SpousePartner]: "Spouse or Partner"
 };
+function presentReadOnlyState(state) {
+  switch (state) {
+    case MembershipConfirmationState.ApprovedByRelative:
+      return {
+        title: MEMBERSHIP_CONFIRMATION_STATE_LABELS[state],
+        body: "Another family member has already confirmed this connection."
+      };
+    case MembershipConfirmationState.RejectedByRelative:
+      return {
+        title: MEMBERSHIP_CONFIRMATION_STATE_LABELS[state],
+        body: "A family member did not confirm this connection. A Family Steward will review it."
+      };
+    case MembershipConfirmationState.StewardReviewRequired:
+      return {
+        title: MEMBERSHIP_CONFIRMATION_STATE_LABELS[state],
+        body: "A Family Steward will review this connection."
+      };
+    case MembershipConfirmationState.ResolvedBySteward:
+      return {
+        title: MEMBERSHIP_CONFIRMATION_STATE_LABELS[state],
+        body: "A Family Steward has already reviewed this connection."
+      };
+    default:
+      return null;
+  }
+}
 function resolveBirthYear(profile) {
   if (!profile) return null;
   const source = profile.birthDate ?? profile.birthInfo;
@@ -83420,8 +83521,25 @@ function MembershipConfirmationRequestCard({
         children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "confirm-mark", "aria-hidden": "true", children: settled.kind === "confirmed" ? /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { className: "h-6 w-6", strokeWidth: 1.75 }) : settled.kind === "disputed" ? /* @__PURE__ */ jsxRuntimeExports.jsx(ShieldQuestion, { className: "h-6 w-6", strokeWidth: 1.75 }) : /* @__PURE__ */ jsxRuntimeExports.jsx(CircleHelp, { className: "h-6 w-6", strokeWidth: 1.75 }) }),
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "confirm-body", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "confirm-title", children: settled.kind === "confirmed" ? "Connection confirmed" : settled.kind === "disputed" ? "Thanks — this connection will be reviewed" : settled.kind === "reviewRequired" ? "This connection needs a Family Steward" : settled.kind === "noLongerNeeded" ? "This request no longer needs your confirmation" : "We couldn't record your response" }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "confirm-hint", children: settled.kind === "confirmed" ? `${settled.name} can now join the family.` : settled.kind === "disputed" ? "Thanks — this connection will be reviewed by a Family Steward." : settled.kind === "reviewRequired" ? "A Family Steward will review this connection." : settled.kind === "noLongerNeeded" ? "Nothing further is needed from you right now." : "Please try again in a moment." })
+            /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "confirm-title", children: settled.kind === "confirmed" ? "Confirmed by a family member" : settled.kind === "disputed" ? "Disputed" : settled.kind === "reviewRequired" ? "Needs Steward review" : settled.kind === "noLongerNeeded" ? "This request no longer needs your confirmation" : "We couldn't record your response" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "confirm-hint", children: settled.kind === "confirmed" ? `${settled.name} can now join the family.` : settled.kind === "disputed" ? "Thanks — a Family Steward will review this connection." : settled.kind === "reviewRequired" ? "A Family Steward will review this connection." : settled.kind === "noLongerNeeded" ? "Nothing further is needed from you right now." : "Please try again in a moment." })
+          ] })
+        ]
+      }
+    );
+  }
+  const readOnly = eligible && eligible.confirmationState !== MembershipConfirmationState.AwaitingConfirmation ? presentReadOnlyState(eligible.confirmationState) : null;
+  if (readOnly) {
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "div",
+      {
+        "data-ocid": "confirmation.request_result",
+        className: "confirm-card confirm-card-result",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "confirm-mark", "aria-hidden": "true", children: /* @__PURE__ */ jsxRuntimeExports.jsx(CircleHelp, { className: "h-6 w-6", strokeWidth: 1.75 }) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "confirm-body", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "confirm-title", children: readOnly.title }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "confirm-hint", children: readOnly.body })
           ] })
         ]
       }
@@ -83582,7 +83700,7 @@ function NotificationsPage() {
         children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "flex h-12 w-12 items-center justify-center rounded-full bg-muted text-muted-foreground", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Inbox, { className: "h-6 w-6", strokeWidth: 1.5, "aria-hidden": "true" }) }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display text-xl font-semibold text-foreground", children: "No notifications yet" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "max-w-sm text-sm text-muted-foreground", children: "When someone requests a profile claim or a relationship connection, the activity will show up here." })
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "max-w-sm text-sm text-muted-foreground", children: "When someone requests a profile claim, a relationship connection, or a family membership confirmation, the activity will show up here." })
         ]
       }
     ) : /* @__PURE__ */ jsxRuntimeExports.jsx("ul", { "data-ocid": "notifications.list", className: "notif-list", children: notifications.map((notification, index2) => {
@@ -83646,7 +83764,8 @@ function RelationshipRequestForm({
   onSuccess
 }) {
   const [selected, setSelected] = reactExports.useState(null);
-  const propose = useProposeRelationship();
+  const familyId = useFamilyScopedId();
+  const propose = useProposeRelationship(familyId);
   const handleSubmit = () => {
     if (!selected) return;
     propose.mutate(

@@ -191,6 +191,18 @@ another qualifying trusted relative: a later `#Disputed` decision moves the
 membership from `#Active` to `#Suspended` and escalates the case to the Steward.
 A Steward `#Approve` then restores the membership to `#Active`.
 
+The confirmation case state maps to the membership-confirmation outcomes as
+follows: `#AwaitingConfirmation` = Pending (no decision yet);
+`#ApprovedByRelative` = Confirmed (at least one valid `#Confirmed` and no
+`#Disputed`); `#RejectedByRelative` = Rejected/Disputed (a standalone
+trusted-relative `#Disputed` with no `#Confirmed`, which never activates the
+membership and leaves it pending/reviewable); `#StewardReviewRequired` =
+NeedsStewardReview (conflicting `#Confirmed` + `#Disputed` evidence, which never
+auto-activates); and `#ResolvedBySteward` = a later Steward outcome, which is NOT
+equivalent to `#RejectedByRelative`. A standalone rejection is persisted
+explicitly on the confirmation record as `rejectedByAccountId`/`rejectedAt`,
+distinct from the Steward resolution record.
+
 Relationship confirmation is a separate record from `FamilyMembership`,
 `ProfileClaim`, `StewardRecord`, and `FamilyInvitation`. A confirmation records
 only the SIMPLE relationship type used to qualify the confirmer
@@ -234,9 +246,12 @@ is the final arbiter for split decisions.
   invariants. If that activation fails, the case is NOT reported as
   `#ApprovedByRelative`; the decision is rolled back and
   `#err(#ActivationFailed)` is returned so the membership and confirmation state
-  stay internally consistent. When any `#Disputed` exists (with or without a
-  `#Confirmed`), the confirmation state becomes `#StewardReviewRequired`; a
-  `#Pending` membership stays `#Pending`, and a relative-activated `#Active`
+  stay internally consistent. When a `#Disputed` and a `#Confirmed` conflict, the
+  confirmation state becomes `#StewardReviewRequired`; a `#Pending` membership
+  stays `#Pending`, and a relative-activated `#Active` membership is transitioned
+  to `#Suspended`. When a `#Disputed` stands alone (no `#Confirmed`), the state
+  becomes `#RejectedByRelative`: the membership is never activated, a `#Pending`
+  membership stays `#Pending` and reviewable, and a relative-activated `#Active`
   membership is transitioned to `#Suspended`. The membership and every
   previously recorded confirmation are preserved.
 - `resolveMembershipConfirmation(familyId : Text, membershipId : Nat, resolution : MembershipConfirmationResolution) : async Result<FamilyMembership, MembershipConfirmationError>` —
@@ -260,9 +275,10 @@ is the final arbiter for split decisions.
 - `getMyMembershipConfirmationState(familyId : Text, membershipId : Nat) : async Result<MembershipConfirmationApplicantView, MembershipConfirmationError>` —
   query. Returns the REDACTED, applicant-safe confirmation view for
   `membershipId` in `familyId`: the derived case state
-  (`#AwaitingConfirmation`, `#ApprovedByRelative`, `#StewardReviewRequired`, or
-  `#ResolvedBySteward`), the caller's own decision and simple relationship label
-  (Parent/Child, Sibling, SpousePartner), and timestamps. It never exposes a
+  (`#AwaitingConfirmation`, `#ApprovedByRelative`, `#RejectedByRelative`,
+  `#StewardReviewRequired`, or `#ResolvedBySteward`), the caller's own decision
+  and simple relationship label (Parent/Child, Sibling, SpousePartner), and
+  timestamps. It never exposes a
   confirmer account principal, sensitive relationship context, private notes, or
   unrelated profile information. Allowed only when the caller is the pending
   membership's own account; anonymous callers get `#err(#NotSignedIn)` and any
@@ -312,11 +328,13 @@ is the final arbiter for split decisions.
   active Steward of `familyId`; anonymous callers get `#err(#NotSignedIn)` and
   any other caller gets `#err(#NotAuthorized)`. The caller identity is derived
   server-side from the query `{ caller }` parameter, never from a caller-supplied
-  id, and a Steward of another family cannot read this family's cases. Only cases
-  whose derived confirmation state is `#StewardReviewRequired` (a recorded
-  `#Disputed` decision with no persisted Steward resolution) are returned;
-  `#ResolvedBySteward`, `#ApprovedByRelative`, and `#AwaitingConfirmation` cases
-  are excluded. Each `MembershipConfirmationReviewView` carries only `familyId`,
+  id, and a Steward of another family cannot read this family's cases. Cases
+  whose derived confirmation state is `#StewardReviewRequired` (a conflicting
+  `#Confirmed` + `#Disputed` with no persisted Steward resolution) or
+  `#RejectedByRelative` (a standalone trusted-relative rejection/dispute) are
+  returned; `#ResolvedBySteward`, `#ApprovedByRelative`, and
+  `#AwaitingConfirmation` cases are excluded. Each
+  `MembershipConfirmationReviewView` carries only `familyId`,
   `membershipId`, `pendingPersonId`, `applicantDisplayName`, `simpleRelationship`
   (Parent/Child, Sibling, SpousePartner), `membershipStatus`, a
   `confirmationHistory` list (each entry with a simple relationship label, a
@@ -337,8 +355,11 @@ accept the nomination; confirmation itself grants no Steward authority.
 The OQL `membershipConfirmation` entity is a flattened, `.controllerOnly()` view
 of every recorded trusted-relative decision: `familyId`, `id`, `membershipId`,
 `pendingPersonId`, `confirmerAccountId`, `confirmerPersonId`, `decision` (the
-`#Confirmed`/`#Disputed` tag text), `relationshipId`, `createdAt`, and
-`updatedAt`. The OQL `membershipConfirmationResolution` entity is a flattened,
+`#Confirmed`/`#Disputed` tag text), `relationshipId`, `rejectedByAccountId`
+(the rejecting account when the decision is `#Disputed`, else `\"\"`),
+`rejectedAt` (the rejection timestamp when the decision is `#Disputed`, else
+`0`), `createdAt`, and `updatedAt`. The OQL `membershipConfirmationResolution`
+entity is a flattened,
 `.controllerOnly()` view of the persisted Steward resolutions, keyed by
 `membershipId`: `familyId`, `membershipId`, `resolution` (the
 `#Approve`/`#Reject`/`#NeedsMoreInformation` tag text), `resolvedByAccountId`,

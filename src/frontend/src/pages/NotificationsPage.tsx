@@ -115,8 +115,9 @@ export function NotificationsPage() {
               No notifications yet
             </h2>
             <p className="max-w-sm text-sm text-muted-foreground">
-              When someone requests a profile claim or a relationship
-              connection, the activity will show up here.
+              When someone requests a profile claim, a relationship connection,
+              or a family membership confirmation, the activity will show up
+              here.
             </p>
           </div>
         )

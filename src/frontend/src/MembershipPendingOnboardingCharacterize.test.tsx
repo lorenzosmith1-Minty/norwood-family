@@ -24,8 +24,8 @@ import { MembershipPendingState } from "./pages/InviteRedemptionPage";
 // shell must not disturb it. This file freezes the parts of that surface the
 // existing InviteRedemptionPageCharacterize file does not already pin:
 //
-//   A. The pending state renders its calm "Your membership is pending" plate
-//      and the applicant-safe confirmation status card for the caller's own
+//   A. The pending state renders its calm "Waiting for family confirmation"
+//      plate and the applicant-safe confirmation status card for the caller's own
 //      membership, and it does NOT render normal family navigation (no
 //      "Family history sections" nav, no Message Board link).
 //   B. The explicit "Go to Norwood" continue affordance calls `onConsumed`, so
@@ -171,7 +171,9 @@ describe("pending-membership onboarding surface (characterization)", () => {
     expect(
       await screen.findByTestId("invite.membership_pending_state"),
     ).toBeInTheDocument();
-    expect(screen.getByText("Your membership is pending")).toBeInTheDocument();
+    expect(
+      screen.getByText("Waiting for family confirmation"),
+    ).toBeInTheDocument();
     // The applicant-safe status card renders for the caller's own membership.
     expect(
       await screen.findByTestId("confirmation.status_card"),
@@ -212,7 +214,9 @@ describe("pending-membership onboarding surface (characterization)", () => {
     expect(
       await screen.findByTestId("invite.membership_pending_state"),
     ).toBeInTheDocument();
-    expect(screen.getByText("Your membership is pending")).toBeInTheDocument();
+    expect(
+      screen.getByText("Waiting for family confirmation"),
+    ).toBeInTheDocument();
     expect(screen.getByTestId("invite.continue_button")).toBeInTheDocument();
     // No applicant read is issued without a membership id.
     await waitFor(() =>

@@ -35,8 +35,9 @@ import {
 //   - A second qualifying trusted relative may submit `#Disputed` against an
 //     `#ApprovedByRelative` `#Active` membership: the dispute is recorded, the
 //     membership transitions `#Active` -> `#Suspended`, and the state reads
-//     `#StewardReviewRequired`. A `#Disputed` against a `#Pending` membership
-//     leaves it `#Pending` and escalates.
+//     `#RejectedByRelative` (a standalone rejection). A `#Disputed` against a
+//     `#Pending` membership leaves it `#Pending` and reads `#RejectedByRelative`.
+//     A `#Confirmed` plus a conflicting `#Disputed` reads `#StewardReviewRequired`.
 //   - `resolveMembershipConfirmation` is Steward-of-family only. `#Approve`
 //     activates a `#Pending` membership and restores a confirmation-suspended
 //     membership to `#Active`; `#Reject` leaves the membership non-`#Active`
@@ -395,16 +396,23 @@ it("activates a #Pending membership on one valid #Confirmed decision", async () 
 //     and escalates.
 // ---------------------------------------------------------------------------
 
-it("leaves the membership #Pending and escalates on a #Disputed decision", async () => {
+it("leaves the membership #Pending and records a standalone rejection on a #Disputed decision", async () => {
   const { actor } = await setup();
   const seeded = await seedConfirmationCase(actor, NORWOOD, "disputed-pending");
 
   actor.setIdentity(seeded.confirmer);
-  ok(await actor.confirmPendingMembership(NORWOOD, seeded.membershipId, { Disputed: null }));
+  const record = ok(
+    await actor.confirmPendingMembership(NORWOOD, seeded.membershipId, { Disputed: null }),
+  );
 
+  // A standalone trusted-relative rejection/dispute never activates the
+  // membership and is persisted with an explicit representation distinct from
+  // the Steward-resolution state.
   expect(await membershipStatus(actor, NORWOOD, seeded.membershipId)).toEqual({ Pending: null });
+  expect(record.rejectedByAccountId).toEqual([seeded.confirmer.getPrincipal()]);
+  expect(record.rejectedAt).toHaveLength(1);
   const [state] = await readStewardState(actor, adminIdentity, NORWOOD, seeded.membershipId);
-  expect(state).toEqual({ StewardReviewRequired: null });
+  expect(state).toEqual({ RejectedByRelative: null });
 });
 
 it("escalates when a #Confirmed and a #Disputed decision conflict", async () => {
@@ -672,6 +680,10 @@ it("safely updates a confirmer's existing decision in place", async () => {
   expect(second.id).toBe(first.id);
   expect(second.decision).toEqual({ Disputed: null });
   expect(second.createdAt).toBe(first.createdAt);
+  // The in-place update to #Disputed persists the explicit rejection
+  // representation on the same record.
+  expect(second.rejectedByAccountId).toEqual([seeded.confirmer.getPrincipal()]);
+  expect(second.rejectedAt).toHaveLength(1);
 
   const [state, decisions] = await readStewardState(
     actor,
@@ -680,9 +692,10 @@ it("safely updates a confirmer's existing decision in place", async () => {
     seeded.membershipId,
   );
   expect(decisions).toHaveLength(1);
-  expect(state).toEqual({ StewardReviewRequired: null });
   // The first #Confirmed activated the membership; the in-place update to
-  // #Disputed is a post-activation dispute, so the membership is suspended.
+  // #Disputed leaves a single standalone rejection, so the state is
+  // #RejectedByRelative and the membership is suspended.
+  expect(state).toEqual({ RejectedByRelative: null });
   expect(await membershipStatus(actor, NORWOOD, seeded.membershipId)).toEqual({ Suspended: null });
 });
 
@@ -691,7 +704,11 @@ it("safely updates a confirmer's existing decision in place", async () => {
 //     resolved rejection, NeedsMoreInformation keeps the case open.
 // ---------------------------------------------------------------------------
 
-/** Seeds an escalated case (a single #Disputed) and returns it. */
+/**
+ * Seeds a reviewable case (a single #Disputed) and returns it. A standalone
+ * trusted-relative rejection/dispute leaves the membership #Pending and the
+ * confirmation state at #RejectedByRelative, which is reviewable by the Steward.
+ */
 async function seedEscalatedCase(
   actor: _SERVICE,
   seed: string,
@@ -840,7 +857,9 @@ it("Steward #NeedsMoreInformation keeps the case open and records no resolution"
     NORWOOD,
     seeded.membershipId,
   );
-  expect(state).toEqual({ StewardReviewRequired: null });
+  // A standalone rejection stays reviewable at #RejectedByRelative; the case is
+  // not resolved and no resolution record is written.
+  expect(state).toEqual({ RejectedByRelative: null });
   expect(resolution).toEqual([]);
 });
 

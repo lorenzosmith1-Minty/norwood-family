@@ -14,6 +14,7 @@ import {
   UserCog,
 } from "lucide-react";
 import PendingContributionsBadge from "../components/PendingContributionsBadge";
+import { useFamilyScopedId } from "../context/FamilyContext";
 import { usePendingArchiveItems } from "../hooks/useArchiveStorage";
 import { useMembershipReviews } from "../hooks/useMembershipReviews";
 import { useListReports } from "../hooks/useMessaging";
@@ -70,8 +71,9 @@ export function FamilyStewardHubPage({
   onOpenMembershipReviews,
 }: FamilyStewardHubPageProps) {
   const { data: isSteward = false } = useIsSteward();
-  const { data: claims = [] } = useListProfileClaims();
-  const { data: requests = [] } = useListRelationshipRequests();
+  const familyId = useFamilyScopedId();
+  const { data: claims = [] } = useListProfileClaims(familyId);
+  const { data: requests = [] } = useListRelationshipRequests(familyId);
   const { data: reports = [] } = useListReports();
   const { data: pendingArchiveItems = [] } = usePendingArchiveItems();
   const { data: reviewQueue } = useGetReviewQueue();

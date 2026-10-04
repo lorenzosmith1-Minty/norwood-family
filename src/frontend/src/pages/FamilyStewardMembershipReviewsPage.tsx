@@ -1,6 +1,11 @@
 import { Inbox, ShieldAlert, ShieldCheck, UserCog } from "lucide-react";
+import { useCallback, useMemo, useState } from "react";
+import type { MembershipConfirmationReviewView } from "../backend";
 import { DomainEmptyState } from "../components/DomainEmptyState";
-import { MembershipReviewCaseCard } from "../components/MembershipReviewCaseCard";
+import {
+  type CaseResult,
+  MembershipReviewCaseCard,
+} from "../components/MembershipReviewCaseCard";
 import { useMembershipReviews } from "../hooks/useMembershipReviews";
 import { useIsSteward } from "../hooks/useStewardAuthority";
 
@@ -8,16 +13,32 @@ interface FamilyStewardMembershipReviewsPageProps {
   onBack: () => void;
 }
 
+/** A case the Steward resolved on this screen, kept visible read-only. */
+interface ResolvedCase {
+  review: MembershipConfirmationReviewView;
+  result: CaseResult;
+}
+
 /**
  * The Family Steward membership-review screen.
  *
- * Lists the unresolved membership-confirmation cases in the active family from
- * the canonical, family-scoped `useMembershipReviews` read
- * (`listMembershipConfirmationReviewsForSteward`). Each case shows the
- * applicant's display name, their simple relationship, their membership status,
- * and the confirmed / disputed counts, expands to a human-readable confirmation
- * history, and offers the three Steward resolution actions (Approve Membership,
- * Reject Membership, Needs More Information).
+ * Lists the membership-confirmation cases in the active family from the
+ * canonical, family-scoped `useMembershipReviews` read
+ * (`listMembershipConfirmationReviewsForSteward`). The backend returns only the
+ * cases that require Steward attention — `#StewardReviewRequired` (conflicting
+ * evidence) and `#RejectedByRelative` (a standalone rejection) — and never the
+ * ordinary `#AwaitingConfirmation` cases that still belong with trusted
+ * relatives. The page does not re-filter client-side.
+ *
+ * Each case shows the applicant's display name, their simple relationship,
+ * their membership status, the related family (as a neutral label), the
+ * confirmed / disputed counts, and an explicit conflicting-evidence indicator.
+ * It expands to a human-readable confirmation history and offers exactly two
+ * Steward resolution actions: Approve Membership and Reject Membership.
+ *
+ * After a resolution the case stays visible in place in a clear read-only
+ * resolved/rejected state with no action buttons, so duplicate submission is
+ * impossible even though the backend's unresolved list no longer returns it.
  *
  * The page renders only family-safe fields and never an account principal, a
  * technical id, or sensitive relationship metadata. A failed review request
@@ -37,6 +58,40 @@ export function FamilyStewardMembershipReviewsPage({
     isError: reviewsError,
     refetch: refetchReviews,
   } = useMembershipReviews();
+
+  // Cases resolved on this screen, keyed by membership id. The backend's
+  // unresolved list drops a resolved case on the next read, so the page keeps
+  // it here to render its read-only resolved state in place.
+  const [resolvedCases, setResolvedCases] = useState<Map<string, ResolvedCase>>(
+    () => new Map(),
+  );
+
+  const handleResolved = useCallback(
+    (review: MembershipConfirmationReviewView, result: CaseResult) => {
+      setResolvedCases((current) => {
+        const next = new Map(current);
+        next.set(review.membershipId.toString(), { review, result });
+        return next;
+      });
+    },
+    [],
+  );
+
+  // The rendered list: the backend's unresolved cases, plus any case resolved
+  // on this screen that the backend no longer returns, in a stable order.
+  const visibleCases = useMemo(() => {
+    const backendIds = new Set(reviews.map((r) => r.membershipId.toString()));
+    const resolvedOnly = [...resolvedCases.entries()]
+      .filter(([id]) => !backendIds.has(id))
+      .map(([, entry]) => entry);
+    return [
+      ...reviews.map((review) => ({ review, result: undefined })),
+      ...resolvedOnly.map((entry) => ({
+        review: entry.review,
+        result: entry.result,
+      })),
+    ];
+  }, [reviews, resolvedCases]);
 
   const isLoading = stewardLoading || reviewsLoading;
 
@@ -154,21 +209,23 @@ export function FamilyStewardMembershipReviewsPage({
             className="steward-section"
           >
             <h2 className="steward-section-title">
-              Awaiting Review ({reviews.length})
+              Needs Steward review ({visibleCases.length})
             </h2>
-            {reviews.length === 0 ? (
+            {visibleCases.length === 0 ? (
               <DomainEmptyState
                 icon={Inbox}
-                title="Nothing awaiting review"
+                title="Nothing needs review"
                 hint="Membership connections that need a Steward decision will appear here."
               />
             ) : (
               <ul data-ocid="membership_reviews.list" className="space-y-3">
-                {reviews.map((review, index) => (
+                {visibleCases.map(({ review, result }, index) => (
                   <MembershipReviewCaseCard
                     key={review.membershipId.toString()}
                     review={review}
                     position={index + 1}
+                    onResolved={handleResolved}
+                    initialResult={result}
                   />
                 ))}
               </ul>

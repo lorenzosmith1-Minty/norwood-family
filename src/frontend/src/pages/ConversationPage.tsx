@@ -11,6 +11,7 @@ import {
   DialogTitle,
 } from "../components/ui/dialog";
 import { Textarea } from "../components/ui/textarea";
+import { useFamilyScopedId } from "../context/FamilyContext";
 import { useCanonicalPerson } from "../hooks/useCanonicalPerson";
 import {
   useBlockUser,
@@ -142,8 +143,10 @@ export function ConversationPage({
 
   // The other participant's account id (for block/unblock) comes from their
   // claimed Person Profile.
+  const familyId = useFamilyScopedId();
   const { data: otherProfile } = usePersonProfile(otherPersonId ?? "", {
     enabled: Boolean(otherPersonId),
+    familyId,
   });
   const otherAccountId = otherProfile?.claimedByUserId;
 

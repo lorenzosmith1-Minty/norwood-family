@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AppleLogo, GoogleLogo } from "../components/LoginSurface";
+import { useFamilyScopedId } from "../context/FamilyContext";
 import { useAuth } from "../hooks/useAuth";
 import {
   useCreateMyself,
@@ -224,13 +225,16 @@ function MatchCard({
   onNoMatch: () => void;
 }) {
   const { accountId, isInitializing } = useAuth();
+  const familyId = useFamilyScopedId();
   const { data: myClaim, isLoading: claimLoading } = useMyProfileClaim(
     match.personId,
+    familyId,
   );
   // The profile's global claim state: whether ANY approved owner exists. Only
   // the generic claimed/unclaimed signal is exposed — never the owner identity.
   const { data: claimStatus, isLoading: profileLoading } = usePersonClaimStatus(
     match.personId,
+    familyId,
   );
 
   const currentPrincipal = accountId;
@@ -340,6 +344,7 @@ export function AddMyselfPage({
     signInWithGoogle,
     signInWithApple,
   } = useAuth();
+  const familyId = useFamilyScopedId();
   const [step, setStep] = useState<Step>(() => loadDraft()?.step ?? "name");
   const [name, setName] = useState(() => loadDraft()?.name ?? "");
   const [submittedName, setSubmittedName] = useState(
@@ -427,10 +432,10 @@ export function AddMyselfPage({
     }
   }, [submitted]);
 
-  const search = useSearchPossibleMatches();
-  const create = useCreateMyself();
-  const propose = useProposeRelationship();
-  const claim = useRequestProfileClaim();
+  const search = useSearchPossibleMatches(familyId);
+  const create = useCreateMyself(familyId);
+  const propose = useProposeRelationship(familyId);
+  const claim = useRequestProfileClaim(familyId);
 
   const matches = useMemo(
     () => mergeMatches(buildLocalMatches(submittedName), search.data ?? []),

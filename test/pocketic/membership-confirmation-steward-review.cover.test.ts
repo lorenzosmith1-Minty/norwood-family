@@ -15,7 +15,8 @@ import { BACKEND_WASM, adminIdentity, registerApprovedContributor } from "./lane
 // The accepted behavior this file asserts:
 //
 //   1. An active Steward of the requested family sees that family's unresolved
-//      `#StewardReviewRequired` cases.
+//      review cases (`#StewardReviewRequired` conflicts and standalone
+//      `#RejectedByRelative` rejections).
 //   2. A non-Steward signed-in caller is denied with `#NotAuthorized`.
 //   3. An anonymous caller is denied with `#NotSignedIn`.
 //   4. A Steward of a DIFFERENT family is denied for the requested family with
@@ -220,9 +221,10 @@ async function seedReviewCase(
 }
 
 /**
- * Seeds an escalated case: a single `#Disputed` decision against a `#Pending`
+ * Seeds a reviewable case: a single `#Disputed` decision against a `#Pending`
  * membership, which leaves the membership `#Pending` and the confirmation state
- * at `#StewardReviewRequired`.
+ * at `#RejectedByRelative` (a standalone rejection, distinct from the
+ * Steward-resolution state).
  */
 async function seedEscalatedCase(
   actor: _SERVICE,
@@ -260,7 +262,8 @@ function findReview(
 
 // ---------------------------------------------------------------------------
 // (1) AUTHORIZED STEWARD — an active Steward of the requested family sees that
-//     family's unresolved #StewardReviewRequired cases.
+//     family's unresolved review cases (standalone #RejectedByRelative and
+//     conflicting #StewardReviewRequired).
 // ---------------------------------------------------------------------------
 
 it("lets an active Steward see the requested family's unresolved review cases", async () => {
@@ -275,7 +278,9 @@ it("lets an active Steward see the requested family's unresolved review cases", 
   expect(review.pendingPersonId).toBe(seeded.pendingPersonId);
   expect(review.applicantDisplayName).toBe(`Review Pending steward-sees`);
   expect(review.membershipStatus).toEqual({ Pending: null });
-  expect(review.confirmationState).toEqual({ StewardReviewRequired: null });
+  // A standalone trusted-relative rejection/dispute is reviewable and reads
+  // #RejectedByRelative, distinct from the Steward-resolution state.
+  expect(review.confirmationState).toEqual({ RejectedByRelative: null });
   expect(review.confirmedCount).toBe(0n);
   expect(review.disputedCount).toBe(1n);
   expect(review.simpleRelationship).toEqual({ Sibling: null });

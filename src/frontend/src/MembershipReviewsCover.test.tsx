@@ -289,7 +289,7 @@ describe("Membership Reviews screen: case list", () => {
     expect(
       await screen.findByTestId("membership_reviews.panel"),
     ).toBeInTheDocument();
-    expect(screen.getByText("Nothing awaiting review")).toBeInTheDocument();
+    expect(screen.getByText("Nothing needs review")).toBeInTheDocument();
     expect(
       screen.queryByTestId("membership_reviews.list"),
     ).not.toBeInTheDocument();

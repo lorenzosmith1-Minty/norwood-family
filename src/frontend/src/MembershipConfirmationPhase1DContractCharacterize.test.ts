@@ -125,6 +125,8 @@ function confirmationRecord(): MembershipConfirmation {
     confirmerPersonId: "clayton",
     decision: ConfirmationDecision.Confirmed,
     relationshipId: 11n,
+    rejectedByAccountId: undefined,
+    rejectedAt: undefined,
     createdAt: 1_700_000_000_000_000_000n,
     updatedAt: 1_700_000_000_000_000_000n,
   };
@@ -302,9 +304,12 @@ describe("confirmation consumer seam (characterization)", () => {
 // ---------------------------------------------------------------------------
 
 describe("MembershipConfirmation record contract (characterization)", () => {
-  it("carries the ten specified fields with their stable types", () => {
+  it("carries the twelve specified fields with their stable types", () => {
     const record = confirmationRecord();
 
+    // The confirmation-dispute change adds the explicit persisted rejection
+    // representation (`rejectedByAccountId` / `rejectedAt`) to the record. The
+    // pre-existing ten fields keep their names and types.
     expect(Object.keys(record).sort()).toEqual(
       [
         "confirmerAccountId",
@@ -315,6 +320,8 @@ describe("MembershipConfirmation record contract (characterization)", () => {
         "id",
         "membershipId",
         "pendingPersonId",
+        "rejectedAt",
+        "rejectedByAccountId",
         "relationshipId",
         "updatedAt",
       ].sort(),
@@ -357,11 +364,16 @@ describe("MembershipConfirmation record contract (characterization)", () => {
 // ---------------------------------------------------------------------------
 
 describe("confirmation variant sets (characterization)", () => {
-  it("exposes exactly the four confirmation states", () => {
+  it("exposes exactly the five confirmation states", () => {
+    // The confirmation-dispute change adds `#RejectedByRelative`, the explicit
+    // persisted representation of a standalone trusted-relative rejection,
+    // distinct from `#ResolvedBySteward`. The pre-existing four states keep
+    // their names.
     expect(Object.values(MembershipConfirmationState).sort()).toEqual(
       [
         "ApprovedByRelative",
         "AwaitingConfirmation",
+        "RejectedByRelative",
         "ResolvedBySteward",
         "StewardReviewRequired",
       ].sort(),

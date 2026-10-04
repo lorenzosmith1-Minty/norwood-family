@@ -1301,6 +1301,8 @@ type MembershipConfirmation__240523724 =
     id : Nat;
     membershipId : Nat;
     pendingPersonId : PersonId__654861073;
+    rejectedAt : ?Int;
+    rejectedByAccountId : ?AccountId__342420057;
     relationshipId : ?Nat;
     updatedAt : Int
   };
@@ -2029,6 +2031,8 @@ type NewActor__969407957 =
     invitationState : {var nextInvitationId : Nat};
     invitations : List__836382695<FamilyInvitation__615629172>
   };
+type NewActor__99086632 =
+  {confirmations : List__836382695<NewMembershipConfirmation__505188564>};
 type NewArchiveItem__1052374070 =
   {
     aiSummary : ?Text;
@@ -2192,6 +2196,21 @@ type NewFamilyMembership__148186502 =
     joinedAt : ?Int;
     personId : Text;
     status : MembershipStatus__39198097;
+    updatedAt : Int
+  };
+type NewMembershipConfirmation__505188564 =
+  {
+    confirmerAccountId : Principal;
+    confirmerPersonId : Text;
+    createdAt : Int;
+    decision : OldConfirmationDecision__982995365;
+    familyId : Text;
+    id : Nat;
+    membershipId : Nat;
+    pendingPersonId : Text;
+    rejectedAt : ?Int;
+    rejectedByAccountId : ?Principal;
+    relationshipId : ?Nat;
     updatedAt : Int
   };
 type NewMergeConflict__830783418 =
@@ -3337,6 +3356,8 @@ type OldActor__931712378 =
     profiles : Map__230067015<Text, PersonProfile__863907179>;
     relationshipRequests : List__836382695<RelationshipRequest__839809220>
   };
+type OldActor__934428609 =
+  {confirmations : List__836382695<OldMembershipConfirmation__364600057>};
 type OldActor__959457706 =
   {
     posts : List__836382695<OldPost__174808228>;
@@ -3464,6 +3485,7 @@ type OldBlock__166027910 =
     blockerAccountId : Principal;
     createdAt : Int
   };
+type OldConfirmationDecision__982995365 = {#Confirmed; #Disputed};
 type OldConflictReviewItem__474632668 =
   {
     canonicalValue : Text;
@@ -3511,6 +3533,19 @@ type OldConversation__845865202 =
     updatedAt : Int
   };
 type OldDismissedPair__975273464 = {personIdA : Text; personIdB : Text};
+type OldMembershipConfirmation__364600057 =
+  {
+    confirmerAccountId : Principal;
+    confirmerPersonId : Text;
+    createdAt : Int;
+    decision : OldConfirmationDecision__982995365;
+    familyId : Text;
+    id : Nat;
+    membershipId : Nat;
+    pendingPersonId : Text;
+    relationshipId : ?Nat;
+    updatedAt : Int
+  };
 type OldMergeConflict__523194352 =
   {
     alternateValue : Text;
@@ -5937,7 +5972,8 @@ type UserRole__968740559 = {#admin; #guest; #user};
   "20261003_000000" : (_old : OldActor__463938666) -> NewActor__694455010;
   "20261004_000000" : (old : OldActor__904324871) -> NewActor__793188255;
   "20261005_000000" : (_old : OldActor__386101605) -> NewActor__969407957;
-  "20261006_000000" : (_old : OldActor__927544402) -> NewActor__416082931
+  "20261006_000000" : (_old : OldActor__927544402) -> NewActor__416082931;
+  "20261007_000000" : (old : OldActor__934428609) -> NewActor__99086632
 }
 actor  {
   stable accessControlState :

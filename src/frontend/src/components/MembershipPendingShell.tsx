@@ -56,11 +56,10 @@ export function MembershipPendingShell({
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
             {displayName ? `${displayName} Family` : "Family"}
           </p>
-          <h1 className="invite-title">Your membership is pending</h1>
+          <h1 className="invite-title">Waiting for family confirmation</h1>
           <p className="invite-hint">
-            Your family connection is waiting for confirmation. A family member
-            may confirm your connection. If there is a disagreement, a Family
-            Steward will review it.
+            Your family connection is waiting for a family member to confirm it.
+            If there is a disagreement, a Family Steward will review it.
           </p>
         </div>
         <div className="invite-rule" aria-hidden="true" />

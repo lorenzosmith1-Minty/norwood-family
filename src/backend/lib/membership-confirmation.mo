@@ -87,9 +87,10 @@ module {
   ///
   /// Otherwise the state is derived from the recorded decisions:
   /// `#AwaitingConfirmation` when there are none, `#ApprovedByRelative` when
-  /// there is at least one `#Confirmed` and no `#Disputed`, and
-  /// `#StewardReviewRequired` when a `#Disputed` exists (whether or not a
-  /// `#Confirmed` also exists). Never duplicates `FamilyMembership.status`.
+  /// there is at least one `#Confirmed` and no `#Disputed`,
+  /// `#StewardReviewRequired` when a `#Disputed` and a `#Confirmed` conflict,
+  /// and `#RejectedByRelative` when a `#Disputed` stands alone (no `#Confirmed`).
+  /// Never duplicates `FamilyMembership.status`.
   public func confirmationStateForMembership(
     confirmations : List.List<ConfirmationTypes.MembershipConfirmation>,
     resolutions : List.List<ConfirmationTypes.MembershipConfirmationResolutionRecord>,
@@ -111,8 +112,15 @@ module {
       return #AwaitingConfirmation;
     };
     let hasDisputed = decisions.any(func c = c.decision == #Disputed);
-    if (hasDisputed) {
+    let hasConfirmed = decisions.any(func c = c.decision == #Confirmed);
+    if (hasDisputed and hasConfirmed) {
+      // Conflicting evidence: escalate to the Steward, never auto-activate.
       return #StewardReviewRequired;
+    };
+    if (hasDisputed) {
+      // A standalone rejection/dispute: explicit persisted representation,
+      // distinct from the Steward-resolution state. Never activates.
+      return #RejectedByRelative;
     };
     #ApprovedByRelative;
   };
@@ -145,8 +153,9 @@ module {
   ///
   /// A valid `#Disputed` against a relative-activated `#Active` membership
   /// records the dispute, transitions the membership to `#Suspended`, and
-  /// yields `#StewardReviewRequired`. The membership and every previously
-  /// recorded confirmation are preserved.
+  /// yields `#StewardReviewRequired` (when a `#Confirmed` also exists) or
+  /// `#RejectedByRelative` (when the dispute stands alone). The membership and
+  /// every previously recorded confirmation are preserved.
   public func submitConfirmationForFamily(
     confirmations : List.List<ConfirmationTypes.MembershipConfirmation>,
     resolutions : List.List<ConfirmationTypes.MembershipConfirmationResolutionRecord>,
@@ -210,6 +219,8 @@ module {
           confirmerPersonId = confirmerMembership.personId;
           decision;
           relationshipId = ?relationship.id;
+          rejectedByAccountId = switch (decision) { case (#Disputed) ?caller; case (#Confirmed) null };
+          rejectedAt = switch (decision) { case (#Disputed) ?now; case (#Confirmed) null };
           createdAt = c.createdAt;
           updatedAt = now;
         };
@@ -224,6 +235,8 @@ module {
           confirmerPersonId = confirmerMembership.personId;
           decision;
           relationshipId = ?relationship.id;
+          rejectedByAccountId = switch (decision) { case (#Disputed) ?caller; case (#Confirmed) null };
+          rejectedAt = switch (decision) { case (#Disputed) ?now; case (#Confirmed) null };
           createdAt = now;
           updatedAt = now;
         };
@@ -260,6 +273,21 @@ module {
           };
         };
       };
+      case (#RejectedByRelative) {
+        // A standalone rejection/dispute never activates. A membership that was
+        // already activated by a relative and is now disputed is suspended so
+        // it is not left active; a `#Pending` membership stays `#Pending` and
+        // reviewable.
+        if (membership.status == #Active) {
+          switch (MembershipLib.suspendMembershipForFamily(memberships, familyId, membershipId)) {
+            case (#ok _) {};
+            case (#err _) {
+              rollbackConfirmation(confirmations, familyId, membershipId, caller, existing);
+              return #err(#ActivationFailed);
+            };
+          };
+        };
+      };
       case (#AwaitingConfirmation) {};
       case (#ResolvedBySteward) {};
     };
@@ -276,8 +304,9 @@ module {
   /// confirmation dispute back to `#Active` through the narrow
   /// `restoreConfirmationSuspendedMembershipForFamily` path. A `#Suspended`
   /// membership is restored only when the confirmation case is at
-  /// `#StewardReviewRequired` (a recorded `#Disputed` decision with no prior
-  /// Steward resolution); a membership suspended for any other reason is left
+  /// `#StewardReviewRequired` (a conflicting `#Confirmed` + `#Disputed`) or
+  /// `#RejectedByRelative` (a standalone `#Disputed`), with no prior Steward
+  /// resolution; a membership suspended for any other reason is left
   /// `#Suspended` and `#err(#MembershipNotPending)` is returned, so this is not
   /// an unrestricted reactivation path. Either way a successful resolution
   /// persists a resolution record, so the confirmation state reads
@@ -327,12 +356,13 @@ module {
           };
           case (#Suspended) {
             // Restore ONLY a membership suspended by THIS confirmation dispute:
-            // the case must be open at `#StewardReviewRequired` (a recorded
-            // `#Disputed` decision with no prior Steward resolution). A
-            // membership suspended for any other reason is left `#Suspended`;
-            // this is not a general reactivation path.
+            // the case must be open at `#StewardReviewRequired` (a conflicting
+            // `#Confirmed` + `#Disputed`) or `#RejectedByRelative` (a standalone
+            // `#Disputed`), with no prior Steward resolution. A membership
+            // suspended for any other reason is left `#Suspended`; this is not a
+            // general reactivation path.
             let caseState = confirmationStateForMembership(confirmations, resolutions, familyId, membershipId);
-            if (caseState != #StewardReviewRequired) {
+            if (caseState != #StewardReviewRequired and caseState != #RejectedByRelative) {
               return #err(#MembershipNotPending);
             };
             switch (MembershipLib.restoreConfirmationSuspendedMembershipForFamily(memberships, familyId, membershipId, caller)) {
@@ -505,9 +535,11 @@ module {
   /// list of unresolved confirmation cases in `familyId` that require Steward
   /// review.
   ///
-  /// A case is included only when its derived confirmation state is
-  /// `#StewardReviewRequired` (a recorded `#Disputed` decision with no persisted
-  /// Steward resolution). `#ResolvedBySteward`, `#ApprovedByRelative`, and
+  /// A case is included when its derived confirmation state is
+  /// `#StewardReviewRequired` (a conflicting `#Confirmed` + `#Disputed` with no
+  /// persisted Steward resolution) or `#RejectedByRelative` (a standalone
+  /// trusted-relative rejection/dispute, which leaves the membership
+  /// pending/reviewable). `#ResolvedBySteward`, `#ApprovedByRelative`, and
   /// `#AwaitingConfirmation` cases are excluded. Only memberships belonging to
   /// `familyId` are considered, so a case from another family is never returned.
   ///
@@ -530,7 +562,7 @@ module {
     let reviews = List.empty<ConfirmationTypes.MembershipConfirmationReviewView>();
     for (membership in candidates.values()) {
       let caseState = confirmationStateForMembership(confirmations, resolutions, familyId, membership.id);
-      if (caseState == #StewardReviewRequired) {
+      if (caseState == #StewardReviewRequired or caseState == #RejectedByRelative) {
         let decisions = listConfirmationsForMembership(confirmations, familyId, membership.id);
         let history = List.empty<ConfirmationTypes.MembershipConfirmationReviewHistoryEntry>();
         var confirmedCount = 0;
@@ -598,6 +630,8 @@ module {
       confirmerPersonId = c.confirmerPersonId;
       decision = decisionText(c.decision);
       relationshipId = c.relationshipId ?? 0;
+      rejectedByAccountId = switch (c.rejectedByAccountId) { case (?p) p.toText(); case null "" };
+      rejectedAt = c.rejectedAt ?? 0;
       createdAt = c.createdAt;
       updatedAt = c.updatedAt;
     });

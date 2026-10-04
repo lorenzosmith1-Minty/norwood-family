@@ -195,9 +195,9 @@ module {
   /// This helper checks only the membership status; the CALLER
   /// (`resolveConfirmationForFamily`) is responsible for confirming that the
   /// suspension is attributable to the confirmation case being resolved (the
-  /// case is open at `#StewardReviewRequired` with a recorded `#Disputed`
-  /// decision and no prior Steward resolution). Do not call it for a
-  /// suspension that did not originate from that confirmation dispute.
+  /// case is open at `#StewardReviewRequired` or `#RejectedByRelative` with a
+  /// recorded `#Disputed` decision and no prior Steward resolution). Do not call
+  /// it for a suspension that did not originate from that confirmation dispute.
   public func restoreConfirmationSuspendedMembershipForFamily(
     memberships : List.List<MembershipTypes.FamilyMembership>,
     familyId : MembershipTypes.FamilyId,

@@ -2,6 +2,7 @@ import {
   ConfirmationDecision,
   type EligibleMembershipConfirmationView,
   type MembershipConfirmationError,
+  MembershipConfirmationState,
   type PersonProfile,
   SimpleRelationshipType,
 } from "@/backend";
@@ -13,6 +14,7 @@ import {
 } from "@/hooks/useMembershipConfirmation";
 import { useProfilePhoto } from "@/hooks/usePhotoStorage";
 import { resolveBackendDisplayName } from "@/types/family";
+import { MEMBERSHIP_CONFIRMATION_STATE_LABELS } from "@/types/ownership";
 import { Check, HelpCircle, Loader2, ShieldQuestion } from "lucide-react";
 import { useState } from "react";
 
@@ -56,6 +58,46 @@ type RequestResult =
   | { kind: "reviewRequired" }
   | { kind: "noLongerNeeded" }
   | { kind: "error" };
+
+/**
+ * The calm, read-only presentation for a confirmation case that is no longer
+ * actionable. The backend eligible list can include cases that are already
+ * settled — `#ApprovedByRelative` (an Active membership already confirmed by
+ * another relative), `#RejectedByRelative`, `#StewardReviewRequired`, and
+ * `#ResolvedBySteward` — so the card must gate its actions on the case state,
+ * not only on the caller's own recorded decision. Returns null for
+ * `#AwaitingConfirmation`, the only actionable state.
+ */
+function presentReadOnlyState(
+  state: MembershipConfirmationState,
+): { title: string; body: string } | null {
+  switch (state) {
+    case MembershipConfirmationState.ApprovedByRelative:
+      return {
+        title: MEMBERSHIP_CONFIRMATION_STATE_LABELS[state],
+        body: "Another family member has already confirmed this connection.",
+      };
+    case MembershipConfirmationState.RejectedByRelative:
+      // A dispute is not a final rejection: a Family Steward still reviews it,
+      // so the copy must never read as a permanent "not confirmed" outcome.
+      return {
+        title: MEMBERSHIP_CONFIRMATION_STATE_LABELS[state],
+        body: "A family member did not confirm this connection. A Family Steward will review it.",
+      };
+    case MembershipConfirmationState.StewardReviewRequired:
+      return {
+        title: MEMBERSHIP_CONFIRMATION_STATE_LABELS[state],
+        body: "A Family Steward will review this connection.",
+      };
+    case MembershipConfirmationState.ResolvedBySteward:
+      return {
+        title: MEMBERSHIP_CONFIRMATION_STATE_LABELS[state],
+        body: "A Family Steward has already reviewed this connection.",
+      };
+    default:
+      return null;
+  }
+}
 
 /**
  * Extracts the birth year from a profile's birth info, when present. Returns
@@ -183,11 +225,11 @@ export function MembershipConfirmationRequestCard({
         <div className="confirm-body">
           <h3 className="confirm-title">
             {settled.kind === "confirmed"
-              ? "Connection confirmed"
+              ? "Confirmed by a family member"
               : settled.kind === "disputed"
-                ? "Thanks — this connection will be reviewed"
+                ? "Disputed"
                 : settled.kind === "reviewRequired"
-                  ? "This connection needs a Family Steward"
+                  ? "Needs Steward review"
                   : settled.kind === "noLongerNeeded"
                     ? "This request no longer needs your confirmation"
                     : "We couldn't record your response"}
@@ -196,13 +238,41 @@ export function MembershipConfirmationRequestCard({
             {settled.kind === "confirmed"
               ? `${settled.name} can now join the family.`
               : settled.kind === "disputed"
-                ? "Thanks — this connection will be reviewed by a Family Steward."
+                ? "Thanks — a Family Steward will review this connection."
                 : settled.kind === "reviewRequired"
                   ? "A Family Steward will review this connection."
                   : settled.kind === "noLongerNeeded"
                     ? "Nothing further is needed from you right now."
                     : "Please try again in a moment."}
           </p>
+        </div>
+      </div>
+    );
+  }
+
+  // The backend eligible list can include cases that are no longer actionable
+  // (already confirmed by another relative, already rejected, under Steward
+  // review, or resolved by a Steward). Gate the actions on the case state so an
+  // already-settled case renders read-only instead of offering Confirm/Dispute.
+  const readOnly =
+    eligible &&
+    eligible.confirmationState !==
+      MembershipConfirmationState.AwaitingConfirmation
+      ? presentReadOnlyState(eligible.confirmationState)
+      : null;
+
+  if (readOnly) {
+    return (
+      <div
+        data-ocid="confirmation.request_result"
+        className="confirm-card confirm-card-result"
+      >
+        <span className="confirm-mark" aria-hidden="true">
+          <HelpCircle className="h-6 w-6" strokeWidth={1.75} />
+        </span>
+        <div className="confirm-body">
+          <h3 className="confirm-title">{readOnly.title}</h3>
+          <p className="confirm-hint">{readOnly.body}</p>
         </div>
       </div>
     );

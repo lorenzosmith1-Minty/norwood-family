@@ -279,7 +279,7 @@ describe("Membership Review case card: existing fields stay intact (characteriza
 
     expect(
       screen.getByTestId("membership_reviews.case_state.1"),
-    ).toHaveTextContent("Needs review");
+    ).toHaveTextContent("Needs Steward review");
     expect(
       screen.getByTestId("membership_reviews.history_toggle.1"),
     ).toBeInTheDocument();

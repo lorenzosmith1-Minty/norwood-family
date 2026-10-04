@@ -426,10 +426,12 @@ export interface MembershipConfirmation {
     confirmerAccountId: AccountId;
     decision: ConfirmationDecision;
     relationshipId?: bigint;
+    rejectedByAccountId?: AccountId;
     createdAt: bigint;
     pendingPersonId: PersonId;
     updatedAt: bigint;
     confirmerPersonId: PersonId;
+    rejectedAt?: bigint;
     membershipId: bigint;
     familyId: FamilyId;
 }
@@ -1464,6 +1466,7 @@ export enum MembershipConfirmationResolution {
 export enum MembershipConfirmationState {
     StewardReviewRequired = "StewardReviewRequired",
     ResolvedBySteward = "ResolvedBySteward",
+    RejectedByRelative = "RejectedByRelative",
     AwaitingConfirmation = "AwaitingConfirmation",
     ApprovedByRelative = "ApprovedByRelative"
 }
@@ -2913,9 +2916,11 @@ export interface backendInterface {
      * / query `{ caller }` parameter, never from a caller-supplied id, and a Steward
      * / of another family cannot read this family's cases.
      * /
-     * / Only cases whose derived confirmation state is `#StewardReviewRequired` are
-     * / returned; `#ResolvedBySteward`, `#ApprovedByRelative`, and
-     * / `#AwaitingConfirmation` cases are excluded. Each
+     * / Only cases whose derived confirmation state is `#StewardReviewRequired`
+     * / (a conflicting `#Confirmed` + `#Disputed`) or `#RejectedByRelative` (a
+     * / standalone trusted-relative rejection/dispute) are returned;
+     * / `#ResolvedBySteward`, `#ApprovedByRelative`, and `#AwaitingConfirmation`
+     * / cases are excluded. Each
      * / `MembershipConfirmationReviewView` carries only the family id, membership
      * / id, pending person id, applicant display name, the simple relationship
      * / label, the membership status, the confirmation/dispute history (each entry
@@ -9121,7 +9126,7 @@ function from_candid_MembershipConfirmationReviewView_n329(_uploadFile: (file: E
     return from_candid_record_n330(_uploadFile, _downloadFile, value);
 }
 function from_candid_MembershipConfirmationState_n246(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _MembershipConfirmationState): MembershipConfirmationState {
-    return "StewardReviewRequired" in value ? MembershipConfirmationState.StewardReviewRequired : "ResolvedBySteward" in value ? MembershipConfirmationState.ResolvedBySteward : "AwaitingConfirmation" in value ? MembershipConfirmationState.AwaitingConfirmation : "ApprovedByRelative" in value ? MembershipConfirmationState.ApprovedByRelative : value;
+    return "StewardReviewRequired" in value ? MembershipConfirmationState.StewardReviewRequired : "ResolvedBySteward" in value ? MembershipConfirmationState.ResolvedBySteward : "RejectedByRelative" in value ? MembershipConfirmationState.RejectedByRelative : "AwaitingConfirmation" in value ? MembershipConfirmationState.AwaitingConfirmation : "ApprovedByRelative" in value ? MembershipConfirmationState.ApprovedByRelative : value;
 }
 function from_candid_MembershipConfirmation_n143(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _MembershipConfirmation): MembershipConfirmation {
     return from_candid_record_n144(_uploadFile, _downloadFile, value);
@@ -9893,10 +9898,12 @@ function from_candid_record_n144(_uploadFile: (file: ExternalBlob) => Promise<Ui
     confirmerAccountId: _AccountId;
     decision: _ConfirmationDecision;
     relationshipId: [] | [bigint];
+    rejectedByAccountId: [] | [_AccountId];
     createdAt: bigint;
     pendingPersonId: _PersonId;
     updatedAt: bigint;
     confirmerPersonId: _PersonId;
+    rejectedAt: [] | [bigint];
     membershipId: bigint;
     familyId: _FamilyId;
 }): {
@@ -9904,10 +9911,12 @@ function from_candid_record_n144(_uploadFile: (file: ExternalBlob) => Promise<Ui
     confirmerAccountId: AccountId;
     decision: ConfirmationDecision;
     relationshipId?: bigint;
+    rejectedByAccountId?: AccountId;
     createdAt: bigint;
     pendingPersonId: PersonId;
     updatedAt: bigint;
     confirmerPersonId: PersonId;
+    rejectedAt?: bigint;
     membershipId: bigint;
     familyId: FamilyId;
 } {
@@ -9916,10 +9925,12 @@ function from_candid_record_n144(_uploadFile: (file: ExternalBlob) => Promise<Ui
         confirmerAccountId: value.confirmerAccountId,
         decision: from_candid_ConfirmationDecision_n145(_uploadFile, _downloadFile, value.decision),
         relationshipId: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.relationshipId)),
+        rejectedByAccountId: record_opt_to_undefined(from_candid_opt_n19(_uploadFile, _downloadFile, value.rejectedByAccountId)),
         createdAt: value.createdAt,
         pendingPersonId: value.pendingPersonId,
         updatedAt: value.updatedAt,
         confirmerPersonId: value.confirmerPersonId,
+        rejectedAt: record_opt_to_undefined(from_candid_opt_n18(_uploadFile, _downloadFile, value.rejectedAt)),
         membershipId: value.membershipId,
         familyId: value.familyId
     };

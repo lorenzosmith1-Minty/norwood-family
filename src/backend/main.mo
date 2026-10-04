@@ -674,6 +674,8 @@ actor {
         confirmerPersonId = "";
         decision = "";
         relationshipId = 0;
+        rejectedByAccountId = "";
+        rejectedAt = 0;
         createdAt = 0;
         updatedAt = 0;
       })
@@ -685,6 +687,8 @@ actor {
       .payload("confirmerPersonId", func r = r.confirmerPersonId)
       .payload("decision", func r = r.decision)
       .payload("relationshipId", func r = r.relationshipId)
+      .payload("rejectedByAccountId", func r = r.rejectedByAccountId)
+      .payload("rejectedAt", func r = r.rejectedAt)
       .payload("createdAt", func r = r.createdAt)
       .payload("updatedAt", func r = r.updatedAt)
       .controllerOnly()

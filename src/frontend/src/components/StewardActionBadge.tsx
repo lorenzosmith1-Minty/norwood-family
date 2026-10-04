@@ -1,4 +1,5 @@
 import { ReportStatus } from "@/backend";
+import { useFamilyScopedId } from "../context/FamilyContext";
 import { usePendingArchiveItems } from "../hooks/useArchiveStorage";
 import { useListReports } from "../hooks/useMessaging";
 import { useListProfileClaims } from "../hooks/useProfileClaims";
@@ -21,9 +22,10 @@ import { useIsSteward } from "../hooks/useStewardAuthority";
  * a non-steward caller.
  */
 export function StewardActionBadge() {
+  const familyId = useFamilyScopedId();
   const { data: isSteward = false } = useIsSteward();
-  const { data: claims = [] } = useListProfileClaims();
-  const { data: requests = [] } = useListRelationshipRequests();
+  const { data: claims = [] } = useListProfileClaims(familyId);
+  const { data: requests = [] } = useListRelationshipRequests(familyId);
   const { data: reports = [] } = useListReports();
   const { data: pendingArchive = [] } = usePendingArchiveItems();
   const { data: reviewQueue } = useGetReviewQueue();

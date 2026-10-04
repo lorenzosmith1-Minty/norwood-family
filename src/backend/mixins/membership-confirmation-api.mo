@@ -199,9 +199,11 @@ mixin (
   /// query `{ caller }` parameter, never from a caller-supplied id, and a Steward
   /// of another family cannot read this family's cases.
   ///
-  /// Only cases whose derived confirmation state is `#StewardReviewRequired` are
-  /// returned; `#ResolvedBySteward`, `#ApprovedByRelative`, and
-  /// `#AwaitingConfirmation` cases are excluded. Each
+  /// Only cases whose derived confirmation state is `#StewardReviewRequired`
+  /// (a conflicting `#Confirmed` + `#Disputed`) or `#RejectedByRelative` (a
+  /// standalone trusted-relative rejection/dispute) are returned;
+  /// `#ResolvedBySteward`, `#ApprovedByRelative`, and `#AwaitingConfirmation`
+  /// cases are excluded. Each
   /// `MembershipConfirmationReviewView` carries only the family id, membership
   /// id, pending person id, applicant display name, the simple relationship
   /// label, the membership status, the confirmation/dispute history (each entry

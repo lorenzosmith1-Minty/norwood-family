@@ -2905,6 +2905,9 @@ video {
 .border-\[oklch\(var\(--branch-selected\)\)\] {
   border-color: oklch(var(--branch-selected));
 }
+.border-\[oklch\(var\(--confirm-review\)\/0\.35\)\] {
+  border-color: oklch(var(--confirm-review)/0.35);
+}
 .border-accent {
   --tw-border-opacity: 1;
   border-color: oklch(var(--accent) / var(--tw-border-opacity, 1));
@@ -2969,6 +2972,9 @@ video {
 }
 .bg-\[oklch\(var\(--confirm-review\)\)\] {
   background-color: oklch(var(--confirm-review));
+}
+.bg-\[oklch\(var\(--confirm-review\)\/0\.1\)\] {
+  background-color: oklch(var(--confirm-review)/0.1);
 }
 .bg-accent {
   --tw-bg-opacity: 1;
@@ -3379,6 +3385,9 @@ video {
 }
 .tracking-widest {
   letter-spacing: 0.1em;
+}
+.text-\[oklch\(var\(--confirm-review\)\)\] {
+  color: oklch(var(--confirm-review));
 }
 .text-accent {
   --tw-text-opacity: 1;

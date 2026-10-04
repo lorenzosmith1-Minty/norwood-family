@@ -4,6 +4,7 @@ import {
   CreateError,
   EditError,
   LivingStatus,
+  MembershipConfirmationState,
   NotificationType,
   PrivacyLevel,
   RelationshipError,
@@ -169,11 +170,37 @@ export {
   CreateError,
   EditError,
   LivingStatus,
+  MembershipConfirmationState,
   NotificationType,
   PrivacyLevel,
   RelationshipError,
   RelationshipStatus,
   RelationshipType,
+};
+
+/**
+ * The single, plain family-facing label for each membership-confirmation state.
+ *
+ * Every membership-confirmation surface (the trusted-relative request card, the
+ * Steward review case card, the applicant status card, and the pending shell)
+ * reads its wording from this one map so the same state always reads the same
+ * way. The labels are deliberately plain and never expose the internal enum
+ * name. `RejectedByRelative` reads as "Disputed" — a relative did not confirm
+ * the connection, but the case is not final until a Family Steward resolves it,
+ * so it must never read as a permanent rejection.
+ */
+export const MEMBERSHIP_CONFIRMATION_STATE_LABELS: Record<
+  MembershipConfirmationState,
+  string
+> = {
+  [MembershipConfirmationState.AwaitingConfirmation]:
+    "Waiting for family confirmation",
+  [MembershipConfirmationState.ApprovedByRelative]:
+    "Confirmed by a family member",
+  [MembershipConfirmationState.RejectedByRelative]: "Disputed",
+  [MembershipConfirmationState.StewardReviewRequired]: "Needs Steward review",
+  [MembershipConfirmationState.ResolvedBySteward]:
+    "Reviewed by a Family Steward",
 };
 
 /** Friendly labels for profile claim status. */

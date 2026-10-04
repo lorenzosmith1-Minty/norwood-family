@@ -361,11 +361,12 @@ function MembershipPendingState({ onConsumed }: { onConsumed: () => void }) {
           <Clock className="h-7 w-7" strokeWidth={1.75} />
         </span>
         <div className="flex flex-col items-center gap-2">
-          <h1 className="invite-notice-title">Your membership is pending</h1>
+          <h1 className="invite-notice-title">
+            Waiting for family confirmation
+          </h1>
           <p className="invite-notice-hint">
-            Your family connection is waiting for confirmation. A family member
-            may confirm your connection. If there is a disagreement, a Family
-            Steward will review it.
+            Your family connection is waiting for a family member to confirm it.
+            If there is a disagreement, a Family Steward will review it.
           </p>
         </div>
         <span className="invite-status">Pending</span>

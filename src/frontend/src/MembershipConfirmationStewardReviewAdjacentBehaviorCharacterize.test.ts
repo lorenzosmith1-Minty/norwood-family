@@ -14,8 +14,8 @@ import {
   type MembershipConfirmationResolutionRecord,
   MembershipConfirmationState,
   type PersonId,
-  type Result_19,
-  type Result_28,
+  type Result_23,
+  type Result_33,
   SimpleRelationshipType,
 } from "@/backend";
 
@@ -279,7 +279,7 @@ describe("privacy-safe confirmation view (characterization)", () => {
   });
 
   it("types the eligible view with no account principal field at runtime", () => {
-    const view: Result_19 = {
+    const view: Result_23 = {
       __kind__: "ok",
       ok: [
         {
@@ -391,7 +391,7 @@ describe("confirmation consumer seam (characterization)", () => {
   });
 
   it("types the Steward read Result as a state/decisions/resolution tuple", () => {
-    const ok: Result_28 = {
+    const ok: Result_33 = {
       __kind__: "ok",
       ok: [
         MembershipConfirmationState.StewardReviewRequired,
@@ -399,7 +399,7 @@ describe("confirmation consumer seam (characterization)", () => {
         resolutionRecord(),
       ],
     };
-    const err: Result_28 = {
+    const err: Result_33 = {
       __kind__: "err",
       err: MembershipConfirmationError.NotAuthorized,
     };

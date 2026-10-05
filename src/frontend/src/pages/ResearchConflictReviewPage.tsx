@@ -39,7 +39,7 @@ import type {
   ConflictReviewItem,
   FindingContent,
   ResearchError,
-  Result_6,
+  Result_7,
 } from "../types/research-intake";
 
 interface ResearchConflictReviewPageProps {
@@ -144,7 +144,7 @@ function ConflictCard({ item }: { item: ConflictReviewItem }) {
     resolve.mutate(
       { conflictId: item.id, action, notes },
       {
-        onSuccess: (result: Result_6) => {
+        onSuccess: (result: Result_7) => {
           if (result.__kind__ === "err") {
             // The backend refused to resolve (e.g. an unmappable Person Fact
             // field on Replace Existing). Leave the conflict unresolved, keep

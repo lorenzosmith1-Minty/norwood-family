@@ -1,21 +1,19 @@
 {
-  "overview": "A private multi-family genealogy app for the Norwood family with family-scoped members, profiles, relationships, invitations, confirmations, notifications, archive, photos, and governance.",
+  "overview": "A private family heritage platform for the Norwood family to preserve profiles, relationships, history, and governance.",
   "features": [
-    "Family-scoped member and profile management",
-    "Relationship proposals and approvals",
-    "Invitations and membership confirmations",
-    "Steward review and governance actions",
-    "Family-scoped notifications and archive",
-    "Photo and media metadata",
-    "Multi-family tenancy isolation"
+    "Family profiles and relationships",
+    "Family Steward governance and approvals",
+    "Account recovery for existing family profiles",
+    "Steward authority transfer on recovery",
+    "Family-scoped privacy and access control"
   ],
-  "category": "genealogy",
+  "category": "family-heritage-platform",
   "tags": [
     "family",
+    "heritage",
     "genealogy",
-    "tenancy",
-    "isolation",
-    "audit"
+    "governance",
+    "recovery"
   ],
-  "last_updated": "2026-10-04T12:25:38.472Z"
+  "last_updated": "2026-10-04T21:59:47.147Z"
 }

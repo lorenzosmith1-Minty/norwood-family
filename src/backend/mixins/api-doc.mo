@@ -3008,14 +3008,16 @@ The exposed entities are `family`, `photo`, `archiveItem`, `profile`, `claim`,
 `archivedProfile`, `dismissedPair`, `story`, `mystery`, `mysteryContribution`,
 `recipe`, `boardPost`, `boardReply`, `conversation`, `message`, `block`,
 `report`, `researchSource`, `proposedFinding`, `newPersonCandidate`,
-`relationshipProposal`, `conflictReviewItem`, and `researchAuditLog`.
+`relationshipProposal`, `conflictReviewItem`, `researchAuditLog`,
+`recoveryRequest`, `recoveryVerification`, and `recoveryAuditLog`.
 Most are declared `.controllerOnly()` (see the authorization section); the
-`archiveItem`, `conversation`, and `researchSource` entities are
+`archiveItem`, `conversation`, `researchSource`, `recoveryRequest`,
+`recoveryVerification`, and `recoveryAuditLog` entities are
 `.controllerOrScoped()` and the `message` entity is `.scopedPerUser()`.
 `archiveItem` uses a privacy-reflecting row-visibility rule (see the
-authorization section); `researchSource` uses a family-membership
-row-visibility rule; `conversation` and `message` use a participant-only
-visibility rule. The governance entities `steward`, `successor`,
+authorization section); `researchSource` and the three recovery entities use a
+family-membership row-visibility rule; `conversation` and `message` use a
+participant-only visibility rule. The governance entities `steward`, `successor`,
 `removalRequest`, `auditLog`, `mergeConflict`, and `dismissedPair` each carry a
 `familyId` column naming the family the record belongs to — the tenant boundary
 — so a controller-side query can separate Family A governance records from
@@ -3262,6 +3264,33 @@ action tag text, e.g. `\"SourceCreated\"`/`\"FindingSubmitted\"`/`\"FindingAppro
 (`Nat`, `0` when the entry is not tied to a source), `actorId` (principal text),
 `timestamp` (`Int`, nanoseconds since epoch), and `summary`.
 
+The recovery entities are flattened views of the Phase 4A recovery records.
+`recoveryRequest` rows (primary key `id`, a `Nat`) carry `familyId` (the owning
+family id, the tenant boundary), `recoveryType`
+(`\"AccountRecovery\"`/`\"StewardRecovery\"`), `personId` (the existing
+Person/Profile whose ownership is at stake), `ownerAccountId` (the current owner
+account principal rendered as text), `replacementAccountId` (the requested
+replacement account principal rendered as text), `status`
+(`\"Pending\"`/`\"AwaitingVerification\"`/`\"ReadyForApproval\"`/`\"Approved\"`/`\"Rejected\"`/`\"Cancelled\"`/`\"Expired\"`),
+`requestedByAccountId` (principal text), `createdAt`/`updatedAt` (`Int`,
+nanoseconds since epoch), `decidedByAccountId` (principal text, `\"\"` when
+undecided), `decidedAt` (`Int`, `0` when undecided), and `transferredAt` (`Int`,
+`0` until ownership has been transferred). `recoveryVerification` rows (primary
+key `id`, a `Nat`) carry `familyId` (the tenant boundary), `recoveryId` (`Nat`),
+`verifierAccountId` (principal text), `decision` (`\"Confirm\"`/`\"Reject\"`), and
+`decidedAt` (`Int`). `recoveryAuditLog` rows (primary key `id`, a `Nat`) carry
+`familyId` (the tenant boundary), `recoveryId` (`Nat`), `actionType` (the audit
+action tag text, e.g.
+`\"RequestCreated\"`/`\"VerificationRecorded\"`/`\"StewardDecisionRecorded\"`/`\"ResolutionRecorded\"`/`\"OwnershipTransferred\"`),
+`actorAccountId` (principal text), `affectedPersonCount` (`Nat`, the number of
+affected person ids), `timestamp` (`Int`, nanoseconds since epoch), and
+`summary`. All three recovery entities are `.controllerOrScoped()` with a
+family-membership row-visibility rule (their `familyId` column is the owner
+column): the platform controller reads all rows, while a signed-in caller reads
+only the recovery rows of a family they are an approved member or active Steward
+of, so a caller can never read another family's recovery requests,
+verifications, or audit history through OQL.
+
 ### Access control and Internet Identity
 
 - `_initialize_access_control() : async ()` — update. Registers the signed-in
@@ -3338,6 +3367,14 @@ the live caller. Most exposed entities — `family`, `photo`, `profile`,
 rows through `schema()`/`execute()`; end users do not read them directly. This
 keeps the family, governance, board, block, and report metadata private
 to the platform while still letting the Data Intelligence agent answer over it.
+The `recoveryRequest`, `recoveryVerification`, and `recoveryAuditLog` entities
+are declared `.controllerOrScoped()` with a family-membership row-visibility
+rule: the platform controller reads all rows, while a signed-in caller reads
+only the recovery rows whose `familyId` is a family they are an approved member
+or active Steward of. A caller therefore can never read another family's
+recovery requests, verifications, or audit history through OQL, matching the
+family-scoped recovery API methods (`listRecoveryRequestsForFamily`,
+`listRecoveryVerificationsForFamily`, `listRecoveryAuditForFamily`).
 The `story` entity carries the tenant boundary `familyId` column, so a
 controller-side query can separate Family A stories from Family B stories; the
 direct Story API methods enforce the same boundary for end users (see the

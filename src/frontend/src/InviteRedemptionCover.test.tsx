@@ -6,9 +6,9 @@ import {
   InvitationStatus,
   InvitationType,
   MembershipStatus,
-  type Result,
-  type Result_29,
-  type Result_31,
+  type Result_1,
+  type Result_34,
+  type Result_36,
 } from "@/backend";
 import { Principal } from "@icp-sdk/core/principal";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -215,14 +215,14 @@ function mockValidInvitationWithAlreadyMemberAccept() {
     return {
       __kind__: "ok",
       ok: { __kind__: "Valid", Valid: makePreview() },
-    } satisfies Result_29;
+    } satisfies Result_34;
   });
   mockActor.acceptFamilyInvitation = vi.fn(async (...args: unknown[]) => {
     calls.acceptFamilyInvitation.push(args);
     return {
       __kind__: "err",
       err: FamilyInvitationError.AlreadyMember,
-    } satisfies Result_31;
+    } satisfies Result_36;
   });
 }
 
@@ -365,7 +365,7 @@ describe("AlreadyAccepted neutral wording (cover)", () => {
         return {
           __kind__: "ok",
           ok: { __kind__: "AlreadyAccepted", AlreadyAccepted: null },
-        } satisfies Result_29;
+        } satisfies Result_34;
       },
     );
 
@@ -395,7 +395,7 @@ describe("FoundingSteward post-accept copy (cover)", () => {
               invitationType: InvitationType.FoundingSteward,
             }),
           },
-        } satisfies Result_29;
+        } satisfies Result_34;
       },
     );
     mockActor.acceptFamilyInvitation = vi.fn(async (...args: unknown[]) => {
@@ -403,7 +403,7 @@ describe("FoundingSteward post-accept copy (cover)", () => {
       return {
         __kind__: "ok",
         ok: makeInvitation({ invitationType: InvitationType.FoundingSteward }),
-      } satisfies Result_31;
+      } satisfies Result_36;
     });
 
     renderPage({});
@@ -428,7 +428,7 @@ describe("signed-out preview still works (cover)", () => {
     mockActor.validateFamilyInvitationToken = vi.fn(
       async (...args: unknown[]) => {
         calls.validateFamilyInvitationToken.push(args);
-        return { __kind__: "ok", ok: makePreview() } satisfies Result;
+        return { __kind__: "ok", ok: makePreview() } satisfies Result_1;
       },
     );
 
@@ -473,7 +473,7 @@ describe("decline consumes the invitation (cover)", () => {
         return {
           __kind__: "ok",
           ok: { __kind__: "Valid", Valid: makePreview() },
-        } satisfies Result_29;
+        } satisfies Result_34;
       },
     );
     mockActor.declineFamilyInvitation = vi.fn(async (...args: unknown[]) => {
@@ -481,7 +481,7 @@ describe("decline consumes the invitation (cover)", () => {
       return {
         __kind__: "ok",
         ok: makeInvitation({ status: InvitationStatus.Declined }),
-      } satisfies Result_31;
+      } satisfies Result_36;
     });
     const onConsumed = vi.fn();
 

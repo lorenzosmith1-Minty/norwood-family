@@ -15,12 +15,12 @@ import {
   MembershipConfirmationState,
   MembershipStatus,
   type PersonId,
-  type Result_5,
-  type Result_19,
-  type Result_24,
-  type Result_25,
-  type Result_28,
-  type Result_42,
+  type Result_6,
+  type Result_23,
+  type Result_29,
+  type Result_30,
+  type Result_33,
+  type Result_47,
   SimpleRelationshipType,
 } from "@/backend";
 
@@ -173,8 +173,8 @@ describe("confirmation consumer seam (characterization)", () => {
   });
 
   it("types the submit Result as an ok record / err error union", () => {
-    const ok: Result_42 = { __kind__: "ok", ok: confirmationRecord() };
-    const err: Result_42 = {
+    const ok: Result_47 = { __kind__: "ok", ok: confirmationRecord() };
+    const err: Result_47 = {
       __kind__: "err",
       err: MembershipConfirmationError.MembershipNotPending,
     };
@@ -186,7 +186,7 @@ describe("confirmation consumer seam (characterization)", () => {
   });
 
   it("types the Steward read Result as a state/decisions/resolution tuple", () => {
-    const ok: Result_28 = {
+    const ok: Result_33 = {
       __kind__: "ok",
       ok: [
         MembershipConfirmationState.ApprovedByRelative,
@@ -194,7 +194,7 @@ describe("confirmation consumer seam (characterization)", () => {
         resolutionRecord(),
       ],
     };
-    const err: Result_28 = {
+    const err: Result_33 = {
       __kind__: "err",
       err: MembershipConfirmationError.NotAuthorized,
     };
@@ -207,7 +207,7 @@ describe("confirmation consumer seam (characterization)", () => {
   });
 
   it("types the applicant read Result as a redacted applicant view", () => {
-    const ok: Result_24 = {
+    const ok: Result_29 = {
       __kind__: "ok",
       ok: {
         state: MembershipConfirmationState.ApprovedByRelative,
@@ -218,7 +218,7 @@ describe("confirmation consumer seam (characterization)", () => {
         updatedAt: 1_700_000_000_000_000_000n,
       },
     };
-    const err: Result_24 = {
+    const err: Result_29 = {
       __kind__: "err",
       err: MembershipConfirmationError.NotAuthorized,
     };
@@ -231,9 +231,9 @@ describe("confirmation consumer seam (characterization)", () => {
   });
 
   it("types the own-decision read Result as an optional record", () => {
-    const present: Result_25 = { __kind__: "ok", ok: confirmationRecord() };
-    const absent: Result_25 = { __kind__: "ok", ok: null };
-    const err: Result_25 = {
+    const present: Result_30 = { __kind__: "ok", ok: confirmationRecord() };
+    const absent: Result_30 = { __kind__: "ok", ok: null };
+    const err: Result_30 = {
       __kind__: "err",
       err: MembershipConfirmationError.NotSignedIn,
     };
@@ -246,7 +246,7 @@ describe("confirmation consumer seam (characterization)", () => {
   it("types the eligible-confirmation list Result as a privacy-safe view array", () => {
     // The canonical discovery read returns an array of family-safe views. The
     // view carries no account principal and no sensitive relationship context.
-    const ok: Result_19 = {
+    const ok: Result_23 = {
       __kind__: "ok",
       ok: [
         {
@@ -261,7 +261,7 @@ describe("confirmation consumer seam (characterization)", () => {
         },
       ],
     };
-    const err: Result_19 = {
+    const err: Result_23 = {
       __kind__: "err",
       err: MembershipConfirmationError.NoActiveMembership,
     };
@@ -274,7 +274,7 @@ describe("confirmation consumer seam (characterization)", () => {
   });
 
   it("types the Steward resolution Result as a membership / error union", () => {
-    const ok: Result_5 = {
+    const ok: Result_6 = {
       __kind__: "ok",
       ok: {
         id: 3n,
@@ -289,7 +289,7 @@ describe("confirmation consumer seam (characterization)", () => {
         updatedAt: 1_700_000_000_000_000_000n,
       },
     };
-    const err: Result_5 = {
+    const err: Result_6 = {
       __kind__: "err",
       err: MembershipConfirmationError.NotSteward,
     };

@@ -7,7 +7,7 @@ import {
   type MembershipConfirmationReviewView,
   MembershipConfirmationState,
   MembershipStatus,
-  type Result_21,
+  type Result_25,
   SimpleRelationshipType,
 } from "@/backend";
 import { DEFAULT_FAMILY_ID, FamilyProvider } from "@/context/FamilyContext";
@@ -89,10 +89,10 @@ const {
     },
     async listMembershipConfirmationReviewsForSteward(
       ...args: unknown[]
-    ): Promise<Result_21> {
+    ): Promise<Result_25> {
       calls.listMembershipConfirmationReviewsForSteward.push(args);
       if (reviewsPending) {
-        return new Promise<Result_21>(() => {});
+        return new Promise<Result_25>(() => {});
       }
       if (reviewsError !== null) {
         return { __kind__: "err", err: reviewsError };

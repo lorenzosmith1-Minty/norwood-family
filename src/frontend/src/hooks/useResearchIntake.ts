@@ -7,11 +7,11 @@ import type {
   ProposedFinding,
   RelationshipProposal,
   ResearchAuditEntry,
-  Result_6,
-  Result_33,
-  Result_34,
-  Result_35,
+  Result_7,
   Result_38,
+  Result_39,
+  Result_40,
+  Result_43,
   ReviewQueue,
   ReviewQueueItem,
   SourceId,
@@ -275,7 +275,7 @@ export function useCreateSource() {
       sourceType: SourceRecord["sourceType"];
       description: string;
       archiveItemId: bigint | null;
-    }): Promise<Result_33> => {
+    }): Promise<Result_38> => {
       if (!actor) throw new Error("Backend is not ready");
       // The default family keeps the exact legacy no-argument call shape (the
       // backend's compatibility wrapper resolves the default family), while a
@@ -577,7 +577,7 @@ export function useCreateFinding() {
       sourceId: SourceId;
       personId: string | null;
       newPersonCandidateId: bigint | null;
-    }): Promise<Result_38> => {
+    }): Promise<Result_43> => {
       if (!actor) throw new Error("Backend is not ready");
       return familyScopedId === undefined
         ? actor.createFinding(
@@ -774,7 +774,7 @@ export function useCreateNewPersonCandidate() {
       name: string;
       details: string;
       sourceId: SourceId;
-    }): Promise<Result_35> => {
+    }): Promise<Result_40> => {
       if (!actor) throw new Error("Backend is not ready");
       return familyScopedId === undefined
         ? actor.createNewPersonCandidate(name, details, sourceId)
@@ -959,7 +959,7 @@ export function useCreateRelationshipProposal() {
       toPersonId: string;
       relationshipType: string;
       sourceId: SourceId;
-    }): Promise<Result_34> => {
+    }): Promise<Result_39> => {
       if (!actor) throw new Error("Backend is not ready");
       return familyScopedId === undefined
         ? actor.createRelationshipProposal(
@@ -1152,7 +1152,7 @@ export function useResolveConflict() {
       conflictId: bigint;
       action: ConflictResolutionAction;
       notes: string;
-    }): Promise<Result_6> => {
+    }): Promise<Result_7> => {
       if (!actor) throw new Error("Backend is not ready");
       return familyScopedId === undefined
         ? actor.resolveConflict(conflictId, action, notes)
@@ -1274,7 +1274,7 @@ export type {
   ProposedFinding,
   RelationshipProposal,
   ResearchAuditEntry,
-  Result_6,
+  Result_7,
   ReviewQueue,
   ReviewQueueItem,
   SourceId,

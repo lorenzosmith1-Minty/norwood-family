@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom/vitest";
 import type {
-  Result_14,
-  Result_30,
+  Result_15,
+  Result_35,
   StewardIdentity,
   StewardRecord,
   SuccessorDesignation,
@@ -69,7 +69,7 @@ const { mockActor, calls, resetCalls } = vi.hoisted(() => {
     listStewardIdentitiesForFamily: [],
   };
 
-  const okSteward = (): Result_14 => ({
+  const okSteward = (): Result_15 => ({
     __kind__: "ok",
     ok: {
       familyId: "norwood",
@@ -81,7 +81,7 @@ const { mockActor, calls, resetCalls } = vi.hoisted(() => {
     } as StewardRecord,
   });
 
-  const okSuccessor = (): Result_30 => ({
+  const okSuccessor = (): Result_35 => ({
     __kind__: "ok",
     ok: {
       familyId: "norwood",
@@ -94,27 +94,27 @@ const { mockActor, calls, resetCalls } = vi.hoisted(() => {
   });
 
   const mockActor = {
-    async promoteToSteward(...args: unknown[]): Promise<Result_14> {
+    async promoteToSteward(...args: unknown[]): Promise<Result_15> {
       calls.promoteToSteward.push(args);
       return okSteward();
     },
-    async promoteToStewardForFamily(...args: unknown[]): Promise<Result_14> {
+    async promoteToStewardForFamily(...args: unknown[]): Promise<Result_15> {
       calls.promoteToStewardForFamily.push(args);
       return okSteward();
     },
-    async designateSuccessor(...args: unknown[]): Promise<Result_30> {
+    async designateSuccessor(...args: unknown[]): Promise<Result_35> {
       calls.designateSuccessor.push(args);
       return okSuccessor();
     },
-    async designateSuccessorForFamily(...args: unknown[]): Promise<Result_30> {
+    async designateSuccessorForFamily(...args: unknown[]): Promise<Result_35> {
       calls.designateSuccessorForFamily.push(args);
       return okSuccessor();
     },
-    async activateSuccessor(...args: unknown[]): Promise<Result_14> {
+    async activateSuccessor(...args: unknown[]): Promise<Result_15> {
       calls.activateSuccessor.push(args);
       return okSteward();
     },
-    async activateSuccessorForFamily(...args: unknown[]): Promise<Result_14> {
+    async activateSuccessorForFamily(...args: unknown[]): Promise<Result_15> {
       calls.activateSuccessorForFamily.push(args);
       return okSteward();
     },

@@ -5,7 +5,7 @@ import {
   type FamilyMembership,
   MembershipError,
   MembershipStatus,
-  type Result_2,
+  type Result_3,
 } from "@/backend";
 import { isFamilyMembershipDenial } from "./lib/fileValidation";
 
@@ -130,8 +130,8 @@ describe("FamilyMembership Phase 1A record contract (characterization)", () => {
   });
 
   it("types the membership Result as an ok/err union over the record and error", () => {
-    const ok: Result_2 = { __kind__: "ok", ok: activeMembership() };
-    const err: Result_2 = {
+    const ok: Result_3 = { __kind__: "ok", ok: activeMembership() };
+    const err: Result_3 = {
       __kind__: "err",
       err: MembershipError.NotAuthorized,
     };

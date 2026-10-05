@@ -5,8 +5,8 @@ import {
   type InvitationRedemptionState,
   InvitationStatus,
   InvitationType,
-  type Result_29,
-  type Result_31,
+  type Result_34,
+  type Result_36,
 } from "@/backend";
 import { Principal } from "@icp-sdk/core/principal";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -235,7 +235,7 @@ describe("invitation mutation hooks call the backend and surface errors (charact
     const invitation = makeInvitation();
     mockActor.acceptFamilyInvitation = vi.fn(async (...args: unknown[]) => {
       calls.acceptFamilyInvitation.push(args);
-      return { __kind__: "ok", ok: invitation } satisfies Result_31;
+      return { __kind__: "ok", ok: invitation } satisfies Result_36;
     });
 
     const { result } = renderHook(() => useAcceptInvitation(), { wrapper });
@@ -251,7 +251,7 @@ describe("invitation mutation hooks call the backend and surface errors (charact
       return {
         __kind__: "err",
         err: FamilyInvitationError.AlreadyMember,
-      } satisfies Result_31;
+      } satisfies Result_36;
     });
 
     const { result } = renderHook(() => useAcceptInvitation(), { wrapper });
@@ -264,7 +264,7 @@ describe("invitation mutation hooks call the backend and surface errors (charact
     const invitation = makeInvitation({ status: InvitationStatus.Declined });
     mockActor.declineFamilyInvitation = vi.fn(async (...args: unknown[]) => {
       calls.declineFamilyInvitation.push(args);
-      return { __kind__: "ok", ok: invitation } satisfies Result_31;
+      return { __kind__: "ok", ok: invitation } satisfies Result_36;
     });
 
     const { result } = renderHook(() => useDeclineInvitation(), { wrapper });
@@ -280,7 +280,7 @@ describe("invitation mutation hooks call the backend and surface errors (charact
       return {
         __kind__: "err",
         err: FamilyInvitationError.InvalidTransition,
-      } satisfies Result_31;
+      } satisfies Result_36;
     });
 
     const { result } = renderHook(() => useDeclineInvitation(), { wrapper });
@@ -313,11 +313,11 @@ describe("redemption state union is the typed consumer contract (characterizatio
   });
 
   it("types the redemption Result as an ok/err union over the state and error", () => {
-    const ok: Result_29 = {
+    const ok: Result_34 = {
       __kind__: "ok",
       ok: { __kind__: "Valid", Valid: makePreview() },
     };
-    const err: Result_29 = {
+    const err: Result_34 = {
       __kind__: "err",
       err: FamilyInvitationError.FamilyNotFound,
     };

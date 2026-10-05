@@ -19,7 +19,7 @@ import {
   RelationshipType,
   type Report,
   ReportStatus,
-  type Result_21,
+  type Result_25,
   SimpleRelationshipType,
 } from "@/backend";
 import { DEFAULT_FAMILY_ID, FamilyProvider } from "@/context/FamilyContext";
@@ -481,10 +481,10 @@ describe("Steward reviews consumer seam (characterization)", () => {
       confirmedCount: 1n,
       disputedCount: 1n,
     };
-    const ok: Result_21 = { __kind__: "ok", ok: [view] };
-    const err: Result_21 = {
+    const ok: Result_25 = { __kind__: "ok", ok: [view] };
+    const err: Result_25 = {
       __kind__: "err",
-      err: "NotAuthorized" as Result_21 extends { err: infer E } ? E : never,
+      err: "NotAuthorized" as Result_25 extends { err: infer E } ? E : never,
     };
 
     expect(ok.ok).toHaveLength(1);

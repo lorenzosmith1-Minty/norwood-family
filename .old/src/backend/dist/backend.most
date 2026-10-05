@@ -1,4 +1,5 @@
 // Version: 4.0.0
+type AccountId__157687466 = Principal;
 type AccountId__179449828 = Principal;
 type AccountId__266067895 = Principal;
 type AccountId__342420057 = Principal;
@@ -1031,6 +1032,7 @@ type FamilyId__671487675 = Text;
 type FamilyId__67753120 = Text;
 type FamilyId__766456427 = Text;
 type FamilyId__78894948 = Text;
+type FamilyId__804040230 = Text;
 type FamilyId__878624665 = FamilyId__357998493;
 type FamilyId__997792151 = Text;
 type FamilyInvitation__27286872 =
@@ -1674,6 +1676,12 @@ type NewActor__327868545 =
     proposedFindings : List__836382695<NewProposedFinding__512461137>
   };
 type NewActor__341238509 = {stories : List__836382695<NewStory__292921907>};
+type NewActor__358370540 =
+  {
+    recoveryAudit : List__836382695<RecoveryAuditEntry__204187965>;
+    recoveryRequests : List__836382695<RecoveryRequest__715983905>;
+    recoveryVerifications : List__836382695<RecoveryVerification__587009493>
+  };
 type NewActor__386112082 =
   {
     accessControlState :
@@ -3215,6 +3223,7 @@ type OldActor__66325736 =
     relationshipProposals :
       List__836382695<OldRelationshipProposal__634598119>
   };
+type OldActor__736350056 = {};
 type OldActor__764284879 =
   {
     accessControlState :
@@ -4050,6 +4059,7 @@ type PersonId__39539326 = Text;
 type PersonId__610106223 = Text;
 type PersonId__654861073 = Text;
 type PersonId__675039419 = Text;
+type PersonId__871451099 = Text;
 type PersonProfile__116240516 =
   {
     birthDate : ?Text;
@@ -5081,6 +5091,118 @@ type Recipe__831238705 =
     updatedAt : Int;
     year : ?Nat
   };
+type RecoveryAuditActionType__497707420 =
+  {
+    #OwnershipTransferred;
+    #RequestCreated;
+    #ResolutionRecorded;
+    #StewardDecisionRecorded;
+    #VerificationRecorded
+  };
+type RecoveryAuditActionType__929884153 =
+  {
+    #OwnershipTransferred;
+    #RequestCreated;
+    #ResolutionRecorded;
+    #StewardDecisionRecorded;
+    #VerificationRecorded
+  };
+type RecoveryAuditEntry__204187965 =
+  {
+    actionType : RecoveryAuditActionType__929884153;
+    actorAccountId : Principal;
+    affectedPersonIds : [Text];
+    familyId : Text;
+    id : Nat;
+    recoveryId : Nat;
+    summary : Text;
+    timestamp : Int
+  };
+type RecoveryAuditEntry__206377064 =
+  {
+    actionType : RecoveryAuditActionType__497707420;
+    actorAccountId : AccountId__157687466;
+    affectedPersonIds : [PersonId__871451099];
+    familyId : FamilyId__804040230;
+    id : Nat;
+    recoveryId : Nat;
+    summary : Text;
+    timestamp : Int
+  };
+type RecoveryRequest__378015427 =
+  {
+    createdAt : Int;
+    decidedAt : ?Int;
+    decidedByAccountId : ?AccountId__157687466;
+    familyId : FamilyId__804040230;
+    id : Nat;
+    ownerAccountId : AccountId__157687466;
+    personId : PersonId__871451099;
+    recoveryType : RecoveryType__412148689;
+    replacementAccountId : AccountId__157687466;
+    requestedByAccountId : AccountId__157687466;
+    status : RecoveryStatus__337040860;
+    transferredAt : ?Int;
+    updatedAt : Int
+  };
+type RecoveryRequest__715983905 =
+  {
+    createdAt : Int;
+    decidedAt : ?Int;
+    decidedByAccountId : ?Principal;
+    familyId : Text;
+    id : Nat;
+    ownerAccountId : Principal;
+    personId : Text;
+    recoveryType : RecoveryType__585018442;
+    replacementAccountId : Principal;
+    requestedByAccountId : Principal;
+    status : RecoveryStatus__921528316;
+    transferredAt : ?Int;
+    updatedAt : Int
+  };
+type RecoveryStatus__337040860 =
+  {
+    #Approved;
+    #AwaitingVerification;
+    #Cancelled;
+    #Expired;
+    #Pending;
+    #ReadyForApproval;
+    #Rejected
+  };
+type RecoveryStatus__921528316 =
+  {
+    #Approved;
+    #AwaitingVerification;
+    #Cancelled;
+    #Expired;
+    #Pending;
+    #ReadyForApproval;
+    #Rejected
+  };
+type RecoveryType__412148689 = {#AccountRecovery; #StewardRecovery};
+type RecoveryType__585018442 = {#AccountRecovery; #StewardRecovery};
+type RecoveryVerificationDecision__19906220 = {#Confirm; #Reject};
+type RecoveryVerificationDecision__674381659 = {#Confirm; #Reject};
+type RecoveryVerification__281366110 =
+  {
+    decidedAt : Int;
+    decision : RecoveryVerificationDecision__19906220;
+    familyId : FamilyId__804040230;
+    id : Nat;
+    recoveryId : Nat;
+    verifierAccountId : AccountId__157687466
+  };
+type RecoveryVerification__587009493 =
+  {
+    decidedAt : Int;
+    decision : RecoveryVerificationDecision__674381659;
+    familyId : Text;
+    id : Nat;
+    recoveryId : Nat;
+    verifierAccountId : Principal
+  };
 type RelationshipProposal__180360831 =
   {
     fromPersonId : Text;
@@ -5973,7 +6095,8 @@ type UserRole__968740559 = {#admin; #guest; #user};
   "20261004_000000" : (old : OldActor__904324871) -> NewActor__793188255;
   "20261005_000000" : (_old : OldActor__386101605) -> NewActor__969407957;
   "20261006_000000" : (_old : OldActor__927544402) -> NewActor__416082931;
-  "20261007_000000" : (old : OldActor__934428609) -> NewActor__99086632
+  "20261007_000000" : (old : OldActor__934428609) -> NewActor__99086632;
+  "20261008_000000" : (old : OldActor__736350056) -> NewActor__358370540
 }
 actor  {
   stable accessControlState :
@@ -6142,6 +6265,24 @@ actor  {
     {
       var blockIndex : Nat__227979830;
       var blocks : [var [var ?Recipe__767283240]];
+      var elementIndex : Nat__227979830
+    };
+  stable recoveryAudit :
+    {
+      var blockIndex : Nat__227979830;
+      var blocks : [var [var ?RecoveryAuditEntry__206377064]];
+      var elementIndex : Nat__227979830
+    };
+  stable recoveryRequests :
+    {
+      var blockIndex : Nat__227979830;
+      var blocks : [var [var ?RecoveryRequest__378015427]];
+      var elementIndex : Nat__227979830
+    };
+  stable recoveryVerifications :
+    {
+      var blockIndex : Nat__227979830;
+      var blocks : [var [var ?RecoveryVerification__281366110]];
       var elementIndex : Nat__227979830
     };
   stable relationshipProposals :

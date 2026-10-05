@@ -107,6 +107,53 @@ module {
     });
   };
 
+  /// Retargets an EXISTING active `StewardRecord` of `familyId` from
+  /// `oldAccountId` to `replacementAccountId`, preserving the record itself
+  /// (same `familyId`, `roleStatus`, `successorPriority`, `assignedBy`,
+  /// `assignedAt`, and `founding`) rather than creating a duplicate. Used by
+  /// recovery to move Steward authority atomically with profile ownership.
+  ///
+  /// Returns `true` when a matching active record was retargeted. Returns
+  /// `false` when `oldAccountId` holds no active StewardRecord in `familyId`
+  /// (nothing to transfer) or when the replacement already holds an active
+  /// StewardRecord in `familyId` (never create a duplicate). A record in
+  /// another family is never touched.
+  public func reassignStewardForFamily(
+    stewards : List.List<Types.StewardRecord>,
+    familyId : FamilyTypes.FamilyId,
+    oldAccountId : Principal,
+    replacementAccountId : Principal,
+  ) : Bool {
+    if (oldAccountId == replacementAccountId) {
+      return false;
+    };
+    // Never create a duplicate: if the replacement already holds an active
+    // StewardRecord in this family, leave the existing records untouched.
+    if (isActiveStewardForFamily(stewards, replacementAccountId, familyId)) {
+      return false;
+    };
+    switch (stewards.find(func s =
+      s.stewardAccountId == oldAccountId and s.roleStatus == #Active and s.familyId == familyId
+    )) {
+      case null { false };
+      case (?record) {
+        let updated : Types.StewardRecord = { record with stewardAccountId = replacementAccountId };
+        // Rewrite the record in place, matching on the OLD principal, the family,
+        // and `#Active` so a principal holding StewardRecords in several families
+        // never has another family's record overwritten, and a preserved
+        // `#Removed` record for the same principal is never turned into a
+        // duplicate `#Active` replacement record. The predicate mirrors the
+        // preceding `find` exactly.
+        let snapshot = stewards.toArray();
+        stewards.clear();
+        for (s in snapshot.values()) {
+          if (s.stewardAccountId == oldAccountId and s.roleStatus == #Active and s.familyId == familyId) { stewards.add(updated) } else { stewards.add(s) };
+        };
+        true;
+      };
+    };
+  };
+
   /// TEMPORARY Tenancy 1B compatibility wrapper. Deprecated single-family
   /// form: delegates to `claimStewardForFamily` with the default family id so
   /// the current Norwood bootstrap behavior is unchanged. Tenancy 1C will

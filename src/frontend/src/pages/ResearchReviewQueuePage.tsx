@@ -63,7 +63,7 @@ import type {
   ProposedFinding,
   RelationshipProposal,
   ResearchAuditEntry,
-  Result_6,
+  Result_7,
   SourceRecord,
 } from "../types/research-intake";
 import { profiles } from "./PersonProfilePage";
@@ -641,7 +641,7 @@ function ConflictCard({ item }: { item: ConflictReviewItem }) {
     resolve.mutate(
       { conflictId: item.id, action, notes },
       {
-        onSuccess: (result: Result_6) => {
+        onSuccess: (result: Result_7) => {
           if (result.__kind__ === "err") {
             setResolveError(researchErrorMessage(result.err));
             return;

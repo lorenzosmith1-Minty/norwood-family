@@ -7,9 +7,9 @@ import {
   InvitationType,
   MembershipConfirmationState,
   MembershipStatus,
-  type Result,
-  type Result_29,
-  type Result_31,
+  type Result_1,
+  type Result_34,
+  type Result_36,
 } from "@/backend";
 import { Principal } from "@icp-sdk/core/principal";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -241,7 +241,7 @@ describe("InviteRedemptionPage: signed-out preview and sign-in gate (characteriz
     mockActor.validateFamilyInvitationToken = vi.fn(
       async (...args: unknown[]) => {
         calls.validateFamilyInvitationToken.push(args);
-        return { __kind__: "ok", ok: makePreview() } satisfies Result;
+        return { __kind__: "ok", ok: makePreview() } satisfies Result_1;
       },
     );
 
@@ -262,7 +262,7 @@ describe("InviteRedemptionPage: signed-out preview and sign-in gate (characteriz
     mockActor.validateFamilyInvitationToken = vi.fn(
       async (...args: unknown[]) => {
         calls.validateFamilyInvitationToken.push(args);
-        return { __kind__: "ok", ok: makePreview() } satisfies Result;
+        return { __kind__: "ok", ok: makePreview() } satisfies Result_1;
       },
     );
     const onSignIn = vi.fn();
@@ -282,7 +282,7 @@ describe("InviteRedemptionPage: signed-out preview and sign-in gate (characteriz
     mockActor.validateFamilyInvitationToken = vi.fn(
       async (...args: unknown[]) => {
         calls.validateFamilyInvitationToken.push(args);
-        return { __kind__: "ok", ok: makePreview() } satisfies Result;
+        return { __kind__: "ok", ok: makePreview() } satisfies Result_1;
       },
     );
 
@@ -308,7 +308,7 @@ describe("InviteRedemptionPage: unchanged terminal states (characterization)", (
     mockActor.getInvitationRedemptionState = vi.fn(
       async (...args: unknown[]) => {
         calls.getInvitationRedemptionState.push(args);
-        return { __kind__: "ok", ok: state } satisfies Result_29;
+        return { __kind__: "ok", ok: state } satisfies Result_34;
       },
     );
   }
@@ -370,7 +370,7 @@ describe("InviteRedemptionPage: post-acceptance onboarding (characterization)", 
         return {
           __kind__: "ok",
           ok: { __kind__: "Valid", Valid: makePreview() },
-        } satisfies Result_29;
+        } satisfies Result_34;
       },
     );
     mockActor.acceptFamilyInvitation = vi.fn(async (...args: unknown[]) => {
@@ -378,7 +378,7 @@ describe("InviteRedemptionPage: post-acceptance onboarding (characterization)", 
       return {
         __kind__: "ok",
         ok: makeInvitation({ invitationType: InvitationType.FamilyMember }),
-      } satisfies Result_31;
+      } satisfies Result_36;
     });
     // The caller's own membership is Pending, so the limited onboarding state
     // renders the applicant-safe confirmation status card for that membership.
@@ -441,7 +441,7 @@ describe("InviteRedemptionPage: post-acceptance onboarding (characterization)", 
               invitationType: InvitationType.FoundingSteward,
             }),
           },
-        } satisfies Result_29;
+        } satisfies Result_34;
       },
     );
     mockActor.acceptFamilyInvitation = vi.fn(async (...args: unknown[]) => {
@@ -449,7 +449,7 @@ describe("InviteRedemptionPage: post-acceptance onboarding (characterization)", 
       return {
         __kind__: "ok",
         ok: makeInvitation({ invitationType: InvitationType.FoundingSteward }),
-      } satisfies Result_31;
+      } satisfies Result_36;
     });
 
     renderPage({});
@@ -469,7 +469,7 @@ describe("InviteRedemptionPage: post-acceptance onboarding (characterization)", 
         return {
           __kind__: "ok",
           ok: { __kind__: "Valid", Valid: makePreview() },
-        } satisfies Result_29;
+        } satisfies Result_34;
       },
     );
     mockActor.declineFamilyInvitation = vi.fn(async (...args: unknown[]) => {
@@ -477,7 +477,7 @@ describe("InviteRedemptionPage: post-acceptance onboarding (characterization)", 
       return {
         __kind__: "ok",
         ok: makeInvitation({ status: InvitationStatus.Declined }),
-      } satisfies Result_31;
+      } satisfies Result_36;
     });
     const onConsumed = vi.fn();
 

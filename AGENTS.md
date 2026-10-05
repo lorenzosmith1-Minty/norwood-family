@@ -2,19 +2,15 @@
 
 ## User Preferences
 
-- Do not begin Phase 4
-- Apply only the smallest safe fix for any defect found
-- No reseeding and no destructive migration; preserve all existing data
-- Compile affected interfaces as needed; focused tenancy/isolation tests only; maximum 2 test retries
-- No preview/browser automation
-- Use the latest deployed/exported Norwood code as the source of truth
-- Frontend + existing backend actions only; keep changes small and additive
-- Preserve the existing Norwood visual language; do not redesign
+- Phase 3 multi-family isolation/tenancy is complete; Phase 4 is authorized
+- Do not begin Phase 4B
+- Additive migration only; no reseeding and no destructive migration; preserve all existing Norwood data
+- Reuse existing family-scoping and Steward authorization patterns
+- Focused Phase 4A recovery tests only; maximum 2 test retries; no full app test suite; no preview/browser automation
+- Do not delete the old account record solely because recovery succeeded
 - Use the existing centralized active familyId; never hard-code 'norwood'
 - Neutral success and error wording; never expose technical error tags or private reasons to users
-- No OAuth or Internet Identity browser testing; report authenticated browser checks as manual tests
-- Membership-confirmation status copy uses plain family-facing language; never expose internal enum names in user-facing text
-- Audit and small hardening only; do not
+- Preserve the existing Norwood visual language; do not redesign
 
 ## Verified Commands
 
@@ -24,28 +20,28 @@
 
 ## Learnings
 
-- A Motoko string literal cannot contain an unescaped double quote; a `\"\"` inside a getApiDoc Markdown literal terminates the string and produces M0097. Escape as \"\".
-- The generated-app cover for Phase 1D-A timed out twice (pnpm test exceeded 480s, then the tester session hit its 1800s limit); testing ran its course for this revision and the deploy proceeded with the automated tests not passing.
-- The Phase 1D-A local-deploy preflight was inconclusive (local_deploy_failed): the PocketIC sidecar health check returned HTTP 503, so runtime behavior was not verified. This is a local-deploy runtime fault, not an application bug.
-- The backend eligible list (listMyEligibleMembershipConfirmationsForFamily) can return cases whose confirmationState is not #AwaitingConfirmation (e.g. #ApprovedByRelative, a challengeable Active membership already confirmed by another relative), so MembershipConfirmationRequestCard gates its Confirm/Dispute actions on eligible.confirmationState and renders a read-only state for every non-AwaitingConfirmation state; the caller's own myDecision settle check still takes precedence.
-- MembershipConfirmationState has five variants: AwaitingConfirmation (the only actionable one), ApprovedByRelative, RejectedByRelative, StewardReviewRequired, and ResolvedBySteward.
-- The Phase 1D-B cover passed: frontend Vitest 286 files / 2567 tests; PocketIC backend lane 78 files / 825 tests; typecheck clean.
-- The Phase 1D-B local-deploy preflight was inconclusive (external_boundary): the preview deployed and rendered (home page, Notifications empty state on desktop and mobile), but sign-in offers only Google/Apple OAuth, which the autonomous browser cannot cross, so the eligible-trusted-relative confirmation card and its actions remain MANUAL TEST (no OAuth/II browser testing).
-- Phase 1D-C Steward membership review delta: MembershipReviewCaseCard now exposes exactly two actions (Approve/Reject) and renders resolved cases read-only in place; the page keeps a resolvedCases map merged with the backend list so a resolved case stays visible after the backend drops it.
-- The membership-reviews section heading count must use visibleCases.length (backend unresolved cases merged with locally resolved cases), not reviews.length, so the count always matches the rendered cards.
-- listReviewsForSteward returns both #StewardReviewRequired and #RejectedByRelative; frontend doc comments that mention only the former are stale.
-- The Phase 1D-C cover passed: frontend Vitest 287 files / 2573 tests; PocketIC backend lane 78 files / 825 tests; typecheck clean.
-- The Phase 1D-C local-deploy preflight was inconclusive (tester_error): the preview deployed and rendered the landing page, but the Steward review surface sits behind Google/Apple OAuth sign-in (no Internet Identity path) and the browser action channel was unavailable, so authenticated Steward resolution flows remain MANUAL TEST (no OAuth/II browser testing).
-- Phase 1D-D membership-confirmation polish: MEMBERSHIP_CONFIRMATION_STATE_LABELS in src/frontend/src/types/ownership.ts is the single source of plain family-facing wording for all five membership-confirmation states; every membership surface (request card, Steward review card, applicant status card, pending shell, invite redemption, notifications, Steward reviews page) reads from it so the same state always reads the same way.
-- RejectedByRelative renders as 'Disputed' (under Steward review), never as a final rejection; only ResolvedBySteward renders 'Approved/Rejected by Family Steward'.
-- The Phase 1D-D cover passed: frontend Vitest 289 files / 2599 tests; typecheck clean; the PocketIC backend lane skipped with pocketic_sidecar_unreachable.
-- The Phase 1D-D local-deploy preflight was inconclusive (local_deploy_failed): the PocketIC sidecar health check returned HTTP 503, so runtime behavior was not verified. This is a local-deploy runtime fault, not an application bug.
-- Phase 3 multi-family isolation/tenancy audit (fresh run) found and fixed 10 isolation defects: 2 backend photo/gallery authorization defects (lib/family-authorization.mo canManagePersonPhotosForFamily and mixins/object-storage-api.mo isUnclaimedProfileForFamily used a bare profiles.get(personId) instead of TenancyLib.getProfileForFamily(profiles, familyId, personId); the latter exposed a claimed non-default-family portrait publicly) and 8 frontend defects where family-scoped hooks were called without the active family id and silently fell back to the default family (components/governance/ReviewRequestsTab.tsx, components/StewardActionBadge.tsx, components/RelationshipRequestForm.tsx, pages/FamilyStewardReviewPage.tsx, pages/FamilyStewardHubPage.tsx, pages/HeritageBranchPage.tsx, pages/ConversationPage.tsx, pages/AddMyselfPage.tsx).
-- Family-scoped hooks that take an OPTIONAL familyId parameter (usePersonProfile, useMyProfileClaim, usePersonClaimStatus, useListProfileClaims, useListRelationshipRequests, useListConfirmedRelationships, useProposeRelationship, useRequestProfileClaim, useCreateMyself, useSearchPossibleMatches, useApprove/RejectProfileClaim, useApprove/Reject/SetPendingRelationshipRequest, usePhotos/useProfilePhoto/useAddPhoto/useRemovePhoto/useSetProfilePhoto) silently default to the default family when called with no argument; every caller must pass useFamilyScopedId().
-- Hooks that read the active family internally (useActiveFamilyRecord, useMyMembershipStatus, useArchiveStorage, useBoard, useMessaging, useNotifications, useGovernance, useRecipes, useFamilyHistory, useResearchIntake, useMembershipConfirmation, useMembershipReviews, usePendingCount, useCanonicalPerson, useExploreFamily, useNavbarIdentity, useListArchivedProfileIds) are already correctly scoped and need no caller change.
-- The canonical family-scope profile lookup is TenancyLib.getProfileForFamily(profiles, familyId, personId); a bare profiles.get(personId) is a tenancy defect because non-default families key profiles as familyId::personId.
-- test/pocketic/family-scoped-authorization.behavior.test.ts statically asserts the literal source substring 'p.familyId != familyId' inside canManagePersonPhotosForFamily; keep that explicit gate when refactoring the predicate.
-- The Phase 3 closeout report lives at docs/phase-3-tenancy-audit-closeout.md with all 13 requested sections.
-- The Phase 3 cover passed: frontend Vitest 292 files / 2615 tests; PocketIC backend lane 79 files / 829 tests against the real wasm; typecheck clean.
 - The first Phase 3 cover attempt timed out (pnpm test exceeded 480s); the retry passed. The full suite is near the 480s timeout, so prefer targeted test runs when only a subset changed.
 - The Phase 3 local-deploy preflight passed (validated): the default route rendered the full Norwood landing page with no blank screen, and the core surfaces (Archive, History, Notifications, Heritage Branch sign-in gate, Add Myself search) each rendered correctly on desktop and mobile with no console errors or canister rejects.
+- Phase 4A recovery foundation (backend + types only) is complete: src/backend/types/recovery.mo, src/backend/lib/recovery.mo, src/backend/mixins/recovery-api.mo, additive migration src/backend/migrations/20261008_000000.mo, OQL entities recoveryRequest/recoveryVerification/recoveryAuditLog with canSeeRecovery family-scoped row visibility, and focused tests test/pocketic/recovery.cover.test.ts.
+- Recovery public API: requestRecoveryForFamily, approveAccountRecoveryForFamily, verifyStewardRecoveryForFamily, rejectRecoveryForFamily, getRecoveryRequestForFamily, listRecoveryRequestsForFamily, listRecoveryVerificationsForFamily, listRecoveryAuditForFamily.
+- The recovery request type is derived server-side: #AccountRecovery when a usable active Steward exists, otherwise #StewardRecovery (2-member quorum). The usable-Steward predicate must exclude the candidate (caller, ownerAccountId, and replacementAccountId), or a sole Steward recovering their own profile is misclassified #AccountRecovery and becomes unapprovable.
+- Atomic ownership transfer reuses the existing profile record and retargets the existing #Active FamilyMembership to the replacement account; it deactivates the old owner's #Active membership (set #Left, preserving the record) before activating the replacement's, so exactly one #Active membership owns a Person/Profile. It never creates a duplicate Person or membership and never deletes the old account.
+- Replay safety is enforced by transferredAt plus isResolved(status): a resolved request returns #AlreadyResolved before any transfer, so a completed recovery can never execute the transfer twice.
+- requestRecoveryForFamily requires the caller to be an approved family member, active Steward, or #Active membership holder in familyId; a family founder holds an #Active membership but no #Approved claim, so the gate must also accept hasActiveMembershipForFamily.
+- Caffeine bindgen assigns positional Result_N aliases by first-appearance order of distinct Result<Ok,Err> shapes in the .did; adding new Result-returning endpoints inserts new shapes and shifts every later alias, so hand-written consumers that hard-code Result_N break. Remap consumers using the shape-based bijection, not a uniform shift.
+- `actor` is a reserved keyword in Motoko and cannot be used as a parameter or identifier name (M0001); rename such parameters.
+- The PocketIC lane shares one sidecar; a single test file that installs too many canisters exhausts its pid ceiling and later tests fail with `fetch failed`. Keep installs bounded (one per test).
+- The full root test suite runs near the 480s timeout; prefer targeted test runs when only a subset changed.
+- Phase 4A-H1 recovery hardening: replacement-account eligibility for recovery accepts an #Active family membership (FamilyMembershipLib.hasActiveMembershipForFamily) in addition to an approved member (FamilyAuthorizationLib.isApprovedFamilyMemberForFamily) via the isEligibleReplacement helper, applied at request, approval, and quorum re-check; a principal with no family relationship is still refused.
+- Steward authority transfer on recovery is implemented by reassignStewardForFamily in src/backend/lib/steward-authority.mo, which retargets the existing ACTIVE StewardRecord's stewardAccountId in place (family-qualified, matching the OLD principal, with the roleStatus == #Active guard), never creating a second record; it runs inside transferOwnership's transferredAt replay guard so a completed recovery cannot transfer authority twice.
+- In-place list rewrites that mirror a preceding find predicate must repeat every guard from that predicate; reassignStewardForFamily's rewrite loop must include the roleStatus == #Active guard or a preserved #Removed record for the same principal is converted into a duplicate #Active replacement record.
+- transferOwnership must retarget Steward authority from the profile's current claimedByUserId re-read under family scope, not the request-time ownerAccountId, because approveClaimForFamily can reassign an open profile.
+- No new stable field was required for Phase 4A-H1, so no migration file was added; the existing 20260829/20261007/20261008 chain remains the tail.
+- The focused recovery PocketIC lane runs with `node test/pocketic/run-backend-lane.mjs recovery.cover`; the positional filter selects the single file and the runner keeps --fileParallelism=false.
+- The Phase 4A-H1 local-deploy preflight was inconclusive (auth): the preview deployed, but the app exposes only Google/Apple OAuth sign-in (no Internet Identity path), so no signed-in replacement or Steward account could be established to exercise recovery, Steward authority transfer, security rules, or the focused Phase 4A scenarios. Authenticated recovery flows remain MANUAL TEST.
+- Phase 4A-H2 self-service recovery request initiation: requestRecoveryForFamily no longer requires the caller to be a family member; the caller IS the replacement account, so replacementAccountId must equal caller (else #NotAuthorized), the target must be an existing claimed family-scoped profile (claimedByUserId != null), and ownerAccountId is derived from the profile.
+- Approval-time and quorum-time replacement eligibility uses the new isEligibleReplacementForRequest helper, which accepts the request's own replacementAccountId (the self-service caller) without a membership and otherwise falls back to isEligibleReplacement; unrelated principals are still refused.
+- No migration was needed for Phase 4A-H2: RecoveryRequest already carries ownerAccountId, replacementAccountId, and requestedByAccountId, so relaxing the request-creation gate changed no stable field.
+- The focused recovery PocketIC lane runs with `node test/pocketic/run-backend-lane.mjs recovery.cover`; it passed 27/27 against the real wasm, and the full gate passed (frontend 295 files/2686 tests; backend lane 80 files/856 tests).
+- The shared PocketIC sidecar saturates under load and produces transport-level failures (fetch failed / SocketError: other side closed / 30s timeouts) that are not assertion failures; the failing set moves between identical runs, so re-run once the sidecar recovers rather than treating it as a backend defect.
+- The Phase 4A-H2 local-deploy preflight was inconclusive (auth): the preview deployed, but the app exposes only Google/Apple OAuth sign-in (no Internet Identity path), so no signed-in replacement or Steward account could be established to exercise recovery. Authenticated recovery flows remain MANUAL TEST.

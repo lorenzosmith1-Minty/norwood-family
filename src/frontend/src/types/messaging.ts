@@ -5,7 +5,7 @@ import type {
   Message as BackendMessage,
   Report as BackendReport,
   ReportedMessageView as BackendReportedMessageView,
-  Result_3,
+  Result_4,
 } from "@/backend";
 
 /**
@@ -24,7 +24,7 @@ export type {
   BackendMessage,
   BackendReport,
   BackendReportedMessageView,
-  Result_3,
+  Result_4,
 };
 export { MessageError, MessageStatus, ReportStatus };
 
@@ -51,7 +51,7 @@ export type Report = BackendReport;
 export type ReportedMessageView = BackendReportedMessageView;
 
 /** The result of sending a message: the created message or a MessageError. */
-export type SendMessageResult = Result_3;
+export type SendMessageResult = Result_4;
 
 /** Friendly labels for a message's delivery status. */
 export const MESSAGE_STATUS_LABELS: Record<MessageStatus, string> = {

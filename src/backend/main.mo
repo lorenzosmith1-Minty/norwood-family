@@ -28,6 +28,7 @@ import RecipeTypes "types/recipes";
 import BoardTypes "types/board";
 import MessagingTypes "types/messaging";
 import ResearchIntakeTypes "types/research-intake";
+import RecoveryTypes "types/recovery";
 import ObjectStorageLib "lib/object-storage";
 import FamilyLib "lib/family";
 import FamilyAuthorizationLib "lib/family-authorization";
@@ -41,6 +42,7 @@ import AccountIdentityLib "lib/account-identity";
 import RecipesScopeLib "lib/recipes-scope";
 import FamilyHistoryScopeLib "lib/family-history-scope";
 import MysteryScopeLib "lib/mystery-scope";
+import RecoveryLib "lib/recovery";
 import ObjectStorageApi "mixins/object-storage-api";
 import FamilyApi "mixins/family-api";
 import ArchiveApi "mixins/archive-api";
@@ -70,6 +72,7 @@ import FamilyCreationApi "mixins/family-creation-api";
 import FoundingStewardApi "mixins/founding-steward-api";
 import FamilyInvitationApi "mixins/family-invitation-api";
 import MembershipConfirmationApi "mixins/membership-confirmation-api";
+import RecoveryApi "mixins/recovery-api";
 import ApiDocMixin "mixins/api-doc";
 
 actor {
@@ -125,6 +128,10 @@ actor {
     var nextConflictId : Nat;
     var nextAuditId : Nat;
   };
+
+  let recoveryRequests : List.List<RecoveryTypes.RecoveryRequest>;
+  let recoveryVerifications : List.List<RecoveryTypes.RecoveryVerification>;
+  let recoveryAudit : List.List<RecoveryTypes.RecoveryAuditEntry>;
 
   /// Renders an audit action type variant as its tag text for OQL rows.
   func auditActionText(a : GovernanceTypes.AuditActionType) : Text {
@@ -271,6 +278,21 @@ actor {
   /// owner column is the source's `familyId`, so a caller can never read another
   /// family's sources through OQL. The platform controller still reads all rows.
   func canSeeResearchSource(caller : Principal, owner : OQL.Value) : Bool {
+    switch (owner) {
+      case (#text familyId) {
+        StewardAuthorityLib.isActiveStewardForFamily(stewards, caller, familyId)
+          or FamilyAuthorizationLib.isApprovedFamilyMemberForFamily(stewards, claims, caller, familyId);
+      };
+      case _ false;
+    };
+  };
+
+  /// OQL row-visibility rule for recovery records: a scoped caller sees only the
+  /// recovery rows of a family they are an approved member or active Steward of.
+  /// The owner column is the record's `familyId`, so a caller can never read
+  /// another family's recovery requests, verifications, or audit history through
+  /// OQL. The platform controller still reads all rows.
+  func canSeeRecovery(caller : Principal, owner : OQL.Value) : Bool {
     switch (owner) {
       case (#text familyId) {
         StewardAuthorityLib.isActiveStewardForFamily(stewards, caller, familyId)
@@ -1353,6 +1375,93 @@ actor {
       .payload("summary", func r = r.summary)
       .controllerOnly()
       .build(),
+      OQL.Entity.manual<RecoveryTypes.RecoveryRequestRow>(
+        "recoveryRequest",
+        func() : Iter.Iter<RecoveryTypes.RecoveryRequestRow> = RecoveryLib.requestRows(recoveryRequests).values(),
+        "RecoveryRequest",
+        "id",
+      )
+      .sample({
+        familyId = "";
+        id = 0;
+        recoveryType = "";
+        personId = "";
+        ownerAccountId = "";
+        replacementAccountId = "";
+        status = "";
+        requestedByAccountId = "";
+        createdAt = 0;
+        updatedAt = 0;
+        decidedByAccountId = "";
+        decidedAt = 0;
+        transferredAt = 0;
+      })
+      .payload("familyId", func r = r.familyId)
+      .payload("id", func r = r.id)
+      .payload("recoveryType", func r = r.recoveryType)
+      .payload("personId", func r = r.personId)
+      .payload("ownerAccountId", func r = r.ownerAccountId)
+      .payload("replacementAccountId", func r = r.replacementAccountId)
+      .payload("status", func r = r.status)
+      .payload("requestedByAccountId", func r = r.requestedByAccountId)
+      .payload("createdAt", func r = r.createdAt)
+      .payload("updatedAt", func r = r.updatedAt)
+      .payload("decidedByAccountId", func r = r.decidedByAccountId)
+      .payload("decidedAt", func r = r.decidedAt)
+      .payload("transferredAt", func r = r.transferredAt)
+      .ownedByWith("familyId", canSeeRecovery)
+      .controllerOrScoped()
+      .build(),
+      OQL.Entity.manual<RecoveryTypes.RecoveryVerificationRow>(
+        "recoveryVerification",
+        func() : Iter.Iter<RecoveryTypes.RecoveryVerificationRow> = RecoveryLib.verificationRows(recoveryVerifications).values(),
+        "RecoveryVerification",
+        "id",
+      )
+      .sample({
+        familyId = "";
+        id = 0;
+        recoveryId = 0;
+        verifierAccountId = "";
+        decision = "";
+        decidedAt = 0;
+      })
+      .payload("familyId", func r = r.familyId)
+      .payload("id", func r = r.id)
+      .payload("recoveryId", func r = r.recoveryId)
+      .payload("verifierAccountId", func r = r.verifierAccountId)
+      .payload("decision", func r = r.decision)
+      .payload("decidedAt", func r = r.decidedAt)
+      .ownedByWith("familyId", canSeeRecovery)
+      .controllerOrScoped()
+      .build(),
+      OQL.Entity.manual<RecoveryTypes.RecoveryAuditRow>(
+        "recoveryAuditLog",
+        func() : Iter.Iter<RecoveryTypes.RecoveryAuditRow> = RecoveryLib.auditRows(recoveryAudit).values(),
+        "RecoveryAuditEntry",
+        "id",
+      )
+      .sample({
+        familyId = "";
+        id = 0;
+        recoveryId = 0;
+        actionType = "";
+        actorAccountId = "";
+        affectedPersonCount = 0;
+        timestamp = 0;
+        summary = "";
+      })
+      .payload("familyId", func r = r.familyId)
+      .payload("id", func r = r.id)
+      .payload("recoveryId", func r = r.recoveryId)
+      .payload("actionType", func r = r.actionType)
+      .payload("actorAccountId", func r = r.actorAccountId)
+      .payload("affectedPersonCount", func r = r.affectedPersonCount)
+      .payload("timestamp", func r = r.timestamp)
+      .payload("summary", func r = r.summary)
+      .ownedByWith("familyId", canSeeRecovery)
+      .controllerOrScoped()
+      .build(),
     ];
   });
   include MixinObjectStorage();
@@ -1385,5 +1494,6 @@ actor {
   include ArchiveResearchBoardNotificationsApi(archiveItems, researchSources, researchState, posts, notifications, claims, profiles, stewards);
   include AuditAndWorkloadApi(accessControlState, auditLog, researchAuditLog, conflictReviewItems, profiles, claims, stewards);
   include StewardAuthorityApi(accessControlState, stewards, auditLog);
+  include RecoveryApi(recoveryRequests, recoveryVerifications, recoveryAudit, profiles, claims, memberships, stewards);
   include ApiDocMixin();
 };

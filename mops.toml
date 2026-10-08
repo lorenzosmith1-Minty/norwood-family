@@ -20,7 +20,7 @@ check-limit = 1
 
 [toolchain]
 moc = "1.16.0"
-lintoko = "0.11.0"
+lintoko = "0.12.0"
 
 [lint]
 extends = true

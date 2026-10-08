@@ -30,6 +30,7 @@ mixin (
   recoveryRequests : List.List<RecoveryTypes.RecoveryRequest>,
   recoveryVerifications : List.List<RecoveryTypes.RecoveryVerification>,
   recoveryAudit : List.List<RecoveryTypes.RecoveryAuditEntry>,
+  notifications : List.List<OwnershipTypes.Notification>,
   profiles : Map.Map<OwnershipTypes.PersonId, OwnershipTypes.PersonProfile>,
   claims : List.List<OwnershipTypes.ProfileClaim>,
   memberships : List.List<MembershipTypes.FamilyMembership>,
@@ -70,6 +71,7 @@ mixin (
     RecoveryLib.requestRecoveryForFamily(
       recoveryRequests,
       recoveryAudit,
+      notifications,
       profiles,
       claims,
       memberships,
@@ -102,6 +104,7 @@ mixin (
     RecoveryLib.approveAccountRecoveryForFamily(
       recoveryRequests,
       recoveryAudit,
+      notifications,
       profiles,
       claims,
       memberships,
@@ -134,6 +137,7 @@ mixin (
       recoveryRequests,
       recoveryVerifications,
       recoveryAudit,
+      notifications,
       profiles,
       claims,
       memberships,
@@ -156,11 +160,98 @@ mixin (
     RecoveryLib.rejectRecoveryForFamily(
       recoveryRequests,
       recoveryAudit,
+      notifications,
       stewards,
       familyId,
       recoveryId,
       caller,
     );
+  };
+
+  /// Phase 4B-H1 dedicated recovery discovery read.
+  ///
+  /// Family-scoped name search that returns ONLY the minimum recovery-safe data
+  /// needed to select a recovery target: an opaque target person identifier and
+  /// the display name (`RecoveryTargetMatch`). It never returns family
+  /// relationships, parents, siblings, profile story/history, photos, account
+  /// principals, membership ids, or Steward data, and it never consults the
+  /// relationship graph. Only claimed profiles of `familyId` are discoverable;
+  /// a personId from another family never resolves here.
+  ///
+  /// This is the ONLY discovery read the recovery flow may use. The generic
+  /// `searchPossibleMatchesForFamily` (which returns `PersonMatch` with
+  /// `parents`) must not be used by recovery.
+  ///
+  /// Errors: `#NotSignedIn` for anonymous callers. An empty query returns an
+  /// empty array (not an error).
+  public query ({ caller }) func searchRecoveryTargetsForFamily(
+    familyId : RecoveryTypes.FamilyId,
+    searchTerm : Text,
+  ) : async Result.Result<[RecoveryTypes.RecoveryTargetMatch], RecoveryTypes.RecoveryError> {
+    if (caller.isAnonymous()) {
+      return #err(#NotSignedIn);
+    };
+    #ok(RecoveryLib.searchRecoveryTargetsForFamily(profiles, familyId, searchTerm));
+  };
+
+  /// Phase 4B-H1 caller-scoped recovery status read.
+  ///
+  /// Returns only the recovery requests of `familyId` where the signed-in
+  /// caller is the requester/replacement account, projected to the minimum
+  /// caller-facing view (`MyRecoveryRequestView`: target display name, status,
+  /// timestamps, and — for a Steward Recovery request — the backend-derived
+  /// quorum progress `confirmationsReceived`/`confirmationsRequired`). For an
+  /// ordinary Account Recovery request both quorum fields are `null`. It never
+  /// exposes another account's recovery requests, verifier identities, verifier
+  /// principals, membership ids, Steward ids, audit details, or unrelated family
+  /// data, and a request from another family never appears. This is the
+  /// authoritative source of truth for the replacement account's recovery-status
+  /// page, so status survives a fresh browser session or another device.
+  ///
+  /// Errors: `#NotSignedIn` for anonymous callers. A caller with no requests in
+  /// `familyId` gets an empty array (not an error).
+  public query ({ caller }) func listMyRecoveryRequestsForFamily(
+    familyId : RecoveryTypes.FamilyId,
+  ) : async Result.Result<[RecoveryTypes.MyRecoveryRequestView], RecoveryTypes.RecoveryError> {
+    if (caller.isAnonymous()) {
+      return #err(#NotSignedIn);
+    };
+    #ok(RecoveryLib.listMyRecoveryRequestsForFamily(recoveryRequests, recoveryVerifications, profiles, familyId, caller));
+  };
+
+  /// Phase 4C eligible-verifier read for Steward Recovery.
+  ///
+  /// Returns the family-safe verification context for every OPEN
+  /// `#StewardRecovery` request of `familyId` that the signed-in caller is
+  /// eligible to verify: the caller must be an approved family member of
+  /// `familyId` and must NOT be the recovery candidate (the requester, the
+  /// current owner, or the replacement account). The candidate never receives an
+  /// entry for their own request and never counts toward quorum.
+  ///
+  /// Each entry carries ONLY family-safe fields (`candidateName`, `status`,
+  /// `confirmationsReceived`, `confirmationsRequired`, `callerHasVerified`,
+  /// `callerDecision`). It never exposes account principals, recovery request
+  /// ids, membership ids, verifier identities, or unrelated private family data.
+  /// A caller who is not an approved family member, or a request from another
+  /// family, yields an empty array (existence is never leaked).
+  ///
+  /// Errors: `#NotSignedIn` for anonymous callers. A caller with no eligible
+  /// request gets an empty array (not an error).
+  public query ({ caller }) func listStewardRecoveryVerificationsForFamily(
+    familyId : RecoveryTypes.FamilyId,
+  ) : async Result.Result<[RecoveryTypes.StewardRecoveryVerificationView], RecoveryTypes.RecoveryError> {
+    if (caller.isAnonymous()) {
+      return #err(#NotSignedIn);
+    };
+    #ok(RecoveryLib.listStewardRecoveryVerificationsForFamily(
+      recoveryRequests,
+      recoveryVerifications,
+      profiles,
+      claims,
+      stewards,
+      familyId,
+      caller,
+    ));
   };
 
   /// Returns the recovery request with `recoveryId` only when it belongs to
@@ -226,10 +317,15 @@ mixin (
     #ok(RecoveryLib.listVerificationsForFamily(recoveryVerifications, familyId, recoveryId));
   };
 
-  /// Returns the recovery audit history for `recoveryId` in `familyId`. Active
-  /// Steward of `familyId` only; anonymous callers get `#err(#NotSignedIn)` and
-  /// any other caller gets `#err(#NotAuthorized)`. Audit entries from other
-  /// families are never returned.
+  /// Returns the recovery audit history for `recoveryId` in `familyId`.
+  ///
+  /// Phase 4D minimum authorized audit read: allowed for the same parties that
+  /// may view the request itself — an active Steward of `familyId`, the
+  /// requester, the current owner, or the replacement account. Anonymous
+  /// callers get `#err(#NotSignedIn)`; any other caller gets
+  /// `#err(#NotAuthorized)`; a request id that does not belong to `familyId`
+  /// gets `#err(#RequestNotFound)`. Audit entries from other families are never
+  /// returned.
   public query ({ caller }) func listRecoveryAuditForFamily(
     familyId : RecoveryTypes.FamilyId,
     recoveryId : Nat,
@@ -237,10 +333,51 @@ mixin (
     if (caller.isAnonymous()) {
       return #err(#NotSignedIn);
     };
-    if (not StewardAuthorityLib.isActiveStewardForFamily(stewards, caller, familyId)) {
-      return #err(#NotAuthorized);
+    switch (RecoveryLib.getRequestForFamily(recoveryRequests, familyId, recoveryId)) {
+      case (?r) {
+        if (not canViewRequest(r, caller)) {
+          return #err(#NotAuthorized);
+        };
+      };
+      case null { return #err(#RequestNotFound) };
     };
     #ok(RecoveryLib.listAuditForFamily(recoveryAudit, familyId, recoveryId));
+  };
+
+  /// Phase 4D authorized recovery audit read.
+  ///
+  /// Returns the recovery audit history for `recoveryId` in `familyId` to a
+  /// caller permitted to view that specific request: an active Steward of the
+  /// request's own family, the requester, the current owner, or the replacement
+  /// account (the same authorization as `getRecoveryRequestForFamily`). Each
+  /// entry carries ONLY family-facing fields (`actionLabel`,
+  /// `actorDisplayLabel`, `affectedDisplayNames`, `timestamp`); the internal
+  /// audit id, the recovery request id, the family id, the raw actor account
+  /// principal, the raw affected person ids, and the free-text summary are never
+  /// exposed, so no private reason, technical error tag, account principal, or
+  /// internal identifier is returned. The backend resolves the display labels,
+  /// so the client never needs the raw account identifier to derive them.
+  ///
+  /// Errors: `#NotSignedIn` for anonymous callers, `#RequestNotFound` when the
+  /// request does not exist in `familyId`, and `#NotAuthorized` when the caller
+  /// is not permitted to view the request. A request id from another family is
+  /// never returned.
+  public query ({ caller }) func listAuthorizedRecoveryAuditForFamily(
+    familyId : RecoveryTypes.FamilyId,
+    recoveryId : Nat,
+  ) : async Result.Result<[RecoveryTypes.RecoveryAuditView], RecoveryTypes.RecoveryError> {
+    if (caller.isAnonymous()) {
+      return #err(#NotSignedIn);
+    };
+    switch (RecoveryLib.getRequestForFamily(recoveryRequests, familyId, recoveryId)) {
+      case (?r) {
+        if (not canViewRequest(r, caller)) {
+          return #err(#NotAuthorized);
+        };
+      };
+      case null { return #err(#RequestNotFound) };
+    };
+    #ok(RecoveryLib.listAuthorizedAuditForFamily(recoveryRequests, recoveryAudit, profiles, stewards, familyId, recoveryId, caller));
   };
 
   /// Whether the caller may view a specific recovery request: an active Steward
@@ -251,9 +388,6 @@ mixin (
     request : RecoveryTypes.RecoveryRequest,
     caller : Principal,
   ) : Bool {
-    if (StewardAuthorityLib.isActiveStewardForFamily(stewards, caller, request.familyId)) {
-      return true;
-    };
-    caller == request.requestedByAccountId or caller == request.ownerAccountId or caller == request.replacementAccountId;
+    RecoveryLib.canViewRequestForFamily(stewards, request, caller);
   };
 };

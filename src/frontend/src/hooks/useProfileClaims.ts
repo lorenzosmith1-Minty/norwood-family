@@ -4,6 +4,7 @@ import type {
   PersonProfile,
   ProfileClaim,
   ProfileEdits,
+  RecoveryTargetMatch,
 } from "@/backend";
 import { useFamilyScopedId } from "@/context/FamilyContext";
 import { useActor } from "@caffeineai/core-infrastructure";
@@ -384,6 +385,44 @@ export function useSearchPossibleMatches(familyId?: string) {
 }
 
 /**
+ * Phase 4B-H1 dedicated recovery discovery read.
+ *
+ * The ONLY discovery read the recovery flow may use. It calls the family-scoped
+ * `searchRecoveryTargetsForFamily`, which returns just the minimum recovery-safe
+ * data needed to pick a target — an opaque person id and the display name
+ * (`RecoveryTargetMatch`). It never returns parents, siblings, relationships,
+ * profile story/history, photos, account principals, or membership ids, and it
+ * never consults the relationship graph. The generic
+ * `useSearchPossibleMatches` (which returns `PersonMatch` with `parents`) must
+ * not be used by recovery.
+ *
+ * A backend error rejects the mutation so the page can render a neutral error
+ * state; the error tag itself is never surfaced to the user.
+ *
+ * `searchRecoveryTargetsForFamily` has no legacy no-arg variant, so it must
+ * always receive the active family id (default family included). Callers pass
+ * `useActiveFamilyId()`, which always resolves to the active family, rather than
+ * `useFamilyScopedId()` (which is `undefined` for the default family and would
+ * otherwise query `familyId == ""` and return zero matches).
+ */
+export function useSearchRecoveryTargets(familyId: string) {
+  const { actor } = useActor(createActor);
+  return useMutation({
+    mutationFn: async (searchTerm: string): Promise<RecoveryTargetMatch[]> => {
+      if (!actor) throw new Error("Backend is not ready");
+      const result = await actor.searchRecoveryTargetsForFamily(
+        familyId,
+        searchTerm,
+      );
+      if (result.__kind__ === "err") {
+        throw new Error("Recovery search is unavailable");
+      }
+      return result.ok;
+    },
+  });
+}
+
+/**
  * Creates a minimal person profile for the current user when no existing
  * match exists. The new profile is not inserted into the shared graph until a
  * proposed connection is confirmed.
@@ -476,4 +515,4 @@ export function useUpdateOwnProfile(familyId?: string) {
   });
 }
 
-export type { PersonMatch, PersonProfile, ProfileClaim };
+export type { PersonMatch, PersonProfile, ProfileClaim, RecoveryTargetMatch };

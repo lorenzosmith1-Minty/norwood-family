@@ -5,11 +5,10 @@ import {
   MergeConflictStatus,
   type ProfileRemovalRequest,
   ProfileRemovalStatus,
-  type Result_5,
-  type Result_9,
-  type Result_16,
-  type Result_17,
-  type Result_19,
+  type Result_7,
+  type Result_11,
+  type Result_18,
+  type Result_21,
 } from "@/backend";
 import { FamilyProvider } from "@/context/FamilyContext";
 import { Principal } from "@icp-sdk/core/principal";
@@ -381,7 +380,7 @@ describe("useRequestProfileRemoval: non-default family routes to the family endp
 
   it("surfaces the backend Result unchanged for a non-default family", async () => {
     const request = removalRequest(FAMILY_A);
-    const okResult: Result_9 = { __kind__: "ok", ok: request };
+    const okResult: Result_11 = { __kind__: "ok", ok: request };
     mockActor.requestProfileRemovalForFamily = vi.fn(
       async (...args: unknown[]) => {
         calls.requestProfileRemovalForFamily.push(args);
@@ -597,7 +596,7 @@ describe("useArchiveProfile: non-default family routes to the family endpoint (c
   });
 
   it("surfaces the backend Result unchanged for a non-default family", async () => {
-    const okResult: Result_5 = { __kind__: "ok", ok: null };
+    const okResult: Result_7 = { __kind__: "ok", ok: null };
     mockActor.archiveProfileForFamily = vi.fn(async (...args: unknown[]) => {
       calls.archiveProfileForFamily.push(args);
       return okResult;
@@ -689,7 +688,7 @@ describe("usePermanentlyDeleteProfile: non-default family routes to the family e
   });
 
   it("surfaces the backend Result unchanged for a non-default family", async () => {
-    const okResult: Result_16 = { __kind__: "ok", ok: null };
+    const okResult: Result_18 = { __kind__: "ok", ok: null };
     mockActor.permanentlyDeleteProfileForFamily = vi.fn(
       async (...args: unknown[]) => {
         calls.permanentlyDeleteProfileForFamily.push(args);
@@ -858,7 +857,7 @@ describe("useNotDuplicate: non-default family routes to the family endpoint (cov
   });
 
   it("surfaces the backend Result unchanged for a non-default family", async () => {
-    const okResult: Result_17 = { __kind__: "ok", ok: null };
+    const okResult: Result_18 = { __kind__: "ok", ok: null };
     mockActor.notDuplicateForFamily = vi.fn(async (...args: unknown[]) => {
       calls.notDuplicateForFamily.push(args);
       return okResult;
@@ -917,7 +916,7 @@ describe("useMergeProfiles: non-default family routes to the family endpoint (co
       archivedPersonId: "julia-dup",
       conflicts: [mergeConflict(FAMILY_A)],
     };
-    const okResult: Result_19 = { __kind__: "ok", ok: mergeResult };
+    const okResult: Result_21 = { __kind__: "ok", ok: mergeResult };
     mockActor.mergeProfilesForFamily = vi.fn(async (...args: unknown[]) => {
       calls.mergeProfilesForFamily.push(args);
       return okResult;

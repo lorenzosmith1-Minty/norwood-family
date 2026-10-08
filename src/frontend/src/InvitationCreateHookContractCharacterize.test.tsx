@@ -4,7 +4,7 @@ import {
   FamilyInvitationError,
   InvitationStatus,
   InvitationType,
-  type Result_42,
+  type Result_49,
 } from "@/backend";
 import { Principal } from "@icp-sdk/core/principal";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -142,7 +142,7 @@ describe("useCreateFamilyInvitation call shape (characterization)", () => {
     setCreateResult({
       __kind__: "ok",
       ok: { __kind__: "Created", Created: makeCreated() },
-    } satisfies Result_42);
+    } satisfies Result_49);
 
     const { result } = renderHook(() => useCreateFamilyInvitation(), {
       wrapper,
@@ -158,7 +158,7 @@ describe("useCreateFamilyInvitation call shape (characterization)", () => {
     setCreateResult({
       __kind__: "ok",
       ok: { __kind__: "Created", Created: makeCreated() },
-    } satisfies Result_42);
+    } satisfies Result_49);
 
     const { result } = renderHook(() => useCreateFamilyInvitation(), {
       wrapper,
@@ -177,7 +177,7 @@ describe("useCreateFamilyInvitation outcome mapping (characterization)", () => {
     setCreateResult({
       __kind__: "ok",
       ok: { __kind__: "Created", Created: created },
-    } satisfies Result_42);
+    } satisfies Result_49);
 
     const { result } = renderHook(() => useCreateFamilyInvitation(), {
       wrapper,
@@ -195,7 +195,7 @@ describe("useCreateFamilyInvitation outcome mapping (characterization)", () => {
     setCreateResult({
       __kind__: "ok",
       ok: { __kind__: "Created", Created: existing },
-    } satisfies Result_42);
+    } satisfies Result_49);
 
     const { result } = renderHook(() => useCreateFamilyInvitation(), {
       wrapper,
@@ -213,7 +213,7 @@ describe("useCreateFamilyInvitation outcome mapping (characterization)", () => {
     setCreateResult({
       __kind__: "ok",
       ok: { __kind__: "AlreadyMember", AlreadyMember: null },
-    } satisfies Result_42);
+    } satisfies Result_49);
 
     const { result } = renderHook(() => useCreateFamilyInvitation(), {
       wrapper,
@@ -230,7 +230,7 @@ describe("useCreateFamilyInvitation outcome mapping (characterization)", () => {
         __kind__: "RelationshipNotificationRequired",
         RelationshipNotificationRequired: null,
       },
-    } satisfies Result_42);
+    } satisfies Result_49);
 
     const { result } = renderHook(() => useCreateFamilyInvitation(), {
       wrapper,
@@ -244,7 +244,7 @@ describe("useCreateFamilyInvitation outcome mapping (characterization)", () => {
     setCreateResult({
       __kind__: "err",
       err: FamilyInvitationError.NotAuthorized,
-    } satisfies Result_42);
+    } satisfies Result_49);
 
     const { result } = renderHook(() => useCreateFamilyInvitation(), {
       wrapper,

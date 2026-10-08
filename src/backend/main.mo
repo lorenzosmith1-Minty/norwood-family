@@ -29,6 +29,7 @@ import BoardTypes "types/board";
 import MessagingTypes "types/messaging";
 import ResearchIntakeTypes "types/research-intake";
 import RecoveryTypes "types/recovery";
+import ExportTypes "types/export";
 import ObjectStorageLib "lib/object-storage";
 import FamilyLib "lib/family";
 import FamilyAuthorizationLib "lib/family-authorization";
@@ -73,6 +74,7 @@ import FoundingStewardApi "mixins/founding-steward-api";
 import FamilyInvitationApi "mixins/family-invitation-api";
 import MembershipConfirmationApi "mixins/membership-confirmation-api";
 import RecoveryApi "mixins/recovery-api";
+import ExportApi "mixins/export-api";
 import ApiDocMixin "mixins/api-doc";
 
 actor {
@@ -132,6 +134,10 @@ actor {
   let recoveryRequests : List.List<RecoveryTypes.RecoveryRequest>;
   let recoveryVerifications : List.List<RecoveryTypes.RecoveryVerification>;
   let recoveryAudit : List.List<RecoveryTypes.RecoveryAuditEntry>;
+
+  let exportAudit : List.List<ExportTypes.ExportAuditEntry>;
+  let exportInstances : List.List<ExportTypes.ExportInstance>;
+  let exportMediaBindings : List.List<ExportTypes.ExportMediaBinding>;
 
   /// Renders an audit action type variant as its tag text for OQL rows.
   func auditActionText(a : GovernanceTypes.AuditActionType) : Text {
@@ -1494,6 +1500,7 @@ actor {
   include ArchiveResearchBoardNotificationsApi(archiveItems, researchSources, researchState, posts, notifications, claims, profiles, stewards);
   include AuditAndWorkloadApi(accessControlState, auditLog, researchAuditLog, conflictReviewItems, profiles, claims, stewards);
   include StewardAuthorityApi(accessControlState, stewards, auditLog);
-  include RecoveryApi(recoveryRequests, recoveryVerifications, recoveryAudit, profiles, claims, memberships, stewards);
+  include RecoveryApi(recoveryRequests, recoveryVerifications, recoveryAudit, notifications, profiles, claims, memberships, stewards);
+  include ExportApi(exportAudit, exportInstances, exportMediaBindings, families, profiles, claims, memberships, confirmedRelationships, archiveItems, stories, recipes, recoveryRequests, recoveryVerifications, researchSources, galleries, stewards);
   include ApiDocMixin();
 };

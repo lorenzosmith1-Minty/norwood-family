@@ -35,6 +35,7 @@ import { FamilyHistoryHubPage } from "./pages/FamilyHistoryHubPage";
 import { FamilyStewardGovernancePage } from "./pages/FamilyStewardGovernancePage";
 import { FamilyStewardHubPage } from "./pages/FamilyStewardHubPage";
 import { FamilyStewardMembershipReviewsPage } from "./pages/FamilyStewardMembershipReviewsPage";
+import { FamilyStewardRecoveryReviewsPage } from "./pages/FamilyStewardRecoveryReviewsPage";
 import { FamilyStewardReviewPage } from "./pages/FamilyStewardReviewPage";
 import HeritageBranchPage from "./pages/HeritageBranchPage";
 import { HiddenPostsPage } from "./pages/HiddenPostsPage";
@@ -54,6 +55,8 @@ import { ProfileEditPage } from "./pages/ProfileEditPage";
 import { RecipeContributePage } from "./pages/RecipeContributePage";
 import { RecipeDetailPage } from "./pages/RecipeDetailPage";
 import { RecipesPage } from "./pages/RecipesPage";
+import { RecoveryRequestPage } from "./pages/RecoveryRequestPage";
+import { RecoveryStatusPage } from "./pages/RecoveryStatusPage";
 import { ResearchConflictReviewPage } from "./pages/ResearchConflictReviewPage";
 import { ResearchIntakePage } from "./pages/ResearchIntakePage";
 import { ResearchReviewQueuePage } from "./pages/ResearchReviewQueuePage";
@@ -103,6 +106,9 @@ type View =
   | "research-intake"
   | "research-queue"
   | "research-conflict"
+  | "recovery-request"
+  | "recovery-status"
+  | "recovery-reviews"
   | "invite";
 
 const VALID_VIEWS: readonly View[] = [
@@ -143,6 +149,9 @@ const VALID_VIEWS: readonly View[] = [
   "research-intake",
   "research-queue",
   "research-conflict",
+  "recovery-request",
+  "recovery-status",
+  "recovery-reviews",
   "invite",
 ];
 
@@ -656,6 +665,7 @@ export default function App() {
       onMessageBoardClick={() => setView("message-board-hub")}
       onStewardClick={() => setView("steward-hub")}
       onNotificationsClick={() => setView("notifications")}
+      onRecoverProfileClick={() => setView("recovery-request")}
     >
       <ClaimStewardControl
         isAuthenticated={isAuthenticated}
@@ -1053,6 +1063,7 @@ export default function App() {
             onOpenGovernance={() => setView("governance")}
             onOpenResearchIntake={() => setView("research-intake")}
             onOpenHiddenPosts={() => setView("hidden-posts")}
+            onOpenRecoveryReviews={() => setView("recovery-reviews")}
           />
         </StewardOnly>
       ) : view === "hidden-posts" ? (
@@ -1087,6 +1098,22 @@ export default function App() {
             onBack={() => setView("research-intake")}
           />
         </StewardOnly>
+      ) : view === "recovery-reviews" ? (
+        <StewardOnly isSteward={isSteward}>
+          <FamilyStewardRecoveryReviewsPage
+            onBack={() => setView("steward-hub")}
+          />
+        </StewardOnly>
+      ) : view === "recovery-request" ? (
+        <RecoveryRequestPage
+          onBack={() => setView("home")}
+          onViewStatus={() => setView("recovery-status")}
+        />
+      ) : view === "recovery-status" ? (
+        <RecoveryStatusPage
+          onBack={() => setView("home")}
+          onStartRequest={() => setView("recovery-request")}
+        />
       ) : (
         <ArchiveDetailPage
           itemId={selectedArchiveItemId ?? 0n}

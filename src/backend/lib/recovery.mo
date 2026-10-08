@@ -12,6 +12,7 @@ import TenancyLib "tenancy";
 import StewardAuthorityLib "steward-authority";
 import FamilyAuthorizationLib "family-authorization";
 import FamilyMembershipLib "family-membership";
+import NotificationsScopeLib "notifications-scope";
 
 /// Phase 4A Recovery Foundation domain logic.
 ///
@@ -78,6 +79,223 @@ module {
     );
   };
 
+  /// Phase 4D authorized recovery audit read (INTERNAL, library-only).
+  ///
+  /// Returns the recovery audit history for `recoveryId` in `familyId` projected
+  /// to the family-safe `RecoveryAuditView` (plain-language action label, actor
+  /// display label, affected display names, timestamp) — never the internal
+  /// audit id, the recovery request id, the family id, the raw actor account
+  /// principal, the raw affected person ids, or the free-text `summary`, so no
+  /// private reason, technical error tag, account principal, or internal
+  /// identifier is exposed.
+  ///
+  /// Display labels are resolved here on the backend: the actor is labelled
+  /// relative to the caller ("You" when the caller performed the action, else
+  /// "Family Steward" for an active Steward of the family, else "Family
+  /// member"), and each affected person id is resolved to its family-scoped
+  /// display name. The client never receives the raw account identifier or the
+  /// raw person ids merely to derive these labels.
+  ///
+  /// Authorization reuses the same predicate as the single-request read: the
+  /// caller must be an active Steward of the request's own family, the
+  /// requester, the current owner, or the replacement account. A caller who is
+  /// not authorized, or a request id from another family, yields an empty array
+  /// (existence is never leaked).
+  public func listAuthorizedAuditForFamily(
+    requests : List.List<RecoveryTypes.RecoveryRequest>,
+    audit : List.List<RecoveryTypes.RecoveryAuditEntry>,
+    profiles : Map.Map<OwnershipTypes.PersonId, OwnershipTypes.PersonProfile>,
+    stewards : List.List<GovernanceTypes.StewardRecord>,
+    familyId : RecoveryTypes.FamilyId,
+    recoveryId : Nat,
+    caller : Principal,
+  ) : [RecoveryTypes.RecoveryAuditView] {
+    let request = switch (getRequestForFamily(requests, familyId, recoveryId)) {
+      case (?r) { r };
+      case null { return [] };
+    };
+    if (not canViewRequestForFamily(stewards, request, caller)) {
+      return [];
+    };
+    listAuditForFamily(audit, familyId, recoveryId).map(func a = {
+      actionLabel = auditActionLabel(a.actionType);
+      actorDisplayLabel = auditActorDisplayLabel(stewards, familyId, a.actorAccountId, caller);
+      affectedDisplayNames = a.affectedPersonIds.map(func personId =
+        switch (TenancyLib.getProfileForFamily(profiles, familyId, personId)) {
+          case (?p) { p.name };
+          case null { "Family member" };
+        }
+      );
+      timestamp = a.timestamp;
+    });
+  };
+
+  /// Whether `caller` may view a specific recovery request: an active Steward of
+  /// the request's own family, the requester, the current owner, or the
+  /// replacement account. Evaluated against the request's own `familyId`, so a
+  /// Steward of one family never reads another family's request.
+  public func canViewRequestForFamily(
+    stewards : List.List<GovernanceTypes.StewardRecord>,
+    request : RecoveryTypes.RecoveryRequest,
+    caller : Principal,
+  ) : Bool {
+    if (StewardAuthorityLib.isActiveStewardForFamily(stewards, caller, request.familyId)) {
+      return true;
+    };
+    caller == request.requestedByAccountId or caller == request.ownerAccountId or caller == request.replacementAccountId;
+  };
+
+  /// Phase 4B-H1 dedicated recovery discovery read (INTERNAL, library-only).
+  ///
+  /// Family-scoped name search over CLAIMED profiles of `familyId` only,
+  /// returning the minimum recovery-safe data: an opaque target person
+  /// identifier and the display name. It never returns family relationships,
+  /// parents, siblings, profile story/history, photos, account principals,
+  /// membership ids, or Steward data, and it never consults the relationship
+  /// graph. A personId from another family never resolves here.
+  ///
+  /// Only claimed profiles are discoverable: recovery restores control of a
+  /// profile that already has an owner, so an unclaimed profile is not a valid
+  /// recovery target. An empty query returns no matches.
+  public func searchRecoveryTargetsForFamily(
+    profiles : Map.Map<OwnershipTypes.PersonId, OwnershipTypes.PersonProfile>,
+    familyId : RecoveryTypes.FamilyId,
+    searchTerm : Text,
+  ) : [RecoveryTypes.RecoveryTargetMatch] {
+    let term = searchTerm.toLower();
+    if (term == "") {
+      return [];
+    };
+    profiles.values().toArray().filter(func p =
+      p.familyId == familyId and
+      p.claimedByUserId != null and
+      p.name.toLower().contains(#text term)
+    ).map(func p = {
+      personId = p.personId;
+      name = p.name;
+    });
+  };
+
+  /// Phase 4B-H1 caller-scoped recovery status read (INTERNAL, library-only).
+  ///
+  /// Returns only the recovery requests of `familyId` where `caller` is the
+  /// requester/replacement account, projected to the minimum caller-facing view
+  /// (target display name, status, timestamps). It never returns another
+  /// account's requests, and a request from another family never appears.
+  ///
+  /// For a `#StewardRecovery` request the view also carries the backend-derived
+  /// quorum progress: `confirmationsReceived` is the number of distinct
+  /// `#Confirm` verifications recorded for that request, and
+  /// `confirmationsRequired` is the required quorum count (2). Both are `null`
+  /// for an ordinary `#AccountRecovery` request, where the quorum does not
+  /// apply. The counts are computed here from the request's own confirmations;
+  /// the client never derives or supplies them. The view still exposes no
+  /// verifier identities, verifier principals, membership ids, Steward ids,
+  /// audit details, or unrelated family data.
+  public func listMyRecoveryRequestsForFamily(
+    requests : List.List<RecoveryTypes.RecoveryRequest>,
+    verifications : List.List<RecoveryTypes.RecoveryVerification>,
+    profiles : Map.Map<OwnershipTypes.PersonId, OwnershipTypes.PersonProfile>,
+    familyId : RecoveryTypes.FamilyId,
+    caller : Principal,
+  ) : [RecoveryTypes.MyRecoveryRequestView] {
+    requests.toArray().filter(func r =
+      r.familyId == familyId and
+      (r.requestedByAccountId == caller or r.replacementAccountId == caller)
+    ).map(func r = {
+      targetName = switch (TenancyLib.getProfileForFamily(profiles, familyId, r.personId)) {
+        case (?p) { p.name };
+        case null { "" };
+      };
+      status = r.status;
+      createdAt = r.createdAt;
+      updatedAt = r.updatedAt;
+      // Quorum progress is meaningful only for a Steward Recovery request; an
+      // ordinary Account Recovery request carries both counts as null.
+      confirmationsReceived = switch (r.recoveryType) {
+        case (#StewardRecovery) {
+          ?verifications.toArray().filter(func v =
+            v.familyId == familyId and v.recoveryId == r.id and v.decision == #Confirm
+          ).size();
+        };
+        case (#AccountRecovery) { null };
+      };
+      confirmationsRequired = switch (r.recoveryType) {
+        case (#StewardRecovery) { ?2 };
+        case (#AccountRecovery) { null };
+      };
+    });
+  };
+
+  /// Phase 4C eligible-verifier read (INTERNAL, library-only).
+  ///
+  /// Returns the family-safe Steward Recovery verification context for every
+  /// OPEN `#StewardRecovery` request of `familyId` that `caller` is eligible to
+  /// verify. `caller` must be an approved family member of `familyId` (active
+  /// Steward or `#Approved` profile claim) and must NOT be the recovery
+  /// candidate (the requester, the current owner, or the replacement account).
+  /// A request the caller has already verified is still returned, with
+  /// `callerHasVerified = true` and `callerDecision` set, so the UI can show the
+  /// recorded decision and suppress further actions; the candidate never
+  /// receives an entry for their own request.
+  ///
+  /// The projection carries ONLY family-safe fields: the candidate's display
+  /// name, the recovery status, the distinct confirmation count, the required
+  /// quorum, and the caller's own verification state. It never returns account
+  /// principals, recovery request ids, membership ids, verifier identities, or
+  /// unrelated private family data. A caller who is not an approved family
+  /// member, or a request from another family, yields no entry (existence is
+  /// never leaked).
+  public func listStewardRecoveryVerificationsForFamily(
+    requests : List.List<RecoveryTypes.RecoveryRequest>,
+    verifications : List.List<RecoveryTypes.RecoveryVerification>,
+    profiles : Map.Map<OwnershipTypes.PersonId, OwnershipTypes.PersonProfile>,
+    claims : List.List<OwnershipTypes.ProfileClaim>,
+    stewards : List.List<GovernanceTypes.StewardRecord>,
+    familyId : RecoveryTypes.FamilyId,
+    caller : Principal,
+  ) : [RecoveryTypes.StewardRecoveryVerificationView] {
+    // Only an approved family member of this family may discover or verify a
+    // Steward Recovery request. An unaffiliated principal or a principal in
+    // another family gets no entry, so existence is never leaked.
+    if (not FamilyAuthorizationLib.isApprovedFamilyMemberForFamily(stewards, claims, caller, familyId)) {
+      return [];
+    };
+    requests.toArray().filter(func r =
+      r.familyId == familyId and
+      r.recoveryType == #StewardRecovery and
+      isOpen(r.status) and
+      // The candidate (requester / current owner / replacement account) never
+      // receives a verifier entry for their own request and never counts toward
+      // quorum.
+      caller != r.requestedByAccountId and
+      caller != r.ownerAccountId and
+      caller != r.replacementAccountId
+    ).map(func r = do {
+      let confirmations = verifications.toArray().filter(func v =
+        v.familyId == familyId and v.recoveryId == r.id and v.decision == #Confirm
+      );
+      let callerVerification = verifications.toArray().find(func v =
+        v.familyId == familyId and v.recoveryId == r.id and v.verifierAccountId == caller
+      );
+      {
+        recoveryId = r.id;
+        candidateName = switch (TenancyLib.getProfileForFamily(profiles, familyId, r.personId)) {
+          case (?p) { p.name };
+          case null { "" };
+        };
+        status = r.status;
+        confirmationsReceived = confirmations.size();
+        confirmationsRequired = 2;
+        callerHasVerified = callerVerification != null;
+        callerDecision = switch (callerVerification) {
+          case (?v) { ?v.decision };
+          case null { null };
+        };
+      };
+    });
+  };
+
   // ---------------------------------------------------------------------------
   // Request creation
   // ---------------------------------------------------------------------------
@@ -112,6 +330,7 @@ module {
   public func requestRecoveryForFamily(
     requests : List.List<RecoveryTypes.RecoveryRequest>,
     audit : List.List<RecoveryTypes.RecoveryAuditEntry>,
+    notifications : List.List<OwnershipTypes.Notification>,
     profiles : Map.Map<OwnershipTypes.PersonId, OwnershipTypes.PersonProfile>,
     claims : List.List<OwnershipTypes.ProfileClaim>,
     memberships : List.List<MembershipTypes.FamilyMembership>,
@@ -197,6 +416,11 @@ module {
       now,
       "Recovery request created",
     );
+    // Phase 4D: notify the family members who must act on the new request
+    // (the Steward for an Account Recovery, the eligible verifiers for a
+    // Steward Recovery). Deduplicated per family/recipient/type/message, so a
+    // repeated creation never spams a recipient.
+    notifyReviewers(notifications, stewards, claims, familyId, request, now);
     #ok(request);
   };
 
@@ -218,6 +442,7 @@ module {
   public func approveAccountRecoveryForFamily(
     requests : List.List<RecoveryTypes.RecoveryRequest>,
     audit : List.List<RecoveryTypes.RecoveryAuditEntry>,
+    notifications : List.List<OwnershipTypes.Notification>,
     profiles : Map.Map<OwnershipTypes.PersonId, OwnershipTypes.PersonProfile>,
     claims : List.List<OwnershipTypes.ProfileClaim>,
     memberships : List.List<MembershipTypes.FamilyMembership>,
@@ -262,6 +487,7 @@ module {
     let updated = transferOwnership(
       requests,
       audit,
+      notifications,
       profiles,
       memberships,
       stewards,
@@ -292,6 +518,7 @@ module {
     requests : List.List<RecoveryTypes.RecoveryRequest>,
     verifications : List.List<RecoveryTypes.RecoveryVerification>,
     audit : List.List<RecoveryTypes.RecoveryAuditEntry>,
+    notifications : List.List<OwnershipTypes.Notification>,
     profiles : Map.Map<OwnershipTypes.PersonId, OwnershipTypes.PersonProfile>,
     claims : List.List<OwnershipTypes.ProfileClaim>,
     memberships : List.List<MembershipTypes.FamilyMembership>,
@@ -362,6 +589,15 @@ module {
           now,
           "Recovery request rejected",
         );
+        // Phase 4D: tell the candidate their recovery was not approved.
+        notifyCandidate(
+          notifications,
+          familyId,
+          request,
+          #RecoveryRejected,
+          "A profile recovery request was not approved.",
+          now,
+        );
         #ok(rejected);
       };
       case (#Confirm) {
@@ -385,6 +621,7 @@ module {
           let transferred = transferOwnership(
             requests,
             audit,
+            notifications,
             profiles,
             memberships,
             stewards,
@@ -396,6 +633,17 @@ module {
           #ok(transferred);
         } else {
           let awaiting = setStatus(requests, request, #AwaitingVerification, caller, now);
+          // Phase 4D: tell the candidate a family member recorded a
+          // verification. Deduplicated, so multiple confirmations collapse to
+          // one notification.
+          notifyCandidate(
+            notifications,
+            familyId,
+            request,
+            #RecoveryVerificationRecorded,
+            "A family member recorded a verification for a profile recovery request.",
+            now,
+          );
           #ok(awaiting);
         };
       };
@@ -408,6 +656,7 @@ module {
   public func rejectRecoveryForFamily(
     requests : List.List<RecoveryTypes.RecoveryRequest>,
     audit : List.List<RecoveryTypes.RecoveryAuditEntry>,
+    notifications : List.List<OwnershipTypes.Notification>,
     stewards : List.List<GovernanceTypes.StewardRecord>,
     familyId : RecoveryTypes.FamilyId,
     recoveryId : Nat,
@@ -439,6 +688,15 @@ module {
       now,
       "Recovery request rejected",
     );
+    // Phase 4D: tell the candidate their recovery was not approved.
+    notifyCandidate(
+      notifications,
+      familyId,
+      request,
+      #RecoveryRejected,
+      "A profile recovery request was not approved.",
+      now,
+    );
     #ok(rejected);
   };
 
@@ -460,6 +718,7 @@ module {
   func transferOwnership(
     requests : List.List<RecoveryTypes.RecoveryRequest>,
     audit : List.List<RecoveryTypes.RecoveryAuditEntry>,
+    notifications : List.List<OwnershipTypes.Notification>,
     profiles : Map.Map<OwnershipTypes.PersonId, OwnershipTypes.PersonProfile>,
     memberships : List.List<MembershipTypes.FamilyMembership>,
     stewards : List.List<GovernanceTypes.StewardRecord>,
@@ -594,6 +853,17 @@ module {
         "Steward authority transferred to replacement account",
       );
     };
+    // Phase 4D: tell the candidate their recovery was approved. This runs
+    // inside the `transferredAt` guard above, so a replayed recovery never
+    // emits a second approval notification.
+    notifyCandidate(
+      notifications,
+      familyId,
+      request,
+      #RecoveryApproved,
+      "A profile recovery request was approved.",
+      now,
+    );
     updated;
   };
 
@@ -758,6 +1028,74 @@ module {
   // ---------------------------------------------------------------------------
   // Internal helpers
   // ---------------------------------------------------------------------------
+
+  /// Phase 4D: notifies the family members who must act on a newly created
+  /// recovery request. For an ordinary `#AccountRecovery` those are the family's
+  /// active Stewards; for a `#StewardRecovery` (no usable active Steward) they
+  /// are the eligible verifiers: the family's active Stewards and approved
+  /// profile claimants. The candidate (requester / current owner / replacement
+  /// account) is never notified about their own request. Every notification is
+  /// family-scoped and deduplicated per family/recipient/type/message, so a
+  /// repeated creation never spams a recipient.
+  func notifyReviewers(
+    notifications : List.List<OwnershipTypes.Notification>,
+    stewards : List.List<GovernanceTypes.StewardRecord>,
+    claims : List.List<OwnershipTypes.ProfileClaim>,
+    familyId : RecoveryTypes.FamilyId,
+    request : RecoveryTypes.RecoveryRequest,
+    now : Int,
+  ) {
+    let recipients = switch (request.recoveryType) {
+      case (#AccountRecovery) {
+        stewards.toArray().filter(func s =
+          s.familyId == familyId and s.roleStatus == #Active
+        ).map(func s = s.stewardAccountId);
+      };
+      case (#StewardRecovery) {
+        let stewardAccounts = stewards.toArray().filter(func s =
+          s.familyId == familyId and s.roleStatus == #Active
+        ).map(func s = s.stewardAccountId);
+        let claimAccounts = claims.toArray().filter(func c =
+          c.familyId == familyId and c.status == #Approved
+        ).map(func c = c.requestingUserId);
+        stewardAccounts.concat(claimAccounts);
+      };
+    };
+    for (recipient in recipients.values()) {
+      if (recipient != request.requestedByAccountId and recipient != request.ownerAccountId and recipient != request.replacementAccountId) {
+        ignore NotificationsScopeLib.createUniqueForFamily(
+          notifications,
+          familyId,
+          recipient,
+          #RecoveryRequestSubmitted,
+          "A profile recovery request needs your review.",
+          now,
+        );
+      };
+    };
+  };
+
+  /// Phase 4D: notifies the recovery candidate (the replacement account that
+  /// will own the recovered profile) of a lifecycle transition. Family-scoped
+  /// and deduplicated per family/recipient/type/message, so a repeated
+  /// transition never creates a duplicate notification.
+  func notifyCandidate(
+    notifications : List.List<OwnershipTypes.Notification>,
+    familyId : RecoveryTypes.FamilyId,
+    request : RecoveryTypes.RecoveryRequest,
+    notificationType : OwnershipTypes.NotificationType,
+    message : Text,
+    now : Int,
+  ) {
+    ignore NotificationsScopeLib.createUniqueForFamily(
+      notifications,
+      familyId,
+      request.replacementAccountId,
+      notificationType,
+      message,
+      now,
+    );
+  };
 
   /// Whether `accountId` is a valid, family-scoped replacement account for a
   /// recovery in `familyId`: an approved family member (active Steward or
@@ -964,5 +1302,36 @@ module {
       case (#ResolutionRecorded) "ResolutionRecorded";
       case (#OwnershipTransferred) "OwnershipTransferred";
     };
+  };
+
+  /// Renders a recovery audit action variant as plain family-facing language for
+  /// the authorized audit view. Never a technical tag or error code.
+  func auditActionLabel(a : RecoveryTypes.RecoveryAuditActionType) : Text {
+    switch (a) {
+      case (#RequestCreated) "Recovery requested";
+      case (#VerificationRecorded) "Verification recorded";
+      case (#StewardDecisionRecorded) "Steward decision recorded";
+      case (#ResolutionRecorded) "Recovery resolved";
+      case (#OwnershipTransferred) "Profile ownership transferred";
+    };
+  };
+
+  /// Resolves the family-facing display label for the account that performed an
+  /// audit action, relative to `caller`: "You" when the caller performed the
+  /// action, "Family Steward" when the actor is an active Steward of `familyId`,
+  /// otherwise "Family member". The raw account principal is never returned.
+  func auditActorDisplayLabel(
+    stewards : List.List<GovernanceTypes.StewardRecord>,
+    familyId : RecoveryTypes.FamilyId,
+    actorAccountId : Principal,
+    caller : Principal,
+  ) : Text {
+    if (actorAccountId == caller) {
+      return "You";
+    };
+    if (StewardAuthorityLib.isActiveStewardForFamily(stewards, actorAccountId, familyId)) {
+      return "Family Steward";
+    };
+    "Family member";
   };
 };

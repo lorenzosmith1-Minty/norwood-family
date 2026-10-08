@@ -113,11 +113,17 @@ module {
   /// `assignedAt`, and `founding`) rather than creating a duplicate. Used by
   /// recovery to move Steward authority atomically with profile ownership.
   ///
-  /// Returns `true` when a matching active record was retargeted. Returns
-  /// `false` when `oldAccountId` holds no active StewardRecord in `familyId`
-  /// (nothing to transfer) or when the replacement already holds an active
-  /// StewardRecord in `familyId` (never create a duplicate). A record in
-  /// another family is never touched.
+  /// When the replacement already holds an active StewardRecord in `familyId`,
+  /// the old account's record is NOT retargeted (that would duplicate the
+  /// replacement's authority). Instead the old record is deactivated
+  /// (`roleStatus = #Removed`), preserving the record and its governance fields,
+  /// so the old account loses active Steward authority and no duplicate is
+  /// created.
+  ///
+  /// Returns `true` when a matching active record was retargeted or deactivated.
+  /// Returns `false` when `oldAccountId` holds no active StewardRecord in
+  /// `familyId` (nothing to transfer). A record in another family is never
+  /// touched.
   public func reassignStewardForFamily(
     stewards : List.List<Types.StewardRecord>,
     familyId : FamilyTypes.FamilyId,
@@ -127,17 +133,20 @@ module {
     if (oldAccountId == replacementAccountId) {
       return false;
     };
-    // Never create a duplicate: if the replacement already holds an active
-    // StewardRecord in this family, leave the existing records untouched.
-    if (isActiveStewardForFamily(stewards, replacementAccountId, familyId)) {
-      return false;
-    };
     switch (stewards.find(func s =
       s.stewardAccountId == oldAccountId and s.roleStatus == #Active and s.familyId == familyId
     )) {
       case null { false };
       case (?record) {
-        let updated : Types.StewardRecord = { record with stewardAccountId = replacementAccountId };
+        // Never create a duplicate: when the replacement already holds an active
+        // StewardRecord in this family, deactivate the old account's record
+        // instead of retargeting it, so the old account loses active authority
+        // and the replacement's existing record is left untouched.
+        let updated : Types.StewardRecord = if (isActiveStewardForFamily(stewards, replacementAccountId, familyId)) {
+          { record with roleStatus = #Removed };
+        } else {
+          { record with stewardAccountId = replacementAccountId };
+        };
         // Rewrite the record in place, matching on the OLD principal, the family,
         // and `#Active` so a principal holding StewardRecords in several families
         // never has another family's record overwritten, and a preserved

@@ -249,6 +249,11 @@ export const NOTIFICATION_TYPE_LABELS: Record<NotificationType, string> = {
   [NotificationType.BoardMention]: "Board mention",
   [NotificationType.BoardReply]: "Board reply",
   [NotificationType.NewMessage]: "New message",
+  [NotificationType.RecoveryRequestSubmitted]: "Recovery request submitted",
+  [NotificationType.RecoveryApproved]: "Recovery approved",
+  [NotificationType.RecoveryVerificationRecorded]:
+    "Recovery confirmation recorded",
+  [NotificationType.RecoveryRejected]: "Recovery not approved",
 };
 
 /**

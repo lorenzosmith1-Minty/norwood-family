@@ -1,19 +1,20 @@
 {
-  "overview": "A private family heritage platform for the Norwood family to preserve profiles, relationships, history, and governance.",
+  "overview": "A private family history and archive app where members record people, stories, and media, and a Family Steward can export a portable archive bundle.",
   "features": [
-    "Family profiles and relationships",
-    "Family Steward governance and approvals",
-    "Account recovery for existing family profiles",
-    "Steward authority transfer on recovery",
-    "Family-scoped privacy and access control"
+    "Download the family archive as a portable ZIP bundle",
+    "Bundle includes the versioned JSON export and the family media files",
+    "Steward-only access to archive exports",
+    "Safe, portable file paths inside the bundle",
+    "Clear progress while the bundle is prepared",
+    "Nothing is stored on the server or in the browser"
   ],
-  "category": "family-heritage-platform",
+  "category": "family-history",
   "tags": [
     "family",
-    "heritage",
-    "genealogy",
-    "governance",
-    "recovery"
+    "archive",
+    "export",
+    "privacy",
+    "genealogy"
   ],
-  "last_updated": "2026-10-04T21:59:47.147Z"
+  "last_updated": "2026-10-08T19:29:55.521Z"
 }

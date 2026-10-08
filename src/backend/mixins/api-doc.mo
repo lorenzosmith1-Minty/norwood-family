@@ -2992,6 +2992,109 @@ no business logic of their own.
   for a signed-in but unapproved caller, so the frontend can present a
   definitive family-membership-required outcome rather than a generic retry.
 
+### Data Export / Portability (Phase 5A / 5C / 5C-H1)
+
+- `retrieveFamilyArchiveMedia(exportInstanceRef : Text, mediaRef : Text) : async Result<ExportMediaRetrieval, ExportMediaRetrievalError>` —
+  update. Retrieves the bytes of a single asset bound to a specific
+  FamilyArchive export instance, for an active Family Steward of that instance's
+  family. Anonymous callers get `#err(#NotSignedIn)`; a non-Steward, or a
+  Steward of another family, gets `#err(#NotSteward)`. Possession of an
+  export-instance reference alone never bypasses Steward authorization, and a
+  Family A export instance never retrieves Family B assets. `exportInstanceRef`
+  is the opaque reference returned by `exportFamilyArchive`; `mediaRef` is the
+  export-local media token (`media-1`, `media-2`, …) from that instance's
+  manifest. The token is resolved ONLY against the instance's stored bindings —
+  never against a rebuilt current family-media manifest — so an old export's
+  `media-2` keeps meaning the same asset after family media is added, deleted,
+  or reordered. An unknown instance gets `#err(#ExportInstanceNotFound)`; an
+  expired instance gets `#err(#ExportInstanceExpired)`; a token not bound to
+  that instance gets `#err(#MediaNotFound)`; a bound asset whose bytes are
+  missing gets `#err(#MediaUnavailable)`. An export instance has a bounded
+  lifecycle of 7 days from generation; once that window has elapsed the instance
+  is expired and its bindings are no longer resolvable — an expired instance
+  never falls back to resolving `media-N` against a rebuilt current manifest.
+  Before resolving, this call performs a bounded lazy cleanup that removes any
+  expired export instances and their media bindings from the temporary
+  export-retrieval mapping state; a ref that was expired and is pruned by that
+  cleanup resolves neutrally as `#err(#ExportInstanceNotFound)`, while a
+  still-present expired ref resolves as `#err(#ExportInstanceExpired)`. The
+  cleanup touches only the temporary export-instance mapping — never family
+  archive media, profile photos, archive items, export audit history, or media
+  bytes. The bytes are returned directly to the
+  authorized caller for this call only: no public or permanent media URL is
+  created and no storage secret is exposed. Read-only: no family, profile,
+  archive, or media data is mutated.
+- `exportMyData(familyId : Text) : async Result<ExportEnvelope, ExportError>` —
+  update. Exports the authenticated requester's own Norwood identity data in
+  `familyId`. Anonymous callers get `#err(#NotSignedIn)`. The caller's own
+  Person/Profile is resolved server-side in `familyId` (by direct ownership or an
+  `#Approved` profile claim); a caller with no profile in this family gets
+  `#err(#NotAuthorized)`. A caller-supplied person id is never accepted, so a
+  known id cannot bypass authorization. Inclusion: the caller's own profile
+  projection, their family memberships, relationships involving their
+  Person/Profile, archive/history items authored by or attached to their profile,
+  their own uploaded media metadata, and their own recovery history/status.
+  Exclusion: other users' account principals, others' private recovery
+  information, Steward-only governance records, secrets/tokens, and
+  authentication-provider data. Read-only: no family/profile/archive data is
+  mutated; the only write is the export audit entry.
+- `exportFamilyArchive(familyId : Text) : async Result<ExportFamilyArchiveResult, ExportError>` —
+  update. Exports the portable FamilyArchive dataset of `familyId`. Requires an
+  active Family Steward of `familyId`; anonymous callers get
+  `#err(#NotSignedIn)` and a non-Steward (including a Steward of another family)
+  gets `#err(#NotSteward)`. A known family id never bypasses authorization.
+  Inclusion: family metadata, Person/Profile records, family relationships,
+  archive/history entries, family stories, sources, photo/media metadata, and
+  recipes/oral-history metadata present in that family. Exclusion: authentication
+  credentials, invite tokens, recovery secrets, internal authorization secrets,
+  raw account principals, and platform-only operational data. On success the
+  result carries the existing versioned `envelope` plus an opaque
+  `exportInstanceRef` that binds this generated manifest to later media
+  retrieval; the reference reveals no family id, media/storage id, internal
+  record id, or storage secret. The instance has a bounded lifecycle of 7 days
+  from generation, after which media retrieval against it returns the neutral
+  `#ExportInstanceExpired`. Before minting a new instance, this call performs a
+  bounded lazy cleanup that removes any expired export instances and their media
+  bindings from the temporary export-retrieval mapping state, so that state
+  cannot accumulate indefinitely; the cleanup touches only that temporary
+  mapping — never family archive media, profile photos, archive items, export
+  audit history, or media bytes. Read-only with respect to family/profile/archive
+  data; the writes are the export audit entry and the new export-instance
+  mapping (instance record plus its media bindings).
+
+Both endpoints return a self-describing, versioned `ExportEnvelope`:
+`metadata` carries `schemaVersion` (currently `1`), `generatedAt` (a nanosecond
+timestamp), `scope` (`#MyData`/`#FamilyArchive`), `format` (`#JSON`), `familyRef`
+(the portable family display name, never the internal family id), and
+`sourceAppName`/`sourceAppVersion`; `payloadJson` is the serialized portable
+payload as JSON text. Relationships between exported records are preserved
+through stable portable record references (`ExportRecordRef`), never through raw
+account principals or internal secret ids. Media is metadata/reference only —
+no bytes are carried in the envelope, and the media manifest is kept separate so
+binary packaging can be added later without breaking the format.
+
+The `mediaManifest` category is a versioned, additive list of portable media
+entries. Each entry carries an export-local media reference (`media-N`), a
+portable `mediaKind` (`ProfilePhoto` or `ArchiveItem`), a title, an optional
+MIME type and filename, an optional byte size, an optional export-local
+`relatedPersonRef` and `relatedArchiveRef`, an optional created/uploaded
+timestamp, an `availability` state (`Available` or `Unavailable`), and an opaque
+export-local `reference`. It never exposes a raw internal media or storage
+identifier. A missing or unavailable asset is represented neutrally as
+`Unavailable` and never invalidates the rest of the export. The
+`mediaManifestSummary` object records the asset count, the aggregate known byte
+size, and the unavailable count so later packaging can enforce limits. The
+exportable media types are the assets already legitimately stored as
+family/archive content: profile photos and archive/history items (photos,
+documents, audio, video, and other family-history media).
+
+Every export attempt (success AND failure) is recorded in the export audit
+history with the scope, family, requesting account, timestamp, and
+success/failure status. The exported payload itself is never stored in audit
+history. Errors are stable and family-facing: `#NotSignedIn`, `#NotAuthorized`,
+`#NotSteward`, `#FamilyNotFound`, `#UnsupportedScope`, `#UnsupportedFormat`,
+`#ExportFailed`.
+
 ### Object Query Layer (OQL)
 
 - `schema() : async Text` — query. Returns a JSON catalogue of the exposed
@@ -3010,6 +3113,12 @@ The exposed entities are `family`, `photo`, `archiveItem`, `profile`, `claim`,
 `report`, `researchSource`, `proposedFinding`, `newPersonCandidate`,
 `relationshipProposal`, `conflictReviewItem`, `researchAuditLog`,
 `recoveryRequest`, `recoveryVerification`, and `recoveryAuditLog`.
+The export audit history and the Phase 5C-H1 export-instance state
+(`exportInstances`, `exportMediaBindings`) are deliberately NOT exposed as OQL
+entities: they store raw account principals, family ids, and internal media
+source keys, and they have no public read endpoint, so exposing them would leak
+internal identifiers. They are reachable only through the authorized export and
+media-retrieval methods described in the Data Export / Portability section.
 Most are declared `.controllerOnly()` (see the authorization section); the
 `archiveItem`, `conversation`, `researchSource`, `recoveryRequest`,
 `recoveryVerification`, and `recoveryAuditLog` entities are

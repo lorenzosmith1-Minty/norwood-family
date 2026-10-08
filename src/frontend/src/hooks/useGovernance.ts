@@ -7,16 +7,23 @@ import type {
   ProfileRemovalRequest,
   Relationship,
   RelationshipType,
-  Result_5,
-  Result_9,
+  Result_6,
+  Result_7,
+  Result_10,
   Result_11,
   Result_12,
-  Result_15,
+  Result_13,
+  Result_14,
   Result_16,
   Result_17,
+  Result_18,
   Result_19,
-  Result_35,
-  Result_46,
+  Result_20,
+  Result_21,
+  Result_40,
+  Result_42,
+  Result_51,
+  Result_53,
   StewardIdentity,
   StewardRecord,
   SuccessorDesignation,
@@ -369,7 +376,7 @@ export function usePromoteToSteward() {
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (personId: string): Promise<Result_15> => {
+    mutationFn: async (personId: string): Promise<Result_17> => {
       if (!actor) throw new Error("Backend is not ready");
       return familyScopedId === undefined
         ? actor.promoteToSteward(personId)
@@ -403,7 +410,7 @@ export function useRemoveSteward() {
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (stewardAccountId: Principal): Promise<Result_11> => {
+    mutationFn: async (stewardAccountId: Principal): Promise<Result_13> => {
       if (!actor) throw new Error("Backend is not ready");
       return familyScopedId === undefined
         ? actor.removeSteward(stewardAccountId)
@@ -435,7 +442,7 @@ export function useDesignateSuccessor() {
     }: {
       personId: string;
       priority: bigint;
-    }): Promise<Result_35> => {
+    }): Promise<Result_42> => {
       if (!actor) throw new Error("Backend is not ready");
       return familyScopedId === undefined
         ? actor.designateSuccessor(personId, priority)
@@ -458,7 +465,7 @@ export function useActivateSuccessor() {
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (personId: string): Promise<Result_15> => {
+    mutationFn: async (personId: string): Promise<Result_17> => {
       if (!actor) throw new Error("Backend is not ready");
       return familyScopedId === undefined
         ? actor.activateSuccessor(personId)
@@ -574,7 +581,7 @@ export function useRequestProfileRemoval() {
     }: {
       personId: string;
       reason: string;
-    }): Promise<Result_9> => {
+    }): Promise<Result_11> => {
       if (!actor) throw new Error("Backend is not ready");
       return familyScopedId === undefined
         ? actor.requestProfileRemoval(personId, reason)
@@ -699,7 +706,7 @@ export function useArchiveProfile() {
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (personId: string): Promise<Result_5> => {
+    mutationFn: async (personId: string): Promise<Result_7> => {
       if (!actor) throw new Error("Backend is not ready");
       return familyScopedId === undefined
         ? actor.archiveProfile(personId)
@@ -732,7 +739,7 @@ export function useRestoreProfile() {
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (personId: string): Promise<Result_5> => {
+    mutationFn: async (personId: string): Promise<Result_7> => {
       if (!actor) throw new Error("Backend is not ready");
       return familyScopedId === undefined
         ? actor.restoreProfile(personId)
@@ -827,7 +834,7 @@ export function usePermanentlyDeleteProfile() {
     }: {
       personId: string;
       confirmation: boolean;
-    }): Promise<Result_16> => {
+    }): Promise<Result_18> => {
       if (!actor) throw new Error("Backend is not ready");
       return familyScopedId === undefined
         ? actor.permanentlyDeleteProfile(personId, confirmation)
@@ -897,7 +904,7 @@ export function useNotDuplicate() {
     }: {
       personIdA: string;
       personIdB: string;
-    }): Promise<Result_17> => {
+    }): Promise<Result_19> => {
       if (!actor) throw new Error("Backend is not ready");
       return familyScopedId === undefined
         ? actor.notDuplicate(personIdA, personIdB)
@@ -932,7 +939,7 @@ export function useMergeProfiles() {
     }: {
       canonicalPersonId: string;
       mergedAwayPersonId: string;
-    }): Promise<Result_19> => {
+    }): Promise<Result_21> => {
       if (!actor) throw new Error("Backend is not ready");
       return familyScopedId === undefined
         ? actor.mergeProfiles(canonicalPersonId, mergedAwayPersonId)
@@ -1095,7 +1102,7 @@ export function useAddRelationship() {
       fromPersonId: string;
       toPersonId: string;
       relationshipType: RelationshipType;
-    }): Promise<Result_46> => {
+    }): Promise<Result_53> => {
       if (!actor) throw new Error("Backend is not ready");
       return familyScopedId === undefined
         ? actor.addRelationship(fromPersonId, toPersonId, relationshipType)
@@ -1134,7 +1141,7 @@ export function useRemoveRelationship() {
   const { actor } = useActor(createActor);
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (relationshipId: bigint): Promise<Result_12> => {
+    mutationFn: async (relationshipId: bigint): Promise<Result_14> => {
       if (!actor) throw new Error("Backend is not ready");
       return familyScopedId === undefined
         ? actor.removeRelationship(relationshipId)
@@ -1173,7 +1180,7 @@ export function useCorrectRelationshipType() {
     }: {
       relationshipId: bigint;
       relationshipType: RelationshipType;
-    }): Promise<Result_46> => {
+    }): Promise<Result_53> => {
       if (!actor) throw new Error("Backend is not ready");
       return familyScopedId === undefined
         ? actor.correctRelationshipType(relationshipId, relationshipType)

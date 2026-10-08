@@ -1,10 +1,12 @@
 import { Bell, Check, Inbox } from "lucide-react";
 import { MembershipConfirmationRequestCard } from "../components/MembershipConfirmationRequestCard";
+import { StewardRecoveryVerificationCard } from "../components/StewardRecoveryVerificationCard";
 import { useMyEligibleMembershipConfirmations } from "../hooks/useMembershipConfirmation";
 import {
   useListNotifications,
   useMarkNotificationRead,
 } from "../hooks/useNotifications";
+import { useStewardRecoveryVerifications } from "../hooks/useRecovery";
 import { NOTIFICATION_TYPE_LABELS, NotificationType } from "../types/ownership";
 
 /**
@@ -19,6 +21,12 @@ import { NOTIFICATION_TYPE_LABELS, NotificationType } from "../types/ownership";
  * carries no authorization identifiers; the eligible-confirmation query is the
  * single source of truth for which requests the caller may act on in the active
  * family. A Family A request never renders while Family B is active.
+ *
+ * Steward Recovery verifications are discovered the same way, through the
+ * canonical, family-scoped `useStewardRecoveryVerifications` query. The backend
+ * already excludes the recovery candidate and every non-approved caller, so the
+ * section renders exactly the entries the caller is eligible to verify. The
+ * surface is an additional UI guard only; backend authorization is unchanged.
  */
 
 /** Converts a backend nanosecond timestamp to a readable relative time. */
@@ -47,6 +55,8 @@ export function NotificationsPage() {
   const markRead = useMarkNotificationRead();
   const { data: eligibleConfirmations = [] } =
     useMyEligibleMembershipConfirmations();
+  const { data: recoveryVerifications = [] } =
+    useStewardRecoveryVerifications();
 
   const unreadCount = notifications.filter(
     (notification) => !notification.read,
@@ -71,6 +81,21 @@ export function NotificationsPage() {
           </div>
         </div>
       </header>
+
+      {recoveryVerifications.length > 0 ? (
+        <section
+          data-ocid="recovery_verification.section"
+          className="flex flex-col gap-3"
+          aria-label="Steward Recovery verifications"
+        >
+          {recoveryVerifications.map((verification) => (
+            <StewardRecoveryVerificationCard
+              key={verification.recoveryId.toString()}
+              verification={verification}
+            />
+          ))}
+        </section>
+      ) : null}
 
       {eligibleConfirmations.length > 0 ? (
         <section
@@ -103,7 +128,8 @@ export function NotificationsPage() {
           ))}
         </div>
       ) : notifications.length === 0 ? (
-        eligibleConfirmations.length > 0 ? null : (
+        eligibleConfirmations.length > 0 ||
+        recoveryVerifications.length > 0 ? null : (
           <div
             data-ocid="notifications.empty_state"
             className="flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-border/70 bg-card/50 px-6 py-16 text-center"

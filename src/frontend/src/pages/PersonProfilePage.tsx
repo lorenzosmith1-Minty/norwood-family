@@ -1,4 +1,5 @@
 import {
+  ExportScope,
   FamilyInvitationError,
   MembershipStatus,
   RemovalError,
@@ -20,6 +21,7 @@ import {
   ChefHat,
   Clapperboard,
   Copy,
+  Download,
   FileText,
   Film,
   ImagePlus,
@@ -74,6 +76,7 @@ import {
   resolveCanonicalPersonProfile,
   useCanonicalPerson,
 } from "../hooks/useCanonicalPerson";
+import { useExportDownload } from "../hooks/useExportDownload";
 import {
   useArchiveProfile,
   useListArchivedProfileIds,
@@ -3760,6 +3763,18 @@ export function PersonProfilePage({
   const { membership } = useMyMembershipStatus();
   const isApprovedMember = membership?.status === MembershipStatus.Active;
 
+  // "Download my data": requests the caller's own authorized MyData export via
+  // the existing Phase 5A exportMyData action and hands the payload to an
+  // ephemeral client-side download. The shared hook owns the blob/object-URL
+  // lifecycle; this page only renders the action and its states. It is shown
+  // exclusively to the signed-in owner of this profile (isOwner), so no other
+  // member's export is ever requested or exposed.
+  const {
+    phase: exportPhase,
+    isPreparing,
+    start: startExport,
+  } = useExportDownload();
+
   // Family Governance & Safety controls. The archived ids list is guest-safe
   // (non-gated on the backend), so it can be queried by any caller to drive the
   // archived-profile indicator without triggering a steward-only trap.
@@ -4242,6 +4257,78 @@ export function PersonProfilePage({
                 ? "This profile is not claimable."
                 : "This profile is owned by a family member."}
             </p>
+          )}
+
+          {/* Download my data: visible only to the signed-in owner of this
+              profile. Requests the caller's own authorized MyData export and
+              starts an ephemeral client-side download. The exported JSON is
+              never rendered in the app. */}
+          {isOwner && (
+            <div className="mt-4 flex flex-col items-start gap-3 border-t border-border/60 pt-4">
+              <p className="flex items-start gap-2 text-sm text-muted-foreground">
+                <Download
+                  className="mt-0.5 h-4 w-4 shrink-0 text-accent-foreground/70"
+                  strokeWidth={2}
+                  aria-hidden="true"
+                />
+                Download a portable copy of data associated with your Norwood
+                profile.
+              </p>
+              <button
+                type="button"
+                data-ocid="profile.download_my_data_button"
+                onClick={() => startExport(ExportScope.MyData)}
+                disabled={isPreparing}
+                aria-busy={isPreparing}
+                className="this-is-me-action focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {isPreparing ? (
+                  <Loader2
+                    className="h-4 w-4 animate-spin"
+                    aria-hidden="true"
+                  />
+                ) : (
+                  <Download className="h-4 w-4" aria-hidden="true" />
+                )}
+                {isPreparing ? "Preparing export…" : "Download my data"}
+              </button>
+              {exportPhase === "preparing" && (
+                <output
+                  data-ocid="profile.download_my_data.preparing_state"
+                  aria-live="polite"
+                  className="text-xs text-muted-foreground"
+                >
+                  Preparing export…
+                </output>
+              )}
+              {exportPhase === "ready" && (
+                <output
+                  data-ocid="profile.download_my_data.success_state"
+                  aria-live="polite"
+                  className="text-xs font-semibold text-success"
+                >
+                  Download ready — your download has started.
+                </output>
+              )}
+              {exportPhase === "denied" && (
+                <p
+                  data-ocid="profile.download_my_data.denied_state"
+                  role="alert"
+                  className="text-xs font-semibold text-destructive"
+                >
+                  You do not have permission to download this data.
+                </p>
+              )}
+              {exportPhase === "failed" && (
+                <p
+                  data-ocid="profile.download_my_data.error_state"
+                  role="alert"
+                  className="text-xs font-semibold text-destructive"
+                >
+                  Export failed — try again.
+                </p>
+              )}
+            </div>
           )}
 
           {/* Invite this family member: shown only for a signed-in authorized

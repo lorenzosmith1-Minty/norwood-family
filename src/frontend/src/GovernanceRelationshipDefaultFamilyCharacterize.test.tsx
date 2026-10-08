@@ -3,8 +3,8 @@ import {
   type Relationship,
   RelationshipStatus,
   RelationshipType,
-  type Result_12,
-  type Result_46,
+  type Result_14,
+  type Result_53,
 } from "@/backend";
 import { Principal } from "@icp-sdk/core/principal";
 import {
@@ -217,7 +217,7 @@ describe("useAddRelationship: default-family consumer contract (characterization
   });
 
   it("surfaces the backend Result unchanged", async () => {
-    const okResult: Result_46 = {
+    const okResult: Result_53 = {
       __kind__: "ok",
       ok: seededRelationship,
     };
@@ -268,7 +268,7 @@ describe("useRemoveRelationship: default-family consumer contract (characterizat
   });
 
   it("surfaces the backend Result unchanged", async () => {
-    const okResult: Result_12 = { __kind__: "ok", ok: null };
+    const okResult: Result_14 = { __kind__: "ok", ok: null };
     mockActor.removeRelationship = vi.fn(async (...args: unknown[]) => {
       calls.removeRelationship.push(args);
       return okResult;
@@ -318,7 +318,7 @@ describe("useCorrectRelationshipType: default-family consumer contract (characte
       ...seededRelationship,
       relationshipType: RelationshipType.Sibling,
     };
-    const okResult: Result_46 = { __kind__: "ok", ok: corrected };
+    const okResult: Result_53 = { __kind__: "ok", ok: corrected };
     mockActor.correctRelationshipType = vi.fn(async (...args: unknown[]) => {
       calls.correctRelationshipType.push(args);
       return okResult;

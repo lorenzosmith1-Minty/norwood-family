@@ -1040,6 +1040,10 @@ module {
       case (#ResearchRejected) "ResearchRejected";
       case (#ArchiveApproved) "ArchiveApproved";
       case (#ArchiveRejected) "ArchiveRejected";
+      case (#RecoveryRequestSubmitted) "RecoveryRequestSubmitted";
+      case (#RecoveryApproved) "RecoveryApproved";
+      case (#RecoveryVerificationRecorded) "RecoveryVerificationRecorded";
+      case (#RecoveryRejected) "RecoveryRejected";
     };
   };
 

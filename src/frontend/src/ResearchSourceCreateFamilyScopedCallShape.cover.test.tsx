@@ -2,7 +2,7 @@ import "@testing-library/jest-dom/vitest";
 import {
   ArchiveItemClassification,
   PrivacyLevel,
-  type Result_38,
+  type Result_45,
   type SourceRecord,
   SourceType,
 } from "@/backend";
@@ -261,7 +261,7 @@ describe("useCreateSource: non-default family routes to createSourceForFamily (c
   });
 
   it("surfaces the backend #err result unchanged on the non-default path", async () => {
-    const denial: Result_38 = {
+    const denial: Result_45 = {
       __kind__: "err",
       err: { __kind__: "notAuthorized", notAuthorized: null },
     };
@@ -326,7 +326,7 @@ describe("useCreateSource: default family keeps the legacy path (cover)", () => 
     const created = makeSource({ id: 3n });
     mockActor.createSource = vi.fn(async (...args: unknown[]) => {
       calls.createSource.push(args);
-      return { __kind__: "ok", ok: created } satisfies Result_38;
+      return { __kind__: "ok", ok: created } satisfies Result_45;
     });
 
     const { result } = renderHook(() => useCreateSource(), {

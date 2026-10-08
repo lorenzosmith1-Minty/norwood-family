@@ -12,7 +12,7 @@ import {
   MembershipStatus,
   type ProfileClaim,
   ProfileClaimStatus,
-  type Result_42,
+  type Result_49,
 } from "@/backend";
 import { Principal } from "@icp-sdk/core/principal";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -379,7 +379,7 @@ describe("invite dialog and create journey (cover)", () => {
     setInviteResult({
       __kind__: "ok",
       ok: { __kind__: "Created", Created: makeCreated("secure-token-abc") },
-    } satisfies Result_42);
+    } satisfies Result_49);
     renderProfile();
 
     await user.click(
@@ -429,7 +429,7 @@ describe("invite dialog and create journey (cover)", () => {
     setInviteResult({
       __kind__: "ok",
       ok: { __kind__: "Created", Created: makeCreated() },
-    } satisfies Result_42);
+    } satisfies Result_49);
     renderProfile();
 
     await user.click(
@@ -460,7 +460,7 @@ describe("invite dialog and create journey (cover)", () => {
         __kind__: "Created",
         Created: { ...makeCreated(""), created: false, rawToken: "" },
       },
-    } satisfies Result_42);
+    } satisfies Result_49);
     renderProfile();
 
     await user.click(
@@ -514,7 +514,7 @@ describe("invite failure outcomes render neutral wording (cover)", () => {
     setInviteResult({
       __kind__: "ok",
       ok: { __kind__: "AlreadyMember", AlreadyMember: null },
-    } satisfies Result_42);
+    } satisfies Result_49);
     const dialog = await submitInvite();
 
     expect(
@@ -532,7 +532,7 @@ describe("invite failure outcomes render neutral wording (cover)", () => {
         __kind__: "RelationshipNotificationRequired",
         RelationshipNotificationRequired: null,
       },
-    } satisfies Result_42);
+    } satisfies Result_49);
     const dialog = await submitInvite();
 
     expect(
@@ -549,7 +549,7 @@ describe("invite failure outcomes render neutral wording (cover)", () => {
     setInviteResult({
       __kind__: "err",
       err: FamilyInvitationError.NotAuthorized,
-    } satisfies Result_42);
+    } satisfies Result_49);
     const dialog = await submitInvite();
 
     expect(
@@ -564,7 +564,7 @@ describe("invite failure outcomes render neutral wording (cover)", () => {
     setInviteResult({
       __kind__: "err",
       err: FamilyInvitationError.InvalidInput,
-    } satisfies Result_42);
+    } satisfies Result_49);
     const dialog = await submitInvite();
 
     expect(

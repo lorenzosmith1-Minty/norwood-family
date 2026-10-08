@@ -131,6 +131,10 @@ module {
     #ResearchRejected;
     #ArchiveApproved;
     #ArchiveRejected;
+    #RecoveryRequestSubmitted;
+    #RecoveryApproved;
+    #RecoveryVerificationRecorded;
+    #RecoveryRejected;
   };
 
   /// An in-app notification record addressed to one user. Email is never used

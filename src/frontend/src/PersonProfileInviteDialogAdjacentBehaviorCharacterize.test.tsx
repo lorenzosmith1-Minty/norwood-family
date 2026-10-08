@@ -9,7 +9,7 @@ import {
   InvitationType,
   LivingStatus,
   type ProfileClaim,
-  type Result_42,
+  type Result_49,
 } from "@/backend";
 import { Principal } from "@icp-sdk/core/principal";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -231,7 +231,7 @@ describe("invite dialog submit call shape (characterization)", () => {
     setInviteResult({
       __kind__: "ok",
       ok: { __kind__: "Created", Created: makeCreated() },
-    } satisfies Result_42);
+    } satisfies Result_49);
     renderProfile();
 
     const dialog = await openInviteDialog();
@@ -255,7 +255,7 @@ describe("invite dialog submit call shape (characterization)", () => {
     setInviteResult({
       __kind__: "ok",
       ok: { __kind__: "Created", Created: makeCreated() },
-    } satisfies Result_42);
+    } satisfies Result_49);
     renderProfile();
 
     const dialog = await openInviteDialog();
@@ -286,7 +286,7 @@ describe("invite dialog non-created outcomes render neutral wording (characteriz
     setInviteResult({
       __kind__: "ok",
       ok: { __kind__: "AlreadyMember", AlreadyMember: null },
-    } satisfies Result_42);
+    } satisfies Result_49);
     const dialog = await submitInvite();
 
     expect(
@@ -304,7 +304,7 @@ describe("invite dialog non-created outcomes render neutral wording (characteriz
         __kind__: "RelationshipNotificationRequired",
         RelationshipNotificationRequired: null,
       },
-    } satisfies Result_42);
+    } satisfies Result_49);
     const dialog = await submitInvite();
 
     expect(
@@ -321,7 +321,7 @@ describe("invite dialog non-created outcomes render neutral wording (characteriz
     setInviteResult({
       __kind__: "err",
       err: FamilyInvitationError.NotAuthorized,
-    } satisfies Result_42);
+    } satisfies Result_49);
     const dialog = await submitInvite();
 
     expect(
@@ -336,7 +336,7 @@ describe("invite dialog non-created outcomes render neutral wording (characteriz
     setInviteResult({
       __kind__: "err",
       err: FamilyInvitationError.InvalidInput,
-    } satisfies Result_42);
+    } satisfies Result_49);
     const dialog = await submitInvite();
 
     expect(

@@ -1010,6 +1010,71 @@ type EvidenceStatus__563034664 =
 type EvidenceStatus__824382737 = EvidenceStatus__563034664;
 type EvidenceStatus__952143850 =
   {#Documented; #FamilyHistory; #PersonalMemory; #Unresolved};
+type ExportAuditEntry__196520101 =
+  {
+    familyId : Text;
+    id : Nat;
+    requesterAccountId : Principal;
+    scope : ExportScope__1062714812;
+    status : ExportAuditStatus__3799154;
+    timestamp : Int
+  };
+type ExportAuditEntry__491082099 =
+  {
+    familyId : Text;
+    id : Nat;
+    requesterAccountId : Principal;
+    scope : ExportScope__182331415;
+    status : ExportAuditStatus__229866408;
+    timestamp : Int
+  };
+type ExportAuditEntry__758152085 =
+  {
+    familyId : Text;
+    id : Nat;
+    requesterAccountId : Principal;
+    scope : ExportScope__876519415;
+    status : ExportAuditStatus__114872724;
+    timestamp : Int
+  };
+type ExportAuditStatus__114872724 = {#Failed; #Succeeded};
+type ExportAuditStatus__229866408 = {#Failed; #Succeeded};
+type ExportAuditStatus__3799154 = {#Failed; #Succeeded};
+type ExportInstanceRef__220109078 = Text;
+type ExportInstance__543987687 =
+  {createdAt : Int; expiresAt : Int; familyId : Text; ref : Text};
+type ExportInstance__703134528 =
+  {
+    createdAt : Int;
+    expiresAt : Int;
+    familyId : Text;
+    ref : ExportInstanceRef__220109078
+  };
+type ExportMediaBinding__330429149 =
+  {
+    exportInstanceRef : ExportInstanceRef__220109078;
+    familyId : Text;
+    mediaKind : ExportMediaKind__136900498;
+    mediaRef : Text;
+    sourceKey : Text;
+    sourceKind : ExportMediaSourceKind__226602128
+  };
+type ExportMediaBinding__636813073 =
+  {
+    exportInstanceRef : Text;
+    familyId : Text;
+    mediaKind : ExportMediaKind__272444828;
+    mediaRef : Text;
+    sourceKey : Text;
+    sourceKind : ExportMediaSourceKind__753193402
+  };
+type ExportMediaKind__136900498 = {#ArchiveItem; #ProfilePhoto};
+type ExportMediaKind__272444828 = {#ArchiveItem; #ProfilePhoto};
+type ExportMediaSourceKind__226602128 = {#ArchiveItem; #ProfilePhoto};
+type ExportMediaSourceKind__753193402 = {#ArchiveItem; #ProfilePhoto};
+type ExportScope__1062714812 = {#FamilyArchive; #MyData};
+type ExportScope__182331415 = {#FamilyArchive; #MyData};
+type ExportScope__876519415 = {#FamilyArchive; #MyData};
 type ExternalBlob__220559234 = Blob;
 type FamilyId__1013582186 = Text;
 type FamilyId__1049127122 = Text;
@@ -1632,6 +1697,8 @@ type NewActor__163002496 =
     archiveItems : List__836382695<ArchiveItem__785104390>;
     galleries : Map__230067015<Text, PhotoGallery__360467265>
   };
+type NewActor__237791113 =
+  {exportAudit : List__836382695<ExportAuditEntry__196520101>};
 type NewActor__251972276 =
   {
     accessControlState :
@@ -1669,6 +1736,12 @@ type NewActor__261022624 =
   {
     claims : List__836382695<OldProfileClaim__656299978>;
     memberships : List__836382695<FamilyMembership__617028089>
+  };
+type NewActor__322549712 =
+  {
+    exportAudit : List__836382695<ExportAuditEntry__758152085>;
+    exportInstances : List__836382695<ExportInstance__543987687>;
+    exportMediaBindings : List__836382695<ExportMediaBinding__636813073>
   };
 type NewActor__327868545 =
   {
@@ -1878,6 +1951,8 @@ type NewActor__694455010 =
   };
 type NewActor__703993856 =
   {researchSources : List__836382695<NewSourceRecord__912464744>};
+type NewActor__705149831 =
+  {notifications : List__836382695<NewNotification__646847177>};
 type NewActor__705461471 =
   {successors : List__836382695<NewSuccessorDesignation__918855477>};
 type NewActor__712516871 =
@@ -2321,6 +2396,25 @@ type NewNotificationType__151150982 =
     #ResearchRejected;
     #ResearchSubmission
   };
+type NewNotificationType__323820028 =
+  {
+    #ArchiveApproved;
+    #ArchiveRejected;
+    #BoardMention;
+    #BoardReply;
+    #NewMessage;
+    #ProfileClaimRequested;
+    #ProfileClaimReviewed;
+    #RecoveryApproved;
+    #RecoveryRejected;
+    #RecoveryRequestSubmitted;
+    #RecoveryVerificationRecorded;
+    #RelationshipRequested;
+    #RelationshipReviewed;
+    #ResearchApproved;
+    #ResearchRejected;
+    #ResearchSubmission
+  };
 type NewNotificationType__89360364 =
   {
     #BoardMention;
@@ -2373,6 +2467,16 @@ type NewNotification__384233547 =
         #ResearchRejected;
         #ResearchSubmission
       };
+    read : Bool;
+    recipient : Principal
+  };
+type NewNotification__646847177 =
+  {
+    createdAt : Int;
+    familyId : Text;
+    id : Nat;
+    message : Text;
+    notificationType : NewNotificationType__323820028;
     read : Bool;
     recipient : Principal
   };
@@ -2847,6 +2951,10 @@ type NotificationType__873564229 =
     #NewMessage;
     #ProfileClaimRequested;
     #ProfileClaimReviewed;
+    #RecoveryApproved;
+    #RecoveryRejected;
+    #RecoveryRequestSubmitted;
+    #RecoveryVerificationRecorded;
     #RelationshipRequested;
     #RelationshipReviewed;
     #ResearchApproved;
@@ -3064,6 +3172,8 @@ type OldActor__190834961 =
     stories : List__836382695<Story__138540882>;
     successors : List__836382695<SuccessorDesignation__152383176>
   };
+type OldActor__194158751 =
+  {exportAudit : List__836382695<ExportAuditEntry__758152085>};
 type OldActor__232881591 =
   {
     accessControlState :
@@ -3094,6 +3204,7 @@ type OldActor__263139629 =
     mysteries : List__836382695<OldMystery__794241011>;
     mysteryContributions : List__836382695<OldMysteryContribution__386803244>
   };
+type OldActor__291527786 = {};
 type OldActor__358288849 =
   {
     archiveItems : List__836382695<OldArchiveItem__6033014>;
@@ -3203,6 +3314,8 @@ type OldActor__606090735 =
 type OldActor__61572473 =
   {notifications : List__836382695<OldNotification__694137814>};
 type OldActor__624391799 = {stories : List__836382695<OldStory__747998784>};
+type OldActor__625272489 =
+  {notifications : List__836382695<OldNotification__112185150>};
 type OldActor__650257485 =
   {
     accessControlState :
@@ -3635,6 +3748,21 @@ type OldNewPersonCandidate__5766976 =
     submittedAt : Int;
     submittedBy : Principal
   };
+type OldNotificationType__1057357918 =
+  {
+    #ArchiveApproved;
+    #ArchiveRejected;
+    #BoardMention;
+    #BoardReply;
+    #NewMessage;
+    #ProfileClaimRequested;
+    #ProfileClaimReviewed;
+    #RelationshipRequested;
+    #RelationshipReviewed;
+    #ResearchApproved;
+    #ResearchRejected;
+    #ResearchSubmission
+  };
 type OldNotificationType__216529677 =
   {
     #BoardMention;
@@ -3664,6 +3792,16 @@ type OldNotificationType__293054727 =
     #ProfileClaimReviewed;
     #RelationshipRequested;
     #RelationshipReviewed
+  };
+type OldNotification__112185150 =
+  {
+    createdAt : Int;
+    familyId : Text;
+    id : Nat;
+    message : Text;
+    notificationType : OldNotificationType__1057357918;
+    read : Bool;
+    recipient : Principal
   };
 type OldNotification__501838132 =
   {
@@ -6096,7 +6234,10 @@ type UserRole__968740559 = {#admin; #guest; #user};
   "20261005_000000" : (_old : OldActor__386101605) -> NewActor__969407957;
   "20261006_000000" : (_old : OldActor__927544402) -> NewActor__416082931;
   "20261007_000000" : (old : OldActor__934428609) -> NewActor__99086632;
-  "20261008_000000" : (old : OldActor__736350056) -> NewActor__358370540
+  "20261008_000000" : (old : OldActor__736350056) -> NewActor__358370540;
+  "20261009_000000" : (old : OldActor__625272489) -> NewActor__705149831;
+  "20261010_000000" : (old : OldActor__291527786) -> NewActor__237791113;
+  "20261011_000000" : (old : OldActor__194158751) -> NewActor__322549712
 }
 actor  {
   stable accessControlState :
@@ -6167,6 +6308,24 @@ actor  {
     {
       var blockIndex : Nat__227979830;
       var blocks : [var [var ?DismissedPair__70445725]];
+      var elementIndex : Nat__227979830
+    };
+  stable exportAudit :
+    {
+      var blockIndex : Nat__227979830;
+      var blocks : [var [var ?ExportAuditEntry__491082099]];
+      var elementIndex : Nat__227979830
+    };
+  stable exportInstances :
+    {
+      var blockIndex : Nat__227979830;
+      var blocks : [var [var ?ExportInstance__703134528]];
+      var elementIndex : Nat__227979830
+    };
+  stable exportMediaBindings :
+    {
+      var blockIndex : Nat__227979830;
+      var blocks : [var [var ?ExportMediaBinding__330429149]];
       var elementIndex : Nat__227979830
     };
   stable families :

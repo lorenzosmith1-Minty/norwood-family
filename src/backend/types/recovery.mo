@@ -143,6 +143,91 @@ module {
     transferredAt : ?Int;
   };
 
+  /// Phase 4B-H1 dedicated recovery discovery result.
+  ///
+  /// The MINIMUM recovery-safe data needed to select a recovery target: an
+  /// opaque target person identifier (used to submit the recovery request) and
+  /// the display name. It deliberately does NOT reuse `PersonMatch`, which
+  /// carries `parents` and therefore leaks family relationships.
+  ///
+  /// This type must never grow relationship, parent, sibling, story/history,
+  /// photo, account-principal, membership-id, or Steward fields: an
+  /// unaffiliated replacement account must not be able to browse or enumerate
+  /// the family tree during recovery.
+  public type RecoveryTargetMatch = {
+    personId : PersonId;
+    name : Text;
+  };
+
+  /// Phase 4B-H1 caller-facing recovery status view.
+  ///
+  /// The MINIMUM data a signed-in replacement account may see about its OWN
+  /// recovery requests: the target's display name, the plain-language recovery
+  /// status, the relevant timestamps, and — for a Steward Recovery request — the
+  /// backend-derived quorum progress. It deliberately omits the old owner
+  /// principal, the replacement principal, the recovery internal id, membership
+  /// ids, verifier identities, Steward ids, audit details, and every other
+  /// family datum.
+  ///
+  /// `confirmationsReceived`/`confirmationsRequired` are populated ONLY for a
+  /// `#StewardRecovery` request, where they carry the number of distinct family
+  /// confirmations recorded so far and the required quorum count. For an
+  /// ordinary `#AccountRecovery` request both are `null`, because the 2-member
+  /// quorum does not apply. The client never derives or supplies these counts.
+  public type MyRecoveryRequestView = {
+    targetName : Text;
+    status : RecoveryStatus;
+    createdAt : Int;
+    updatedAt : Int;
+    confirmationsReceived : ?Nat;
+    confirmationsRequired : ?Nat;
+  };
+
+  /// Phase 4C family-safe Steward Recovery verification view.
+  ///
+  /// The MINIMUM data an eligible approved family member needs to independently
+  /// verify a pending Steward Recovery request when no usable active Steward
+  /// remains: the candidate's display name, the plain-language-able recovery
+  /// status, the number of distinct family confirmations received, the required
+  /// quorum count, whether the caller has already submitted a verification (and
+  /// which decision), and the opaque recovery request reference the verification
+  /// action needs.
+  ///
+  /// `recoveryId` is the request reference required to call
+  /// `verifyStewardRecoveryForFamily`; it is an opaque handle, not a private
+  /// family datum, and it is only ever returned to a caller already authorized
+  /// to see the request. The view deliberately omits account principals,
+  /// membership ids, verifier account identities, and every other internal or
+  /// private family datum. The recovery candidate never receives an entry for
+  /// their own request, and the candidate never counts toward quorum.
+  public type StewardRecoveryVerificationView = {
+    recoveryId : Nat;
+    candidateName : Text;
+    status : RecoveryStatus;
+    confirmationsReceived : Nat;
+    confirmationsRequired : Nat;
+    callerHasVerified : Bool;
+    callerDecision : ?RecoveryVerificationDecision;
+  };
+
+  /// Phase 4D family-safe recovery audit view.
+  ///
+  /// The MINIMUM audit data a caller authorized to view a specific recovery
+  /// request may read: a plain-language action label, a display label for the
+  /// actor, the display names of the affected people, and the timestamp. It
+  /// deliberately omits the internal audit id, the recovery request id, the
+  /// family id, the raw actor account principal, the raw affected person ids,
+  /// and the free-text `summary` (which can carry private reasons), so no
+  /// private reason, technical error tag, account principal, or internal
+  /// identifier is ever exposed. The backend resolves the display labels, so the
+  /// client never needs the raw account identifier to derive them.
+  public type RecoveryAuditView = {
+    actionLabel : Text;
+    actorDisplayLabel : Text;
+    affectedDisplayNames : [Text];
+    timestamp : Int;
+  };
+
   /// Errors for recovery request creation, verification, approval, and
   /// resolution. Messages are stable and non-technical.
   public type RecoveryError = {

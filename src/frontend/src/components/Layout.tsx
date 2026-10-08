@@ -3,6 +3,7 @@ import {
   Archive,
   Bell,
   GitBranch,
+  KeyRound,
   LibraryBig,
   LogIn,
   LogOut,
@@ -103,6 +104,12 @@ interface LayoutProps {
   onStewardClick?: () => void;
   /** Navigates to the in-app notifications view. */
   onNotificationsClick?: () => void;
+  /**
+   * Navigates to the "Recover my Norwood profile" flow. Shown only to a
+   * signed-in caller: recovery is started from the account that will be used
+   * going forward, so a signed-out visitor is never offered it.
+   */
+  onRecoverProfileClick?: () => void;
 }
 
 export function Layout({
@@ -125,6 +132,7 @@ export function Layout({
   onMessageBoardClick,
   onStewardClick,
   onNotificationsClick,
+  onRecoverProfileClick,
 }: LayoutProps) {
   // Which nav button is active for the current view. Each nav section maps to
   // the view(s) it owns so the active state stays obvious on desktop and mobile.
@@ -171,6 +179,10 @@ export function Layout({
   const isNotificationsActive = activeView === "notifications";
   const isMyProfileActive =
     activeView === "my-profile" || activeView === "profile-edit";
+  // The recovery entry point owns both the request flow and the caller's own
+  // status view, so the pill stays highlighted across both.
+  const isRecoveryActive =
+    activeView === "recovery-request" || activeView === "recovery-status";
 
   // Family Steward controls are Steward-only. Gate on BOTH authentication and
   // the canonical active-Steward authority so they never leak to a signed-out
@@ -344,6 +356,22 @@ export function Layout({
               Notifications
               <NotificationBadge />
             </button>
+            {isAuthenticated && !isHydrating ? (
+              <button
+                type="button"
+                data-ocid="layout.recover_profile_link"
+                aria-current={isRecoveryActive ? "page" : undefined}
+                onClick={onRecoverProfileClick}
+                className={navClass(isRecoveryActive)}
+              >
+                <KeyRound
+                  className={navIconClass(isRecoveryActive)}
+                  strokeWidth={1.75}
+                  aria-hidden="true"
+                />
+                Recover my profile
+              </button>
+            ) : null}
             {isHydrating ? null : (
               <>
                 <span

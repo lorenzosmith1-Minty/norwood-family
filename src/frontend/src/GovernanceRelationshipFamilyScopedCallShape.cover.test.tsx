@@ -3,8 +3,8 @@ import {
   type Relationship,
   RelationshipStatus,
   RelationshipType,
-  type Result_12,
-  type Result_46,
+  type Result_14,
+  type Result_53,
 } from "@/backend";
 import { FamilyProvider } from "@/context/FamilyContext";
 import { Principal } from "@icp-sdk/core/principal";
@@ -229,7 +229,7 @@ describe("useAddRelationship: non-default family routes to addRelationshipForFam
   });
 
   it("surfaces the backend Result unchanged for a non-default family", async () => {
-    const okResult: Result_46 = { __kind__: "ok", ok: seededRelationship };
+    const okResult: Result_53 = { __kind__: "ok", ok: seededRelationship };
     mockActor.addRelationshipForFamily = vi.fn(async (...args: unknown[]) => {
       calls.addRelationshipForFamily.push(args);
       return okResult;
@@ -481,7 +481,7 @@ describe("useRemoveRelationship: non-default family routes to the family endpoin
   });
 
   it("surfaces the backend Result unchanged for a non-default family", async () => {
-    const okResult: Result_12 = { __kind__: "ok", ok: null };
+    const okResult: Result_14 = { __kind__: "ok", ok: null };
     mockActor.removeRelationshipForFamily = vi.fn(
       async (...args: unknown[]) => {
         calls.removeRelationshipForFamily.push(args);
@@ -584,7 +584,7 @@ describe("useCorrectRelationshipType: non-default family routes to the family en
       ...seededRelationship,
       relationshipType: RelationshipType.Sibling,
     };
-    const okResult: Result_46 = { __kind__: "ok", ok: corrected };
+    const okResult: Result_53 = { __kind__: "ok", ok: corrected };
     mockActor.correctRelationshipTypeForFamily = vi.fn(
       async (...args: unknown[]) => {
         calls.correctRelationshipTypeForFamily.push(args);

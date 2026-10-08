@@ -6,11 +6,10 @@ import {
   type PersonProfile,
   type ProfileRemovalRequest,
   ProfileRemovalStatus,
-  type Result_5,
-  type Result_9,
-  type Result_16,
-  type Result_17,
-  type Result_19,
+  type Result_7,
+  type Result_11,
+  type Result_18,
+  type Result_21,
 } from "@/backend";
 import { Principal } from "@icp-sdk/core/principal";
 import {
@@ -271,7 +270,7 @@ describe("useRequestProfileRemoval: default-family consumer contract (characteri
     const request = removalRequest();
     mockActor.requestProfileRemoval = vi.fn(async (...args: unknown[]) => {
       calls.requestProfileRemoval.push(args);
-      return { __kind__: "ok", ok: request } satisfies Result_9;
+      return { __kind__: "ok", ok: request } satisfies Result_11;
     });
 
     const { result } = renderHook(() => useRequestProfileRemoval(), {
@@ -436,7 +435,7 @@ describe("useArchiveProfile: default-family consumer contract (characterization)
   it("surfaces the backend result unchanged", async () => {
     mockActor.archiveProfile = vi.fn(async (...args: unknown[]) => {
       calls.archiveProfile.push(args);
-      return { __kind__: "ok", ok: null } satisfies Result_5;
+      return { __kind__: "ok", ok: null } satisfies Result_7;
     });
 
     const { result } = renderHook(() => useArchiveProfile(), { wrapper });
@@ -521,7 +520,7 @@ describe("usePermanentlyDeleteProfile: default-family consumer contract (charact
   it("surfaces the backend result unchanged", async () => {
     mockActor.permanentlyDeleteProfile = vi.fn(async (...args: unknown[]) => {
       calls.permanentlyDeleteProfile.push(args);
-      return { __kind__: "ok", ok: null } satisfies Result_16;
+      return { __kind__: "ok", ok: null } satisfies Result_18;
     });
 
     const { result } = renderHook(() => usePermanentlyDeleteProfile(), {
@@ -695,7 +694,7 @@ describe("useNotDuplicate: default-family consumer contract (characterization)",
   it("surfaces the backend result unchanged", async () => {
     mockActor.notDuplicate = vi.fn(async (...args: unknown[]) => {
       calls.notDuplicate.push(args);
-      return { __kind__: "ok", ok: null } satisfies Result_17;
+      return { __kind__: "ok", ok: null } satisfies Result_18;
     });
 
     const { result } = renderHook(() => useNotDuplicate(), { wrapper });
@@ -750,7 +749,7 @@ describe("useMergeProfiles: default-family consumer contract (characterization)"
     };
     mockActor.mergeProfiles = vi.fn(async (...args: unknown[]) => {
       calls.mergeProfiles.push(args);
-      return { __kind__: "ok", ok: mergeResult } satisfies Result_19;
+      return { __kind__: "ok", ok: mergeResult } satisfies Result_21;
     });
 
     const { result } = renderHook(() => useMergeProfiles(), { wrapper });

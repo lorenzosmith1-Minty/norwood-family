@@ -6,8 +6,8 @@ import {
   type MembershipConfirmationReviewView,
   MembershipConfirmationState,
   MembershipStatus,
-  type Result_6,
-  type Result_25,
+  type Result_7,
+  type Result_29,
   SimpleRelationshipType,
 } from "@/backend";
 import { DEFAULT_FAMILY_ID, FamilyProvider } from "@/context/FamilyContext";
@@ -105,16 +105,16 @@ const {
     },
     async listMembershipConfirmationReviewsForSteward(
       ...args: unknown[]
-    ): Promise<Result_25> {
+    ): Promise<Result_29> {
       calls.listMembershipConfirmationReviewsForSteward.push(args);
       if (reviewsError !== null) {
         return { __kind__: "err", err: reviewsError };
       }
       return { __kind__: "ok", ok: reviews };
     },
-    async resolveMembershipConfirmation(...args: unknown[]): Promise<Result_6> {
+    async resolveMembershipConfirmation(...args: unknown[]): Promise<Result_7> {
       calls.resolveMembershipConfirmation.push(args);
-      const result = resolveResult as Result_6;
+      const result = resolveResult as Result_7;
       if (removeResolvedOnSuccess && result?.__kind__ === "ok") {
         const resolvedId = args[1];
         reviews = reviews.filter(

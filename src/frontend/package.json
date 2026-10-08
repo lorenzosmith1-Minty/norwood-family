@@ -77,6 +77,7 @@
     "cmdk": "^1.0.0",
     "date-fns": "^3.6.0",
     "embla-carousel-react": "^8.2.1",
+    "fflate": "^0.8.3",
     "input-otp": "^1.4.1",
     "lucide-react": "0.511.0",
     "motion": "^12.34.3",
